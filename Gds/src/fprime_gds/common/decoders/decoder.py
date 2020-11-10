@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all decoders. Defines the Decoder interface.
 
 Decoders are responsible for taking in serialized data and parsing it into
@@ -18,114 +18,48 @@ allow consumers to receive raw data.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
-from __future__ import print_function
+"""
+
+import abc
+import logging
+
+import fprime_gds.common.handlers
+
+LOGGER = logging.getLogger("decoder")
 
 
-class Decoder(object):
-    '''Base class for all decoder classes. Defines the interface for decoders'''
+class Decoder(
+    fprime_gds.common.handlers.DataHandler,
+    fprime_gds.common.handlers.HandlerRegistrar,
+    abc.ABC,
+):
+    """
+    Base class for all decoder classes. This defines the "decode_api" function to allow for decoding of raw bytes. In
+    addition it has a "data_callback" function implementation that decodes and sends out all results.
+    """
 
-    def __init__(self):
-        '''
-        Decoder class constructor
+    def data_callback(self, data, sender=None):
+        """
+        Data callback which calls the decode_api function exactly once. Then it passes the results to all registered
+        consumer. This should only need to be overridden in extraordinary circumstances.
 
-        Returns:
-            An initialized decoder object.
-        '''
-        # List of consumers to be notified of new data
-        self.__consumers = []
+        :param data: data bytes to be decoded
+        :param sender: (optional) sender id, otherwise None
+        """
+        decoded = self.decode_api(data)
+        if decoded is not None:
+            self.send_to_all(decoded)
+            return
+        LOGGER.warning("Decoder of type %s produced 'None' decoded object", type(self))
 
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the decoder class
-
-        Args:
-            data: Binary data to decode and pass to registered consumers
-        '''
-        self.send_to_all(data)
-
-
-    def register(self, consumer_obj):
-        '''
-        Function called to register a consumer to this decoder
-
-        For each data item passed to and parsed by the decoder, the parsed data
-        will be passed as an argument to the data_callback function of each
-        registered consumer.
-
-        Args:
-            consumer_obj: Object to register to the decoder. Must implement a
-                          data_callback function.
-        '''
-        self.__consumers.append(consumer_obj)
-    
-    def deregister(self, consumer_obj):
-        '''
-        Function called to remove a registered consumer from this decoder
-
-        Once called, a registered item will no longer receive updates from this decoder.
-
-        Args:
-            consumer_obj: Object to deregister from the decoder. Must implement a
-                          data_callback function.
-        Return:
-            a boolean indicating if the consumer was removed
-        '''
-        try:
-            self.__consumers.remove(consumer_obj)
-            return True
-        except ValueError:
-            return False
-
-
+    @abc.abstractmethod
     def decode_api(self, data):
-        '''
+        """
         Decodes the given data and returns the result.
 
         This function allows for non-registered code to call the same decoding
         code as is used to parse data passed to the data_callback function.
 
-        Args:
-            data: Binary data to decode
-
-        Returns:
-            Parsed version of the argument data
-        '''
-        # Base class just acts as a data passthrough:
-        return data
-
-
-    def send_to_all(self, parsed_data):
-        '''
-        Sends the parsed_data object to all registered consumers
-
-        This function is not intended to be called from outside a decoder class
-
-        Args:
-            parsed_data: object to send to all registered consumers
-        '''
-        for obj in self.__consumers:
-            obj.data_callback(parsed_data)
-
-
-if __name__ == "__main__":
-    # Unit tests
-    # (don't check functionality, just test code path's for exceptions)
-
-    try:
-        decoder1 = Decoder()
-        decoder2 = Decoder()
-        decoder3 = Decoder()
-
-        decoder1.register(decoder2)
-        decoder1.register(decoder3)
-
-        decoder1.data_callback("hello")
-
-        if (decoder1.decode_api("hello") != "hello"):
-            print("Decoder Unit tests failed")
-        else:
-            print("Decoder Unit tests passed")
-    except:
-        print("Decoder Unit tests failed")
+        :param data: binary data to decode
+        :return: decoded data object
+        """

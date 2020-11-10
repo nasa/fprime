@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: Port.py
 #
 # DESCRIPTION:  This is a Port meta-model sort of class.  It is
@@ -15,14 +14,11 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
 
 #
 # Python extention modules and custom interfaces
@@ -33,15 +29,30 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
-class Channel(object):
+class Channel:
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
     """
-    def __init__(self, ids, name, ctype, size, abbrev = None, format_string=None, update=None, limits = (None,None,None,None), comment=None, xml_filename=None, component_name=None , component_base_name = None):
+
+    def __init__(
+        self,
+        ids,
+        name,
+        ctype,
+        size,
+        abbrev=None,
+        format_string=None,
+        update=None,
+        limits=(None, None, None, None),
+        comment=None,
+        xml_filename=None,
+        component_name=None,
+        component_base_name=None,
+    ):
         """
         Constructor
         @param id:  Numeric ID of channel
@@ -97,7 +108,7 @@ class Channel(object):
         """
         return self.__abbrev
 
-    def set_abbrev(self , new_abbrev):
+    def set_abbrev(self, new_abbrev):
         """
         Sets the abbrev to be new_abbrev
         """

@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: ImplCppVisitor.py
 #
 # DESCRIPTION: A visitor class for generating component implementation cpp files.
@@ -10,21 +9,29 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
+from fprime_ac.generators.visitors import ImplVisitorBase
 from fprime_ac.utils import ConfigManager
 
-from fprime_ac.generators.templates.impl import cpp
-from fprime_ac.generators.visitors import ImplVisitorBase
+try:
+    from fprime_ac.generators.templates.impl import cpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class ImplCppVisitor(ImplVisitorBase.ImplVisitorBase):
     """
     A visitor class for generating component implementation cpp files.
     """
-    __config   = None
+
+    __config = None
 
     def __init__(self):
-        self.__config       = ConfigManager.ConfigManager.getInstance()
+        super().__init__()
+        self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("ImplCpp")
 
     def buildFileName(self, obj):

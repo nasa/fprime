@@ -1,4 +1,4 @@
-'''
+"""
 @brief Encoder for cmd data
 
 This encoder takes in cmd_data objects, serializes them, and sends the results
@@ -39,53 +39,35 @@ Serialized command format:
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
-from __future__ import absolute_import
+"""
+
 
 from . import encoder
+from fprime.common.models.serialize.numerical_types import U32Type
 from fprime_gds.common.data_types.cmd_data import CmdData
-from fprime.common.models.serialize.u32_type import U32Type
 from fprime_gds.common.utils.data_desc_type import DataDescType
 
-import binascii
 
 class CmdEncoder(encoder.Encoder):
-    '''Encoder class for command data'''
+    """Encoder class for command data"""
 
-    def __init__(self, dest="FSW", config=None):
-        '''
+    def __init__(self, config=None):
+        """
         CmdEncoder class constructor
 
         Args:
-            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
-                  data produced by encoder.
             config (ConfigManager, default=None): Object with configuration data
                     for the sizes of fields in the binary data. If None passed,
                     defaults are used.
 
         Returns:
             An initialized CmdEncoder object
-        '''
-        super(CmdEncoder, self).__init__(dest, config)
-
+        """
+        super().__init__(config)
         self.len_obj = self.config.get_type("msg_len")
 
-
-    def data_callback(self, data):
-        '''
-        Function called to pass data through the encoder.
-
-        Objects that the encoder is registered to will call this function to
-        pass data to the encoder.
-
-        Args:
-            data: CmdData object to encode into binary data.
-        '''
-        self.send_to_all(self.encode_api(data))
-
-
     def encode_api(self, data):
-        '''
+        """
         Encodes the given CmdData object as binary data and returns the result.
 
         Args:
@@ -93,11 +75,11 @@ class CmdEncoder(encoder.Encoder):
 
         Returns:
             Encoded version of the data argument as binary data
-        '''
-        # TODO we should be able to handle multiple destinations, not just FSW
+        """
+        assert isinstance(data, CmdData), "Encoder handling incorrect type"
         cmd_temp = data.get_template()
 
-        desc = U32Type( 0x5A5A5A5A ).serialize()
+        desc = U32Type(0x5A5A5A5A).serialize()
 
         descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].value).serialize()
 
@@ -111,7 +93,6 @@ class CmdEncoder(encoder.Encoder):
         self.len_obj.val = length_val
         length = self.len_obj.serialize()
 
-        binary_data = (desc + length + descriptor + op_code + arg_data)
+        binary_data = desc + length + descriptor + op_code + arg_data
 
         return binary_data
-

@@ -19,7 +19,7 @@ register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/TlmChan/TlmChanComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChanComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanImplTester.cpp"
 )

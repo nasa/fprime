@@ -7,7 +7,11 @@
  *
  * @author mstarch
  */
-import {filter, timeToString} from "./utils.js";
+import {listExistsAndItemNameNotInList, timeToString} from "./utils.js";
+import {_datastore} from "../datastore.js";
+
+let OPREG = /Opcode (0x[0-9a-fA-F]+)/;
+
 /**
  * events-list:
  *
@@ -15,7 +19,50 @@ import {filter, timeToString} from "./utils.js";
  * needed method to configure fp-table to render events.
  */
 Vue.component("event-list", {
-    props:["events"],
+    props: {
+        /**
+         * fields:
+         *
+         * Fields to display on this object. This should be null, unless the user is specifically trying to minimize
+         * this object's display.
+         */
+        fields: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * The search text to initialize the table filter with (defaults to
+         * nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
+        },
+        /**
+         * A list of item ID names saying what rows in the table should be
+         * shown; defaults to an empty list, meaning "show all items"
+         */
+        itemsShown: {
+            type: [Array, String],
+            default: ""
+        },
+        /**
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         */
+        compact: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data: function() {
+        return {
+            // NOTE: Events/command lists shared across all component instances
+            "events": _datastore.events,
+            "eventsOffset": 0,
+            "commands": _datastore.commands
+        };
+    },
     template: "#event-list-template",
     methods: {
         /**
@@ -23,9 +70,23 @@ Vue.component("event-list", {
          * @param item: event object to harvest
          * @return {[string, *, *, void | string, *]}
          */
-        columnify: function (item) {
+        columnify(item) {
+            let display_text = item.display_text;
+            // Remap command EVRs to expand opcode for visualization pruposes
+            let groups = null
+            if (item.template.severity.value == "EventSeverity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
+                let mnemonic = "UNKNOWN";
+                let id = parseInt(groups[1]);
+                for (let command in this.commands) {
+                    command = this.commands[command];
+                    if (command.id == id) {
+                        mnemonic = command.mnemonic;
+                    }
+                }
+                display_text = display_text.replace(OPREG, '<span title="' + groups[0] + '">' + mnemonic + '</span>');
+            }
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
-                item.template.severity.value.replace("Severity.", ""), item.display_text];
+                item.template.severity.value.replace("EventSeverity.", ""), display_text];
         },
         /**
          * Use the row's values and bounds to colorize the row. This function will color red and yellow items using
@@ -33,15 +94,15 @@ Vue.component("event-list", {
          * @param item: item passed in with which to calculate style
          * @return {string}: style-class to use
          */
-        style: function (item) {
+        style(item) {
             let severity = {
-                "Severity.FATAL":      "fp-color-fatal",
-                "Severity.WARNING_HI": "fp-color-warn-hi",
-                "Severity.WARNING_LO": "fp-color-warn-lo",
-                "Severity.ACTIVITY_HI": "fp-color-act-hi",
-                "Severity.ACTIVITY_LO": "fp-color-act-lo",
-                "Severity.COMMAND":     "fp-color-command",
-                "Severity.DIAGNOSTIC":  ""
+                "EventSeverity.FATAL":      "fp-color-fatal",
+                "EventSeverity.WARNING_HI": "fp-color-warn-hi",
+                "EventSeverity.WARNING_LO": "fp-color-warn-lo",
+                "EventSeverity.ACTIVITY_HI": "fp-color-act-hi",
+                "EventSeverity.ACTIVITY_LO": "fp-color-act-lo",
+                "EventSeverity.COMMAND":     "fp-color-command",
+                "EventSeverity.DIAGNOSTIC":  ""
             }
             return severity[item.template.severity.value];
         },
@@ -53,53 +114,35 @@ Vue.component("event-list", {
          */
         keyify(item) {
             return "evt-" + item.id + "-" + item.time.seconds + "-"+ item.time.microseconds;
+        },
+        /**
+         * A function to clear this events pane to remove events that have already been seen. Note: this action is
+         * irrecoverable.
+         */
+        clearEvents() {
+            this.eventsOffset = this.events.length;
+        },
+        /**
+         * Returns if the given item should be hidden in the data table; by
+         * default, shows all items. If the "itemsShown" property is set, only
+         * show items with the given names
+         *
+         * @param item: The given F' data item
+         * @return {boolean} Whether or not the item is shown
+         */
+        isItemHidden(item) {
+            return listExistsAndItemNameNotInList(this.itemsShown, item);
+        }
+    },
+    computed: {
+        /**
+         * Returns a list of events that should be visible on this component
+         * instance, to support instance-specific clearing
+         *
+         * @return {Array} The list of event items this instance can show
+         */
+        componentEvents() {
+            return this.events.slice(this.eventsOffset);
         }
     }
 });
-/**
- * EventMixins:
- *
- * This set of functions should be mixed in as member functions to the F´ wrappers around the above Vue.js component.
- * These provide the functions required to update events on the fly.
- *
- * Note: to mixin these functions: Object.assign(EventMixins)
- */
-export let EventMixins = {
-    /**
-     * Update the list of events with the supplied new list of events.
-     * @param newEvents: new full list of events to render
-     */
-    updateEvents(newEvents) {
-        this.vue.events.push(...newEvents);
-    },
-    /**
-     * Sets up the needed event data items.
-     * @return [] an empty list to fill with events
-     */
-    setupEvents() {
-        return {"events": []};
-    }
-};
-
-/**
- * EventView:
- *
- * A wrapper for the event-list viewable. This is stand-alone and could be used anywhere that an events list is needed.
- * It will setup the Vue.js component and mixin the above needed functions.
- *
- * @author mstarch
- */
-export class EventView {
-    /**
-     * Creates a ChannelView that delegates to a Vue.js view.
-     * @param elemid: HTML ID of the element to render to
-     */
-    constructor(elemid) {
-        Object.assign(EventView.prototype, EventMixins);
-        this.vue = new Vue({
-            el: elemid,
-            data: this.setupEvents()
-        });
-    }
-
-}

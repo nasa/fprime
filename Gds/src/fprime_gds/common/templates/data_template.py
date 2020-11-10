@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base data template class.
 
 Data templates are classes whose instances describe a specific class of data
@@ -9,23 +9,23 @@ event or the channel FR_CycleTime.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 import fprime_gds.common.utils.jsonable
 
-class DataTemplate(object):
-    '''Base class for all data template classes'''
+
+class DataTemplate:
+    """Base class for all data template classes"""
 
     def __init__(self):
-        '''
+        """
         Constructor.
 
         The only required fields for template classes are id and name
 
         Returns:
             Initialized Template object
-        '''
+        """
         # Initialize at least id and name here
-        pass
 
     def get_id(self):
         raise NotImplementedError
@@ -34,8 +34,7 @@ class DataTemplate(object):
         raise NotImplementedError
 
     def to_jsonable(self):
-        '''
+        """
         Converts to a JSONable object (primatives, anon-objects, lists)
-        '''
+        """
         return fprime_gds.common.utils.jsonable.fprime_to_jsonable(self)
-

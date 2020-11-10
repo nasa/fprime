@@ -1,20 +1,21 @@
-'''
+"""
 @brief Loader class for importing xml based channel dictionaries
 
 @date Created July 19, 2018
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
-from __future__ import absolute_import
+"""
+
+from fprime_gds.common.data_types import exceptions
+from fprime_gds.common.templates.ch_template import ChTemplate
 
 # Custom Python Modules
 from .xml_loader import XmlLoader
-from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.data_types import exceptions
+
 
 class ChXmlLoader(XmlLoader):
-    '''Class to load xml based telemetry channel dictionaries'''
+    """Class to load xml based telemetry channel dictionaries"""
 
     CH_SECT = "channels"  # Name of the channel section
 
@@ -32,9 +33,8 @@ class ChXmlLoader(XmlLoader):
     HIGH_O_TAG = "high_orange"
     HIGH_R_TAG = "high_red"
 
-
     def construct_dicts(self, path):
-        '''
+        """
         Constructs and returns python dictionaries keyed on id and name
 
         This function should not be called directly, instead, use
@@ -47,15 +47,15 @@ class ChXmlLoader(XmlLoader):
             A tuple with two channel dictionaries (python type dict):
             (id_idct, name_dict). The keys are the channels' id and name fields
             respectively and the values are ChTemplate objects
-        '''
+        """
         xml_tree = self.get_xml_tree(path)
 
         # Check if xml dict has channels section
         ch_section = self.get_xml_section(self.CH_SECT, xml_tree)
-        if (ch_section == None):
+        if ch_section is None:
             raise exceptions.GseControllerParsingException(
-                    "Xml dict did not have a %s section"%self.CH_SECT)
-
+                "Xml dict did not have a %s section" % self.CH_SECT
+            )
 
         id_dict = dict()
         name_dict = dict()
@@ -78,40 +78,48 @@ class ChXmlLoader(XmlLoader):
             ch_high_orange = None
             ch_high_red = None
 
-            if (self.DESC_TAG in ch_dict):
+            if self.DESC_TAG in ch_dict:
                 ch_desc = ch_dict[self.DESC_TAG]
 
-            if (self.FMT_STR_TAG in ch_dict):
+            if self.FMT_STR_TAG in ch_dict:
                 ch_fmt_str = ch_dict[self.FMT_STR_TAG]
 
             # TODO we need to convert these into numbers, is this the best
             #  way to do it?
-            if (self.LOW_R_TAG in ch_dict):
+            if self.LOW_R_TAG in ch_dict:
                 ch_low_red = float(ch_dict[self.LOW_R_TAG])
 
-            if (self.LOW_O_TAG in ch_dict):
+            if self.LOW_O_TAG in ch_dict:
                 ch_low_orange = float(ch_dict[self.LOW_O_TAG])
 
-            if (self.LOW_Y_TAG in ch_dict):
+            if self.LOW_Y_TAG in ch_dict:
                 ch_low_yellow = float(ch_dict[self.LOW_Y_TAG])
 
-            if (self.HIGH_Y_TAG in ch_dict):
+            if self.HIGH_Y_TAG in ch_dict:
                 ch_high_yellow = float(ch_dict[self.HIGH_Y_TAG])
 
-            if (self.HIGH_O_TAG in ch_dict):
+            if self.HIGH_O_TAG in ch_dict:
                 ch_high_orange = float(ch_dict[self.HIGH_O_TAG])
 
-            if (self.HIGH_R_TAG in ch_dict):
+            if self.HIGH_R_TAG in ch_dict:
                 ch_high_red = float(ch_dict[self.HIGH_R_TAG])
 
-
-            ch_temp = ChTemplate(ch_id, ch_name, ch_comp, ch_type_obj,
-                                 ch_fmt_str, ch_desc, ch_low_red, ch_low_orange,
-                                 ch_low_yellow, ch_high_yellow, ch_high_orange,
-                                 ch_high_red)
+            ch_temp = ChTemplate(
+                ch_id,
+                ch_name,
+                ch_comp,
+                ch_type_obj,
+                ch_fmt_str,
+                ch_desc,
+                ch_low_red,
+                ch_low_orange,
+                ch_low_yellow,
+                ch_high_yellow,
+                ch_high_orange,
+                ch_high_red,
+            )
 
             id_dict[ch_id] = ch_temp
             name_dict[ch_name] = ch_temp
 
         return (id_dict, name_dict)
-

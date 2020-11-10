@@ -1,43 +1,32 @@
-'''
+"""
 @brief Loader class for importing xml based packet dictionaries
 
 @date Created July 12, 2018
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
 
-import os
-from lxml import etree
+from fprime_gds.common.data_types import exceptions
 
 # Custom python modules
 from fprime_gds.common.loaders.xml_loader import XmlLoader
-from fprime_gds.common.data_types import exceptions
 from fprime_gds.common.templates.pkt_template import PktTemplate
 
+
 class PktXmlLoader(XmlLoader):
-    '''Class to load xml packet dictionaries'''
+    """Class to load xml packet dictionaries"""
 
     # Constants for use when parsing the xml
     PKT_LIST_TAG = "packet_list"  # tag on the root list of packets
-    PKT_TAG = "packet"            # tag on each packet object
-    CH_TAG = "channel"            # tag on each channel element of the packet
-    NAME_FIELD = "name"           # key to retrieve the packet name
-    ID_FIELD = "id"               # key to retrieve the packet id
-    CH_NAME_FIELD = "name"        # key to retrieve the name from each ch elem
-
-    def __init__(self):
-        '''
-        Constructor
-
-        Returns:
-            An initialized loader object
-        '''
-        super(PktXmlLoader, self).__init__()
-
+    PKT_TAG = "packet"  # tag on each packet object
+    CH_TAG = "channel"  # tag on each channel element of the packet
+    NAME_FIELD = "name"  # key to retrieve the packet name
+    ID_FIELD = "id"  # key to retrieve the packet id
+    CH_NAME_FIELD = "name"  # key to retrieve the name from each ch elem
 
     def get_id_dict(self, path, ch_name_dict):
-        '''
+        """
         Returns the python dictionary keyed by ids for the given path
 
         This function will return the same dictionary originally computed for
@@ -51,8 +40,8 @@ class PktXmlLoader(XmlLoader):
 
         Returns:
             The id dictionary associated with the given path
-        '''
-        if (path in self.saved_dicts):
+        """
+        if path in self.saved_dicts:
             (id_dict, name_dict) = self.saved_dicts[path]
         else:
             (id_dict, name_dict) = self.construct_dicts(path, ch_name_dict)
@@ -60,9 +49,8 @@ class PktXmlLoader(XmlLoader):
 
         return id_dict
 
-
     def get_name_dict(self, path, ch_name_dict):
-        '''
+        """
         Returns the python dictionary keyed by names for the given path
 
         This function will return the same dictionary originally computed for
@@ -76,8 +64,8 @@ class PktXmlLoader(XmlLoader):
 
         Returns:
             The name dictionary associated with the given path
-        '''
-        if (path in self.saved_dicts):
+        """
+        if path in self.saved_dicts:
             (id_dict, name_dict) = self.saved_dicts[path]
         else:
             (id_dict, name_dict) = self.construct_dicts(path, ch_name_dict)
@@ -85,9 +73,8 @@ class PktXmlLoader(XmlLoader):
 
         return name_dict
 
-
     def construct_dicts(self, path, ch_name_dict):
-        '''
+        """
         Constructs and returns python dictionaries keyed on id and name
 
         This function should not be called directly, instead, use
@@ -103,19 +90,20 @@ class PktXmlLoader(XmlLoader):
             A tuple with two packet dictionaries (type==dict()):
             (id_dict, name_dict). The keys should be the packets' id and name
             fields respectively and the values should be PktTemplate objects.
-        '''
+        """
         packet_list = self.get_xml_tree(path)
-        if (packet_list.tag != self.PKT_LIST_TAG):
-            raise exceptions.GseControllerParseException(
-                    "expected packet list to have tag %s, but found %s"%
-                    (self.PKT_LIST_TAG, packet_list.tag))
+        if packet_list.tag != self.PKT_LIST_TAG:
+            raise exceptions.GseControllerParsingException(
+                "expected packet list to have tag %s, but found %s"
+                % (self.PKT_LIST_TAG, packet_list.tag)
+            )
 
         id_dict = dict()
         name_dict = dict()
 
         for packet in packet_list:
             # check if this is actually a packet, and not something to ignore
-            if (packet.tag != self.PKT_TAG):
+            if packet.tag != self.PKT_TAG:
                 continue
 
             pkt_name = packet.attrib[self.NAME_FIELD]
@@ -127,8 +115,9 @@ class PktXmlLoader(XmlLoader):
 
                 if ch_name not in ch_name_dict:
                     raise exceptions.GseControllerParsingException(
-                            "Channel %s in pkt %s, but cannot be found in channel dictionary"%
-                            (ch_name, pkt_name))
+                        "Channel %s in pkt %s, but cannot be found in channel dictionary"
+                        % (ch_name, pkt_name)
+                    )
 
                 ch_list.append(ch_name_dict[ch_name])
 
@@ -138,4 +127,3 @@ class PktXmlLoader(XmlLoader):
             name_dict[pkt_name] = pkt_temp
 
         return (id_dict, name_dict)
-

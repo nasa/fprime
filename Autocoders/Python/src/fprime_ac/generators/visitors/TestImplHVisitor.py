@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplHVisitor.py
 #
 # DESCRIPTION: A visitor class for generating test implementation
@@ -11,20 +10,28 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
+from fprime_ac.generators.visitors import TestImplVisitorBase
 from fprime_ac.utils import ConfigManager
 
-from fprime_ac.generators.templates.test_impl import hpp
-from fprime_ac.generators.visitors import TestImplVisitorBase
+try:
+    from fprime_ac.generators.templates.test_impl import hpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class TestImplHVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """
     A visitor class for generating test implementation header files.
     """
-    __config   = None
+
+    __config = None
 
     def __init__(self):
+        super().__init__()
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("TestImplH")
 

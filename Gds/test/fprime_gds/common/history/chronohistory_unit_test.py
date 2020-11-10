@@ -3,23 +3,25 @@ import sys
 import time
 import unittest
 
+from fprime.common.models.serialize.numerical_types import I32Type
+from fprime.common.models.serialize.time_type import TimeType
+from fprime_gds.common.data_types.ch_data import ChData
+from fprime_gds.common.history.chrono import ChronologicalHistory
+from fprime_gds.common.templates.ch_template import ChTemplate
+from fprime_gds.common.testing_fw import predicates
+
 filename = os.path.dirname(__file__)
 gdsName = os.path.join(filename, "../../../../src")
 fprimeName = os.path.join(filename, "../../../../../Fw/Python/src")
 sys.path.insert(0, gdsName)
 sys.path.insert(0, fprimeName)
 
-from fprime_gds.common.testing_fw import predicates
-from fprime_gds.common.history.chrono import ChronologicalHistory
-from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.i32_type import I32Type
 
-from fprime_gds.common.templates.ch_template import ChTemplate
-from fprime_gds.common.data_types.ch_data import ChData
 """
 These unit tests were quickly modified from the original tests on the predicate history.
 They all run, but may not be written in an optimized way.
 """
+
 
 class HistoryTestCases(unittest.TestCase):
     def setUp(self):
@@ -224,7 +226,6 @@ class HistoryTestCases(unittest.TestCase):
         except TypeError:
             correct_error = True
         assert correct_error, "The History should have raised a TypeError"
-        
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import {filter} from "./utils.js";
+import {filter, toArrayIfString} from "./utils.js";
 
 /**
  * fp-row:
@@ -50,7 +50,21 @@ Vue.component("fp-row", {
         inView: {
             type: Boolean,
             default: true
-        }
+        },
+        /**
+         * Action to perform when the clicked row has been clicked.
+         */
+        clickAction: {
+            type: Function,
+            default: (item) => {},
+        },
+        /**
+         * An array of indices that are visible.
+         */
+        visible: {
+            type: Array,
+            default: null
+        },
     },
     methods: {
         /**
@@ -68,10 +82,10 @@ Vue.component("fp-row", {
          * the itemToColumns variable has not been bound to.
          */
         calculatedColumns: function () {
-            if (typeof (this.itemToColumns) === "function") {
-                return this.itemToColumns(this.item);
+            if (typeof (this.itemToColumns) !== "function") {
+                throw Error("Failed to define required 'itemToColumns' function on fp-table")
             }
-            throw Error("Failed to define required 'itemToColumns' function on fp-table")
+            return this.itemToColumns(this.item).filter((item, index) => this.visible == null || this.visible.indexOf(index) != -1);
         },
         /**
          * Calculates the style of the row based on a given item. This is optional and will not raise an error if the
@@ -85,6 +99,62 @@ Vue.component("fp-row", {
         }
     }
 });
+
+/**
+ * file-row:
+ *
+ * File row Vue component. This is used to display rows that represent file data in the GDS. This includes sources,
+ * destinations, and progress bars.
+ */
+Vue.component("file-row", {
+    template: "#file-row-template",
+    props: {
+        /**
+         * item:
+         *
+         * 'item' will be automatically bound to each item in the 'items' list of the consuming table. It is the loop
+         * variable, and will be passed into the 'itemToColumns' function to produce columns.
+         */
+        item: Object,
+        /**
+         * itemToColumns:
+         *
+         * 'itemToColumns' will be bound to a function taking one item from the parent fp-table object. See fp-table.
+         */
+        itemToColumns: Function,
+    },
+    methods: {
+        /**
+         * Performs an action on a given file. This allows for the "Remove" and "Cancel" actions to be sent via the
+         * uploader to control the file's state on the server. If the file is being curated in JavaScript before uplink
+         * was started, then it will just be removed locally.
+         * @param event: button event to look at for the action.
+         */
+        fileAction(event) {
+            let action = event.currentTarget.innerText;
+            let uplinkvue = this.$parent.$parent;
+            let index = uplinkvue.selected.indexOf(this.item);
+            // Local javascript file, removeit from the selected (curation) list
+            if (action == "Remove" && index != -1) {
+                uplinkvue.selected.splice(index, 1);
+            } else {
+                uplinkvue.uploader.command(this.item.source, action);
+            }
+        }
+    },
+    computed: {
+        /**
+         * Calculates the basename of the given file. This is used for cases where the REST interface needs to be
+         * supplied a filename in the URL i.e. GET /files/filename1.  This strip all characters up to the last / or \.
+         * @return {string} full path to file (source, destination)
+         */
+        basename() {
+            let regex = /.*[\\\/]/;
+            return this.item.destination.replace(regex, "")
+        }
+    }
+});
+
 /**
  * fp-table:
  *
@@ -101,6 +171,16 @@ Vue.component("fp-table", {
     template: "#fp-table-template",
     //Properties used by fp-table
     props: {
+        /**
+         * initialFields:
+         *
+         * 'initialFields' is an accept-list of fields (columns) to display. Use null if all fields should be displayed. If not
+         * supplied default is null such that all fields will be printed.
+         */
+        initialFields: {
+            type: [Array, String],
+            default: null
+        },
         /**
          * headerColumns:
          *
@@ -151,6 +231,18 @@ Vue.component("fp-table", {
             default: false
         },
         /**
+         * compact:
+         *
+         * 'compact' allows the user to hide filters/buttons/headers/etc. to
+         * only show the table itself for a cleaner view
+         *
+         * default: false
+         */
+        compact: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * itemToViewName:
          *
          * 'itemToViewName' provides a function that converts from an item to a view's name. This allows the views to
@@ -173,10 +265,54 @@ Vue.component("fp-table", {
             default: function () {
                 return false;
             }
+        },
+        /**
+         * Display template to use for the row. Override with fp-row with something else for uplink/downlink file
+         * displays.
+         */
+        displayTemplate: {
+            default: "fp-row"
+        },
+        /**
+         * Action to perform when the clicked row has been clicked.
+         */
+        clickAction: {
+            type: Function,
+            default: (item) => {},
+        },
+        /**
+         * Action to perform when the clear rows button has been clicked.
+         */
+        clearRows: {
+            type: Function,
+            default: null
+        },
+        /**
+         * The search text to initialize the filter with (defaults to nothing)
+         */
+        filterText: {
+            type: String,
+            default: ""
+        },
+        /**
+         * The initial views to show in this table, if views are enabled
+         * (defaults to empty list)
+         */
+        initialViews: {
+            type: [Array, String],
+            default: []
         }
     },
     // Required data items (unique for each table instance)
-    data: function() {return {matching: [], editing: false, view: []}},
+    data: function() {
+        return {
+            matching: (this.filterText) ? [this.filterText] : [],
+            editing: false,
+            // use Vue.util.extend to copy by data, not by reference
+            view: Vue.util.extend([], toArrayIfString(this.initialViews)),
+            fields: Vue.util.extend([], toArrayIfString(this.initialFields))
+        }
+    },
     methods: {
         /**
          * Process the checked-child message. This should add or remove names from the view.
@@ -260,6 +396,35 @@ Vue.component("fp-table", {
     },
     // Computed items
     computed: {
+        /**
+         * visibleIndices:
+         *
+         * Computes the visible indices from the fields to show. This allows the sub row to restrict the columns based
+         * on what header fields are used.
+         *
+         * @return {null|Uint8Array}
+         */
+        visibleIndices: function() {
+            if (this.fields == null || this.fields.length == 0) {
+                return null;
+            }
+            return this.fields.map(field => this.headerColumns.indexOf(field)).filter(index => index != -1);
+        },
+        /**
+         * calculatedHeaderColumns:
+         *
+         * Computes the visible headers based on the fields to show. This allows this element to shink to a specified
+         * set of columns.
+         *
+         * @return {null|Uint8Array}
+         */
+        calculatedHeaderColumns: function() {
+            // Check for null full-display
+            if (this.fields == null || this.fields.length == 0) {
+                return this.headerColumns;
+            }
+            return this.fields.filter(field => this.headerColumns.indexOf(field) != -1);
+        },
         /**
          * Calculates a list of displayed items.
          */

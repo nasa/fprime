@@ -17,18 +17,17 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 
 
 class TestRefAppClass(object):
-
     @classmethod
     def setup_class(cls):
         cls.pipeline = StandardPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
         path = os.path.join(filename, "../../Top/RefTopologyAppDictionary.xml")
-        cls.pipeline.setup(config, path)
+        cls.pipeline.setup(config, path, "/tmp")
         cls.pipeline.connect("127.0.0.1", 50050)
         logpath = os.path.join(filename, "./logs")
         cls.api = IntegrationTestAPI(cls.pipeline, logpath)
-        cls.case_list = [] # TODO find a better way to do this. 
+        cls.case_list = []  # TODO find a better way to do this.
 
     @classmethod
     def teardown_class(cls):
@@ -61,15 +60,19 @@ class TestRefAppClass(object):
         Return:
             returns a list of the EventData objects found by the search
         """
-        self.api.log("Starting assert_command helper")
         cmd_id = self.api.translate_command_name(command)
+        self.api.log(
+            "Starting assert_command helper for {}({})".format(command, cmd_id)
+        )
         events = []
         events.append(self.api.get_event_pred("OpCodeDispatched", [cmd_id, None]))
         events.append(self.api.get_event_pred("OpCodeCompleted", [cmd_id]))
         results = self.api.send_and_assert_event(command, args, events, timeout=timeout)
         if max_delay is not None:
             delay = results[1].get_time() - results[0].get_time()
-            msg = "The delay, {}, between the two events should be < {}".format(delay, max_delay)
+            msg = "The delay, {}, between the two events should be < {}".format(
+                delay, max_delay
+            )
             assert delay < max_delay, msg
         self.api.log("assert_command helper completed successfully")
         return results
@@ -77,7 +80,10 @@ class TestRefAppClass(object):
     """
     This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
     """
-    FilterSeverity = Enum('FilterSeverity', 'WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC')
+    FilterSeverity = Enum(
+        "FilterSeverity",
+        "WARNING_HI WARNING_LO COMMAND ACTIVITY_HI ACTIVITY_LO DIAGNOSTIC",
+    )
 
     def set_event_filter(self, severity, enabled):
         """
@@ -95,8 +101,14 @@ class TestRefAppClass(object):
         else:
             severity = self.FilterSeverity[severity].name
         try:
-            self.api.send_command("eventLogger.ALOG_SET_EVENT_REPORT_FILTER", ["INPUT_" + severity, "INPUT_" + enabled])
-            self.api.send_command("eventLogger.ALOG_SET_EVENT_SEND_FILTER", ["SEND_" + severity, "SEND_" + enabled])
+            self.api.send_command(
+                "eventLogger.ALOG_SET_EVENT_REPORT_FILTER",
+                ["INPUT_" + severity, "INPUT_" + enabled],
+            )
+            self.api.send_command(
+                "eventLogger.ALOG_SET_EVENT_SEND_FILTER",
+                ["SEND_" + severity, "SEND_" + enabled],
+            )
             return True
         except AssertionError:
             return False
@@ -125,38 +137,54 @@ class TestRefAppClass(object):
         any_reordered = False
         dropped = False
         for i in range(0, length):
-            results = self.api.send_and_await_event("cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25)
+            results = self.api.send_and_await_event(
+                "cmdDisp.CMD_NO_OP", events=evr_seq, timeout=25
+            )
             msg = "Send and assert NO_OP Trial #{}".format(i)
-            if not self.api.test_assert(len(results) == 3,msg, True):
+            if not self.api.test_assert(len(results) == 3, msg, True):
                 items = self.api.get_event_test_history().retrieve()
                 last = None
                 reordered = False
                 for item in items:
                     if last is not None:
                         if item.get_time() < last.get_time():
-                            self.api.log("during iteration #{}, a reordered event was detected: {}".format(i, item))
+                            self.api.log(
+                                "during iteration #{}, a reordered event was detected: {}".format(
+                                    i, item
+                                )
+                            )
                             any_reordered = True
                             reordered = True
                             break
                     last = item
                 if not reordered:
-                    self.api.log("during iteration #{}, a dropped event was detected".format(i))
+                    self.api.log(
+                        "during iteration #{}, a dropped event was detected".format(i)
+                    )
                     dropped = True
                 failed += 1
             self.api.clear_histories()
 
         case = True
-        case &= self.api.test_assert(not any_reordered, "Expected no events to be reordered.", True)
-        case &= self.api.test_assert(not dropped, "Expected no events to be dropped.", True)
+        case &= self.api.test_assert(
+            not any_reordered, "Expected no events to be reordered.", True
+        )
+        case &= self.api.test_assert(
+            not dropped, "Expected no events to be dropped.", True
+        )
         msg = "{} sequences failed out of {}".format(failed, length)
         case &= self.api.test_assert(failed == 0, msg, True)
 
-        assert case, "Expected all checks to pass (reordering, dropped events, all passed). See log."
+        assert (
+            case
+        ), "Expected all checks to pass (reordering, dropped events, all passed). See log."
 
     def test_bd_cycles_ascending(self):
         length = 60
         count_pred = predicates.greater_than(length - 1)
-        results = self.api.await_telemetry_count(count_pred, "BD_Cycles", timeout=length)
+        results = self.api.await_telemetry_count(
+            count_pred, "BD_Cycles", timeout=length
+        )
         last = None
         reordered = False
         ascending = True
@@ -165,15 +193,21 @@ class TestRefAppClass(object):
                 last_time = last.get_time()
                 result_time = result.get_time()
                 if result_time - last_time > 1.5:
-                    msg = "FSW didn't send an update between {} and {}".format(last_time.to_readable(), result_time.to_readable())
+                    msg = "FSW didn't send an update between {} and {}".format(
+                        last_time.to_readable(), result_time.to_readable()
+                    )
                     self.api.log(msg)
                 elif result_time < last_time:
-                    msg = "There is potential reorder error between {} and {}".format(last_time, result_time)
+                    msg = "There is potential reorder error between {} and {}".format(
+                        last_time, result_time
+                    )
                     self.api.log(msg)
                     reordered = True
-        
-                if not result.get_val() > last.get_val(): 
-                    msg = "Not all updates ascended: First ({}) Second ({})".format(last.get_val(), result.get_val())
+
+                if not result.get_val() > last.get_val():
+                    msg = "Not all updates ascended: First ({}) Second ({})".format(
+                        last.get_val(), result.get_val()
+                    )
                     self.api.log(msg)
                     ascending = False
 
@@ -181,8 +215,15 @@ class TestRefAppClass(object):
 
         case = True
         case &= self.api.test_assert(ascending, "Expected all updates to ascend.", True)
-        case &= self.api.test_assert(not reordered, "Expected no updates to be dropped.", True)
-        self.api.predicate_assert(count_pred, len(results), "Expected > {} updates".format(length-1), True)
+        case &= self.api.test_assert(
+            not reordered, "Expected no updates to be dropped.", True
+        )
+        self.api.predicate_assert(
+            count_pred,
+            len(results) - 1,
+            "Expected >= {} updates".format(length - 1),
+            True,
+        )
         self.api.assert_telemetry_count(0, "RgCycleSlips")
         assert case, "Expected all checks to pass (ascending, reordering). See log."
 
@@ -193,21 +234,25 @@ class TestRefAppClass(object):
             actHI_events = self.api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
             pred = predicates.greater_than(0)
             zero = predicates.equal_to(0)
+            # Drain time for dispatch events
+            time.sleep(10)
 
             self.assert_command("cmdDisp.CMD_NO_OP")
             self.assert_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(6.5)
+            time.sleep(0.5)
 
             self.api.assert_event_count(pred, cmd_events)
             self.api.assert_event_count(pred, actHI_events)
 
             self.set_event_filter(self.FilterSeverity.COMMAND, False)
+            # Drain time for dispatch events
+            time.sleep(10)
             self.api.clear_histories()
             self.api.send_command("cmdDisp.CMD_NO_OP")
             self.api.send_command("cmdDisp.CMD_NO_OP")
 
-            time.sleep(6.5)
+            time.sleep(0.5)
 
             self.api.assert_event_count(zero, cmd_events)
             self.api.assert_event_count(pred, actHI_events)

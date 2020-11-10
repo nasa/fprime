@@ -1,24 +1,44 @@
-#!/usr/bin/env python
-
 import logging
 
 # Global logger initialization
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 
-def printDict(di, format="%-25s %s",log=None, loglvl=logging.DEBUG):
+
+def printDict(di, format="%-25s %s", log=None, loglvl=logging.DEBUG):
     for (key, val) in list(di.items()):
         if log:
-            log.log(loglvl,format % (str(key)+':', val))
+            log.log(loglvl, format % (str(key) + ":", val))
         else:
-            print(format % (str(key)+':', val))
+            print(format % (str(key) + ":", val))
 
-def dumpAttrs(obj,log=None, loglvl=logging.DEBUG):
-    '''
-    '''
-    dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=log, loglvl=loglvl, showDoc=False, showMethods=False, showAtributes=True)
 
-def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DEBUG, showDoc=True, showMethods=True, showAtributes=True):
+def dumpAttrs(obj, log=None, loglvl=logging.DEBUG):
+    """"""
+    dumpObj(
+        obj,
+        maxlen=77,
+        lindent=24,
+        maxspew=600,
+        log=log,
+        loglvl=loglvl,
+        showDoc=False,
+        showMethods=False,
+        showAtributes=True,
+    )
+
+
+def dumpObj(
+    obj,
+    maxlen=77,
+    lindent=24,
+    maxspew=600,
+    log=None,
+    loglvl=logging.DEBUG,
+    showDoc=True,
+    showMethods=True,
+    showAtributes=True,
+):
     """
     Print a nicely formatted overview of an object.
 
@@ -64,7 +84,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     import types
 
     # Formatting parameters.
-    ltab    = 2    # initial tab in front of level 2 text
+    ltab = 2  # initial tab in front of level 2 text
 
     # There seem to be a couple of other types; gather templates of them
     MethodWrapperType = type(object().__hash__)
@@ -72,42 +92,42 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     #
     # Gather all the attributes of the object
     #
-    objclass  = None
-    objdoc    = None
-    objmodule = '<None defined>'
+    objclass = None
+    objdoc = None
+    objmodule = "<None defined>"
 
-    methods   = []
-    builtins  = []
-    classes   = []
-    attrs     = []
+    methods = []
+    builtins = []
+    classes = []
+    attrs = []
     for slot in dir(obj):
         attr = getattr(obj, slot)
-        if   slot == '__class__':
+        if slot == "__class__":
             objclass = attr.__name__
             # This does not seem to detect class names all the time...
-            DEBUG.debug( "dumpObj: Instance of class '" +
-                                      str(objclass) + "' at first...")
-        elif slot == '__doc__':
+            DEBUG.debug(
+                "dumpObj: Instance of class '" + str(objclass) + "' at first..."
+            )
+        elif slot == "__doc__":
             objdoc = attr
-        elif slot == '__module__':
+        elif slot == "__module__":
             objmodule = attr
-        elif (isinstance(attr, types.BuiltinMethodType) or
-              isinstance(attr, MethodWrapperType)):
-            builtins.append( slot )
-        elif (isinstance(attr, types.MethodType) or
-              isinstance(attr, types.FunctionType)):
-            methods.append( (slot, attr) )
+        elif isinstance(attr, types.BuiltinMethodType) or isinstance(
+            attr, MethodWrapperType
+        ):
+            builtins.append(slot)
+        elif isinstance(attr, types.MethodType) or isinstance(attr, types.FunctionType):
+            methods.append((slot, attr))
         elif isinstance(attr, type):
-            classes.append( (slot, attr) )
+            classes.append((slot, attr))
         else:
-            attrs.append( (slot, attr) )
+            attrs.append((slot, attr))
     # If we still don't know object class, try these two approaches
-    if objclass == None:
-        objclass = getattr(obj,'__class__').__name__
+    if objclass is None:
+        objclass = getattr(obj, "__class__").__name__
         # This seems a more reliable way to get class names.
-        DEBUG.debug( "Instance of class '" +
-                      str(objclass) + "' at second pass...")
-    elif objclass == '':
+        DEBUG.debug("Instance of class '" + str(objclass) + "' at second pass...")
+    elif objclass == "":
         objclass = type(obj).__name__
 
     #
@@ -122,35 +142,38 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     # Print a readable summary of those attributes
     #
     normalwidths = [lindent, maxlen - lindent]
-    tabbedwidths = [ltab, lindent-ltab, maxlen - lindent - ltab]
+    tabbedwidths = [ltab, lindent - ltab, maxlen - lindent - ltab]
 
     def truncstring(s, maxlen):
         if len(s) > maxlen:
-            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
+            return s[0:maxlen] + " ...(%d more chars)..." % (len(s) - maxlen)
         else:
             return s
 
     # Summary of introspection attributes
 
-    intro = "Instance of class '%s' as defined in module %s with id %d" % \
-            (objclass, objmodule, id(obj))
+    intro = "Instance of class '%s' as defined in module %s with id %d" % (
+        objclass,
+        objmodule,
+        id(obj),
+    )
     if log:
-        log.log(loglvl,'\n'.join(prettyPrint(intro, maxlen)))
+        log.log(loglvl, "\n".join(prettyPrint(intro, maxlen)))
     else:
-        print('\n'.join(prettyPrint(intro, maxlen)))
+        print("\n".join(prettyPrint(intro, maxlen)))
 
     if showDoc:
         # Object's Docstring
         if objdoc is None:
             objdoc = str(objdoc)
         else:
-            objdoc = ('"""' + objdoc.strip()  + '"""')
-        prettyString = prettyPrintCols( ('Documentation string:',
-                                        truncstring(objdoc, maxspew)),
-                                        normalwidths, ' ')
+            objdoc = '"""' + objdoc.strip() + '"""'
+        prettyString = prettyPrintCols(
+            ("Documentation string:", truncstring(objdoc, maxspew)), normalwidths, " "
+        )
         if log:
-            log.log(loglvl,'')
-            log.log(loglvl,prettyString)
+            log.log(loglvl, "")
+            log.log(loglvl, prettyString)
         else:
             print()
             print(prettyString)
@@ -158,13 +181,13 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
     if showMethods:
         # Built-in methods
         if builtins:
-            bi_str   = delchars(str(builtins), "[']") or str(None)
-            prettyString = prettyPrintCols( ('Built-in Methods:',
-                                            truncstring(bi_str, maxspew)),
-                                            normalwidths, ', ')
+            bi_str = delchars(str(builtins), "[']") or str(None)
+            prettyString = prettyPrintCols(
+                ("Built-in Methods:", truncstring(bi_str, maxspew)), normalwidths, ", "
+            )
             if log:
-                log.log(loglvl,'')
-                log.log(loglvl,prettyString)
+                log.log(loglvl, "")
+                log.log(loglvl, prettyString)
             else:
                 print()
                 print(prettyString)
@@ -172,38 +195,36 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
         # Classes
         if classes:
             if log:
-                log.log(loglvl,'')
-                log.log(loglvl,'Classes:')
+                log.log(loglvl, "")
+                log.log(loglvl, "Classes:")
             else:
                 print()
-                print('Classes:')
+                print("Classes:")
         for (classname, classtype) in classes:
-            classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
-            prettyString = prettyPrintCols( ('',
-                                              classname,
-                                              truncstring(classdoc, maxspew)),
-                                             tabbedwidths, ' ')
+            classdoc = getattr(classtype, "__doc__", None) or "<No documentation>"
+            prettyString = prettyPrintCols(
+                ("", classname, truncstring(classdoc, maxspew)), tabbedwidths, " "
+            )
             if log:
-                log.log(loglvl,prettyString)
+                log.log(loglvl, prettyString)
             else:
                 print(prettyString)
 
         # User methods
         if methods:
             if log:
-                log.log(loglvl,'')
-                log.log(loglvl,'Methods:')
+                log.log(loglvl, "")
+                log.log(loglvl, "Methods:")
             else:
                 print()
-                print('Methods:')
+                print("Methods:")
         for (methodname, method) in methods:
-            methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
-            prettyString = prettyPrintCols( ('',
-                                              methodname,
-                                              truncstring(methoddoc, maxspew)),
-                                             tabbedwidths, ' ')
+            methoddoc = getattr(method, "__doc__", None) or "<No documentation>"
+            prettyString = prettyPrintCols(
+                ("", methodname, truncstring(methoddoc, maxspew)), tabbedwidths, " "
+            )
             if log:
-                log.log(loglvl,prettyString)
+                log.log(loglvl, prettyString)
             else:
                 print(prettyString)
 
@@ -211,23 +232,22 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600, log=None, loglvl=logging.DE
         # Attributes
         if attrs:
             if log:
-                log.log(loglvl,'')
-                log.log(loglvl,'Attributes:')
+                log.log(loglvl, "")
+                log.log(loglvl, "Attributes:")
             else:
                 print()
-                print('Attributes:')
+                print("Attributes:")
         for (attr, val) in attrs:
-            prettyString = prettyPrintCols( ('',
-                                              attr,
-                                              truncstring(str(val), maxspew)),
-                                             tabbedwidths, ' ')
+            prettyString = prettyPrintCols(
+                ("", attr, truncstring(str(val), maxspew)), tabbedwidths, " "
+            )
             if log:
-                log.log(loglvl,prettyString)
+                log.log(loglvl, prettyString)
             else:
                 print(prettyString)
 
 
-def prettyPrintCols(strings, widths, split=' '):
+def prettyPrintCols(strings, widths, split=" "):
     """Pretty prints text in colums, with each string breaking at
     split according to prettyPrint.  margins gives the corresponding
     right breaking point."""
@@ -237,20 +257,21 @@ def prettyPrintCols(strings, widths, split=' '):
     strings = list(map(nukenewlines, strings))
 
     # pretty print each column
-    cols = [''] * len(strings)
+    cols = [""] * len(strings)
     for i in range(len(strings)):
         cols[i] = prettyPrint(strings[i], widths[i], split)
 
     # prepare a format line
-    format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
+    format = "".join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
 
     def formatline(*cols):
-        return format % tuple([(s or '') for s in cols])
+        return format % tuple([(s or "") for s in cols])
 
     # generate the formatted text
-    return '\n'.join(map(formatline, *cols))
+    return "\n".join(map(formatline, *cols))
 
-def prettyPrint(string, maxlen=75, split=' '):
+
+def prettyPrint(string, maxlen=75, split=" "):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
 
@@ -260,15 +281,16 @@ def prettyPrint(string, maxlen=75, split=' '):
     # Tack on the splitting character to guarantee a final match
     string += split
 
-    lines   = []
-    oldeol  = 0
-    eol     = 0
-    while not (eol == -1 or eol == len(string)-1):
-        eol = string.rfind(split, oldeol, oldeol+maxlen+len(split))
+    lines = []
+    oldeol = 0
+    eol = 0
+    while not (eol == -1 or eol == len(string) - 1):
+        eol = string.rfind(split, oldeol, oldeol + maxlen + len(split))
         lines.append(string[oldeol:eol])
         oldeol = eol + len(split)
 
     return lines
+
 
 def nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin
@@ -277,9 +299,11 @@ def nukenewlines(string):
     Bug: This routine will completely butcher any whitespace-formatted
     text."""
 
-    if not string: return ''
+    if not string:
+        return ""
     lines = string.splitlines()
-    return ' '.join( [line.strip() for line in lines] )
+    return " ".join([line.strip() for line in lines])
+
 
 def delchars(str, chars):
     """Returns a string for which all occurrences of characters in
@@ -287,6 +311,6 @@ def delchars(str, chars):
 
     # Translate demands a mapping string of 256 characters;
     # whip up a string that will leave all characters unmolested.
-    identity = ''.join([chr(x) for x in range(256)])
+    identity = "".join([chr(x) for x in range(256)])
 
     return str.translate(identity, chars)

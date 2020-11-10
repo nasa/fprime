@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -20,10 +20,10 @@ class EnumCheckResults:
         self.overrun_details = list()
         self.underrun_details = list()
 
-        self.overruns    = 0          # not enough uplink bits (error)
-        self.underruns   = 0          # too many uplink bits (warning)
-        self.key_errors  = 0          # no enum typedef generated (error)
-        self.stale_bools = 0          # extra enum typedef generated (warning)
+        self.overruns = 0  # not enough uplink bits (error)
+        self.underruns = 0  # too many uplink bits (warning)
+        self.key_errors = 0  # no enum typedef generated (error)
+        self.stale_bools = 0  # extra enum typedef generated (warning)
 
     def add_overrun(self):
         self.overruns = self.overruns + 1
@@ -63,7 +63,6 @@ class EnumCheckResults:
             print("    enumeration underrun: type=%s" % (i[0]))
             print("       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3]))
 
-
     def report_errors(self):
 
         print("Enum Check Errors: (%d)" % (self.overruns + self.key_errors))
@@ -75,7 +74,6 @@ class EnumCheckResults:
 
 
 class EnumInfo:
-
     def __init__(self, type_name):
 
         self.signed = False
@@ -128,7 +126,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
     enum = None
     results = EnumCheckResults()
 
-    fd = open(filename, "r");
+    fd = open(filename)
 
     for line in fd:
 
@@ -138,13 +136,12 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
         if line.find("<enum_typedef ") != -1:
 
-            max_value = 0;
             fields = line.split('"')
 
             # The key is the type name.
             key = fields[1]
             enum = EnumInfo(key)
-            #print "***Initial max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
+            # print "***Initial max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
 
             # Find the largest value needed for this enumeration. We also
             # need to know if this is a signed or unsigned enumeration. The
@@ -161,7 +158,7 @@ def cmd_dict_enum_size_check(filename, verbose=False):
                 if values.find("</enum_typedef") != -1:
                     break
 
-            #print ">>>>>Final max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
+            # print ">>>>>Final max value of %s (%s) is %d" % (key,enum.name,enum.max_abs_value)
 
             if key in enums:
                 print("Duplicate enumerations: %s." % (key))
@@ -185,19 +182,18 @@ def cmd_dict_enum_size_check(filename, verbose=False):
             integertypename = integertypename[1:]
             value = int(integertypename)
             if key[0:3] != "All":
-		enums[key].set_bits(value)
+                enums[key].set_bits(value)
 
-            	if key in enum_info:
-                # Skip the ones we generated.
+                if key in enum_info:
+                    # Skip the ones we generated.
                     if key.find("InstanceId") == -1:
                         print("Duplicate enumeration usages: %s." % (key))
                         return None
 
                 enum_info[key] = enums[key]
-            #print "----Stored max value of %s (%s) is %d" % (key,enum_info[key].name,enum_info[key].max_abs_value)
+            # print "----Stored max value of %s (%s) is %d" % (key,enum_info[key].name,enum_info[key].max_abs_value)
 
     fd.close()
-
 
     if verbose == True:
         print("Done gathering %d enumerations." % (len(enums)))
@@ -233,19 +229,19 @@ def cmd_dict_enum_size_check(filename, verbose=False):
 
             # Check for enumeration overruns errors
             if e.max_value() > max_fsw_value:
-               results.add_overrun()
-               results.add_over_err(type, e.get_bits(), e.max_value(), signed)
+                results.add_overrun()
+                results.add_over_err(type, e.get_bits(), e.max_value(), signed)
 
             # Check for enumeration underruns warnings
             if e.max_value() < max_value_8 and not e.get_bits() == 8:
-               # Could use only 8 uplink bits.
-               results.add_underrun()
-               results.add_under_err(type, e.get_bits(), e.max_value(), signed)
+                # Could use only 8 uplink bits.
+                results.add_underrun()
+                results.add_under_err(type, e.get_bits(), e.max_value(), signed)
 
             elif e.max_value() <= max_value_16 and e.get_bits() == 32:
-               # Could use only 16 uplink bits.
-               results.add_underrun()
-               results.add_under_err(type, e.get_bits(), e.max_value(), signed)
+                # Could use only 16 uplink bits.
+                results.add_underrun()
+                results.add_under_err(type, e.get_bits(), e.max_value(), signed)
 
         except KeyError:
             if type.startswith("Bool"):
@@ -259,13 +255,13 @@ def cmd_dict_enum_size_check(filename, verbose=False):
     return results
 
 
-if (__name__ == '__main__'):
+if __name__ == "__main__":
 
     filename = "../../fsw/msl/currentxml/command.xml"
 
     status = cmd_dict_enum_size_check(filename, True)
 
-    if status == None:
+    if status is None:
         print("Error perform dictionary enumeration check.")
         sys.exit(-1)
 
@@ -273,4 +269,3 @@ if (__name__ == '__main__'):
     status.report_errors()
 
     sys.exit(0)
-

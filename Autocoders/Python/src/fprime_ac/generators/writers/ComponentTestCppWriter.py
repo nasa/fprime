@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: ComponentTestCppWriter.py
 #
 # DESCRIPTION: A writer for generating component test implemetation files.
@@ -10,19 +9,27 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
 from fprime_ac.generators.writers import TestWriterBase
-from fprime_ac.generators.templates.test import cpp
+
+try:
+    from fprime_ac.generators.templates.test import cpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
     """
     A writer for generating component implemetation files.
     """
-    
+
     FILE_NAME = "TesterBase.cpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentTestCpp")
 
     def emitCppParams(self, params):
@@ -39,7 +46,11 @@ class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
         self.initTest(obj, c)
         c.emit_cpp_params = self.emitCppParams
         c.emit_cpp_port_params = self.emitCppPortParams
-        c.param_maxHistorySize = ("maxHistorySize", "const U32", "The maximum size of each history")
+        c.param_maxHistorySize = (
+            "maxHistorySize",
+            "const U32",
+            "The maximum size of each history",
+        )
         self._writeTmpl(c, "startSourceFilesWrite")
 
     def write(self, obj):

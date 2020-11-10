@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/EightyCharString.hpp>
@@ -30,15 +30,10 @@ namespace Fw {
 
     };
 
-#if FW_OBJECT_NAMES == 1
     ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name) {
 
     }
-#else
-    ActiveComponentBase::ActiveComponentBase() : QueuedComponentBase() {
 
-    }
-#endif
     ActiveComponentBase::~ActiveComponentBase() {
         DEBUG_PRINT("ActiveComponent %s destructor.\n",this->getObjName());
     }
@@ -68,7 +63,7 @@ namespace Fw {
 // If running with the baremetal scheduler, use a variant of the task-loop that
 // does not loop internal, but waits for an external eiteration call.
 #if FW_BAREMETAL_SCHEDULER == 1
-        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
+	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
 #else
         Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask, this, cpuAffinity);
 #endif

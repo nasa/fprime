@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: Arg.py
 #
 # DESCRIPTION:  This is an Arg (argument) meta-model sort of class.  It is
@@ -14,14 +13,11 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
 
 #
 # Python extention modules and custom interfaces
@@ -32,16 +28,17 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
-class Arg(object):
+class Arg:
     """
     This is a very simple arg meta-model class.
     Note: This class is a container of basic argument information.
     @todo: Serializables might need to be incorperated into this.
     """
-    def __init__(self, name, atype, modifier, size = None, comment=None):
+
+    def __init__(self, name, atype, modifier, size=None, comment=None):
         """
         Constructor
         @param name:  Name of arg (each instance must be unique).
@@ -58,11 +55,15 @@ class Arg(object):
 
     def get_name(self):
         return self.__name
+
     def get_type(self):
         return self.__type
+
     def get_modifier(self):
         return self.__modifier
+
     def get_size(self):
         return self.__size
+
     def get_comment(self):
         return self.__comment

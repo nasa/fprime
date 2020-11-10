@@ -1,4 +1,4 @@
-<title>Fw::Tlm Port SDD</title>
+\page FwTlmPort Fw::Tlm Port
 # Fw::Tlm Port
 
 ## 1. Introduction

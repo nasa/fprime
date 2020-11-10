@@ -1,17 +1,17 @@
-'''
+"""
 @brief Class to log raw binary input and output as well as telemetry and events
-'''
+"""
 
-import datetime
 import os
 
+import fprime_gds.common.handlers
 from fprime_gds.common.data_types.ch_data import ChData
-from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.cmd_data import CmdData
+from fprime_gds.common.data_types.event_data import EventData
 from fprime_gds.common.data_types.pkt_data import PktData
 
-class DataLogger(object):
 
+class DataLogger(fprime_gds.common.handlers.DataHandler):
     def __init__(self, logdir, verbose=False, csv=False, prefix=""):
 
         self.logdir = logdir
@@ -30,28 +30,26 @@ class DataLogger(object):
         self.f_event = open(self.logdir + os.sep + self.event_file, "w+")
         self.f_command = open(self.logdir + os.sep + self.command_file, "w+")
 
-
     def __del__(self):
         self.f_r.close()
         self.f_s.close()
         self.f_telem.close()
         self.f_event.close()
 
-    def data_callback(self, data):
-        # TODO Ideally, each data object would have an identifier for its type,
-        # or you would have a separate logger object for each
+    def data_callback(self, data, sender=None):
         if isinstance(data, ChData) or isinstance(data, PktData):
-            self.f_telem.write(data.get_str(verbose=self.verbose, csv=self.csv) + '\n')
+            self.f_telem.write(data.get_str(verbose=self.verbose, csv=self.csv) + "\n")
             self.f_telem.flush()
 
         if isinstance(data, EventData):
-            self.f_event.write(data.get_str(verbose=self.verbose, csv=self.csv) + '\n')
+            self.f_event.write(data.get_str(verbose=self.verbose, csv=self.csv) + "\n")
             self.f_event.flush()
 
         if isinstance(data, CmdData):
-            self.f_command.write(data.get_str(verbose=self.verbose, csv=self.csv) + '\n')
+            self.f_command.write(
+                data.get_str(verbose=self.verbose, csv=self.csv) + "\n"
+            )
             self.f_command.flush()
-
 
     def send(self, data, dest):
         """Send callback for the encoder

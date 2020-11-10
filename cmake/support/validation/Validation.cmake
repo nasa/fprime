@@ -1,7 +1,7 @@
 ####
 # Validation.cmake:
 #
-# Allows for validation hooks in the F prime cmake system.
+# Allows for validation hooks in the F prime cmake system. Experimental.
 ####
 
 ####
@@ -52,5 +52,5 @@ endfunction(setup_validation_command)
 if (SKIP_TOOLS_CHECK)
     message(WARNING "[VALIDATION] User chose to skip tools check.")
 else()
-    setup_validation_command("SETUP" "python" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
+    setup_validation_command("SETUP" "python3" "${CMAKE_CURRENT_LIST_DIR}/pipsetup.py")
 endif()

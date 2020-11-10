@@ -44,6 +44,13 @@
 .fp-color-logging {
     background-color: #f0fff0;
 }
+/**
+ * Filter the orb image when there is no data flow.
+ */
+img.dead {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
 
 /**
  * FP Containerization:
@@ -73,6 +80,7 @@ body, .fp-full-height {
     overflow: hidden;
     flex-grow: 1;
     position: relative;
+    min-height: 10em;
 }
 .fp-scrollable {
     position: absolute;
@@ -139,4 +147,21 @@ table {
 }
 table td:last-child {
     width: 100%;
+}
+
+
+/**
+ * Dashboard CSS Styles for styling components specific to the Dashboard page
+ */
+.fp-dashboard-box {
+    margin: 2px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.fp-dashboard-box-title {
+    width: initial;
+    color: white;
+    background: black;
+    border-radius: 5px;
 }

@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: HtmlDocVisitor.py
 #
 # DESCRIPTION: A visitor for generating component dictionary doc files
@@ -10,30 +9,30 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 import logging
 import os
 import sys
-import time
-import datetime
-from optparse import OptionParser
+
+from fprime_ac.generators.visitors import ComponentVisitorBase
+
 #
 # Python extention modules and custom interfaces
 #
-#from Cheetah import Template
-#from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
-from fprime_ac.models import ModelParser
-#from fprime_ac.utils import DiffAndRename
-from fprime_ac.utils import DictTypeConverter
-from fprime_ac.generators.visitors import AbstractVisitor
-from fprime_ac.generators import formatters
+# from Cheetah import Template
+# from fprime_ac.utils import version
 
-from fprime_ac.generators.visitors import ComponentVisitorBase
-from fprime_ac.generators.templates.html import HtmlDocPage
+# from fprime_ac.utils import DiffAndRename
 
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+
+try:
+    from fprime_ac.generators.templates.html import HtmlDocPage
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
+
 
 class HtmlDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
@@ -41,6 +40,7 @@ class HtmlDocVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("HtmlDoc")
 
     def htmlStartPage(self, obj):

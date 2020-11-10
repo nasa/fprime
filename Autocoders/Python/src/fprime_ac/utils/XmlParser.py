@@ -1,5 +1,5 @@
-#!/bin/env python
-#===============================================================================
+#!/usr/bin/env python3
+# ===============================================================================
 # NAME: XmlParser.py
 #
 # DESCRIPTION:  This is a general xml parser class based on
@@ -13,16 +13,15 @@
 #
 # Copyright 2007, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
 import os
-import sys
-import time
-from optparse import OptionParser
+
 from genshi import XML
+
 #
 # Python extention modules and custom interfaces
 #
@@ -32,10 +31,10 @@ from genshi import XML
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
-class Parser(object):
+class Parser:
     """
     An XML parser class that uses Genshi streams to consume an XML document
     into a tree of Element objects. The class is instanced with an optional
@@ -64,11 +63,10 @@ class Parser(object):
         self.__node_end_visit_dict = dict()
         self.__node_start_visit_dict = dict()
 
-        if xml_file == None:
+        if xml_file is None:
             self.__xml_string = None
         else:
             self.__xml_string = self._make_string(xml_file)
-
 
     def _make_string(self, filename):
         """
@@ -78,10 +76,9 @@ class Parser(object):
         if os.path.isfile(filename) == False:
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
-            raise IOError(str)
+            raise OSError(str)
 
-        return open(filename,'r').read()
-
+        return open(filename).read()
 
     def addStartVisitor(self, element_name, visitor):
         """
@@ -101,22 +98,27 @@ class Parser(object):
         """
         self.__node_start_visit_dict[element_name] = visitor
 
-    def exampleStartVisitor( self, element ):
-        '''
+    def exampleStartVisitor(self, element):
+        """
         This is an example of a method you might register via addStartVisitor.
         It might be useful to see your XML as its parsed in during debugging.
-        '''
-        if True != isinstance( element, Parser.Element ):
+        """
+        if True != isinstance(element, Parser.Element):
             print("Usage: exampleStartVisitor( Parser.Element )")
-            print("Argument is not a Parser.Element (it is a %s)" % element.__class__.__name__)
-            raise TypeError("XmlParser.Parser.exampleStartVisitor argument" + \
-                             " is not a Parser.Element (it is a %s)" % element.__class__.__name__)
+            print(
+                "Argument is not a Parser.Element (it is a %s)"
+                % element.__class__.__name__
+            )
+            raise TypeError(
+                "XmlParser.Parser.exampleStartVisitor argument"
+                + " is not a Parser.Element (it is a %s)" % element.__class__.__name__
+            )
 
         s = "exampleStartVisitor element %s attributes=[" % element.getName()
         for attrName in list(element.getAttr().keys()):
             attrValue = element.getAttr(attrName)
             s += ' %s="%s"' % attrName, attrValue
-        s += ' ]'
+        s += " ]"
         print(s)
 
     def addEndVisitor(self, element_name, visitor):
@@ -140,7 +142,6 @@ class Parser(object):
 
         self.__node_end_visit_dict[element_name] = visitor
 
-
     def parse(self):
         """
         Read through the stringified XML and parse it into a tree of Element
@@ -152,22 +153,22 @@ class Parser(object):
         single parse tree.
         """
 
-        if self.__xml_string == None:
+        if self.__xml_string is None:
             return
         else:
             self.__node_stack = list()
 
         for token, content, loc in XML(self.__xml_string):
 
-# This next line presents a problem procesing XML with special
-# formatting characters. It generates an exception. Since it is
-# only debug, we'll just comment this out until the XML is
-# updated to remove the special characters.
-#
-#            DEBUG.debug( 'token, content, loc are %s=%s %s=%s %s=%s'
-#                         % (type(token).__name__,str(token),
-#                            type(content).__name__,str(content),
-#                            type(loc).__name__,str(loc) ) )
+            # This next line presents a problem procesing XML with special
+            # formatting characters. It generates an exception. Since it is
+            # only debug, we'll just comment this out until the XML is
+            # updated to remove the special characters.
+            #
+            #            DEBUG.debug( 'token, content, loc are %s=%s %s=%s %s=%s'
+            #                         % (type(token).__name__,str(token),
+            #                            type(content).__name__,str(content),
+            #                            type(loc).__name__,str(loc) ) )
 
             if token == "START":
                 name = content[0]
@@ -180,7 +181,6 @@ class Parser(object):
                 self._endElement(name)
 
         return self.__root
-
 
     def parse_file(self, filename):
         """
@@ -207,7 +207,7 @@ class Parser(object):
                 # requirement for parsing a second file is that it has a same
                 # named root Element.
 
-                if self.__root != None and root_name_checked == False:
+                if self.__root is not None and root_name_checked == False:
 
                     if self.__root.getName() == name:
 
@@ -228,7 +228,10 @@ class Parser(object):
                         # previously parsed file. Stop since this will result
                         # in an orphaned tree branch.
 
-                        print("XML file (%s) has invalid root name: %s (expected: %s)." % (filename, name, self.__root.getName()))
+                        print(
+                            "XML file (%s) has invalid root name: %s (expected: %s)."
+                            % (filename, name, self.__root.getName())
+                        )
                         return
 
                 else:
@@ -244,7 +247,6 @@ class Parser(object):
                 self._endElement(name)
 
         return self.__root
-
 
     def _startElement(self, name, attr):
         """
@@ -266,7 +268,6 @@ class Parser(object):
         if name in list(self.__node_start_visit_dict.keys()):
             self.__node_start_visit_dict[name](self._Parser__node_stack[-1])
 
-
     def _endElement(self, name):
         """
         End element event handler.
@@ -276,7 +277,6 @@ class Parser(object):
             self.__node_end_visit_dict[name](self.__node_stack[-1])
 
         self.__node_stack = self.__node_stack[:-1]
-
 
     def _cData(self, data):
         """
@@ -288,9 +288,8 @@ class Parser(object):
             element.cdata += data
             return
 
-
-    def validateElement(self,element,validAttrs):
-        '''
+    def validateElement(self, element, validAttrs):
+        """
         Validate the attributes of a single element. Note that attributes
         cannot be repeated, or its not valid XML, so we won't even get here
         with repeated attributes.
@@ -308,13 +307,13 @@ class Parser(object):
         desired. It always has something in it, even if no problems, so it can
         be used as the beginning of an error message for more detailed checks
         done by the caller (subclass' element validation method).
-        '''
+        """
 
         problems = 0
         value = dict()
         invalidAttrs = list()
 
-        errorMsg = 'Error: XML element <%s> is invalid' % (element.getName())
+        errorMsg = "Error: XML element <%s> is invalid" % (element.getName())
 
         for attrName in validAttrs:
             value[attrName] = None
@@ -335,10 +334,10 @@ class Parser(object):
                 errorMsg += '; found unexpected attribute "%s"' % attrName
                 problems += 1
 
-        return ( problems,value,invalidAttrs,errorMsg )
+        return (problems, value, invalidAttrs, errorMsg)
 
-    def countSubtree( self, element, expectedChildren ):
-        '''
+    def countSubtree(self, element, expectedChildren):
+        """
         Count the children of an element that have names (XML tags) from
         a specified list. The shape of the tree is not specified, so this only
         confirms the existence, and the count of, specified elements, but does
@@ -358,35 +357,40 @@ class Parser(object):
         if no problems, so can be used as the beginning of an error message for more
         detailed validation performed by the caller (the subclass' element validation
         methods).
-        '''
+        """
         found = dict()
         unexpectedChildren = list()
-        errMsg = 'Error: The XML element <%s> is invalid' % (element.getName())
+        errMsg = "Error: The XML element <%s> is invalid" % (element.getName())
 
         children = element.getElements()
 
         for child in children:
             childName = child.getName()
-            DEBUG.debug('countSubtree: element %s childName=%s' % (element.getName(),childName))
+            DEBUG.debug(
+                "countSubtree: element {} childName={}".format(
+                    element.getName(), childName
+                )
+            )
             if childName in expectedChildren:
                 try:
                     found[childName] += 1
-                    DEBUG.debug('duplicate %s for %d time' % (childName,found[childName]))
-                except:
+                    DEBUG.debug(
+                        "duplicate %s for %d time" % (childName, found[childName])
+                    )
+                except KeyError:
                     found[childName] = 1
-                    DEBUG.debug('first %s' % childName)
+                    DEBUG.debug("first %s" % childName)
             else:
                 unexpectedChildren.append(childName)
-                DEBUG.debug('unexpected %s' % childName)
+                DEBUG.debug("unexpected %s" % childName)
 
-        return ( found, unexpectedChildren, errMsg )
-
+        return (found, unexpectedChildren, errMsg)
 
     def dump(self):
         """
         Dump from root over the tree.
         """
-        if self.__root == None:
+        if self.__root is None:
             return
 
         elist = self.__root.getElements()
@@ -396,10 +400,9 @@ class Parser(object):
                 print("Data: %s" % e.getData())
                 print("Attr:")
                 for attr in list(e.getAttr().keys()):
-                    print("  %s = %s" % (attr, e.getAttr(attr)))
+                    print("  {} = {}".format(attr, e.getAttr(attr)))
                 child = e.getElements()
                 self.dump2(child)
-
 
     def dump2(self, element, level=1):
         """
@@ -410,19 +413,20 @@ class Parser(object):
             return
         else:
             for e in elist:
-                tabs = level*'  '
-                print("%sElement: %s" % (tabs, e.getName()))
-                print("%sData: %s" % (tabs, e.getData()))
+                tabs = level * "  "
+                print("{}Element: {}".format(tabs, e.getName()))
+                print("{}Data: {}".format(tabs, e.getData()))
                 print("%sAttr:" % tabs)
                 for attr in list(e.getAttr().keys()):
-                    print("%s%s = %s" % (tabs, attr, e.getAttr(attr)))
-                self.dump2(e.getElements(),level+1)
+                    print("{}{} = {}".format(tabs, attr, e.getAttr(attr)))
+                self.dump2(e.getElements(), level + 1)
 
 
 class Element:
     """
     A parsed XML element.
     """
+
     def __init__(self, name, attributes):
         """
         Element constructor.
@@ -436,7 +440,7 @@ class Element:
             attr = dict()
         self.attribute = attr
         # The element's cdata
-        self.cdata = ''
+        self.cdata = ""
         # The element's child element list (sequence)
         self.children = []
 
@@ -450,7 +454,7 @@ class Element:
         """
         Get an attribute value.
         """
-        if key == None:
+        if key is None:
             return self.attribute
         else:
             return self.attribute.get(key)
@@ -467,7 +471,7 @@ class Element:
         """
         return self.name
 
-    def getElements(self,name=""):
+    def getElements(self, name=""):
         """
         Get a list of child elements
 
@@ -501,6 +505,7 @@ class Element:
             e = self.getElements(item)
         return e
 
+
 def node_visit(element):
     """
     Demonstration node visitor
@@ -510,30 +515,29 @@ def node_visit(element):
     print("Visit attr    %s" % element.getAttr())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    xmlfile1 = os.environ['MSL_ROOT'] + "/cmd/cmd_ai_ipc.xml"
-    xmlfile2 = os.environ['MSL_ROOT'] + "/apxs/apxs_ai_ipc.xml"
+    xmlfile1 = os.environ["MSL_ROOT"] + "/cmd/cmd_ai_ipc.xml"
+    xmlfile2 = os.environ["MSL_ROOT"] + "/apxs/apxs_ai_ipc.xml"
 
     print("IPC parse test (genshi)")
 
-# There are two ways to use this class:
-#  1. Pass file to constructor, and call parse method
-#  2. Use no arg constructor and call parse_file method
-#
-#    p = Parser(xmlfile1)
+    # There are two ways to use this class:
+    #  1. Pass file to constructor, and call parse method
+    #  2. Use no arg constructor and call parse_file method
+    #
+    #    p = Parser(xmlfile1)
     p = Parser()
 
-#    p.addStartVisitor('id',node_visit)
-#    p.addEndVisitor('max',node_visit)
+    #    p.addStartVisitor('id',node_visit)
+    #    p.addEndVisitor('max',node_visit)
 
-#    root = p.parse()
+    #    root = p.parse()
     root = p.parse_file(xmlfile1)
     root = p.parse_file(xmlfile2)
 
     print("Dump the xml file %s" % xmlfile1)
     p.dump()
 
-    for iface in root.getElements('iface'):
-        print(iface.getElements('id')[0].getData())
-
+    for iface in root.getElements("iface"):
+        print(iface.getElements("id")[0].getData())

@@ -1,7 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os
 import sys
+
 
 ##
 ## Copied directly from the Python Cookbook
@@ -25,14 +26,14 @@ def AddSysPath(new_path):
     # Standardize the path. Windows is case-sensitive
     new_path = os.path.abspath(new_path)
 
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         new_path = new_path.lower()
 
     # Check against all currently available paths
     for x in sys.path:
         x = os.path.abspath(x)
 
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             x = x.lower()
 
         if new_path in (x, x + os.sep):
@@ -42,17 +43,18 @@ def AddSysPath(new_path):
 
     return 1
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     print("Before:")
     for x in sys.path:
         print(x)
 
-    if sys.platform == 'win32':
-        print(AddSysPath('c:\\Temp'))
-        print(AddSysPath('c:\\temp'))
+    if sys.platform == "win32":
+        print(AddSysPath("c:\\Temp"))
+        print(AddSysPath("c:\\temp"))
     else:
-        print(AddSysPath('/usr/lib'))
+        print(AddSysPath("/usr/lib"))
 
     print("After:")
     for x in sys.path:

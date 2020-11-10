@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplHWriter.py
 #
 # DESCRIPTION: A writer class for generating test implementation
@@ -11,21 +10,29 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
+from fprime_ac.generators.writers import TestImplWriterBase
 from fprime_ac.utils import ConfigManager
 
-from fprime_ac.generators.templates.test_impl import hpp
-from fprime_ac.generators.writers import TestImplWriterBase
+try:
+    from fprime_ac.generators.templates.test_impl import hpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class TestImplHWriter(TestImplWriterBase.TestImplWriterBase):
     """
     A writer class for generating test implementation header files.
     """
-    __config   = None
+
+    __config = None
     FILE_NAME = "Tester.hpp"
 
     def __init__(self):
+        super().__init__()
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("TestImplH")
 

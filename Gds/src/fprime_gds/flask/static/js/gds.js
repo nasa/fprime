@@ -1,29 +1,41 @@
 /**
  * gds.js:
  *
- * JavaScript support file for the gds layer.
+ * Entry-point for the JavaScript frontend tot he F prime GDS. This will start up all the services in JavaScript used to
+ * display the GDS UI.
+ *
+ * @author mstarch
  */
-import {Loader} from "./loader.js"
-import {TabETCVue}  from "./vue-support/tabetc.js"
+import {_loader} from "./loader.js"
+import {_uploader} from "./uploader.js"
+import  {_datastore} from "./datastore.js";
 
-//import {SimpleTemplate} from "./simple-templates.js";
-let loader = new Loader();
+//Import all vue objects such that the components are defined
+import "./vue-support/tabetc.js"
+
 
 /**
- * Setup the data bindings in order to map the loaded content to the GUI.
+ * Constructs the vue and registers all data polling functions used to pull data into the UI. These polls are attached
+ * to the handling functions used to deal with this data. Sets up a tabbed view for GDS functions.
+ *
+ * Note: this function should be called as a result of the loader's setup function completing.
  */
 function setupBindings() {
-    let tabView = new TabETCVue("#tabetc",
-        loader.endpoints["command-dict"].data,
-        loader.endpoints["channel-dict"].data,
-        loader);
-    loader.registerPoller("channels", function (data) {tabView.updateChannels(data["history"]);});
-    loader.registerPoller("events", function (data) {tabView.updateEvents(data["history"]);});
-    loader.registerPoller("commands", function (data) {tabView.updateCommandHistory(data["history"]);});
-    loader.registerPoller("logdata", function (data) {tabView.updateLogs(data);});
+    //Startup the global datastore *before* setting-up the Vue application, as Vue needs a configured datastore
+    _datastore.startup();
+    new Vue({el: "#tabetc"});
 }
 
-// On ready when the document has been loaded
+/**
+ * Main entry point of the GDS scripts.  This is loaded after all HTML content has been fetched, and will call the
+ * loader's setup function, providing the "setupBindings" function as its callback.
+ */
 document.addEventListener("DOMContentLoaded", function(event) {
-    loader.setup().then(setupBindings).catch(console.error);
+    _loader.setup().then(setupBindings).catch(console.error);
 });
+/**
+ * Teardown best effort code.
+ */
+window.onbeforeunload = function (e) {
+    _loader.destroy();
+};

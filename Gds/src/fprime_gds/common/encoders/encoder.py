@@ -1,4 +1,4 @@
-'''
+"""
 @brief Base class for all encoders. Defines the Encoder interface.
 
 Encoders are responsible for taking data objects and serializing them into
@@ -19,94 +19,64 @@ purpose is to define the interface for an encoder.
 @author R. Joseph Paetz
 
 @bug No known bugs
-'''
+"""
+import abc
+import logging
 
+import fprime_gds.common.handlers
 from fprime_gds.common.utils.config_manager import ConfigManager
 
-class Encoder(object):
-    '''Base class for all encoder classes. Defines the interface for encoders'''
+LOGGER = logging.getLogger("encoder")
 
-    def __init__(self, dest="FSW", config=None):
-        '''
+
+class Encoder(
+    fprime_gds.common.handlers.DataHandler,
+    fprime_gds.common.handlers.HandlerRegistrar,
+    abc.ABC,
+):
+    """
+    Base class for all encoder classes. This defines the "encode_api" function to allow for decoding of raw bytes. In
+    addition it has a "data_callback" function implementation that decodes and sends out all results.
+    """
+
+    def __init__(self, config=None):
+        """
         Encoder class constructor
 
-        Args:
-            dest (string, "FSW" or "GUI", default="FSW"): Destination for binary
-                  data produced by encoder.
-            config (ConfigManager, default=None): Object with configuration data
-                    for the sizes of fields in the binary data. If None passed,
-                    defaults are used.
-
-        Returns:
-            An initialized encoder object.
-        '''
-        # List of senders to be notified of new data
-        self.__senders = []
-
-        if config==None:
+        :param config: (ConfigManager, default=None): Object with configuration data for the sizes of fields in the
+                       binary data. If None passed, defaults are used.
+        """
+        super().__init__()
+        if config is None:
             # Retrieve defaults for the configs
             config = ConfigManager()
-
         self.config = config
 
-        self.dest = dest
+    def data_callback(self, data, sender=None):
+        """
+        Data callback which calls the encode_api function exactly once. Then it passes the results to all registered
+        consumer. This should only need to be overridden in extraordinary circumstances.
 
+        :param data: data bytes to be decoded
+        :param sender: (optional) sender id, otherwise None
+        :return: returns the encoded data for reference
+        """
+        encoded = self.encode_api(data)
+        if encoded is not None:
+            self.send_to_all(encoded)
+        else:
+            LOGGER.warning("Encoder of type %s encoded 'None' type object", type(self))
+        return encoded
 
-    def data_callback(self, data):
-        '''
-        Function called to pass data to the encoder
-
-        Args:
-            data: Data object (of type sys_data) to serialize and send to all
-                  senders.
-        '''
-        pass
-
-
-    def register(self, sender_obj):
-        '''
-        Function called to register a sender to this encoder
-
-        For each data item passed to and serialized by the encoder, the
-        resulting binary data will be passed as an argument to the send function
-        of each registered consumer.
-
-        Args:
-            sender_obj: Object to regiser to the encoder. Must implement a
-                        send function.
-        '''
-        self.__senders.append(sender_obj)
-
-
+    @abc.abstractmethod
     def encode_api(self, data):
-        '''
+        """
         Encodes the given data and returns the result.
 
         This function allows for non-registered code to utilize the same
         serialization functionality as is used to encode data passed to the
         data_callback function.
 
-        Args:
-            data: Data object (of a sys_data type) to encode
-
-        Returns:
-            Binary version of the data argument
-        '''
-        pass
-
-
-    def send_to_all(self, binary_data):
-        '''
-        Sends the binary_data object to all registered senders
-
-        This function is not intended to be called from outside a decoder class
-
-        Args:
-            binary_data (bytearray): object to send to all registered senders
-        '''
-        for obj in self.__senders:
-            obj.send(binary_data, self.dest)
-
-
-if __name__ == "__main__":
-    pass
+        :param data: data to be encoded as rae bytes
+        :return: encoded data bytes
+        """

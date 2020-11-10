@@ -6,6 +6,7 @@
 #include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
+#include <Fw/Types/MallocAllocator.hpp>
 
 #include <stdio.h>
 #include <string.h>
@@ -45,8 +46,9 @@ TEST(SerializationTest,Serialization1) {
     printf("U8 Test\n");
 #endif
 
-    U8 u8t1 = 10;
+    U8 u8t1 = 0xAB;
     U8 u8t2 = 0;
+    U8* ptr = buff.getBuffAddr();
 
     Fw::SerializeStatus stat1;
     Fw::SerializeStatus stat2;
@@ -55,8 +57,11 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(1,buff.m_serLoc);
     stat2 = buff.deserialize(u8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(1,buff.m_deserLoc);
 
     ASSERT_EQ(u8t2,u8t1);
 
@@ -66,23 +71,47 @@ TEST(SerializationTest,Serialization1) {
     printf("I8 Test\n");
 #endif
 
-    I8 i8t1 = -10;
+    buff.resetSer();
+    ASSERT_EQ(0,buff.m_serLoc);
+    ASSERT_EQ(0,buff.m_deserLoc);
+
+    I8 i8t1 = 0xFF;
     I8 i8t2 = 0;
 
-    buff.resetSer();
     stat1 = buff.serialize(i8t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(1,buff.m_serLoc);
+    ASSERT_EQ(0xFF,ptr[0]);
     stat2 = buff.deserialize(i8t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i8t1,i8t2);
+    ASSERT_EQ(1,buff.m_deserLoc);
 
-#if DEBUG_VERBOSE
+
+    buff.resetSer();
+    ASSERT_EQ(0,buff.m_serLoc);
+    ASSERT_EQ(0,buff.m_deserLoc);
+
+    // double check negative numbers
+    i8t1 = -100;
+    i8t2 = 0;
+
+    stat1 = buff.serialize(i8t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(1,buff.m_serLoc);
+    stat2 = buff.deserialize(i8t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i8t1,i8t2);
+    ASSERT_EQ(1,buff.m_deserLoc);
+
+
+    #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i8t1, i8t2, stat1,
             stat2);
     printf("U16 Test\n");
 #endif
 
-    U16 u16t1 = 1000;
+    U16 u16t1 = 0xABCD;
     U16 u16t2 = 0;
 
 // Test shorts
@@ -90,9 +119,13 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
     stat2 = buff.deserialize(u16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u16t1,u16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u16t1, u16t2, stat1,
@@ -100,15 +133,34 @@ TEST(SerializationTest,Serialization1) {
     printf("I16 test\n");
 #endif
 
-    I16 i16t1 = -1000;
+    I16 i16t1 = 0xABCD;
     I16 i16t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i16t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    // 2s complement
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
     stat2 = buff.deserialize(i16t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i16t1,i16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
+
+    // double check negative number
+    i16t1 = -1000;
+    i16t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i16t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(2,buff.m_serLoc);
+    stat2 = buff.deserialize(i16t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i16t1,i16t2);
+    ASSERT_EQ(2,buff.m_deserLoc);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i16t1, i16t2, stat1,
@@ -117,7 +169,7 @@ TEST(SerializationTest,Serialization1) {
     printf("U32 Test\n");
 #endif
 
-    U32 u32t1 = 100000;
+    U32 u32t1 = 0xABCDEF12;
     U32 u32t2 = 0;
 
 // Test ints
@@ -125,9 +177,15 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
+    ASSERT_EQ(0xEF,ptr[2]);
+    ASSERT_EQ(0x12,ptr[3]);
     stat2 = buff.deserialize(u32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u32t1,u32t2);
+    ASSERT_EQ(4,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", u32t1, u32t2, stat1,
@@ -135,15 +193,35 @@ TEST(SerializationTest,Serialization1) {
     printf("I32 Test\n");
 #endif
 
-    I32 i32t1 = -100000;
+    I32 i32t1 = 0xABCDEF12;
     I32 i32t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xAB,ptr[0]);
+    ASSERT_EQ(0xCD,ptr[1]);
+    ASSERT_EQ(0xEF,ptr[2]);
+    ASSERT_EQ(0x12,ptr[3]);
     stat2 = buff.deserialize(i32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(4,buff.m_deserLoc);
     ASSERT_EQ(i32t1,i32t2);
+
+    // double check negative number
+    i32t1 = -1000000;
+    i32t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i32t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    stat2 = buff.deserialize(i32t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(4,buff.m_deserLoc);
+    ASSERT_EQ(i32t1,i32t2);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %d out: %d stat1: %d stat2: %d\n", i32t1, i32t2, stat1,
@@ -152,7 +230,7 @@ TEST(SerializationTest,Serialization1) {
     printf("U64 Test\n");
 #endif
 
-    U64 u64t1 = 10000000;
+    U64 u64t1 = 0x0123456789ABCDEF;
     U64 u64t2 = 0;
 
 // Test ints
@@ -160,9 +238,19 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(u64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x01,ptr[0]);
+    ASSERT_EQ(0x23,ptr[1]);
+    ASSERT_EQ(0x45,ptr[2]);
+    ASSERT_EQ(0x67,ptr[3]);
+    ASSERT_EQ(0x89,ptr[4]);
+    ASSERT_EQ(0xAB,ptr[5]);
+    ASSERT_EQ(0xCD,ptr[6]);
+    ASSERT_EQ(0xEF,ptr[7]);
     stat2 = buff.deserialize(u64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(u64t1,u64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", u64t1, u64t2, stat1,
@@ -170,15 +258,39 @@ TEST(SerializationTest,Serialization1) {
     printf("I64 Test\n");
 #endif
 
-    I64 i64t1 = -10000000;
+    I64 i64t1 = 0x0123456789ABCDEF;
     I64 i64t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(i64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x01,ptr[0]);
+    ASSERT_EQ(0x23,ptr[1]);
+    ASSERT_EQ(0x45,ptr[2]);
+    ASSERT_EQ(0x67,ptr[3]);
+    ASSERT_EQ(0x89,ptr[4]);
+    ASSERT_EQ(0xAB,ptr[5]);
+    ASSERT_EQ(0xCD,ptr[6]);
+    ASSERT_EQ(0xEF,ptr[7]);
     stat2 = buff.deserialize(i64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_EQ(i64t1,i64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
+
+    // double check negative number
+    i64t1 = -1000000000000;
+    i64t2 = 0;
+
+    buff.resetSer();
+    stat1 = buff.serialize(i64t1);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    stat2 = buff.deserialize(i64t2);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
+    ASSERT_EQ(i64t1,i64t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
+
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lld out: %lld stat1: %d stat2: %d\n", i64t1, i64t2, stat1,
@@ -187,7 +299,7 @@ TEST(SerializationTest,Serialization1) {
     printf("F32 Test\n");
 #endif
 
-    F32 f32t1 = 100.2;
+    F32 f32t1 = -1.23;
     F32 f32t2 = 0;
 
 // Test ints
@@ -195,9 +307,15 @@ TEST(SerializationTest,Serialization1) {
     buff.resetSer();
     stat1 = buff.serialize(f32t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(4,buff.m_serLoc);
+    ASSERT_EQ(0xBF,ptr[0]);
+    ASSERT_EQ(0x9D,ptr[1]);
+    ASSERT_EQ(0x70,ptr[2]);
+    ASSERT_EQ(0xA4,ptr[3]);
     stat2 = buff.deserialize(f32t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_FLOAT_EQ(f32t1,f32t2);
+    ASSERT_EQ(4,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %f out: %f stat1: %d stat2: %d\n", f32t1, f32t2, stat1,
@@ -205,15 +323,25 @@ TEST(SerializationTest,Serialization1) {
     printf("F64 Test\n");
 #endif
 
-    F64 f64t1 = -100.232145345346534;
+    F64 f64t1 = 100.232145345346534;
     F64 f64t2 = 0;
 
     buff.resetSer();
     stat1 = buff.serialize(f64t1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
+    ASSERT_EQ(8,buff.m_serLoc);
+    ASSERT_EQ(0x40,ptr[0]);
+    ASSERT_EQ(0x59,ptr[1]);
+    ASSERT_EQ(0x0E,ptr[2]);
+    ASSERT_EQ(0xDB,ptr[3]);
+    ASSERT_EQ(0x78,ptr[4]);
+    ASSERT_EQ(0x26,ptr[5]);
+    ASSERT_EQ(0x8B,ptr[6]);
+    ASSERT_EQ(0xA6,ptr[7]);
     stat2 = buff.deserialize(f64t2);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat2);
     ASSERT_DOUBLE_EQ(f32t1,f32t2);
+    ASSERT_EQ(8,buff.m_deserLoc);
 
 #if DEBUG_VERBOSE
     printf("Val: in: %lf out: %lf stat1: %d stat2: %d\n", f64t1, f64t2, stat1,
@@ -476,8 +604,7 @@ class MySerializable: public Fw::Serializable {
         TestStruct m_testStruct;
 };
 
-void serPerfTest(I32 iterations) {
-
+TEST(PerformanceTest, SerPerfTest) {
     Os::IntervalTimer timer;
 
     MySerializable in;
@@ -489,6 +616,7 @@ void serPerfTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
         in.serialize(buff);
         out.deserialize(buff);
@@ -503,7 +631,7 @@ void serPerfTest(I32 iterations) {
 
 }
 
-void structCopyTest(I32 iterations) {
+TEST(PerformanceTest, StructCopyTest) {
     char buff[sizeof(TestStruct)];
     TestStruct ts;
 
@@ -513,6 +641,7 @@ void structCopyTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
 
 // simulate the incoming MSL-style call by doing member assignments
@@ -535,7 +664,7 @@ void structCopyTest(I32 iterations) {
 
 }
 
-void classCopyTest(I32 iterations) {
+TEST(PerformanceTest, ClassCopyTest) {
 
     char buff[sizeof(MySerializable)];
     MySerializable ms;
@@ -546,6 +675,7 @@ void classCopyTest(I32 iterations) {
     intLock.lock();
     timer.start();
 
+    I32 iterations = 1000000;
     for (I32 iter = 0; iter < iterations; iter++) {
         memcpy(buff, reinterpret_cast<void*>(&ms), sizeof(ms));
         memcpy(reinterpret_cast<void*>(&ms), buff, sizeof(buff));
@@ -745,19 +875,166 @@ TEST(TypesTest, CheckAssertTest) {
 
 TEST(TypesTest,PolyTest) {
 
+    // U8 Type  ===============================================================
     U8 in8 = 13;
     U8 out8;
 
     Fw::PolyType pt(in8);
 
-    printf("U8 PolyType Test\n");
     out8 = (U8) pt;
-    if (out8 != in8) {
-        printf("U8 in %d out %d mismatch!\n", in8, out8);
-    }
+    ASSERT_EQ(in8, out8);
 
-// Should assert
-// out16 = (U16)pt;
+    // Test assigning to polytype and return type of assignment
+    in8 = 21;
+    // Can assign Polytype to U8 via overriden cast operator
+    out8 = (pt = in8);
+    ASSERT_EQ((U8) pt, (U8) 21);
+    ASSERT_EQ((U8) pt, in8);
+    ASSERT_EQ(out8, in8);
+
+    // U16 Type  ==============================================================
+    U16 inU16 = 34;
+    U16 outU16;
+    Fw::PolyType ptU16(inU16);
+
+    outU16 = (U16) ptU16;
+    ASSERT_EQ(inU16, outU16);
+
+    inU16 = 55;
+    outU16 = (ptU16 = inU16);
+    ASSERT_EQ((U16) ptU16, inU16);
+    ASSERT_EQ(outU16, inU16);
+
+    // U32 Type  ==============================================================
+    U32 inU32 = 89;
+    U32 outU32;
+    Fw::PolyType ptU32(inU32);
+
+    outU32 = (U32) ptU32;
+    ASSERT_EQ(inU32, outU32);
+
+    inU32 = 144;
+    outU32 = (ptU32 = inU32);
+    ASSERT_EQ((U32) ptU32, inU32);
+    ASSERT_EQ(outU32, inU32);
+
+    // U64 Type  ==============================================================
+    U64 inU64 = 233;
+    U64 outU64;
+    Fw::PolyType ptU64(inU64);
+
+    outU64 = (U64) ptU64;
+    ASSERT_EQ(inU64, outU64);
+
+    inU64 = 377;
+    outU64 = (ptU64 = inU64);
+    ASSERT_EQ((U64) ptU64, inU64);
+    ASSERT_EQ(outU64, inU64);
+
+    // I8 Type  ===============================================================
+    I8 inI8 = 2;
+    I8 outI8;
+    Fw::PolyType ptI8(inI8);
+
+    outI8 = (I8) ptI8;
+    ASSERT_EQ(inI8, outI8);
+
+    inI8 = 3;
+    outI8 = (ptI8 = inI8);
+    ASSERT_EQ((I8) ptI8, inI8);
+    ASSERT_EQ(outI8, inI8);
+
+    // I16 Type  ==============================================================
+    I16 inI16 = 5;
+    I16 outI16;
+    Fw::PolyType ptI16(inI16);
+
+    outI16 = (I16) ptI16;
+    ASSERT_EQ(inI16, outI16);
+
+    inI16 = 7;
+    outI16 = (ptI16 = inI16);
+    ASSERT_EQ((I16) ptI16, inI16);
+    ASSERT_EQ(outI16, inI16);
+
+    // I32 Type  ==============================================================
+    I32 inI32 = 11;
+    I32 outI32;
+    Fw::PolyType ptI32(inI32);
+
+    outI32 = (I32) ptI32;
+    ASSERT_EQ(inI32, outI32);
+
+    inI32 = 13;
+    outI32 = (ptI32 = inI32);
+    ASSERT_EQ((I32) ptI32, inI32);
+    ASSERT_EQ(outI32, inI32);
+
+    // I64 Type  ==============================================================
+    I64 inI64 = 17;
+    I64 outI64;
+    Fw::PolyType ptI64(inI64);
+
+    outI64 = (I64) ptI64;
+    ASSERT_EQ(inI64, outI64);
+
+    inI64 = 19;
+    outI64 = (ptI64 = inI64);
+    ASSERT_EQ((I64) ptI64, inI64);
+    ASSERT_EQ(outI64, inI64);
+
+    // F32 Type  ==============================================================
+    F32 inF32 = 23.32;
+    F32 outF32;
+    Fw::PolyType ptF32(inF32);
+
+    outF32 = (F32) ptF32;
+    ASSERT_EQ(inF32, outF32);
+
+    inF32 = 29.92;
+    outF32 = (ptF32 = inF32);
+    ASSERT_EQ((F32) ptF32, inF32);
+    ASSERT_EQ(outF32, inF32);
+
+    // F64 Type  ==============================================================
+    F64 inF64 = 31.13;
+    F64 outF64;
+    Fw::PolyType ptF64(inF64);
+
+    outF64 = (F64) ptF64;
+    ASSERT_EQ(inF64, outF64);
+
+    inF64 = 37.73;
+    outF64 = (ptF64 = inF64);
+    ASSERT_EQ((F64) ptF64, inF64);
+    ASSERT_EQ(outF64, inF64);
+
+    // bool Type  =============================================================
+    bool inbool = true;
+    bool outbool;
+    Fw::PolyType ptbool(inbool);
+
+    outbool = (bool) ptbool;
+    ASSERT_EQ(inbool, outbool);
+
+    inbool = false;
+    outbool = (ptbool = inbool);
+    ASSERT_EQ((bool) ptbool, inbool);
+    ASSERT_EQ(outbool, inbool);
+
+    // ptr Type  ==============================================================
+    void* inPtr = &ptbool;
+    void* outPtr;
+    Fw::PolyType ptPtr(inPtr);
+
+    outPtr = (void*) ptPtr;
+    ASSERT_EQ(inPtr, outPtr);
+
+    inPtr = &ptF64;
+    outPtr = (ptPtr = inPtr);
+    ASSERT_EQ((void*) ptPtr, inPtr);
+    ASSERT_EQ(outPtr, inPtr);
+
 }
 
 TEST(TypesTest,EightyCharTest) {
@@ -803,7 +1080,53 @@ TEST(TypesTest,EightyCharTest) {
 TEST(TypesTest,StringFormatTest) {
     Fw::EightyCharString str;
     str.format("Int %d String %s",10,"foo");
-    printf("Formatted: %s\n",str.toChar());
+    ASSERT_STREQ(str.toChar(), "Int 10 String foo");
+}
+
+TEST(PerformanceTest, F64SerPerfTest) {
+
+
+    SerializeTestBuffer buff;
+
+#if DEBUG_VERBOSE
+    printf("U8 Test\n");
+#endif
+
+    F64 in = 10000.0;
+    F64 out = 0;
+
+    NATIVE_INT_TYPE iters = 1000000;
+
+    Os::IntervalTimer timer;
+    timer.start();
+
+
+    for (NATIVE_INT_TYPE iter = 0; iter < iters; iter++) {
+		buff.resetSer();
+		buff.serialize(in);
+		buff.deserialize(out);
+    }
+
+    timer.stop();
+
+    printf("%d iterations took %d us (%f us each).\n", iters,
+            timer.getDiffUsec(),
+            (F32) (timer.getDiffUsec()) / (F32) iters);
+
+}
+
+TEST(AllocatorTest,MallocAllocatorTest) {
+    // Since it is a wrapper around malloc, the test consists of requesting
+    // memory and verifying a non-zero pointer, unchanged size, and not recoverable.
+    Fw::MallocAllocator allocator;
+    NATIVE_UINT_TYPE size = 100; // one hundred bytes
+    bool recoverable;
+    void *ptr = allocator.allocate(10,size,recoverable);
+    ASSERT_EQ(100,size);
+    ASSERT_NE(ptr,(void*)NULL);
+    ASSERT_FALSE(recoverable);
+    // deallocate memory
+    allocator.deallocate(100,ptr);
 }
 
 int main(int argc, char **argv) {

@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplWriterBase.py
 #
 # DESCRIPTION: A base class for TestImpl writers
@@ -10,9 +9,10 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 
 from fprime_ac.generators.writers import ComponentWriterBase
+
 
 class TestImplWriterBase(ComponentWriterBase.ComponentWriterBase):
     """
@@ -23,4 +23,3 @@ class TestImplWriterBase(ComponentWriterBase.ComponentWriterBase):
         self.init(obj, c)
         c.component_base = c.name() + "ComponentBase"
         c.gtest_base = c.name() + "GTestBase"
-

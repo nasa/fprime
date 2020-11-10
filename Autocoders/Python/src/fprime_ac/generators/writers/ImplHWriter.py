@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: ImplHWriter.py
 #
 # DESCRIPTION: A writer class for generating component implementation
@@ -11,20 +10,28 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
+from fprime_ac.generators.writers import ImplWriterBase
 from fprime_ac.utils import ConfigManager
 
-from fprime_ac.generators.templates.impl import hpp
-from fprime_ac.generators.writers import ImplWriterBase
+try:
+    from fprime_ac.generators.templates.impl import hpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class ImplHWriter(ImplWriterBase.ImplWriterBase):
     """
     A writer class for generating component implementation header files.
     """
-    __config   = None
+
+    __config = None
 
     def __init__(self):
+        super().__init__()
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.initBase("ImplH")
 
@@ -41,7 +48,7 @@ class ImplHWriter(ImplWriterBase.ImplWriterBase):
         c.emit_port_params = self.emitPortParams
         c.emit_non_port_params = self.emitNonPortParams
         self._writeTmpl(c, "startSourceFilesVisit")
-    
+
     def write(self, obj):
         """
         Calls all of the write methods so that full file is made
@@ -59,6 +66,6 @@ class ImplHWriter(ImplWriterBase.ImplWriterBase):
 
     def setFileName(self, obj):
         self.FILE_NAME = obj.get_name() + self.__config.get("component", "ImplH")
-    
+
     def toString(self):
         return self.FILE_NAME

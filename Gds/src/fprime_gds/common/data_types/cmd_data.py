@@ -1,4 +1,4 @@
-'''
+"""
 @brief Command Data class
 
 Instances of this class define a specific instance of a command with specific
@@ -8,41 +8,36 @@ argument values.
 @author Josef Biberstein
 
 @bug No known bugs
-'''
-from __future__ import print_function
-
-from enum import Enum
-
-from fprime_gds.common.data_types import sys_data
-
-from fprime.common.models.serialize.time_type import *
-
-from fprime.common.models.serialize.bool_type import *
-from fprime.common.models.serialize.enum_type import *
-from fprime.common.models.serialize.f32_type import *
-from fprime.common.models.serialize.f64_type import *
-
-from fprime.common.models.serialize.u8_type import *
-from fprime.common.models.serialize.u16_type import *
-from fprime.common.models.serialize.u32_type import *
-from fprime.common.models.serialize.u64_type import *
-
-from fprime.common.models.serialize.i8_type import *
-from fprime.common.models.serialize.i16_type import *
-from fprime.common.models.serialize.i32_type import *
-from fprime.common.models.serialize.i64_type import *
-
-from fprime.common.models.serialize.string_type import *
-from fprime.common.models.serialize.serializable_type import *
+"""
 
 from copy import deepcopy
 
+from fprime.common.models.serialize.array_type import ArrayType
+from fprime.common.models.serialize.bool_type import BoolType
+from fprime.common.models.serialize.enum_type import EnumType
+from fprime.common.models.serialize.numerical_types import (
+    I8Type,
+    I16Type,
+    I32Type,
+    I64Type,
+    U8Type,
+    U16Type,
+    U32Type,
+    U64Type,
+    F32Type,
+    F64Type,
+)
+from fprime.common.models.serialize.serializable_type import SerializableType
+from fprime.common.models.serialize.string_type import StringType
+from fprime.common.models.serialize.time_type import TimeBase, TimeType
+from fprime_gds.common.data_types import sys_data
+
 
 class CmdData(sys_data.SysData):
-    '''The CmdData class stores a specific command'''
+    """The CmdData class stores a specific command"""
 
     def __init__(self, cmd_args, cmd_temp, cmd_time=None):
-        '''
+        """
         Constructor.
 
         Args:
@@ -55,7 +50,8 @@ class CmdData(sys_data.SysData):
 
         Returns:
             An initialized CmdData object
-        '''
+        """
+        super().__init__()
         self.id = cmd_temp.get_id()
         self.template = cmd_temp
         self.arg_vals = cmd_args
@@ -63,7 +59,7 @@ class CmdData(sys_data.SysData):
         self.args = [deepcopy(typ) for (_, _, typ) in self.template.arguments]
         self.arg_names = [name for (name, _, _) in self.template.arguments]
 
-        if (cmd_time):
+        if cmd_time:
             self.time = cmd_time
         else:
             self.time = TimeType(TimeBase["TB_DONT_CARE"].value)
@@ -94,16 +90,16 @@ class CmdData(sys_data.SysData):
         Returns:
             An ID number
         """
-        
+
         return self.id
 
     def get_arg_vals(self):
-        """ Get the values for each argument in a command.
+        """Get the values for each argument in a command.
 
         Returns:
             list -- a list of value objects that were used in this data object.
         """
-        
+
         return self.arg_vals
 
     def get_args(self):
@@ -115,9 +111,8 @@ class CmdData(sys_data.SysData):
 
         return self.args
 
-
     def get_str(self, time_zone=None, verbose=False, csv=False):
-        '''
+        """
         Convert the command data to a string
 
         Args:
@@ -129,13 +124,12 @@ class CmdData(sys_data.SysData):
 
         Returns:
             String version of the command data
-        '''
+        """
         time_str = self.time.to_readable(time_zone)
         raw_time_str = str(self.time)
         name = self.template.get_full_name()
 
-
-        if self.args == None:
+        if self.args is None:
             arg_str = "EMPTY COMMAND OBJ"
         else:
             # The arguments are currently serializable objects which cannot be
@@ -145,81 +139,63 @@ class CmdData(sys_data.SysData):
             arg_str = " ".join(str(arg_val_list))
 
         if verbose and csv:
-            return ("%s,%s,%s,%d,%s"%(time_str, raw_time_str, name, self.id, arg_str))
+            return "%s,%s,%s,%d,%s" % (time_str, raw_time_str, name, self.id, arg_str)
         elif verbose and not csv:
-            return ("%s: %s (%d) %s : %s"%(time_str, name, self.id,
-                                              raw_time_str, arg_str))
+            return "%s: %s (%d) %s : %s" % (
+                time_str,
+                name,
+                self.id,
+                raw_time_str,
+                arg_str,
+            )
         elif not verbose and csv:
-            return ("%s,%s,%s"%(time_str, name, arg_str))
+            return "{},{},{}".format(time_str, name, arg_str)
         else:
-            return ("%s: %s : %s"%(time_str, name, arg_str))
+            return "{}: {} : {}".format(time_str, name, arg_str)
 
     def convert_arg_value(self, arg_val, arg_type):
         if arg_val is None:
-            raise CommandArgumentException('Argument value could not be converted to type object')
-        if "0x" in arg_val:
-            arg_val = int(arg_val, 16)
-
-        if type(arg_type) == type(BoolType()):
+            raise CommandArgumentException(
+                "Argument value could not be converted to type object"
+            )
+        if isinstance(arg_type, BoolType):
             if arg_val == "False":
                 av = False
             else:
                 av = True
             arg_type.val = av
-        elif type(arg_type) == type(EnumType()):
+        elif isinstance(arg_type, EnumType):
             arg_type.val = arg_val
-        elif type(arg_type) == type(F64Type()):
+        elif isinstance(arg_type, (F64Type, F32Type)):
             arg_type.val = float(arg_val)
-
-        elif type(arg_type) == type(F32Type()):
-            arg_type.val = float(arg_val)
-
-        elif type(arg_type) == type(I64Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I32Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I16Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(I8Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U64Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U32Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U16Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(U8Type()):
-            arg_type.val = int(arg_val)
-
-        elif type(arg_type) == type(StringType()):
+        elif isinstance(
+            arg_type,
+            (I64Type, U64Type, I32Type, U32Type, I16Type, U16Type, I8Type, U8Type),
+        ):
+            arg_type.val = int(arg_val, 0)
+        elif isinstance(arg_type, StringType):
             arg_type.val = arg_val
-
-        elif type(arg_type) == type(SerializableType()):
+        # Cannot handle serializable or array argument inputs
+        elif isinstance(arg_type, (SerializableType, ArrayType)):
             pass
         else:
-            raise CommandArgumentException('Argument value could not be converted to type object')
-
+            raise CommandArgumentException(
+                "Argument value could not be converted to type object"
+            )
 
     def __str__(self):
-        arg_str = ''
+        arg_str = ""
         for name, typ in zip(self.arg_names, self.args):
-            arg_str += ('%s : %s |')%(name, str(typ.val))
-        arg_str = 'w/ args | ' + arg_str
+            arg_str += ("%s : %s |") % (name, str(typ.val))
+        arg_str = "w/ args | " + arg_str
 
-
-        arg_info = '%s '% self.template.mnemonic
+        arg_info = "%s " % self.template.mnemonic
 
         if len(self.args) > 0:
             return arg_info + arg_str
         else:
             return arg_info
+
 
 class CommandArgumentException(Exception):
     pass
@@ -230,5 +206,5 @@ class CommandArgumentsException(Exception):
         """
         Handle a list of errors as an exception.
         """
-        super(CommandArgumentsException, self).__init__(" ".join(errors))
+        super().__init__(" ".join(errors))
         self.errors = errors

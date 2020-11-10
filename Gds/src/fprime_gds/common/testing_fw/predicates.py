@@ -55,15 +55,15 @@ def is_predicate(pred):
     return False
 
 
-def get_descriptive_string(value, predicate):
+def get_descriptive_string(value, pred_function):
     """
     a helper function that formats a predicate and argument in a nice human-readable format
 
     Args:
         value: the argument of the predicate
-        predicate: a predicate function
+        pred_function: a predicate function
     """
-    return "F({}), where F(x) evaluates\n\t {}".format(value, predicate)
+    return "F({}), where F(x) evaluates\n\t {}".format(value, pred_function)
 
 
 ##########################################################################################
@@ -81,6 +81,7 @@ class less_than(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -106,6 +107,7 @@ class greater_than(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -131,6 +133,7 @@ class equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -156,6 +159,7 @@ class not_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -181,6 +185,7 @@ class less_than_or_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -206,6 +211,7 @@ class greater_than_or_equal_to(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to compare
         """
         try:
@@ -234,6 +240,7 @@ class within_range(predicate):
 
     def __call__(self, actual):
         """
+
         :param actual: the value to evaluate
         """
         try:
@@ -263,6 +270,7 @@ class is_a_member_of(predicate):
     def __call__(self, item):
         """
         Evaluates the predicate
+
         :param item: the object to search for then evaluate
         """
         for x in self.set:
@@ -289,6 +297,7 @@ class is_not_a_member_of(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object to search for then evaluate
         """
         for x in self.set:
@@ -307,10 +316,10 @@ class is_not_a_member_of(predicate):
 # Logic predicates
 ##########################################################################################
 class always_true(predicate):
-    def __call__(self, object):
+    def __call__(self, obj):
         """
         used as a placeholder by other predicates. This is like a logical TRUE signal.
-        :param object: the object or value to evaluate
+        :param obj: the object or value to evaluate
         """
         return True
 
@@ -333,6 +342,7 @@ class invert(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         return not self.pred(item)
@@ -358,6 +368,7 @@ class satisfies_all(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         for pred in self.p_list:
@@ -386,6 +397,7 @@ class satisfies_any(predicate):
 
     def __call__(self, item):
         """
+
         :param item: the object or value to evaluate
         """
         for pred in self.p_list:
@@ -448,7 +460,9 @@ class args_predicate(predicate):
 
 
 class event_predicate(predicate):
-    def __init__(self, id_pred=None, args_pred=None, severity_pred=None, time_pred=None):
+    def __init__(
+        self, id_pred=None, args_pred=None, severity_pred=None, time_pred=None
+    ):
         """
         A predicate for specifying an EventData object from data_types.event_data. This predicate
         can be used to search a history. If arguments passed into this constructor are not

@@ -1,18 +1,24 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import sys
 
 import xml.etree.ElementTree as ET
 
+
 def get_serializable_qualified(input_file):
     tree = ET.parse(input_file)
     root = tree.getroot()
-    spath = root.get("namespace").replace("::", "/").replace(":", "/") + "/" + root.get("name")
+    spath = (
+        root.get("namespace").replace("::", "/").replace(":", "/")
+        + "/"
+        + root.get("name")
+    )
 
     # Print without newline
     sys.stdout.write(spath)
     sys.stdout.flush()
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

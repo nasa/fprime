@@ -11,22 +11,24 @@ import os
 import sys
 
 # Migrated from setup.py in Fw/Python
-REQUIRED_PACKS = ['six', "lxml", "Markdown", "pexpect", "pytest"]
+REQUIRED_PACKS = ["six", "lxml", "Markdown", "pexpect", "pytest"]
 if sys.version_info[0] >= 3:
     REQUIRED_PACKS.append("Cheetah3")
 else:
-    REQUIRED_PACKS.extend(['Cheetah', 'enum34']) 
+    REQUIRED_PACKS.extend(["Cheetah", "enum34"])
+
 
 def validate_python_setup():
     """
     Validates the python setup of the system to ensure that the CMake system, Autocoder, etc can run
     as expected.
     """
-    if sys.version_info[0] >= 3 and sys.version_info[1] <= 3:
-        print("Python 3.4+ required")
+    if sys.version_info[0] < 3 or sys.version_info[1] < 5:
+        print("Python 3.5+ required")
         return False
     import pkg_resources
-    deps = REQUIRED_PACKS  
+
+    deps = REQUIRED_PACKS
     # Checking all dependencies one-at-a-time
     good = True
     for dep in deps:
@@ -42,6 +44,7 @@ def validate_python_setup():
             if "RequirementParseError" not in str(e):
                 raise
     return good
+
 
 if __name__ == "__main__":
     sys.exit(0 if validate_python_setup() else 1)

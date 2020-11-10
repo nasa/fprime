@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os
-import sys
 import shutil
+
 
 ##
 ## Copied directly from the Python Cookbook
@@ -22,13 +22,13 @@ import shutil
 ##    ValueError - unknown vtype (copy, or rename)
 ##    RuntimeError - all extensions used (eg: filename.c.999)
 ##
-def VersionFile(filename, vtype='copy'):
+def VersionFile(filename, vtype="copy"):
 
     if os.path.isfile(filename):
 
         # check the vtype parameter
-        if vtype not in ('copy', 'rename'):
-            raise ValueError('Unknown vtype %r' % (vtype,))
+        if vtype not in ("copy", "rename"):
+            raise ValueError("Unknown vtype {!r}".format(vtype))
 
         # Determine root filename so extension doesn't get longer
         n, e = os.path.splitext(filename)
@@ -44,25 +44,24 @@ def VersionFile(filename, vtype='copy'):
         # Find the next available file version
         for i in range(num, 1000):
 
-            new_file = '%s.%03d' % (root, i)
+            new_file = "%s.%03d" % (root, i)
 
             if not os.path.exists(new_file):
-                if vtype == 'copy':
+                if vtype == "copy":
                     shutil.copy(filename, new_file)
                 else:
                     os.rename(filename, new_file)
                 return True
 
-        raise RuntimeError("Can't %s %r, all name taken" % (vtype, filename))
+        raise RuntimeError("Can't {} {!r}, all name taken".format(vtype, filename))
 
     return False
 
-if __name__ == '__main__':
-    import os
 
+if __name__ == "__main__":
     # Create a dummy file 'test.txt'
-    tfn = 'test.txt'
-    open(tfn, 'w').close()
+    tfn = "test.txt"
+    open(tfn, "w").close()
 
     # version it 3 times
     print(VersionFile(tfn))
@@ -70,7 +69,7 @@ if __name__ == '__main__':
     print(VersionFile(tfn))
 
     # remove all test.txt* files we just made
-    for x in ('', '.000', '.001', '.002'):
+    for x in ("", ".000", ".001", ".002"):
         os.unlink(tfn + x)
 
     # show what happens when the file does not exist

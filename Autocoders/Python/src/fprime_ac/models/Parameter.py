@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: Port.py
 #
 # DESCRIPTION:  This is a Parameter meta-model sort of class.  It is
@@ -15,14 +14,11 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
 
 #
 # Python extention modules and custom interfaces
@@ -33,15 +29,30 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
-class Parameter(object):
+class Parameter:
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
     """
-    def __init__(self, ids, name, ctype, set_opcodes, save_opcodes, default, size, comment=None, xml_filename=None, component_name=None , base_setop = None , base_saveop = None):
+
+    def __init__(
+        self,
+        ids,
+        name,
+        ctype,
+        set_opcodes,
+        save_opcodes,
+        default,
+        size,
+        comment=None,
+        xml_filename=None,
+        component_name=None,
+        base_setop=None,
+        base_saveop=None,
+    ):
         """
         Constructor
         @param id:  Numeric ID of parameter
@@ -123,9 +134,9 @@ class Parameter(object):
         return self.__component_name
 
     def get_component_base_name(self):
-        '''
+        """
         Tries to isolate the base component name by finding the last part of the string that is joined by ::
-        '''
+        """
         base_name_list = self.__component_name.split("::")
         return base_name_list[-1]
 
@@ -134,4 +145,3 @@ class Parameter(object):
 
     def get_base_setop(self):
         return self.__base_setop
-

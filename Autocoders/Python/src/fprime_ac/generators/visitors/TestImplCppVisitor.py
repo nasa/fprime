@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplCppVisitor.py
 #
 # DESCRIPTION: A visitor class for generating test implementation cpp files.
@@ -10,12 +9,17 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
-from fprime_ac.utils import ConfigManager
-
-from fprime_ac.generators.templates.test_impl import cpp
 from fprime_ac.generators.visitors import TestImplVisitorBase
+
+try:
+    from fprime_ac.generators.templates.test_impl import cpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class TestImplCppVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """
@@ -23,6 +27,7 @@ class TestImplCppVisitor(TestImplVisitorBase.TestImplVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("TestImplCpp")
 
     def emitPortParams(self, params):

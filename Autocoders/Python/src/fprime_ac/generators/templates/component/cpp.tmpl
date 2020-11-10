@@ -11,7 +11,7 @@
 // ======================================================================
 
 \#include <stdio.h>
-\#include <Fw/Cfg/Config.hpp>
+\#include <FpConfig.hpp>
 \#include <${comp_include_path}/${include_name}ComponentAc.hpp>
 \#include <Fw/Types/Assert.hpp>
 \#if FW_ENABLE_TEXT_LOGGING
@@ -370,36 +370,15 @@ namespace ${namespace} {
   // Component construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  ${class_name} ::
 #if $kind == "passive":
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::PassiveComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::PassiveComponentBase()
-\#endif
-  {
-
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::PassiveComponentBase(compName) {
 #else if $kind == "queued":
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::QueuedComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::QueuedComponentBase()
-\#endif
-  {
-
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::QueuedComponentBase(compName) {
 #else:
-\#if FW_OBJECT_NAMES == 1
-    ${class_name}(const char* compName) :
-      Fw::ActiveComponentBase(compName)
-\#else
-    ${class_name}() :
-      Fw::ActiveComponentBase()
-\#endif
-  {
+    ${class_name} :: ${class_name}(const char* compName) :
+        Fw::ActiveComponentBase(compName) {
 #end if
 
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
@@ -2007,7 +1986,7 @@ namespace ${namespace} {
 
 #end if
 #if $namespace_list != None
- #for $namespace in $namespace_list
+ #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
  #end for
 #end if

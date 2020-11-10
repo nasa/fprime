@@ -137,7 +137,7 @@ unsigned short update_crc_ccitt( unsigned short crc, char c ) {
     if ( ! crc_tabccitt_init ) init_crcccitt_tab();
 
     tmp = (crc >> 8) ^ short_c;
-    crc = (crc << 8) ^ crc_tabccitt[tmp];
+    crc = (unsigned short)((crc << 8) ^ crc_tabccitt[tmp]);
 
     return crc;
 
@@ -161,10 +161,10 @@ unsigned short update_crc_sick( unsigned short crc, char c, char prev_byte ) {
     unsigned short short_c, short_p;
 
     short_c  =   0x00ff & (unsigned short) c;
-    short_p  = ( 0x00ff & (unsigned short) prev_byte ) << 8;
+    short_p  =  (unsigned short)(( 0x00ff & (unsigned short) prev_byte ) << 8);
 
-    if ( crc & 0x8000 ) crc = ( crc << 1 ) ^ P_SICK;
-    else                crc =   crc << 1;
+    if ( crc & 0x8000 ) crc = (unsigned short)(( crc << 1 ) ^ P_SICK);
+    else                crc =   (unsigned short)(crc << 1);
 
     crc &= 0xffff;
     crc ^= ( short_c | short_p );
@@ -441,14 +441,14 @@ static void init_crcccitt_tab( void ) {
     for (i=0; i<256; i++) {
 
         crc = 0;
-        c   = ((unsigned short) i) << 8;
+        c   = (unsigned short)(((unsigned short) i) << 8);
 
         for (j=0; j<8; j++) {
 
-            if ( (crc ^ c) & 0x8000 ) crc = ( crc << 1 ) ^ P_CCITT;
-            else                      crc =   crc << 1;
+            if ( (crc ^ c) & 0x8000 ) crc = (unsigned short)(( crc << 1 ) ^ P_CCITT);
+            else                      crc =   (unsigned short)(crc << 1);
 
-            c = c << 1;
+            c = (unsigned short)(c << 1);
         }
 
         crc_tabccitt[i] = crc;

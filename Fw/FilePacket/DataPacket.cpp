@@ -19,7 +19,7 @@ namespace Fw {
     initialize(
         const U32 sequenceIndex,
         const U32 byteOffset,
-        const U32 dataSize,
+        const U16 dataSize,
         const U8 *const data
     )
   {

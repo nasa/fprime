@@ -1,5 +1,5 @@
-#!/bin/env python
-#===============================================================================
+#!/usr/bin/env python3
+# ===============================================================================
 # NAME: AbstractVisitor.py
 #
 # DESCRIPTION: This is a factory class for instancing the interface
@@ -11,86 +11,77 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 
-import os
-import sys
-import time
-import socket
 import logging
+import socket
 
 from fprime_ac.utils import Logger
-from fprime_ac.utils import ConfigManager
 
-from .visitors import ComponentCppVisitor
-from .visitors import ComponentHVisitor
-from .visitors import ImplCppVisitor
-from .visitors import ImplHVisitor
-from .visitors import PortCppVisitor
-from .visitors import PortHVisitor
-from .visitors import SerialCppVisitor
-from .visitors import SerialHVisitor
-from .visitors import TopologyCppVisitor
-from .visitors import TopologyHVisitor
-from .visitors import TopologyIDVisitor
-
-from .visitors import InstanceTopologyHVisitor
-from .visitors import InstanceTopologyCppVisitor
-from .visitors import InstanceTopologyCmdHTMLVisitor
-from .visitors import InstanceTopologyChannelsHTMLVisitor
-from .visitors import InstanceTopologyEventsHTMLVisitor
-
-from .visitors import ComponentTestHVisitor
-from .visitors import ComponentTestCppVisitor
-from .visitors import GTestHVisitor
-from .visitors import GTestCppVisitor
-from .visitors import TestImplCppVisitor
-from .visitors import TestImplHVisitor
-
-from .visitors import CommandVisitor
-from .visitors import EventVisitor
-from .visitors import ChannelVisitor
-from .visitors import SerializableVisitor
-
-from .visitors import InstanceCommandVisitor
-from .visitors import InstanceEventVisitor
-from .visitors import InstanceChannelVisitor
-from .visitors import InstanceSerializableVisitor
-
-from .visitors import HtmlDocVisitor
-from .visitors import MdDocVisitor
-
-from . import InitFiles
-from . import StartSource
-from . import Includes1
-from . import Includes2
-from . import Namespace
-from . import Public
-from . import Protected
-from . import Private
-from . import FinishSource
-
-from . import DictStart
-from . import DictHeader
-from . import DictBody
-
-from . import InstanceDictStart
-from . import InstanceDictHeader
-from . import InstanceDictBody
-
-from . import HtmlDocPage
-from . import HtmlStartPage
-
-from . import MdDocPage
-from . import MdStartPage
+from . import (
+    DictBody,
+    DictHeader,
+    DictStart,
+    FinishSource,
+    HtmlDocPage,
+    HtmlStartPage,
+    Includes1,
+    Includes2,
+    InitFiles,
+    InstanceDictBody,
+    InstanceDictHeader,
+    InstanceDictStart,
+    MdDocPage,
+    MdStartPage,
+    Namespace,
+    Private,
+    Protected,
+    Public,
+    StartSource,
+)
+from .visitors import (
+    ChannelVisitor,
+    CommandVisitor,
+    ComponentCppVisitor,
+    ComponentHVisitor,
+    ComponentTestCppVisitor,
+    ComponentTestHVisitor,
+    EventVisitor,
+    GTestCppVisitor,
+    GTestHVisitor,
+    HtmlDocVisitor,
+    ImplCppVisitor,
+    ImplHVisitor,
+    InstanceChannelVisitor,
+    InstanceCommandVisitor,
+    InstanceEventVisitor,
+    InstanceSerializableVisitor,
+    InstanceTopologyChannelsHTMLVisitor,
+    InstanceTopologyCmdHTMLVisitor,
+    InstanceTopologyCppVisitor,
+    InstanceTopologyEventsHTMLVisitor,
+    InstanceTopologyHVisitor,
+    MdDocVisitor,
+    PortCppVisitor,
+    PortHVisitor,
+    SerialCppVisitor,
+    SerialHVisitor,
+    SerializableVisitor,
+    TestImplCppVisitor,
+    TestImplHVisitor,
+    TopologyCppVisitor,
+    TopologyHVisitor,
+    TopologyIDVisitor,
+)
 
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
-HOST  = socket.gethostname()
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
+HOST = socket.gethostname()
+
 
 class GenFactory:
     """
@@ -99,6 +90,7 @@ class GenFactory:
     a list of instances that are the elements that generate the code based
     on visitors attached here.
     """
+
     __instance = None
     __configured_visitors = None
     __visitor_list = None
@@ -107,6 +99,7 @@ class GenFactory:
         """
         The up front visitor configuration options.
         """
+
         __enabled = None
         __generate_code = None
         __type = None
@@ -120,25 +113,21 @@ class GenFactory:
             self.setGenerateCode(generate_code)
 
         def getEnabled(self):
-            """
-            """
+            """"""
             return self.__enabled
 
         def getGenerateCode(self):
-            """
-            """
+            """"""
             return self.__generate_code
 
         def setEnabled(self, enabled):
-            """
-            """
+            """"""
             if enabled not in (True, False):
                 raise AttributeError("GenFactory: bad is enabled option")
             self.__enabled = enabled
 
         def setGenerateCode(self, generate_code):
-            """
-            """
+            """"""
             if generate_code not in (True, False):
                 raise AttributeError("GenFactory: bad generate code option")
             self.__generate_code = generate_code
@@ -178,9 +167,13 @@ class GenFactory:
             elif self.__type == "InstanceTopologyCmdHTMLVisitor":
                 inst = InstanceTopologyCmdHTMLVisitor.InstanceTopologyCmdHTMLVisitor()
             elif self.__type == "InstanceTopologyChannelsTMLVisitor":
-                inst = InstanceTopologyChannelsHTMLVisitor.InstanceTopologyChannelsHTMLVisitor()
+                inst = (
+                    InstanceTopologyChannelsHTMLVisitor.InstanceTopologyChannelsHTMLVisitor()
+                )
             elif self.__type == "InstanceTopologyEventsHTMLVisitor":
-                inst = InstanceTopologyEventsHTMLVisitor.InstanceTopologyEventsHTMLVisitor()
+                inst = (
+                    InstanceTopologyEventsHTMLVisitor.InstanceTopologyEventsHTMLVisitor()
+                )
             elif self.__type == "ComponentTestHVisitor":
                 inst = ComponentTestHVisitor.ComponentTestHVisitor()
             elif self.__type == "ComponentTestCppVisitor":
@@ -212,11 +205,12 @@ class GenFactory:
             elif self.__type == "TopologyIDVisitor":
                 inst = TopologyIDVisitor.TopologyIDVisitor()
             else:
-                s = "VisitorConfig.getInstance: unsupported visitor type (%s)" % (self.__type)
+                s = "VisitorConfig.getInstance: unsupported visitor type (%s)" % (
+                    self.__type
+                )
                 PRINT.info(s)
                 raise ValueError(s)
             return inst
-
 
     def __init__(self):
         """
@@ -225,22 +219,19 @@ class GenFactory:
         self.__instance = None
         self.__configured_visitors = dict()
 
-
     def getInstance():
         """
         Return instance of singleton.
         """
-# TKC - Removed singleton since component and command instances were clashing.
-#         if(GenFactory.__instance is None) :
-#             GenFactory.__instance = GenFactory()
-#
-#         return GenFactory.__instance
+        # TKC - Removed singleton since component and command instances were clashing.
+        #         if(GenFactory.__instance is None) :
+        #             GenFactory.__instance = GenFactory()
+        #
+        #         return GenFactory.__instance
         return GenFactory()
 
-
-    #define static method
+    # define static method
     getInstance = staticmethod(getInstance)
-
 
     def create(self, the_type):
         """
@@ -325,7 +316,6 @@ class GenFactory:
 
         return code_section_generator
 
-
     def configureVisitor(self, instance, the_type, enable=True, gencode=True):
         """
         Call this method to configure the specified visitor. This must be
@@ -353,14 +343,13 @@ class GenFactory:
             self.__configured_visitors[instance].setEnabled(enable)
             self.__configured_visitors[instance].setGenerateCode(gencode)
 
-
     def _buildVisitorList(self):
         """
         Build the visitor list. This is where the
         visitors (code producers) are instanced.
         """
         # Instance this list only once for all elements
-        if self.__visitor_list == None:
+        if self.__visitor_list is None:
             self.__visitor_list = list()
             #
             # Insert each of the code producer visitors into the list of
@@ -379,7 +368,6 @@ class GenFactory:
         #
         return self.__visitor_list
 
-
     def _addVisitor(self, type_obj, visitor_list):
         """
         Method to add the visitors to the created object.
@@ -389,18 +377,23 @@ class GenFactory:
         for v in visitor_list:
             type_obj.addVisitor(v)
 
+
 def main():
 
     # Configures output only to stdout.
     Logger.connectOutputLogger(None)
 
-    GenFactory.getInstance().configureVisitor("TestComponentH", "ComponentHVisitor", True, True)
-    GenFactory.getInstance().configureVisitor("TestComponentCpp", "ComponentCppVisitor", True, True)
+    GenFactory.getInstance().configureVisitor(
+        "TestComponentH", "ComponentHVisitor", True, True
+    )
+    GenFactory.getInstance().configureVisitor(
+        "TestComponentCpp", "ComponentCppVisitor", True, True
+    )
 
-    initfiles = GenFactory.getInstance().create('initFiles')
+    initfiles = GenFactory.getInstance().create("initFiles")
     print(initfiles)
-    initfiles('object args')
+    initfiles("object args")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

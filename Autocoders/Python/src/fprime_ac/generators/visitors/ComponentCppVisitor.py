@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: ComponentCppVisitor.py
 #
 # DESCRIPTION: A visitor for generating component implemetation files.
@@ -10,10 +9,17 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
 from fprime_ac.generators.visitors import ComponentVisitorBase
-from fprime_ac.generators.templates.component import cpp
+
+try:
+    from fprime_ac.generators.templates.component import cpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class ComponentCppVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
@@ -21,6 +27,7 @@ class ComponentCppVisitor(ComponentVisitorBase.ComponentVisitorBase):
     """
 
     def __init__(self):
+        super().__init__()
         self.initBase("ComponentCpp")
 
     def startSourceFilesVisit(self, obj):

@@ -71,7 +71,8 @@ namespace Svc {
         // Force a U32 to know the size
         buffer_wrapper.serialize(static_cast<U32>(0xdeadbeef));
         buffer.setsize(buffer_wrapper.getBuffLength());
-        state.setInputParams(sizeof(U32), reinterpret_cast<U8*>(buffer.getdata()));
+        state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), reinterpret_cast<U8*>(buffer.getdata()),
+                             Fw::ComPacket::FW_PACKET_FILE);
         state.invoke_to_fileDownlinkBufferSendIn(0, buffer);
         state.assert_from_write_size(__FILE__, __LINE__, 1);
         state.assert_from_fileDownlinkBufferSendOut_size(__FILE__, __LINE__, 1);

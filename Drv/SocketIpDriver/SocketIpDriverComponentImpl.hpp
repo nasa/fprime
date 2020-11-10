@@ -15,7 +15,10 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include "Drv/SocketIpDriver/SocketIpDriverComponentAc.hpp"
-#include <Drv/SocketIpDriver/SocketIpDriverCfg.hpp>
+#include <SocketIpDriverCfg.hpp>
+#include <Drv/SocketIpDriver/SocketHelper.hpp>
+#include <Drv/SocketIpDriver/SocketIpDriverTypes.hpp>
+
 // Includes for the IP layer
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <inetLib.h>
@@ -32,17 +35,6 @@ namespace Drv {
   {
     public:
 
-      enum SocketIpStatus {
-          SUCCESS = 0,
-          FAILED_TO_GET_SOCKET = -1,
-          FAILED_TO_GET_HOST_IP = -2,
-          INVALID_IP_ADDRESS = -3,
-          FAILED_TO_CONNECT = -4,
-          FAILED_TO_SET_SOCKET_OPTIONS = -5,
-          INTERRUPTED_TRY_AGAIN = -6,
-          READ_ERROR = -7,
-          READ_DISCONNECTED = -8
-      };
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
@@ -50,13 +42,7 @@ namespace Drv {
       //! Construct object SocketIpDriver
       //!
       SocketIpDriverComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#endif
-        ,
-        const bool send_udp = SOCKET_SEND_UDP, /*!< Send down using UDP. Default: read from configuration HPP*/
-        const U32 timeout_seconds = SOCKET_TIMEOUT_SECONDS, /*!< Timeout(S). Default: from configuration HPP*/
-        const U32 timeout_microseconds = SOCKET_TIMEOUT_MICROSECONDS /*!< Timeout(uS). Default: from configuration HPP*/
       );
 
       //! Initialize object SocketIpDriver
@@ -71,15 +57,17 @@ namespace Drv {
 
       //! Open up the socket port, ready for communications
       //!
-      SocketIpStatus open();
+      SocketIpStatus configure(
+              const char* hostname,
+              U16 port,
+              const bool send_udp = SOCKET_SEND_UDP, /*!< Send down using UDP. Default: read from configuration HPP*/
+              const U32 timeout_seconds = SOCKET_TIMEOUT_SECONDS, /*!< Timeout(S). Default: from configuration HPP*/
+              const U32 timeout_microseconds = SOCKET_TIMEOUT_MICROSECONDS /*!< Timeout(uS). Default: from configuration HPP*/
+              );
 
       //! The task required to read from the socket
       //!
       static void readTask(void* ptr);
-
-      //! Receive on setup port
-      //! return: true to stop the task, false otherwise
-      SocketIpStatus receive();
 
       //! Start the socket task
       //!
@@ -91,9 +79,15 @@ namespace Drv {
               NATIVE_INT_TYPE cpuAffinity = -1 //!< CPU affinity of the task to start
       );
 
-    PRIVATE:
+      //! Task to join nondetached pthreads 
+      //!
+      Os::Task::TaskStatus joinSocketTask(void** value_ptr);
 
-      SocketIpStatus openProtocol(NATIVE_INT_TYPE protocol, bool isInput = true);
+      //! Set the stop flag on the thread's loop such that it will shutdown promptly
+      //!
+      void exitSocketTask();
+
+    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -105,20 +99,15 @@ namespace Drv {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer 
       );
+
+      // socket helper instance
+      SocketHelper m_helper;
+
       Os::Task m_recvTask;           //!< Os::Task to start for reciving data
       Fw::Buffer m_buffer;           //!< Fw::Buffer used to pass data
-      struct sockaddr_in m_udpAddr;  //!< UDP server address, maybe unused
-      NATIVE_INT_TYPE m_socketInFd;  //!< Input file descriptor, always TCP
-      NATIVE_INT_TYPE m_socketOutFd; //!< Output file descriptor, always UDP
-      const char* m_hostname;        //!< Hostname to supply
-      U16 m_port;                    //!< IP address port used
       U8 m_backing_data[MAX_RECV_BUFFER_SIZE]; //!< Buffer used to store data
       bool m_stop; //!< Stop the receiving port
 
-      // Configuration values
-      const bool m_send_udp;
-      const U32 m_timeout_seconds;
-      const U32 m_timeout_microseconds;
 
     };
 

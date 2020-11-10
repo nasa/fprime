@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: Event.py
 #
 # DESCRIPTION:  This is a Eve t meta-model sort of class.  It is
@@ -15,14 +14,11 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 import logging
-import os
-import sys
-import time
 
 #
 # Python extention modules and custom interfaces
@@ -33,15 +29,28 @@ import time
 # (DO NOT USE MANY!)
 #
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
 #
-class Event(object):
+class Event:
     """
     This is a very simple component meta-model class.
     Note: associations to Arg instances as needed.
     """
-    def __init__(self, ids, name, severity, format_string, throttle, args, comment=None, xml_filename=None, component_name=None , component_base_name = None):
+
+    def __init__(
+        self,
+        ids,
+        name,
+        severity,
+        format_string,
+        throttle,
+        args,
+        comment=None,
+        xml_filename=None,
+        component_name=None,
+        component_base_name=None,
+    ):
         """
         Constructor
         @param id:  Event identifier (integer)
@@ -114,6 +123,3 @@ class Event(object):
 
     def get_component_base_name(self):
         return self.__component_base_name
-
-
-

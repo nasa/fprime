@@ -13,6 +13,7 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Svc/FileDownlink/FileDownlink.hpp>
+#include <Svc/FileManager/FileManager.hpp>
 #include <Svc/BufferManager/BufferManager.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
@@ -43,6 +44,7 @@ extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;
 extern Svc::FileUplink fileUplink;
 extern Svc::FileDownlink fileDownlink;
+extern Svc::FileManager fileManager;
 extern Svc::BufferManager fileDownlinkBufferManager;
 extern Svc::BufferManager fileUplinkBufferManager;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;

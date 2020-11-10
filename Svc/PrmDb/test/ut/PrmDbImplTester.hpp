@@ -9,7 +9,7 @@
 #define PRMDB_TEST_UT_PRMDBIMPLTESTER_HPP_
 
 #include <GTestBase.hpp>
-#include <Svc/PrmDb/test/ut/PrmDbImplTesterCfg.hpp>
+#include <PrmDbImplTesterCfg.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Os/File.hpp>
 

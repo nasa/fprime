@@ -19,11 +19,7 @@
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1
     TlmChanImpl::TlmChanImpl(const char* name) : TlmChanComponentBase(name)
-#else
-    TlmChanImpl::TlmChanImpl()
-#endif
     {
         // clear data
         this->m_activeBuffer = 0;
@@ -35,10 +31,12 @@ namespace Svc {
         // clear buckets
         for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
             this->m_tlmEntries[0].buckets[entry].used = false;
+            this->m_tlmEntries[0].buckets[entry].updated = false;
             this->m_tlmEntries[0].buckets[entry].bucketNo = entry;
             this->m_tlmEntries[0].buckets[entry].next = 0;
             this->m_tlmEntries[0].buckets[entry].id = 0;
             this->m_tlmEntries[1].buckets[entry].used = false;
+            this->m_tlmEntries[1].buckets[entry].updated = false;
             this->m_tlmEntries[1].buckets[entry].bucketNo = entry;
             this->m_tlmEntries[1].buckets[entry].next = 0;
             this->m_tlmEntries[1].buckets[entry].id = 0;

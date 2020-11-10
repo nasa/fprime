@@ -1,14 +1,19 @@
 #ifndef FW_ASSERT_HPP
 #define FW_ASSERT_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
 #define FW_ASSERT(...)
+#define FW_STATIC_ASSERT(...)
 
 #else // ASSERT is defined
+
+#define FW_STATIC_CAT_(a, b) a ## b
+#define FW_STATIC_CAT(a, b) FW_STATIC_CAT_(a, b)
+#define FW_STATIC_ASSERT(cond) typedef int FW_STATIC_CAT(FW_STATIC_ASSERT,__LINE__)[(cond) ? 1 : -1]
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define FILE_NAME_ARG NATIVE_UINT_TYPE
@@ -42,7 +47,7 @@ namespace Fw {
     // Base class for declaring an assert hook
     class AssertHook {
         public:
-            AssertHook() {}; //!< constructor
+            AssertHook() : previousHook(NULL) {}; //!< constructor
             virtual ~AssertHook() {}; //!< destructor
             // override this function to intercept asserts
             virtual void reportAssert(
@@ -64,8 +69,13 @@ namespace Fw {
             virtual void doAssert(void);
             // register the hook
             void registerHook(void);
+            // deregister the hook
+            void deregisterHook(void);
 
         protected:
+        private:
+            // the previous assert hook
+            AssertHook *previousHook;
     };
 
 

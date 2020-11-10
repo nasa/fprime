@@ -1,5 +1,5 @@
-#!/bin/env python
-#===============================================================================
+#!/usr/bin/env python3
+# ===============================================================================
 # NAME: PortFactory.py
 #
 # DESCRIPTION: This is a factory class for instancing the Port (interface type)
@@ -11,29 +11,21 @@
 #
 # Copyright 2013, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
 #
 # Python standard modules
 #
 
-import os
-import sys
-import time
-import socket
 import logging
 
-from fprime_ac.utils import Logger
-from fprime_ac.utils import ConfigManager
-
+from fprime_ac.models import Arg, Port
 from fprime_ac.parsers import XmlPortsParser
-
-from fprime_ac.models import Port
-from fprime_ac.models import Arg
-
+from fprime_ac.utils import Logger
 
 # Global logger init. below.
-PRINT = logging.getLogger('output')
-DEBUG = logging.getLogger('debug')
+PRINT = logging.getLogger("output")
+DEBUG = logging.getLogger("debug")
+
 
 class PortFactory:
     """
@@ -41,33 +33,30 @@ class PortFactory:
     to the code generation.  A single call to create is made that returns
     a the port object containing all the includes, args, etc.
     """
-    __parsed   = None
+
+    __parsed = None
     __instance = None
     __configured_visitors = None
-
 
     def __init__(self):
         """
         Private Constructor (singleton pattern)
         """
-        self.__parsed   = None
+        self.__parsed = None
         self.__instance = None
         self.__configured_visitors = dict()
-
 
     def getInstance():
         """
         Return instance of singleton.
         """
-        if(PortFactory.__instance is None) :
+        if PortFactory.__instance is None:
             PortFactory.__instance = PortFactory()
 
         return PortFactory.__instance
 
-
-    #define static method
+    # define static method
     getInstance = staticmethod(getInstance)
-
 
     def create(self, the_parsed_port_xml):
         """
@@ -76,12 +65,15 @@ class PortFactory:
         x = the_parsed_port_xml
         port_obj = x.get_interface()
         include_header_files_list = x.get_include_header_files()
-        include_header_serial_files_list = x.get_includes_serial_files()
+        include_header_serial_files_list = (
+            x.get_includes_serial_files() + x.get_include_array_files()
+        )
+        include_header_enum_files_list = x.get_include_enum_files()
         args_obj_list = x.get_args()
         #
         port_namespace = port_obj.get_namespace()
-        port_name      = port_obj.get_name()
-        port_comment   = port_obj.get_comment()
+        port_name = port_obj.get_name()
+        port_comment = port_obj.get_comment()
         port_return_type = port_obj.get_return_type()
         port_return_modifier = port_obj.get_return_modifier()
         #
@@ -91,19 +83,29 @@ class PortFactory:
         #
         args_list = []
         for arg in args_obj_list:
-            n=arg.get_name()
-            t=arg.get_type()
-            m=arg.get_modifier()
-            s=arg.get_size()
-            c=arg.get_comment()
-            args_list.append(Arg.Arg(n,t,m,s,c))
+            n = arg.get_name()
+            t = arg.get_type()
+            m = arg.get_modifier()
+            s = arg.get_size()
+            c = arg.get_comment()
+            args_list.append(Arg.Arg(n, t, m, s, c))
         #
         # Instance the port here...
         #
-        the_port = Port.Port(None, port_name, None, None, None, None, None, port_xml_filename)
-        the_port.set(port_namespace, args_list, include_header_files_list, include_header_serial_files_list, port_comment)
+        the_port = Port.Port(
+            None, port_name, None, None, None, None, None, port_xml_filename
+        )
+        the_port.set(
+            port_namespace,
+            args_list,
+            include_header_files_list,
+            include_header_serial_files_list,
+            include_header_enum_files_list,
+            port_comment,
+        )
         the_port.set_return(port_return_type, port_return_modifier)
         return the_port
+
 
 def main():
 
@@ -120,10 +122,10 @@ def main():
     print(the_parsed_port_xml.get_args())
     args = the_parsed_port_xml.get_args()
     for a in args:
-        print("\t",a)
-        print("\t",a.get_name())
-        print("\t",a.get_type())
-        print("\t",a.get_comment())
+        print("\t", a)
+        print("\t", a.get_name())
+        print("\t", a.get_type())
+        print("\t", a.get_comment())
     print(the_parsed_port_xml.get_include_header_files())
     print(the_parsed_port_xml.get_interface())
     print(the_parsed_port_xml.get_interface().get_comment())
@@ -143,8 +145,11 @@ def main():
     args = port.get_args()
     print("Args: %s" % args)
     for a in args:
-        print("Arg Name: %s Type: %s Comment: %s" % (a.get_name(), a.get_type(), a.get_comment()))
+        print(
+            "Arg Name: %s Type: %s Comment: %s"
+            % (a.get_name(), a.get_type(), a.get_comment())
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

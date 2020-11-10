@@ -9,34 +9,29 @@
 ####
 
 ####
-# Function `setup_module_dicts`:
+# Function `dict`:
 #
-# Creates a dictionary target for the module, that is then added to the "dict" and "module"
-# targets.
-#
-# - **MOD_NAME:** name of module being processed
-# - **AI_XML:** AI_XML that is generating dictionaries
-# - **DICT_INPUTS:** inputs from auto-coder, used to trigger dictionary generation
+# Generate a dictionary from any *AppAi.xml file that we see
 ####
-function(setup_module_dicts MOD_NAME TARGET_NAME AI_XML_FULL DICT_INPUTS)
-    # UTs don't supply directories
-    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
-        return()
-    endif()
-    get_filename_component(AI_XML ${AI_XML_FULL} NAME_WE)
-	set(AI_DICT_NAME "${AI_XML}_${TARGET_NAME}")
-	# Add the dictionary target for this module, if it doesn't already exist
-	if (NOT TARGET ${TARGET_NAME})
-	    add_custom_target(${TARGET_NAME})
-		if (CMAKE_DEBUG_OUTPUT)
-		    message(STATUS "\tAdding Dict Target: ${MOD_NAME}_dict")
-		endif()
-	endif()
-	add_custom_target(${AI_DICT_NAME} DEPENDS ${DICT_INPUTS})
-	# Add dependencies upstream
-	add_dependencies(${AI_DICT_NAME} ${CODEGEN_TARGET})
-	add_dependencies(${TARGET_NAME} ${AI_DICT_NAME})
-endfunction(setup_module_dicts)
+function(dictgen MODULE_NAME AI_XML MOD_DEPS)
+  string(REGEX REPLACE "Ai.xml" "Dictionary.xml" DICT_XML "${AI_XML}")
+  string(REGEX REPLACE "Ai.xml" "Ac" AC_BASE "${AI_XML}")
+  string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
+  # Building here with a fake dictionary output file, so this command will always rebuild.
+  add_custom_command(
+      OUTPUT "${DICT_XML}"
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
+      FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
+      PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR}
+      ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py --build_root --xml_topology_dict ${AI_XML}
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${AC_BASE}.cpp ${AC_BASE}.hpp
+      DEPENDS ${MOD_DEPS}
+  )
+  # Return file for output
+  set(DICTIONARY_OUTPUT_FILE "${DICT_XML}" PARENT_SCOPE) 
+endfunction(dictgen)
+
 ####
 # Dict function `add_global_target`:
 #
@@ -47,19 +42,7 @@ endfunction(setup_module_dicts)
 # - **TARGET_NAME:** target name to be generated
 ####
 function(add_global_target TARGET_NAME)
-    # If we are generating python dictionaries, then we need to copy the outputs
-    if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
-        return()
-    elseif (GENERATE_HERITAGE_PY_DICT)
-        add_custom_target(
-            ${TARGET_NAME} ALL
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/dict/serializable ${CMAKE_SOURCE_DIR}/py_dict/serializable
-            COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_SOURCE_DIR}/py_dict/serializable/__init__.py
-        )
-    # Otherwise just add an empty target
-    else()
-        add_custom_target(${TARGET_NAME} ALL)
-    endif()
+    add_custom_target(${TARGET_NAME} ALL)
 endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
@@ -74,13 +57,17 @@ endfunction(add_global_target)
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
+# - **MOD_DEPS:** module dependencies of the target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS)
+function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
     # Try to generate dictionaries for every AC input file
     foreach (AC_IN ${AC_INPUTS})
-    	# Only generate dictionaries on serializables or topologies
-    	if (AC_IN MATCHES ".*Serializable.*\.xml$" OR AC_IN MATCHES ".*Topology.*\.xml$")
-    	    setup_module_dicts("${MODULE_NAME}" "${TARGET_NAME}" "${AC_IN}" "${AC_OUTPUTS}")
-    	endif()
+        # Only generate dictionaries on serializables or topologies
+        if (AC_IN MATCHES ".*Topology.*\.xml$")
+            fprime_ai_info("${AC_IN}" "${MODULE_NAME}")
+    	    dictgen("${MODULE_NAME}" "${AC_IN}" "${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
+            add_custom_target("${TARGET_NAME}" DEPENDS "${AC_IN}" "${DICTIONARY_OUTPUT_FILE}")
+            add_dependencies("${MODULE_NAME}" "${TARGET_NAME}")
+        endif()
     endforeach()
 endfunction(add_module_target)

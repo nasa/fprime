@@ -128,14 +128,14 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const U32 currTimeBase, //!< The current time base
-                  const U32 seqTimeBase //!< The sequence file time base
+                  const FwTimeBaseStoreType currTimeBase, //!< The current time base
+                  const FwTimeBaseStoreType seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch
               void timeContextMismatch(
-                  const U32 currTimeContext, //!< The current time context
-                  const U32 seqTimeContext //!< The sequence file time context
+                  const FwTimeContextStoreType currTimeContext, //!< The current time context
+                  const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
 
             PRIVATE:
@@ -241,9 +241,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              NATIVE_INT_TYPE identifier, //!< The identifier
+              const NATIVE_INT_TYPE identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              NATIVE_UINT_TYPE bytes //!< The number of bytes
+              const NATIVE_UINT_TYPE bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -539,11 +539,7 @@ namespace Svc {
 
       //! Construct a CmdSequencer
       CmdSequencerComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char* compName //!< The component name
-#else
-          void
-#endif
       );
 
       //! Initialize a CmdSequencer
@@ -571,9 +567,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          NATIVE_INT_TYPE identifier, //!< The identifier
+          const NATIVE_INT_TYPE identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          NATIVE_UINT_TYPE bytes //!< The number of bytes
+          const NATIVE_UINT_TYPE bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.

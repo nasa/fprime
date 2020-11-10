@@ -132,8 +132,10 @@ Directory containing all unit tests invoked by the cmake system. List of working
 ### CMakeLists.txt
 Cmake file that is present in all parts of directory tree to be built by cmake. If cmake was invoked with type testing, templates and test get built. The src directory is always built as well.
 
-### requirements.txt
-Up-to-date requirements file for using the autocoder with either Python2 and Python3. It can be run using "pip install -r ./requirements.txt"
+### Requirements
+
+The Autocoder's requirements are covered by installing the F´ software package. This is is covered by the install document 
+found at: [INSTALL.md](../../INSTALL.md).
 
 ## Schematron
 In Autocoders/Python/schema/default there are various schematron .rng files mixed with the normal F Prime RelaxNG .rng schema files. The schematron files validate xml in the same way as the RelaxNG schemas (within the XmlParser classes), but these schematron files will only generate command line errors, not exceptions like the schema files will. Here is a short description of each file:

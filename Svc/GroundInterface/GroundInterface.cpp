@@ -20,17 +20,12 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   GroundInterfaceComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     GroundInterfaceComponentImpl(
         const char *const compName
-    ) :
-      GroundInterfaceComponentBase(compName),
-#else
-  GroundInterfaceComponentBase(void),
-#endif
-    m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
-    m_data_size(0),
-    m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
+    ) : GroundInterfaceComponentBase(compName),
+        m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
+        m_data_size(0),
+        m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
   {
 
   }
@@ -71,7 +66,7 @@ namespace Svc {
     )
   {
       FW_ASSERT(fwBuffer.getsize() <= MAX_DATA_SIZE);
-      frame_send(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
+      frame_send(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize(), Fw::ComPacket::FW_PACKET_FILE);
       fileDownlinkBufferSendOut_out(0, fwBuffer);
   }
 
@@ -99,19 +94,30 @@ namespace Svc {
       }
   }
 
-  void GroundInterfaceComponentImpl::frame_send(U8 *data, TOKEN_TYPE size) {
+  void GroundInterfaceComponentImpl::frame_send(U8 *data, TOKEN_TYPE size, TOKEN_TYPE packet_type) {
       // TODO: replace with a call to a buffer manager
       Fw::Buffer buffer = m_ext_buffer;
       Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(m_ext_buffer.getdata()),
                                                  m_ext_buffer.getsize());
+      // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
+      // This is because if not UNKOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
+      // already the first token in the UNKNOWN typed buffer.
+      U32 true_size = (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? size + sizeof(TOKEN_TYPE) : size;
+      U32 total_size = sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32);
       // Serialize data
+      FW_ASSERT(GND_BUFFER_SIZE >= total_size, GND_BUFFER_SIZE, total_size);
       buffer_wrapper.serialize(START_WORD);
-      buffer_wrapper.serialize(static_cast<TOKEN_TYPE>(size));
+      buffer_wrapper.serialize(static_cast<TOKEN_TYPE>(true_size));
+      // Explicitly set the packet type, if it didn't come with the data already
+      if (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) {
+          buffer_wrapper.serialize(packet_type);
+      }
       buffer_wrapper.serialize(data, size, true);
       buffer_wrapper.serialize(static_cast<TOKEN_TYPE>(END_WORD));
 
       buffer.setsize(buffer_wrapper.getBuffLength());
       buffer.setdata(reinterpret_cast<POINTER_CAST>(buffer_wrapper.getBuffAddr()));
+      FW_ASSERT(buffer.getsize() == total_size, buffer.getsize(), total_size);
       write_out(0, buffer);
   }
 
@@ -137,8 +143,8 @@ namespace Svc {
               if (isConnected_fileUplinkBufferGet_OutputPort(0) &&
                   isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
                   Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
-                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size, HEADER_SIZE);
-                  buffer.setsize(m_data_size);
+                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
+                  buffer.setsize(m_data_size - sizeof(packet_type));
                   fileUplinkBufferSendOut_out(0, buffer);
               }
               break;

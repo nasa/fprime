@@ -60,14 +60,17 @@ namespace Svc {
         const Fw::CmdStringArg& dirName
     )
   {
+    Fw::LogStringArg logStringDirName(dirName.toChar());
+    this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
     const Os::FileSystem::Status status = 
       Os::FileSystem::createDirectory(dirName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringDirName(dirName.toChar());
       this->log_WARNING_HI_DirectoryCreateError(
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_CreateDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -80,14 +83,17 @@ namespace Svc {
         const Fw::CmdStringArg& fileName
     )
   {
+    Fw::LogStringArg logStringFileName(fileName.toChar());
+    this->log_ACTIVITY_HI_RemoveFileStarted(logStringFileName);
     const Os::FileSystem::Status status =
       Os::FileSystem::removeFile(fileName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringFileName(fileName.toChar());
       this->log_WARNING_HI_FileRemoveError(
           logStringFileName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -101,17 +107,20 @@ namespace Svc {
         const Fw::CmdStringArg& destFileName
     )
   {
+    Fw::LogStringArg logStringSource(sourceFileName.toChar());
+    Fw::LogStringArg logStringDest(destFileName.toChar());
+    this->log_ACTIVITY_HI_MoveFileStarted(logStringSource, logStringDest);
     const Os::FileSystem::Status status = 
       Os::FileSystem::moveFile(
           sourceFileName.toChar(), 
           destFileName.toChar()
       );
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringSource(sourceFileName.toChar());
-      Fw::LogStringArg logStringDest(destFileName.toChar());
       this->log_WARNING_HI_FileMoveError(
           logStringSource, logStringDest, status
       );
+    } else {
+      this->log_ACTIVITY_HI_MoveFileSucceeded(logStringSource, logStringDest);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -124,14 +133,17 @@ namespace Svc {
         const Fw::CmdStringArg& dirName
     )
   {
+    Fw::LogStringArg logStringDirName(dirName.toChar());
+    this->log_ACTIVITY_HI_RemoveDirectoryStarted(logStringDirName);
     const Os::FileSystem::Status status =
       Os::FileSystem::removeDirectory(dirName.toChar());
     if (status != Os::FileSystem::OP_OK) {
-      Fw::LogStringArg logStringDirName(dirName.toChar());
       this->log_WARNING_HI_DirectoryRemoveError(
           logStringDirName,
           status
       );
+    } else {
+      this->log_ACTIVITY_HI_RemoveDirectorySucceeded(logStringDirName);
     }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
@@ -145,15 +157,17 @@ namespace Svc {
         const Fw::CmdStringArg& logFileName
     )
   {
+    Fw::LogStringArg logStringCommand(command.toChar());
+    this->log_ACTIVITY_HI_ShellCommandStarted(
+          logStringCommand
+      );
     NATIVE_INT_TYPE status = 
       this->systemCall(command, logFileName);
-    Fw::LogStringArg logStringCommand(command.toChar());
     if (status == 0) {
       this->log_ACTIVITY_HI_ShellCommandSucceeded(
           logStringCommand
       );
-    }
-    else {
+    } else {
       this->log_WARNING_HI_ShellCommandFailed(
           logStringCommand, status
       );
@@ -166,6 +180,37 @@ namespace Svc {
         cmdSeq, 
         status == 0 ? Os::FileSystem::OP_OK : Os::FileSystem::OTHER_ERROR
     );
+  }
+
+  void FileManager ::
+    AppendFile_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& source,
+        const Fw::CmdStringArg& target
+    )
+  {
+    Fw::LogStringArg logStringSource(source.toChar());
+    Fw::LogStringArg logStringTarget(target.toChar());
+    this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
+
+    Os::FileSystem::Status status;
+    status = Os::FileSystem::appendFile(source.toChar(), target.toChar(), true);
+    if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_AppendFileFailed(
+        logStringSource,
+        logStringTarget,
+        status
+      );
+    } else {
+      this->log_ACTIVITY_HI_AppendFileSucceeded(
+        logStringSource,
+        logStringTarget
+      );
+    }
+
+    this->emitTelemetry(status);
+    this->sendCommandResponse(opCode, cmdSeq, status);
   }
 
   void FileManager ::

@@ -13,7 +13,7 @@
 
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 
 namespace Fw {
@@ -28,11 +28,7 @@ namespace Fw {
             };
 
         PROTECTED:
-#if FW_OBJECT_NAMES == 1
             ActiveComponentBase(const char* name); //!< Constructor
-#else
-            ActiveComponentBase(); //!< Constructor
-#endif
             virtual ~ActiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization code
             virtual void preamble(void); //!< A function that will be called before the event loop is entered

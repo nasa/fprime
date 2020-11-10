@@ -6,6 +6,31 @@
 ####
 
 ####
+# Function `get_nearest_build_root`:
+#
+# Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.
+#
+# - **DIRECTORY_PATH:** path to detect nearest build root
+# Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
+####
+function(get_nearest_build_root DIRECTORY_PATH)
+    set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
+    set(LAST_REL "${DIRECTORY_PATH}")
+    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS})
+        file(RELATIVE_PATH TEMP_MODULE ${FPRIME_BUILD_LOC} ${DIRECTORY_PATH})
+        string(LENGTH "${LAST_REL}" LEN1)
+        string(LENGTH "${TEMP_MODULE}" LEN2)
+        if (LEN2 LESS LEN1 AND TEMP_MODULE MATCHES "^[^./].*")
+            set(FOUND_BUILD_ROOT "${FPRIME_BUILD_LOC}")
+            set(LAST_REL "${TEMP_MODULE}")
+        endif()
+    endforeach()
+    if ("${FOUND_BUILD_ROOT}" STREQUAL "${DIRECTORY_PATH}")
+        message(FATAL_ERROR "No build root found for: ${DIRECTORY_PATH}")
+    endif()
+    set(FPRIME_CLOSEST_BUILD_ROOT "${FOUND_BUILD_ROOT}" PARENT_SCOPE)
+endfunction()
+####
 # Function `get_module_name`:
 #
 # Takes a path, or something path-like and returns the module's name. This breaks down as the
@@ -26,7 +51,8 @@ function(get_module_name DIRECTORY_PATH)
   # forward in the calculation.
   if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
       # Get path name relative to the root directory
-      file(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CURRENT_BUILD_ROOT} ${DIRECTORY_PATH})
+      get_nearest_build_root(${DIRECTORY_PATH})  
+      File(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CLOSEST_BUILD_ROOT} ${DIRECTORY_PATH})
   else()
       set(TEMP_MODULE_NAME ${DIRECTORY_PATH})
   endif()
@@ -64,35 +90,46 @@ function(add_generated_sources CPP_SOURCE HPP_SOURCE)
 endfunction(add_generated_sources)
 
 ####
-# Function `fprime_dependencies`:
+# Function `fprime_ai_info`:
 #
-# A function used to detect the dependencies of a given module from the XML file that
-# defines this module. This is used to reduce code in the Serializable, Port, Component,
-# and Topology functions that all use the same procedure.
+# A function used to detect all the needed information for an Ai.xml file. This looks for the following items:
+#  1. Type of object defined inside: Component, Port, Enum, Serializable, TopologyApp
+#  2. All fprime module dependencies that may be auto-detected
+#  3. All file dependencies
 #
 # - **XML_PATH:** full path to the XML used for sources.
 # - **MODULE_NAME:** name of the module soliciting new dependencies
-# - **PARSER_TYPE:** type of parser to use. Must be one of the prefixes *_xml in cmake/parser/
 ####
-function(fprime_dependencies XML_PATH MODULE_NAME PARSER_TYPE)
+function(fprime_ai_info XML_PATH MODULE_NAME)
+  # Run the parser and capture the output. If an error occcurs, that fatals CMake as we cannot continue
   set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
-      COMMAND "${FPRIME_CORE_DIR}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CURRENT_BUILD_ROOT}"
+      COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
 	  RESULT_VARIABLE ERR_RETURN
-	  OUTPUT_VARIABLE TARGETS
+	  OUTPUT_VARIABLE AI_OUTPUT
   )
-  # Check parser return code
   if(ERR_RETURN)
      message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
   endif()
-  # For every dected dependency, add them to the supplied module. This enforces build order.
-  # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
-  # this prevents the need for manually specifying link orders.
-  foreach(TARGET ${TARGETS})
-    add_dependencies(${MODULE_NAME} "${TARGET}")
-    target_link_libraries(${MODULE_NAME} "${TARGET}")
-  endforeach()
-endfunction(fprime_dependencies)
+  # Next parse the output matching one line at a time, then consuming it and matching the next
+  string(REGEX MATCH   "([^\r\n]+)" XML_TYPE "${AI_OUTPUT}")
+  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
+  string(REGEX MATCH   "^([^\r\n]+)" MODULE_DEPENDENCIES "${AI_OUTPUT}")
+  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
+  string(REGEX MATCH   "^([^\r\n]+)" FILE_DEPENDENCIES "${AI_OUTPUT}")
+
+  # Next compute the needed variants of the items needed. This
+  string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
+  get_filename_component(XML_NAME "${INPUT_FILE}" NAME)
+  string(REGEX REPLACE "(${XML_TYPE})?Ai.xml" "" AC_OBJ_NAME "${XML_NAME}")
+
+  # Finally, set all variables into parent scope
+  set(XML_TYPE "${XML_TYPE}" PARENT_SCOPE)
+  set(XML_LOWER_TYPE "${XML_LOWER_TYPE}" PARENT_SCOPE)
+  set(AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
+  set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
+  set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+endfunction(fprime_ai_info)
 
 ####
 # Function `split_source_files`:
@@ -107,7 +144,7 @@ function(split_source_files SOURCE_INPUT_FILES)
     set(AC "")
     set(SC "")
     foreach (INPUTFILE ${SOURCE_INPUT_FILES})
-        if (INPUTFILE MATCHES ".*\.xml$" OR INPUTFILE MATCHES ".*\.txt")
+        if (INPUTFILE MATCHES ".*\\.xml$" OR INPUTFILE MATCHES ".*\\.txt")
             list(APPEND AC ${INPUTFILE})
         else()
             list(APPEND SC ${INPUTFILE})
@@ -148,8 +185,8 @@ endfunction(split_dependencies)
 # hashes.txt. This allows for asserts on file ID not string.
 ####
 function(set_hash_flag SRC)
-    get_filename_component(FPRIME_CURRENT_BUILD_ROOT_ABS "${FPRIME_CURRENT_BUILD_ROOT}" ABSOLUTE)
-    string(REPLACE "${FPRIME_CURRENT_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
+    string(REPLACE "${FPRIME_CLOSEST_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
     string(MD5 HASH_VAL "${SHORT_SRC}")
     string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
     file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")

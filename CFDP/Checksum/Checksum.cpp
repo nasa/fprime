@@ -32,6 +32,12 @@ namespace CFDP {
   }
 
   Checksum ::
+    Checksum(const Checksum &original)
+  {
+    this->value = original.getValue();
+  }
+
+  Checksum ::
     ~Checksum()
   {
 
@@ -41,7 +47,7 @@ namespace CFDP {
     operator=(const Checksum& checksum)
   {
     this->value = checksum.value;
-    return checksum;
+    return *this;
   }
     
   bool Checksum ::
@@ -74,10 +80,10 @@ namespace CFDP {
     // Add the first word unaligned if necessary
     const U32 offsetMod4 = offset % 4;
     if (offsetMod4 != 0) {
-      const U8 wordLength = min(length, 4 - offsetMod4);
+      const U8 wordLength = static_cast<U8>(min(length, 4 - offsetMod4));
       this->addWordUnaligned(
           &data[index],
-          offset + index,
+          static_cast<U8>(offset + index),
           wordLength
       );
       index += wordLength;
@@ -89,10 +95,10 @@ namespace CFDP {
 
     // Add the last word unaligned if necessary
     if (index < length) {
-      const U8 wordLength = length - index;
+      const U8 wordLength = static_cast<U8>(length - index);
       this->addWordUnaligned(
           &data[index], 
-          offset + index,
+          static_cast<U8>(offset + index),
           wordLength
       );
     }
@@ -102,7 +108,7 @@ namespace CFDP {
   void Checksum ::
     addWordAligned(const U8 *const word)
   {
-    for (U32 i = 0; i < 4; ++i)
+    for (U8 i = 0; i < 4; ++i)
       addByteAtOffset(word[i], i);
   }
   

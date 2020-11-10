@@ -103,6 +103,13 @@ $emit_cpp_params([ $param_maxHistorySize ])
     #end if
   #end for
 #end if
+  #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
+    #set $params = $port_params[$instance]
+    #if len($typed_user_output_ports) > 0 and len($params) > 0:
+    // Destroy port histories
+    delete this->fromPortHistory_${instance};
+    #end if
+  #end for
   }
 
   void ${tester_base} ::
@@ -1275,7 +1282,7 @@ $emit_cpp_params([ $param_val, $param_valid ])
 
 #end for
 #if $namespace_list != None
- #for $namespace in $namespace_list
+ #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
  #end for
 #end if

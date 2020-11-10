@@ -1,5 +1,4 @@
-#!/bin/env python
-#===============================================================================
+# ===============================================================================
 # NAME: TestImplCppWriter.py
 #
 # DESCRIPTION: A writer class for generating test implementation cpp files.
@@ -10,21 +9,27 @@
 #
 # Copyright 2015, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
-#===============================================================================
+# ===============================================================================
+import sys
 
-from fprime_ac.utils import ConfigManager
-
-from fprime_ac.generators.templates.test_impl import cpp
 from fprime_ac.generators.writers import TestImplWriterBase
+
+try:
+    from fprime_ac.generators.templates.test_impl import cpp
+except ImportError:
+    print("ERROR: must generate python templates first.")
+    sys.exit(-1)
+
 
 class TestImplCppWriter(TestImplWriterBase.TestImplWriterBase):
     """
     A writer class for generating test implementation cpp files.
     """
-    
+
     FILE_NAME = "Tester.cpp"
 
     def __init__(self):
+        super().__init__()
         self.initBase("TestImplCpp")
 
     def emitPortParams(self, params):
