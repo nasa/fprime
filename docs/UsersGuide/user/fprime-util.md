@@ -14,7 +14,7 @@ optional arguments:
 subcommands:
   F prime utility command line. Please run one of the commands. For help, run a command with the --help flag.
 
-  {generate,purge,hash-to-file,info,build,impl,check,coverage,install}
+  {generate,purge,hash-to-file,info,build,impl,check,coverage}
     generate            Generate a build cache directory
     purge               Purge build cache directoriess
     hash-to-file        Converts F prime build hash to filename.
@@ -23,7 +23,6 @@ subcommands:
     impl                Generate implementation template files in the specified directory
     check               Run unit tests in the specified directory
     coverage            Generate unit test coverage reports in the specified directory
-    install             Install the current deployment build artifacts in the specified directory
 ```
 
 The `fprime-util` helper is driven by a series of subcommands listed above. Each perform one aspect
@@ -40,7 +39,8 @@ each command's usage in more detail.
 4. `info`: Print information about location of build caches and `fprime-util` commands available in
    the current directory.
 5. `build`: builds the current directory. If in a component directory, it will compile the component
-   library. If in a deployment directory, it will build the binary.
+   library. If in a deployment directory, it will build the binary, the copy build artifacts into
+   installation directory.
 6. `impl`: Autogenerate boilerplate for components and component unit tests. When creating a new
    component, this command can generate a new skeleton implementation of the component from the
    *Ai.xml file, saving significant development time. Providing the `--ut` flag will generate a unit
@@ -49,7 +49,6 @@ each command's usage in more detail.
    unit tests known to a deployment. The `--leak` flag will check for memory leaks while running the
    unit tests.
 8. `coverage`: Similar to check, but calculates and generates unit test code coverage reports.
-9. `install`: Builds, if necessary, then copies built deployment binaries into the `bin/` directory.
 
 Most `fprime-util` commands support a common set of flags that can be used to modify command
 behavior:

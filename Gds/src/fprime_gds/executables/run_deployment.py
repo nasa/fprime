@@ -8,12 +8,103 @@ import sys
 import platform
 import sys
 import webbrowser
+from pathlib import Path
+from fprime.fbuild.settings import IniSettings
 
 import fprime_gds.executables.cli
 import fprime_gds.executables.utils
 
 
-def get_args():
+def get_artifacts_root() -> Path:
+    ini_settings = IniSettings.load(None)
+    assert "install_dest" in ini_settings, "install_dest not in settings.ini"
+    print(
+        "[INFO] Autodetected artifacts root '{}' from deployment settings.ini file.".format(
+            ini_settings["install_dest"]
+        )
+    )
+    return ini_settings["install_dest"]
+
+
+def find_app(root: Path) -> Path:
+    bin_dir = root / "bin"
+
+    if not bin_dir.exists():
+        print("[ERROR] binary location {} does not exist".format(bin_dir))
+        sys.exit(-1)
+
+    files = []
+    for child in bin_dir.iterdir():
+        if child.is_file():
+            files.append(child)
+
+    if len(files) == 0:
+        print("[ERROR] No app found in binary location {}".format(bin_dir))
+        sys.exit(-1)
+
+    if len(files) > 1:
+        print(
+            "[ERROR] Multiple app candidates in binary location {}. Specify app manually with --app.".format(
+                bin_dir
+            )
+        )
+        sys.exit(-1)
+
+    return files[0]
+
+
+def find_dict(root: Path) -> Path:
+    dict_dir = root / "dict"
+
+    if not dict_dir.exists():
+        print("[ERROR] dictionary location {} does not exist".format(dict_dir))
+        sys.exit(-1)
+
+    files = []
+    for child in dict_dir.iterdir():
+        if child.is_file() and child.suffix == ".xml":
+            files.append(child)
+
+    if len(files) == 0:
+        print(
+            "[ERROR] No xml dictionary found in dictionary location {}".format(dict_dir)
+        )
+        sys.exit(-1)
+
+    if len(files) > 1:
+        print(
+            "[ERROR] Multiple xml dictionaries found in dictionary location {}. Specify dictionary manually with --dictionary.".format(
+                dict_dir
+            )
+        )
+        sys.exit(-1)
+
+    return files[0]
+
+
+def get_settings():
+    args = parse_args()
+
+    if args.dictionary is not None and (args.app is not None or args.noapp):
+        return args
+
+    root = None
+    if args.root_dir is not None:
+        root = Path(args.root_dir)
+    else:
+        root = get_artifacts_root()
+    root = root / platform.system()
+
+    if not args.noapp and args.app is None:
+        args.app = find_app(root)
+
+    if args.dictionary is None:
+        args.dictionary = find_dict(root)
+
+    return args
+
+
+def parse_args():
     """
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
@@ -237,21 +328,21 @@ def main():
     """
     Main function used to launch processes.
     """
-    args = vars(get_args())
+    settings = vars(get_settings())
     # Launch a gui, if specified
-    args["connect_address"] = (
-        args["tts_addr"] if args["tts_addr"] != "0.0.0.0" else "127.0.0.1"
+    settings["connect_address"] = (
+        settings["tts_addr"] if settings["tts_addr"] != "0.0.0.0" else "127.0.0.1"
     )
     # List of things to launch, in order.
     launchers = [launch_tts, launch_comm]
     # Add app, if possible
-    if args.get("app", None) is not None and args.get("adapter", "") == "ip":
+    if settings.get("app", None) is not None and settings.get("adapter", "") == "ip":
         launchers.append(launch_app)
-    elif args.get("app", None) is not None:
+    elif settings.get("app", None) is not None:
         print("[WARNING] App cannot be auto-launched without IP adapter")
 
     # Launch the desired GUI package
-    gui = args.get("gui", "none")
+    gui = settings.get("gui", "none")
     if gui == "wx":
         launchers.append(launch_wx)
     elif gui == "html" or gui == "none":
@@ -259,12 +350,12 @@ def main():
     # elif gui == "none":
     #    print("[WARNING] No GUI specified, running headless", file=sys.stderr)
     else:
-        raise Exception("Invalid GUI specified: {}".format(args["gui"]))
+        raise Exception("Invalid GUI specified: {}".format(settings["gui"]))
     # Launch launchers and wait for the last app to finish
     try:
         procs = []
         for launcher in launchers:
-            procs.append(launcher(**args))
+            procs.append(launcher(**settings))
         print("[INFO] F prime is now running. CTRL-C to shutdown all components.")
         procs[-1].wait()
     except KeyboardInterrupt:

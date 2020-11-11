@@ -2114,20 +2114,9 @@ The final connection is the connection that performs the math operation. It goes
 
 Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
 If the updates were correct, the module should compile with no errors. 
-The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`. Once the
-build passes, you should also run the installation of the `Ref` deployment using by typing `fprime-util install`.
+The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
 
 If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
-
-# 4 Executing the Example
-
-We are now ready to run the ground system. Before the user runs this build system, ensure that the install command has
-been run. This is accomplished with the following commands:
-
-```shell
-cd fprime/Ref
-fprime-util install
-```
 
 ## 4.1 Running the Ground System
 

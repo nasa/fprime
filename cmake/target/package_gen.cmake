@@ -22,7 +22,7 @@ function(add_global_target TARGET_NAME)
         return()
     endif()
 
-    add_custom_target(${TARGET_NAME})
+    add_custom_target(${TARGET_NAME} ALL)
 endfunction(add_global_target)
 
 ####
@@ -51,15 +51,15 @@ function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS 
     if ("${FPRIME_OBJECT_TYPE}" STREQUAL "Library")
         add_custom_target(
             ${TARGET_NAME}
-            COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/lib/static/${PLATFORM}/"
-            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${PROJECT_SOURCE_DIR}/lib/static/${PLATFORM}/"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${FPRIME_INSTALL_DEST}/${PLATFORM}/lib/static/"
+            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${FPRIME_INSTALL_DEST}/${PLATFORM}/lib/static/"
             DEPENDS ${PKG_DEPS}
         )
     elseif("${FPRIME_OBJECT_TYPE}" STREQUAL "Executable")
         add_custom_target(
             ${TARGET_NAME}
-            COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/bin/${PLATFORM}/"
-            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${PROJECT_SOURCE_DIR}/bin/${PLATFORM}/"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${FPRIME_INSTALL_DEST}/${PLATFORM}/bin/"
+            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${FPRIME_INSTALL_DEST}/${PLATFORM}/bin/"
             DEPENDS ${PKG_DEPS}
         )
         add_dependencies("${GLOBAL_TARGET_NAME}" "${TARGET_NAME}")

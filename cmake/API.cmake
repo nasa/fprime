@@ -301,7 +301,15 @@ function(register_fprime_executable)
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
-    generate_executable("${EX_NAME}" "${SC_IFS}" "${MD_IFS}")
+    generate_executable("${EX_NAME}_exe" "${SC_IFS}" "${MD_IFS}")
+    set_target_properties("${EX_NAME}_exe" PROPERTIES OUTPUT_NAME "${EX_NAME}")
+    add_custom_target(${EX_NAME} ALL)
+    add_dependencies("${EX_NAME}" "${EX_NAME}_exe")
+
+    # Only install into artifacts directory in release builds when SKIP_INSTALL is not set.
+    if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE")
+        add_dependencies("${EX_NAME}" "package_gen")
+    endif()
 endfunction(register_fprime_executable)
 
 ####

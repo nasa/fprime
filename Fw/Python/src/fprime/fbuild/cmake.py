@@ -218,6 +218,7 @@ class CMakeHandler:
         :param ignore_output: do not print the output where the user can see it
         :param environment: environment to set when generating
         """
+
         if not os.path.exists(build_dir):
             os.makedirs(build_dir)
         # We will CD for build, so this path must become absolute
