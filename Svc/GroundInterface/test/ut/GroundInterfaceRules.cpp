@@ -65,13 +65,13 @@ namespace Svc {
     }
     // Pick a rule and downlink
     void FileDownlinkRule :: action(Svc::Tester &state) {
-        char data_holder[2048];
-        Fw::Buffer buffer(0, 0, reinterpret_cast<U64>(data_holder), sizeof(data_holder));
-        Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(buffer.getdata()), buffer.getsize());
+        unsigned char data_holder[2048];
+        Fw::Buffer buffer(data_holder, sizeof(data_holder));
+        Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(buffer.getData()), buffer.getSize());
         // Force a U32 to know the size
         buffer_wrapper.serialize(static_cast<U32>(0xdeadbeef));
-        buffer.setsize(buffer_wrapper.getBuffLength());
-        state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), reinterpret_cast<U8*>(buffer.getdata()),
+        buffer.setData(buffer.getData(), buffer_wrapper.getBuffLength());
+        state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), reinterpret_cast<U8*>(buffer.getData()),
                              Fw::ComPacket::FW_PACKET_FILE);
         state.invoke_to_fileDownlinkBufferSendIn(0, buffer);
         state.assert_from_write_size(__FILE__, __LINE__, 1);
@@ -90,11 +90,11 @@ namespace Svc {
     // Pick a rule and downlink
     void SendAvailableRule :: action(Svc::Tester &state) {
         U32 total_used = state.m_uplink_used + HEADER_SIZE + sizeof(U32);
-        U64 up_ptr = reinterpret_cast<U64>(state.m_uplink_data + state.m_uplink_point);
+        U8* up_ptr = state.m_uplink_data + state.m_uplink_point;
         U32 size = ((state.m_uplink_point + state.m_uplink_size) >= total_used) ?
                     (total_used - state.m_uplink_point) : state.m_uplink_size;
         state.m_uplink_point = (state.m_uplink_point + size >= total_used) ? 0 : (state.m_uplink_point + size);
-        Fw::Buffer buffer(0x12345321, 0x98765678, up_ptr, size);
+        Fw::Buffer buffer(up_ptr, size);
         // Uplink based on uplink type
         if (state.m_uplink_type) {
             state.invoke_to_readCallback(0,buffer);

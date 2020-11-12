@@ -21,7 +21,7 @@
 namespace Fw {
 
 Buffer::Buffer(): Serializable(),
-    m_serialize_repr(NULL, 0),
+    m_serialize_repr(),
     m_data(NULL),
     m_size(0),
     m_context(0xFFFFFFFF)

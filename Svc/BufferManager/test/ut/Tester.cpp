@@ -52,15 +52,15 @@ namespace Svc {
       Fw::Buffer buffer1 = this->invoke_to_bufferGetCallee(0, 4);
       Fw::Buffer buffer2 = this->invoke_to_bufferGetCallee(0, 4);
       //Fill the 2nd buffer
-      *((U32*)buffer2.getdata()) = 0xDEADBEEF;
+      *((U32*)buffer2.getData()) = 0xDEADBEEF;
       //Return the 1st buffer
       this->invoke_to_bufferSendIn(0, buffer1);
       //Allocate and fill 3rd buffer
       Fw::Buffer buffer3 = this->invoke_to_bufferGetCallee(0, 4);
-      *((U32*)buffer3.getdata()) = 0x0;
+      *((U32*)buffer3.getData()) = 0x0;
       //Check that no warnings have happened
       //Check that buffer 2's data is intact. It Fails here.
-      ASSERT_EQ(0xDEADBEEF,*((U32*)buffer2.getdata()));
+      ASSERT_EQ(0xDEADBEEF,*((U32*)buffer2.getData()));
   }
 
   // ----------------------------------------------------------------------

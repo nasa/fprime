@@ -32,12 +32,12 @@ namespace Svc {
       component()
 #endif
       ,
+      m_buffer(NULL),
       m_uplink_type(1),
       m_uplink_used(30),
       m_uplink_size(sizeof(TOKEN_TYPE) * 3 + m_uplink_used),
       m_uplink_point(0),
-      m_uplink_com_type(Fw::ComPacket::FW_PACKET_COMMAND),
-      m_buffer(NULL)
+      m_uplink_com_type(Fw::ComPacket::FW_PACKET_COMMAND)
   {
     this->initComponents();
     this->connectPorts();
@@ -89,9 +89,9 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileUplinkBufferSendOut(fwBuffer);
-    for (U32 i = 0; i < fwBuffer.getsize(); i++) {
+    for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
-        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getdata())[i], m_uplink_data[i + HEADER_SIZE + sizeof(TOKEN_TYPE)]);
+        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getData())[i], m_uplink_data[i + HEADER_SIZE + sizeof(TOKEN_TYPE)]);
     }
   }
 
@@ -125,8 +125,7 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileUplinkBufferGet(size);
-    m_incoming_file_buffer.setsize(size);
-    m_incoming_file_buffer.setdata(reinterpret_cast<U64>(file_back_buffer));
+    m_incoming_file_buffer.setData(file_back_buffer, size);
     return m_incoming_file_buffer;
   }
 
@@ -142,8 +141,8 @@ namespace Svc {
     TOKEN_TYPE size = 0;
     TOKEN_TYPE packet = 0;
     U32 end = 0;
-    Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
-    buffer_wrapper.setBuffLen(fwBuffer.getsize());
+    Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(fwBuffer.getData()), fwBuffer.getSize());
+    buffer_wrapper.setBuffLen(fwBuffer.getSize());
     // Check basic deserialization
     ASSERT_EQ(buffer_wrapper.deserialize(start), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buffer_wrapper.deserialize(size), Fw::FW_SERIALIZE_OK);
@@ -175,12 +174,12 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_readPoll(fwBuffer);
-    U8* incoming = reinterpret_cast<U8*>(m_incoming_buffer.getdata());
-    U8* outgoing = reinterpret_cast<U8*>(fwBuffer.getdata());
-    for (U32 i = 0; i < m_incoming_buffer.getsize(); i++) {
+    U8* incoming = reinterpret_cast<U8*>(m_incoming_buffer.getData());
+    U8* outgoing = reinterpret_cast<U8*>(fwBuffer.getData());
+    for (U32 i = 0; i < m_incoming_buffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }
-    fwBuffer.setsize(m_incoming_buffer.getsize());
+    fwBuffer.setData(fwBuffer.getData(), m_incoming_buffer.getSize());
   }
 
   // ----------------------------------------------------------------------
