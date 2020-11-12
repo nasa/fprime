@@ -42,8 +42,8 @@ namespace Fw {
     toBuffer(Buffer& buffer) const
   {
     SerialBuffer serialBuffer(
-        reinterpret_cast<U8*>(buffer.getdata()),
-        buffer.getsize()
+        reinterpret_cast<U8*>(buffer.getData()),
+        buffer.getSize()
     );
     return this->toSerialBuffer(serialBuffer);
   }

@@ -1,100 +1,116 @@
+// ======================================================================
+// \title  Buffer.cpp
+// \author mstarch
+// \brief  cpp file for Fw::Buffer implementation
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
+
 #if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
+    #include <Fw/Types/EightyCharString.hpp>
 #endif
 #include <cstring>
+
 namespace Fw {
-// public methods
 
-Buffer::Buffer(void): Serializable() {
+Buffer::Buffer(): Serializable(),
+    m_serialize_repr(NULL, 0),
+    m_data(NULL),
+    m_size(0),
+    m_context(0xFFFFFFFF)
+{}
 
-}
+Buffer::Buffer(const Buffer& src) : Serializable(),
+    m_serialize_repr(src.m_data, src.m_size),
+    m_data(src.m_data),
+    m_size(src.m_size),
+    m_context(src.m_context)
+{}
 
-Buffer::Buffer(const Buffer& src) : Serializable() {
-    this->set(src.m_managerID, src.m_bufferID, src.m_data, src.m_size);
-}
+//Buffer::Buffer(const Buffer* src) : Serializable() {
+//    FW_ASSERT(src);
+//    this->setData(src->m_data, src->m_size);
+//    this->setContext(src->m_context);
+//}
 
-Buffer::Buffer(const Buffer* src) : Serializable() {
-    FW_ASSERT(src);
-    this->set(src->m_managerID, src->m_bufferID, src->m_data, src->m_size);
-}
+Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
+    m_serialize_repr(data, size),
+    m_data(data),
+    m_size(size),
+    m_context(context)
+{}
 
-Buffer::Buffer(U32 managerID, U32 bufferID, U64 data, U32 size) : Serializable() {
-    this->set(managerID, bufferID, data, size);
-}
-
-const Buffer& Buffer::operator=(const Buffer& src) {
-    this->set(src.m_managerID, src.m_bufferID, src.m_data, src.m_size);
-    return src;
+Buffer& Buffer::operator=(const Buffer& src) {
+    // Ward against self-assignment
+    if (this != &src) {
+        this->setData(src.m_data, src.m_size);
+        this->setContext(src.m_context);
+    }
+    return *this;
 }
 
 bool Buffer::operator==(const Buffer& src) const {
-    return (
-        (src.m_managerID == this->m_managerID) &&
-        (src.m_bufferID == this->m_bufferID) &&
-        (src.m_data == this->m_data) &&
-        (src.m_size == this->m_size) &&
-        true);
+    return (this->m_data == src.m_data) && (this->m_size == src.m_size) && (this->m_context == src.m_context);
 }
 
-void Buffer::set(U32 managerID, U32 bufferID, U64 data, U32 size) {
-    this->m_managerID = managerID;
-    this->m_bufferID = bufferID;
-    this->m_data = data;
-    this->m_size = size;
-}
-
-U32 Buffer::getmanagerID(void) {
-    return this->m_managerID;
-}
-
-U32 Buffer::getbufferID(void) {
-    return this->m_bufferID;
-}
-
-U64 Buffer::getdata(void) {
+U8* Buffer::getData() const {
     return this->m_data;
 }
 
-U32 Buffer::getsize(void) {
+U32 Buffer::getSize() const {
     return this->m_size;
 }
 
-void Buffer::setmanagerID(U32 val) {
-    this->m_managerID = val;
+U32 Buffer::getContext() const {
+    return this->m_context;
 }
-void Buffer::setbufferID(U32 val) {
-    this->m_bufferID = val;
+
+void Buffer::setData(U8* const data, const U32 size) {
+    this->m_data = data;
+    this->m_size = size;
+    this->m_serialize_repr.setExtBuffer(data, size);
+    // Force a reset of usage
+    this->m_serialize_repr.resetSer();
 }
-void Buffer::setdata(U64 val) {
-    this->m_data = val;
+
+void Buffer::setContext(const U32 context) {
+    this->m_context = context;
 }
-void Buffer::setsize(U32 val) {
-    this->m_size = val;
+
+Fw::SerializeBufferBase& Buffer::getSerializeRepr() {
+    this->m_serialize_repr.resetSer();
+    return m_serialize_repr;
 }
+
+Fw::SerializeBufferBase& Buffer::getDeserializeRepr() {
+    m_serialize_repr.setBuffLen(m_size);
+    return m_serialize_repr;
+}
+
 Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
     Fw::SerializeStatus stat;
-
 #if FW_SERIALIZATION_TYPE_ID
-    // serialize type ID
     stat = buffer.serialize((U32)Buffer::TYPE_ID);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
 #endif
-
-    stat = buffer.serialize(this->m_managerID);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-    stat = buffer.serialize(this->m_bufferID);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-    stat = buffer.serialize(this->m_data);
+    stat = buffer.serialize(reinterpret_cast<POINTER_CAST>(this->m_data));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
     stat = buffer.serialize(this->m_size);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.serialize(this->m_context);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -116,20 +132,18 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 #endif
+    POINTER_CAST pointer;
+    stat = buffer.deserialize(pointer);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    this->m_data = reinterpret_cast<U8*>(pointer);
 
-    stat = buffer.deserialize(this->m_managerID);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-    stat = buffer.deserialize(this->m_bufferID);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-    stat = buffer.deserialize(this->m_data);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
     stat = buffer.deserialize(this->m_size);
+    if (stat != Fw::FW_SERIALIZE_OK) {
+        return stat;
+    }
+    stat = buffer.deserialize(this->m_context);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }
@@ -137,32 +151,16 @@ Fw::SerializeStatus Buffer::deserialize(Fw::SerializeBufferBase& buffer) {
 }
 
 #if FW_SERIALIZABLE_TO_STRING  || BUILD_UT
-
 void Buffer::toString(Fw::StringBase& text) const {
-
-    static const char * formatString =
-       "("
-       "managerID = %u, "
-       "bufferID = %u, "
-       "data = %lu, "
-       "size = %u"
-       ")";
-
-    // declare strings to hold any serializable toString() arguments
-
-
+    static const char * formatString = "(data = %p, size = %u,context = %u)";
     char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
-    (void)snprintf(outputString,FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE,formatString
-       ,this->m_managerID
-       ,this->m_bufferID
-       ,this->m_data
-       ,this->m_size
-    );
-    outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE-1] = 0; // NULL terminate
 
+    (void)snprintf(outputString, FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE, formatString, this->m_data, this->m_size,
+                   this->m_context);
+    // Force NULL termination
+    outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE-1] = 0;
     text = outputString;
 }
-
 #endif
 
 #ifdef BUILD_UT
