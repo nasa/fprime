@@ -188,3 +188,8 @@ if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
 endif()
 
+# Settings for F artifacts installation destination
+if (NOT DEFINED FPRIME_INSTALL_DEST)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/" CACHE PATH "F prime artifacts installation directory" FORCE)
+endif()
+set(IGNORE_ME ${FPRIME_INSTALL_DEST}) # Prevent warning that FPRIME_INSTALL_DEST is unused
