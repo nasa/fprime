@@ -40,6 +40,7 @@ The API documentation section contains the automatically generated documentation
     - [Core Constructs: Ports, Components, and Topologies](user/port-comp-top.md)
     - [Data Types and Data Structures: Primitive Types, Enums, Arrays, and Serializables](user/enum-arr-ser.md)
     - [Data Constructs: Commands, Events, Channels, and Parameters](user/cmd-evt-chn-prm.md)
+    - [Unit Testing F´ Components](./user/unit-testing.md)
 - F´ Best Practices: helpful patterns when developing F´ software
     - [F´ Development Process](./best/development-practice.md)
     - [Application, Manager, Driver Pattern](./best/app-man-drv.md)
@@ -51,6 +52,7 @@ The API documentation section contains the automatically generated documentation
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
     - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
 - Full Development Guides: technical details for full F´ implementations
+    - [Configuring F´](./dev/configuring-fprime.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
     - [F´ XML Specifications](./dev/xml-specification.md): 
     - [F´ Implementation Classes](./dev/implementation.md)
