@@ -54,8 +54,7 @@ public:
     //! Constructs a buffer setting the context to the default no-context value of 0xffffffff. In addition, the size
     //! and data pointers are zeroed-out.
     Buffer();
-    // //! Construct a buffer by copying data from a pointer to another buffer
-    // explicit Buffer(const Buffer* src);
+
     //! Construct a buffer by copying data from a reference to anothe buffer
     Buffer(const Buffer& src);
 
@@ -140,11 +139,15 @@ public:
 
     //! Sets pointer to wrapped data and the size of the given data
     //!
-    void setData(U8* const data, const U32 size);
+    void setData(U8* data);
+
+    //! Sets pointer to wrapped data and the size of the given data
+    //!
+    void setSize(U32 size);
 
     //! Sets creation context
     //!
-    void setContext(const U32 context);
+    void setContext(U32 context);
 
 #if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     //! Supports writing this buffer to a string representation

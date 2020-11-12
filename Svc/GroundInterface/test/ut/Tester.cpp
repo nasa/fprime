@@ -125,7 +125,8 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_fileUplinkBufferGet(size);
-    m_incoming_file_buffer.setData(file_back_buffer, size);
+    m_incoming_file_buffer.setData(file_back_buffer);
+    m_incoming_file_buffer.setSize(size);
     return m_incoming_file_buffer;
   }
 
@@ -179,7 +180,7 @@ namespace Svc {
     for (U32 i = 0; i < m_incoming_buffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }
-    fwBuffer.setData(fwBuffer.getData(), m_incoming_buffer.getSize());
+    fwBuffer.setSize(m_incoming_buffer.getSize());
   }
 
   // ----------------------------------------------------------------------

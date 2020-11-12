@@ -34,12 +34,6 @@ Buffer::Buffer(const Buffer& src) : Serializable(),
     m_context(src.m_context)
 {}
 
-//Buffer::Buffer(const Buffer* src) : Serializable() {
-//    FW_ASSERT(src);
-//    this->setData(src->m_data, src->m_size);
-//    this->setContext(src->m_context);
-//}
-
 Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
     m_serialize_repr(data, size),
     m_data(data),
@@ -50,7 +44,8 @@ Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
 Buffer& Buffer::operator=(const Buffer& src) {
     // Ward against self-assignment
     if (this != &src) {
-        this->setData(src.m_data, src.m_size);
+        this->setData(src.m_data);
+        this->setSize(src.m_size);
         this->setContext(src.m_context);
     }
     return *this;
@@ -72,10 +67,16 @@ U32 Buffer::getContext() const {
     return this->m_context;
 }
 
-void Buffer::setData(U8* const data, const U32 size) {
+void Buffer::setData(U8* const data) {
     this->m_data = data;
+    this->m_serialize_repr.setExtBuffer(m_data, m_size);
+    // Force a reset of usage
+    this->m_serialize_repr.resetSer();
+}
+
+void Buffer::setSize(const U32 size) {
     this->m_size = size;
-    this->m_serialize_repr.setExtBuffer(data, size);
+    this->m_serialize_repr.setExtBuffer(m_data, m_size);
     // Force a reset of usage
     this->m_serialize_repr.resetSer();
 }

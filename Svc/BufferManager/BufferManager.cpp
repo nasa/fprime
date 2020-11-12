@@ -327,7 +327,8 @@ namespace Svc {
 
     if (warningStatus == Warnings::Status::SUCCESS) {
         buffer.setContext(BufferManager::getBufferContext(this->getInstance(), id));
-        buffer.setData(address, size);
+        buffer.setData(address);
+        buffer.setSize(size);
     }
 
     this->warnings.update(warningStatus);

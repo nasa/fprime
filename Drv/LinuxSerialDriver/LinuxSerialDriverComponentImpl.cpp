@@ -389,7 +389,7 @@ namespace Drv {
           } else {
 //              (void)clock_gettime(CLOCK_REALTIME,&stime);
 //              DEBUG_PRINT("<!<! Sending data to RceAdapter %u at %d %d\n", buff.getsize(), stime.tv_sec, stime.tv_nsec);
-              buff.setData(buff.getData(), sizeRead);
+              buff.setSize(sizeRead);
               serReadStat = Drv::SER_OK; // added by m.chase 03.06.2017
               //comp->serialRecv_out(0,buff,Drv::SER_OK);
           }

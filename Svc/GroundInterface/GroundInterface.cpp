@@ -115,7 +115,7 @@ namespace Svc {
       buffer_wrapper.serialize(static_cast<TOKEN_TYPE>(END_WORD));
 
       // Setup for sending by truncating unused data
-      buffer.setData(buffer.getData(), buffer_wrapper.getBuffLength());
+      buffer.setSize(buffer_wrapper.getBuffLength());
       FW_ASSERT(buffer.getSize() == total_size, buffer.getSize(), total_size);
       write_out(0, buffer);
   }
@@ -143,7 +143,7 @@ namespace Svc {
                   isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
                   Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
                   m_in_ring.peek(buffer.getData(), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
-                  buffer.setData(buffer.getData(), m_data_size - sizeof(packet_type));
+                  buffer.setSize(m_data_size - sizeof(packet_type));
                   fileUplinkBufferSendOut_out(0, buffer);
               }
               break;

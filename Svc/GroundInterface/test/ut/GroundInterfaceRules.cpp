@@ -70,7 +70,7 @@ namespace Svc {
         Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(buffer.getData()), buffer.getSize());
         // Force a U32 to know the size
         buffer_wrapper.serialize(static_cast<U32>(0xdeadbeef));
-        buffer.setData(buffer.getData(), buffer_wrapper.getBuffLength());
+        buffer.setSize(buffer_wrapper.getBuffLength());
         state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), reinterpret_cast<U8*>(buffer.getData()),
                              Fw::ComPacket::FW_PACKET_FILE);
         state.invoke_to_fileDownlinkBufferSendIn(0, buffer);

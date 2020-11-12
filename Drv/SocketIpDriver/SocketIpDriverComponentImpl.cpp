@@ -82,7 +82,7 @@ namespace Drv {
                   // Ignore KEEPALIVE data and send out any other data.
                   if (memcmp(data, KEEPALIVE_CONST,
                          (size > static_cast<I32>(sizeof(KEEPALIVE_CONST)) - 1) ? sizeof(KEEPALIVE_CONST) -1 : size) != 0) {
-                      self->m_buffer.setData(self->m_buffer.getData(), size);
+                      self->m_buffer.setSize(size);
                       self->recv_out(0, self->m_buffer);
                   }
               }
