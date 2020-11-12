@@ -193,6 +193,10 @@ endfunction(register_fprime_module)
 # fprime autocoding capabilities. This requires three variables to define the executable name,
 # autocoding and source inputs, and (optionally) any non-standard link dependencies.
 #
+# Executables will automatically install itself and its dependencies into the out-of-cache build
+# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. To skip this
+# installation step, set the SKIP_INSTALL variable before registering an executable.
+#
 # Required variables (defined in calling scope):
 #
 #
@@ -300,7 +304,9 @@ function(register_fprime_executable)
         message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Explicit call to module register
+    # Register executable and module with name '<exe name>_exe', then create an empty target with
+    # name '<exe name>' that depends on the executable. This enables additional post-processing
+    # targets that depend on the built executable.
     generate_executable("${EX_NAME}_exe" "${SC_IFS}" "${MD_IFS}")
     set_target_properties("${EX_NAME}_exe" PROPERTIES OUTPUT_NAME "${EX_NAME}")
     add_custom_target(${EX_NAME} ALL)
