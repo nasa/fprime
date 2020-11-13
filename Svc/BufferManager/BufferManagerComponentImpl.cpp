@@ -14,6 +14,7 @@
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
+#include <new>
 
 namespace Svc {
 
@@ -109,8 +110,11 @@ namespace Svc {
     for (NATIVE_UINT_TYPE bin = 0; bin < MAX_NUM_BINS; bin++) {
         if (bins.bins[bin].numBuffers) {
             for (NATIVE_UINT_TYPE binEntry = 0; binEntry < bins.bins[bin].numBuffers; binEntry++) {
-                // placement new for Fw::Buffer instance
-                Fw::Buffer* ptr = new(&this->m_buffers[currStruct].buff) Fw::Buffer;
+                // placement new for Fw::Buffer instance. We don't need the new() return value, 
+                // because we know where the Fw::Buffer instance is
+                (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer();
+                this->m_buffers[currStruct].buff.set(
+                          0,currStruct,reinterpret_cast<U64>(bufferMem),bins.bins[bin].bufferSize);
                 this->m_buffers[currStruct].allocated = false;
                 this->m_buffers[currStruct].memory = bufferMem;
                 bufferMem += bins.bins[bin].bufferSize;
