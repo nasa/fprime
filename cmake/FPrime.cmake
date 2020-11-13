@@ -53,6 +53,7 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/file_list.cmake")
 
 register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
 
