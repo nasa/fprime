@@ -1,3 +1,4 @@
 title: "F´"
 description: "Flight Software & Embedded Systems Framework"
-theme: jekyll-theme-slate
+theme: jekyll-theme-slate,
+include: UsersGuide/api/
