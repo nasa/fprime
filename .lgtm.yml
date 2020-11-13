@@ -36,5 +36,4 @@ extraction:
             - "fprime-util generate"
         index:   
             build_command:
-                - "cd build-fprime-automatic-default/"
                 - "fprime-util build --all"
