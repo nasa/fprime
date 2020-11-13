@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/BufferManager.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImpl.cpp"
 )
 
 register_fprime_module()
