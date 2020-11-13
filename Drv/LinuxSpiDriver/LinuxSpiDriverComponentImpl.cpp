@@ -41,14 +41,14 @@ namespace Drv {
             return;
         }
 
-        DEBUG_PRINT("Writing %d bytes to SPI\n",writeBuffer.getsize());
+        DEBUG_PRINT("Writing %d bytes to SPI\n",writeBuffer.getSize());
 
         spi_ioc_transfer tr;
         // Zero for unused fields:
         memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = writeBuffer.getdata();
-        tr.rx_buf = readBuffer.getdata();
-        tr.len = writeBuffer.getsize();
+        tr.tx_buf = (U64)writeBuffer.getData();
+        tr.rx_buf = (U64)readBuffer.getData();
+        tr.len = writeBuffer.getSize();
 /*
             .speed_hz = 0,
             .delay_usecs = 0,
@@ -64,7 +64,7 @@ namespace Drv {
         if (stat < 1) {
             this->log_WARNING_HI_SPI_WriteError(this->m_device,this->m_select,stat);
         }
-        this->m_bytes += readBuffer.getsize();
+        this->m_bytes += readBuffer.getSize();
         this->tlmWrite_SPI_Bytes(this->m_bytes);
         return;
 

@@ -80,8 +80,8 @@ namespace Drv {
 
 #if DEBUG_PRINT
       printf("I2c addr: 0x%02X\n",addr);
-      for (U32 byte = 0; byte < serBuffer.getsize(); byte++) {
-    	  printf("0x%02X ",((U8*)serBuffer.getdata())[byte]);
+      for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
+    	  printf("0x%02X ",((U8*)serBuffer.getData())[byte]);
 
       }
       printf("\n");
@@ -95,9 +95,9 @@ namespace Drv {
 	  return Drv::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
-      FW_ASSERT(serBuffer.getdata());
+      FW_ASSERT(serBuffer.getData());
       // write data
-      stat = write(this->m_fd,(void*) serBuffer.getdata(), serBuffer.getsize());
+      stat = write(this->m_fd,(void*) serBuffer.getData(), serBuffer.getSize());
       if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
@@ -129,9 +129,9 @@ namespace Drv {
 	  return Drv::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
-      FW_ASSERT(serBuffer.getdata());
+      FW_ASSERT(serBuffer.getData());
       // read data
-      stat = read(this->m_fd,(void*) serBuffer.getdata(), serBuffer.getsize());
+      stat = read(this->m_fd,(void*) serBuffer.getData(), serBuffer.getSize());
       if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
@@ -139,8 +139,8 @@ namespace Drv {
 	  return Drv::I2C_READ_ERR;
       }
 #if DEBUG_PRINT
-      for (U32 byte = 0; byte < serBuffer.getsize(); byte++) {
-    	  printf("0x%02X ",((U8*)serBuffer.getdata())[byte]);
+      for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
+    	  printf("0x%02X ",((U8*)serBuffer.getData())[byte]);
 
       }
       printf("\n");
