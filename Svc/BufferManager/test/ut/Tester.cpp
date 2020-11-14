@@ -50,19 +50,38 @@ namespace Svc {
     testSetup(void) 
   {
 
-    BufferManagerComponentImpl::BufferBins bins;
-    memset(&bins,0,sizeof(bins));
-    bins.bins[0].bufferSize = 100;
-    bins.bins[0].numBuffers = 2;
-    bins.bins[5].bufferSize = 12;
-    bins.bins[5].numBuffers = 4;
-    bins.bins[9].bufferSize = 10;
-    bins.bins[9].numBuffers = 3;
+      BufferManagerComponentImpl::BufferBins bins;
+      memset(&bins,0,sizeof(bins));
+      bins.bins[0].bufferSize = 100;
+      bins.bins[0].numBuffers = 2;
+      bins.bins[5].bufferSize = 12;
+      bins.bins[5].numBuffers = 4;
+      bins.bins[9].bufferSize = 10;
+      bins.bins[9].numBuffers = 3;
 
-    Fw::MallocAllocator alloc;
+      Fw::MallocAllocator alloc;
 
-    this->component.setup(10,0,alloc,bins);
+      this->component.setup(10,0,alloc,bins);
   }
+
+  void Tester::oneBufferSize(void) {
+
+      BufferManagerComponentImpl::BufferBins bins;
+      memset(&bins,0,sizeof(bins));
+      bins.bins[0].bufferSize = 100;
+      bins.bins[0].numBuffers = 2;
+
+      Fw::MallocAllocator alloc;
+
+      this->component.setup(10,0,alloc,bins);
+
+      // Get a buffer
+      Fw::Buffer testBuff = this->invoke_to_bufferGetCallee(0,25);
+      // return the buffer
+      this->invoke_to_bufferSendIn(0,testBuff);
+
+  }
+
 
   // ----------------------------------------------------------------------
   // Helper methods 

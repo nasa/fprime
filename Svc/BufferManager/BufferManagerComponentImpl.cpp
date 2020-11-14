@@ -27,6 +27,7 @@ namespace Svc {
     BufferManagerComponentImpl(
         const char *const compName
     ) : BufferManagerComponentBase(compName)
+    ,m_setup(false)
     ,m_mgrID(0)
     ,m_buffers(0)
     ,m_allocator(0)
@@ -60,7 +61,21 @@ namespace Svc {
         Fw::Buffer &fwBuffer
     )
   {
-    // TODO
+      // make sure component has been set up
+      FW_ASSERT(this->m_setup);
+      // use the bufferID member field to find the original slot
+      U32 id = fwBuffer.getbufferID();
+      // check some things
+      FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
+      FW_ASSERT(fwBuffer.getmanagerID() == this->m_mgrID);
+      FW_ASSERT(true == this->m_buffers[id].allocated);
+      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getdata()) == this->m_buffers[id].memory);
+      // user can make smaller for their own purposes, but it shouldn't be bigger
+      FW_ASSERT(fwBuffer.getsize() <= this->m_buffers[id].size);
+      // clear the allocated flag
+      this->m_buffers[id].allocated = false;
+      // reset the size
+      this->m_buffers[id].buff.setsize(this->m_buffers[id].size);
   }
 
   Fw::Buffer BufferManagerComponentImpl ::
@@ -69,7 +84,19 @@ namespace Svc {
         U32 size
     )
   {
-    return Fw::Buffer();
+      // make sure component has been set up
+      FW_ASSERT(this->m_setup);
+      // find smallest buffer based on size.
+      for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
+          if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
+              this->m_buffers[buff].allocated = true;
+              return this->m_buffers[buff].buff;
+          }
+      }
+
+      // if no buffers found, return empty buffer
+      return Fw::Buffer();
+
   }
 
   void BufferManagerComponentImpl::setup(
@@ -107,7 +134,7 @@ namespace Svc {
         }
     }
 
-    // bubble sort bins by size to help search algorithm
+    // bubble sort bins by size to help search algorithm later
     BufferBin temp;
     for (NATIVE_UINT_TYPE outer = 0; outer < numBins-1; outer++) {
         for (NATIVE_UINT_TYPE inner = 0; inner < numBins-1-outer; inner++) {
@@ -169,6 +196,8 @@ namespace Svc {
     // check some assertions
     FW_ASSERT(bufferMem == (static_cast<U8*>(memory) + memorySize));
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
+    // indicate setup is done
+    this->m_setup = true;
   }
 
 } // end namespace Svc

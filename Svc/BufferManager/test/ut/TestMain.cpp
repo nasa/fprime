@@ -4,9 +4,14 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, ToDo) {
+TEST(Nominal, Setup) {
     Svc::Tester tester;
     tester.testSetup();
+}
+
+TEST(Nominal, OneSize) {
+    Svc::Tester tester;
+    tester.oneBufferSize();
 }
 
 int main(int argc, char **argv) {

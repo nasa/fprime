@@ -42,9 +42,12 @@ namespace Svc {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! Test Setupt
+      //! Test Setup
       //!
       void testSetup(void);
+
+      //! One buffer size
+      void oneBufferSize(void);
 
     private:
 
