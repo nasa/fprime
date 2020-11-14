@@ -1,15 +1,15 @@
 // ----------------------------------------------------------------------
-// Main.cpp 
+// TestMain.cpp
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
 
-TEST(Test, ThreeBufferProblem) {
-  Svc::Tester tester;
-  tester.three_buffer_problem();
+TEST(Nominal, ToDo) {
+    Svc::Tester tester;
+    tester.testSetup();
 }
 
 int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

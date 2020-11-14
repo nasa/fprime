@@ -56,6 +56,7 @@ namespace Svc {
       //! set up configuration
 
       void setup(
+          NATIVE_UINT_TYPE mgrID, //!< ID of manager for buffer checking
           NATIVE_UINT_TYPE memID, //!< Memory segment identifier
           Fw::MemAllocator& allocator, //!< memory allocator. MUST be persistent for later deallocation.
           const BufferBins& bins //!< Set of user bins
@@ -85,17 +86,21 @@ namespace Svc {
           U32 size 
       );
 
+      NATIVE_UINT_TYPE m_mgrID; //!< stored manager ID for buffer checking
+
       BufferBins m_bufferBins; //!< copy of bins supplied by user
 
       struct AllocatedBuffer {
           Fw::Buffer buff; //!< Buffer class to give to user
           U8* memory; //!< pointer to memory buffer
-          bool allocated; //!< this buffer has been allocated to somebody
+          U32 size; //!< size of the buffer
+          bool allocated; //!< this buffer has been allocated
       };
 
       AllocatedBuffer* m_buffers; //!< pointer to allocated buffer space
       Fw::MemAllocator* m_allocator; //!< allocator for memory
       NATIVE_UINT_TYPE m_identifier; //!< identifier for allocator
+      NATIVE_UINT_TYPE m_numStructs; //!< number of allocated structs
 
     };
 

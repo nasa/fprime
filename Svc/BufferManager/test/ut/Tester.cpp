@@ -1,6 +1,6 @@
 // ====================================================================== 
 // \title  BufferManager.hpp
-// \author mstarch
+// \author tcanham
 // \brief  cpp file for BufferManager test harness implementation class
 //
 // \copyright
@@ -11,6 +11,7 @@
 // ====================================================================== 
 
 #include "Tester.hpp"
+#include <Fw/Types/MallocAllocator.hpp>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -25,7 +26,7 @@ namespace Svc {
     Tester(void) : 
 #if FW_OBJECT_NAMES == 1
       BufferManagerGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("BufferManager", 12, 3)
+      component("BufferManager")
 #else
       BufferManagerGTestBase(MAX_HISTORY_SIZE),
       component()
@@ -46,21 +47,21 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    three_buffer_problem(void) 
+    testSetup(void) 
   {
-      //Alocate 2 buffers
-      Fw::Buffer buffer1 = this->invoke_to_bufferGetCallee(0, 4);
-      Fw::Buffer buffer2 = this->invoke_to_bufferGetCallee(0, 4);
-      //Fill the 2nd buffer
-      *((U32*)buffer2.getdata()) = 0xDEADBEEF;
-      //Return the 1st buffer
-      this->invoke_to_bufferSendIn(0, buffer1);
-      //Allocate and fill 3rd buffer
-      Fw::Buffer buffer3 = this->invoke_to_bufferGetCallee(0, 4);
-      *((U32*)buffer3.getdata()) = 0x0;
-      //Check that no warnings have happened
-      //Check that buffer 2's data is intact. It Fails here.
-      ASSERT_EQ(0xDEADBEEF,*((U32*)buffer2.getdata()));
+
+    BufferManagerComponentImpl::BufferBins bins;
+    memset(&bins,0,sizeof(bins));
+    bins.bins[0].bufferSize = 100;
+    bins.bins[0].numBuffers = 2;
+    bins.bins[5].bufferSize = 12;
+    bins.bins[5].numBuffers = 4;
+    bins.bins[9].bufferSize = 10;
+    bins.bins[9].numBuffers = 3;
+
+    Fw::MallocAllocator alloc;
+
+    this->component.setup(10,0,alloc,bins);
   }
 
   // ----------------------------------------------------------------------
@@ -106,6 +107,9 @@ namespace Svc {
         0, 
         this->get_from_tlmOut(0)
     );
+
+
+
 
   }
 

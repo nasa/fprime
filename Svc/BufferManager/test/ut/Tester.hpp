@@ -1,20 +1,20 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BufferManager/test/ut/Tester.hpp
-// \author mstarch
+// \author tcanham
 // \brief  hpp file for BufferManager test harness implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/BufferManager/BufferManager.hpp"
+#include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
 
 namespace Svc {
 
@@ -38,11 +38,14 @@ namespace Svc {
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
-      void three_buffer_problem(void);
+      //! Test Setupt
+      //!
+      void testSetup(void);
+
     private:
 
       // ----------------------------------------------------------------------
@@ -65,7 +68,7 @@ namespace Svc {
 
       //! The component under test
       //!
-      BufferManager component;
+      BufferManagerComponentImpl component;
 
   };
 
