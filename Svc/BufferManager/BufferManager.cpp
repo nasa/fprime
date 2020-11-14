@@ -272,7 +272,7 @@ namespace Svc {
 
   U32 BufferManager :: getBufferContext(const U32 managerId, const U32 bufferId) {
       // Context is a concatenation of IDs, so check for overflows
-      FW_ASSERT(managerId < 0xFFFF, managerId);
+      FW_ASSERT(managerId <= 0x7FFF, managerId);
       FW_ASSERT(bufferId <= 0xFFFF, bufferId);
 
       U32 context = (managerId << 16) | bufferId;

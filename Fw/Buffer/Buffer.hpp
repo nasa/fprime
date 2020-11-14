@@ -55,7 +55,8 @@ public:
     //! and data pointers are zeroed-out.
     Buffer();
 
-    //! Construct a buffer by copying data from a reference to anothe buffer
+    //! Construct a buffer by copying members from a reference to another buffer. Does not copy wrapped data.
+    //!
     Buffer(const Buffer& src);
 
     //! Construct a buffer to wrap the given data pointer of given size
@@ -67,7 +68,7 @@ public:
     //! \param context: user-specified context to track creation. Default: no context
     Buffer(U8* data, U32 size, U32 context=NO_CONTEXT);
 
-    //! Assignment operator to set given buffer from another
+    //! Assignment operator to set given buffer's members from another without copying wrapped data
     //!
     Buffer& operator=(const Buffer& src);
 
