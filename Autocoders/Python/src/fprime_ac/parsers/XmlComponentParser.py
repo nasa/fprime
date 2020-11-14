@@ -184,7 +184,7 @@ class XmlComponentParser:
                     raise OSError(stri)
                 PRINT.info("Reading external dictionary %s" % dict_file)
                 dict_fd = open(dict_file)
-                dict_parser = etree.XMLParser(remove_comments=True)
+                _ = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd, parser=xml_parser)
 
                 component.append(dict_element_tree.getroot())
@@ -1129,7 +1129,7 @@ class XmlComponentParser:
                 self.__add_to_import_port_list(implicitPorts)
 
         for p in self.__ports:
-            n = p.get_name()
+            _ = p.get_name()
             t = p.get_type()
             if "::" in t:
                 # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file." % (n,t))
@@ -1846,7 +1846,7 @@ class Event:
 
 if __name__ == "__main__":
 
-    xmlfile = "../../test/app1a/FujiComponentAi.xml"
+    _ = "../../test/app1a/FujiComponentAi.xml"
     xmlfile = sys.argv[1]
 
     print("Component XML parse test (%s)" % xmlfile)

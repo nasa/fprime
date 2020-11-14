@@ -94,7 +94,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         output_dir = os.environ["DICT_DIR"] + "/channels"
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
-        pyfile = output_dir + "/" + obj.get_name() + ".py"
+        _ = output_dir + "/" + obj.get_name() + ".py"
 
         self.__fp = list()
 

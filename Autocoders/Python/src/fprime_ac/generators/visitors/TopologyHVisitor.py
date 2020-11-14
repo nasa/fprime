@@ -312,7 +312,6 @@ class TopologyHVisitor(AbstractVisitor.AbstractVisitor):
         # Generate Component Declarations
         for component in component_list:
             # Partition instance names
-            n = component["name"]  # Save name
             if part is None:
                 pass
             else:
