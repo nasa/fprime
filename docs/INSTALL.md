@@ -87,7 +87,7 @@ layer components. Should the user not have installed the given component, the co
 ```
 cd Ref
 fprime-util generate
-fprime-util build --jobs 32
+fprime-util build --jobs $(nproc || printf '%s\n' 1)"
 ```
 
 **Testing F´ GDS Installation Via Running HTML GUI**
