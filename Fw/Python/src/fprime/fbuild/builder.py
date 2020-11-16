@@ -195,7 +195,7 @@ class Build:
         build.load()
     """
 
-    VALID_CMAKE_LIST = re.compile(r"(?sm)^\s*project\(.*\)")
+    VALID_CMAKE_LIST = re.compile(r"^\s*project\(.*\)", re.MULTILINE)
     CMAKE_DEFAULT_BUILD_NAME = "build-fprime-automatic-{platform}{suffix}"
 
     def __init__(self, build_type: BuildType, deployment: Path, verbose: bool = False):
