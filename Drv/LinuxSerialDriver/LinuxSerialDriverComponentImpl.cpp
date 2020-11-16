@@ -352,7 +352,7 @@ namespace Drv {
               }
 
               stat = ::read(comp->m_fd,
-                            reinterpret_cast<unsigned char*>(buff.getData()),
+                            buff.getData(),
                             buff.getSize());
 
               // Good read:

@@ -97,7 +97,7 @@ namespace Drv {
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
       // write data
-      stat = write(this->m_fd,(void*) serBuffer.getData(), serBuffer.getSize());
+      stat = write(this->m_fd, serBuffer.getData(), serBuffer.getSize());
       if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
