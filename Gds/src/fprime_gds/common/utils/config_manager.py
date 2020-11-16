@@ -67,7 +67,6 @@ class ConfigManager(configparser.ConfigParser):
         """
         # Cannot use super() function since ConfigParser is an old-style class
         configparser.ConfigParser.__init__(self)
-        configparser.RawConfigParser.__init__(self)
 
         # Set default properties
         self.__prop = dict()

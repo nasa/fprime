@@ -581,7 +581,6 @@ class ModelParser:
                 if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
-                        _ = "enum"
                     else:
                         print("ERROR: Expected ENUM type in event args list...")
                         sys.exit(-1)

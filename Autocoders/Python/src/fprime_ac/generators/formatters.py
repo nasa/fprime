@@ -1413,7 +1413,6 @@ class Formatters:
                 new_args.append((id2, "U16", comment, "", "", [], []))
 
             elif type == "SCLK":
-                _ = module[0].upper() + module[1:] + "ArgSclk"
                 type = "TimSpacecraftTime"
                 new_args.append(
                     (

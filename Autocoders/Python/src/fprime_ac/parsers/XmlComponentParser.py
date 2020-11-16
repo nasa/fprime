@@ -1129,7 +1129,6 @@ class XmlComponentParser:
                 self.__add_to_import_port_list(implicitPorts)
 
         for p in self.__ports:
-            _ = p.get_name()
             t = p.get_type()
             if "::" in t:
                 # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file." % (n,t))
@@ -1845,8 +1844,6 @@ class Event:
 
 
 if __name__ == "__main__":
-
-    _ = "../../test/app1a/FujiComponentAi.xml"
     xmlfile = sys.argv[1]
 
     print("Component XML parse test (%s)" % xmlfile)
