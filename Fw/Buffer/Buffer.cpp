@@ -90,11 +90,6 @@ Fw::SerializeBufferBase& Buffer::getSerializeRepr() {
     return m_serialize_repr;
 }
 
-Fw::SerializeBufferBase& Buffer::getDeserializeRepr() {
-    m_serialize_repr.setBuffLen(m_size);
-    return m_serialize_repr;
-}
-
 Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
     Fw::SerializeStatus stat;
 #if FW_SERIALIZATION_TYPE_ID

@@ -287,7 +287,7 @@ namespace Drv {
           return;
       }
 
-      unsigned char* data = reinterpret_cast<unsigned char*>(serBuffer.getData());
+      unsigned char* data = serBuffer.getData();
       NATIVE_INT_TYPE xferSize = serBuffer.getSize();
 
       NATIVE_INT_TYPE stat = ::write(this->m_fd,data,xferSize);

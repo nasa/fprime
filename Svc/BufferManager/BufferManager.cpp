@@ -346,7 +346,7 @@ namespace Svc {
     FW_ASSERT(BufferManager::getManagerIdFromBufferContext(buffer.getContext()) == instance);
 
     const U32 expectedId = BufferManager::getBufferIdFromBufferContext(buffer.getContext());
-    U8 *const address = reinterpret_cast<U8*>(buffer.getData());
+    U8 *const address = buffer.getData();
     U32 sawId = 0;
     U32 size = 0;
 

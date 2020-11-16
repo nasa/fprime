@@ -67,6 +67,7 @@ void test_representations() {
 
     // Test serialization and that it stops before overflowing
     Fw::SerializeBufferBase& sbb = buffer.getSerializeRepr();
+    sbb.resetSer();
     for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(sbb.serialize(i), Fw::FW_SERIALIZE_OK);
     }
@@ -78,13 +79,15 @@ void test_representations() {
 
     // Now deserialize all the things
     U32 out;
-    sbb = buffer.getDeserializeRepr();
+    sbb = buffer.getSerializeRepr();
+    sbb.setBuffLen(buffer.getSize());
     for (U32 i = 0; i < sizeof(data)/4; i++) {
         ASSERT_EQ(sbb.deserialize(out), Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(i, out);
     }
     ASSERT_NE(sbb.deserialize(out), Fw::FW_SERIALIZE_OK);
-    sbb = buffer.getDeserializeRepr();
+    sbb = buffer.getSerializeRepr();
+    sbb.setBuffLen(buffer.getSize());
     ASSERT_EQ(sbb.deserialize(out), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(0, out);
 }

@@ -81,7 +81,7 @@ namespace Drv {
 #if DEBUG_PRINT
       printf("I2c addr: 0x%02X\n",addr);
       for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  printf("0x%02X ",((U8*)serBuffer.getData())[byte]);
+    	  printf("0x%02X ",serBuffer.getData()[byte]);
 
       }
       printf("\n");
@@ -131,7 +131,7 @@ namespace Drv {
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
       // read data
-      stat = read(this->m_fd,(void*) serBuffer.getData(), serBuffer.getSize());
+      stat = read(this->m_fd, serBuffer.getData(), serBuffer.getSize());
       if (stat == -1) {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
@@ -140,7 +140,7 @@ namespace Drv {
       }
 #if DEBUG_PRINT
       for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
-    	  printf("0x%02X ",((U8*)serBuffer.getData())[byte]);
+    	  printf("0x%02X ",serBuffer.getData()[byte]);
 
       }
       printf("\n");

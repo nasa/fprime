@@ -23,7 +23,7 @@ namespace Fw {
     fromBuffer(const Buffer& buffer)
   {
     SerialBuffer serialBuffer(
-        reinterpret_cast<U8*>(const_cast<Buffer&>(buffer).getData()),
+        const_cast<Buffer&>(buffer).getData(),
         const_cast<Buffer&>(buffer).getSize()
     );
     serialBuffer.fill();

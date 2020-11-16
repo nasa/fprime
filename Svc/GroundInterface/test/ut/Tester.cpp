@@ -91,7 +91,7 @@ namespace Svc {
     this->pushFromPortEntry_fileUplinkBufferSendOut(fwBuffer);
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
-        ASSERT_EQ(reinterpret_cast<U8*>(fwBuffer.getData())[i], m_uplink_data[i + HEADER_SIZE + sizeof(TOKEN_TYPE)]);
+        ASSERT_EQ(fwBuffer.getData()[i], m_uplink_data[i + HEADER_SIZE + sizeof(TOKEN_TYPE)]);
     }
   }
 
@@ -142,7 +142,7 @@ namespace Svc {
     TOKEN_TYPE size = 0;
     TOKEN_TYPE packet = 0;
     U32 end = 0;
-    Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(fwBuffer.getData()), fwBuffer.getSize());
+    Fw::ExternalSerializeBuffer buffer_wrapper(fwBuffer.getData(), fwBuffer.getSize());
     buffer_wrapper.setBuffLen(fwBuffer.getSize());
     // Check basic deserialization
     ASSERT_EQ(buffer_wrapper.deserialize(start), Fw::FW_SERIALIZE_OK);
@@ -175,8 +175,8 @@ namespace Svc {
     )
   {
     this->pushFromPortEntry_readPoll(fwBuffer);
-    U8* incoming = reinterpret_cast<U8*>(m_incoming_buffer.getData());
-    U8* outgoing = reinterpret_cast<U8*>(fwBuffer.getData());
+    U8* incoming = m_incoming_buffer.getData();
+    U8* outgoing = fwBuffer.getData();
     for (U32 i = 0; i < m_incoming_buffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }

@@ -66,7 +66,7 @@ namespace Svc {
     )
   {
       FW_ASSERT(fwBuffer.getSize() <= MAX_DATA_SIZE);
-      frame_send(reinterpret_cast<U8*>(fwBuffer.getData()), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
+      frame_send(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
       fileDownlinkBufferSendOut_out(0, fwBuffer);
   }
 
@@ -98,6 +98,7 @@ namespace Svc {
       // TODO: replace with a call to a buffer manager
       Fw::Buffer buffer = m_ext_buffer;
       Fw::SerializeBufferBase& buffer_wrapper = buffer.getSerializeRepr();
+      buffer_wrapper.resetSer();
       // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
       // This is because if not UNKOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
       // already the first token in the UNKNOWN typed buffer.

@@ -71,7 +71,7 @@ namespace Drv {
 
           // If the network connection is open, read from it
           if (self->m_helper.isOpened()) {
-              BYTE* data = reinterpret_cast<U8*>(self->m_buffer.getData());
+              BYTE* data = self->m_buffer.getData();
               FW_ASSERT(data);
               I32 size = 0;
               status = self->m_helper.recv(data,size);
@@ -138,7 +138,7 @@ namespace Drv {
     )
   {
       U32 size = fwBuffer.getSize();
-      BYTE* data = reinterpret_cast<BYTE*>(fwBuffer.getData());
+      BYTE* data = fwBuffer.getData();
       FW_ASSERT(data);
       this->m_helper.send(data,size);
   }

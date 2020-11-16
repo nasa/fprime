@@ -67,11 +67,11 @@ namespace Svc {
     void FileDownlinkRule :: action(Svc::Tester &state) {
         unsigned char data_holder[2048];
         Fw::Buffer buffer(data_holder, sizeof(data_holder));
-        Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(buffer.getData()), buffer.getSize());
+        Fw::ExternalSerializeBuffer buffer_wrapper(buffer.getData(), buffer.getSize());
         // Force a U32 to know the size
         buffer_wrapper.serialize(static_cast<U32>(0xdeadbeef));
         buffer.setSize(buffer_wrapper.getBuffLength());
-        state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), reinterpret_cast<U8*>(buffer.getData()),
+        state.setInputParams(sizeof(U32) + sizeof(TOKEN_TYPE), buffer.getData(),
                              Fw::ComPacket::FW_PACKET_FILE);
         state.invoke_to_fileDownlinkBufferSendIn(0, buffer);
         state.assert_from_write_size(__FILE__, __LINE__, 1);

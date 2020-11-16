@@ -88,18 +88,10 @@ public:
     //! Returns a SerializeBufferBase representation of the wrapped data for serializing
     //!
     //! Returns a SerializeBufferBase representation of the wrapped data allowing for serializing other types of data
-    //! to the wrapped buffer. This representation assumes that the entire size of the wrapped data is available for
-    //! writing and will effectively forget any previous call to this function.
+    //! to the wrapped buffer. Once obtained the user should call one of two functions: `sbb.resetSer();` to setup for
+    //! serialization, or `sbb.setBuffLen(buffer.getSize());` to setup for deserializing.
     //! \return representation of the wrapped data to aid in serializing to it
     SerializeBufferBase& getSerializeRepr();
-
-    //! Returns a SerializeBufferBase representation of the wrapped data for deserializing
-    //!
-    //! Returns a SerializeBufferBase representation of the wrapped data allowing for deserializing other types of data
-    //! from the wrapped buffer. This representation assumes that the entire size of the wrapped data is available for
-    //! reading and will effectively forget any previous call to this function.
-    //! \return representation of the wrapped data to aid in deserializing from it
-    SerializeBufferBase& getDeserializeRepr();
 
     //! Serializes this buffer to a SerializeBufferBase
     //!
