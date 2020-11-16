@@ -19,6 +19,11 @@ void test_basic() {
     ASSERT_EQ(buffer.getSize(), sizeof(data));
     ASSERT_EQ(buffer.getContext(), 1234);
 
+    // Test set method is equivalent
+    Fw::Buffer buffer_set;
+    buffer_set.set(data, sizeof(data), 1234);
+    ASSERT_EQ(buffer_set, buffer);
+
     // Check constructors and assignments
     Fw::Buffer buffer_new(buffer);
     ASSERT_EQ(buffer_new.getData(), data);

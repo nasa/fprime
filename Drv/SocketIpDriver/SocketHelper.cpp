@@ -197,7 +197,7 @@ namespace Drv {
 
     }
 
-    void SocketHelper::send(BYTE* data, const U32 size) {
+    void SocketHelper::send(U8* data, const U32 size) {
 
         U32 total = 0;
         // Prevent transmission before connection, or after a disconnect
@@ -240,7 +240,7 @@ namespace Drv {
 
     }
 
-    SocketIpStatus SocketHelper::recv(BYTE* data, I32 &size) {
+    SocketIpStatus SocketHelper::recv(U8* data, I32 &size) {
 
         SocketIpStatus status = SOCK_SUCCESS;
         // Attempt to recv out data

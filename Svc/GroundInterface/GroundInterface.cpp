@@ -100,7 +100,7 @@ namespace Svc {
       Fw::SerializeBufferBase& buffer_wrapper = buffer.getSerializeRepr();
       buffer_wrapper.resetSer();
       // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
-      // This is because if not UNKOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
+      // This is because if not UNKNOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
       // already the first token in the UNKNOWN typed buffer.
       U32 true_size = (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? size + sizeof(TOKEN_TYPE) : size;
       U32 total_size = sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32);
