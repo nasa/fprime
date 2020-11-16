@@ -1,3 +1,5 @@
 title: "F´"
 description: "Flight Software & Embedded Systems Framework"
+plugins:
+  - jekyll-remote-theme
 remote_theme: fprime-community/fprime-theme
