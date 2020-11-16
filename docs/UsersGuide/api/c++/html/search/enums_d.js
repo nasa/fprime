@@ -5,7 +5,7 @@ var searchData=
   ['seqmode_5541',['SeqMode',['../class_svc_1_1_cmd_sequencer_component_base.html#afe6b72b9042d3b216e409ec99ddba29b',1,'Svc::CmdSequencerComponentBase']]],
   ['serializestatus_5542',['SerializeStatus',['../namespace_fw.html#aa232625e63c0c60a1fced2933334fc32',1,'Fw']]],
   ['serialreadstatus_5543',['SerialReadStatus',['../namespace_drv.html#a730670ad0d73ef36e59e767fed6eb66c',1,'Drv']]],
-  ['socketipcfg_5544',['SocketIpCfg',['../_socket_ip_driver_cfg_8hpp.html#a632b81391d49d4604135a61b05a1ae4a',1,'SocketIpDriverCfg.hpp']]],
+  ['socketipcfg_5544',['SocketIpCfg',['../socket_ip_driver_cfg_8hpp.html#a632b81391d49d4604135a61b05a1ae4a',1,'SocketIpDriverCfg.hpp']]],
   ['socketipstatus_5545',['SocketIpStatus',['../namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d',1,'Drv']]],
   ['socketprotocol_5546',['SocketProtocol',['../namespace_drv.html#ad3dd46ccae39822ec0748865da6f0193',1,'Drv']]],
   ['spifrequency_5547',['SpiFrequency',['../namespace_drv.html#a61d09174558e3591ec1e787fc84c27ff',1,'Drv']]],
