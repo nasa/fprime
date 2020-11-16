@@ -92,7 +92,7 @@ $(document).ready(function(){initNavTree('class_fw_1_1_input_log_port.html','');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_log_port_ac_8hpp_source.html">build-fprime-automatic-native/F-Prime/Fw/Log/LogPortAc.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="log_port_ac_8hpp_source.html">build-fprime-automatic-native/F-Prime/Fw/Log/LogPortAc.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Fw::InputLogPort:</div>
 <div class="dyncontent">
@@ -110,7 +110,7 @@ Public Types</h2></td></tr>
 <tr class="memitem:ae64d22498b8669defd0f12f871513ff3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom">{ <a class="el" href="class_fw_1_1_input_log_port.html#ae64d22498b8669defd0f12f871513ff3a46a42183f96e8cb47a0b5622dd37f2ce">SERIALIZED_SIZE</a> = sizeof(FwEventIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(NATIVE_INT_TYPE) + LogBuffer::SERIALIZED_SIZE
  }</td></tr>
 <tr class="separator:ae64d22498b8669defd0f12f871513ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e70200db05054134e0ae41103f7d9d9"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_log_port.html#a6e70200db05054134e0ae41103f7d9d9">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum, <a class="el" href="_fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td></tr>
+<tr class="memitem:a6e70200db05054134e0ae41103f7d9d9"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_log_port.html#a6e70200db05054134e0ae41103f7d9d9">CompFuncPtr</a>) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td></tr>
 <tr class="memdesc:a6e70200db05054134e0ae41103f7d9d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">port callback definition  <a href="class_fw_1_1_input_log_port.html#a6e70200db05054134e0ae41103f7d9d9">More...</a><br /></td></tr>
 <tr class="separator:a6e70200db05054134e0ae41103f7d9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -125,11 +125,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a032ab01ed0ec65eb682e2aa93c33080a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_log_port.html#a032ab01ed0ec65eb682e2aa93c33080a">addCallComp</a> (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="class_fw_1_1_input_log_port.html#a6e70200db05054134e0ae41103f7d9d9">CompFuncPtr</a> funcPtr)</td></tr>
 <tr class="memdesc:a032ab01ed0ec65eb682e2aa93c33080a"><td class="mdescLeft">&#160;</td><td class="mdescRight">call to register a component  <a href="class_fw_1_1_input_log_port.html#a032ab01ed0ec65eb682e2aa93c33080a">More...</a><br /></td></tr>
 <tr class="separator:a032ab01ed0ec65eb682e2aa93c33080a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d2d30546099be0336b05958e71df7b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_log_port.html#a1d2d30546099be0336b05958e71df7b1">invoke</a> (<a class="el" href="_fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td></tr>
+<tr class="memitem:a1d2d30546099be0336b05958e71df7b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_log_port.html#a1d2d30546099be0336b05958e71df7b1">invoke</a> (<a class="el" href="fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td></tr>
 <tr class="memdesc:a1d2d30546099be0336b05958e71df7b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">invoke port interface  <a href="class_fw_1_1_input_log_port.html#a1d2d30546099be0336b05958e71df7b1">More...</a><br /></td></tr>
 <tr class="separator:a1d2d30546099be0336b05958e71df7b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_input_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_input_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></td></tr>
-<tr class="memitem:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aabcb9bbd8f56dea8d3a03e08f76d0041">setPortNum</a> (<a class="el" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum)</td></tr>
+<tr class="memitem:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aabcb9bbd8f56dea8d3a03e08f76d0041">setPortNum</a> (<a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum)</td></tr>
 <tr class="separator:aabcb9bbd8f56dea8d3a03e08f76d0041 inherit pub_methods_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_fw_1_1_port_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_fw_1_1_port_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_fw_1_1_port_base.html">Fw::PortBase</a></td></tr>
 <tr class="memitem:a084b5ec35cfb866c99abe975761f426b inherit pub_methods_class_fw_1_1_port_base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_port_base.html#a084b5ec35cfb866c99abe975761f426b">isConnected</a> (void)</td></tr>
@@ -160,7 +160,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_fw_1_1_input_port_base"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_fw_1_1_input_port_base')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_fw_1_1_input_port_base.html">Fw::InputPortBase</a></td></tr>
 <tr class="memitem:aec0bdf66c9b3290a42ea3a9998f246a3 inherit pro_attribs_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_passive_component_base.html">PassiveComponentBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#aec0bdf66c9b3290a42ea3a9998f246a3">m_comp</a></td></tr>
 <tr class="separator:aec0bdf66c9b3290a42ea3a9998f246a3 inherit pro_attribs_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a812f868e83fe8544f528db72a59f17f4 inherit pro_attribs_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">m_portNum</a></td></tr>
+<tr class="memitem:a812f868e83fe8544f528db72a59f17f4 inherit pro_attribs_class_fw_1_1_input_port_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_input_port_base.html#a812f868e83fe8544f528db72a59f17f4">m_portNum</a></td></tr>
 <tr class="separator:a812f868e83fe8544f528db72a59f17f4 inherit pro_attribs_class_fw_1_1_input_port_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_fw_1_1_port_base"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_fw_1_1_port_base')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_fw_1_1_port_base.html">Fw::PortBase</a></td></tr>
 <tr class="memitem:af1781f18a2fd371fe586caa8c3d066dd inherit pro_attribs_class_fw_1_1_port_base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_fw_1_1_obj_base.html">Fw::ObjBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a></td></tr>
@@ -169,7 +169,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Input Log port description </p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8hpp_source.html#l00040">40</a> of file <a class="el" href="_log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8hpp_source.html#l00040">40</a> of file <a class="el" href="log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a6e70200db05054134e0ae41103f7d9d9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6e70200db05054134e0ae41103f7d9d9">&#9670;&nbsp;</a></span>CompFuncPtr</h2>
@@ -178,14 +178,14 @@ Additional Inherited Members</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(* Fw::InputLogPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum, <a class="el" href="_fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td>
+          <td class="memname">typedef void(* Fw::InputLogPort::CompFuncPtr) (<a class="el" href="class_fw_1_1_passive_component_base.html">Fw::PassiveComponentBase</a> *callComp, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum, <a class="el" href="fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a> id, <a class="el" href="class_fw_1_1_time.html">Fw::Time</a> &amp;timeTag, <a class="el" href="namespace_fw.html#aff8bb5257f7b9c092148d00e693b93fa">LogSeverity</a> severity, <a class="el" href="class_fw_1_1_log_buffer.html">LogBuffer</a> &amp;args)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>port callback definition </p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8hpp_source.html#l00045">45</a> of file <a class="el" href="_log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8hpp_source.html#l00045">45</a> of file <a class="el" href="log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -206,7 +206,7 @@ Additional Inherited Members</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8hpp_source.html#l00042">42</a> of file <a class="el" href="_log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8hpp_source.html#l00042">42</a> of file <a class="el" href="log_port_ac_8hpp_source.html">LogPortAc.hpp</a>.</p>
 
 </div>
 </div>
@@ -229,7 +229,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>constructor </p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8cpp_source.html#l00033">33</a> of file <a class="el" href="_log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8cpp_source.html#l00033">33</a> of file <a class="el" href="log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -262,7 +262,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>call to register a component </p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8cpp_source.html#l00042">42</a> of file <a class="el" href="_log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8cpp_source.html#l00042">42</a> of file <a class="el" href="log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -294,7 +294,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_fw_1_1_input_port_base.html#a613bbd9af40901c4ef97878f1f378384">Fw::InputPortBase</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8cpp_source.html#l00038">38</a> of file <a class="el" href="_log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8cpp_source.html#l00038">38</a> of file <a class="el" href="log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
 
 </div>
 </div>
@@ -307,7 +307,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Fw::InputLogPort::invoke </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="_fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fp_config_8hpp.html#a9cc5cff369fc66e208aba0e88968823a">FwEventIdType</a>&#160;</td>
           <td class="paramname"><em>id</em>, </td>
         </tr>
         <tr>
@@ -338,13 +338,13 @@ Additional Inherited Members</h2></td></tr>
 
 <p>invoke port interface </p>
 
-<p class="definition">Definition at line <a class="el" href="_log_port_ac_8cpp_source.html#l00052">52</a> of file <a class="el" href="_log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="log_port_ac_8cpp_source.html#l00052">52</a> of file <a class="el" href="log_port_ac_8cpp_source.html">LogPortAc.cpp</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>build-fprime-automatic-native/F-Prime/Fw/Log/<a class="el" href="_log_port_ac_8hpp_source.html">LogPortAc.hpp</a></li>
-<li>build-fprime-automatic-native/F-Prime/Fw/Log/<a class="el" href="_log_port_ac_8cpp_source.html">LogPortAc.cpp</a></li>
+<li>build-fprime-automatic-native/F-Prime/Fw/Log/<a class="el" href="log_port_ac_8hpp_source.html">LogPortAc.hpp</a></li>
+<li>build-fprime-automatic-native/F-Prime/Fw/Log/<a class="el" href="log_port_ac_8cpp_source.html">LogPortAc.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
