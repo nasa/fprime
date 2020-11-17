@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/interface_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <interface name="BufferGet" namespace="Fw">
-    <import_serializable_type>Fw/Buffer/BufferSerializableAi.xml</import_serializable_type>
+    <include_header>Fw/Buffer/Buffer.hpp</include_header>
     <args>
         <arg name="size" type="U32" pass_by="value">
         </arg>

@@ -555,7 +555,7 @@ namespace Svc {
 
     const size_t bufferSize = filePacket.bufferSize();
     U8 bufferData[bufferSize];
-    Fw::Buffer buffer(0, 0, reinterpret_cast<U64>(bufferData), bufferSize);
+    Fw::Buffer buffer(bufferData, bufferSize);
 
     const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);

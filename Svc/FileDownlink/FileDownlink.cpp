@@ -239,8 +239,8 @@ namespace Svc {
   {
     const U32 bufferSize = filePacket.bufferSize();
     Fw::Buffer buffer = this->bufferGetCaller_out(0, bufferSize);
-    FW_ASSERT(buffer.getdata() != 0);
-    FW_ASSERT(buffer.getsize() == bufferSize, bufferSize, buffer.getsize());
+    FW_ASSERT(buffer.getData() != 0);
+    FW_ASSERT(buffer.getSize() == bufferSize, bufferSize, buffer.getSize());
     const Fw::SerializeStatus status = filePacket.toBuffer(buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     this->bufferSendOut_out(0, buffer);

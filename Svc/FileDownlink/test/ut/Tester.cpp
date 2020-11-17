@@ -41,7 +41,7 @@ namespace Svc {
   Tester ::
     ~Tester(void) 
   {
-    for (int i = 0; i < downlinkDataBuffers.size(); i++) {
+    for (U32 i = 0; i < downlinkDataBuffers.size(); i++) {
       delete[] downlinkDataBuffers[i];
     }
   }
@@ -192,10 +192,9 @@ namespace Svc {
     U8 *const data = new U8[size];
     downlinkDataBuffers.push_back(data);
     Fw::Buffer buffer(
-        MANAGER_ID,
-        BUFFER_ID,
-        reinterpret_cast<U64>(data),
-        size
+        data,
+        size,
+        (MANAGER_ID << 16) | BUFFER_ID
     );
     return buffer;
   }
