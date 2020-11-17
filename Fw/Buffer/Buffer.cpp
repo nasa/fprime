@@ -93,7 +93,6 @@ void Buffer::set(U8* const data, const U32 size, const U32 context) {
 }
 
 Fw::SerializeBufferBase& Buffer::getSerializeRepr() {
-    this->m_serialize_repr.resetSer();
     return m_serialize_repr;
 }
 
