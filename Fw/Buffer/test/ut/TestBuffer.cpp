@@ -80,6 +80,7 @@ void test_representations() {
     ASSERT_NE(stat, Fw::FW_SERIALIZE_OK);
     // And that another call to repr resets it
     sbb = buffer.getSerializeRepr();
+    sbb.resetSer();
     ASSERT_EQ(sbb.serialize(0), Fw::FW_SERIALIZE_OK);
 
     // Now deserialize all the things
