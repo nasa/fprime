@@ -33,6 +33,10 @@ namespace Svc {
     ,m_allocator(0)
     ,m_identifier(0)
     ,m_numStructs(0)
+    ,m_highWater(0)
+    ,m_currBuffs(0)
+    ,m_noBuffs(0)
+    ,m_emptyBuffs(0)
   {
 
   }
@@ -63,6 +67,13 @@ namespace Svc {
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
+      // check for empty buffers - this is just a warning since this component returns
+      // empty buffers if it can't allocate one.
+      if (fwBuffer.getsize() == 0) {
+          this->log_WARNING_HI_ZeroSizeBuffer();
+          this->tlmWrite_EmptyBuffs(++this->m_emptyBuffs);
+          return;
+      }
       // use the bufferID member field to find the original slot
       U32 id = fwBuffer.getbufferID();
       // check some things
@@ -76,6 +87,8 @@ namespace Svc {
       this->m_buffers[id].allocated = false;
       // reset the size
       this->m_buffers[id].buff.setsize(this->m_buffers[id].size);
+      this->tlmWrite_CurrBuffs(--this->m_currBuffs);
+
   }
 
   Fw::Buffer BufferManagerComponentImpl ::
@@ -86,15 +99,23 @@ namespace Svc {
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
+      this->tlmWrite_TotalBuffs(this->m_numStructs);
       // find smallest buffer based on size.
       for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
           if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
               this->m_buffers[buff].allocated = true;
+              this->tlmWrite_CurrBuffs(++this->m_currBuffs);
+              if (this->m_currBuffs > this->m_highWater) {
+                  this->m_highWater = this->m_currBuffs;
+                  this->tlmWrite_HiBuffs(this->m_highWater);
+              }
               return this->m_buffers[buff].buff;
           }
       }
 
       // if no buffers found, return empty buffer
+      this->log_WARNING_HI_NoBuffsAvailable(size);
+      this->tlmWrite_NoBuffs(++this->m_noBuffs);
       return Fw::Buffer();
 
   }
@@ -113,40 +134,6 @@ namespace Svc {
     memset(&this->m_bufferBins,0,sizeof(this->m_bufferBins));
 
     this->m_bufferBins = bins;
-
-    // remove any gaps in bins
-    NATIVE_UINT_TYPE numBins = 0;
-    for (NATIVE_UINT_TYPE entry = 0; entry < MAX_NUM_BINS; entry++) {
-        if (this->m_bufferBins.bins[entry].numBuffers == 0) {
-            // search ahead for the next bin
-            for (NATIVE_UINT_TYPE inner = entry; inner < MAX_NUM_BINS; inner++) {
-                if (this->m_bufferBins.bins[inner].numBuffers) {
-                    this->m_bufferBins.bins[entry] = this->m_bufferBins.bins[inner];
-                    // make copied entry empty
-                    this->m_bufferBins.bins[inner].numBuffers = 0;
-                    this->m_bufferBins.bins[inner].bufferSize = 0;
-                    numBins += 1;
-                    break;
-                }
-            }
-        } else {
-            numBins += 1;
-        }
-    }
-
-    // bubble sort bins by size to help search algorithm later
-    BufferBin temp;
-    for (NATIVE_UINT_TYPE outer = 0; outer < numBins-1; outer++) {
-        for (NATIVE_UINT_TYPE inner = 0; inner < numBins-1-outer; inner++) {
-            if (this->m_bufferBins.bins[inner].numBuffers) {
-                if (this->m_bufferBins.bins[inner].bufferSize > this->m_bufferBins.bins[inner+1].bufferSize) {
-                    temp = this->m_bufferBins.bins[inner];
-                    this->m_bufferBins.bins[inner] = this->m_bufferBins.bins[inner+1];
-                    this->m_bufferBins.bins[inner+1] = temp; 
-                }
-            } 
-        }
-    }
 
     // compute the amount of memory needed
     NATIVE_UINT_TYPE memorySize = 0; // size needed memory

@@ -19,6 +19,34 @@
 namespace Svc
 {
 
+    // To use the class, instantiate an instance of the BufferBins struct below. This
+    // table specifies N buffers of M size per bin. Up to MAX_NUM_BINS bins can be specified.
+    // The table is copied when setup() is called, so it does not need to be retained after
+    // the call.
+    //
+    // The rules for specifying bins:
+    // 1. For each bin (BufferBins.bins[n]), specify the size of the buffers (bufferSize) in the 
+    //    bin and how many buffers for that bin (numBuffers).
+    // 2. The bins should be ordered based on an increasing bufferSize to allow BufferManager to 
+    //    search for available buffers. When receiving a request for a buffer, the component will 
+    //    search for the first buffer from the bins that is equal to or greater
+    //    than the requested size, starting at the begginning of the table.
+    // 3. Any unused bins should have numBuffers set to 0.
+    // 4. A single bin can be specified if a single size is needed.
+    // 
+    // If a buffer is requested that can't be found among available buffers, the call will 
+    //    return an Fw::Buffer with a size of zero. It is expected that the user will notice
+    //    and have the appropriate response for the design. If an empty buffer is returned to
+    //    the BufferManager instance, a warning event will be issued but no other action will
+    //    be taken.
+    //
+    // Buffer manager will assert under the following conditions:
+    // 1. A returned buffer has the incorrect manager ID.
+    // 2. A returned buffer has an incorrect buffer ID.
+    // 3. A returned buffer is returned with a correct buffer ID, but it isn't already allocated.
+    // 4. A returned buffer has an indicated size larger than originally allocated.
+    // 5. A returned buffer has a pointer different than the one originally allocated.
+
     class BufferManagerComponentImpl : public BufferManagerComponentBase
     {
 
@@ -103,6 +131,12 @@ namespace Svc
         Fw::MemAllocator *m_allocator; //!< allocator for memory
         NATIVE_UINT_TYPE m_identifier; //!< identifier for allocator
         NATIVE_UINT_TYPE m_numStructs; //!< number of allocated structs
+
+        // stats
+        U32 m_highWater; //!< high watermark for allocations
+        U32 m_currBuffs; //!< number of currently allocated buffers
+        U32 m_noBuffs; //!< number of failures to allocate a buffer
+        U32 m_emptyBuffs; //!< number of empty buffers returned
     };
 
 } // end namespace Svc
