@@ -29,6 +29,7 @@ namespace Svc {
         const char *const compName
     ) : BufferManagerComponentBase(compName)
     ,m_setup(false)
+    ,m_cleaned(false)
     ,m_mgrId(0)
     ,m_buffers(0)
     ,m_allocator(0)
@@ -53,8 +54,24 @@ namespace Svc {
   BufferManagerComponentImpl ::
     ~BufferManagerComponentImpl(void)
   {
-
+      this->cleanup();
   }
+
+  void BufferManagerComponentImpl ::
+    cleanup(void)
+  {
+      if (not this->m_cleaned) {
+          // walk through Fw::Buffer instances and delete them
+          for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numStructs; entry++) {
+              this->m_buffers[entry].buff.~Buffer();
+          }
+          this->m_cleaned = true;
+          // release memory
+          this->m_allocator->deallocate(this->m_memId,this->m_buffers);
+          this->m_setup = false;
+      }
+  }
+  
 
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined typed input ports
@@ -139,7 +156,7 @@ namespace Svc {
     this->m_bufferBins = bins;
 
     // compute the amount of memory needed
-    NATIVE_UINT_TYPE memorySize = 0; // size needed memory
+    NATIVE_UINT_TYPE memorySize = 0; // track needed memory
     this->m_numStructs = 0; // size the number of tracking structs
     // walk through bins and add up the sizes
     for (NATIVE_UINT_TYPE bin = 0; bin < MAX_NUM_BINS; bin++) {

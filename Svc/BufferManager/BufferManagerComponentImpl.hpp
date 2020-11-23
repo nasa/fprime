@@ -46,6 +46,11 @@ namespace Svc
     // 3. A returned buffer is returned with a correct buffer ID, but it isn't already allocated.
     // 4. A returned buffer has an indicated size larger than originally allocated.
     // 5. A returned buffer has a pointer different than the one originally allocated.
+    //
+    // Note that a pointer to the Fw::MemAllocator used in setup() is stored for later memory cleanup.
+    // The instance of the allocator must persist beyond calling the cleanup() function or the 
+    // destructor of BufferManager if cleanup() is not called. If a project-specific manual memory 
+    // allocator is not needed, Fw::MallocAllocator can be used.
 
     class BufferManagerComponentImpl : public BufferManagerComponentBase
     {
@@ -88,8 +93,12 @@ namespace Svc
             NATIVE_UINT_TYPE mgrID,      //!< ID of manager for buffer checking
             NATIVE_UINT_TYPE memID,      //!< Memory segment identifier
             Fw::MemAllocator &allocator, //!< memory allocator. MUST be persistent for later deallocation.
+                                         //!  MUST persist past destructor if cleanup() not called explicitly.
             const BufferBins &bins       //!< Set of user bins
         );
+
+        void cleanup(void);              // Free memory prior to end of program if desired. Otherwise,
+                                         // will be deleted in destructor
 
         //! Destroy object BufferManager
         //!
@@ -115,6 +124,7 @@ namespace Svc
             U32 size);
 
         bool m_setup;             //!< flag to indicate component has been setup
+        bool m_cleaned;           //!< flag to indicate memory has been cleaned up
         NATIVE_UINT_TYPE m_mgrId; //!< stored manager ID for buffer checking
 
         BufferBins m_bufferBins; //!< copy of bins supplied by user
