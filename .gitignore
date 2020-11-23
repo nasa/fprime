@@ -44,7 +44,6 @@ coverity.out
 .#*
 
 **/docs/*.html
-*-template
 
 logs
 

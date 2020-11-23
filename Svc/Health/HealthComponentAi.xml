@@ -27,6 +27,9 @@
             </comment>
         </port>
     </ports>
+    <!-- //////////////////////// -->
+    <!--         COMMANDS         -->
+    <!-- //////////////////////// -->
     <commands>
         <command kind="async" opcode="0x0" mnemonic="HLTH_ENABLE">
             <comment>
@@ -40,16 +43,16 @@
                     </enum>
                     <comment>whether or not health checks are enabled</comment>
                 </arg>
-             </args>
+            </args>
         </command>
-        <command kind="async" opcode="0x1" mnemonic="HLTH_PING_ENABLE" >
+        <command kind="async" opcode="0x1" mnemonic="HLTH_PING_ENABLE">
             <comment>
             Ignore a particular ping entry
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry to enable/disable</comment>
-                </arg>          
+                </arg>
                 <arg name="enable" type="ENUM">
                     <enum name="PingEnabled">
                         <item name="HLTH_PING_DISABLED"/>
@@ -57,25 +60,38 @@
                     </enum>
                     <comment>whether or not a port is pinged</comment>
                 </arg>
-             </args>
+            </args>
         </command>
-        <command kind="async" opcode="0x2" mnemonic="HLTH_CHNG_PING" >
+        <command kind="async" opcode="0x2" mnemonic="HLTH_CHNG_PING">
             <comment>
             Change ping value
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry to modify</comment>
-                </arg>          
+                </arg>
                 <arg name="warningValue" type="U32">
                     <comment>Ping warning threshold</comment>
                 </arg>
                 <arg name="fatalValue" type="U32">
                     <comment>Ping fatal threshold</comment>
                 </arg>
-             </args>
+            </args>
+        </command>
+        <command kind="async" opcode="0x3" mnemonic="HLTH_PING">
+            <comment>
+            Ping specific component
+            </comment>
+            <args>
+                <arg name="entry" type="string" size="40">
+                    <comment>The entry to ping</comment>
+                </arg>
+            </args>
         </command>
     </commands>
+    <!-- //////////////////////// -->
+    <!--        TELEMETRY         -->
+    <!-- //////////////////////// -->
     <telemetry>
         <channel id="0x0" name="PingLateWarnings" data_type="U32" abbrev="T001-1234">
             <comment>
@@ -83,41 +99,44 @@
             </comment>
         </channel>
     </telemetry>
+    <!-- //////////////////////// -->
+    <!--           EVENTS         -->
+    <!-- //////////////////////// -->
     <events>
-        <event id="0x0" name="HLTH_PING_WARN" severity="WARNING_HI" format_string = "Ping entry %s late warning" >
+        <event id="0x0" name="HLTH_PING_WARN" severity="WARNING_HI" format_string = "Ping entry %s late warning">
             <comment>
             Warn that a ping target is longer than the warning value
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry passing the warning level</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x1" name="HLTH_PING_LATE" severity="FATAL" format_string = "Ping entry %s did not respond" >
+        <event id="0x1" name="HLTH_PING_LATE" severity="FATAL" format_string = "Ping entry %s did not respond">
             <comment>
             Declare FATAL since task is no longer responding
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry passing the warning level</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x2" name="HLTH_PING_WRONG_KEY" severity="FATAL" format_string = "Ping entry %s responded with wrong key 0x%08X" >
+        <event id="0x2" name="HLTH_PING_WRONG_KEY" severity="FATAL" format_string = "Ping entry %s responded with wrong key 0x%08X">
             <comment>
             Declare FATAL since task is no longer responding
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry passing the warning level</comment>
-                </arg>          
+                </arg>
                 <arg name="badKey" type="U32">
                     <comment>The incorrect key value</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x3" name="HLTH_CHECK_ENABLE" severity="ACTIVITY_HI" format_string = "Health checking set to %d" >
+        <event id="0x3" name="HLTH_CHECK_ENABLE" severity="ACTIVITY_HI" format_string = "Health checking set to %d">
             <comment>
             Report checking turned on or off
             </comment>
@@ -131,7 +150,7 @@
                 </arg>
             </args>
         </event>
-        <event id="0x4" name="HLTH_CHECK_PING" severity="ACTIVITY_HI" format_string = "Health checking set to %d for %s" >
+        <event id="0x4" name="HLTH_CHECK_PING" severity="ACTIVITY_HI" format_string = "Health checking set to %d for %s">
             <comment>
             Report a particular entry on or off
             </comment>
@@ -145,49 +164,69 @@
                 </arg>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry passing the warning level</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x5" name="HLTH_CHECK_LOOKUP_ERROR" severity="WARNING_LO" format_string = "Couldn't find entry %s" >
+        <event id="0x5" name="HLTH_CHECK_LOOKUP_ERROR" severity="WARNING_LO" format_string = "Couldn't find entry %s">
             <comment>
             Entry was not found
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry passing the warning level</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x6" name="HLTH_PING_UPDATED" severity="ACTIVITY_HI" format_string = "Health ping for %s changed to WARN %d FATAL %d" >
+        <event id="0x6" name="HLTH_PING_UPDATED" severity="ACTIVITY_HI" format_string = "Health ping for %s changed to WARN %d FATAL %d">
             <comment>
             Report changed ping
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry changed</comment>
-                </arg>          
+                </arg>
                 <arg name="warn" type="U32">
                     <comment>The new warning value</comment>
-                </arg>          
+                </arg>
                 <arg name="fatal" type="U32">
                     <comment>The new FATAL value</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
-        <event id="0x7" name="HLTH_PING_INVALID_VALUES" severity="WARNING_HI" format_string = "Health ping for %s invalid values: WARN %d FATAL %d" >
+        <event id="0x7" name="HLTH_PING_INVALID_VALUES" severity="WARNING_HI" format_string = "Health ping for %s invalid values: WARN %d FATAL %d">
             <comment>
             Report changed ping
             </comment>
             <args>
                 <arg name="entry" type="string" size="40">
                     <comment>The entry changed</comment>
-                </arg>          
+                </arg>
                 <arg name="warn" type="U32">
                     <comment>The new warning value</comment>
-                </arg>          
+                </arg>
                 <arg name="fatal" type="U32">
                     <comment>The new FATAL value</comment>
-                </arg>          
+                </arg>
+            </args>
+        </event>
+        <event id="0x8" name="HLTH_PING_RESPONSE" severity="ACTIVITY_HI" format_string = "Ping response from %s">
+            <comment>
+            Send ping response
+            </comment>
+            <args>
+                <arg name="entry" type="string" size="40">
+                    <comment>The entry pinged</comment>
+                </arg>
+            </args>
+        </event>
+        <event id="0x9" name="HLTH_PING_DISABLED" severity="WARNING_HI" format_string = "Ping disabled for %s">
+            <comment>
+            Warn if ping is disable for a specific entry
+            </comment>
+            <args>
+                <arg name="entry" type="string" size="40">
+                    <comment>The entry pinged</comment>
+                </arg>
             </args>
         </event>
     </events>
