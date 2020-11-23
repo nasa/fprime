@@ -12,8 +12,9 @@
 
 
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <new>
 #include <stdio.h>
 
@@ -28,10 +29,10 @@ namespace Svc {
         const char *const compName
     ) : BufferManagerComponentBase(compName)
     ,m_setup(false)
-    ,m_mgrID(0)
+    ,m_mgrId(0)
     ,m_buffers(0)
     ,m_allocator(0)
-    ,m_identifier(0)
+    ,m_memId(0)
     ,m_numStructs(0)
     ,m_highWater(0)
     ,m_currBuffs(0)
@@ -69,24 +70,26 @@ namespace Svc {
       FW_ASSERT(this->m_setup);
       // check for empty buffers - this is just a warning since this component returns
       // empty buffers if it can't allocate one.
-      if (fwBuffer.getsize() == 0) {
+      if (fwBuffer.getSize() == 0) {
           this->log_WARNING_HI_ZeroSizeBuffer();
           this->tlmWrite_EmptyBuffs(++this->m_emptyBuffs);
           return;
       }
       // use the bufferID member field to find the original slot
-      U32 id = fwBuffer.getbufferID();
+      U32 context = fwBuffer.getContext();
+      U32 id = context & 0xFFFF;
+      U32 mgrId = context >> 16;
       // check some things
       FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
-      FW_ASSERT(fwBuffer.getmanagerID() == this->m_mgrID);
+      FW_ASSERT(mgrId == this->m_mgrId);
       FW_ASSERT(true == this->m_buffers[id].allocated);
-      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getdata()) == this->m_buffers[id].memory);
+      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory);
       // user can make smaller for their own purposes, but it shouldn't be bigger
-      FW_ASSERT(fwBuffer.getsize() <= this->m_buffers[id].size);
+      FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size);
       // clear the allocated flag
       this->m_buffers[id].allocated = false;
       // reset the size
-      this->m_buffers[id].buff.setsize(this->m_buffers[id].size);
+      this->m_buffers[id].buff.setSize(this->m_buffers[id].size);
       this->tlmWrite_CurrBuffs(--this->m_currBuffs);
 
   }
@@ -121,14 +124,14 @@ namespace Svc {
   }
 
   void BufferManagerComponentImpl::setup(
-    NATIVE_UINT_TYPE mgrID, //!< manager ID
-    NATIVE_UINT_TYPE memID, //!< Memory segment identifier
+    NATIVE_UINT_TYPE mgrId, //!< manager ID
+    NATIVE_UINT_TYPE memId, //!< Memory segment identifier
     Fw::MemAllocator& allocator, //!< memory allocator
     const BufferBins& bins //!< Set of user bins
   ) {
 
-    this->m_mgrID = mgrID;
-    this->m_identifier = memID;
+    this->m_mgrId = mgrId;
+    this->m_memId = memId;
     this->m_allocator = &allocator;
     // clear bins
     memset(&this->m_bufferBins,0,sizeof(this->m_bufferBins));
@@ -152,7 +155,7 @@ namespace Svc {
     bool recoverable; //!< don't care if it is recoverable since they are a pool of user buffers
 
     // allocate memory
-    void *memory = allocator.allocate(memID,allocatedSize,recoverable);
+    void *memory = allocator.allocate(memId,allocatedSize,recoverable);
     // make sure the memory returns was non-zero and the size requested
     FW_ASSERT(memory);
     FW_ASSERT(memorySize == allocatedSize,memorySize,allocatedSize);
@@ -169,8 +172,8 @@ namespace Svc {
             for (NATIVE_UINT_TYPE binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
                 // placement new for Fw::Buffer instance. We don't need the new() return value, 
                 // because we know where the Fw::Buffer instance is
-                (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(mgrID,
-                      currStruct,reinterpret_cast<U64>(bufferMem),this->m_bufferBins.bins[bin].bufferSize);
+                U32 context = (this->m_mgrId << 16) | currStruct;
+                (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(bufferMem,this->m_bufferBins.bins[bin].bufferSize,context);
                 this->m_buffers[currStruct].allocated = false;
                 this->m_buffers[currStruct].memory = bufferMem;
                 this->m_buffers[currStruct].size = this->m_bufferBins.bins[bin].bufferSize;

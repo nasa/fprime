@@ -115,7 +115,7 @@ namespace Svc
             U32 size);
 
         bool m_setup;             //!< flag to indicate component has been setup
-        NATIVE_UINT_TYPE m_mgrID; //!< stored manager ID for buffer checking
+        NATIVE_UINT_TYPE m_mgrId; //!< stored manager ID for buffer checking
 
         BufferBins m_bufferBins; //!< copy of bins supplied by user
 
@@ -129,7 +129,7 @@ namespace Svc
 
         AllocatedBuffer *m_buffers;    //!< pointer to allocated buffer space
         Fw::MemAllocator *m_allocator; //!< allocator for memory
-        NATIVE_UINT_TYPE m_identifier; //!< identifier for allocator
+        NATIVE_UINT_TYPE m_memId; //!< identifier for allocator
         NATIVE_UINT_TYPE m_numStructs; //!< number of allocated structs
 
         // stats
