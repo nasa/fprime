@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a03d084b980d42745f30faf9dd5515924"><td class="mdescLeft">&#160;</td><td class="mdescRight">counts the number of files in the given directory  <a href="namespace_os_1_1_file_system.html#a03d084b980d42745f30faf9dd5515924">More...</a><br /></td></tr>
 <tr class="separator:a03d084b980d42745f30faf9dd5515924"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98bd5e7ce73b337b8c7dd4bcf961630c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a98bd5e7ce73b337b8c7dd4bcf961630c">readDirectory</a> (const char *path, const U32 maxNum, <a class="el" href="class_fw_1_1_eighty_char_string.html">Fw::EightyCharString</a> fileArray[], U32 &amp;numFiles)</td></tr>
-<tr class="memdesc:a98bd5e7ce73b337b8c7dd4bcf961630c"><td class="mdescLeft">&#160;</td><td class="mdescRight">read the contents of a directory. Size of fileArray should be maxNum. Cleaner implentation found in <a class="el" href="_directory_8hpp.html">Directory.hpp</a>  <a href="namespace_os_1_1_file_system.html#a98bd5e7ce73b337b8c7dd4bcf961630c">More...</a><br /></td></tr>
+<tr class="memdesc:a98bd5e7ce73b337b8c7dd4bcf961630c"><td class="mdescLeft">&#160;</td><td class="mdescRight">read the contents of a directory. Size of fileArray should be maxNum. Cleaner implentation found in <a class="el" href="directory_8hpp.html">Directory.hpp</a>  <a href="namespace_os_1_1_file_system.html#a98bd5e7ce73b337b8c7dd4bcf961630c">More...</a><br /></td></tr>
 <tr class="separator:a98bd5e7ce73b337b8c7dd4bcf961630c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dc1cda7708fe268195a1bb34579af12"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12">appendFile</a> (const char *originPath, const char *destPath, bool createMissingDest=false)</td></tr>
 <tr class="memdesc:a7dc1cda7708fe268195a1bb34579af12"><td class="mdescLeft">&#160;</td><td class="mdescRight">copies a file from origin to destination  <a href="namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12">More...</a><br /></td></tr>
@@ -149,7 +149,7 @@ Functions</h2></td></tr>
 <tr class="memitem:abad653e2beacc22dabf5c9292499d848"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">getFreeSpace</a> (const char *path, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;totalBytes, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;freeBytes)</td></tr>
 <tr class="memdesc:abad653e2beacc22dabf5c9292499d848"><td class="mdescLeft">&#160;</td><td class="mdescRight">get FS free and total space in bytes on filesystem containing path  <a href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">More...</a><br /></td></tr>
 <tr class="separator:abad653e2beacc22dabf5c9292499d848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5df534b36274232fa392df65cfb0606"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#ad5df534b36274232fa392df65cfb0606">initAndCheckFileStats</a> (const char *filePath, struct stat *fileInfo=<a class="el" href="_basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>)</td></tr>
+<tr class="memitem:ad5df534b36274232fa392df65cfb0606"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#ad5df534b36274232fa392df65cfb0606">initAndCheckFileStats</a> (const char *filePath, struct stat *fileInfo=<a class="el" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>)</td></tr>
 <tr class="separator:ad5df534b36274232fa392df65cfb0606"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72df80b8e7e3e503b8fd26a6e1232316"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9f">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a72df80b8e7e3e503b8fd26a6e1232316">copyFileData</a> (<a class="el" href="class_os_1_1_file.html">File</a> source, <a class="el" href="class_os_1_1_file.html">File</a> destination, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> size)</td></tr>
 <tr class="separator:a72df80b8e7e3e503b8fd26a6e1232316"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,7 +191,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_file_system_8hpp_source.html#l00015">15</a> of file <a class="el" href="_file_system_8hpp_source.html">FileSystem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file_system_8hpp_source.html#l00015">15</a> of file <a class="el" href="file_system_8hpp_source.html">FileSystem.hpp</a>.</p>
 
 </div>
 </div>
@@ -232,7 +232,7 @@ Functions</h2></td></tr>
 <p>&lt; gets the size of the file (in bytes) at location path</p>
 <p>&lt; gets the size of the file (in bytes) at location path</p>
 
-<p class="definition">Definition at line <a class="el" href="_linux_2_file_system_8cpp_source.html#l00404">404</a> of file <a class="el" href="_linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00404">404</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -254,7 +254,7 @@ Functions</h2></td></tr>
 
 <p>move current directory to path </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00044">44</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00044">44</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +288,7 @@ Functions</h2></td></tr>
 <p>&lt; gets the size of the file (in bytes) at location path</p>
 <p>&lt; gets the size of the file (in bytes) at location path</p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00036">36</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00036">36</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -334,7 +334,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_linux_2_file_system_8cpp_source.html#l00334">334</a> of file <a class="el" href="_linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00334">334</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -356,7 +356,7 @@ Functions</h2></td></tr>
 
 <p>create a new directory at location path </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00009">9</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00009">9</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -388,7 +388,7 @@ Functions</h2></td></tr>
 
 <p>counts the number of files in the given directory </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00048">48</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00048">48</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -421,7 +421,7 @@ Functions</h2></td></tr>
 <p>append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist. </p>
 <p>gets the size of the file (in bytes) at location path </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00040">40</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00040">40</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -459,7 +459,7 @@ Functions</h2></td></tr>
 
 <p>get FS free and total space in bytes on filesystem containing path </p>
 
-<p class="definition">Definition at line <a class="el" href="_linux_2_file_system_8cpp_source.html#l00493">493</a> of file <a class="el" href="_linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00493">493</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -479,7 +479,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00032">32</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00032">32</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -499,7 +499,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">struct stat *&#160;</td>
-          <td class="paramname"><em>fileInfo</em> = <code><a class="el" href="_basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></code>&#160;</td>
+          <td class="paramname"><em>fileInfo</em> = <code><a class="el" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -511,7 +511,7 @@ Functions</h2></td></tr>
 <p>A helper function that returns an "OP_OK" status if the given file exists and can be read from, otherwise returns an error status.</p>
 <p>If provided, will also initialize the given stat struct with file information. </p>
 
-<p class="definition">Definition at line <a class="el" href="_linux_2_file_system_8cpp_source.html#l00285">285</a> of file <a class="el" href="_linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00285">285</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -541,7 +541,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00027">27</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00027">27</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -577,7 +577,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00017">17</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00017">17</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -619,9 +619,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>read the contents of a directory. Size of fileArray should be maxNum. Cleaner implentation found in <a class="el" href="_directory_8hpp.html">Directory.hpp</a> </p>
+<p>read the contents of a directory. Size of fileArray should be maxNum. Cleaner implentation found in <a class="el" href="directory_8hpp.html">Directory.hpp</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="_linux_2_file_system_8cpp_source.html#l00102">102</a> of file <a class="el" href="_linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_2_file_system_8cpp_source.html#l00102">102</a> of file <a class="el" href="linux_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -643,7 +643,7 @@ Functions</h2></td></tr>
 
 <p>remove a directory at location path </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00013">13</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00013">13</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>
@@ -665,7 +665,7 @@ Functions</h2></td></tr>
 
 <p>removes a file at location path </p>
 
-<p class="definition">Definition at line <a class="el" href="_baremetal_2_file_system_8cpp_source.html#l00022">22</a> of file <a class="el" href="_baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="baremetal_2_file_system_8cpp_source.html#l00022">22</a> of file <a class="el" href="baremetal_2_file_system_8cpp_source.html">FileSystem.cpp</a>.</p>
 
 </div>
 </div>

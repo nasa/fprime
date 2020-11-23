@@ -78,7 +78,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # define name to be uppercase? We will use any case for now. So,
     # we are looking for '#define id value'.
 
-    parser = Forward()
+    _ = Forward()
 
     keyword = Literal("#define").suppress()
     name = Literal(defname).suppress()
@@ -179,16 +179,16 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # for named typedefs of enumerations. We are looking for 'typedef enum'
     # followd by the typename.
 
-    parser = Forward()
+    _ = Forward()
 
     keyword = Literal("typedef enum").suppress()
     typetoken = Literal(typename).suppress()
 
     # 04/23/07: Fix allows for nagative numbers.
-    val = Word("=" + " " + "-" + nums) + restOfLine.suppress()
+    _ = Word("=" + " " + "-" + nums) + restOfLine.suppress()
 
     # 03/21/08: Fix allows hexidecimal numbers.
-    val = Word("=" + " " + "-" + decORhex) + restOfLine.suppress()
+    _ = Word("=" + " " + "-" + decORhex) + restOfLine.suppress()
 
     # 04/04/08: Fix allows (int) cast enumerations. TBD: Must fine
     # some way to suppress the inclusion of the (int) cast. We want

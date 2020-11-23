@@ -92,7 +92,7 @@ function(setup_module_target MODULE_NAME TARGET_FILE_PATH AC_INPUTS SOURCE_FILES
 	# Include the file and look for definitions
     include("${TARGET_FILE_PATH}")
     get_target_name("${TARGET_FILE_PATH}")
-    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
+    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
 endfunction(setup_module_target)
 
 ####
@@ -107,15 +107,12 @@ endfunction(setup_module_target)
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** module dependencies of the target
 ####
-function(setup_all_module_targets MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
-    foreach(ITEM ${FPRIME_TARGET_LIST})
+function(setup_all_module_targets TARGET_LIST MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+    foreach(ITEM ${${TARGET_LIST}})
         setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
-        get_target_name("${ITEM}")
-        if (TARGET "${MODULE_NAME}_${TARGET_NAME}" AND TARGET "${TARGET_NAME}")
-            add_dependencies("${TARGET_NAME}" "${MODULE_NAME}_${TARGET_NAME}")
-        endif()
-    endforeach(ITEM ${FPRIME_TARGET_LIST})
+    endforeach(ITEM ${${TARGET_LIST}})
 endfunction(setup_all_module_targets)
+
 #### Documentation links
 # See Also:
 #  - API: [API](../API.md) describes the `register_fprime_target` function

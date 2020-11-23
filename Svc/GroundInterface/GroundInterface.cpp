@@ -23,7 +23,7 @@ namespace Svc {
     GroundInterfaceComponentImpl(
         const char *const compName
     ) : GroundInterfaceComponentBase(compName),
-        m_ext_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_buffer), GND_BUFFER_SIZE),
+        m_ext_buffer(m_buffer, GND_BUFFER_SIZE),
         m_data_size(0),
         m_in_ring(m_in_buffer, GND_BUFFER_SIZE)
   {
@@ -65,8 +65,8 @@ namespace Svc {
         Fw::Buffer &fwBuffer
     )
   {
-      FW_ASSERT(fwBuffer.getsize() <= MAX_DATA_SIZE);
-      frame_send(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize(), Fw::ComPacket::FW_PACKET_FILE);
+      FW_ASSERT(fwBuffer.getSize() <= MAX_DATA_SIZE);
+      frame_send(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
       fileDownlinkBufferSendOut_out(0, fwBuffer);
   }
 
@@ -97,10 +97,10 @@ namespace Svc {
   void GroundInterfaceComponentImpl::frame_send(U8 *data, TOKEN_TYPE size, TOKEN_TYPE packet_type) {
       // TODO: replace with a call to a buffer manager
       Fw::Buffer buffer = m_ext_buffer;
-      Fw::ExternalSerializeBuffer buffer_wrapper(reinterpret_cast<U8*>(m_ext_buffer.getdata()),
-                                                 m_ext_buffer.getsize());
+      Fw::SerializeBufferBase& buffer_wrapper = buffer.getSerializeRepr();
+      buffer_wrapper.resetSer();
       // True size is supplied size plus sizeof(TOKEN_TYPE) if a packet_type other than "UNKNOWN" was supplied.
-      // This is because if not UNKOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
+      // This is because if not UNKNOWN, the packet_type is serialized too.  Otherwise it is assumed the PACKET_TYPE is
       // already the first token in the UNKNOWN typed buffer.
       U32 true_size = (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? size + sizeof(TOKEN_TYPE) : size;
       U32 total_size = sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE) + true_size + sizeof(U32);
@@ -115,9 +115,9 @@ namespace Svc {
       buffer_wrapper.serialize(data, size, true);
       buffer_wrapper.serialize(static_cast<TOKEN_TYPE>(END_WORD));
 
-      buffer.setsize(buffer_wrapper.getBuffLength());
-      buffer.setdata(reinterpret_cast<POINTER_CAST>(buffer_wrapper.getBuffAddr()));
-      FW_ASSERT(buffer.getsize() == total_size, buffer.getsize(), total_size);
+      // Setup for sending by truncating unused data
+      buffer.setSize(buffer_wrapper.getBuffLength());
+      FW_ASSERT(buffer.getSize() == total_size, buffer.getSize(), total_size);
       write_out(0, buffer);
   }
 
@@ -143,8 +143,8 @@ namespace Svc {
               if (isConnected_fileUplinkBufferGet_OutputPort(0) &&
                   isConnected_fileDownlinkBufferSendOut_OutputPort(0)) {
                   Fw::Buffer buffer = fileUplinkBufferGet_out(0, m_data_size);
-                  m_in_ring.peek(reinterpret_cast<U8*>(buffer.getdata()), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
-                  buffer.setsize(m_data_size - sizeof(packet_type));
+                  m_in_ring.peek(buffer.getData(), m_data_size - sizeof(packet_type), HEADER_SIZE + sizeof(packet_type));
+                  buffer.setSize(m_data_size - sizeof(packet_type));
                   fileUplinkBufferSendOut_out(0, buffer);
               }
               break;
@@ -195,10 +195,10 @@ namespace Svc {
     processBuffer(Fw::Buffer& buffer)
   {
       NATIVE_UINT_TYPE buffer_offset = 0;
-      while (buffer_offset < buffer.getsize()) {
-          NATIVE_UINT_TYPE ser_size = (buffer.getsize() >= m_in_ring.get_remaining_size(true)) ?
-              m_in_ring.get_remaining_size(true) : static_cast<NATIVE_UINT_TYPE>(buffer.getsize());
-          m_in_ring.serialize(reinterpret_cast<U8*>(buffer.getdata()) + buffer_offset, ser_size);
+      while (buffer_offset < buffer.getSize()) {
+          NATIVE_UINT_TYPE ser_size = (buffer.getSize() >= m_in_ring.get_remaining_size(true)) ?
+              m_in_ring.get_remaining_size(true) : static_cast<NATIVE_UINT_TYPE>(buffer.getSize());
+          m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
           buffer_offset = buffer_offset + ser_size;
           processRing();
       }

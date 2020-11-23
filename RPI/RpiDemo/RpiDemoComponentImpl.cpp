@@ -63,8 +63,8 @@ namespace Rpi {
       // send buffers to UART driver
       for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_RPI_UART_BUFFERS; buffer++) {
           // assign buffers to buffer containers
-          this->m_recvBuffers[buffer].setdata((U64)this->m_uartBuffers[buffer]);
-          this->m_recvBuffers[buffer].setsize(RPI_UART_READ_BUFF_SIZE);
+          this->m_recvBuffers[buffer].setData(this->m_uartBuffers[buffer]);
+          this->m_recvBuffers[buffer].setSize(RPI_UART_READ_BUFF_SIZE);
           this->UartBuffers_out(0,this->m_recvBuffers[buffer]);
       }
       // check initial state parameter
@@ -128,10 +128,10 @@ namespace Rpi {
     )
   {
       // convert incoming data to string. If it is not printable, set character to '*'
-      char uMsg[serBuffer.getsize()+1];
-      char* bPtr = (char*)serBuffer.getdata();
+      char uMsg[serBuffer.getSize()+1];
+      char* bPtr = (char*)serBuffer.getData();
 
-      for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getsize(); byte++) {
+      for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
           uMsg[byte] = isalpha(bPtr[byte])?bPtr[byte]:'*';
       }
       uMsg[sizeof(uMsg)-1] = 0;
@@ -139,10 +139,10 @@ namespace Rpi {
       Fw::LogStringArg evrMsg(uMsg);
       this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
       this->m_lastUartMsg = uMsg;
-      this->m_uartReadBytes += serBuffer.getsize();
+      this->m_uartReadBytes += serBuffer.getSize();
 
       // reset buffer size
-      serBuffer.setsize(RPI_UART_READ_BUFF_SIZE);
+      serBuffer.setSize(RPI_UART_READ_BUFF_SIZE);
       // return buffer to driver
       this->UartBuffers_out(0,serBuffer);
   }
@@ -159,8 +159,8 @@ namespace Rpi {
     )
   {
       Fw::Buffer txt;
-      txt.setsize(text.length());
-      txt.setdata((U64)text.toChar());
+      txt.setSize(text.length());
+      txt.setData((U8*)text.toChar());
       this->UartWrite_out(0,txt);
       this->m_uartWriteBytes += text.length();
       
@@ -236,12 +236,12 @@ namespace Rpi {
       // copy data from string to output buffer
       char inBuf[data.length()+1];
       Fw::Buffer in;
-      in.setdata((U64)inBuf);
-      in.setsize(sizeof(inBuf));
+      in.setData((U8*)inBuf);
+      in.setSize(sizeof(inBuf));
 
       Fw::Buffer out;
-      out.setdata((U64)data.toChar());
-      out.setsize(data.length());
+      out.setData((U8*)data.toChar());
+      out.setSize(data.length());
       this->SpiReadWrite_out(0,out,in);
       for (NATIVE_UINT_TYPE byte = 0; byte < sizeof(inBuf); byte++) {
           inBuf[byte] = isalpha(inBuf[byte])?inBuf[byte]:'*';

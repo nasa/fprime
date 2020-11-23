@@ -56,7 +56,7 @@ pip install Fw/Python Gds/
 ```
 cd Ref
 fprime-util generate
-fprime-util install
+fprime-util build
 ```
 **Run the Ref Application**
 ```

@@ -203,8 +203,6 @@ class XmlPortsParser:
     #             sys.exit(-1)
 
     def __del__(self):
-        for a in self.__args:
-            del a
         del self.__port
 
     def get_xml_filename(self):

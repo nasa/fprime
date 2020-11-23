@@ -14,7 +14,7 @@
 #define Fw_FilePacket_HPP
 
 #include <CFDP/Checksum/Checksum.hpp>
-#include <Fw/Buffer/BufferSerializableAc.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/Serializable.hpp>

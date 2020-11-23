@@ -21,25 +21,27 @@ This guide includes:
 - [Conclusion](#conclusion)
 
 
-## How To Configure F´ 
+## How To Configure F´
 
-All configurable files (top-level and component-specific) for F´ are available in the top-level `config` directory. If
-a user is using an out-of-source deployment, as recommended after release 1.5, this whole directory can be copied and
-the location of the project's copy can be specified as part of the build.
+All configurable files (top-level and component-specific) for F´ are available in the top-level
+`config` directory. By default, all deployments use the F´ provided default configuration options,
+but as of F´ version 1.5, deployments can provide their own `AcConstants.ini` and configuration
+`*.hpp` files by using the `ac_constants` and `config_directory` options in the deployment's
+`settings.ini` file. See the [settings.ini guide](../user/settings.md) for more details.
+
+A deployment can clone `AcConstants.ini` or the whole set of `*.hpp` files or both. The deployment
+must take ownership of all `*.hpp` due to C++ compiler constraints.
 
 AcConstants.ini follows [python's INI](https://docs.python.org/3/library/configparser.html#supported-ini-file-structure)
-format and the `FpConfig.hpp` file is a C++ header allowing the user to define global settings. Where components allow
-specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
-
-A project can clone `AcConstants.ini` or the whole set of `*.hpp` files or both.  The project must take ownership of 
-all `*.hpp` due to C++ compiler constraints. By default, the provided configuration from the framework is used.
+format and the `FpConfig.hpp` file is a C++ header allowing the user to define global settings.
+Where components allow specific configuration, a `<component>Cfg.hpp` is available to be modified as well.
 
 ## AcConstants.ini
 
-AcConsstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
+AcConstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
 projects to appropriately size the number of ports provided by many of the command and data handling components defined
 in the `Svc` package. **Note:** internal configurations like table sizes are set in the component specific header as
-these settings aren't autocoded.  See: [Component Configuration](#component-configuration)
+these settings aren't autocoded. See: [Component Configuration](#component-configuration)
 
 These settings may need to be increased for large projects with many components, or minimized for projects with a small
 number of components.
@@ -198,6 +200,10 @@ class stores a task name as private data. Table 35 provides the macro for this f
 | FW_OBJ_NAME_MAX_SIZE     | Size of the buffer storing the object name  | 80      | Positive integer  |
 | FW_QUEUE_NAME_MAX_SIZE   | Size of the buffer storing the queue names  | 80      | Positive integer  |
 | FW_TASK_NAME_MAX_SIZE    | Size of the buffer storing task names       | 80      | Positive integer  |
+
+**Note:** The macro `FW_OPTIONAL_NAME("string")` can be used to conditionally return the given
+string or an empty string depending on whether `FW_OBJECT_NAMES` is on. This can be used to strip
+out component names from code when building without `FW_OBJECT_NAMES`.
 
 **Note:** If the size of the string passed to the code-generated component base classes is larger than this size, the
 string will be truncated. FW_OBJECT_NAMES must be turned on for FW_OBJ_NAME_MAX_SIZ to have any effect.

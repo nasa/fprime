@@ -14,10 +14,12 @@
 #define SocketIpDriver_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include "Drv/SocketIpDriver/SocketIpDriverComponentAc.hpp"
 #include <SocketIpDriverCfg.hpp>
 #include <Drv/SocketIpDriver/SocketHelper.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverTypes.hpp>
+#include <Os/Task.hpp>
 
 // Includes for the IP layer
 #ifdef TGT_OS_TYPE_VXWORKS
