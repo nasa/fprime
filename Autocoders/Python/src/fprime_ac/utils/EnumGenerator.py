@@ -12,7 +12,6 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-import os
 import sys
 
 from fprime_ac.parsers import XmlEnumParser, XmlParser
@@ -20,7 +19,6 @@ from fprime_ac.parsers import XmlEnumParser, XmlParser
 try:
     from fprime_ac.generators.templates.enums import enum_cpp
     from fprime_ac.generators.templates.enums import enum_hpp
-    from fprime_ac.generators.templates.enums import enum_py
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -30,19 +28,8 @@ def open_file(name, type):
     """
     Open the file for writing
     """
-    #
-    gse_serializable_install_dir = os.path.join("DefaultDict", "serializable")
-    if type == "py":
-        filename = name + ".py"
-        #
-        # Put Gse serializable is correct place for make system
-        #
-        if not os.path.exists(gse_serializable_install_dir):
-            os.makedirs(gse_serializable_install_dir)
-        os.chdir(gse_serializable_install_dir)
-    else:
-        filename = name + "EnumAc." + type
-    #
+
+    filename = name + "EnumAc." + type
     fp = open(filename, "w")
     if fp is None:
         print("Could not open file %s" % filename)
@@ -91,13 +78,6 @@ def generate_enum(xml_file):
         #
         fp = open_file(name, "cpp")
         c = enum_cpp.enum_cpp()
-        write_template(fp, c, name, namespace, items, max_value, comment)
-        fp.close()
-        #
-        # Generate the py file
-        #
-        fp = open_file(name, "py")
-        c = enum_py.enum_py()
         write_template(fp, c, name, namespace, items, max_value, comment)
         fp.close()
         return True
