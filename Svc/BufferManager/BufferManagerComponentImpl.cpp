@@ -159,7 +159,7 @@ namespace Svc {
     NATIVE_UINT_TYPE memorySize = 0; // track needed memory
     this->m_numStructs = 0; // size the number of tracking structs
     // walk through bins and add up the sizes
-    for (NATIVE_UINT_TYPE bin = 0; bin < MAX_NUM_BINS; bin++) {
+    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             memorySize += 
                 this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers // allocate each set of buffer memory
@@ -184,7 +184,7 @@ namespace Svc {
 
     // walk through entries and initialize them
     NATIVE_UINT_TYPE currStruct = 0;
-    for (NATIVE_UINT_TYPE bin = 0; bin < MAX_NUM_BINS; bin++) {
+    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             for (NATIVE_UINT_TYPE binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
                 // placement new for Fw::Buffer instance. We don't need the new() return value, 

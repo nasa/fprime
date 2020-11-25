@@ -15,6 +15,7 @@
 
 #include "Svc/BufferManager/BufferManagerComponentAc.hpp"
 #include <Fw/Types/MemAllocator.hpp>
+#include "BufferManagerComponentImplCfg.hpp"
 
 namespace Svc
 {
@@ -56,7 +57,6 @@ namespace Svc
     {
 
     public:
-        static const NATIVE_UINT_TYPE MAX_NUM_BINS = 10;
 
         // ----------------------------------------------------------------------
         // Construction, initialization, and destruction
@@ -84,7 +84,7 @@ namespace Svc
         // Set of bins for the BufferManager
         struct BufferBins
         {
-            BufferBin bins[MAX_NUM_BINS]; //!< set of bins to define buffers
+            BufferBin bins[BUFFERMGR_MAX_NUM_BINS]; //!< set of bins to define buffers
         };
 
         //! set up configuration
