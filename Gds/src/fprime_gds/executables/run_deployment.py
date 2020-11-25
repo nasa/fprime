@@ -9,14 +9,20 @@ import platform
 import sys
 import webbrowser
 from pathlib import Path
-from fprime.fbuild.settings import IniSettings
+from fprime.fbuild.settings import IniSettings, FprimeLocationUnknownException
 
 import fprime_gds.executables.cli
 import fprime_gds.executables.utils
 
 
 def get_artifacts_root() -> Path:
-    ini_settings = IniSettings.load(None)
+    try:
+        ini_settings = IniSettings.load(None)
+    except FprimeLocationUnknownException:
+        print(
+            "[ERROR] Not in fprime deployment and no artifacts root provided, unable to find dictionary and/or app"
+        )
+        sys.exit(-1)
     assert "install_dest" in ini_settings, "install_dest not in settings.ini"
     print(
         "[INFO] Autodetected artifacts root '{}' from deployment settings.ini file.".format(
