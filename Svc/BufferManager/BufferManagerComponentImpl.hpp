@@ -123,6 +123,14 @@ namespace Svc
             const NATIVE_INT_TYPE portNum, /*!< The port number*/
             U32 size);
 
+        //! Handler implementation for schedIn
+        //!
+        void schedIn_handler(
+            const NATIVE_INT_TYPE portNum, /*!< The port number*/
+            NATIVE_UINT_TYPE context /*!< The call order*/
+        );
+
+
         bool m_setup;             //!< flag to indicate component has been setup
         bool m_cleaned;           //!< flag to indicate memory has been cleaned up
         NATIVE_UINT_TYPE m_mgrId; //!< stored manager ID for buffer checking

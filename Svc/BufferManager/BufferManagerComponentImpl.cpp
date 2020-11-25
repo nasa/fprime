@@ -89,7 +89,7 @@ namespace Svc {
       // empty buffers if it can't allocate one.
       if (fwBuffer.getSize() == 0) {
           this->log_WARNING_HI_ZeroSizeBuffer();
-          this->tlmWrite_EmptyBuffs(++this->m_emptyBuffs);
+          this->m_emptyBuffs++;
           return;
       }
       // use the bufferID member field to find the original slot
@@ -105,10 +105,7 @@ namespace Svc {
       FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size);
       // clear the allocated flag
       this->m_buffers[id].allocated = false;
-      // reset the size
-      this->m_buffers[id].buff.setSize(this->m_buffers[id].size);
-      this->tlmWrite_CurrBuffs(--this->m_currBuffs);
-
+      this->m_currBuffs--;
   }
 
   Fw::Buffer BufferManagerComponentImpl ::
@@ -119,15 +116,13 @@ namespace Svc {
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
-      this->tlmWrite_TotalBuffs(this->m_numStructs);
       // find smallest buffer based on size.
       for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
           if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
               this->m_buffers[buff].allocated = true;
-              this->tlmWrite_CurrBuffs(++this->m_currBuffs);
+              this->m_currBuffs++;
               if (this->m_currBuffs > this->m_highWater) {
                   this->m_highWater = this->m_currBuffs;
-                  this->tlmWrite_HiBuffs(this->m_highWater);
               }
               return this->m_buffers[buff].buff;
           }
@@ -135,7 +130,7 @@ namespace Svc {
 
       // if no buffers found, return empty buffer
       this->log_WARNING_HI_NoBuffsAvailable(size);
-      this->tlmWrite_NoBuffs(++this->m_noBuffs);
+      this->m_noBuffs++;
       return Fw::Buffer();
 
   }
@@ -205,6 +200,20 @@ namespace Svc {
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
     // indicate setup is done
     this->m_setup = true;
+  }
+
+  void BufferManagerComponentImpl ::
+    schedIn_handler(
+        const NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+    // write telemetry values
+    this->tlmWrite_HiBuffs(this->m_highWater);
+    this->tlmWrite_CurrBuffs(this->m_currBuffs);
+    this->tlmWrite_TotalBuffs(this->m_numStructs);
+    this->tlmWrite_NoBuffs(this->m_noBuffs);
+    this->tlmWrite_EmptyBuffs(this->m_emptyBuffs);
   }
 
 } // end namespace Svc

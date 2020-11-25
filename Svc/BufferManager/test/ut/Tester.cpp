@@ -177,8 +177,6 @@ namespace Svc {
           }
       }
 
-
-
       // memory location should be at end of allocated memory
       ASSERT_EQ(mem,reinterpret_cast<U8*>(alloc.getMem()) + alloc.getSize());
 
@@ -211,13 +209,27 @@ namespace Svc {
           ASSERT_EQ(b+1,this->component.m_highWater);
       }
 
+
       // should send back empty buffer
       Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
       ASSERT_EQ(1,this->component.m_noBuffs);
 
-      // clear histories
-      this->clearEvents();
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(5);
+      ASSERT_TLM_TotalBuffs_SIZE(1);
+      ASSERT_TLM_TotalBuffs(0,BIN1_NUM_BUFFERS);
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,BIN1_NUM_BUFFERS);
+      ASSERT_TLM_HiBuffs_SIZE(1);
+      ASSERT_TLM_HiBuffs(0,BIN1_NUM_BUFFERS);
+      ASSERT_TLM_NoBuffs_SIZE(1);
+      ASSERT_TLM_NoBuffs(0,1);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,0);
 
+      // clear histories
+      this->clearHistory();
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           // return the buffer
@@ -231,6 +243,16 @@ namespace Svc {
       // should reject empty buffer
       this->invoke_to_bufferSendIn(0,noBuff);
       ASSERT_EQ(1,this->component.m_emptyBuffs);
+
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      // No total buffs or no buffs since only on update
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,0);
+      ASSERT_TLM_NoBuffs_SIZE(0);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,1);
 
       // all buffers should be deallocated
       for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
@@ -277,6 +299,24 @@ namespace Svc {
       Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
       ASSERT_EQ(1,this->component.m_noBuffs);
 
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(5);
+      ASSERT_TLM_TotalBuffs_SIZE(1);
+      ASSERT_TLM_TotalBuffs(0,BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS);
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS);
+      ASSERT_TLM_HiBuffs_SIZE(1);
+      ASSERT_TLM_HiBuffs(0,BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS);
+      ASSERT_TLM_NoBuffs_SIZE(1);
+      ASSERT_TLM_NoBuffs(0,1);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,0);
+
+      // clear histories
+      this->clearHistory();
+
+
       for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
@@ -289,6 +329,19 @@ namespace Svc {
       // should reject empty buffer
       this->invoke_to_bufferSendIn(0,noBuff);
       ASSERT_EQ(1,this->component.m_emptyBuffs);
+
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      // No total buffs or no buffs since only on update
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,0);
+      ASSERT_TLM_NoBuffs_SIZE(0);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,1);
+
+      // clear histories
+      this->clearHistory();
 
       // all buffers should be deallocated
       for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
@@ -314,6 +367,19 @@ namespace Svc {
       noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
       ASSERT_EQ(2,this->component.m_noBuffs);
 
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      ASSERT_TLM_TotalBuffs_SIZE(0);
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS);
+      ASSERT_TLM_NoBuffs_SIZE(1);
+      ASSERT_TLM_NoBuffs(0,2);
+      ASSERT_TLM_EmptyBuffs_SIZE(0);
+
+      // clear histories
+      this->clearHistory();
+
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
@@ -325,6 +391,19 @@ namespace Svc {
       // should reject empty buffer
       this->invoke_to_bufferSendIn(0,noBuff);
       ASSERT_EQ(2,this->component.m_emptyBuffs);
+
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      // No total buffs or no buffs since only on update
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,0);
+      ASSERT_TLM_NoBuffs_SIZE(0);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,2);
+
+      // clear histories
+      this->clearHistory();
 
       // all buffers should be deallocated
       for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
@@ -347,6 +426,20 @@ namespace Svc {
       noBuff = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE-1);
       ASSERT_EQ(3,this->component.m_noBuffs);
 
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      ASSERT_TLM_TotalBuffs_SIZE(0);
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,BIN2_NUM_BUFFERS);
+      ASSERT_TLM_NoBuffs_SIZE(1);
+      ASSERT_TLM_NoBuffs(0,3);
+      ASSERT_TLM_EmptyBuffs_SIZE(0);
+
+      // clear histories
+      this->clearHistory();
+
+
       for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
           // return the buffer
           this->invoke_to_bufferSendIn(0,buffs[b]);
@@ -359,19 +452,23 @@ namespace Svc {
       this->invoke_to_bufferSendIn(0,noBuff);
       ASSERT_EQ(3,this->component.m_emptyBuffs);
 
+      // check telemetry
+      this->invoke_to_schedIn(0,0);
+      ASSERT_TLM_SIZE(2);
+      // No total buffs or no buffs since only on update
+      ASSERT_TLM_CurrBuffs_SIZE(1);
+      ASSERT_TLM_CurrBuffs(0,0);
+      ASSERT_TLM_NoBuffs_SIZE(0);
+      ASSERT_TLM_EmptyBuffs_SIZE(1);
+      ASSERT_TLM_EmptyBuffs(0,3);
+
       // all buffers should be deallocated
       for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
-      // clear histories
-      this->clearEvents();
-
-
-
       // cleanup BufferManager memory
       this->component.cleanup();
-
 
   }
 
@@ -422,8 +519,11 @@ namespace Svc {
         this->get_from_tlmOut(0)
     );
 
-
-
+    // schedIn
+    this->connect_to_schedIn(
+        0, 
+        this->component.get_schedIn_InputPort(0)
+    );
 
   }
 
