@@ -14,6 +14,11 @@ TEST(Nominal, OneSize) {
     tester.oneBufferSize();
 }
 
+TEST(Nominal, MultSize) {
+    Svc::Tester tester;
+    tester.multBuffSize();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

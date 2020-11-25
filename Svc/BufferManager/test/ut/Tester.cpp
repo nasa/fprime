@@ -14,7 +14,7 @@
 #include <Fw/Types/MallocAllocator.hpp>
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 100
 
 
 // Bin buffer sizes/numbers
@@ -177,6 +177,8 @@ namespace Svc {
           }
       }
 
+
+
       // memory location should be at end of allocated memory
       ASSERT_EQ(mem,reinterpret_cast<U8*>(alloc.getMem()) + alloc.getSize());
 
@@ -200,7 +202,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           // Get the buffers
-          buffs[b] = this->invoke_to_bufferGetCallee(0,8);
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
           // check allocation state
           ASSERT_TRUE(this->component.m_buffers[b].allocated);
           // check stats
@@ -210,8 +212,12 @@ namespace Svc {
       }
 
       // should send back empty buffer
-      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,8);
+      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
       ASSERT_EQ(1,this->component.m_noBuffs);
+
+      // clear histories
+      this->clearEvents();
+
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           // return the buffer
@@ -226,10 +232,150 @@ namespace Svc {
       this->invoke_to_bufferSendIn(0,noBuff);
       ASSERT_EQ(1,this->component.m_emptyBuffs);
 
+      // all buffers should be deallocated
+      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+      }
+
       // cleanup BufferManager memory
       this->component.cleanup();
 
   }
+
+  void Tester::multBuffSize(void) {
+
+      BufferManagerComponentImpl::BufferBins bins;
+      memset(&bins,0,sizeof(bins));
+      bins.bins[0].bufferSize = BIN0_BUFFER_SIZE;
+      bins.bins[0].numBuffers = BIN0_NUM_BUFFERS;
+      bins.bins[1].bufferSize = BIN1_BUFFER_SIZE;
+      bins.bins[1].numBuffers = BIN1_NUM_BUFFERS;
+      bins.bins[2].bufferSize = BIN2_BUFFER_SIZE;
+      bins.bins[2].numBuffers = BIN2_NUM_BUFFERS;
+
+      TestAllocator alloc;
+
+      this->component.setup(MGR_ID,MEM_ID,alloc,bins);
+
+      Fw::Buffer buffs[BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS];
+
+      // BufferManager should be able to provide the whole pool worth of buffers 
+      // for a requested size smaller than the smallest bin.
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+          // Get the buffers
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN0_BUFFER_SIZE-1);
+          // check allocation state
+          ASSERT_TRUE(this->component.m_buffers[b].allocated);
+          // check stats
+          ASSERT_EQ(b+1,this->component.m_currBuffs);
+          // check stats
+          ASSERT_EQ(b+1,this->component.m_highWater);
+      }
+
+      // should send back empty buffer
+      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+      ASSERT_EQ(1,this->component.m_noBuffs);
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+          // return the buffer
+          this->invoke_to_bufferSendIn(0,buffs[b]);
+          // check allocation state
+          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+          ASSERT_EQ(BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS-b-1,this->component.m_currBuffs);
+          ASSERT_EQ(BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS,this->component.m_highWater);
+      }
+
+      // should reject empty buffer
+      this->invoke_to_bufferSendIn(0,noBuff);
+      ASSERT_EQ(1,this->component.m_emptyBuffs);
+
+      // all buffers should be deallocated
+      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+      }
+
+      // clear histories
+      this->clearEvents();
+
+      // BufferManager should be able to provide the BIN1 and BIN2 worth of buffers 
+      // for a requested size just smaller than the BIN1 size
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+          // Get the buffers
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+          // check allocation state - should be allocating from bin 1
+          ASSERT_TRUE(this->component.m_buffers[b+BIN0_NUM_BUFFERS].allocated);
+          // check stats
+          ASSERT_EQ(b+1,this->component.m_currBuffs);
+      }
+
+      // should send back empty buffer
+      noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+      ASSERT_EQ(2,this->component.m_noBuffs);
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
+          // return the buffer
+          this->invoke_to_bufferSendIn(0,buffs[b]);
+          // check allocation state - should be freeing from bin 1
+          ASSERT_FALSE(this->component.m_buffers[b+BIN0_NUM_BUFFERS].allocated);
+          ASSERT_EQ(BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS-b-1,this->component.m_currBuffs);
+      }
+
+      // should reject empty buffer
+      this->invoke_to_bufferSendIn(0,noBuff);
+      ASSERT_EQ(2,this->component.m_emptyBuffs);
+
+      // all buffers should be deallocated
+      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+      }
+
+      // BufferManager should be able to provide the BIN2 worth of buffers 
+      // for a requested size just smaller than the BIN2 size
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
+          // Get the buffers
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE-1);
+          // check allocation state - should be allocating from bin 1
+          ASSERT_TRUE(this->component.m_buffers[b+BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS].allocated);
+          // check stats
+          ASSERT_EQ(b+1,this->component.m_currBuffs);
+      }
+
+      // should send back empty buffer
+      noBuff = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE-1);
+      ASSERT_EQ(3,this->component.m_noBuffs);
+
+      for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
+          // return the buffer
+          this->invoke_to_bufferSendIn(0,buffs[b]);
+          // check allocation state - should be freeing from bin 1
+          ASSERT_FALSE(this->component.m_buffers[b+BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS].allocated);
+          ASSERT_EQ(BIN2_NUM_BUFFERS-b-1,this->component.m_currBuffs);
+      }
+
+      // should reject empty buffer
+      this->invoke_to_bufferSendIn(0,noBuff);
+      ASSERT_EQ(3,this->component.m_emptyBuffs);
+
+      // all buffers should be deallocated
+      for (NATIVE_UINT_TYPE b=0; b<this->component.m_numStructs; b++) {
+          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+      }
+
+      // clear histories
+      this->clearEvents();
+
+
+
+      // cleanup BufferManager memory
+      this->component.cleanup();
+
+
+  }
+
+
 
 
   // ----------------------------------------------------------------------

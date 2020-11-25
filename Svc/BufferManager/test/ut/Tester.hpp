@@ -49,6 +49,9 @@ namespace Svc {
       //! One buffer size
       void oneBufferSize(void);
 
+      //! Multiple buffer sizes
+      void multBuffSize(void);
+
     private:
 
       // ----------------------------------------------------------------------
