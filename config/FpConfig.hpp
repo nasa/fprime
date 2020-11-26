@@ -167,7 +167,7 @@
 
 // Define max length of assert string
 #ifndef FW_ASSERT_TEXT_SIZE
-#define FW_ASSERT_TEXT_SIZE                 120  //!< Size of string used to store assert description
+#define FW_ASSERT_TEXT_SIZE                 180  //!< Size of string used to store assert description
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
