@@ -6,6 +6,7 @@
  */
 
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 
@@ -127,7 +128,6 @@ namespace Svc {
     }
 
     void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, QueueLogSeverity severity, Fw::LogBuffer &args) {
-
         // Serialize event
         this->m_logPacket.setId(id);
         this->m_logPacket.setTimeTag(timeTag);
@@ -187,9 +187,14 @@ namespace Svc {
                 FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity));
                 return;
         }
-
+        
         if (this->isConnected_PktSend_OutputPort(0)) {
             this->PktSend_out(0, this->m_comBuffer,0);
+        }
+
+        // redirect event through event output
+        if (this->isConnected_LogSend_OutputPort(0)) {
+            this->LogSend_out(0, id, timeTag, static_cast<Fw::LogSeverity>(severity) , args);
         }
     }
 

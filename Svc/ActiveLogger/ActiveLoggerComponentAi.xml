@@ -18,6 +18,11 @@
             Telemetry input port
             </comment>
         </port>
+        <port name="LogSend" data_type="Fw::Log" kind="output" >
+            <comment>
+            Telemetry output port
+            </comment>
+        </port>
         <port name="PktSend" data_type="Fw::Com" kind="output" >
             <comment>
             Packet send port
