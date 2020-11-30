@@ -1,35 +1,5 @@
     <events>
-        <event id="0" name="ALOG_FILE_WRITE_ERR" severity="WARNING_HI" format_string = "Event buffer write failed in stage %d with error %d" >
-            <comment>
-            Failed to write circular buffer
-            </comment>
-            <args>
-                <arg name="stage" type="ENUM">
-                    <enum name="LogWriteError">
-                        <item name="LOG_WRITE_OPEN"/>
-                        <item name="LOG_WRITE_FATAL_DELIMETER"/>
-                        <item name="LOG_WRITE_FATAL_RECORD"/>
-                        <item name="LOG_WRITE_WARNING_HI_DELIMETER"/>
-                        <item name="LOG_WRITE_WARNING_HI_RECORD"/>
-                        <item name="LOG_WRITE_WARNING_LO_DELIMETER"/>
-                        <item name="LOG_WRITE_WARNING_LO_RECORD"/>
-                        <item name="LOG_WRITE_COMMAND_DELIMETER"/>
-                        <item name="LOG_WRITE_COMMAND_RECORD"/>
-                        <item name="LOG_WRITE_ACTIVITY_HI_DELIMETER"/>
-                        <item name="LOG_WRITE_ACTIVITY_HI_RECORD"/>
-                        <item name="LOG_WRITE_ACTIVITY_LO_DELIMETER"/>
-                        <item name="LOG_WRITE_ACTIVITY_LO_RECORD"/>
-                        <item name="LOG_WRITE_DIAGNOSTIC_DELIMETER"/>
-                        <item name="LOG_WRITE_DIAGNOSTIC_RECORD"/>
-                    </enum>
-                    <comment>The write stage</comment>
-                </arg>          
-                <arg name="error" type="I32">
-                    <comment>The error code</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="ALOG_SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. Recv: %d Send: %d" >
+        <event id="0" name="ALOG_SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. Recv: %d Send: %d" >
             <comment>
             Dump severity filter state
             </comment>
@@ -51,7 +21,7 @@
                 </arg>
             </args>
         </event>
-        <event id="2" name="ALOG_ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
+        <event id="1" name="ALOG_ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
             <comment>
             Indicate ID is filtered
             </comment>
@@ -61,7 +31,7 @@
                 </arg>
             </args>
         </event>
-        <event id="3" name="ALOG_ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
+        <event id="2" name="ALOG_ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
             <comment>
             Attempted to add ID to full ID filter ID
             </comment>
@@ -71,7 +41,7 @@
                 </arg>
             </args>
         </event>
-        <event id="4" name="ALOG_ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
+        <event id="3" name="ALOG_ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
             <comment>
             Removed an ID from the filter
             </comment>
@@ -81,7 +51,7 @@
                 </arg>
             </args>
         </event>
-        <event id="5" name="ALOG_ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
+        <event id="4" name="ALOG_ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
             <comment>
             ID not in filter
             </comment>
