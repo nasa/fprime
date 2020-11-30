@@ -116,7 +116,6 @@ namespace Svc {
           this->mode.set(Mode::DOWNLINK);
       }
 
-      //If back-to-back transfer mode attempt the next downlink
       this->downlinkPacket();
   }
 
