@@ -12,14 +12,7 @@
 namespace Svc {
 
     ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
-        ActiveLoggerComponentBase(name),
-        m_fatalHead(0),
-        m_warningHiHead(0),
-        m_warningLoHead(0),
-        m_commandHead(0),
-        m_activityHiHead(0),
-        m_activityLoHead(0),
-        m_diagnosticHead(0)
+        ActiveLoggerComponentBase(name)
     {
         // set input filter defaults
         this->m_inFilterState[INPUT_WARNING_HI].enabled =
@@ -138,47 +131,33 @@ namespace Svc {
 
         switch (severity) {
             case QUEUE_LOG_FATAL: // always pass FATAL
-                this->m_fatalCb[this->m_fatalHead] = this->m_comBuffer;
-                this->m_fatalHead = (this->m_fatalHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_fatalCb);
                 break;
             case QUEUE_LOG_WARNING_HI:
-                this->m_warningHiCb[this->m_warningHiHead] = this->m_comBuffer;
-                this->m_warningHiHead = (this->m_warningHiHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_warningHiCb);
                 if (this->m_sendFilterState[SEND_WARNING_HI].enabled == SEND_DISABLED) {
                    return;
                 }
                 break;
             case QUEUE_LOG_WARNING_LO:
-                this->m_warningLoCb[this->m_warningLoHead] = this->m_comBuffer;
-                this->m_warningLoHead = (this->m_warningLoHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_warningLoCb);
                 if (this->m_sendFilterState[SEND_WARNING_LO].enabled == SEND_DISABLED) {
                     return;
                 }
                 break;
             case QUEUE_LOG_COMMAND:
-                this->m_commandCb[this->m_commandHead] = this->m_comBuffer;
-                this->m_commandHead = (this->m_commandHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_commandCb);
                 if (this->m_sendFilterState[SEND_COMMAND].enabled == SEND_DISABLED) {
                     return;
                 }
                 break;
             case QUEUE_LOG_ACTIVITY_HI:
-                this->m_activityHiCb[this->m_activityHiHead] = this->m_comBuffer;
-                this->m_activityHiHead = (this->m_activityHiHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_activityHiCb);
                 if (this->m_sendFilterState[SEND_ACTIVITY_HI].enabled == SEND_DISABLED) {
                     return;
                 }
                 break;
             case QUEUE_LOG_ACTIVITY_LO:
-                this->m_activityLoCb[this->m_activityLoHead] = this->m_comBuffer;
-                this->m_activityLoHead = (this->m_activityLoHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_activityLoCb);
                 if (this->m_sendFilterState[SEND_ACTIVITY_LO].enabled == SEND_DISABLED) {
                     return;
                 }
                 break;
             case QUEUE_LOG_DIAGNOSTIC:
-                this->m_diagnosticCb[this->m_diagnosticHead] = this->m_comBuffer;
-                this->m_diagnosticHead = (this->m_diagnosticHead + 1)%FW_NUM_ARRAY_ELEMENTS(this->m_diagnosticCb);
                 if (this->m_sendFilterState[SEND_DIAGNOSTIC].enabled == SEND_DISABLED) {
                     return;
                 }
@@ -214,240 +193,6 @@ namespace Svc {
             return;
         }
         this->m_sendFilterState[FilterLevel].enabled = FilterEnable;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-    }
-
-    void ActiveLoggerImpl::ALOG_DUMP_EVENT_LOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& filename) {
-        // Walk through each event type and write it to the file
-
-        static const BYTE delimiter = 0xA5;
-        // open the file
-        Os::File file;
-        Os::File::Status stat = file.open(filename.toChar(),Os::File::OPEN_WRITE);
-        if (stat != Os::File::OP_OK) {
-            this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_OPEN,(I32)stat);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-            return;
-        }
-
-        NATIVE_UINT_TYPE numRecords = 0;
-
-        NATIVE_INT_TYPE fileWriteSize;
-        // write FATAL
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_fatalCb); entry++) {
-
-            // if there is data, write it
-            if (this->m_fatalCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_FATAL_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_fatalCb[entry].getBuffLength();
-                stat = file.write(this->m_fatalCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_FATAL_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write WARNING HI
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_warningHiCb); entry++) {
-            // if there is data, write it
-            if (this->m_warningHiCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_HI_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_warningHiCb[entry].getBuffLength();
-                stat = file.write(this->m_warningHiCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_HI_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write WARNING LO
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_warningLoCb); entry++) {
-            // if there is data, write it
-            if (this->m_warningLoCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_LO_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_warningLoCb[entry].getBuffLength();
-                stat = file.write(this->m_warningLoCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_LO_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write COMMAND
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_commandCb); entry++) {
-            // if there is data, write it
-            if (this->m_commandCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_COMMAND_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_commandCb[entry].getBuffLength();
-                stat = file.write(this->m_commandCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_COMMAND_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write ACTIVITY HI
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_activityHiCb); entry++) {
-            // if there is data, write it
-            if (this->m_activityHiCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_HI_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_activityHiCb[entry].getBuffLength();
-                stat = file.write(this->m_activityHiCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_HI_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write ACTIVITY LO
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_activityLoCb); entry++) {
-            // if there is data, write it
-            if (this->m_activityLoCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_LO_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_activityLoCb[entry].getBuffLength();
-                stat = file.write(this->m_activityLoCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_LO_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        // write DIAGNOSTIC
-        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_diagnosticCb); entry++) {
-            // if there is data, write it
-            if (this->m_diagnosticCb[entry].getBuffLength() != 0) {
-                // write delimiter
-                fileWriteSize = sizeof(delimiter);
-                stat = file.write(&delimiter,fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_DIAGNOSTIC_DELIMETER,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-
-                // write event record
-                fileWriteSize = this->m_diagnosticCb[entry].getBuffLength();
-                stat = file.write(this->m_diagnosticCb[entry].getBuffAddr(),fileWriteSize);
-                if (stat != Os::File::OP_OK) {
-                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_DIAGNOSTIC_RECORD,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
-                    file.close();
-                    return;
-                }
-                numRecords++;
-            } else {
-                // if the entry is empty, that means it is only a partially filled list, so quit writing
-                break;
-            }
-        }
-
-        file.close();
-
-        this->log_ACTIVITY_HI_ALOG_FILE_WRITE_COMPLETE(numRecords);
-
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 

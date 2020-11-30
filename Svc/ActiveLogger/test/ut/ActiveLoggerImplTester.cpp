@@ -15,7 +15,6 @@
 
 #include <cstdio>
 
-
 namespace Svc {
 
     void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {

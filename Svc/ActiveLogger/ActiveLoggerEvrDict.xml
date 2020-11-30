@@ -29,17 +29,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="1" name="ALOG_FILE_WRITE_COMPLETE" severity="ACTIVITY_HI" format_string = "Event buffer write complete. Wrote %d records." >
-            <comment>
-            Evemt log file write complete
-            </comment>
-            <args>
-                <arg name="records" type="U32">
-                    <comment>number of records written</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="2" name="ALOG_SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. Recv: %d Send: %d" >
+        <event id="1" name="ALOG_SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. Recv: %d Send: %d" >
             <comment>
             Dump severity filter state
             </comment>
@@ -61,7 +51,7 @@
                 </arg>
             </args>
         </event>
-        <event id="3" name="ALOG_ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
+        <event id="2" name="ALOG_ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
             <comment>
             Indicate ID is filtered
             </comment>
@@ -71,7 +61,7 @@
                 </arg>
             </args>
         </event>
-        <event id="4" name="ALOG_ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
+        <event id="3" name="ALOG_ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
             <comment>
             Attempted to add ID to full ID filter ID
             </comment>
@@ -81,7 +71,7 @@
                 </arg>
             </args>
         </event>
-        <event id="5" name="ALOG_ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
+        <event id="4" name="ALOG_ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
             <comment>
             Removed an ID from the filter
             </comment>
@@ -91,7 +81,7 @@
                 </arg>
             </args>
         </event>
-        <event id="6" name="ALOG_ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
+        <event id="5" name="ALOG_ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
             <comment>
             ID not in filter
             </comment>

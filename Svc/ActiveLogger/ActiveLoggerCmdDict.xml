@@ -49,16 +49,7 @@
                 </arg>
              </args>
         </command>
-        <command kind="async" opcode="2" mnemonic="ALOG_DUMP_EVENT_LOG">
-            <comment>
-            Dump circular buffers of events to a file 
-            </comment>
-            <args>
-                <arg name="filename" type="string" size="40">
-                </arg>
-            </args>
-        </command>
-        <command kind="async" opcode="3" mnemonic="ALOG_SET_ID_FILTER">
+        <command kind="async" opcode="2" mnemonic="ALOG_SET_ID_FILTER">
             <comment>
             Filter a particular ID 
             </comment>
@@ -74,7 +65,7 @@
                 </arg>
             </args>
         </command>
-        <command kind="async" opcode="4" mnemonic="ALOG_DUMP_FILTER_STATE">
+        <command kind="async" opcode="3" mnemonic="ALOG_DUMP_FILTER_STATE">
             <comment>
             Dump the filter states via events
             </comment>
