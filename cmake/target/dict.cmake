@@ -13,33 +13,37 @@
 #
 # Generate a dictionary from any *AppAi.xml file that we see
 ####
-function(dictgen MODULE_NAME AI_XML MOD_DEPS)
+function(dictgen MODULE_NAME AI_XML DEPS)
   string(REGEX REPLACE "Ai.xml" "Dictionary.xml" DICT_XML "${AI_XML}")
+  string(REGEX REPLACE "Ai.xml" "ID.csv" ID_CSV_XML "${AI_XML}")
+  string(REGEX REPLACE "Ai.xml" "Ai_IDTableLog.txt" ID_LOG_XML "${AI_XML}")
   string(REGEX REPLACE "Ai.xml" "Ac" AC_BASE "${AI_XML}")
   string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
   get_filename_component(DICT_XML_NAME ${DICT_XML} NAME)
+  get_filename_component(ID_CSV_XML_NAME ${ID_CSV_XML} NAME)
+  get_filename_component(ID_LOG_XML_NAME ${ID_LOG_XML} NAME)
   set(DICT_ROOT "${FPRIME_INSTALL_DEST}/${PLATFORM}/dict")
   set(DICTIONARY_OUTPUT_FILE "${DICT_ROOT}/${DICT_XML_NAME}")
 
   add_custom_command(
-      OUTPUT "${DICTIONARY_OUTPUT_FILE}"
+      OUTPUT "${DICT_ROOT}/${DICT_XML_NAME}"
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
       FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
       ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py --build_root --xml_topology_dict ${AI_XML}
       COMMAND ${CMAKE_COMMAND} -E make_directory "${DICT_ROOT}"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${DICT_XML_NAME} ${DICTIONARY_OUTPUT_FILE}
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${DICT_XML_NAME} ${ID_LOG_XML_NAME} ${ID_CSV_XML_NAME} ${DICT_ROOT}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory commands "${DICT_ROOT}/commands"
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory channels "${DICT_ROOT}/channels"
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory events "${DICT_ROOT}/events"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${DICT_XML_NAME} ${AC_BASE}.cpp ${AC_BASE}.hpp
+      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${DICT_XML_NAME} ${ID_CSV_XML_NAME} ${ID_LOG_XML_NAME} ${AC_BASE}.cpp ${AC_BASE}.hpp
       # Workaround for older versions of cmake (~v3.10) that can only delete a single directory with "remove_directory" command.
       # When bumping cmake versions combine all deletions into a single "cmake -E rm -rf" command.
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory commands
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory channels
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory events
-      DEPENDS ${MOD_DEPS}
+      DEPENDS ${DEPS}
   )
 
   # Return file for output
@@ -81,7 +85,7 @@ function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS 
         # Only generate dictionaries on serializables or topologies
         if (AC_IN MATCHES ".*Topology.*\.xml$")
             fprime_ai_info("${AC_IN}" "${MODULE_NAME}")
-            dictgen("${MODULE_NAME}" "${AC_IN}" "${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
+            dictgen("${MODULE_NAME}" "${AC_IN}" "${AC_INPUTS};${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
             add_custom_target("${TARGET_NAME}" DEPENDS "${AC_IN}" "${DICTIONARY_OUTPUT_FILE}")
             add_dependencies("${MODULE_NAME}" "${TARGET_NAME}")
             add_dependencies("${GLOBAL_TARGET_NAME}" "${TARGET_NAME}")

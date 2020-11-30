@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import platform
 from enum import Enum
 
 filename = os.path.dirname(__file__)
@@ -22,7 +23,12 @@ class TestRefAppClass(object):
         cls.pipeline = StandardPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
-        path = os.path.join(filename, "../../Top/RefTopologyAppDictionary.xml")
+        path = os.path.join(
+            filename,
+            "../../build-artifacts/{}/dict/RefTopologyAppDictionary.xml".format(
+                platform.system()
+            ),
+        )
         cls.pipeline.setup(config, path, "/tmp")
         cls.pipeline.connect("127.0.0.1", 50050)
         logpath = os.path.join(filename, "./logs")
