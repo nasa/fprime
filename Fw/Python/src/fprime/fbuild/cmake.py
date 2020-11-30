@@ -52,7 +52,14 @@ class CMakeHandler:
         self.verbose = verbose
 
     def execute_known_target(
-        self, target, build_dir, path, cmake_args=None, make_args=None, top_target=False, environment=None
+        self,
+        target,
+        build_dir,
+        path,
+        cmake_args=None,
+        make_args=None,
+        top_target=False,
+        environment=None,
     ):
         """
         Executes a known target for a given build_dir. Path will default to a known path.
@@ -209,7 +216,9 @@ class CMakeHandler:
         self._cmake_validate_build_dir(cmake_dir)  # Validate the dir
         return self._read_values_from_cache(fields, build_dir=cmake_dir)
 
-    def generate_build(self, source_dir, build_dir, args=None, ignore_output=False, environment=None):
+    def generate_build(
+        self, source_dir, build_dir, args=None, ignore_output=False, environment=None
+    ):
         """Generate a build directory for purposes of the build.
 
         :param source_dir: source directory to generate from
@@ -240,7 +249,7 @@ class CMakeHandler:
             workdir=build_dir,
             print_output=not ignore_output,
             write_override=True,
-            environment=environment
+            environment=environment,
         )
 
     def get_cmake_module(self, path, build_dir):

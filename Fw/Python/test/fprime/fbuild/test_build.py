@@ -51,7 +51,7 @@ def test_hash_finder():
     builder = fprime.fbuild.builder.Build(
         fprime.fbuild.builder.BuildType.BUILD_NORMAL, dep_dir
     )
-    builder.load(build_dir=dep_dir / "build-fprime-automatic-native")
+    builder.load(local, build_dir=dep_dir / "build-fprime-automatic-native")
 
     assert builder.find_hashed_file(0xDEADBEEF) == ["Abc: 0xdeadbeef\n"]
     assert builder.find_hashed_file(0xC0DEC0DE) == ["HJK: 0xc0dec0de\n"]
