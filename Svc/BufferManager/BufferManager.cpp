@@ -270,9 +270,30 @@ namespace Svc {
 
   }
 
-  // ----------------------------------------------------------------------
+  U32 BufferManager :: getBufferContext(const U32 managerId, const U32 bufferId) {
+      // Context is a concatenation of IDs, so check for overflows
+      FW_ASSERT(managerId <= 0x7FFF, managerId);
+      FW_ASSERT(bufferId <= 0xFFFF, bufferId);
+
+      U32 context = (managerId << 16) | bufferId;
+      FW_ASSERT(context != Fw::Buffer::NO_CONTEXT); // Ensure we didn't collide with not context
+      return context;
+  }
+
+  U32 BufferManager :: getManagerIdFromBufferContext(const U32 context) {
+      FW_ASSERT(context != Fw::Buffer::NO_CONTEXT); // Ensure we didn't receive with not context
+      return (context >> 16) & 0x7FFF;
+  }
+
+  U32 BufferManager :: getBufferIdFromBufferContext(const U32 context) {
+      FW_ASSERT(context != Fw::Buffer::NO_CONTEXT); // Ensure we didn't receive with not context
+      return context & 0xFFFF;
+  }
+
+    // ----------------------------------------------------------------------
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
+
 
   Fw::Buffer BufferManager ::
     bufferGetCallee_handler(
@@ -283,7 +304,7 @@ namespace Svc {
     U8 *address;
     U32 id;
     Fw::Buffer buffer;
-    buffer.set(this->getInstance(), 0, 0, size);
+    buffer.setContext(BufferManager::getBufferContext(this->getInstance(), 0));
 
     Warnings::Status::t warningStatus = Warnings::Status::SUCCESS;
 
@@ -305,8 +326,9 @@ namespace Svc {
     }
 
     if (warningStatus == Warnings::Status::SUCCESS) {
-      buffer.setbufferID(id);
-      buffer.setdata(reinterpret_cast<U64>(address));
+        buffer.setContext(BufferManager::getBufferContext(this->getInstance(), id));
+        buffer.setData(address);
+        buffer.setSize(size);
     }
 
     this->warnings.update(warningStatus);
@@ -321,10 +343,10 @@ namespace Svc {
   {
 
     const U32 instance = static_cast<U32>(this->getInstance());
-    FW_ASSERT(buffer.getmanagerID() == instance);
+    FW_ASSERT(BufferManager::getManagerIdFromBufferContext(buffer.getContext()) == instance);
 
-    const U32 expectedId = buffer.getbufferID();
-    U8 *const address = reinterpret_cast<U8*>(buffer.getdata());
+    const U32 expectedId = BufferManager::getBufferIdFromBufferContext(buffer.getContext());
+    U8 *const address = buffer.getData();
     U32 sawId = 0;
     U32 size = 0;
 

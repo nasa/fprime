@@ -88,7 +88,6 @@ layer components. Should the user not have installed the given component, the co
 cd Ref
 fprime-util generate
 fprime-util build --jobs 32
-fprime-util install --jobs 32
 ```
 
 **Testing F´ GDS Installation Via Running HTML GUI**
