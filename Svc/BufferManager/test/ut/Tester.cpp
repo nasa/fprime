@@ -12,6 +12,8 @@
 
 #include "Tester.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Fw/Test/UnitTest.hpp>
+#include <stdlib.h>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -116,6 +118,8 @@ namespace Svc {
     testSetup(void) 
   {
 
+      REQUIREMENT("FPRIME-BM-001");
+
       BufferManagerComponentImpl::BufferBins bins;
       memset(&bins,0,sizeof(bins));
       bins.bins[0].bufferSize = BIN0_BUFFER_SIZE;
@@ -139,6 +143,8 @@ namespace Svc {
         BIN2_NUM_BUFFERS,
         this->component.m_numStructs
         );
+
+      REQUIREMENT("FPRIME-BM-005");  
 
       // check that enough memory was requested
       NATIVE_UINT_TYPE memSize = 
@@ -231,11 +237,29 @@ namespace Svc {
       // clear histories
       this->clearHistory();
 
+      REQUIREMENT("FPRIME-BM-006"); 
+
+      // randomly return buffers
+      time_t t;
+      srand((unsigned) time(&t));
+
+      bool returned[BIN1_NUM_BUFFERS];
+
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
+          bool found = false;
+          NATIVE_UINT_TYPE entry;
+          while (1) {
+              entry = rand() % BIN1_NUM_BUFFERS;
+              if (not returned[entry]) {
+                  returned[entry] = true;
+                  break;
+              }
+          }
           // return the buffer
-          this->invoke_to_bufferSendIn(0,buffs[b]);
+          printf("Returning buffer %d\n",entry);
+          this->invoke_to_bufferSendIn(0,buffs[entry]);
           // check allocation state
-          ASSERT_FALSE(this->component.m_buffers[b].allocated);
+          ASSERT_FALSE(this->component.m_buffers[entry].allocated);
           ASSERT_EQ(BIN1_NUM_BUFFERS-b-1,this->component.m_currBuffs);
           ASSERT_EQ(BIN1_NUM_BUFFERS,this->component.m_highWater);
       }
@@ -281,6 +305,8 @@ namespace Svc {
 
       Fw::Buffer buffs[BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS];
 
+      REQUIREMENT("FPRIME-BM-002");
+
       // BufferManager should be able to provide the whole pool worth of buffers 
       // for a requested size smaller than the smallest bin.
 
@@ -294,6 +320,8 @@ namespace Svc {
           // check stats
           ASSERT_EQ(b+1,this->component.m_highWater);
       }
+
+      REQUIREMENT("FPRIME-BM-003");
 
       // should send back empty buffer
       Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
@@ -325,6 +353,8 @@ namespace Svc {
           ASSERT_EQ(BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS-b-1,this->component.m_currBuffs);
           ASSERT_EQ(BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS,this->component.m_highWater);
       }
+
+      REQUIREMENT("FPRIME-BM-004");
 
       // should reject empty buffer
       this->invoke_to_bufferSendIn(0,noBuff);

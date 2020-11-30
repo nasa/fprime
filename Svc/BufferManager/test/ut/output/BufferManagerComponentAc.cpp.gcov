@@ -1,0 +1,1047 @@
+        -:    0:Source:/home/tcanham/source/fprime/build-fprime-automatic-native-ut/F-Prime/Svc/BufferManager/BufferManagerComponentAc.cpp
+        -:    1:// ======================================================================
+        -:    2:// \title  BufferManagerComponentAc.cpp
+        -:    3:// \author Auto-generated
+        -:    4:// \brief  cpp file for BufferManager component base class
+        -:    5://
+        -:    6:// \copyright
+        -:    7:// Copyright 2009-2015, by the California Institute of Technology.
+        -:    8:// ALL RIGHTS RESERVED.  United States Government Sponsorship
+        -:    9:// acknowledged.
+        -:   10://
+        -:   11:// ======================================================================
+        -:   12:
+        -:   13:#include <stdio.h>
+        -:   14:#include <FpConfig.hpp>
+        -:   15:#include <Svc/BufferManager/BufferManagerComponentAc.hpp>
+        -:   16:#include <Fw/Types/Assert.hpp>
+        -:   17:#if FW_ENABLE_TEXT_LOGGING
+        -:   18:#include <Fw/Types/EightyCharString.hpp>
+        -:   19:#endif
+        -:   20:
+        -:   21:
+        -:   22:namespace Svc {
+        -:   23:
+        -:   24:  // ----------------------------------------------------------------------
+        -:   25:  // Getters for numbers of input ports
+        -:   26:  // ----------------------------------------------------------------------
+        -:   27:
+        9:   28:  Fw::InputBufferSendPort *BufferManagerComponentBase ::
+        -:   29:    get_bufferSendIn_InputPort(NATIVE_INT_TYPE portNum)
+        -:   30:  {
+       9*:   31:    FW_ASSERT(portNum < this->getNum_bufferSendIn_InputPorts(),static_cast<AssertArg>(portNum));
+        9:   32:    return &this->m_bufferSendIn_InputPort[portNum];
+        -:   33:  }
+        -:   34:
+        9:   35:  Fw::InputBufferGetPort *BufferManagerComponentBase ::
+        -:   36:    get_bufferGetCallee_InputPort(NATIVE_INT_TYPE portNum)
+        -:   37:  {
+       9*:   38:    FW_ASSERT(portNum < this->getNum_bufferGetCallee_InputPorts(),static_cast<AssertArg>(portNum));
+        9:   39:    return &this->m_bufferGetCallee_InputPort[portNum];
+        -:   40:  }
+        -:   41:
+        9:   42:  Svc::InputSchedPort *BufferManagerComponentBase ::
+        -:   43:    get_schedIn_InputPort(NATIVE_INT_TYPE portNum)
+        -:   44:  {
+       9*:   45:    FW_ASSERT(portNum < this->getNum_schedIn_InputPorts(),static_cast<AssertArg>(portNum));
+        9:   46:    return &this->m_schedIn_InputPort[portNum];
+        -:   47:  }
+        -:   48:
+        -:   49:  // ----------------------------------------------------------------------
+        -:   50:  // Typed connectors for output ports
+        -:   51:  // ----------------------------------------------------------------------
+        -:   52:
+        9:   53:  void BufferManagerComponentBase ::
+        -:   54:    set_timeCaller_OutputPort(
+        -:   55:        NATIVE_INT_TYPE portNum,
+        -:   56:        Fw::InputTimePort* port
+        -:   57:    )
+        -:   58:  {
+       9*:   59:    FW_ASSERT(portNum < this->getNum_timeCaller_OutputPorts(),static_cast<AssertArg>(portNum));
+        9:   60:    this->m_timeCaller_OutputPort[portNum].addCallPort(port);
+        9:   61:  }
+        -:   62:
+        9:   63:  void BufferManagerComponentBase ::
+        -:   64:    set_eventOut_OutputPort(
+        -:   65:        NATIVE_INT_TYPE portNum,
+        -:   66:        Fw::InputLogPort* port
+        -:   67:    )
+        -:   68:  {
+       9*:   69:    FW_ASSERT(portNum < this->getNum_eventOut_OutputPorts(),static_cast<AssertArg>(portNum));
+        9:   70:    this->m_eventOut_OutputPort[portNum].addCallPort(port);
+        9:   71:  }
+        -:   72:
+        -:   73:#if FW_ENABLE_TEXT_LOGGING == 1
+        9:   74:  void BufferManagerComponentBase ::
+        -:   75:    set_textEventOut_OutputPort(
+        -:   76:        NATIVE_INT_TYPE portNum,
+        -:   77:        Fw::InputLogTextPort* port
+        -:   78:    )
+        -:   79:  {
+       9*:   80:    FW_ASSERT(portNum < this->getNum_textEventOut_OutputPorts(),static_cast<AssertArg>(portNum));
+        9:   81:    this->m_textEventOut_OutputPort[portNum].addCallPort(port);
+        9:   82:  }
+        -:   83:#endif
+        -:   84:
+        9:   85:  void BufferManagerComponentBase ::
+        -:   86:    set_tlmOut_OutputPort(
+        -:   87:        NATIVE_INT_TYPE portNum,
+        -:   88:        Fw::InputTlmPort* port
+        -:   89:    )
+        -:   90:  {
+       9*:   91:    FW_ASSERT(portNum < this->getNum_tlmOut_OutputPorts(),static_cast<AssertArg>(portNum));
+        9:   92:    this->m_tlmOut_OutputPort[portNum].addCallPort(port);
+        9:   93:  }
+        -:   94:
+        -:   95:  // ----------------------------------------------------------------------
+        -:   96:  // Serialization connectors for output ports
+        -:   97:  // ----------------------------------------------------------------------
+        -:   98:
+        -:   99:#if FW_PORT_SERIALIZATION
+        -:  100:
+    #####:  101:  void BufferManagerComponentBase ::
+        -:  102:    set_timeCaller_OutputPort(
+        -:  103:        NATIVE_INT_TYPE portNum,
+        -:  104:        Fw::InputSerializePort *port
+        -:  105:    )
+        -:  106:  {
+    #####:  107:    FW_ASSERT(portNum < this->getNum_timeCaller_OutputPorts(),static_cast<AssertArg>(portNum));
+    #####:  108:    return this->m_timeCaller_OutputPort[portNum].registerSerialPort(port);
+        -:  109:  }
+        -:  110:
+    #####:  111:  void BufferManagerComponentBase ::
+        -:  112:    set_eventOut_OutputPort(
+        -:  113:        NATIVE_INT_TYPE portNum,
+        -:  114:        Fw::InputSerializePort *port
+        -:  115:    )
+        -:  116:  {
+    #####:  117:    FW_ASSERT(portNum < this->getNum_eventOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    #####:  118:    return this->m_eventOut_OutputPort[portNum].registerSerialPort(port);
+        -:  119:  }
+        -:  120:
+        -:  121:#if FW_ENABLE_TEXT_LOGGING == 1
+    #####:  122:  void BufferManagerComponentBase ::
+        -:  123:    set_textEventOut_OutputPort(
+        -:  124:        NATIVE_INT_TYPE portNum,
+        -:  125:        Fw::InputSerializePort *port
+        -:  126:    )
+        -:  127:  {
+    #####:  128:    FW_ASSERT(portNum < this->getNum_textEventOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    #####:  129:    return this->m_textEventOut_OutputPort[portNum].registerSerialPort(port);
+        -:  130:  }
+        -:  131:#endif
+        -:  132:
+    #####:  133:  void BufferManagerComponentBase ::
+        -:  134:    set_tlmOut_OutputPort(
+        -:  135:        NATIVE_INT_TYPE portNum,
+        -:  136:        Fw::InputSerializePort *port
+        -:  137:    )
+        -:  138:  {
+    #####:  139:    FW_ASSERT(portNum < this->getNum_tlmOut_OutputPorts(),static_cast<AssertArg>(portNum));
+    #####:  140:    return this->m_tlmOut_OutputPort[portNum].registerSerialPort(port);
+        -:  141:  }
+        -:  142:
+        -:  143:#endif
+        -:  144:
+        -:  145:  // ----------------------------------------------------------------------
+        -:  146:  // Component construction, initialization, and destruction
+        -:  147:  // ----------------------------------------------------------------------
+        -:  148:
+        9:  149:    BufferManagerComponentBase :: BufferManagerComponentBase(const char* compName) :
+       72:  150:        Fw::PassiveComponentBase(compName) {
+        -:  151:
+        -:  152:    // Initialize telemetry channel TotalBuffs
+        9:  153:    this->m_first_update_TotalBuffs = true;
+        9:  154:    this->m_last_TotalBuffs = 0;
+        -:  155:    // Initialize telemetry channel CurrBuffs
+        9:  156:    this->m_first_update_CurrBuffs = true;
+        9:  157:    this->m_last_CurrBuffs = 0;
+        -:  158:    // Initialize telemetry channel HiBuffs
+        9:  159:    this->m_first_update_HiBuffs = true;
+        9:  160:    this->m_last_HiBuffs = 0;
+        -:  161:    // Initialize telemetry channel NoBuffs
+        9:  162:    this->m_first_update_NoBuffs = true;
+        9:  163:    this->m_last_NoBuffs = 0;
+        -:  164:    // Initialize telemetry channel EmptyBuffs
+        9:  165:    this->m_first_update_EmptyBuffs = true;
+        9:  166:    this->m_last_EmptyBuffs = 0;
+        -:  167:
+        9:  168:    this->m_NoBuffsAvailableThrottle = 0;
+        9:  169:    this->m_ZeroSizeBufferThrottle = 0;
+        -:  170:
+        9:  171:  }
+        -:  172:
+        9:  173:  void BufferManagerComponentBase ::
+        -:  174:    init(NATIVE_INT_TYPE instance)
+        -:  175:  {
+        -:  176:
+        -:  177:    // Initialize base class
+        9:  178:    Fw::PassiveComponentBase::init(instance);
+        -:  179:
+        -:  180:    // Connect input port bufferSendIn
+        9:  181:    for (
+        9:  182:        NATIVE_INT_TYPE port = 0;
+       18:  183:        port < this->getNum_bufferSendIn_InputPorts();
+        -:  184:        port++
+        -:  185:    ) {
+        -:  186:
+        9:  187:      this->m_bufferSendIn_InputPort[port].init();
+        9:  188:      this->m_bufferSendIn_InputPort[port].addCallComp(
+        -:  189:          this,
+        -:  190:          m_p_bufferSendIn_in
+        -:  191:      );
+        9:  192:      this->m_bufferSendIn_InputPort[port].setPortNum(port);
+        -:  193:
+        -:  194:#if FW_OBJECT_NAMES == 1
+        -:  195:      char portName[120];
+        9:  196:      (void) snprintf(
+        -:  197:          portName,
+        -:  198:          sizeof(portName),
+        -:  199:          "%s_bufferSendIn_InputPort[%d]",
+        9:  200:          this->m_objName,
+        -:  201:          port
+        -:  202:      );
+        9:  203:      this->m_bufferSendIn_InputPort[port].setObjName(portName);
+        -:  204:#endif
+        -:  205:
+        -:  206:    }
+        -:  207:
+        -:  208:    // Connect input port bufferGetCallee
+        9:  209:    for (
+        9:  210:        NATIVE_INT_TYPE port = 0;
+       18:  211:        port < this->getNum_bufferGetCallee_InputPorts();
+        -:  212:        port++
+        -:  213:    ) {
+        -:  214:
+        9:  215:      this->m_bufferGetCallee_InputPort[port].init();
+        9:  216:      this->m_bufferGetCallee_InputPort[port].addCallComp(
+        -:  217:          this,
+        -:  218:          m_p_bufferGetCallee_in
+        -:  219:      );
+        9:  220:      this->m_bufferGetCallee_InputPort[port].setPortNum(port);
+        -:  221:
+        -:  222:#if FW_OBJECT_NAMES == 1
+        -:  223:      char portName[120];
+        9:  224:      (void) snprintf(
+        -:  225:          portName,
+        -:  226:          sizeof(portName),
+        -:  227:          "%s_bufferGetCallee_InputPort[%d]",
+        9:  228:          this->m_objName,
+        -:  229:          port
+        -:  230:      );
+        9:  231:      this->m_bufferGetCallee_InputPort[port].setObjName(portName);
+        -:  232:#endif
+        -:  233:
+        -:  234:    }
+        -:  235:
+        -:  236:    // Connect input port schedIn
+        9:  237:    for (
+        9:  238:        NATIVE_INT_TYPE port = 0;
+       18:  239:        port < this->getNum_schedIn_InputPorts();
+        -:  240:        port++
+        -:  241:    ) {
+        -:  242:
+        9:  243:      this->m_schedIn_InputPort[port].init();
+        9:  244:      this->m_schedIn_InputPort[port].addCallComp(
+        -:  245:          this,
+        -:  246:          m_p_schedIn_in
+        -:  247:      );
+        9:  248:      this->m_schedIn_InputPort[port].setPortNum(port);
+        -:  249:
+        -:  250:#if FW_OBJECT_NAMES == 1
+        -:  251:      char portName[120];
+        9:  252:      (void) snprintf(
+        -:  253:          portName,
+        -:  254:          sizeof(portName),
+        -:  255:          "%s_schedIn_InputPort[%d]",
+        9:  256:          this->m_objName,
+        -:  257:          port
+        -:  258:      );
+        9:  259:      this->m_schedIn_InputPort[port].setObjName(portName);
+        -:  260:#endif
+        -:  261:
+        -:  262:    }
+        -:  263:
+        -:  264:    // Initialize output port timeCaller
+        9:  265:    for (
+        9:  266:        NATIVE_INT_TYPE port = 0;
+       18:  267:        port < this->getNum_timeCaller_OutputPorts();
+        -:  268:        port++
+        -:  269:    ) {
+        9:  270:      this->m_timeCaller_OutputPort[port].init();
+        -:  271:
+        -:  272:#if FW_OBJECT_NAMES == 1
+        -:  273:      char portName[120];
+        9:  274:      (void) snprintf(
+        -:  275:          portName,
+        -:  276:          sizeof(portName),
+        -:  277:          "%s_timeCaller_OutputPort[%d]",
+        9:  278:          this->m_objName,
+        -:  279:          port
+        -:  280:      );
+        9:  281:      this->m_timeCaller_OutputPort[port].setObjName(portName);
+        -:  282:#endif
+        -:  283:
+        -:  284:    }
+        -:  285:
+        -:  286:    // Initialize output port eventOut
+        9:  287:    for (
+        9:  288:        NATIVE_INT_TYPE port = 0;
+       18:  289:        port < this->getNum_eventOut_OutputPorts();
+        -:  290:        port++
+        -:  291:    ) {
+        9:  292:      this->m_eventOut_OutputPort[port].init();
+        -:  293:
+        -:  294:#if FW_OBJECT_NAMES == 1
+        -:  295:      char portName[120];
+        9:  296:      (void) snprintf(
+        -:  297:          portName,
+        -:  298:          sizeof(portName),
+        -:  299:          "%s_eventOut_OutputPort[%d]",
+        9:  300:          this->m_objName,
+        -:  301:          port
+        -:  302:      );
+        9:  303:      this->m_eventOut_OutputPort[port].setObjName(portName);
+        -:  304:#endif
+        -:  305:
+        -:  306:    }
+        -:  307:
+        -:  308:    // Initialize output port textEventOut
+        -:  309:#if FW_ENABLE_TEXT_LOGGING == 1
+        9:  310:    for (
+        9:  311:        NATIVE_INT_TYPE port = 0;
+       18:  312:        port < this->getNum_textEventOut_OutputPorts();
+        -:  313:        port++
+        -:  314:    ) {
+        9:  315:      this->m_textEventOut_OutputPort[port].init();
+        -:  316:
+        -:  317:#if FW_OBJECT_NAMES == 1
+        -:  318:      char portName[120];
+        9:  319:      (void) snprintf(
+        -:  320:          portName,
+        -:  321:          sizeof(portName),
+        -:  322:          "%s_textEventOut_OutputPort[%d]",
+        9:  323:          this->m_objName,
+        -:  324:          port
+        -:  325:      );
+        9:  326:      this->m_textEventOut_OutputPort[port].setObjName(portName);
+        -:  327:#endif
+        -:  328:
+        -:  329:    }
+        -:  330:#endif
+        -:  331:
+        -:  332:    // Initialize output port tlmOut
+        9:  333:    for (
+        9:  334:        NATIVE_INT_TYPE port = 0;
+       18:  335:        port < this->getNum_tlmOut_OutputPorts();
+        -:  336:        port++
+        -:  337:    ) {
+        9:  338:      this->m_tlmOut_OutputPort[port].init();
+        -:  339:
+        -:  340:#if FW_OBJECT_NAMES == 1
+        -:  341:      char portName[120];
+        9:  342:      (void) snprintf(
+        -:  343:          portName,
+        -:  344:          sizeof(portName),
+        -:  345:          "%s_tlmOut_OutputPort[%d]",
+        9:  346:          this->m_objName,
+        -:  347:          port
+        -:  348:      );
+        9:  349:      this->m_tlmOut_OutputPort[port].setObjName(portName);
+        -:  350:#endif
+        -:  351:
+        -:  352:    }
+        -:  353:
+        -:  354:
+        9:  355:  }
+        -:  356:
+       9*:  357:  BufferManagerComponentBase::
+       72:  358:    ~BufferManagerComponentBase() {
+        -:  359:
+       9*:  360:  }
+------------------
+_ZN3Svc26BufferManagerComponentBaseD0Ev:
+    #####:  357:  BufferManagerComponentBase::
+        -:  358:    ~BufferManagerComponentBase() {
+        -:  359:
+    #####:  360:  }
+------------------
+_ZN3Svc26BufferManagerComponentBaseD2Ev:
+        9:  357:  BufferManagerComponentBase::
+       72:  358:    ~BufferManagerComponentBase() {
+        -:  359:
+        9:  360:  }
+------------------
+        -:  361:
+        -:  362:  // ----------------------------------------------------------------------
+        -:  363:  // Invocation functions for output ports
+        -:  364:  // ----------------------------------------------------------------------
+        -:  365:
+        -:  366:  // ----------------------------------------------------------------------
+        -:  367:  // Getters for numbers of ports
+        -:  368:  // ----------------------------------------------------------------------
+        -:  369:
+       27:  370:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  371:    getNum_timeCaller_OutputPorts(void)
+        -:  372:  {
+       27:  373:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  374:        this->m_timeCaller_OutputPort
+        -:  375:    );
+        -:  376:  }
+        -:  377:
+       27:  378:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  379:    getNum_eventOut_OutputPorts(void)
+        -:  380:  {
+       27:  381:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  382:        this->m_eventOut_OutputPort
+        -:  383:    );
+        -:  384:  }
+        -:  385:
+        -:  386:#if FW_ENABLE_TEXT_LOGGING == 1
+       27:  387:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  388:    getNum_textEventOut_OutputPorts(void)
+        -:  389:  {
+       27:  390:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  391:        this->m_textEventOut_OutputPort
+        -:  392:    );
+        -:  393:  }
+        -:  394:#endif
+        -:  395:
+      108:  396:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  397:    getNum_bufferSendIn_InputPorts(void)
+        -:  398:  {
+      108:  399:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  400:        this->m_bufferSendIn_InputPort
+        -:  401:    );
+        -:  402:  }
+        -:  403:
+      108:  404:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  405:    getNum_bufferGetCallee_InputPorts(void)
+        -:  406:  {
+      108:  407:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  408:        this->m_bufferGetCallee_InputPort
+        -:  409:    );
+        -:  410:  }
+        -:  411:
+       27:  412:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  413:    getNum_tlmOut_OutputPorts(void)
+        -:  414:  {
+       27:  415:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  416:        this->m_tlmOut_OutputPort
+        -:  417:    );
+        -:  418:  }
+        -:  419:
+       51:  420:  NATIVE_INT_TYPE BufferManagerComponentBase ::
+        -:  421:    getNum_schedIn_InputPorts(void)
+        -:  422:  {
+       51:  423:    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
+        -:  424:        this->m_schedIn_InputPort
+        -:  425:    );
+        -:  426:  }
+        -:  427:
+        -:  428:  // ----------------------------------------------------------------------
+        -:  429:  // Port connection status queries
+        -:  430:  // ----------------------------------------------------------------------
+        -:  431:
+    #####:  432:  bool BufferManagerComponentBase ::
+        -:  433:    isConnected_timeCaller_OutputPort(NATIVE_INT_TYPE portNum)
+        -:  434:  {
+    #####:  435:     FW_ASSERT(
+        -:  436:        portNum < this->getNum_timeCaller_OutputPorts(),
+        -:  437:        static_cast<AssertArg>(portNum)
+        -:  438:     );
+    #####:  439:     return this->m_timeCaller_OutputPort[portNum].isConnected();
+        -:  440:  }
+        -:  441:
+    #####:  442:  bool BufferManagerComponentBase ::
+        -:  443:    isConnected_eventOut_OutputPort(NATIVE_INT_TYPE portNum)
+        -:  444:  {
+    #####:  445:     FW_ASSERT(
+        -:  446:        portNum < this->getNum_eventOut_OutputPorts(),
+        -:  447:        static_cast<AssertArg>(portNum)
+        -:  448:     );
+    #####:  449:     return this->m_eventOut_OutputPort[portNum].isConnected();
+        -:  450:  }
+        -:  451:
+        -:  452:#if FW_ENABLE_TEXT_LOGGING == 1
+    #####:  453:  bool BufferManagerComponentBase ::
+        -:  454:    isConnected_textEventOut_OutputPort(NATIVE_INT_TYPE portNum)
+        -:  455:  {
+    #####:  456:     FW_ASSERT(
+        -:  457:        portNum < this->getNum_textEventOut_OutputPorts(),
+        -:  458:        static_cast<AssertArg>(portNum)
+        -:  459:     );
+    #####:  460:     return this->m_textEventOut_OutputPort[portNum].isConnected();
+        -:  461:  }
+        -:  462:#endif
+        -:  463:
+    #####:  464:  bool BufferManagerComponentBase ::
+        -:  465:    isConnected_tlmOut_OutputPort(NATIVE_INT_TYPE portNum)
+        -:  466:  {
+    #####:  467:     FW_ASSERT(
+        -:  468:        portNum < this->getNum_tlmOut_OutputPorts(),
+        -:  469:        static_cast<AssertArg>(portNum)
+        -:  470:     );
+    #####:  471:     return this->m_tlmOut_OutputPort[portNum].isConnected();
+        -:  472:  }
+        -:  473:
+        -:  474:  // ----------------------------------------------------------------------
+        -:  475:  // Telemetry write functions
+        -:  476:  // ----------------------------------------------------------------------
+        -:  477:
+       24:  478:  void BufferManagerComponentBase ::
+        -:  479:    tlmWrite_TotalBuffs(U32 arg)
+        -:  480:  {
+        -:  481:
+        -:  482:    // Check to see if it is the first time
+       24:  483:    if (not this->m_first_update_TotalBuffs) {
+        -:  484:      // Check to see if value has changed. If not, don't write it.
+       18:  485:      if (arg == this->m_last_TotalBuffs) {
+       18:  486:        return;
+        -:  487:      } else {
+    #####:  488:        this->m_last_TotalBuffs = arg;
+        -:  489:      }
+        -:  490:    }
+        -:  491:    else {
+        6:  492:      this->m_first_update_TotalBuffs = false;
+        6:  493:      this->m_last_TotalBuffs = arg;
+        -:  494:    }
+        -:  495:
+        6:  496:    if (this->m_tlmOut_OutputPort[0].isConnected()) {
+       12:  497:      Fw::Time _tlmTime;
+        6:  498:      if (this->m_timeCaller_OutputPort[0].isConnected()) {
+        6:  499:         this->m_timeCaller_OutputPort[0].invoke( _tlmTime);
+        -:  500:      }
+       12:  501:      Fw::TlmBuffer _tlmBuff;
+        6:  502:      Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
+       6*:  503:      FW_ASSERT(
+        -:  504:          _stat == Fw::FW_SERIALIZE_OK,
+        -:  505:          static_cast<AssertArg>(_stat)
+        -:  506:      );
+        -:  507:
+        -:  508:      FwChanIdType _id;
+        -:  509:
+        6:  510:      _id = this->getIdBase() + CHANNELID_TOTALBUFFS;
+        -:  511:
+        6:  512:      this->m_tlmOut_OutputPort[0].invoke(
+        -:  513:          _id,
+        -:  514:          _tlmTime,
+        -:  515:          _tlmBuff
+        -:  516:      );
+        -:  517:    }
+        -:  518:
+        -:  519:  }
+        -:  520:
+       24:  521:  void BufferManagerComponentBase ::
+        -:  522:    tlmWrite_CurrBuffs(U32 arg)
+        -:  523:  {
+        -:  524:
+        -:  525:    // Check to see if it is the first time
+       24:  526:    if (not this->m_first_update_CurrBuffs) {
+        -:  527:      // Check to see if value has changed. If not, don't write it.
+       18:  528:      if (arg == this->m_last_CurrBuffs) {
+    #####:  529:        return;
+        -:  530:      } else {
+       18:  531:        this->m_last_CurrBuffs = arg;
+        -:  532:      }
+        -:  533:    }
+        -:  534:    else {
+        6:  535:      this->m_first_update_CurrBuffs = false;
+        6:  536:      this->m_last_CurrBuffs = arg;
+        -:  537:    }
+        -:  538:
+       24:  539:    if (this->m_tlmOut_OutputPort[0].isConnected()) {
+       48:  540:      Fw::Time _tlmTime;
+       24:  541:      if (this->m_timeCaller_OutputPort[0].isConnected()) {
+       24:  542:         this->m_timeCaller_OutputPort[0].invoke( _tlmTime);
+        -:  543:      }
+       48:  544:      Fw::TlmBuffer _tlmBuff;
+       24:  545:      Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
+      24*:  546:      FW_ASSERT(
+        -:  547:          _stat == Fw::FW_SERIALIZE_OK,
+        -:  548:          static_cast<AssertArg>(_stat)
+        -:  549:      );
+        -:  550:
+        -:  551:      FwChanIdType _id;
+        -:  552:
+       24:  553:      _id = this->getIdBase() + CHANNELID_CURRBUFFS;
+        -:  554:
+       24:  555:      this->m_tlmOut_OutputPort[0].invoke(
+        -:  556:          _id,
+        -:  557:          _tlmTime,
+        -:  558:          _tlmBuff
+        -:  559:      );
+        -:  560:    }
+        -:  561:
+        -:  562:  }
+        -:  563:
+       24:  564:  void BufferManagerComponentBase ::
+        -:  565:    tlmWrite_HiBuffs(U32 arg)
+        -:  566:  {
+        -:  567:
+        -:  568:    // Check to see if it is the first time
+       24:  569:    if (not this->m_first_update_HiBuffs) {
+        -:  570:      // Check to see if value has changed. If not, don't write it.
+       18:  571:      if (arg == this->m_last_HiBuffs) {
+       18:  572:        return;
+        -:  573:      } else {
+    #####:  574:        this->m_last_HiBuffs = arg;
+        -:  575:      }
+        -:  576:    }
+        -:  577:    else {
+        6:  578:      this->m_first_update_HiBuffs = false;
+        6:  579:      this->m_last_HiBuffs = arg;
+        -:  580:    }
+        -:  581:
+        6:  582:    if (this->m_tlmOut_OutputPort[0].isConnected()) {
+       12:  583:      Fw::Time _tlmTime;
+        6:  584:      if (this->m_timeCaller_OutputPort[0].isConnected()) {
+        6:  585:         this->m_timeCaller_OutputPort[0].invoke( _tlmTime);
+        -:  586:      }
+       12:  587:      Fw::TlmBuffer _tlmBuff;
+        6:  588:      Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
+       6*:  589:      FW_ASSERT(
+        -:  590:          _stat == Fw::FW_SERIALIZE_OK,
+        -:  591:          static_cast<AssertArg>(_stat)
+        -:  592:      );
+        -:  593:
+        -:  594:      FwChanIdType _id;
+        -:  595:
+        6:  596:      _id = this->getIdBase() + CHANNELID_HIBUFFS;
+        -:  597:
+        6:  598:      this->m_tlmOut_OutputPort[0].invoke(
+        -:  599:          _id,
+        -:  600:          _tlmTime,
+        -:  601:          _tlmBuff
+        -:  602:      );
+        -:  603:    }
+        -:  604:
+        -:  605:  }
+        -:  606:
+       24:  607:  void BufferManagerComponentBase ::
+        -:  608:    tlmWrite_NoBuffs(U32 arg)
+        -:  609:  {
+        -:  610:
+        -:  611:    // Check to see if it is the first time
+       24:  612:    if (not this->m_first_update_NoBuffs) {
+        -:  613:      // Check to see if value has changed. If not, don't write it.
+       18:  614:      if (arg == this->m_last_NoBuffs) {
+       12:  615:        return;
+        -:  616:      } else {
+        6:  617:        this->m_last_NoBuffs = arg;
+        -:  618:      }
+        -:  619:    }
+        -:  620:    else {
+        6:  621:      this->m_first_update_NoBuffs = false;
+        6:  622:      this->m_last_NoBuffs = arg;
+        -:  623:    }
+        -:  624:
+       12:  625:    if (this->m_tlmOut_OutputPort[0].isConnected()) {
+       24:  626:      Fw::Time _tlmTime;
+       12:  627:      if (this->m_timeCaller_OutputPort[0].isConnected()) {
+       12:  628:         this->m_timeCaller_OutputPort[0].invoke( _tlmTime);
+        -:  629:      }
+       24:  630:      Fw::TlmBuffer _tlmBuff;
+       12:  631:      Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
+      12*:  632:      FW_ASSERT(
+        -:  633:          _stat == Fw::FW_SERIALIZE_OK,
+        -:  634:          static_cast<AssertArg>(_stat)
+        -:  635:      );
+        -:  636:
+        -:  637:      FwChanIdType _id;
+        -:  638:
+       12:  639:      _id = this->getIdBase() + CHANNELID_NOBUFFS;
+        -:  640:
+       12:  641:      this->m_tlmOut_OutputPort[0].invoke(
+        -:  642:          _id,
+        -:  643:          _tlmTime,
+        -:  644:          _tlmBuff
+        -:  645:      );
+        -:  646:    }
+        -:  647:
+        -:  648:  }
+        -:  649:
+       24:  650:  void BufferManagerComponentBase ::
+        -:  651:    tlmWrite_EmptyBuffs(U32 arg)
+        -:  652:  {
+        -:  653:
+        -:  654:    // Check to see if it is the first time
+       24:  655:    if (not this->m_first_update_EmptyBuffs) {
+        -:  656:      // Check to see if value has changed. If not, don't write it.
+       18:  657:      if (arg == this->m_last_EmptyBuffs) {
+        6:  658:        return;
+        -:  659:      } else {
+       12:  660:        this->m_last_EmptyBuffs = arg;
+        -:  661:      }
+        -:  662:    }
+        -:  663:    else {
+        6:  664:      this->m_first_update_EmptyBuffs = false;
+        6:  665:      this->m_last_EmptyBuffs = arg;
+        -:  666:    }
+        -:  667:
+       18:  668:    if (this->m_tlmOut_OutputPort[0].isConnected()) {
+       36:  669:      Fw::Time _tlmTime;
+       18:  670:      if (this->m_timeCaller_OutputPort[0].isConnected()) {
+       18:  671:         this->m_timeCaller_OutputPort[0].invoke( _tlmTime);
+        -:  672:      }
+       36:  673:      Fw::TlmBuffer _tlmBuff;
+       18:  674:      Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
+      18*:  675:      FW_ASSERT(
+        -:  676:          _stat == Fw::FW_SERIALIZE_OK,
+        -:  677:          static_cast<AssertArg>(_stat)
+        -:  678:      );
+        -:  679:
+        -:  680:      FwChanIdType _id;
+        -:  681:
+       18:  682:      _id = this->getIdBase() + CHANNELID_EMPTYBUFFS;
+        -:  683:
+       18:  684:      this->m_tlmOut_OutputPort[0].invoke(
+        -:  685:          _id,
+        -:  686:          _tlmTime,
+        -:  687:          _tlmBuff
+        -:  688:      );
+        -:  689:    }
+        -:  690:
+        -:  691:  }
+        -:  692:
+        -:  693:  // ----------------------------------------------------------------------
+        -:  694:  // Time
+        -:  695:  // ----------------------------------------------------------------------
+        -:  696:
+    #####:  697:  Fw::Time BufferManagerComponentBase ::
+        -:  698:    getTime(void)
+        -:  699:  {
+    #####:  700:    if (this->m_timeCaller_OutputPort[0].isConnected()) {
+    #####:  701:      Fw::Time _time;
+    #####:  702:      this->m_timeCaller_OutputPort[0].invoke(_time);
+    #####:  703:      return _time;
+        -:  704:    } else {
+    #####:  705:      return Fw::Time(TB_NONE,0,0);
+        -:  706:    }
+        -:  707:  }
+        -:  708:
+        -:  709:  // ----------------------------------------------------------------------
+        -:  710:  // Event handling functions
+        -:  711:  // ----------------------------------------------------------------------
+        -:  712:
+       12:  713:  void BufferManagerComponentBase ::
+        -:  714:    log_WARNING_HI_NoBuffsAvailable(
+        -:  715:        U32 size
+        -:  716:    )
+        -:  717:  {
+        -:  718:
+        -:  719:    // check throttle value
+       12:  720:    if (this->m_NoBuffsAvailableThrottle >= EVENTID_NOBUFFSAVAILABLE_THROTTLE) {
+    #####:  721:        return;
+        -:  722:    } else {
+       12:  723:        this->m_NoBuffsAvailableThrottle++;
+        -:  724:    }
+        -:  725:
+        -:  726:    // Get the time
+       24:  727:    Fw::Time _logTime;
+       12:  728:    if (this->m_timeCaller_OutputPort[0].isConnected()) {
+       12:  729:       this->m_timeCaller_OutputPort[0].invoke( _logTime);
+        -:  730:    }
+        -:  731:
+       12:  732:    FwEventIdType _id = static_cast<FwEventIdType>(0);
+        -:  733:
+       12:  734:    _id = this->getIdBase() + EVENTID_NOBUFFSAVAILABLE;
+        -:  735:
+        -:  736:    // Emit the event on the log port
+       12:  737:    if (this->m_eventOut_OutputPort[0].isConnected()) {
+        -:  738:
+       24:  739:      Fw::LogBuffer _logBuff;
+       12:  740:      Fw::SerializeStatus _status = Fw::FW_SERIALIZE_OK;
+        -:  741:
+        -:  742:#if FW_AMPCS_COMPATIBLE
+        -:  743:      // Serialize the number of arguments
+        -:  744:      _status = _logBuff.serialize(static_cast<U8>(1));
+        -:  745:      FW_ASSERT(
+        -:  746:          _status == Fw::FW_SERIALIZE_OK,
+        -:  747:          static_cast<AssertArg>(_status)
+        -:  748:      );
+        -:  749:#endif
+        -:  750:
+        -:  751:#if FW_AMPCS_COMPATIBLE
+        -:  752:      // Serialize the argument size
+        -:  753:      _status = _logBuff.serialize(
+        -:  754:          static_cast<U8>(sizeof(size))
+        -:  755:      );
+        -:  756:      FW_ASSERT(
+        -:  757:          _status == Fw::FW_SERIALIZE_OK,
+        -:  758:          static_cast<AssertArg>(_status)
+        -:  759:      );
+        -:  760:#endif
+        -:  761:
+       12:  762:      _status = _logBuff.serialize(size);
+      12*:  763:      FW_ASSERT(
+        -:  764:          _status == Fw::FW_SERIALIZE_OK,
+        -:  765:          static_cast<AssertArg>(_status)
+        -:  766:      );
+        -:  767:
+        -:  768:
+       12:  769:      this->m_eventOut_OutputPort[0].invoke(
+        -:  770:          _id,
+        -:  771:          _logTime,Fw::LOG_WARNING_HI,
+        -:  772:          _logBuff
+        -:  773:      );
+        -:  774:
+        -:  775:    }
+        -:  776:
+        -:  777:    // Emit the event on the text log port
+        -:  778:#if FW_ENABLE_TEXT_LOGGING
+       12:  779:    if (this->m_textEventOut_OutputPort[0].isConnected()) {
+        -:  780:
+        -:  781:#if FW_OBJECT_NAMES == 1
+       12:  782:      const char* _formatString =
+        -:  783:        "(%s) %s: No available buffers of size %d";
+        -:  784:#else
+        -:  785:      const char* _formatString =
+        -:  786:        "%s: No available buffers of size %d";
+        -:  787:#endif
+        -:  788:
+        -:  789:      char _textBuffer[FW_LOG_TEXT_BUFFER_SIZE];
+        -:  790:
+       12:  791:      (void) snprintf(
+        -:  792:          _textBuffer,
+        -:  793:          FW_LOG_TEXT_BUFFER_SIZE,
+        -:  794:          _formatString,
+        -:  795:#if FW_OBJECT_NAMES == 1
+       12:  796:          this->m_objName,
+        -:  797:#endif
+        -:  798:          "NoBuffsAvailable "
+        -:  799:        , size
+        -:  800:      );
+        -:  801:
+        -:  802:      // Null terminate
+       12:  803:      _textBuffer[FW_LOG_TEXT_BUFFER_SIZE-1] = 0;
+       24:  804:      Fw::TextLogString _logString = _textBuffer;
+       12:  805:      this->m_textEventOut_OutputPort[0].invoke(
+        -:  806:          _id,
+        -:  807:          _logTime,Fw::TEXT_LOG_WARNING_HI,
+        -:  808:          _logString
+        -:  809:      );
+        -:  810:
+        -:  811:    }
+        -:  812:#endif
+        -:  813:
+        -:  814:  }
+        -:  815:
+    #####:  816:    void BufferManagerComponentBase::log_WARNING_HI_NoBuffsAvailable_ThrottleClear(void) {
+        -:  817:        // reset throttle counter
+    #####:  818:        this->m_NoBuffsAvailableThrottle = 0;
+    #####:  819:    }
+        -:  820:
+       12:  821:  void BufferManagerComponentBase ::
+        -:  822:    log_WARNING_HI_ZeroSizeBuffer(
+        -:  823:        void
+        -:  824:    )
+        -:  825:  {
+        -:  826:
+        -:  827:    // check throttle value
+       12:  828:    if (this->m_ZeroSizeBufferThrottle >= EVENTID_ZEROSIZEBUFFER_THROTTLE) {
+    #####:  829:        return;
+        -:  830:    } else {
+       12:  831:        this->m_ZeroSizeBufferThrottle++;
+        -:  832:    }
+        -:  833:
+        -:  834:    // Get the time
+       24:  835:    Fw::Time _logTime;
+       12:  836:    if (this->m_timeCaller_OutputPort[0].isConnected()) {
+       12:  837:       this->m_timeCaller_OutputPort[0].invoke( _logTime);
+        -:  838:    }
+        -:  839:
+       12:  840:    FwEventIdType _id = static_cast<FwEventIdType>(0);
+        -:  841:
+       12:  842:    _id = this->getIdBase() + EVENTID_ZEROSIZEBUFFER;
+        -:  843:
+        -:  844:    // Emit the event on the log port
+       12:  845:    if (this->m_eventOut_OutputPort[0].isConnected()) {
+        -:  846:
+       24:  847:      Fw::LogBuffer _logBuff;
+        -:  848:#if FW_AMPCS_COMPATIBLE
+        -:  849:      // for AMPCS, need to encode zero arguments
+        -:  850:      Fw::SerializeStatus _zero_status = Fw::FW_SERIALIZE_OK;
+        -:  851:      _zero_status = _logBuff.serialize(static_cast<U8>(0));
+        -:  852:      FW_ASSERT(
+        -:  853:          _zero_status == Fw::FW_SERIALIZE_OK,
+        -:  854:          static_cast<AssertArg>(_zero_status)
+        -:  855:      );
+        -:  856:#endif
+        -:  857:
+        -:  858:
+       12:  859:      this->m_eventOut_OutputPort[0].invoke(
+        -:  860:          _id,
+        -:  861:          _logTime,Fw::LOG_WARNING_HI,
+        -:  862:          _logBuff
+        -:  863:      );
+        -:  864:
+        -:  865:    }
+        -:  866:
+        -:  867:    // Emit the event on the text log port
+        -:  868:#if FW_ENABLE_TEXT_LOGGING
+       12:  869:    if (this->m_textEventOut_OutputPort[0].isConnected()) {
+        -:  870:
+        -:  871:#if FW_OBJECT_NAMES == 1
+       12:  872:      const char* _formatString =
+        -:  873:        "(%s) %s: Received zero size buffer";
+        -:  874:#else
+        -:  875:      const char* _formatString =
+        -:  876:        "%s: Received zero size buffer";
+        -:  877:#endif
+        -:  878:
+        -:  879:      char _textBuffer[FW_LOG_TEXT_BUFFER_SIZE];
+        -:  880:
+       12:  881:      (void) snprintf(
+        -:  882:          _textBuffer,
+        -:  883:          FW_LOG_TEXT_BUFFER_SIZE,
+        -:  884:          _formatString,
+        -:  885:#if FW_OBJECT_NAMES == 1
+       12:  886:          this->m_objName,
+        -:  887:#endif
+        -:  888:          "ZeroSizeBuffer "
+        -:  889:      );
+        -:  890:
+        -:  891:      // Null terminate
+       12:  892:      _textBuffer[FW_LOG_TEXT_BUFFER_SIZE-1] = 0;
+       24:  893:      Fw::TextLogString _logString = _textBuffer;
+       12:  894:      this->m_textEventOut_OutputPort[0].invoke(
+        -:  895:          _id,
+        -:  896:          _logTime,Fw::TEXT_LOG_WARNING_HI,
+        -:  897:          _logString
+        -:  898:      );
+        -:  899:
+        -:  900:    }
+        -:  901:#endif
+        -:  902:
+        -:  903:  }
+        -:  904:
+    #####:  905:    void BufferManagerComponentBase::log_WARNING_HI_ZeroSizeBuffer_ThrottleClear(void) {
+        -:  906:        // reset throttle counter
+    #####:  907:        this->m_ZeroSizeBufferThrottle = 0;
+    #####:  908:    }
+        -:  909:
+        -:  910:  // ----------------------------------------------------------------------
+        -:  911:  // Mutex functions for guarded ports
+        -:  912:  // ----------------------------------------------------------------------
+        -:  913:
+      162:  914:  void BufferManagerComponentBase ::
+        -:  915:    lock(void)
+        -:  916:  {
+      162:  917:    this->m_guardedPortMutex.lock();
+      162:  918:  }
+        -:  919:
+      162:  920:  void BufferManagerComponentBase ::
+        -:  921:    unLock(void)
+        -:  922:  {
+      162:  923:    this->m_guardedPortMutex.unLock();
+      162:  924:  }
+        -:  925:
+        -:  926:  // ----------------------------------------------------------------------
+        -:  927:  // Calls for invocations received on typed input ports
+        -:  928:  // ----------------------------------------------------------------------
+        -:  929:
+       81:  930:  void BufferManagerComponentBase ::
+        -:  931:    m_p_bufferSendIn_in(
+        -:  932:        Fw::PassiveComponentBase* callComp,
+        -:  933:        NATIVE_INT_TYPE portNum,
+        -:  934:        Fw::Buffer &fwBuffer
+        -:  935:    )
+        -:  936:  {
+      81*:  937:    FW_ASSERT(callComp);
+       81:  938:    BufferManagerComponentBase* compPtr =
+        -:  939:      (BufferManagerComponentBase*) callComp;
+       81:  940:    compPtr->bufferSendIn_handlerBase(portNum, fwBuffer);
+       81:  941:  }
+        -:  942:
+       81:  943:  Fw::Buffer BufferManagerComponentBase ::
+        -:  944:    m_p_bufferGetCallee_in(
+        -:  945:        Fw::PassiveComponentBase* callComp,
+        -:  946:        NATIVE_INT_TYPE portNum,
+        -:  947:        U32 size
+        -:  948:    )
+        -:  949:  {
+      81*:  950:    FW_ASSERT(callComp);
+       81:  951:    BufferManagerComponentBase* compPtr =
+        -:  952:      (BufferManagerComponentBase*) callComp;
+       81:  953:    return compPtr->bufferGetCallee_handlerBase(portNum, size);
+        -:  954:  }
+        -:  955:
+       24:  956:  void BufferManagerComponentBase ::
+        -:  957:    m_p_schedIn_in(
+        -:  958:        Fw::PassiveComponentBase* callComp,
+        -:  959:        NATIVE_INT_TYPE portNum,
+        -:  960:        NATIVE_UINT_TYPE context
+        -:  961:    )
+        -:  962:  {
+      24*:  963:    FW_ASSERT(callComp);
+       24:  964:    BufferManagerComponentBase* compPtr =
+        -:  965:      (BufferManagerComponentBase*) callComp;
+       24:  966:    compPtr->schedIn_handlerBase(portNum, context);
+       24:  967:  }
+        -:  968:
+        -:  969:  // ----------------------------------------------------------------------
+        -:  970:  // Port handler base-class functions for typed input ports
+        -:  971:  // ----------------------------------------------------------------------
+        -:  972:
+       81:  973:  void BufferManagerComponentBase ::
+        -:  974:    bufferSendIn_handlerBase(
+        -:  975:        NATIVE_INT_TYPE portNum,
+        -:  976:        Fw::Buffer &fwBuffer
+        -:  977:    )
+        -:  978:  {
+        -:  979:
+        -:  980:    // Make sure port number is valid
+      81*:  981:    FW_ASSERT(portNum < this->getNum_bufferSendIn_InputPorts(),static_cast<AssertArg>(portNum));
+        -:  982:
+        -:  983:    // Lock guard mutex before calling
+       81:  984:    this->lock();
+        -:  985:
+        -:  986:    // Down call to pure virtual handler method implemented in Impl class
+       81:  987:    this->bufferSendIn_handler(portNum, fwBuffer);
+        -:  988:
+        -:  989:    // Unlock guard mutex
+       81:  990:    this->unLock();
+        -:  991:
+       81:  992:  }
+        -:  993:
+       81:  994:  Fw::Buffer BufferManagerComponentBase ::
+        -:  995:    bufferGetCallee_handlerBase(
+        -:  996:        NATIVE_INT_TYPE portNum,
+        -:  997:        U32 size
+        -:  998:    )
+        -:  999:  {
+        -: 1000:
+        -: 1001:    // Make sure port number is valid
+      81*: 1002:    FW_ASSERT(portNum < this->getNum_bufferGetCallee_InputPorts(),static_cast<AssertArg>(portNum));
+       81: 1003:    Fw::Buffer  retVal;
+        -: 1004:
+        -: 1005:    // Lock guard mutex before calling
+       81: 1006:    this->lock();
+        -: 1007:
+        -: 1008:    // Down call to pure virtual handler method implemented in Impl class
+       81: 1009:    retVal = this->bufferGetCallee_handler(portNum, size);
+        -: 1010:
+        -: 1011:    // Unlock guard mutex
+       81: 1012:    this->unLock();
+        -: 1013:
+       81: 1014:    return retVal;
+        -: 1015:
+        -: 1016:  }
+        -: 1017:
+       24: 1018:  void BufferManagerComponentBase ::
+        -: 1019:    schedIn_handlerBase(
+        -: 1020:        NATIVE_INT_TYPE portNum,
+        -: 1021:        NATIVE_UINT_TYPE context
+        -: 1022:    )
+        -: 1023:  {
+        -: 1024:
+        -: 1025:    // Make sure port number is valid
+      24*: 1026:    FW_ASSERT(portNum < this->getNum_schedIn_InputPorts(),static_cast<AssertArg>(portNum));
+        -: 1027:
+        -: 1028:    // Down call to pure virtual handler method implemented in Impl class
+       24: 1029:    this->schedIn_handler(portNum, context);
+        -: 1030:
+       24: 1031:  }
+        -: 1032:
+        -: 1033:} // end namespace Svc

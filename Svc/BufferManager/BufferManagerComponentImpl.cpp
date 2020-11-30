@@ -98,11 +98,11 @@ namespace Svc {
       U32 mgrId = context >> 16;
       // check some things
       FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
-      FW_ASSERT(mgrId == this->m_mgrId);
-      FW_ASSERT(true == this->m_buffers[id].allocated);
-      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory);
+      FW_ASSERT(mgrId == this->m_mgrId,mgrId,id,this->m_mgrId);
+      FW_ASSERT(true == this->m_buffers[id].allocated,id,this->m_mgrId);
+      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory,id,this->m_mgrId);
       // user can make smaller for their own purposes, but it shouldn't be bigger
-      FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size);
+      FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size,id,this->m_mgrId);
       // clear the allocated flag
       this->m_buffers[id].allocated = false;
       this->m_currBuffs--;
