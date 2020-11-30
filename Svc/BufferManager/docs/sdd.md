@@ -123,7 +123,7 @@ to the [`bufferSendIn`](#bufferSendIn) port of `BufferManager` for deallocation.
 
 ## 4 Dictionary
 
-Dictionaries: [HTML](BufferManager.html) [MD](BufferManager.md)
+TBD
 
 ## 5 Checklists
 
@@ -131,6 +131,6 @@ Dictionaries: [HTML](BufferManager.html) [MD](BufferManager.md)
 ## 6 Unit Testing
 
 Completed. 
-Output [here](test/ut/output/test.txt).
-Unit test coverage [here](test/ut/output/BufferManagerComponentImpl.cpp.gcov)
+Output [here](../test/ut/output/test.txt).
+Unit test coverage [here](../test/ut/output/BufferManagerComponentImpl.cpp.gcov)
 
