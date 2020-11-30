@@ -64,9 +64,10 @@ namespace Drv {
           Fw::Buffer &serBuffer 
       );
 
+      // Prevent unused field error when using stub
+      #ifndef STUBBED_LINUX_I2C_DRIVER
       NATIVE_INT_TYPE m_fd; //!< i2c file descriptor
-
-
+      #endif
     };
 
 } // end namespace Drv

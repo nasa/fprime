@@ -416,6 +416,25 @@ def utility_entry(args):
                 )
                 if confirm() or parsed.force:
                     build.purge()
+
+            build = Build(BuildType.BUILD_NORMAL, deployment, verbose=parsed.verbose)
+            try:
+                build.load(parsed.platform, build_dir_as_path)
+            except InvalidBuildCacheException:
+                # Just load the install destination regardless of whether the build is valid.
+                pass
+
+            install_dir = build.install_dest_exists()
+            if install_dir is None:
+                return
+
+            print(
+                "[INFO] {} install directory at: {}".format(
+                    parsed.command.title(), install_dir
+                )
+            )
+            if confirm() or parsed.force:
+                build.purge_install()
         else:
             target = get_target(parsed)
             build = get_build(parsed, deployment, parsed.verbose, target)

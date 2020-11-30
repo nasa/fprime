@@ -14,6 +14,7 @@ import time
 import tempfile
 import subprocess
 import functools
+import platform
 
 # Constants to supplied to the calls to subprocess
 CMAKE = "cmake"
@@ -97,7 +98,7 @@ def run_make(target):
     return proc.wait() == 0
 
 
-def assert_exists(expected, start_time):
+def assert_exists(expected, install_dest, start_time):
     """
     Goes through all of the expected files and check to ensure that each is a file. This also
     ensures that the file is new enough to have been generated at the start of this build.
@@ -109,6 +110,7 @@ def assert_exists(expected, start_time):
         expect = expect.replace(
             "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
         )
+        expect = expect.replace("<FPRIME_INSTALL>", os.path.join(install_dest, platform.system()))
         assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(
             expect
         )
@@ -136,6 +138,10 @@ def run_build(
         raise Exception("Named build directories not supported, yet.")
     owd = os.getcwd()
     tmpd = tempfile.mkdtemp()
+
+    if not "FPRIME_INSTALL_DEST" in options:
+        options["FPRIME_INSTALL_DEST"] = os.path.join(tmpd, "build-artifacts")
+
     try:
         os.chdir(tmpd)
         build_path = build_path.replace(
@@ -150,7 +156,7 @@ def run_build(
             ), "Failed to build '{0}' target for '{1}' and options '{2}'".format(
                 target, build_path, options
             )
-        assert_exists(expected_outputs, start_time)
+        assert_exists(expected_outputs, options["FPRIME_INSTALL_DEST"], start_time)
     finally:
         os.chdir(owd)
         shutil.rmtree(tmpd, ignore_errors=False)

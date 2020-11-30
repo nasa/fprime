@@ -340,8 +340,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         generator.configureVisitor(cpp_instance_name, "TopologyCppVisitor", True, True)
 
     # Used to generate base ID/base ID window CSV files
-    if True:
-        generator.configureVisitor(csv_instance_name, "TopologyIDVisitor", True, True)
+    generator.configureVisitor(csv_instance_name, "TopologyIDVisitor", True, True)
 
     # Used to generate HTML tables of ID's etc.
     if opt.default_topology_dict or opt.xml_topology_dict:

@@ -42,8 +42,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_loopback")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_nogen")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/port_return_type")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/queued1")
-#Note: AC broken, does not generate from_SerialOut_static in TesterBase.cpp
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serial_passive")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serial_passive")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_enum")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_stringbuffer")
 

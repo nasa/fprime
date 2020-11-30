@@ -47,10 +47,7 @@ class Distributor:
         self.__buf = b""
         # Setup key framing
         self.key_frame = None
-        try:
-            tmp_frame = config.get("framing", "use_key")
-        except:
-            tmp_frame = "false"
+        tmp_frame = config.get("framing", "use_key", fallback="false")
         if tmp_frame.lower() == "true":
             self.key_frame = int(config.get("framing", "key_val"), 16)
         self.key_obj = config.get_type("key_val")

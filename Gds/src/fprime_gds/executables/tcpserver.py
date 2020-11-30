@@ -529,7 +529,6 @@ def main(argv=None):
         server.allow_reuse_address = True
         SERVER = server
         LOCK = server.lock_obj
-        ip, port = server.server_address
 
         print("TCP Socket Server listening on host addr {}, port {}".format(HOST, PORT))
         # Start a thread with the server -- that thread will then start one

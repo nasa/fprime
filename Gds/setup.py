@@ -120,7 +120,5 @@ integrated configuration with ground in-the-loop.
         # I and T API
         "uart-adapter": "pyserial",
         "test-api-xls": "openpyxl",
-        # WX GUI options
-        "wx-gui": "wxPython",
     },
 )

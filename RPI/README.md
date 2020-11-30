@@ -62,11 +62,10 @@ bin subfolder.
 
 ```
 cd fprime/RPI
-fprime-util install 
+fprime-util build
 ```
 
-After the build has completed, the output binary can be found in the `bin/raspberrypi` folder. This assumes you build with the default toolchain
-of "raspberrypi".
+After the build has completed, the output binary can be found in the `build-artifacts/arm-linux-gnueabihf/bin` folder.
 
 **Run the software:**
 

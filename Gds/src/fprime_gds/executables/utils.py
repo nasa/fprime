@@ -122,4 +122,3 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
         raise AppWrapperException(
             "Failed to run application: {}. Error: {}".format(" ".join(arguments), exc)
         )
-    return None

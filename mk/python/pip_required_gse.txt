@@ -1,8 +1,0 @@
-multiprocess
-pexpect
-Pmw
-tkintertable==1.2
-numpy
-scimath
-scipy
-matplotlib

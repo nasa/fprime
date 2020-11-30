@@ -6,8 +6,10 @@ settings from the settings.default file that is part of the F prime deployment d
 
 @author mstarch
 """
-import configparser  # Written after PY2 eol
 import os
+import configparser
+from typing import Dict, List
+from pathlib import Path
 
 
 class IniSettings:
@@ -21,20 +23,24 @@ class IniSettings:
         """
         Finds F prime by recursing parent to parent until a matching directory is found.
         """
-        needle = os.path.join(
-            "cmake", "FPrime.cmake"
-        )  # If the F prime cmake file exists
-        path = os.getcwd()
-        while path != os.path.dirname(path):
-            if os.path.isfile(os.path.join(path, needle)):
-                return os.path.abspath(os.path.normpath(path))
-            path = os.path.dirname(path)
+        needle = Path("cmake/FPrime.cmake")
+        path = Path.cwd().resolve()
+        while path != path.parent:
+            if Path(path, needle).is_file():
+                return path
+            path = path.parent
         raise FprimeLocationUnknownException(
             "Please set 'framework_path' in [fprime] section in 'settings.ini"
         )
 
     @staticmethod
-    def read_safe_path(parser, section, key, ini_file):
+    def read_safe_path(
+        parser: configparser.ConfigParser,
+        section: str,
+        key: str,
+        ini_file: Path,
+        exists: bool = True,
+    ) -> List[str]:
         """
         Reads path(s), safely, from the config parser.  Validates the path(s) exists or raises an exception. Paths are
         separated by ':'.  This will also expand relative paths relative to the settings file.
@@ -51,7 +57,7 @@ class IniSettings:
             if path == "" or path is None:
                 continue
             full_path = os.path.abspath(os.path.normpath(os.path.join(base_dir, path)))
-            if not os.path.exists(full_path):
+            if exists and not os.path.exists(full_path):
                 raise FprimeSettingsException(
                     "Non-existant path '{}' found in section '{}' option '{}' of file '{}'".format(
                         path, section, key, ini_file
@@ -61,7 +67,7 @@ class IniSettings:
         return expanded
 
     @staticmethod
-    def load(settings_file):
+    def load(settings_file: Path):
         """
         Load settings from specified file or from specified build directory. Either a specific file or the build
         directory must be not None.
@@ -71,16 +77,18 @@ class IniSettings:
         :return: a dictionary of needed settings
         """
         settings_file = (
-            settings_file
-            if settings_file is not None
-            else os.path.join(IniSettings.DEF_FILE)
+            settings_file if settings_file is not None else Path(IniSettings.DEF_FILE)
         )
+
+        dfl_install_dest = Path(settings_file.resolve().parent, "build-artifacts")
+
         # Check file existence if specified
         if not os.path.exists(settings_file):
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
             fprime_location = IniSettings.find_fprime()
             return {
                 "framework_path": fprime_location,
+                "install_dest": dfl_install_dest,
             }
         confparse = configparser.ConfigParser()
         confparse.read(settings_file)
@@ -91,7 +99,7 @@ class IniSettings:
         if not fprime_location:
             fprime_location = IniSettings.find_fprime()
         else:
-            fprime_location = fprime_location[0]
+            fprime_location = Path(fprime_location[0])
         # Read project root if it is available
         proj_root = IniSettings.read_safe_path(
             confparse, "fprime", "project_root", settings_file
@@ -108,6 +116,15 @@ class IniSettings:
         )
         config_dir = None if not config_dir else config_dir[0]
 
+        install_dest = IniSettings.read_safe_path(
+            confparse, "fprime", "install_dest", settings_file, False
+        )
+
+        if install_dest:
+            install_dest = Path(install_dest[0])
+        else:
+            install_dest = dfl_install_dest
+
         # Read separate environment file if necessary
         env_file = IniSettings.read_safe_path(
             confparse, "fprime", "environment_file", settings_file
@@ -117,6 +134,7 @@ class IniSettings:
             confparse, "fprime", "library_locations", settings_file
         )
         environment = IniSettings.load_environment(env_file)
+
         settings = {
             "settings_file": settings_file,
             "framework_path": fprime_location,
@@ -124,6 +142,7 @@ class IniSettings:
             "default_toolchain": confparse.get(
                 "fprime", "default_toolchain", fallback="native"
             ),
+            "install_dest": install_dest,
             "environment_file": env_file,
             "environment": environment,
         }

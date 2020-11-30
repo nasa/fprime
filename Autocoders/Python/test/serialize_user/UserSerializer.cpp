@@ -52,7 +52,7 @@ Fw::SerializeStatus UserSerializer::deserialize(Fw::SerializeBufferBase& buffer)
 
 #if FW_SERIALIZABLE_TO_STRING
 
-void UserSerializer::toString(Fw::StringBase& text) {
+void UserSerializer::toString(Fw::StringBase& text) const {
 
     // declare strings to hold any serializable toString() arguments
 

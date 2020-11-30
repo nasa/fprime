@@ -17,8 +17,7 @@ namespace Svc {
     }
 
     PolyDbImplTester::PolyDbImplTester(Svc::PolyDbImpl& inst) :
-        Svc::PolyDbTesterComponentBase("testerbase"),
-        m_impl(inst) {
+        Svc::PolyDbTesterComponentBase("testerbase") {
     }
 
     PolyDbImplTester::~PolyDbImplTester() {
