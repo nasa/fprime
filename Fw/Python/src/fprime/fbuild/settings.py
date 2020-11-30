@@ -19,12 +19,12 @@ class IniSettings:
     SET_ENV = "FPRIME_SETTINGS_FILE"
 
     @staticmethod
-    def find_fprime():
+    def find_fprime(cwd: Path) -> Path:
         """
         Finds F prime by recursing parent to parent until a matching directory is found.
         """
         needle = Path("cmake/FPrime.cmake")
-        path = Path.cwd().resolve()
+        path = cwd.resolve()
         while path != path.parent:
             if Path(path, needle).is_file():
                 return path
@@ -67,7 +67,7 @@ class IniSettings:
         return expanded
 
     @staticmethod
-    def load(settings_file: Path):
+    def load(settings_file: Path, cwd: Path):
         """
         Load settings from specified file or from specified build directory. Either a specific file or the build
         directory must be not None.
@@ -85,7 +85,7 @@ class IniSettings:
         # Check file existence if specified
         if not os.path.exists(settings_file):
             print("[WARNING] Failed to find settings file: {}".format(settings_file))
-            fprime_location = IniSettings.find_fprime()
+            fprime_location = IniSettings.find_fprime(cwd)
             return {
                 "framework_path": fprime_location,
                 "install_dest": dfl_install_dest,
@@ -97,7 +97,7 @@ class IniSettings:
             confparse, "fprime", "framework_path", settings_file
         )
         if not fprime_location:
-            fprime_location = IniSettings.find_fprime()
+            fprime_location = IniSettings.find_fprime(cwd)
         else:
             fprime_location = Path(fprime_location[0])
         # Read project root if it is available
