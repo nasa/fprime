@@ -111,18 +111,26 @@ to the [`bufferSendIn`](#bufferSendIn) port of `BufferManager` for deallocation.
 
 ![`BufferManager` Sending a Buffer](img/SendingABuffer.jpg "SequenceDiagram")
 
+### 3.8 Assertions
+
+`BufferManager` will assert under the following conditions:
+
+* A returned buffer has the incorrect manager ID.
+* A returned buffer has an incorrect buffer ID.
+* A returned buffer is returned with a correct buffer ID, but it isn't already allocated.
+* A returned buffer has an indicated size larger than originally allocated.
+* A returned buffer has a pointer different than the one originally allocated.
+
 ## 4 Dictionary
 
 Dictionaries: [HTML](BufferManager.html) [MD](BufferManager.md)
 
 ## 5 Checklists
 
-Document | Link
--------- | ----
-Design | [Link](Checklist/design.xlsx)
-Code | [Link](Checklist/code.xlsx)
-Unit Test | [Link](Checklist/unit_test.xls)
 
 ## 6 Unit Testing
 
-TODO
+Completed. 
+Output [here](test/ut/output/test.txt).
+Unit test coverage [here](test/ut/output/BufferManagerComponentImpl.cpp.gcov)
+
