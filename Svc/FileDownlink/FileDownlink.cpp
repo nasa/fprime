@@ -267,8 +267,7 @@ namespace Svc {
   {
     FW_ASSERT(byteOffset < this->endOffset);
     const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
-    const U32 dataSize = (byteOffset + maxDataSize > this->endOffset) ?
-      this->endOffset - byteOffset : maxDataSize;
+    const U32 dataSize = (byteOffset + maxDataSize > this->endOffset) ? (this->endOffset - byteOffset) : maxDataSize;
     U8 buffer[dataSize];
     //This will be last data packet sent
     if (dataSize + byteOffset == this->endOffset) {

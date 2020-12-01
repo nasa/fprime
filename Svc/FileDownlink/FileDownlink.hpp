@@ -190,7 +190,7 @@ namespace Svc {
           void fileOpenError(void);
 
           //! Issue a File Read Error warning
-          void fileRead(const Os::File::Status sttatus);
+          void fileRead(const Os::File::Status status);
 
         PRIVATE:
 
