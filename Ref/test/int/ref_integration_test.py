@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import platform
+import subprocess
 from enum import Enum
 
 filename = os.path.dirname(__file__)
@@ -34,6 +35,7 @@ class TestRefAppClass(object):
         logpath = os.path.join(filename, "./logs")
         cls.api = IntegrationTestAPI(cls.pipeline, logpath)
         cls.case_list = []  # TODO find a better way to do this.
+        cls.dictionary = path
 
     @classmethod
     def teardown_class(cls):
@@ -264,3 +266,9 @@ class TestRefAppClass(object):
             self.api.assert_event_count(pred, actHI_events)
         finally:
             self.set_default_filters()
+
+    def test_seqgen(self):
+        """ Tests the seqgen code """
+        sequence = os.path.join(os.path.dirname(__file__), "test_seq.seq")
+        assert subprocess.run(["fprime-seqgen", "-d", self.dictionary, sequence, "/tmp/ref_test_int.bin"]).returncode == 0, "Failed to run fprime-seqgen"
+        self.assert_command("cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin"], max_delay=5)

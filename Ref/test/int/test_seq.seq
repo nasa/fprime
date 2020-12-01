@@ -1,0 +1,6 @@
+; A test sequence
+;
+R00:00:00 cmdDisp.CMD_NO_OP
+
+; Let's try out some commands with arguments
+R00:00:01.050 cmdDisp.CMD_NO_OP_STRING "Awesome string!";
