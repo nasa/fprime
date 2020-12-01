@@ -51,6 +51,7 @@ The API documentation section contains the automatically generated documentation
     - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
     - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
+    - [Sequencing in F´](./gds/seqgen.md)
 - Full Development Guides: technical details for full F´ implementations
     - [Configuring F´](./dev/configuring-fprime.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
