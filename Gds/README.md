@@ -1,88 +1,55 @@
 # GDS
+
+Note: This README describes GDS internals. Refer to the [user's guide](https://nasa.github.io/fprime/UsersGuide/gds/gds-introduction.html)
+for instructions on how to use the GDS.
+
 ## Overview
-The Gds consists of a collection of classes and tools that provide an interface for fprime deployments, allowing users to view telemetry and events and send commands.
+The GDS consists of a collection of classes and tools that provide an interface for fprime
+deployments, allowing users to view telemetry and events and send commands.
 
-The GDS HTML GUI is an almost completely rewritten version of the fprime GSE UI, our historical ground system that has been
-deprecated due to its Python 2 requirement. Both the GSE and GDS
-use the ThreadedTCPServer to receive data from the fprime deployment. They also
-have very similar looking GUIs, start up scripts, and command line arguments.
-However, The infrastructure supporting each one is very different.
+The GDS HTML GUI is an almost completely rewritten version of the fprime GSE UI, our historical
+ground system that has been deprecated due to its Python 2 requirement.
 
-The Gds was designed to be adaptable, easily understandable, and easily
-expandable. To this end, it is built using publisher/subscriber relationships.
+The Gds was designed to be adaptable, easily understandable, and easily expandable. To this end, it
+is built using publisher/subscriber relationships.
 
-The diagram below shows the basic layout of the GDS. Data from the
-F' deployment first enters the Gds at the TCP client. Each packet is then passed
-directly to the distributor which is responsible for parsing the packets in to
-data messages and sending on each message type (currently only events, channels,
-and packetized telemetry are supported) to decoders registered for that type.
-The decoder is responsible for turning that data message into a data object
-which it passes along to all consumers registered to it. These consumers could
-be anything, but in the Gds they are gui panels that display the data.
-For outgoing data, the structure is similar. Currently, commands are
-the only output data type included. Command data objects are created in the command 
-panel and then sent to the command encoder registered to that panel. Encoders take
-a data object and turn it into binary data that can be sent to the fprime 
-deployment. The binary data is then passed to the TCP client which is 
-registered to the encoder. Finally, the TCP client send the data back
-to the TCP server and the F' deployment.
-![The layout of the GDS](../docs/UsersGuide/media/gds_layout.jpg)
+The diagram below shows the basic layout of the GDS. Data from the F' deployment first enters the
+Gds at the TCP client. Each packet is then passed directly to the distributor which is responsible
+for parsing the packets in to data messages and sending on each message type (currently only events,
+channels, and packetized telemetry are supported) to decoders registered for that type. The decoder
+is responsible for turning that data message into a data object which it passes along to all
+consumers registered to it. These consumers could be anything, but in the Gds they are gui panels
+that display the data. For outgoing data, the structure is similar. Currently, commands are the only
+output data type included. Command data objects are created in the command panel and then sent to
+the command encoder registered to that panel. Encoders take a data object and turn it into binary
+data that can be sent to the fprime deployment. The binary data is then passed to the TCP client
+which is registered to the encoder. Finally, the TCP client send the data back to the TCP server and
+the F' deployment. ![The layout of the GDS](../docs/UsersGuide/media/gds_layout.jpg)
 
 All of these objects are created and registered to other objects when the Gds
 is initialized. Thus, all of the structure of the Gds is created in one place,
 and can be easily modified.
 
 ## GDS Tools
-The Gds was designed to have flexible configurations of consumers for its various data decoders. This has been used to support several additional tools.
+The Gds was designed to have flexible configurations of consumers for its various data decoders.
+This has been used to support several additional tools.
 
 ### GDS Standard Pipeline
-The standard pipeline can be thought of as a Python helper-layer to instantiate the GDS and connect to an FPrime deployment. The pipeline provides event, telemetry and command histories, sending commands and registering consumers to the GDS decoders. The Standard Pipeline can be found [here](src/fprime_gds/common/pipeline/standard.py).
+The standard pipeline can be thought of as a Python helper-layer to instantiate the GDS and connect
+to an FPrime deployment. The pipeline provides event, telemetry and command histories, sending
+commands and registering consumers to the GDS decoders. The Standard Pipeline can be found
+[here](src/fprime_gds/common/pipeline/standard.py).
 
 ### GDS Integration Test API
-The Integration Test API is a tool that provides the ability to write integration-level tests for an FPrime deployment using the GDS. The tool provides history searches/asserts, command sending, a detailed test log, sub-histories and convenient access to GDS data objects. The test API comes with separate [documentation](../docs/UsersGuide/dev/testAPI/markdown/contents.md) and its own [user guide](../docs/UsersGuide/dev/testAPI/user_guide.md) and is built on top of the Standard Pipeline.
-
-### GDS WX GUI
-The WX GUI is a user interface developed with the WX-Python. It uses the GDS to support a simple UI with command, event, and telemetry interfaces.
+The Integration Test API is a tool that provides the ability to write integration-level tests for an
+FPrime deployment using the GDS. The tool provides history searches/asserts, command sending, a
+detailed test log, sub-histories and convenient access to GDS data objects. The test API comes with
+separate [documentation](../docs/UsersGuide/dev/testAPI/markdown/contents.md) and its own [user
+guide](../docs/UsersGuide/dev/testAPI/user_guide.md) and is built on top of the Standard Pipeline.
 
 ## GDS GUI Usage
-Starting the GDS can started along with the TCPServer and Reference App by executing the following script.
-```
-fprime-gds -d Ref/
-```
-The Ref example should be built, and the `Ref/logs` directory should exist in the fprime directory.
 
-This script has default parameters passed to the GDS, but the full usage of the GDS is: 
-```
-usage: fprime-gds [-h] [-d DEPLOY] [-l LOGS] [--log-directly]
-                  [--tts-port TTS_PORT] [--tts-addr TTS_ADDR] [-g {none,html}]
-                  [--dictionary DICTIONARY] [-c CONFIG] [--comm-adapter {ip}]
-                  [-n] [--app APP]
-
-Run F prime deployment with: GDS data server, GDS GUI, and application.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DEPLOY, --deployment DEPLOY
-                        Path to deployment directory. Will be used to find
-                        dictionary and app automatically
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existant.
-  --log-directly        Logging directory is used directly, no extra dated
-                        directories created.
-  --tts-port TTS_PORT   Set the threaded TCP socket server port [default:
-                        50050]
-  --tts-addr TTS_ADDR   set the threaded TCP socket server address [default:
-                        0.0.0.0]
-  -g {none,html}, --gui {none,html}
-                        Set the desired GUI system for running the deployment.
-                        [default: html]
-  --dictionary DICTIONARY
-                        Path to dictionary. Overrides deploy if both are set
-  -c CONFIG, --config CONFIG
-                        Configuration for wx GUI. Ignored if not using wx.
-  --comm-adapter {ip}   Choose an adapter from the available adapters.
-  -n, --no-app          Do not run deployment binary. Overrides --app.
-  --app APP             Path to app to run. Overrides deploy if both are set.
-```
+A guide for how to use the GDS is available in the [fprime documentation](https://nasa.github.io/fprime/UsersGuide/gds/gds-introduction.html)
 
 ## Classes
 The Gds back end is composed of several different data processing units. For 
