@@ -66,6 +66,7 @@ The API documentation section contains the automatically generated documentation
     - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
+    - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)
