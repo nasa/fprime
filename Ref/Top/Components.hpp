@@ -14,7 +14,7 @@
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Svc/FileManager/FileManager.hpp>
-#include <Svc/BufferManager/BufferManager.hpp>
+#include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
@@ -45,8 +45,8 @@ extern Svc::PrmDbImpl prmDb;
 extern Svc::FileUplink fileUplink;
 extern Svc::FileDownlink fileDownlink;
 extern Svc::FileManager fileManager;
-extern Svc::BufferManager fileDownlinkBufferManager;
-extern Svc::BufferManager fileUplinkBufferManager;
+extern Svc::BufferManagerComponentImpl fileDownlinkBufferManager;
+extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;

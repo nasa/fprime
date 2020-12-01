@@ -16,8 +16,10 @@ enum {
     DOWNLINK_PACKET_SIZE = 500,
     DOWNLINK_BUFFER_STORE_SIZE = 2500,
     DOWNLINK_BUFFER_QUEUE_SIZE = 5,
+    DOWNLINK_BUFFER_MGR_ID = 100,
     UPLINK_BUFFER_STORE_SIZE = 3000,
-    UPLINK_BUFFER_QUEUE_SIZE = 30
+    UPLINK_BUFFER_QUEUE_SIZE = 30,
+    UPLINK_BUFFER_MGR_ID = 200
 };
 
 Os::Log osLogger;
@@ -65,7 +67,7 @@ Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
 
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
 
-Fw::MallocAllocator seqMallocator;
+Fw::MallocAllocator mallocator;
 Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
 
 Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
@@ -80,9 +82,13 @@ Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"), DOWNLINK_PACKET
 
 Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
 
-Svc::BufferManager fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"), DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
+// Svc::BufferManagerComponentImpl fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"), DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
 
-Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
+// Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
+
+Svc::BufferManagerComponentImpl fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"));
+
+Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
 
 Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
 
@@ -144,7 +150,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     cmdDisp.init(20,0);
 
     cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
+    cmdSeq.allocateBuffer(0,mallocator,5*1024);
 
     prmDb.init(10,0);
 
@@ -197,6 +203,19 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     prmDb.readParamFile();
     recvBuffComp.loadParameters();
     sendBuffComp.loadParameters();
+
+    // set up BufferManager instances
+    Svc::BufferManagerComponentImpl::BufferBins dwnBuffMgrBins;
+    memset(&dwnBuffMgrBins,0,sizeof(dwnBuffMgrBins));
+    dwnBuffMgrBins.bins[0].bufferSize = DOWNLINK_BUFFER_STORE_SIZE;
+    dwnBuffMgrBins.bins[0].numBuffers = DOWNLINK_BUFFER_QUEUE_SIZE;
+    fileDownlinkBufferManager.setup(DOWNLINK_BUFFER_MGR_ID,0,mallocator,dwnBuffMgrBins);
+
+    Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+    memset(&dwnBuffMgrBins,0,sizeof(upBuffMgrBins));
+    dwnBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_STORE_SIZE;
+    dwnBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_QUEUE_SIZE;
+    fileUplinkBufferManager.setup(UPLINK_BUFFER_MGR_ID,0,mallocator,upBuffMgrBins);
 
     // set health ping entries
 
@@ -278,6 +297,8 @@ void exitTasks(void) {
     (void) pingRcvr.ActiveComponentBase::join(NULL);
     socketIpDriver.exitSocketTask();
     (void) socketIpDriver.joinSocketTask(NULL);
-    cmdSeq.deallocateBuffer(seqMallocator);
+    cmdSeq.deallocateBuffer(mallocator);
+    fileDownlinkBufferManager.cleanup();
+    fileUplinkBufferManager.cleanup();
 }
 
