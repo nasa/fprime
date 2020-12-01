@@ -7,7 +7,6 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
 // ====================================================================== 
 
 #include <errno.h>
@@ -17,12 +16,11 @@
 
 #define INSTANCE 0
 #define CMD_SEQ 0
-#define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
-#define DOWNLINK_PACKET_SIZE 5
-#define MANAGER_ID 100
-#define BUFFER_ID 200
 
+#define TIMEOUT_MS 1000
+#define CYCLE_MS 100
+#define MAX_ALLOCATED 100
 namespace Svc {
 
   // ----------------------------------------------------------------------
@@ -32,7 +30,9 @@ namespace Svc {
   Tester ::
     Tester(void) : 
       FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("FileDownlink", DOWNLINK_PACKET_SIZE)
+      component("FileDownlink", 1000, 100),
+      buffers_index(0),
+      prevent_return(false)
   {
     this->connectPorts();
     this->initComponents();
@@ -41,9 +41,9 @@ namespace Svc {
   Tester ::
     ~Tester(void) 
   {
-    for (U32 i = 0; i < downlinkDataBuffers.size(); i++) {
-      delete[] downlinkDataBuffers[i];
-    }
+      for (U32 i = 0; i < buffers_index; i++) {
+          delete buffers[i];
+      }
   }
 
   // ----------------------------------------------------------------------
@@ -68,17 +68,21 @@ namespace Svc {
     this->sendFile(sourceFileName, destFileName, Fw::COMMAND_OK);
 
     // Assert telemetry
-    ASSERT_TLM_SIZE(5);
-    ASSERT_TLM_FileDownlink_PacketsSent_SIZE(4);
-    for (size_t i = 0; i < 4; ++i)
-      ASSERT_TLM_FileDownlink_PacketsSent(i, i+1);
-    ASSERT_TLM_FileDownlink_FilesSent_SIZE(1);
-    ASSERT_TLM_FileDownlink_FilesSent(0, 1);
+    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_PacketsSent_SIZE(3);
+    for (size_t i = 0; i < 3; ++i) {
+        ASSERT_TLM_PacketsSent(i, i + 1);
+    }
+    ASSERT_TLM_FilesSent_SIZE(1);
+    ASSERT_TLM_FilesSent(0, 1);
 
     // Assert events
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileDownlink_FileSent_SIZE(1);
-    ASSERT_EVENTS_FileDownlink_FileSent(0, sourceFileName, destFileName);
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_FileSent_SIZE(1);
+    ASSERT_EVENTS_SendStarted_SIZE(1);
+//    printTextLogHistory(stdout);
+    ASSERT_EVENTS_SendStarted(0, 10, sourceFileName, destFileName);
+    ASSERT_EVENTS_FileSent(0, sourceFileName, destFileName);
 
     // Validate the packet history
     History<Fw::FilePacket::DataPacket> dataPackets(MAX_HISTORY_SIZE);
@@ -88,8 +92,9 @@ namespace Svc {
         *this->fromPortHistory_bufferSendOut,
         dataPackets,
         Fw::FilePacket::T_END,
-        4,
-        checksum
+        3,
+        checksum,
+        0
     );
 
     // Compare the outgoing and incoming files
@@ -115,107 +120,224 @@ namespace Svc {
     this->sendFile(
         sourceFileName, 
         destFileName,
-        Fw::COMMAND_EXECUTION_ERROR
+        (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK,
+        true
     );
 
     // Assert telemetry
     ASSERT_TLM_SIZE(1);
-    ASSERT_TLM_FileDownlink_Warnings(0, 1);
+    ASSERT_TLM_Warnings(0, 1);
 
     // Assert events
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+//    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
 
   }
 
   void Tester ::
     cancelDownlink(void) 
   {
+    // Create a file
+    const char *const sourceFileName = "source.bin";
+    const char *const destFileName = "dest.bin";
+    U8 data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
 
-    // Pretend we are already downlinking
-    this->component.mode.set(FileDownlink::Mode::DOWNLINK);
-
-    // Send a cancel command and assert COMMAND_OK
+    // Send a file
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(
+        INSTANCE, 
+        CMD_SEQ, 
+        sourceCmdStringArg,
+        destCmdStringArg
+    );
+    // Send a cancel command and assert COMMAND_OK immediately, otherwise the file downlink will dinish
     this->cancel(Fw::COMMAND_OK);
 
     // Assert CANCEL mode
     ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.mode.get());
 
+    this->component.doDispatch(); // Process return of original buffer and send cancel packet
+    this->component.doDispatch(); // Process return of cancel packet
     // Clear the command response history
     this->cmdResponseHistory->clear();
 
-    // Send a file and assert COMMAND_OK
-    this->sendFile("source.bin", "dest.bin", Fw::COMMAND_OK);
-
     // Assert telemetry
-    ASSERT_TLM_SIZE(0);
+    ASSERT_TLM_SIZE(2);
 
     // Assert cancel event
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_FileDownlink_DownlinkCanceled_SIZE(1);
-    ASSERT_EVENTS_FileDownlink_DownlinkCanceled(
-        0,
-        "source.bin",
-        "dest.bin"
-    );
+    ASSERT_EVENTS_SIZE(2); // Started and cancel
+    ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
+//    ASSERT_EVENTS_FileDownlink_DownlinkCanceled(
+//        0,
+//        "source.bin",
+//        "dest.bin"
+//    );
 
     // Assert IDLE mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
-
+    
+    // Remove the outgoing file
+    this->removeFile(sourceFileName);
   }
 
   void Tester ::
     cancelInIdleMode(void) 
   {
-    
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
 
     // Send a cancel command
-    this->cancel(Fw::COMMAND_OK);
-
+    this->cancel(Fw::COMMAND_OK, false);
+    
+    this->component.Run_handler(0,0);
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
 
   }
+
+  void Tester ::
+    downlinkPartial(void)
+  {
+    // Assert idle mode
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+
+    // Create a file
+    const char *const sourceFileName = "source.bin";
+    const char *const destFileName = "dest.bin";
+    U8 data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    U8 dataSubset[] = { 1, 2, 3, 4 };
+    U32 offset = 1;
+    U32 length = 4;
+
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+    FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
+
+    // Send the file and assert COMMAND_OK
+    this->sendFilePartial(sourceFileName, destFileName, Fw::COMMAND_OK, offset, length);
+
+    // Assert telemetry
+    ASSERT_TLM_SIZE(4);
+    ASSERT_TLM_PacketsSent_SIZE(3);
+    for (size_t i = 0; i < 3; ++i) {
+        ASSERT_TLM_PacketsSent(i, i + 1);
+    }
+    ASSERT_TLM_FilesSent_SIZE(1);
+    ASSERT_TLM_FilesSent(0, 1);
+
+    // Assert events
+    ASSERT_EVENTS_SIZE(2); // Start and sent
+    ASSERT_EVENTS_SendStarted_SIZE(1);
+    ASSERT_EVENTS_FileSent_SIZE(1);
+//    printTextLogHistory(stdout);
+    ASSERT_EVENTS_FileSent(0, sourceFileName, destFileName);
+    ASSERT_EVENTS_SendStarted(0, length, sourceFileName, destFileName);
+
+    // Validate the packet history
+    History<Fw::FilePacket::DataPacket> dataPackets(MAX_HISTORY_SIZE);
+
+    CFDP::Checksum checksum;
+    checksum.update(dataSubset, offset, length);
+
+    validatePacketHistory(
+        *this->fromPortHistory_bufferSendOut,
+        dataPackets,
+        Fw::FilePacket::T_END,
+        3,
+        checksum,
+        1
+    );
+
+    // Compare the outgoing and incoming files
+    FileBuffer fileBufferIn(dataPackets);
+    ASSERT_EQ(true, FileBuffer::compare(fileBufferIn, fileBufferOutSubset));
+
+    // Assert idle mode
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+
+    // Remove the outgoing file
+    this->removeFile(sourceFileName);
+
+  }
+
+    void Tester ::
+      timeout(void)
+    {
+        // Assert idle mode
+        ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+
+        // Create a file
+        const char *const sourceFileName = "source.bin";
+        const char *const destFileName = "dest.bin";
+        U8 data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        FileBuffer fileBufferOut(data, sizeof(data));
+        fileBufferOut.write(sourceFileName);
+        prevent_return = true;
+
+        // Send the file and assert COMMAND_OK
+        this->sendFile(sourceFileName, destFileName, Fw::COMMAND_OK);
+        for (U32 i = 0; i < TIMEOUT_MS/CYCLE_MS + 1; i++) {
+            invoke_to_Run(0, 0);
+            this->component.doDispatch();
+        }
+
+        // Assert telemetry
+        ASSERT_TLM_SIZE(1);
+        ASSERT_TLM_PacketsSent_SIZE(1);
+
+        // Assert events
+        ASSERT_EVENTS_SIZE(2);
+        ASSERT_EVENTS_DownlinkTimeout_SIZE(1);
+        ASSERT_EVENTS_SendStarted_SIZE(1);
+//    printTextLogHistory(stdout);
+        ASSERT_EVENTS_SendStarted(0, 10, sourceFileName, destFileName);
+        ASSERT_EVENTS_DownlinkTimeout(0, sourceFileName, destFileName);
+
+        // Assert idle mode
+        ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
+
+        // Remove the outgoing file
+        this->removeFile(sourceFileName);
+
+    }
 
   // ----------------------------------------------------------------------
   // Handlers for from ports
   // ----------------------------------------------------------------------
 
-  Fw::Buffer Tester ::
-    from_bufferGetCaller_handler(
-        const NATIVE_INT_TYPE portNum,
-        U32 size
-    )
-  {
-    U8 *const data = new U8[size];
-    downlinkDataBuffers.push_back(data);
-    Fw::Buffer buffer(
-        data,
-        size,
-        (MANAGER_ID << 16) | BUFFER_ID
-    );
-    return buffer;
-  }
-
-  void Tester ::
+   void Tester ::
     from_bufferSendOut_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& buffer
     )
   {
-    pushFromPortEntry_bufferSendOut(buffer);
+    // Copy buffer before recycling
+    U8* data = new U8[buffer.getSize()];
+    ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
+    this->buffers[buffers_index] = data;
+    buffers_index++;
+    ::memcpy(data, buffer.getData(), buffer.getSize());
+    Fw::Buffer buffer_new = buffer;
+    buffer_new.setData(data);
+    pushFromPortEntry_bufferSendOut(buffer_new);
+    // Recycle buffer
+    if (not prevent_return) {
+        invoke_to_bufferReturn(0, buffer);
+    }
   }
 
-  void Tester ::
-    from_pingOut_handler(
-        const NATIVE_INT_TYPE portNum,
-        U32 key
+   void Tester ::
+     from_pingOut_handler(
+         const NATIVE_INT_TYPE portNum,
+         U32 key
     )
-  {
-    this->pushFromPortEntry_pingOut(key);
-  }
+    {
+        pushFromPortEntry_pingOut(key);
+    }
 
   // ----------------------------------------------------------------------
   // Private instance methods
@@ -224,23 +346,40 @@ namespace Svc {
   void Tester ::
     connectPorts(void) 
   {
-
     // cmdIn
     this->connect_to_cmdIn(
         0,
         this->component.get_cmdIn_InputPort(0)
     );
 
-    // bufferGetCaller
-    this->component.set_bufferGetCaller_OutputPort(
-        0, 
-        this->get_from_bufferGetCaller(0)
+    // Run
+    this->connect_to_Run(
+        0,
+        this->component.get_Run_InputPort(0)
+    );
+
+    // bufferReturn
+    this->connect_to_bufferReturn(
+        0,
+        this->component.get_bufferReturn_InputPort(0)
     );
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
         0, 
         this->get_from_timeCaller(0)
+    );
+
+    // cmdRegOut
+    this->component.set_cmdRegOut_OutputPort(
+        0, 
+        this->get_from_cmdRegOut(0)
+    );
+
+    // eventOut
+    this->component.set_eventOut_OutputPort(
+        0, 
+        this->get_from_eventOut(0)
     );
 
     // bufferSendOut
@@ -261,34 +400,10 @@ namespace Svc {
         this->get_from_cmdResponseOut(0)
     );
 
-    // cmdRegOut
-    this->component.set_cmdRegOut_OutputPort(
-        0, 
-        this->get_from_cmdRegOut(0)
-    );
-
-    // eventOut
-    this->component.set_eventOut_OutputPort(
-        0, 
-        this->get_from_eventOut(0)
-    );
-
     // LogText
-    this->component.set_LogText_OutputPort(
+    this->component.set_textEventOut_OutputPort(
         0, 
-        this->get_from_LogText(0)
-    );
-
-    // pingIn
-    this->connect_to_pingIn(
-        0,
-        this->component.get_pingIn_InputPort(0)
-    );
-
-    // pingOut
-    this->component.set_pingOut_OutputPort(
-        0,
-        this->get_from_pingOut(0)
+        this->get_from_textEventOut(0)
     );
 
   }
@@ -307,48 +422,101 @@ namespace Svc {
     sendFile(
         const char *const sourceFileName,
         const char *const destFileName,
-        const Fw::CommandResponse response
+        const Fw::CommandResponse response,
+        const bool force_stop
     )
   {
-
+    Fw::Buffer mybuf;
+    U32 filesSent = this->component.filesSent.n;
     // Command the File Downlink component to send the file
     Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
     Fw::CmdStringArg destCmdStringArg(destFileName);
-    this->sendCmd_FileDownlink_SendFile(
+    this->sendCmd_SendFile(
         INSTANCE, 
         CMD_SEQ, 
         sourceCmdStringArg,
         destCmdStringArg
     );
     this->component.doDispatch();
+    
+    // Assert command response if expecting error
+    if (response != Fw::COMMAND_OK || force_stop) {
+       ASSERT_CMD_RESPONSE_SIZE(1);
+       ASSERT_CMD_RESPONSE(
+           0,
+           FileDownlink::OPCODE_SENDFILE,
+           CMD_SEQ,
+           response
+       );
+       return;
+    }
 
-    // Assert command response
-    ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(
-        0,
-        FileDownlink::OPCODE_FILEDOWNLINK_SENDFILE,
-        CMD_SEQ,
-        response
-    );
+    while (this->component.filesSent.n < filesSent + 1 and not prevent_return) {
+       this->component.Run_handler(0,0);
+       this->component.doDispatch();
+    }
 
   }
 
   void Tester ::
-    cancel(const Fw::CommandResponse response)
+    sendFilePartial(
+      const char *const sourceFileName, //!< The source file name
+      const char *const destFileName, //!< The destination file name
+      const Fw::CommandResponse response, //!< The expected command response
+      U32 startIndex, //!< The starting index
+      U32 length //!< The amount of bytes to downlink
+    )
   {
+    Fw::Buffer mybuf;
+    U32 filesSent = this->component.filesSent.n;
+    // Command the File Downlink component to send the file
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendPartial(
+            INSTANCE,
+            CMD_SEQ,
+            sourceCmdStringArg,
+            destCmdStringArg,
+            startIndex,
+            length
+    );
+    this->component.doDispatch();
 
+    // Assert command response if expecting error
+    if (response != Fw::COMMAND_OK) {
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(
+                0,
+                FileDownlink::OPCODE_SENDPARTIAL,
+                CMD_SEQ,
+                response
+        );
+        return;
+    }
+
+    while (this->component.filesSent.n < filesSent + 1) {
+        this->component.Run_handler(0,0);
+        this->component.doDispatch();
+    }
+  }
+
+  void Tester ::
+    cancel(const Fw::CommandResponse response, bool dispatch_start)
+  {
     // Command the File Downlink component to cancel a file downlink
-    this->sendCmd_FileDownlink_Cancel(INSTANCE, CMD_SEQ);
-
+    this->sendCmd_Cancel(INSTANCE, CMD_SEQ);
+    if (dispatch_start) {
+        this->component.doDispatch(); // Send start packet
+    }
+    this->component.doDispatch(); // Cancel command processes here
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(
         0,
-        FileDownlink::OPCODE_FILEDOWNLINK_CANCEL,
+        FileDownlink::OPCODE_CANCEL,
         CMD_SEQ,
         response
     );
-
   }
 
   void Tester ::
@@ -371,7 +539,8 @@ namespace Svc {
         History<Fw::FilePacket::DataPacket>& historyOut,
         const Fw::FilePacket::Type finalPacketType,
         const size_t numPackets,
-        const CFDP::Checksum& checksum
+        const CFDP::Checksum& checksum,
+        U32 startOffset
     )
   {
 
@@ -385,7 +554,6 @@ namespace Svc {
       validateStartPacket(buffer);
     }
 
-    U32 byteOffset = 0;
     for (size_t i = 1; i < size - 1; ++i) {
       const Fw::Buffer& buffer = historyIn.at(i).fwBuffer;
       Fw::FilePacket::DataPacket dataPacket;
@@ -393,7 +561,7 @@ namespace Svc {
           buffer,
           dataPacket,
           i,
-          byteOffset
+          startOffset
       );
       historyOut.push_back(dataPacket);
     }
