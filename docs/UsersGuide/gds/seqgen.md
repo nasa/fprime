@@ -16,6 +16,7 @@ file found here: [simple_sequence.seq](https://github.com/nasa/fprime/blob/devel
 ```
 A2015-075T22:32:40.123 cmdDisp.CMD_NO_OP
 ```
+**Note:** see [Time Details](#time-details) for more on time formats and time bases.
 
 Here an absolute command was chosen.  Times can be specified in in absolute or relative time format.  An absolute time
 starts with an `A` and specifies a calendar time. A relative command is specified starting with an `R`, which runs
@@ -56,3 +57,36 @@ cmdSeq.CS_RUN	"/tmp/sample_sequence.bin"
 ```
 
 **Note:** the sample sequence will run for multiple hours due to the specification of the relative commands. 
+
+## Time Details
+
+Time is represented in the sequence file using several formats. Relative times are represented with ISO_8601 time with
+only subseconds being optional, see table below. Absolute times are represented in ISO_8601 using ordinal dates
+(day of year) and time with optional subseconds.
+
+| | Format | Description | Example |
+|---|---|---|---|
+| Relative Times | RHH:MM:SS[.sss] | 'R' followed by ISO_8601 hour minute section and optional subseconds | R23:02:01.010 |
+| Absolute Times | AYYYY-DDDTHH:MM:SS[.sss] | 'A' followed by ISO_8601 ordinal datetime format with optional subseconds | A2020-192T23:02:01.010 |
+
+**Note:** relative times cannot exceed 24 hours.
+
+Since sequences can specify absolute time it may be dangerous to run a sequence should the flight software time not be
+synchronized with a known source. For example, it may be dangerous to run a sequence near system boot before time has
+been polled from a hardware clock or system time source.
+
+A sequence can be built with an expected time base and said sequence will not run should the flight software report time
+system in a different time base. For example, a sequence using TB_SC_TIME (spacecraft time) could be prevented from
+running if the flight software is currently using raw processor time and has not synchronized time with a known time
+source.  Available time sources are below:
+
+| Timebase | Value | Explanation |
+|---|---|---|
+| TB_PROC_TIME | 1 | Sequence will run when only raw processor time is reported |
+| TB_WORKSTATION_TIME | 2 | Sequence will run when time is synchronized with test workstation (for testing) |
+| TB_SC_TIME | 3 | Sequence will run when time is synchronized with spacecraft time |
+| TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
+| TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
+
+**Note:** the above discriptions represent typically usages of these time bases but are project specific i.e.
+TB_SC_TIME might derive time from an internet time source.
