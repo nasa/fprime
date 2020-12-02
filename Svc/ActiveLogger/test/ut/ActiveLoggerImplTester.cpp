@@ -71,26 +71,26 @@ namespace Svc {
 
         // enable report filter
         this->clearHistory();
-        ActiveLoggerImpl::InputFilterLevel reportFilterLevel = ActiveLoggerImpl::INPUT_WARNING_HI;
+        ActiveLoggerImpl::EventLevel reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
 
         switch (filter) {
             case Fw::LOG_WARNING_HI:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_WARNING_HI;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
                 break;
             case Fw::LOG_WARNING_LO:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_WARNING_LO;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_LO;
                 break;
             case Fw::LOG_COMMAND:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_COMMAND;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_COMMAND;
                 break;
             case Fw::LOG_ACTIVITY_HI:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_ACTIVITY_HI;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_ACTIVITY_HI;
                 break;
             case Fw::LOG_ACTIVITY_LO:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_ACTIVITY_LO;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_ACTIVITY_LO;
                 break;
             case Fw::LOG_DIAGNOSTIC:
-                reportFilterLevel = ActiveLoggerImpl::INPUT_DIAGNOSTIC;
+                reportFilterLevel = ActiveLoggerImpl::FILTER_DIAGNOSTIC;
                 break;
             default:
                 ASSERT_TRUE(false);
@@ -98,48 +98,11 @@ namespace Svc {
         }
 
         this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::INPUT_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::FILTER_ENABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
-                cmdSeq,
-                Fw::COMMAND_OK
-                );
-
-        // enable send filter
-        ActiveLoggerImpl::SendFilterLevel sendFilterLevel = ActiveLoggerImpl::SEND_WARNING_HI;
-
-        switch (filter) {
-            case Fw::LOG_WARNING_HI:
-                sendFilterLevel = ActiveLoggerImpl::SEND_WARNING_HI;
-                break;
-            case Fw::LOG_WARNING_LO:
-                sendFilterLevel = ActiveLoggerImpl::SEND_WARNING_LO;
-                break;
-            case Fw::LOG_COMMAND:
-                sendFilterLevel = ActiveLoggerImpl::SEND_COMMAND;
-                break;
-            case Fw::LOG_ACTIVITY_HI:
-                sendFilterLevel = ActiveLoggerImpl::SEND_ACTIVITY_HI;
-                break;
-            case Fw::LOG_ACTIVITY_LO:
-                sendFilterLevel = ActiveLoggerImpl::SEND_ACTIVITY_LO;
-                break;
-            case Fw::LOG_DIAGNOSTIC:
-                sendFilterLevel = ActiveLoggerImpl::SEND_DIAGNOSTIC;
-                break;
-            default:
-                ASSERT_TRUE(false);
-                break;
-        }
-
-        this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,sendFilterLevel,ActiveLoggerImpl::SEND_ENABLED);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_OK
                 );
@@ -178,14 +141,13 @@ namespace Svc {
         // packet should be empty
         ASSERT_EQ(this->m_sentPacket.getBuffLeft(),(NATIVE_UINT_TYPE)0);
 
-        // Disable severity in send filter
-
+        // Disable severity filter
         this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,sendFilterLevel,ActiveLoggerImpl::SEND_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::FILTER_DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_OK
                 );
@@ -198,49 +160,8 @@ namespace Svc {
         ASSERT_FALSE(this->m_receivedPacket);
         // dispatch message
         this->m_impl.doDispatch();
-        // should have received packet
-        ASSERT_FALSE(this->m_receivedPacket);
-
-        // Turn on receive filter. This isn't testable other
-        // than "it doesn't crash" since nothing goes on the queue
-
-        // enable receive filter
-        this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::INPUT_DISABLED);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
-                cmdSeq,
-                Fw::COMMAND_OK
-                );
-
-        this->m_receivedPacket = false;
-
-        this->invoke_to_LogRecv(0,id,timeTag,filter,buff);
-
         // should not have received packet
         ASSERT_FALSE(this->m_receivedPacket);
-        // clear filters
-        this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::INPUT_ENABLED);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
-                cmdSeq,
-                Fw::COMMAND_OK
-                );
-
-        this->clearHistory();
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,sendFilterLevel,ActiveLoggerImpl::SEND_ENABLED);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
-                cmdSeq,
-                Fw::COMMAND_OK
-                );
 
     }
 
@@ -249,92 +170,49 @@ namespace Svc {
         U32 cmdSeq = 21;
 
         this->clearHistory();
-        ActiveLoggerImpl::InputFilterLevel reportFilterLevel = ActiveLoggerImpl::INPUT_WARNING_HI;
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::InputFilterEnabled)10);
+        ActiveLoggerImpl::EventLevel reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::FilterEnabled)10);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_VALIDATION_ERROR
                 );
 
         this->clearHistory();
-        reportFilterLevel = ActiveLoggerImpl::INPUT_WARNING_HI;
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::InputFilterEnabled)-2);
+        reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::FilterEnabled)-2);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_VALIDATION_ERROR
                 );
 
         this->clearHistory();
-        ActiveLoggerImpl::InputFilterEnabled reportEnable = ActiveLoggerImpl::INPUT_ENABLED;
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,(ActiveLoggerImpl::InputFilterLevel)-1,reportEnable);
+        ActiveLoggerImpl::FilterEnabled reportEnable = ActiveLoggerImpl::FILTER_ENABLED;
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)-1,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_VALIDATION_ERROR
                 );
 
         this->clearHistory();
-        reportEnable = ActiveLoggerImpl::INPUT_ENABLED;
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,(ActiveLoggerImpl::InputFilterLevel)100,reportEnable);
+        reportEnable = ActiveLoggerImpl::FILTER_ENABLED;
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)100,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_VALIDATION_ERROR
                 );
 
-        this->clearHistory();
-        ActiveLoggerImpl::SendFilterLevel sendFilterLevel = ActiveLoggerImpl::SEND_WARNING_HI;
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,sendFilterLevel,(ActiveLoggerImpl::SendFilterEnabled) 10);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
-
-        this->clearHistory();
-        sendFilterLevel = ActiveLoggerImpl::SEND_WARNING_HI;
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,sendFilterLevel,(ActiveLoggerImpl::SendFilterEnabled) -2);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
-
-        this->clearHistory();
-        ActiveLoggerImpl::SendFilterEnabled sendFilterEnabled = ActiveLoggerImpl::SEND_ENABLED;
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,(ActiveLoggerImpl::SendFilterLevel)-1,sendFilterEnabled);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
-
-        this->clearHistory();
-        sendFilterEnabled = ActiveLoggerImpl::SEND_ENABLED;
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,(ActiveLoggerImpl::SendFilterLevel)100,sendFilterEnabled);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_SEND_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
     }
 
     void ActiveLoggerImplTester::runFilterEventNominal(void) {
@@ -356,35 +234,35 @@ namespace Svc {
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::COMMAND_OK
                     );
             ASSERT_EVENTS_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_ENABLED_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_ENABLED(0,filterID);
+            ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
+            ASSERT_EVENTS_ID_FILTER_ENABLED(0,filterID);
             // send it again, to verify it will accept a second add
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::COMMAND_OK
                     );
             ASSERT_EVENTS_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_ENABLED_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_ENABLED(0,filterID);
+            ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
+            ASSERT_EVENTS_ID_FILTER_ENABLED(0,filterID);
 
         }
 
@@ -433,68 +311,68 @@ namespace Svc {
         // Try to add to the full filter. It should be rejected
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,ActiveLoggerComponentBase::ID_ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::COMMAND_EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
-        ASSERT_EVENTS_ALOG_ID_FILTER_LIST_FULL_SIZE(1);
-        ASSERT_EVENTS_ALOG_ID_FILTER_LIST_FULL(0,TELEM_ID_FILTER_SIZE+1);
+        ASSERT_EVENTS_ID_FILTER_LIST_FULL_SIZE(1);
+        ASSERT_EVENTS_ID_FILTER_LIST_FULL(0,TELEM_ID_FILTER_SIZE+1);
 
         // Now clear them
 
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_DISABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_DISABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
             ASSERT_CMD_RESPONSE(
                     0,
-                    ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                    ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
                     Fw::COMMAND_OK
                     );
             ASSERT_EVENTS_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_REMOVED_SIZE(1);
-            ASSERT_EVENTS_ALOG_ID_FILTER_REMOVED(0,filterID);
+            ASSERT_EVENTS_ID_FILTER_REMOVED_SIZE(1);
+            ASSERT_EVENTS_ID_FILTER_REMOVED(0,filterID);
         }
 
         // Try to clear one that doesn't exist
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,10,ActiveLoggerComponentBase::ID_DISABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,ActiveLoggerComponentBase::ID_DISABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::COMMAND_EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
-        ASSERT_EVENTS_ALOG_ID_FILTER_NOT_FOUND_SIZE(1);
-        ASSERT_EVENTS_ALOG_ID_FILTER_NOT_FOUND(0,10);
+        ASSERT_EVENTS_ID_FILTER_NOT_FOUND_SIZE(1);
+        ASSERT_EVENTS_ID_FILTER_NOT_FOUND(0,10);
 
         // Send an invalid argument
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,10,static_cast<ActiveLoggerComponentBase::IdFilterEnabled>(10));
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,static_cast<ActiveLoggerComponentBase::IdFilterEnabled>(10));
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_ID_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
                 Fw::COMMAND_VALIDATION_ERROR
                 );
@@ -506,29 +384,22 @@ namespace Svc {
         U32 cmdSeq = 21;
         // set random set of filters
 
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_WARNING_HI,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_WARNING_LO,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_COMMAND,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_ACTIVITY_HI,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_ACTIVITY_LO,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,0,ActiveLoggerImpl::INPUT_DIAGNOSTIC,ActiveLoggerImpl::INPUT_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_ENABLED);
 
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_WARNING_HI,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_WARNING_LO,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_COMMAND,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_ACTIVITY_HI,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_ACTIVITY_LO,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,0,ActiveLoggerImpl::SEND_DIAGNOSTIC,ActiveLoggerImpl::SEND_ENABLED);
-
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,4,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,ActiveLoggerComponentBase::ID_ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,13,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,13,ActiveLoggerComponentBase::ID_ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_ALOG_SET_ID_FILTER(0,cmdSeq,4000,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4000,ActiveLoggerComponentBase::ID_ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
@@ -536,24 +407,24 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_ALOG_DUMP_FILTER_STATE(0,cmdSeq);
+        this->sendCmd_DUMP_FILTER_STATE(0,cmdSeq);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_DUMP_FILTER_STATE,
+                ActiveLoggerImpl::OPCODE_DUMP_FILTER_STATE,
                 cmdSeq,
                 Fw::COMMAND_OK
                 );
         ASSERT_EVENTS_SIZE(6+3);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE_SIZE(6);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(0,ActiveLoggerImpl::EVENT_FILTER_WARNING_HI,true,false);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(1,ActiveLoggerImpl::EVENT_FILTER_WARNING_LO,false,false);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(2,ActiveLoggerImpl::EVENT_FILTER_COMMAND,true,true);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(3,ActiveLoggerImpl::EVENT_FILTER_ACTIVITY_HI,false,false);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(4,ActiveLoggerImpl::EVENT_FILTER_ACTIVITY_LO,true,true);
-        ASSERT_EVENTS_ALOG_SEVERITY_FILTER_STATE(5,ActiveLoggerImpl::EVENT_FILTER_DIAGNOSTIC,true,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE_SIZE(6);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(0,ActiveLoggerImpl::FILT_WARNING_HI,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(1,ActiveLoggerImpl::FILT_WARNING_LO,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(2,ActiveLoggerImpl::FILT_COMMAND,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,ActiveLoggerImpl::FILT_ACTIVITY_HI,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,ActiveLoggerImpl::FILT_ACTIVITY_LO,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,ActiveLoggerImpl::FILT_DIAGNOSTIC,true);
     }
 
     void ActiveLoggerImplTester::runEventFatal(void) {
@@ -606,28 +477,21 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_WARNING_HI,ActiveLoggerImpl::INPUT_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
-                ActiveLoggerImpl::OPCODE_ALOG_SET_EVENT_REPORT_FILTER,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
                 Fw::COMMAND_OK
                 );
 
 
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_WARNING_LO,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_COMMAND,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_ACTIVITY_HI,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_ACTIVITY_LO,ActiveLoggerImpl::INPUT_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_DIAGNOSTIC,ActiveLoggerImpl::INPUT_DISABLED);
-
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_WARNING_HI,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_WARNING_LO,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_COMMAND,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_ACTIVITY_HI,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_ACTIVITY_LO,ActiveLoggerImpl::SEND_DISABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_DIAGNOSTIC,ActiveLoggerImpl::SEND_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_DISABLED);
 
         this->m_receivedPacket = false;
 
@@ -661,19 +525,12 @@ namespace Svc {
 
         // turn off filters
 
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_WARNING_HI,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_WARNING_LO,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_COMMAND,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_ACTIVITY_HI,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_ACTIVITY_LO,ActiveLoggerImpl::INPUT_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_REPORT_FILTER(0,cmdSeq,ActiveLoggerImpl::INPUT_DIAGNOSTIC,ActiveLoggerImpl::INPUT_ENABLED);
-
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_WARNING_HI,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_WARNING_LO,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_COMMAND,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_ACTIVITY_HI,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_ACTIVITY_LO,ActiveLoggerImpl::SEND_ENABLED);
-        this->sendCmd_ALOG_SET_EVENT_SEND_FILTER(0,cmdSeq,ActiveLoggerImpl::SEND_DIAGNOSTIC,ActiveLoggerImpl::SEND_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_ENABLED);
 
     }
 
