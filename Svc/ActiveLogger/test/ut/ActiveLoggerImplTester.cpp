@@ -156,13 +156,8 @@ namespace Svc {
 
         this->invoke_to_LogRecv(0,id,timeTag,filter,buff);
 
-        // should not have received packet
+        // should not have received packet - all we can check since no message is dispatched.
         ASSERT_FALSE(this->m_receivedPacket);
-        // dispatch message
-        this->m_impl.doDispatch();
-        // should not have received packet
-        ASSERT_FALSE(this->m_receivedPacket);
-
     }
 
     void ActiveLoggerImplTester::runFilterInvalidCommands(void) {
