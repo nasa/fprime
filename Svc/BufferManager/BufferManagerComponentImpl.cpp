@@ -124,7 +124,10 @@ namespace Svc {
               if (this->m_currBuffs > this->m_highWater) {
                   this->m_highWater = this->m_currBuffs;
               }
-              return this->m_buffers[buff].buff;
+              Fw::Buffer copy = this->m_buffers[buff].buff;
+              // change size to match request
+              copy.setSize(size);
+              return copy;
           }
       }
 
