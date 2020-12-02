@@ -212,9 +212,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fileDownlinkBufferManager.setup(DOWNLINK_BUFFER_MGR_ID,0,mallocator,dwnBuffMgrBins);
 
     Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
-    memset(&dwnBuffMgrBins,0,sizeof(upBuffMgrBins));
-    dwnBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_STORE_SIZE;
-    dwnBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_QUEUE_SIZE;
+    memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
+    upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_STORE_SIZE;
+    upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_QUEUE_SIZE;
     fileUplinkBufferManager.setup(UPLINK_BUFFER_MGR_ID,0,mallocator,upBuffMgrBins);
 
     // set health ping entries
