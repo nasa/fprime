@@ -1,27 +1,25 @@
     <events>
-        <event id="0" name="ALOG_SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. Recv: %d Send: %d" >
+        <event id="0" name="SEVERITY_FILTER_STATE" severity="ACTIVITY_LO" format_string = "%d filter state. %d" >
             <comment>
             Dump severity filter state
             </comment>
             <args>
                 <arg name="severity" type="ENUM">
                     <enum name="EventFilterState">
-                        <item name="EVENT_FILTER_WARNING_HI"/>
-                        <item name="EVENT_FILTER_WARNING_LO"/>
-                        <item name="EVENT_FILTER_COMMAND"/>
-                        <item name="EVENT_FILTER_ACTIVITY_HI"/>
-                        <item name="EVENT_FILTER_ACTIVITY_LO"/>
-                        <item name="EVENT_FILTER_DIAGNOSTIC"/>
+                        <item name="FILT_WARNING_HI"/>
+                        <item name="FILT_WARNING_LO"/>
+                        <item name="FILT_COMMAND"/>
+                        <item name="FILT_ACTIVITY_HI"/>
+                        <item name="FILT_ACTIVITY_LO"/>
+                        <item name="FILT_DIAGNOSTIC"/>
                     </enum>
                     <comment>The severity level</comment>
                 </arg>
-                <arg name="recvEnabled" type="bool">
-                </arg>
-                <arg name="sendEnabled" type="bool">
+                <arg name="enabled" type="bool">
                 </arg>
             </args>
         </event>
-        <event id="1" name="ALOG_ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
+        <event id="1" name="ID_FILTER_ENABLED" severity="ACTIVITY_HI" format_string = "ID %d is filtered." >
             <comment>
             Indicate ID is filtered
             </comment>
@@ -31,7 +29,7 @@
                 </arg>
             </args>
         </event>
-        <event id="2" name="ALOG_ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
+        <event id="2" name="ID_FILTER_LIST_FULL" severity="WARNING_LO" format_string = "ID filter list is full. Cannot filter %d ." >
             <comment>
             Attempted to add ID to full ID filter ID
             </comment>
@@ -41,7 +39,7 @@
                 </arg>
             </args>
         </event>
-        <event id="3" name="ALOG_ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
+        <event id="3" name="ID_FILTER_REMOVED" severity="ACTIVITY_HI" format_string = "ID filter ID %d removed." >
             <comment>
             Removed an ID from the filter
             </comment>
@@ -51,7 +49,7 @@
                 </arg>
             </args>
         </event>
-        <event id="4" name="ALOG_ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
+        <event id="4" name="ID_FILTER_NOT_FOUND" severity="WARNING_LO" format_string = "ID filter ID %d not found." >
             <comment>
             ID not in filter
             </comment>

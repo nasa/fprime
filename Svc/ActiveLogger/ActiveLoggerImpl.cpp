@@ -14,32 +14,19 @@ namespace Svc {
     ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
         ActiveLoggerComponentBase(name)
     {
-        // set input filter defaults
-        this->m_inFilterState[INPUT_WARNING_HI].enabled =
-                INPUT_WARNING_HI_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        this->m_inFilterState[INPUT_WARNING_LO].enabled =
-                INPUT_WARNING_LO_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        this->m_inFilterState[INPUT_COMMAND].enabled =
-                INPUT_COMMAND_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        this->m_inFilterState[INPUT_ACTIVITY_HI].enabled =
-                INPUT_ACTIVITY_HI_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        this->m_inFilterState[INPUT_ACTIVITY_LO].enabled =
-                INPUT_ACTIVITY_LO_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        this->m_inFilterState[INPUT_DIAGNOSTIC].enabled =
-                INPUT_DIAGNOSTIC_DEFAULT?INPUT_ENABLED:INPUT_DISABLED;
-        // set send filter defaults
-        this->m_sendFilterState[SEND_WARNING_HI].enabled =
-                SEND_WARNING_HI_DEFAULT?SEND_ENABLED:SEND_DISABLED;
-        this->m_sendFilterState[SEND_WARNING_LO].enabled =
-                SEND_WARNING_LO_DEFAULT?SEND_ENABLED:SEND_DISABLED;
-        this->m_sendFilterState[SEND_COMMAND].enabled =
-                SEND_COMMAND_DEFAULT?SEND_ENABLED:SEND_DISABLED;
-        this->m_sendFilterState[SEND_ACTIVITY_HI].enabled =
-                SEND_ACTIVITY_HI_DEFAULT?SEND_ENABLED:SEND_DISABLED;
-        this->m_sendFilterState[SEND_ACTIVITY_LO].enabled =
-                SEND_ACTIVITY_LO_DEFAULT?SEND_ENABLED:SEND_DISABLED;
-        this->m_sendFilterState[SEND_DIAGNOSTIC].enabled =
-                SEND_DIAGNOSTIC_DEFAULT?SEND_ENABLED:SEND_DISABLED;
+        // set filter defaults
+        this->m_filterState[FILTER_WARNING_HI].enabled =
+                FILTER_WARNING_HI_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
+        this->m_filterState[FILTER_WARNING_LO].enabled =
+                FILTER_WARNING_LO_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
+        this->m_filterState[FILTER_COMMAND].enabled =
+                FILTER_COMMAND_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
+        this->m_filterState[FILTER_ACTIVITY_HI].enabled =
+                FILTER_ACTIVITY_HI_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
+        this->m_filterState[FILTER_ACTIVITY_LO].enabled =
+                FILTER_ACTIVITY_LO_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
+        this->m_filterState[FILTER_DIAGNOSTIC].enabled =
+                FILTER_DIAGNOSTIC_DEFAULT?FILTER_ENABLED:FILTER_DISABLED;
 
         memset(m_filteredIDs,0,sizeof(m_filteredIDs));
 
@@ -64,32 +51,32 @@ namespace Svc {
             case Fw::LOG_FATAL: // always pass FATAL
                 break;
             case Fw::LOG_WARNING_HI:
-                if (this->m_inFilterState[INPUT_WARNING_HI].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_WARNING_HI].enabled == FILTER_DISABLED) {
                    return;
                 }
                 break;
             case Fw::LOG_WARNING_LO:
-                if (this->m_inFilterState[INPUT_WARNING_LO].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_WARNING_LO].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
             case Fw::LOG_COMMAND:
-                if (this->m_inFilterState[INPUT_COMMAND].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_COMMAND].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
             case Fw::LOG_ACTIVITY_HI:
-                if (this->m_inFilterState[INPUT_ACTIVITY_HI].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_ACTIVITY_HI].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
             case Fw::LOG_ACTIVITY_LO:
-                if (this->m_inFilterState[INPUT_ACTIVITY_LO].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_ACTIVITY_LO].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
             case Fw::LOG_DIAGNOSTIC:
-                if (this->m_inFilterState[INPUT_DIAGNOSTIC].enabled == INPUT_DISABLED) {
+                if (this->m_filterState[FILTER_DIAGNOSTIC].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
@@ -129,74 +116,24 @@ namespace Svc {
         Fw::SerializeStatus stat = this->m_logPacket.serialize(this->m_comBuffer);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
-        switch (severity) {
-            case QUEUE_LOG_FATAL: // always pass FATAL
-                break;
-            case QUEUE_LOG_WARNING_HI:
-                if (this->m_sendFilterState[SEND_WARNING_HI].enabled == SEND_DISABLED) {
-                   return;
-                }
-                break;
-            case QUEUE_LOG_WARNING_LO:
-                if (this->m_sendFilterState[SEND_WARNING_LO].enabled == SEND_DISABLED) {
-                    return;
-                }
-                break;
-            case QUEUE_LOG_COMMAND:
-                if (this->m_sendFilterState[SEND_COMMAND].enabled == SEND_DISABLED) {
-                    return;
-                }
-                break;
-            case QUEUE_LOG_ACTIVITY_HI:
-                if (this->m_sendFilterState[SEND_ACTIVITY_HI].enabled == SEND_DISABLED) {
-                    return;
-                }
-                break;
-            case QUEUE_LOG_ACTIVITY_LO:
-                if (this->m_sendFilterState[SEND_ACTIVITY_LO].enabled == SEND_DISABLED) {
-                    return;
-                }
-                break;
-            case QUEUE_LOG_DIAGNOSTIC:
-                if (this->m_sendFilterState[SEND_DIAGNOSTIC].enabled == SEND_DISABLED) {
-                    return;
-                }
-                break;
-            default:
-                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity));
-                return;
-        }
-
         if (this->isConnected_PktSend_OutputPort(0)) {
             this->PktSend_out(0, this->m_comBuffer,0);
         }
     }
 
-    void ActiveLoggerImpl::ALOG_SET_EVENT_REPORT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, InputFilterLevel FilterLevel, InputFilterEnabled FilterEnable) {
-        if (  (FilterLevel > INPUT_DIAGNOSTIC) or
-              (FilterLevel < INPUT_WARNING_HI) or
-              (FilterEnable < INPUT_ENABLED) or
-              (FilterEnable > INPUT_DISABLED)) {
+    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, EventLevel FilterLevel, FilterEnabled FilterEnable) {
+        if (  (FilterLevel > FILTER_DIAGNOSTIC) or
+              (FilterLevel < FILTER_WARNING_HI) or
+              (FilterEnable < FILTER_ENABLED) or
+              (FilterEnable > FILTER_DISABLED)) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
             return;
         }
-        this->m_inFilterState[FilterLevel].enabled = FilterEnable;
+        this->m_filterState[FilterLevel].enabled = FilterEnable;
         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
     }
 
-    void ActiveLoggerImpl::ALOG_SET_EVENT_SEND_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, SendFilterLevel FilterLevel, SendFilterEnabled FilterEnable) {
-        if (  (FilterLevel > SEND_DIAGNOSTIC) or
-              (FilterLevel < SEND_WARNING_HI) or
-              (FilterEnable < SEND_ENABLED) or
-              (FilterEnable > SEND_DISABLED)) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
-            return;
-        }
-        this->m_sendFilterState[FilterLevel].enabled = FilterEnable;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-    }
-
-    void ActiveLoggerImpl::ALOG_SET_ID_FILTER_cmdHandler(
+    void ActiveLoggerImpl::SET_ID_FILTER_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq, //!< The command sequence number
             U32 ID,
@@ -218,7 +155,7 @@ namespace Svc {
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-                    this->log_ACTIVITY_HI_ALOG_ID_FILTER_ENABLED(ID);
+                    this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
                     return;
                 }
             }
@@ -227,12 +164,12 @@ namespace Svc {
                 if (this->m_filteredIDs[entry] == 0) {
                     this->m_filteredIDs[entry] = ID;
                     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-                    this->log_ACTIVITY_HI_ALOG_ID_FILTER_ENABLED(ID);
+                    this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
                     return;
                 }
             }
             // if an empty slot was not found, send an error event
-            this->log_WARNING_LO_ALOG_ID_FILTER_LIST_FULL(ID);
+            this->log_WARNING_LO_ID_FILTER_LIST_FULL(ID);
             this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         } else { // remove ID
             // search list for existing entry
@@ -240,35 +177,34 @@ namespace Svc {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->m_filteredIDs[entry] = 0; // zero entry
                     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
-                    this->log_ACTIVITY_HI_ALOG_ID_FILTER_REMOVED(ID);
+                    this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
                     return;
                 }
             }
             // if it gets here, wasn't found
-            this->log_WARNING_LO_ALOG_ID_FILTER_NOT_FOUND(ID);
+            this->log_WARNING_LO_ID_FILTER_NOT_FOUND(ID);
             this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         }
 
     }
 
-    void ActiveLoggerImpl::ALOG_DUMP_FILTER_STATE_cmdHandler(
+    void ActiveLoggerImpl::DUMP_FILTER_STATE_cmdHandler(
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq //!< The command sequence number
         ) {
 
         // first, iterate through severity filters
-        for (NATIVE_INT_TYPE filter = 0; filter < InputFilterLevel_MAX; filter++) {
-            this->log_ACTIVITY_LO_ALOG_SEVERITY_FILTER_STATE(
+        for (NATIVE_INT_TYPE filter = 0; filter < EventLevel_MAX; filter++) {
+            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     static_cast<EventFilterState>(filter),
-                    INPUT_ENABLED == this->m_inFilterState[filter].enabled,
-                    SEND_ENABLED == this->m_sendFilterState[filter].enabled
+                    FILTER_ENABLED == this->m_filterState[filter].enabled
                     );
         }
 
         // iterate through ID filter
         for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (this->m_filteredIDs[entry] != 0) {
-                this->log_ACTIVITY_HI_ALOG_ID_FILTER_ENABLED(this->m_filteredIDs[entry]);
+                this->log_ACTIVITY_HI_ID_FILTER_ENABLED(this->m_filteredIDs[entry]);
             }
         }
 
