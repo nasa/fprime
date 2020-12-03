@@ -56,9 +56,7 @@ namespace Svc {
 
     void ActiveLoggerImplTester::runWithFilters(Fw::LogSeverity filter) {
 
-        REQUIREMENT("AL-004");
-        REQUIREMENT("AL-005");
-        REQUIREMENT("AL-006");
+        REQUIREMENT("AL-002");
 
         Fw::LogBuffer buff;
         U32 val = 10;
@@ -224,7 +222,7 @@ namespace Svc {
 
         // for a set of IDs, fill filter
 
-        REQUIREMENT("AL-007");
+        REQUIREMENT("AL-003");
 
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
@@ -427,6 +425,7 @@ namespace Svc {
         U32 val = 10;
         FwEventIdType id = 29;
         U32 cmdSeq = 21;
+        REQUIREMENT("AL-004");
 
         Fw::SerializeStatus stat = buff.serialize(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
