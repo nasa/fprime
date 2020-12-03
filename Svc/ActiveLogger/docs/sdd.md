@@ -2,7 +2,9 @@
 
 ## 1. Introduction
 
-The `Svc::ActiveLogger` component processes events from other components. The events are put in packets and sent to an external user like a ground system. The component provides event filtering and writing event logs to a file.
+The `Svc::ActiveLogger` component processes events from other components. The events are put in packets and sent to an
+external component like the ground interface. The component provides event filtering capability such that events may
+be turned off via ID or severity.
 
 ## 2. Requirements
 
@@ -12,7 +14,7 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 AL-001 | The `Svc::ActiveLogger` component shall queue events and compose them into downlink packets. | Inspection; Unit Test
 AL-002 | The `Svc::ActiveLogger` component shall have commands to filter events based on event severity. | Unit Test
-AL-003 | The `Svc::ActiveLogger` component shall filter events based on the event ID. | Unit Test 
+AL-003 | The `Svc::ActiveLogger` component shall have commands to filter events based on the event ID. | Unit Test 
 
 ## 3. Design
 
@@ -36,31 +38,45 @@ Port Data Type | Name | Direction | Kind | Usage
 
 ### 3.2 Functional Description
 
-The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows developers to specify a set of events in the component XML (see User's Guide). For those components, the autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger filters the events and sends them as packets to other components that send them out of the system.
+The `Svc::ActiveLogger` component provides an event logging function for the software. The framework autocoder allows
+developers to specify a set of events in the component XML
+(see [Events](https://nasa.github.io/fprime/UsersGuide/user/cmd-evt-chn-prm.html#Events)). For these components, the
+autocoder will add an `Fw::Log` output port to send events in serialized form. The ActiveLogger receives these port
+calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
+interface. 
+ 
+**Note:** the Event ID value 0 is reserved for the logger.
 
-NOTE: Event ID value 0 is reserved for the logger.
+Should a FATAL severity event arrive, it is announced using a FATAL out port allow the system to respond when a FATAL
+event is seen.
 
 #### 3.2.1 Filtering
 
-The `Svc::ActiveLogger` `LogRecv` input port handler filters events on the thread of the caller to lessen the CPU load caused by sending events via IPC to the component thread. The filters can be set by severity. By default, the DIAGNOSTIC events are filtered since the number can be the highest and are typically only used for development and debugging. This filter is modified by the `SET_EVENT_FILTER` command.
+The `Svc::ActiveLogger` `LogRecv` input port handler filters events to lessen the load on the downstream components. The
+filters can be set by severity and ID. By default, the DIAGNOSTIC events are filtered out since the number of DIAGNOSTIC
+evens can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
+modified at runtime by the `SET_EVENT_FILTER` command.
 
-The thread of the component retrieves the log events from the message queue and converts them to a packet and sent via the `PktSend` port.
+The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs
+that can be filtered. This allows operators to mute a particular event that might be flooding the downstream components.
+These filters are modified at runtime by the `SET_ID_FILTER` command.
 
-The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs that can be filtered. This allows operators to mute a particular event that might be flooding the event queue. This filter can be set on either receipt of the event or prior to sending the event. In most cases, it is desirable to filter on receipt so a flooding event does not overwhelm the message queue. These filters is modified by the `SET_EVENT_ID_REPORT_FILTER` and `SET_EVENT_ID_SEND_FILTER` command.
+FATAL events are never filtered, so they can be caught and broadcast to the system. Outgoing events are converted into
+the F´ ground format and sent out using the `PktSend` port.
 
-FATAL events are never filtered, so they can be caught by the system.
+
 
 #### 3.2.2 Fatal Announce
 
-When the `ActiveLogger` component receives a FATAL event, it calls the FatalAnnounce port. Another component that has a system response to FATALs (such as reset) can connect to the port to be informed when a FATAL has occurred.
+When the `ActiveLogger` component receives a FATAL event, it calls the FatalAnnounce port. Another component that
+handles the system response to FATALs (such as resetting the system) can connect to this port to be informed when a
+FATAL has occurred.
 
 ### 3.3 Scenarios
 
 #### 3.3.1 Receive Events
 
-The `Svc::ActiveLogger` component accepts events from other components:
-
-![Receive Events](img/ReceiveEvents.jpg) 
+The `Svc::ActiveLogger` component accepts events from other components.
 
 ### 3.4 State
 
