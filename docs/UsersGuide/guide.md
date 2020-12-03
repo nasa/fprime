@@ -30,7 +30,7 @@ The API documentation section contains the automatically generated documentation
 ## Table of Contents
 
 - Getting Started with F´
-    - [What is F´: a breif introduction](../index.md)
+    - [What is F´: a brief introduction](../index.md)
     - [Installing F´](../INSTALL.md)
     - [Installing F´ Console Autocomplete](./user/autocomplete.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
