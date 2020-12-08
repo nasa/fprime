@@ -25,7 +25,6 @@ from fprime.fbuild.builder import (
     Target,
     Build,
     BuildType,
-    NoValidBuildTypeException,
     GenerateException,
     InvalidBuildCacheException,
     UnableToDetectDeploymentException,
@@ -51,41 +50,6 @@ def get_target(parsed: argparse.Namespace) -> Target:
         flag for flag in Target.get_all_possible_flags() if getattr(parsed, flag, False)
     }
     return Target.get_target(mnemonic, flags)
-
-
-def get_build(
-    parsed: argparse.Namespace, deployment: Path, verbose: bool, target: Target = None
-) -> Build:
-    """Gets the build given the namespace
-
-    Takes the parsed namespace and processes it to a known build configuration. This will refine down a supplied list of
-    build types or loop through all of the build types if None is specified.
-
-    Args:
-        parsed: argparse namespace to read values from
-        deployment: deployment directory the build will operate against
-        verbose: have we enabled verbose output
-        build_types: build types to search through
-
-    Returns:
-        build meeting the specifications on build type
-    """
-    build_types = target.build_types if target is not None else BuildType
-    build_type = [
-        build_type
-        for build_type in build_types
-        if parsed.build_type is None
-        or build_type.get_cmake_build_type() == parsed.build_type
-    ]
-    # None found, explode
-    if not build_type:
-        raise NoValidBuildTypeException(
-            "Could not execute '{}' with a build type '{}'".format(
-                target, parsed.build_type
-            )
-        )
-    # Grab first build when multiple are available
-    return Build(build_type[0], deployment, verbose=verbose)
 
 
 def validate(parsed, unknown):
@@ -143,7 +107,8 @@ def add_target_parser(
             add_help=False,
             help="{} in the specified directory".format(target.desc),
         )
-        existing[target.mnemonic] = (parser, [])
+        # --ut flag also exists at the global parsers, skip adding it
+        existing[target.mnemonic] = (parser, ["ut"])
         # Common target-only items
         parser.add_argument(
             "-j",
@@ -198,18 +163,16 @@ def parse_args(args):
         help="F prime directory to operate on. Default: cwd, %(default)s.",
     )
     common_parser.add_argument(
-        "--build-type",
-        dest="build_type",
-        default=None,
-        choices=[build_type.get_cmake_build_type() for build_type in BuildType],
-        help="CMake build type passed to CMake system.",
-    )
-    common_parser.add_argument(
         "-v",
         "--verbose",
         default=False,
         action="store_true",
         help="Turn on verbose output.",
+    )
+    common_parser.add_argument(
+        "--ut",
+        action="store_true",
+        help="Run command against unit testing build type",
     )
 
     # Main parser for the whole application
@@ -223,7 +186,7 @@ def parse_args(args):
     # Add non-target parsers
     generate_parser = subparsers.add_parser(
         "generate",
-        help="Generate a build cache directory",
+        help="Generate a build cache directory. Defaults to generating a release build cache",
         parents=[common_parser],
         add_help=False,
     )
@@ -299,12 +262,7 @@ def print_info(parsed, deployment, build_dir):
     """ Builds and prints the informational output block """
     cwd = Path(parsed.path)
     build_types = BuildType
-    if parsed.build_type is not None:
-        build_types = [
-            build_type
-            for build_type in BuildType
-            if build_type.get_cmake_build_type() == parsed.build_type
-        ]
+
     # Roll up targets for more concise display
     build_infos = {}
     local_generic_targets = set()
@@ -368,6 +326,11 @@ def utility_entry(args):
     parsed, cmake_args, make_args, parser = parse_args(args)
     build_dir_as_path = None if parsed.build_dir is None else Path(parsed.build_dir)
     cwd = Path(parsed.path)
+
+    build_type = BuildType.BUILD_NORMAL
+    if parsed.ut:
+        build_type = BuildType.BUILD_TESTING
+
     try:
         deployment = Build.find_nearest_deployment(cwd)
         if parsed.command is None:
@@ -377,33 +340,22 @@ def utility_entry(args):
         elif parsed.command == "info":
             print_info(parsed, deployment, build_dir_as_path)
         elif parsed.command == "hash-to-file":
-            lines = get_build(
-                parsed, deployment, verbose=parsed.verbose
-            ).find_hashed_file(parsed.hash)
+            build = Build(build_type, deployment, verbose=parsed.verbose)
+            lines = build.find_hashed_file(parsed.hash)
             print_hash_info(lines, parsed.hash)
         elif parsed.command == "generate":
-            # First check for existing builds and error-quick if one is found. Prevents divergent generations
-            builds = []
-            for build_type in BuildType:
-                build = Build(build_type, deployment, verbose=parsed.verbose)
-                build.invent(cwd, parsed.platform, build_dir_as_path)
-                builds.append(build)
-            # Once we looked for errors, then generate
-            for build in builds:
-                toolchain = build.find_toolchain()
-                print(
-                    "[INFO] {} build directory at: {}".format(
-                        parsed.command.title(), build.build_dir
-                    )
+            build = Build(build_type, deployment, verbose=parsed.verbose)
+            build.invent(cwd, parsed.platform, build_dir_as_path)
+            toolchain = build.find_toolchain()
+            print("[INFO] Generating build directory at: {}".format(build.build_dir))
+            print(
+                "[INFO] Using toolchain file {} for platform {}".format(
+                    toolchain, parsed.platform
                 )
-                print(
-                    "[INFO] Using toolchain file {} for platform {}".format(
-                        toolchain, parsed.platform
-                    )
-                )
-                if toolchain is not None:
-                    cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
-                build.generate(cmake_args)
+            )
+            if toolchain is not None:
+                cmake_args.update({"CMAKE_TOOLCHAIN_FILE": toolchain})
+            build.generate(cmake_args)
         elif parsed.command == "purge":
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
@@ -439,7 +391,7 @@ def utility_entry(args):
                 build.purge_install()
         else:
             target = get_target(parsed)
-            build = get_build(parsed, deployment, parsed.verbose, target)
+            build = Build(target.build_type, deployment, verbose=parsed.verbose)
             build.load(cwd, parsed.platform, build_dir_as_path)
             build.execute(target, context=Path(parsed.path), make_args=make_args)
     except GenerateException as genex:

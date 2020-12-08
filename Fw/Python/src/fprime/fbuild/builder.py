@@ -66,7 +66,7 @@ class Target(ABC):
         self,
         mnemonic: str,
         desc: str,
-        build_types: List[BuildType] = None,
+        build_type: BuildType = None,
         flags: set = None,
         cmake: str = None,
     ):
@@ -81,10 +81,8 @@ class Target(ABC):
         """
         self.mnemonic = mnemonic
         self.desc = desc
-        self.build_types = (
-            build_types
-            if build_types is not None
-            else [BuildType.BUILD_NORMAL, BuildType.BUILD_TESTING]
+        self.build_type = (
+            build_type if build_type is not None else BuildType.BUILD_NORMAL
         )
         self.flags = flags if flags is not None else set()
         self.cmake_target = cmake if cmake is not None else mnemonic
@@ -141,7 +139,6 @@ class Target(ABC):
         Returns:
             single matching target
         """
-        # matching = [target for target in cls.get_all_targets() if target.mnemonic == mnemonic and flags == target.flags]
         matching = []
         for target in cls.get_all_targets():
             if target.mnemonic == mnemonic and flags == target.flags:
@@ -257,8 +254,11 @@ class Build:
             not self.build_dir.exists()
             or not (self.build_dir / "CMakeCache.txt").exists()
         ):
+            gen_args = " --ut" if self.build_type == BuildType.BUILD_TESTING else ""
             raise InvalidBuildCacheException(
-                "{} invalid build cache. Please (re)generate.".format(build_dir)
+                "'{}' is not a valid build cache. Generate this build cache with 'fprime-util generate{}'".format(
+                    self.build_dir, gen_args
+                )
             )
 
     def get_settings(
@@ -341,10 +341,7 @@ class Build:
             and isinstance(target, LocalTarget)
         ]
         global_targets = [
-            target
-            for target in BUILD_TARGETS
-            if isinstance(target, GlobalTarget)
-            if self.build_type in target.build_types
+            target for target in BUILD_TARGETS if isinstance(target, GlobalTarget)
         ]
 
         relative_path = self.cmake.get_project_relative_path(
@@ -556,10 +553,6 @@ class UnableToDetectDeploymentException(FprimeException):
     """ An exception indicating a build cache """
 
 
-class NoValidBuildTypeException(FprimeException):
-    """ An build type matching the user request could not be found """
-
-
 class NoSuchTargetException(FprimeException):
     """ Could not find a matching build target """
 
@@ -580,7 +573,7 @@ BUILD_TARGETS = [
     LocalTarget(
         "build",
         "Build unit tests",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"ut"},
         cmake="ut_exe",
     ),
@@ -588,44 +581,39 @@ BUILD_TARGETS = [
     LocalTarget("impl", "Generate implementation template files"),
     LocalTarget("impl", "Generate unit test files", flags={"ut"}, cmake="testimpl"),
     # Check targets and unittest targets
-    LocalTarget("check", "Run unit tests", build_types=[BuildType.BUILD_TESTING]),
+    LocalTarget("check", "Run unit tests", build_type=BuildType.BUILD_TESTING),
     LocalTarget(
         "check",
         "Run unit tests with memory checking",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"leak"},
         cmake="check_leak",
     ),
     LocalTarget(
         "check",
         "Run unit tests with code coverage",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"coverage"},
         cmake="coverage",
     ),
     GlobalTarget(
         "check",
         "Run all deployment unit tests",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"all"},
     ),
     GlobalTarget(
         "check",
         "Run all deployment unit tests with memory checking",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"all", "leak"},
         cmake="check_leak",
     ),
     GlobalTarget(
         "check",
         "Run all deployment unit tests with code coverage",
-        build_types=[BuildType.BUILD_TESTING],
+        build_type=BuildType.BUILD_TESTING,
         flags={"all", "coverage"},
         cmake="coverage",
-    ),
-    LocalTarget(
-        "coverage",
-        "Generate unit test coverage reports",
-        build_types=[BuildType.BUILD_TESTING],
     ),
 ]
