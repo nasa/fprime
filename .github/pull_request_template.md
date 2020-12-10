@@ -5,7 +5,7 @@
 |**_Affected Architectures(s)_**|  |
 |**_Related Issue(s)_**|  |
 |**_Has Unit Tests (y/n)_**|  |
-|**_Build Passes (y/n)_**|  |
+|**_Builds Without Errors (y/n)_**|  |
 |**_Unit Tests Pass (y/n)_**|  |
 |**_Documentation Included (y/n)_**|  |
 
