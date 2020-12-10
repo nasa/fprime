@@ -376,7 +376,7 @@ def utility_entry(args):
                         parsed.command.title(), build.build_dir
                     )
                 )
-                if confirm() or parsed.force:
+                if parsed.force or confirm():
                     build.purge()
 
             build = Build(BuildType.BUILD_NORMAL, deployment, verbose=parsed.verbose)
@@ -395,7 +395,7 @@ def utility_entry(args):
                     parsed.command.title(), install_dir
                 )
             )
-            if confirm() or parsed.force:
+            if parsed.force or confirm():
                 build.purge_install()
         else:
             target = get_target(parsed)
