@@ -7,14 +7,15 @@ assignees: ''
 
 ---
 
-|**Field**|**Value**|
+| | |
 |:---|:---|
-|**_Report Date_**| [DATE] |
-|**_Reported By_**| [USER] |
-|**_Branch/Hash_**| |
-|**_Short Description_**| |
+|**_F´ Version_**| |
 |**_Affected Component_**|  |
 ---
 ## Feature Description
 
+A quick description of the requested feature.
+
 ## Rationale
+
+A rationale for why the feature should be implemented in F´.
