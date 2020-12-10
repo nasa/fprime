@@ -6,13 +6,9 @@ labels: bug
 assignees: ''
 
 ---
-
-|**Field**|**Value**|
+| | |
 |:---|:---|
-|**_Report Date_**| [DATE] |
-|**_Reported By_**| [USER] |
-|**_Branch/Hash_**| |
-|**_Short Description_**| |
+|**_F´ Version_**| |
 |**_Affected Component_**|   |
 ---
 ## Problem Description
