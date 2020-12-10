@@ -270,7 +270,15 @@ def print_info(parsed, deployment, build_dir):
     # Loop through available builds and harvest targets
     for build_type in build_types:
         build = Build(build_type, deployment, verbose=parsed.verbose)
-        build.load(cwd, parsed.platform, build_dir)
+        try:
+            build.load(cwd, parsed.platform, build_dir)
+        except InvalidBuildCacheException:
+            print(
+                "[WARNING] Not displying results for build type '{}', missing build cache.".format(
+                    build_type.get_cmake_build_type()
+                )
+            )
+            continue
         build_info = build.get_build_info(cwd)
         # Target list
         local_targets = {
@@ -299,7 +307,7 @@ def print_info(parsed, deployment, build_dir):
     # Artifact locations come afterwards
     print("  ----------------------------------------------------------")
     for build_type, build_artifact_location in build_infos.items():
-        format_string = "    Build artifact directory ({}): {}"
+        format_string = "    {} build cache: {}"
         print(
             format_string.format(
                 build_type.get_cmake_build_type(), build_artifact_location
