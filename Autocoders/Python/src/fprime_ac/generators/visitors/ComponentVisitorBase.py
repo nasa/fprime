@@ -28,7 +28,6 @@ from fprime_ac.models import ModelParser
 # Python extention modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import get_nearest_build_root
 
 #
 # Global logger init. below.
