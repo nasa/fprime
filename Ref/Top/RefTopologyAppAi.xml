@@ -34,7 +34,7 @@
     <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
-    <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+    <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
 
     <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -48,7 +48,7 @@
     <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
     <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
     <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
-    <instance namespace="Svc" name="fileManager" type="FileManager" base_id="621"  base_id_window="20" />
+    <instance namespace="Svc" name="fileManager" type="FileManager" base_id="601"  base_id_window="20" />
     <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
     <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
     <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
@@ -56,7 +56,9 @@
     <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
 
     <!-- Communications driver. May be swapped with other comm drivers like UART -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="601" base_id_window="20" />
+    <!-- Note: here we have tcp reliable uplink, and Udp (low latency) downlink -->
+    <instance namespace="Drv" name="uplinkComm" type="ByteStreamDriverModel" base_id="621" base_id_window="20" />
+    <instance namespace="Drv" name="downlinkComm" type="ByteStreamDriverModel" base_id="641" base_id_window="20" />
 
     <!-- Rate Group Components -->
 
@@ -80,12 +82,12 @@
     <!-- Connections -->
     <!-- Communications driver connections -->
     <connection name = "CommunicationRecv">
-        <source component = "socketIpDriver" port = "recv" type = "Fw::BufferSend" num = "0"/>
+        <source component = "uplinkComm" port = "recv" type = "Drv::ByteStreamSend" num = "0"/>
         <target component = "groundIf" port = "readCallback" type = "Fw::BufferSend" num = "0"/>
     </connection>
     <connection name = "CommunicationSend">
         <source component = "groundIf" port = "write" type = "Fw::BufferSend" num = "0"/>
-        <target component = "socketIpDriver" port = "send" type = "Fw::BufferSend" num = "0"/>
+        <target component = "downlinkComm" port = "send" type = "Drv::ByteStreamRecv" num = "0"/>
     </connection>
     
     <!-- Command Registration/Dispatch/Reply Connections -->

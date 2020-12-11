@@ -33,7 +33,9 @@ Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEM
 
 // Command Components
 Svc::GroundInterfaceComponentImpl groundIf("GNDIF");
-Drv::SocketIpDriverComponentImpl socketIpDriver("SocketIpDriver");
+
+Drv::UdpComponentImpl downlinkComm(FW_OPTIONAL_NAME("UdpDownlink"));
+Drv::TcpClientComponentImpl uplinkComm(FW_OPTIONAL_NAME("TcpUplink"));
 
 #if FW_ENABLE_TEXT_LOGGING
 Svc::ConsoleTextLoggerImpl textLogger("TLOG");
@@ -109,7 +111,8 @@ void constructApp(U32 port_number, char* hostname) {
     prmDb.init(10,0);
 
     groundIf.init(0);
-    socketIpDriver.init(0);
+    uplinkComm.init(0);
+    downlinkComm.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -224,9 +227,18 @@ void constructApp(U32 port_number, char* hostname) {
 
     uartDrv.startReadThread(100,10*1024,-1);
 
-    // Initialize socket server
+    // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+        Fw::EightyCharString name("ReceiveTask");
+        // Downlink is UDP and only configured for sending
+        downlinkComm.configureSend(hostname, port_number);
+        Drv::SocketIpStatus openStatus = downlinkComm.open();
+        if (openStatus != Drv::SOCK_SUCCESS) {
+            Fw::Logger::logMsg("[WARNING] Failed to one downlink socket with status: %d\n", openStatus);
+        }
+        // Uplink is configured for receive so a socket task is started
+        uplinkComm.configure(hostname, port_number);
+        uplinkComm.startSocketTask(name, 100, 10 * 1024);
     }
 }
 
@@ -243,5 +255,8 @@ void exitTasks(void) {
     fileDownlink.exit();
     cmdSeq.exit();
     rpiDemo.exit();
+    downlinkComm.close();
+    uplinkComm.stopSocketTask();
+    (void) uplinkComm.joinSocketTask(NULL);
 }
 

@@ -72,7 +72,8 @@ Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
-Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
+Drv::UdpComponentImpl downlinkComm(FW_OPTIONAL_NAME("UdpDownlink"));
+Drv::TcpClientComponentImpl uplinkComm(FW_OPTIONAL_NAME("TcpUplink"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
@@ -147,7 +148,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     prmDb.init(10,0);
 
     groundIf.init(0);
-    socketIpDriver.init(0);
+    uplinkComm.init(0);
+    downlinkComm.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -238,9 +240,20 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
+   
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+        Fw::EightyCharString name("ReceiveTask");
+        // Downlink is UDP and only configured for sending
+        downlinkComm.configureSend(hostname, port_number);
+        Drv::SocketIpStatus openStatus = downlinkComm.open();
+        if (openStatus != Drv::SOCK_SUCCESS) {
+            Fw::Logger::logMsg("[WARNING] Failed to one downlink socket with status: %d\n", openStatus);
+        }
+        // Uplink is configured for receive so a socket task is started
+        uplinkComm.configure(hostname, port_number);
+        uplinkComm.startSocketTask(name, 100, 10 * 1024);
     }
     return false;
 }
@@ -273,8 +286,9 @@ void exitTasks(void) {
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
-    socketIpDriver.exitSocketTask();
-    (void) socketIpDriver.joinSocketTask(NULL);
+    downlinkComm.close();
+    uplinkComm.stopSocketTask();
+    (void) uplinkComm.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(seqMallocator);
 }
 

@@ -87,14 +87,19 @@ namespace Svc {
 
       //! Handler for from_write
       //!
-      void from_write_handler(
+      Drv::SendStatus from_write_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer 
       );
 
+      void from_write_handler_helper(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer
+      );
+
       //! Handler for from_readPoll
       //!
-      void from_readPoll_handler(
+      Drv::PollStatus from_readPoll_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &fwBuffer 
       );

@@ -97,7 +97,7 @@ namespace Svc {
         Fw::Buffer buffer(up_ptr, size);
         // Uplink based on uplink type
         if (state.m_uplink_type) {
-            state.invoke_to_readCallback(0,buffer);
+            state.invoke_to_readCallback(0,buffer, Drv::RECV_OK);
         } else {
             state.m_incoming_buffer = buffer;
             state.invoke_to_schedIn(0, 0);
