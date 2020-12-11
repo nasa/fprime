@@ -143,13 +143,6 @@ def parse_args(args):
         help="F prime build platform (e.g. Linux, Darwin). Default specified in settings.ini",
     )
     common_parser.add_argument(
-        "-b",
-        "--build-dir",
-        dest="build_dir",
-        default=None,
-        help="Specific F prime build directory to use. Better to specify --deploy.",
-    )
-    common_parser.add_argument(
         "-d",
         "--deploy",
         dest="deploy",
@@ -258,7 +251,7 @@ def confirm():
         print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
-def print_info(parsed, deployment, build_dir):
+def print_info(parsed, deployment):
     """ Builds and prints the informational output block """
     cwd = Path(parsed.path)
     build_types = BuildType
@@ -271,7 +264,7 @@ def print_info(parsed, deployment, build_dir):
     for build_type in build_types:
         build = Build(build_type, deployment, verbose=parsed.verbose)
         try:
-            build.load(cwd, parsed.platform, build_dir)
+            build.load(cwd, parsed.platform)
         except InvalidBuildCacheException:
             print(
                 "[WARNING] Not displying results for build type '{}', missing build cache.".format(
@@ -332,7 +325,6 @@ def print_hash_info(lines, hash_val):
 def utility_entry(args):
     """ Main interface to F prime utility """
     parsed, cmake_args, make_args, parser = parse_args(args)
-    build_dir_as_path = None if parsed.build_dir is None else Path(parsed.build_dir)
     cwd = Path(parsed.path)
 
     build_type = BuildType.BUILD_NORMAL
@@ -340,20 +332,24 @@ def utility_entry(args):
         build_type = BuildType.BUILD_TESTING
 
     try:
-        deployment = Build.find_nearest_deployment(cwd)
+        deployment = (
+            Path(parsed.deploy)
+            if parsed.deploy is not None
+            else Build.find_nearest_deployment(cwd)
+        )
         if parsed.command is None:
             print("[ERROR] Must supply subcommand for fprime-util. See below.")
             parser.print_help()
-            print_info(parsed, deployment, build_dir_as_path)
+            print_info(parsed, deployment)
         elif parsed.command == "info":
-            print_info(parsed, deployment, build_dir_as_path)
+            print_info(parsed, deployment)
         elif parsed.command == "hash-to-file":
             build = Build(build_type, deployment, verbose=parsed.verbose)
             lines = build.find_hashed_file(parsed.hash)
             print_hash_info(lines, parsed.hash)
         elif parsed.command == "generate":
             build = Build(build_type, deployment, verbose=parsed.verbose)
-            build.invent(cwd, parsed.platform, build_dir_as_path)
+            build.invent(cwd, parsed.platform)
             toolchain = build.find_toolchain()
             print("[INFO] Generating build directory at: {}".format(build.build_dir))
             print(
@@ -368,7 +364,7 @@ def utility_entry(args):
             for build_type in BuildType:
                 build = Build(build_type, deployment, verbose=parsed.verbose)
                 try:
-                    build.load(cwd, parsed.platform, build_dir_as_path)
+                    build.load(cwd, parsed.platform)
                 except InvalidBuildCacheException:
                     continue
                 print(
@@ -381,7 +377,7 @@ def utility_entry(args):
 
             build = Build(BuildType.BUILD_NORMAL, deployment, verbose=parsed.verbose)
             try:
-                build.load(cwd, parsed.platform, build_dir_as_path)
+                build.load(cwd, parsed.platform)
             except InvalidBuildCacheException:
                 # Just load the install destination regardless of whether the build is valid.
                 pass
@@ -400,7 +396,7 @@ def utility_entry(args):
         else:
             target = get_target(parsed)
             build = Build(target.build_type, deployment, verbose=parsed.verbose)
-            build.load(cwd, parsed.platform, build_dir_as_path)
+            build.load(cwd, parsed.platform)
             build.execute(target, context=Path(parsed.path), make_args=make_args)
     except GenerateException as genex:
         print(
