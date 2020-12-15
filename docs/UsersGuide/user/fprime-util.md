@@ -72,11 +72,6 @@ behavior:
   this behavior to manually specify a deployment. Ex: `fprime-util build -d ~/fprime` will try to
   build the `~/fprime` deployment.
 
-Additionally, there are some advanced flags that can be useful in some situations:
-
-- `--build-dir`: This sets the cmake build cache directory. This is usually automatically determined
-  by the deployment and build type and setting this can cause unexpected results.
-
 ## Setting Build Platform
 
 Different F´ deployments will target different operating systems, architectures, and hardware. To
