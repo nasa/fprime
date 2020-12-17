@@ -93,6 +93,7 @@ class XmlSerializeParser:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
         fd = open(xml_file)
+        xml_file = os.path.basename(xml_file)
         #        xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
 
