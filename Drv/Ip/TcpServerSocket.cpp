@@ -1,10 +1,21 @@
+// ======================================================================
+// \title  TcpServerSocket.cpp
+// \author mstarch
+// \brief  cpp file for TcpServerSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #include <Drv/Ip/TcpServerSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
 
 #ifdef TGT_OS_TYPE_VXWORKS
-#include <socket.h>
+    #include <socket.h>
     #include <inetLib.h>
     #include <fioLib.h>
     #include <hostLib.h>
@@ -17,14 +28,13 @@
     #include <errnoLib.h>
     #include <string.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
 #else
-#error OS not supported for IP Socket Communications
+    #error OS not supported for IP Socket Communications
 #endif
 
-#include <stdio.h>
 #include <string.h>
 
 namespace Drv {

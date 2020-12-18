@@ -1,3 +1,14 @@
+// ======================================================================
+// \title  IpSocket.hpp
+// \author mstarch
+// \brief  hpp file for IpSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #ifndef DRV_IP_IPHELPER_HPP_
 #define DRV_IP_IPHELPER_HPP_
 
@@ -42,6 +53,10 @@ class IpSocket {
      * is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port
      * cannot be set to 0 as dynamic port assignment is not supported.
      *
+     * Note: for UDP sockets this is equivalent to `configureSend` and only sets up the transmission direction of the
+     * socket.  A separate call to `configureRecv` is required to receive on the socket and should be made before the
+     * `open` call has been made.
+     *
      * \param hostname: socket uses for outgoing transmissions (and incoming when tcp). Must be of form x.x.x.x
      * \param port: port socket uses for outgoing transmissions (and incoming when tcp). Must NOT be 0.
      * \param send_timeout_seconds: send timeout seconds portion
@@ -66,10 +81,14 @@ class IpSocket {
      * \brief open the IP socket for communications
      *
      * This will open the IP socket for communication. This method error checks and validates properties set using the
-     * `configure` method.  In the case of Udp, incoming transmissions are opened if configured via `configureRecv`. A
+     * `configure` method.  Tcp sockets will open bidirectional communication assuming the `condifure` function was
+     * previously called. Udp sockets allow `configureRecv` and `configure`/`configureSend` calls to configure for
+     * each direction separately and may be operated in a single-direction or bidirectional mode. This call returns a
      * status of SOCK_SEND means the port is ready for transmissions and any other status should be treated as an error
      * with the socket not capable of sending nor receiving. This method will properly close resources on any
      * unsuccessful status.
+     *
+     * In the case of server components (TcpServer) this function will block until a client has connected.
      *
      * Note: delegates to openProtocol for protocol specific implementation
      * \return status of open

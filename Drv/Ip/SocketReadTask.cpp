@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  SocketReadTask.hpp
+// \title  SocketReadTask.cpp
 // \author mstarch
-// \brief  cpp file for SocketReadTask component implementation class
+// \brief  cpp file for SocketReadTask implementation class
 //
 // \copyright
 // Copyright 2009-2020, by the California Institute of Technology.

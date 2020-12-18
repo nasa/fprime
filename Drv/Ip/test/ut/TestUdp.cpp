@@ -12,7 +12,7 @@
 
 Os::Log logger;
 
-void test_with_loop(U32 iterations) {
+void test_with_loop(U32 iterations, bool duplex) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
 
@@ -26,10 +26,15 @@ void test_with_loop(U32 iterations) {
         Drv::UdpSocket udp1;
         Drv::UdpSocket udp2;
         udp1.configureSend("127.0.0.1", port1, 0, 100);
-        udp1.configureRecv("127.0.0.1", port2);
+        // If simplex, test only half the channel
+        if (duplex) {
+            udp1.configureRecv("127.0.0.1", port2);
+        }
         status1 = udp1.open();
-
-        udp2.configureSend("127.0.0.1", port2, 0, 100);
+        // If simplex, test only half the channel
+        if (duplex) {
+            udp2.configureSend("127.0.0.1", port2, 0, 100);
+        }
         udp2.configureRecv("127.0.0.1", port1);
         status2 = udp2.open();;
 
@@ -43,7 +48,10 @@ void test_with_loop(U32 iterations) {
             Drv::Test::force_recv_timeout(udp1);
             Drv::Test::force_recv_timeout(udp2);
             Drv::Test::send_recv(udp1, udp2);
-            Drv::Test::send_recv(udp2, udp1);
+            // Allow duplex comms
+            if (duplex) {
+                Drv::Test::send_recv(udp2, udp1);
+            }
         }
         udp1.close();
         udp2.close();
@@ -51,11 +59,19 @@ void test_with_loop(U32 iterations) {
 }
 
 TEST(Nominal, TestNominalUdp) {
-    test_with_loop(1);
+    test_with_loop(1, false);
 }
 
 TEST(Nominal, TestMulipleUdp) {
-    test_with_loop(100);
+    test_with_loop(100, false);
+}
+
+TEST(SingleSide, TestSingleSideUdp) {
+    test_with_loop(1, true);
+}
+
+TEST(SingleSide, TestSingleSideMulipleUdp) {
+    test_with_loop(100, true);
 }
 
 int main(int argc, char** argv) {

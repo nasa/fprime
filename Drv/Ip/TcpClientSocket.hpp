@@ -1,3 +1,14 @@
+// ======================================================================
+// \title  TcpClientSocket.hpp
+// \author mstarch
+// \brief  cpp file for TcpClientSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #ifndef DRV_TCPCLIENT_TCPHELPER_HPP_
 #define DRV_TCPCLIENT_TCPHELPER_HPP_
 

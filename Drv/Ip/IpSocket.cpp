@@ -1,6 +1,16 @@
+// ======================================================================
+// \title  IpSocket.cpp
+// \author mstarch
+// \brief  cpp file for IpSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 
 #include <Drv/Ip/IpSocket.hpp>
-#include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>

@@ -21,7 +21,6 @@ void force_recv_timeout(Drv::IpSocket& socket) {
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 50; // 50ms max before test failure
-    // set socket write to timeout after 1 sec
     setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
 }
 

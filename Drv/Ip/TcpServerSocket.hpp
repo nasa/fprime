@@ -1,3 +1,14 @@
+// ======================================================================
+// \title  TcpServerSocket.hpp
+// \author mstarch
+// \brief  hpp file for TcpServerSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #ifndef DRV_TCPSERVER_TCPHELPER_HPP_
 #define DRV_TCPSERVER_TCPHELPER_HPP_
 
@@ -20,13 +31,19 @@ class TcpServerSocket : public IpSocket {
     TcpServerSocket();
 
     /**
-     * \brief Opens the server socket and listens.
+     * \brief Opens the server socket and listens, does not block.
+     *
+     * Opens the server's listening socket such that this server can listen for incoming client requests. Given the
+     * nature of this component, only one (1) client can be handled at a time. After this call succeeds, clients may
+     * connect. This call does not block, block occurs on `open` while waiting to accept incoming clients.
      * \return status of the server socket setup.
      */
     SocketIpStatus startup(void);
 
     /**
-     * \brief Opens the server socket and listens.
+     * \brief Shutdown client socket, and listening server socket
+     *
+     *
      */
     void shutdown(void);
 

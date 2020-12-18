@@ -1,4 +1,14 @@
-
+// ======================================================================
+// \title  UdpSocket.cpp
+// \author mstarch
+// \brief  cpp file for UdpSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -6,7 +16,7 @@
 #include <Fw/Types/StringUtils.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
-#include <socket.h>
+    #include <socket.h>
     #include <inetLib.h>
     #include <fioLib.h>
     #include <hostLib.h>
@@ -19,16 +29,13 @@
     #include <errnoLib.h>
     #include <string.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
 #else
-#error OS not supported for IP Socket Communications
+    #error OS not supported for IP Socket Communications
 #endif
 
-#include <stdio.h>
 #include <string.h>
 
 namespace Drv {
@@ -79,7 +86,7 @@ SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
     if (IpSocket::addressToIp4(m_recv_hostname, &address.sin_addr) != SOCK_SUCCESS) {
         return SOCK_INVALID_IP_ADDRESS;
     };
-    // TCP requires bind to an address to the socket
+    // UDP (for receiving) requires bind to an address to the socket
     if (::bind(fd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         return SOCK_FAILED_TO_BIND;
     }
@@ -89,38 +96,47 @@ SocketIpStatus UdpSocket::bind(NATIVE_INT_TYPE fd) {
 }
 
 SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
-    //D eclarations
     SocketIpStatus status = SOCK_SUCCESS;
     NATIVE_INT_TYPE socketFd = -1;
     struct sockaddr_in address;
+
+    // Ensure configured for at least send or receive
+    if (m_port == 0 && m_recv_port == 0) {
+        return SOCK_INVALID_IP_ADDRESS; // Consistent with port = 0 behavior in TCP
+    }
 
     // Acquire a socket, or return error
     if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
-    // Set up the address port and name
-    address.sin_family = AF_INET;
-    address.sin_port = htons(this->m_port);
 
-    // OS specific settings
+    // May not be sending in all cases
+    if (this->m_port != 0) {
+        // Set up the address port and name
+        address.sin_family = AF_INET;
+        address.sin_port = htons(this->m_port);
+
+        // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
-    address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
+        address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-    // First IP address to socket sin_addr
-    if ((status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr))) != SOCK_SUCCESS) {
-        ::close(socketFd);
-        return status;
-    };
+        // First IP address to socket sin_addr
+        if ((status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr))) != SOCK_SUCCESS) {
+            ::close(socketFd);
+            return status;
+        };
 
-    // Now apply timeouts
-    if ((status = IpSocket::setupTimeouts(socketFd)) != SOCK_SUCCESS) {
-        ::close(socketFd);
-        return status;
+        // Now apply timeouts
+        if ((status = IpSocket::setupTimeouts(socketFd)) != SOCK_SUCCESS) {
+            ::close(socketFd);
+            return status;
+        }
+
+        FW_ASSERT(sizeof(this->m_state->m_addr_send) == sizeof(address), sizeof(this->m_state->m_addr_send),
+                  sizeof(address));
+        memcpy(&this->m_state->m_addr_send, &address, sizeof(this->m_state->m_addr_send));
     }
-
-    FW_ASSERT(sizeof(this->m_state->m_addr_send) == sizeof(address), sizeof(this->m_state->m_addr_send), sizeof(address));
-    memcpy(&this->m_state->m_addr_send, &address, sizeof(this->m_state->m_addr_send));
 
     // When we are setting up for receiving as well, then we must bind to a port
     if ((m_recv_port != 0)  && ((status = this->bind(socketFd)) != SOCK_SUCCESS)) {

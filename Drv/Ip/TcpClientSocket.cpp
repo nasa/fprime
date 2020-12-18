@@ -1,12 +1,21 @@
+// ======================================================================
+// \title  TcpClientSocket.cpp
+// \author mstarch
+// \brief  cpp file for TcpClientSocket core implementation classes
+//
+// \copyright
+// Copyright 2009-2020, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
 
 #include <Drv/Ip/TcpClientSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/StringUtils.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
-#include <socket.h>
+    #include <socket.h>
     #include <inetLib.h>
     #include <fioLib.h>
     #include <hostLib.h>
@@ -19,13 +28,11 @@
     #include <errnoLib.h>
     #include <string.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
-#include <arpa/inet.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
+    #include <arpa/inet.h>
 #else
-#error OS not supported for IP Socket Communications
+    #error OS not supported for IP Socket Communications
 #endif
 
 #include <stdio.h>
@@ -65,7 +72,7 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     }
 
     // TCP requires connect to the socket to allow for communication
-    if (connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
+    if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         ::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }

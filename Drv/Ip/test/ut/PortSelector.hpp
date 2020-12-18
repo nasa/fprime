@@ -14,7 +14,10 @@ namespace Test {
  * Tests working with TCP often need ports to be unused. This presents a problem when looking to bind to a port that has
  * not been used anywhere on the system.  This function will walk the process through to the point of getting a bind,
  * and use the port 0 to have the OS assign one.  At this point, the assigned port will be inspected and the fd will be
- * closed without a connection allowing something else to bind to it. Most probably the test code.
+ * closed without a connection allowing something else to bind to it e.g the test code.
+ *
+ * Note: this is test code only as there is a known race condition from the moment of closing the port, to when the
+ * recipient binds it again.
  *
  * \param is_udp: is this a UDP port
  * \return 0 on error, or a free port on success
