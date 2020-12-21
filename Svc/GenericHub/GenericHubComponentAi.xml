@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<component name="GenericHub" kind="passive" namespace="Svc" modeler="true">
+    <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamRecvPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamSendPortAi.xml</import_port_type>
+
+    <ports>
+        <!-- Set GenericHubInputPorts in AcConstants.ini to size this array -->
+        <port name="portIn" data_type="Serial" kind="guarded_input" max_number="$GenericHubInputPorts">
+            <comment>Input array of generic ports to shuttle to the other side of the hub connection</comment>
+        </port>
+        <!-- Set GenericHubOutputPorts in AcConstants.ini to size this array -->
+        <port name="portOut" data_type="Serial" kind="output" max_number="$GenericHubOutputPorts">
+            <comment>Output array of generic ports shuttled from the other side of the hub connection</comment>
+        </port>
+        <!-- Set GenericHubInputBuffers in AcConstants.ini to size this array -->
+        <port name="buffersIn" data_type="Fw::BufferSend" kind="guarded_input" max_number="$GenericHubInputBuffers">
+            <comment>Input array of generic ports shuttling in copy-free buffers form external sources</comment>
+        </port>
+        <!-- Set GenericHubOutputBuffers in AcConstants.ini to size this array -->
+        <port name="buffersOut" data_type="Fw::BufferSend" kind="output" max_number="$GenericHubOutputBuffers">
+            <comment>Output array of generic ports shuttling in copy-free buffers form external sources</comment>
+        </port>
+
+        <!-- Byte Driver Connection:
+
+        Fw::Buffer connections for some byte driver implementation. Note: the driver should be hooked up in
+        event mode as the driver itself will not be polled.
+         -->
+        <port name="dataOut" data_type="Drv::ByteStreamSend" kind="output" max_number="1">
+        </port>
+        <port name="dataIn" data_type="Drv::ByteStreamRecv" kind="sync_input" max_number="1">
+        </port>
+
+    </ports>
+
+</component>
