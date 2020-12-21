@@ -58,9 +58,9 @@ implementations running on baremetal machines.
 
 | Name | Description | Validation |
 |---|---|---|
-| BYTEDRV-001 | The ByteStreamDriverModel shall provide the capability to send bytes | validation |
-| BYTEDRV-002 | The ByteStreamDriverModel shall provide the capability to poll for bytes | validation |
-| BYTEDRV-003 | The ByteStreamDriverModel shall provide the capability to produce bytes | validation |
+| BYTEDRV-001 | The ByteStreamDriverModel shall provide the capability to send bytes | inspection |
+| BYTEDRV-002 | The ByteStreamDriverModel shall provide the capability to poll for bytes | inspection |
+| BYTEDRV-003 | The ByteStreamDriverModel shall provide the capability to produce bytes | inspection |
 
 ## Change Log
 

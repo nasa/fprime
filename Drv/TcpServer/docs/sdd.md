@@ -76,9 +76,9 @@ void exitTasks(void) {
 
 | Name | Description | Validation |
 |---|---|---|
-| TCPSRVCOMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | validation |
-| TCPSRVCOMP-002 | The tcp server component shall provide a read thread | validation |
-| TCPSRBCOMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | validation |
+| TCPSRVCOMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | inspection |
+| TCPSRVCOMP-002 | The tcp server component shall provide a read thread | unit test |
+| TCPSRBCOMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | unit test |
 
 ## Change Log
 

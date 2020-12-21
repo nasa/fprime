@@ -72,9 +72,9 @@ void exitTasks(void) {
 
 | Name | Description | Validation |
 |---|---|---|
-| UDPCOMP-001 | The udp component shall implement the ByteStreamDriverModel  | validation |
-| UDPCOMP-002 | The udp component shall provide a read thread | validation |
-| UDPCOMP-003 | The udp component shall provide single and bidirectional communication across udp | validation |
+| UDPCOMP-001 | The udp component shall implement the ByteStreamDriverModel  | inspection |
+| UDPCOMP-002 | The udp component shall provide a read thread | unit test |
+| UDPCOMP-003 | The udp component shall provide single and bidirectional communication across udp | unit test |
 
 ## Change Log
 

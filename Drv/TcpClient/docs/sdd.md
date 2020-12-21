@@ -68,9 +68,9 @@ void exitTasks(void) {
 
 | Name | Description | Validation |
 |---|---|---|
-| TCPCLICOMP-001 | The tcp client component shall implement the ByteStreamDriverModel  | validation |
-| TCPCLICOMP-002 | The tcp client component shall provide a read thread | validation |
-| TCPCLICOMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | validation |
+| TCPCLICOMP-001 | The tcp client component shall implement the ByteStreamDriverModel  | inspection |
+| TCPCLICOMP-002 | The tcp client component shall provide a read thread | unit test |
+| TCPCLICOMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | unit test |
 
 ## Change Log
 
