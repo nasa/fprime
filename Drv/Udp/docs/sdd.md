@@ -1,11 +1,11 @@
-\page DrvTcpClient Tcp Client Component
-# Drv::TcpClient Tcp Client Component
+\page DrvUdp Udp  Component
+# Drv::Udp Udp Component
 
-The TCP client component bridges the byte stream driver model interface to a remote TCP server to which this tcp client
-connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data
-and producing the callback port call.
+The UDP client component bridges the byte stream driver model interface to a remote UDP port to which this udp component
+sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing
+the callback port call.  Udp does not require bidirectional operation and can be used in a single direction.
 
-For more information on the supporting TCP implementation see: Drv::TcpClientSocket.
+For more information on the supporting UDP implementation see: Drv::UdpSocket.
 For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.
 
 ## Design
@@ -39,12 +39,15 @@ This status is an enumeration enumeration whose values are described in the foll
 
 The Drv::TcpClientComponentImpl must be configured with the address of the remote connection, and the socket must be
 open to begin. Usually, the user runs the Drv::TcpClientComponentImpl engaging its read thread, which will automatically
-open the  connection. The component is passive and has no commands meaning users should `init`, `configure`, and
-`startSocketTask`. Upon shutdown, the `stopSocketThread` and `joinSocketThread` methods should be called to ensure
-proper resource deallocation. This typical usage is shown in the C++ snippet below.
+open the  connection. The component is passive and has no commands meaning users should `init`,
+`configureSend`/`configureRecv`, and `startSocketTask`. Upon shutdown, the `stopSocketThread` and `joinSocketThread`
+methods should be called to ensure proper resource deallocation. This typical usage is shown in the C++ snippet below.
+
+Since UDP support single or bidirectional communication, configuring each direction is cone separately using the two
+methods `configureSend` and `configureRecv`. The user is not required to call both.
 
 ```c++
-Drv::TcpClientComponentImpl comm = Drv::TcpClientComponentImpl("TCP Client");
+Drv::TcpClientComponentImpl comm = Drv::TcpClientComponentImpl("UDp Client");
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
@@ -52,7 +55,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
     if (hostname != NULL && port_number != 0) {
         Fw::EightyCharString name("ReceiveTask");
-        comm.configure(hostname, port_number);
+        comm.configureSend(hostname, port_number);
+        comm.configureRecv(hostname, port_number);
         comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);
     }
 }
@@ -68,12 +72,12 @@ void exitTasks(void) {
 
 | Name | Description | Validation |
 |---|---|---|
-| TCPCLICOMP-001 | The tcp client component shall implement the ByteStreamDriverModel  | validation |
-| TCPCLICOMP-002 | The tcp client component shall provide a read thread | validation |
-| TCPCLICOMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | validation |
+| UDPCOMP-001 | The udp component shall implement the ByteStreamDriverModel  | validation |
+| UDPCOMP-002 | The udp component shall provide a read thread | validation |
+| UDPCOMP-003 | The udp component shall provide single and bidirectional communication across udp | validation |
 
 ## Change Log
 
 | Date | Description |
 |---|---|
-| 2020-12-17 | Initial Draft |
+| 2020-12-21 | Initial Draft |

@@ -1,11 +1,12 @@
-\page DrvTcpClient Tcp Client Component
-# Drv::TcpClient Tcp Client Component
+\page DrvTcpServer Tcp Server Component
+# Drv::TcpServer Tcp Server Component
 
-The TCP client component bridges the byte stream driver model interface to a remote TCP server to which this tcp client
+The TCP server component bridges the byte stream driver model interface to a remote TCP client to which this tcp server
 connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data
-and producing the callback port call.
+and producing the callback port call. Since it is a server it must startup and listen for client connections. Designed
+for single client communication, it does not permit a queue of connecting clients.
 
-For more information on the supporting TCP implementation see: Drv::TcpClientSocket.
+For more information on the supporting TCP implementation see: Drv::TcpServerSocket.
 For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverModel.
 
 ## Design
@@ -37,14 +38,19 @@ This status is an enumeration enumeration whose values are described in the foll
 
 ## Usage
 
-The Drv::TcpClientComponentImpl must be configured with the address of the remote connection, and the socket must be
-open to begin. Usually, the user runs the Drv::TcpClientComponentImpl engaging its read thread, which will automatically
+The Drv::TcpServerComponentImpl must be configured with the address of the remote connection, and the socket must be
+open to begin. Usually, the user runs the Drv::TcpServerComponentImpl engaging its read thread, which will automatically
 open the  connection. The component is passive and has no commands meaning users should `init`, `configure`, and
-`startSocketTask`. Upon shutdown, the `stopSocketThread` and `joinSocketThread` methods should be called to ensure
+`startSocketTask`. In addition to these methods shared with the Drv::TcpClientComponentImpl, the server provides 
+`startup` and `shutdown` methods to start and stop the listening socket. It `startup` must be run before the read task
+is started and `shutdown` should be called before the task is stopped.
+
+Upon shutdown, the `stopSocketThread` and `joinSocketThread` methods should be called to ensure
 proper resource deallocation. This typical usage is shown in the C++ snippet below.
 
+
 ```c++
-Drv::TcpClientComponentImpl comm = Drv::TcpClientComponentImpl("TCP Client");
+Drv::TcpServerComponentImpl comm = Drv::TcpServeromponentImpl("TCP Server");
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
@@ -53,12 +59,14 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     if (hostname != NULL && port_number != 0) {
         Fw::EightyCharString name("ReceiveTask");
         comm.configure(hostname, port_number);
+        comm.startup();
         comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);
     }
 }
 
 void exitTasks(void) {
     ...
+    comm.shutdown();
     comm.stopSocketTask();
     (void) comm.joinSocketTask(NULL);
 }
@@ -68,12 +76,12 @@ void exitTasks(void) {
 
 | Name | Description | Validation |
 |---|---|---|
-| TCPCLICOMP-001 | The tcp client component shall implement the ByteStreamDriverModel  | validation |
-| TCPCLICOMP-002 | The tcp client component shall provide a read thread | validation |
-| TCPCLICOMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | validation |
+| TCPSRVCOMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | validation |
+| TCPSRVCOMP-002 | The tcp server component shall provide a read thread | validation |
+| TCPSRBCOMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | validation |
 
 ## Change Log
 
 | Date | Description |
 |---|---|
-| 2020-12-17 | Initial Draft |
+| 2020-12-21 | Initial Draft |
