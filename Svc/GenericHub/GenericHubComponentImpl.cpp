@@ -89,7 +89,7 @@ namespace Svc {
         Drv::RecvStatus recvStatus
     )
   {
-      HubType type;
+      U32 type_in;
       U32 port;
       Fw::SerializeStatus status;
       Fw::ExternalSerializeBuffer buffer_in_wrapper(fwBuffer.getData(), fwBuffer.getSize());
@@ -99,8 +99,9 @@ namespace Svc {
           // Must inform buffer that there is *real* data in the buffer
           status = buffer_in_wrapper.setBuffLen(fwBuffer.getSize());
           FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-          status = buffer_in_wrapper.deserialize(reinterpret_cast<U32&>(type));
+          status = buffer_in_wrapper.deserialize(type_in);
           FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+          HubType type = static_cast<HubType>(type_in);
           FW_ASSERT(type < HUB_TYPE_MAX, type);
           status = buffer_in_wrapper.deserialize(port);
           FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
