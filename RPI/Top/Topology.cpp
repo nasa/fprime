@@ -58,7 +58,7 @@ Svc::PrmDbImpl prmDb("PRM","PrmDb.dat");
 
 Svc::FileUplink fileUplink("fileUplink");
 
-Svc::FileDownlink fileDownlink ("fileDownlink", 10000, 100); //10 second time out, 100ms ticks.
+Svc::FileDownlink fileDownlink ("fileDownlink");
 
 Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
 
@@ -112,6 +112,7 @@ void constructApp(U32 port_number, char* hostname) {
     socketIpDriver.init(0);
 
     fileUplink.init(30, 0);
+    fileDownlink.configure(1000, 200, 100, 10);
     fileDownlink.init(30, 0);
     fileUplinkBufferManager.init(0);
 
