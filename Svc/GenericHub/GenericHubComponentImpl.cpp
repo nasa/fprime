@@ -72,9 +72,10 @@ void GenericHubComponentImpl ::buffersIn_handler(const NATIVE_INT_TYPE portNum, 
 void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& fwBuffer,
                                               Drv::RecvStatus recvStatus) {
-    HubType type;
-    U32 port;
-    Fw::SerializeStatus status;
+    HubType type = HUB_TYPE_MAX;
+    U32 type_in = 0;
+    U32 port = 0;
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     Fw::ExternalSerializeBuffer buffer_in_wrapper(fwBuffer.getData(), fwBuffer.getSize());
     Fw::ExternalSerializeBuffer buffer_out_wrapper(reinterpret_cast<U8*>(m_data_in), sizeof(m_data_in));
     // Only handle good statuses
@@ -82,8 +83,9 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
         // Must inform buffer that there is *real* data in the buffer
         status = buffer_in_wrapper.setBuffLen(fwBuffer.getSize());
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        status = buffer_in_wrapper.deserialize(reinterpret_cast<U32&>(type));
+        status = buffer_in_wrapper.deserialize(type_in);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+        type = static_cast<HubType>(type_in);
         FW_ASSERT(type < HUB_TYPE_MAX, type);
         status = buffer_in_wrapper.deserialize(port);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
