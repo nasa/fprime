@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileDownlink/test/ut/Tester.hpp
 // \author bocchino
 // \brief  hpp file for FileDownlink test harness implementation class
@@ -7,7 +7,7 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -41,7 +41,7 @@ namespace Svc {
           FileBuffer(
               const U8 *const data,
               const size_t size
-          ); 
+          );
 
           //! Construct a FileBuffer from a history of data packets
           FileBuffer(
@@ -60,7 +60,7 @@ namespace Svc {
 
           //! Compare two file buffers
           static bool compare(
-              const FileBuffer& fb1, 
+              const FileBuffer& fb1,
               const FileBuffer& fb2
           );
 
@@ -98,9 +98,9 @@ namespace Svc {
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Create a file F
       //! Downlink F
@@ -130,6 +130,11 @@ namespace Svc {
       //!
       void timeout(void);
 
+      //! sendFilePort
+      //! Test downlinking a file via a port
+      //!
+      void sendFilePort(void);
+
     private:
 
       // ----------------------------------------------------------------------
@@ -148,6 +153,13 @@ namespace Svc {
       void from_pingOut_handler(
           const NATIVE_INT_TYPE portNum,
           U32 key
+      );
+
+      //! Handler for from_FileComplete
+      //!
+      void from_FileComplete_handler(
+          const NATIVE_INT_TYPE portNum,
+          Svc::SendFileResponse resp
       );
 
     private:
@@ -170,8 +182,7 @@ namespace Svc {
       void sendFile(
           const char *const sourceFileName, //!< The source file name
           const char *const destFileName, //!< The destination file name
-          const Fw::CommandResponse response, //!< The expected command response
-          const bool force_stop = false
+          const Fw::CommandResponse response //!< The expected command response
       );
 
       //! Command the FileDownlink component to send a file
@@ -189,8 +200,7 @@ namespace Svc {
       //! Assert a command response
       //!
       void cancel(
-          const Fw::CommandResponse response, //!< The expected command response
-          const bool dispatch_start = true
+          const Fw::CommandResponse response //!< The expected command response
       );
 
       //! Remove a file
@@ -273,10 +283,6 @@ namespace Svc {
       //! The current sequence index
       //!
       U32 sequenceIndex;
-
-      //! For timeout test
-      //!
-      bool prevent_return;
   };
 
 } // end namespace Svc

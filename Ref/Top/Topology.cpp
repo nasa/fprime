@@ -77,7 +77,7 @@ Drv::TcpClientComponentImpl uplinkComm(FW_OPTIONAL_NAME("TcpUplink"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
-Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"), 1000, 1000); // 1s timeout, 1s clock
+Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
 
 Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
 
@@ -153,6 +153,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
+    fileDownlink.configure(1000, 1000, 1000, 10);
     fileManager.init(30, 0);
     fileUplinkBufferManager.init(0);
     SG1.init(10,0);
