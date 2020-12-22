@@ -82,7 +82,7 @@ namespace Svc {
   // Helpers
 
   void Tester :: send_random_comm(U32 port) {
-      U32 random_size = STest::Pick::lowerUpper(1, FW_COM_BUFFER_MAX_SIZE);
+      U32 random_size = STest::Pick::lowerUpper(0, FW_COM_BUFFER_MAX_SIZE);
       m_comm.resetSer();
       for (U32 i = 0; i < random_size; i++) {
           m_comm.serialize(static_cast<U8>(STest::Pick::any()));
@@ -96,7 +96,7 @@ namespace Svc {
   }
 
   void Tester :: send_random_buffer(U32 port) {
-      U32 random_size = STest::Pick::lowerUpper(1, DATA_SIZE);
+      U32 random_size = STest::Pick::lowerUpper(0, DATA_SIZE);
 
       for (U32 i = 0; i < random_size; i++) {
           reinterpret_cast<U8*>(m_buffer.getData())[i] = static_cast<U8>(STest::Pick::any());

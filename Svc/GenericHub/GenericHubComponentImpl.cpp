@@ -41,7 +41,6 @@ void GenericHubComponentImpl ::send_data(const HubType type,
                                          const U8* data,
                                          const U32 size) {
     FW_ASSERT(data != NULL);
-    FW_ASSERT(size > 0);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
     Fw::Buffer buffer_out(m_data_out, sizeof(m_data_out));
