@@ -17,48 +17,38 @@
 
 namespace Svc {
 
-  class GenericRepeaterComponentImpl :
-    public GenericRepeaterComponentBase
-  {
+class GenericRepeaterComponentImpl : public GenericRepeaterComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object GenericRepeater
+    //!
+    GenericRepeaterComponentImpl(const char* const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object GenericRepeater
+    //!
+    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object GenericRepeater
-      //!
-      GenericRepeaterComponentImpl(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object GenericRepeater
+    //!
+    ~GenericRepeaterComponentImpl(void);
 
-      //! Initialize object GenericRepeater
-      //!
-      void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined serial input ports
+    // ----------------------------------------------------------------------
 
-      //! Destroy object GenericRepeater
-      //!
-      ~GenericRepeaterComponentImpl(void);
+    //! Handler implementation for portIn
+    //!
+    void portIn_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+                        Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    );
+};
 
-    PRIVATE:
-
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined serial input ports
-      // ----------------------------------------------------------------------
-
-      //! Handler implementation for portIn
-      //!
-      void portIn_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
-      );
-
-
-    };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

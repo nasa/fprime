@@ -10,55 +10,38 @@
 //
 // ======================================================================
 
-
 #include <Svc/GenericRepeater/GenericRepeaterComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction, initialization, and destruction
+// ----------------------------------------------------------------------
 
-  GenericRepeaterComponentImpl ::
-    GenericRepeaterComponentImpl(
-        const char *const compName
-    ) : GenericRepeaterComponentBase(compName)
-  {
+GenericRepeaterComponentImpl ::GenericRepeaterComponentImpl(const char* const compName)
+    : GenericRepeaterComponentBase(compName) {}
 
-  }
-
-  void GenericRepeaterComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    )
-  {
+void GenericRepeaterComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GenericRepeaterComponentBase::init(instance);
-  }
+}
 
-  GenericRepeaterComponentImpl ::
-    ~GenericRepeaterComponentImpl(void)
-  {
+GenericRepeaterComponentImpl ::~GenericRepeaterComponentImpl(void) {}
 
-  }
+// ----------------------------------------------------------------------
+// Handler implementations for user-defined serial input ports
+// ----------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // Handler implementations for user-defined serial input ports
-  // ----------------------------------------------------------------------
+void GenericRepeaterComponentImpl ::portIn_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+                                                   Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+) {
+    for (NATIVE_INT_TYPE i = 0; i < NUM_PORTOUT_OUTPUT_PORTS; i++) {
+        if (!isConnected_portOut_OutputPort(i)) {
+            continue;
+        }
 
-  void GenericRepeaterComponentImpl ::
-    portIn_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
-    )
-  {
-    for(NATIVE_INT_TYPE i = 0; i < NUM_PORTOUT_OUTPUT_PORTS; i++) {
-      if(!isConnected_portOut_OutputPort(i)) {
-        break;
-      }
-
-      portOut_out(i, Buffer);
+        portOut_out(i, Buffer);
     }
-  }
+}
 
-} // end namespace Svc
+}  // end namespace Svc
