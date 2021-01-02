@@ -87,7 +87,7 @@ namespace Svc {
           //! Record a received file
           void fileReceived(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_FilesReceived(n);
+            this->fileUplink->tlmWrite_FilesReceived(n);
           }
 
         PRIVATE:
@@ -115,7 +115,7 @@ namespace Svc {
           //! Record a packet received
           void packetReceived(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_PacketsReceived(n);
+            this->fileUplink->tlmWrite_PacketsReceived(n);
           }
 
         PRIVATE:
@@ -172,7 +172,7 @@ namespace Svc {
           //! Record a warning
           void warning(void) {
             ++this->n;
-            this->fileUplink->tlmWrite_FileUplink_Warnings(n);
+            this->fileUplink->tlmWrite_Warnings(n);
           }
 
         PRIVATE:
@@ -218,7 +218,7 @@ namespace Svc {
       //!
       void bufferSendIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer& buffer
+          Fw::Buffer& buffer //!< Buffer wrapping data
       );
 
       //! Handler implementation for pingIn

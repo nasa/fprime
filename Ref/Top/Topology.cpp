@@ -76,11 +76,9 @@ Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
-Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"), DOWNLINK_PACKET_SIZE);
+Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
 
 Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-Svc::BufferManager fileDownlinkBufferManager(FW_OPTIONAL_NAME("fileDownlinkBufferManager"), DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
 
 Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"), UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
 
@@ -153,9 +151,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
+    fileDownlink.configure(1000, 1000, 1000, 10);
     fileManager.init(30, 0);
     fileUplinkBufferManager.init(0);
-    fileDownlinkBufferManager.init(1);
     SG1.init(10,0);
     SG2.init(10,1);
     SG3.init(10,2);
@@ -189,9 +187,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     SG2.regCommands();
     SG3.regCommands();
     SG4.regCommands();
-	SG5.regCommands();
-	health.regCommands();
-	pingRcvr.regCommands();
+    SG5.regCommands();
+    health.regCommands();
+    pingRcvr.regCommands();
 
     // read parameters
     prmDb.readParamFile();

@@ -28,7 +28,6 @@ from fprime_ac.models import ModelParser
 # Python extention modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import get_nearest_build_root
 
 #
 # Global logger init. below.
@@ -783,11 +782,9 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Include any headers for channel/parameter serializable includes
         """
-        ser_includes = [si.get_xml_filename() for si in obj.get_serializables()]
+        ser_includes = self.__model_parser.uniqueList(obj.get_xml_serializable_files())
         s_includes = [
-            sinc.replace("Ai.xml", "Ac.hpp").replace(
-                get_nearest_build_root(sinc) + "/", ""
-            )
+            sinc.replace("Ai.xml", "Ac.hpp")
             for sinc in ser_includes
         ]
         c.ser_includes = s_includes

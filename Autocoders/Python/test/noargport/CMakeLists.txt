@@ -3,9 +3,10 @@
 # SOURCE_FILES: Handcoded C++ source files)
 
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/NoArgPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/SomePortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentImpl.cpp"
 )
 
 register_fprime_module()
@@ -23,8 +24,9 @@ set_target_properties(
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/test/noargport/ExampleComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
 

@@ -29,9 +29,10 @@ The `fprime-util` helper is driven by a series of subcommands listed above. Each
 of the development process and are breifly described below.  The following sections will go into
 each command's usage in more detail.
 
-1. `generate`: generates build caches, one for development, and one with unit test flags enabled.
-   This is the required first step to using the F´ build system. This should be executed once int
-   the deployment directory before developing.  It can be run again after the user runs `purge`.
+1. `generate`: generates build cache directories. It defaults to generating the build cache for
+   release builds, but adding the `--ut` flag will generate a unit testing build cache. This is the
+   required first step to using the F´ build system and must be run before building an F´ deployment
+   or running unit tests. The `purge` command can be used to delete all existing build caches.
 2. `purge`: removes the build caches created with generate. This should be used when the build
    system has not properly detected changes and need to be redone from the beginning.
 3. `hash-to-file`: If F´ assertions are setup to output file hashes instead of file paths (i.e. when
@@ -70,13 +71,6 @@ behavior:
   and starts moving up until it finds a F´ deployment. The deploy flag allows a user to override
   this behavior to manually specify a deployment. Ex: `fprime-util build -d ~/fprime` will try to
   build the `~/fprime` deployment.
-
-Additionally, there are some advanced flags that can be useful in some situations:
-
-- `--build-type {Release,Testing}`: Manually set the Cmake built type. This is usually automatically
-  determined by `fprime-util` and setting this can cause unexpected behavior.
-- `--build-dir`: This sets the cmake build cache directory. This is usually automatically determined
-  by the deployment and build type and setting this can cause unexpected results.
 
 ## Setting Build Platform
 

@@ -57,8 +57,6 @@
    
    <instance namespace="Svc" name="groundIf" type="GroundInterface" base_id="1200"  base_id_window="20" />
    
-   <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="1300"  base_id_window="20" />
-   
    <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="1400"  base_id_window="20" />
    
    <instance namespace="Svc" name="linuxTime" type="Time" base_id="1500"  base_id_window="20" />
@@ -228,10 +226,6 @@
        <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
-   <connection name = "FileDownlinkBufferManagerLog">
-       <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-   </connection>
    <connection name = "CmdSeqLog">
        <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -374,10 +368,6 @@
        <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
    </connection>
-   <connection name = "FileDownlinkBufferManagerTlm">
-       <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-   </connection>
    <connection name = "cmdSeqTlm">
        <source component = "cmdSeq" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
@@ -430,10 +420,6 @@
    </connection>
    <connection name = "rateGroup10HzCompTime">
        <source component = "rateGroup10HzComp" port = "Time" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-   </connection>
-   <connection name = "fileDownlinkBufferManagerTime">
-       <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
    <connection name = "cmdSeqTime">
@@ -517,6 +503,10 @@
    <connection name = "rpiDemo10Hz">
        <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
         <target component = "rpiDemo" port = "Run" type = "Sched" num = "0"/>
+   </connection>
+   <connection name = "rpiDemo10Hz">
+       <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>
+        <target component = "fileDownlink" port = "Run" type = "Sched" num = "0"/>
    </connection>
 
    <!-- 1Hz Rate Group -->
@@ -661,17 +651,13 @@
         <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
    </connection>
    
-   <connection name = "fileDownlinkBufferGet">
-       <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-   </connection>
-   <connection name = "fileDownlinkBufferManagerBufferReturn">
-       <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
    <connection name = "fileDownlinkBufferSend">
        <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
         <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+   </connection>
+   <connection name = "fileDownlinkBufferReturn">
+       <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+       <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
    </connection>
    
    <!-- Fault Connectionss -->
