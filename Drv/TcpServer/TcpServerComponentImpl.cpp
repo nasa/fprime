@@ -69,6 +69,8 @@ void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status
 
 Drv::SendStatus TcpServerComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     Drv::SocketIpStatus status = m_socket.send(fwBuffer.getData(), fwBuffer.getSize());
+    // Always return the buffer
+    deallocate_out(0, fwBuffer);
     if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
         return SEND_RETRY;
     } else if (status != SOCK_SUCCESS) {

@@ -30,7 +30,7 @@ The Drv::IpSocket class represents the external interface to IPv4 socket compone
 interface to IPv4 sockets for connecting, disconnecting, sending, and receiving  using the socket. This implements the
 IPv4 socket protocol as provided by the unix (Berkley) sockets implementation.
 
-High-level interfaces are provided for the standard functions of: `open`, `close`, `send`, and `recv`.  Protocol and
+High-level interfaces are provided for the standard functions of: `open`, `close`, `send`, and `recv`.  FramingProtocol and
 implementation specific functionality are implemented in derived classes by implementing the pure virtual functions:
 `openProtocol`, `sendProtocol`, and `recvProtocol`.
 

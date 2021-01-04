@@ -25,6 +25,9 @@
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
+#include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
+#include <Svc/Framer/FramerComponentImpl.hpp>
+#include <Svc/Deframer/DeframerComponentImpl.hpp>
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
 #include <Drv/Udp/UdpComponentImpl.hpp>
@@ -59,6 +62,9 @@ extern Ref::SendBuffImpl sendBuffComp;
 extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 
+extern Svc::StaticMemoryComponentImpl staticMemory;
 extern Drv::TcpClientComponentImpl uplinkComm;
 extern Drv::UdpComponentImpl downlinkComm;
+extern Svc::FramerComponentImpl downlink;
+extern Svc::DeframerComponentImpl uplink;
 #endif

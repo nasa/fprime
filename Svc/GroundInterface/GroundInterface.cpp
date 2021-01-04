@@ -81,6 +81,7 @@ namespace Svc {
       if (Drv::RECV_OK == recvStatus) {
           processBuffer(buffer);
       }
+      readBufferReturn_out(0, buffer);
   }
 
   void GroundInterfaceComponentImpl ::

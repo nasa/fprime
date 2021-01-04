@@ -65,6 +65,11 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
                         Fw::Buffer& fwBuffer,
                         Drv::RecvStatus recvStatus);
 
+    //! Handler implementation for bufferReturn
+    //!
+    void bufferReturn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              Fw::Buffer& fwBuffer);
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined serial input ports
     // ----------------------------------------------------------------------

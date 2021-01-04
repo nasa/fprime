@@ -147,6 +147,10 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
     return Fw::FW_SERIALIZE_OK;
 }
 
+NATIVE_UINT_TYPE CircularBuffer ::get_capacity() {
+    return m_size;
+}
+
 #ifdef CIRCULAR_DEBUG
 void CircularBuffer :: print() {
     U8* pointer = m_head;

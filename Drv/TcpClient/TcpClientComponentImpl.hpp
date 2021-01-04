@@ -134,8 +134,6 @@ class TcpClientComponentImpl : public ByteStreamDriverModelComponentBase, public
     Drv::PollStatus poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
     Drv::TcpClientSocket m_socket; //!< Socket implementation
-    Fw::Buffer m_buffer;           //!< Fw::Buffer used to pass data
-    U8 m_backing_data[SOCKET_MAX_RECV_BUFFER_SIZE]; //!< Buffer used to store data
 };
 
 }  // end namespace Drv

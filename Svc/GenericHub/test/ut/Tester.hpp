@@ -15,117 +15,114 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include "GTestBase.hpp"
 #include "Svc/GenericHub/GenericHubComponentImpl.hpp"
-#define DATA_SIZE 512
+// 10K, big
+#define DATA_SIZE (512)
 
 namespace Svc {
 
-  class Tester :
-    public GenericHubGTestBase
-  {
+class Tester : public GenericHubGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object Tester
+    //!
+    Tester(void);
 
-    public:
+    //! Destroy object Tester
+    //!
+    ~Tester(void);
 
-      //! Construct object Tester
-      //!
-      Tester(void);
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+    //! Test of basic in/out of a set of serialized ports
+    //!
+    void test_in_out(void);
 
-    public:
+    //! Test of buffer in/out of a set of buffer ports
+    //!
+    void test_buffer_io(void);
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Test of random in/out of a set of file and normal ports
+    //!
+    void test_random_io(void);
 
-      //! Test of basic in/out of a set of serialized ports
-      //!
-      void test_in_out(void);
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      //! Test of buffer in/out of a set of buffer ports
-      //!
-      void test_buffer_io(void);
+    //! Handler for from_buffersOut
+    //!
+    void from_buffersOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                 Fw::Buffer& fwBuffer);
 
-      //! Test of random in/out of a set of file and normal ports
-      //!
-      void test_random_io(void);
+    //! Handler for from_dataOut
+    //!
+    Drv::SendStatus from_dataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                         Fw::Buffer& fwBuffer);
 
-    private:
+    //! Handler for from_bufferAllocate
+    //!
+    Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, const U32 size);
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Handler for from_bufferDeallocate
+    //!
+    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
 
-      //! Handler for from_buffersOut
-      //!
-      void from_buffersOut_handler(
-              const NATIVE_INT_TYPE portNum, /*!< The port number*/
-              Fw::Buffer &fwBuffer
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for serial from ports
+    // ----------------------------------------------------------------------
 
-      //! Handler for from_dataOut
-      //!
-      Drv::SendStatus from_dataOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer
-      );
+    //! Handler for from_portOut
+    //!
+    void from_portOut_handler(NATIVE_INT_TYPE portNum,        /*!< The port number*/
+                              Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    );
 
-    private:
+  private:
+    void send_random_comm(U32 port);
 
-      // ----------------------------------------------------------------------
-      // Handlers for serial from ports
-      // ----------------------------------------------------------------------
+    void send_random_buffer(U32 port);
 
-      //! Handler for from_portOut
-      //!
-      void from_portOut_handler(
-        NATIVE_INT_TYPE portNum, /*!< The port number*/
-        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
-      );
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts(void);
 
-      void send_random_comm(U32 port);
+    //! Initialize components
+    //!
+    void initComponents(void);
 
-      void send_random_buffer(U32 port);
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! The component under test
+    //!
+    GenericHubComponentImpl componentIn;
+    GenericHubComponentImpl componentOut;
+    Fw::ComBuffer m_comm;
+    Fw::Buffer m_buffer;
+    Fw::Buffer m_allocate;
+    U32 m_comm_in;
+    U32 m_buffer_in;
+    U32 m_comm_out;
+    U32 m_buffer_out;
+    U32 m_current_port;
+    U8 m_data_store[DATA_SIZE];
+    U8 m_data_for_allocation[DATA_SIZE];
+};
 
-      //! Connect ports
-      //!
-      void connectPorts(void);
-
-      //! Initialize components
-      //!
-      void initComponents(void);
-
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      GenericHubComponentImpl componentIn;
-      GenericHubComponentImpl componentOut;
-      Fw::ComBuffer m_comm;
-      Fw::Buffer m_buffer;
-      U32 m_comm_in;
-      U32 m_buffer_in;
-      U32 m_comm_out;
-      U32 m_buffer_out;
-      U32 m_current_port;
-      U8 m_data_store[DATA_SIZE];
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

@@ -22,8 +22,8 @@ namespace Drv {
 
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
     : ByteStreamDriverModelComponentBase(compName),
-      SocketReadTask(),
-      m_buffer(m_backing_data, sizeof(m_backing_data)) {}
+      SocketReadTask() {}
+//      m_buffer(m_backing_data, sizeof(m_backing_data)) {}
 
 void TcpClientComponentImpl::init(const NATIVE_INT_TYPE instance) {
     ByteStreamDriverModelComponentBase::init(instance);
@@ -47,13 +47,11 @@ IpSocket& TcpClientComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer TcpClientComponentImpl::getBuffer() {
-    return m_buffer;
+    return allocate_out(0, 1024);
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    if (status == SOCK_SUCCESS) {
-        this->recv_out(0, buffer, RECV_OK);
-    }
+    this->recv_out(0, buffer, (status == SOCK_SUCCESS) ? RECV_OK : RECV_ERROR);
 }
 
 // ----------------------------------------------------------------------
@@ -62,6 +60,8 @@ void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status
 
 Drv::SendStatus TcpClientComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     Drv::SocketIpStatus status = m_socket.send(fwBuffer.getData(), fwBuffer.getSize());
+    // Always return the buffer
+    deallocate_out(0, fwBuffer);
     if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
         return SEND_RETRY;
     } else if (status != SOCK_SUCCESS) {

@@ -48,6 +48,9 @@
         <port name="readPoll" data_type="Drv::ByteStreamPoll" kind="output" max_number="1">
         </port>
 
+        <port name="readBufferReturn" data_type="Fw::BufferSend"  kind="output"    max_number="1">
+        </port>
+
         <!-- Standard F prime ports -->
         <port name="Log" data_type="Fw::Log"  kind="output" role="LogEvent"    max_number="1">
         </port>
@@ -57,7 +60,5 @@
 
         <port name="Time" data_type="Time"  kind="output" role="TimeGet"    max_number="1">
         </port>
-
-
     </ports>
 </component>

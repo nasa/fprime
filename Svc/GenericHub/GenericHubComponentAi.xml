@@ -3,6 +3,7 @@
 
 <component name="GenericHub" kind="passive" namespace="Svc" modeler="true">
     <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>
+    <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
     <import_port_type>Drv/ByteStreamDriverModel/ByteStreamRecvPortAi.xml</import_port_type>
     <import_port_type>Drv/ByteStreamDriverModel/ByteStreamSendPortAi.xml</import_port_type>
 
@@ -22,6 +23,17 @@
         <!-- Set GenericHubOutputBuffers in AcConstants.ini to size this array -->
         <port name="buffersOut" data_type="Fw::BufferSend" kind="output" max_number="$GenericHubOutputBuffers">
             <comment>Output array of generic ports shuttling in copy-free buffers form external sources</comment>
+        </port>
+
+        <!-- Buffer requests -->
+        <port name="bufferReturn" data_type="Fw::BufferSend" kind="guarded_input">
+            <comment>Buffer return from outgoing buffersOut calls</comment>
+        </port>
+        <port name="bufferAllocate" data_type="Fw::BufferGet" kind="output">
+            <comment>Buffer allocation request to the buffer manager</comment>
+        </port>
+        <port name="bufferDeallocate" data_type="Fw::BufferSend" kind="output">
+            <comment>Buffer deallocation request to the buffer manager</comment>
         </port>
 
         <!-- Byte Driver Connection:

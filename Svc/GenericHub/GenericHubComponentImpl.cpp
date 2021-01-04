@@ -75,10 +75,17 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     U32 type_in = 0;
     U32 port = 0;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
-    Fw::ExternalSerializeBuffer buffer_in_wrapper(fwBuffer.getData(), fwBuffer.getSize());
+
     Fw::ExternalSerializeBuffer buffer_out_wrapper(reinterpret_cast<U8*>(m_data_in), sizeof(m_data_in));
     // Only handle good statuses
     if (recvStatus == Drv::RECV_OK) {
+        // Representation of incoming data prepped for serialization
+        Fw::SerializeBufferBase& incoming = fwBuffer.getSerializeRepr();
+        FW_ASSERT(incoming.setBuffLen(fwBuffer.getSize()) == Fw::FW_SERIALIZE_OK);
+        // Request buffer
+        Fw::Buffer allocation = bufferAllocate_out(0, fwBuffer.getSize() - sizeof(NATIVE_INT_TYPE))
+
+
         // Must inform buffer that there is *real* data in the buffer
         status = buffer_in_wrapper.setBuffLen(fwBuffer.getSize());
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
@@ -100,6 +107,10 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     } else {
         Fw::Logger::logMsg("[ERROR] Failed to receive in generic hub", recvStatus);
     }
+}
+
+void GenericHubComponentImpl ::bufferReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+    bufferDeallocate_out(0, fwBuffer);
 }
 
 // ----------------------------------------------------------------------
