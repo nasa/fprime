@@ -50,7 +50,7 @@ void FramerComponentImpl ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComB
 void FramerComponentImpl ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(m_protocol != NULL);
     m_protocol->frame(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
-    bufferReturn_out(0, fwBuffer);
+    bufferDeallocate_out(0, fwBuffer);
 }
 
 void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
@@ -63,7 +63,7 @@ void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
 }
 
 Fw::Buffer FramerComponentImpl ::allocate(const U32 size) {
-    return allocate_out(0, size);
+    return framedAllocate_out(0, size);
 }
 
 Fw::Time FramerComponentImpl ::time() {

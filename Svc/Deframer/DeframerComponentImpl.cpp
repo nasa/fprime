@@ -48,7 +48,7 @@ void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
     if (Drv::RECV_OK == recvStatus) {
         processBuffer(recvBuffer);
     }
-    deallocate_out(0, recvBuffer);
+    framedDeallocate_out(0, recvBuffer);
 }
 
 void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
@@ -131,7 +131,6 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
         buffer_offset = buffer_offset + ser_size;
         processRing();
     }
-    deallocate_out(0, buffer);
 }
 
 }  // end namespace Svc

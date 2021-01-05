@@ -96,7 +96,7 @@
         <target component = "uplink" port = "framedIn" type = "Drv::ByteStreamSend" num = "0"/>
     </connection>
     <connection name = "UplinkDeallocate">
-        <source component = "uplink" port = "deallocate" type = "Fw::BufferSend" num = "0"/>
+        <source component = "uplink" port = "framedDeallocate" type = "Fw::BufferSend" num = "0"/>
         <target component = "staticMemory" port = "bufferDeallocate" type = "Fw::BufferSend" num = "0"/>
     </connection>
     <!-- Uplink data connections -->
@@ -123,7 +123,7 @@
 
     <!-- Downlink ports -->
     <connection name = "DownlinkAllocate">
-        <source component = "downlink" port = "allocate" type = "Fw::BufferGet" num = "0"/>
+        <source component = "downlink" port = "framedAllocate" type = "Fw::BufferGet" num = "0"/>
         <target component = "staticMemory" port = "bufferAllocate" type = "Drv::BufferGet" num = "1"/>
     </connection>
     <connection name = "DownlinkSend">
@@ -149,7 +149,7 @@
         <target component = "downlink" port = "bufferIn" type = "BufferSend" num = "0"/>
     </connection>
     <connection name = "fileDownlinkBufferReturn">
-        <source component = "downlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
+        <source component = "downlink" port = "bufferDeallocate" type = "BufferSend" num = "0"/>
         <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
     </connection>
     

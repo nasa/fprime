@@ -27,7 +27,7 @@
         <port name="framedIn" data_type="Drv::ByteStreamRecv"  kind="guarded_input" max_number="1">
         </port>
 
-        <port name="deallocate" data_type="Fw::BufferSend"  kind="output" max_number="1">
+        <port name="framedDeallocate" data_type="Fw::BufferSend"  kind="output" max_number="1">
         </port>
 
         <!-- Ports for polling configuration -->

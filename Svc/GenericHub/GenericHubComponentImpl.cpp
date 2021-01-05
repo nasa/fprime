@@ -25,10 +25,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-GenericHubComponentImpl ::GenericHubComponentImpl(const char* const compName) : GenericHubComponentBase(compName) {
-    (void)::memset(m_data_in, 0, sizeof(m_data_in));
-    (void)::memset(m_data_out, 0, sizeof(m_data_out));
-}
+GenericHubComponentImpl ::GenericHubComponentImpl(const char* const compName) : GenericHubComponentBase(compName) {}
 
 void GenericHubComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GenericHubComponentBase::init(instance);
@@ -43,21 +40,18 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     FW_ASSERT(data != NULL);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer buffer_out(m_data_out, sizeof(m_data_out));
-    Fw::ExternalSerializeBuffer buffer_out_wrapper(reinterpret_cast<U8*>(m_data_out), sizeof(m_data_out));
+    Fw::Buffer outgoing = bufferAllocate_out(0, size + sizeof(U32) + sizeof(U32));
+    Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
     // Write data to our buffer
-    status = buffer_out_wrapper.serialize(static_cast<U32>(type));
+    status = serialize.serialize(static_cast<U32>(type));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-    status = buffer_out_wrapper.serialize(static_cast<U32>(port));
+    status = serialize.serialize(static_cast<U32>(port));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-    status = buffer_out_wrapper.serialize(data, size);
+    status = serialize.serialize(data, size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-    buffer_out.setSize(buffer_out_wrapper.getBuffLength());
-    Drv::SendStatus sendStatus = dataOut_out(0, buffer_out);
-    // Log bad statuses
-    if (sendStatus != Drv::SEND_OK) {
-        Fw::Logger::logMsg("[ERROR] Failed to send in generic hub", sendStatus);
-    }
+    outgoing.setSize(serialize.getBuffLength());
+    dataOut_out(0, outgoing);
+
 }
 
 // ----------------------------------------------------------------------
@@ -66,46 +60,41 @@ void GenericHubComponentImpl ::send_data(const HubType type,
 
 void GenericHubComponentImpl ::buffersIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     send_data(HUB_TYPE_BUFFER, portNum, fwBuffer.getData(), fwBuffer.getSize());
+    bufferDeallocate_out(0, fwBuffer);
 }
 
 void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
-                                              Fw::Buffer& fwBuffer,
-                                              Drv::RecvStatus recvStatus) {
+                                              Fw::Buffer& fwBuffer) {
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
 
-    Fw::ExternalSerializeBuffer buffer_out_wrapper(reinterpret_cast<U8*>(m_data_in), sizeof(m_data_in));
-    // Only handle good statuses
-    if (recvStatus == Drv::RECV_OK) {
-        // Representation of incoming data prepped for serialization
-        Fw::SerializeBufferBase& incoming = fwBuffer.getSerializeRepr();
-        FW_ASSERT(incoming.setBuffLen(fwBuffer.getSize()) == Fw::FW_SERIALIZE_OK);
-        // Request buffer
-        Fw::Buffer allocation = bufferAllocate_out(0, fwBuffer.getSize() - sizeof(NATIVE_INT_TYPE))
+    // Representation of incoming data prepped for serialization
+    Fw::SerializeBufferBase& incoming = fwBuffer.getSerializeRepr();
+    FW_ASSERT(incoming.setBuffLen(fwBuffer.getSize()) == Fw::FW_SERIALIZE_OK);
 
+    // Must inform buffer that there is *real* data in the buffer
+    status = incoming.setBuffLen(fwBuffer.getSize());
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    status = incoming.deserialize(type_in);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    type = static_cast<HubType>(type_in);
+    FW_ASSERT(type < HUB_TYPE_MAX, type);
+    status = incoming.deserialize(port);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
 
-        // Must inform buffer that there is *real* data in the buffer
-        status = buffer_in_wrapper.setBuffLen(fwBuffer.getSize());
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        status = buffer_in_wrapper.deserialize(type_in);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        type = static_cast<HubType>(type_in);
-        FW_ASSERT(type < HUB_TYPE_MAX, type);
-        status = buffer_in_wrapper.deserialize(port);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        status = buffer_in_wrapper.deserialize(buffer_out_wrapper);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
-        // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
-        if (type == HUB_TYPE_PORT) {
-            portOut_out(port, buffer_out_wrapper);
-        } else if (type == HUB_TYPE_BUFFER) {
-            Fw::Buffer buffer(buffer_out_wrapper.getBuffAddr(), buffer_out_wrapper.getBuffLength());
-            buffersOut_out(port, buffer);
-        }
-    } else {
-        Fw::Logger::logMsg("[ERROR] Failed to receive in generic hub", recvStatus);
+    // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
+    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32);
+    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32);
+    if (type == HUB_TYPE_PORT) {
+        // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
+        Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
+        portOut_out(port, wrapper);
+        dataDeallocate_out(0, fwBuffer);
+    } else if (type == HUB_TYPE_BUFFER) {
+        fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
+        buffersOut_out(port, fwBuffer);
     }
 }
 

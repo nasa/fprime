@@ -12,7 +12,8 @@ set(SOURCE_FILES
 )
 
 set(MOD_DEPS
-    Svc_FramingProtocol
+    Svc/FramingProtocol
+    Utils/Types
 )
 
 register_fprime_module()

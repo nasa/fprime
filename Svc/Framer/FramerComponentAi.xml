@@ -16,11 +16,11 @@
         <port name="bufferIn" data_type="Fw::BufferSend"  kind="guarded_input" max_number="1">
         </port>
 
-        <port name="bufferReturn" data_type="Fw::BufferSend"  kind="output" max_number="1">
+        <port name="bufferDeallocate" data_type="Fw::BufferSend"  kind="output" max_number="1">
         </port>
 
         <!-- Outgoing buffer allocate and send -->
-        <port name="allocate" data_type="Fw::BufferGet"  kind="output" max_number="1">
+        <port name="framedAllocate" data_type="Fw::BufferGet"  kind="output" max_number="1">
         </port>
 
         <port name="framedOut" data_type="Drv::ByteStreamSend"  kind="output" max_number="1">

@@ -62,8 +62,7 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
     //! Handler implementation for dataIn
     //!
     void dataIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                        Fw::Buffer& fwBuffer,
-                        Drv::RecvStatus recvStatus);
+                        Fw::Buffer& fwBuffer);
 
     //! Handler implementation for bufferReturn
     //!
@@ -82,9 +81,6 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
 
     // Helpers and members
     void send_data(const HubType type, const NATIVE_INT_TYPE port, const U8* data, const U32 size);
-
-    U8 m_data_in[GENERIC_HUB_DATA_SIZE];
-    U8 m_data_out[GENERIC_HUB_DATA_SIZE];
 };
 
 }  // end namespace Svc

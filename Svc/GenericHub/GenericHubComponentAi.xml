@@ -26,25 +26,21 @@
         </port>
 
         <!-- Buffer requests -->
-        <port name="bufferReturn" data_type="Fw::BufferSend" kind="guarded_input">
+        <port name="bufferDeallocate" data_type="Fw::BufferSend" kind="output">
             <comment>Buffer return from outgoing buffersOut calls</comment>
         </port>
         <port name="bufferAllocate" data_type="Fw::BufferGet" kind="output">
             <comment>Buffer allocation request to the buffer manager</comment>
         </port>
-        <port name="bufferDeallocate" data_type="Fw::BufferSend" kind="output">
-            <comment>Buffer deallocation request to the buffer manager</comment>
+
+        <!-- Data side connections -->
+        <port name="dataOut" data_type="Fw::BufferSend" kind="output" max_number="1">
+        </port>
+        <port name="dataIn" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
+        </port>
+        <port name="dataDeallocate" data_type="Fw::BufferSend" kind="output" max_number="1">
         </port>
 
-        <!-- Byte Driver Connection:
-
-        Fw::Buffer connections for some byte driver implementation. Note: the driver should be hooked up in
-        event mode as the driver itself will not be polled.
-         -->
-        <port name="dataOut" data_type="Drv::ByteStreamSend" kind="output" max_number="1">
-        </port>
-        <port name="dataIn" data_type="Drv::ByteStreamRecv" kind="sync_input" max_number="1">
-        </port>
 
     </ports>
 
