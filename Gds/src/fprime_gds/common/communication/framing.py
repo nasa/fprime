@@ -14,11 +14,11 @@ that implement this pattern. The current list of implementation classes are:
 import abc
 import copy
 import struct
+import zlib
 
-
-def CHECKSUM_CALC(_):
+def CHECKSUM_CALC(data):
     """ Initial checksum implementation for FpFramerDeframer. """
-    return 0xCAFECAFE
+    return zlib.crc32(data) & 0xffffffff
 
 
 class FramerDeframer(abc.ABC):
