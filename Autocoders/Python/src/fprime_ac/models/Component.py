@@ -18,7 +18,10 @@
 # Python standard modules
 #
 import logging
+from typing import List
 
+from .exceptions import InvalidComponentException
+from .Port import Port
 #
 # Python extention modules and custom interfaces
 #
@@ -106,7 +109,7 @@ class Component:
     def get_modeler(self):
         return self.__modeler
 
-    def get_ports(self):
+    def get_ports(self) -> List[Port]:
         return self.__port_obj_list
 
     def set_ports(self, ports):
@@ -177,3 +180,10 @@ class Component:
 
     def get_included_enums(self):
         return self.__included_enums_list
+
+    def get_port_by_name(self, name: str, index) -> Port:
+        """ Returns the component model of a component with given name. """
+        ports = [port for port in self.get_ports() if port.get_name() == name]
+        if not ports or index >= len(ports):
+            return None
+        return ports[index]
