@@ -19,7 +19,6 @@
 #
 import logging
 from typing import List
-from .exceptions import InvalidTopologyException
 
 from .Component import Component
 #
@@ -139,13 +138,3 @@ class Topology:
         Returns true if instances name should be prepended to components even if the type only has one instance
         """
         return self.__prepend_instance_name
-
-    def get_comp_by_name(self, name: str) -> Component:
-        """ Returns the component model of a component with given name. """
-        comps = [comp for comp in self.get_comp_list() if comp.get_name() == name]
-        if not comps:
-            return None
-        elif len(comps) > 1:
-            raise InvalidTopologyException("Multiple components with name {} defined".format(name))
-        return comps[0]
-

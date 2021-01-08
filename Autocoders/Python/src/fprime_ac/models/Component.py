@@ -20,7 +20,6 @@
 import logging
 from typing import List
 
-from .exceptions import InvalidComponentException
 from .Port import Port
 #
 # Python extention modules and custom interfaces
@@ -180,13 +179,3 @@ class Component:
 
     def get_included_enums(self):
         return self.__included_enums_list
-
-    def get_port_by_name(self, name: str, index) -> Port:
-        """ Returns the component model of a component with given name. """
-        ports = [port for port in self.get_ports() if port.get_name() == name]
-        if not ports:
-            return None
-        ports_of_index = [port for port in ports if port.get_source_num() == index]
-        if not ports_of_index:
-            return None
-        return ports_of_index[0]
