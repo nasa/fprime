@@ -32,7 +32,6 @@ from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
     BuildRootMissingException,
     build_root_relative_path,
-    get_nearest_build_root,
 )
 
 #
@@ -353,7 +352,6 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
     def initIncludes(self, obj, c):
         self.initTypeIncludes(obj, c)
         self.initPortIncludes(obj, c)
-        self.initSerialIncludes(obj, c)
         self.initIncludeName(obj, c)
         self.initCompIncludePath(obj, c)
 
@@ -785,19 +783,6 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         )
         c.param_msgSize = ("msgSize", "const NATIVE_INT_TYPE", "The message size")
         c.param_queueDepth = ("queueDepth", "const NATIVE_INT_TYPE", "The queue depth")
-
-    def initSerialIncludes(self, obj, c):
-        """
-        Include any headers for channel/parameter serializable includes
-        """
-        ser_includes = [si.get_xml_filename() for si in obj.get_serializables()]
-        s_includes = [
-            sinc.replace("Ai.xml", "Ac.hpp")
-            .replace(get_nearest_build_root(sinc) + "/", "")
-            .replace("/test/ut", "")
-            for sinc in ser_includes
-        ]
-        c.ser_includes = s_includes
 
     def initTelemetry(self, obj, c):
         """
