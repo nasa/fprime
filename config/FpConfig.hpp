@@ -347,6 +347,12 @@ enum TimeBase {
 #ifndef FW_USE_TIME_CONTEXT
 #define FW_USE_TIME_CONTEXT             1 //!< Whether or not to serialize the time context
 #endif
+//
+//These defines used for the FilepathCharString type
+
+#ifndef FW_FIXED_LENGTH_STRING_SIZE
+#define FW_FIXED_LENGTH_STRING_SIZE   256 //!< Character array size for the filepath character type
+#endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
