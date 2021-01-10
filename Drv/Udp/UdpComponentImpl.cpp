@@ -23,8 +23,7 @@ namespace Drv {
 
 UdpComponentImpl::UdpComponentImpl(const char* const compName)
     : ByteStreamDriverModelComponentBase(compName),
-      SocketReadTask(),
-      m_buffer(m_backing_data, sizeof(m_backing_data)) {}
+      SocketReadTask() {}
 
 void UdpComponentImpl::init(const NATIVE_INT_TYPE instance) {
     ByteStreamDriverModelComponentBase::init(instance);
@@ -52,13 +51,11 @@ IpSocket& UdpComponentImpl::getSocketHandler() {
 }
 
 Fw::Buffer UdpComponentImpl::getBuffer() {
-    return m_buffer;
+    return allocate_out(0, 1024);
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    if (status == SOCK_SUCCESS) {
-        this->recv_out(0, buffer, RECV_OK);
-    }
+    this->recv_out(0, buffer, (status == SOCK_SUCCESS) ? RECV_OK : RECV_ERROR);
 }
 
 // ----------------------------------------------------------------------

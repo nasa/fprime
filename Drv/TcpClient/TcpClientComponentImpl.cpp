@@ -23,7 +23,6 @@ namespace Drv {
 TcpClientComponentImpl::TcpClientComponentImpl(const char* const compName)
     : ByteStreamDriverModelComponentBase(compName),
       SocketReadTask() {}
-//      m_buffer(m_backing_data, sizeof(m_backing_data)) {}
 
 void TcpClientComponentImpl::init(const NATIVE_INT_TYPE instance) {
     ByteStreamDriverModelComponentBase::init(instance);

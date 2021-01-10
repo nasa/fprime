@@ -15,15 +15,15 @@ FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
 void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
     FW_ASSERT(m_interface != NULL);
-    FP_FRAME_TOKEN_TYPE total = size + FP_FRAME_HEADER_SIZE + HASH_DIGEST_LENGTH +
-                             ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FP_FRAME_TOKEN_TYPE real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FP_FRAME_TOKEN_TYPE total = real_data_size + FP_FRAME_HEADER_SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);
     Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
     Utils::HashBuffer hash;
 
     // Serialize data
     serializer.serialize(START_WORD);
-    serializer.serialize(size);
+    serializer.serialize(real_data_size);
     // Serialize packet type if supplied, otherwise it *must* be present in the data
     if (packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) {
         serializer.serialize(static_cast<I32>(packet_type)); // I32 used for enum storage

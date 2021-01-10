@@ -67,7 +67,8 @@ Vue.component("command-item", {
  */
 Vue.component("command-input", {
     data: function() {
-        let selected = _datastore.commands["cmdDisp.CMD_NO_OP"];
+        let keys = Object.keys(_datastore.commands).filter(command_name => {return command_name.indexOf("CMD_NO_OP") != -1;});
+        let selected = (keys.length != 0) ? _datastore.commands[keys[0]] : Object.keys(_datastore.commands)[0];
         return {
             "commands": _datastore.commands,
             "loader": _loader,

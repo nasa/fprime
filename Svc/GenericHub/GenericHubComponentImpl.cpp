@@ -68,6 +68,7 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     HubType type = HUB_TYPE_MAX;
     U32 type_in = 0;
     U32 port = 0;
+    FwBuffSizeType size = 0;
     Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
 
     // Representation of incoming data prepped for serialization
@@ -83,13 +84,18 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
     FW_ASSERT(type < HUB_TYPE_MAX, type);
     status = incoming.deserialize(port);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
+    status = incoming.deserialize(size);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
 
     // invokeSerial deserializes arguments before calling a normal invoke, this will return ownership immediately
-    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32);
-    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32);
+    U8* rawData = fwBuffer.getData() + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
+    U32 rawSize = fwBuffer.getSize() - sizeof(U32) - sizeof(U32) - sizeof(FwBuffSizeType);
+    FW_ASSERT(rawSize == static_cast<U32>(size));
     if (type == HUB_TYPE_PORT) {
         // Com buffer representations should be copied before the call returns, so we need not "allocate" new data
         Fw::ExternalSerializeBuffer wrapper(rawData, rawSize);
+        status = wrapper.setBuffLen(rawSize);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
         portOut_out(port, wrapper);
         dataDeallocate_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
