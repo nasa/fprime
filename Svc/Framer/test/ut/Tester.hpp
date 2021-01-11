@@ -60,14 +60,14 @@ class Tester : public FramerGTestBase {
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_bufferReturn
+    //! Handler for from_bufferDeallocate
     //!
-    void from_bufferReturn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                                    Fw::Buffer& fwBuffer);
 
-    //! Handler for from_allocate
+    //! Handler for from_framedAllocate
     //!
-    Fw::Buffer from_allocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+    Fw::Buffer from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                                      U32 size);
 
     //! Handler for from_framedOut
