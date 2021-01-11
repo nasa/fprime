@@ -15,8 +15,9 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include "GTestBase.hpp"
 #include "Svc/GenericHub/GenericHubComponentImpl.hpp"
-// 10K, big
-#define DATA_SIZE (512)
+
+// Larger than com buffer size
+#define DATA_SIZE (FW_COM_BUFFER_MAX_SIZE*10 + sizeof(U32)  + sizeof(U32) + sizeof(FwBuffSizeType))
 
 namespace Svc {
 
@@ -61,18 +62,25 @@ class Tester : public GenericHubGTestBase {
     void from_buffersOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                                  Fw::Buffer& fwBuffer);
 
-    //! Handler for from_dataOut
-    //!
-    Drv::SendStatus from_dataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                         Fw::Buffer& fwBuffer);
-
-    //! Handler for from_bufferAllocate
-    //!
-    Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, const U32 size);
-
     //! Handler for from_bufferDeallocate
     //!
-    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer);
+    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                       Fw::Buffer& fwBuffer);
+
+    //! Handler for from_dataOutAllocate
+    //!
+    Fw::Buffer from_dataOutAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                            U32 size);
+
+    //! Handler for from_dataOut
+    //!
+    void from_dataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              Fw::Buffer& fwBuffer);
+
+    //! Handler for from_dataDeallocate
+    //!
+    void from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                     Fw::Buffer& fwBuffer);
 
   private:
     // ----------------------------------------------------------------------

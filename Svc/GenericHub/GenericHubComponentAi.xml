@@ -26,19 +26,19 @@
         </port>
 
         <!-- Buffer requests -->
-        <port name="bufferDeallocate" data_type="Fw::BufferSend" kind="output">
-            <comment>Buffer return from outgoing buffersOut calls</comment>
+        <port name="bufferDeallocate" data_type="Fw::BufferSend" kind="output" max_number="1">
+            <comment>Buffer return from incoming bufferIn calls</comment>
         </port>
-        <port name="bufferAllocate" data_type="Fw::BufferGet" kind="output">
-            <comment>Buffer allocation request to the buffer manager</comment>
-        </port>
+
 
         <!-- Data side connections -->
         <port name="dataOut" data_type="Fw::BufferSend" kind="output" max_number="1">
         </port>
         <port name="dataIn" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
         </port>
-        <port name="dataDeallocate" data_type="Fw::BufferSend" kind="output" max_number="1">
+        <port name="dataInDeallocate" data_type="Fw::BufferSend" kind="output" max_number="1">
+        </port>
+        <port name="dataOutAllocate" data_type="Fw::BufferGet" kind="output" max_number="1">
         </port>
 
 

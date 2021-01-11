@@ -40,7 +40,7 @@ void GenericHubComponentImpl ::send_data(const HubType type,
     FW_ASSERT(data != NULL);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
-    Fw::Buffer outgoing = bufferAllocate_out(0, size + sizeof(U32) + sizeof(U32));
+    Fw::Buffer outgoing = dataOutAllocate_out(0, size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType));
     Fw::SerializeBufferBase& serialize = outgoing.getSerializeRepr();
     // Write data to our buffer
     status = serialize.serialize(static_cast<U32>(type));
@@ -97,15 +97,11 @@ void GenericHubComponentImpl ::dataIn_handler(const NATIVE_INT_TYPE portNum,
         status = wrapper.setBuffLen(rawSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<NATIVE_INT_TYPE>(status));
         portOut_out(port, wrapper);
-        dataDeallocate_out(0, fwBuffer);
+        dataInDeallocate_out(0, fwBuffer);
     } else if (type == HUB_TYPE_BUFFER) {
         fwBuffer.set(rawData, rawSize, fwBuffer.getContext());
         buffersOut_out(port, fwBuffer);
     }
-}
-
-void GenericHubComponentImpl ::bufferReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    bufferDeallocate_out(0, fwBuffer);
 }
 
 // ----------------------------------------------------------------------
