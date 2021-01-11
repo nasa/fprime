@@ -84,14 +84,14 @@ void Tester  ::check_not_freed() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_bufferReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    this->pushFromPortEntry_bufferReturn(fwBuffer);
+void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+    this->pushFromPortEntry_bufferDeallocate(fwBuffer);
     m_returned = true;
     delete[] fwBuffer.getData();
 }
 
-Fw::Buffer Tester ::from_allocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
-    this->pushFromPortEntry_allocate(size);
+Fw::Buffer Tester ::from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+    this->pushFromPortEntry_framedAllocate(size);
     Fw::Buffer buffer(new U8[size], size);
     m_buffer = buffer;
     return buffer;
@@ -116,11 +116,11 @@ void Tester ::connectPorts(void) {
     // bufferIn
     this->connect_to_bufferIn(0, this->component.get_bufferIn_InputPort(0));
 
-    // bufferReturn
-    this->component.set_bufferReturn_OutputPort(0, this->get_from_bufferReturn(0));
+    // bufferDeallocate
+    this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
-    // allocate
-    this->component.set_allocate_OutputPort(0, this->get_from_allocate(0));
+    // framedAllocate
+    this->component.set_framedAllocate_OutputPort(0, this->get_from_framedAllocate(0));
 
     // framedOut
     this->component.set_framedOut_OutputPort(0, this->get_from_framedOut(0));
