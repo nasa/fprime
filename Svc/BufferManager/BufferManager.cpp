@@ -196,7 +196,8 @@ namespace Svc {
     BufferManager::AllocationQueue ::
     allocate(
         const U32 size,
-        U32& id
+        U32& id,
+        U8* address
     )
   {
     FW_ASSERT(this->allocationSize <= this->totalSize);
@@ -209,6 +210,7 @@ namespace Svc {
     id = this->getNextId();
     e.id = id;
     e.size = size;
+    e.address = address;
     this->allocateIndex = this->getNextIndex(this->allocateIndex);
     ++this->allocationSize;
     return Allocate::SUCCESS;
@@ -219,7 +221,8 @@ namespace Svc {
     free(
         const U32 expectedId,
         U32& sawId,
-        U32& size
+        U32& size,
+        U8*& address
     )
   {
     sawId = 0;
@@ -232,6 +235,7 @@ namespace Svc {
     Entry& e = this->data[this->freeIndex];
     sawId = e.id;
     size = e.size;
+    address = e.address;
     if (expectedId != sawId) {
       return Free::ID_MISMATCH;
     }
@@ -318,7 +322,7 @@ namespace Svc {
 
     if (warningStatus == Warnings::Status::SUCCESS) {
       const AllocationQueue::Allocate::Status status =
-        this->allocationQueue.allocate(size, id);
+        this->allocationQueue.allocate(size, id, address);
       if (status == AllocationQueue::Allocate::FULL) {
         this->store.free(size, address);
         warningStatus = Warnings::Status::TOO_MANY_BUFFERS;
@@ -346,21 +350,23 @@ namespace Svc {
     FW_ASSERT(BufferManager::getManagerIdFromBufferContext(buffer.getContext()) == instance);
 
     const U32 expectedId = BufferManager::getBufferIdFromBufferContext(buffer.getContext());
-    U8 *const address = buffer.getData();
     U32 sawId = 0;
     U32 size = 0;
+    U8* original_address = 0;
 
     {
       const AllocationQueue::Free::Status status =
-        this->allocationQueue.free(expectedId, sawId, size);
+        this->allocationQueue.free(expectedId, sawId, size, original_address);
       FW_ASSERT(
           status == AllocationQueue::Free::SUCCESS,
           status, expectedId, sawId, size
       );
+      FW_ASSERT(original_address <= buffer.getData());
+      FW_ASSERT((original_address + size) >= (buffer.getData() + buffer.getSize()));
     }
 
     {
-      this->store.free(size, address);
+      this->store.free(size, original_address);
     }
 
   }

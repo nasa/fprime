@@ -214,6 +214,7 @@ namespace Svc {
           typedef struct {
             U32 id;
             U32 size;
+            U8* address;
           } Entry;
 
         public:
@@ -228,14 +229,16 @@ namespace Svc {
           // Record an allocation of size 'size' and generate a new id
           Allocate::Status allocate(
               const U32 size,
-              U32& id
+              U32& id,
+              U8* address
           );
 
           // Record a deallocation
           Free::Status free(
               const U32 expectedId,
               U32& sawId,
-              U32& size
+              U32& size,
+              U8*& address
           );
 
         PRIVATE:
