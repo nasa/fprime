@@ -104,6 +104,13 @@ namespace Svc {
           Fw::Buffer &fwBuffer 
       );
 
+      //! Handler for from_readBufferReturn
+      //!
+      void from_readBufferReturn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer 
+      );
+      
     private:
 
       // ----------------------------------------------------------------------
