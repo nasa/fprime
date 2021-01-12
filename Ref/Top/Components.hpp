@@ -45,7 +45,6 @@ extern Svc::PrmDbImpl prmDb;
 extern Svc::FileUplink fileUplink;
 extern Svc::FileDownlink fileDownlink;
 extern Svc::FileManager fileManager;
-extern Svc::BufferManagerComponentImpl fileDownlinkBufferManager;
 extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;

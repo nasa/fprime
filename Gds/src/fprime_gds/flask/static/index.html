@@ -301,7 +301,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                         <div v-if="error != null" class="alert alert-danger" role="alert">
                             {{ this.error }}
                         </div>
-                        <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
+                        <fp-table :header-columns="['Start Time', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
                                   :items="elements"
                                   :item-to-unique="keyify"
                                   :display-template="'file-row'"
@@ -320,7 +320,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                     <div class="fp-flex-header">
                         <h2>File Downlink</h2>
                     </div>
-                    <fp-table :header-columns="['Start Timne', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
+                    <fp-table :header-columns="['Start Time', 'End Time', 'Source', 'Destination', 'State', 'Control', 'Progress']"
                               :items="elements"
                               :item-to-unique="keyify"
                               :display-template="'file-row'"

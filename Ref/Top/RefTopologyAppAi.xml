@@ -48,7 +48,6 @@
     <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="261"  base_id_window="20" />
     <instance namespace="Svc" name="fileUplinkBufferManager" type="BufferManager" base_id="301"  base_id_window="20" />
     <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
-    <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="401"  base_id_window="20" />
     <instance namespace="Svc" name="fileManager" type="FileManager" base_id="621"  base_id_window="20" />
     <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
     <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
@@ -327,10 +326,6 @@
         <source component = "cmdDisp" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
-    <connection name = "FileDownlinkBufferManagerLog">
-        <source component = "fileDownlinkBufferManager" port = "eventOut" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-    </connection>
     <connection name = "CmdSeqLog">
         <source component = "cmdSeq" port = "logOut" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -470,6 +465,10 @@
          <source component = "recvBuffComp" port = "LogText" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
+    <connection name = "fileDownlinkText">
+         <source component = "fileDownlink" port = "textEventOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
     
 
     <!-- Telemetry Connections -->
@@ -484,10 +483,6 @@
     </connection>
     <connection name = "FileUplinkTlm">
         <source component = "fileUplink" port = "tlmOut" type = "Tlm" num = "0"/>
-        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
-    </connection>
-    <connection name = "FileDownlinkBufferManagerTlm">
-        <source component = "fileDownlinkBufferManager" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     <connection name = "fileManagerTlm">
@@ -596,10 +591,6 @@
          <source component = "rateGroup3Comp" port = "Time" type = "Time" num = "0"/>
          <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
-    <connection name = "fileDownlinkBufferManagerTime">
-        <source component = "fileDownlinkBufferManager" port = "timeCaller" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-    </connection>
     <connection name = "cmdSeqTime">
         <source component = "cmdSeq" port = "timeCaller" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
@@ -697,6 +688,10 @@
     <connection name = "Rg1ChTlm">
          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
          <target component = "chanTlm" port = "Run" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "Rg1FileDown">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "fileDownlink" port = "Run" type = "Sched" num = "0"/>
     </connection>
 
     <!-- Rate Group 2 -->
@@ -887,17 +882,14 @@
         <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
     </connection>
    
-    <connection name = "fileDownlinkBufferGet">
-        <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-    </connection>
-    <connection name = "fileDownlinkBufferManagerBufferReturn">
-        <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-    </connection>
     <connection name = "fileDownlinkBufferSend">
         <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
         <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+
+    <connection name = "fileDownlinkBufferReturn">
+        <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
     </connection>
    
     <!-- Fault Connections -->

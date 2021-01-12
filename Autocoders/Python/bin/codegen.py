@@ -1699,7 +1699,6 @@ def main():
 
     for xml_filename in xml_filenames:
 
-        xml_filename = os.path.basename(xml_filename)
         xml_type = XmlParser.XmlParser(xml_filename)()
 
         if xml_type == "component":
@@ -1707,12 +1706,12 @@ def main():
             the_parsed_component_xml = XmlComponentParser.XmlComponentParser(
                 xml_filename
             )
-            generate_component(the_parsed_component_xml, xml_filename, opt)
+            generate_component(the_parsed_component_xml, os.path.basename(xml_filename), opt)
             dependency_parser = the_parsed_component_xml
         elif xml_type == "interface":
             DEBUG.info("Detected Port type XML so Generating Port type C++ Files...")
             the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xml_filename)
-            generate_port(the_parsed_port_xml, xml_filename)
+            generate_port(the_parsed_port_xml, os.path.basename(xml_filename))
             dependency_parser = the_parsed_port_xml
         elif xml_type == "serializable":
             DEBUG.info(
@@ -1726,7 +1725,7 @@ def main():
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
             print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
-            generate_topology(the_parsed_topology_xml, xml_filename, opt)
+            generate_topology(the_parsed_topology_xml, os.path.basename(xml_filename), opt)
             dependency_parser = the_parsed_topology_xml
         elif xml_type == "enum":
             DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
@@ -1758,7 +1757,7 @@ def main():
             if opt.build_root_flag:
                 generate_dependency_file(
                     opt.dependency_file,
-                    xml_filename,
+                    os.path.basename(xml_filename),
                     list(get_build_roots())[0],
                     dependency_parser,
                     xml_type,

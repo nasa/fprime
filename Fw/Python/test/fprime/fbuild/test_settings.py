@@ -11,9 +11,11 @@ from pathlib import Path
 
 from fprime.fbuild.settings import IniSettings
 
+LOCAL_PATH = Path(__file__).parent
+
 
 def full_path(path):
-    path = Path(__file__).parent / Path(path)
+    path = LOCAL_PATH / Path(path)
     return path.resolve()
 
 
@@ -54,13 +56,10 @@ def test_settings():
         },
     ]
 
-    # Setting chdir so that test is unaffected from working directory pytest is run from
-    os.chdir(full_path("."))
-
     for case in test_cases:
         fp = full_path("settings-data/" + case["file"])
         print(fp)
-        results = IniSettings.load(fp)
+        results = IniSettings.load(fp, LOCAL_PATH)
         assert case["expected"] == results, "{}: Expected {}, got {}".format(
             fp, case["expected"], results
         )

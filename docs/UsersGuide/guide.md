@@ -30,7 +30,7 @@ The API documentation section contains the automatically generated documentation
 ## Table of Contents
 
 - Getting Started with F´
-    - [What is F´: a breif introduction](../index.md)
+    - [What is F´: a brief introduction](../index.md)
     - [Installing F´](../INSTALL.md)
     - [Installing F´ Console Autocomplete](./user/autocomplete.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
@@ -51,6 +51,7 @@ The API documentation section contains the automatically generated documentation
     - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
     - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
+    - [Sequencing in F´](./gds/seqgen.md)
 - Full Development Guides: technical details for full F´ implementations
     - [Configuring F´](./dev/configuring-fprime.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
@@ -66,6 +67,7 @@ The API documentation section contains the automatically generated documentation
     - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
+    - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)

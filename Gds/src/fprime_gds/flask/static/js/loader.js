@@ -109,7 +109,7 @@ class Loader {
      * @param data: data to send.  Only useful if method != "GET". Default: no data
      * @param jsonify: jsonify the data. Default: true.
      */
-    load(endpoint, method, data, jsonify) {
+    load(endpoint, method, data, jsonify, raw) {
         let _self = this;
         // Default method argument to "GET"
         if (typeof(method) === "undefined") {
@@ -124,7 +124,9 @@ class Loader {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 // Parse as JSON or send back raw error
-                if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState == 4 && this.status == 200 && raw) {
+                    resolve(this.responseText);
+		} else if (this.readyState == 4 && this.status == 200) {
                     let dataObj = JSON.parse(this.responseText);
                     resolve(dataObj);
                 } else if(this.readyState == 4) {
