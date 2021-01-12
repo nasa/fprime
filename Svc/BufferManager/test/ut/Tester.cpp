@@ -246,7 +246,6 @@ namespace Svc {
       bool returned[BIN1_NUM_BUFFERS];
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
-          bool found = false;
           NATIVE_UINT_TYPE entry;
           while (1) {
               entry = rand() % BIN1_NUM_BUFFERS;
