@@ -100,7 +100,8 @@ namespace Svc {
       FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
       FW_ASSERT(mgrId == this->m_mgrId,mgrId,id,this->m_mgrId);
       FW_ASSERT(true == this->m_buffers[id].allocated,id,this->m_mgrId);
-      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory,id,this->m_mgrId);
+      //FIXME: Add pointer range check as opposed to only beginning
+      //FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory,id,this->m_mgrId);
       // user can make smaller for their own purposes, but it shouldn't be bigger
       FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size,id,this->m_mgrId);
       // clear the allocated flag
@@ -161,7 +162,7 @@ namespace Svc {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             memorySize += 
                 this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers // allocate each set of buffer memory
-                + sizeof(AllocatedBuffer) * this->m_bufferBins.bins[bin].numBuffers; // allocate the structs to track the buffers
+                + static_cast<NATIVE_UINT_TYPE>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers; // allocate the structs to track the buffers
             this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
         }
     }

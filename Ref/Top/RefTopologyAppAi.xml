@@ -736,7 +736,7 @@
     </connection>
     <!-- Note: This is optional if BufferManager stats are desired -->
     <connection name = "Rg3UpBuffMan">
-         <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+         <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
          <target component = "fileUplinkBufferManager" port = "schedIn" type = "Sched" num = "0"/>
     </connection>
     
