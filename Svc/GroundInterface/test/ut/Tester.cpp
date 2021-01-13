@@ -194,6 +194,15 @@ namespace Svc {
     return Drv::POLL_OK;
   }
 
+  void Tester ::
+    from_readBufferReturn_handler(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Buffer &fwBuffer
+    )
+  {
+    this->pushFromPortEntry_readBufferReturn(fwBuffer);
+  }
+
   // ----------------------------------------------------------------------
   // Helper methods 
   // ----------------------------------------------------------------------
@@ -279,7 +288,29 @@ namespace Svc {
         0, 
         this->get_from_readPoll(0)
     );
+// readBufferReturn
+    this->component.set_readBufferReturn_OutputPort(
+        0, 
+        this->get_from_readBufferReturn(0)
+    );
 
+    // Log
+    this->component.set_Log_OutputPort(
+        0, 
+        this->get_from_Log(0)
+    );
+
+    // LogText
+    this->component.set_LogText_OutputPort(
+        0, 
+        this->get_from_LogText(0)
+    );
+
+    // Time
+    this->component.set_Time_OutputPort(
+        0, 
+        this->get_from_Time(0)
+    );
   }
 
   void Tester ::
