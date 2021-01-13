@@ -80,6 +80,7 @@ to interact with the data coming from the FSW.
         "Markdown",
         "pexpect",
         "pytest",
+        "cookiecutter",
         'Cheetah3;python_version >= "3.0"',
         'Cheetah;python_version < "3.0"',
     ],

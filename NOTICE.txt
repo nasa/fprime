@@ -25,3 +25,4 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 This product includes cryptographic software written by  Eric Young (eay@cryptsoft.com)
 This product includes pyparsing written by Paul T. McGuire
+This product references python cookiecutters from Sterling Lewis Peet<sterling.peet@gatech.edu> Georgia Institute of Technology
