@@ -19,9 +19,9 @@ set(MOD_DEPS
 register_fprime_module()
 
 #### UTS ###
-#set(UT_SOURCE_FILES
-#  "${FPRIME_FRAMEWORK_PATH}/Svc/BufferManager/BufferManagerComponentAi.xml"
-#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
-#)
-#register_fprime_ut()
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/DeframerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+)
+register_fprime_ut()
