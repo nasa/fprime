@@ -29,6 +29,7 @@ from fprime.fbuild.builder import (
     InvalidBuildCacheException,
     UnableToDetectDeploymentException,
 )
+from fprime.fbuild.interaction import confirm, new_component
 from fprime.fbuild.settings import IniSettings
 
 CMAKE_REG = re.compile(r"-D([a-zA-Z0-9_]+)=(.*)")
@@ -242,18 +243,6 @@ def parse_args(args):
     return parsed, cmake_args, make_args, parser
 
 
-def confirm(msg=None):
-    """ Confirms the removal of the file with a yes or no input """
-    # Loop "forever" intended
-    while True:
-        confirm_input = input(msg if msg is not None else "Purge this directory (yes/no)?")
-        if confirm_input.lower() in ["y", "yes"]:
-            return True
-        if confirm_input.lower() in ["n", "no"]:
-            return False
-        print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
-
-
 def print_info(parsed, deployment):
     """ Builds and prints the informational output block """
     cwd = Path(parsed.path)
@@ -312,69 +301,6 @@ def print_info(parsed, deployment):
     print()
 
 
-def add_to_cmake(list_file: Path, comp_path: Path):
-    """ Adds new component to CMakeLists.txt"""
-    print("[INFO] Found CMakeLists.txt at '{}'".format(list_file))
-    with open(list_file, "r") as file_handle:
-        lines = file_handle.readlines()
-    topology_lines = [(line, text) for line, text in enumerate(lines) if "/Top/" in text]
-    line = len(topology_lines)
-    if topology_lines:
-        line, text = topology_lines[0]
-        print("[INFO] Topology inclusion '{}' found on line {}.".format(text.strip(), line + 1))
-    if not confirm("Add component {} to {} {}?".format(comp_path, list_file, "at end of file" if not topology_lines else " before topology inclusion")):
-        return
-
-    addition = 'add_fprime_subdirectory("${{CMAKE_CURRENT_LIST_DIR}}/{}/")\n'.format(comp_path)
-    lines.insert(line, addition)
-    with open(list_file, "w") as file_handle:
-        file_handle.write("".join(lines))
-
-
-def fprime_new(path: Path, settings: Dict[str, str]):
-    """ Uses cookiecutter for making new components """
-    try:
-        from cookiecutter.main import cookiecutter
-        from cookiecutter.exceptions import OutputDirExistsException
-    except ImportError:
-        print("[ERROR] 'cookiecutter' package not installed. Source venv and rum 'pip install cookiecutter'.",
-              file=sys.stderr)
-        return 1
-    try:
-        calculated_defaults = {}
-        proj_root = None
-        comp_parent_path = None
-        try:
-            proj_root = Path(settings.get("project_root", None))
-            comp_parent_path = path.relative_to(proj_root)
-            back_path = os.sep.join([".." for _ in str(comp_parent_path).split(os.sep)])
-            calculated_defaults["component_path"] = str(comp_parent_path).rstrip(os.sep)
-            calculated_defaults["component_path_to_fprime_root"] = str(back_path).rstrip(os.sep)
-        except (ValueError, TypeError):
-            print("[WARNING] No found project root. Set 'component_path' and 'component_path_to_fprime_root' carefully")
-        source = 'gh:SterlingPeet/cookiecutter-fprime-component'
-        print("[INFO] Cookiecutter source: {}".format(source))
-        print()
-        print("----------------")
-        print("[INFO] Help available here: https://github.com/SterlingPeet/cookiecutter-fprime-component/blob/master/README.rst#id3")
-        print("----------------")
-        print()
-        final_dir = cookiecutter(source, extra_context=calculated_defaults)
-        # Attempt to register to CMakeLists.txt
-        test_path = Path(final_dir).parent.resolve()
-        while proj_root is not None and test_path != proj_root.parent:
-            cmake_list_file = (test_path / "CMakeLists.txt")
-            if cmake_list_file.is_file():
-                add_to_cmake(cmake_list_file, Path(final_dir).relative_to(test_path))
-                break
-            test_path = test_path.parent
-        return 0
-    except OutputDirExistsException as oderr:
-        print("{}".format(oderr))
-        return 1
-
-
-
 def print_hash_info(lines, hash_val):
     """ Prints out hash info from lines """
     # Print out lines when found
@@ -411,7 +337,7 @@ def utility_entry(args):
             print_info(parsed, deployment)
         elif parsed.command == "new":
             settings = IniSettings.load(deployment / "settings.ini", cwd)
-            status = fprime_new(cwd, settings)
+            status = new_component(cwd, deployment, parsed.platform, parsed.verbose, settings)
             sys.exit(status)
         elif parsed.command == "hash-to-file":
             build = Build(build_type, deployment, verbose=parsed.verbose)
@@ -442,7 +368,7 @@ def utility_entry(args):
                         parsed.command.title(), build.build_dir
                     )
                 )
-                if parsed.force or confirm():
+                if parsed.force or confirm("Purge this directory (yes/no)?"):
                     build.purge()
 
             build = Build(BuildType.BUILD_NORMAL, deployment, verbose=parsed.verbose)
@@ -461,7 +387,7 @@ def utility_entry(args):
                     parsed.command.title(), install_dir
                 )
             )
-            if parsed.force or confirm():
+            if parsed.force or confirm("Purge installation directory (yes/no)?"):
                 build.purge_install()
         else:
             target = get_target(parsed)
