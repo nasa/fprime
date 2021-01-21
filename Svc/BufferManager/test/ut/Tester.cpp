@@ -243,7 +243,7 @@ namespace Svc {
       time_t t;
       srand((unsigned) time(&t));
 
-      bool returned[BIN1_NUM_BUFFERS];
+      bool returned[BIN1_NUM_BUFFERS] = {false};
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           NATIVE_UINT_TYPE entry;
