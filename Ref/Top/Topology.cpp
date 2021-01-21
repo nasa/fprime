@@ -313,8 +313,6 @@ void exitTasks(void) {
     downlinkComm.close();
     uplinkComm.stopSocketTask();
     (void) uplinkComm.joinSocketTask(NULL);
-    socketIpDriver.exitSocketTask();
-    (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }
