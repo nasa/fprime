@@ -1,0 +1,235 @@
+        -:    0:Source:/home/tcanham/source/fprime/Svc/BufferManager/BufferManagerComponentImpl.cpp
+        -:    1:// ======================================================================
+        -:    2:// \title  BufferManagerComponentImpl.cpp
+        -:    3:// \author tcanham
+        -:    4:// \brief  cpp file for BufferManager component implementation class
+        -:    5://
+        -:    6:// \copyright
+        -:    7:// Copyright 2009-2015, by the California Institute of Technology.
+        -:    8:// ALL RIGHTS RESERVED.  United States Government Sponsorship
+        -:    9:// acknowledged.
+        -:   10://
+        -:   11:// ======================================================================
+        -:   12:
+        -:   13:
+        -:   14:#include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
+        -:   15:#include <Fw/Types/BasicTypes.hpp>
+        -:   16:#include <Fw/Types/Assert.hpp>
+        -:   17:#include <Fw/Buffer/Buffer.hpp>
+        -:   18:#include <new>
+        -:   19:#include <stdio.h>
+        -:   20:
+        -:   21:namespace Svc {
+        -:   22:
+        -:   23:  // ----------------------------------------------------------------------
+        -:   24:  // Construction, initialization, and destruction
+        -:   25:  // ----------------------------------------------------------------------
+        -:   26:
+        9:   27:  BufferManagerComponentImpl ::
+        -:   28:    BufferManagerComponentImpl(
+        -:   29:        const char *const compName
+        9:   30:    ) : BufferManagerComponentBase(compName)
+        -:   31:    ,m_setup(false)
+        -:   32:    ,m_cleaned(false)
+        -:   33:    ,m_mgrId(0)
+        -:   34:    ,m_buffers(0)
+        -:   35:    ,m_allocator(0)
+        -:   36:    ,m_memId(0)
+        -:   37:    ,m_numStructs(0)
+        -:   38:    ,m_highWater(0)
+        -:   39:    ,m_currBuffs(0)
+        -:   40:    ,m_noBuffs(0)
+        9:   41:    ,m_emptyBuffs(0)
+        -:   42:  {
+        -:   43:
+        9:   44:  }
+        -:   45:
+        9:   46:  void BufferManagerComponentImpl ::
+        -:   47:    init(
+        -:   48:        const NATIVE_INT_TYPE instance
+        -:   49:    )
+        -:   50:  {
+        9:   51:    BufferManagerComponentBase::init(instance);
+        9:   52:  }
+        -:   53:
+       9*:   54:  BufferManagerComponentImpl ::
+        9:   55:    ~BufferManagerComponentImpl(void)
+        -:   56:  {
+        9:   57:      this->cleanup();
+       9*:   58:  }
+------------------
+_ZN3Svc26BufferManagerComponentImplD0Ev:
+    #####:   54:  BufferManagerComponentImpl ::
+        -:   55:    ~BufferManagerComponentImpl(void)
+        -:   56:  {
+        -:   57:      this->cleanup();
+    #####:   58:  }
+------------------
+_ZN3Svc26BufferManagerComponentImplD2Ev:
+        9:   54:  BufferManagerComponentImpl ::
+        9:   55:    ~BufferManagerComponentImpl(void)
+        -:   56:  {
+        9:   57:      this->cleanup();
+        9:   58:  }
+------------------
+        -:   59:
+       18:   60:  void BufferManagerComponentImpl ::
+        -:   61:    cleanup(void)
+        -:   62:  {
+       18:   63:      if (not this->m_cleaned) {
+        -:   64:          // walk through Fw::Buffer instances and delete them
+       75:   65:          for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numStructs; entry++) {
+       66:   66:              this->m_buffers[entry].buff.~Buffer();
+        -:   67:          }
+        9:   68:          this->m_cleaned = true;
+        -:   69:          // release memory
+        9:   70:          this->m_allocator->deallocate(this->m_memId,this->m_buffers);
+        9:   71:          this->m_setup = false;
+        -:   72:      }
+       18:   73:  }
+        -:   74:  
+        -:   75:
+        -:   76:  // ----------------------------------------------------------------------
+        -:   77:  // Handler implementations for user-defined typed input ports
+        -:   78:  // ----------------------------------------------------------------------
+        -:   79:
+       81:   80:  void BufferManagerComponentImpl ::
+        -:   81:    bufferSendIn_handler(
+        -:   82:        const NATIVE_INT_TYPE portNum,
+        -:   83:        Fw::Buffer &fwBuffer
+        -:   84:    )
+        -:   85:  {
+        -:   86:      // make sure component has been set up
+      81*:   87:      FW_ASSERT(this->m_setup);
+        -:   88:      // check for empty buffers - this is just a warning since this component returns
+        -:   89:      // empty buffers if it can't allocate one.
+       81:   90:      if (fwBuffer.getSize() == 0) {
+       12:   91:          this->log_WARNING_HI_ZeroSizeBuffer();
+       12:   92:          this->m_emptyBuffs++;
+       12:   93:          return;
+        -:   94:      }
+        -:   95:      // use the bufferID member field to find the original slot
+       69:   96:      U32 context = fwBuffer.getContext();
+       69:   97:      U32 id = context & 0xFFFF;
+       69:   98:      U32 mgrId = context >> 16;
+        -:   99:      // check some things
+      69*:  100:      FW_ASSERT(id < this->m_numStructs,id,this->m_numStructs);
+      69*:  101:      FW_ASSERT(mgrId == this->m_mgrId);
+      69*:  102:      FW_ASSERT(true == this->m_buffers[id].allocated);
+      69*:  103:      FW_ASSERT(reinterpret_cast<U8*>(fwBuffer.getData()) == this->m_buffers[id].memory);
+        -:  104:      // user can make smaller for their own purposes, but it shouldn't be bigger
+      69*:  105:      FW_ASSERT(fwBuffer.getSize() <= this->m_buffers[id].size);
+        -:  106:      // clear the allocated flag
+       69:  107:      this->m_buffers[id].allocated = false;
+       69:  108:      this->m_currBuffs--;
+        -:  109:  }
+        -:  110:
+       81:  111:  Fw::Buffer BufferManagerComponentImpl ::
+        -:  112:    bufferGetCallee_handler(
+        -:  113:        const NATIVE_INT_TYPE portNum,
+        -:  114:        U32 size
+        -:  115:    )
+        -:  116:  {
+        -:  117:      // make sure component has been set up
+      81*:  118:      FW_ASSERT(this->m_setup);
+        -:  119:      // find smallest buffer based on size.
+      468:  120:      for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
+      456:  121:          if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
+       69:  122:              this->m_buffers[buff].allocated = true;
+       69:  123:              this->m_currBuffs++;
+       69:  124:              if (this->m_currBuffs > this->m_highWater) {
+       39:  125:                  this->m_highWater = this->m_currBuffs;
+        -:  126:              }
+       69:  127:              return this->m_buffers[buff].buff;
+        -:  128:          }
+        -:  129:      }
+        -:  130:
+        -:  131:      // if no buffers found, return empty buffer
+       12:  132:      this->log_WARNING_HI_NoBuffsAvailable(size);
+       12:  133:      this->m_noBuffs++;
+       12:  134:      return Fw::Buffer();
+        -:  135:
+        -:  136:  }
+        -:  137:
+        9:  138:  void BufferManagerComponentImpl::setup(
+        -:  139:    NATIVE_UINT_TYPE mgrId, //!< manager ID
+        -:  140:    NATIVE_UINT_TYPE memId, //!< Memory segment identifier
+        -:  141:    Fw::MemAllocator& allocator, //!< memory allocator
+        -:  142:    const BufferBins& bins //!< Set of user bins
+        -:  143:  ) {
+        -:  144:
+        9:  145:    this->m_mgrId = mgrId;
+        9:  146:    this->m_memId = memId;
+        9:  147:    this->m_allocator = &allocator;
+        -:  148:    // clear bins
+        9:  149:    memset(&this->m_bufferBins,0,sizeof(this->m_bufferBins));
+        -:  150:
+        9:  151:    this->m_bufferBins = bins;
+        -:  152:
+        -:  153:    // compute the amount of memory needed
+        9:  154:    NATIVE_UINT_TYPE memorySize = 0; // track needed memory
+        9:  155:    this->m_numStructs = 0; // size the number of tracking structs
+        -:  156:    // walk through bins and add up the sizes
+       99:  157:    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
+       90:  158:        if (this->m_bufferBins.bins[bin].numBuffers) {
+       21:  159:            memorySize += 
+       21:  160:                this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers // allocate each set of buffer memory
+       21:  161:                + sizeof(AllocatedBuffer) * this->m_bufferBins.bins[bin].numBuffers; // allocate the structs to track the buffers
+       21:  162:            this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
+        -:  163:        }
+        -:  164:    }
+        -:  165:
+        9:  166:    NATIVE_UINT_TYPE allocatedSize = memorySize;
+        -:  167:    bool recoverable; //!< don't care if it is recoverable since they are a pool of user buffers
+        -:  168:
+        -:  169:    // allocate memory
+        9:  170:    void *memory = allocator.allocate(memId,allocatedSize,recoverable);
+        -:  171:    // make sure the memory returns was non-zero and the size requested
+       9*:  172:    FW_ASSERT(memory);
+       9*:  173:    FW_ASSERT(memorySize == allocatedSize,memorySize,allocatedSize);
+        -:  174:    // structs will be at beginning of memory
+        9:  175:    this->m_buffers = static_cast<AllocatedBuffer*>(memory);
+        -:  176:    // memory buffers will be at end of structs in memory, so compute that memory as the begining of the 
+        -:  177:    // struct past the number of structs
+        9:  178:    U8* bufferMem = reinterpret_cast<U8*>(&this->m_buffers[this->m_numStructs]);
+        -:  179:
+        -:  180:    // walk through entries and initialize them
+        9:  181:    NATIVE_UINT_TYPE currStruct = 0;
+       99:  182:    for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
+       90:  183:        if (this->m_bufferBins.bins[bin].numBuffers) {
+       87:  184:            for (NATIVE_UINT_TYPE binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
+        -:  185:                // placement new for Fw::Buffer instance. We don't need the new() return value, 
+        -:  186:                // because we know where the Fw::Buffer instance is
+       66:  187:                U32 context = (this->m_mgrId << 16) | currStruct;
+       66:  188:                (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(bufferMem,this->m_bufferBins.bins[bin].bufferSize,context);
+       66:  189:                this->m_buffers[currStruct].allocated = false;
+       66:  190:                this->m_buffers[currStruct].memory = bufferMem;
+       66:  191:                this->m_buffers[currStruct].size = this->m_bufferBins.bins[bin].bufferSize;
+       66:  192:                bufferMem += this->m_bufferBins.bins[bin].bufferSize;
+       66:  193:                currStruct++;
+        -:  194:            }
+        -:  195:        }
+        -:  196:    }
+        -:  197:      
+        -:  198:    // check some assertions
+       9*:  199:    FW_ASSERT(bufferMem == (static_cast<U8*>(memory) + memorySize));
+       9*:  200:    FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
+        -:  201:    // indicate setup is done
+        9:  202:    this->m_setup = true;
+        9:  203:  }
+        -:  204:
+       24:  205:  void BufferManagerComponentImpl ::
+        -:  206:    schedIn_handler(
+        -:  207:        const NATIVE_INT_TYPE portNum,
+        -:  208:        NATIVE_UINT_TYPE context
+        -:  209:    )
+        -:  210:  {
+        -:  211:    // write telemetry values
+       24:  212:    this->tlmWrite_HiBuffs(this->m_highWater);
+       24:  213:    this->tlmWrite_CurrBuffs(this->m_currBuffs);
+       24:  214:    this->tlmWrite_TotalBuffs(this->m_numStructs);
+       24:  215:    this->tlmWrite_NoBuffs(this->m_noBuffs);
+       24:  216:    this->tlmWrite_EmptyBuffs(this->m_emptyBuffs);
+       24:  217:  }
+        -:  218:
+        -:  219:} // end namespace Svc
