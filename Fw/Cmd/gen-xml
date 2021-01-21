@@ -3,7 +3,6 @@
 export FPRIME_ROOT=`cd ../..; echo $PWD`
 
 fpp-to-xml -p $FPRIME_ROOT -i $FPRIME_ROOT/config/FpConfig.fpp CmdResponse.fpp
-# Suppress header file include for FwOpcodeType
-# The build system doesn't like it
+# Suppress header file import for FwOpcodeType
 awk '/FwOpcodeType\.hpp/ { next } { print }' < CmdResponsePortAi.xml > tmp.xml
 mv tmp.xml CmdResponsePortAi.xml
