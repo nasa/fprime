@@ -112,7 +112,7 @@ namespace Svc {
     )
   {
     m_file.setBaseName(file);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
   void BufferLogger ::
@@ -122,7 +122,7 @@ namespace Svc {
     )
   {
     m_file.closeAndEmitEvent();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
   void BufferLogger ::
@@ -136,7 +136,7 @@ namespace Svc {
     if (state == LOGGING_OFF) {
       m_file.closeAndEmitEvent();
     }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
   void BufferLogger ::
@@ -148,11 +148,11 @@ namespace Svc {
     const bool status = m_file.flush();
     if(status)
     {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
     }
     else
     {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
     }
   }
 

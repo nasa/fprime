@@ -1,0 +1,7 @@
+#!/bin/sh
+
+fpp-to-xml -p $TOOLS/FPrime/bocchino/fprime -i $TOOLS/FPrime/bocchino/fprime/config/FpConfig.fpp CmdResponse.fpp
+# Suppress header file include for FwOpcodeType
+# The build system doesn't like it
+awk -f '/FwOpcodeType\.hpp/ { next } { print }' < CmdResponsePortAi.xml > tmp.xml
+mv tmp.xml CmdResponsePortAi.xml

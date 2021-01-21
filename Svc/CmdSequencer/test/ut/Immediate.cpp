@@ -182,7 +182,7 @@ namespace Svc {
             this->component.m_cmdTimeoutTimer.m_state
         );
         // Send command response
-        this->invoke_to_cmdResponseIn(0, i, 0, Fw::COMMAND_OK);
+        this->invoke_to_cmdResponseIn(0, i, 0, Fw::CommandResponse::OK);
         this->clearAndDispatch();
         if (i < numCommands - 1) {
           // Assert events

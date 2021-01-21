@@ -149,7 +149,7 @@ namespace Svc {
     else {
       this->send = false;
     }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
   // ----------------------------------------------------------------------

@@ -73,11 +73,11 @@ namespace Cmd {
 #if FW_CMD_CHECK_RESIDUAL
       // should fail
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::COMMAND_FORMAT_ERROR);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::CommandResponse::FORMAT_ERROR);
 #else
       // should pass
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::CommandResponse::OK);
 #endif
 
       // second async command
@@ -101,11 +101,11 @@ namespace Cmd {
 #if FW_CMD_CHECK_RESIDUAL
       // should fail
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::COMMAND_FORMAT_ERROR);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::CommandResponse::FORMAT_ERROR);
 #else
       // should pass
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::CommandResponse::OK);
 #endif
 
   }

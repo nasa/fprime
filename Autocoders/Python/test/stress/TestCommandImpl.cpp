@@ -52,12 +52,12 @@ void TestCommand1Impl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I3
     }
 
     printf("Got command args: %d %s\n", arg1, enum_str);
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
 }
 
 void TestCommand1Impl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2) {
     printf("Got command args: %d %f\n", arg1, arg2);
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
 }
 
 void TestCommand1Impl::printParam(void) {

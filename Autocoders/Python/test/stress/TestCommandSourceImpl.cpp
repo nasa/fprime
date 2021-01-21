@@ -35,24 +35,24 @@ void TestCommandSourceImpl::init(void) {
 }
 
 void TestCommandSourceImpl::printStatus(Fw::CommandResponse response) {
-    switch (response) {
-        case Fw::COMMAND_OK:
+    switch (response.e) {
+        case Fw::CommandResponse::OK:
             printf("COMMAND OK\n");
             break;
-        case Fw::COMMAND_INVALID_OPCODE:
+        case Fw::CommandResponse::INVALID_OPCODE:
             printf("INVALID OPCODE\n");
             break;
-        case Fw::COMMAND_VALIDATION_ERROR:
+        case Fw::CommandResponse::VALIDATION_ERROR:
             printf("VALIDATION ERROR\n");
             break;
-        case Fw::COMMAND_FORMAT_ERROR:
+        case Fw::CommandResponse::FORMAT_ERROR:
             printf("FORMAT ERROR\n");
             break;
-        case Fw::COMMAND_EXECUTION_ERROR:
+        case Fw::CommandResponse::EXECUTION_ERROR:
             printf("EXECUTION ERROR\n");
             break;
         default:
-            printf("Unknown status %d\n", response);
+            printf("Unknown status %d\n", response.e);
             break;
     }
 }

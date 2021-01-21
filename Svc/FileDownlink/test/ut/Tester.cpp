@@ -65,7 +65,7 @@ namespace Svc {
     fileBufferOut.write(sourceFileName);
 
     // Send the file and assert COMMAND_OK
-    this->sendFile(sourceFileName, destFileName, Fw::COMMAND_OK);
+    this->sendFile(sourceFileName, destFileName, Fw::CommandResponse::OK);
 
     // Assert telemetry
     ASSERT_TLM_SIZE(4);
@@ -115,11 +115,11 @@ namespace Svc {
     const char *const sourceFileName = "missing_directory/source.bin";
     const char *const destFileName = "dest.bin";
 
-    // Send the file and assert COMMAND_EXECUTION_ERROR
+    // Send the file and assert CommandResponse::EXECUTION_ERROR
     this->sendFile(
         sourceFileName,
         destFileName,
-        (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK
+        (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::CommandResponse::EXECUTION_ERROR : Fw::CommandResponse::OK
     );
 
     // Assert telemetry
@@ -158,7 +158,7 @@ namespace Svc {
     this->component.doDispatch(); // Dispatch cancel command
     // Assert cancelation response
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_CANCEL, CMD_SEQ, Fw::COMMAND_OK);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_CANCEL, CMD_SEQ, Fw::CommandResponse::OK);
     this->cmdResponseHistory->clear();
     ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.mode.get());
 
@@ -166,7 +166,7 @@ namespace Svc {
     this->component.doDispatch(); // Process return of cancel packet
 
     // Ensure initial send file command also recives a response.
-    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK;
+    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::CommandResponse::EXECUTION_ERROR : Fw::CommandResponse::OK;
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, resp);
 
@@ -189,7 +189,7 @@ namespace Svc {
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
 
     // Send a cancel command
-    this->cancel(Fw::COMMAND_OK);
+    this->cancel(Fw::CommandResponse::OK);
 
     this->component.Run_handler(0,0);
     // Assert idle mode
@@ -216,7 +216,7 @@ namespace Svc {
     FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
 
     // Send the file and assert COMMAND_OK
-    this->sendFilePartial(sourceFileName, destFileName, Fw::COMMAND_OK, offset, length);
+    this->sendFilePartial(sourceFileName, destFileName, Fw::CommandResponse::OK, offset, length);
 
     // Assert telemetry
     ASSERT_TLM_SIZE(4);
@@ -294,7 +294,7 @@ namespace Svc {
 
         this->component.Run_handler(0,0);
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, Fw::CommandResponse::EXECUTION_ERROR);
 
         // Assert telemetry
         ASSERT_TLM_SIZE(1);
