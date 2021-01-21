@@ -168,7 +168,7 @@ namespace Svc {
     }
 
     NATIVE_UINT_TYPE allocatedSize = memorySize;
-    bool recoverable; //!< don't care if it is recoverable since they are a pool of user buffers
+    bool recoverable = false; //!< don't care if it is recoverable since they are a pool of user buffers
 
     // allocate memory
     void *memory = allocator.allocate(memId,allocatedSize,recoverable);
