@@ -1416,25 +1416,25 @@ namespace ExampleComponents {
   {
     const char *severityString = "UNKNOWN";
     switch (e.severity) {
-      case Fw::LOG_FATAL:
+      case Fw::LogSeverity::FATAL:
         severityString = "FATAL";
         break;
-      case Fw::LOG_WARNING_HI:
+      case Fw::LogSeverity::WARNING_HI:
         severityString = "WARNING_HI";
         break;
-      case Fw::LOG_WARNING_LO:
+      case Fw::LogSeverity::WARNING_LO:
         severityString = "WARNING_LO";
         break;
-      case Fw::LOG_COMMAND:
+      case Fw::LogSeverity::COMMAND:
         severityString = "COMMAND";
         break;
-      case Fw::LOG_ACTIVITY_HI:
+      case Fw::LogSeverity::ACTIVITY_HI:
         severityString = "ACTIVITY_HI";
         break;
-      case Fw::LOG_ACTIVITY_LO:
+      case Fw::LogSeverity::ACTIVITY_LO:
         severityString = "ACTIVITY_LO";
         break;
-      case Fw::LOG_DIAGNOSTIC:
+      case Fw::LogSeverity::DIAGNOSTIC:
        severityString = "DIAGNOSTIC";
         break;
       default:

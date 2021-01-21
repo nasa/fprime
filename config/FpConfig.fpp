@@ -1,1 +1,2 @@
+type FwEventIdType
 type FwOpcodeType

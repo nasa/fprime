@@ -1,0 +1,5 @@
+module Fw {
+
+  type Time
+
+}
