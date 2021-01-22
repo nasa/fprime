@@ -1,10 +1,9 @@
 #!/bin/sh
 
-export FPRIME_ROOT=`cd ../..; echo $PWD`
+. ./defs.sh
 
-fpp-to-xml -p $FPRIME_ROOT \
-  -i $FPRIME_ROOT/config/FpConfig.fpp \
-  Prm.fpp
+fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
+
 # Codegen workarounds
 for name in PrmGet PrmSet
 do
