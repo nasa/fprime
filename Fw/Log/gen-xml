@@ -1,14 +1,14 @@
 #!/bin/sh
 
-export FPRIME_ROOT=`cd ../..; echo $PWD`
+. ./defs.sh
 
-fpp-to-xml -p $FPRIME_ROOT \
-  -i $FPRIME_ROOT/config/FpConfig.fpp,$FPRIME_ROOT/Fw/Time/Time.fpp \
-  LogPort.fpp LogTextPort.fpp
-# Suppress header file import for FwEventIdType
+fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
+
+# Code gen workarounds
 for name in Log LogText
 do
   xml_file=$name'PortAi.xml'
+  # Suppress header file import for FwEventIdType
   awk '/FwEventIdType\.hpp/ { next } { print }' < $xml_file > tmp.xml
   mv tmp.xml $xml_file
 done

@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+. ./defs.sh
+
+fpp-locate-uses -i $DEPS,$FPRIME_ROOT/defs.fpp $FPP_FILES
