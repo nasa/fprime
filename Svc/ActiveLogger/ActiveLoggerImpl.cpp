@@ -47,41 +47,41 @@ namespace Svc {
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
 
-        switch (severity) {
-            case Fw::LOG_FATAL: // always pass FATAL
+        switch (severity.e) {
+            case Fw::LogSeverity::FATAL: // always pass FATAL
                 break;
-            case Fw::LOG_WARNING_HI:
+            case Fw::LogSeverity::WARNING_HI:
                 if (this->m_filterState[FILTER_WARNING_HI].enabled == FILTER_DISABLED) {
                    return;
                 }
                 break;
-            case Fw::LOG_WARNING_LO:
+            case Fw::LogSeverity::WARNING_LO:
                 if (this->m_filterState[FILTER_WARNING_LO].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
-            case Fw::LOG_COMMAND:
+            case Fw::LogSeverity::COMMAND:
                 if (this->m_filterState[FILTER_COMMAND].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
-            case Fw::LOG_ACTIVITY_HI:
+            case Fw::LogSeverity::ACTIVITY_HI:
                 if (this->m_filterState[FILTER_ACTIVITY_HI].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
-            case Fw::LOG_ACTIVITY_LO:
+            case Fw::LogSeverity::ACTIVITY_LO:
                 if (this->m_filterState[FILTER_ACTIVITY_LO].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
-            case Fw::LOG_DIAGNOSTIC:
+            case Fw::LogSeverity::DIAGNOSTIC:
                 if (this->m_filterState[FILTER_DIAGNOSTIC].enabled == FILTER_DISABLED) {
                     return;
                 }
                 break;
             default:
-                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity));
+                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(severity.e));
                 return;
         }
 
@@ -89,17 +89,17 @@ namespace Svc {
         for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
             if (
               (m_filteredIDs[entry] == id) &&
-              (severity != Fw::LOG_FATAL)
+              (severity != Fw::LogSeverity::FATAL)
               ) {
                 return;
             }
         }
 
         // send event to the logger thread
-        this->loqQueue_internalInterfaceInvoke(id,timeTag,static_cast<QueueLogSeverity>(severity),args);
+        this->loqQueue_internalInterfaceInvoke(id,timeTag,static_cast<QueueLogSeverity>(severity.e),args);
 
         // if connected, announce the FATAL
-        if (Fw::LOG_FATAL == severity) {
+        if (Fw::LogSeverity::FATAL == severity.e) {
             if (this->isConnected_FatalAnnounce_OutputPort(0)) {
                 this->FatalAnnounce_out(0,id);
             }
