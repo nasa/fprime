@@ -2,7 +2,13 @@
 
 export FPRIME_ROOT=`cd ../..; echo $PWD`
 
-fpp-to-xml -p $FPRIME_ROOT -i $FPRIME_ROOT/config/FpConfig.fpp CmdResponse.fpp
-# Suppress header file import for FwOpcodeType
-awk '/FwOpcodeType\.hpp/ { next } { print }' < CmdResponsePortAi.xml > tmp.xml
-mv tmp.xml CmdResponsePortAi.xml
+fpp-to-xml -p $FPRIME_ROOT -i $FPRIME_ROOT/config/FpConfig.fpp Cmd.fpp
+# Codegen workarounds
+for name in Cmd CmdReg CmdResponse
+do
+  xml_file=$name'PortAi.xml'
+  cat $xml_file | \
+    # Suppress header for FwOpcodeType
+    awk '/FwOpcodeType\.hpp/ { next } { print }' > tmp.xml
+  mv tmp.xml $xml_file
+done
