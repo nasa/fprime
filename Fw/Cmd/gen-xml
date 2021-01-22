@@ -1,10 +1,8 @@
 #!/bin/sh
 
-export FPRIME_ROOT=`cd ../..; echo $PWD`
+. ./defs.sh
 
-deps=`fpp-depend $FPRIME_ROOT/defs.fpp Cmd.fpp`
-comma_deps=`echo $deps | sed 's/ /,/g'`
-fpp-to-xml -p $FPRIME_ROOT -i $comma_deps Cmd.fpp
+fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
 
 # Codegen workarounds
 for name in Cmd CmdReg CmdResponse
