@@ -178,7 +178,7 @@ namespace Svc {
         // ask for ID that isn't present
         this->clearEvents();
         Fw::ParamBuffer pBuff;
-        EXPECT_EQ(Fw::PARAM_INVALID,this->invoke_to_getPrm(0,0x1000,pBuff));
+        EXPECT_EQ(Fw::ParamValid::INVALID,this->invoke_to_getPrm(0,0x1000,pBuff).e);
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmIdNotFound_SIZE(1);
         ASSERT_EVENTS_PrmIdNotFound(0,0x1000);

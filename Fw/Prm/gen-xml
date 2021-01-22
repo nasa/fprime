@@ -5,10 +5,14 @@ export FPRIME_ROOT=`cd ../..; echo $PWD`
 fpp-to-xml -p $FPRIME_ROOT \
   -i $FPRIME_ROOT/config/FpConfig.fpp \
   Prm.fpp
-# Suppress header file import for FwPrmIdType
+# Codegen workarounds
 for name in PrmGet PrmSet
 do
   xml_file=$name'PortAi.xml'
-  awk '/FwPrmIdType\.hpp/ { next } { print }' < $xml_file > tmp.xml
+  cat $xml_file | \
+    # Suppress header for FwPrmIdType
+    awk '/FwPrmIdType\.hpp/ { next } { print }' | \
+    # Fix return type
+    sed 's/return type="ParamValid"/return type="Fw::ParamValid"/' > tmp.xml
   mv tmp.xml $xml_file
 done

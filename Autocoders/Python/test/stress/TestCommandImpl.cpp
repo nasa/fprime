@@ -61,10 +61,10 @@ void TestCommand1Impl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I3
 }
 
 void TestCommand1Impl::printParam(void) {
-    Fw::ParamValid valid = Fw::PARAM_INVALID;
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
     const U32& prmRef = this->paramGet_someparam(valid);
 
-    printf("Parameter is: %d %s\n",prmRef,valid==Fw::PARAM_VALID?"VALID":"INVALID");
+    printf("Parameter is: %d %s\n",prmRef,valid==Fw::ParamValid::VALID?"VALID":"INVALID");
 }
 
 void TestCommand1Impl::genTlm(Ref::Gnc::Quaternion val) {

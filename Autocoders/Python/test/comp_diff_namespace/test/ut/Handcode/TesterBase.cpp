@@ -70,7 +70,7 @@ namespace Components {
         const NATIVE_INT_TYPE instance
     )
   {
-    this->m_param_someparam_valid = Fw::PARAM_UNINIT;
+    this->m_param_someparam_valid = Fw::ParamValid::UNINIT;
 
     // Initialize base class
 
@@ -624,7 +624,7 @@ namespace Components {
       static_cast<TestCommandTesterBase*>(component);
 
     Fw::SerializeStatus _status;
-    Fw::ParamValid _ret = Fw::PARAM_VALID;
+    Fw::ParamValid _ret = Fw::ParamValid::VALID;
     val.resetSer();
 
     const U32 idBase = _testerBase->getIdBase();

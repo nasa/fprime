@@ -118,7 +118,7 @@ $emit_cpp_params([ $param_instance ])
     )
   {
 #for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
-    this->m_param_${prm_name}_valid = Fw::PARAM_UNINIT;
+    this->m_param_${prm_name}_valid = Fw::ParamValid::UNINIT;
 #end for
 
     // Initialize base class
@@ -503,7 +503,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
       static_cast<${tester_base}*>(component);
 
     Fw::SerializeStatus _status;
-    Fw::ParamValid _ret = Fw::PARAM_VALID;
+    Fw::ParamValid _ret = Fw::ParamValid::VALID;
     val.resetSer();
 
     const U32 idBase = _testerBase->getIdBase();

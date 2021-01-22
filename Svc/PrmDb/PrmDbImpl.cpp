@@ -60,20 +60,20 @@ namespace Svc {
 
     Fw::ParamValid PrmDbImpl::getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
         // search for entry
-        Fw::ParamValid stat = Fw::PARAM_INVALID;
+        Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if (this->m_db[entry].used) {
                 if (this->m_db[entry].id == id) {
                     val = this->m_db[entry].val;
-                    stat = Fw::PARAM_VALID;
+                    stat = Fw::ParamValid::VALID;
                     break;
                 }
             }
         }
 
         // if unable to find parameter, send error message
-        if (Fw::PARAM_INVALID == stat) {
+        if (Fw::ParamValid::INVALID == stat.e) {
             this->log_WARNING_LO_PrmIdNotFound(id);
         }
 
