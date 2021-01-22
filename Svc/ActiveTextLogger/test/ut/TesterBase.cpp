@@ -107,7 +107,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::TextLogSeverity severity,
+        Fw::LogSeverity severity,
         Fw::TextLogString &text
     )
   {

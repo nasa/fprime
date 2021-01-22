@@ -155,7 +155,7 @@ namespace Ref {
 
       this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
       this->tlmWrite_Type(SigType);
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
   void SignalGen :: SignalGen_Toggle_cmdHandler(
@@ -164,7 +164,7 @@ namespace Ref {
         )
   {
       this->running = !this->running;
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
 
@@ -175,7 +175,7 @@ namespace Ref {
     )
   {
       this->skipOne = true;
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
   }
 
 };

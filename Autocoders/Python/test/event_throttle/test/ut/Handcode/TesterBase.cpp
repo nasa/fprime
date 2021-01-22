@@ -310,7 +310,7 @@ namespace Somewhere {
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::TextLogSeverity severity,
+        Fw::LogSeverity severity,
         Fw::TextLogString &text
     )
   {
@@ -557,7 +557,7 @@ namespace Somewhere {
     textLogIn(
         const U32 id,
         Fw::Time &timeTag,
-        const Fw::TextLogSeverity severity,
+        const Fw::LogSeverity severity,
         const Fw::TextLogString &text
     )
   {

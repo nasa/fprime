@@ -15,7 +15,6 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/LogSeverityEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/LogString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/LogTextPortAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/TextLogSeverityEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TextLogString.cpp"
 
 )

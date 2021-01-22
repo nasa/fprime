@@ -11,7 +11,7 @@ do
   dir=`dirname $file`
   printf '%-60s' $dir
   cd $dir
-  if fprime-util build 2>&1 > /dev/null
+  if fprime-util build > /dev/null 2>&1
   then
     echo $GREEN'OK'$NO_COLOR
   else

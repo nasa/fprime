@@ -1344,7 +1344,7 @@ namespace ${namespace} {
       Fw::TextLogString _logString = _textBuffer;
       this->m_${LogTextEvent_Name}_OutputPort[0].invoke(
           _id,
-          _logTime,Fw::TEXT_LOG_${severity},
+          _logTime,Fw::LogSeverity::${severity},
           _logString
       );
 

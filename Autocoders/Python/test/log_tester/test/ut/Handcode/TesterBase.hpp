@@ -249,7 +249,7 @@ namespace Log {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwEventIdType id, /*!< Log ID*/
           Fw::Time &timeTag, /*!< Time Tag*/
-          Fw::TextLogSeverity severity, /*!< The severity argument*/
+          Fw::LogSeverity severity, /*!< The severity argument*/
           Fw::TextLogString &text /*!< Text of log message*/
       );
 

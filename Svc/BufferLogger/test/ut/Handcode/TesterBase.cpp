@@ -809,7 +809,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::TextLogSeverity severity,
+        Fw::LogSeverity severity,
         Fw::TextLogString &text
     )
   {
@@ -1488,7 +1488,7 @@ namespace Svc {
     textLogIn(
         const U32 id,
         Fw::Time &timeTag,
-        const Fw::TextLogSeverity severity,
+        const Fw::LogSeverity severity,
         const Fw::TextLogString &text
     )
   {
