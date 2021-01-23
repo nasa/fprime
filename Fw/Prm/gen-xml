@@ -3,13 +3,3 @@
 . ./defs.sh
 
 fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
-
-# Codegen workarounds
-for name in PrmGet PrmSet
-do
-  xml_file=$name'PortAi.xml'
-  cat $xml_file | \
-    # Fix return type
-    sed 's/return type="ParamValid"/return type="Fw::ParamValid"/' > tmp.xml
-  mv tmp.xml $xml_file
-done
