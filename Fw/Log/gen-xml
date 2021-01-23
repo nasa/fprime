@@ -3,12 +3,3 @@
 . ./defs.sh
 
 fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
-
-# Code gen workarounds
-for name in Log LogText
-do
-  xml_file=$name'PortAi.xml'
-  # Suppress header file import for FwEventIdType
-  awk '/FwEventIdType\.hpp/ { next } { print }' < $xml_file > tmp.xml
-  mv tmp.xml $xml_file
-done

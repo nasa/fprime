@@ -9,8 +9,6 @@ for name in PrmGet PrmSet
 do
   xml_file=$name'PortAi.xml'
   cat $xml_file | \
-    # Suppress header for FwPrmIdType
-    awk '/FwPrmIdType\.hpp/ { next } { print }' | \
     # Fix return type
     sed 's/return type="ParamValid"/return type="Fw::ParamValid"/' > tmp.xml
   mv tmp.xml $xml_file
