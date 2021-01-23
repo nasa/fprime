@@ -3,7 +3,7 @@
 export FPRIME_ROOT=`cd ../..; echo $PWD`
 
 export FPP_FILES="
-Prm.fpp
+Buffer.fpp
 "
 
 . $FPRIME_ROOT/defs-root.sh

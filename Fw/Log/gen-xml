@@ -2,4 +2,4 @@
 
 . ./defs.sh
 
-fpp-to-xml -p $FPRIME_ROOT -i $DEPS $FPP_FILES
+gen_xml
