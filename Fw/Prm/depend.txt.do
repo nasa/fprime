@@ -1,5 +1,5 @@
 #!/bin/sh -e
 
-. ./defs.sh
+. ./fpp-defs.sh
 
 depend_txt_do "$@"

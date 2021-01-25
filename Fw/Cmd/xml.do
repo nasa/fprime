@@ -1,5 +1,5 @@
 #!/bin/sh
 
-. ./defs.sh
+. ./fpp-defs.sh
 
 xml_do "$@"
