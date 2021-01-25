@@ -23,6 +23,7 @@ require_vars()
 # Require and canonicalize FPRIME_ROOT
 require_vars FPRIME_ROOT
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
+export FPP_DEFS=$FPRIME_ROOT/defs.fpp
 
 redo-ifchange fpp-defs.sh
 redo-ifchange $FPRIME_ROOT/fpp-defs-root.sh
@@ -55,22 +56,47 @@ subdir_targets()
 # Clean files
 clean_do()
 {
-  doall rm '*~'
+  doall 'rm -rf' '*~' depend xml
 }
 
 # Generate dependencies
 depend_txt_do()
 {
   require_vars FPP_FILES
-  redo-ifchange $FPRIME_ROOT/defs.fpp $FPP_FILES
-  fpp-depend $FPRIME_ROOT/defs.fpp $FPP_FILES > $3
+  redo-ifchange $FPP_DEFS $FPP_FILES
+  fpp-depend $FPP_DEFS $FPP_FILES > $3
 }
 
-# Convert dependencies to comma-separated format
+# Generate depend directory
+depend_do()
+{
+  require_vars FPP_FILES
+  # Regenerate dependencies if any of these files have changed
+  redo-ifchange $FPP_DEFS $FPP_FILES
+  rm -rf $3
+  mkdir $3
+  fpp-depend -m $3/missing.txt $FPP_DEFS $FPP_FILES > $3/noinclude.txt
+  fpp-depend -i $FPP_DEFS $FPP_FILES > $3/include.txt
+  missing=`cat $3/missing.txt`
+  if test -n "$missing"
+  then
+    echo "WARNING: missing dependency files" 1>&2
+    echo $missing 1>&2
+  fi
+  redo-ifchange `cat $3/include.txt`
+}
+
+# Convert import dependencies to comma-separated format
 get_comma_deps()
 {
-  redo-ifchange depend.txt
-  deps=`cat depend.txt`
+  # Recompute dependencies
+  redo-ifchange depend
+  # Check if dependencies have changed. If not, we are done.
+  # Count included files in these dependencies
+  cat depend/include.txt | redo-stamp
+  # Compute the files to import
+  # Don't count included dependencies
+  deps=`cat depend/noinclude.txt`
   if test -n "$deps"
   then
     echo $deps | sed 's/ /,/g'
@@ -98,9 +124,9 @@ locate_uses_do()
   comma_deps=`get_comma_deps`
   if test -n "$comma_deps"
   then
-    import_deps="-i $comma_deps,$FPRIME_ROOT/defs.fpp"
+    import_deps="-i $comma_deps,$FPP_DEFS"
   else
-    import_deps="-i $FPRIME_ROOT/defs.fpp"
+    import_deps="-i $FPP_DEFS"
   fi
   fpp-locate-uses $import_deps $FPP_FILES
 }

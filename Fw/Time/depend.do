@@ -2,4 +2,4 @@
 
 . ./fpp-defs.sh
 
-depend_txt_do "$@"
+depend_do "$@"
