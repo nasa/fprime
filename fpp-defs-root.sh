@@ -62,7 +62,7 @@ clean_do()
 depend_do()
 {
   require_vars FPP_FILES
-  # Regenerate dependencies if any of these files have changed
+  # Regenerate the dependencies if any of these files have changed
   redo-ifchange $FPP_DEFS $FPP_FILES
   rm -rf $3
   mkdir $3
@@ -74,23 +74,26 @@ depend_do()
     echo "WARNING: missing dependency files" 1>&2
     echo $missing 1>&2
   fi
-  redo-ifchange `cat $3/include.txt`
+  # If the generated dependencies have not changed, then we don't
+  # need to report a change upwards in the build
+  cat $3/*.txt | redo-stamp
 }
 
 # Convert import dependencies to comma-separated format
 get_comma_deps()
 {
-  # Recompute dependencies
+  # Recompute all dependencies
   redo-ifchange depend
-  # Check if dependencies have changed. If not, we are done.
-  # Count included files in these dependencies
-  cat depend/include.txt | redo-stamp
+  # Compute the files this build depends on
+  # Count included dependencies
+  build_deps=`cat depend/include.txt`
+  redo-ifchange $build_deps
   # Compute the files to import
   # Don't count included dependencies
-  deps=`cat depend/noinclude.txt`
-  if test -n "$deps"
+  import_deps=`cat depend/noinclude.txt`
+  if test -n "$import_deps"
   then
-    echo $deps | sed 's/ /,/g'
+    echo $import_deps | sed 's/ /,/g'
   fi
 }
 
