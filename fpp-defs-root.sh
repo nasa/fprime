@@ -46,9 +46,8 @@ doall()
 # Find and run all subdirectory targets
 subdir_targets()
 {
-  for path in `find . -mindepth 2 -maxdepth 2 -name $2'.do'`
+  for dir in $SUBDIRS
   do
-    dir=`dirname $path`
     echo $dir/$2
   done | xargs $1
 }
@@ -56,7 +55,7 @@ subdir_targets()
 # Clean files
 clean_do()
 {
-  doall 'rm -rf' '*~' depend xml
+  doall 'rm -rf' '*~' depend xml '*.targets.txt'
 }
 
 # Generate dependencies
