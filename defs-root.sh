@@ -13,36 +13,40 @@ done
 
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
 
-depend()
+depend_txt_do()
 {
-  fpp-depend $FPRIME_ROOT/defs.fpp $FPP_FILES
+  fpp-depend $FPRIME_ROOT/defs.fpp $FPP_FILES > $3
 }
 
-export DEPS=`depend`
-if test -n "$DEPS"
-then
-  export COMMA_DEPS="`echo $DEPS | sed 's/ /,/g'`"
-else
-  unset COMMA_DEPS
-fi
-
-gen_xml()
+get_comma_deps()
 {
-  if test -n "$COMMA_DEPS"
+  redo-ifchange depend.txt
+  deps=`cat depend.txt`
+  if test -n "$deps"
   then
-    import_deps="-i $COMMA_DEPS"
-  else
-    unset import_deps
+    echo $deps | sed 's/ /,/g'
   fi
-  fpp-to-xml -p $FPRIME_ROOT $import_deps $FPP_FILES
 }
+
+#depend()
+#{
+#  fpp-depend $FPRIME_ROOT/defs.fpp $FPP_FILES
+#}
+#
+#export DEPS=`depend`
+#if test -n "$DEPS"
+#then
+#  export COMMA_DEPS="`echo $DEPS | sed 's/ /,/g'`"
+#else
+#  unset COMMA_DEPS
+#fi
 
 xml_do()
 {
-  redo-ifchange $FPRIME_ROOT/defs.fpp $DEPS $FPP_FILES
-  if test -n "$COMMA_DEPS"
+  comma_deps=`get_comma_deps`
+  if test -n "$comma_deps"
   then
-    import_deps="-i $COMMA_DEPS"
+    import_deps="-i $comma_deps"
   else
     unset import_deps
   fi
@@ -51,11 +55,12 @@ xml_do()
   fpp-to-xml -d $3 -p $FPRIME_ROOT $import_deps $FPP_FILES
 }
 
-locate_uses()
+locate_uses_do()
 {
-  if test -n "$COMMA_DEPS"
+  comma_deps=`get_comma_deps`
+  if test -n "$comma_deps"
   then
-    import_deps="-i $COMMA_DEPS,$FPRIME_ROOT/defs.fpp"
+    import_deps="-i $comma_deps,$FPRIME_ROOT/defs.fpp"
   else
     import_deps="-i $FPRIME_ROOT/defs.fpp"
   fi

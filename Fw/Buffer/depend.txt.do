@@ -2,4 +2,4 @@
 
 . ./defs.sh
 
-locate_uses
+depend_txt_do "$@"

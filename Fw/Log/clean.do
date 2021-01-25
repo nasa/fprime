@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-rm -rf xml *~
+rm -rf depend.txt xml *~
