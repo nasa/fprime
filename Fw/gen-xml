@@ -1,8 +1,0 @@
-#!/bin/sh
-
-for file in `find . -mindepth 2 -name gen-xml`
-do
-  dir=`dirname $file | sed 's;^\./;;'`
-  echo "running $dir/gen.xml"
-  (cd $dir; ./gen-xml)
-done
