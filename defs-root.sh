@@ -37,6 +37,20 @@ gen_xml()
   fpp-to-xml -p $FPRIME_ROOT $import_deps $FPP_FILES
 }
 
+xml_do()
+{
+  redo-ifchange $FPRIME_ROOT/defs.fpp $DEPS $FPP_FILES
+  if test -n "$COMMA_DEPS"
+  then
+    import_deps="-i $COMMA_DEPS"
+  else
+    unset import_deps
+  fi
+  rm -rf $3
+  mkdir $3
+  fpp-to-xml -d $3 -p $FPRIME_ROOT $import_deps $FPP_FILES
+}
+
 locate_uses()
 {
   if test -n "$COMMA_DEPS"
