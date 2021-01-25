@@ -73,7 +73,7 @@ get_comma_deps()
   fi
 }
 
-# Geenrate XML files
+# Generate XML files
 xml_do()
 {
   comma_deps=`get_comma_deps`
