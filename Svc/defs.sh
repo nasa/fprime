@@ -4,4 +4,4 @@ export FPRIME_ROOT=..
 export SUBDIRS="
 Cycle
 "
-. $FPRIME_ROOT/fpp-defs-root.sh
+. $FPRIME_ROOT/defs-root.sh

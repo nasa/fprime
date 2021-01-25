@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 # ----------------------------------------------------------------------
-# fpp-defs-root.sh
+# defs-root.sh
 # Root definitions for FPP models
 # ----------------------------------------------------------------------
 
@@ -25,8 +25,8 @@ require_vars FPRIME_ROOT
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
 export FPP_DEFS=$FPRIME_ROOT/defs.fpp
 
-redo-ifchange fpp-defs.sh
-redo-ifchange $FPRIME_ROOT/fpp-defs-root.sh
+redo-ifchange defs.sh
+redo-ifchange $FPRIME_ROOT/defs-root.sh
 
 # Run command on all files matching regex
 doall()

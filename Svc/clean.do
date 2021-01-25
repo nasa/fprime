@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-. ./fpp-defs.sh
+. ./defs.sh
 
 clean_do
 subdir_targets redo clean

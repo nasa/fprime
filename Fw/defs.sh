@@ -10,4 +10,4 @@ Prm
 Time
 Tlm
 "
-. $FPRIME_ROOT/fpp-defs-root.sh
+. $FPRIME_ROOT/defs-root.sh

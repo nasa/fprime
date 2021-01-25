@@ -5,4 +5,4 @@ export SUBDIRS="
 Fw
 Svc
 "
-. $FPRIME_ROOT/fpp-defs-root.sh
+. $FPRIME_ROOT/defs-root.sh

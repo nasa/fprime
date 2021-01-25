@@ -6,4 +6,4 @@ export FPP_FILES="
 Log.fpp
 "
 
-. $FPRIME_ROOT/fpp-defs-root.sh
+. $FPRIME_ROOT/defs-root.sh

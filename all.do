@@ -1,5 +1,5 @@
 #!/bin/sh -e
 
-. ./fpp-defs.sh
+. ./defs.sh
 
 subdir_targets redo-ifchange all

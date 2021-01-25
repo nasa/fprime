@@ -3,7 +3,7 @@
 export FPRIME_ROOT=../..
 
 export FPP_FILES="
-Time.fpp
+Buffer.fpp
 "
 
-. $FPRIME_ROOT/fpp-defs-root.sh
+. $FPRIME_ROOT/defs-root.sh
