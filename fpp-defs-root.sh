@@ -59,6 +59,7 @@ clean_do()
 depend_txt_do()
 {
   require_vars FPP_FILES
+  redo-ifchange $FPRIME_ROOT/defs.fpp $FPP_FILES
   fpp-depend $FPRIME_ROOT/defs.fpp $FPP_FILES > $3
 }
 
