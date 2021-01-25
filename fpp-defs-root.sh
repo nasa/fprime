@@ -58,14 +58,6 @@ clean_do()
   doall 'rm -rf' '*~' depend xml '*.targets.txt'
 }
 
-# Generate dependencies
-depend_txt_do()
-{
-  require_vars FPP_FILES
-  redo-ifchange $FPP_DEFS $FPP_FILES
-  fpp-depend $FPP_DEFS $FPP_FILES > $3
-}
-
 # Generate depend directory
 depend_do()
 {
