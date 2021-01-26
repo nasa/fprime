@@ -23,7 +23,7 @@ require_vars()
 # Require and canonicalize FPRIME_ROOT
 require_vars FPRIME_ROOT
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
-export FPP_DEFS=$FPRIME_ROOT/defs.fpp
+export FPP_DEFS="$FPRIME_ROOT/defs.fpp $CLIENT_FPP_DEFS"
 
 redo-ifchange defs.sh
 redo-ifchange $FPRIME_ROOT/defs-root.sh
@@ -109,7 +109,7 @@ xml_do()
   fi
   rm -rf $3
   mkdir $3
-  fpp-to-xml -d $3 -p $FPRIME_ROOT $import_deps $FPP_FILES
+  fpp-to-xml -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
 }
 
 # Locate uses
