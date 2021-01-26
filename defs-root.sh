@@ -87,7 +87,7 @@ get_comma_deps()
   # Compute the files this build depends on
   # Count included dependencies
   build_deps=`cat depend/include.txt`
-  redo-ifchange $build_deps
+  redo-ifchange $FPP_FILES $build_deps
   # Compute the files to import
   # Don't count included dependencies
   import_deps=`cat depend/noinclude.txt`
