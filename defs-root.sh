@@ -124,3 +124,16 @@ locate_uses_do()
   fi
   fpp-locate-uses $import_deps $FPP_FILES
 }
+
+# Update generated files
+update()
+{
+  for file in $@
+  do
+    base=`basename $file`
+    if ! test -f $base || ! diff -q $file $base
+    then
+      cp $file $base
+    fi
+  done
+}

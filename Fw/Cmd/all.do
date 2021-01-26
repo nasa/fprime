@@ -1,3 +1,6 @@
 #!/bin/sh -e
 
-redo-ifchange update-xml
+. ./defs.sh
+
+redo-ifchange xml
+update xml/*.xml
