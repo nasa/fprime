@@ -131,7 +131,7 @@ update()
   for file in $@
   do
     base=`basename $file`
-    if ! test -f $base || ! diff -q $file $base
+    if ! test -f $base || ! diff -q $file $base > /dev/null
     then
       cp $file $base
     fi
