@@ -23,7 +23,7 @@ require_vars()
 # Require and canonicalize FPRIME_ROOT
 require_vars FPRIME_ROOT
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
-export FPP_LOCS="$FPRIME_ROOT/locs.fpp $CLIENT_FPP_DEFS"
+export FPP_LOCS="$FPRIME_ROOT/locs.fpp $CLIENT_FPP_LOCS"
 
 redo-ifchange defs.sh
 redo-ifchange $FPRIME_ROOT/defs-root.sh
