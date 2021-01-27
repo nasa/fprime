@@ -23,7 +23,7 @@ require_vars()
 # Require and canonicalize FPRIME_ROOT
 require_vars FPRIME_ROOT
 export FPRIME_ROOT=`cd $FPRIME_ROOT; echo $PWD`
-export FPP_DEFS="$FPRIME_ROOT/defs.fpp $CLIENT_FPP_DEFS"
+export FPP_LOCS="$FPRIME_ROOT/locs.fpp $CLIENT_FPP_DEFS"
 
 redo-ifchange defs.sh
 redo-ifchange $FPRIME_ROOT/defs-root.sh
@@ -63,11 +63,11 @@ depend_do()
 {
   require_vars FPP_FILES
   # Regenerate the dependencies if any of these files have changed
-  redo-ifchange $FPP_DEFS $FPP_FILES
+  redo-ifchange $FPP_LOCS $FPP_FILES
   rm -rf $3
   mkdir $3
-  fpp-depend -m $3/missing.txt $FPP_DEFS $FPP_FILES > $3/noinclude.txt
-  fpp-depend -i $FPP_DEFS $FPP_FILES > $3/include.txt
+  fpp-depend -m $3/missing.txt $FPP_LOCS $FPP_FILES > $3/noinclude.txt
+  fpp-depend -i $FPP_LOCS $FPP_FILES > $3/include.txt
   missing=`cat $3/missing.txt`
   if test -n "$missing"
   then
@@ -118,9 +118,9 @@ locate_uses_do()
   comma_deps=`get_comma_deps`
   if test -n "$comma_deps"
   then
-    import_deps="-i $comma_deps,$FPP_DEFS"
+    import_deps="-i $comma_deps,$FPP_LOCS"
   else
-    import_deps="-i $FPP_DEFS"
+    import_deps="-i $FPP_LOCS"
   fi
   fpp-locate-uses $import_deps $FPP_FILES
 }
