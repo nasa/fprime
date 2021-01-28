@@ -72,7 +72,7 @@ void exitTasks(void) {
 }
 ```
 ## Class Diagram
-![classdiagram](./img/class_diagram_tcp_server.png)
+![classdiagram](./img/class_diagram_tcpserver.png)
 
 ## Requirements
 
