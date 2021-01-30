@@ -1,5 +1,5 @@
 \page SvcGenericHub Generic Hub Component
-# Drv::SvcGenericHub Generic Hub Component
+# Svc::GenericHub Generic Hub Component
 
 The Generic Hub component is an implementation of the F´ [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
 This pattern (and component) is used to bridge across an address space barrier between F´ deployments and route F´ port
