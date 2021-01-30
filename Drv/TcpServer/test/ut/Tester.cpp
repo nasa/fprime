@@ -14,7 +14,7 @@
 #include "Os/Log.hpp"
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
-#include <stdio.h>
+
 Os::Log logger;
 
 #define INSTANCE 0
