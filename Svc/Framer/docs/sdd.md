@@ -7,10 +7,14 @@ The Framer component is used to frame packets for downlink. It translates betwee
 
 The manager component (typically a service layer or a generic hub) initiates the transfer of data by calling bufferIn port. The Framer component will perform the serialization per `FramingProtocol` and will transfer the stream via bufferOut port.
 
-## Usage
+## Usage Examples
+The following diagram is an example of framer usage with chanTlm and eventLogger:
+
+![framer_example](./img/framer_example_1.png)
+
 The following diagram is an example of framer usage with a generic hub and TcpClient:
 
-![framer_example](./img/framer_example.png)
+![framer_example](./img/framer_example_2.png)
 
 ```c++
 Svc::FprimeFraming framing_obj; // Initializing framing protocol;
