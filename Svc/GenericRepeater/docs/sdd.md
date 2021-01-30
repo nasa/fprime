@@ -1,5 +1,5 @@
 \page SvcGenericRepeater Generic Repeater Component
-# Drv::SvcGenericRepeater Generic Repeater Component
+# Svc::GenericRepeater Generic Repeater Component
 
 The GenericRepeater component is designed to take in a port and repeat it to the output multiple times. GenericRepeater is
 typically used to take in `Fw::ComBuffer` and log the buffer to a file and send it to the ground interface.
