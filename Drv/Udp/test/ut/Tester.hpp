@@ -80,6 +80,20 @@ namespace Drv {
           RecvStatus recvStatus 
       );
 
+      //! Handler for from_allocate
+      //!
+      Fw::Buffer from_allocate_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 size 
+      );
+
+      //! Handler for from_deallocate
+      //!
+      void from_deallocate_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer 
+      );
+
     private:
 
       // ----------------------------------------------------------------------
@@ -104,6 +118,7 @@ namespace Drv {
       //!
       UdpComponentImpl component;
       Fw::Buffer m_data_buffer;
+      Fw::Buffer m_data_buffer2;
       U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
       bool m_spinner;
   };

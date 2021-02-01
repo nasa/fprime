@@ -28,7 +28,7 @@ This data is immediately sent out to the remote tcp server with a configured sen
 
 In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
 "readCallback" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
-This status is an enumeration enumeration whose values are described in the following table:
+This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
@@ -67,6 +67,9 @@ void exitTasks(void) {
     (void) comm.joinSocketTask(NULL);
 }
 ```
+## Class Diagram
+
+![classdiagram](./img/class_diagram_udp.png)
 
 ## Requirements
 
@@ -81,3 +84,4 @@ void exitTasks(void) {
 | Date | Description |
 |---|---|
 | 2020-12-21 | Initial Draft |
+| 2021-01-28 | Updated |

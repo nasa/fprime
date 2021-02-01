@@ -25,7 +25,7 @@ These responses are an enumeration whose values are described in the following t
 
 In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
 "readCallback" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
-This status is an enumeration enumeration whose values are described in the following table:
+This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
@@ -43,7 +43,7 @@ The following components implement the byte stream model using a callback format
 
 In the callback formation, The manager component (typically the ground interface) initiates the transfer of received
 data by calling the "poll" input port. This port fills in the provided `Fw::Buffer` along with a status for the poll.
-This status is an enumeration enumeration whose values are described in the following table:
+This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
@@ -53,6 +53,9 @@ This status is an enumeration enumeration whose values are described in the foll
 
 **Note:**  there are no known implementers of the polling formation, although this formation is best suited for
 implementations running on baremetal machines.
+
+## Class Diagram
+![classdiagram](./img/class_diagram.png)
 
 ## Requirements
 
@@ -67,3 +70,4 @@ implementations running on baremetal machines.
 | Date | Description |
 |---|---|
 | 2020-12-17 | Initial Draft |
+| 2021-01-28 | Updated |
