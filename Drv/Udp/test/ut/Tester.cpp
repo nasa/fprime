@@ -19,7 +19,7 @@
 Os::Log logger;
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 1000
 
 
 namespace Drv {
@@ -119,7 +119,7 @@ void Tester ::test_basic_messaging(void) {
 }
 
 void Tester ::test_multiple_messaging() {
-    test_with_loop(10); // Was 100
+    test_with_loop(100);
 }
 
 void Tester ::test_receive_thread(void) {
@@ -127,7 +127,7 @@ void Tester ::test_receive_thread(void) {
 }
 
 void Tester ::test_advanced_reconnect(void) {
-    test_with_loop(4, true); // Was 10 // Up to 10 * RECONNECT_MS
+    test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
 // ----------------------------------------------------------------------
