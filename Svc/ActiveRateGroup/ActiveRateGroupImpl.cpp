@@ -51,7 +51,7 @@ namespace Svc {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroupImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroupImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal cycleStart) {
 
         TimerVal end;
 
@@ -99,7 +99,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroupImpl::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroupImpl::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }
