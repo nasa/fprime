@@ -24,6 +24,7 @@
 \#ifndef ${namespace}_${name}_HPP
 \#define ${namespace}_${name}_HPP
 
+\#include "Fw/Types/EightyCharString.hpp"
 \#include "Fw/Types/BasicTypes.hpp"
 \#include "Fw/Types/Serializable.hpp"
 
@@ -141,7 +142,12 @@ namespace ${namespace} {
     Fw::SerializeStatus deserialize(
         Fw::SerializeBufferBase& buffer //!< The serial buffer
         );
-  
+
+\#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+    //! ENUM toString
+    void toString(Fw::StringBase& text) const;  //!< generate text from serializable
+\#endif
+
     public:
   
     // ----------------------------------------------------------------------
