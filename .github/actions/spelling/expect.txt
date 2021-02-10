@@ -130,6 +130,7 @@ BADCHECKSUM
 BAREMERAL
 baremetal
 BARETASKHANDLE
+baseclass
 basestring
 bashcompinit
 bashrc
@@ -509,6 +510,11 @@ DROPPEDPACKET
 dropright
 dropup
 drv
+drvipsocket
+drvsocketreadtask
+drvtcpclientsocket
+drvtcpserversocket
+drvudpsocket
 dsdl
 DSKIP
 dspal
@@ -532,7 +538,6 @@ Dxyz
 dylib
 EACCES
 EAGAIN
-eas
 eay
 eb
 EBADF
@@ -774,6 +779,7 @@ getpid
 getquaternion
 getroot
 getsize
+getsockname
 getstate
 getstatus
 gettime
@@ -948,9 +954,12 @@ ior
 iostream
 ip
 ipc
+IPCFG
+IPHELPER
 ipp
 IPPROTO
 ipriority
+IPv
 IRUSR
 IRWXU
 isabs
@@ -1456,6 +1465,7 @@ popen
 portlist
 PORTOPENED
 PORTOUT
+PORTSELECTOR
 PORTSEQUENCESTARTED
 PORTSOUT
 posix
@@ -1577,6 +1587,7 @@ RCHILD
 rcs
 Rcv
 rcvd
+RCVTIMEO
 RDONLY
 RDWR
 Readback
@@ -1782,7 +1793,9 @@ SOCKETHELPER
 SOCKETIPDRIVER
 SOCKETIPDRIVERCFG
 SOCKETIPDRIVERTYPES
+SOCKETREADTASK
 socketserver
+socklen
 somechan
 somechanarg
 someenumchan
@@ -1923,6 +1936,8 @@ tcl
 tclist
 tcomp
 tcp
+TCPCLIENT
+TCPHELPER
 tcpserver
 TCSANOW
 tcsetattr
@@ -2084,6 +2099,7 @@ UDPRECEIVER
 UDPRECEIVERCOMPONENTIMPLCFG
 UDPSENDER
 UDPSENDERCOMPONENTIMPLCFG
+UDPSOCKET
 uint
 UIs
 uk
