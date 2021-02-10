@@ -9,19 +9,26 @@ import zlib
 
 from fprime.common.models.serialize.type_exceptions import TypeMismatchException
 from fprime.common.models.serialize.numerical_types import U8Type, U16Type, U32Type
+from fprime_gds.common.utils import config_manager
+from fprime_gds.common.utils.data_desc_type import DataDescType
 
 
 class SeqBinaryWriter:
     """
     Write out the Binary (ASTERIA) form of sequencer file.
     """
-
-    def __init__(self, timebase=0xFFFF):
+    def __init__(self, timebase=0xffff, config=None):
         """
         Constructor
         """
+        if config is None:
+            config = config_manager.ConfigManager().get_instance()
+
         self.__fd = None
         self.__timebase = timebase
+        self.desc_obj = config.get_type("msg_desc")
+        self.opcode_obj = config.get_type("op_code")
+        self.len_obj = config.get_type("msg_len")
 
     def open(self, filename):
         """
@@ -53,17 +60,18 @@ class SeqBinaryWriter:
             return U8Type(cmd_obj.getDescriptor().value - 1).serialize()
 
         def __command(cmd_obj):
-            command = U32Type(
-                0
-            ).serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
-            command += U32Type(cmd_obj.getOpCode()).serialize()  # serialize opcode
-            # Command arguments
-            for arg in cmd_obj.getArgs():
-                command += arg[2].serialize()
-            return command
+          self.desc_obj.val = DataDescType["FW_PACKET_COMMAND"].value
+          self.opcode_obj.val = cmd_obj.getOpCode()
+          command = self.desc_obj.serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
+          command += self.opcode_obj.serialize()  # serialize opcode
+          # Command arguments
+          for arg in cmd_obj.getArgs():
+              command += arg[2].serialize()
+          return command
 
         def __length(command):
-            return U32Type(len(command)).serialize()
+          self.len_obj.val = len(command)
+          return self.len_obj.serialize()
 
         def __print(byteBuffer):
             print("Byte buffer size: %d" % len(byteBuffer))

@@ -13,7 +13,6 @@ descriptor header will be passed on to the registered objects.
 
 @bug No known bugs
 """
-import fprime.common.models.serialize.numerical_types
 from fprime_gds.common.utils import config_manager, data_desc_type
 
 
@@ -38,8 +37,8 @@ class Distributor:
                    defaults are used.
         """
         if config is None:
-            # Retrieve defaults for the configs
-            config = config_manager.ConfigManager()
+            # Retrieve singleton for the configs, or defaults if singleton unused
+            config = config_manager.ConfigManager().get_instance()
 
         self.__decoders = {key.name: [] for key in list(data_desc_type.DataDescType)}
 
@@ -52,6 +51,7 @@ class Distributor:
             self.key_frame = int(config.get("framing", "key_val"), 16)
         self.key_obj = config.get_type("key_val")
         self.len_obj = config.get_type("msg_len")
+        self.desc_obj = config.get_type("msg_desc")
 
     # NOTE we could use either the type of the object or an enum as the type argument. It should indicate what the decoder decodes.
 
@@ -151,10 +151,9 @@ class Distributor:
         length = self.len_obj.val
 
         # Parse Descriptor type
-        desc_obj = fprime.common.models.serialize.numerical_types.U32Type()
-        desc_obj.deserialize(raw_msg, offset)
-        offset += desc_obj.getSize()
-        desc = desc_obj.val
+        self.desc_obj.deserialize(raw_msg, offset)
+        offset += self.desc_obj.getSize()
+        desc = self.desc_obj.val
 
         # Retrieve message section
         msg = raw_msg[offset:]

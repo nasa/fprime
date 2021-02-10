@@ -18,16 +18,16 @@ Example data that would be sent to a decoder that parses events or channels:
 """
 
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.numerical_types import U16Type
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.data_types.pkt_data import PktData
 from fprime_gds.common.decoders.ch_decoder import ChDecoder
+from fprime_gds.common.utils import config_manager
 
 
 class PktDecoder(ChDecoder):
     """Decoder class for Packetized Telemetry data"""
 
-    def __init__(self, pkt_name_dict, ch_dict):
+    def __init__(self, pkt_name_dict, ch_dict, config=None):
         """
         Constructor
 
@@ -40,9 +40,12 @@ class PktDecoder(ChDecoder):
         Returns:
             An initialized PktDecoder object
         """
-        super().__init__(ch_dict)
+        if config is None:
+            config = config_manager.ConfigManager().get_instance()
+        super().__init__(ch_dict, config)
 
         self.__dict = pkt_name_dict
+        self.id_obj = config.get_type("pkt_id")
 
     def decode_api(self, data):
         """
@@ -61,10 +64,9 @@ class PktDecoder(ChDecoder):
         ptr = 0
 
         # Decode Pkt ID here...
-        id_obj = U16Type()
-        id_obj.deserialize(data, ptr)
-        ptr += id_obj.getSize()
-        pkt_id = id_obj.val
+        self.id_obj.deserialize(data, ptr)
+        ptr += self.id_obj.getSize()
+        pkt_id = self.id_obj.val
 
         # Decode time...
         pkt_time = TimeType()
