@@ -60,7 +60,7 @@ namespace Svc {
 
             //! downcall for input port
             //! NOTE: This port can execute in ISR context.
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal cycleStart);
+            void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
 
             //! divider array
             NATIVE_INT_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];

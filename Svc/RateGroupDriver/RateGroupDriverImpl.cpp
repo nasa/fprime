@@ -41,7 +41,7 @@ namespace Svc {
         RateGroupDriverComponentBase::init();
     }
 
-    void RateGroupDriverImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal cycleStart) {
+    void RateGroupDriverImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
 
         // Loop through each divider. For a given port, the port will be called when the divider value
         // divides evenly into the number of ticks. For example, if the divider value for a port is 4,
