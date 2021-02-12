@@ -67,3 +67,15 @@ class Arg:
 
     def get_comment(self):
         return self.__comment
+
+    def __eq__(self, other):
+        """ Equality checker """
+        if type(other) != type(self):
+            return False
+        return (
+            self.__name == other.__name
+            and self.__type == other.__type
+            and self.__modifier == other.__modifier
+            and self.__size == other.__size
+            and self.__comment == other.__comment
+        )
