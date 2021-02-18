@@ -4,9 +4,9 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:javascript)
 
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
-F´ comprises several elements: 
+F´ comprises several elements:
 
 * An architecture that decomposes flight software into discrete components with well-defined interfaces
 * A C++ framework that provides core capabilities such as message queues and threads
@@ -16,7 +16,7 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
-F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3.5+ with pip. Once these have been installed, users are 
+F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3.5+ with pip. Once these have been installed, users are
 recommended to install F´ python dependencies. This is usually done in a Python virtual environment as this prevents issues at the system level, but is not required. Full installation instructions
 including virtual environment creation, and installation verification: [INSTALL.md](./docs/INSTALL.md). The following are the most basic steps for convenience.
 
@@ -29,12 +29,12 @@ pip install Fw/Python Gds/
 
 ## Example Deployments
 
-F´ comes with two example deployments. The deployments represent working F´ applications for help understanding F´. These examples may be used 
+F´ comes with two example deployments. The deployments represent working F´ applications for help understanding F´. These examples may be used
 as reference, or cloned to start a new project. More step-by-step tutorials are linked in the next section, but as these are complete applications
 it is recommended that the user at least build and run the first one to ensure that F´ is installed correctly.
 
 [Ref](./Ref/README.md): The standard reference application demonstrates how most of the system components should be wired together. In addition,
-the reference application can be build on Linux or Mac OSX allowing the user to get started immediately without the need for embedded hardware.
+the reference application can be built on Linux or Mac OSX allowing the user to get started immediately without the need for embedded hardware.
 
 [RPI](./RPI/README.md): The Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded
 Linux computer). This application shows the user how to get started in the embedded world with cross-compiling, dirvers, and more. The Raspberry
@@ -55,14 +55,13 @@ software development and more! [https://github.com/fprime-community](https://git
 
 Issues can be submitted to: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
 
-
 ## F´ Features
 
 F´ has the following key features that enable robust embedded system design.
 
 ### Reusability
 
-F´'s component-based architecture enables a high degree of modularity and software reuse. 
+F´'s component-based architecture enables a high degree of modularity and software reuse.
 
 ### Rapid Deployment
 
@@ -75,7 +74,7 @@ F´ runs on a wide range of processors, from microcontrollers to multicore compu
 ### High Performance
 
 F´ utilizes a point-to-point architecture. The architecture minimizes the use of computational resources and is well suited for smaller processors.
-	
+
 ### Adaptability
 
 F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while still supporting a wide variety of missions.
@@ -86,13 +85,13 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 ## F´ Release Notes
 
-#### Release 1.0: 
+#### Release 1.0:
 
  * This is the initial release of the software to open source. See the license file for terms of use.
 
 #### Release 1.01
 
- * Updated contributor list. No code changes. 
+ * Updated contributor list. No code changes.
 
 #### Release 1.1
 
@@ -161,4 +160,3 @@ The typed port connections provide strong compile-time guarantees of correctness
   * Project custom dashboard support
 * Array, Enum type support and examples
 * Code linting and bug fixes
-
