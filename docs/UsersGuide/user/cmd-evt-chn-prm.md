@@ -2,7 +2,7 @@
 
 Typically, spacecraft software is controlled through commands, and monitored using a set of events and telemetry
 channels. These are the critical data constructs supported directly by F´ and have built in autocoder support. In
-addition, the F´ `Svc` components handel these types making it easy to define and control an F´ system through commands,
+addition, the F´ `Svc` components handle these types making it easy to define and control an F´ system through commands,
 events, and telemetry channels.
 
 Parameters allow for controlling stored values that effect the operation of an F´ system. They have framework support
