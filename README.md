@@ -16,7 +16,7 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
-The following utilities are prerequisites to installing F':
+The following utilities are prerequisites to installing F´:
 
 - cmake
 - git
@@ -24,7 +24,7 @@ The following utilities are prerequisites to installing F':
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
 
-To install F' quickly, enter:
+To install F´ quickly, enter:
 
 ```
 git clone https://github.com/nasa/fprime.git
@@ -59,7 +59,7 @@ As F´ becomes a community centered product line, there are more items available
 
 You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
 
-The F' community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
+The F´ community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
 You can open issues with this repository at: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
 
