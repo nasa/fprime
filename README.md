@@ -85,7 +85,7 @@ F´ utilizes a point-to-point architecture. The architecture minimizes the use o
 	
 ### Adaptability
 
-F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while still supporting a wide variety of missions.
+F´ is tailored to the level of complexity required for small missions. This makes F´ accessible and easy to use while still supporting a wide variety of missions.
 
 ### Analyzability
 
@@ -103,8 +103,8 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 #### Release 1.1
 
- * Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
- * Added a tutorial [here.](docs/Tutorials/README.md)
+ * Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
+ * Added a tutorial [here](docs/Tutorials/README.md)
  * Updated Svc/BufferManager with bug fix
  * Fixed a bunch of shell permissions
  
