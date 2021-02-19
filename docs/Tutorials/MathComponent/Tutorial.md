@@ -1428,13 +1428,19 @@ Next, the test checks for the expected telemetry and events:
 
 The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
 
-To build the unit test, type:
+You must first generate the unit test before you can build it. Enter:
+
+```
+fprime-util generate --ut
+```
+
+Once you generate the unit test, you can build the unit test by entering:
 
 ```
 fprime-util build --ut
 ```
 
-The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
+You can run the unit test by typing the following in the `MathSender` (not `test/ut`) directory:
 
 ```shell
 $ fprime-util check
