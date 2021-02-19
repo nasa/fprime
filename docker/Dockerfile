@@ -18,10 +18,10 @@ RUN groupadd fprime && \
     useradd -ms /bin/bash -g root -G sudo,fprime -p fprime fprime && \
     usermod -u 1001 fprime && \
 # Installing system components
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install --no-install-recommends \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
     mkdir -p /opt/ && chown fprime:fprime /opt/ && \
-    git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
+    git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group of the virtual environemnt
 # Make fprime user default user
