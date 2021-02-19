@@ -51,19 +51,17 @@ The next section links to more step-by-step tutorials, but it's a good idea to b
 
 ## Tutorials
 
-F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system
- and topology design, tooling, and more. These tutorials are available here: [docs/Tutorials/README.md](./docs/Tutorials/README.md).
+F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. These tutorials are available at [docs/Tutorials/README.md](./docs/Tutorials/README.md).
 
 ## Getting Help with F´
 
-As F´ becomes a community centered product line, there are more items available from the community at large. A mailing list is available
-at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
+As F´ becomes a community centered product line, there are more items available from the community at large. 
 
-In addition we have a community GitHub Organization containing third party contributions, further documentation of flight
-software development and more! [https://github.com/fprime-community](https://github.com/fprime-community).
+You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
 
-Issues can be submitted to: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
+The F' community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
+You can open issues with this repository at: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
 
 ## F´ Features
 
