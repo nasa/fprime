@@ -37,16 +37,17 @@ For full installation instructions, including virtual environment creation and i
 
 ## Example Deployments
 
-F´ comes with two example deployments. The deployments represent working F´ applications for help understanding F´. These examples may be used 
-as reference, or cloned to start a new project. More step-by-step tutorials are linked in the next section, but as these are complete applications
-it is recommended that the user at least build and run the first one to ensure that F´ is installed correctly.
+F´ comes with two example deployments. The deployments represent working F´ applications to help you understand F´. You can use these examples for reference, or clone them to start a new project. 
 
-[Ref](./Ref/README.md): The standard reference application demonstrates how most of the system components should be wired together. In addition,
-the reference application can be build on Linux or Mac OSX allowing the user to get started immediately without the need for embedded hardware.
+The next section links to more step-by-step tutorials, but it's a good idea to build and run at least the first example deployment to ensure that F´ is installed correctly.
 
-[RPI](./RPI/README.md): The Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded
-Linux computer). This application shows the user how to get started in the embedded world with cross-compiling, dirvers, and more. The Raspberry
-Pi was chosen as it is comercially available for a low price and runs Linux.
+**Example one:** [Ref](./Ref/README.md)
+
+   The standard reference application demonstrates how most of the system components should be wired together. The reference application can build on Linux or Mac OSX, allowing you to get started immediately without the need for embedded hardware.
+
+**Example two:** [RPI](./RPI/README.md)
+
+   This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, dirvers, and more. The Raspberry Pi was chosen because it is comercially available for a low price and runs Linux.
 
 ## Tutorials
 
