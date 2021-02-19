@@ -2119,7 +2119,7 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
+Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/` directory. 
 If the updates were correct, the module should compile with no errors. 
 The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
 
