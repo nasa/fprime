@@ -416,7 +416,9 @@ class CompFactory:
             comp_included_enums_list,
         )
         the_component.set_xml_port_files(comp_xml_port_files + parsed_array_list)
-        the_component.set_xml_serializable_files(the_parsed_component_xml.get_serializable_type_files())
+        the_component.set_xml_serializable_files(
+            the_parsed_component_xml.get_serializable_type_files()
+        )
         the_component.set_c_header_files(comp_c_header_files)
         if has_guarded_ports:
             the_component.set_has_guarded_ports()
