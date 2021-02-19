@@ -1905,7 +1905,8 @@ The component XML definitions must be imported into the topology file:
 `Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+
 
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
