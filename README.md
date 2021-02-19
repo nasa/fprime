@@ -16,9 +16,15 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
-F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3.5+ with pip. Once these have been installed, users are 
-recommended to install F´ python dependencies. This is usually done in a Python virtual environment as this prevents issues at the system level, but is not required. Full installation instructions
-including virtual environment creation, and installation verification: [INSTALL.md](./docs/INSTALL.md). The following are the most basic steps for convenience.
+The following utilities are prerequisites to installing F':
+
+- cmake
+- git
+- Python 3.5+ with pip
+
+Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
+
+To install F' quickly, enter:
 
 ```
 git clone https://github.com/nasa/fprime.git
@@ -26,6 +32,8 @@ cd fprime
 pip install --upgrade wheel setuptools pip
 pip install Fw/Python Gds/
 ```
+
+For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md). 
 
 ## Example Deployments
 
