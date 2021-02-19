@@ -50,23 +50,20 @@
 ## STEP 1: DELETE the following fail-safe line
 message(FATAL_ERROR "\n[F-PRIME] Platform must be filled before use.\n")
 
-## STEP 2: Specify the OS type include directive i.e. LINUX or DARWIN
-add_definitions(-DTGT_OS_TYPE_<PLATFORM-NAME>)
-
-# STEP 3: Specify CMAKE C and CXX compile flags. DO NOT clear existing flags
+# STEP 2: Specify CMAKE C and CXX compile flags. DO NOT clear existing flags
 set(CMAKE_C_FLAGS
-  "${CMAKE_C_FLAGS} <ADD-C-FLAGS-HERE>"
+  "${CMAKE_C_FLAGS} <ADD-CXX-FLAGS-HERE>"
 )
 set(CMAKE_CXX_FLAGS
-  "${CMAKE_CXX_FLAGS} <ADD-CXX-FLAGS-HERE>"
+  "${CMAKE_CXX_FLAGS} <ADD-C-FLAGS-HERE>"
 )
 
-# STEP 4: Specify that a thread package should be searched in the toolchain
+# STEP 3: Specify that a thread package should be searched in the toolchain
 #         directory. NOTE: when running without threads, remove this line.
 message(STATUS "Requiring thread library")
 FIND_PACKAGE ( Threads REQUIRED )
 
-# STEP 5: Specify a directory containing the "StandardTypes.hpp" headers, as well
+# STEP 4: Specify a directory containing the "StandardTypes.hpp" headers, as well
 #         as other system headers. Other global headers can be placed here.
 #         Note: Typically, the Linux directory is a good default, as it grabs
 #         standard types from <stdint.h>. 
