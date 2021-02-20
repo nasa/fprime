@@ -69,7 +69,7 @@ entirely auto-generated, developers usually refrain from unit testing the port a
 Next, developers design components. Components are designed by specifying the ports that represent the Component's
 interface and the Commands, Events amd Channels that the Component handles. This tutorial focuses on the tool suite, so
 the design is already in-place.  Users can see the design by inspecting Components in the `Ref` directory. Creation of
-new components from design through test is demonstrated in the Math Component Tutorial](../MathComponent/Tutorial.md).
+new components from design through test is demonstrated in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
 The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
 with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
@@ -195,7 +195,7 @@ This happens any time the "install" or "build" command are run on a deployment.
 
 The user can also build a component or deployment for a cross-compile by specifying the toolchain.  A previous generate
 for that toolchain should have been run. Again for deployments, the user typically should run "install", see below. These
-steps require the setup describe here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
+steps require the setup described here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 
 ```
 cd fprime/Ref/SignalGen
@@ -206,9 +206,9 @@ fprime-util build raspberrypi
 
 ## Installing the F´ Executable and Dictionaries
 
-Once the deployment is built, it would nice to be able to install the binary and dictionaries. This will enable the users to
+Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
 quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke "build" so users should use this in-place
+the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
 of build for deployments.
 
 **Installing the Ref Deployment and Running the Binary Assuming Linux**
@@ -229,7 +229,7 @@ fprime-util build raspberrypi
 ## Building and Running Unit Tests
 
 Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
-in preparation to run them.  The user can also just run "check" to build and run the unit tests.
+in preparation to run them.  The user can also just run `check` to build and run the unit tests.
 
 Before building unit tests, the unit test build cache must be generated:
 
