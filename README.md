@@ -47,7 +47,7 @@ The next section links to more step-by-step tutorials, but it's a good idea to b
 
 **Example two:** [RPI](./RPI/README.md)
 
-This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, dirvers, and more. The Raspberry Pi was chosen because it is comercially available for a low price and runs Linux.
+This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, drivers, and more. The Raspberry Pi was chosen because it is commercially available for a low price and runs Linux.
 
 ## Tutorials
 
