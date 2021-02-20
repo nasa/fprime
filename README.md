@@ -163,7 +163,7 @@ The typed port connections provide strong compile-time guarantees of correctness
   * Replaced redundant targets with flags e.g. build-ut is now build --ut
   * Added `info` command
   * Bug and usability fixes
-* GDS Improvments
+* GDS Improvements
   * Prototype GDS CLI tool
   * Project custom dashboard support
 * Array, Enum type support and examples
