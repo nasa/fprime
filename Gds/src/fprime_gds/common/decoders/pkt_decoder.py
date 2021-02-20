@@ -34,7 +34,7 @@ class PktDecoder(ChDecoder):
         Args:
             pkt_name_dict: (dict) Packet dictionary. Pkt names should be keys
                                   and PktTemplate objects should be values
-            ch_dict: (dict) Channel dictionary. Channel ids shoudl be keys and
+            ch_dict: (dict) Channel dictionary. Channel ids should be keys and
                             ChTemplate objects should be values
 
         Returns:

@@ -41,7 +41,7 @@ cd fprime/Ref
 fprime-gds
 ```
 
-The user may nopw explore the "Commanding", "Event", and "Channels" tabs to see the F´ code in action.  The "Logs" tab has logs for the running
+The user may now explore the "Commanding", "Event", and "Channels" tabs to see the F´ code in action.  The "Logs" tab has logs for the running
 application should an error arise.  See: Logs -> Ref.log to see standard output of the Ref app.
 
 To run the ground system without starting the Ref app:

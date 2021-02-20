@@ -140,7 +140,7 @@ class Command:
         Method to set up an argument value of any
         of the types specified in serialize package.
         @param arg_name: string name of the argument.
-        @param arg_type: object type to store arugment value in.
+        @param arg_type: object type to store argument value in.
         """
         ### double check argument types
         if not isinstance(arg_name, str):

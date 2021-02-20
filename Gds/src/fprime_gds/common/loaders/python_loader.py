@@ -45,7 +45,7 @@ class PythonLoader(dict_loader.DictLoader):
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
-                           name to be imported. This is esspecially important
+                           name to be imported. This is especially important
                            when trying to import dictionaries from multiple
                            deployments.
 
@@ -79,7 +79,7 @@ class PythonLoader(dict_loader.DictLoader):
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
-                           name to be imported. This is esspecially important
+                           name to be imported. This is especially important
                            when trying to import dictionaries from multiple
                            deployments.
 

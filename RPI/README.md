@@ -78,7 +78,7 @@ home network where the pi and the user's computer are connected to the same netw
 ./scripts/run_rpi_cross.sh
 ```
 The ground station should now appear in the user's default browser. Should the user wish to terminate the ground system, return to that terminal
-and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab diaplying the GUI.
+and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab displaying the GUI.
 
 
 In order to run the compiled software, we'll first need to copy it to the RPI. This can be done by creating a new terminal, and running the
