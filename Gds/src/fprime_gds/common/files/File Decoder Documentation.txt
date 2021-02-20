@@ -31,10 +31,10 @@ File Decoder can send the decoded data to multiple consumers to do anything as l
 registered to File Decoder in main_frame_factory.py.  Note that files such as File Decoder should be generic
 and not include any code that would be used in a consumer (e.g. don't write to files in File Decoder because
 that should be done in a consumer like File Writer).  An example of another possible consumer could be a
-progress bar and the decoded data could indicate if the bar can be full to signal complettion or if it needs to
+progress bar and the decoded data could indicate if the bar can be full to signal completion or if it needs to
 be stopped because a timeout was detected.
 
-An important thing to note is that all consuers must have a data_callback function inside them.  When the file
+An important thing to note is that all consumers must have a data_callback function inside them.  When the file
 decoder calls send_to_all(), the consumers receive the data via the data_callback function so this must be
 included i.e. data_callback(self, data) ----> data = decoded data received
 
@@ -53,7 +53,7 @@ file_decoder.py:
     look into
 file_writer.py:
     -My state machine implementation is kinda messy due to time crunch.  Can possibly
-    look into using switch statements and making it more readible
+    look into using switch statements and making it more readable
     
     -Currently, even if the downlink times out the program will still read through all
     of the packets.  This means that if we get a lot of packets timing out, then the

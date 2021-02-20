@@ -139,7 +139,7 @@ class SeqBinaryWriter:
         header += U16Type(self.__timebase).serialize()  # Write time base
         header += U8Type(0xFF).serialize()  # write time context
         sequence = header + sequence  # Write the list of command records here
-        # compute CRC. Ported from Utils/Hassh/libcrc/libcrc.h (update_crc_32)
+        # compute CRC. Ported from Utils/Hash/libcrc/libcrc.h (update_crc_32)
         crc = self.computeCrc(sequence)
 
         print("CRC: %d (0x%04X)" % (crc, crc))
