@@ -1,5 +1,5 @@
-\page SvcFrameringProtocol FramerProtocol
-# Svc::FrameringProtocol FrameringProtocol Component
+\page SvcFramingProtocol FramingProtocol
+# Svc::FramingProtocol FramingProtocol Component
 
 FramingProtocol is used to build the messages for Framer and Deframer. It splits out the serialization from the topology hookup allowing the same system component connections to support different byte protocols "on-the-wire". F´ is shipped with a default "F´ protocol" which works with F´ Test Gds and amounts to: startword, data, CRC32.
 

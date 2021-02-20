@@ -11,9 +11,6 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include <iostream>
-#include <stdio.h>
-using namespace std;
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 1000
