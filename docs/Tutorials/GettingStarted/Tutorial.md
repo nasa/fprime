@@ -118,7 +118,7 @@ Most developers wish to run F´ on embedded hardware. This is done by generating
 toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
 
 Here, the "raspberrypi" toolchain supplied by F´ is used. This will generate a cross-compile for the raspberry pi
-architecture.  The user should ensure to follow the Raspberry PI setup steps found at: [RPI](../../../RPI/README.md)
+architecture.  The user should ensure to follow the Raspberry PI setup steps found at: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 ```
 cd fprime/Ref
 fprime-util generate raspberrypi
@@ -195,7 +195,7 @@ This happens any time the "install" or "build" command are run on a deployment.
 
 The user can also build a component or deployment for a cross-compile by specifying the toolchain.  A previous generate
 for that toolchain should have been run. Again for deployments, the user typically should run "install", see below. These
-steps require the setup described here: [RPI](../../../RPI/README.md)
+steps require the setup described here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 
 ```
 cd fprime/Ref/SignalGen
