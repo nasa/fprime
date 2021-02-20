@@ -1428,13 +1428,19 @@ Next, the test checks for the expected telemetry and events:
 
 The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
 
-To build the unit test, type:
+You must first generate the unit test before you can build it. Enter:
+
+```
+fprime-util generate --ut
+```
+
+Once you generate the unit test, you can build the unit test by entering:
 
 ```
 fprime-util build --ut
 ```
 
-The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
+You can run the unit test by typing the following in the `MathSender` (not `test/ut`) directory:
 
 ```shell
 $ fprime-util check
@@ -1899,7 +1905,8 @@ The component XML definitions must be imported into the topology file:
 `Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+
 
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
@@ -2112,7 +2119,7 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
+Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/` directory. 
 If the updates were correct, the module should compile with no errors. 
 The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
 
@@ -2120,7 +2127,7 @@ If running on a different platform, you can specify the build target by typing `
 
 ## 4.1 Running the Ground System
 
-Once the `Ref` example has successfully built, the ground system and executable can be run by typing `fprime-gds -d fprime/Ref`. The ground system GUI should appear:
+Once the `Ref` example has built successfully, you can run the ground system and executable by entering `cd fprime/Ref; fprime-gds`. The ground system GUI should appear.
 
 ### 4.1.1 Executing Commands
 
