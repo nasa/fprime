@@ -10,8 +10,8 @@ namespace Os {
             InterruptLock(void); //!< Constructor
             virtual ~InterruptLock(void); //!< destructor
             
-            void lock(void); //!< lock interrupts
-            void unLock(void); //!< unlock interrupts
+            int lock(void); //!< lock interrupts
+            char unLock(void); //!< unlock interrupts
             
             POINTER_CAST getKey(void); //!< get the key, if used
         private:
