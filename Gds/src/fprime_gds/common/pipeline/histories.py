@@ -1,7 +1,7 @@
 """
 histories.py:
 
-Module used to handle the wrangling of histories for the standard pipeline. Thie allows the standard pipeline, and other
+Module used to handle the wrangling of histories for the standard pipeline. This allows the standard pipeline, and other
 to compose in this code.
 
 @author mstarch

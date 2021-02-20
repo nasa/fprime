@@ -2,7 +2,7 @@
 @brief file writer to write decoded objects into files
 
 This file writer takes in decoded data and writes the data
-to the correct log files and destination filse
+to the correct log files and destination files
 
 @date Created August 8, 2019
 @author Blake A. Harriman
@@ -149,7 +149,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
 
         :param data: end packet
         """
-        # Initialize all relevant END packet attributes into varibles from file_data
+        # Initialize all relevant END packet attributes into variables from file_data
         # hashValue attribute is not relevent right now, but might be in the future
         if self.state != FileStates.RUNNING:
             LOGGER.warning("Received unexpected END packet")
@@ -185,7 +185,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
     @staticmethod
     def sanitize(filename):
         """
-        Sannitize the given filename by removing slashes that would make new directories.
+        Sanitize the given filename by removing slashes that would make new directories.
 
         :param filename: filename to sanitize
         :return: sanitized filename
