@@ -475,7 +475,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
 \#endif
 
   #end if
-  #if $has_events or $has_telemetry:
+  #if $has_events or $has_telemetry or $has_time_get:
   void ${tester_base} ::
     from_${Time_Name}_static(
         Fw::PassiveComponentBase *const component,
@@ -818,7 +818,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
   }
 
 #end if
-#if $has_telemetry or $has_events
+#if $has_telemetry or $has_events or $has_time_get
   // ----------------------------------------------------------------------
   // Time
   // ----------------------------------------------------------------------
