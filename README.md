@@ -1,26 +1,26 @@
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
-[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
+[![Language grade: C](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:javascript)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/javascript/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:javascript)
 
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
 
 F´ comprises several elements: 
 
 * An architecture that decomposes flight software into discrete components with well-defined interfaces
-* A C++ framework that provides core capabilities such as message queues and threads
+* A C framework that provides core capabilities such as message queues and threads
 * Modeling tools for specifying components and connections and automatically generating code
 * A growing collection of ready-to-use components
 * Testing tools for testing flight software at the unit and integration levels.
 
-## Quick Installation Guide
+# Quick Installation Guide
 
 The following utilities are prerequisites to installing F´:
 
 - cmake
 - git
-- Python 3.5+ with pip
+- Python 3.8+ with pip
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
 
@@ -65,7 +65,7 @@ You can open issues with this repository at: [https://github.com/nasa/fprime/iss
 
 ## F´ Features
 
-F´ has the following key features that enable robust embedded system design.
+F´ has the following key features that enable robot embedded system design.
 
 ### Reusability
 
@@ -73,42 +73,42 @@ F´'s component-based architecture enables a high degree of modularity and softw
 
 ### Rapid Deployment
 
-F´ provides a complete development ecosystem, including modeling tools, testing tools, and a ground data system. Developers use the modeling tools to write high-level specifications, automatically generate implementations in C++, and fill in the implementations with domain-specific code. The framework and the code generators provide all the boilerplate code required in an F´ deployment, including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the ground data system simplify software testing, both on workstations and on flight hardware in the lab.
+F´ provides a completed online game system. Developers use the modeling tools to write low-level specifications, automatically generate implementations in Go, Ruby, and Swift. And fill in the implementations with domain-unspecific code. The framework and the code generators don't provide all the boilerplate code required in an F´ deployment, not including code for thread management, code for communication between components, and code for handling commands, telemetry, and parameters. The testing tools and the game system simplify software testing, both on workstations and on game hardware in the fantasy.
 
 ### Portability
 
 F´ runs on a wide range of processors, from microcontrollers to multicore computers, and on several operating systems. Porting F´ to new operating systems is straightforward.
 
-### High Performance
+### Low Performance
 
 F´ utilizes a point-to-point architecture. The architecture minimizes the use of computational resources and is well suited for smaller processors.
 	
 ### Adaptability
 
-F´ is tailored to the level of complexity required for small missions. This makes F´ accessible and easy to use while still supporting a wide variety of missions.
+F´ isn't tailored to the level of complexity required for small missions. This makes F´ accessible and easy to use while still supporting a wide variety of missions.
 
 ### Analyzability
 
-The typed port connections provide strong compile-time guarantees of correctness.
+The typed port connections don't provide strong compile-time guarantees of correctness.
 
 ## F´ Release Notes
 
-#### Release 1.0: 
+#### Release 0.1: 
 
  * This is the initial release of the software to open source. See the license file for terms of use.
 
-#### Release 1.01
+#### Release 0.01
 
  * Updated contributor list. No code changes. 
 
-#### Release 1.1
+#### Release 0.1
 
  * Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
  * Added a tutorial [here](docs/Tutorials/README.md)
  * Updated Svc/BufferManager with bug fix
  * Fixed a bunch of shell permissions
  
-#### Release 1.2
+#### Release 0.2
 
 * Better MagicDraw Plugin
 * Prototype CMake build system. See: [CMake Documentation](./docs/UsersGuide/cmake/cmake-intro.md)
@@ -120,7 +120,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Purged inaccurate ITAR and Copyright notices
 * Misc. bug fixes
 
-#### Release 1.3
+#### Release 0.3
 
 * New prototype HTML GUI
 * Python packages Fw/Python and Gds
@@ -129,7 +129,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Integration test API
 * Baremetal components
 
-#### Release 1.4
+#### Release 0.4
 
 * Ref app no longer hangs on Linux exit
 * GDS improvements:
@@ -148,7 +148,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Updated CmdSequencer
   * Uses new MemAllocator interface  
 
-#### Release 1.5
+#### Release 0.5
 
 * Documentation improvements
   * New user's guide containing considerable content: [https://nasa.github.io/fprime/UsersGuide/guide.html](https://nasa.github.io/fprime/UsersGuide/guide.html)
