@@ -47,6 +47,7 @@ The next section links to more step-by-step tutorials, but it's a good idea to b
 
 **Example two:** [RPI](./RPI/README.md)
 
+
 This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, drivers, and more. The Raspberry Pi was chosen because it is commercially available for a low price and runs Linux.
 
 ## Tutorials
@@ -154,8 +155,8 @@ The typed port connections provide strong compile-time guarantees of correctness
   * New user's guide containing considerable content: [https://nasa.github.io/fprime/UsersGuide/guide.html](https://nasa.github.io/fprime/UsersGuide/guide.html)
   * Auto-generated API documentation
   * Rewrites, edits, improvements across the board
-* F´ Project restructuing
-  * Projects may now link to F´ and F´ library packges, without needing to keep the framework code in the same source tree
+* F´ Project restructuring
+  * Projects may now link to F´ and F´ library packages, without needing to keep the framework code in the same source tree
   * Usage of framework can be out-of-source
   * `settings.ini` Introduced
   * Example: [https://github.com/fprime-community/fprime-arduino](https://github.com/fprime-community/fprime-arduino)
