@@ -80,7 +80,7 @@ the fprime-base image has been built or downloaded as latest. If downloaded, run
 mapped into the container.
 
 **Note:** the user/developer should understand Docker UUIDs and the implications in mounting volumes
-into a running Docker container because this differs accross host OSes.
+into a running Docker container because this differs across host OSes.
 
 ### Run the F´Docker Image Manually
 ```bash
