@@ -6,7 +6,6 @@
 import os
 import sys
 import platform
-import sys
 import webbrowser
 from pathlib import Path
 from fprime.fbuild.settings import (
@@ -195,7 +194,7 @@ def launch_tts(tts_port, tts_addr, logs, **_):
     tts_log = os.path.join(logs, "ThreadedTCP.log")
     # Launch the tcp server
     tts_cmd = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.executables.tcpserver",
@@ -219,7 +218,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     :return: process
     """
     gse_args = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.wxgui.tools.gds",
@@ -278,7 +277,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
             "SERVE_LOGS": "YES",
         }
     )
-    gse_args = ["python3", "-u", "-m", "flask", "run"]
+    gse_args = [sys.executable, "-u", "-m", "flask", "run"]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
     if extras["gui"] == "html":
         webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
@@ -310,7 +309,7 @@ def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     """
 
     app_cmd = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.executables.comm",
