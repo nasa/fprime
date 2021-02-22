@@ -67,7 +67,7 @@ need. If desired, the port can be built and compiled to ensure that the design i
 entirely auto-generated, developers usually refrain from unit testing the port and defer unit testing to the Component.
 
 Next, developers design components. Components are designed by specifying the ports that represent the Component's
-interface and the Commands, Events amd Channels that the Component handles. This tutorial focuses on the tool suite, so
+interface and the Commands, Events and Channels that the Component handles. This tutorial focuses on the tool suite, so
 the design is already in-place.  Users can see the design by inspecting Components in the `Ref` directory. Creation of
 new components from design through test is demonstrated in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
@@ -188,7 +188,7 @@ cd fprime/Ref
 fprime-util build
 ```
 **Note:** the user almost always wants to run the "install" command on deployments. This builds the binary like "build"
-but also copies the binary to the deployments "bin" directory. i.e. `fprime/Ref/bin`.  Install is describes below.
+but also copies the binary to the deployments "bin" directory, i.e. `fprime/Ref/bin`.  Install is described below.
 
 This process also built the Dictionaries for the project and places the dictionary in the "Top" folder of the deployment.
 This happens any time the "install" or "build" command are run on a deployment.
