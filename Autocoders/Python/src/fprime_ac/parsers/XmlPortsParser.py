@@ -73,6 +73,7 @@ class XmlPortsParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close()
 
         # Validate against schema
         relax_file_handler = open(ROOTDIR + self.__config.get("schema", "interface"))

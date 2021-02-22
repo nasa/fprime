@@ -102,6 +102,7 @@ class XmlArrayParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close()
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"), "r")
