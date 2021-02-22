@@ -194,7 +194,7 @@ class Uplinker:
                     else:
                         UP_LOGGER.warning(
                             "Uplink failed to send %d bytes of data after %d retries",
-                            (len(framed), Uplinker.RETRY_COUNT),
+                            len(framed), Uplinker.RETRY_COUNT 
                         )
         # An OSError might occur during shutdown and is harmless. If we are not shutting down, this error should be
         # propagated up the stack.

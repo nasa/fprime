@@ -307,6 +307,18 @@ namespace Svc {
       ~BufferManager(void);
 
     PRIVATE:
+      //! Remaps ids into a single context
+      //!
+      static U32 getBufferContext(const U32 managerId, const U32 bufferId);
+
+      //! Gets the manager ID from the singular context
+      //!
+      static U32 getManagerIdFromBufferContext(const U32 context);
+
+      //! Gets the buffer ID from the singular context
+      //!
+      static U32 getBufferIdFromBufferContext(const U32 context);
+
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

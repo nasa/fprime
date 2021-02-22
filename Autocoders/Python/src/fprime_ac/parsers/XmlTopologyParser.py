@@ -354,6 +354,12 @@ class XmlTopologyParser:
         """
         return self.__base_id
 
+    def get_component_includes(self):
+        """
+        Return component includes
+        """
+        return self.__comp_type_files
+
     def get_base_id_window(self):
         """
         Return base id window size of topology

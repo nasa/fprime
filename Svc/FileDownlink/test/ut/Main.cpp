@@ -24,6 +24,21 @@ TEST(FileDownlink, CancelInIdleMode) {
   tester.cancelInIdleMode();
 }
 
+TEST(FileDownlink, DownlinkPartial) {
+  Svc::Tester tester;
+  tester.downlinkPartial();
+}
+
+TEST(FileDownlink, DownlinkTimeout) {
+    Svc::Tester tester;
+    tester.timeout();
+}
+
+TEST(FileDownlink, SendFilePort) {
+    Svc::Tester tester;
+    tester.sendFilePort();
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

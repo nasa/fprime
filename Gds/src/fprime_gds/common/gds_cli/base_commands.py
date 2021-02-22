@@ -141,7 +141,7 @@ class QueryHistoryCommand(BaseCommand):
         cls, dictionary_path: str, search_filter: predicates.predicate, json: bool
     ) -> str:
         """
-        Returns a string of the the information for all relevant possible items
+        Returns a string of the information for all relevant possible items
         for this command, filtered using the given predicate.
 
         :param dictionary_path: The string path to the dictionary file we should

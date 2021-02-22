@@ -1,0 +1,9 @@
+<!--
+dashboard.xml:
+
+A sample dashboard to show off the image-display component. This dashboard drops the image-display
+component into a labeled box.
+-->
+<dashboard-box title="Last Image" border-color="black">
+    <image-display></image-display>
+</dashboard-box>

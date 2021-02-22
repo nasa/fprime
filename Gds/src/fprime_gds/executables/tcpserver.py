@@ -45,7 +45,7 @@ def now():
 class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     """
     Derived from original Stable demo during R&TD and adapted
-    for use in new FSW gse.py applicaiton.
+    for use in new FSW gse.py application.
 
     TCP socket server for commands, log events, and telemetry data.
     Later this will handle other things such as sequence files and parameters.
@@ -328,7 +328,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
 class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
     """
     Derived from original Stable demo during R&TD and adapted
-    for use in new FSW gse.py applicaiton.
+    for use in new FSW gse.py application.
 
     TCP socket server for commands, log events, and telemetry data.
     Later this will handle other things such as sequence files and parameters.
@@ -529,7 +529,6 @@ def main(argv=None):
         server.allow_reuse_address = True
         SERVER = server
         LOCK = server.lock_obj
-        ip, port = server.server_address
 
         print("TCP Socket Server listening on host addr {}, port {}".format(HOST, PORT))
         # Start a thread with the server -- that thread will then start one

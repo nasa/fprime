@@ -25,7 +25,7 @@ namespace Svc {
   // Instance variables
   // ----------------------------------------------------------------------
 
-    const U8 Tester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
+  U8 Tester::data[COM_BUFFER_LENGTH] = { 0xDE, 0xAD, 0xBE, 0xEF };
 
   // ----------------------------------------------------------------------
   // Construction and destruction
@@ -236,12 +236,7 @@ namespace Svc {
   void Tester ::
     sendManagedBuffers(const U32 n)
   {
-    Fw::Buffer buffer(
-        0,
-        0,
-        reinterpret_cast<U64>(data),
-        sizeof(data)
-    );
+    Fw::Buffer buffer(data, sizeof(data));
     for (U32 i = 0; i < n; ++i) {
       this->invoke_to_bufferSendIn(0, buffer);
       this->dispatchOne();

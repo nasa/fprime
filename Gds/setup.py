@@ -80,7 +80,8 @@ integrated configuration with ground in-the-loop.
     ####
     entry_points={
         "gui_scripts": ["fprime-gds = fprime_gds.executables.run_deployment:main"],
-        "console_scripts": ["fprime-cli = fprime_gds.executables.fprime_cli:main"],
+        "console_scripts": ["fprime-cli = fprime_gds.executables.fprime_cli:main", 
+                            "fprime-seqgen = fprime_gds.common.tools.seqgen:main"],
     },
     ####
     # Classifiers:
@@ -120,7 +121,5 @@ integrated configuration with ground in-the-loop.
         # I and T API
         "uart-adapter": "pyserial",
         "test-api-xls": "openpyxl",
-        # WX GUI options
-        "wx-gui": "wxPython",
     },
 )

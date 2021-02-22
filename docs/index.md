@@ -35,7 +35,7 @@ In order to develop applications with F´, the following requirements of the use
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
 2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
 3. Bash or Bash compatible shell
-4. CLang or GCC compiler
+4. Clang or GCC compiler
 5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 
@@ -56,7 +56,7 @@ pip install Fw/Python Gds/
 ```
 cd Ref
 fprime-util generate
-fprime-util install
+fprime-util build
 ```
 **Run the Ref Application**
 ```
@@ -72,5 +72,5 @@ Full information on the code and F´ are available at our Github page:
 
 To start with, follow the [installation guide](./INSTALL.md). Then inspect
 either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md), 
-[rapberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
+[raspberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
 [tutorials](Tutorials/README.md).

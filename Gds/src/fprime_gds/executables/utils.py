@@ -81,7 +81,7 @@ def register_process_assassin(process, log=None):
 def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None):
     """
     Run an application and ensure that it is logged immediately to the logfile. This will allow the application to have
-    up-to-date logs. This is a wrapper for pexpect to ensure that the application runs and log effectivly. It has been
+    up-to-date logs. This is a wrapper for pexpect to ensure that the application runs and log effectively. It has been
     converted to a function to remove superfluous processes.
 
     :param arguments: arguments with the first being the executable.
@@ -122,4 +122,3 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
         raise AppWrapperException(
             "Failed to run application: {}. Error: {}".format(" ".join(arguments), exc)
         )
-    return None

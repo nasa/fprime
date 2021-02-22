@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
 
     Os::Task::delay(500);
     serImpl.exit();
+    serImpl.ActiveComponentBase::join(NULL);
 
     return 0;
 

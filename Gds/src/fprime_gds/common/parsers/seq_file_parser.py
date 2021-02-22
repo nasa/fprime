@@ -123,7 +123,7 @@ class SeqFileParser:
                 def parseTimeString(timeFmt):
                     try:
                         return datetime.strptime(timeStr, timeFmt)
-                    except:
+                    except ValueError:
                         return None
 
                 for fmt in timeFmts:
@@ -223,7 +223,7 @@ class SeqFileParser:
                                     "Line %d: %s"
                                     % (
                                         i + 1,
-                                        "Encountered sytax error parsing arguments",
+                                        "Encountered syntax error parsing arguments",
                                     )
                                 )
                     yield i, descriptor, seconds, useconds, mnemonic, args

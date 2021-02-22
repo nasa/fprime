@@ -32,7 +32,7 @@ namespace ANameSpace {
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const;
         Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
     #if FW_SERIALIZABLE_TO_STRING
-        void toString(Fw::StringBase& text); //!< generate text from serializable
+        void toString(Fw::StringBase& text) const; //!< generate text from serializable
     #endif
     protected:
 
