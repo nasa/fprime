@@ -565,7 +565,7 @@ $emit_hpp_params([ $param_const_timeTag, $param_val ])
         *tlmHistory_${name};
 
 #end for
-#if $has_telemetry or $has_events
+#if $has_telemetry or $has_events or $has_time_get
     protected:
 
       // ----------------------------------------------------------------------
@@ -674,7 +674,7 @@ $emit_hpp_port_params([ $param_callComp, $param_portNum] + $params)
 
   #end for
 #end if
-#if $has_telemetry or $has_events
+#if $has_telemetry or $has_events or $has_time_get
     private:
 
       // ----------------------------------------------------------------------
