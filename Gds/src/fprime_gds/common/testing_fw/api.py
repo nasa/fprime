@@ -562,7 +562,7 @@ class IntegrationTestAPI(DataHandler):
         the sequence is completed. The user can specify that await also searches the history by
         specifying a value for start. On timeout, the search will return the list of found
         channel updates regardless of whether the sequence is complete.
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: It is recommended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of updates. The user should check if the
         sequence was completed.
 
@@ -652,7 +652,7 @@ class IntegrationTestAPI(DataHandler):
         A search for a sing sequence of telemetry updates messages. If the history doesn't have the
         complete sequence, the call will await until the sequence is completed or the timeout, at
         which point it will return the list of found channel updates.
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: It is recommended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of updates the user should check if the
         sequence was completed.
 
@@ -801,7 +801,7 @@ class IntegrationTestAPI(DataHandler):
         the sequence is completed. The user can specify that await also searches the history by
         specifying a value for start. On timeout, the search will return the list of found
         event messages regardless of whether the sequence is complete.
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: It is recommended (but not enforced) not to specify timestamps for this assert.
         Note: This function will always return a list of events the user should check if the
         sequence was completed.
 
@@ -899,7 +899,7 @@ class IntegrationTestAPI(DataHandler):
         An assert that a sequence of event messages is received. If the history doesn't have the
         complete sequence, the call will await until the sequence is completed or the timeout, at
         which point it will assert failure.
-        Note: It is reccomended (but not enforced) not to specify timestamps for this assert.
+        Note: It is recommended (but not enforced) not to specify timestamps for this assert.
 
         Args:
             events: an ordered list of event specifiers (mnemonic, id, or predicate)

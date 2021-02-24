@@ -86,7 +86,7 @@ class ArgNotFoundException(TypeException):
 
 
 class NotInitializedException(TypeException):
-    """ Did not intialize types """
+    """ Did not initialize types """
 
     def __init__(self, message):
         super().__init__("Instance %s not initialized!" % message)

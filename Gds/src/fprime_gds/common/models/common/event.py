@@ -97,7 +97,7 @@ class Event:
 
     def stringify(self, event_args_list):
         """
-        Return a formated string of event args.
+        Return a formatted string of event args.
         """
         # print event_args_list
         return self.__format_string % tuple(event_args_list[1:])

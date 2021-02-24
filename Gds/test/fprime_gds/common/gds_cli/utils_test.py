@@ -162,7 +162,7 @@ def item_template_dictionary():
 
 def t2d(template: DataTemplate) -> SysData:
     """
-    Convers a DataTemplate object to a SysData object
+    Convert a DataTemplate object to a SysData object
     """
     # Currently unable to instantiate SysData, so instantiating PktData instead
     return PktData([], None, template)

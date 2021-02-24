@@ -26,7 +26,7 @@ subcommands:
 ```
 
 The `fprime-util` helper is driven by a series of subcommands listed above. Each perform one aspect
-of the development process and are breifly described below.  The following sections will go into
+of the development process and are briefly described below.  The following sections will go into
 each command's usage in more detail.
 
 1. `generate`: generates build cache directories. It defaults to generating the build cache for

@@ -211,7 +211,7 @@ remove  directories etc.
 This class definition can be found in **Os/Log.hpp**. It is an interface to
 a system logging facility. It is meant to abstract the VxWorks logging
 facility.  It is a subclass of `Fw::Logger` and thus must be registered after construction.  Compiling in
-**Os/LogDefault.cpp** into your deployment will automatically creat an **Os::Log** and register it.
+**Os/LogDefault.cpp** into your deployment will automatically create an **Os::Log** and register it.
 Table 30 provides the methods and their descriptions.
 
 **Table 30.** Log method descriptions.

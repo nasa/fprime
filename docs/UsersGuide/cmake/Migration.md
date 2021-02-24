@@ -43,7 +43,7 @@ A guide to the API function calls is found here: [API](API.md)
 
 ## Creating Deployments
 
-Deployments in the new F prime system must now specifiy a `CMakeLists.txt` following a specific
+Deployments in the new F prime system must now specify a `CMakeLists.txt` following a specific
 format in order to act as a build entry point. This file includes the F prime make system, acts as
 a target for the CMake command, and sets up basic project information. This file may also add other
 subdirectories to pull in deployment specific modules, and is placed at top-level in the deployment

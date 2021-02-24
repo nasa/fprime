@@ -64,7 +64,7 @@ setting = 123; Comment
 
 Some configurations may be changed during compilation time. The F′ framework has a number of optional features that can
 be enabled or disabled by editing the `config/FpConfig.hpp` file.  These changes affect of the whole of the F´
-deployment. Users can change or override defined *C* macro values that activate or disable code by using complier flags
+deployment. Users can change or override defined *C* macro values that activate or disable code by using compiler flags
 for different deployment settings. During flight software (FSW) execution, disabling unnecessary features saves memory
 and CPU cycles.
 

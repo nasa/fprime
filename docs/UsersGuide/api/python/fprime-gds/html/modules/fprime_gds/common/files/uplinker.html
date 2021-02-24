@@ -266,7 +266,7 @@
                 <span class="k">if</span> <span class="n">file_obj</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>
                     <span class="k">break</span>
-                <span class="c1"># Once a file is obtained from the queue, aquire the busy lock before starting. This prevents a in-use</span>
+                <span class="c1"># Once a file is obtained from the queue, acquire the busy lock before starting. This prevents a in-use</span>
                 <span class="c1"># or paused queue from uplinking.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">busy</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">uplinker</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span>

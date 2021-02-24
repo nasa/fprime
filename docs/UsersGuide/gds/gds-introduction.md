@@ -207,7 +207,7 @@ click that button. This new window will connect to the same backend as the first
 At the very top-right, there should be a green circle or a red X representing the GUI's connection status. A green
 circle means that data is still flowing from the embedded system, while a red X means the embedded system is currently
 disconnected and not sending/receiving any data. This is reset to an X via timeout, so you may need to configure that
-timeout in the `config.js` file.  This widget is fondly refered to as "the orb" as it quickly shows if there is data
+timeout in the `config.js` file.  This widget is fondly referred to as "the orb" as it quickly shows if there is data
 flow from the embedded F´ system.
 
 There's also a NASA logo on the far left. It doesn't do anything right now, but hopefully the meatball continues to

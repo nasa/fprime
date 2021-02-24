@@ -41,7 +41,7 @@ setup(
     # Package Description:
     #
     # Basic package information. Describes the package and the data contained inside. This
-    # information should match the F prime decription information.
+    # information should match the F prime description information.
     ####
     name="fprime_gds",
     version="1.5.0",

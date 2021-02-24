@@ -99,7 +99,7 @@ public:
     //! serializes the pointer to said data, the size, and context. This is done for efficiency in moving around data,
     //! and is the primary usage of Fw::Buffer. To serialize the wrapped data, use either the data pointer accessor
     //! or the serialize buffer base representation and serialize from that.
-    //! \param serialBuffer: serialze buffer to write data into
+    //! \param serialBuffer: serialize buffer to write data into
     //! \return: status of serialization
     Fw::SerializeStatus serialize(Fw::SerializeBufferBase& serialBuffer) const;
 
@@ -109,7 +109,7 @@ public:
     //! deserializes the pointer to said data, the size, and context. This is done for efficiency in moving around data,
     //! and is the primary usage of Fw::Buffer. To deserialize the wrapped data, use either the data pointer accessor
     //! or the serialize buffer base representation and deserialize from that.
-    //! \param serialBuffer: serialze buffer to read data into
+    //! \param serialBuffer: serialize buffer to read data into
     //! \return: status of serialization
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
 
@@ -154,7 +154,7 @@ public:
 #endif
 
 #ifdef BUILD_UT
-    //! Supports GTest framework for outputing this type to a stream
+    //! Supports GTest framework for outputting this type to a stream
     //!
     friend std::ostream& operator<<(std::ostream& os, const Buffer& obj);
 #endif
