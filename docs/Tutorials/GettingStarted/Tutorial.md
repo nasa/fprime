@@ -95,7 +95,7 @@ is a setup step and isn't formally part of the F´ development process.
 
 To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
 used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
-setup to run on the current platform (typically Mac OS, or Linux depending on the developer's choosen OS).
+setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 
 **Generate the Ref Application for Native Compilation**
 

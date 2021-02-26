@@ -1803,7 +1803,7 @@ Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
 Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
-Where the other components are initialzed, add `MathSender` and `MathReceiver`:
+Where the other components are initialized, add `MathSender` and `MathReceiver`:
 
 `Ref/Top/Topology.cpp`, line 286:
 

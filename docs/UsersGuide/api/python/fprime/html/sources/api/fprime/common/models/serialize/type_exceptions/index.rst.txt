@@ -87,7 +87,7 @@ Module Contents
 
    Bases: :class:`fprime.common.models.serialize.type_exceptions.TypeException`
 
-   Did not intialize types
+   Did not initialize types
 
 
 .. py:exception:: NotOverridenException(message)

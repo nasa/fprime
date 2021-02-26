@@ -126,7 +126,7 @@ serial driver.
         </port>
         <port name="cmdResponseOut" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
         </port>
-        <!-- Event ports: send events, and text formated events -->
+        <!-- Event ports: send events, and text formatted events -->
         <port name="eventOut" data_type="Fw::Log"  kind="output" role="LogEvent"  max_number="1">
         </port>
         <port name="textEventOut" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
@@ -547,7 +547,7 @@ namespace GpsApp {
           this->serialBufferOut_out(0, serBuffer);
           return;
       }
-      // If not enough data is available for a full messsage, return the buffer and abort.
+      // If not enough data is available for a full message, return the buffer and abort.
       else if (buffsize < 24) {
           // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
           // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to

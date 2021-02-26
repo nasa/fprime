@@ -23,7 +23,7 @@ RUN groupadd fprime && \
     mkdir -p /opt/ && chown fprime:fprime /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# Change user and group of the virtual environemnt
+# Change user and group of the virtual environment
 # Make fprime user default user
 ENV HOST fprime
 ENV USER fprime

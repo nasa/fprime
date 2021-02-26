@@ -28,7 +28,7 @@ class SeqFileParser:
 
         def removeTrailingComments(string):
             """
-            Remove any trailing comments (proceded by ';') in a string
+            Remove any trailing comments (preceded by ';') in a string
             @param string: the string to perform comment removal on
             @return the string without trailing comments
             """

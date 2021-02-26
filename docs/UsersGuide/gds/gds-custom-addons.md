@@ -74,7 +74,7 @@ Available data from `_datastore` is described in the following table
 
 | Item | Type | Description |
 |---|---|---|
-| events    | list | List of events recieved |
+| events    | list | List of events received |
 | channels  | dict | Channel id to last received reading |
 | upfiles   | list | List of uplinked file objects |
 | downfiles | list | List of downlinked file objects |

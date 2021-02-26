@@ -27,7 +27,7 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 ```
 
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
-with a ;. The example file above goes into greater explaination of the sample commands.
+with a ;. The example file above goes into greater explanation of the sample commands.
 
 ## Compiling A Sample Sequence
 

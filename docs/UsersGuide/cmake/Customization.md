@@ -8,7 +8,7 @@ advice on how to configure standard customization items as part of this CMake sy
 can be done using standard CMake patterns. Thus, the user is encouraged to study CMake if advice
 cannot be found herein.
 
-## Build F Prime Utilites
+## Build F Prime Utilities
 
 Adding a utility executable that dependns on F prime code is easy. Just perform a standard call to
 `register_fprime_executable`. Care should be taken to set the variable `EXECUTABLE_NAME` before

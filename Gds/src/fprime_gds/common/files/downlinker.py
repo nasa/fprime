@@ -150,7 +150,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         :param data: end packet
         """
         # Initialize all relevant END packet attributes into variables from file_data
-        # hashValue attribute is not relevent right now, but might be in the future
+        # hashValue attribute is not relevant right now, but might be in the future
         if self.state != FileStates.RUNNING:
             LOGGER.warning("Received unexpected END packet")
         else:
