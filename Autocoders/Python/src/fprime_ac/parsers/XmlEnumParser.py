@@ -89,7 +89,7 @@ class XmlEnumParser:
 
         enum = element_tree.getroot()
         if enum.tag != "enum":
-            PRINT.info("%s is not a enum definition file" % xml_file)
+            PRINT.info("%s is not a enum definition file", xml_file)
             sys.exit(-1)
 
         print("Parsing Enum %s" % enum.attrib["name"])
@@ -203,8 +203,7 @@ class XmlEnumParser:
     def get_comment(self):
         return self.__comment
 
-
-if __name__ == "__main__":
+def main():
     xmlfile = sys.argv[1]
     xml = XmlParser.XmlParser(xmlfile)
     print("Type of XML is: %s" % xml())
@@ -217,3 +216,6 @@ if __name__ == "__main__":
     print("Items")
     for item in xml_parser.get_items():
         print("%s=%s // %s" % item)
+
+if __name__ == "__main__":
+    main()

@@ -141,20 +141,16 @@ class XmlComponentParser:
         if "modeler" in component.attrib:
             modeler = True
             if component.attrib["modeler"] != "true":
-                PRINT.info(
-                    '%s: Component %s: "modeler" attribute must be "true" or not present'
-                    % (xml_file, component_name)
-                )
+                PRINT.info('%s: Component %s: "modeler" attribute must be "true" or not present',
+                           xml_file, component_name)
                 sys.exit(-1)
         else:
             modeler = False
 
         comp_kind = component.attrib["kind"]
         if comp_kind not in ["passive", "queued", "active"]:
-            PRINT.info(
-                '%s: Component %s: "kind" attribute must be "passive","queued", or "active"'
-                % (xml_file, component_name)
-            )
+            PRINT.info('%s: Component %s: "kind" attribute must be "passive","queued", or "active"',
+                       xml_file, component_name)
             sys.exit(-1)
 
         self.__component = Component(
@@ -181,8 +177,8 @@ class XmlComponentParser:
                     stri = "ERROR: Could not find specified dictionary XML file. {}. Error: {}".format(
                         comp_tag.text, str(bre)
                     )
-                    raise OSError(stri)
-                PRINT.info("Reading external dictionary %s" % dict_file)
+                    raise OSError(stri) from bre
+                PRINT.info("Reading external dictionary %s", dict_file)
                 dict_fd = open(dict_file)
                 _ = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd, parser=xml_parser)
@@ -210,10 +206,8 @@ class XmlComponentParser:
             elif comp_tag.tag == "ports":  # parse ports
                 for port in comp_tag:
                     if port.tag != "port":
-                        PRINT.info(
-                            "%s: Invalid tag %s in ports definition"
-                            % (xml_file, port.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in ports definition",
+                                   xml_file, port.tag)
                         sys.exit(-1)
                     n = port.attrib["name"]
                     ## Set role if defined
@@ -228,10 +222,8 @@ class XmlComponentParser:
                         component.attrib["kind"] == "passive"
                         and d_orig == "async_input"
                     ):
-                        PRINT.info(
-                            "%s: Port %s cannot be async_input with a passive component"
-                            % (xml_file, n)
-                        )
+                        PRINT.info("%s: Port %s cannot be async_input with a passive component",
+                                   xml_file, n)
                         sys.exit(-1)
                     d = d_orig.split("_")
                     t = port.attrib["data_type"]
@@ -242,11 +234,11 @@ class XmlComponentParser:
                         err = '%s: Invalid attribute value "%s" for "kind" in port "%s" definition. Should be one of "sync_input", "async_input", "guarded_input", or "output"'
                         s = d[0]
                         if s not in ["sync", "async", "guarded", "model"]:
-                            PRINT.info(err % (xml_file, d_orig, n))
+                            PRINT.info(err, xml_file, d_orig, n)
                             sys.exit(-1)
                         d = d[1]
                         if d != "input":
-                            PRINT.info(err % (xml_file, d_orig, n))
+                            PRINT.info(err, xml_file, d_orig, n)
                             sys.exit(-1)
                     if "max_number" in list(port.attrib.keys()):
                         m = self.__eval_var(
@@ -261,8 +253,8 @@ class XmlComponentParser:
                     if "full" in list(port.attrib.keys()):
                         f = port.attrib["full"]
                         if f not in ["drop", "assert", "block"]:
-                            err = '%s: Invalid attribute value "%s" for "full" in port "%s" definition. Should be one of "drop", "assert", or "block"'
-                            PRINT.info(err % (xml_file, f, n))
+                            PRINT.info('%s: Invalid attribute value "%s" for "full" in port "%s" definition. Should be one of "drop", "assert", or "block"',
+                                       xml_file, f, n)
                             sys.exit(-1)
                     else:
                         f = "assert"
@@ -270,10 +262,8 @@ class XmlComponentParser:
                     for comment in port:
                         # only valid tag in ports is comment
                         if comment.tag != "comment":
-                            PRINT.info(
-                                "%s: Invalid tag %s in port %s"
-                                % (xml_file, comment.tag, port.tag)
-                            )
+                            PRINT.info("%s: Invalid tag %s in port %s",
+                                xml_file, comment.tag, port.tag)
                             sys.exit(-1)
                         port_obj.set_comment(comment.text.strip())
                     self.__ports.append(port_obj)
@@ -289,10 +279,8 @@ class XmlComponentParser:
                         self.__instances = len(opcode_bases)
                     else:
                         if len(opcode_bases) != self.__instances:
-                            PRINT.info(
-                                "%s: Component has mismatched command instances: %d vs. %d"
-                                % (xml_file, len(opcode_bases), self.__instances)
-                            )
+                            PRINT.info("%s: Component has mismatched command instances: %d vs. %d",
+                                       xml_file, len(opcode_bases), self.__instances)
                             sys.exit(-1)
 
                     # convert text bases to integers
@@ -304,10 +292,8 @@ class XmlComponentParser:
 
                 for command in comp_tag:
                     if command.tag != "command":
-                        PRINT.info(
-                            "%s: Invalid tag %s in commands definition"
-                            % (xml_file, command.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in commands definition",
+                                   xml_file, command.tag)
                         sys.exit(-1)
                     m = command.attrib["mnemonic"]
                     o = command.attrib["opcode"]
@@ -322,10 +308,8 @@ class XmlComponentParser:
 
                     s = command.attrib["kind"]
                     if component.attrib["kind"] == "passive" and s == "async":
-                        PRINT.info(
-                            "%s: Command %s cannot be async with a passive component"
-                            % (xml_file, m)
-                        )
+                        PRINT.info("%s: Command %s cannot be async with a passive component",
+                                   xml_file, m)
                         sys.exit(-1)
                     if "priority" in list(command.attrib.keys()):
                         p = command.attrib["priority"]
@@ -335,15 +319,15 @@ class XmlComponentParser:
                     if "full" in list(command.attrib.keys()):
                         f = command.attrib["full"]
                         if f not in ["drop", "assert", "block"]:
-                            err = '%s: Invalid attribute value "%s" for "full" in command "%s" definition. Should be one of "drop", "assert", or "block"'
-                            PRINT.info(err % (xml_file, f, m))
+                            PRINT.info('%s: Invalid attribute value "%s" for "full" in command "%s" definition. Should be one of "drop", "assert", or "block"',
+                                       xml_file, f, m)
                             sys.exit(-1)
                     else:
                         f = "assert"
 
-                    err = '%s: Invalid attribute "%s" in command "%s" definition. Should be one of "sync", "async", or "guarded"'
                     if s not in ["sync", "async", "guarded"]:
-                        PRINT.info(err % (xml_file, s, m))
+                        PRINT.info('%s: Invalid attribute "%s" in command "%s" definition. Should be one of "sync", "async", or "guarded"',
+                                   xml_file, s, m)
                         sys.exit(-1)
                     command_obj = Command(
                         m, opcode_list, s, p, None, base_opcode=o, full=f
@@ -355,10 +339,8 @@ class XmlComponentParser:
                         elif command_tag.tag == "args":
                             for arg in command_tag:
                                 if arg.tag != "arg":
-                                    PRINT.info(
-                                        "%s: Invalid tag %s in command args definition"
-                                        % (xml_file, arg.tag)
-                                    )
+                                    PRINT.info("%s: Invalid tag %s in command args definition",
+                                               xml_file, arg.tag)
                                     sys.exit(-1)
                                 n = arg.attrib["name"]
                                 t = arg.attrib["type"]
@@ -390,30 +372,24 @@ class XmlComponentParser:
                                         )
                                     else:
                                         PRINT.info(
-                                            "%s: Invalid argument tag %s in command %s argument %s"
-                                            % (
-                                                xml_file,
-                                                arg_tag.tag,
-                                                command_tag.tag,
-                                                n,
-                                            )
+                                            "%s: Invalid argument tag %s in command %s argument %s",
+                                            xml_file,
+                                            arg_tag.tag,
+                                            command_tag.tag,
+                                            n,
                                         )
                                         sys.exit(-1)
                                 command_obj.add_arg(command_arg_obj)
                         else:
-                            PRINT.info(
-                                "%s: Invalid tag %s in command definition"
-                                % (xml_file, command_tag.tag)
-                            )
+                            PRINT.info("%s: Invalid tag %s in command definition",
+                                       xml_file, command_tag.tag)
                             sys.exit(-1)
                     self.__commands.append(command_obj)
                 ## Check if there was at least 1 command
                 if len(self.__commands) > 0:
                     has_commands = True
                 else:
-                    PRINT.info(
-                        "Warning: No commands defined within the 'commands' tag "
-                    )
+                    PRINT.info("Warning: No commands defined within the 'commands' tag ")
             elif comp_tag.tag == "telemetry":  # parse telemetry channels
                 if "telemetry_base" in list(comp_tag.attrib.keys()):
                     telemetry_base = self.__eval_var(
@@ -425,10 +401,8 @@ class XmlComponentParser:
                         self.__instances = len(telemetry_bases)
                     else:
                         if len(telemetry_bases) != self.__instances:
-                            PRINT.info(
-                                "%s: Component has mismatched telemetry instances: %d vs. %d"
-                                % (xml_file, len(telemetry_bases), self.__instances)
-                            )
+                            PRINT.info("%s: Component has mismatched telemetry instances: %d vs. %d",
+                                       xml_file, len(telemetry_bases), self.__instances)
                             sys.exit(-1)
 
                     # convert text bases to integers
@@ -440,10 +414,8 @@ class XmlComponentParser:
 
                 for channel in comp_tag:
                     if channel.tag != "channel":
-                        PRINT.info(
-                            "%s: Invalid tag %s in channel definition"
-                            % (xml_file, channel.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in channel definition",
+                                   xml_file, channel.tag)
                         sys.exit(-1)
                     i = channel.attrib["id"]
                     # check to see if there is a base id specified
@@ -482,10 +454,8 @@ class XmlComponentParser:
                     if "data_type" in list(channel.attrib.keys()) and "type" in list(
                         channel.attrib.keys()
                     ):
-                        PRINT.info(
-                            "%s: Telemetry channel %s attributes 'data_type' and 'type' are  both specified. Only specify one."
-                            % (xml_file, n)
-                        )
+                        PRINT.info("%s: Telemetry channel %s attributes 'data_type' and 'type' are  both specified. Only specify one.",
+                                   xml_file, n)
                         sys.exit(-1)
 
                     if "data_type" in list(channel.attrib.keys()):
@@ -500,10 +470,8 @@ class XmlComponentParser:
                     if "update" in list(channel.attrib.keys()):
                         u = channel.attrib["update"]
                         if u != "always" and u != "on_change":
-                            PRINT.info(
-                                '%s: Invalid update %s in channel %s. Should be "always" or "on_change"'
-                                % (xml_file, u, n)
-                            )
+                            PRINT.info('%s: Invalid update %s in channel %s. Should be "always" or "on_change"',
+                                       xml_file, u, n)
                             sys.exit(-1)
                     else:
                         u = None
@@ -514,16 +482,14 @@ class XmlComponentParser:
                     s = None
                     if d == "string":
                         if not "size" in list(channel.attrib.keys()):
-                            PRINT.info(
-                                "%s: Telemetry channel %s string value must specify a size"
-                                % (xml_file, n)
-                            )
+                            PRINT.info("%s: Telemetry channel %s string value must specify a size",
+                                       xml_file, n)
                             sys.exit(-1)
                         s = channel.attrib["size"]
                     channel_obj = Channel(
                         ids=id_list,
                         name=n,
-                        type=d,
+                        command_type=d,
                         size=s,
                         abbrev=a,
                         format_string=f,
@@ -559,10 +525,8 @@ class XmlComponentParser:
                             # print "Offset: %s" % offset
                             channel_obj.set_units(name, gain, offset)
                         else:
-                            PRINT.info(
-                                "%s: Invalid tag %s in channel %s"
-                                % (xml_file, channel_tag.tag, n)
-                            )
+                            PRINT.info("%s: Invalid tag %s in channel %s",
+                                       xml_file, channel_tag.tag, n)
                             sys.exit(-1)
                     self.__channels.append(channel_obj)
                 if len(self.__channels) > 0:
@@ -580,10 +544,8 @@ class XmlComponentParser:
                         self.__instances = len(event_bases)
                     else:
                         if len(event_bases) != self.__instances:
-                            PRINT.info(
-                                "%s: Component has mismatched event instances: %d vs. %d"
-                                % (xml_file, len(opcode_bases), self.__instances)
-                            )
+                            PRINT.info("%s: Component has mismatched event instances: %d vs. %d",
+                                       xml_file, len(opcode_bases), self.__instances)
                             sys.exit(-1)
 
                     # convert text bases to integers
@@ -596,10 +558,8 @@ class XmlComponentParser:
 
                 for event in comp_tag:
                     if event.tag != "event":
-                        PRINT.info(
-                            "%s: Invalid tag %s in events definition"
-                            % (xml_file, event.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in events definition",
+                                   xml_file, event.tag)
                         sys.exit(-1)
                     i = event.attrib["id"]
                     # check to see if there is a base id specified
@@ -624,10 +584,8 @@ class XmlComponentParser:
                         "DIAGNOSTIC",
                     ]
                     if s not in serverity_list:
-                        PRINT.info(
-                            "%s: Error: Event %s severity must be one of %s."
-                            % (xml_file, n, ",".join(serverity_list))
-                        )
+                        PRINT.info("%s: Error: Event %s severity must be one of %s.",
+                                   xml_file, n, ",".join(serverity_list))
                         sys.exit(-1)
                     f = event.attrib["format_string"]
                     # Finding how many arguments are within the format string
@@ -647,35 +605,27 @@ class XmlComponentParser:
                         elif event_tag.tag == "args":
                             # Check if amount of args matches with the amount of arguments within the format string
                             if f_arg_amount != len(event_tag):
-                                argument_tuple = (
-                                    n,
-                                    component_name,
-                                    f_arg_amount,
-                                    len(event_tag),
-                                )  # event, component name,  format string arg count , supplied arg count
                                 PRINT.info(
-                                    "ArgumentCountMismatch: For event {} in component {} there are {} specified arguments in the format string but {} supplied arguments in the 'args' tag.".format(
-                                        *argument_tuple
-                                    )
+                                    "ArgumentCountMismatch: For event %s in component %s there are %d specified arguments in the format string but %d supplied arguments in the 'args' tag.",
+                                    n,               # event
+                                    component_name,  # component name
+                                    f_arg_amount,    # formt string arg count
+                                    len(event_tag),  # supplied arg count
                                 )
-                                PRINT.info("File path: {}".format(xml_file))
+                                PRINT.info("File path: %s", xml_file)
                                 sys.exit(-1)
                             for arg in event_tag:
                                 if arg.tag != "arg":
-                                    PRINT.info(
-                                        "%s: Invalid tag %s in %s event args definition"
-                                        % (xml_file, arg.tag, event.attrib["name"])
-                                    )
+                                    PRINT.info("%s: Invalid tag %s in %s event args definition",
+                                               xml_file, arg.tag, event.attrib["name"])
                                     sys.exit(-1)
                                 n = arg.attrib["name"]
                                 t = arg.attrib["type"]
                                 s = None
                                 if t == "string":
                                     if not "size" in list(arg.attrib.keys()):
-                                        PRINT.info(
-                                            "%s: Event %s string argument %s must specify a size"
-                                            % (xml_file, event.attrib["name"], n)
-                                        )
+                                        PRINT.info("%s: Event %s string argument %s must specify a size",
+                                                   xml_file, event.attrib["name"], n)
                                         sys.exit(-1)
                                     s = arg.attrib["size"]
                                 event_arg_obj = EventArg(n, t, s)
@@ -700,21 +650,17 @@ class XmlComponentParser:
                                         event_arg_obj.set_type(((t, en), enum_members))
                                     else:
                                         PRINT.info(
-                                            "%s: Invalid argument tag %s in event %s argument %s"
-                                            % (
-                                                xml_file,
-                                                arg_tag.tag,
-                                                event.attrib["name"],
-                                                n,
-                                            )
+                                            "%s: Invalid argument tag %s in event %s argument %s",
+                                            xml_file,
+                                            arg_tag.tag,
+                                            event.attrib["name"],
+                                            n,
                                         )
                                         sys.exit(-1)
                                 event_obj.add_arg(event_arg_obj)
                         else:
-                            PRINT.info(
-                                "%s: Invalid tag %s in event definition"
-                                % (xml_file, event_tag.tag)
-                            )
+                            PRINT.info("%s: Invalid tag %s in event definition",
+                                       xml_file, event_tag.tag)
                             sys.exit(-1)
                     self.__events.append(event_obj)
                 if len(self.__events) > 0:
@@ -732,10 +678,8 @@ class XmlComponentParser:
                         self.__instances = len(parameter_bases)
                     else:
                         if len(parameter_bases) != self.__instances:
-                            PRINT.info(
-                                "%s: Component has mismatched parameter instances: %d vs. %d"
-                                % (xml_file, len(opcode_bases), self.__instances)
-                            )
+                            PRINT.info("%s: Component has mismatched parameter instances: %d vs. %d",
+                                       xml_file, len(opcode_bases), self.__instances)
                             sys.exit(-1)
 
                     # convert text bases to integers
@@ -757,10 +701,8 @@ class XmlComponentParser:
                         self.__instances = len(opcode_bases)
                     else:
                         if len(opcode_bases) != self.__instances:
-                            PRINT.info(
-                                "%s: Component has mismatched command instances: %d vs. %d"
-                                % (xml_file, len(opcode_bases), self.__instances)
-                            )
+                            PRINT.info("%s: Component has mismatched command instances: %d vs. %d",
+                                       xml_file, len(opcode_bases), self.__instances)
                             sys.exit(-1)
 
                     # convert text bases to integers
@@ -771,10 +713,8 @@ class XmlComponentParser:
 
                 for parameter in comp_tag:
                     if parameter.tag != "parameter":
-                        PRINT.info(
-                            "%s: Invalid tag %s in parameter definition"
-                            % (xml_file, parameter.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in parameter definition",
+                                   xml_file, parameter.tag)
                         sys.exit(-1)
                     i = parameter.attrib["id"]
                     # check to see if there is a base id specified
@@ -811,10 +751,8 @@ class XmlComponentParser:
                     s = None
                     if d == "string":
                         if not "size" in list(parameter.attrib.keys()):
-                            PRINT.info(
-                                "%s: Parameter %s string value must specify a size"
-                                % (xml_file, n)
-                            )
+                            PRINT.info("%s: Parameter %s string value must specify a size",
+                                       xml_file, n)
                             sys.exit(-1)
                         s = parameter.attrib["size"]
                     if "default" in list(parameter.attrib.keys()):
@@ -851,10 +789,8 @@ class XmlComponentParser:
                                 enum_members.append((mn, v, mc))
                             parameter_obj.set_type(((d, en), enum_members))
                         else:
-                            PRINT.info(
-                                "%s: Invalid tag %s in parameter %s"
-                                % (xml_file, comment.tag, n)
-                            )
+                            PRINT.info("%s: Invalid tag %s in parameter %s",
+                                       xml_file, comment.tag, n)
                             sys.exit(-1)
                     self.__parameters.append(parameter_obj)
                 if len(self.__parameters) > 0:
@@ -865,17 +801,13 @@ class XmlComponentParser:
                 comp_tag.tag == "internal_interfaces"
             ):  # parse interfaces, which are internal messages
                 if comp_kind == "passive":
-                    PRINT.error(
-                        "%s: Component %s must be active or queued to have internal interfaces"
-                        % (xml_file, component_name)
-                    )
+                    PRINT.error("%s: Component %s must be active or queued to have internal interfaces",
+                                xml_file, component_name)
                     sys.exit(-1)
                 for internal_interface in comp_tag:
                     if internal_interface.tag != "internal_interface":
-                        PRINT.info(
-                            "%s: Invalid tag %s in internal interface definition"
-                            % (xml_file, internal_interface.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in internal interface definition",
+                                   xml_file, internal_interface.tag)
                         sys.exit(-1)
                     n = internal_interface.attrib["name"]
                     if "priority" in list(internal_interface.attrib.keys()):
@@ -886,8 +818,8 @@ class XmlComponentParser:
                     if "full" in list(internal_interface.attrib.keys()):
                         f = internal_interface.attrib["full"]
                         if f not in ["drop", "assert", "block"]:
-                            err = '%s: Invalid attribute value "%s" for "full" in internal_interface "%s" definition. Should be one of "drop", "assert", or "block"'
-                            PRINT.info(err % (xml_file, f, n))
+                            PRINT.info('%s: Invalid attribute value "%s" for "full" in internal_interface "%s" definition. Should be one of "drop", "assert", or "block"',
+                                       xml_file, f, n)
                             sys.exit(-1)
                     else:
                         f = "assert"
@@ -902,10 +834,8 @@ class XmlComponentParser:
                         elif internal_interface_tag.tag == "args":
                             for arg in internal_interface_tag:
                                 if arg.tag != "arg":
-                                    PRINT.info(
-                                        "%s: Invalid tag %s in internal_interface args definition"
-                                        % (xml_file, arg.tag)
-                                    )
+                                    PRINT.info("%s: Invalid tag %s in internal_interface args definition",
+                                               xml_file, arg.tag)
                                     sys.exit(-1)
                                 n = arg.attrib["name"]
                                 t = arg.attrib["type"]
@@ -940,36 +870,27 @@ class XmlComponentParser:
                                             ((t, en), enum_members)
                                         )
                                     else:
-                                        PRINT.info(
-                                            "%s: Invalid argument tag %s in internal_interface %s argument %s"
-                                            % (
-                                                xml_file,
-                                                arg_tag.tag,
-                                                internal_interface_tag.tag,
-                                                n,
-                                            )
+                                        PRINT.info("%s: Invalid argument tag %s in internal_interface %s argument %s",
+                                                   xml_file,
+                                                   arg_tag.tag,
+                                                   internal_interface_tag.tag,
+                                                   n,
                                         )
                                         sys.exit(-1)
                                 internal_interface_obj.add_arg(
                                     internal_interface_arg_obj
                                 )
                         else:
-                            PRINT.info(
-                                "%s: Invalid tag %s in internal_interface definition"
-                                % (xml_file, internal_interface_tag.tag)
-                            )
+                            PRINT.info("%s: Invalid tag %s in internal_interface definition",
+                                       xml_file, internal_interface_tag.tag)
                             sys.exit(-1)
                     self.__internal_interfaces.append(internal_interface_obj)
                 ## Check if there was at least 1 interface
                 if len(self.__internal_interfaces) == 0:
-                    PRINT.info(
-                        "Warning: No interfaces defined within the 'internal_interfaces' tag "
-                    )
+                    PRINT.info("Warning: No interfaces defined within the 'internal_interfaces' tag ")
             else:
-                PRINT.info(
-                    "%s: Invalid tag %s in component definition"
-                    % (xml_file, comp_tag.tag)
-                )
+                PRINT.info("%s: Invalid tag %s in component definition",
+                           xml_file, comp_tag.tag)
                 sys.exit(-1)
 
         ## Add implicit ports to port list if no ports were defined
@@ -1058,7 +979,7 @@ class XmlComponentParser:
             else:
                 for port, value in cmd_or_param.items():
                     if value == False:
-                        PRINT.info("%s port missing" % port)
+                        PRINT.info("%s port missing", port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
 
@@ -1081,7 +1002,7 @@ class XmlComponentParser:
             else:
                 for port, value in param.items():
                     if value == False:
-                        PRINT.info("%s port missing" % port)
+                        PRINT.info("%s port missing", port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
 
@@ -1131,7 +1052,7 @@ class XmlComponentParser:
         for p in self.__ports:
             t = p.get_type()
             if "::" in t:
-                # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file." % (n,t))
+                # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file.", n, t)
                 p.set_type(t.split("::")[-1])
 
     def __generate_port_from_role(self, role):
@@ -1145,7 +1066,7 @@ class XmlComponentParser:
         c = special_ports[role]["comment"]
         m = 1
 
-        p = Port(n, d, t, sync=s, role=role, comment=c, max=m)
+        p = Port(n, d, t, sync=s, role=role, comment=c, max_number=m)
 
         return p
 
@@ -1154,48 +1075,39 @@ class XmlComponentParser:
             port_file = self.special_ports[port.get_role()]["port_file"]
             self.__import_port_type_files.append(port_file)
 
-    def __eval_var(self, file, section, var):
+    def __eval_var(self, constants_file, section, var):
         # print "Check %s:%s"%(section,var)
         # check to see if variable token
         if var[0] != "$":
             return var
-        # make sure file was read in if a variable is defined
+        # make sure constants file was read in if a variable is defined
         if self.__const_parser is None:
-            PRINT.info(
-                "%s: Variable %s defined with no constants file %s"
-                % (
-                    file,
-                    var,
-                    self.Config._ConfigManager__prop["constants"]["constants_file"],
-                )
+            PRINT.info("%s: Variable %s defined with no constants file %s",
+                       constants_file,
+                       var,
+                       self.Config._ConfigManager__prop["constants"]["constants_file"],
             )
             sys.exit(-1)
         # check for more than one $
         if var.count("$") > 1:
-            PRINT.info("{}: Invalid variable {}".format(file, var))
+            PRINT.info("%s: Invalid variable %s", constants_file, var)
             sys.exit(-1)
         # try to find variable
         if not section in self.__const_parser.sections():
-            PRINT.info(
-                "%s: Config file %s has no %s variables"
-                % (
-                    file,
-                    self.Config._ConfigManager__prop["constants"]["constants_file"],
-                    section,
-                )
+            PRINT.info("%s: Config file %s has no %s variables",
+                       constants_file,
+                       self.Config._ConfigManager__prop["constants"]["constants_file"],
+                       section,
             )
             sys.exit(-1)
         # remove $
         var = var[1:]
         if not self.__const_parser.has_option(section, var):
-            PRINT.info(
-                "%s: Config file %s has no variable %s in section %s"
-                % (
-                    file,
-                    self.Config._ConfigManager__prop["constants"]["constants_file"],
-                    var,
-                    section,
-                )
+            PRINT.info("%s: Config file %s has no variable %s in section %s",
+                       constants_file,
+                       self.Config._ConfigManager__prop["constants"]["constants_file"],
+                       var,
+                       section,
             )
             sys.exit(-1)
         # Python 3's SafeConfigParser isn't stripping comments, this fixes that problem
@@ -1232,7 +1144,8 @@ class XmlComponentParser:
                 )
                 raise FprimeXmlException(msg)
             elif validator_type == "schematron":
-                msg = "WARNING: XML file {} is not valid according to {} {}.".format(
+                PRINT.info(
+                    "WARNING: XML file %s is not valid according to %s %s.",
                     dict_file,
                     validator_type,
                     ROOTDIR + self.Config.get(validator_type, validator_name),
@@ -1375,31 +1288,31 @@ class Port:
         self,
         name,
         direction,
-        type,
+        port_type,
         sync=None,
         priority=None,
         full=None,
         comment=None,
-        max=None,
+        max_number=None,
         role=None,
     ):
         """
         Constructor
         @param name:  Name of port (each instance must be unique).
         @param direction: Direction of data flow (must be input or output)
-        @param type:  Type of port (must have supporting include xml)
+        @param port_type:  Type of port (must have supporting include xml)
         @param sync:  Kind of port (must be one of: asynch, synch, or guarded)
         @param comment:  A single or multline comment
         """
         # TODO: ADD NAMESPACE
         self.__name = name
         self.__direction = direction
-        self.__type = type
+        self.__type = port_type
         self.__sync = sync
         self.__priority = priority
         self.__full = full
         self.__comment = comment
-        self.__max_number = max
+        self.__max_number = max_number
         self.__role = role
 
     def get_role(self):
@@ -1444,9 +1357,9 @@ class CommandArg:
     Data container for an command argument
     """
 
-    def __init__(self, name, type, size=None, comment=None):
+    def __init__(self, name, command_type, size=None, comment=None):
         self.__name = name
-        self.__type = type
+        self.__type = command_type
         self.__size = size
         self.__comment = comment
 
@@ -1459,8 +1372,8 @@ class CommandArg:
     def get_size(self):
         return self.__size
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, command_type):
+        self.__type = command_type
 
     def get_comment(self):
         return self.__comment
@@ -1539,9 +1452,9 @@ class InternalInterfaceArg:
     Data container for an interface argument
     """
 
-    def __init__(self, name, type, size=None, comment=None):
+    def __init__(self, name, command_type, size=None, comment=None):
         self.__name = name
-        self.__type = type
+        self.__type = command_type
         self.__size = size
         self.__comment = comment
 
@@ -1554,8 +1467,8 @@ class InternalInterfaceArg:
     def get_size(self):
         return self.__size
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, command_type):
+        self.__type = command_type
 
     def get_comment(self):
         return self.__comment
@@ -1614,7 +1527,7 @@ class Channel:
         self,
         ids,
         name,
-        type,
+        command_type,
         size=None,
         abbrev=None,
         format_string=None,
@@ -1626,7 +1539,7 @@ class Channel:
         Constructor
         @param id:  numeric channel id
         @param name: name of command
-        @param type:  Type of command (must have supporting include xml)
+        @param command_type:  Type of command (must have supporting include xml)
         @param abbrev: Channel abbreviation (to support AMPCS)
         @param size: size, if type is string
         @param format_string: represents the format string to display the value
@@ -1637,7 +1550,7 @@ class Channel:
 
         self.__ids = ids
         self.__name = name
-        self.__type = type
+        self.__type = command_type
         self.__abbrev = abbrev
         self.__size = size
         self.__format_string = format_string
@@ -1662,8 +1575,8 @@ class Channel:
     def get_type(self):
         return self.__type
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, command_type):
+        self.__type = command_type
 
     def get_size(self):
         return self.__size
@@ -1699,7 +1612,7 @@ class Parameter:
         self,
         ids,
         name,
-        type,
+        command_type,
         set_opcodes,
         save_opcodes,
         default,
@@ -1712,13 +1625,13 @@ class Parameter:
         Constructor
         @param id:  numeric channel id
         @param name: name of command
-        @param type:  Type of command (must have supporting include xml)
+        @param command_type:  Type of command (must have supporting include xml)
         @param comment:  A single or multiline comment
         """
 
         self.__ids = ids
         self.__name = name
-        self.__type = type
+        self.__type = command_type
         self.__set_opcodes = set_opcodes
         self.__save_opcodes = save_opcodes
         self.__default = default
@@ -1742,8 +1655,8 @@ class Parameter:
     def get_save_opcodes(self):
         return self.__save_opcodes
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, command_type):
+        self.__type = command_type
 
     def get_size(self):
         return self.__size
@@ -1769,9 +1682,9 @@ class EventArg:
     Data container for an event argument
     """
 
-    def __init__(self, name, type, size=None, comment=None):
+    def __init__(self, name, command_type, size=None, comment=None):
         self.__name = name
-        self.__type = type
+        self.__type = command_type
         self.__comment = comment
         self.__size = size
 
@@ -1781,8 +1694,8 @@ class EventArg:
     def get_type(self):
         return self.__type
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, command_type):
+        self.__type = command_type
 
     def get_size(self):
         return self.__size
@@ -1842,8 +1755,7 @@ class Event:
     def add_arg(self, arg):
         self.__args += (arg,)
 
-
-if __name__ == "__main__":
+def main():
     xmlfile = sys.argv[1]
 
     print("Component XML parse test (%s)" % xmlfile)
@@ -1874,3 +1786,6 @@ if __name__ == "__main__":
     for i in port_import_list:
         print("\t%s" % i)
     print()
+
+if __name__ == "__main__":
+    main()

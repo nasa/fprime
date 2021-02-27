@@ -64,8 +64,8 @@ class XmlPortsParser:
         self.__modifier = None
         #
         if os.path.isfile(xml_file) == False:
-            str = "ERROR: Could not find specified XML file %s." % xml_file
-            raise OSError(str)
+            msg = "ERROR: Could not find specified XML file %s." % xml_file
+            raise OSError(msg)
         fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
@@ -86,7 +86,7 @@ class XmlPortsParser:
 
         interface = element_tree.getroot()
         if interface.tag != "interface":
-            PRINT.info("%s is not a interface file" % xml_file)
+            PRINT.info("%s is not a interface file", xml_file)
             sys.exit(-1)
 
         print("Parsing Interface %s" % interface.attrib["name"])
@@ -112,10 +112,8 @@ class XmlPortsParser:
             elif interface_tag.tag == "args":
                 for arg in interface_tag:
                     if arg.tag != "arg":
-                        PRINT.info(
-                            "%s: Invalid tag %s in interface args definition"
-                            % (xml_file, arg.tag)
-                        )
+                        PRINT.info("%s: Invalid tag %s in interface args definition",
+                                   xml_file, arg.tag)
                         sys.exit(-1)
                     n = arg.attrib["name"]
                     t = arg.attrib["type"]
@@ -125,10 +123,8 @@ class XmlPortsParser:
                         p = None
                     if t == "string" or t == "buffer":
                         if not "size" in list(arg.attrib.keys()):
-                            PRINT.info(
-                                "%s: arg %s string must specify size tag"
-                                % (xml_file, arg.tag)
-                            )
+                            PRINT.info("%s: arg %s string must specify size tag",
+                                       xml_file, arg.tag)
                             sys.exit(-1)
                         else:
                             s = arg.attrib["size"]
@@ -155,10 +151,8 @@ class XmlPortsParser:
                                 enum_members.append((mn, v, mc))
                             arg_obj.set_type(((t, en), enum_members))
                         else:
-                            PRINT.info(
-                                "%s: Invalid argument tag %s in port %s argument %s"
-                                % (xml_file, arg_tag.tag, interface_tag.tag, n)
-                            )
+                            PRINT.info("%s: Invalid argument tag %s in port %s argument %s",
+                                       xml_file, arg_tag.tag, interface_tag.tag, n)
                             sys.exit(-1)
 
                     self.__args.append(arg_obj)
@@ -187,10 +181,8 @@ class XmlPortsParser:
                             enum_members.append((mn, v, mc))
                         t = ((t, en), enum_members)
                     else:
-                        PRINT.info(
-                            "%s: Invalid port return value tag %s"
-                            % (xml_file, enum_tag.tag)
-                        )
+                        PRINT.info("%s: Invalid port return value tag %s",
+                                   xml_file, enum_tag.tag)
                         sys.exit(-1)
 
                 self.__port.set_return(t, m)
@@ -330,5 +322,5 @@ class Arg:
     def set_comment(self, comment):
         self.__comment = comment
 
-    def set_type(self, type):
-        self.__type = type
+    def set_type(self, to_type):
+        self.__type = to_type
