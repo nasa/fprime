@@ -8,7 +8,7 @@ settings from the settings.default file that is part of the F prime deployment d
 """
 import os
 import configparser
-from typing import Dict, List
+from typing import List
 from pathlib import Path
 
 

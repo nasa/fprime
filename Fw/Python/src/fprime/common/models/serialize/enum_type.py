@@ -85,12 +85,12 @@ class EnumType(ValueType):
         """
         try:
             int_val = struct.unpack_from(">i", data, offset)[0]
-        except:
+        except struct.error as ex:
             raise DeserializeException(
                 "Could not deserialize enum value. Needed: {} bytes Found: {}".format(
                     self.getSize(), len(data[offset:])
                 )
-            )
+            ) from ex
         for key, val in self.enum_dict().items():
             if int_val == val:
                 self.val = key

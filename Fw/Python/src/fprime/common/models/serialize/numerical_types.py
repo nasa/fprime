@@ -56,7 +56,7 @@ class NumericalType(ValueType, abc.ABC):
         try:
             self.val = struct.unpack_from(self.get_serialize_format(), data, offset)[0]
         except struct.error as err:
-            raise DeserializeException(str(err))
+            raise DeserializeException(str(err)) from err
 
 
 class IntegerType(NumericalType, abc.ABC):

@@ -346,7 +346,7 @@ class CMakeHandler:
         reg = re.compile("([^:]+):[^=]*=(.*)")
         # Check that the build_dir is properly setup
         self._cmake_validate_build_dir(build_dir)
-        stdout, stderr = self._run_cmake(["-LA"], workdir=build_dir, print_output=False)
+        stdout, _ = self._run_cmake(["-LA"], workdir=build_dir, print_output=False)
         # Scan for lines in stdout that have non-None matches for the above regular expression
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout))
         # Return the dictionary composed from the match groups

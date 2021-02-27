@@ -40,8 +40,8 @@ class BoolType(ValueType):
             if int_val not in [self.TRUE, self.FALSE]:
                 raise TypeRangeException(int_val)
             self.val = int_val == self.TRUE
-        except struct.error:
-            raise DeserializeException("Not enough bytes to deserialize bool.")
+        except struct.error as ex:
+            raise DeserializeException("Not enough bytes to deserialize bool.") from ex
 
     def getSize(self):
         return struct.calcsize("B")

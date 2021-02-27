@@ -75,8 +75,6 @@ class EnumMismatchException(TypeException):
 class DeserializeException(TypeException):
     """ Exception during deserialization """
 
-    pass
-
 
 class ArgNotFoundException(TypeException):
     """ Argument not found exception """

@@ -72,8 +72,8 @@ class StringType(type_base.ValueType):
             elif self.__max_string_len is not None and val_size > self.__max_string_len:
                 raise StringSizeException(val_size, self.__max_string_len)
             self.val = data[offset + 2 : offset + 2 + val_size].decode(DATA_ENCODING)
-        except struct.error:
-            raise DeserializeException("Not enough bytes to deserialize string length.")
+        except struct.error as ex:
+            raise DeserializeException("Not enough bytes to deserialize string length.") from ex
 
     def getSize(self):
         """
