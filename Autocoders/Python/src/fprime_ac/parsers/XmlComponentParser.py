@@ -1144,13 +1144,13 @@ class XmlComponentParser:
                 )
                 raise FprimeXmlException(msg)
             elif validator_type == "schematron":
+                # TODO: Should this raise an FprimeXmlException instead?
                 PRINT.info(
                     "WARNING: XML file %s is not valid according to %s %s.",
                     dict_file,
                     validator_type,
                     ROOTDIR + self.Config.get(validator_type, validator_name),
                 )
-                PRINT.info(msg)
 
     def is_component(self):
         """
