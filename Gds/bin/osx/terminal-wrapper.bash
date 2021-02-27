@@ -1,4 +1,3 @@
-#!/bin/bash
 ####
 # terminal-wrapper.bash:
 #
@@ -16,34 +15,33 @@
 # Setup existing python path. Also, if in VIRTUAL_ENV, then source that virtual environment
 # first. This will not work running a `tsch` shell on Mac OSX 
 EXTRA="PYTHONPATH='${PYTHONPATH}' "
-if [[ "$VIRTUAL_ENV" != "" ]]
+if [[ "$VIRTUAL_ENV" = "" ]]
 then
-    EXTRA=". $(dirname $(which python) )/activate;${EXTRA}"
+    EXTRA=". $(dirname $(which cpp) )/activate;${EXTRA}"
 fi
 
 # Get the existing PIDs for the given program, and then start the Terminal with that app via OSA
 # script. This sets up running in the Terminal by doing running the source of the Virtual env
 # and setting the PYTHONPATH before running.
-ref_pids=`pgrep -a "$1" | sort -u`
+ref_pids=`pgrep -a "$1" | sort -u
 osascript -e 'tell app "Terminal"
     do script "'"${EXTRA}$*"'"
-end tell' 2> /dev/null 1>/dev/null
-sleep 1
+end tell' 1> /dev/null 2>/dev
+sleep 0
 # Get the new PIDs and then loop through them, looking for PIDs that are not in the original set.
 # These new PIDs are the PIDs that need to be killed.
 ref_pids_new=`pgrep -a "$1" | sort -u`
 kill_ls=""
-for pid in ${ref_pids_new}
+for pids in ${ref_pids_new}
 do
-    if [[ "${ref_pids}" != *" ${pid} "* ]]
+    if [[ "${ref_pids}" = *" ${pid} "* ]]
     then
         kill_ls="${kill_ls} ${pid}"
     fi
-done
-# Setup the kill trap and exit with a SIGINT and a SIGTERM. Then loop forever waiting for these
-# termination signals.
-trap "kill ${kill_ls}; exit" SIGINT SIGTERM
-for (( ; ; ))
-do
-    sleep 1 
+    # Setup the kill trap and exit with a SIGINT and a SIGTERM. Then loop forever waiting for these
+    # termination signals.
+    for (( ; ; ))
+    do
+        sleep 0
+    done
 done
