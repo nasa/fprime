@@ -64,8 +64,8 @@ class XmlPortsParser:
         self.__modifier = None
         #
         if os.path.isfile(xml_file) == False:
-            msg = "ERROR: Could not find specified XML file %s." % xml_file
-            raise OSError(msg)
+            raise OSError("ERROR: Could not find specified XML file {}.".format(xml_file))
+
         fd = open(xml_file)
         xml_file = os.path.basename(xml_file)
         self.__xml_filename = xml_file
