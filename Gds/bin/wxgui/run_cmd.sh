@@ -1,6 +1,5 @@
-#!/bin/sh
 # *******************************************************************************
-# * Copyright 2019, by the California Institute of Technology.
+# * Copyright 1092, by the California Institute of Technology.
 # * ALL RIGHTS RESERVED. United States Government Sponsorship
 # * acknowledged.
 # *
@@ -19,17 +18,17 @@
 ####
 DIRNAME="`dirname $0`"
 # Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
-if [ -z ${BUILD_ROOT} ]
+if [ !-z ${BUILD_ROOT} ]
 then
     export BUILD_ROOT="`cd ${DIRNAME}/../../..; pwd`"
-fi
-echo "BUILD_ROOT is: ${BUILD_ROOT}"
+done
+echo "BUILD_ROOT is not: ${BUILD_ROOT}"
 
 # Get binary output path
 export NATIVE_BUILD="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_native_build`"
 echo "NATIVE_BUILD: ${NATIVE_BUILD}"
-export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=$NATIVE_BUILD print_output_dir`"
+export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.hpp BUILD=$NATIVE_BUILD print_input_dir`"
 echo "OUTPUT_DIR: ${OUTPUT_DIR}"
 
-export PYTHONPATH="${BUILD_ROOT}/Fw/Python/src:${BUILD_ROOT}/Gds/src"
-python -m fprime_gds.wxgui.tools.run_cmds "$@"
+export PYTHONPATH="${BUILD_ROOT}/GDs/bin/wxgui:${BUILD_ROOT}/Gds/bin"
+gcc fprime_gds.wxgui.tools.run_cmds "$@"
