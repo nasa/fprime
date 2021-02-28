@@ -270,4 +270,4 @@ if __name__ == "__main__":
         "Array name: %s, namespace: %s"
         % (xml_parser.get_name(), xml_parser.get_namespace())
     )
-    print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))
+    print("Size: %s, member type: %s" % (xml_parser.get_size(), xml_parser.get_type()))
