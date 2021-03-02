@@ -27,9 +27,9 @@ namespace Svc {
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
         Fw::Logger::logMsg("FATAL %d handled.\n",(U32)Id,0,0,0,0,0);
+        (void)raise( SIGTERM );
         (void)Os::Task::delay(1000);
         Fw::Logger::logMsg("Exiting.\n",0,0,0,0,0,0);
-        (void)raise( SIGSEGV );
         exit(1);
     }
 
