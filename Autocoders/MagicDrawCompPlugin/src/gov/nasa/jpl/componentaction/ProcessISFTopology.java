@@ -215,7 +215,7 @@ public class ProcessISFTopology {
 	 * <p>
 	 * 
 	 * The index checking/correction is done so multiplicites do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
-	 * The latter pair has the additinal port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
+	 * The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
 	 * This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match.
 	 * 
 	 * <p> 

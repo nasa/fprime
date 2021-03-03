@@ -225,7 +225,7 @@ PHASE THREE FUNCTION
 .PP
 This function serves two purposes\&. The first is to convert the physicalConnectionSet to a physicalConnecitonList\&. The second is to perform index checking and correction on ports of the cmdReg/cmd or com/cmdResponse type\&.
 .PP
-The index checking/correction is done so multiplicites do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks\&. The latter pair has the additinal port name constraint because there are multiple other ports with the same cmdResponse type\&. Some of these port are not to be auto-indexed\&. This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match\&.
+The index checking/correction is done so multiplicites do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks\&. The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type\&. Some of these port are not to be auto-indexed\&. This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match\&.
 .PP
 The program redefines the indexes in numerical order\&. Even if initial indexes are given, for the origin of Cmd and the target of CmdReg, they are overwritten\&. They target index of Cmd is preserved and also is written to the source of CmdReg\&.
 .PP
