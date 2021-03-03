@@ -363,7 +363,7 @@ endfunction(register_fprime_executable)
 #   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
 #             these as positional arguments overrides any specified in the parent scope.
 #
-#   **Note:** UTs automaitcally depend on the module. In order to prevent this, explicitly pass in args
+#   **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
 #             to this module, excluding the module.
 #
 #         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
