@@ -8,7 +8,7 @@
 #                 command listing.
 #  PUT /commands/<command>: issue a command through the GDS
 #      Data: {
-#                "key": "0xfeedcafe", # A key preventing accedential issuing of a command
+#                "key": "0xfeedcafe", # A key preventing accidental issuing of a command
 #                "args": {
 #                            <arg-key>:<arg-value>,
 #                             ...
