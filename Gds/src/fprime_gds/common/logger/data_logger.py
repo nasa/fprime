@@ -67,7 +67,7 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
         """Data was recved on the socket server
 
         Arguments:
-            data {bin} --binnary data string that was recved
+            data {bin} --binary data string that was recved
         """
 
         self.f_r.write(data)
