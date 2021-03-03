@@ -33,11 +33,7 @@ from fprime_ac.utils.exceptions import (
     FprimeXmlException,
 )
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-# from __builtin__ import None
+import configparser
 
 # For Python determination
 
