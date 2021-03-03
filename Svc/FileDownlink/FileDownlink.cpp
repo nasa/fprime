@@ -13,6 +13,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Svc {
 
@@ -172,8 +173,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    memcpy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    memcpy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
+    Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
@@ -245,8 +246,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    memcpy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    memcpy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
+    Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
@@ -278,8 +279,8 @@ namespace Svc {
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
-    memcpy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
-    memcpy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
+    Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
+    Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
