@@ -139,11 +139,11 @@
 			<optional>
 				<choice>
 					<attribute name="base_id_window">
-						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternativly use the "base_id_range" tag.</a:documentation>
+						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternatively use the "base_id_range" tag.</a:documentation>
 						<data type="nonNegativeInteger"></data>
 					</attribute>
 					<attribute name="base_id_range">
-						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternativly use the "base_id_window" tag.</a:documentation>
+						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternatively use the "base_id_window" tag.</a:documentation>
 						<data type="nonNegativeInteger"></data>
 					</attribute>
 				</choice>

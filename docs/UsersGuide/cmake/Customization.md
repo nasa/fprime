@@ -59,7 +59,7 @@ use the `add_directory` cmake command to add the directory. Then use a `CMakeLis
 is used when the system does not depend on the files produced (directly) but may need a link
 dependency, and `add_custom_command` is used when the system needs access to the output files.
 
-Alternativley, `ExternalProject_Add` can be used if the external library requires download,
+Alternatively, `ExternalProject_Add` can be used if the external library requires download,
 version control, and building steps.
 
 **Supporting Documentation:**
