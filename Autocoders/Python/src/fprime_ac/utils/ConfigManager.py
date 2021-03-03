@@ -40,7 +40,6 @@ class ConfigManager(parent):
         Constructor.
         """
         configparser.ConfigParser.__init__(self)
-        configparser.RawConfigParser.__init__(self)
         self.__prop = dict()
         self._setProps()
         # Now look for an ac.ini file within
