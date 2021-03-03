@@ -24,7 +24,7 @@ def dumpAttrs(obj, log=None, loglvl=logging.DEBUG):
         loglvl=loglvl,
         showDoc=False,
         showMethods=False,
-        showAtributes=True,
+        showAttributes=True,
     )
 
 
@@ -37,7 +37,7 @@ def dumpObj(
     loglvl=logging.DEBUG,
     showDoc=True,
     showMethods=True,
-    showAtributes=True,
+    showAttributes=True,
 ):
     """
     Print a nicely formatted overview of an object.
@@ -228,7 +228,7 @@ def dumpObj(
             else:
                 print(prettyString)
 
-    if showAtributes:
+    if showAttributes:
         # Attributes
         if attrs:
             if log:
