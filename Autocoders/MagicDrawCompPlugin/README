@@ -49,7 +49,7 @@ To regenerate the Documentation to conform with any future changes:
 
 Version 2.7:
 -------------
-- Add the subsystem name as a field in the <assmbly> tag.  This allows the Autocoder to generate a unique name for each topology model.
+- Add the subsystem name as a field in the <assembly> tag.  This allows the Autocoder to generate a unique name for each topology model.
 
 Version 2.8:
 --------------
