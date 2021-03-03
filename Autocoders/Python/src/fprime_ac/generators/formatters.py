@@ -1212,7 +1212,7 @@ class Formatters:
         Run this function again for alignment of
         comments on the end.
         @param type_list: list of argument type names.
-        @param arg_list:  list of argments corresponding to type names.
+        @param arg_list:  list of arguments corresponding to type names.
         @return str_list: a list of strings with args aligned.
         """
 
