@@ -61,7 +61,7 @@ MathSender will have no parameters.
 
 ### 1.2.1 Commands
 
-`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 0 if the command is never invoked.
+`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multiplied by this factor. It should default to 0 if the command is never invoked.
 
 `MathReceiver` should also implement a MR_CLEAR_EVENT_THROTTLE command to clear the throttled MR_SET_FACTOR1 event (see below).
 
