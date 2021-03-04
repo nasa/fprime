@@ -130,7 +130,7 @@ public class ISFComponent {
 	}
 
 	/**
-	 * Creates a new port object using the port Element inputed. This processes the port and can throw an exception if something in the port is illegal.
+	 * Creates a new port object using the port Element inputted. This processes the port and can throw an exception if something in the port is illegal.
 	 * It also adds the port into fillList. 
 	 * 
 	 * <p>
@@ -154,7 +154,7 @@ public class ISFComponent {
 	}
 	
 	/**
-	 * Creates a new port object using the port Element inputed. This processes the port and can throw an exception if something in the port is illegal.
+	 * Creates a new port object using the port Element inputted. This processes the port and can throw an exception if something in the port is illegal.
 	 * It also adds the port into fillList.
 	 * 
 	 * @param portElement

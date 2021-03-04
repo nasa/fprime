@@ -559,7 +559,7 @@ public class ProcessISFTopology {
 		
 		subsystemInstances.put(subsystemName, subsystemInstanceNameList.size());
 		
-		//Iterate through all owned objects of the inputed subsystem
+		//Iterate through all owned objects of the inputted subsystem
 		for(Element e: subsystem.getOwnedElement()){
 			//Add connections to a map where the connector end is a key associated with lists of input/output connections
 			if(e.getHumanType().equals("Part Property") || e.getHumanType().equals("Reference Property")){
