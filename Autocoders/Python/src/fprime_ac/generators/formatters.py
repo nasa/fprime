@@ -617,7 +617,7 @@ class Formatters:
 
     def msgUnionArgName(self, msg_type):
         """
-        Return the name of a stardard argument for a union
+        Return the name of a standard argument for a union
         used to determine maximum size of a message type.
         @param msg_type: The Typedef msg name (must include 'AcMsg')
         """
