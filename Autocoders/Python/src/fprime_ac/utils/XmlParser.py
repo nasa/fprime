@@ -3,7 +3,7 @@
 # NAME: XmlParser.py
 #
 # DESCRIPTION:  This is a general xml parser class based on
-#               the python xml2obj receipe.
+#               the python xml2obj recipe.
 #
 # USAGE:
 #
