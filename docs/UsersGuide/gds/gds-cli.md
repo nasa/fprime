@@ -156,7 +156,7 @@ The `fprime-cli` commands can roughly be grouped into 2 categories:
 #### Receiving Events and Channels
 
 The first category contains `channels` and `events`. There are two very similar commands to respectively listen for any
-telemetry channels or logged events coming from the embedded sysstem through the GDS. These commands print out all the
+telemetry channels or logged events coming from the embedded system through the GDS. These commands print out all the
 data they receive to the console until the user stops them with `CTRL+C`. Since this can be quite a lot of data,
 the user will often want to limit the data to items the user specifically cares about. There are several options to
 filter which items are displayed:
