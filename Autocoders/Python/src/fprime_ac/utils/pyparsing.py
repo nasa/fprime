@@ -77,7 +77,7 @@ def _ustr(obj):
     then < returns the unicode object | encodes it with the default encoding | ... >.
     """
     try:
-        # If this works, then _ustr(obj) has the same behaviour as str(obj), so
+        # If this works, then _ustr(obj) has the same behavior as str(obj), so
         # it won't break any existing code.
         return str(obj)
 
