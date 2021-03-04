@@ -245,7 +245,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 ```
 
 Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First,
-`MOD_DEPS` is usually defined as some dependencies cannot be auto-detectesd must be chosen and
+`MOD_DEPS` is usually defined as some dependencies cannot be auto-detected must be chosen and
 `register_fprime_executable` is called as an executable will be generated.
 
 **Topology CMakeList.txt**
