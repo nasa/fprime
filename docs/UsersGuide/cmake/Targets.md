@@ -29,7 +29,7 @@ See: [coverage.md](coverage.md)
 
 ### `dict` Target
 
-The target system is also used to produce ductionaries. These dictionaries can be created using the
+The target system is also used to produce dictionaries. These dictionaries can be created using the
 top-level `dict` target. Dictionaries do not make use of module-specific targets in terms of user
 interaction.
 
