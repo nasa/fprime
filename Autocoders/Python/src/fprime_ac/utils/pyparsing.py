@@ -1941,7 +1941,7 @@ class StringStart(PositionToken):
 
     def parseImpl(self, instring, loc, doActions=True):
         if loc != 0:
-            # see if entire string up to here is just whitespace and ignoreables
+            # see if entire string up to here is just whitespace and ignorables
             if loc != self.preParse(instring, 0):
                 # ~ raise ParseException( instring, loc, "Expected start of text" )
                 exc = self.myException
