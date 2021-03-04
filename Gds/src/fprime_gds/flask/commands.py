@@ -18,7 +18,7 @@
 #
 #
 # Note: for commands, these are not true "REST" objects, and thus this is a bit of a stretch to use
-#       a restful interface here. It is done this way to be in-tandum with the events and telemetry
+#       a restful interface here. It is done this way to be in-tandem with the events and telemetry
 #       APIs for maintainability.
 ####
 import flask_restful
