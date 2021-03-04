@@ -11,7 +11,7 @@ used for access and control flow of the internal queue data structure (ie. [`pth
 etc.). The Pthread implementation provides the following advantages over the operating system provided IPC queues:
 
 - The Pthreads implementation is NOT an IPC queue. It is designed for message passing between threads in the same
-memory address space. This means that it never touches the filesystem and has no persistant state after the
+memory address space. This means that it never touches the filesystem and has no persistent state after the
 `Os::Queue` deconstructor has been called. ISF currently does not spread different threads of execution in different memory 
 spaces on Darwin and Linux, so this is an acceptable solution.
 
