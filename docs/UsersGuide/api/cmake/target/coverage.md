@@ -26,7 +26,7 @@ make Svc_CmdDispatcher_Cmd
 **Note:** although a globale `coverage` target is created, it typically should not be used as
 CTest provides better global coverage with the `Coverage` target.
 
-## Detailed Function Desceiptions
+## Detailed Function Descriptions
 
 The following functions are used to register the _coverage targets into the target system. They
 are required for the system to register custom targets.
