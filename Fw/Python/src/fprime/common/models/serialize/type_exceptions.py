@@ -97,7 +97,7 @@ class NotOverriddenException(TypeException):
 
     def __init__(self, message):
         super().__init__(
-            "Required base class method not overrwritten in type %s!" % message
+            "Required base class method not overwritten in type %s!" % message
         )
 
 
