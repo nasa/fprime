@@ -22,8 +22,8 @@ namespace Svc {
       maxFileSize(maxFileSize),
       fileMode(CLOSED), 
       byteCount(0),
-      writeErrorOccured(false),
-      openErrorOccured(false),
+      writeErrorOccurred(false),
+      openErrorOccurred(false),
       storeBufferLength(storeBufferLength)
   {
     if( this->storeBufferLength ) {
@@ -162,15 +162,15 @@ namespace Svc {
 
     Os::File::Status ret = file.open((char*) this->fileName, Os::File::OPEN_WRITE);
     if( Os::File::OP_OK != ret ) {
-      if( !this->openErrorOccured ) { // throttle this event, otherwise a positive
-                                // feedback event loop can occur!
+      if( !this->openErrorOccurred ) { // throttle this event, otherwise a positive
+                                       // feedback event loop can occur!
         Fw::LogStringArg logStringArg((char*) this->fileName);
         this->log_WARNING_HI_FileOpenError(ret, logStringArg);
       }
-      this->openErrorOccured = true;
+      this->openErrorOccurred = true;
     } else {
       // Reset event throttle:
-      this->openErrorOccured = false;
+      this->openErrorOccurred = false;
 
       // Reset byte count:
       this->byteCount = 0;
@@ -234,16 +234,16 @@ namespace Svc {
     NATIVE_INT_TYPE size = length;
     Os::File::Status ret = file.write(data, size);
     if( Os::File::OP_OK != ret || size != (NATIVE_INT_TYPE) length ) {
-      if( !this->writeErrorOccured ) { // throttle this event, otherwise a positive
-                                 // feedback event loop can occur!
+      if( !this->writeErrorOccurred ) { // throttle this event, otherwise a positive
+                                        // feedback event loop can occur!
         Fw::LogStringArg logStringArg((char*) this->fileName);
         this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
       }
-      this->writeErrorOccured = true;
+      this->writeErrorOccurred = true;
       return false;
     }
 
-    this->writeErrorOccured = false;
+    this->writeErrorOccurred = false;
     return true;
   }
 
