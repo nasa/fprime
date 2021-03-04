@@ -259,7 +259,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     val = 0
 
     # To debug this loop, set the watchForType value to be what you
-    # are interested in debgging, such as 'MrfType'
+    # are interested in debugging, such as 'MrfType'
     debugOnType = "no_debugging_desired_here_sir_carry_on"
 
     for i in range(len(toks)):
