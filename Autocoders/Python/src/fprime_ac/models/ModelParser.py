@@ -144,7 +144,7 @@ class ModelParser:
             return arg_type
         elif arg_type == "Serial":
             return arg_type
-        # Type already has specific namespace preffixed
+        # Type already has specific namespace prefixed
         elif "::" in arg_type:
             return arg_type
         else:
