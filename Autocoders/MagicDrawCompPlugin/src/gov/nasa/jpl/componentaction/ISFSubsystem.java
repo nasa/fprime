@@ -28,7 +28,7 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 public class ISFSubsystem {
 
 	/**
-	 * Used as a object to store the componentMap, physicalConnectionList, name, baseID, and instaneWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to 
+	 * Used as a object to store the componentMap, physicalConnectionList, name, baseID, and instanceWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to 
 	 * the XML output file. 
 	 *
 	 */
