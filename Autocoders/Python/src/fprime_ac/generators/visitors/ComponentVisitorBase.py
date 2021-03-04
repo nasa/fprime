@@ -68,13 +68,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Make a list of args into a string
         """
-        if len(args) == 0:
-            result = ""
-        else:
-            result = args[0]
-            for arg in args[1:]:
-                result += ", %s" % arg
-        return result
+        return ', '.join(args)
 
     def buildFileName(self, obj):
         """

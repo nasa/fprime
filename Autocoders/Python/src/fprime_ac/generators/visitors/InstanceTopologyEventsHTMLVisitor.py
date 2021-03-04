@@ -150,6 +150,12 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         @parms args: the instance of the concrete element to operation on.
         """
 
+    def argsString(self, args):
+        """
+        Make a list of args into a string
+        """
+        return ', '.join(args)
+
     def eventArgsStr(self):
         """
         Make a list of event args into a string
