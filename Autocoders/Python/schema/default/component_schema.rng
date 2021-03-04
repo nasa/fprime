@@ -187,7 +187,7 @@
 
     <define name = "import_port_define">
         <element name = "import_port_type">
-            <a:documentation>Path to port XML defenition.</a:documentation>
+            <a:documentation>Path to port XML definition.</a:documentation>
             <data type = "anyURI"></data>
         </element>
     </define>

@@ -13,15 +13,15 @@
 		<a:documentation>Test inside START</a:documentation>
 		<choice>
 			<element  name = "deployment">
-				<ref name = "root_defenition"></ref>
+				<ref name = "root_definition"></ref>
 			</element>
 			<element  name = "assembly">
-				<ref name = "root_defenition"></ref>
+				<ref name = "root_definition"></ref>
 			</element>
 		</choice>
 	</start>
 
-	<define name = "root_defenition">
+	<define name = "root_definition">
 		<!-- Actual attributes and elements inside the root tag. -->
 
 		<!-- Attributes -->
@@ -73,31 +73,31 @@
 
 			<zeroOrMore>
 				<a:documentation>Import of component type XML files.</a:documentation>
-				<ref name = "import_defenition"></ref>
+				<ref name = "import_definition"></ref>
 			</zeroOrMore>
 
 			<oneOrMore>
 				<a:documentation>Declares instances of objects.</a:documentation>
-				<ref name = "instance_defenition"></ref>
+				<ref name = "instance_definition"></ref>
 			</oneOrMore>
 
 			<oneOrMore>
 				<a:documentation>Creates connections between objects and their ports.</a:documentation>
-				<ref name = "connection_defenition"></ref>
+				<ref name = "connection_definition"></ref>
 			</oneOrMore>
 		</interleave>
 
 	</define>
 
-	<define name = "import_defenition">
-		<!-- Defenition for "import_component_type" tags.-->
+	<define name = "import_definition">
+		<!-- Definition for "import_component_type" tags.-->
 		<element name = "import_component_type">
 			<a:documentation>Value should be a path to a component XML file that is used as an instance.</a:documentation>
 			<data type="anyURI"></data>
 		</element>
 	</define>
 
-	<define name = "instance_defenition">
+	<define name = "instance_definition">
 		<!-- Defines attributes for "instance" tags. -->
 		<element name = "instance">
 			<a:documentation>Instance of component within the model.</a:documentation>
@@ -152,7 +152,7 @@
 		</element>
 	</define>
 
-	<define name = "connection_defenition">
+	<define name = "connection_definition">
 		<element name = "connection">
 			<a:documentation>Creates a new connection between source and target objects.</a:documentation>
 			<!-- Attributes -->
