@@ -58,7 +58,7 @@ while (true) {
 Now all that is required is to determine when this interval has elapsed. This can be done spinning on a hardware clock
 signal, calculating elapsed time by reading of clock registers, using timing library functions, the `sleep()` call, or
 by an timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
-before going this route.  Notibly, the ISR should not execute the rate group directly, but rather should set a flag or
+before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or
 queu a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
 groups.
 
