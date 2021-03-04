@@ -68,7 +68,7 @@ Remember it should be renamed to `CMakeLists.txt` in your deployments folder.
 When building a module, ensure it at least calls `register_fprime_module`. Deployments may call
 `register_fprime_executable` in the deployment `CMakeLists.txt` or in any child (usually Top/CMakeLists.txt).
 
-When building a module, remember to add it to the deployment by adding a line `add_fprime_subdirecory(path/module/dir)`
+When building a module, remember to add it to the deployment by adding a line `add_fprime_subdirectory(path/module/dir)`
 to the deployment `CMakeLists.txt`.
 
 ## API Information
