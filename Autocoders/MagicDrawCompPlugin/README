@@ -88,7 +88,7 @@ version 4.2:
 
 version 4.3:
 ---------------
-- Added functionally for CmdSequenceCommands and CmdSequenceResponseto have their multiplicities be auto generated. 
+- Added functionally for CmdSequenceCommands and CmdSequenceResponse to have their multiplicities be auto generated. 
 - Added button that allows user to import a base id / window range config file which will add those ids to the model.
 - Added simple tags to warning messages for easier human identification.
 
