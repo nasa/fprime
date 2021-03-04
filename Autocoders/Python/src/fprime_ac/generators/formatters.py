@@ -1083,7 +1083,7 @@ class Formatters:
             if cpos <= apos + type_max + 1:
                 cpos = apos + type_max + 1
 
-            # place args and comments and put togeither the string.
+            # place args and comments and put together the string.
             i = 0
             func_arg_list = []
             for a in format_func_list[1:]:
