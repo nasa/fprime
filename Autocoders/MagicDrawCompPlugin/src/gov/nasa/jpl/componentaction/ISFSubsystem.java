@@ -111,7 +111,7 @@ public class ISFSubsystem {
 
 	/**
 	 * The physicalConnectionType is used to describe connections. Connector objects can not be re-defined through the API, so when we find a source port with it's final target port, we make one 
-	 * of these objects to describe the connection. This includes the names of the ports, the type, the parent name, the multiplicities, and the actual conectorEnd.
+	 * of these objects to describe the connection. This includes the names of the ports, the type, the parent name, the multiplicities, and the actual connectorEnd.
 	 */
 	public static class physicalConnectionType {
 		String source;
