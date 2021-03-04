@@ -21,7 +21,7 @@ as part of the CMake system. These targets are described in more detain below.
 ### `<MODULE>_coverage` Targets
 
 The coverage target works on systems where the `gcov` executable is available on the executable
-search path and the `CMAKE_BUILD_TYPE` vrariable has been set to `TESTING`. If these two conditions
+search path and the `CMAKE_BUILD_TYPE` variable has been set to `TESTING`. If these two conditions
 are met, then the user can build both the `<MODULE>_coverage` targets to run unit-tests and generate
 coverage reports for the specified module.
 
