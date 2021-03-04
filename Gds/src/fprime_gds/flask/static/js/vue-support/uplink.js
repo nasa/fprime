@@ -55,7 +55,7 @@ Vue.component("uplink", {
          * mock file object so that it displays nicely in the curateable "NOT STARTED" state.
          * @param event: event to add files
          */
-        handelFiles(event) {
+        handleFiles(event) {
             // Bail on no files
             if (event.target.files.length == 0) {
                 return;

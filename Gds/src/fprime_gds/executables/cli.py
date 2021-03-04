@@ -72,7 +72,7 @@ class ParserBase(abc.ABC):
     ):
         """
         Create a parser for the given application using the description provided. This will then add all specified
-        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handel
+        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handle
         arguments methods will be called, and the final namespace will be returned.
 
         :param parser_classes: a list of ParserBase subclasses that will be used to

@@ -292,7 +292,7 @@ Note: Vue.js annotations are used, as Vue is the data-to-view framework of choic
                             <input class="col-2" type="text" v-model="destination" pattern="/.*" />
                             <div class="col-4">
                                 <label>Add Files to Uplink:</label>
-                                <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handelFiles" />
+                                <input type="file" class="btn btn-active" v-bind:files="selected" multiple v-on:change="handleFiles" />
                             </div>
                             <button v-if="running" type="button" class="col-2 btn btn-outline-secondary" v-on:click="pauseUplink">Pause Uplink Queue</button>
                             <button v-if="!running" type="button" class="col-2 btn btn-outline-secondary" v-on:click="unpauseUplink">Unpause Uplink Queue</button>
