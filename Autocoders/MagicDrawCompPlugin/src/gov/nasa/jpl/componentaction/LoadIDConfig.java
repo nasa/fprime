@@ -311,7 +311,7 @@ public class LoadIDConfig {
 				}
 				catch(Exception e){
 					if(lineNumber > 0){
-						Utils.notifyWarning("Line numer " + lineNumber + " in file " + path + " has items in columns three and/or four that cannot be parsed to an integer.");
+						Utils.notifyWarning("Line number " + lineNumber + " in file " + path + " has items in columns three and/or four that cannot be parsed to an integer.");
 					}
 				}
 				
