@@ -8,7 +8,7 @@
 ###
 # Function `cheetah`:
 #
-# This function sets up the ability to call cheetah to compile chetah templates and prepare them for use
+# This function sets up the ability to call cheetah to compile cheetah templates and prepare them for use
 # within the auto-coder. Here we setup the "compilation" of Cheetah templates.
 #
 # TODO: when/if the autocoder stops depending on generated templates, this function may be removed. Otherwise,
