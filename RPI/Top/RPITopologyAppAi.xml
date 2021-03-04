@@ -660,7 +660,7 @@
        <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
    </connection>
    
-   <!-- Fault Connectionss -->
+   <!-- Fault Connections -->
    <connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
