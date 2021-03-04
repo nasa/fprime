@@ -83,7 +83,7 @@
     <define name = "members_define">
         <!-- 'members' is just a tag that hold multiple 'member' tags -->
         <element name = "members">
-            <a:documentation>A collection of memeber items to define the serializable object.</a:documentation>
+            <a:documentation>A collection of member items to define the serializable object.</a:documentation>
             <oneOrMore>
                 <ref name = "member_define"></ref>
             </oneOrMore>
@@ -98,7 +98,7 @@
             <!-- Required attributes -->
 
             <attribute name = "name">
-                <a:documentation>Name of the memeber item.</a:documentation>
+                <a:documentation>Name of the member item.</a:documentation>
                 <text/>
             </attribute>
 

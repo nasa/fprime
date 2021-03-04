@@ -174,7 +174,7 @@ class TopoFactory:
         # Iterate over all the model.Component classes and then...
         # Iterate over all the connection sources and assigned output ports to each Component..
         # For each output port you want to assign the connect comment, target component name, target port and type...
-        #    (Requires adding to the model.Port class ether members or a memeber called of type TargetConnection)
+        #    (Requires adding to the model.Port class ether members or a member called of type TargetConnection)
         for component in components:
             port_obj_list = []
             for connection in x.get_connections():

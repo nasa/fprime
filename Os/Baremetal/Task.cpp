@@ -19,7 +19,7 @@ Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identif
     if (handle == NULL) {
        return Task::TASK_UNKNOWN_ERROR;
     }
-    //Set handle memeber variables
+    //Set handle member variables
     handle->m_enabled = true;
     handle->m_priority = priority;
     handle->m_routine = routine;
