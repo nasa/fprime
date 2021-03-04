@@ -579,7 +579,7 @@ $emit_hpp_params([ $param_const_timeTag ])
       );
 
 #end if
-#for $ids, $name, $type, $oset, $osaves, $size, $default, $comment, $typeinfo in $parameters:
+#for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     protected:
 
       // ----------------------------------------------------------------------
@@ -693,7 +693,7 @@ $emit_hpp_port_params([ $param_callComp, $param_portNum] + $params)
       // Parameter validity flags
       // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $oset, $osaves, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
       //! True if parameter $name was successfully received
       //!
       Fw::ParamValid m_param_${name}_valid;
@@ -705,7 +705,7 @@ $emit_hpp_port_params([ $param_callComp, $param_portNum] + $params)
       // Parameter variables
       // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $oset, $osaves, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
       //! Parameter $name
       //!
       $get_param_type($type, $typeinfo) m_param_${name};
