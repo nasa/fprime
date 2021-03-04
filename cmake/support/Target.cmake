@@ -98,7 +98,7 @@ endfunction(setup_module_target)
 ####
 # Function `setup_all_module_targets`:
 #
-# Takes all registerd targets and sets up the module specific target from them. The list of targets
+# Takes all registered targets and sets up the module specific target from them. The list of targets
 # is read from the CACHE variable FPRIME_TARGET_LIST.
 #
 # - **MODULE_NAME:** name of the module
