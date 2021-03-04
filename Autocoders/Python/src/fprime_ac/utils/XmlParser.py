@@ -160,7 +160,7 @@ class Parser:
 
         for token, content, loc in XML(self.__xml_string):
 
-            # This next line presents a problem procesing XML with special
+            # This next line presents a problem processing XML with special
             # formatting characters. It generates an exception. Since it is
             # only debug, we'll just comment this out until the XML is
             # updated to remove the special characters.
