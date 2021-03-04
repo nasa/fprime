@@ -11,7 +11,7 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 
 @date Created July 25, 2018
 
-@lisence Copyright 2018, California Institute of Technology.
+@license Copyright 2018, California Institute of Technology.
          ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 """
 import configparser
