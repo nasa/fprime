@@ -15,7 +15,7 @@ from .xml_loader import XmlLoader
 
 
 class CmdXmlLoader(XmlLoader):
-    """Class to laode xml based command dictionaries"""
+    """Class to load xml based command dictionaries"""
 
     CMD_SECT = "commands"
     EVENT_SECT = "events"
