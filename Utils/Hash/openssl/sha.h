@@ -4,7 +4,7 @@
  *
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
+ * The implementation was written so as to conform with Netscape's SSL.
  *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
