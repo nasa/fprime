@@ -12,7 +12,7 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # fputil_action:
 #
 # Runs an action for the FP util. This takes two parameters a target and a deployment. This assumes
-# prequsite actions already exist.
+# prerequisite actions already exist.
 # :param target($1): command to run with FP util
 # :param deploy($2): deployment to run on
 ####
