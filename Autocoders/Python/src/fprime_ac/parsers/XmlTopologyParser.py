@@ -234,7 +234,7 @@ class XmlTopologyParser:
         # For each instance determine if it is active or passive here...
         # Determine a maximum base id window required for each instance here
         PRINT.info(
-            "\nDetermining kind of component and maximum reqired ID's for component instances"
+            "\nDetermining kind of component and maximum required ID's for component instances"
         )
         for inst in self.get_instances():
             type = inst.get_type()
