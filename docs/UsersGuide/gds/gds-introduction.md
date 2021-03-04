@@ -68,7 +68,7 @@ this to work properly, the user must build and install the `Ref` application usi
 
 By default, the `fprime-gds` command uses the current deployment to find the dictionary and the flight software to run.
 The dictionary is used for the GDS to understand the events, channels, and commands produced by the embedded system and
-the software is run as a convienence for local testing (`-n` will disable this feature).  
+the software is run as a convenience for local testing (`-n` will disable this feature).  
 
 In the following sections, we will explore various options for using the GDS.
 
