@@ -160,7 +160,7 @@ To add a component to the topology:
     - Call the component's `init` function.
     - If additional setup is required, call a user defined setup function.
     - If using commands, register component's commands.
-    - If using health checking, add component to ping entires.
+    - If using health checking, add component to ping entries.
     - If using an active component, start component with `start` function and call `exit` when
       exiting. 
 
