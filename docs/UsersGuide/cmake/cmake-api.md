@@ -33,7 +33,7 @@ define types and headers needed for F´ for any embedded system they desire.
 
 These links document the custom targets integrated into the F´ build system. Targets can be
 generically integrated to support both module-level and global targets building toward the same
-F´ "target".  For example, the "dict" target may build local dictionary fragements and then roll
+F´ "target".  For example, the "dict" target may build local dictionary fragments and then roll
 them into a global dictionary.
 
 [Target](../api/cmake/support/Target.md): target subsystem documentation
