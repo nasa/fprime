@@ -81,7 +81,7 @@
                 <comment>The name of the sequence file</comment>
             </arg>
             <arg name="size" type="U32">
-                <comment>Inavalid size</comment>
+                <comment>Invalid size</comment>
             </arg>
         </args>
     </event>
