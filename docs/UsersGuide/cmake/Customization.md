@@ -10,7 +10,7 @@ cannot be found herein.
 
 ## Build F Prime Utilities
 
-Adding a utility executable that dependns on F prime code is easy. Just perform a standard call to
+Adding a utility executable that depends on F prime code is easy. Just perform a standard call to
 `register_fprime_executable`. Care should be taken to set the variable `EXECUTABLE_NAME` before
 making this call in order to set the utility's name. This executable will then be output as part
 of the deployment's build. A separate tools deployment may be used to build only utilities.
