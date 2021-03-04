@@ -61,7 +61,7 @@ def main():
                      ['/{}'.format(correction) for correction in defunct_files]
     corrections_out = ['"{}'.format(correction) for correction in corrected] + \
                       ['/{}'.format(correction) for correction in corrected]
-    full_files = [os.path.join(path, fle) for path, _, files in os.walk(directory) for fle in files]
+    full_files = [os.path.join(path, file) for path, _, files in os.walk(directory) for file in files]
     mappings = list(zip(corrections_out, corrections_in))
     #for inin, outout in mappings:
     #    print("{} -> {}".format(inin, outout))

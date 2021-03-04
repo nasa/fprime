@@ -353,7 +353,7 @@ public class ISFComponent {
 	}
 
 	/**
-	 * Creates a list of strings based off the data type from filitList values
+	 * Creates a list of strings based off the data type from filtList values
 	 * @return A list of data type strings 
 	 */
 	public List<String> getPortDataList() {
