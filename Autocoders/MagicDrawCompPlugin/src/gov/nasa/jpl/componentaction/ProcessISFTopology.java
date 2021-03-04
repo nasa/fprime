@@ -892,7 +892,7 @@ public class ProcessISFTopology {
 	 * <p>
 	 * 
 	 * The function takes in three arguments: the current Connector, the multiplicity of the source of the connector (calculated from this function in the previous iteration of the loop) and 
-	 * a 'prevousConnectorTargetMult', which is an integer which indicates the 'inorder' position of the target of the Connector by keeping a track of how many connectors have accessed the same end. 
+	 * a 'previousConnectorTargetMult', which is an integer which indicates the 'inorder' position of the target of the Connector by keeping a track of how many connectors have accessed the same end. 
 	 * 
 	 * <p>
 	 * 
