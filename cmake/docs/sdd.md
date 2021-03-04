@@ -282,7 +282,7 @@ blue/orange in the diagram below.
 ### 4.1 Deployment and Executable CMake Files
 
 These files are supplied by the the deployment or executable being built. This is typically supplied
-by the adaption project of F´. These files supply two critical functions. Primarily, this must
+by the adaptation project of F´. These files supply two critical functions. Primarily, this must
 supply an entry-point of the build system. It contains the standard CMake headers and an inclusion
 of the F´ CMake support file `FPrime.cmake` it should also include `FPrime-Code.cmake` to include
 the F´ core code. This ensures CMake is ready to run, and all the F´ setup is included.
