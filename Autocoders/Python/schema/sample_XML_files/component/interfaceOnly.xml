@@ -40,7 +40,7 @@
             <comment>Flight Command One excecutes complex command.</comment>
             <args>
                 <arg name="Throttle" type="I8" size="8" pass_by="reference" comment="Throttle Value">
-                    <comment>Controles the throttle value.</comment>
+                    <comment>Controls the throttle value.</comment>
                 </arg>
                 <arg name="Rotation" type = "ENUM">
                     <enum name="RotationValues">
