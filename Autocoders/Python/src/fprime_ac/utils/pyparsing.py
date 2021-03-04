@@ -956,7 +956,7 @@ class ParserElement:
         out = []
         lastE = 0
         # force preservation of <TAB>s, to minimize unwanted transformation of string, and to
-        # keep string locs straight between transformString and scanString
+        # keep string locations straight between transformString and scanString
         self.keepTabs = True
         for t, s, e in self.scanString(instring):
             out.append(instring[lastE:s])
