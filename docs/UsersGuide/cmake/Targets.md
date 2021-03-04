@@ -18,7 +18,7 @@ For projects generating GNU make files, these targets can be executed with the `
 The CMake system supplies several targets that are useful for all projects and thus are included
 as part of the CMake system. These targets are described in more detain below.
 
-### `<MODULE>_coverage` Targtes
+### `<MODULE>_coverage` Targets
 
 The coverage target works on systems where the `gcov` executable is available on the executable
 search path and the `CMAKE_BUILD_TYPE` vrariable has been set to `TESTING`. If these two conditions

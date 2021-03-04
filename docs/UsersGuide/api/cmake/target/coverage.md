@@ -9,7 +9,7 @@ build type.  This means the  following things to be setup:
 1. `gcov` must be available on the path
 2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
 
-Once the CMake build directory has been created the user can run the CMake targers
+Once the CMake build directory has been created the user can run the CMake targets
 `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
 _coverage targets perform the following steps:
 

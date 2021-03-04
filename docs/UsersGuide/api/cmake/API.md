@@ -336,7 +336,7 @@ function(register_fprime_target TARGET_FILE_PATH)
     set(TMP "${FPRIME_TARGET_LIST}")
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
-    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targtes" FORCE)
+    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
     #Setup global target. Note: module targets found during module processing
     setup_global_target("${TARGET_FILE_PATH}")
 endfunction(register_fprime_target)
