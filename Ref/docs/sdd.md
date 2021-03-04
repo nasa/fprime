@@ -31,7 +31,7 @@ It interconnects those application components with reusable service components:
 |Health|Pings active components in the topology to verify their aliveness|[HTML](../../Svc/Health/docs/sdd.html) [MD](../../Svc/Health/docs/sdd.md)|
 |PrmDb|Loads sets of parameters from storage at startup and provides them to components|[HTML](../../Svc/PrmDb/docs/sdd.html) [MD](../../Svc/PrmDb/docs/sdd.md)|
 |RateGroupDriver|Sends messages to ActiveRateGroup instances to run a cycle|[HTML](../../Svc/RateGroupDriver/docs/sdd.html) [MD](../../Svc/RateGroupDriver/docs/sdd.md)|
-|TlmChan|Provides storage for telemetry channels and periocially sends them to the ground system|[HTML](../../Svc/TlmChan/docs/sdd.html) [MD](../../Svc/TlmChan/docs/sdd.md)|
+|TlmChan|Provides storage for telemetry channels and periodically sends them to the ground system|[HTML](../../Svc/TlmChan/docs/sdd.html) [MD](../../Svc/TlmChan/docs/sdd.md)|
 |PolyDb|Manages a database of polymorphic data values|[HTML](../../Svc/PolyDb/docs/sdd.html) [MD](../../Svc/PolyDb/docs/sdd.md)|
 
 There is a set of application-level components developed on previous projects that can be used:
