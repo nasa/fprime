@@ -16,7 +16,7 @@ Please follow the install guide for F´ found here: [INSTALL.md](../docs/INSTALL
 
 In order to build the Ref application, or any other F´ application, we first need to generate a build directory.  F´ uses CMake under the hood,
 which requires a directory to work in. To generate a build directory, we will use the `fprime-util` (a wrapper for CMake to streamline standard 
-F´ processses). This can be done with the following commands:
+F´ processes). This can be done with the following commands:
 
 ```
 cd fprime/Ref
