@@ -413,7 +413,7 @@ Vue.component("fp-table", {
         /**
          * calculatedHeaderColumns:
          *
-         * Computes the visible headers based on the fields to show. This allows this element to shink to a specified
+         * Computes the visible headers based on the fields to show. This allows this element to shrink to a specified
          * set of columns.
          *
          * @return {null|Uint8Array}
