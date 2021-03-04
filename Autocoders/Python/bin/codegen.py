@@ -125,7 +125,7 @@ def pinit():
         "-b",
         "--build_root",
         dest="build_root_flag",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
+        help="Enable search for environment variable BUILD_ROOT to establish absolute XML directory path",
         action="store_true",
         default=False,
     )
