@@ -53,7 +53,7 @@ F´ was built to support **Command and Data Handling** (C&DH) of these space sys
 part of these space systems. This means F´ out-of-the-box is designed to handle commands sent from the ground, and
 respond with telemetry to the ground. In F´ this telemetry is broken into **Events** representing history of actions
 taken by the system, and channels representing the current state of the system broken into named channels that each
-contain a portion of the state. e.g. an **Evnt** might be "Established Communications" and a **Channel** might be
+contain a portion of the state. e.g. an **Event** might be "Established Communications" and a **Channel** might be
 "Current Temperature: 3C".
 
 All projects using F´ are composed of **Components**, **Ports**, and **Topologies**. Although F´ does not require the
