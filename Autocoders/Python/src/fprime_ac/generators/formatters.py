@@ -452,7 +452,7 @@ class Formatters:
 
     def capFirstCharTuple3(self, t, en):
         """
-        For three element tupple capitalize first character of select
+        For three element tuple capitalize first character of select
         elements.   They are enabled by binary bits (e.g. en=111 sets
         each element, en=010 set element 1, etc.)
         @param t: A three element tuple
