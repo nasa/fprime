@@ -69,7 +69,7 @@ class StartEvent:
     def accept(self, visitor):
         """
         The operation in Visitor design pattern that takes a visitor as an argument
-        and calls the visitor's method that corresponds to this elememnt.
+        and calls the visitor's method that corresponds to this element.
         @raise Exception: if the given visitor is not a subclass of AbstractVisitor
         """
         # visitor should be extended from the AbstractVisitor class
