@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 
   // Test saving to impossible file:
   printf("Testing bad save... ");
-  status = configFile.save("this/file/doesnt/exist", config);
+  status = configFile.save("this/file/does/not/exist", config);
   FW_ASSERT(SerializableFile::FILE_OPEN_ERROR == status, status);
   printf("Passed\n");
 
