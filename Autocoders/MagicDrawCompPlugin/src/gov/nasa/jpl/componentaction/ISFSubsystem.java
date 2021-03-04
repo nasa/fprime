@@ -67,7 +67,7 @@ public class ISFSubsystem {
 	}
 
 	/**
-	 * Used as a dataObjet within the componentMap. The objects within this object are used to describe a leaf component. The methods are pretty self-explanatory. 
+	 * Used as a dataObject within the componentMap. The objects within this object are used to describe a leaf component. The methods are pretty self-explanatory. 
 	 *
 	 */
 	public static class componentType {

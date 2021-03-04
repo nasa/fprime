@@ -193,7 +193,7 @@
  #endif
 // When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should be >= FW_OBJ_NAME_MAX_SIZE.
  #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE
- #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  //!< Size of ojbect registry dump string
+ #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  //!< Size of object registry dump string
  #endif
 #endif
 
