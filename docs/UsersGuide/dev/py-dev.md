@@ -88,7 +88,7 @@ onerous, we’ll have a better project as a result.  Be like the Borg and just a
 ## Static Analysis
 
 While almost all projects require unit tests, not enough them consistently use static analysis to improve code quality.
-With a few simple commands static analysis will drastically reduce time wasted with simple errors or issues and increas
+With a few simple commands static analysis will drastically reduce time wasted with simple errors or issues and increase
 the lifecycle of your code.
 
 F uses Pylama to perform static analysis on our python code. Pylama contains pylint, pyflakes, pycodestyle(pep8), 
