@@ -598,11 +598,11 @@ class TopoFactory:
 
             while True:
                 # Check if the items in the data_row  have a length of zero
-                all_items_lenth_zero = True
+                all_items_length_zero = True
                 for data_item in data_row:
                     if len(data_item) != 0:
-                        all_items_lenth_zero = False
-                if all_items_lenth_zero:
+                        all_items_length_zero = False
+                if all_items_length_zero:
                     break
 
                 row_string = ""
