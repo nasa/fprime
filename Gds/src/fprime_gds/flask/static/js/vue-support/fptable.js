@@ -429,7 +429,7 @@ Vue.component("fp-table", {
          * Calculates a list of displayed items.
          */
         filteredItems: function() {
-            // Map loacal methods into the closure provided to the filtering function
+            // Map local methods into the closure provided to the filtering function
             let itemToColumns = this.itemToColumns;
             // Pre-filter step removes non-viewable items
             let items = [];
