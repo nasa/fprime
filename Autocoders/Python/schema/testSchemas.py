@@ -82,7 +82,7 @@ class schema_test:
         """
         Add test case to object.
 
-        test_name - Way of identifiying the test
+        test_name - Way of identifying the test
         xml_path - Path to xml test file
         error_class - What sort of error that is going to be thrown. If error_class is None, it is assumed that the test will pass without raising exceptions.
         parsed_xml - Add the etree of the XML if available.
