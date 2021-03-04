@@ -160,7 +160,7 @@ while (!shutdown) {
 }
 ```
 Here, as seen above, `run_once` does not block and so each component gets a slice of execution time before yielding to
-the next. Parallelism has been virtualized and the processor is sharable without writing a full-blown thread scheduler
+the next. Parallelism has been virtualized and the processor is shareable without writing a full-blown thread scheduler
 nor requiring processor instruction set support to switch threading contexts.
 
 Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks
