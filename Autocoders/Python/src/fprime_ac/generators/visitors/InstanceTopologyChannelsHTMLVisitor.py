@@ -93,7 +93,7 @@ class InstanceTopologyChannelsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate files for generated code products.
         @parms obj: the instance of the model to visit.
         """
-        # Check for command dir here and if none creat it but always switch into it
+        # Check for command dir here and if none create it but always switch into it
         if not os.path.exists(self.__cmd_dir):
             os.mkdir(self.__cmd_dir)
         os.chdir(self.__cmd_dir)
