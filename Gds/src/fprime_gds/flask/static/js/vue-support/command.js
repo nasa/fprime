@@ -18,7 +18,7 @@ Vue.component("command-argument", {
     template: "#command-argument-template",
     computed: {
         /**
-         * Allows for validation of commands using the HTML-based validation using regex and numers. Note: numbers here
+         * Allows for validation of commands using the HTML-based validation using regex and numbers. Note: numbers here
          * are treated as text, because we can allow for hex, and octal bases.
          * @return [HTML input type, validation regex]
          */
