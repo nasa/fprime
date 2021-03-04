@@ -490,7 +490,7 @@ class Element:
 
     def __getitem__(self, item):
         """
-        Make getData, getName and getElemnets
+        Make getData, getName and getElements
         look like dictionary calls.
         """
         if item == "attr":

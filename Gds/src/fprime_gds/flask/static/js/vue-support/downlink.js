@@ -37,7 +37,7 @@ Vue.component("downlink", {
     },
     computed: {
         /**
-         * The elemets to be displayed are the list of incoming files set by the REST backend.
+         * The elements to be displayed are the list of incoming files set by the REST backend.
          */
         elements() {
             return this.downfiles;
