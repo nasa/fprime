@@ -44,7 +44,7 @@ def dumpObj(
 
     By default, output goes to stdout via print. However, if a
     logging object is passed in as the keyword argument, then
-    the output will be put to the loggging object. The default
+    the output will be put to the logging object. The default
     logging message level is DEBUG, but this can be changed to any
     level using the keyword argument 'loglvl'.  For example:
     DumpObj.dumpObj(someObject, logging.getLogger('output'), logging.INFO)
