@@ -422,9 +422,9 @@ public class ProcessISFTopology {
 	 */
 	private static List<Element> processModel(Element root) throws ConnectorException{
 		List<Element> subsystemElementList = new ArrayList<Element>();
-		Collection<Element> coll = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
+		Collection<Element> collection = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
 
-		for(Element el : coll) {
+		for(Element el : collection) {
 			if(el instanceof NamedElement) {
 				if (el.getHumanType().equals("Subsystem")) {
 					subsystemElementList.add(el);
