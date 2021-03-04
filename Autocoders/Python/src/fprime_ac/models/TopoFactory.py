@@ -646,7 +646,7 @@ class TopoFactory:
                 )
             else:
                 b = abs(int(inst.get_base_id()))
-            PRINT.info("WARNING: %s instance reseting base id to %d" % (n, b))
+            PRINT.info("WARNING: %s instance resetting base id to %d" % (n, b))
         #
         # set window size or override it on instance basis
 
@@ -664,7 +664,7 @@ class TopoFactory:
         if inst.get_base_id_window() is not None:
             w = abs(int(inst.get_base_id_window()))
             PRINT.info(
-                "{} instance reseting base id window range to instance specified size ({})".format(
+                "{} instance resetting base id window range to instance specified size ({})".format(
                     n, w
                 )
             )
@@ -672,14 +672,14 @@ class TopoFactory:
             if size > component_calculated_window_range:
                 w = size
                 PRINT.info(
-                    "{} instance reseting base id window range to default topology size ({})".format(
+                    "{} instance resetting base id window range to default topology size ({})".format(
                         n, w
                     )
                 )
             else:
                 w = component_calculated_window_range
                 PRINT.info(
-                    "{} instance reseting base id window range to size calculated from the component XML file ({})".format(
+                    "{} instance resetting base id window range to size calculated from the component XML file ({})".format(
                         n, w
                     )
                 )
