@@ -490,7 +490,7 @@ endfunction(register_fprime_target_generic)
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
 #  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
-#  - Adding Module: [Modules](module.md) register fprime Ports, Compontents, etc.
+#  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 ####
