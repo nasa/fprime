@@ -396,7 +396,7 @@ autocoding, and otherwise acts similar to the above module with the exception th
 output is the result of the build.
 
 **Note:** deployments specify one or more executables, and these executables become the root of the
-dependency tree. Thus, only the needed exetuables, libraries, and outputs are generated and the
+dependency tree. Thus, only the needed executables, libraries, and outputs are generated and the
 complete F´ system is not explicity built. This  makes the build more efficient.
 
 ### 5.3 Unit Test Functions: register_fprime_ut
