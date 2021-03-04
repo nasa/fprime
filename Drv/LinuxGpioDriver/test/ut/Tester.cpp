@@ -53,7 +53,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testInterrrupt(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles)
+    testInterrupt(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles)
   {
       // initialize the driver
       if (not this->component.open(gpio,LinuxGpioDriverComponentImpl::GPIO_INT)) {
