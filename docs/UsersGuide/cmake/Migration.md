@@ -6,7 +6,7 @@ the key features of the old make system to the features of the new CMake system.
 
 ## `make impl` and `make testcomp` 
 
-The commands `make impl` and `make testcomp` should be runnable outside of tany make system setup.
+The commands `make impl` and `make testcomp` should be runnable outside of any make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
 requiring the user to navigate to the directory, generate the make system, and then run these
 commands is less productive then running just the code generator directly.
