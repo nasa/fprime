@@ -165,7 +165,7 @@ namespace Svc {
     this->component.doDispatch(); // Process return of original buffer and send cancel packet
     this->component.doDispatch(); // Process return of cancel packet
 
-    // Ensure initial send file command also recives a response.
+    // Ensure initial send file command also receives a response.
     Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK;
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, resp);
