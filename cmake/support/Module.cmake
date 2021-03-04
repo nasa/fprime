@@ -38,7 +38,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES MOD_DEPS)
       string(CONCAT AC_FULL_HEADER ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.hpp")
       string(CONCAT AC_FULL_SOURCE ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.cpp")
 
-      # Run the specific autocoder herlper
+      # Run the specific autocoder helper
       acwrap("${XML_LOWER_TYPE}" "${AC_FULL_SOURCE}" "${AC_FULL_HEADER}"  "${INPUT_FILE}" "${FILE_DEPENDENCIES}" "${MOD_DEPS};${MODULE_DEPENDENCIES}")
 
       add_generated_sources("${AC_FULL_SOURCE}" "${AC_FULL_HEADER}" "${MODULE_NAME}")
