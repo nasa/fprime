@@ -92,7 +92,7 @@ class NotInitializedException(TypeException):
         super().__init__("Instance %s not initialized!" % message)
 
 
-class NotOverridenException(TypeException):
+class NotOverriddenException(TypeException):
     """ Not implemented exception by another name """
 
     def __init__(self, message):

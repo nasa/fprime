@@ -57,7 +57,7 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     endif()
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
-    # Add component subdirectories using normal add_subdirectory with overriden binary_dir
+    # Add component subdirectories using normal add_subdirectory with overridden binary_dir
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
 
