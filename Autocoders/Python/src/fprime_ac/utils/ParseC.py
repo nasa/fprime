@@ -187,7 +187,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # 04/23/07: Fix allows for nagative numbers.
     _ = Word("=" + " " + "-" + nums) + restOfLine.suppress()
 
-    # 03/21/08: Fix allows hexidecimal numbers.
+    # 03/21/08: Fix allows hexadecimal numbers.
     _ = Word("=" + " " + "-" + decORhex) + restOfLine.suppress()
 
     # 04/04/08: Fix allows (int) cast enumerations. TBD: Must fine
