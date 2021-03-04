@@ -337,7 +337,7 @@ public class ISFComponent {
 	}
 
 	/**
-	 * Returns last part of the componenetElement name
+	 * Returns last part of the componentElement name
 	 * @return name
 	 */
 	public String getName() {
