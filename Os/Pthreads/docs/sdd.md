@@ -141,7 +141,7 @@ The queue unit tests are located in `Os/test/ut`. These tests validate the funct
 
 1. **Send and Receive**: Test successful send and receive from a blocking queue.
 
-2. **Blocking Receive on Empty**: Test blocking behavior for receiveing on an empty queue.
+2. **Blocking Receive on Empty**: Test blocking behavior for receiving on an empty queue.
 
 3. **Non-blocking Send on Full**: Test non-blocking behavior for sending to a full queue.
 
