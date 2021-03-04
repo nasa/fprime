@@ -197,7 +197,7 @@ endfunction(set_hash_flag)
 #
 # Prints the dependency list of the module supplied as well as the include directories.
 #
-# - **MODULE_NAME**: module name to print dependencies fors
+# - **MODULE_NAME**: module name to print dependencies
 ####
 function(print_dependencies MODULE_NAME)
      get_target_property(OUT "${MODULE_NAME}" INCLUDE_DIRECTORIES)

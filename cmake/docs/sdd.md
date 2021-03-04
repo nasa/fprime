@@ -362,7 +362,7 @@ generation and the other which wraps it. `register_*` functions are the API wrap
 `generate_*` functions perform the work. The functions are:
 
 1. register_fprime_module; generate_module: generates library/module build files and dependencies.
-2. register_fprime_executable; generate_executable: generates executable build and dependecies.
+2. register_fprime_executable; generate_executable: generates executable build and dependencies.
 
 ![F´ CMake Architecture](img/CMake%20-%20Architecture.png "F´ CMake Architecture")
 
