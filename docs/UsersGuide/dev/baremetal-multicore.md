@@ -1,4 +1,4 @@
-# F´ On Baremetal and Muti-Core Systems
+# F´ On Baremetal and Multi-Core Systems
 
 F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user though some
 of the caveats and delicacies of such systems. It includes
