@@ -469,23 +469,23 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: BL_Deativated
+  // Event: BL_Deactivated
   // ----------------------------------------------------------------------
 
   void BufferLoggerGTestBase ::
-    assertEvents_BL_Deativated_size(
+    assertEvents_BL_Deactivated_size(
         const char *const __callSiteFileName,
         const U32 __callSiteLineNumber,
         const U32 size
     ) const
   {
-    ASSERT_EQ(size, this->eventsSize_BL_Deativated)
+    ASSERT_EQ(size, this->eventsSize_BL_Deactivated)
       << "\n"
       << "  File:     " << __callSiteFileName << "\n"
       << "  Line:     " << __callSiteLineNumber << "\n"
-      << "  Value:    Size of history for event BL_Deativated\n"
+      << "  Value:    Size of history for event BL_Deactivated\n"
       << "  Expected: " << size << "\n"
-      << "  Actual:   " << this->eventsSize_BL_Deativated << "\n";
+      << "  Actual:   " << this->eventsSize_BL_Deactivated << "\n";
   }
 
   // ----------------------------------------------------------------------
