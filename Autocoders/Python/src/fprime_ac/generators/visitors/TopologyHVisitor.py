@@ -343,7 +343,7 @@ class TopologyHVisitor(AbstractVisitor.AbstractVisitor):
         #
 
         #
-        # Generate Component Initalizations
+        # Generate Component Initializations
         for component in component_list:
             if obj.is_ptr:
                 init_template = """{name}_ptr->init(10);""".format(**component)
