@@ -16,7 +16,7 @@ subcommands:
 
   {generate,purge,hash-to-file,info,build,impl,check,coverage}
     generate            Generate a build cache directory
-    purge               Purge build cache directoriess
+    purge               Purge build cache directories
     hash-to-file        Converts F prime build hash to filename.
     info                Gets fprime-util contextual information.
     build               Build components, ports, and deployments in the specified directory

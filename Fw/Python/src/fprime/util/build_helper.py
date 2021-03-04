@@ -192,7 +192,7 @@ def parse_args(args):
     )
     purge_parser = subparsers.add_parser(
         "purge",
-        help="Purge build cache directoriess",
+        help="Purge build cache directories",
         add_help=False,
         parents=[common_parser],
     )
