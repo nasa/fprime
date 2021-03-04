@@ -28,7 +28,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
 )
-# Check for default loger
+# Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
     list(APPEND SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"

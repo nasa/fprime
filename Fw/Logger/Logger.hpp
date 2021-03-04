@@ -1,13 +1,13 @@
 /**
- * File: Loger.hpp
+ * File: Logger.hpp
  * Description: Framework logging support
  * Author: mstarch
  *
  * This file adds in support to the core 'Fw' package, to separate it from Os and other loggers, and
  * allow the architect of the system to select which core framework logging should be used. 
  */
-#ifndef _Fw_Loger_hpp_
-#define _Fw_Loger_hpp_
+#ifndef _Fw_Logger_hpp_
+#define _Fw_Logger_hpp_
 
 #include <Fw/Types/BasicTypes.hpp>
 
