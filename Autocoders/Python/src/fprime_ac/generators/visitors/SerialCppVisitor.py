@@ -81,7 +81,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_proto_string(self, obj):
         """
-        Return a string of (type, name) args, comma seperated
+        Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes.
         """
         arg_str = ""
@@ -104,7 +104,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_string(self, obj, prefix=""):
         """
-        Return a string of name args, comma seperated
+        Return a string of name args, comma separated
         for use in templates that generate method or function calls.
         """
         args = obj.get_members()

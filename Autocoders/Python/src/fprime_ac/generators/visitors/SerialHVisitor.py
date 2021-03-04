@@ -84,7 +84,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_string(self, obj):
         """
-        Return a string of (type, name) args, comma seperated
+        Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes.
         """
         arg_str = ""
