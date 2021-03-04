@@ -112,7 +112,7 @@ the user to take advantage of all parts of F´ without generating their own CMak
 be developing or improving F´ provided infrastructure components, then the `generate` command should be run in the F´
 root directory. However, most developers do not need this functionality.
 
-**Generate Cross-Compile of the Ref Application for Raspberry PI Platformn**
+**Generate Cross-Compile of the Ref Application for Raspberry PI Platform**
 
 Most developers wish to run F´ on embedded hardware. This is done by generating a cross-compile using a different CMake
 toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
