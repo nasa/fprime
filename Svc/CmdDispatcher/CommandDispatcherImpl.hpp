@@ -72,7 +72,7 @@ namespace Svc {
             //!
             //!  \param portNum the number of the incoming port.
             //!  \param data the buffer containing the command.
-            //!  \param context a user value returned with the statuss
+            //!  \param context a user value returned with the status
             void seqCmdBuff_handler(NATIVE_INT_TYPE portNum, Fw::ComBuffer &data, U32 context);
             //!  \brief component command registration handler
             //!
