@@ -50,7 +50,7 @@ improvements to the CMake are needed. Build system architects should consult thi
 
 
 [FPrime Code](../api/cmake/FPrime-Code.md): F´ framework code inclusions
-[FPrime](../api/cmake/FPrime.md): F´ project supoort
+[FPrime](../api/cmake/FPrime.md): F´ project support
 [Module](../api/cmake/support/Module.md): Module registry and autocode support 
 [Executable](../api/cmake/support/Executable.md): Executable registry and autocoding support
 [Unit Test](../api/cmake/support/Unit_Test.md): Unit test registry and autocode support
