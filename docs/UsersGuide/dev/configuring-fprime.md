@@ -313,7 +313,7 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 
 ### Serializable Type ID
 
-As described [in serializable tyoes](../user/enum-arr-ser.md), serializable types can be defined for use in the code.
+As described [in serializable types](../user/enum-arr-ser.md), serializable types can be defined for use in the code.
 When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
 data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
 will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
