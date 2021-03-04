@@ -35,7 +35,7 @@ class Arg:
     """
     This is a very simple arg meta-model class.
     Note: This class is a container of basic argument information.
-    @todo: Serializables might need to be incorperated into this.
+    @todo: Serializables might need to be incorporated into this.
     """
 
     def __init__(self, name, atype, modifier, size=None, comment=None):
