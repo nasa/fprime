@@ -716,7 +716,7 @@ class Formatters:
         Called for generation of the mod_ac_msg.h
         code file.  If there are repeated stem
         names than through exception and stop
-        everthing.
+        everything.
         @param cmd_name_list: list of command function names.
         @return: TRUE if all command stem names are unique, else raise exception.
         """
