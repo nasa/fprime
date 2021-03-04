@@ -549,7 +549,7 @@ The port attributes are:
 |Attribute|Description|
 |---|---|
 |name|The port name|
-|data_type|The type of the port as defined in the included port definitions, in the form `namepace::name`|
+|data_type|The type of the port as defined in the included port definitions, in the form `namespace::name`|
 |kind|The kind of port. Can be `sync_input`,`async_input`,`guarded_input`, or `output`|
 
 For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
