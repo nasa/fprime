@@ -318,7 +318,7 @@ class IntegrationTestAPI(DataHandler):
             command: Either the command id (int) or the command mnemonic (str)
 
         Returns:
-            The comand ID (int)
+            The command ID (int)
         """
         if isinstance(command, str):
             cmd_dict = self.pipeline.dictionaries.command_name
