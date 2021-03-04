@@ -1490,7 +1490,7 @@ Add the files and compile them: `fprime-util build`
 
 ##### 2.4.2.1.1 Port handler
 
-Look for the empty port hander in the sub class:
+Look for the empty port handler in the sub class:
 
 ```c++
   void MathReceiverComponentImpl ::
