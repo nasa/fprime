@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   // Test reading from nonexistent file:
   printf("Testing bad load... ");
   Test config3;
-  status = configFile.load("thisfiledoesnexist.ser", config3);
+  status = configFile.load("thisfiledoesnotexist.ser", config3);
   FW_ASSERT(SerializableFile::FILE_OPEN_ERROR == status, status);
   printf("Passed\n");
 

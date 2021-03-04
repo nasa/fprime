@@ -11,7 +11,7 @@ void testValidateFile() {
     Os::ValidateFile::Status validateStatus;
     Os::FileSystem::Status fsStatus;
     const char fileName[] = "mod.mk";
-    const char nonexistentFileName[] = "thisfiledoesntexist";
+    const char nonexistentFileName[] = "thisfiledoesnotexist";
     const char hashFileName[] = "mod.mk.hashed";
     const char hardtoaccessHashFileName[] = "thisdirdoesnotexist/mod.mk.hashed";
     
