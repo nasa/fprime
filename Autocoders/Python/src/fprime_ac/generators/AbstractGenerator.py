@@ -3,7 +3,7 @@
 #
 # DESCRIPTION: The abstract generator defines the interface
 #                for each element or in this case
-#              portition of code to be generated.  We use
+#              portion of code to be generated.  We use
 #              the python __call__ method to make
 #              direct calls to generators.
 #
