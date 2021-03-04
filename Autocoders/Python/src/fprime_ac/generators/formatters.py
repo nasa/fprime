@@ -3,7 +3,7 @@
 #
 # DESCRIPTION: This file contains the Formatters class
 #              which contains various routines to output
-#              formated strings for code generation.
+#              formatted strings for code generation.
 #
 # USAGE: Nominally each visitor will instance this and
 #        use the methods privately in conjunction with
@@ -1168,17 +1168,17 @@ class Formatters:
             pad = pad_len * " "
             # Build up formatted lines
             #
-            formated_line = type_and_name + "(\n"
-            formated_line += pad + arg_list[0] + ","
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = type_and_name + "(\n"
+            formatted_line += pad + arg_list[0] + ","
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
             for cnt in range(1, num_args - 1):
                 nxt = arg_list[cnt]
-                formated_line = formated_line + "\n" + pad + nxt + ","
-                self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+                formatted_line = formatted_line + "\n" + pad + nxt + ","
+                self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
-            formated_line = formated_line + "\n" + pad + arg_list[-1]
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = formatted_line + "\n" + pad + arg_list[-1]
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
         else:
             # Each argument goes on a new line, and we can't align with the lParen.
             # First line is just function name, subsequent lines are just args.
@@ -1192,17 +1192,17 @@ class Formatters:
             pad = " " * pad_len
             # Build up list of lines
             #
-            formated_line = type_and_name + "("
-            self._dlog(ddt, "B formated_line=\n%s" % formated_line)
+            formatted_line = type_and_name + "("
+            self._dlog(ddt, "B formatted_line=\n%s" % formatted_line)
             for cnt in range(0, num_args - 1):
                 nxt = arg_list[cnt]
-                formated_line = formated_line + "\n" + pad + nxt + ","
-                self._dlog(ddt, "B formatedLine=\n%s" % formated_line)
+                formatted_line = formatted_line + "\n" + pad + nxt + ","
+                self._dlog(ddt, "B formattedLine=\n%s" % formatted_line)
 
-            formated_line = formated_line + "\n" + pad + arg_list[-1]
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = formatted_line + "\n" + pad + arg_list[-1]
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
-        return formated_line
+        return formatted_line
 
     def argStringAlign(self, type_list, arg_list, pad_spaces=4):
         """
