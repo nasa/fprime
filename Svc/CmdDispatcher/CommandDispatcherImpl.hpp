@@ -123,7 +123,7 @@ namespace Svc {
             //!  This command will clear the table tracking the completion of commands.
             //!  It is meant to be used if the tracking table has gotten full because of
             //!  a software failure. It is dangerous in that it can clear a command
-            //!  that a sequencer is watiting for.
+            //!  that a sequencer is waiting for.
             //!
             //!  \param opCode the CLEAR_TRACKING opcode.
             //!  \param cmdSeq the assigned sequence number for the command
