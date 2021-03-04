@@ -28,7 +28,7 @@ def get_cmake_builder():
 
 def get_data_dir():
     """
-    Gets directory containing test-data specific to the builder being tested. This will enable new implementors, should
+    Gets directory containing test-data specific to the builder being tested. This will enable new implementers, should
     there be any, to implement their own build-directory structure.
 
     :return:

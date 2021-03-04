@@ -31,7 +31,7 @@ of that delegated execution context comes next.
 
 ### Choosing an Execution Context
 
-Since the OS is not around to execute F´, the implementor of the F´ project must choose an execution context for F´ to
+Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to
 run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system.  Otherwise some
 components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
 driven by [rate groups](../best/rate-group.md). Designing the system this way ensures that all execution is derived from
