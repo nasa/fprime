@@ -214,7 +214,7 @@ Otherwise the supplied object name is used.
 #### Object to String
 
 The framework port and object classes have an optional toString() method. This method by default returns the instance
-name of the object, but toString() is defined as a virtual method so a developer class can override this and provid
+name of the object, but toString() is defined as a virtual method so a developer class can override this and provide
 custom information. Table 35 provides the macros to configure this feature.
 
 **Note:** for these settings to work FW_OBJECT_NAMES must be turned on.
