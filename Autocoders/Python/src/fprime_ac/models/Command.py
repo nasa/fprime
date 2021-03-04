@@ -3,7 +3,7 @@
 #
 # DESCRIPTION:  This is a Command meta-model sort of class.  It is
 #               contained within a Component class as a list
-#               of Command intances and is visited by the code
+#               of Command instances and is visited by the code
 #               generators.
 #
 # USAGE:

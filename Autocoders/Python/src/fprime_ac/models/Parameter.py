@@ -3,7 +3,7 @@
 #
 # DESCRIPTION:  This is a Parameter meta-model sort of class.  It is
 #               contained within a Component class as a list
-#               of Parameter intances and is visited by the code
+#               of Parameter instances and is visited by the code
 #               generators.
 #
 # USAGE:
