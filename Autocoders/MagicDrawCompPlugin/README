@@ -43,7 +43,7 @@ To regenerate the Documentation to conform with any future changes:
 - In the 'File' tab at the top of the Doxygen GUI, choose open and select the file titled "Doxyfile"
 - This will load all the configurations necessary to regenerate the documentation 
 - Go to the 'Run' tab in the GUI and click the 'Run Doxygen' button to regenerate the documentation
-- To regenerate the refman.pdf file froun in the doc folder, open doc/rtf/refman.rtf, save as a Word Document, convert the document to PDF, then drag the PDF to the doc folder
+- To regenerate the refman.pdf file found in the doc folder, open doc/rtf/refman.rtf, save as a Word Document, convert the document to PDF, then drag the PDF to the doc folder
 - To edit the comments found in the top of the documentation files, edit the comment block found at the top of src/gov/nasa/jpl/componentaction/MainMenuConfigurator.java
 
 
