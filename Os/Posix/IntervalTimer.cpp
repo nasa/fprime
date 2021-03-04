@@ -3,7 +3,7 @@
  *
  * The Posix implementation of the interval timer shares the same raw setup as other X86
  * implementations. That is: the lower U32 of the RawTime is nano-seconds, and the upper U32 of
- * RawTime object is seconds. Thus only the "getRawTime" function differes from the base X86
+ * RawTime object is seconds. Thus only the "getRawTime" function differs from the base X86
  * version of this file.
  */
 #include <Os/IntervalTimer.hpp>
