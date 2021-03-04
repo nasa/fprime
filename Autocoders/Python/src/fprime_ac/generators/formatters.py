@@ -1206,7 +1206,7 @@ class Formatters:
 
     def argStringAlign(self, type_list, arg_list, pad_spaces=4):
         """
-        Method to align generatic type/argument
+        Method to align generic type/argument
         sets found in struct, typedefs and unions.
 
         Run this function again for alignment of
