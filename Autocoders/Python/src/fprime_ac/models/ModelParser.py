@@ -198,7 +198,7 @@ class ModelParser:
                 m = a.get_modifier()
                 e = None
                 #
-                # Store modifier as language symblol
+                # Store modifier as language symbol
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":
