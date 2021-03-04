@@ -492,7 +492,7 @@ class Packet:
             print()
 
         if self.m_name == "":
-            self.err_msg("Preceeding packet has no name")
+            self.err_msg("Preceding packet has no name")
 
         p = copy.deepcopy(self)
         tlm_packet_list.append(p)
