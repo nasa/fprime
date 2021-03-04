@@ -113,7 +113,7 @@ namespace Os {
         return status;
     }
 
-    // Enum and function for translating from a status to a validataion status: 
+    // Enum and function for translating from a status to a validation status: 
     typedef enum {
         FileType,
         HashFileType
