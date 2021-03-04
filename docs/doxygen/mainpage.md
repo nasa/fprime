@@ -113,7 +113,7 @@ functions.
 \page Utils Utils Classes
 
 The Utils package provides classes for general applications in F´ projects. These classes are for
-a varity of purposes.
+a variety of purposes.
 
 \subpage UtilsHashClass
 
