@@ -403,7 +403,7 @@ complete F´ system is not explicitly built. This  makes the build more efficien
 
 Registering unit tests uses the same process as above with the exception that the variables
 `UT_SOURCE_FILES` and `UT_MOD_DEPS`. This allows the same file to define both a module or
-executable and unit test without overriding perviously used variables.
+executable and unit test without overriding previously used variables.
 
 Unit tests must be built with a cmake build type of "TESTING". This allows for the building of the
 unit-tests and setting up the `make check` target. This prevents the
