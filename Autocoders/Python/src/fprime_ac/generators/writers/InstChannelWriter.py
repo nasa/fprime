@@ -95,7 +95,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
             init_file = os.path.join(output_dir, "__init__.py")
-            open(init_file, "w+").closse()
+            open(init_file, "w+").close()
 
         self.__fp = {}
 
