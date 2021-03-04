@@ -84,7 +84,7 @@ version 4.1:
 
 version 4.2:
 ---------------
-- Added functionality for Cmd and CmdReg port types not needing indexes or multiplicites to be specified. This allows automatically finds each pair of cmd and cmd reg and generates the same source index. 
+- Added functionality for Cmd and CmdReg port types not needing indexes or multiplicities to be specified. This allows automatically finds each pair of cmd and cmd reg and generates the same source index. 
 
 version 4.3:
 ---------------

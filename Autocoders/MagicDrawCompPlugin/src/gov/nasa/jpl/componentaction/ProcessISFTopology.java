@@ -214,7 +214,7 @@ public class ProcessISFTopology {
 	 * 
 	 * <p>
 	 * 
-	 * The index checking/correction is done so multiplicites do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
+	 * The index checking/correction is done so multiplicities do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
 	 * The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
 	 * This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match.
 	 * 
@@ -724,7 +724,7 @@ public class ProcessISFTopology {
 					Property targetPart = currentConnectorEnd.getPartWithPort();
 					
 					ArrayList<Connector> connList = new ArrayList<Connector>(); //connectors in order of path
-					ArrayList<Integer> multList = new ArrayList<Integer>(); //Indexes of multiplicites are associated with the conn list
+					ArrayList<Integer> multList = new ArrayList<Integer>(); //Indexes of multiplicities are associated with the conn list
 					ArrayList<String> sourceNameList = new ArrayList<String>();
 					ArrayList<String> targetNameList = new ArrayList<String>();
 					
