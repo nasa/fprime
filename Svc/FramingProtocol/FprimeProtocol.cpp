@@ -1,6 +1,14 @@
+// ======================================================================
+// \title  FprimeProtocol.cpp
+// \author mstarch
+// \brief  cpp file for FprimeProtocol class
 //
-// Created by Starch, Michael D (348C) on 12/30/20.
+// \copyright
+// Copyright 2009-2021, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 //
+// ======================================================================
 
 #include "FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
