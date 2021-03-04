@@ -70,7 +70,7 @@ endfunction(serialns)
 # - **AC_FINAL_HEADER:** final position of the HPP file
 # - **AI_XML:** AI xml input to autocoder
 # - **XML_FILE_DEPS:** xml file dependencies
-# - **MOD_DEPS:** xml and hand specidied module dependencies
+# - **MOD_DEPS:** xml and hand specified module dependencies
 # - **Return: AC_OUTPUTS** (set in outer scope)
 ####
 function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD_DEPS)

@@ -163,7 +163,7 @@ class CommentFormatters:
 
     def _commentWrap(self, message, text, length):
         """
-        Return text comments wrapped at the specifief length.
+        Return text comments wrapped at the specified length.
 
         Steve: 03-01-08
         """
