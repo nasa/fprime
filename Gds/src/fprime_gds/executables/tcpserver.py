@@ -435,7 +435,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     TCP Socket server.
 
     Keep a dictionary of destination objects containing queues and
-    socket id's for writting to destinations.
+    socket id's for writing to destinations.
     """
 
     dest_obj = dict()

@@ -184,7 +184,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         # make empty __init__.py
         open("{}/{}".format(output_dir, "__init__.py"), "w").close()
 
-        # Open file for writting here...
+        # Open file for writing here...
         DEBUG.info("Open file: %s" % pyfile)
         self.__fp = open(pyfile, "w")
         if self.__fp is None:

@@ -112,7 +112,7 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
                 PRINT.info(msg)
                 raise ValueError(msg)
 
-            # Open file for writting here...
+            # Open file for writing here...
             DEBUG.info("Open file: %s" % filename)
             self.__fp = open(filename, "w")
             if self.__fp is None:
