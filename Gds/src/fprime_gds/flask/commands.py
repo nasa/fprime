@@ -48,7 +48,7 @@ class CommandDictionary(flask_restful.Resource):
 
 class CommandHistory(flask_restful.Resource):
     """
-    Command history reurning both the full list of available commands and the global history of all
+    Command history returning both the full list of available commands and the global history of all
     of these commands that have run.
     """
 
