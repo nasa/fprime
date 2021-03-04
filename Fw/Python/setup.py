@@ -83,7 +83,7 @@ to interact with the data coming from the FSW.
         'Cheetah;python_version < "3.0"',
     ],
     extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
-    # Setup and test requirments, not needed by normal install
+    # Setup and test requirements, not needed by normal install
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
     # Create a set of executable entry-points for running directly from the package
