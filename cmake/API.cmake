@@ -256,7 +256,7 @@ endfunction(register_fprime_module)
 # ```
 # ### fprime Executable With Autocoding/Dependencies ###
 #
-# Developers can make executables or other utilites that take advantage of fprime autocoding
+# Developers can make executables or other utilities that take advantage of fprime autocoding
 # and fprime dependencies. These can be registered using the same executable registrar function
 # but should specify a specific executable name.
 #

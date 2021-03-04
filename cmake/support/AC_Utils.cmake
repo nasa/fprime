@@ -2,7 +2,7 @@
 # AC_Utils.cmake:
 #
 # Defines needed utility functions that are (or should be) dependent on any autocoding calls to
-# be made. Other utilites should go in *Utils.cmake*.
+# be made. Other utilities should go in *Utils.cmake*.
 ####
 
 ###
