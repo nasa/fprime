@@ -267,7 +267,7 @@ def print_info(parsed, deployment):
             build.load(cwd, parsed.platform)
         except InvalidBuildCacheException:
             print(
-                "[WARNING] Not displying results for build type '{}', missing build cache.".format(
+                "[WARNING] Not displaying results for build type '{}', missing build cache.".format(
                     build_type.get_cmake_build_type()
                 )
             )
