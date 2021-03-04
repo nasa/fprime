@@ -341,7 +341,7 @@ testdata = """
 * indicate the command processing status. This is used in conjunction
 * with the command reply handler.
 *
-* Note: The first two entries in this enumeration are intetionally
+* Note: The first two entries in this enumeration are intentionally
 * made to match the status of MsapFswStatus. Keep the primary success,
 * and fail conditions as 0 and 1 in this list.
 */
