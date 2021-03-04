@@ -66,7 +66,7 @@ make check # Only if CMAKE_BUILD_TYPE=Testing was used when generating the build
 
 ## Adding in New CMake Components and Deployments
 
-The core of a cmake build is the `CMakeLists.txt` file. This file specifices the files needed to
+The core of a cmake build is the `CMakeLists.txt` file. This file specifies the files needed to
 build the current directory of the system. In F prime each Component, Port, and Topology get a
 `CMakeList.txt` along with the top-level deployment directory.
 
