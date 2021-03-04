@@ -129,7 +129,7 @@ Test coverage is fairly low; there are currently no integration tests for the CL
 -   New event/channel retrieval methods defined in `test_api_utils` instead of using the Test API's existing `await_telemetry`/etc. methods, since those only accept predicates filtering by time or one of the predefined `telemetry_predicate` or `event_predicate` fields; defining our own methods lets us use any predicate that will accept a `SysData` object
     -   This lets us also filter by component, printed strings, etc. at the cost of having slightly more complicated predicates
 -   The `search` filter option doesn't take multiple arguments like the other filtering options (done to allow for multi-word string queries more easily, but might not be worth breaking the multiple-filter pattern of the other ones)
--   CLI filters are inclusive OR with themselves but exclusive to one another (e.g. passings multiple `ids` will show all data with any of those ID types, but passing `--ids` and `--search` will only show data with those IDs AND having that search term)
+-   CLI filters are inclusive OR with themselves but exclusive to one another (e.g. passing multiple `ids` will show all data with any of those ID types, but passing `--ids` and `--search` will only show data with those IDs AND having that search term)
 -   MVC isn't strictly followed, since the base command class has a logging method for convenience (and since we have to print on data receipt), but parsing is separated from execution code
 
 ## Future Work
