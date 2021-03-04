@@ -72,7 +72,7 @@ build the current directory of the system. In F prime each Component, Port, and 
 
 Two templates for these CMakeLists.txt files are provided as part of the CMake system. One for
 Modules that result in the creation of a library, executable, or both. The other for Deployments,
-which setup the CMake for a deploment and include a number of Modules.
+which setup the CMake for a deployment and include a number of Modules.
 
 Components, Ports, and Topologies (`Top` folders) all use the Module template. These modules
 provide libraries and executables to the system.
