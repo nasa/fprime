@@ -92,7 +92,7 @@ The `GpsComponentAi.xml` file in the `Gps` subdirectory should look like:
 
 This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
 Telemetry that represent the GPS link. This will also have a command to emit the lock status of the GPS signal. This
-is an active component, meaning it will have it's own thead. It will therefore process messages at its own pace, and
+is an active component, meaning it will have it's own thread. It will therefore process messages at its own pace, and
 will not need an external thread of execution to run on.
 
 It has 3 standard command ports, 2 standard event ports, 1 standard telemetry port, and 2 ports to interact with the
