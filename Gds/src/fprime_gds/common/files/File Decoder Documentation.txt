@@ -2,7 +2,7 @@
 of Blake A. Harriman
 
 @date August 9, 2019
-@author Blake A. Harriamn
+@author Blake A. Harriman
 
 Files Covered:
 -file_decoder.py
