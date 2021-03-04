@@ -47,7 +47,7 @@ endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
 #
-# Creats each module's coverage targets.
+# Creates each module's coverage targets.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
