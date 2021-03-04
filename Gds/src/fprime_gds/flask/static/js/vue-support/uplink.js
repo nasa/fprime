@@ -24,7 +24,7 @@ Vue.component("uplink", {
     },
     methods: {
         /**
-         * Starts the uplink by uploading the currated list of files to the webserver backend. If there are no files
+         * Starts the uplink by uploading the curated list of files to the webserver backend. If there are no files
          * specified in the curated list, then bail.
          */
         uplinkFiles() {
@@ -94,7 +94,7 @@ Vue.component("uplink", {
     },
     computed: {
         /**
-         * Returns the total list of files for display in the table. In short, this is curatec + uplinked (reversed)
+         * Returns the total list of files for display in the table. In short, this is curated + uplinked (reversed)
          * lists.
          * @return {T[] | string}
          */
