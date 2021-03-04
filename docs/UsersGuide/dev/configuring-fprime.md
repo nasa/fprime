@@ -229,7 +229,7 @@ string.
 | FW_SERIALIZABLE_TO_STRING             | Defines a toString() method for code-generated serializable | 1 (on)  | 0 (off) 1 (on)    |
 | FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE | Defines buffer size of toString() result for serializables  | 255     | Positive integer  |
 | FW_ARRAY_TO_STRING                    | Defines a toString() method for code-generated arrays       | 1 (on)  | 0 (off) 1 (on)    |
-| FW_ARRAY_TO_STRING_BUFFER_SIZE        | Defines buffer size of toString() result for arrats         | 256     | Positive integer  |
+| FW_ARRAY_TO_STRING_BUFFER_SIZE        | Defines buffer size of toString() result for arrays         | 256     | Positive integer  |
 
 
 #### Object Registry
