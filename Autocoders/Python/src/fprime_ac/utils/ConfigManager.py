@@ -21,16 +21,7 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 import os
-
-# For Python determination
-import six
-
-# 2/3 support
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
+import configparser
 
 parent = configparser.ConfigParser
 
@@ -48,10 +39,7 @@ class ConfigManager(parent):
         """
         Constructor.
         """
-        if six.PY2:
-            configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
-        configparser.RawConfigParser.__init__(self)
         self.__prop = dict()
         self._setProps()
         # Now look for an ac.ini file within
