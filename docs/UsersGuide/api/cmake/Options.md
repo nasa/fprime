@@ -50,7 +50,7 @@ options.
 **Values:**
 - Release: (default) standard flight build
 - Testing: allow for unit tests and debug enabled build
-- Debug: supplied by CMake and typlically unused for F prime
+- Debug: supplied by CMake and typically unused for F prime
 
 e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 
