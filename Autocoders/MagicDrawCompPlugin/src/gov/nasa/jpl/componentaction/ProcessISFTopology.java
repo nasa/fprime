@@ -80,7 +80,7 @@ import com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port;
  * 					This map is cross checked with all the instances of the modules. If something in the map does not exist within an instance, the user gets notified by a warning.
  * 				</li>
  * 				<li>
- * 					An ISFSubsystem topologyModel object is created using the pysicalConnectionType list and the  map of all the components.
+ * 					An ISFSubsystem topologyModel object is created using the physicalConnectionType list and the  map of all the components.
  * 				</li>
  * 				<li>
  * 					This object is passed to the IsfSubXmlWriter and is used to generate the flattened XML topology file. 
