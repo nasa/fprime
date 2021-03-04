@@ -31,7 +31,7 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES MOD_DEPS)
       # Run the function required to get all information from the Ai file
       fprime_ai_info("${INPUT_FILE}" "${MODULE_NAME}")
       message(STATUS "\tFound ${XML_LOWER_TYPE}: ${AC_OBJ_NAME} in ${INPUT_FILE}")
-      # The build system intrinsically depends on these Ai.xmls and all files includeded by it
+      # The build system intrinsically depends on these Ai.xmls and all files included by it
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE};${FILE_DEPENDENCIES}")
 
       # Calculate the full path to the Ac.hpp and Ac.cpp files that should be generated both the
