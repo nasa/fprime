@@ -1,5 +1,5 @@
-\page OsQueue Os::Queue (Pthreads implemenation)
-# Os::Queue (Pthreads implemenation)
+\page OsQueue Os::Queue (Pthreads implementation)
+# Os::Queue (Pthreads implementation)
 
 ## 1 Introduction
 
