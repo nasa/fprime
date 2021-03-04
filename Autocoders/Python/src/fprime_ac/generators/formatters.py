@@ -699,7 +699,7 @@ class Formatters:
         # Make the string and clip to 32 chars.
         name_string = "_"
         name_string = name_string.join(name_list)[:max_stem_length]
-        # Check charactors
+        # Check characters
         if len(re.findall("[^A-Z0-9_]", name_string)) != 0:
             PRINT.info(
                 "ERROR: DETECTED INVALID CHARACTER IN COMMAND STEM NAME (%s)."
