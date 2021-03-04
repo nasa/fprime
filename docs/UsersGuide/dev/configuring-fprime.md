@@ -192,7 +192,7 @@ macros related to this feature.
 The `Os::Queue` class stores a queue name as private data. Table 35 provides the macro for this feature. The `Os::Task`
 class stores a task name as private data. Table 35 provides the macro for this feature as well.
 
-**Table 35.** Macros for object naming, queue naming, and task namining
+**Table 35.** Macros for object naming, queue naming, and task naming
 
 | Macro                    | Definition                                  | Default | Valid Values      |
 | ------------------------ | ------------------------------------------- |---------|-------------------|
