@@ -120,7 +120,7 @@
             </optional>
 
 
-            <!-- Type, size, and internal enum define are defined withing this ref -->
+            <!-- Type, size, and internal enum define are defined within this ref -->
             <ref name = "type_size_choice_define"></ref>
 
 

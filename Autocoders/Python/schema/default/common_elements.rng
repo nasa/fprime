@@ -278,7 +278,7 @@
     </define>
 
     <define name="type_size_choice_define">
-        <!-- This is a common choice withing many elements. -->
+        <!-- This is a common choice within many elements. -->
 
         <choice>
 
