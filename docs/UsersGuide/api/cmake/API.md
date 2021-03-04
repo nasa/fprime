@@ -207,7 +207,7 @@ and fprime dependencies. These can be registered using the same executable regis
 but should specify a specific executable name.
 
 ```
-set(EXECUTABLE_NAME "MyUtitlity")
+set(EXECUTABLE_NAME "MyUtility")
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR)/ModuleAi.xml"
