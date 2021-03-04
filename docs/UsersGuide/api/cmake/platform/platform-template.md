@@ -28,7 +28,7 @@ will be used. `${CMAKE_SYSTEM_NAME}` is set in the toolchain file.
 Otherwise, CMake sets the `${CMAKE_SYSTEM_NAME}` to be that of the Host system, and that platform
 will be used. e.g. when building on Linux, the platform file "Linux.cmake" will be used.
 
-### Filling In CMake Platform by Eample ###
+### Filling In CMake Platform by Example ###
 
 F prime platform files are used to set F prime specific settings. This allows the user to control
 some aspects of the F prime build at the top-leve. This means setting global include directories
