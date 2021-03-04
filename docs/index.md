@@ -67,7 +67,7 @@ CTRL-C
 
 ## Further References
 
-Full information on the code and F´ are available at our Github page:
+Full information on the code and F´ are available at our GitHub page:
 [http://github.com/nasa/fprime](http://github.com/nasa/fprime).  
 
 To start with, follow the [installation guide](./INSTALL.md). Then inspect

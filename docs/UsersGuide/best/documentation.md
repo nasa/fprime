@@ -66,10 +66,10 @@ change these settings.
 | PROJECT_BRIEF  | Brief description of project |
 | PROJECT_LOGO | 200x50 or smaller logo for project. Leave blank for no logo |
 
-## Github Pages Notes
+## GitHub Pages Notes
 
-There is a small problem with the Doxygen files generated and hosting these pages on Github pages. This is because
-Doxygen converts the leading / of markdown paths to an _ which then is ignored by Github pages autogenerator Jekyll.
+There is a small problem with the Doxygen files generated and hosting these pages on GitHub pages. This is because
+Doxygen converts the leading / of markdown paths to an _ which then is ignored by GitHub pages autogenerator Jekyll.
 
 Possible fixes:
 
