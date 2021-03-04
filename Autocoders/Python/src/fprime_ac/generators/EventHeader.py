@@ -85,7 +85,7 @@ class EventHeader:
 
     def addVisitor(self, visitor):
         """
-        Add a visitor to the list of vistors.
+        Add a visitor to the list of visitors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
         """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):
