@@ -279,7 +279,7 @@ class TimeType(type_base.BaseType):
                       Defaults to None.
 
         Returns:
-            A human readable string reperesenting the time type object
+            A human readable string representing the time type object
         """
         dt = self.get_datetime(time_zone)
 
