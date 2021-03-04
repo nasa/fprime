@@ -2,7 +2,7 @@
 # NAME: Namespace
 #
 # DESCRIPTION:  The Namespace class is the main entry point
-#                 for generation of initiallization code (e.g.
+#                 for generation of initialization code (e.g.
 #               opening files and namming) for code generation.
 #
 # USAGE: Nominally the Namespace.__call__ is called by using the

@@ -57,7 +57,7 @@ namespace Svc {
             //!  The readFile function reads the set of parameters from the file passed in to
             //!  the constructor.
             //!
-            void readParamFile(void); // NOTE: Assumed to run at initialzation time. No guard of data structure.
+            void readParamFile(void); // NOTE: Assumed to run at initialization time. No guard of data structure.
 
             //!  \brief PrmDb destructor
             //!

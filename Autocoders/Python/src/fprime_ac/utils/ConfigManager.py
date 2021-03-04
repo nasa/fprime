@@ -9,7 +9,7 @@
 #       included with Python 2.4 to extend configuration out to
 #       reading windows like .ini files.  If none exist then this
 #       uses hardwired values set in a dictionary called prop to
-#       default initiallization.
+#       default initialization.
 #
 # AUTHOR: Leonard J. Reder
 #

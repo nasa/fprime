@@ -2,7 +2,7 @@
 # NAME: InitFiles
 #
 # DESCRIPTION:  The InitFiles class is the main entry point
-#                 for generation of initiallization code (e.g.
+#                 for generation of initialization code (e.g.
 #               opening files and namming) for code generation.
 #
 # USAGE: Nominally the InitFiles.__call__ is called by using the
