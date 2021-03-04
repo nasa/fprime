@@ -23,7 +23,7 @@ These targets can be run using the build system as shown in the example below:
 ```
 make Svc_CmdDispatcher_Cmd
 ```
-**Note:** although a globale `coverage` target is created, it typically should not be used as
+**Note:** although a global `coverage` target is created, it typically should not be used as
 CTest provides better global coverage with the `Coverage` target.
 
 ## Detailed Function Descriptions
