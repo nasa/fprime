@@ -86,7 +86,7 @@ class XmlComponentParser:
         ## Dictionary of special_ports
         self.special_ports = self.Config._ConfigManager__prop["special_ports"]
 
-        ## get costants file name and read it in
+        ## get constants file name and read it in
         constants_file = self.Config.get("constants", "constants_file")
         if not os.path.isabs(constants_file):
             constants_file = os.path.join(ROOTDIR, constants_file)
