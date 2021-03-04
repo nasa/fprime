@@ -39,7 +39,7 @@
  * then initialized to contain information for random number generation with
  * that much state information.  Good sizes for the amount of state
  * information are 32, 64, 128, and 256 bytes.  The state can be switched by
- * calling the setstate() routine with the same array as was initiallized
+ * calling the setstate() routine with the same array as was initialized
  * with initstate().  By default, the package runs with 128 bytes of state
  * information and generates far better random numbers than a linear
  * congruential generator.  If the amount of state information is less than
