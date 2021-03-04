@@ -694,7 +694,7 @@ public class ISFSubsystem {
 				}
 			}
 			catch(Exception e){
-				Utils.throwConnectorException("Port in " + c.getObjectParent().getHumanName() + "  does not have direction. (The connector end does not have a sterotype with a direction value)");
+				Utils.throwConnectorException("Port in " + c.getObjectParent().getHumanName() + "  does not have direction. (The connector end does not have a stereotype with a direction value)");
 			}
 		}
 	
