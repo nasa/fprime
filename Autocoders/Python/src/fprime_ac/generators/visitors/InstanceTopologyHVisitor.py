@@ -324,7 +324,7 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
                 )
                 c.component_declarations.append(declaration_template)
             else:
-                pass  ## If objects are generated as instances the object was instansiated in includes
+                pass  ## If objects are generated as instances the object was instantiated in includes
         #
 
         #
