@@ -71,10 +71,9 @@ to interact with the data coming from the FSW.
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    # Requires Python 3.5+, and the 'six' Python package
+    # Requires Python 3.5+
     python_requires=">=3.5",
     install_requires=[
-        "six",
         "lxml",
         'enum34;python_version < "3.4"',
         "Markdown",
