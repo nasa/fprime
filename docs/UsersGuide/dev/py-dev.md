@@ -71,7 +71,7 @@ pre-commit hook by modifying the 'SKIP' environment variable in bash. For exampl
 SKIP=black git commit -m "foo"
 ```
 
-However this should only be used in an emergency. If SKIP is used for all of your commits it will dramaticall
+However this should only be used in an emergency. If SKIP is used for all of your commits it will dramatically
 reduce code quality over time.
 
 ### Why did we choose black
