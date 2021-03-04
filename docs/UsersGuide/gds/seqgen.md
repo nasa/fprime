@@ -88,5 +88,5 @@ source.  Available time sources are below:
 | TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
 | TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
 
-**Note:** the above discriptions represent typically usages of these time bases but are project specific i.e.
+**Note:** the above descriptions represent typically usages of these time bases but are project specific i.e.
 TB_SC_TIME might derive time from an internet time source.
