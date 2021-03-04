@@ -17,7 +17,7 @@ of the deployment's build. A separate tools deployment may be used to build only
 
 See: [API](API.md)
 
-## Cutsom Build-System Commands (Make Targets)
+## Custom Build-System Commands (Make Targets)
 
 Custom build targets that need to be build against modules, and global targets can be generated 
 using the hook pattern. This pattern involves creating a file with two functions `add_global_target`
