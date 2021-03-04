@@ -27,7 +27,7 @@
 
             <optional>
                 <attribute name = "typeid">
-                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serlializable files.</a:documentation>
+                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serializable files.</a:documentation>
                     <ref name = "id_define"></ref>
                 </attribute>
             </optional>

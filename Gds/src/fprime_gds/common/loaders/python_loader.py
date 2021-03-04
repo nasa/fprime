@@ -100,7 +100,7 @@ class PythonLoader(dict_loader.DictLoader):
         else:
             sys.path.append(superpkg_path)
 
-        # Make sure serializeable directory is imported
+        # Make sure serializable directory is imported
         sys.path.append(superpkg_path + os.sep + "serializable")
 
         # Compute a list of all files to import

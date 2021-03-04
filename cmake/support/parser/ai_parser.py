@@ -176,7 +176,7 @@ def read_xml_file(root, import_base):
     kind = root.attrib.get("kind", None)
     if kind in KIND_DEPENDENCIES:
         dependencies.update(KIND_DEPENDENCIES[kind])
-    # Import component/serialzable/port types
+    # Import component/serializable/port types
     for import_type in [
         "import_port_type",
         "import_component_type",
