@@ -492,7 +492,7 @@ class Formatters:
 
         @param id: The module id (name)
         @param name: The user specified function name
-        @param str:  A short string with '_' seperation.
+        @param str:  A short string with '_' separation.
         """
 
         name = name.lower()
@@ -551,7 +551,7 @@ class Formatters:
         """
         Return a mod_ok_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_ok", itype, verbose)
 
@@ -559,7 +559,7 @@ class Formatters:
         """
         Return a mod_ok_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_parse", itype, verbose)
 
@@ -567,7 +567,7 @@ class Formatters:
         """
         Return a mod_unpack_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_unpack", itype, verbose)
 
@@ -575,7 +575,7 @@ class Formatters:
         """
         Return a mod_unpack_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         name_str = name + "_handler"
         return name_str
@@ -584,7 +584,7 @@ class Formatters:
         """
         Return the name of msg typedef from a import function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         @param name_sep: A string placed between the id and interface name
         """
 
@@ -638,7 +638,7 @@ class Formatters:
         Return the name of msg typedef
         from a input function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         id_list = id.split("_")
         name_list = name.split("_")
@@ -659,7 +659,7 @@ class Formatters:
         Return the name of command opcode
         from a input function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         name_list = name.split("_")
         name_list = list(map((lambda x: x.upper()), name_list))
@@ -682,7 +682,7 @@ class Formatters:
            and if exceeded then clip name.
         5. If all was ok return the command stem name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         @return: Valid command stem name stri
         """
 
