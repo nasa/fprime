@@ -77,7 +77,7 @@
  * the 'arg_state' variable must be forced to begin on word boundaries.
  * This can be easily done by casting a long integer array to char *.
  * The overall logic has been left STRICTLY alone.  This software was
- * tested on both a VAX and Sun SpacsStation with exactly the same
+ * tested on both a VAX and Sun SparcStation with exactly the same
  * results.  The new version and the original give IDENTICAL results.
  * The new version is somewhat faster than the original.  As the
  * documentation says:  "By default, the package runs with 128 bytes of
