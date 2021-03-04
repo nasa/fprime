@@ -248,7 +248,7 @@ def dumpObj(
 
 
 def prettyPrintCols(strings, widths, split=" "):
-    """Pretty prints text in colums, with each string breaking at
+    """Pretty prints text in columns, with each string breaking at
     split according to prettyPrint.  margins gives the corresponding
     right breaking point."""
 

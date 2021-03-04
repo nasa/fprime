@@ -43,7 +43,7 @@ Vue.component("downlink", {
             return this.downfiles;
         },
         /**
-         * Returns the file item as a list of clumns. This allows for filtering.
+         * Returns the file item as a list of columns. This allows for filtering.
          * @param item: item to columnify
          * @return list of columns
          */
