@@ -184,7 +184,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     keyword = Literal("typedef enum").suppress()
     typetoken = Literal(typename).suppress()
 
-    # 04/23/07: Fix allows for nagative numbers.
+    # 04/23/07: Fix allows for negative numbers.
     _ = Word("=" + " " + "-" + nums) + restOfLine.suppress()
 
     # 03/21/08: Fix allows hexadecimal numbers.
