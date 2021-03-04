@@ -163,11 +163,11 @@ class Distributor:
 
     def on_recv(self, data):
         """
-        Called by the internal socket client when data is recved from the socket
+        Called by the internal socket client when data is received from the socket
         client.
 
         Arguments:
-            data {binary} -- the data recved from the socket client. May contain
+            data {binary} -- the data received from the socket client. May contain
                              more than one message.
         """
         # NOTE make data sizes selectable with a configuration later
