@@ -108,7 +108,7 @@ namespace Tlm {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel somechan\n"
+      << " on telemetry channel somechan\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

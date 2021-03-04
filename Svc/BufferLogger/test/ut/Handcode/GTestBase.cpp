@@ -177,7 +177,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << __index
-      << " on telmetry channel BufferLogger_NumLoggedBuffers\n"
+      << " on telemetry channel BufferLogger_NumLoggedBuffers\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

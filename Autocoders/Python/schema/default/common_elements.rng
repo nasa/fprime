@@ -285,7 +285,7 @@
             <!-- Choice one: Type = string and size is also an attribute -->
             <group>
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <value>string</value>
@@ -307,7 +307,7 @@
             <!--Choice two: Type = ENUM and Enum element inside block -->
             <group>
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <value>ENUM</value>
@@ -328,7 +328,7 @@
 
 
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <!-- Any string BUT ENUM -->

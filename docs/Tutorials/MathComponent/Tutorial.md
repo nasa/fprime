@@ -1259,7 +1259,7 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
 
 The next step is to add the specific test cases to the `Tester.cpp` implementation file. It is important to note that the unit tests are designed to be single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the message queue and dispatched to handlers. This makes testing simpler since the execution of the thread in response to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
 
-The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telmetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
+The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telemetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
 
 Add a member function to the implementation class in `Tester.cpp` to implement the test case:
 

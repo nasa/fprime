@@ -177,7 +177,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel PingLateWarnings\n"
+      << " on telemetry channel PingLateWarnings\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
