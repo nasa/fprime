@@ -159,7 +159,7 @@ In order to build individual components inside F´ when using out-of-source buil
 into the parallel build structure to find the components build directory. F´ core components live in
 `<build>/F-Prime/<path-to-component>` and adaptations typically live in
 `<build>/<adaptation>/<path-to-component>`.  The user can then issue make in this directory to build
-the component.  A referend app example can be seen in the commands below.
+the component.  A reference app example can be seen in the commands below.
 
 **Build F´ Svc Component Individually**
 
