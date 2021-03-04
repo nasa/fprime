@@ -31,7 +31,7 @@
 
         <!-- Required attributes -->
         <attribute name = "name">
-            <a:documentationa>Name of the component.</a:documentationa>
+            <a:documentation>Name of the component.</a:documentation>
             <text/>
         </attribute>
 

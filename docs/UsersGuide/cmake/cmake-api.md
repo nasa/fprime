@@ -8,7 +8,7 @@ takes. Users wanting to alter the build should look here.
 - [Options](../api/cmake/Options.md): Runtime build options
 - [API](../api/cmake/API.md): Module API function documentation 
 
-## Toolchain and Platform Doucmentation
+## Toolchain and Platform Documentation
 
 Toolchain files are used to cross-compile F´. In general, standard CMake toolchain files can be used
 to cross-compile, however; F´ includes several built-in toolchains and a template for writing your
