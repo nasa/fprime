@@ -49,7 +49,7 @@ BUILD_18 | Deployments shall configure dependencies independently. | Current F´
 BUILD_19 | The build system shall not be difficult to set up and configure. | Porting existing F´ deployments to the new make system should not require massive efforts | Inspection | Done |
 BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection | Done |
 BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection | **Needed** |
-BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | **Deffered** Note: AC support needed |
+BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | **Deferred** Note: AC support needed |
 BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection | Done |
 BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection | **Needed** |
 BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | | | Done |
