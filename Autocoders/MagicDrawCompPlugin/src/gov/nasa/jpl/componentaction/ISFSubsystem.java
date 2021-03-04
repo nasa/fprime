@@ -636,7 +636,7 @@ public class ISFSubsystem {
 	 * Both getSourceConnEnd and getTargetConnEnd use this function. Incorporates error handling/checking.
 	 * <p>
 	 * The function checks the direction property of the first stereotype found in each port of the connector. 
-	 * Depending on what the connector can see within and around the system, the funcion will return what it sees as the source and what is sees as the target.
+	 * Depending on what the connector can see within and around the system, the function will return what it sees as the source and what is sees as the target.
 	 * 
 	 * @param c Connector
 	 * @param isSource true if looking for source end, false if looking for target end
