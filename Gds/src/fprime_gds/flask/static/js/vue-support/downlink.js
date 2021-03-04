@@ -28,7 +28,7 @@ Vue.component("downlink", {
     methods: {
         /**
          * Converts file into a unique key.
-         * @param item: item to keyifiy
+         * @param item: item to keyify
          * @return {string}
          */
         keyify(item) {
