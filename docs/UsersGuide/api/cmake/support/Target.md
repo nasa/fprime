@@ -19,7 +19,7 @@ CMake's `add_custom_target("${TARGET_NAME}" ...)` at some point in the function.
 
 ### `add_module_target` Specification:
 
-Adds a module-by-module target for this given target. Any subtargets for each module and thier
+Adds a module-by-module target for this given target. Any subtargets for each module and their
 commands should be registered via CMake's `add_custom_target("${TARGET_NAME}" ...)`. This command
 is supplied with all of the modules knowledge. Add a `DEPENDS` call on AC_OUTPUTS to come after
 the autocoding step.
