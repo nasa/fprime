@@ -18,7 +18,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-  # their separate peices. 
+  # their separate pieces. 
   #
   # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
   # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
