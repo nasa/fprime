@@ -54,7 +54,7 @@ BUILD_23 | The build system shall support building F´ core as a set of shared l
 BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection | **Needed** |
 BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | | | Done |
 BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | | | Done |
-BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | |  **Needed** Note: pytrhon check needed |
+BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | |  **Needed** Note: python check needed |
 BUILD_29 | The build system shall implement all user targets of the legacy F´ build system. | | | **Deferred** separate build commands needed. |
 BUILD_30 | The build system shall support execution of individual, sets, or all GSE based integration tests. | | | **Needed** |
 BUILD_31 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. | | | Done |
