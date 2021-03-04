@@ -137,7 +137,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         if not os.path.isfile(filename):
             ##################
             # EddieB ENUM path fix but I replace try/except
-            # with existance test for MSL_ROOT.
+            # with existence test for MSL_ROOT.
             # LJR - 15 Nov. 2007
             ##################
             if "MSL_ROOT" in os.environ:
