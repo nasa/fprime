@@ -10,7 +10,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 # Function `generate_executable:`
 #
-# Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
+# Top-level executable generation. Core allows for generation of UT specifics without affecting API.
 #
 # - **EXECUTABLE_NAME:** name of executable to be generated.
 # - **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
