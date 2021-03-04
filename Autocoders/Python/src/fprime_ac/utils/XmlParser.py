@@ -23,7 +23,7 @@ import os
 from genshi import XML
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #

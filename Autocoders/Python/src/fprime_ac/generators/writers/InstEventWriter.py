@@ -26,7 +26,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.writers import AbstractDictWriter
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version

@@ -26,7 +26,7 @@ import csv
 from Cheetah.Template import Template
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #

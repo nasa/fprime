@@ -27,7 +27,7 @@ from fprime_ac.generators.writers import AbstractDictWriter
 from fprime_ac.models import Command, Parameter
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version

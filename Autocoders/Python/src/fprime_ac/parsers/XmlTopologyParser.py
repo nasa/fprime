@@ -35,7 +35,7 @@ from fprime_ac.utils.exceptions import (
 
 # from builtins import file
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 #
 # Universal globals used within module go here.
