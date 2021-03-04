@@ -101,7 +101,7 @@ endfunction(add_generated_sources)
 # - **MODULE_NAME:** name of the module soliciting new dependencies
 ####
 function(fprime_ai_info XML_PATH MODULE_NAME)
-  # Run the parser and capture the output. If an error occcurs, that fatals CMake as we cannot continue
+  # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
   set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
   execute_process(
       COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
