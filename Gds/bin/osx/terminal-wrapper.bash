@@ -2,7 +2,7 @@
 ####
 # terminal-wrapper.bash:
 #
-# Terminal wrapper wraps the call to the OSX Terminal.app to run the application in an external
+# Terminal wrapper wraps the call to the macOS Terminal.app to run the application in an external
 # window. This ensures that the application can be shutdown after a shutdown call. It must do
 # the following:
 #

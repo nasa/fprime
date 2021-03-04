@@ -236,7 +236,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
             ),
             file=sys.stderr,
         )
-    # For OSX, add in the wx wrapper
+    # For macOS, add in the wx wrapper
     if platform.system() == "Darwin":
         gse_args.insert(
             0,
