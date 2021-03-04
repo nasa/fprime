@@ -18,7 +18,7 @@
 # pip install --upgrade ./Gds
 # ```
 #
-# Developer and Dynamic Installtion:
+# Developer and Dynamic Installation:
 # ```
 # pip install -e ./Gds
 # ```

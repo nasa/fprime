@@ -11,7 +11,7 @@
 # pip install --upgrade ./Fw/Python
 # ```
 #
-# Developer and Dynamic Installtion:
+# Developer and Dynamic Installation:
 # ```
 # pip install -e ./Fw/Python
 # ```
