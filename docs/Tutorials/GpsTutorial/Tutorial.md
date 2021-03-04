@@ -238,7 +238,7 @@ This defines four telemetry channels to report basic GPS information.
         <comment>The current altitude</comment>
     </channel>
     <channel id="3" name="Gps_Count" data_type="U32" abbrev="GPS-0003">
-        <comment>The current number of satilites</comment>
+        <comment>The current number of satellites</comment>
     </channel>
 </telemetry>
 ```
