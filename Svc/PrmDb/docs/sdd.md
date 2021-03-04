@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Svc::PrmDb` Component is used to store parameter values used by other components. The values are stored in serialized form. During initialization, `Svc::PrmDb` loads a set of parameters from a file, and stores the values in a table based on the parameter ID. Components that need parameters request their values during intialization after they have been loaded. Components occasionally receive updates to parameter values via a command, and the new values will be send to `Svc::PrmDb`. A command will save the copy in memory back to the file.
+The `Svc::PrmDb` Component is used to store parameter values used by other components. The values are stored in serialized form. During initialization, `Svc::PrmDb` loads a set of parameters from a file, and stores the values in a table based on the parameter ID. Components that need parameters request their values during initialization after they have been loaded. Components occasionally receive updates to parameter values via a command, and the new values will be send to `Svc::PrmDb`. A command will save the copy in memory back to the file.
 
 ## 2. Requirements
 
