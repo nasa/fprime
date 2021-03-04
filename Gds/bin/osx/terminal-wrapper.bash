@@ -14,7 +14,7 @@
 ####
 
 # Setup existing python path. Also, if in VIRTUAL_ENV, then source that virtual environment
-# first. This will not work running a `tsch` shell on Mac OSX 
+# first. This will not work running a `tsch` shell on macOS 
 EXTRA="PYTHONPATH='${PYTHONPATH}' "
 if [[ "$VIRTUAL_ENV" != "" ]]
 then

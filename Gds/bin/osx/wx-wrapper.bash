@@ -2,7 +2,7 @@
 ####
 # wx-wrapper.bash:
 #
-# Wx doesn't work well on Mac OSX in a virtual environment. This is because the virtual environment
+# Wx doesn't work well on macOS in a virtual environment. This is because the virtual environment
 # doesn't provide access to the screen through the virtual environment's python binary. This script
 # stores the PYTHONHOME variable from the VIRTUALENV and then unsets the python virtual environment
 # and runs the system python with the captures PYTHONHOME.

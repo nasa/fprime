@@ -23,7 +23,7 @@ define types and headers needed for F´ for any embedded system they desire.
 
 [Platform Template](../api/cmake/platform/platform-template.md): Platform file template documentation
 [Linux](../api/cmake/platform/Linux.md): Linux platform support
-[Darwin](../api/cmake/platform/Darwin.md): Darwin (Mac OSX) platform support
+[Darwin](../api/cmake/platform/Darwin.md): Darwin (macOS) platform support
 [arm-linux-gnueabihf](../api/cmake/platform/arm-linux-gnueabihf.md): Raspberry PI platform support
 [rtems5](../api/cmake/platform/rtems5.md): RTEMS 5 initial support
 [Linux-common](./platform/Linux-common.md): Common Linux platform support included above

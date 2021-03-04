@@ -45,7 +45,7 @@ The next section links to more step-by-step tutorials, but it's a good idea to b
 
 **Example one:** [Ref](./Ref/README.md)
 
-   The standard reference application demonstrates how most of the system components should be wired together. The reference application can build on Linux or Mac OSX, allowing you to get started immediately without the need for embedded hardware.
+   The standard reference application demonstrates how most of the system components should be wired together. The reference application can build on Linux or macOS, allowing you to get started immediately without the need for embedded hardware.
 
 **Example two:** [RPI](./RPI/README.md)
 

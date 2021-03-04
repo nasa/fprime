@@ -895,7 +895,7 @@ to the USB GPS device. If the device doesn't exist, the system will run but log 
 cd fprime/GpsApp
 # For "Linux":
 ./bin/Linux/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
-# For "Mac OSX":
+# For "macOS":
 ./bin/Darwin/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
 ```
 
