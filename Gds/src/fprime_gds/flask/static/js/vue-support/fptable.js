@@ -328,7 +328,7 @@ Vue.component("fp-table", {
             this.$refs.allbox.indeterminate = true;
         },
         /**
-         * Clears everything from a view.  Everything will be displated.
+         * Clears everything from a view.  Everything will be displayed.
          */
         clearView: function() {
             this.view = [];
