@@ -27,7 +27,7 @@ F´ was built to meet the following goals:
   - Adapt easily to new contexts
   - Port to new architectures and platforms
   - Be easy to use
-  - Scale and configure to meet new usse cases
+  - Scale and configure to meet new use cases
   - Perform well in resource constrained context
 
 F´ was developed at NASA's Jet Propulsion Laboratory for small-scale embedded flight software. These small missions
