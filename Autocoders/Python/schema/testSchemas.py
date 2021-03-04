@@ -131,7 +131,7 @@ class schema_test:
 
     def run_all_tests(self):
         """
-        Runs all the tests consecutivley.
+        Runs all the tests consecutively.
         """
         for index in range(len(self.__test_set_list)):
             self.run_test(index)
