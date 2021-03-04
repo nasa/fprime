@@ -41,10 +41,10 @@
 
     <commands opcode_base="$OPCODEBASE">
         <command kind="async" opcode="0" mnemonic="Flight Command Zero">
-            <comment>Flight Command Zero excecutes very simple command.</comment>
+            <comment>Flight Command Zero executes very simple command.</comment>
         </command>
         <command kind = "sync"  opcode="1" mnemonic="Flight Command One">
-            <comment>Flight Command One excecutes complex command.</comment>
+            <comment>Flight Command One executes complex command.</comment>
             <args>
                 <arg name="Throttle" type="I8" size="8" comment="Throttle Value">
                     <comment>Controls the throttle value.</comment>
