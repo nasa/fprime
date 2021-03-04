@@ -290,7 +290,7 @@ def setup():
         AssertionError,
     )
     event_test.add_test(
-        "Formot string missing",
+        "Format string missing",
         "sample_XML_files/event/missingFormatString.xml",
         AssertionError,
     )
