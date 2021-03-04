@@ -4,7 +4,7 @@
 # This file provides the API for the commands Gds interface for use with the Gds Flask server. This
 # API should provide the following HTML API behaviors:
 #
-#  GET /commands: list all commandsi history available to the GUI. Note: this also prvides a full
+#  GET /commands: list all commandsi history available to the GUI. Note: this also provides a full
 #                 command listing.
 #  PUT /commands/<command>: issue a command through the GDS
 #      Data: {
