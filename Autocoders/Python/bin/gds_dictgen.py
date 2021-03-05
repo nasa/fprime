@@ -24,7 +24,7 @@ from fprime_ac.models import TopoFactory
 
 # Parsers to read the XML
 from fprime_ac.parsers import XmlParser, XmlSerializeParser, XmlTopologyParser
-from fprime_ac.utils import ConfigManager, DictTypeConverter
+from fprime_ac.utils import ConfigManager, DictTypeConverter, EnumDupRemover
 from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
 
 # Generators to produce the code
@@ -403,7 +403,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
         if parsed_xml_dict[comp_type].get_parameters() is not None:
             for parameter in parsed_xml_dict[comp_type].get_parameters():
                 if VERBOSE:
-                    print("Processing Parameter %s" % chan.get_name())
+                    print("Processing Parameter %s" % parameter.get_name())
                 param_default = None
                 command_elem_set = etree.Element("command")
                 command_elem_set.attrib["component"] = comp_name
@@ -493,40 +493,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
 
                 parameter_list.append(param_elem)
 
-    # Remove duplicates from enum list
-    temp_enum_list = []
-    for enum_elem in enum_list:
-        temp_enum_list.append(enum_elem)
-    for enum_elem in temp_enum_list:
-        should_remove = False
-        for temp_enum in enum_list:
-            # Skip over comparisons between same exact element
-            if id(enum_elem) == id(temp_enum):
-                continue
-
-            # Check all attributes
-            if temp_enum.attrib["type"] == enum_elem.attrib["type"]:
-                should_remove = True
-            if (
-                not len(temp_enum.getchildren()) == len(enum_elem.getchildren())
-                and should_remove
-            ):
-                should_remove = False
-            children1 = temp_enum.getchildren()
-            children2 = enum_elem.getchildren()
-            if children1 and children2:
-                i = 0
-                while i < len(children1) and i < len(children2):
-                    if (
-                        not children1[i].attrib["name"] == children2[i].attrib["name"]
-                        and should_remove
-                    ):
-                        should_remove = False
-                    i += 1
-            if should_remove:
-                break
-        if should_remove:
-            enum_list.remove(enum_elem)
+    EnumDupRemover.remove_duplicates(enum_list)
 
     topology_dict.append(enum_list)
     topology_dict.append(serializable_list)

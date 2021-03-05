@@ -102,7 +102,7 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | XmlParser.py | Parent class of the rest of the XmlParser classes |
 | XmlPortsParser.py | Parses XML port description files |
 | XmlSerializeParser.py | Parses XML serialize description files |
-| XmlTopologyParser.py | Topology XML topology description files |
+| XmlTopologyParser.py | Parses XML topology description files |
 
 #### src/utils/
 | File | Description |
@@ -115,6 +115,7 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | DiffAndRename.py | Mainly used for difference and rename routines |
 | DumpObj.py | Contains methods to print nicely formatted overviews of objects |
 | EnumDictCheck.py | A structure used to report enumeration size errors |
+| EnumDupRemover.py | Contains a function that removes duplicates from list of enums |
 | EnumGenerator.py | Generator to produce serializable enums |
 | Logger.py | Sets up the logging for all other scripts based on the Python logging module - not a standalone file |
 | ParseC.py | Contains a set of Python functions that parse C code |
