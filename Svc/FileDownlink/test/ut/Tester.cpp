@@ -43,7 +43,7 @@ namespace Svc {
     ~Tester(void)
   {
       for (U32 i = 0; i < buffers_index; i++) {
-          delete buffers[i];
+          delete [] buffers[i];
       }
   }
 
