@@ -200,27 +200,31 @@ leak | Check for memory leaks in unit tests.
 
 For example, to run all unit tests and check for code coverage, enter `fprime-util check --all,coverage`.
 
-Components that call into libraries have two ways to write tests: i)
-link against the library in the test, or ii) link against a mock or stub
-library. Selecting from either of these two options depend on the
-circumstances. If selecting the link against the library in the test,
-avoid writing the mock or stub library. This approach proves that the
-component code works with the actual library. If selecting the link
-against a mock or stub library, it will make it easier to induce the
-behaviors for testing, such as injecting faults. This approach may be
+### Choosing a test library
+
+Components that call into libraries have two ways to write tests:
+
+- Link against the library in the test
+- Link against a mock or stub library
+
+If you link against the library in the test, avoid linking against the
+mock or stub library. Linking against only the test library proves that the component code works with the actual library. 
+
+Linking against a mock or stub library makes it easier to induce 
+behaviors for testing, like injecting faults. This approach may be
 the only option on some platforms.
 
-Checking code coverage checks which lines were run at least once during
-a test. There are standard tools, such as *gcov*, that can perform this
-analysis by compiling and running the tests, and then produce a report.
+### Code coverage
+
+Code coverage checks which lines were run at least once during
+a test. Tools like *gcov* perform code coverage analysis by compiling and running the tests, then producing a report.
+
 Generally, code coverage checks close to 80% of lines. The remaining
 lines are usually off-nominal behaviors that may require additional
 effort to check by reverse reasoning from the desired behavior to
 synthesize the inputs, or by injecting faults into the library
-behaviors. However, 100% code coverage is not a complete solution to
-checking which system states were tested, or which paths through the
-code were tested, as this is not possible.
+behaviors.
 
-To review the analysis, go to the component directory and review the 
-summary output *\_gcov.txt* files. Next, go to the component directory to 
-review the coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
+Note that 100% code coverage does not check which system states were tested, nor which paths through the code were tested.
+
+To review code coverage analysis, go to the component directory and review the summary output *\_gcov.txt* files. Next, go to the component directory to review the coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
