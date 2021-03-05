@@ -187,12 +187,10 @@ The F′ Prime build system provides targets for building and running
 component unit tests.
 
 To build unit tests, go to the component directory (not the *test/ut*
-directory) and run *make ut* to build with code coverage enabled, or run
-*make ut\_nocov* to build with code coverage disabled.
+directory) and run `fprime-util generate --ut`.
 
 To run unit tests, go to the component directory (not the *test/ut*
-directory) and run *make run\_ut* to run with coverage enabled, or *make
-run\_ut\_nocov* to run with coverage disabled.
+directory) and run `fprime-util check --coverage` to run with coverage enabled.
 
 Components that call into libraries have two ways to write tests: i)
 link against the library in the test, or ii) link against a mock or stub
@@ -215,9 +213,6 @@ behaviors. However, 100% code coverage is not a complete solution to
 checking which system states were tested, or which paths through the
 code were tested, as this is not possible.
 
-To generate the analysis, go to the component directory (not the
-*test/ut* directory). After building and running the tests as outlined
-above, run *make cov*. The review the analysis, go to the *test/ut*
-directory (not the component director) and review the summary output
-*\_gcov.txt* files. Next, go to the component directory to review the
-coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
+To review the analysis, go to the component directory and review the 
+summary output *\_gcov.txt* files. Next, go to the component directory to 
+review the coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
