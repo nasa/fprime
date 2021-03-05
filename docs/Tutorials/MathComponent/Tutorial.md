@@ -2127,7 +2127,7 @@ If running on a different platform, you can specify the build target by typing `
 
 ## 4.1 Running the Ground System
 
-Once the `Ref` example has built successfully, you can run the ground system and executable by entering `cd fprime/Ref; fprime-gds`. The ground system GUI should appear.
+Once the `Ref` example has built successfully, you can run the ground system and executable by entering `fprime-gds -r fprime/Ref/build-artifacts`. The ground system GUI should appear.
 
 ### 4.1.1 Executing Commands
 
