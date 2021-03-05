@@ -160,7 +160,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the concrete element to operation on.
+        @param obj: the instance of the concrete element to operation on.
         """
         # Build filename here...
 
@@ -194,7 +194,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
     def startSourceFilesVisit(self, obj):
         """
         Defined to generate header for  command python class.
-        @parms obj: the instance of the command model to visit.
+        @param obj: the instance of the command model to visit.
         """
         c = SerialHeader.SerialHeader()
         d = datetime.datetime.now()
@@ -207,7 +207,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Serial types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = SerialImport.SerialImport()
         self._writeTmpl(c, "includes1Visit")
@@ -221,7 +221,7 @@ class SerializableVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = SerialBody.SerialBody()
         c.name = obj.get_name()

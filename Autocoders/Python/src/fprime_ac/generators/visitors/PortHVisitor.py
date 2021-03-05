@@ -213,7 +213,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         # Build filename here...
         if self.__config.get("port", "XMLDefaultFileName") == "True":
@@ -265,7 +265,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Port types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = includes1PortH.includes1PortH()
         self._writeTmpl(c, "includes1Visit")
@@ -274,7 +274,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = includes2PortH.includes2PortH()
         c.c_includes_list = obj.get_includes()
@@ -322,7 +322,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = namespacePortH.namespacePortH()
         if obj.get_namespace() is None:
@@ -354,7 +354,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = publicPortH.publicPortH()
         c.name = obj.get_type()
@@ -382,7 +382,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = protectedPortH.protectedPortH()
         self._writeTmpl(c, "protectedVisit")
@@ -390,7 +390,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = privatePortH.privatePortH()
         c.name = obj.get_type()

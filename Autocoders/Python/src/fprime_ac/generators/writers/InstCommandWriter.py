@@ -89,7 +89,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
     def DictStartWrite(self, obj, topology_model):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the command model to write.
+        @param obj: the instance of the command model to write.
         """
 
         # Build filename here...
@@ -187,7 +187,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
     def DictHeaderWrite(self, obj, topology_model):
         """
         Defined to generate header for  command python class.
-        @parms obj: the instance of the command model to write.
+        @param obj: the instance of the command model to write.
         """
 
         if type(obj) is Command.Command:
@@ -221,7 +221,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
     def DictBodyWrite(self, obj, topology_model):
         """
         Defined to generate the body of the  Python command class
-        @parms obj: the instance of the command model to operation on.
+        @param obj: the instance of the command model to operation on.
         """
         try:
             instance_obj_list = topology_model.get_base_id_dict()[

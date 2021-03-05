@@ -156,7 +156,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         # Build filename here...
         if self.__config.get("serialize", "XMLDefaultFileName") == "True":
@@ -208,7 +208,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Serial types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         relative_path = self.relativePath()
         #
@@ -237,14 +237,14 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def namespaceVisit(self, obj):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialCpp.namespaceSerialCpp()
         if obj.get_namespace() is None:
@@ -259,7 +259,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = publicSerialCpp.publicSerialCpp()
         c.name = obj.get_name()
@@ -273,13 +273,13 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def finishSourceFilesVisit(self, obj):

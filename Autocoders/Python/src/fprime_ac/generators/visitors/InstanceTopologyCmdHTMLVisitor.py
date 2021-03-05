@@ -93,7 +93,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the model to visit.
+        @param obj: the instance of the model to visit.
         """
         # Check for command dir here and if none create it but always switch into it
         if not os.path.exists(self.__cmd_dir):
@@ -134,27 +134,27 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Port types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def includes2Visit(self, obj):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def namespaceVisit(self, obj):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         # os.chdir(self.__cmd_dir)
         c = HtmlCmdTablePage.HtmlCmdTablePage()
@@ -182,13 +182,13 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def finishSourceFilesVisit(self, obj):
