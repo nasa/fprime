@@ -27,7 +27,7 @@ F´ was built to meet the following goals:
   - Adapt easily to new contexts
   - Port to new architectures and platforms
   - Be easy to use
-  - Scale and configure to meed new usse cases
+  - Scale and configure to meet new use cases
   - Perform well in resource constrained context
 
 F´ was developed at NASA's Jet Propulsion Laboratory for small-scale embedded flight software. These small missions
@@ -53,7 +53,7 @@ F´ was built to support **Command and Data Handling** (C&DH) of these space sys
 part of these space systems. This means F´ out-of-the-box is designed to handle commands sent from the ground, and
 respond with telemetry to the ground. In F´ this telemetry is broken into **Events** representing history of actions
 taken by the system, and channels representing the current state of the system broken into named channels that each
-contain a portion of the state. e.g. an **Evnt** might be "Established Communications" and a **Channel** might be
+contain a portion of the state. e.g. an **Event** might be "Established Communications" and a **Channel** might be
 "Current Temperature: 3C".
 
 All projects using F´ are composed of **Components**, **Ports**, and **Topologies**. Although F´ does not require the
@@ -83,7 +83,7 @@ communication such that the system can function.
 F´ was built for use on platforms running an Operating System (OS) and executing on a single core. Notably these systems
 come with a thread scheduler. That being said it is entirely possible to use F´ on a baremetal system, or a multi-core
 system, however; some care should be take when designing for such systems an understanding of execution context is
-required.  See: [F´ On Baremetal and Muti-Core Systems](../dev/baremetal-multicore.md)
+required.  See: [F´ On Baremetal and Multi-Core Systems](../dev/baremetal-multicore.md)
 
 ## Conclusion
 

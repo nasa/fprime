@@ -117,7 +117,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
 $emit_cpp_params([ $param_instance ])
     )
   {
-#for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+#for $ids, $prm_name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     this->m_param_${prm_name}_valid = Fw::PARAM_UNINIT;
 #end for
 
@@ -510,7 +510,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
     FW_ASSERT(id >= idBase, id, idBase);
 
     switch (id - idBase) {
-    #for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+    #for $ids, $prm_name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
       #for $id in $ids
       case ${id}:
       #end for
@@ -560,7 +560,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
     FW_ASSERT(id >= idBase, id, idBase);
 
     switch (id - idBase) {
-    #for $ids, $prmname, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+    #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
       #for $id in $ids
       case ${id}:
       #end for
@@ -1173,7 +1173,7 @@ $emit_cpp_params($params)
 
   #end for
 #end if
-#for $ids, $prm_name, $type, $oset, $osave, $size, $default, $comment, $typeinfo in $parameters:
+#for $ids, $prm_name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
   // ----------------------------------------------------------------------
   // Parameter $prm_name
   // ----------------------------------------------------------------------

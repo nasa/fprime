@@ -279,8 +279,8 @@ def test_serializable_type():
 #    """
 #    Tests the ArrayType serialization and deserialization
 #    """
-#    extra_ctor_args = [("TestArray", (I32Type, 2, "I DON'T KNOW")), ("TesyArray2", (U8Type, 4, "I DON'T KNOW")),
-#               ("TesyArray3", (StringType, 1, "I DON'T KNOW"))]
+#    extra_ctor_args = [("TestArray", (I32Type, 2, "I DON'T KNOW")), ("TestArray2", (U8Type, 4, "I DON'T KNOW")),
+#               ("TestArray3", (StringType, 1, "I DON'T KNOW"))]
 #    values = [[32, 1], [0, 1, 2, 3], ["one"]]
 #    sizes = [8, 4, 3]
 #

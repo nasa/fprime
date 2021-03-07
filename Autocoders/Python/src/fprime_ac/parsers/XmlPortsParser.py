@@ -26,7 +26,7 @@ from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeRngXmlValidationException
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #

@@ -125,7 +125,7 @@ def pinit():
         "-b",
         "--build_root",
         dest="build_root_flag",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
+        help="Enable search for environment variable BUILD_ROOT to establish absolute XML directory path",
         action="store_true",
         default=False,
     )
@@ -308,7 +308,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     topology_model = generator.create(the_parsed_topology_xml)
 
     if opt.is_ptr:
-        PRINT.info("Topology Components will be initalized as Pointers. ")
+        PRINT.info("Topology Components will be initialized as Pointers. ")
         topology_model.is_ptr = opt.is_ptr
     if opt.connect_only:
         PRINT.info("Only port connections will be generated for Topology.")

@@ -141,7 +141,7 @@ Args:
 
 Returns:
 
-    A human readable string reperesenting the time type object
+    A human readable string representing the time type object
 
 
 #### get_datetime(tz=None)

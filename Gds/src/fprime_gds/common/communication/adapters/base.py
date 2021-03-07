@@ -16,7 +16,7 @@ class BaseAdapter(abc.ABC):
     Base adapter for adapting the communications layer. This essentially breaks down to providing the ability to read
     data from, and write to the necessary wire-format. The children of this class must at least implement the 'read' and
     'write' functions to ensure that data can be read and written. 'open' and 'close' are also provided as a helper to
-    the subclass implementor to place resource initialization and release code, however; these implementations are
+    the subclass implementer to place resource initialization and release code, however; these implementations are
     defaulted not overridden.
     """
 
@@ -33,7 +33,7 @@ class BaseAdapter(abc.ABC):
         call is expected to block waiting on incoming data.
 
         :param size: maximum size of data to read before breaking
-        :param timeout: timeout for the block, default: 0.500 (500ms) as blocking w/o timeout may be uninterruptable
+        :param timeout: timeout for the block, default: 0.500 (500ms) as blocking w/o timeout may be uninterruptible
         :return: byte array of data, or b'' if no data was read
         """
 

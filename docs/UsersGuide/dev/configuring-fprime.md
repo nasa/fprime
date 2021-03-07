@@ -192,7 +192,7 @@ macros related to this feature.
 The `Os::Queue` class stores a queue name as private data. Table 35 provides the macro for this feature. The `Os::Task`
 class stores a task name as private data. Table 35 provides the macro for this feature as well.
 
-**Table 35.** Macros for object naming, queue naming, and task namining
+**Table 35.** Macros for object naming, queue naming, and task naming
 
 | Macro                    | Definition                                  | Default | Valid Values      |
 | ------------------------ | ------------------------------------------- |---------|-------------------|
@@ -214,7 +214,7 @@ Otherwise the supplied object name is used.
 #### Object to String
 
 The framework port and object classes have an optional toString() method. This method by default returns the instance
-name of the object, but toString() is defined as a virtual method so a developer class can override this and provid
+name of the object, but toString() is defined as a virtual method so a developer class can override this and provide
 custom information. Table 35 provides the macros to configure this feature.
 
 **Note:** for these settings to work FW_OBJECT_NAMES must be turned on.
@@ -229,7 +229,7 @@ string.
 | FW_SERIALIZABLE_TO_STRING             | Defines a toString() method for code-generated serializable | 1 (on)  | 0 (off) 1 (on)    |
 | FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE | Defines buffer size of toString() result for serializables  | 255     | Positive integer  |
 | FW_ARRAY_TO_STRING                    | Defines a toString() method for code-generated arrays       | 1 (on)  | 0 (off) 1 (on)    |
-| FW_ARRAY_TO_STRING_BUFFER_SIZE        | Defines buffer size of toString() result for arrats         | 256     | Positive integer  |
+| FW_ARRAY_TO_STRING_BUFFER_SIZE        | Defines buffer size of toString() result for arrays         | 256     | Positive integer  |
 
 
 #### Object Registry
@@ -313,7 +313,7 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 
 ### Serializable Type ID
 
-As described [in serializable tyoes](../user/enum-arr-ser.md), serializable types can be defined for use in the code.
+As described [in serializable types](../user/enum-arr-ser.md), serializable types can be defined for use in the code.
 When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
 data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
 will lower the amount of data moved around for a given object when it is serialized. Table 41 provides

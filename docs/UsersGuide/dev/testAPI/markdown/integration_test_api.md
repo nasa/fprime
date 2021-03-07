@@ -205,7 +205,7 @@ Args:
 
 Returns:
 
-    The comand ID (int)
+    The command ID (int)
 
 
 #### send_command(command, args=[])

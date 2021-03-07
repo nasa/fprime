@@ -85,7 +85,7 @@ def pinit():
         "--build_root",
         dest="build_root_overwrite",
         type="string",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
+        help="Enable search for environment variable BUILD_ROOT to establish absolute XML directory path",
         default=None,
     )
 

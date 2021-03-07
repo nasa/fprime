@@ -17,7 +17,7 @@ This JS file defines a Vue.js component in javascript with the HTML template and
 items.
 
 
-This file is typicall placed in a folder named for the addon (e.g. `example`) and the JS file is
+This file is typically placed in a folder named for the addon (e.g. `example`) and the JS file is
 typically named `addon.js`. A quick example can be seen below.
 
 ```

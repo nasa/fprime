@@ -70,7 +70,7 @@
  * <br>
  * \ref IsfComponentAction.java - NOT USED.
  * <br>
- * \ref LoadIDCOnfigAction.java - Creates button to load id configuration file within the "Component Autocoder" tab.
+ * \ref LoadIDConfigAction.java - Creates button to load id configuration file within the "Component Autocoder" tab.
  * <br>
  * 
  * \subsection objectProcessing Processing

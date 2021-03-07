@@ -580,7 +580,7 @@ $emit_port_params(8, $params)
       #set $inst = $inst + 1
     #end for
   #end for
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     #set $inst = 0
     #for $opcode in $osets:
       #if len($osets) > 1:
@@ -591,8 +591,8 @@ $emit_port_params(8, $params)
       #set $inst = $inst + 1
     #end for
     #set $inst = 0
-    #for $opcode in $osavs:
-      #if len($osavs) > 1:
+    #for $opcode in $osaves:
+      #if len($osaves) > 1:
       OPCODE_${name.upper}_${inst}_SAVE = ${opcode}, //!< opcode to save parameter $name for instance $inst
       #else
       OPCODE_${name.upper}_SAVE = ${opcode}, //!< opcode to save parameter $name
@@ -881,7 +881,7 @@ $emit_non_port_params(8, $params)
     // ----------------------------------------------------------------------
 
     enum {
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     #set $inst = 0
     #for $id in $ids:
       #if len($ids) > 1
@@ -892,7 +892,7 @@ $emit_non_port_params(8, $params)
       #set $inst = $inst + 1
     #end for
   #end for
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     #if len($ids) > 1
       PARAMID_${name.upper}, // for notifications
     #end if
@@ -929,7 +929,7 @@ $emit_non_port_params(8, $params)
     // Parameter get functions
     // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     //! Get parameter $name
     //!
     #if not $comment is None
@@ -1163,7 +1163,7 @@ $emit_port_params(8, $params)
     // Parameter validity flags
     // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     //! True if parameter $name was successfully received
     //!
     Fw::ParamValid m_param_${name}_valid;
@@ -1175,7 +1175,7 @@ $emit_port_params(8, $params)
     // Parameter variables
     // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     //! Parameter $name
     //!
     $doxygen_pre_comment($comment)
@@ -1198,7 +1198,7 @@ $emit_port_params(8, $params)
     //!
     Fw::ParamValid getParam(
         FwPrmIdType id, $doxygen_post_comment("The ID")
-        Fw::ParamBuffer& buff $doxygen_post_comment("The paramter value")
+        Fw::ParamBuffer& buff $doxygen_post_comment("The parameter value")
     );
 
   PRIVATE:
@@ -1207,7 +1207,7 @@ $emit_port_params(8, $params)
     // Parameter set functions
     // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     //! Set parameter $name
     //!
     //! \return The command response
@@ -1223,7 +1223,7 @@ $emit_port_params(8, $params)
     // Parameter save functions
     // ----------------------------------------------------------------------
 
-  #for $ids, $name, $type, $osets, $osavs, $size, $default, $comment, $typeinfo in $parameters:
+  #for $ids, $name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
     //! Save parameter $name
     //!
     //! \return The command response

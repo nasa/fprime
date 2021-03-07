@@ -3,7 +3,7 @@
 # NAME: XmlParser.py
 #
 # DESCRIPTION:  This is a general xml parser class based on
-#               the pythom xml2obj receipe.
+#               the python xml2obj recipe.
 #
 # USAGE:
 #
@@ -23,7 +23,7 @@ import os
 from genshi import XML
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -160,7 +160,7 @@ class Parser:
 
         for token, content, loc in XML(self.__xml_string):
 
-            # This next line presents a problem procesing XML with special
+            # This next line presents a problem processing XML with special
             # formatting characters. It generates an exception. Since it is
             # only debug, we'll just comment this out until the XML is
             # updated to remove the special characters.
@@ -490,7 +490,7 @@ class Element:
 
     def __getitem__(self, item):
         """
-        Make getData, getName and getElemnets
+        Make getData, getName and getElements
         look like dictionary calls.
         """
         if item == "attr":

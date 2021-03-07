@@ -1,7 +1,7 @@
 #include <Os/Mutex.hpp>
 namespace Os {
     /**
-     * On baremetal, mutexs are not required as there is a single threaded
+     * On baremetal, mutexes are not required as there is a single threaded
      * engine to run on.
      */
     Mutex::Mutex(void) {

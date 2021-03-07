@@ -36,7 +36,7 @@ namespace Svc {
       (NATIVE_UINT_TYPE) strnlen(incomingFilePrefix, sizeof(this->filePrefix)), (NATIVE_UINT_TYPE) sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
     // Set the file prefix:
-    memset(this->filePrefix, 0, sizeof(this->filePrefix)); // probably unnecesary, but I am paranoid.
+    memset(this->filePrefix, 0, sizeof(this->filePrefix)); // probably unnecessary, but I am paranoid.
     U8* dest = (U8*) strncpy((char*) this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
     FW_ASSERT(dest == this->filePrefix, reinterpret_cast<U64>(dest), reinterpret_cast<U64>(this->filePrefix));
   }

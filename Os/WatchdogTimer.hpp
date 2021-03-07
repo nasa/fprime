@@ -39,7 +39,7 @@ namespace Os {
             void* m_parameter; //!< parameter for timer call
             I32 m_timerTicks; //!< number of ticks for timer.
             I32 m_timerMs; //!< number of milliseconds for timer.
-            WatchdogTimer(WatchdogTimer&); //!< disable copy contructor
+            WatchdogTimer(WatchdogTimer&); //!< disable copy constructor
 
     };
 }

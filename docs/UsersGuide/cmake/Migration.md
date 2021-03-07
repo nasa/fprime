@@ -6,7 +6,7 @@ the key features of the old make system to the features of the new CMake system.
 
 ## `make impl` and `make testcomp` 
 
-The commands `make impl` and `make testcomp` should be runnable outside of tany make system setup.
+The commands `make impl` and `make testcomp` should be runnable outside of any make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
 requiring the user to navigate to the directory, generate the make system, and then run these
 commands is less productive then running just the code generator directly.
@@ -33,7 +33,7 @@ everything imported in the Ai.xml files. Thus, only manual and link dependencies
 maintained. This is done on a per-module basis. These dependencies are then rolled-up into the top
 level binary and used for build-ordering and linking.
 
-1. `add_fprime_subdriectory`: make directory available to the build. Done for **all** directories.
+1. `add_fprime_subdirectory`: make directory available to the build. Done for **all** directories.
 2. `register_fprime_module`: add library to the build. Done for **all** components and ports.
 3. `register_fprime_executable`: add an executable output to the build. Done for **all** Topologies.
 
@@ -53,7 +53,7 @@ directory.
 name, not the key from the Topology Ai.xml. This makes naming cleaner and easier to maintain. It is
 done in the deployment `CMakeLists.txt` with the CMake `project` command.
 
-In one of the modules added in the Deployment with `add_fprime_subdriectory`, one or more executable
+In one of the modules added in the Deployment with `add_fprime_subdirectory`, one or more executable
 should be added with `register_fprime_executable`.
 
 A guide to `CMakeLists.txt` for Deployments is found here: [deployment](deployment.md)

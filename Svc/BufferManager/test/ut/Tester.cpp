@@ -48,7 +48,7 @@ namespace Svc {
   void Tester ::
     three_buffer_problem(void) 
   {
-      //Alocate 2 buffers
+      //Allocate 2 buffers
       Fw::Buffer buffer1 = this->invoke_to_bufferGetCallee(0, 4);
       Fw::Buffer buffer2 = this->invoke_to_bufferGetCallee(0, 4);
       //Fill the 2nd buffer

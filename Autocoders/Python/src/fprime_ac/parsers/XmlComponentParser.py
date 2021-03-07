@@ -86,7 +86,7 @@ class XmlComponentParser:
         ## Dictionary of special_ports
         self.special_ports = self.Config._ConfigManager__prop["special_ports"]
 
-        ## get costants file name and read it in
+        ## get constants file name and read it in
         constants_file = self.Config.get("constants", "constants_file")
         if not os.path.isabs(constants_file):
             constants_file = os.path.join(ROOTDIR, constants_file)
@@ -611,7 +611,7 @@ class XmlComponentParser:
                     n = event.attrib["name"]
                     s = event.attrib["severity"]
                     # FIXME: Move to configuration file
-                    serverity_list = [
+                    severity_list = [
                         "FATAL",
                         "WARNING_HI",
                         "WARNING_LO",
@@ -620,10 +620,10 @@ class XmlComponentParser:
                         "ACTIVITY_LO",
                         "DIAGNOSTIC",
                     ]
-                    if s not in serverity_list:
+                    if s not in severity_list:
                         PRINT.info(
                             "%s: Error: Event %s severity must be one of %s."
-                            % (xml_file, n, ",".join(serverity_list))
+                            % (xml_file, n, ",".join(severity_list))
                         )
                         sys.exit(-1)
                     f = event.attrib["format_string"]

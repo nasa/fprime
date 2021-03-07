@@ -11,14 +11,14 @@ available as the OpenSource team does not use nor support this work.
 ## MagicDraw Notes
 
 F´ has a plugin to MagicDraw that can be used to generate Ai.xml files to use with the autocoder. It is available in the
-`Autocoders/MagicDraeCompPlugin` folder of F´.  It can be installed by following the README file there, although support
+`Autocoders/MagicDrawCompPlugin` folder of F´.  It can be installed by following the README file there, although support
 past MagicDraw 18.5 is not guaranteed. 
 
 F´ has some MagicDraw support for existing components, however; given the disuse of these features, not all components
 or examples will work.  Open up the `Ref/Top/REFApplication.mdxml` file to begin. If import errors arise, the user will
 need to fix them, and that is outside the scope of this document.
 
-Should problems arise when looking for "ISF-MD-Profile.mdzip" it is now located here: `Autocoders/MagicDraeCompPlugin/model`.
+Should problems arise when looking for "ISF-MD-Profile.mdzip" it is now located here: `Autocoders/MagicDrawCompPlugin/model`.
 
 At the time of writing this document, Ai.xml files generated with the MagicDraw plugin work correctly with the Autocoder
 and there are no plans in place to change this interoperability.  Ongoing support for the plugin and supplied design

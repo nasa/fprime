@@ -4,11 +4,11 @@
 # This file provides the API for the commands Gds interface for use with the Gds Flask server. This
 # API should provide the following HTML API behaviors:
 #
-#  GET /commands: list all commandsi history available to the GUI. Note: this also prvides a full
+#  GET /commands: list all commandsi history available to the GUI. Note: this also provides a full
 #                 command listing.
 #  PUT /commands/<command>: issue a command through the GDS
 #      Data: {
-#                "key": "0xfeedcafe", # A key preventing accedential issuing of a command
+#                "key": "0xfeedcafe", # A key preventing accidental issuing of a command
 #                "args": {
 #                            <arg-key>:<arg-value>,
 #                             ...
@@ -18,7 +18,7 @@
 #
 #
 # Note: for commands, these are not true "REST" objects, and thus this is a bit of a stretch to use
-#       a restful interface here. It is done this way to be in-tandum with the events and telemetry
+#       a restful interface here. It is done this way to be in-tandem with the events and telemetry
 #       APIs for maintainability.
 ####
 import flask_restful
@@ -48,7 +48,7 @@ class CommandDictionary(flask_restful.Resource):
 
 class CommandHistory(flask_restful.Resource):
     """
-    Command history reurning both the full list of available commands and the global history of all
+    Command history returning both the full list of available commands and the global history of all
     of these commands that have run.
     """
 

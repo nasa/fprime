@@ -1,7 +1,7 @@
 """
 flask/updown.py:
 
-A simple service that handles file uploads and downloads. This allowd the REST api to show the status of file uplinks
+A simple service that handles file uploads and downloads. This allowed the REST api to show the status of file uplinks
 and downlinks. In addition, an uplink destination directory is exposed for the UI to set where new uploads should be
 uplinked to.
 

@@ -92,7 +92,7 @@ The `GpsComponentAi.xml` file in the `Gps` subdirectory should look like:
 
 This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
 Telemetry that represent the GPS link. This will also have a command to emit the lock status of the GPS signal. This
-is an active component, meaning it will have it's own thead. It will therefore process messages at its own pace, and
+is an active component, meaning it will have it's own thread. It will therefore process messages at its own pace, and
 will not need an external thread of execution to run on.
 
 It has 3 standard command ports, 2 standard event ports, 1 standard telemetry port, and 2 ports to interact with the
@@ -203,7 +203,7 @@ This defines two events, one at activity hi level to report that lock has been a
 indicate lock lost.
 -->
 <events>
-    <event id="0" name="Gps_LockAquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
+    <event id="0" name="Gps_LockAcquired" severity="ACTIVITY_HI" format_string="GPS lock acquired">
         <comment>A notification on GPS lock acquired</comment>
     </event>
     <event id="1" name="Gps_LockLost" severity="WARNING_HI" format_string="GPS lock lost">
@@ -238,7 +238,7 @@ This defines four telemetry channels to report basic GPS information.
         <comment>The current altitude</comment>
     </channel>
     <channel id="3" name="Gps_Count" data_type="U32" abbrev="GPS-0003">
-        <comment>The current number of satilites</comment>
+        <comment>The current number of satellites</comment>
     </channel>
 </telemetry>
 ```
@@ -422,7 +422,7 @@ function called *serialRecv_handler* and the second is to implement a command ha
 *Gps_ReportLockStatus_cmdHandler*. The other functions of our code are provided as functions we can use when we
 implement these two pieces. Those available functions are described below:
 
-1. log_ACTIVITY_HI_Gps_LockAquired: used to emit the event *Gps_Lock_aquired* as defined in Events.xml
+1. log_ACTIVITY_HI_Gps_LockAcquired: used to emit the event *Gps_Lock_acquired* as defined in Events.xml
 2. log_WARNING_HI_Gps_LockLost: used to emit the event *Gps_LockLost* as defined in Events.xml
 3. tlmWrite_Gps_Latitude: used to send down *Latitude* telemetry as defined in Telemetry.xml
 4. tlmWrite_Gps_Longitude: used to send down *Longitude* telemetry as defined in Telemetry.xml
@@ -613,7 +613,7 @@ namespace GpsApp {
           log_WARNING_HI_Gps_LockLost();
       } else if (packet.lock == 1 && !m_locked) {
           m_locked = true;
-          log_ACTIVITY_HI_Gps_LockAquired();
+          log_ACTIVITY_HI_Gps_LockAcquired();
       }
       // We MUST return the buffer or the serial driver won't be able to reuse it. The same buffer send call is used
       // as we did in "preamble".  Since the buffer's size was overwritten to hold the actual data size, we need to
@@ -637,7 +637,7 @@ namespace GpsApp {
   {
     //Locked-force print
     if (m_locked) {
-        log_ACTIVITY_HI_Gps_LockAquired();
+        log_ACTIVITY_HI_Gps_LockAcquired();
     } else {
         log_WARNING_HI_Gps_LockLost();
     }
@@ -895,7 +895,7 @@ to the USB GPS device. If the device doesn't exist, the system will run but log 
 cd fprime/GpsApp
 # For "Linux":
 ./bin/Linux/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
-# For "Mac OSX":
+# For "macOS":
 ./bin/Darwin/GpsApp -a 127.0.0.1 -p 50000 -d /dev/ttyACM0
 ```
 

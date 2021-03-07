@@ -1,6 +1,6 @@
 # Ref the Reference Application
 
-The purpose of this application is to demonstrate a completely assembled application for use on Linux, and Mac OSX.  This allows the user to get
+The purpose of this application is to demonstrate a completely assembled application for use on Linux, and macOS.  This allows the user to get
 up and running quickly, test the installation, and work with the code before embedded hardware may be available. Should the user be interested in
 cross-compiling, please see the [RPI](../RPI/README.md) reference.
 
@@ -16,7 +16,7 @@ Please follow the install guide for F´ found here: [INSTALL.md](../docs/INSTALL
 
 In order to build the Ref application, or any other F´ application, we first need to generate a build directory.  F´ uses CMake under the hood,
 which requires a directory to work in. To generate a build directory, we will use the `fprime-util` (a wrapper for CMake to streamline standard 
-F´ processses). This can be done with the following commands:
+F´ processes). This can be done with the following commands:
 
 ```
 cd fprime/Ref
@@ -33,7 +33,7 @@ and will produce a binary that can be run on the user's system. This is accompli
 F´ ships with a browser-based test ground system. This system is designed to help developers of F´
 projects quickly test and work with F´ code without much overhead. This ground system can be run
 with the following commands. Please note: the Ref application's binary will also be run
-automatically. This allows for quick testing on Linux and Mac OSX. Before running the GDS, make sure
+automatically. This allows for quick testing on Linux and macOS. Before running the GDS, make sure
 that you have built the Ref example.
 
 ```

@@ -64,7 +64,7 @@ The API documentation section contains the automatically generated documentation
 - Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
     - [Porting F´ To a New Platform](./dev/porting-guide.md)
-    - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
+    - [F´ On Baremetal and Multi-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
     - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
