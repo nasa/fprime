@@ -13,6 +13,7 @@
 #ifndef StaticMemory_HPP
 #define StaticMemory_HPP
 
+#include "StaticMemoryConfig.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentAc.hpp"
 
 namespace Svc {
@@ -54,7 +55,7 @@ class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
                                       U32 size);
 
     bool m_allocated[NUM_BUFFERALLOCATE_INPUT_PORTS];
-    U8 m_static_memory[NUM_BUFFERALLOCATE_INPUT_PORTS][2048];
+    U8 m_static_memory[NUM_BUFFERALLOCATE_INPUT_PORTS][STATIC_MEMORY_ALLOCATION_SIZE];
 };
 
 }  // end namespace Svc
