@@ -50,7 +50,7 @@ class EncodingDecoding:
 
         :param dictionaries: a dictionaries handling object holding dictionaries
         :param distributor: distributor of data to register to
-        :param sender: TODO
+        :param sender: is used to send the bytes created by the command encoder
         :param config: config object used to describe types used for different field encodings
         """
         # Create encoders and decoders using dictionaries

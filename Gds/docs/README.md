@@ -9,9 +9,9 @@ This tool includes logging capability and can be connected to several adapters t
 
 Certain deployments may alter the fields of messsages for various reasons including memory conservation.
 To make the corresponding changes to the Gds for successful communication, 
-please edit the Gds/src/fprime_gds/common/utils/config_manager.py file accordingly. 
-Each field in the _set_defaults() function corresponds to a specific compile time flag for an FPrime deployment.
-Bellow is a table of corresponding fields that must match between deployment and Gds in order for successful communication to occur.
+please edit the `Gds/src/fprime_gds/common/utils/config_manager.py` file accordingly. 
+Each field in the `_set_defaults()` function corresponds to a specific compile time flag in the `/config/FpConfig.hpp` file for an FPrime deployment.
+Below is a table of corresponding fields that must match between deployment and Gds in order for successful communication to occur.
 
 Gds Field | FPrime Flag
 ----------- | ----------- |
@@ -23,4 +23,4 @@ self.__prop['types']['event_id'] | FwEventIdType
 self.__prop['types']['pkt_id'] | Unkown
 self.__prop['types']['key_val'] | unknown
 
-It is important to note that the default value of all of these fprime fields is U32, which is the behavior when none of these compile time flags are set in any CMakeLists.txt fields.
+It is important to note that the default value of all of these fprime fields is U32, which is the behavior when none of these compile time flags are changed in the `FpConfig.hpp` file.
