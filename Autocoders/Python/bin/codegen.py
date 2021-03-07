@@ -33,6 +33,7 @@ from fprime_ac.utils import (
     ArrayGenerator,
     ConfigManager,
     DictTypeConverter,
+    EnumDupRemover,
     EnumGenerator,
     Logger,
 )
@@ -746,7 +747,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 # check for parameters
                 if parsed_xml_dict[comp_type].get_parameters() is not None:
                     for parameter in parsed_xml_dict[comp_type].get_parameters():
-                        PRINT.debug("Processing Parameter %s" % chan.get_name())
+                        PRINT.debug("Processing Parameter %s" % parameter.get_name())
                         param_default = None
                         command_elem_set = etree.Element("command")
                         command_elem_set.attrib["component"] = comp_name
@@ -871,6 +872,8 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
                         array_elem.append(members_elem)
                         array_list.append(array_elem)
+
+            EnumDupRemover.remove_duplicates(enum_list)
 
             topology_dict.append(enum_list)
             topology_dict.append(serializable_list)
