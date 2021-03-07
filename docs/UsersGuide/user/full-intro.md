@@ -43,7 +43,7 @@ What is a space system? For the purposes of this guide, it is any embedded syste
 compose the complete control and operation of a spacecraft to accomplish some mission.  At JPL these systems are
 typically conducting some aspect of scientific research.
 
-Since F´ is usually the complete software for one of these systems, F´ decomposes its projects into discreet
+Since F´ is usually the complete software for one of these systems, F´ decomposes its projects into discrete
 **Components** that each manage one part of the system. e.g. a Radio Component may control the radio hardware to
 facilitate communication. **Components** are connected to one another via **Ports**. **Ports** allow communication
 between **Components**.  The complete graph or network of **Components** connected via **Ports** is called a
@@ -65,7 +65,7 @@ framework.
 ## The Organization of F´ Deployments
 
 The core F′ software framework allows projects to be decomposed into a set of **Components** that are interconnected by
-**Ports**. Each **Component** represents one discreet piece of the system. e.g. the Command Dispatcher is a framework
+**Ports**. Each **Component** represents one discrete piece of the system. e.g. the Command Dispatcher is a framework
 component used to dispatch incoming commands to be handled by another component in the system. Its job is to receive a
 ground communication and translate that into an action, dispatch the action to another component, and await the
 completion of this action. It emits **Events** to signify when the action is dispatched, and when it has completed. It
