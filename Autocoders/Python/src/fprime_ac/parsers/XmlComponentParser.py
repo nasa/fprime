@@ -1234,7 +1234,7 @@ class XmlComponentParser:
                     validator_type,
                     ROOTDIR + self.Config.get(validator_type, validator_name),
                 )
-                PRINT.info(msg)
+                raise FprimeXmlException(msg)
 
     def is_component(self):
         """
