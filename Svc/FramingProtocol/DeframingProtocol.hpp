@@ -24,7 +24,7 @@ namespace Svc {
  * \brief Abstract base class representing a deframing protocol
  *
  * This class represents the basic interface for writing a deframing protocol. This class may be
- * subclassed to provide concrete implementations for the protocol. A DeframingProtcolInterface is
+ * subclassed to provide concrete implementations for the protocol. A DeframingProtocolInterface is
  * be supplied using the `setup` call. This instance is usually the DeframingComponentImpl.
  *
  * Implementations are expected to call `m_interface.route` to send the deframed data and may call
@@ -33,7 +33,7 @@ namespace Svc {
 class DeframingProtocol {
   public:
     /**
-     * \brief Status of the deraming call
+     * \brief Status of the deframing call
      */
     enum DeframingStatus {
         DEFRAMING_STATUS_SUCCESS, /*!< Successful deframing */
