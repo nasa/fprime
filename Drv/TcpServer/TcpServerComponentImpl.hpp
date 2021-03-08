@@ -58,7 +58,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * to the user.
      *
      * \param hostname: ip address of remote tcp server in the form x.x.x.x
-     * \paran port: port of remote tcp server
+     * \param port: port of remote tcp server
      * \param send_timeout_seconds: send timeout seconds component. Defaults to: SOCKET_TIMEOUT_SECONDS
      * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000. Defaults to:
      * SOCKET_TIMEOUT_MICROSECONDS
