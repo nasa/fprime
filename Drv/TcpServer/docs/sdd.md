@@ -50,7 +50,7 @@ proper resource deallocation. This typical usage is shown in the C++ snippet bel
 
 
 ```c++
-Drv::TcpServerComponentImpl comm = Drv::TcpServeromponentImpl("TCP Server");
+Drv::TcpServerComponentImpl comm = Drv::TcpServerComponentImpl("TCP Server");
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
