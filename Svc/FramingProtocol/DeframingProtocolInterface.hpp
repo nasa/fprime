@@ -19,7 +19,7 @@
 /**
  * \brief interface supplied to the deframing protocol
  *
- * In order to supply necessary fprime actions to deframeing implementations this class provides
+ * In order to supply necessary fprime actions to deframing implementations this class provides
  * the necessary functions. Typically the DeframerComponentImpl is the concrete implementor of this
  * interface.
  */

@@ -33,7 +33,7 @@ namespace Svc {
 class DeframingProtocol {
   public:
     /**
-     * \brief Status of the deraming call
+     * \brief Status of the deframing call
      */
     enum DeframingStatus {
         DEFRAMING_STATUS_SUCCESS, /*!< Successful deframing */
