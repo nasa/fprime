@@ -76,7 +76,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      * dot-notation IP address of the form "x.x.x.x". DNS translation is left up to the user.
      *
      * \param hostname: ip address of remote tcp server in the form x.x.x.x
-     * \paran port: port of remote tcp server
+     * \param port: port of remote tcp server
      *  \return status of the configure
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
