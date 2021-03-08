@@ -7,7 +7,7 @@ This tool includes logging capability and can be connected to several adapters t
 
 ## 2. Message Field Configuration
 
-Certain deployments may alter the fields of messsages for various reasons including memory conservation.
+Certain deployments may alter the fields of messages for various reasons including memory conservation.
 To make the corresponding changes to the Gds for successful communication, 
 please edit the `Gds/src/fprime_gds/common/utils/config_manager.py` file accordingly. 
 Each field in the `_set_defaults()` function corresponds to a specific compile time flag in the `/config/FpConfig.hpp` file for an FPrime deployment.
