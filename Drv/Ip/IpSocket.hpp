@@ -81,7 +81,7 @@ class IpSocket {
      * \brief open the IP socket for communications
      *
      * This will open the IP socket for communication. This method error checks and validates properties set using the
-     * `configure` method.  Tcp sockets will open bidirectional communication assuming the `condifure` function was
+     * `configure` method.  Tcp sockets will open bidirectional communication assuming the `configure` function was
      * previously called. Udp sockets allow `configureRecv` and `configure`/`configureSend` calls to configure for
      * each direction separately and may be operated in a single-direction or bidirectional mode. This call returns a
      * status of SOCK_SEND means the port is ready for transmissions and any other status should be treated as an error
