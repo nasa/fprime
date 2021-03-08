@@ -20,7 +20,7 @@ self.__prop['types']['msg_desc'] | FwPacketDescriptorType
 self.__prop['types']['op_code'] | FwOpcodeType
 self.__prop['types']['ch_id'] | FwChanIdType
 self.__prop['types']['event_id'] | FwEventIdType
-self.__prop['types']['pkt_id'] | Unkown
+self.__prop['types']['pkt_id'] | Unknown
 self.__prop['types']['key_val'] | unknown
 
 It is important to note that the default value of all of these fprime fields is U32, which is the behavior when none of these compile time flags are changed in the `FpConfig.hpp` file.
