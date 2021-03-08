@@ -48,7 +48,7 @@ specific use-case and standard components are inherited from the framework itsel
 
 ### Standard Tooling
 
-F´ provides a number of standard tools to eas development:
+F´ provides a number of standard tools to ease development:
 
 1. Autocoder for stamping out boilerplate code
 2. CMake based build system for building cross-platform binaries
