@@ -60,7 +60,7 @@ class IpSocket {
      * \param hostname: socket uses for outgoing transmissions (and incoming when tcp). Must be of form x.x.x.x
      * \param port: port socket uses for outgoing transmissions (and incoming when tcp). Must NOT be 0.
      * \param send_timeout_seconds: send timeout seconds portion
-     * \param semd_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
+     * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
     SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
