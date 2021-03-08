@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  FrameingProtocolInterface.hpp
+// \title  FramingProtocolInterface.hpp
 // \author mstarch
 // \brief  hpp file for framing protocol interface
 //
@@ -19,7 +19,7 @@
 /**
  * \brief interface supplied to the framing protocol
  *
- * In order to supply necessary fprime actions to frameing implementations this allows the framing
+ * In order to supply necessary fprime actions to framing implementations this allows the framing
  * implementation to call the functions to delegate the actions. Typically the FramerComponentImpl
  * is the concrete implementor of this interface.
  */
