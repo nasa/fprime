@@ -56,7 +56,7 @@ TEST(Nominal, TestNominalTcp) {
     test_with_loop(1);
 }
 
-TEST(Nominal, TestMulipleTcp) {
+TEST(Nominal, TestMultipleTcp) {
     test_with_loop(100);
 }
 
