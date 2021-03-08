@@ -62,7 +62,7 @@ TEST(Nominal, TestNominalUdp) {
     test_with_loop(1, false);
 }
 
-TEST(Nominal, TestMulipleUdp) {
+TEST(Nominal, TestMultipleUdp) {
     test_with_loop(100, false);
 }
 
@@ -70,7 +70,7 @@ TEST(SingleSide, TestSingleSideUdp) {
     test_with_loop(1, true);
 }
 
-TEST(SingleSide, TestSingleSideMulipleUdp) {
+TEST(SingleSide, TestSingleSideMultipleUdp) {
     test_with_loop(100, true);
 }
 
