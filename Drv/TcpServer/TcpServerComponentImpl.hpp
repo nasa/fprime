@@ -76,7 +76,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * accept incoming connections the `open` call must be made.  Only when the startup method returns SOCK_SUCCESS has
      * the server successfully bound to the port/
      *
-     * \return status of startup. SOCK_SUCCESS on success, somtheing else on error.
+     * \return status of startup. SOCK_SUCCESS on success, something else on error.
      */
     SocketIpStatus startup();
 
