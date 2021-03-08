@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-This is a tool intended to be used with FPrime dpeloyments to exchange commands, telemetry, events and other messages.
+This is a tool intended to be used with FPrime deployments to exchange commands, telemetry, events and other messages.
 This tool includes logging capability and can be connected to several adapters to communicate with ground station equipment.
 
 ## 2. Message Field Configuration
