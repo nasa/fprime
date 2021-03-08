@@ -55,7 +55,7 @@ class FramerComponentImpl : public FramerComponentBase, public FramingProtocolIn
     //! \brief Allocation callback used to request memory for the framer
     //!
     //! Method used by the FramingProtocol to allocate memory for the framed buffer. Framing
-    //! typically adds tokens on the begining and end of the raw data so it must allocate new space
+    //! typically adds tokens on the beginning and end of the raw data so it must allocate new space
     //! to place those and a copy of the data in.
     //!
     //! \param size: size of allocation
