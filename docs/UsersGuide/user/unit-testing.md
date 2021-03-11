@@ -190,15 +190,15 @@ To build unit tests, go to the component directory (not the *test/ut*
 directory) and run `fprime-util generate --ut`.
 
 To run unit tests, go to the component directory (not the *test/ut*
-directory) and run `fprime-util check --<params>`. 
+directory) and run `fprime-util check [parameter flags]`. 
 
 Unit test check parameter | Description
 ---|---
-all | Run all unit tests. Combineable with `leak` or `coverage`.
-coverage | Check for code coverage in unit tests.
-leak | Check for memory leaks in unit tests.
+`--all` | Run all unit tests, combinable with `leak` or `coverage`
+`--coverage` | Check for code coverage in unit tests
+`--leak` | Check for memory leaks in unit tests
 
-For example, to run all unit tests and check for code coverage, enter `fprime-util check --all,coverage`.
+For example, to run all unit tests and check for code coverage, run `fprime-util check --all --coverage`.
 
 ### Choosing a test library
 
