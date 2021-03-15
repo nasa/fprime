@@ -42,7 +42,7 @@ In order to develop applications with F´, the following requirements of the use
 ## Quick Installation Guide
 
 F´ can be quickly installed and ready to use by cloning the GitHub repository, installing Python code (typically in a
-virtual environment), and building on of our reference applications. For full install instructions please see:
+virtual environment), and building one of our reference applications. For full install instructions please see:
 [INSTALL.md](./INSTALL.md).
 
 **Clone and Install**
