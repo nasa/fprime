@@ -119,7 +119,7 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | Logger.py | Sets up the logging for all other scripts based on the Python logging module - not a standalone file |
 | ParseC.py | Contains a set of Python functions that parse C code |
 | pyparsing.py | Python parser methods created externally by Paul T. McGuire |
-| TopDictGenerator.py | Generator that produces a topology dictonary from parsed XML |
+| TopDictGenerator.py | Generator that produces a topology dictionary from parsed XML |
 | TypesList.py | Contains types_list and port_types_list which contain types allowed in commands/telemetry/parameters/events |
 | VersionFile.py | Check if file exists, and creates a backup copy using an appended versioning string - copied directly from the language cookbook |
 | XmlParser.py | General XML parser class based on the Python xml2obj recipe |
