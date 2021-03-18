@@ -24,8 +24,8 @@ def format_string(format_str, values):
     type:        ([cCdiouxXeEfgGaAnpsSZ])
 
     Note:
-    This function will keep the flags, widht, .percision and length of C-string
-    template. It will remove all types so they could be ducktyped by python 
+    This function will keep the flags, width, .precision and length of C-string
+    template. It will remove all types so they could be duck-typed by python 
     interpreter except for hex type X or x.
     """
     def convert(match_obj):
