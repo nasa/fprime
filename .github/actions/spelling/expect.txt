@@ -47,7 +47,6 @@ ANamespace
 anotherchan
 ANOTHEREVENT
 anotherparam
-Anps
 aop
 apad
 api
@@ -218,7 +217,6 @@ ccsparc
 cdata
 cdefs
 CDH
-Cdioux
 cdn
 cdt
 cerrno
@@ -534,6 +532,7 @@ Dxyz
 dylib
 EACCES
 EAGAIN
+eas
 eay
 eb
 EBADF
@@ -547,7 +546,6 @@ edu
 EEXIST
 EFAULT
 EFBIG
-Efg
 EGB
 EHAs
 EINPROGRESS
@@ -1090,7 +1088,6 @@ LINUXTIMEIMPL
 listbox
 listdir
 Listst
-LIw
 LJR
 ljust
 lkd
@@ -1286,6 +1283,7 @@ noapp
 noargport
 NOBUFFERS
 NOCOLOR
+nocov
 NOCTTY
 nogen
 nolog
@@ -1904,7 +1902,6 @@ synopsys
 sys
 SYSFS
 systemd
-SZ
 tabbedwidths
 tabccitt
 tabdnp
