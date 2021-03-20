@@ -15,14 +15,14 @@ def format_string(format_str, values):
     without using python interpolation
     Considered the following format for C-string:
     %[flags][width][.precision][length]type
-
+    ```
     %:           (?<!%)(?:%%)*%
     flags:       ([\-\+0\ \#])?
     width:       (\d+|\*)?
     .precision:  (\.\*|\.\d+)?
     length:      ([hLIw]|l{1,2}|I32|I64)?
     type:        ([cCdiouxXeEfgGaAnpsSZ])
-
+    ```
     Note:
     This function will keep the flags, width, .precision and length of C-string
     template. It will remove all types so they could be duck-typed by python 
