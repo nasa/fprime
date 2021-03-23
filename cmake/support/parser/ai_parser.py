@@ -22,7 +22,7 @@ BASIC_DEPENDENCIES = {
     "commands": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Cmd"],
     "events": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Log"],
     "telemetry": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
-    "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
+    "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm", "Fw_Cmd"],
     "internal_interfaces": [],
     "enum": [],
     "array": [],
