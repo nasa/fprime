@@ -141,9 +141,16 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
                               --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
                               --verbose -T MemCheck)
     endif()
+    
+    # Add top ut wrapper for this module
+    if (NOT TARGET "${MODULE_NAME}_ut_exe")
+      add_custom_target("${MODULE_NAME}_ut_exe")
+    endif()
+    
     add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
     add_dependencies("${MODULE_NAME}_check_leak" ${UT_EXE_NAME})
-    
+    add_dependencies("${MODULE_NAME}_ut_exe" ${UT_EXE_NAME})
+
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
 	    print_dependencies(${UT_EXE_NAME})
