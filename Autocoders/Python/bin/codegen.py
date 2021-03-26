@@ -954,7 +954,7 @@ def generate_component_instance_dictionary(
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info(
-                "ERROR: Component include serializables cannot use user-defined types. file: "
+                "ERROR: Component include serializables cannot use user-defined types. file: %s"
                 % serializable_file
             )
             sys.exit(-1)
@@ -1129,7 +1129,7 @@ def generate_component(
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info(
-                "ERROR: Component include serializables cannot use user-defined types. file: "
+                "ERROR: Component include serializables cannot use user-defined types. file: %s"
                 % serializable_file
             )
             sys.exit(-1)
