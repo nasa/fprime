@@ -128,7 +128,7 @@ Svc::PrmDb Component</h1>
 </table>
 <h4><a class="anchor" id="autotoc_md420"></a>
 3.2 Functional Description</h4>
-<p>The <code>Svc::PrmDb</code> component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occuring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status to the <code>getPrm</code> port of <code>PARAM_INVALID</code> will be returned, otherwise <code>PARAM_OK</code>.</p>
+<p>The <code>Svc::PrmDb</code> component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occurring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status to the <code>getPrm</code> port of <code>PARAM_INVALID</code> will be returned, otherwise <code>PARAM_OK</code>.</p>
 <p>When a new parameter value is written to the <code>setPrm</code> port, the table in memory is updated, and the flag indicating a valid value is set.</p>
 <p>When the component receives the <code>PRM_SAVE_FILE</code> command, it saves the entire table to the file, overwriting the old values. Unless the file is written, any parameter updates will be lost when the software is restarted.</p>
 <p>The fields for each parameter value as stored in the parameter file are as follows:</p>
