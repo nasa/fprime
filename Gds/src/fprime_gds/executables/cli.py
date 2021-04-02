@@ -386,7 +386,7 @@ class GdsParser(ParserBase):
         parser.add_argument(
             "-g",
             "--gui",
-            choices=GUIS,
+            #choices=GUIS,
             dest="gui",
             type=str,
             help="Set the desired GUI system for running the deployment. [default: %(default)s]",

@@ -278,10 +278,16 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
             "SERVE_LOGS": "YES",
         }
     )
-    gse_args = ["python3", "-u", "-m", "flask", "run"]
+    gui = extras["gui"]
+    if (gui.isdigit()):
+        gui_port = gui
+    else:
+        gui_port = "5000"
+
+    gse_args = ["python3", "-u", "-m", "flask", "run", "--port={}".format(gui_port)]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
-    if extras["gui"] == "html":
-        webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
+    if gui == "html" or gui.isdigit():
+        webbrowser.open("http://localhost:{}/".format(gui_port), new=0, autoraise=True)
     return ret
 
 
@@ -358,7 +364,7 @@ def main():
     gui = settings.get("gui", "none")
     if gui == "wx":
         launchers.append(launch_wx)
-    elif gui == "html" or gui == "none":
+    elif gui == "html" or gui.isdigit() or gui == "none":
         launchers.append(launch_html)
     # elif gui == "none":
     #    print("[WARNING] No GUI specified, running headless", file=sys.stderr)
