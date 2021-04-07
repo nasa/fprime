@@ -78,7 +78,7 @@ class XmlArrayParser(object):
 
         typeslist = [
             "I8",
-            "I8",
+            "U8",
             "BYTE",
             "I16",
             "U16",
