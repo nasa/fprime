@@ -56,9 +56,9 @@ class ChannelHistory(flask_restful.Resource):
         Return the telemetry history object
         """
         args = self.parser.parse_args()
-        new_chans = self.history.retrieve(start=args.get("session"))
+        new_channels = self.history.retrieve(start=args.get("session"))
         self.history.clear()
-        for chan in new_chans:
+        for chan in new_channels:
             # Add the 'display_text' to the event, along with a getter
             if chan.template.get_format_str() is not None:
                 setattr(
@@ -68,7 +68,7 @@ class ChannelHistory(flask_restful.Resource):
                 )
                 func = lambda this: this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
-        return {"history": new_chans}
+        return {"history": new_channels}
 
     def delete(self):
         """

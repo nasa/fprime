@@ -48,7 +48,7 @@ void test_with_loop(U32 iterations, bool duplex) {
             Drv::Test::force_recv_timeout(udp1);
             Drv::Test::force_recv_timeout(udp2);
             Drv::Test::send_recv(udp1, udp2);
-            // Allow duplex comms
+            // Allow duplex connections
             if (duplex) {
                 Drv::Test::send_recv(udp2, udp1);
             }
@@ -62,7 +62,7 @@ TEST(Nominal, TestNominalUdp) {
     test_with_loop(1, false);
 }
 
-TEST(Nominal, TestMulipleUdp) {
+TEST(Nominal, TestMultipleUdp) {
     test_with_loop(100, false);
 }
 
@@ -70,7 +70,7 @@ TEST(SingleSide, TestSingleSideUdp) {
     test_with_loop(1, true);
 }
 
-TEST(SingleSide, TestSingleSideMulipleUdp) {
+TEST(SingleSide, TestSingleSideMultipleUdp) {
     test_with_loop(100, true);
 }
 

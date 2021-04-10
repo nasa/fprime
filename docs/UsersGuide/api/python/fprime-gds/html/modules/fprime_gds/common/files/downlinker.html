@@ -306,7 +306,7 @@
 <span class="sd">        :param data: end packet</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Initialize all relevant END packet attributes into varibles from file_data</span>
-        <span class="c1"># hashValue attribute is not relevent right now, but might be in the future</span>
+        <span class="c1"># hashValue attribute is not relevant right now, but might be in the future</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">FileStates</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Received unexpected END packet&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

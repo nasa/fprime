@@ -12,7 +12,7 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # fputil_action:
 #
 # Runs an action for the FP util. This takes two parameters a target and a deployment. This assumes
-# prequsite actions already exist.
+# prerequisite actions already exist.
 # :param target($1): command to run with FP util
 # :param deploy($2): deployment to run on
 ####
@@ -109,7 +109,7 @@ function integration_test {
         kill $VALGRIND_PID
         wait $VALGRIND_PID
         RET_MEMTEST=$?
-        # Report memory leaks if they occured and the pytests were successful
+        # Report memory leaks if they occurred and the pytests were successful
         if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then 
             cat "${LOG_DIR}/gds-logs/valgrind.log"
             fail_and_stop "Integration tests on ${WORKDIR} contain memory leaks"

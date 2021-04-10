@@ -616,7 +616,7 @@ namespace Svc {
           const U32 __ISF_callSiteLineNumber, /*!< The line number of the call site*/
           const U32 index, /*!< The index*/
           const char *const fileName, /*!< The name of the sequence file*/
-          const U32 size /*!< Inavalid size*/
+          const U32 size /*!< Invalid size*/
       ) const;
 
     protected:

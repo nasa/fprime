@@ -60,7 +60,7 @@ class NumericalType(ValueType, abc.ABC):
 
 
 class IntegerType(NumericalType, abc.ABC):
-    """ Base class thar represents all integer common functions """
+    """ Base class that represents all integer common functions """
 
     def validate(self, val):
         """ Validates the given integer. """
@@ -76,7 +76,7 @@ class IntegerType(NumericalType, abc.ABC):
 
 
 class FloatType(NumericalType, abc.ABC):
-    """ Base class thar represents all float common functions """
+    """ Base class that represents all float common functions """
 
     def validate(self, val):
         """ Validates the given integer. """

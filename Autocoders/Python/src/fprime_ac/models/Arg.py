@@ -20,7 +20,7 @@
 import logging
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -31,11 +31,13 @@ import logging
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 #
+
+
 class Arg:
     """
     This is a very simple arg meta-model class.
     Note: This class is a container of basic argument information.
-    @todo: Serializables might need to be incorperated into this.
+    @todo: Serializables might need to be incorporated into this.
     """
 
     def __init__(self, name, atype, modifier, size=None, comment=None):
@@ -72,4 +74,10 @@ class Arg:
         """ Equality checker """
         if type(other) != type(self):
             return False
-        return self.__name == other.__name and self.__type == other.__type and self.__modifier == other.__modifier and self.__size == other.__size and self.__comment == other.__comment
+        return (
+            self.__name == other.__name
+            and self.__type == other.__type
+            and self.__modifier == other.__modifier
+            and self.__size == other.__size
+            and self.__comment == other.__comment
+        )

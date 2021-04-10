@@ -35,7 +35,7 @@ Directory containing all 7 autocoder tools and a few scripts to invoke them.
 Directory containing telemetry packet / layout documentation. It also contains a changelog and a readme for the autocoder, but both are outdated.
 
 ### schema/
-Directory containing all autocoder RelaxNG and Schematron XML schemas. Schemas are found witin the default directory. The sample_XML_files directory contains sample XML files for the schemas that are run using the testSchemas.py test. These sample XML files were made for the RelaxNG schemas, but they have not been updated for the schematron schemas, so they may not work with them. 
+Directory containing all autocoder RelaxNG and Schematron XML schemas. Schemas are found within the default directory. The sample_XML_files directory contains sample XML files for the schemas that are run using the testSchemas.py test. These sample XML files were made for the RelaxNG schemas, but they have not been updated for the schematron schemas, so they may not work with them. 
 
 ### src/
 Directory containing all python code for the autocoder tools. Codegen uses the visitor pattern to generate its output files, and the generators for the visitor pattern are found in generators while the visitors are found in generators/visitors. The directory generators/writers contain the modules that perform serial writes for the testgen and dictgen tools. They are alternatives to the visitors, but currently there are only writers for the test component and dictionary files. Generators/templates contains all the cheetah templates required to run the autocoder. In a fresh repo, these should be built either by making F Prime, making the autocoder unit tests, or manually running cheetah compile within the templates directory. The parsers directory contains all the custom autocoder XML parser modules that the autocoder uses to create models from raw F Prime XML. Lastly, utils/cosmos contains the modules used by the cosmosgen tool. There is a readme file within this directory that explains what all of this code does.
@@ -102,7 +102,7 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | XmlParser.py | Parent class of the rest of the XmlParser classes |
 | XmlPortsParser.py | Parses XML port description files |
 | XmlSerializeParser.py | Parses XML serialize description files |
-| XmlTopologyParser.py | Topology XML topology description files |
+| XmlTopologyParser.py | Parses XML topology description files |
 
 #### src/utils/
 | File | Description |
@@ -115,6 +115,7 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | DiffAndRename.py | Mainly used for difference and rename routines |
 | DumpObj.py | Contains methods to print nicely formatted overviews of objects |
 | EnumDictCheck.py | A structure used to report enumeration size errors |
+| EnumDupRemover.py | Contains a function that removes duplicates from list of enums |
 | EnumGenerator.py | Generator to produce serializable enums |
 | Logger.py | Sets up the logging for all other scripts based on the Python logging module - not a standalone file |
 | ParseC.py | Contains a set of Python functions that parse C code |
@@ -152,4 +153,4 @@ In Autocoders/Python/schema/default there are various schematron .rng files mixe
 | parameter_id_schematron.rng | Checks uniqueness of parameter id's in parameter xml elements  |
 
 ### Schematron Syntax
-The root element of a schematron file is a schema tag with attribute xmlns set to "http://purl.oclc.org/dsdl/schematron". You are able to define any number of patterns with any number of rules within these files, where a pattern is a set of rules and a rule defines a set of asserts that all run on an xml element where the element's name is defined in the rule's context attribute. Schematron asserts use XPath syntax. It is helpful to find XPath cheat sheets online and have them open when definining a schematron assert.
+The root element of a schematron file is a schema tag with attribute xmlns set to "http://purl.oclc.org/dsdl/schematron". You are able to define any number of patterns with any number of rules within these files, where a pattern is a set of rules and a rule defines a set of asserts that all run on an xml element where the element's name is defined in the rule's context attribute. Schematron asserts use XPath syntax. It is helpful to find XPath cheat sheets online and have them open when defining a schematron assert.

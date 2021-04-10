@@ -30,18 +30,18 @@
             <comment>Buffer return from incoming bufferIn calls</comment>
         </port>
 
-
         <!-- Data side connections -->
         <port name="dataOut" data_type="Fw::BufferSend" kind="output" max_number="1">
+            <comment>Data output to remote hub</comment>
         </port>
         <port name="dataIn" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
+            <comment>Data input from remote hub</comment>
         </port>
         <port name="dataInDeallocate" data_type="Fw::BufferSend" kind="output" max_number="1">
+            <comment>Deallocation of buffer passed into data in</comment>
         </port>
         <port name="dataOutAllocate" data_type="Fw::BufferGet" kind="output" max_number="1">
+            <comment>Allocation of buffer passed to passed out dataOut</comment>
         </port>
-
-
     </ports>
-
 </component>

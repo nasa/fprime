@@ -63,12 +63,8 @@ void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
 }
 
 Fw::Buffer FramerComponentImpl ::allocate(const U32 size) {
+    this->getTime();
     return framedAllocate_out(0, size);
-}
-
-Fw::Time FramerComponentImpl ::time() {
-    Fw::Time time_val;  // TODO: does this get time?
-    return time_val;
 }
 
 }  // end namespace Svc

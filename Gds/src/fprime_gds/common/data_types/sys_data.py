@@ -68,7 +68,7 @@ class SysData:
 
     def to_jsonable(self):
         """
-        Converts to a JSONable object (primatives, anon-objects, lists)
+        Converts to a JSONable object (primitives, anon-objects, lists)
         """
         return fprime_gds.common.utils.jsonable.fprime_to_jsonable(self)
 

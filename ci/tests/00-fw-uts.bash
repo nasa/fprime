@@ -2,7 +2,7 @@
 ####
 # 00-fw-uts.bash:
 #
-# FW Unit Tests for the pythonm code. Performed upfront as it will inform the stability of the rest
+# FW Unit Tests for the python code. Performed upfront as it will inform the stability of the rest
 # of the build.
 ####
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."

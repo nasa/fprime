@@ -1,7 +1,7 @@
 /**
  * datastore.js:
  *
- * Creates a dataestore object that handles the storing of the various data items in the system. It then allows for
+ * Creates a datastore object that handles the storing of the various data items in the system. It then allows for
  * accessing those data items by the components in this system.
  *
  *  @author mstarch

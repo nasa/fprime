@@ -159,10 +159,15 @@ class CmdData(sys_data.SysData):
                 "Argument value could not be converted to type object"
             )
         if isinstance(arg_type, BoolType):
-            if arg_val == "False":
+            value = str(arg_val).lower().strip()
+            if value in ("true", "yes"):
+                av = True
+            elif value in ("false", "no"):
                 av = False
             else:
-                av = True
+                raise CommandArgumentException(
+                    "Argument value is not a valid boolean"
+                )
             arg_type.val = av
         elif isinstance(arg_type, EnumType):
             arg_type.val = arg_val

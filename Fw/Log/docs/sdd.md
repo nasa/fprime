@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Fw::Log` port is used to pass a serialzed form of an ISF Event. It passes the ID, a time tag, the severity, and a buffer
+The `Fw::Log` port is used to pass a serialized form of an ISF Event. It passes the ID, a time tag, the severity, and a buffer
 containing the serialized arguments of the event. 
 
 The `Fw::LogText` port is used to pass a printable text representation of an ISF Event. It passes the ID, a time tag, 

@@ -95,7 +95,11 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
 }
 
 bool IpSocket::isOpened(void) {
-    return m_open;
+    bool is_open = false;
+    m_lock.lock();
+    is_open = m_open;
+    m_lock.unLock();
+    return is_open;
 }
 
 void IpSocket::close(void) {
@@ -110,7 +114,7 @@ void IpSocket::close(void) {
 SocketIpStatus IpSocket::open(void) {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
-    FW_ASSERT(m_fd == -1); // Ensure we are not opening an opened socket
+    FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket
     // Open a TCP socket for incoming commands, and outgoing data if not using UDP
     status = this->openProtocol(fd);
     if (status != SOCK_SUCCESS) {
@@ -175,7 +179,7 @@ SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
         // Attempt to recv out data
         size = this->recvProtocol(data, req_read);
         // Error is EINTR, just try again
-        if (size == -1 && (errno == EINTR)) {
+        if (size == -1 && ((errno == EINTR) || errno == EAGAIN)) {
             continue;
         }
         // Zero bytes read reset or bad ef means we've disconnected

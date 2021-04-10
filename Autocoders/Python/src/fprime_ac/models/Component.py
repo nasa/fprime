@@ -22,7 +22,7 @@ from typing import List
 
 from .Port import Port
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #

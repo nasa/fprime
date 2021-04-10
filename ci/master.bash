@@ -32,7 +32,7 @@ mkdir -p "${LOG_DIR}"
 # Loop through all scripts in  tests directory and run them
 for test_script in ${TESTS}
 do
-    "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning drectory"
+    "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning directory"
     echo -e "${BLUE}Starting CI test ${test_script}${NOCOLOR}"
     /usr/bin/time "${test_script}" || fail_and_stop "${test_script} failed"
     echo -e "${GREEN}CI test ${test_script} SUCCESSFUL${NOCOLOR}"

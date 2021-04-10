@@ -63,7 +63,7 @@ class ValueType(BaseType, abc.ABC):
     @abc.abstractmethod
     def validate(self, val):
         """
-        Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
+        Checks the val for validity with respect to the current type. This will raise TypeMismatchException when the
         validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
 
         :param val: value to validate

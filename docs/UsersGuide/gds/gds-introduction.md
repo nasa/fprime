@@ -68,7 +68,7 @@ this to work properly, the user must build and install the `Ref` application usi
 
 By default, the `fprime-gds` command uses the current deployment to find the dictionary and the flight software to run.
 The dictionary is used for the GDS to understand the events, channels, and commands produced by the embedded system and
-the software is run as a convienence for local testing (`-n` will disable this feature).  
+the software is run as a convenience for local testing (`-n` will disable this feature).  
 
 In the following sections, we will explore various options for using the GDS.
 
@@ -207,7 +207,7 @@ click that button. This new window will connect to the same backend as the first
 At the very top-right, there should be a green circle or a red X representing the GUI's connection status. A green
 circle means that data is still flowing from the embedded system, while a red X means the embedded system is currently
 disconnected and not sending/receiving any data. This is reset to an X via timeout, so you may need to configure that
-timeout in the `config.js` file.  This widget is fondly refered to as "the orb" as it quickly shows if there is data
+timeout in the `config.js` file.  This widget is fondly referred to as "the orb" as it quickly shows if there is data
 flow from the embedded F´ system.
 
 There's also a NASA logo on the far left. It doesn't do anything right now, but hopefully the meatball continues to

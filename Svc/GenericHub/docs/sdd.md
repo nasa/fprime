@@ -1,32 +1,32 @@
 \page SvcGenericHub Generic Hub Component
-# Drv::SvcGenericHub Generic Hub Component
+# Svc::GenericHub Generic Hub Component
 
 The Generic Hub component is an implementation of the F´ [hub pattern](https://nasa.github.io/fprime/UsersGuide/best/hub-pattern.html).
 This pattern (and component) is used to bridge across an address space barrier between F´ deployments and route F´ port
 calls to the remote deployment. It also receives incoming port calls from the remote component. Essentially, it is a
-port multiplexer/demultiplexer that serializes the port calls to an Fw::Buffer object and outputs this data to an 
-implementation of the Drv::ByteStreamDriverModel for transport out of the current deployment's address space.
+port multiplexer/demultiplexer that serializes the port calls to an `Fw::Buffer` object and outputs this data to an 
+implementation of the `Drv::ByteStreamDriverModel` for transport out of the current deployment's address space.
 
-**Note:** at this time send/receive errors are dropped by the hub.  Individual projects may adapt this component should
-other behavior be needed.
+**Note:** At this time, the hub drops send/receive errors.
+Individual projects that need to monitor send/receive errors may need to add this functionality to the GenericHub [see idiosyncrasies](#idiosyncrasies)
 
 ## Design
 
 The generic hub accepts incoming port calls using an array of Serial input ports. This allows any port call to be
-bridged across the connection. There is also an incoming set of ports supporting Fw::Buffer type allowing the generic
-hub to send generic byte data across (e.g. file packets) the connection.  These connections are serialized into the out
-going connections to the driver.  On the far side of the byte driver there is another generic hub that deserializes
-these port calls and buffer calls into normal F´ port calls on the new deployment as if they were made locally.
+bridged across the connection. There is also an incoming set of ports supporting `Fw::Buffer` type allowing the generic
+hub to send generic byte data across (e.g. file packets) the connection. These connections are serialized into the outgoing 
+connections to the driver. On the far side of the byte driver, another generic hub deserializes these port calls and buffer 
+calls into normal F´ port calls on the new deployment as if they were made locally. 
 
-It is essential that generic hub inputs on one hub is parallel to the outputs on the other hub, and vise-versa. It is
-also essential that users never pass a **pointer** into the generic hub, as pointer data will become invalid when it
-leave the current address space. A sample configuration is shown below. Finally, the generic hub is bidirectional so it
+Generic hub inputs on one hub should be parallel to the outputs on the other hub and vise-versa. 
+It is also essential that users never pass a **pointer** into the generic hub, as pointer data will become invalid when it 
+leaves the current address space. A sample configuration is shown below. Finally, the generic hub is bidirectional, so it
 can operate on inputs and produce outputs as long as its remote counterpart is hooked up in parallel.
 
 ### Example Formations
 
-This section shows how to setup of the generic hub component. It is broken into several separate views. This first shows
-the top level of the formation. Here we connection a component on the left (command dispatcher) to several components on
+This section shows how to set up the generic hub component. It is broken into several separate views. This first shows
+the top level of the formation. Here we connect a component on the left (command dispatcher) to several components on
 the right (two signal generators). Both forward and reverse connections are shown. Notice the parallelism from the left
 port calls from the command dispatcher to the port outputs to the components being commanded.
 
@@ -34,7 +34,7 @@ port calls from the command dispatcher to the port outputs to the components bei
 
 The next diagram show a similar setup to the first, except here we are using buffer transmission to support a file
 downlink and uplink pair to show how the left deployment may "downlink" files to the right deployment. Both this and the
-first diagram can be connected at the same time, and are split only to keep the diagrams less complex. Here the revers
+first diagram can be connected at the same time, and are split only to keep the diagrams less complex. Here the reverse
 connections are omitted for simplicity.
 
 ![Top Level Generic Hub](./img/gh-top-buff.png)
@@ -67,7 +67,7 @@ The above configuration may be used with both deployments hubs as the input/outp
 
 ## Idiosyncrasies 
 
-Currently, the Drv::ByteStreamDriverModel can report errors and failures. This generic hub component drops these errors.
+Currently, the `Drv::ByteStreamDriverModel` can report errors and failures. This generic hub component drops these errors.
 Users who expect the driver to error should adapt this component to handle this issue. Future versions of this component
 may correct this issue by calling to a fault port on error.
 
@@ -85,3 +85,4 @@ may correct this issue by calling to a fault port on error.
 | Date | Description |
 |---|---|
 | 2020-12-21 | Initial Draft |
+| 2021-01-29 | Updated |

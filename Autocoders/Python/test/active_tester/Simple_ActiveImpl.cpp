@@ -17,14 +17,14 @@ namespace Simple_Active{
         //Delay Output
         for(int i = 0; i < 9999; i++){
         }
-        printf("\nComp_A Recieved Input: %d\n", int_arg);
+        printf("\nComp_A Received Input: %d\n", int_arg);
     }
 
     void Simple_ActiveImpl::F32_Sync_handler(NATIVE_INT_TYPE portNum, F32 float_args){
         //Delay Output
         for(int i = 0; i < 9999; i++){
         }
-        printf("\nComp_A Recieved Input: %lf\n", float_args);
+        printf("\nComp_A Received Input: %lf\n", float_args);
     }
 
 };

@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  ByteStreamDriverModel.hpp
+// \title  Tester.cpp
 // \author mstarch
-// \brief  cpp file for ByteStreamDriverModel test harness implementation class
+// \brief  cpp file for Tester for Udp
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -19,7 +19,7 @@
 Os::Log logger;
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 1000
 
 
 namespace Drv {
@@ -127,7 +127,7 @@ void Tester ::test_receive_thread(void) {
 }
 
 void Tester ::test_advanced_reconnect(void) {
-    test_with_loop(10, true);  // Up to 10 * RECONNECT_MS
+    test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
 // ----------------------------------------------------------------------
@@ -142,17 +142,66 @@ void Tester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvB
     m_spinner = true;
 }
 
+Fw::Buffer Tester ::
+    from_allocate_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 size
+    )
+  {
+    this->pushFromPortEntry_allocate(size);
+    Fw::Buffer buffer(new U8[size], size);
+    m_data_buffer2 = buffer;
+    return buffer;
+  }
+
+  void Tester ::
+    from_deallocate_handler(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Buffer &fwBuffer
+    )
+  {
+    this->pushFromPortEntry_deallocate(fwBuffer);
+  }
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::
+    connectPorts(void) 
+  {
+
     // send
-    this->connect_to_send(0, this->component.get_send_InputPort(0));
+    this->connect_to_send(
+        0,
+        this->component.get_send_InputPort(0)
+    );
+
+    // poll
+    this->connect_to_poll(
+        0,
+        this->component.get_poll_InputPort(0)
+    );
 
     // recv
-    this->component.set_recv_OutputPort(0, this->get_from_recv(0));
-}
+    this->component.set_recv_OutputPort(
+        0, 
+        this->get_from_recv(0)
+    );
+
+    // allocate
+    this->component.set_allocate_OutputPort(
+        0, 
+        this->get_from_allocate(0)
+    );
+
+    // deallocate
+    this->component.set_deallocate_OutputPort(
+        0, 
+        this->get_from_deallocate(0)
+    );
+
+  }
 
 void Tester ::initComponents(void) {
     this->init();

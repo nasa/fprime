@@ -58,7 +58,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * to the user.
      *
      * \param hostname: ip address of remote tcp server in the form x.x.x.x
-     * \paran port: port of remote tcp server
+     * \param port: port of remote tcp server
      * \param send_timeout_seconds: send timeout seconds component. Defaults to: SOCKET_TIMEOUT_SECONDS
      * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000. Defaults to:
      * SOCKET_TIMEOUT_MICROSECONDS
@@ -76,7 +76,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * accept incoming connections the `open` call must be made.  Only when the startup method returns SOCK_SUCCESS has
      * the server successfully bound to the port/
      *
-     * \return status of startup. SOCK_SUCCESS on success, somtheing else on error.
+     * \return status of startup. SOCK_SUCCESS on success, something else on error.
      */
     SocketIpStatus startup();
 

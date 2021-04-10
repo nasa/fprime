@@ -27,7 +27,7 @@ namespace Drv {
 class SocketReadTask {
   public:
     /**
-     * \brief constucts the socket read task
+     * \brief constructs the socket read task
      */
     SocketReadTask();
 

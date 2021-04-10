@@ -1,1 +1,1 @@
-The sha.h header is included in this directory because the version on MacOSX spews deprecated warnings, since it no longer uses openssl's implementation of sha. Linux still uses openssl's version.
+The sha.h header is included in this directory because the version on macOS spews deprecated warnings, since it no longer uses openssl's implementation of sha. Linux still uses openssl's version.

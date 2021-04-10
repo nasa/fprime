@@ -1,6 +1,15 @@
+// ======================================================================
+// \title  DeframingProtocol.hpp
+// \author mstarch
+// \brief  hpp file for DeframingProtocol class
 //
-// Created by Starch, Michael D (348C) on 12/30/20.
+// \copyright
+// Copyright 2009-2021, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 //
+// ======================================================================
+
 #include "Svc/FramingProtocol/DeframingProtocolInterface.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Utils/Types/CircularBuffer.hpp"
@@ -11,21 +20,42 @@
 namespace Svc {
 
 
-
+/**
+ * \brief Abstract base class representing a deframing protocol
+ *
+ * This class represents the basic interface for writing a deframing protocol. This class may be
+ * subclassed to provide concrete implementations for the protocol. A DeframingProtocolInterface is
+ * be supplied using the `setup` call. This instance is usually the DeframingComponentImpl.
+ *
+ * Implementations are expected to call `m_interface.route` to send the deframed data and may call
+ * `m_interface.allocate` to allocate new memory.
+ */
 class DeframingProtocol {
   public:
+    /**
+     * \brief Status of the deframing call
+     */
     enum DeframingStatus {
-        DEFRAMING_STATUS_SUCCESS,
-        DEFRAMING_INVALID_SIZE,
-        DEFRAMING_INVALID_CHECKSUM,
-        DEFRAMING_MORE_NEEDED,
+        DEFRAMING_STATUS_SUCCESS, /*!< Successful deframing */
+        DEFRAMING_INVALID_SIZE, /*!< Invalid size found */
+        DEFRAMING_INVALID_CHECKSUM, /*!< Invalid checksum */
+        DEFRAMING_MORE_NEEDED, /*!< Successful deframing likely with more data */
         DEFRAMING_MAX_STATUS
     };
+    //! Constructor
+    //!
     DeframingProtocol();
 
-    void setup(DeframingProtocolInterface& interface);
+    //! Setup the deframing protocol with the deframing interface
+    //!
+    void setup(DeframingProtocolInterface& interface /*!< Deframing interface */
+    );
 
-    virtual DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed) = 0;
+    //! Deframe packets from within the circular buffer
+    //! \return deframing status of this deframe attempt
+    virtual DeframingStatus deframe(Types::CircularBuffer& buffer,  /*!< Deframe from circular buffer */
+                                    U32& needed  /*!< Return needed number of bytes */
+    ) = 0;
 
   PROTECTED:
     DeframingProtocolInterface* m_interface;

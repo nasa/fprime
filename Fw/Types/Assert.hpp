@@ -40,7 +40,7 @@ namespace Fw {
 }
 
 // Base class for declaring an assert hook
-// Each of the base class functions can be overriden
+// Each of the base class functions can be overridden
 // or used by derived classes.
 
 namespace Fw {

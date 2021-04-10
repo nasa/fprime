@@ -35,14 +35,14 @@ In order to develop applications with F´, the following requirements of the use
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
 2. CMake [https://cmake.org/download/](https://cmake.org/download/) available on the system path
 3. Bash or Bash compatible shell
-4. CLang or GCC compiler
+4. Clang or GCC compiler
 5. Python 3 and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 
 ## Quick Installation Guide
 
 F´ can be quickly installed and ready to use by cloning the GitHub repository, installing Python code (typically in a
-virtual environment), and building on of our reference applications. For full install instructions please see:
+virtual environment), and building one of our reference applications. For full install instructions please see:
 [INSTALL.md](./INSTALL.md).
 
 **Clone and Install**
@@ -67,10 +67,10 @@ CTRL-C
 
 ## Further References
 
-Full information on the code and F´ are available at our Github page:
+Full information on the code and F´ are available at our GitHub page:
 [http://github.com/nasa/fprime](http://github.com/nasa/fprime).  
 
 To start with, follow the [installation guide](./INSTALL.md). Then inspect
 either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md), 
-[rapberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
+[raspberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
 [tutorials](Tutorials/README.md).

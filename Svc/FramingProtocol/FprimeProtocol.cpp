@@ -1,6 +1,14 @@
+// ======================================================================
+// \title  FprimeProtocol.cpp
+// \author mstarch
+// \brief  cpp file for FprimeProtocol class
 //
-// Created by Starch, Michael D (348C) on 12/30/20.
+// \copyright
+// Copyright 2009-2021, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
 //
+// ======================================================================
 
 #include "FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -14,7 +22,9 @@ FprimeFraming::FprimeFraming(): FramingProtocol() {}
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
 void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+    FW_ASSERT(data != NULL);
     FW_ASSERT(m_interface != NULL);
+    // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
     FP_FRAME_TOKEN_TYPE real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
     FP_FRAME_TOKEN_TYPE total = real_data_size + FP_FRAME_HEADER_SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);

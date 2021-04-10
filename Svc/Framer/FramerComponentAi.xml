@@ -27,8 +27,8 @@
         </port>
 
         <!-- Standard ports -->
-        <!--port name="timeGet" data_type="Fw::Time"  kind="output" role="TimeGet" max_number="1">
-        </port-->
+        <port name="timeGet" data_type="Fw::Time"  kind="output" role="TimeGet" max_number="1">
+        </port>
 
     </ports>
 </component>

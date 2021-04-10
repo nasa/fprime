@@ -8,7 +8,7 @@ Producers of encodable data (such as gui panels) will be passed an encoder
 object for a specific descriptor type (cmd, file, etc). This will register the
 encoder with the panel and the panel is responsible for calling the encoder's
 data_callback function with data of the given descriptor type to send. In turn,
-a sender (such as a tcp client) will be regsitered to the encoder using the
+a sender (such as a tcp client) will be registered to the encoder using the
 encoder's register_send function. The encoder will then call the sender's send
 function with the serialized binary data.
 

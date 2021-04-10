@@ -845,7 +845,7 @@ namespace Svc {
       //!
       virtual void logIn_WARNING_HI_CS_FileSizeError(
           Fw::LogStringArg& fileName, /*!< The name of the sequence file*/
-          U32 size /*!< Inavalid size*/
+          U32 size /*!< Invalid size*/
       );
 
       //! A history entry for event CS_FileSizeError

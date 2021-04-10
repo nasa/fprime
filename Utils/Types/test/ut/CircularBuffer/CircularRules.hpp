@@ -8,8 +8,8 @@
  *
  * 1. Serialize into CircularBuffer with sufficient space should work.
  * 2. Serialize into CircularBuffer without sufficient space should error.
- * 3. Peeking into CicularBuffer with data should work (all variants).
- * 4. Peeking into CicularBuffer without data should error (all variants).
+ * 3. Peeking into CircularBuffer with data should work (all variants).
+ * 4. Peeking into CircularBuffer without data should error (all variants).
  * 5. Rotations should increase space when there is enough data.
  * 6. Rotations should error when there is not enough data.
  * 7. A rule exists to help randomize items.

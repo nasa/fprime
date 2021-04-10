@@ -3,7 +3,7 @@ layout: default
 title: "F´ Installation Guide"
 ---
 
-This installation guide is specifically designed to enable individual and researchers to get up and
+This installation guide is specifically designed to enable individuals and researchers to get up and
 running with F´ quickly. This guide is not intended for large teams with specific content
 management (CM) requirements.
 
@@ -87,12 +87,12 @@ layer components. Should the user not have installed the given component, the co
 ```
 cd Ref
 fprime-util generate
-fprime-util build --jobs 32
+fprime-util build --jobs "$(nproc || printf '%s\n' 1)"
 ```
 
 **Testing F´ GDS Installation Via Running HTML GUI**
 ```
-fprime-gds -g html -d <path to fprime checkout>/Ref
+fprime-gds -g html -r <path to fprime checkout>/Ref/build-artifacts
 ```
 **Note:** `Ref` should contain pre-built dictionaries and binaries for the user's system. This can
 be achieved by running the Autocoder installation test (the user must have a working Autocoder
@@ -100,7 +100,7 @@ installation).
 
 ## (Optional) Installing Tab Completion
 
-Several of F´s command line utilities support tab completion. To enable these tools to use it, see the [instructions here](UsersGuide/user/AUTOCOMPLETE.md).
+Several of F´s command line utilities support tab completion. To enable these tools to use it, see the [instructions here](UsersGuide/user/autocomplete.md).
 
 ## Troubleshooting
 
@@ -130,7 +130,7 @@ More information can be found here: https://stackoverflow.com/questions/30668601
 
 ### System Python, Packages, and Python3
 
-Many operating systems are offer python PIP packages through their package manager (apt, yum, etc).  Most python projects
+Many operating systems offer python PIP packages through their package manager (apt, yum, etc).  Most python projects
 recommend avoiding those packages, but rather installing from PIP in a virtual environment.  The reason for this is that the
 version of the python package from the OS may not be the required version that the python project depends on.  Thus, for
 F´ we strongly recommend using a virtual environment and not system packages.

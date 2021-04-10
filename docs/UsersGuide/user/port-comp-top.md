@@ -24,7 +24,7 @@ represent the data being conveyed across the port.
 
 A port supports passing arguments across the port's connection in order to pass data to the receiving
 **Component** of an invocation. Some ports may also return data from the receiving **Component** to the invoking
-**Component**. A port may specify zero or more arguments of any D´ data type or primitive (int, float, U8, etc.).
+**Component**. A port may specify zero or more arguments of any F´ data type or primitive (int, float, U8, etc.).
 Pointers and references are allowed as arguments to the port as well (for performance purposes), but care should be
 taken to ensure correct memory management as the ownership of the underlying memory is effectively shared when the
 port is invoked.  The port's type is synonymous with the port invocations' "data_type" when used on a **Component**.

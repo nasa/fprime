@@ -17,7 +17,7 @@ This JS file defines a Vue.js component in javascript with the HTML template and
 items.
 
 
-This file is typicall placed in a folder named for the addon (e.g. `example`) and the JS file is
+This file is typically placed in a folder named for the addon (e.g. `example`) and the JS file is
 typically named `addon.js`. A quick example can be seen below.
 
 ```
@@ -74,7 +74,7 @@ Available data from `_datastore` is described in the following table
 
 | Item | Type | Description |
 |---|---|---|
-| events    | list | List of events recieved |
+| events    | list | List of events received |
 | channels  | dict | Channel id to last received reading |
 | upfiles   | list | List of uplinked file objects |
 | downfiles | list | List of downlinked file objects |

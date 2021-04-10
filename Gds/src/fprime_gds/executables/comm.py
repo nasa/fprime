@@ -77,7 +77,7 @@ def main():
     downlinker.start()
     uplinker.start()
 
-    # Wait for shutdown event in the form of a KeyboardInterupt then stop the processing, close resources, and wait for
+    # Wait for shutdown event in the form of a KeyboardInterrupt then stop the processing, close resources, and wait for
     # everything to terminate as expected.
     def shutdown(*_):
         """ Shutdown function for signals"""

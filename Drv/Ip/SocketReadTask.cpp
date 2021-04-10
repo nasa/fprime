@@ -52,7 +52,7 @@ Os::Task::TaskStatus SocketReadTask::joinSocketTask(void** value_ptr) {
 
 void SocketReadTask::stopSocketTask() {
     this->m_stop = true;
-    this->getSocketHandler().close();
+    this->getSocketHandler().close();  // Break out of any receives
 }
 
 void SocketReadTask::readTask(void* pointer) {
@@ -61,14 +61,14 @@ void SocketReadTask::readTask(void* pointer) {
     SocketReadTask* self = reinterpret_cast<SocketReadTask*>(pointer);
     do {
         // Open a network connection if it has not already been open
-        if ((not self->m_stop) and (not self->getSocketHandler().isOpened()) and
+        if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
             ((status = self->getSocketHandler().open()) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
         }
 
         // If the network connection is open, read from it
-        if (self->getSocketHandler().isOpened()) {
+        if (self->getSocketHandler().isOpened() and (not self->m_stop)) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
@@ -88,5 +88,6 @@ void SocketReadTask::readTask(void* pointer) {
     // As long as not told to stop, and we are successful interrupted or ordered to retry, keep receiving
     while (not self->m_stop &&
            (status == SOCK_SUCCESS || status == SOCK_INTERRUPTED_TRY_AGAIN || self->m_reconnect));
+    self->getSocketHandler().close(); // Close the handler again, in case it reconnected
 }
 };  // namespace Drv

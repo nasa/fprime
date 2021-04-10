@@ -3,7 +3,7 @@
 
 The TCP server component bridges the byte stream driver model interface to a remote TCP client to which this tcp server
 connects and sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data
-and producing the callback port call. Since it is a server it must startup and listen for client connections. Designed
+and producing the callback port call. Since it is a server, it must startup and listen for client connections. Designed
 for single client communication, it does not permit a queue of connecting clients.
 
 For more information on the supporting TCP implementation see: Drv::TcpServerSocket.
@@ -29,7 +29,7 @@ This data is immediately sent out to the remote tcp server with a configured sen
 
 In the callback formation, the byte stream driver component initiates the transfer of received data by calling the
 "readCallback" output port. This port transfers any read data in a `Fw::Buffer` along with a status for the receive.
-This status is an enumeration enumeration whose values are described in the following table:
+This status is an enumeration whose values are described in the following table:
 
 | Value | Description |
 |---|---|
@@ -50,7 +50,7 @@ proper resource deallocation. This typical usage is shown in the C++ snippet bel
 
 
 ```c++
-Drv::TcpServerComponentImpl comm = Drv::TcpServeromponentImpl("TCP Server");
+Drv::TcpServerComponentImpl comm = Drv::TcpServerComponentImpl("TCP Server");
 
 bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
@@ -71,17 +71,20 @@ void exitTasks(void) {
     (void) comm.joinSocketTask(NULL);
 }
 ```
+## Class Diagram
+![class diagram](./img/class_diagram_tcpserver.png)
 
 ## Requirements
 
 | Name | Description | Validation |
 |---|---|---|
-| TCPSRVCOMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | inspection |
-| TCPSRVCOMP-002 | The tcp server component shall provide a read thread | unit test |
-| TCPSRBCOMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | unit test |
+| TCP-SERVER-COMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | inspection |
+| TCP-SERVER-COMP-002 | The tcp server component shall provide a read thread | unit test |
+| TCP-SERVER-COMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | unit test |
 
 ## Change Log
 
 | Date | Description |
 |---|---|
 | 2020-12-21 | Initial Draft |
+| 2021-01-28 | Updated |

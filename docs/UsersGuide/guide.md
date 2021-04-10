@@ -64,7 +64,7 @@ The API documentation section contains the automatically generated documentation
 - Advanced F´ Topics:
     - [F´ Python Guidelines](./dev/py-dev.md)
     - [Porting F´ To a New Platform](./dev/porting-guide.md)
-    - [F´ On Baremetal and Muti-Core Systems](./dev/baremetal-multicore.md)
+    - [F´ On Baremetal and Multi-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
     - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
@@ -124,7 +124,7 @@ are automatically generated from this design. These dictionaries are read into t
 
 ## F′ Utility Build Helper and CMake System
 
-F´ ships with a buoild system configured to build the F´ code. This build system is implemented using CMake and handles
+F´ ships with a build system configured to build the F´ code. This build system is implemented using CMake and handles
 the dependencies needed to run the Autocoder and assemble it with user written code. In order to support more standard
 development patterns with F´, the `fprime-util` was built. This tool maps simple commands into the make system in order
 to allow developer to follow set patterns easily.

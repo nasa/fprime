@@ -4,7 +4,7 @@
 // \brief  hpp file for Deframer component implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -19,7 +19,19 @@
 #include "Utils/Types/CircularBuffer.hpp"
 
 namespace Svc {
-
+/**
+ * \brief Generic deframing component using DeframingProtocol implementation for actual deframing
+ *
+ * Deframing component used to take byte streams and expand them into Com/File buffers. This is
+ * done using a deframing protocol specified in a DeframingProtocol instance.  The instance must be
+ * supplied using the `setup` method.
+ *
+ * Using this component, projects can implement and supply a fresh DeframingProtocol implementation
+ * without changing the reference topology.
+ *
+ * Implementation uses a circular buffer to store incoming data, which is drained one framed packet
+ * at a time into buffers dispatched to the rest of the system.
+ */
 class DeframerComponentImpl : public DeframerComponentBase, public DeframingProtocolInterface {
   public:
     // ----------------------------------------------------------------------
@@ -42,7 +54,8 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
 
     //! Setup the object
     //!
-    void setup(DeframingProtocol& protocol);
+    void setup(DeframingProtocol& protocol /*!< Deframing protocol instance*/
+    );
 
 
   PRIVATE:
@@ -62,8 +75,9 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
     //! Handler implementation for framedIn
     //!
     void framedIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                          Fw::Buffer& recvBuffer,
-                          Drv::RecvStatus recvStatus);
+                          Fw::Buffer& recvBuffer,  /*!< The raw bytes */
+                          Drv::RecvStatus recvStatus /*!< Status of the bytes */
+                          );
 
     //! Handler implementation for schedIn
     //!

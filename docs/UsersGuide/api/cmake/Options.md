@@ -50,7 +50,7 @@ options.
 **Values:**
 - Release: (default) standard flight build
 - Testing: allow for unit tests and debug enabled build
-- Debug: supplied by CMake and typlically unused for F prime
+- Debug: supplied by CMake and typically unused for F prime
 
 e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 
@@ -78,7 +78,7 @@ Note: these settings are supplied by `fprime-util` and need not be provided unle
 any way bypassing that utility (e.g. inside your beloved IDE).
 
 These locations specify the locations of the needed F prime paths. These are described below. Defaults are set to
-support the historical in-source deployments where F prime is merged with deployment code. Specifiy these settings if
+support the historical in-source deployments where F prime is merged with deployment code. Specify these settings if
 using the newer deployment structure. `fprime-util` does this for you.
 
 FPRIME_FRAMEWORK_PATH: location of F prime framework installation, always the directory above this file, however;

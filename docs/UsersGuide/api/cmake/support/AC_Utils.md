@@ -3,7 +3,7 @@
 ## AC_Utils.cmake:
 
 Defines needed utility functions that are (or should be) dependent on any autocoding calls to
-be made. Other utilites should go in *Utils.cmake*.
+be made. Other utilities should go in *Utils.cmake*.
 
 
 ## Function `serialns`:
@@ -28,7 +28,7 @@ Note: as the autocoder is rewritten, this will likely need to change.
 - **AC_FINAL_HEADER:** final position of the HPP file
 - **AI_XML:** AI xml input to autocoder
 - **XML_FILE_DEPS:** xml file dependencies
-- **MOD_DEPS:** xml and hand specidied module dependencies
+- **MOD_DEPS:** xml and hand specified module dependencies
 - **Return: AC_OUTPUTS** (set in outer scope)
 
 

@@ -11,7 +11,7 @@
 # pip install --upgrade ./Fw/Python
 # ```
 #
-# Developer and Dynamic Installtion:
+# Developer and Dynamic Installation:
 # ```
 # pip install -e ./Fw/Python
 # ```
@@ -26,7 +26,7 @@ setup(
     # Package Description:
     #
     # Basic package information. Describes the package and the data contained inside. This
-    # information should match the F prime decription information.
+    # information should match the F prime description information.
     ####
     name="fprime",
     version="1.5.3",
@@ -71,10 +71,9 @@ to interact with the data coming from the FSW.
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    # Requires Python 3.5+, and the 'six' Python package
+    # Requires Python 3.5+
     python_requires=">=3.5",
     install_requires=[
-        "six",
         "lxml",
         'enum34;python_version < "3.4"',
         "Markdown",
@@ -85,7 +84,7 @@ to interact with the data coming from the FSW.
         'Cheetah;python_version < "3.0"',
     ],
     extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
-    # Setup and test requirments, not needed by normal install
+    # Setup and test requirements, not needed by normal install
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
     # Create a set of executable entry-points for running directly from the package

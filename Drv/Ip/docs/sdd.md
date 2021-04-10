@@ -11,8 +11,8 @@ interacting with sockets generically. Drv::IpSocket delegates protocol specific 
 implemented by the children concrete socket classes. i.e. Drv::IpSocket::open delegates to the functions
 Drv::TcpClientSocket::openProtocol to open up specifically a tcp client socket.
 
-Drv::SocketReadTask is a virtual baseclass that comes with the functionality for setting up a generic reading thread
-complete with the ability to reconnect to a closed/errored connection. This virtual base class is intended to be
+Drv::SocketReadTask is a virtual base class that comes with the functionality for setting up a generic reading thread
+complete with the ability to reconnect to a closed/broken connection. This virtual base class is intended to be
 inherited by an F´ component wrapper that need to support a receive thread such that this functionality need not be
 redundantly implemented.
 

@@ -22,7 +22,7 @@ from typing import List
 
 from .Component import Component
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #

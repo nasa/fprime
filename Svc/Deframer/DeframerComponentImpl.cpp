@@ -68,9 +68,10 @@ Fw::Buffer DeframerComponentImpl ::allocate(const U32 size)  {
 
 void DeframerComponentImpl ::route(Fw::Buffer& data) {
     // Read the packet type from the data buffer
-    I32 packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN;
+    I32 packet_type = static_cast<I32>(Fw::ComPacket::FW_PACKET_UNKNOWN);
     Fw::SerializeBufferBase& serial = data.getSerializeRepr();
     serial.setBuffLen(data.getSize());
+    // Serialized packet type is explicitly an I32 (4 bytes)
     serial.deserialize(packet_type);
 
     // Process variable type
@@ -87,8 +88,8 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
             // If file uplink is possible, handle files.  Otherwise ignore.
             if (isConnected_bufferAllocate_OutputPort(0)) {
                 // Shift the buffer to ignore the packet type
-                data.setData(data.getData() + sizeof(I32));
-                data.setSize(data.getSize() - sizeof(I32));
+                data.setData(data.getData() + sizeof(packet_type));
+                data.setSize(data.getSize() - sizeof(packet_type));
                 bufferOut_out(0, data);
             }
             break;
@@ -102,8 +103,9 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
 void DeframerComponentImpl ::processRing() {
     FW_ASSERT(m_protocol != NULL);
     // Inner-loop, process ring buffer looking for at least the header
+    U32 i = 0;
     U32 needed = 0;
-    while (m_in_ring.get_remaining_size() >= needed) {
+    for (i = 0; (i < (m_in_ring.get_capacity() + 1)) and (m_in_ring.get_remaining_size() >= needed); i++) {
         DeframingProtocol::DeframingStatus status = m_protocol->deframe(m_in_ring, needed);
         // Successful deframing consumes messages
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
@@ -113,17 +115,22 @@ void DeframerComponentImpl ::processRing() {
         else if (status != DeframingProtocol::DEFRAMING_MORE_NEEDED) {
             m_in_ring.rotate(1);
             needed = 0;
-            // Checksum errors get logged as it is unlinkly to get to a checksum check on random data
+            // Checksum errors get logged as it is unlikely to get to a checksum check on random data
             if (status == DeframingProtocol::DEFRAMING_INVALID_CHECKSUM) {
                 Fw::Logger::logMsg("[ERROR] Deframing checksum validation failed\n");
             }
         }
     }
+    // Note: this assert can trip when "more is needed" from the circular buffer and the circular buffer
+    // reports that it has enough for what is needed. This would constitute a hard failure
+    FW_ASSERT(i <= m_in_ring.get_capacity(), m_in_ring.get_capacity());
 }
 
 void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
-    NATIVE_UINT_TYPE buffer_offset = 0;
-    while (buffer_offset < buffer.getSize()) {
+    U32 i = 0;
+    U32 buffer_offset = 0; // Max buffer size is U32
+    // Note: max iteration bounded by processing 1 byte per iteration
+    for (i = 0; (i < (buffer.getSize() + 1)) and (buffer_offset < buffer.getSize()); i++) {
         NATIVE_UINT_TYPE ser_size = (buffer.getSize() >= m_in_ring.get_remaining_size(true))
                                         ? m_in_ring.get_remaining_size(true)
                                         : static_cast<NATIVE_UINT_TYPE>(buffer.getSize());
@@ -131,6 +138,10 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
         buffer_offset = buffer_offset + ser_size;
         processRing();
     }
+    // Note: this assert can trip when the processRing function failed to process data
+    // or when the circular buffer is not large enough to hold a complete message. Both
+    // are hard-failures
+    FW_ASSERT(i <= buffer.getSize(), buffer.getSize());
 }
 
 }  // end namespace Svc

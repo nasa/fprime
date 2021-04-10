@@ -18,14 +18,14 @@ Vue.component("command-argument", {
     template: "#command-argument-template",
     computed: {
         /**
-         * Allows for validation of commands using the HTML-based validation using regex and numers. Note: numbers here
+         * Allows for validation of commands using the HTML-based validation using regex and numbers. Note: numbers here
          * are treated as text, because we can allow for hex, and octal bases.
          * @return [HTML input type, validation regex]
          */
         inputType() {
             // Unsigned integer
             if (this.argument.type[0] == 'U') {
-                // Supports binary, hex, ocatal, and digital
+                // Supports binary, hex, octal, and digital
                 return ["text", "0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|[1-9]\\\\d*"];
             }
             else if (this.argument.type[0] == 'F') {

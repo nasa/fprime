@@ -60,7 +60,7 @@ class IpSocket {
      * \param hostname: socket uses for outgoing transmissions (and incoming when tcp). Must be of form x.x.x.x
      * \param port: port socket uses for outgoing transmissions (and incoming when tcp). Must NOT be 0.
      * \param send_timeout_seconds: send timeout seconds portion
-     * \param semd_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
+     * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
     SocketIpStatus configure(const char* hostname, const U16 port, const U32 send_timeout_seconds,
@@ -81,7 +81,7 @@ class IpSocket {
      * \brief open the IP socket for communications
      *
      * This will open the IP socket for communication. This method error checks and validates properties set using the
-     * `configure` method.  Tcp sockets will open bidirectional communication assuming the `condifure` function was
+     * `configure` method.  Tcp sockets will open bidirectional communication assuming the `configure` function was
      * previously called. Udp sockets allow `configureRecv` and `configure`/`configureSend` calls to configure for
      * each direction separately and may be operated in a single-direction or bidirectional mode. This call returns a
      * status of SOCK_SEND means the port is ready for transmissions and any other status should be treated as an error
@@ -146,7 +146,7 @@ class IpSocket {
     /**
      * \brief converts a given address in dot form x.x.x.x to an ip address. ONLY works for IPv4.
      * \param address: address to convert
-     * \param ip4: ipv4 representation structure to fill
+     * \param ip4: IPv4 representation structure to fill
      * \return: status of conversion
      */
     static SocketIpStatus addressToIp4(const char* address, void* ip4);
