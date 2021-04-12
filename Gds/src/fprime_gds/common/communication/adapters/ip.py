@@ -34,7 +34,8 @@ def check_port(address, port):
         socket_trial.bind((address, port))
     except OSError as err:
         raise ValueError(
-            "Error with address/port of '{}:{}' : {}".format(address, port, err)
+            "Error with address/port of '{}:{}' : {}".format(
+                address, port, err)
         )
     finally:
         if socket_trial is not None:
@@ -76,10 +77,12 @@ class IpAdapter(fprime_gds.common.communication.adapters.base.BaseAdapter):
         # Keep alive thread
         try:
             # Setup the tcp and udp adapter and run a thread to service them
-            self.thtcp = threading.Thread(target=self.th_handler, args=(self.tcp,))
+            self.thtcp = threading.Thread(
+                target=self.th_handler, args=(self.tcp,))
             self.thtcp.daemon = True
             self.thtcp.start()
-            self.thudp = threading.Thread(target=self.th_handler, args=(self.udp,))
+            self.thudp = threading.Thread(
+                target=self.th_handler, args=(self.udp,))
             self.thudp.daemon = True
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
@@ -404,6 +407,13 @@ class TcpHandler(IpHandler):
         primary socket.
         """
         data = self.client.recv(IpAdapter.MAXIMUM_DATA_SIZE)
+        if not data:
+            try:
+                print("No more data. Closing the connection")
+                self.client.close()
+            except AttributeError:
+                print("Skip closing. Client connection is already closed.")
+                pass
         return data
 
     def write_impl(self, message):
