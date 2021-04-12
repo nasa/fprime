@@ -128,6 +128,8 @@ export class DataStore {
             this.active.splice(index, 1, true);
             clearTimeout(this.active_timeout);
             this.active_timeout = setTimeout(() => _self.active.splice(index, 1, false), timeout);
+        } else {
+            this.active.splice(index, 1, false);
         }
     }
 };
