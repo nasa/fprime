@@ -36,7 +36,7 @@ doall()
   for regex in "$@"
   do
     shift
-    for file in `find . -name "$regex" -maxdepth 1`
+    for file in `find . -maxdepth 1 -name "$regex"`
     do
       $cmd $file
     done
