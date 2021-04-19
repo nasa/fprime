@@ -38,7 +38,7 @@ the reference application can be build on Linux or Mac OSX allowing the user to 
 
 [RPI](./RPI/README.md): The Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded
 Linux computer). This application shows the user how to get started in the embedded world with cross-compiling, dirvers, and more. The Raspberry
-Pi was chosen as it is comercially available for a low price and runs Linux.
+Pi was chosen as it is commercially available for a low price, and runs Linux.
 
 ## Tutorials
 
