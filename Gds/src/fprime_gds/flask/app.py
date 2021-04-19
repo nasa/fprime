@@ -49,7 +49,7 @@ def construct_app():
     if "FP_FLASK_SETTINGS" in os.environ:
         app.config.from_envvar("FP_FLASK_SETTINGS")
 
-    # JSON encoding seeting must come before restful
+    # JSON encoding setting must come before restful
     app.json_encoder = fprime_gds.flask.json.GDSJsonEncoder
     app.config["RESTFUL_JSON"] = {"cls": app.json_encoder}
     # Standard pipeline creation

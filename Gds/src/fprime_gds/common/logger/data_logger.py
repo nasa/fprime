@@ -64,10 +64,10 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
 
     # Some data was recvd
     def on_recv(self, data):
-        """Data was recved on the socket server
+        """Data was received on the socket server
 
         Arguments:
-            data {bin} --binnary data string that was recved
+            data {bin} --binary data string that was received
         """
 
         self.f_r.write(data)

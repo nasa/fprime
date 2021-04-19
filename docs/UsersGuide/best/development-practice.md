@@ -21,7 +21,7 @@ The process:
 
 The first step of the development process is to establish the high-level design for the project.
 This involves specifying system-level requirements and a block diagram that represents the key
-system functionality. Once complete the project should break this functionality into discreet units
+system functionality. Once complete the project should break this functionality into discrete units
 of functionality that represent the system. In addition, the interface between these units should be
 defined. The units of functionality are Components and the interfaces are further broken down into
 discrete call or actions through that interface. These are F´ ports. The full design of the system
@@ -160,7 +160,7 @@ To add a component to the topology:
     - Call the component's `init` function.
     - If additional setup is required, call a user defined setup function.
     - If using commands, register component's commands.
-    - If using health checking, add component to ping entires.
+    - If using health checking, add component to ping entries.
     - If using an active component, start component with `start` function and call `exit` when
       exiting. 
 

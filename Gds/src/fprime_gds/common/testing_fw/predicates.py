@@ -472,7 +472,7 @@ class event_predicate(predicate):
         Args:
             id_pred: optional predicate to call on the EventData instance's id field
             args_pred: optional predicate to call on a list of the EventData 's argument values
-            severity_pred: optional predicate to call on the EvenetData instances severity field
+            severity_pred: optional predicate to call on the EventData instances severity field
             time_pred: optional predicate to call on the EventData instance's timestamp
         """
         true_pred = always_true()

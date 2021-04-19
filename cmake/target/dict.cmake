@@ -66,7 +66,7 @@ endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
 #
-# Adds a module-by-module target for procducing dictionaries. These dictionaries take the outputs
+# Adds a module-by-module target for producing dictionaries. These dictionaries take the outputs
 # from the autocoder and copies them into the correct directory. These outputs are then handled as
 # part of the global `dict` target above.
 #

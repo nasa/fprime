@@ -57,7 +57,7 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     endif()
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
-    # Add component subdirectories using normal add_subdirectory with overriden binary_dir
+    # Add component subdirectories using normal add_subdirectory with overridden binary_dir
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
 
@@ -169,7 +169,7 @@ function(register_fprime_module)
     elseif(DEFINED MOD_DEPS)
     	set(MD_IFS "${MOD_DEPS}")
     elseif(${CMAKE_DEBUG_OUTPUT})
-        message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
+        message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
     if (${ARGC} GREATER 2)
         set(MODULE_NAME "${ARGV2}")
@@ -256,12 +256,12 @@ endfunction(register_fprime_module)
 # ```
 # ### fprime Executable With Autocoding/Dependencies ###
 #
-# Developers can make executables or other utilites that take advantage of fprime autocoding
+# Developers can make executables or other utilities that take advantage of fprime autocoding
 # and fprime dependencies. These can be registered using the same executable registrar function
 # but should specify a specific executable name.
 #
 # ```
-# set(EXECUTABLE_NAME "MyUtitlity")
+# set(EXECUTABLE_NAME "MyUtility")
 #
 # set(SOURCE_FILES
 #   "${CMAKE_CURRENT_LIST_DIR)/ModuleAi.xml"
@@ -363,7 +363,7 @@ endfunction(register_fprime_executable)
 #   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
 #             these as positional arguments overrides any specified in the parent scope.
 #
-#   **Note:** UTs automaitcally depend on the module. In order to prevent this, explicitly pass in args
+#   **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
 #             to this module, excluding the module.
 #
 #         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
@@ -435,7 +435,7 @@ function(register_fprime_ut)
     else()
         set(MD_IFS "${MODULE_NAME_NO_SUFFIX}")
         if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
+            message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
         endif()
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
@@ -490,7 +490,7 @@ endfunction(register_fprime_target_generic)
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
 #  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
-#  - Adding Module: [Modules](module.md) register fprime Ports, Compontents, etc.
+#  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 ####

@@ -1,4 +1,4 @@
-# F´ On Baremetal and Muti-Core Systems
+# F´ On Baremetal and Multi-Core Systems
 
 F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user though some
 of the caveats and delicacies of such systems. It includes
@@ -31,7 +31,7 @@ of that delegated execution context comes next.
 
 ### Choosing an Execution Context
 
-Since the OS is not around to execute F´, the implementor of the F´ project must choose an execution context for F´ to
+Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to
 run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system.  Otherwise some
 components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
 driven by [rate groups](../best/rate-group.md). Designing the system this way ensures that all execution is derived from
@@ -58,8 +58,8 @@ while (true) {
 Now all that is required is to determine when this interval has elapsed. This can be done spinning on a hardware clock
 signal, calculating elapsed time by reading of clock registers, using timing library functions, the `sleep()` call, or
 by an timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
-before going this route.  Notibly, the ISR should not execute the rate group directly, but rather should set a flag or
-queu a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
+before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or
+queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
 groups.
 
 ## Multi-Core and Multi-Device Systems
@@ -160,7 +160,7 @@ while (!shutdown) {
 }
 ```
 Here, as seen above, `run_once` does not block and so each component gets a slice of execution time before yielding to
-the next. Parallelism has been virtualized and the processor is sharable without writing a full-blown thread scheduler
+the next. Parallelism has been virtualized and the processor is shareable without writing a full-blown thread scheduler
 nor requiring processor instruction set support to switch threading contexts.
 
 Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks

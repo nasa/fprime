@@ -145,7 +145,7 @@ namespace Os {
                             return QUEUE_FULL;
                         } else {
                             // TODO(mereweth) - multiprocess signalling necessary?
-                            // Go to sleep until we receive a signal that something was takeng off the queue
+                            // Go to sleep until we receive a signal that something was taken off the queue
                             continue;
                         }
                     default:

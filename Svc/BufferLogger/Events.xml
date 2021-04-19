@@ -65,7 +65,7 @@
     <comment>Buffer logger was activated</comment>
   </event>
 
-  <event id="0x05" name="BL_Deativated" severity="ACTIVITY_LO" format_string="Buffer logger was deactivated">
+  <event id="0x05" name="BL_Deactivated" severity="ACTIVITY_LO" format_string="Buffer logger was deactivated">
     <comment>Buffer logger was deactivated</comment>
   </event>
 

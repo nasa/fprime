@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "Ref">
 
-    <!-- Immport component declarations -->
+    <!-- Import component declarations -->
 
     <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>

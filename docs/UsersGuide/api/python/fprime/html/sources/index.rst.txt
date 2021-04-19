@@ -3,7 +3,7 @@
 =======================
 
 A flight software and embedded systems framework. This is the automatically generated API
-documentation for the `fprime` python package. This package contains the necesssary types and setup
+documentation for the `fprime` python package. This package contains the necessary types and setup
 to write support code for F´ including both Autocoder functions and Ground Data System packages.
 
 This package also provides the `fprime-util` command line utility used to help build F´ following

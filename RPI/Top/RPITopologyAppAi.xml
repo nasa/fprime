@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "RPI">
 
-    <!-- Immport component declarations -->
+    <!-- Import component declarations -->
 
    <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
@@ -660,7 +660,7 @@
        <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
    </connection>
    
-   <!-- Fault Connectionss -->
+   <!-- Fault Connections -->
    <connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>

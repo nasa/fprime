@@ -1,5 +1,5 @@
-\page OsQueue Os::Queue (Pthreads implemenation)
-# Os::Queue (Pthreads implemenation)
+\page OsQueue Os::Queue (Pthreads implementation)
+# Os::Queue (Pthreads implementation)
 
 ## 1 Introduction
 
@@ -11,7 +11,7 @@ used for access and control flow of the internal queue data structure (ie. [`pth
 etc.). The Pthread implementation provides the following advantages over the operating system provided IPC queues:
 
 - The Pthreads implementation is NOT an IPC queue. It is designed for message passing between threads in the same
-memory address space. This means that it never touches the filesystem and has no persistant state after the
+memory address space. This means that it never touches the filesystem and has no persistent state after the
 `Os::Queue` deconstructor has been called. ISF currently does not spread different threads of execution in different memory 
 spaces on Darwin and Linux, so this is an acceptable solution.
 
@@ -141,7 +141,7 @@ The queue unit tests are located in `Os/test/ut`. These tests validate the funct
 
 1. **Send and Receive**: Test successful send and receive from a blocking queue.
 
-2. **Blocking Receive on Empty**: Test blocking behavior for receiveing on an empty queue.
+2. **Blocking Receive on Empty**: Test blocking behavior for receiving on an empty queue.
 
 3. **Non-blocking Send on Full**: Test non-blocking behavior for sending to a full queue.
 
@@ -213,4 +213,4 @@ Test complete.
 ---------------------
 ```
 
-The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similiar to the Posix queue implementation. Based on these results the the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a [lock-free concurrent max heap data structure](http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf).
+The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similar to the Posix queue implementation. Based on these results the the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a [lock-free concurrent max heap data structure](http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf).

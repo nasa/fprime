@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: GTestCppVisitor.py
 #
-# DESCRIPTION: A visitor for generating component gtest base implemetation files.
+# DESCRIPTION: A visitor for generating component gtest base implementation files.
 #
 # AUTHOR: bocchino
 # EMAIL:  bocchino@jpl.nasa.gov
@@ -23,7 +23,7 @@ except ImportError:
 
 class GTestCppVisitor(GTestVisitorBase.GTestVisitorBase):
     """
-    A visitor for generating component gtest base implemetation files.
+    A visitor for generating component gtest base implementation files.
     """
 
     def __init__(self):

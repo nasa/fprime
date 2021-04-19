@@ -19,7 +19,7 @@ TESTCASE 104.1.1: PolyDb Nominal Read/Write Test
 ***************************************
 
 ***************************************
-Read and write values to the database while varyingthe measurement statuses.
+Read and write values to the database while varying the measurement statuses.
 ***************************************
 
 ***************************************

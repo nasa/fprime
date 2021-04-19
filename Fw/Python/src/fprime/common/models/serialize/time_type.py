@@ -279,7 +279,7 @@ class TimeType(type_base.BaseType):
                       Defaults to None.
 
         Returns:
-            A human readable string reperesenting the time type object
+            A human readable string representing the time type object
         """
         dt = self.get_datetime(time_zone)
 
@@ -445,7 +445,7 @@ class TimeType(type_base.BaseType):
         return self.get_type_from_float(num)
 
     def __floordiv__(self, other):
-        """ Floored divisionv """
+        """ Floored division """
         if isinstance(other, TimeType):
             other = other.get_float()
         num = self.get_float() // other

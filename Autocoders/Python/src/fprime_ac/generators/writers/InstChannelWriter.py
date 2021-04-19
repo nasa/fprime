@@ -25,7 +25,7 @@ from fprime_ac.generators.writers import AbstractDictWriter
 
 # from fprime_ac.utils import DiffAndRename
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -86,7 +86,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
     def DictStartWrite(self, obj, topology_model):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the channel model to write.
+        @param obj: the instance of the channel model to write.
         """
 
         # Build filename here...
@@ -95,7 +95,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
             init_file = os.path.join(output_dir, "__init__.py")
-            open(init_file, "w+").closse()
+            open(init_file, "w+").close()
 
         self.__fp = {}
 
@@ -147,7 +147,7 @@ class InstChannelWriter(AbstractDictWriter.AbstractDictWriter):
     def DictBodyWrite(self, obj, topology_model):
         """
         Defined to generate the body of the  Python channel class
-        @parms obj: the instance of the channel model to operation on.
+        @param obj: the instance of the channel model to operation on.
         """
         try:
             instance_obj_list = topology_model.get_base_id_dict()[

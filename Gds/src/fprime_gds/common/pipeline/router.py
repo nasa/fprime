@@ -22,14 +22,14 @@ class OutgoingRouter(
 
     def __init__(self):
         """
-        Construct the outgoing router with a dictioanry to map IDs
+        Construct the outgoing router with a dictionary to map IDs
         """
         super().__init__()
 
     def data_callback(self, data, sender=None):
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
-        from the sender parameter to creat this token, otherwise "0000" is sent out.
+        from the sender parameter to create this token, otherwise "0000" is sent out.
 
         :param data: encoded data to be prepended to
         :param sender: sender to append to.
@@ -53,7 +53,7 @@ class IncomingRouter(
     def data_callback(self, data, sender=None):
         """
         Handles incoming data by stamping on a handshake token to be passed back in the handshake packet. This reads
-        from the sender parameter to creat this token, otherwise "0000" is sent out.
+        from the sender parameter to create this token, otherwise "0000" is sent out.
 
         :param data: encoded data to be prepended to
         :param sender: sender id to append to.

@@ -21,7 +21,7 @@ The software system architecture is designed to break down software into modules
 function, definition of interfaces, behavioral characteristics, testing at the unit level, and ownership. These modules
 are known as **Components** in F´ and all external functions of the component are defined as an interface for
 interacting with the component. In F´ the component’s **Port** list is its external interface. In addition, 
-initialization functions and Construtors allow for setup and construction from the main thread.
+initialization functions and Constructors allow for setup and construction from the main thread.
 
 ### Software Layering
 

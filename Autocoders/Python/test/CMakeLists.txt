@@ -45,6 +45,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/queued1")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serial_passive")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_enum")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/serialize_stringbuffer")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/time_get")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/crisscross")
 
 # Template uses a malformed XML file

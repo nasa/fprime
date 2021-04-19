@@ -177,7 +177,7 @@ namespace Ref {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel MS_VAL1\n"
+      << " on telemetry channel MS_VAL1\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -227,7 +227,7 @@ namespace Ref {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel MS_VAL2\n"
+      << " on telemetry channel MS_VAL2\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -277,7 +277,7 @@ namespace Ref {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel MS_OP\n"
+      << " on telemetry channel MS_OP\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -327,7 +327,7 @@ namespace Ref {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel MS_RES\n"
+      << " on telemetry channel MS_RES\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

@@ -108,7 +108,7 @@ namespace Tlm {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << __index
-      << " on telmetry channel AQuat\n"
+      << " on telemetry channel AQuat\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

@@ -1,5 +1,5 @@
-#ifndef __LITS_COMPONENTS_HEADER__
-#define __LITS_COMPONENTS_HEADER__
+#ifndef __LIST_COMPONENTS_HEADER__
+#define __LIST_COMPONENTS_HEADER__
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
 

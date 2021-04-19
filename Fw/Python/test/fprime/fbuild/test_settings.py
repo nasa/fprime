@@ -22,7 +22,7 @@ def full_path(path):
 def test_settings():
     test_cases = [
         {
-            "file": "nonexistant.ini",
+            "file": "nonexistent.ini",
             "expected": {
                 "framework_path": full_path("../../../../.."),
                 "install_dest": full_path("settings-data/build-artifacts"),

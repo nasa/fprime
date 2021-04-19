@@ -14,8 +14,8 @@ The requirements for `Svc::TlmChan` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-TLC-001 | The `Svc::TlmChan` component shall provide an interface to submit telmetry | Unit Test
-TLC-002 | The `Svc::TlmChan` component shall provide an interface to read telmetry | Unit Test
+TLC-001 | The `Svc::TlmChan` component shall provide an interface to submit telemetry | Unit Test
+TLC-002 | The `Svc::TlmChan` component shall provide an interface to read telemetry | Unit Test
 TLC-003 | The `Svc::TlmChan` component shall provide an interface to run periodically to write telemetry | Unit Test
 TLC-004 | The `Svc::TlmChan` component shall write changed telemetry channels when invoked by the run port | Unit Test
 

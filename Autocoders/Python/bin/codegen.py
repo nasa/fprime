@@ -33,6 +33,7 @@ from fprime_ac.utils import (
     ArrayGenerator,
     ConfigManager,
     DictTypeConverter,
+    EnumDupRemover,
     EnumGenerator,
     Logger,
 )
@@ -124,7 +125,7 @@ def pinit():
         "-b",
         "--build_root",
         dest="build_root_flag",
-        help="Enable search for enviornment variable BUILD_ROOT to establish absolute XML directory path",
+        help="Enable search for environment variable BUILD_ROOT to establish absolute XML directory path",
         action="store_true",
         default=False,
     )
@@ -307,7 +308,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
     topology_model = generator.create(the_parsed_topology_xml)
 
     if opt.is_ptr:
-        PRINT.info("Topology Components will be initalized as Pointers. ")
+        PRINT.info("Topology Components will be initialized as Pointers. ")
         topology_model.is_ptr = opt.is_ptr
     if opt.connect_only:
         PRINT.info("Only port connections will be generated for Topology.")
@@ -746,7 +747,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 # check for parameters
                 if parsed_xml_dict[comp_type].get_parameters() is not None:
                     for parameter in parsed_xml_dict[comp_type].get_parameters():
-                        PRINT.debug("Processing Parameter %s" % chan.get_name())
+                        PRINT.debug("Processing Parameter %s" % parameter.get_name())
                         param_default = None
                         command_elem_set = etree.Element("command")
                         command_elem_set.attrib["component"] = comp_name
@@ -872,6 +873,8 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                         array_elem.append(members_elem)
                         array_list.append(array_elem)
 
+            EnumDupRemover.remove_duplicates(enum_list)
+
             topology_dict.append(enum_list)
             topology_dict.append(serializable_list)
             topology_dict.append(array_list)
@@ -951,7 +954,7 @@ def generate_component_instance_dictionary(
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info(
-                "ERROR: Component include serializables cannot use user-defined types. file: "
+                "ERROR: Component include serializables cannot use user-defined types. file: %s"
                 % serializable_file
             )
             sys.exit(-1)
@@ -1126,7 +1129,7 @@ def generate_component(
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info(
-                "ERROR: Component include serializables cannot use user-defined types. file: "
+                "ERROR: Component include serializables cannot use user-defined types. file: %s"
                 % serializable_file
             )
             sys.exit(-1)

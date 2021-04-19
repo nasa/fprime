@@ -91,7 +91,7 @@ namespace STest {
           const State& state //!< The system state
       ) const = 0;
 
-      //! The virtual implementation of nextScenario requred by ConditionalIteratedScenario
+      //! The virtual implementation of nextScenario required by ConditionalIteratedScenario
       virtual void nextScenario_ConditionalIteratedScenario(
           const Scenario<State> *const nextScenario //!< The scenario being returned
       ) = 0;

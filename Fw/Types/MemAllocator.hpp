@@ -27,7 +27,7 @@
  * appropriate.
  *
  * The identifier can be used to look up a pre-allocated buffer by ID in an
- * embbeded system.
+ * embedded system.
  *
  * The size is the requested size of the memory. If the allocator cannot return the
  * requested amount, it should return the actual amount and users should check.

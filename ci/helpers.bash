@@ -14,7 +14,7 @@ export NOCOLOR='\033[0m' # No Color
 ####
 # fail_and_stop:
 #
-# This function, when called ouside a subsehll, should print an error and stop the test. This will
+# This function, when called outside a subshell, should print an error and stop the test. This will
 # allow fairly easy test failures.
 # :param message ($1): message to print to the error log
 ####

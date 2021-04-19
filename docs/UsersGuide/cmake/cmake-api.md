@@ -8,7 +8,7 @@ takes. Users wanting to alter the build should look here.
 - [Options](../api/cmake/Options.md): Runtime build options
 - [API](../api/cmake/API.md): Module API function documentation 
 
-## Toolchain and Platform Doucmentation
+## Toolchain and Platform Documentation
 
 Toolchain files are used to cross-compile F´. In general, standard CMake toolchain files can be used
 to cross-compile, however; F´ includes several built-in toolchains and a template for writing your
@@ -23,9 +23,9 @@ define types and headers needed for F´ for any embedded system they desire.
 
 [Platform Template](../api/cmake/platform/platform-template.md): Platform file template documentation
 [Linux](../api/cmake/platform/Linux.md): Linux platform support
-[Darwin](../api/cmake/platform/Darwin.md): Darwin (Mac OSX) platform support
+[Darwin](../api/cmake/platform/Darwin.md): Darwin (macOS) platform support
 [arm-linux-gnueabihf](../api/cmake/platform/arm-linux-gnueabihf.md): Raspberry PI platform support
-[rtems5](../api/cmake/platform/rtems5.md): RTEMS 5 intital support
+[rtems5](../api/cmake/platform/rtems5.md): RTEMS 5 initial support
 [Linux-common](./platform/Linux-common.md): Common Linux platform support included above
 [CMakeLists.txt](./platform/CMakeLists.txt.md)
 
@@ -33,7 +33,7 @@ define types and headers needed for F´ for any embedded system they desire.
 
 These links document the custom targets integrated into the F´ build system. Targets can be
 generically integrated to support both module-level and global targets building toward the same
-F´ "target".  For example, the "dict" target may build local dictionary fragements and then roll
+F´ "target".  For example, the "dict" target may build local dictionary fragments and then roll
 them into a global dictionary.
 
 [Target](../api/cmake/support/Target.md): target subsystem documentation
@@ -50,7 +50,7 @@ improvements to the CMake are needed. Build system architects should consult thi
 
 
 [FPrime Code](../api/cmake/FPrime-Code.md): F´ framework code inclusions
-[FPrime](../api/cmake/FPrime.md): F´ project supoort
+[FPrime](../api/cmake/FPrime.md): F´ project support
 [Module](../api/cmake/support/Module.md): Module registry and autocode support 
 [Executable](../api/cmake/support/Executable.md): Executable registry and autocoding support
 [Unit Test](../api/cmake/support/Unit_Test.md): Unit test registry and autocode support

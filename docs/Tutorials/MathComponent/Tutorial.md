@@ -61,7 +61,7 @@ MathSender will have no parameters.
 
 ### 1.2.1 Commands
 
-`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 0 if the command is never invoked.
+`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multiplied by this factor. It should default to 0 if the command is never invoked.
 
 `MathReceiver` should also implement a MR_CLEAR_EVENT_THROTTLE command to clear the throttled MR_SET_FACTOR1 event (see below).
 
@@ -295,7 +295,7 @@ own to port definitions.
 
 ## 2.2 Serializable Definition
 
-A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the neccessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground sysmtem needs an XML definition to decode them.
+A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the necessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground system needs an XML definition to decode them.
 
 ### 2.2.1 MathOp
 
@@ -549,7 +549,7 @@ The port attributes are:
 |Attribute|Description|
 |---|---|
 |name|The port name|
-|data_type|The type of the port as defined in the included port definitions, in the form `namepace::name`|
+|data_type|The type of the port as defined in the included port definitions, in the form `namespace::name`|
 |kind|The kind of port. Can be `sync_input`,`async_input`,`guarded_input`, or `output`|
 
 For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
@@ -1259,7 +1259,7 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
 
 The next step is to add the specific test cases to the `Tester.cpp` implementation file. It is important to note that the unit tests are designed to be single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the message queue and dispatched to handlers. This makes testing simpler since the execution of the thread in response to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
 
-The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telmetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
+The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telemetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
 
 Add a member function to the implementation class in `Tester.cpp` to implement the test case:
 
@@ -1428,13 +1428,19 @@ Next, the test checks for the expected telemetry and events:
 
 The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
 
-To build the unit test, type:
+You must first generate the unit test before you can build it. Enter:
+
+```
+fprime-util generate --ut
+```
+
+Once you generate the unit test, you can build the unit test by entering:
 
 ```
 fprime-util build --ut
 ```
 
-The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
+You can run the unit test by typing the following in the `MathSender` (not `test/ut`) directory:
 
 ```shell
 $ fprime-util check
@@ -1484,7 +1490,7 @@ Add the files and compile them: `fprime-util build`
 
 ##### 2.4.2.1.1 Port handler
 
-Look for the empty port hander in the sub class:
+Look for the empty port handler in the sub class:
 
 ```c++
   void MathReceiverComponentImpl ::
@@ -1797,7 +1803,7 @@ Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
 Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
-Where the other components are initialzed, add `MathSender` and `MathReceiver`:
+Where the other components are initialized, add `MathSender` and `MathReceiver`:
 
 `Ref/Top/Topology.cpp`, line 286:
 
@@ -1899,7 +1905,8 @@ The component XML definitions must be imported into the topology file:
 `Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+
 
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
@@ -2112,7 +2119,7 @@ The final connection is the connection that performs the math operation. It goes
    
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
+Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/` directory. 
 If the updates were correct, the module should compile with no errors. 
 The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
 
@@ -2120,7 +2127,7 @@ If running on a different platform, you can specify the build target by typing `
 
 ## 4.1 Running the Ground System
 
-Once the `Ref` example has successfully built, the ground system and executable can be run by typing `fprime-gds -d fprime/Ref`. The ground system GUI should appear:
+Once the `Ref` example has built successfully, you can run the ground system and executable by entering `fprime-gds -r fprime/Ref/build-artifacts`. The ground system GUI should appear.
 
 ### 4.1.1 Executing Commands
 

@@ -1,5 +1,5 @@
 """
-Tests the chanel encoder
+Tests the channel encoder
 
 Created on Jul 10, 2020
 @author: Joseph Paetz, hpaulson

@@ -72,7 +72,7 @@ Vue.component("event-list", {
          */
         columnify(item) {
             let display_text = item.display_text;
-            // Remap command EVRs to expand opcode for visualization pruposes
+            // Remap command EVRs to expand opcode for visualization purposes
             let groups = null
             if (item.template.severity.value == "EventSeverity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
                 let component_mnemonic = "UNKNOWN"

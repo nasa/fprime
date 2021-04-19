@@ -11,7 +11,7 @@ Based on the ConfigManager class written by Len Reder in the fprime Gse
 
 @date Created July 25, 2018
 
-@lisence Copyright 2018, California Institute of Technology.
+@license Copyright 2018, California Institute of Technology.
          ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 """
 import configparser
@@ -162,6 +162,7 @@ class ConfigManager(configparser.ConfigParser):
         self.__prop["types"]["msg_desc"] = "U32"
         self.__prop["types"]["ch_id"] = "U32"
         self.__prop["types"]["event_id"] = "U32"
+        self.__prop["types"]["op_code"] = "U32"
         self.__prop["types"]["pkt_id"] = "U16"
         self.__prop["types"]["key_val"] = "U16"
         self._set_section_defaults("types")

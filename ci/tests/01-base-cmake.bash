@@ -7,7 +7,7 @@
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
 
-# Set areguments if CTEST_ARGS
+# Set arguments if CTEST_ARGS
 CTEST_ARGS=""
 which valgrind > /dev/null
 if (( $? == 0 ))

@@ -91,7 +91,7 @@
 #define FW_OBJECT_NAMES                     1   //!< Indicates whether or not object names are stored (more memory, can be used for tracking objects)
 #endif
 
-// To reduce binary size, FW_OPTIONAL_NAME(<string>) can be used to subsitute strings with an empty string
+// To reduce binary size, FW_OPTIONAL_NAME(<string>) can be used to substitute strings with an empty string
 // when running with FW_OBJECT_NAMES disabled
 #if FW_OBJECT_NAMES == 1
  #define FW_OPTIONAL_NAME(name) name
@@ -193,7 +193,7 @@
  #endif
 // When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should be >= FW_OBJ_NAME_MAX_SIZE.
  #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE
- #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  //!< Size of ojbect registry dump string
+ #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  //!< Size of object registry dump string
  #endif
 #endif
 

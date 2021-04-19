@@ -1,7 +1,7 @@
 /**
  * datastore.js:
  *
- * Creates a dataestore object that handles the storing of the various data items in the system. It then allows for
+ * Creates a datastore object that handles the storing of the various data items in the system. It then allows for
  * accessing those data items by the components in this system.
  *
  *  @author mstarch
@@ -128,6 +128,8 @@ export class DataStore {
             this.active.splice(index, 1, true);
             clearTimeout(this.active_timeout);
             this.active_timeout = setTimeout(() => _self.active.splice(index, 1, false), timeout);
+        } else {
+            this.active.splice(index, 1, false);
         }
     }
 };

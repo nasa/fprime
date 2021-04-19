@@ -39,7 +39,7 @@ If the UART port is not set up correctly, there will be a file open error.
 
 **Install the packages necessary to run the demo.** 
 
-Please see [INSTALL.md](../docs/INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/rpi`. If they are installed elsewhere, the user can set the environemnt variable `RPI_TOOLCHAIN_DIR` to the full tools directory.  e.g. in bash the user may run `export RPI_TOOLCHAIN_DIR=/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/`.
+Please see [INSTALL.md](../docs/INSTALL.md) to ensure that the F´ application has been installed and tested with the basic Ref. For cross-compiling, clone the cross-compile tools from [here](https://github.com/raspberrypi/tools). This demo has configuration files that assume that the tools have been installed in `/opt/rpi`. If they are installed elsewhere, the user can set the environment variable `RPI_TOOLCHAIN_DIR` to the full tools directory.  e.g. in bash the user may run `export RPI_TOOLCHAIN_DIR=/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/`.
 
 ### Build the software
 
@@ -78,7 +78,7 @@ home network where the pi and the user's computer are connected to the same netw
 ./scripts/run_rpi_cross.sh
 ```
 The ground station should now appear in the user's default browser. Should the user wish to terminate the ground system, return to that terminal
-and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab diaplying the GUI.
+and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab displaying the GUI.
 
 
 In order to run the compiled software, we'll first need to copy it to the RPI. This can be done by creating a new terminal, and running the

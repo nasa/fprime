@@ -192,7 +192,7 @@ def parse_args(args):
     )
     purge_parser = subparsers.add_parser(
         "purge",
-        help="Purge build cache directoriess",
+        help="Purge build cache directories",
         add_help=False,
         parents=[common_parser],
     )
@@ -267,7 +267,7 @@ def print_info(parsed, deployment):
             build.load(cwd, parsed.platform)
         except InvalidBuildCacheException:
             print(
-                "[WARNING] Not displying results for build type '{}', missing build cache.".format(
+                "[WARNING] Not displaying results for build type '{}', missing build cache.".format(
                     build_type.get_cmake_build_type()
                 )
             )

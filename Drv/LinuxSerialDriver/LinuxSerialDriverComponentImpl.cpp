@@ -196,7 +196,7 @@ namespace Drv {
           return false;
       }
 
-      // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Reciever
+      // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Receiver
       // TODO PARENB for parity bit
       /*
         Even parity (7E1):

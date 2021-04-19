@@ -177,7 +177,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << __index
-      << " on telmetry channel CommandsDispatched\n"
+      << " on telemetry channel CommandsDispatched\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -227,7 +227,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << __index
-      << " on telmetry channel CommandErrors\n"
+      << " on telemetry channel CommandErrors\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
