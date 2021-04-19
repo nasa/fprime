@@ -112,6 +112,21 @@ xml_do()
   fpp-to-xml -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
 }
 
+# Generate cpp files
+cpp_do()
+{
+  comma_deps=`get_comma_deps`
+  if test -n "$comma_deps"
+  then
+    import_deps="-i $comma_deps"
+  else
+    unset import_deps
+  fi
+  rm -rf $3
+  mkdir $3
+  fpp-to-cpp -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
+}
+
 # Locate uses
 locate_uses_do()
 {
