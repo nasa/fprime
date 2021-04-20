@@ -326,6 +326,7 @@ Connectedoutput
 Consolas
 consts
 contenttype
+cookiecutter
 cooldown
 coor
 coravy
@@ -739,6 +740,7 @@ FWCASSERT
 gainsboro
 Gangianpour
 gantt
+gatech
 gbl
 gcc
 gcda
@@ -1344,6 +1346,7 @@ objmodule
 objs
 ocl
 oclc
+oderr
 odl
 odo
 oflag
@@ -1429,6 +1432,7 @@ pdb
 pdf
 pdflatex
 peeker
+peet
 Peet
 perl
 PERLMOD
