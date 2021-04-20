@@ -284,7 +284,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, gui_addr, gui_port,
                 "--port", str(gui_port)]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
     if extras["gui"] == "html":
-        webbrowser.open(f"http://localhost:{str(gui_port)}/", new=0, autoraise=True)
+        webbrowser.open(f"http://{str(gui_addr)}:{str(gui_port)}/", new=0, autoraise=True)
     return ret
 
 
