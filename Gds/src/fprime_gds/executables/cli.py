@@ -410,6 +410,25 @@ class GdsParser(ParserBase):
             type=str,
             help="Configuration for wx GUI. Ignored if not using wx.",
         )
+        parser.add_argument(
+            "--gui-addr",
+            dest="gui_addr",
+            action="store",
+            default="127.0.0.1",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+        parser.add_argument(
+            "--gui-port",
+            dest="gui_port",
+            action="store",
+            default="5000",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+
         return parser
 
     @classmethod
