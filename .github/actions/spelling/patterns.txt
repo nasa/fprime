@@ -34,3 +34,9 @@ value="(?:[0-9a-f]{1,2} )*"
 
 # ignore long runs of a single character:
 \b([A-Za-z])\g{-1}{3,}\b
+
+# Ignore string sequence if it is assigned to a variable and has special symbols | \ / % * & %
+=\s*["'].*[\|\\\/\#\*\&\%].*["']
+
+# Ignore any text between inline back-ticks
+`(.*?)`

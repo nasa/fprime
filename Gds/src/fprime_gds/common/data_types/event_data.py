@@ -9,6 +9,7 @@
 
 from fprime.common.models.serialize import time_type
 from fprime_gds.common.data_types import sys_data
+from fprime_gds.common.utils.string_util import format_string
 
 
 class EventData(sys_data.SysData):
@@ -102,7 +103,7 @@ class EventData(sys_data.SysData):
             # used to fill in a format string. Convert them to values that can be
             arg_val_list = [arg_obj.val for arg_obj in self.args]
 
-            arg_str = format_str % tuple(arg_val_list)
+            arg_str = format_string(format_str, tuple(arg_val_list))
 
         if verbose and csv:
             return "%s,%s,%s,%d,%s,%s" % (
