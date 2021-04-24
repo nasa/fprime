@@ -43,5 +43,3 @@ set(UT_SOURCE_FILES
 # Register a unit test with above sources
 register_fprime_ut()
 ```
-
-

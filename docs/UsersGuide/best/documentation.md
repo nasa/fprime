@@ -21,7 +21,7 @@ running Doxygen. Make sure to delete or exclude (see EXCLUDE settings below) any
 
 The working directory should be the root of the project that is to be documented.  A configuration file can be generated
 or the sample can be used/modified. To run Doxygen through the GUI, select the working directory and a configuration
-file and then run generation.  Alternatively the `doxygen` command line utility can be run.  Change to the working 
+file and then run generation.  Alternatively the `doxygen` command line utility can be run.  Change to the working
 directory and supply the path to the configuration file. More detail can be found on the
  [Doxygen](https://www.doxygen.nl/index.html) website.
 
@@ -51,7 +51,7 @@ These settings are essential to use Doxygen to generate documentation.
 | USE_MDFILE_AS_MAINPAGE | Set a MD file to be the landing page documentation | MyProject/README.md |
 | MARKDOWN_SUPPORT | Pull in markdown files | YES |
 | RECURSIVE | Run doxygen recursively | YES |
-| EXCLUDE | Paths to exclude. Used to not generate fprime Doxygen inside project documentation. | ./fprime | 
+| EXCLUDE | Paths to exclude. Used to not generate fprime Doxygen inside project documentation. | ./fprime |
 | EXCLUDE_PATTERNS | Wildcard patterns to not include | MyProject/test* |
 
 ### Project Descriptions
@@ -78,5 +78,3 @@ of Doxygen will be hosted as-is. This is a good choice for projects that just wa
 
 2. Rename underscore files.  This is necessary when Jekyll needs to preprocess MD files. A sample renaming script can
 be found next to the Doxygen sample configuration.  Mileage may vary.
-
-

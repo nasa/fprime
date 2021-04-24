@@ -102,5 +102,3 @@ Additional locations FPRIME_SETTINGS_FILE and FPRIME_ENVIRONMENT_FILE:
 
 These files are used for settings in fprime-util. If supplied (typically only by fprime-util) then
 they will be added as dependencies into the build system.
-
-

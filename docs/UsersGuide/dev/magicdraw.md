@@ -12,7 +12,7 @@ available as the OpenSource team does not use nor support this work.
 
 F´ has a plugin to MagicDraw that can be used to generate Ai.xml files to use with the autocoder. It is available in the
 `Autocoders/MagicDrawCompPlugin` folder of F´.  It can be installed by following the README file there, although support
-past MagicDraw 18.5 is not guaranteed. 
+past MagicDraw 18.5 is not guaranteed.
 
 F´ has some MagicDraw support for existing components, however; given the disuse of these features, not all components
 or examples will work.  Open up the `Ref/Top/REFApplication.mdxml` file to begin. If import errors arise, the user will

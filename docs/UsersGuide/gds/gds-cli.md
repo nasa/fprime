@@ -183,8 +183,8 @@ show you all the information available and allow interaction with other tools.
 #### Sending Commands
 
 In the second category is the `command-send` command, which can used to send commands through the GDS to the embedded
-system. You can send commands by giving the *full name* of the command. These are typically formed by joining the 
-component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments, 
+system. You can send commands by giving the *full name* of the command. These are typically formed by joining the
+component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments,
 these can be passed in as a space-separated list using the `-args`/`--arguments` option. To send a command that does not
 need arguments like `cmdDisp.CMD_NO_OP`, you would just run the following:
 

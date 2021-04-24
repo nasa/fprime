@@ -141,7 +141,7 @@ correctly and thus changing these values should be done carefully.
 | FwPrmIdType                 | Type storing F´ parameter ids          | U32     | U8, U16, U32, U64 |
 | FwBuffSizeType              | Type storing the size of an F´ buffer  | U16     | U8, U16, U32, U64 |
 | FwEnumStoreType             | Type storing F´ enum values            | I32     | I8, I16, I32, I64 |
-| FwTimeBaseStoreType         | Type storing F´ timebase enum          | U16     | U8, U16, U32, U64 | 
+| FwTimeBaseStoreType         | Type storing F´ timebase enum          | U16     | U8, U16, U32, U64 |
 | FwTimeContextStoreType      | Type storing F´ time context           | U8      | U8, U16, U32, U64 |
 
 **Note:** for a further understanding of timebase and time context, see the next section.
@@ -174,13 +174,13 @@ Time base and time context usage may be turned on and off using the macros shown
 | ------------------------ | ------------------------------------------- |---------|-------------------|
 | FW_USE_TIME_BASE         | Enables the time base Fw::time field        | 1 (on)  | 0 (off) 1 (on)    |
 | FW_USE_TIME_CONTEXT      | Enables the time context Fw::time field     | 1 (on)  | 0 (off) 1 (on)    |
- 
+
 ### Object Settings
 
 The architecture allows for various settings to control, monitor, and trace objects in the system. These settings
 typically result in a larger binary size, but make the framework and system easier to debug. This section includes
 a discussion of OS objects like Tasks and Queues as well.
- 
+
 #### Object Naming
 
 The architecture can store names for each object created. This is useful when using object registries or tracing to see
@@ -335,7 +335,7 @@ thus to introspect what type is contained in the buffer.
 ### Buffer Sizes
 
 Many of the built in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
-through the ground interface, serialized and more. This section will discuss the com buffer configuration, 
+through the ground interface, serialized and more. This section will discuss the com buffer configuration,
 command, channel, event, parameter and other buffer size arguments.
 
 The com buffer must be able to store all the other types such that they can all be passed as generic communication. Thus
@@ -351,7 +351,7 @@ These types also provide optional string sizes for their constituent pieces. How
 **always** be smaller than the BUFFER_MAX_SIZE. i.e. the command string max size cannot be larger than the command
 buffer max size, as the string is serialized into the buffer.
 
-Commands serialize argument values into these buffers. Events (aka log events) also serialize just the arguments. 
+Commands serialize argument values into these buffers. Events (aka log events) also serialize just the arguments.
 Channelized telemetry and parameters serialize the values. Other information like event strings is not serialized but
 rather reconstructed when needed from the dictionary. This is all placed in a comm buffer.
 
@@ -396,7 +396,7 @@ compiles out the code and format strings for text logging. Table 46 provides the
 | Macro                       | Definition                                              | Default | Valid Values     |
 | --------------------------- | --------------------------------------------------------|---------|------------------|
 | FW_ENABLE_TEXT_LOGGING      | Enables or disables text logging                        | 1 (on)  | 0 (off) 1 (on)   |
-| FW_LOG_TEXT_BUFFER_SIZE     | Maximum size of the textual representation of the event | 256     | Positive integer | 
+| FW_LOG_TEXT_BUFFER_SIZE     | Maximum size of the textual representation of the event | 256     | Positive integer |
 
 **Note:** the FW_LOG_TEXT_BUFFER_SIZE should be large enough to store the full event including its text format
 string after being populated with arguments.
@@ -445,7 +445,7 @@ headers.
 These component headers follow the form `<Component>Cfg.hpp` and allows a project to set the configuration for each
 component's C++ implementation. This is typically to set maximum sizes for tables, and other static memory allocations.
 Some components allow users to turn on and off features. If a component does not have a header, it has no configuration
-for the user to set. 
+for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self descriptive.
 

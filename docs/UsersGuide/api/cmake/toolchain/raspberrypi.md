@@ -16,5 +16,3 @@ e.g. should the user install the tools in ``/home/user1` then the environment va
 **Note:** this toolchain file sets the system name to `arm-linux-gnueabihf` to be similar to other raspberry pi
 toolchain files while providing a cleaner name of `raspberrypi`.  Its parallel platform file is therefore named
 `arm-linux-gnueabihf.cmake` in the platforms directory.
-
-

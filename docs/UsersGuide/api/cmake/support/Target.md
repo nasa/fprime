@@ -78,5 +78,3 @@ is read from the CACHE variable FPRIME_TARGET_LIST.
 
 ## See Also:
  - API: [API](../API.md) describes the `register_fprime_target` function
-
-

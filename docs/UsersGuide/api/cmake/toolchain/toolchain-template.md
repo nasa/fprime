@@ -33,5 +33,3 @@ set(CMAKE_FIND_ROOT_PATH  "/opt/rpi")
 
 **Note:** if copying the template, delete the message with FATAL_ERROR line. This is a fail-safe
           to prevent a raw-copy from being treated as a valid toolchain file.
-
-

@@ -3,7 +3,7 @@
 The F´ Ground Data System (GDS) was built to aid in the usage, development, test, and integration of F´-based embedded
 systems. It was designed for projects that have not already chosen a GDS, for developers who need to test before the
 project's GDS is fully online, and for integration testers who wish to automate tests against F´ software. This guide
-will give you a quick introduction to what the F´ GDS is and how you can use it. 
+will give you a quick introduction to what the F´ GDS is and how you can use it.
 
 - [What is the GDS?](#what-is-the-gds)
 - [Getting Started](#getting-started)
@@ -23,7 +23,7 @@ will give you a quick introduction to what the F´ GDS is and how you can use it
     - [Logs](#logs)
     - [Dashboard](#dashboard)
 - [Conclusion](#conclusion)
-    
+
 ![GDS Image](../media/gds_gui_events.png)
 
 ## What is the GDS?
@@ -68,7 +68,7 @@ this to work properly, the user must build and install the `Ref` application usi
 
 By default, the `fprime-gds` command uses the current deployment to find the dictionary and the flight software to run.
 The dictionary is used for the GDS to understand the events, channels, and commands produced by the embedded system and
-the software is run as a convenience for local testing (`-n` will disable this feature).  
+the software is run as a convenience for local testing (`-n` will disable this feature).
 
 In the following sections, we will explore various options for using the GDS.
 
@@ -149,7 +149,7 @@ $ fprime-gds -g none
 
 ### Help and Other Options
 
-To see the full list of options you have when running the `fprime-gds` command, use the `--help` flag. e.g. 
+To see the full list of options you have when running the `fprime-gds` command, use the `--help` flag. e.g.
 `fprime-gds --help`. The following are the currently available options:
 
 ```

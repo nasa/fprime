@@ -46,5 +46,3 @@ include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
 
 **Note:** if copying the template, delete the message with FATAL_ERROR line. This is a fail-safe
           to prevent a raw-copy from being treated as a valid toolchain file.
-
-

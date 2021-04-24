@@ -14,5 +14,3 @@ Top-level executable generation. Core allows for generation of UT specifics with
 - **EXECUTABLE_NAME:** name of executable to be generated.
 - **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
 - **DEPS_INPUT:** specified module-level dependencies
-
-

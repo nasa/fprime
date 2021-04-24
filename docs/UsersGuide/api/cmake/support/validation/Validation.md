@@ -15,5 +15,3 @@ called, and returns the results of to the VALIDATION_RESULT variable in parent s
 ## Function `setup_validation_command`:
 
 Setup validation command to run in the system.
-
-

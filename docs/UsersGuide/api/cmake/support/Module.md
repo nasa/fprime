@@ -41,6 +41,3 @@ and library deps.
 - *MODULE_NAME:* module name of library to build
 - *SOURCE_FILES_INPUT:* source files that will be split into AC and normal sources.
 - *DEPS_INPUT:* dependencies bound for link and cmake dependencies
-
-
-

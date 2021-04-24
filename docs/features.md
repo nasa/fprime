@@ -43,8 +43,8 @@ The typed port connections provide strong compile-time guarantees of correctness
 ### Standard Component Library
 
 F´ ships with a good number of flight-proven components ready for use. These include most standard functions of an
-embedded system including commanding, telemetry capture, system event capture, and ground interaction. Often this
-means that most of an application is completed. Developers often only need to develop components about their
+embedded system including: commanding, telemetry capture, system event capture, and ground interaction. Often this
+means that most of an application is completed.  Developers often only need to develop components for their
 specific use-case and standard components are inherited from the framework itself.
 
 ### Standard Tooling
