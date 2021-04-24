@@ -4,7 +4,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:javascript)
 
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+**F´ (F Prime)** is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/).  This website contains project information, user guides, documentation, tutorials, and more!
 
@@ -20,9 +20,9 @@ F´ comprises several elements:
 
 The following utilities are prerequisites to installing F´:
 
-- cmake
-- git
-- Python 3.5+ with pip
+- [cmake](https://cmake.org/)
+- [git](https://git-scm.com/)
+- [Python](https://www.python.org/) 3.5+ with pip
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
 
@@ -60,7 +60,7 @@ F´ provides several tutorials in order to help understand and develop within th
 
 As F´ becomes a community centered product line, there are more items available from the community at large. 
 
-You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
+You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/g/fprime-community).
 
 The F´ community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
