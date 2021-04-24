@@ -26,5 +26,3 @@ Generates the actual unit test, dependencies, and call the autocoder.
 - **UT_EXE_NAME:** name of the UT executable to be created
 - **UT_SOURCES_INPUT:** sources to split into source and autocoder file
 - **MOD_DEPS_INPUT:** dependencies split into thread and module dependencies
-
-

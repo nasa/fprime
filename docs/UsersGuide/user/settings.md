@@ -51,7 +51,7 @@ These settings include:
 
 ### Example `settings.ini`
 
-This `settings.ini` file comes from the [fprime-sphinx](https://github.com/fprime-community/fprime-sphinx) 
+This `settings.ini` file comes from the [fprime-sphinx](https://github.com/fprime-community/fprime-sphinx)
 deployment, which is a standard standalone deployment where the F´ framework and libraries are included
 as git submodules at the top level.
 

@@ -21,7 +21,7 @@ simplify software testing, both on workstations and on flight hardware in the la
 
 ### Portability
 
-F´ runs on a wide range of processors, from microcontrollers to multicore computers. It runs on several
+F´ runs on a wide range of processors, from microcontrollers to multi-core computers. It runs on several
 operating systems (or no operating system at all). Porting F´ to new operating systems and architectures is
 straightforward enabling use with just about any embedded system.
 
@@ -29,7 +29,7 @@ straightforward enabling use with just about any embedded system.
 
 F´ utilizes a point-to-point architecture. The architecture minimizes the use of computational resources and is well
 suited for smaller processors.
-	
+
 ### Adaptability
 
 F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while
@@ -41,7 +41,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 ### Standard Component Library
 
-F´ ships with a good number of flight-proven components ready for use. These include most standard functions of an 
+F´ ships with a good number of flight-proven components ready for use. These include most standard functions of an
 embedded system including: commanding, telemetry capture, system event capture, and ground interaction. Often this
 means that most of an application is completed.  Developers often only need to develop components pertaining to their
 specific use-case and standard components are inherited from the framework itself.

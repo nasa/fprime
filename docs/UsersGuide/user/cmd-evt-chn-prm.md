@@ -23,9 +23,9 @@ These types will be elaborated within this guide. It contains:
 
 ## Commands
 
-Each **Component** defines a set of commands for operations. Unlike pipes, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of 
-properties. Users can send commands to the F´ system and via `Svc::CmdDispatcher` these commands are dispatched to a 
-handling component to invoke some behavior. The handling component handles a command by defining a command handler function 
+Each **Component** defines a set of commands for operations. Unlike pipes, which are intended for component to component communication, commands are designed for user interaction with a component. Commands are defined through a series of
+properties. Users can send commands to the F´ system and via `Svc::CmdDispatcher` these commands are dispatched to a
+handling component to invoke some behavior. The handling component handles a command by defining a command handler function
 to run when the command arrives.
 
 The properties defining commands are shown below:
@@ -56,7 +56,7 @@ the command dispatcher connecting the registration, dispatch, and response ports
 The command opcode is extracted, and a lookup table is used to find the handling component. The argument buffer is then
 passed to the component, and the command dispatcher waits without blocking for the component to return status..
 
-In many projects, commands need to be sequenced in order. In order to facilitate this the framework provides 
+In many projects, commands need to be sequenced in order. In order to facilitate this the framework provides
 `Svc::CmdSequencer`. The command sequencer reads a defined sequence of commands and sends each in turn to the command
 dispatcher to be dispatched and the command execution status is returned to the sequencer.  This is an alternate path to
 send command buffers to the command dispatcher than the external path from ground.
@@ -106,8 +106,8 @@ events:
 ### Event Logging
 
 Events first acquire a time tag to represent when they occurred and then are typically sent to the `Svc::ActiveLogger`
-component on their way to be sent down to the ground. This logger component both process the event and also recognizes 
-and begins responses for FATAL severity events. 
+component on their way to be sent down to the ground. This logger component both process the event and also recognizes
+and begins responses for FATAL severity events.
 
 ![Active Logger](../media/data_model3.png)
 

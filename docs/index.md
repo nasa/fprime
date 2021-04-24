@@ -18,7 +18,7 @@ F´ has the following features:
 |---|---|
 | Features | [Features](./features.md) |
 | Projects  | [Projects](./projects.md) |
-| Installation | [INSTALL.md](./INSTALL.md) | 
+| Installation | [INSTALL.md](./INSTALL.md) |
 | Tutorials | [Tutorials](./Tutorials/README.md) |
 | User Guide | [User Guide](./UsersGuide/guide.md) |
 | Repository | [https://github.com/nasa/fprime](https://github.com/nasa/fprime) |
@@ -68,9 +68,9 @@ CTRL-C
 ## Further References
 
 Full information on the code and F´ are available at our GitHub page:
-[http://github.com/nasa/fprime](http://github.com/nasa/fprime).  
+[http://github.com/nasa/fprime](http://github.com/nasa/fprime).
 
 To start with, follow the [installation guide](./INSTALL.md). Then inspect
-either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md), 
+either the [reference application](https://github.com/nasa/fprime/blob/master/Ref/README.md),
 [raspberry pi reference](https://github.com/nasa/fprime/blob/master/RPI/README.md), or the
 [tutorials](Tutorials/README.md).

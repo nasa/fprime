@@ -4,5 +4,3 @@
 
 Darwin based platform file used for Darwin (Mac OS X) targets. Note: this sets some OS X flags before calling into the common
 Linux implementations to use the posix types defined there.
-
-

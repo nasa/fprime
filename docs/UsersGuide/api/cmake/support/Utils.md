@@ -80,5 +80,3 @@ hashes.txt. This allows for asserts on file ID not string.
 Prints the dependency list of the module supplied as well as the include directories.
 
 - **MODULE_NAME**: module name to print dependencies
-
-

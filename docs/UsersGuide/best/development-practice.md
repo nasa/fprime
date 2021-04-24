@@ -42,7 +42,7 @@ The next step for most projects is to prepare for development. This means gettin
 deployment setup such that the developers can be assigned components and ports to implement, and
 test within a working deployment.
 
-There are two options for creating a deployment: 
+There are two options for creating a deployment:
 
 You can create an in-tree deployment, where a deployment is created within the F´ git repository.
 This is convenient and requires minimal setup, but placing your code within the F´ source tree
@@ -65,11 +65,11 @@ mission
 ```
 
 After creating the project layout, an external deployments can also be created by coping the Ref
-application. 
+application.
 
 After copying the Ref app, both in-tree and standalone deployments need to create and modify a
 `settings.ini` file in the root of the deployment to set the deployment toolchain, library
-locations, and for standalone deployments, the location of the F´ framework. 
+locations, and for standalone deployments, the location of the F´ framework.
 
 For details on configuring the `settings.ini` file, see the [user guide page](../user/settings.md).
 
@@ -162,7 +162,7 @@ To add a component to the topology:
     - If using commands, register component's commands.
     - If using health checking, add component to ping entries.
     - If using an active component, start component with `start` function and call `exit` when
-      exiting. 
+      exiting.
 
 ## Integration Testing
 

@@ -30,5 +30,3 @@ Note: as the autocoder is rewritten, this will likely need to change.
 - **XML_FILE_DEPS:** xml file dependencies
 - **MOD_DEPS:** xml and hand specified module dependencies
 - **Return: AC_OUTPUTS** (set in outer scope)
-
-

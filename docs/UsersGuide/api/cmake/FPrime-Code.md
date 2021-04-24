@@ -7,5 +7,3 @@ separated from the CMake includes themselves such that this is built after all C
 should be added here and F prime CMake API function should be added elsewhere.
 
 Note: given F prime's historical folder structure, this is not organized as an fprime library.
-
-

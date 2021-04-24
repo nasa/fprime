@@ -36,5 +36,3 @@ part of the global `dict` target above.
 - **SOURCE_FILES:** list of source file inputs
 - **AC_OUTPUTS:** list of autocoder outputs
 - **MOD_DEPS:** module dependencies of the target
-
-

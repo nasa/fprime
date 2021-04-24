@@ -37,7 +37,7 @@ Below is an example on how to run the sample example sequence with the Ref dicti
 dictionary will not be generated.
 
 ```
-fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyAppDictionary.xml 
+fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyAppDictionary.xml
 ```
 
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with
@@ -56,7 +56,7 @@ application.
 cmdSeq.CS_RUN	"/tmp/sample_sequence.bin"
 ```
 
-**Note:** the sample sequence will run for multiple hours due to the specification of the relative commands. 
+**Note:** the sample sequence will run for multiple hours due to the specification of the relative commands.
 
 ## Time Details
 

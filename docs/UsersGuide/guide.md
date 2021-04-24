@@ -47,7 +47,7 @@ The API documentation section contains the automatically generated documentation
     - [Rate Groups and Timeliness](./best/rate-group.md)
     - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
     - [Documenting F´ Projects](./best/documentation.md)
-- F´ Ground Data System Tools (GDS) 
+- F´ Ground Data System Tools (GDS)
     - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
     - [The GDS Dashboard](./gds/gds-custom-dashboards.md)
@@ -55,7 +55,7 @@ The API documentation section contains the automatically generated documentation
 - Full Development Guides: technical details for full F´ implementations
     - [Configuring F´](./dev/configuring-fprime.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
-    - [F´ XML Specifications](./dev/xml-specification.md): 
+    - [F´ XML Specifications](./dev/xml-specification.md):
     - [F´ Implementation Classes](./dev/implementation.md)
     - [Constructing the F´ Topology](./dev/building-topology.md)
     - [Asserts in F´](./dev/assert.md)
@@ -73,7 +73,7 @@ The API documentation section contains the automatically generated documentation
     - [C++ Documentation](./api/c++/html/index.html)
     - [`fprime` Python Documentation](./api/python/fprime/html/index.html)
     - [`fprime-gds` Python Documentation](./api/python/fprime-gds/html/index.html)
-    
+
 
 
 ## F´ Source Tree F´ Out of the Box Items
