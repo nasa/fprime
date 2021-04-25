@@ -27,7 +27,7 @@ Requirements:
 
 You can install them using this one-liner command :
 
-```sudo apt-get -y install cmake git python3-pip```
+```sudo apt-get update && -y install cmake git python3-pip```
 
 **Note:** it is possible to install and run F´ without a virtual environment, however; for
 individuals and researchers, this is the recommended approach.
