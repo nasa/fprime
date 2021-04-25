@@ -27,7 +27,7 @@ Requirements:
 
 You can install them using this one-liner command :
 
-```sudo apt-get update && -y install cmake git python3-pip``` (for Debian based OS'es)
+```sudo apt-get update && sudo apt-get -y install cmake git python3-pip``` (for Debian based OS'es)
 
 OR
 
