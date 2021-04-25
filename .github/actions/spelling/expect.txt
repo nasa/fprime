@@ -1394,6 +1394,7 @@ outdir
 outout
 outputfile
 overridable
+OS'es
 packetization
 packetized
 PACKETOUTOFBOUNDS
@@ -1663,6 +1664,7 @@ runtest
 rx
 RXD
 rxor
+RHEL
 saaj
 saddr
 sadl
