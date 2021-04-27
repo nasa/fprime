@@ -1,6 +1,0 @@
-:mod:`fprime_gds.common.controllers`
-====================================
-
-.. py:module:: fprime_gds.common.controllers
-
-
