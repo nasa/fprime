@@ -115,11 +115,11 @@ Directory containing all python code for the autocoder tools. Codegen uses the v
 | DiffAndRename.py | Mainly used for difference and rename routines |
 | DumpObj.py | Contains methods to print nicely formatted overviews of objects |
 | EnumDictCheck.py | A structure used to report enumeration size errors |
-| EnumDupRemover.py | Contains a function that removes duplicates from list of enums |
 | EnumGenerator.py | Generator to produce serializable enums |
 | Logger.py | Sets up the logging for all other scripts based on the Python logging module - not a standalone file |
 | ParseC.py | Contains a set of Python functions that parse C code |
 | pyparsing.py | Python parser methods created externally by Paul T. McGuire |
+| TopDictGenerator.py | Generator that produces a topology dictionary from parsed XML |
 | TypesList.py | Contains types_list and port_types_list which contain types allowed in commands/telemetry/parameters/events |
 | VersionFile.py | Check if file exists, and creates a backup copy using an appended versioning string - copied directly from the language cookbook |
 | XmlParser.py | General XML parser class based on the Python xml2obj recipe |
