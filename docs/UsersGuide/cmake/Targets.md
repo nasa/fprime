@@ -36,4 +36,3 @@ interaction.
 ## Adding Custom Targets
 
 See [support/Target.md](../support/Target.md) for a description of adding custom targets.
-

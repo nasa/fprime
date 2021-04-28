@@ -4,7 +4,7 @@ This document give key pointers to users who wish to move away from the old make
 using the new CMake system. Notably, it provides links for each step in the process for moving from
 the key features of the old make system to the features of the new CMake system.
 
-## `make impl` and `make testcomp` 
+## `make impl` and `make testcomp`
 
 The commands `make impl` and `make testcomp` should be runnable outside of any make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
@@ -98,7 +98,7 @@ If needed, specific platforms may also be specified, but this is only needed if 
 F prime cross-compile configurations for a given toolchain.
 
 **Difference from Old Make System:** Each build is setup using a call to CMake, and then built with
-the standard build call like `make`. Unlink the old system, if something changes in the build 
+the standard build call like `make`. Unlink the old system, if something changes in the build
 configuration, CMake will automatically be rerun. There should be no need to call `make gen_make`.
 
 A guide to full usage documentation is found here: [README](cmake-intro.md)
@@ -142,4 +142,3 @@ make check
 ## Global Build Options:
  - Options: [Options](Options.md) describes the CMake system options.
  - Targets: [Targets](targets/Targets.md) describes built in support targets like `dict`
-

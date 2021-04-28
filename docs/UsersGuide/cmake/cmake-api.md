@@ -6,7 +6,7 @@ descriptions of module-level functions. Options describes the runtime options th
 takes. Users wanting to alter the build should look here.
 
 - [Options](../api/cmake/Options.md): Runtime build options
-- [API](../api/cmake/API.md): Module API function documentation 
+- [API](../api/cmake/API.md): Module API function documentation
 
 ## Toolchain and Platform Documentation
 
@@ -51,7 +51,7 @@ improvements to the CMake are needed. Build system architects should consult thi
 
 [FPrime Code](../api/cmake/FPrime-Code.md): F´ framework code inclusions
 [FPrime](../api/cmake/FPrime.md): F´ project support
-[Module](../api/cmake/support/Module.md): Module registry and autocode support 
+[Module](../api/cmake/support/Module.md): Module registry and autocode support
 [Executable](../api/cmake/support/Executable.md): Executable registry and autocoding support
 [Unit Test](../api/cmake/support/Unit_Test.md): Unit test registry and autocode support
 [Utils](../api/cmake/support/Utils.md): General utility functions

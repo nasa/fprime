@@ -169,7 +169,7 @@ results = self.api.await_event_sequence(evr_seq)
 
 ### Asserting on Telemetry
 
-The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using a telemetry_predicate will enable the user to better specify the fields of the ChData object to be searched for.  
+The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using a telemetry_predicate will enable the user to better specify the fields of the ChData object to be searched for.
 
 **NOTE**: all successful search-then-assert calls in the API will return the results of the search. This is so the user may perform additional checks on the results. Because an assertion is raised on search failure, the user can be sure the results reflect a successful test.
 
@@ -200,7 +200,7 @@ results = self.api.assert_telemetry_sequence(ch_seq)
 
 ### Asserting on Events
 
-The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using a event_predicate will enable the user to better specify the fields of the EventData object to be searched for.  
+The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using a event_predicate will enable the user to better specify the fields of the EventData object to be searched for.
 
 **NOTE**: all successful search-then-assert calls in the API will return the results of the search. This is so the user may perform additional checks on the results. Because an assertion is raised on search failure, the user can be sure the results reflect a successful test.
 
@@ -731,18 +731,18 @@ self = <WriteOnlyWorksheet "Sheet">, row = [<Cell 'Sheet'.A1>, <Cell 'Sheet'.A1>
         :param row: iterable containing values to append
         :type row: iterable
         """
-    
+
         if (not isgenerator(row) and
             not isinstance(row, (list, tuple, range))
             ):
             self._invalid_row(row)
-    
+
         self._max_row += 1
-    
+
         if self.writer is None:
             self.writer = self._write_header()
             next(self.writer)
-    
+
         try:
 >           self.writer.send(row)
 E           StopIteration
@@ -761,7 +761,7 @@ self = <api_unit_test.APITestCases testMethod=test_find_history_item>
         count = len(self.case_list)
 >       self.api.start_test_case(self._testMethodName, count)
 
-test/fprime_gds/common/testing_fw/api_unit_test.py:102: 
+test/fprime_gds/common/testing_fw/api_unit_test.py:102:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 src/fprime_gds/common/testing_fw/api.py:96: in start_test_case
     self.__log(msg, TestLogger.GRAY, TestLogger.BOLD, case_id=case_id)
@@ -771,7 +771,7 @@ src/fprime_gds/common/logger/test_logger.py:121: in log_message
     self.worksheet.append(row)
 /usr/lib/python3/dist-packages/openpyxl/writer/write_only.py:243: in append
     self._already_saved()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 self = <WriteOnlyWorksheet "Sheet">
 
@@ -916,7 +916,7 @@ When a new test case [is started](https://github.jpl.nasa.gov/FPRIME/fprime-sw/b
 
 ### GDS command arguments should allow non-string types
 
-Presently, the GDS doesn't accept command arguments that aren't strings. This is kind of annoying and means the test API is more flexible about 
+Presently, the GDS doesn't accept command arguments that aren't strings. This is kind of annoying and means the test API is more flexible about
 
 ### F Prime CI/CD Test Runner
 

@@ -190,7 +190,7 @@ To build unit tests, go to the component directory (not the *test/ut*
 directory) and run `fprime-util generate --ut`.
 
 To run unit tests, go to the component directory (not the *test/ut*
-directory) and run `fprime-util check [parameter flags]`. 
+directory) and run `fprime-util check [parameter flags]`.
 
 Unit test check parameter | Description
 ---|---
@@ -208,9 +208,9 @@ Components that call into libraries have two ways to write tests:
 - Link against a mock or stub library
 
 If you link against the library in the test, avoid linking against the
-mock or stub library. Linking against only the test library proves that the component code works with the actual library. 
+mock or stub library. Linking against only the test library proves that the component code works with the actual library.
 
-Linking against a mock or stub library makes it easier to induce 
+Linking against a mock or stub library makes it easier to induce
 behaviors for testing, like injecting faults. This approach may be
 the only option on some platforms.
 

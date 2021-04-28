@@ -19,7 +19,7 @@ See: [API](API.md)
 
 ## Custom Build-System Commands (Make Targets)
 
-Custom build targets that need to be build against modules, and global targets can be generated 
+Custom build targets that need to be build against modules, and global targets can be generated
 using the hook pattern. This pattern involves creating a file with two functions `add_global_target`
 and `add_module_target`. These functions are called to add targets to top-level and each module.
 Then this file ise registered with `register_fprime_target`.
@@ -67,6 +67,3 @@ version control, and building steps.
 2. [https://cmake.org/cmake/help/latest/command/add_custom_command.html](https://cmake.org/cmake/help/latest/command/add_custom_command.html)
 3. [https://cmake.org/cmake/help/latest/module/ExternalProject.html](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
 4. [https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf](https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf)
-
-
-

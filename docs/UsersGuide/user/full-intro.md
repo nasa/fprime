@@ -9,7 +9,7 @@ more complete "story". This document contains the following sections:
 - [Conclusion](#conclusion)
 
 
-## The Origins of F´ 
+## The Origins of F´
 
 F´ is an embedded systems framework developed build to meet certain goals expanded upon below.
 These goals it particularly well suited for small embedded missions (and projects) that need
@@ -31,7 +31,7 @@ F´ was built to meet the following goals:
   - Perform well in resource constrained context
 
 F´ was developed at NASA's Jet Propulsion Laboratory for small-scale embedded flight software. These small missions
-desperately needed a Flight-Quality framework to expedite development while reducing cost. 
+desperately needed a Flight-Quality framework to expedite development while reducing cost.
 
 ## A (Brief) Introduction to Space Systems
 

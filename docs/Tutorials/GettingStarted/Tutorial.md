@@ -24,9 +24,9 @@ This section will cover basic terminology used in this and other tutorial with r
 reference for keywords that have specific meaning in an F´ project.
 
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
-*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*. 
+*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*.
 
-**Component:** the location of program behavior. Components execute the software logic of the system and typically 
+**Component:** the location of program behavior. Components execute the software logic of the system and typically
 define an interface of *Ports* that act allow them to interact with other *Components*. Components additionally
 may define *Commands*, *Events*, *Channels*, and *Parameters*, which define standard data patterns in F´.
 
@@ -74,7 +74,7 @@ new components from design through test is demonstrated in the [Math Component T
 The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
 with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
 and tests from there.  Unit tests template stubs are generated in the same way, and should test-driven development be
-preferred, these tests stubs could be generated and implemented before the Component's code. 
+preferred, these tests stubs could be generated and implemented before the Component's code.
 
 Finally, the Component is integrated into the deployment and the entire deployment may be built and installed.
 
@@ -137,7 +137,7 @@ fprime-util impl
 ```
 
 This creates two files for the component. These are `<Component>Impl.cpp-template` and `<Component>Impl.hpp-template`.
-The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating 
+The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating
 `-template` files, we won't accidentally overwrite any existing implementation should the developer need to repeat this
 step.
 
@@ -154,7 +154,7 @@ cd fprime/Ref/SignalGen
 fprime-util impl --ut
 ```
 
-This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
+This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are
 placed in the current directory and named:
 ```
 Tester.cpp
@@ -262,7 +262,7 @@ fprime-util build raspberrypi --ut
 ## Conclusion
 
 The user should now be familiar with F´ terminology and with the `fprime-util` tool used to build and develop F´
-applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and 
+applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and
 *Topologies*. This will walk the user through the entire development process, using the tool commands we learned here.
 
 **Next:** [Math Component Tutorial](../MathComponent/Tutorial.md)

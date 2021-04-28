@@ -56,7 +56,7 @@ step can be run one time.  Rebuilding and iteration can be done with the followi
 
 **Build Commands(Linux, Mac OS X)**
 
-``` 
+```
 # Build the application (Will regenerate CMake if necessary)
 make
 # Build and run the UTs (if desired)
