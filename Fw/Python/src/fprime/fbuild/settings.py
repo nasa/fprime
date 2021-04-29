@@ -142,6 +142,9 @@ class IniSettings:
             "default_toolchain": confparse.get(
                 "fprime", "default_toolchain", fallback="native"
             ),
+            "default_ut_toolchain": confparse.get(
+                "fprime", "default_ut_toolchain", fallback="native"
+            ),
             "install_dest": install_dest,
             "environment_file": env_file,
             "environment": environment,
