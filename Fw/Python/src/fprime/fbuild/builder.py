@@ -529,11 +529,14 @@ class Build:
         assert self.build_dir is None, "Already setup it is invalid to re-setup"
 
         self.settings = IniSettings.load(self.deployment / "settings.ini", cwd)
-        self.platform = (
-            platform
-            if platform is not None and platform != "default"
-            else self.settings.get("default_toolchain", "native")
-        )
+
+        if platform is not None and platform != "default":
+            self.platform = platform
+        elif self.build_type == BuildType.BUILD_TESTING:
+            self.platform = self.settings.get("default_ut_toolchain", "native")
+        else:
+            self.platform = self.settings.get("default_toolchain", "native")
+
         self.build_dir = build_dir if build_dir is not None else self.get_build_cache()
 
 

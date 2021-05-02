@@ -44,6 +44,8 @@ These settings include:
   specified with the `:` separator. Ex: `../library1:../library2`
 - `default_toolchain`: Default platform to build against. Defaults to `native`, or the host
   computer platform.
+- `default_ut_toolchain`: Default platform to build unit tests against. Defaults to `native`, or the host
+  computer platform.
 - `environment_file`: An ini file that can be used to set environmental variables during the build
   process.
 - `ac_constants`: Path to autocode constants ini file.
