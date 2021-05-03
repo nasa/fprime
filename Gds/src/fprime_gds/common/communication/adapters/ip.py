@@ -404,6 +404,8 @@ class TcpHandler(IpHandler):
         primary socket.
         """
         data = self.client.recv(IpAdapter.MAXIMUM_DATA_SIZE)
+        if not data:
+            self.close_impl()
         return data
 
     def write_impl(self, message):

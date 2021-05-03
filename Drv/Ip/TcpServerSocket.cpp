@@ -22,7 +22,6 @@
     #include <ioLib.h>
     #include <vxWorks.h>
     #include <sockLib.h>
-    #include <fioLib.h>
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>

@@ -23,7 +23,6 @@
     #include <ioLib.h>
     #include <vxWorks.h>
     #include <sockLib.h>
-    #include <fioLib.h>
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
@@ -143,7 +142,7 @@ SocketIpStatus UdpSocket::openProtocol(NATIVE_INT_TYPE& fd) {
         ::close(socketFd);
         return status; // Not closing FD as it is still a valid send FD
     }
-    const char* actions = ((m_recv_port == 0) ? "send" : "send and receive");
+    const char* actions = (m_recv_port != 0 && m_port != 0) ? "send and receive" : ((m_port != 0) ? "send": "receive");
     Fw::Logger::logMsg("Setup to %s udp to %s:%hu\n", reinterpret_cast<POINTER_CAST>(actions),
                        reinterpret_cast<POINTER_CAST>(m_hostname), m_port);
     FW_ASSERT(status == SOCK_SUCCESS, status);

@@ -49,7 +49,7 @@ IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), 
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, timeout_microseconds);
-    FW_ASSERT(port != 0, timeout_microseconds);
+    FW_ASSERT(port != 0, port);
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;
@@ -68,7 +68,6 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
     timeout.tv_usec = this->m_timeoutMicroseconds;
     // set socket write to timeout after 1 sec
     if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout, sizeof(timeout)) < 0) {
-        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
     return SOCK_SUCCESS;
@@ -104,9 +103,11 @@ bool IpSocket::isOpened(void) {
 
 void IpSocket::close(void) {
     m_lock.lock();
-    (void)::shutdown(this->m_fd, SHUT_RDWR);
-    (void)::close(this->m_fd);
-    this->m_fd = -1;
+    if (this->m_fd != -1) {
+        (void)::shutdown(this->m_fd, SHUT_RDWR);
+        (void)::close(this->m_fd);
+        this->m_fd = -1;
+    }
     m_open = false;
     m_lock.unLock();
 }
@@ -132,13 +133,12 @@ SocketIpStatus IpSocket::open(void) {
 SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     U32 total = 0;
     I32 sent  = 0;
-    U32 i = 0;
     // Prevent transmission before connection, or after a disconnect
     if (this->m_fd == -1) {
         return SOCK_DISCONNECTED;
     }
     // Attempt to send out data and retry as necessary
-    for (i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
+    for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
         sent = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(data + total, size - total);
@@ -159,7 +159,7 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
         total += sent;
     }
     // Failed to retry enough to send all data
-    if ((i == SOCKET_MAX_ITERATIONS) && (total < size)) {
+    if (total < size) {
         return SOCK_INTERRUPTED_TRY_AGAIN;
     }
     FW_ASSERT(total == size, total, size); // Ensure we sent everything
@@ -168,14 +168,13 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
 
 SocketIpStatus IpSocket::recv(U8* data, I32& req_read) {
     I32 size = 0;
-    U32 i = 0;
     // Check for previously disconnected socket
     if (m_fd == -1) {
         return SOCK_DISCONNECTED;
     }
 
     // Try to read until we fail to receive data
-    for (i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
+    for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (size <= 0); i++) {
         // Attempt to recv out data
         size = this->recvProtocol(data, req_read);
         // Error is EINTR, just try again

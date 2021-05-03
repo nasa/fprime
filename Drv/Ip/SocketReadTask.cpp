@@ -13,11 +13,9 @@
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <errno.h>
-#include <arpa/inet.h>
-#include "errno.h"
+
+#define MAXIMUM_SIZE 0x7FFFFFFF
 
 namespace Drv {
 
@@ -72,7 +70,8 @@ void SocketReadTask::readTask(void* pointer) {
             Fw::Buffer buffer = self->getBuffer();
             U8* data = buffer.getData();
             FW_ASSERT(data);
-            I32 size = buffer.getSize();
+            I32 size = static_cast<I32>(buffer.getSize());
+            size = (size >= 0) ? size : MAXIMUM_SIZE; // Handle max U32 edge case
             status = self->getSocketHandler().recv(data, size);
             if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN)) {
                 Fw::Logger::logMsg("[WARNING] Failed to recv from port with status %d and errno %d\n", status, errno);
