@@ -33,6 +33,7 @@ def test_settings():
             "expected": {
                 "settings_file": full_path("settings-data/settings-empty.ini"),
                 "default_toolchain": "native",
+                "default_ut_toolchain": "native",
                 "framework_path": full_path("../../../../.."),
                 "install_dest": full_path("settings-data/build-artifacts"),
                 "library_locations": [],
@@ -45,11 +46,27 @@ def test_settings():
             "expected": {
                 "settings_file": full_path("settings-data/settings-custom-install.ini"),
                 "default_toolchain": "native",
+                "default_ut_toolchain": "native",
                 "framework_path": full_path("../../../../.."),
                 "install_dest": full_path("test"),
                 "library_locations": [],
                 "environment_file": full_path(
                     "settings-data/settings-custom-install.ini"
+                ),
+                "environment": {},
+            },
+        },
+        {
+            "file": "settings-custom-toolchain.ini",
+            "expected": {
+                "settings_file": full_path("settings-data/settings-custom-toolchain.ini"),
+                "default_toolchain": "custom1",
+                "default_ut_toolchain": "custom2",
+                "framework_path": full_path("../../../../.."),
+                "install_dest": full_path("settings-data/build-artifacts"),
+                "library_locations": [],
+                "environment_file": full_path(
+                    "settings-data/settings-custom-toolchain.ini"
                 ),
                 "environment": {},
             },
