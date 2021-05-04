@@ -13,7 +13,7 @@
 enum {
     CMD_DISPATCHER_DISPATCH_TABLE_SIZE = 100, // !< The size of the table holding opcodes to dispatch
     CMD_DISPATCHER_SEQUENCER_TABLE_SIZE = 25, // !< The size of the table holding commands in progress
-    ALLOW_REREGISTRATION = true // !< If true will reregister opcodes otherwise will ASSERT for duplicate opcode
+    ALLOW_REREGISTRATION = false // !< If true will reregister opcodes otherwise will ASSERT for duplicate opcode
 };
 
 
