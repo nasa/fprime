@@ -11,7 +11,7 @@ void testValidateFile() {
     Os::ValidateFile::Status validateStatus;
     Os::FileSystem::Status fsStatus;
     const char fileName[] = "mod.mk";
-    const char nonexistantFileName[] = "thisfiledoesntexist";
+    const char nonexistentFileName[] = "thisfiledoesnotexist";
     const char hashFileName[] = "mod.mk.hashed";
     const char hardtoaccessHashFileName[] = "thisdirdoesnotexist/mod.mk.hashed";
     
@@ -26,10 +26,10 @@ void testValidateFile() {
     }
 
     // Create a hash of a file that doesn't exist:
-    printf("Creating hash for file %s in %s\n", nonexistantFileName, hashFileName);
-    validateStatus = Os::ValidateFile::createValidation(nonexistantFileName, hashFileName);   //!< create a validation of the file 'filename' and store it in
+    printf("Creating hash for file %s in %s\n", nonexistentFileName, hashFileName);
+    validateStatus = Os::ValidateFile::createValidation(nonexistentFileName, hashFileName);   //!< create a validation of the file 'filename' and store it in
     if ( Os::ValidateFile::FILE_DOESNT_EXIST != validateStatus ) {
-        printf("\tFile %s was found and hashed, but it shouldn't exist.\n", nonexistantFileName);
+        printf("\tFile %s was found and hashed, but it shouldn't exist.\n", nonexistentFileName);
         printf("\tReturn status: %d\n", validateStatus);
         FW_ASSERT(0);
         return;

@@ -11,7 +11,7 @@ import abc
 
 class DataHandler(abc.ABC):
     """
-    Defines the necessary functions required to handle data as part of the F prime project. This allows any implementor
+    Defines the necessary functions required to handle data as part of the F prime project. This allows any implementer
     to be used to handle data.
     """
 

@@ -136,7 +136,7 @@ to the F' deployment.
 ### Main Frame Factory
 This class is responsible for setting up the pipeline of data between different 
 components in the publisher/subscriber interface - that is, it is 
-responsible for registering all of the various components that whish to share
+responsible for registering all of the various components that wish to share
 data. This class also supports the creation of multiple Gds GUI windows which
 all share the same subscriptions and therefore receive the same data. 
 

@@ -76,7 +76,7 @@ namespace Ref {
         // Generate the next sample internal helper
         F32 generateSample(U32 ticks);
 
-        // Memeber variables
+        // Member variables
         U32 sampleFrequency;
         U32 signalFrequency;
         F32 signalAmplitude;

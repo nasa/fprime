@@ -55,7 +55,7 @@ namespace CFDP {
       //! Assign checksum to this
       const Checksum& operator=(const Checksum& checksum);
 
-      //! Comapre checksum and this for equality
+      //! Compare checksum and this for equality
       bool operator==(const Checksum& checksum) const;
 
       //! Compare checksum and this for inequality

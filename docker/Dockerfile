@@ -23,7 +23,7 @@ RUN groupadd fprime && \
     mkdir -p /opt/ && chown fprime:fprime /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# Change user and group of the virtual environemnt
+# Change user and group of the virtual environment
 # Make fprime user default user
 ENV HOST fprime
 ENV USER fprime
@@ -36,9 +36,9 @@ ENTRYPOINT ["/bin/bash"]
 FROM fprime-base AS fprime-docker
 RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
         python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
-        pip install -U wheel setuptools pip && \
-        pip install /opt/fprime/Fw/Python/ && \
-        pip install /opt/fprime/Gds/ && \
+        pip install --no-cache-dir -U wheel setuptools pip && \
+        pip install --no-cache-dir /opt/fprime/Fw/Python/ && \
+        pip install --no-cache-dir /opt/fprime/Gds/ && \
         rm -r ~/.cache/pip && \
         chown -R fprime:fprime /opt/fprime-venv && \
         chmod -R 775 /opt/fprime-venv

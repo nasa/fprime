@@ -12,7 +12,7 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # fputil_action:
 #
 # Runs an action for the FP util. This takes two parameters a target and a deployment. This assumes
-# prequsite actions already exist.
+# prerequisite actions already exist.
 # :param target($1): command to run with FP util
 # :param deploy($2): deployment to run on
 ####
@@ -24,18 +24,7 @@ function fputil_action {
     (
         cd "${DEPLOYMENT}"
         PLATFORM=""
-        # Setup special platform for check/check-all
-        if [[ "${TARGET}" == check* ]] && [[ "${DEPLOYMENT}" == */RPI ]]
-        then
-                PLATFORM="${CHECK_TARGET_PLATFORM}"
-                if [[ "${TEST_TYPE}" == "QUICK" ]]
-                then
-                    echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-                    fprime-util generate --ut ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
-                        || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-                fi
-        fi
-  
+
         # Generate is only needed when it isn't being tested
         if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
         then
@@ -97,7 +86,7 @@ function integration_test {
         # Run integration tests
         (
             cd "${WORKDIR}/test"
-            echo "[INFO] Running ${WORKDIR}/test's pytest integration tests" 
+            echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
             timeout --kill-after=10s 180s pytest
         )
         RET_PYTEST=$?
@@ -109,8 +98,8 @@ function integration_test {
         kill $VALGRIND_PID
         wait $VALGRIND_PID
         RET_MEMTEST=$?
-        # Report memory leaks if they occured and the pytests were successful
-        if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then 
+        # Report memory leaks if they occurred and the pytests were successful
+        if [ ${RET_MEMTEST} -ne 0 ] && [ ${RET_PYTEST} -eq 0 ]; then
             cat "${LOG_DIR}/gds-logs/valgrind.log"
             fail_and_stop "Integration tests on ${WORKDIR} contain memory leaks"
         fi

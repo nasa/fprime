@@ -9,6 +9,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/I2cDriverPorts/")
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BlockDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverModel/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver/")

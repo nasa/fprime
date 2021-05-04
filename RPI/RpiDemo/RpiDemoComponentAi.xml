@@ -274,7 +274,7 @@
                 <item name="LED_STATE_OFF_PRM"/>
             </enum>
             <comment>
-            Parameter to determine intial state of blinking LED
+            Parameter to determine initial state of blinking LED
             </comment>
         </parameter>
     </parameters>

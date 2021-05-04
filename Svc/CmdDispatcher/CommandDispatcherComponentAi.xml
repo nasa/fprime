@@ -188,12 +188,12 @@
         </event>
         <event id="7" name="NoOpReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP command" >
         	<comment>
-        	The command dispatcher has successfully recieved a NO-OP command
+        	The command dispatcher has successfully received a NO-OP command
         	</comment>
         </event>
         <event id="8" name="NoOpStringReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP string=%s" >
            <comment>
-           The command dispatcher has successfully recieved a NO-OP command from GUI with a string
+           The command dispatcher has successfully received a NO-OP command from GUI with a string
            </comment>
            <args>
                 <arg name="message" type="string" size="40">

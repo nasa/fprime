@@ -6,7 +6,6 @@
 import os
 import sys
 import platform
-import sys
 import webbrowser
 from pathlib import Path
 from fprime.fbuild.settings import (
@@ -195,7 +194,7 @@ def launch_tts(tts_port, tts_addr, logs, **_):
     tts_log = os.path.join(logs, "ThreadedTCP.log")
     # Launch the tcp server
     tts_cmd = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.executables.tcpserver",
@@ -219,7 +218,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     :return: process
     """
     gse_args = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.wxgui.tools.gds",
@@ -237,7 +236,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
             ),
             file=sys.stderr,
         )
-    # For OSX, add in the wx wrapper
+    # For macOS, add in the wx wrapper
     if platform.system() == "Darwin":
         gse_args.insert(
             0,
@@ -257,7 +256,7 @@ def launch_wx(port, dictionary, connect_address, log_dir, config, **_):
     return launch_process(gse_args, name="WX GUI")
 
 
-def launch_html(tts_port, dictionary, connect_address, logs, **extras):
+def launch_html(tts_port, dictionary, connect_address, logs, gui_addr, gui_port, **extras):
     """
     Launch the flask server and a browser pointed at the HTML page.
 
@@ -265,6 +264,8 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
     :param dictionary: dictionary to look at
     :param connect_address: address to connect to
     :param logs: directory to place logs
+    :param gui_addr: Flask server host IP address
+    :param gui_port: Flask server port number
     :return: process
     """
     gse_env = os.environ.copy()
@@ -278,10 +279,12 @@ def launch_html(tts_port, dictionary, connect_address, logs, **extras):
             "SERVE_LOGS": "YES",
         }
     )
-    gse_args = ["python3", "-u", "-m", "flask", "run"]
+    gse_args = [sys.executable, "-u", "-m", "flask", "run", 
+                "--host", str(gui_addr), 
+                "--port", str(gui_port)]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
     if extras["gui"] == "html":
-        webbrowser.open("http://localhost:5000/", new=0, autoraise=True)
+        webbrowser.open(f"http://{str(gui_addr)}:{str(gui_port)}/", new=0, autoraise=True)
     return ret
 
 
@@ -310,7 +313,7 @@ def launch_comm(comm_adapter, tts_port, connect_address, logs, **all_args):
     """
 
     app_cmd = [
-        "python3",
+        sys.executable,
         "-u",
         "-m",
         "fprime_gds.executables.comm",

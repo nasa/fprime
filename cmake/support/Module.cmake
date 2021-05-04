@@ -31,14 +31,14 @@ function(generic_autocoder MODULE_NAME AUTOCODER_INPUT_FILES MOD_DEPS)
       # Run the function required to get all information from the Ai file
       fprime_ai_info("${INPUT_FILE}" "${MODULE_NAME}")
       message(STATUS "\tFound ${XML_LOWER_TYPE}: ${AC_OBJ_NAME} in ${INPUT_FILE}")
-      # The build system intrinsically depends on these Ai.xmls and all files includeded by it
+      # The build system intrinsically depends on these Ai.xmls and all files included by it
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${INPUT_FILE};${FILE_DEPENDENCIES}")
 
       # Calculate the full path to the Ac.hpp and Ac.cpp files that should be generated both the
       string(CONCAT AC_FULL_HEADER ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.hpp")
       string(CONCAT AC_FULL_SOURCE ${CMAKE_CURRENT_BINARY_DIR} "/" "${AC_OBJ_NAME}" "${XML_TYPE}Ac.cpp")
 
-      # Run the specific autocoder herlper
+      # Run the specific autocoder helper
       acwrap("${XML_LOWER_TYPE}" "${AC_FULL_SOURCE}" "${AC_FULL_HEADER}"  "${INPUT_FILE}" "${FILE_DEPENDENCIES}" "${MOD_DEPS};${MODULE_DEPENDENCIES}")
 
       add_generated_sources("${AC_FULL_SOURCE}" "${AC_FULL_HEADER}" "${MODULE_NAME}")
@@ -66,7 +66,7 @@ endfunction(generic_autocoder)
 # - **OBJ_NAME:** object name to add dependencies to. 
 # - **AUTOCODER_INPUT_FILES:** files to pass to the autocoder
 # - **SOURCE_FILES:** source file inputs
-# - **LINK_DEPS:** link-time dependecies like -lm or -lpthread
+# - **LINK_DEPS:** link-time dependencies like -lm or -lpthread
 # - **MOD_DEPS:** CMake module dependencies
 ####
 function(generate_module OBJ_NAME AUTOCODER_INPUT_FILES SOURCE_FILES LINK_DEPS MOD_DEPS)
@@ -127,7 +127,7 @@ endfunction(generate_module)
 ####
 function(generate_library MODULE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-  # their separate peices. 
+  # their separate pieces. 
   #
   # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
   # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources

@@ -71,7 +71,7 @@ class XmlLoader(dict_loader.DictLoader):
     ARR_DEFAULT_TAG = "defaults"
     ARR_DEFAULT_VALUE_TAG = "value"
 
-    # Xml sction names and tags for argument sections
+    # Xml section names and tags for argument sections
     ARGS_SECT = "args"
     ARG_NAME_TAG = "name"
     ARG_DESC_TAG = "description"
@@ -176,7 +176,7 @@ class XmlLoader(dict_loader.DictLoader):
 
     def get_enum_type(self, enum_name, xml_obj):
         """
-        Parses and retuns an Enum object for the given enum name.
+        Parses and returns an Enum object for the given enum name.
 
         Looks in the enums section of the xml dict.
 
@@ -219,7 +219,7 @@ class XmlLoader(dict_loader.DictLoader):
 
     def get_serializable_type(self, type_name, xml_obj):
         """
-        Parses and retuns a serializable type object for the given type name.
+        Parses and returns a serializable type object for the given type name.
 
         Looks in the serializables section of the xml dict.
 
@@ -272,7 +272,7 @@ class XmlLoader(dict_loader.DictLoader):
 
     def get_array_type(self, type_name, xml_obj):
         """
-        Parses and retuns an array type object for the given type name.
+        Parses and returns an array type object for the given type name.
 
         Looks in the arrays section of the xml dict.
 
@@ -328,7 +328,7 @@ class XmlLoader(dict_loader.DictLoader):
             type_name (string): Name of the type in the xml
             xml_item (lxml etree root): Parsed xml object for the item
                       containing the type name being parsed. This is used to get
-                      meta data such as string lenght.
+                      meta data such as string length.
             xml_tree (lxml etree root): Parsed Xml object containing enum and
                                         serializable type info (may not be used)
 

@@ -24,9 +24,9 @@ This section will cover basic terminology used in this and other tutorial with r
 reference for keywords that have specific meaning in an F´ project.
 
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
-*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*. 
+*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*.
 
-**Component:** the location of program behavior. Components execute the software logic of the system and typically 
+**Component:** the location of program behavior. Components execute the software logic of the system and typically
 define an interface of *Ports* that act allow them to interact with other *Components*. Components additionally
 may define *Commands*, *Events*, *Channels*, and *Parameters*, which define standard data patterns in F´.
 
@@ -67,14 +67,14 @@ need. If desired, the port can be built and compiled to ensure that the design i
 entirely auto-generated, developers usually refrain from unit testing the port and defer unit testing to the Component.
 
 Next, developers design components. Components are designed by specifying the ports that represent the Component's
-interface and the Commands, Events amd Channels that the Component handles. This tutorial focuses on the tool suite, so
+interface and the Commands, Events and Channels that the Component handles. This tutorial focuses on the tool suite, so
 the design is already in-place.  Users can see the design by inspecting Components in the `Ref` directory. Creation of
-new components from design through test is demonstrated in the Math Component Tutorial](../MathComponent/Tutorial.md).
+new components from design through test is demonstrated in the [Math Component Tutorial](../MathComponent/Tutorial.md).
 
 The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
 with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
 and tests from there.  Unit tests template stubs are generated in the same way, and should test-driven development be
-preferred, these tests stubs could be generated and implemented before the Component's code. 
+preferred, these tests stubs could be generated and implemented before the Component's code.
 
 Finally, the Component is integrated into the deployment and the entire deployment may be built and installed.
 
@@ -95,7 +95,7 @@ is a setup step and isn't formally part of the F´ development process.
 
 To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
 used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
-setup to run on the current platform (typically Mac OS, or Linux depending on the developer's choosen OS).
+setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 
 **Generate the Ref Application for Native Compilation**
 
@@ -112,7 +112,7 @@ the user to take advantage of all parts of F´ without generating their own CMak
 be developing or improving F´ provided infrastructure components, then the `generate` command should be run in the F´
 root directory. However, most developers do not need this functionality.
 
-**Generate Cross-Compile of the Ref Application for Raspberry PI Platformn**
+**Generate Cross-Compile of the Ref Application for Raspberry PI Platform**
 
 Most developers wish to run F´ on embedded hardware. This is done by generating a cross-compile using a different CMake
 toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
@@ -137,7 +137,7 @@ fprime-util impl
 ```
 
 This creates two files for the component. These are `<Component>Impl.cpp-template` and `<Component>Impl.hpp-template`.
-The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating 
+The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating
 `-template` files, we won't accidentally overwrite any existing implementation should the developer need to repeat this
 step.
 
@@ -154,7 +154,7 @@ cd fprime/Ref/SignalGen
 fprime-util impl --ut
 ```
 
-This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
+This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are
 placed in the current directory and named:
 ```
 Tester.cpp
@@ -188,14 +188,14 @@ cd fprime/Ref
 fprime-util build
 ```
 **Note:** the user almost always wants to run the "install" command on deployments. This builds the binary like "build"
-but also copies the binary to the deployments "bin" directory. i.e. `fprime/Ref/bin`.  Install is describes below.
+but also copies the binary to the deployments "bin" directory, i.e. `fprime/Ref/bin`.  Install is described below.
 
 This process also built the Dictionaries for the project and places the dictionary in the "Top" folder of the deployment.
 This happens any time the "install" or "build" command are run on a deployment.
 
 The user can also build a component or deployment for a cross-compile by specifying the toolchain.  A previous generate
 for that toolchain should have been run. Again for deployments, the user typically should run "install", see below. These
-steps require the setup describe here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
+steps require the setup described here: [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)
 
 ```
 cd fprime/Ref/SignalGen
@@ -206,9 +206,9 @@ fprime-util build raspberrypi
 
 ## Installing the F´ Executable and Dictionaries
 
-Once the deployment is built, it would nice to be able to install the binary and dictionaries. This will enable the users to
+Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
 quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke "build" so users should use this in-place
+the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
 of build for deployments.
 
 **Installing the Ref Deployment and Running the Binary Assuming Linux**
@@ -229,7 +229,7 @@ fprime-util build raspberrypi
 ## Building and Running Unit Tests
 
 Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
-in preparation to run them.  The user can also just run "check" to build and run the unit tests.
+in preparation to run them.  The user can also just run `check` to build and run the unit tests.
 
 Before building unit tests, the unit test build cache must be generated:
 
@@ -262,7 +262,7 @@ fprime-util build raspberrypi --ut
 ## Conclusion
 
 The user should now be familiar with F´ terminology and with the `fprime-util` tool used to build and develop F´
-applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and 
+applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and
 *Topologies*. This will walk the user through the entire development process, using the tool commands we learned here.
 
 **Next:** [Math Component Tutorial](../MathComponent/Tutorial.md)

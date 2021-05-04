@@ -48,7 +48,7 @@ namespace Svc {
         }
 
         // Format the string here, so that it is done in the task context
-        // of the caller.  Format doce borrowed from PassiveTextLogger.
+        // of the caller.  Format doc borrowed from PassiveTextLogger.
         const char *severityString = "UNKNOWN";
         switch (severity) {
             case Fw::TEXT_LOG_FATAL:

@@ -16,7 +16,7 @@ subcommands:
 
   {generate,purge,hash-to-file,info,build,impl,check,coverage}
     generate            Generate a build cache directory
-    purge               Purge build cache directoriess
+    purge               Purge build cache directories
     hash-to-file        Converts F prime build hash to filename.
     info                Gets fprime-util contextual information.
     build               Build components, ports, and deployments in the specified directory
@@ -26,7 +26,7 @@ subcommands:
 ```
 
 The `fprime-util` helper is driven by a series of subcommands listed above. Each perform one aspect
-of the development process and are breifly described below.  The following sections will go into
+of the development process and are briefly described below.  The following sections will go into
 each command's usage in more detail.
 
 1. `generate`: generates build cache directories. It defaults to generating the build cache for

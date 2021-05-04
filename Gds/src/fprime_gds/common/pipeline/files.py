@@ -29,7 +29,7 @@ class Filing:
         """
         Sets up the file handling (uplink and downlink) from a pair of encoders and decoders
 
-        :param down_store: downlink storafe directory
+        :param down_store: downlink storage directory
         :param file_encoder: file encoder for uplink
         :param file_decoder: file decoder for downlink
         """

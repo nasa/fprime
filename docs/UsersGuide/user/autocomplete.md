@@ -1,6 +1,6 @@
 # Autocomplete: Tab Completion for Command-Line Tools
 
-This guide will walk the user through installing command line tools's autocomplete feature. This works when being run on
+This guide will walk the user through installing command line tools autocomplete feature. This works when being run on
 many common shells including: bash, fish, and tcsh.  Due to the support library we use, we are unable to support shells
 outside of the shells supported by this library.
 
@@ -33,7 +33,7 @@ guide.
 ### Manual Activation (Run In Each New Shell)
 
 These Commands can be run directly in each shell to provide autocomplete. This setup will end when the shell process is
-closed, so they should be run on each new shell that is opened. 
+closed, so they should be run on each new shell that is opened.
 
 **Bash:** `eval "$(register-python-argcomplete fprime-cli)"`
 
@@ -81,7 +81,7 @@ even the available commands on the F´ instance you're running.
 
 F´ has its CLI tools written in Python, and we've implemented tab completion through the
 [argcomplete](https://github.com/kislyuk/argcomplete) library. If you have any troubleshooting concerns, want to extend
-these tools, or need to explore more advanced settings, this documentation would be the starting point for 
+these tools, or need to explore more advanced settings, this documentation would be the starting point for
 troubleshooting.
 
 ## Conclusion

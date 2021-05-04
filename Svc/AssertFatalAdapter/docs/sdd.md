@@ -67,7 +67,7 @@ The unit test results are as follows:
 Log|Link
 ---|----
 Test Output|[Link](../test/ut/output/test.txt)
-Coverage Output|[Link](../test/ut/output/AssertFatalAdaperComponentImpl.cpp.gcov)
+Coverage Output|[Link](../test/ut/output/AssertFatalAdapterComponentImpl.cpp.gcov)
 
 ## 7. Change Log
 

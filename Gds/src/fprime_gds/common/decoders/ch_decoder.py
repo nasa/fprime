@@ -20,15 +20,15 @@ Example data that would be sent to a decoder that parses channels:
 import copy
 
 from fprime.common.models.serialize.time_type import TimeType
-from fprime.common.models.serialize.numerical_types import U32Type
 from fprime_gds.common.data_types.ch_data import ChData
 from fprime_gds.common.decoders.decoder import Decoder
+from fprime_gds.common.utils import config_manager
 
 
 class ChDecoder(Decoder):
     """Decoder class for Channel data"""
 
-    def __init__(self, ch_dict):
+    def __init__(self, ch_dict, config):
         """
         ChDecoder class constructor
 
@@ -40,7 +40,13 @@ class ChDecoder(Decoder):
             An initialized channel decoder object.
         """
         super().__init__()
+
+        if config is None:
+            # Retrieve singleton for the configs
+            config = config_manager.ConfigManager().get_instance()
+
         self.__dict = ch_dict
+        self.id_obj = config.get_type("ch_id")
 
     def decode_api(self, data):
         """
@@ -59,10 +65,9 @@ class ChDecoder(Decoder):
         ptr = 0
 
         # Decode Ch ID here...
-        id_obj = U32Type()
-        id_obj.deserialize(data, ptr)
-        ptr += id_obj.getSize()
-        ch_id = id_obj.val
+        self.id_obj.deserialize(data, ptr)
+        ptr += self.id_obj.getSize()
+        ch_id = self.id_obj.val
 
         # Decode time...
         ch_time = TimeType()

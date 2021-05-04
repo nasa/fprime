@@ -98,8 +98,8 @@ int main() {
   const char* messages[DEPTH] = {"hello", "how are you", "pretty good", "cosmic bro", "kthxbye"};
   // Fill queue:
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
-    printf("Pushing '%s' at priority %d.\n", messages[ii], priorities[ii]);
-    ret = queue2.push((U8*) &messages[ii], sizeof(messages[ii]), priorities[ii]);
+    printf("Pushing '%s' at priority %d with size %d\n", messages[ii], priorities[ii], (int)strlen(messages[ii]));
+    ret = queue2.push((U8*) messages[ii], (int)strlen(messages[ii]), priorities[ii]);
     FW_ASSERT(ret, ret);
     count = queue2.getCount();
     maxCount = queue2.getMaxCount();
@@ -114,17 +114,19 @@ int main() {
   NATIVE_INT_TYPE orderedPriorities[DEPTH] = {0, 0, 0, 0, 0};
   const char* orderedMessages[DEPTH] = {"hello", "how are you", "pretty good", "cosmic bro", "kthxbye"};
 #endif
-  char* temp[100];
-  size = sizeof(temp);
+  char temp[101];
+  size = sizeof(temp) - 1; // Leave room for extra \0 because of the message print
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
-    ret = queue2.pop((U8*) &temp[0], size, priority);
+    ret = queue2.pop((U8*) temp, size, priority);
+    temp[size] = '\0';
     FW_ASSERT(ret, ret);
     FW_ASSERT(priority == orderedPriorities[ii], priority);
-    FW_ASSERT(size == sizeof(orderedMessages[ii]), sizeof(orderedMessages[ii]));
+    FW_ASSERT(size == strlen(orderedMessages[ii]), strlen(orderedMessages[ii]));
     printf("Popped '%s' at priority %d. Expected '%s' at priority %d.\n", 
-      temp[0], priority, orderedMessages[ii], orderedPriorities[ii]);
-    FW_ASSERT(memcmp(temp[0], orderedMessages[ii], size) == 0);
+           temp, priority, orderedMessages[ii], orderedPriorities[ii]);
+    FW_ASSERT(memcmp(temp, orderedMessages[ii], size) == 0, ii);
     count = queue2.getCount();
+    size = sizeof(temp) - 1; //Reset size
   }
 
 

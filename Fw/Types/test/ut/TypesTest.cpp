@@ -886,7 +886,7 @@ TEST(TypesTest,PolyTest) {
 
     // Test assigning to polytype and return type of assignment
     in8 = 21;
-    // Can assign Polytype to U8 via overriden cast operator
+    // Can assign Polytype to U8 via overridden cast operator
     out8 = (pt = in8);
     ASSERT_EQ((U8) pt, (U8) 21);
     ASSERT_EQ((U8) pt, in8);

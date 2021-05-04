@@ -106,7 +106,7 @@ endfunction(unit_test_component_autocoder)
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-    # their separate peices. 
+    # their separate pieces. 
     #
     # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
     # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
@@ -141,9 +141,16 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
                               --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
                               --verbose -T MemCheck)
     endif()
+    
+    # Add top ut wrapper for this module
+    if (NOT TARGET "${MODULE_NAME}_ut_exe")
+      add_custom_target("${MODULE_NAME}_ut_exe")
+    endif()
+    
     add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
     add_dependencies("${MODULE_NAME}_check_leak" ${UT_EXE_NAME})
-    
+    add_dependencies("${MODULE_NAME}_ut_exe" ${UT_EXE_NAME})
+
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
 	    print_dependencies(${UT_EXE_NAME})

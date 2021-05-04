@@ -61,7 +61,7 @@ namespace Fw {
         taskName = taskNameChar;
 #endif
 // If running with the baremetal scheduler, use a variant of the task-loop that
-// does not loop internal, but waits for an external eiteration call.
+// does not loop internal, but waits for an external iteration call.
 #if FW_BAREMETAL_SCHEDULER == 1
 	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
 #else
