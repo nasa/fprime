@@ -92,7 +92,7 @@ namespace Drv {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
-	  return Drv::I2C_ADDRESS_ERR;
+	  return I2cStatus::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
@@ -102,9 +102,9 @@ namespace Drv {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
-	  return Drv::I2C_WRITE_ERR;
+	  return I2cStatus::I2C_WRITE_ERR;
       }
-      return Drv::I2C_OK;
+      return I2cStatus::I2C_OK;
   }
 
   Drv::I2cStatus LinuxI2cDriverComponentImpl ::
@@ -126,7 +126,7 @@ namespace Drv {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
-	  return Drv::I2C_ADDRESS_ERR;
+	  return I2cStatus::I2C_ADDRESS_ERR;
       }
       // make sure it isn't a null pointer
       FW_ASSERT(serBuffer.getData());
@@ -136,7 +136,7 @@ namespace Drv {
 #if DEBUG_PRINT
           printf("Status: %d Errno: %d\n", stat, errno);
 #endif
-	  return Drv::I2C_READ_ERR;
+	  return I2cStatus::I2C_READ_ERR;
       }
 #if DEBUG_PRINT
       for (U32 byte = 0; byte < serBuffer.getSize(); byte++) {
@@ -145,7 +145,7 @@ namespace Drv {
       }
       printf("\n");
 #endif
-      return Drv::I2C_OK;
+      return I2cStatus::I2C_OK;
   }
 
 } // end namespace Drv
