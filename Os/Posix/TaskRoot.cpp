@@ -41,34 +41,10 @@ namespace Os {
 
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno,strerror(stat));
+            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno, reinterpret_cast<POINTER_CAST>(strerror(stat)));
         	return TASK_INVALID_PARAMS;
         }
 
-        stat = pthread_attr_setstacksize(&att,stackSize);
-        if (stat != 0) {
-            return TASK_INVALID_STACK;
-        }
-
-        stat = pthread_attr_setschedpolicy(&att,SCHED_RR);
-
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n",strerror(errno));
-            return TASK_INVALID_PARAMS;
-        }
-        stat = pthread_attr_setinheritsched(&att,PTHREAD_EXPLICIT_SCHED); // may not need this
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_setinheritsched: %s\n",strerror(errno));
-         	return TASK_INVALID_PARAMS;
-        }
-        sched_param schedParam;
-        memset(&schedParam,0,sizeof(sched_param));
-        schedParam.sched_priority = priority;
-        stat = pthread_attr_setschedparam(&att,&schedParam);
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_setschedparam: %s\n",strerror(errno));
-        	return TASK_INVALID_PARAMS;
-        }
 
         // Set affinity before creating thread:
         if (cpuAffinity != -1) {
@@ -79,7 +55,7 @@ namespace Os {
 
             stat = pthread_attr_setaffinity_np(&att, sizeof(cpu_set_t), &cpuset);
             if (stat != 0) {
-                Fw::Logger::logMsg("pthread_setaffinity_np: %i %s\n",cpuAffinity,strerror(stat));
+                Fw::Logger::logMsg("pthread_setaffinity_np: %i %s\n",cpuAffinity,reinterpret_cast<POINTER_CAST>(strerror(stat)));
                 return TASK_INVALID_PARAMS;
             }
         }
@@ -100,7 +76,7 @@ namespace Os {
                 break;
             case EINVAL:
                 delete tid;
-                Fw::Logger::logMsg("pthread_create: %s\n",strerror(errno));
+                Fw::Logger::logMsg("pthread_create: %s\n",reinterpret_cast<POINTER_CAST>(strerror(errno)));
                 tStat = TASK_INVALID_PARAMS;
                 break;
             default:
@@ -113,7 +89,7 @@ namespace Os {
 
             stat = pthread_setname_np(*tid,(char*)this->m_name.toChar());
             if (stat != 0) {
-                Fw::Logger::logMsg("pthread_setname_np: %s %s\n",this->m_name.toChar(),strerror(stat));
+                Fw::Logger::logMsg("pthread_setname_np: %s %s\n",reinterpret_cast<POINTER_CAST>(this->m_name.toChar()),reinterpret_cast<POINTER_CAST>(strerror(stat)));
                 delete tid;
                 tStat = TASK_INVALID_PARAMS;
             }
