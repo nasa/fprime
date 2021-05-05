@@ -24,7 +24,6 @@ The following utilities are prerequisites to installing F´:
 - git
 - Python 3.5+ with pip
 
-
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
 
 To install F´ quickly, enter:
