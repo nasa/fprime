@@ -16,7 +16,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Buffer/Buffer.hpp>
 #include <new>
-#include <stdio.h>
 
 namespace Svc {
 
@@ -60,6 +59,9 @@ namespace Svc {
   void BufferManagerComponentImpl ::
     cleanup(void)
   {
+      FW_ASSERT(this->m_buffers);
+      FW_ASSERT(this->m_allocator);
+
       if (not this->m_cleaned) {
           // walk through Fw::Buffer instances and delete them
           for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numStructs; entry++) {
@@ -85,6 +87,7 @@ namespace Svc {
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
+      FW_ASSERT(m_buffers);
       // check for empty buffers - this is just a warning since this component returns
       // empty buffers if it can't allocate one.
       if (fwBuffer.getSize() == 0) {
@@ -117,6 +120,7 @@ namespace Svc {
   {
       // make sure component has been set up
       FW_ASSERT(this->m_setup);
+      FW_ASSERT(m_buffers);
       // find smallest buffer based on size.
       for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
           if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
@@ -161,8 +165,8 @@ namespace Svc {
     for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             memorySize += 
-                this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers // allocate each set of buffer memory
-                + static_cast<NATIVE_UINT_TYPE>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers; // allocate the structs to track the buffers
+                (this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers) + // allocate each set of buffer memory
+                (static_cast<NATIVE_UINT_TYPE>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
             this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
         }
     }
