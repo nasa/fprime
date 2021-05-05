@@ -97,7 +97,6 @@ integrated configuration with ground in-the-loop.
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
@@ -107,7 +106,7 @@ integrated configuration with ground in-the-loop.
         # 'Programming Language :: Python :: Implementation :: Jython',
         # 'Programming Language :: Python :: Implementation :: Stackless',
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     install_requires=[
         "flask",
         "pexpect",

@@ -65,22 +65,19 @@ to interact with the data coming from the FSW.
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    # Requires Python 3.5+
-    python_requires=">=3.5",
+    # Requires Python 3.6+
+    python_requires=">=3.6",
     install_requires=[
         "lxml",
-        'enum34;python_version < "3.4"',
         "Markdown",
         "pexpect",
         "pytest",
-        'Cheetah3;python_version >= "3.0"',
-        'Cheetah;python_version < "3.0"',
+        "Cheetah3",
     ],
     extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
     # Setup and test requirements, not needed by normal install
