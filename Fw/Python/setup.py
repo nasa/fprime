@@ -75,12 +75,10 @@ to interact with the data coming from the FSW.
     python_requires=">=3.5",
     install_requires=[
         "lxml",
-        'enum34;python_version < "3.4"',
         "Markdown",
         "pexpect",
         "pytest",
-        'Cheetah3;python_version >= "3.0"',
-        'Cheetah;python_version < "3.0"',
+        "Cheetah3",
     ],
     extras_require={"dev": ["black", "pylama", "pylint", "pre-commit"]},
     # Setup and test requirements, not needed by normal install
