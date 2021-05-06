@@ -159,20 +159,18 @@ An example of how to instantiate and register classes into the correct structure
 can be found in the `MainFrameFactory` class.
 
 ## Setup
-The Gds requires the packages in the `../mk/python/pip_required_gds.txt` file. The
-wxPython version must be at least 4.0.0.
+The Gds requires the packages specified in [setup.py](setup.py).
 
-Some specific wxPython instructions are included below in case the regular install
-does not succeed.
+These can be installed along the Gds package using the following commands:
 
-### wxPython Mac Install
-First try: ```{path to python used by fprime} -m pip install wxPython```
+```
+git clone https://github.com/nasa/fprime.git
+cd fprime
+pip install --upgrade wheel setuptools pip
+pip install Gds/
+```
 
-If that doesn't work, try the following:
-
-Download the wheel file for your system from: https://pypi.org/project/wxPython/#files
-Run:
-```sudo {path to python used by fprime} -m pip install {path to wxPython 4 .whl file}```
+For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](https://github.com/nasa/fprime/blob/devel/docs/INSTALL.md).
 
 ## Generate Documentation
 You can generate a doxygen documentation page for the GDS source.

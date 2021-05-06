@@ -30,12 +30,12 @@ from setuptools import find_packages, setup
 ####
 # GDS Packages:
 #
-# The GDS package 'tkgui' is only allowed as part of a Python 2 distribution. This code initially
-# excludes the 'fprime_gds.tkgui' package, and then includes it if the Python version is < 2.
+# The GDS package 'tkgui' is only allowed as part of a Python 2 distribution. This code
+# excludes the 'fprime_gds.tkgui' package.
 ####
 gds_packages = find_packages("src", exclude=["*tkgui*"])
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
-# then distutils.
+# than distutils.
 setup(
     ####
     # Package Description:
