@@ -35,7 +35,7 @@ from setuptools import find_packages, setup
 ####
 gds_packages = find_packages("src", exclude=["*tkgui*"])
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
-# then distutils.
+# than distutils.
 setup(
     ####
     # Package Description:
