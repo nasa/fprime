@@ -86,7 +86,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
         }
         case Fw::ComPacket::FW_PACKET_FILE: {
             // If file uplink is possible, handle files.  Otherwise ignore.
-            if (isConnected_bufferAllocate_OutputPort(0)) {
+            if (isConnected_bufferOut_OutputPort(0)) {
                 // Shift the buffer to ignore the packet type
                 data.setData(data.getData() + sizeof(packet_type));
                 data.setSize(data.getSize() - sizeof(packet_type));
@@ -95,6 +95,8 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
             break;
         }
         default:
+            // In the case that we do not know the packet type, we should deallocate the request
+            bufferDeallocate_out(0, data);
             return;
     }
 }
@@ -131,9 +133,10 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
     U32 buffer_offset = 0; // Max buffer size is U32
     // Note: max iteration bounded by processing 1 byte per iteration
     for (i = 0; (i < (buffer.getSize() + 1)) and (buffer_offset < buffer.getSize()); i++) {
-        NATIVE_UINT_TYPE ser_size = (buffer.getSize() >= m_in_ring.get_remaining_size(true))
+        U32 remaining = buffer.getSize() - buffer_offset;
+        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_remaining_size(true))
                                         ? m_in_ring.get_remaining_size(true)
-                                        : static_cast<NATIVE_UINT_TYPE>(buffer.getSize());
+                                        : static_cast<NATIVE_UINT_TYPE>(remaining);
         m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
         buffer_offset = buffer_offset + ser_size;
         processRing();

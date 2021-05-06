@@ -12,13 +12,15 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
     return()
 endif()
 
+set(MEM_TEST_CLI_OPTIONS '--leak-check=full --error-exitcode=100 --show-leak-kinds=all -v')
+
 # Enable testing, setup CTest, etc.
 enable_testing()
 include( CTest )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND}
                   --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                  --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
+                  --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                   -T MemCheck)
 
 ####
@@ -138,7 +140,7 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     if (NOT TARGET "${MODULE_NAME}_check_leak")
         add_custom_target("${MODULE_NAME}_check_leak" COMMAND ${CMAKE_CTEST_COMMAND}
                               --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                              --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
+                              --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                               --verbose -T MemCheck)
     endif()
     

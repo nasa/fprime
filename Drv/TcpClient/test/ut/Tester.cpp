@@ -27,7 +27,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
-    U8 buffer[sizeof(m_data_storage)];
+    U8 buffer[sizeof(m_data_storage)] = {};
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
     Drv::SocketIpStatus serverStat = Drv::SOCK_SUCCESS;
@@ -101,6 +101,7 @@ Tester ::Tester(void)
       m_data_buffer(m_data_storage, 0), m_spinner(true) {
     this->initComponents();
     this->connectPorts();
+    ::memset(m_data_storage, 0, sizeof(m_data_storage));
 }
 
 Tester ::~Tester(void) {}
@@ -142,6 +143,7 @@ void Tester ::test_advanced_reconnect(void) {
     EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
     m_spinner = true;
+    delete[] recvBuffer.getData();
 }
 
 Fw::Buffer Tester ::
