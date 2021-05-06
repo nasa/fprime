@@ -9,7 +9,7 @@
 // acknowledged.
 //
 // ======================================================================
-
+#include <string.h>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
@@ -45,7 +45,9 @@
 
 namespace Drv {
 
-IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0), m_open(false) {}
+IpSocket::IpSocket() : m_fd(-1), m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0), m_open(false) {
+    ::memset(m_hostname, 0, sizeof(m_hostname));
+}
 
 SocketIpStatus IpSocket::configure(const char* const hostname, const U16 port, const U32 timeout_seconds, const U32 timeout_microseconds) {
     FW_ASSERT(timeout_microseconds < 1000000, timeout_microseconds);
