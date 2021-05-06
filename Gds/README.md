@@ -163,7 +163,7 @@ The Gds requires the packages specified in [setup.py](setup.py).
 
 These can be installed along the Gds package using the following commands:
 
-```shell
+```
 git clone https://github.com/nasa/fprime.git
 cd fprime
 pip install --upgrade wheel setuptools pip
