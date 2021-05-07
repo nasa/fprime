@@ -72,7 +72,7 @@ F´ has the following key features that enable robust embedded system design.
 
 ### Reusability
 
-F´'s component-based architecture enables a high degree of modularity and software reuse. 
+F´'s component-based architecture enables a high degree of modularity and software reusability.
 
 ### Rapid Deployment
 

@@ -7,42 +7,42 @@ for instructions on how to use the GDS.
 The GDS consists of a collection of classes and tools that provide an interface for fprime
 deployments, allowing users to view telemetry and events and send commands.
 
-The GDS HTML GUI is an almost completely rewritten version of the fprime GSE UI, our historical
+The GDS HTML GUI is an almost completely rewritten version of the F´ GSE UI, our historical
 ground system that has been deprecated due to its Python 2 requirement.
 
-The Gds was designed to be adaptable, easily understandable, and easily expandable. To this end, it
+The GDS was designed to be adaptable, easily understandable, and easily expandable. To this end, it
 is built using publisher/subscriber relationships.
 
-The diagram below shows the basic layout of the GDS. Data from the F' deployment first enters the
-Gds at the TCP client. Each packet is then passed directly to the distributor which is responsible
+The diagram below shows the basic layout of the GDS. Data from the F´ deployment first enters the
+GDS at the TCP client. Each packet is then passed directly to the distributor which is responsible
 for parsing the packets in to data messages and sending on each message type (currently only events,
 channels, and packetized telemetry are supported) to decoders registered for that type. The decoder
 is responsible for turning that data message into a data object which it passes along to all
-consumers registered to it. These consumers could be anything, but in the Gds they are gui panels
+consumers registered to it. These consumers could be anything, but in the GDS they are GUI panels
 that display the data. For outgoing data, the structure is similar. Currently, commands are the only
 output data type included. Command data objects are created in the command panel and then sent to
 the command encoder registered to that panel. Encoders take a data object and turn it into binary
-data that can be sent to the fprime deployment. The binary data is then passed to the TCP client
+data that can be sent to the F´ deployment. The binary data is then passed to the TCP client
 which is registered to the encoder. Finally, the TCP client send the data back to the TCP server and
-the F' deployment. ![The layout of the GDS](../docs/UsersGuide/media/gds_layout.jpg)
+the F´ deployment. ![The layout of the GDS](../docs/UsersGuide/media/gds_layout.jpg)
 
-All of these objects are created and registered to other objects when the Gds
-is initialized. Thus, all of the structure of the Gds is created in one place,
+All of these objects are created and registered to other objects when the GDS
+is initialized. Thus, all of the structure of the GDS is created in one place,
 and can be easily modified.
 
 ## GDS Tools
-The Gds was designed to have flexible configurations of consumers for its various data decoders.
+The GDS was designed to have flexible configurations of consumers for its various data decoders.
 This has been used to support several additional tools.
 
 ### GDS Standard Pipeline
 The standard pipeline can be thought of as a Python helper-layer to instantiate the GDS and connect
-to an FPrime deployment. The pipeline provides event, telemetry and command histories, sending
+to an F´ deployment. The pipeline provides event, telemetry and command histories, sending
 commands and registering consumers to the GDS decoders. The Standard Pipeline can be found
 [here](src/fprime_gds/common/pipeline/standard.py).
 
 ### GDS Integration Test API
 The Integration Test API is a tool that provides the ability to write integration-level tests for an
-FPrime deployment using the GDS. The tool provides history searches/asserts, command sending, a
+F´ deployment using the GDS. The tool provides history searches/asserts, command sending, a
 detailed test log, sub-histories and convenient access to GDS data objects. The test API comes with
 separate [documentation](../docs/UsersGuide/dev/testAPI/markdown/contents.md) and its own [user
 guide](../docs/UsersGuide/dev/testAPI/user_guide.md) and is built on top of the Standard Pipeline.
@@ -52,24 +52,24 @@ guide](../docs/UsersGuide/dev/testAPI/user_guide.md) and is built on top of the 
 A guide for how to use the GDS is available in the [fprime documentation](https://nasa.github.io/fprime/UsersGuide/gds/gds-introduction.html)
 
 ## Classes
-The Gds back end is composed of several different data processing units. For 
+The GDS back end is composed of several different data processing units. For 
 most of the units described below, a base class describes the interface and 
 subclasses implement the interface for specific data types (such as events,
 channels, etc).
 
-To expand the Gds to accept more data types or have additional features, new classes 
+To expand the GDS to accept more data types or have additional features, new classes 
 can be written and registered into the existing structure.
 
 ### TCP Client
 The TCP client is simply a passthrough for data coming from the TCP Server and 
-the F' Distribution. The client handles all the socket connection overhead and 
+the F´ Distribution. The client handles all the socket connection overhead and 
 passes un-parsed data onto all objects registered with it.
 
 ### Distributor
 The distributer is responsible for taking in raw binary data, parsing off the 
 length and descriptor, and then passing the data to all decoders registered to 
 that descriptor. Descriptor types include events, channels, packets, etc (a full
-enumeration can be found in src/utils/data_desc_type.py). The binary data that 
+enumeration can be found in (src/utils/data_desc_type.py). The binary data that 
 the descriptor receives should be of the form:
 
 | Length (4 bytes) | Type Descriptor (4 bytes) | Message Data |
@@ -119,9 +119,9 @@ decoder. Each decoder type takes in the binary message data, parses it, and
 sends the resulting data object to all consumers registered to it. 
 
 ### Encoders
-Encoders are responsible for taking data objects from consumers (gui panels), 
+Encoders are responsible for taking data objects from consumers (GUI panels), 
 converting them to binary data, and passing them to the TCP client to send to 
-the F' deployment. 
+the F´ deployment. 
 
 Like the decoders, encoders use dictionaries produced by loaders to help craft
 the binary output.
@@ -131,7 +131,7 @@ Consumers do not have a specific base class, but instead simply implement a data
 callback method that is called by decoders with parsed data objects as the 
 argument. In the case of the Gds, the consumers are the GUI panels that display 
 data. Consumers can also produce data that is sent to encoders and eventually on
-to the F' deployment. 
+to the F´ deployment. 
 
 ### Main Frame Factory
 This class is responsible for setting up the pipeline of data between different 
