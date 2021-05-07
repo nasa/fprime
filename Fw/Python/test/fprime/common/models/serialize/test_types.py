@@ -274,6 +274,10 @@ def test_serializable_type():
     memList = [(a, b, c, None) for a, b, c in memList]
     check_cloned_member_list(mem_list, memList)
 
+    serTypeEmpty = SerializableType("ASerType", [])
+    assert serTypeEmpty.val == {}
+    assert serTypeEmpty.mem_list == []
+
 
 # def test_array_type():
 #    """
