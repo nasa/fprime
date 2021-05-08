@@ -27,13 +27,16 @@ from fprime.common.models.serialize.numerical_types import (
 from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime.common.models.serialize.string_type import StringType
 from fprime.common.models.serialize.time_type import TimeBase, TimeType
+from fprime.common.models.serialize.type_base import BaseType, ValueType
 
 from fprime.common.models.serialize.type_exceptions import (
+    AbstractMethodException,
     DeserializeException,
     NotInitializedException,
     TypeMismatchException,
     TypeRangeException,
 )
+
 
 PYTHON_TESTABLE_TYPES = [
     True,
@@ -318,3 +321,40 @@ def test_time_type():
     for (t_base, t_context, secs, usecs) in in_err_list:
         with pytest.raises(TypeRangeException):
             ser_deser_time_test(t_base, t_context, secs, usecs)
+
+
+class Dummy(BaseType):
+    def serialize(self):
+        return "serialized"
+
+    def deserialize(self, data, offset):
+        super(Dummy, self).deserialize(data, offset)
+        return "deserialized"
+
+    def getSize(self):
+        return 0
+
+    def to_jsonable(self):
+        return {'name': 'dummy'}
+
+
+def test_base_type():
+    with pytest.raises(TypeError) as excinfo:
+        BaseType()
+
+    assert "Can't instantiate abstract class" in str(excinfo.value)
+
+    with pytest.raises(TypeError) as excinfo2:
+        ValueType()
+
+    assert "Can't instantiate abstract class" in str(excinfo2.value)
+
+    d = Dummy()
+    assert d.serialize() == "serialized"
+    assert d.getSize() == 0
+    with pytest.raises(AbstractMethodException):
+        # In the Dummy class above, the deserialize method
+        # is set to call the super class, which is just the
+        # raw abstract method, which is the only way to
+        # raise an `AbstractMethodException`.
+        d.deserialize("a", 0)
