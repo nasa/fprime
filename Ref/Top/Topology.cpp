@@ -5,8 +5,6 @@
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
-#include <Svc/FramingProtocol/FprimeProtocol.hpp>
-
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <getopt.h>
 #include <stdlib.h>
@@ -15,14 +13,17 @@
 
 // List of context IDs
 enum {
+    DOWNLINK_PACKET_SIZE = 500,
+    DOWNLINK_BUFFER_STORE_SIZE = 2500,
+    DOWNLINK_BUFFER_QUEUE_SIZE = 5,
+    DOWNLINK_BUFFER_MGR_ID = 100,
     UPLINK_BUFFER_STORE_SIZE = 3000,
     UPLINK_BUFFER_QUEUE_SIZE = 30,
     UPLINK_BUFFER_MGR_ID = 200
 };
 
 Os::Log osLogger;
-Svc::FprimeDeframing deframing;
-Svc::FprimeFraming framing;
+
 
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
@@ -41,6 +42,9 @@ Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NU
 
 static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
+
+// Command Components
+Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
 
 // Driver Component
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
@@ -70,7 +74,7 @@ Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
-Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
+Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
@@ -96,12 +100,6 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
-Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
-
-Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
-
-Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
-
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -115,7 +113,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
 #endif    
-    staticMemory.init(0);
+
     // Initialize rate group driver
     rateGroupDriverComp.init();
 
@@ -150,9 +148,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    comm.init(0);
-    downlink.init(0);
-    uplink.init(0);
+    groundIf.init(0);
+    socketIpDriver.init(0);
+
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
     fileDownlink.configure(1000, 1000, 1000, 10);
@@ -167,10 +165,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
-
-    downlink.setup(framing);
-    uplink.setup(deframing);
-
     // Connect rate groups to rate group driver
     constructRefArchitecture();
 
@@ -254,14 +248,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
-   
-
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        Fw::EightyCharString name("ReceiveTask");
-        // Uplink is configured for receive so a socket task is started
-        comm.configure(hostname, port_number);
-        comm.startSocketTask(name, 100, 10 * 1024);
+        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
     }
     return false;
 }
@@ -294,8 +283,8 @@ void exitTasks(void) {
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
-    comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
+    socketIpDriver.exitSocketTask();
+    (void) socketIpDriver.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }
