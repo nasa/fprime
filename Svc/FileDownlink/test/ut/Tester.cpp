@@ -119,7 +119,7 @@ namespace Svc {
     this->sendFile(
         sourceFileName,
         destFileName,
-        (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK
+        (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR
     );
 
     // Assert telemetry
@@ -166,7 +166,7 @@ namespace Svc {
     this->component.doDispatch(); // Process return of cancel packet
 
     // Ensure initial send file command also receives a response.
-    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) ? Fw::COMMAND_EXECUTION_ERROR : Fw::COMMAND_OK;
+    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR;
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, resp);
 
@@ -214,6 +214,14 @@ namespace Svc {
     FileBuffer fileBufferOut(data, sizeof(data));
     fileBufferOut.write(sourceFileName);
     FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
+
+    // Test send partial past end of file, should return COMMAND_OK but raise an warning event.
+    Fw::CommandResponse expResp = FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::COMMAND_OK : Fw::COMMAND_VALIDATION_ERROR;
+    this->sendFilePartial(sourceFileName, destFileName, expResp, sizeof(data), length);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DownlinkPartialFail(0, sourceFileName, destFileName, sizeof(data), sizeof(data));
+    this->cmdResponseHistory->clear();
+    this->clearEvents();
 
     // Send the file and assert COMMAND_OK
     this->sendFilePartial(sourceFileName, destFileName, Fw::COMMAND_OK, offset, length);
@@ -294,7 +302,8 @@ namespace Svc {
 
         this->component.Run_handler(0,0);
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, Fw::COMMAND_EXECUTION_ERROR);
+        Fw::CommandResponse expResp = FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR;
+        ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, expResp);
 
         // Assert telemetry
         ASSERT_TLM_SIZE(1);

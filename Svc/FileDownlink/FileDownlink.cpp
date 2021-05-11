@@ -140,7 +140,7 @@ namespace Svc {
           this->curTimer = 0;
           this->log_WARNING_HI_DownlinkTimeout(this->file.sourceName, this->file.destName);
           this->enterCooldown();
-          this->sendResponse(SendFileStatus::ERROR);
+          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
         } else { //Otherwise update the current counter
           this->curTimer += cycleTime;
         }
@@ -359,22 +359,19 @@ namespace Svc {
     if (status != Os::File::OP_OK) {
       this->mode.set(Mode::IDLE);
       this->warnings.fileOpenError();
-      if (FILEDOWNLINK_COMMAND_FAIL_ON_MISSING_FILE) {
-          sendResponse(SendFileStatus::ERROR);
-      } else {
-          sendResponse(SendFileStatus::OK);
-      }
+      sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
       return;
     }
 
-    // If the amount to downlink is greater than the file size, emit a Warning and then allow
-    // the file to be downlinked anyway
+
     if (startOffset >= this->file.size) {
         this->enterCooldown();
         this->log_WARNING_HI_DownlinkPartialFail(this->file.sourceName, this->file.destName, startOffset, this->file.size);
-        sendResponse(SendFileStatus::INVALID);
+        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::INVALID);
         return;
     } else if (startOffset + length > this->file.size) {
+        // If the amount to downlink is greater than the file size, emit a Warning and then allow
+        // the file to be downlinked anyway
         this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, this->file.size, this->file.sourceName, this->file.destName);
         length = this->file.size - startOffset;
     }
@@ -529,7 +526,7 @@ namespace Svc {
           if (status != Os::File::OP_OK) {
               this->log_WARNING_HI_SendDataFail(this->file.sourceName, this->byteOffset);
               this->enterCooldown();
-              sendResponse(SendFileStatus::ERROR);
+              this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
               //Don't go to wait state
               return;
           }
