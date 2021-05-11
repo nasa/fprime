@@ -70,7 +70,8 @@ namespace Svc {
   // ----------------------------------------------------------------------
     void Tester ::test_incoming_frame(U32 buffer_size, 
                                       U32 expected_size) {
-        U8 data[buffer_size] = {};
+        U8 data[buffer_size];
+        ::memset(data, 0, buffer_size);
         Fw::Buffer recvBuffer(data, buffer_size);
         Drv::RecvStatus recvStatus = Drv::RecvStatus::RECV_OK;
         invoke_to_framedIn(0, recvBuffer, recvStatus);
