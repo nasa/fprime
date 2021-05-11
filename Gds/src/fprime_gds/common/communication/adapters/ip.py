@@ -408,12 +408,7 @@ class TcpHandler(IpHandler):
         """
         data = self.client.recv(IpAdapter.MAXIMUM_DATA_SIZE)
         if not data:
-            try:
-                print("No more data. Closing the connection")
-                self.client.close()
-            except AttributeError:
-                print("Skip closing. Client connection is already closed.")
-                pass
+            self.close_impl()
         return data
 
     def write_impl(self, message):

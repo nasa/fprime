@@ -30,12 +30,12 @@ from setuptools import find_packages, setup
 ####
 # GDS Packages:
 #
-# The GDS package 'tkgui' is only allowed as part of a Python 2 distribution. This code initially
-# excludes the 'fprime_gds.tkgui' package, and then includes it if the Python version is < 2.
+# The GDS package 'tkgui' is only allowed as part of a Python 2 distribution. This code
+# excludes the 'fprime_gds.tkgui' package.
 ####
 gds_packages = find_packages("src", exclude=["*tkgui*"])
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
-# then distutils.
+# than distutils.
 setup(
     ####
     # Package Description:
@@ -97,7 +97,6 @@ integrated configuration with ground in-the-loop.
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
@@ -107,7 +106,7 @@ integrated configuration with ground in-the-loop.
         # 'Programming Language :: Python :: Implementation :: Jython',
         # 'Programming Language :: Python :: Implementation :: Stackless',
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     install_requires=[
         "flask",
         "pexpect",

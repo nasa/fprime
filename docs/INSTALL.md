@@ -22,8 +22,16 @@ Requirements:
 2. CMake 3.5 or newer [https://cmake.org/download/](https://cmake.org/download/). CLI tool must be available on the system path.
 3. Bash or Bash compatible shell
 4. CLang or GCC compiler
-5. Python 3.5+ and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
+5. Python 3.6+ and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
 6. Python Virtual Environment \* (pip install venv or pip install virtualenv)
+
+You can install them using this one-liner command :
+
+```sudo apt-get update && sudo apt-get -y install cmake git python3-pip``` (for Debian based OS'es)
+
+OR
+
+``` yum install cmake git python3-pip ``` (for RHEL OS)
 
 **Note:** it is possible to install and run F´ without a virtual environment, however; for
 individuals and researchers, this is the recommended approach.
@@ -34,7 +42,7 @@ This will create a new virtual environment for F´ to be installed into. The fol
 will create a new virtual environment called `fprime-venv` and ensure that the virtual environment
 is activated.
 
-**Python 3.5+:**
+**Python 3.6+:**
 
 ```
 python3 -m venv ./fprime-venv

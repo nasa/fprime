@@ -22,7 +22,7 @@ The following utilities are prerequisites to installing F´:
 
 - [cmake](https://cmake.org/)
 - [git](https://git-scm.com/)
-- [Python](https://www.python.org/) 3.5+ with pip
+- [Python](https://www.python.org/) 3.6+ with pip
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
 
@@ -72,7 +72,7 @@ F´ has the following key features that enable robust embedded system design.
 
 ### Reusability
 
-F´'s component-based architecture enables a high degree of modularity and software reuse. 
+F´'s component-based architecture enables a high degree of modularity and software reusability.
 
 ### Rapid Deployment
 

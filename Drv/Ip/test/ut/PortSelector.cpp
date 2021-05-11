@@ -35,6 +35,7 @@ U16 get_free_port(bool udp) {
     }
     socklen_t size = sizeof(address);
     if (::getsockname(socketFd, ((struct sockaddr *) &address), &size) == -1) {
+        ::close(socketFd);
         return 0;
     }
     U16 port = address.sin_port;

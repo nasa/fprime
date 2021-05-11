@@ -36,7 +36,7 @@ aheared
 ajkl
 allbox
 ALLEXTERNALS
-ALLOCATEDSIZE
+alloc
 Alltypes
 ALOG
 alphanums
@@ -122,6 +122,7 @@ autoraise
 autosectionlabel
 awt
 AYYYY
+arijitdas
 backend
 backface
 backport
@@ -175,7 +176,8 @@ BUFFERACCEPTED
 BUFFERACCUMULATOR
 BUFFERALLOCATE
 BUFFERLOGGER
-BUFFERMANAGER
+BUFFERMANAGERCOMPONENTIMPLCFG
+BUFFERMGR
 BUFFERTOOSMALL
 buffsize
 BUGLIST
@@ -255,7 +257,6 @@ classpath
 classpathentry
 classtype
 clazz
-CLEAREDERRORSTATE
 clearfix
 clibwrapper
 clion
@@ -468,7 +469,6 @@ dll
 dlog
 dnp
 DNs
-doall
 docbook
 dockerfile
 docset
@@ -885,7 +885,6 @@ idl
 idx
 ieeetr
 iface
-ifchange
 ifcomment
 ifconfig
 ifdef
@@ -1332,7 +1331,6 @@ NSHUFF
 NSPACES
 nukenewlines
 nullptr
-NUMALLOCATEDBUFFERS
 numargs
 Numinput
 NUMLOGGEDBUFFERS
@@ -1405,6 +1403,7 @@ outdir
 outout
 outputfile
 overridable
+OS'es
 packetization
 packetized
 PACKETOUTOFBOUNDS
@@ -1677,6 +1676,7 @@ runtest
 rx
 RXD
 rxor
+RHEL
 saaj
 saddr
 sadl
@@ -1864,7 +1864,6 @@ stdio
 stdlib
 stdout
 stest
-STORESIZEEXCEEDED
 strcat
 strcmp
 strcpy
@@ -2053,7 +2052,6 @@ toolbar
 toolchain
 tooltip
 tooltiptext
-TOOMANYBUFFERS
 TOOMANYCOMMANDS
 topologyapp
 Torvalds

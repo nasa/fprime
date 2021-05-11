@@ -25,7 +25,7 @@ This guide is for programmers who intend to maintain and develop code for the Gr
     -   At a minimum, the CLI tools should allow for receiving all events/telemetry data from the GDS and sending commands to the spacecraft
 -   The CLI tools' output must be usable with existing UNIX utilities through piping/file output/BASH scripting/etc.
 -   The CLI tools should be multi-platform, supporting (at a minimum) Linux, Mac, and Windows systems
--   If implemented in Python, must support Python 3.5+
+-   If implemented in Python, must support Python 3.6+
 
 ### Secondary Requirements
 

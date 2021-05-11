@@ -1480,7 +1480,7 @@ Add the stub files to `CMakeLists.txt`:
 
 ```cmake
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponent.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentImpl.cpp"
 )
 register_fprime_module()
@@ -1748,6 +1748,14 @@ This unit test demonstrates how event throttling works. The event is repeatedly 
 ```c++
       // send the command to clear the throttle
       this->sendCmd_MR_CLEAR_EVENT_THROTTLE(0,10);
+```
+
+The header file should be updated to include the `testThrottle` method as a public member.
+
+`Tester.hpp`, line 51:
+
+```c++
+void testThrottle(void);
 ```
 
 
