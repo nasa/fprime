@@ -77,7 +77,7 @@ class XmlArrayParser(object):
         self.Config = ConfigManager.ConfigManager.getInstance()
 
         typeslist = [
-            "I8",
+            "U8",
             "I8",
             "BYTE",
             "I16",
