@@ -63,8 +63,7 @@ extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 
 extern Svc::StaticMemoryComponentImpl staticMemory;
-extern Drv::TcpClientComponentImpl uplinkComm;
-extern Drv::UdpComponentImpl downlinkComm;
+extern Drv::TcpClientComponentImpl comm;
 extern Svc::FramerComponentImpl downlink;
 extern Svc::DeframerComponentImpl uplink;
 #endif

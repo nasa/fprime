@@ -63,8 +63,7 @@
 
     <!-- Communications driver. May be swapped with other comm drivers like UART -->
     <!-- Note: here we have tcp reliable uplink, and Udp (low latency) downlink -->
-    <instance namespace="Drv" name="uplinkComm" type="ByteStreamDriverModel" base_id="621" base_id_window="20" />
-    <instance namespace="Drv" name="downlinkComm" type="ByteStreamDriverModel" base_id="641" base_id_window="20" />
+    <instance namespace="Drv" name="comm" type="ByteStreamDriverModel" base_id="621" base_id_window="20" />
 
     <!-- Rate Group Components -->
 
@@ -88,11 +87,11 @@
     <!-- Connections -->
     <!-- Communications driver connections -->
     <connection name = "UplinkDrvAllocate">
-        <source component = "uplinkComm" port = "allocate" type = "Fw::BufferGet" num = "0"/>
+        <source component = "comm" port = "allocate" type = "Fw::BufferGet" num = "0"/>
         <target component = "staticMemory" port = "bufferAllocate" type = "Fw::BufferGet" num = "0"/>
     </connection>
     <connection name = "UplinkRecv">
-        <source component = "uplinkComm" port = "recv" type = "Drv::ByteStreamSend" num = "0"/>
+        <source component = "comm" port = "recv" type = "Drv::ByteStreamSend" num = "0"/>
         <target component = "uplink" port = "framedIn" type = "Drv::ByteStreamSend" num = "0"/>
     </connection>
     <connection name = "UplinkDeallocate">
@@ -128,10 +127,10 @@
     </connection>
     <connection name = "DownlinkSend">
         <source component = "downlink" port = "framedOut" type = "Fw::BufferSend" num = "0"/>
-        <target component = "downlinkComm" port = "send" type = "Drv::ByteStreamSend" num = "0"/>
+        <target component = "comm" port = "send" type = "Drv::ByteStreamSend" num = "0"/>
     </connection>
     <connection name = "DownlinkDeallocate">
-        <source component = "downlinkComm" port = "deallocate" type = "Fw::BufferSend" num = "0"/>
+        <source component = "comm" port = "deallocate" type = "Fw::BufferSend" num = "0"/>
         <target component = "staticMemory" port = "bufferDeallocate" type = "Fw::BufferSend" num = "1"/>
     </connection>
 
