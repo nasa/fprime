@@ -5,6 +5,8 @@
 #include <Os/Log.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
+#include <Svc/FramingProtocol/FprimeProtocol.hpp>
+
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <getopt.h>
 #include <stdlib.h>
@@ -23,7 +25,8 @@ enum {
 };
 
 Os::Log osLogger;
-
+Svc::FprimeDeframing deframing;
+Svc::FprimeFraming framing;
 
 // Registry
 #if FW_OBJECT_REGISTRATION == 1
@@ -74,7 +77,8 @@ Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
-Drv::SocketIpDriverComponentImpl socketIpDriver(FW_OPTIONAL_NAME("SocketIpDriver"));
+Drv::UdpComponentImpl downlinkComm(FW_OPTIONAL_NAME("UdpDownlink"));
+Drv::TcpClientComponentImpl uplinkComm(FW_OPTIONAL_NAME("TcpUplink"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
@@ -100,6 +104,12 @@ Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter
 
 Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
+Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
+
+Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+
+Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -113,7 +123,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
 #endif    
-
+    staticMemory.init(0);
     // Initialize rate group driver
     rateGroupDriverComp.init();
 
@@ -149,8 +159,10 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     prmDb.init(10,0);
 
     groundIf.init(0);
-    socketIpDriver.init(0);
-
+    uplinkComm.init(0);
+    downlinkComm.init(0);
+    downlink.init(0);
+    uplink.init(0);
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
     fileDownlink.configure(1000, 1000, 1000, 10);
@@ -165,6 +177,10 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
+
+    downlink.setup(framing);
+    uplink.setup(deframing);
+
     // Connect rate groups to rate group driver
     constructRefArchitecture();
 
@@ -248,9 +264,20 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
+   
+
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+        Fw::EightyCharString name("ReceiveTask");
+        // Downlink is UDP and only configured for sending
+        downlinkComm.configureSend(hostname, port_number);
+        Drv::SocketIpStatus openStatus = downlinkComm.open();
+        if (openStatus != Drv::SOCK_SUCCESS) {
+            Fw::Logger::logMsg("[WARNING] Failed to one downlink socket with status: %d\n", openStatus);
+        }
+        // Uplink is configured for receive so a socket task is started
+        uplinkComm.configure(hostname, port_number);
+        uplinkComm.startSocketTask(name, 100, 10 * 1024);
     }
     return false;
 }

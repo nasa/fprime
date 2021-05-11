@@ -24,8 +24,13 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
-#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
+#include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
+#include <Svc/Framer/FramerComponentImpl.hpp>
+#include <Svc/Deframer/DeframerComponentImpl.hpp>
+
+#include <Drv/TcpClient/TcpClientComponentImpl.hpp>
+#include <Drv/Udp/UdpComponentImpl.hpp>
 
 void constructRefArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -56,6 +61,10 @@ extern Ref::RecvBuffImpl recvBuffComp;
 extern Ref::SendBuffImpl sendBuffComp;
 extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
 extern Ref::PingReceiverComponentImpl pingRcvr;
-extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 
+extern Svc::StaticMemoryComponentImpl staticMemory;
+extern Drv::TcpClientComponentImpl uplinkComm;
+extern Drv::UdpComponentImpl downlinkComm;
+extern Svc::FramerComponentImpl downlink;
+extern Svc::DeframerComponentImpl uplink;
 #endif
