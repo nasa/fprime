@@ -128,7 +128,7 @@ class ChData(sys_data.SysData):
         if self.val_obj is None:
             ch_val = "EMPTY CH OBJ"
         elif fmt_str:
-            ch_val = fmt_str % (self.val_obj.val)
+            ch_val = fmt_str % self.val_obj.val
         else:
             ch_val = str(self.val_obj.val)
 
@@ -162,7 +162,7 @@ class ChData(sys_data.SysData):
         if self.val_obj is None:
             return ""
         elif fmt_str:
-            return fmt_str % (self.val_obj.val)
+            return fmt_str % self.val_obj.val
         else:
             return str(self.val_obj.val)
 
