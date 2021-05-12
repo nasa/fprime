@@ -108,17 +108,17 @@ integrated configuration with ground in-the-loop.
     ],
     python_requires=">=3.6",
     install_requires=[
-        "flask",
-        "pexpect",
-        "pytest",
-        "flask_restful",
+        "flask==1.1.2",
+        "pexpect==4.8.0",
+        "pytest==6.2.4",
+        "flask_restful==0.3.8",
         "fprime>=1.3.0",
         "flask_uploads @ git+https://github.com/maxcountryman/flask-uploads@f66d7dc93e684fa0a3a4350a38e41ae00483a796",
-        "argcomplete",
+        "argcomplete==1.12.3",
     ],
     extras_require={
         # I and T API
-        "uart-adapter": "pyserial",
-        "test-api-xls": "openpyxl",
+        "uart-adapter": "pyserial==3.5",
+        "test-api-xls": "openpyxl==3.0.7",
     },
 )
