@@ -81,7 +81,7 @@ class BaseAdapter(abc.ABC):
             adapter_name = adapter.__module__
             adapter_short = adapter_name.split(".")[-1]
             # Check to use long or short name
-            if not adapter_short in adapter_map:
+            if adapter_short not in adapter_map:
                 adapter_name = adapter_short
             adapter_map[adapter_name] = adapter
         return adapter_map
