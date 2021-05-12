@@ -29,7 +29,7 @@
    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
    <import_component_type>RPI/RpiDemo/RpiDemoComponentAi.xml</import_component_type>
-   <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -81,16 +81,17 @@
    <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2700"  base_id_window="100" />
 
     <!-- Communications driver. May be swapped with other comm drivers like UART -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="2800" base_id_window="20" />
+    <!-- Note: here we have tcp reliable uplink, and downlink -->
+    <instance namespace="Drv" name="comm" type="ByteStreamDriverModel" base_id="621" base_id_window="20" />
 
     <!-- Communications driver connections -->
     <connection name = "CommunicationRecv">
-        <source component = "socketIpDriver" port = "recv" type = "Fw::BufferSend" num = "0"/>
+        <source component = "comm" port = "recv" type = "Drv::ByteStreamSend" num = "0"/>
         <target component = "groundIf" port = "readCallback" type = "Fw::BufferSend" num = "0"/>
     </connection>
     <connection name = "CommunicationSend">
         <source component = "groundIf" port = "write" type = "Fw::BufferSend" num = "0"/>
-        <target component = "socketIpDriver" port = "send" type = "Fw::BufferSend" num = "0"/>
+        <target component = "comm" port = "send" type = "Drv::ByteStreamRecv" num = "0"/>
     </connection>
 
    <!-- Command Registration/Dispatch/Reply Connections -->
