@@ -108,7 +108,7 @@ integrated configuration with ground in-the-loop.
     ],
     python_requires=">=3.6",
     install_requires=[
-        "flask",
+        "flask=1.1.2",
         "pexpect",
         "pytest",
         "flask_restful",
