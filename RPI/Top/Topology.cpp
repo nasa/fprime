@@ -35,7 +35,8 @@ Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEM
 
 // Command Components
 Svc::GroundInterfaceComponentImpl groundIf("GNDIF");
-Drv::SocketIpDriverComponentImpl socketIpDriver("SocketIpDriver");
+
+Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
 
 #if FW_ENABLE_TEXT_LOGGING
 Svc::ConsoleTextLoggerImpl textLogger("TLOG");
@@ -112,7 +113,7 @@ void constructApp(U32 port_number, char* hostname) {
     prmDb.init(10,0);
 
     groundIf.init(0);
-    socketIpDriver.init(0);
+    comm.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.configure(1000, 200, 100, 10);
@@ -235,9 +236,12 @@ void constructApp(U32 port_number, char* hostname) {
 
     uartDrv.startReadThread(100,10*1024,-1);
 
-    // Initialize socket server
+    // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        socketIpDriver.startSocketTask(100, 10 * 1024, hostname, port_number);
+        Fw::EightyCharString name("ReceiveTask");
+        // Uplink is configured for receive so a socket task is started
+        comm.configure(hostname, port_number);
+        comm.startSocketTask(name, 100, 10 * 1024);
     }
 }
 
@@ -254,6 +258,8 @@ void exitTasks(void) {
     fileDownlink.exit();
     cmdSeq.exit();
     rpiDemo.exit();
+    comm.stopSocketTask();
+    comm.joinSocketTask();
     fileUplinkBufferManager.cleanup();
 }
 

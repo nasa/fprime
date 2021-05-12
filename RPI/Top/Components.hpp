@@ -18,7 +18,6 @@
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
 
-#include <Drv/SocketIpDriver/SocketIpDriverComponentImpl.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
@@ -29,6 +28,8 @@
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include <Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.hpp>
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
+#include <Drv/TcpClient/TcpClientComponentImpl.hpp>
+#include <Drv/Udp/UdpComponentImpl.hpp>
 
 // Main app
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
@@ -65,7 +66,7 @@ extern Drv::LinuxGpioDriverComponentImpl gpio17Drv;
 
 extern Rpi::RpiDemoComponentImpl rpiDemo;
 
-extern Drv::SocketIpDriverComponentImpl socketIpDriver;
 extern Svc::GroundInterfaceComponentImpl groundIf;
 
+extern Drv::TcpClientComponentImpl comm;
 #endif
