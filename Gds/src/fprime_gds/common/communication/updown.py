@@ -146,8 +146,8 @@ class Uplinker:
     ):
         """Initializes the uplink class
 
-        Initialize the uplink class using a hardware adapter, ground handler, and framer.  loopback is used to virtualize
-        the return packet handshake as FSW does not handle that.
+        Initialize the uplink class using a hardware adapter, ground handler, and framer.
+        loopback is used to virtualize the return packet handshake as FSW does not handle that.
 
         Args:
             adapter: hardware adapter used to write raw outgoing data bytes
