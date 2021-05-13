@@ -38,13 +38,12 @@ class Decoder(
     addition it has a "data_callback" function implementation that decodes and sends out all results.
     """
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Data callback which calls the decode_api function exactly once. Then it passes the results to all registered
         consumer. This should only need to be overridden in extraordinary circumstances.
 
         :param data: data bytes to be decoded
-        :param sender: (optional) sender id, otherwise None
         """
         decoded = self.decode_api(data)
         if decoded is not None:
