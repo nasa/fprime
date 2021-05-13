@@ -26,7 +26,7 @@ from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeRngXmlValidationException
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -73,6 +73,7 @@ class XmlPortsParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close() #Close the file, which is only used for the parsing above        
 
         # Validate against schema
         relax_file_handler = open(ROOTDIR + self.__config.get("schema", "interface"))

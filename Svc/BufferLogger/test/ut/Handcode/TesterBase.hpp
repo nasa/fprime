@@ -755,18 +755,18 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BL_Deativated
+      // Event: BL_Deactivated
       // ----------------------------------------------------------------------
 
-      //! Handle event BL_Deativated
+      //! Handle event BL_Deactivated
       //!
-      virtual void logIn_ACTIVITY_LO_BL_Deativated(
+      virtual void logIn_ACTIVITY_LO_BL_Deactivated(
           void
       );
 
-      //! Size of history for event BL_Deativated
+      //! Size of history for event BL_Deactivated
       //!
-      U32 eventsSize_BL_Deativated;
+      U32 eventsSize_BL_Deactivated;
 
     protected:
 

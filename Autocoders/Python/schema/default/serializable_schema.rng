@@ -27,7 +27,7 @@
 
             <optional>
                 <attribute name = "typeid">
-                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serlializable files.</a:documentation>
+                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serializable files.</a:documentation>
                     <ref name = "id_define"></ref>
                 </attribute>
             </optional>
@@ -83,7 +83,7 @@
     <define name = "members_define">
         <!-- 'members' is just a tag that hold multiple 'member' tags -->
         <element name = "members">
-            <a:documentation>A collection of memeber items to define the serializable object.</a:documentation>
+            <a:documentation>A collection of member items to define the serializable object.</a:documentation>
             <oneOrMore>
                 <ref name = "member_define"></ref>
             </oneOrMore>
@@ -98,7 +98,7 @@
             <!-- Required attributes -->
 
             <attribute name = "name">
-                <a:documentation>Name of the memeber item.</a:documentation>
+                <a:documentation>Name of the member item.</a:documentation>
                 <text/>
             </attribute>
 
@@ -120,7 +120,7 @@
             </optional>
 
 
-            <!-- Type, size, and internal enum define are defined withing this ref -->
+            <!-- Type, size, and internal enum define are defined within this ref -->
             <ref name = "type_size_choice_define"></ref>
 
 

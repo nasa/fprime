@@ -33,11 +33,7 @@ from fprime_ac.utils.exceptions import (
     FprimeXmlException,
 )
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-# from __builtin__ import None
+import configparser
 
 # For Python determination
 
@@ -90,7 +86,7 @@ class XmlComponentParser:
         ## Dictionary of special_ports
         self.special_ports = self.Config._ConfigManager__prop["special_ports"]
 
-        ## get costants file name and read it in
+        ## get constants file name and read it in
         constants_file = self.Config.get("constants", "constants_file")
         if not os.path.isabs(constants_file):
             constants_file = os.path.join(ROOTDIR, constants_file)
@@ -103,6 +99,7 @@ class XmlComponentParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close() #Close the file, which is only used for the parsing above
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get("schema", "component"))
@@ -614,7 +611,7 @@ class XmlComponentParser:
                     n = event.attrib["name"]
                     s = event.attrib["severity"]
                     # FIXME: Move to configuration file
-                    serverity_list = [
+                    severity_list = [
                         "FATAL",
                         "WARNING_HI",
                         "WARNING_LO",
@@ -623,10 +620,10 @@ class XmlComponentParser:
                         "ACTIVITY_LO",
                         "DIAGNOSTIC",
                     ]
-                    if s not in serverity_list:
+                    if s not in severity_list:
                         PRINT.info(
                             "%s: Error: Event %s severity must be one of %s."
-                            % (xml_file, n, ",".join(serverity_list))
+                            % (xml_file, n, ",".join(severity_list))
                         )
                         sys.exit(-1)
                     f = event.attrib["format_string"]
@@ -1237,7 +1234,7 @@ class XmlComponentParser:
                     validator_type,
                     ROOTDIR + self.Config.get(validator_type, validator_name),
                 )
-                PRINT.info(msg)
+                raise FprimeXmlException(msg)
 
     def is_component(self):
         """

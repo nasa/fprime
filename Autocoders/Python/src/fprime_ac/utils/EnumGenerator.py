@@ -52,7 +52,7 @@ def write_template(fp, c, name, namespace, items, max_value, comment):
 def generate_enum(xml_file):
     """
     Produce a *Ac.hpp, *Ac.cpp, and *.py files for serializable enum's.
-    Return True if xml file was an enum, othersise return False and
+    Return True if xml file was an enum, otherwise return False and
     generate nothing.
     """
     xml = XmlParser.XmlParser(xml_file)

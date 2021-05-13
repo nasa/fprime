@@ -55,13 +55,13 @@ MathSender will have no parameters.
 
 `MathSender` should be an active (i.e. threaded) component, so it will process the commands immediately. The command will be *asynchronous*, which means the handler will be executed on the thread of the active component. It will delegate the operation to `MathReceiver`.
 
-## 1.2 MathReceiver 
+## 1.2 MathReceiver
 
 `MathReceiver` will be a queued component that performs the requested operation and returns the result. `MathReceiver` will be connected to the 1Hz rate group that is part of the reference example. The simple operation in this component could have just as easily been done in a passive or active component; it is done here as a queued component to illustrate how to implement one.
 
 ### 1.2.1 Commands
 
-`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multipled by this factor. It should default to 0 if the command is never invoked.
+`MathReceiver` should implement a MR_SET_FACTOR1 command. This command will set a factor used for any subsequent operations. The result of the commanded operation will be multiplied by this factor. It should default to 0 if the command is never invoked.
 
 `MathReceiver` should also implement a MR_CLEAR_EVENT_THROTTLE command to clear the throttled MR_SET_FACTOR1 event (see below).
 
@@ -94,12 +94,12 @@ result = (value1 operation value2)*factor1/factor2
 
 # 2 Implementation
 
-This section will cover the implementation of the components for this tutorial. The implementation of these components 
+This section will cover the implementation of the components for this tutorial. The implementation of these components
 will have the following steps:
 
 1) Define the `MathOpPort` and 'MathResultPort' ports that are used between the components.
 2) Define the `MathSender` component in XML and compile it.
-3) Implement the `MathSender` derived implementation class. 
+3) Implement the `MathSender` derived implementation class.
 4) Unit test the `MathSender` implementation component.
 5) Define the `MathReceiver` component in XML.
 6) Implement the `MathReceiver` implementation class.
@@ -154,7 +154,7 @@ The `interface` tag specifies that a port is being defined. The attributes are a
 |Attribute|Description|
 |---|---|
 |name|The name of the component type. Becomes the C++ class name|
-|namespace|The namespace of the component. The C++ namespace the where the component class will appear| 
+|namespace|The namespace of the component. The C++ namespace the where the component class will appear|
 
 #### 2.1.1.2 Port Argument Specification
 
@@ -221,7 +221,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
-``` 
+```
 
 The file after modification should look like the following:
 
@@ -232,11 +232,11 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
-``` 
+```
 
 Now that the ports directory is part of the build system, the port can be built. If you have not already generated a
 build directory for `Ref` as described in the "INSTALL.md" and the "Getting Started" tutorial, then run the following
-commands to generate a build. 
+commands to generate a build.
 
 ```shell
 # Change to Ref directory
@@ -256,7 +256,7 @@ The code generation from the XML produces two files, both of which are part of t
 
 ```
  MathOpPortAc.cpp
- MathOpPortAc.hpp 
+ MathOpPortAc.hpp
 ```
 These contain the C++ classes that implement the port functionality. The build system will automatically compile them when it is aware of the port XML file.
 
@@ -295,7 +295,7 @@ own to port definitions.
 
 ## 2.2 Serializable Definition
 
-A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the neccessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground sysmtem needs an XML definition to decode them.
+A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the necessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground system needs an XML definition to decode them.
 
 ### 2.2.1 MathOp
 
@@ -313,8 +313,8 @@ The `MathOp` serializable structure is needed by `MathReceiver` for a telemetry 
             <enum name="Operation">
                 <item name="ADD"/>
                 <item name="SUB"/>
-                <item name="MULT"/>           
-                <item name="DIVIDE"/>           
+                <item name="MULT"/>
+                <item name="DIVIDE"/>
             </enum>
         </member>
         <member name="result" type="F32"/>
@@ -353,8 +353,8 @@ The `members` tag starts the section of the XML that specifies the members of th
             <enum name="Operation">
                 <item name="ADD"/>
                 <item name="SUB"/>
-                <item name="MULT"/>           
-                <item name="DIVIDE"/>           
+                <item name="MULT"/>
+                <item name="DIVIDE"/>
             </enum>
         </member>
         <member name="result" type="F32"/>
@@ -363,7 +363,7 @@ The `members` tag starts the section of the XML that specifies the members of th
 
 As with the arguments to port definitions, built-in types can be specified as well as enumerations.
 
-As before with the port definitions, the `Ref/MathTypes` directory needs to be added to `Ref/CMakeLists.txt`.  
+As before with the port definitions, the `Ref/MathTypes` directory needs to be added to `Ref/CMakeLists.txt`.
 
 ```cmake
 ...
@@ -373,7 +373,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
-``` 
+```
 
 This XML defined structure compiles to a C++ class that has accessors for the members of the structure.
 
@@ -408,16 +408,16 @@ The `MathSender` component XML definition is as follows. The XML should be place
             <args>
                 <arg name="val1" type="F32">
                     <comment>The first value</comment>
-                </arg>          
+                </arg>
                 <arg name="val2" type="F32">
                     <comment>The second value</comment>
-                </arg>          
+                </arg>
                 <arg name="operation" type="ENUM">
                     <enum name="MathOp">
                         <item name="ADD"/>
                         <item name="SUBTRACT"/>
-                        <item name="MULTIPLY"/>           
-                        <item name="DIVIDE"/>           
+                        <item name="MULTIPLY"/>
+                        <item name="DIVIDE"/>
                     </enum>
                     <comment>The operation to perform</comment>
                 </arg>
@@ -439,8 +439,8 @@ The `MathSender` component XML definition is as follows. The XML should be place
             <enum name="MathOpTlm">
                 <item name="ADD_TLM"/>
                 <item name="SUB_TLM"/>
-                <item name="MULT_TLM"/>           
-                <item name="DIV_TLM"/>           
+                <item name="MULT_TLM"/>
+                <item name="DIV_TLM"/>
             </enum>
             <comment>
             The operation
@@ -460,19 +460,19 @@ The `MathSender` component XML definition is as follows. The XML should be place
             <args>
                 <arg name="val1" type="F32">
                     <comment>The val1 argument</comment>
-                </arg>          
+                </arg>
                 <arg name="val2" type="F32">
                     <comment>The val2 argument</comment>
-                </arg>          
+                </arg>
                 <arg name="op" type="ENUM">
                     <comment>The requested operation</comment>
                 <enum name="MathOpEv">
                     <item name="ADD_EV"/>
                     <item name="SUB_EV"/>
-                    <item name="MULT_EV"/>           
-                    <item name="DIV_EV"/>           
+                    <item name="MULT_EV"/>
+                    <item name="DIV_EV"/>
                 </enum>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
@@ -482,7 +482,7 @@ The `MathSender` component XML definition is as follows. The XML should be place
             <args>
                 <arg name="result" type="F32">
                     <comment>The math result</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>
@@ -527,7 +527,7 @@ The path in the port import statement is relative to the root of the repository.
 
 #### 2.3.1.3 Port Declarations
 
-Ports and their attributes are declared once the port definitions are included. 
+Ports and their attributes are declared once the port definitions are included.
 
 ```xml
     <ports>
@@ -549,7 +549,7 @@ The port attributes are:
 |Attribute|Description|
 |---|---|
 |name|The port name|
-|data_type|The type of the port as defined in the included port definitions, in the form `namepace::name`|
+|data_type|The type of the port as defined in the included port definitions, in the form `namespace::name`|
 |kind|The kind of port. Can be `sync_input`,`async_input`,`guarded_input`, or `output`|
 
 For `MathSender`, the request for the operation will be sent on the `mathOut` output port, and the result will be returned on the `mathIn` asynchronous port. Because the component is active and the result input port is asynchronous, the port handler will execute on the thread of `MathSender`.
@@ -567,16 +567,16 @@ The commands defined for the component are:
             <args>
                 <arg name="val1" type="F32">
                     <comment>The first value</comment>
-                </arg>          
+                </arg>
                 <arg name="val2" type="F32">
                     <comment>The second value</comment>
-                </arg>          
+                </arg>
                 <arg name="operation" type="ENUM">
                     <enum name="MathOp">
                         <item name="ADD"/>
                         <item name="SUBTRACT"/>
-                        <item name="MULTIPLY"/>           
-                        <item name="DIVIDE"/>           
+                        <item name="MULTIPLY"/>
+                        <item name="DIVIDE"/>
                     </enum>
                     <comment>The operation to perform</comment>
                 </arg>
@@ -613,8 +613,8 @@ The telemetry XML is as follows:
             <enum name="MathOpTlm">
                 <item name="ADD_TLM"/>
                 <item name="SUB_TLM"/>
-                <item name="MULT_TLM"/>           
-                <item name="DIV_TLM"/>           
+                <item name="MULT_TLM"/>
+                <item name="DIV_TLM"/>
             </enum>
             <comment>
             The operation
@@ -649,19 +649,19 @@ The XML for the defined events is as follows:
             <args>
                 <arg name="val1" type="F32">
                     <comment>The val1 argument</comment>
-                </arg>          
+                </arg>
                 <arg name="val2" type="F32">
                     <comment>The val1 argument</comment>
-                </arg>          
+                </arg>
                 <arg name="op" type="ENUM">
                     <comment>The requested operation</comment>
                 <enum name="MathOpEv">
                     <item name="ADD_EV"/>
                     <item name="SUB_EV"/>
-                    <item name="MULT_EV"/>           
-                    <item name="DIV_EV"/>           
+                    <item name="MULT_EV"/>
+                    <item name="DIV_EV"/>
                 </enum>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
@@ -671,7 +671,7 @@ The XML for the defined events is as follows:
             <args>
                 <arg name="result" type="F32">
                     <comment>The math result</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
     </events>
@@ -697,7 +697,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathSender/")
-``` 
+```
 
 Create a `CMakeLists.txt` file in `Ref/MathSender` and add `MathSenderComponentAi.xml`.
 
@@ -749,7 +749,7 @@ The `MathReceiver` component XML is as follows:
             <args>
                 <arg name="val" type="F32">
                     <comment>The first factor</comment>
-                </arg>          
+                </arg>
              </args>
         </command>
         <command kind="async" opcode="1" mnemonic="MR_CLEAR_EVENT_THROTTLE">
@@ -787,7 +787,7 @@ The `MathReceiver` component XML is as follows:
             <args>
                 <arg name="val" type="F32">
                     <comment>The factor value</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="1" name="MR_UPDATED_FACTOR2" severity="ACTIVITY_HI" format_string = "Factor 2 updated to: %f" >
@@ -797,7 +797,7 @@ The `MathReceiver` component XML is as follows:
             <args>
                 <arg name="val" type="F32">
                     <comment>The factor value</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="2" name="MR_OPERATION_PERFORMED" severity="ACTIVITY_HI" format_string = "Operation performed: %s" >
@@ -807,7 +807,7 @@ The `MathReceiver` component XML is as follows:
             <args>
                 <arg name="val" type="Ref::MathOp">
                     <comment>The operation</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
         <event id="3" name="MR_THROTTLE_CLEARED" severity="ACTIVITY_HI" format_string = "Event throttle cleared" >
@@ -823,7 +823,7 @@ The `MathReceiver` component XML is as follows:
             </comment>
         </parameter>
     </parameters>
-    
+
 </component>
 ```
 
@@ -884,7 +884,7 @@ The `MR_SET_FACTOR1` event has a new argument `throttle = "3"` that specifies ho
             <args>
                 <arg name="val" type="F32">
                     <comment>The factor value</comment>
-                </arg>          
+                </arg>
             </args>
         </event>
 ```
@@ -919,7 +919,7 @@ The `parameter` attributes are as follows:
 
 ## 2.4 Component Implementation
 
-The component implementation consists of writing a class that is derived from the code-generated base class and filling in member functions that implement the port calls. 
+The component implementation consists of writing a class that is derived from the code-generated base class and filling in member functions that implement the port calls.
 
 ### 2.4.1 MathSender Implementation
 
@@ -960,7 +960,7 @@ The stub files should successfully compile.
 
 #### 2.4.1.2 Handler implementation
 
-The next step is to fill in the handler with implementation code. 
+The next step is to fill in the handler with implementation code.
 
 First, find the empty command handler in the `MathSenderComponentImpl.cpp` file:
 
@@ -1029,11 +1029,11 @@ Then, fill in the function with the code to perform the functions described at t
 
 ```
 
-The handler will send the appropriate events and telemetry values, then invoke the output math operation port to request the operation. 
-Note that each channel and event argument that has an enumeration has a unique type declaration. 
-Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete. 
-If the completion status isn't sent, it will stall any sequences the command was part of. 
-There are command error status along with successful completions. 
+The handler will send the appropriate events and telemetry values, then invoke the output math operation port to request the operation.
+Note that each channel and event argument that has an enumeration has a unique type declaration.
+Finally, note that the output command response port must be called with a command status in order to let the framework components know that the command is complete.
+If the completion status isn't sent, it will stall any sequences the command was part of.
+There are command error status along with successful completions.
 Most commands return this status at the end of the handler, but component implementations can store the `opCode` and `cmdSeq` values to return later, but those specific values must be returned in order to match the status with the command originally sent.
 
 Find the empty result handler:
@@ -1242,9 +1242,9 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
     ...
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Test operation command
       //!
@@ -1259,13 +1259,13 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
 
 The next step is to add the specific test cases to the `Tester.cpp` implementation file. It is important to note that the unit tests are designed to be single-threaded. The active components do not have their threads started, so any messages to asynchronous ports are manually retrieved from the message queue and dispatched to handlers. This makes testing simpler since the execution of the thread in response to port calls or commands does not need to be managed. Examples of this will be seen in the test code.
 
-The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telmetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
+The first test case will be to test the `MS_DO_MATH` command for the addition operation. In the example component implementation, `MS_DO_MATH` command calls the `mathOut` output port and emits some channelized telemetry and events. The test component provides methods for invoking the command and checking that the telemetry and events were emitted as expected. The steps to write the test case are as follows:
 
 Add a member function to the implementation class in `Tester.cpp` to implement the test case:
 
 ```c++
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -1319,7 +1319,7 @@ Add a member function to the implementation class in `Tester.cpp` to implement t
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expected value of the event arguments
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
 ```
@@ -1423,18 +1423,24 @@ Next, the test checks for the expected telemetry and events:
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expected value of the event
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
 ```
 
 The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
 
-To build the unit test, type:
+You must first generate the unit test before you can build it. Enter:
+
+```
+fprime-util generate --ut
+```
+
+Once you generate the unit test, you can build the unit test by entering:
 
 ```
 fprime-util build --ut
 ```
 
-The unit test can be run by typing the following in the `MathSender` (not `test/ut`) directory:
+You can run the unit test by typing the following in the `MathSender` (not `test/ut`) directory:
 
 ```shell
 $ fprime-util check
@@ -1474,7 +1480,7 @@ Add the stub files to `CMakeLists.txt`:
 
 ```cmake
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponent.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/MathReceiverComponentImpl.cpp"
 )
 register_fprime_module()
@@ -1484,7 +1490,7 @@ Add the files and compile them: `fprime-util build`
 
 ##### 2.4.2.1.1 Port handler
 
-Look for the empty port hander in the sub class:
+Look for the empty port handler in the sub class:
 
 ```c++
   void MathReceiverComponentImpl ::
@@ -1566,9 +1572,9 @@ U32 m_factor1s;
 
 
 
-In this handler, the operation is done based on the port arguments from `MathSender`. 
-The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`. 
-The parameter value is retrieved during initialization and is returned via the `paramGet_factor2()` call. 
+In this handler, the operation is done based on the port arguments from `MathSender`.
+The `op` structure is populated for the event and telemetry calls, and the `mathOut` port is called to send the result back to `MathSender`.
+The parameter value is retrieved during initialization and is returned via the `paramGet_factor2()` call.
 The commands to set and save the factor2 parameter run entirely in the code generated base classes.
 
 ##### 2.4.2.1.2 Commands
@@ -1593,7 +1599,7 @@ The command handler to update the value of `factor1` is as follows:
 
 ```
 
-The telemetry and log values are sent, and the command response is sent. 
+The telemetry and log values are sent, and the command response is sent.
 Note that after three calls to the handler, the `this->log_ACTIVITY_HI_MR_SET_FACTOR1(val)` call will not actually send any events until the throttle is cleared.
 The throttled state is part of the generated code.
 
@@ -1616,7 +1622,7 @@ The handler to clear the throttle is as follows:
 ```
 ##### 2.4.2.1.3 Scheduler Call
 
-The port invoked by the scheduler retrieves the messages from the message queue and dispatches them. 
+The port invoked by the scheduler retrieves the messages from the message queue and dispatches them.
 The message dispatches invoke the command and input port handlers that were implemented earlier in the tutorial.
 
 ```c++
@@ -1639,7 +1645,7 @@ The message dispatches invoke the command and input port handlers that were impl
 
 The developer can optionally receive a notification that a parameter has been updated by overriding a virtual function in the code generated base class:
 
-```c++ 
+```c++
   void MathReceiverComponentImpl ::
      parameterUpdated(
       FwPrmIdType id /*!< The parameter ID*/
@@ -1659,7 +1665,7 @@ Add the function to the header file:
   F32 m_factor1;
   // number of times factor1 has been written
   U32 m_factor1s;
-  
+
   void parameterUpdated(
       FwPrmIdType id /*!< The parameter ID*/
   );
@@ -1669,7 +1675,7 @@ Once it is added, add the directory to the build and build the component by typi
 
 #### 2.4.2.2 Unit Tests
 
-See section `2.4.1.3.1` for directions on how to generate unit test stubs and copy them to the correct subdirectory. 
+See section `2.4.1.3.1` for directions on how to generate unit test stubs and copy them to the correct subdirectory.
 The `MathReceiver` tests are similar to `MathSender`.
 
 ##### 2.4.2.2.1 Test Code Implementation
@@ -1682,23 +1688,23 @@ The full unit test code for the `MathReceiver` component can be found in the `do
 
 ```c++
   void Tester ::
-    testAddCommand(void) 
+    testAddCommand(void)
   {
       // load parameters
       this->component.loadParameters();
       ...
 ```
 
-The `loadParameters()` call will attempt to load any parameters that the component needs. 
-The `this->paramSet_*` functions in the `*TesterBase` base classes allow the developer to set parameter and status values prior to the `loadParameters()` 
-With no manually set parameter values preceding the call, in this test case the parameter value is set to the default value. 
+The `loadParameters()` call will attempt to load any parameters that the component needs.
+The `this->paramSet_*` functions in the `*TesterBase` base classes allow the developer to set parameter and status values prior to the `loadParameters()`
+With no manually set parameter values preceding the call, in this test case the parameter value is set to the default value.
 It is a way to test default settings for parameters.
 
 `Tester.cpp`, line 206:
 
 ```c++
   void Tester ::
-    testSubCommand(void) 
+    testSubCommand(void)
   {
       // set the test value for the parameter before loading - it will be initialized to this value
       this->paramSet_factor2(5.0,Fw::PARAM_VALID);
@@ -1731,7 +1737,7 @@ The `Ref::Mathop` class is the C++ implementation of the serializable type defin
 
 ```c++
   void Tester ::
-    testThrottle(void) 
+    testThrottle(void)
   {
 ```
 
@@ -1744,14 +1750,22 @@ This unit test demonstrates how event throttling works. The event is repeatedly 
       this->sendCmd_MR_CLEAR_EVENT_THROTTLE(0,10);
 ```
 
+The header file should be updated to include the `testThrottle` method as a public member.
+
+`Tester.hpp`, line 51:
+
+```c++
+void testThrottle(void);
+```
+
 
 # 3 Topology
 
-Now that the two components are defined, implemented and unit tested they can to be added to the `Ref` topology. 
-The topology describes the interconnection of all the components so the system operates as intended. 
-They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F´ repository as well as custom components written for the `Ref` reference example including the ones in this tutorial. 
-The `Ref` topology has already been developed as an example. 
-The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration. 
+Now that the two components are defined, implemented and unit tested they can to be added to the `Ref` topology.
+The topology describes the interconnection of all the components so the system operates as intended.
+They consist of the core Command and Data Handling (C&DH) components that are part of the reusable set of components that come with the F´ repository as well as custom components written for the `Ref` reference example including the ones in this tutorial.
+The `Ref` topology has already been developed as an example.
+The tutorial will add the `MathSender` and `MathReceiver` components to the existing demonstration.
 It involves modification of a topology description XML file as well as accompanying C++ code to instantiate and initialize the components.
 
 ## 3.1 Define C++ Component Instances
@@ -1797,7 +1811,7 @@ Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
 Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 ```
 
-Where the other components are initialzed, add `MathSender` and `MathReceiver`:
+Where the other components are initialized, add `MathSender` and `MathReceiver`:
 
 `Ref/Top/Topology.cpp`, line 286:
 
@@ -1808,8 +1822,8 @@ Where the other components are initialzed, add `MathSender` and `MathReceiver`:
     mathReceiver.init(10,0);
 ```
 
-The first argument is the queue message depth. 
-This is the number of messages that can be pending while other messages are being dispatched. 
+The first argument is the queue message depth.
+This is the number of messages that can be pending while other messages are being dispatched.
 
 After all the components are initialized, the generated function `constructRefArchitecture()` (see `RefTopologyAppAc.cpp`) can be called to connect the components together. How this function is generated will be seen later in the tutorial.
 
@@ -1871,11 +1885,11 @@ The arguments to the `start()` function is as follows:
 |3|Thread stack size. Passed to underlying OS|
 
 
-The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later. 
+The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later.
 It does not need to to have a thread started, since queued components do not have threads.
 
-The `exitTasks()` function is called when the process is shut down. 
-It contains `exit()` calls to all the active components. 
+The `exitTasks()` function is called when the process is shut down.
+It contains `exit()` calls to all the active components.
 These functions internally send a message to the component's thread to shut down.
 
 `Ref/Top/Topology.cpp`, line 396:
@@ -1887,9 +1901,9 @@ These functions internally send a message to the component's thread to shut down
 ```
 ## 3.2 Define Component Connections
 
-Components need to be connected to invoke each other via ports. 
-The connections are specified via a topology XML file. 
-The file for the Ref example is located in `Ref/Top/RefTopologyAppAi.xml` 
+Components need to be connected to invoke each other via ports.
+The connections are specified via a topology XML file.
+The file for the Ref example is located in `Ref/Top/RefTopologyAppAi.xml`
 The connections for the new components will be added to the existing connections.
 
 ### 3.2.1 Component Imports
@@ -1899,7 +1913,8 @@ The component XML definitions must be imported into the topology file:
 `Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
-	<import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+	<import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+
 
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
@@ -1932,10 +1947,10 @@ The type must match the type declared in the component XML:
 <component name="MathSender" kind="active" namespace="Ref">
 ```
 
-The `base_id` attribute specifies the beginning range of the assigned IDs for commands, telemetry, events, and parameters. 
-The values declared in the component XML are added to this base address. 
-This allows multiple instances of components to be declared with unique ID ranges. 
-The `base_id_window` attribute is used to set a limit on ID ranges for spacing the base IDs from different components sufficiently apart. 
+The `base_id` attribute specifies the beginning range of the assigned IDs for commands, telemetry, events, and parameters.
+The values declared in the component XML are added to this base address.
+This allows multiple instances of components to be declared with unique ID ranges.
+The `base_id_window` attribute is used to set a limit on ID ranges for spacing the base IDs from different components sufficiently apart.
 If the IDs exceed the limit, the code generator will issue a warning.
 
 ### 3.2.3 Command connections
@@ -1964,7 +1979,7 @@ a unique number that hasn't been used yet in the `Ref` example.
         <source component = "mathReceiver" port = "CmdReg" type = "CmdReg" num = "0"/>
         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "21"/>
    </connection>
-   
+
     <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
 
    <connection name = "MathSenderDisp">
@@ -1975,7 +1990,7 @@ a unique number that hasn't been used yet in the `Ref` example.
         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "21"/>
         <target component = "mathReceiver" port = "CmdDisp" type = "Cmd" num = "0"/>
    </connection>
-   
+
     <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
 
    <connection name = "MathSenderReply">
@@ -1996,7 +2011,7 @@ The output connections for log ports are connected to the `eventLogger` componen
 
 ```xml
    <!-- Event Logger Binary Connections -->
-   
+
    <connection name = "MathSenderLog">
        <source component = "mathSender" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -2007,7 +2022,7 @@ The output connections for log ports are connected to the `eventLogger` componen
    </connection>
 
    <!-- Event Logger Text Connections -->
-   
+
    <connection name = "MathSenderTextLog">
        <source component = "mathSender" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
@@ -2037,7 +2052,7 @@ The telemetry output ports are connected to the `chanTlm` component.
        <source component = "mathReceiver" port = "Tlm" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
    </connection>
-   
+
 ```
 
 ### 3.2.6 Parameter Connections
@@ -2048,7 +2063,7 @@ There are two parameter connections, a `PrmGet` connection for reading parameter
 
 ```xml
    <!-- Parameter Connections -->
-   
+
    <connection name = "MathReceiverPrmGet">
        <source component = "mathReceiver" port = "ParamGet" type = "PrmGet" num = "0"/>
         <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
@@ -2109,22 +2124,22 @@ The final connection is the connection that performs the math operation. It goes
        <source component = "mathReceiver" port = "mathOut" type = "Ref::MathResult" num = "0"/>
         <target component = "mathSender" port = "mathIn" type = "Ref::MathResult" num = "0"/>
    </connection>
-   
+
 ```
 
-Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/Top` directory. 
-If the updates were correct, the module should compile with no errors. 
+Once all the updates to the topology file have been made, the module can be built by typing `fprime-util build` at the command line in the `Ref/` directory.
+If the updates were correct, the module should compile with no errors.
 The overall `Ref` deployment can be built by changing to the `Ref` directory and typing `fprime-util build`.
 
 If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
 
 ## 4.1 Running the Ground System
 
-Once the `Ref` example has successfully built, the ground system and executable can be run by typing `fprime-gds -d fprime/Ref`. The ground system GUI should appear:
+Once the `Ref` example has built successfully, you can run the ground system and executable by entering `fprime-gds -r fprime/Ref/build-artifacts`. The ground system GUI should appear.
 
 ### 4.1.1 Executing Commands
 
-Commands can be executed by selecting the `Commands` tab and clicking on the `Cmds` drop-down list. 
+Commands can be executed by selecting the `Commands` tab and clicking on the `Cmds` drop-down list.
 
 For the tutorial example, select the `MathSender` command `MS_DO_MATH` and fill in the arguments.
 
@@ -2167,7 +2182,7 @@ Notice that the `MS_OP`, `MS_VAL1`, `MS_VAL2`, `MR_OPERATION`, and `MS_RESULT` a
 
 ### 4.1.8 Parameter Updates
 
-The tutorial defined a `factor2` parameter in the `MathReceiver` component. The code generator creates two commands for each parameter: `XXXX_PRM_SET` and `XXX_PRM_SAVE` where `XXX` is an upper case version of the parameter name. The `FACTOR2_PRM_SET` command will set the value in `MathReceiver`, while `FACTOR2_PRM_SAVE` will send the current value to `PrmDb` for storage. `PrmDb` is an F' infrastructure component that reads and writes parameters to storage. It is important to note that `PrmDb` does not immediately write the value to storage. There is an explicit `PRM_SAVE_FILE` command that will take all the parameter values currently in RAM and write them. 
+The tutorial defined a `factor2` parameter in the `MathReceiver` component. The code generator creates two commands for each parameter: `XXXX_PRM_SET` and `XXX_PRM_SAVE` where `XXX` is an upper case version of the parameter name. The `FACTOR2_PRM_SET` command will set the value in `MathReceiver`, while `FACTOR2_PRM_SAVE` will send the current value to `PrmDb` for storage. `PrmDb` is an F' infrastructure component that reads and writes parameters to storage. It is important to note that `PrmDb` does not immediately write the value to storage. There is an explicit `PRM_SAVE_FILE` command that will take all the parameter values currently in RAM and write them.
 
 #### 4.1.8.1 Setting the Parameter Value
 

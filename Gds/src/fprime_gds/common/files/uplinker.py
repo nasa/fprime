@@ -110,7 +110,7 @@ class UplinkQueue:
                 if file_obj is None or not self.running:
                     self.queue.put(file_obj)
                     break
-                # Once a file is obtained from the queue, aquire the busy lock before starting. This prevents a in-use
+                # Once a file is obtained from the queue, acquire the busy lock before starting. This prevents a in-use
                 # or paused queue from uplinking.
                 self.busy.acquire()
                 self.uplinker.start(file_obj)
@@ -309,7 +309,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
 
     def finish(self, wait_for_handshake=True):
         """
-        Finishes the current file uplink by closing the file, and starting the end processs. If the uplinker should
+        Finishes the current file uplink by closing the file, and starting the end process. If the uplinker should
         immediately terminate (like during a timeout) then set wait_for_handshake to False.
 
         :param wait_for_handshake: (optional) wrap up cleanly by waiting for handshake. Default: True, clean wait

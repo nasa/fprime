@@ -112,6 +112,7 @@ namespace Os {
 #else
                 ;
 #endif
+                break;
             case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
                 break;

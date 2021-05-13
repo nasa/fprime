@@ -167,7 +167,7 @@ public class LoadIDConfig {
 	 * @throws LoadIDException
 	 */
 	public static void changeModel(Element root , Project proj ,  Map<String , configItem> configMap) throws LoadIDException{
-		Collection<Element> coll = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
+		Collection<Element> collection = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
 		ArrayList<Element> componentList = new ArrayList<Element>();
 		Stereotype componentInstanceStereotype = StereotypesHelper.getStereotype(proj, "ComponentInstance");
 		
@@ -178,7 +178,7 @@ public class LoadIDConfig {
 		}
 		
 		//Iterate through all the elements in the model
-		for(Element el : coll) {
+		for(Element el : collection) {
 			if(el instanceof NamedElement) {
 				NamedElement elNamed  = (NamedElement) el;
 				if (el.getHumanType().equals("Part Property") || el.getHumanType().equals("Reference Property") ){
@@ -223,7 +223,7 @@ public class LoadIDConfig {
 		}
 		
 		//Set base IDs of subsystems to zero. This wasn't done in the earlier loop to ensure the model and files are valid before any changes are made
-		for(Element el : coll) {
+		for(Element el : collection) {
 			if(el instanceof NamedElement) {
 				if (el.getHumanType().equals("Subsystem")) {
 					StereotypesHelper.setStereotypePropertyValue(el , componentInstanceStereotype, "BaseID" , 0);
@@ -311,7 +311,7 @@ public class LoadIDConfig {
 				}
 				catch(Exception e){
 					if(lineNumber > 0){
-						Utils.notifyWarning("Line numer " + lineNumber + " in file " + path + " has items in columns three and/or four that cannot be parsed to an integer.");
+						Utils.notifyWarning("Line number " + lineNumber + " in file " + path + " has items in columns three and/or four that cannot be parsed to an integer.");
 					}
 				}
 				

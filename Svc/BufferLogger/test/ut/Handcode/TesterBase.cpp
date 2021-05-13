@@ -1418,7 +1418,7 @@ namespace Svc {
 
       }
 
-      case BufferLoggerComponentBase::EVENTID_BL_DEATIVATED: 
+      case BufferLoggerComponentBase::EVENTID_BL_DEACTIVATED: 
       {
 
 #if FW_AMPCS_COMPATIBLE
@@ -1431,7 +1431,7 @@ namespace Svc {
             static_cast<AssertArg>(_zero_status)
         );
 #endif    
-        this->logIn_ACTIVITY_LO_BL_Deativated();
+        this->logIn_ACTIVITY_LO_BL_Deactivated();
 
         break;
 
@@ -1474,7 +1474,7 @@ namespace Svc {
     this->eventHistory_BL_LogFileValidationError->clear();
     this->eventHistory_BL_LogFileWriteError->clear();
     this->eventsSize_BL_Activated = 0;
-    this->eventsSize_BL_Deativated = 0;
+    this->eventsSize_BL_Deactivated = 0;
     this->eventsSize_BL_NoLogFileOpenInitError = 0;
   }
 
@@ -1639,15 +1639,15 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Event: BL_Deativated 
+  // Event: BL_Deactivated 
   // ----------------------------------------------------------------------
 
   void BufferLoggerTesterBase ::
-    logIn_ACTIVITY_LO_BL_Deativated(
+    logIn_ACTIVITY_LO_BL_Deactivated(
         void
     )
   {
-    ++this->eventsSize_BL_Deativated;
+    ++this->eventsSize_BL_Deactivated;
     ++this->eventsSize;
   }
 

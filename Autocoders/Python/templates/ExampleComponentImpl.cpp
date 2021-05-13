@@ -27,7 +27,7 @@ namespace ExampleComponents {
 
     void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::mytype arg2, U8 arg3, Example3::ExampleSerializable arg4, AnotherExample::SomeEnum arg5) {
         Fw::TlmString arg = "A string arg";
-        // write some telemtry
+        // write some telemetry
         this->tlmWrite_stringchan(arg);
         // call the output port
         if (this->isConnected_exampleOutput_OutputPort(0)) {

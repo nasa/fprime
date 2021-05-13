@@ -2,7 +2,7 @@
 // Author: Nathan Serafin (nathan.serafin@jpl.nasa.gov)
 // Date: 27 July, 2018
 //
-// OS-independant wrapper for events.
+// OS-independent wrapper for events.
 
 #ifndef EVENT_HPP
 #define EVENT_HPP

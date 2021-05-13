@@ -82,7 +82,7 @@ class schema_test:
         """
         Add test case to object.
 
-        test_name - Way of identifiying the test
+        test_name - Way of identifying the test
         xml_path - Path to xml test file
         error_class - What sort of error that is going to be thrown. If error_class is None, it is assumed that the test will pass without raising exceptions.
         parsed_xml - Add the etree of the XML if available.
@@ -131,7 +131,7 @@ class schema_test:
 
     def run_all_tests(self):
         """
-        Runs all the tests consecutivley.
+        Runs all the tests consecutively.
         """
         for index in range(len(self.__test_set_list)):
             self.run_test(index)
@@ -290,7 +290,7 @@ def setup():
         AssertionError,
     )
     event_test.add_test(
-        "Formot string missing",
+        "Format string missing",
         "sample_XML_files/event/missingFormatString.xml",
         AssertionError,
     )

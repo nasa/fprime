@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar  xmlns="http://relaxng.org/ns/structure/1.0" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
 
-    <!-- Defenitions for items that can only have specific values -->
+    <!-- Definitions for items that can only have specific values -->
 
     <define name = "full_items_define">
         <a:documentation>Valid values for the full tag.</a:documentation>
@@ -278,14 +278,14 @@
     </define>
 
     <define name="type_size_choice_define">
-        <!-- This is a common choice withing many elements. -->
+        <!-- This is a common choice within many elements. -->
 
         <choice>
 
             <!-- Choice one: Type = string and size is also an attribute -->
             <group>
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <value>string</value>
@@ -307,7 +307,7 @@
             <!--Choice two: Type = ENUM and Enum element inside block -->
             <group>
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <value>ENUM</value>
@@ -328,7 +328,7 @@
 
 
                 <choice>
-                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telementry channels -->
+                    <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name = "type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
                         <!-- Any string BUT ENUM -->

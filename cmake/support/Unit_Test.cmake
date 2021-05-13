@@ -12,13 +12,15 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
     return()
 endif()
 
+set(MEM_TEST_CLI_OPTIONS '--leak-check=full --error-exitcode=100 --show-leak-kinds=all -v')
+
 # Enable testing, setup CTest, etc.
 enable_testing()
 include( CTest )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND}
                   --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                  --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
+                  --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                   -T MemCheck)
 
 ####
@@ -106,7 +108,7 @@ endfunction(unit_test_component_autocoder)
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-    # their separate peices. 
+    # their separate pieces. 
     #
     # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
     # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
@@ -138,12 +140,19 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     if (NOT TARGET "${MODULE_NAME}_check_leak")
         add_custom_target("${MODULE_NAME}_check_leak" COMMAND ${CMAKE_CTEST_COMMAND}
                               --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                              --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
+                              --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                               --verbose -T MemCheck)
     endif()
+    
+    # Add top ut wrapper for this module
+    if (NOT TARGET "${MODULE_NAME}_ut_exe")
+      add_custom_target("${MODULE_NAME}_ut_exe")
+    endif()
+    
     add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
     add_dependencies("${MODULE_NAME}_check_leak" ${UT_EXE_NAME})
-    
+    add_dependencies("${MODULE_NAME}_ut_exe" ${UT_EXE_NAME})
+
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
 	    print_dependencies(${UT_EXE_NAME})

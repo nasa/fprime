@@ -50,18 +50,18 @@ function clobber
     cd "${FPRIME}"
     clobber "${DOXY_OUTPUT}"
     (
-        mkdir -p "${FPRIME}/docs-build-for-docs"
-        cd "${FPRIME}/docs-build-for-docs"
+        mkdir -p "${FPRIME}/build-fprime-automatic-docs"
+        cd "${FPRIME}/build-fprime-automatic-docs"
         cmake "${FPRIME}" -DCMAKE_BUILD_TYPE=RELEASE
     )
-    fprime-util build -b "${FPRIME}/docs-build-for-docs" -j32
+    fprime-util build "docs" -j32
     if (( $? != 0 ))
     then
         echo "[ERROR] Failed to build fprime please generate build cache"
         exit 2 
     fi
     ${DOXYGEN} "${FPRIME}/docs/doxygen/Doxyfile"
-    rm -r "${FPRIME}/docs-build-for-docs"
+    rm -r "${FPRIME}/build-fprime-automatic-docs"
 ) || exit 1
 
 # CMake

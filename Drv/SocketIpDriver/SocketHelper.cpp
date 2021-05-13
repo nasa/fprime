@@ -228,7 +228,7 @@ namespace Drv {
                 break;
             }
             // Error returned, and it wasn't an interrupt
-            else if (sent == -1 && errno == EINTR) {
+            else if (sent == -1 && errno != EINTR) {
                 Fw::Logger::logMsg("[ERROR] IP send failed ERRNO: %d UDP: %d\n", errno, m_sendUdp);
                 break;
             }

@@ -27,7 +27,7 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 ```
 
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
-with a ;. The example file above goes into greater explaination of the sample commands.
+with a ;. The example file above goes into greater explanation of the sample commands.
 
 ## Compiling A Sample Sequence
 
@@ -37,7 +37,7 @@ Below is an example on how to run the sample example sequence with the Ref dicti
 dictionary will not be generated.
 
 ```
-fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyAppDictionary.xml 
+fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifacts/*/dict/RefTopologyAppDictionary.xml
 ```
 
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with
@@ -56,7 +56,7 @@ application.
 cmdSeq.CS_RUN	"/tmp/sample_sequence.bin"
 ```
 
-**Note:** the sample sequence will run for multiple hours due to the specification of the relative commands. 
+**Note:** the sample sequence will run for multiple hours due to the specification of the relative commands.
 
 ## Time Details
 
@@ -88,5 +88,5 @@ source.  Available time sources are below:
 | TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
 | TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
 
-**Note:** the above discriptions represent typically usages of these time bases but are project specific i.e.
+**Note:** the above descriptions represent typically usages of these time bases but are project specific i.e.
 TB_SC_TIME might derive time from an internet time source.

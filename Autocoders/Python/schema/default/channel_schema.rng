@@ -23,14 +23,14 @@
 
 
             <oneOrMore>
-                <ref name = "channel_defenition"></ref>
+                <ref name = "channel_definition"></ref>
             </oneOrMore>
         </element>
     </define>
 
-    <define name = "channel_defenition">
+    <define name = "channel_definition">
         <element name = "channel">
-            <a:documentation>Defenition for a telemetry channel.</a:documentation>
+            <a:documentation>Definition for a telemetry channel.</a:documentation>
 
             <!-- Required Attributes -->
 

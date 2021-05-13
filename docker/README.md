@@ -14,8 +14,8 @@ the need to ensure every worker has F´ build dependencies installed.
 Our Dockerfile is organized into substages. The first stage is setup with just the tools installed
 and the entrypoint is setup to be a generic `bash` prompt. This stage may be used for projects
 that want their developers using Docker as an environment.  The other stage is the Jenkins-CI stage
-that adds in the needed user setup for running continuous integration on Jenkins CI.  **Note:** 
-F´ CI using GitHub actions is done off from the base image, as these Actions do not require extensive
+that adds in the needed user setup for running continuous integration on Jenkins CI. 
+> **Note:** F´ CI using GitHub actions is done off from the base image, as these Actions do not require extensive
 user setup like Jenkins.
 
 ### Building Docker Images
@@ -23,7 +23,7 @@ user setup like Jenkins.
 This section will describe building each Docker image in turn. In the end, the user will have built
 the `latest` docker images and these will be available for users to run.
 
-**Note:** this base does not require a context (files from the local machine) to build but docker
+> **Note:** this base does not require a context (files from the local machine) to build but docker
 will "upload" one anyway. Thus we `cd` into the directory in order to assure that we are uploading
 as few files as possible.
 
@@ -79,8 +79,8 @@ the fprime-base image has been built or downloaded as latest. If downloaded, run
 `nasafprime/fprime-base:latest` instead of just `fprime-base:latest`. An fprime checkout should be
 mapped into the container.
 
-**Note:** the user/developer should understand Docker UUIDs and the implications in mounting volumes
-into a running Docker container because this differs accross host OSes.
+> **Note:** the user/developer should understand Docker UUIDs and the implications in mounting volumes
+into a running Docker container because this differs across host OSes.
 
 ### Run the F´Docker Image Manually
 ```bash

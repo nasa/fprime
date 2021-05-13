@@ -32,6 +32,8 @@ class SerializableType(ValueType):
         if not isinstance(typename, str):
             raise TypeMismatchException(str, type(typename))
         self.__typename = typename
+
+        new_mem_list = []
         # If the member list is defined, stamp in None for any missing descriptions
         if mem_list:
             new_mem_list = [

@@ -3,7 +3,7 @@ Date: 15 Aug. 2013
 This is a PartitionHub Component which is a passive component (PartitionHubComponentAi.xml)
 with serialized input and serialized output ports.
 Yacgen requires a Port XML file so I also included a file called SerialPortAi.xml but
-I'm not sure what is supposed to go into this file. At the moment its giberish.
+I'm not sure what is supposed to go into this file. At the moment its gibberish.
 
 The expected source output from yacgen is captured as:
 PartitionHubPartitionHubComponentAcRef.cpp and PartitionHubPartitionHubComponentRef.hpp

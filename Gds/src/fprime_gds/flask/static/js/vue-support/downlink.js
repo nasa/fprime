@@ -28,7 +28,7 @@ Vue.component("downlink", {
     methods: {
         /**
          * Converts file into a unique key.
-         * @param item: item to keyifiy
+         * @param item: item to keyify
          * @return {string}
          */
         keyify(item) {
@@ -37,13 +37,13 @@ Vue.component("downlink", {
     },
     computed: {
         /**
-         * The elemets to be displayed are the list of incoming files set by the REST backend.
+         * The elements to be displayed are the list of incoming files set by the REST backend.
          */
         elements() {
             return this.downfiles;
         },
         /**
-         * Returns the file item as a list of clumns. This allows for filtering.
+         * Returns the file item as a list of columns. This allows for filtering.
          * @param item: item to columnify
          * @return list of columns
          */

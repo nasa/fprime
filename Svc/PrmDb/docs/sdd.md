@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-The `Svc::PrmDb` Component is used to store parameter values used by other components. The values are stored in serialized form. During initialization, `Svc::PrmDb` loads a set of parameters from a file, and stores the values in a table based on the parameter ID. Components that need parameters request their values during intialization after they have been loaded. Components occasionally receive updates to parameter values via a command, and the new values will be send to `Svc::PrmDb`. A command will save the copy in memory back to the file.
+The `Svc::PrmDb` Component is used to store parameter values used by other components. The values are stored in serialized form. During initialization, `Svc::PrmDb` loads a set of parameters from a file, and stores the values in a table based on the parameter ID. Components that need parameters request their values during initialization after they have been loaded. Components occasionally receive updates to parameter values via a command, and the new values will be send to `Svc::PrmDb`. A command will save the copy in memory back to the file.
 
 ## 2. Requirements
 
@@ -37,7 +37,7 @@ Port | Name | Direction | Type | Usage
 
 #### 3.2 Functional Description
 
-The `Svc::PrmDb` component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occuring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status to the `getPrm` port of `PARAM_INVALID` will be returned, otherwise `PARAM_OK`. 
+The `Svc::PrmDb` component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occurring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status to the `getPrm` port of `PARAM_INVALID` will be returned, otherwise `PARAM_OK`. 
 
 When a new parameter value is written to the `setPrm` port, the table in memory is updated, and the flag indicating a valid value is set.
 

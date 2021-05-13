@@ -2,7 +2,7 @@
 <?xml-model href="../../Autocoders/Python/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "Ref">
 
-    <!-- Immport component declarations -->
+    <!-- Import component declarations -->
 
     <import_component_type>Svc/FatalHandler/FatalHandlerComponentAi.xml</import_component_type>
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
@@ -733,6 +733,11 @@
     <connection name = "Rg3BlkDrv">
          <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
          <target component = "blockDrv" port = "Sched" type = "Sched" num = "0"/>
+    </connection>
+    <!-- Note: This is optional if BufferManager stats are desired -->
+    <connection name = "Rg3UpBuffMan">
+         <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <target component = "fileUplinkBufferManager" port = "schedIn" type = "Sched" num = "0"/>
     </connection>
     
     

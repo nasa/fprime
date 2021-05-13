@@ -112,7 +112,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Helper methdods 
+      // Helper methods 
       // ----------------------------------------------------------------------
 
       //! A system command with no arguments

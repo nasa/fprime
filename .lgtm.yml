@@ -1,5 +1,5 @@
 ##############
-# Cofiguration file for LGTM.com
+# Configuration file for LGTM.com
 # Currently only needed for cpp code since python and js works by default
 #
 # @author: Hunter Paulson

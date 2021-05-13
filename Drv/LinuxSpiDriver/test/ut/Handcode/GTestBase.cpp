@@ -108,7 +108,7 @@ namespace Drv {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel SPI_Bytes\n"
+      << " on telemetry channel SPI_Bytes\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

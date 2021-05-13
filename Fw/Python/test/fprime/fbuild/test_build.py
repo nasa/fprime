@@ -28,7 +28,7 @@ def get_cmake_builder():
 
 def get_data_dir():
     """
-    Gets directory containing test-data specific to the builder being tested. This will enable new implementors, should
+    Gets directory containing test-data specific to the builder being tested. This will enable new implementers, should
     there be any, to implement their own build-directory structure.
 
     :return:
@@ -165,7 +165,7 @@ def test_get_include_info():
             ("/opt/something/else/external-sw/NachoDeploy/SomeComp3", None),
         ],
     }
-    # Run through all the above data look for matching ansers
+    # Run through all the above data look for matching answers
     for key in test_data.keys():
         build_dir = os.path.join(get_data_dir(), key)
         # Test all path, truth pairs

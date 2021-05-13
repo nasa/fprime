@@ -101,7 +101,7 @@ class TestRefAppClass(object):
             severity: A valid FilterSeverity Enum Value (str) or an instance of FilterSeverity
             enabled: a boolean of whether or not to enable the given severity
         Return:
-            boolean of wether the report filter was set successfully.
+            boolean of whether the report filter was set successfully.
         """
         enabled = "ENABLED" if enabled else "DISABLED"
         if isinstance(severity, self.FilterSeverity):

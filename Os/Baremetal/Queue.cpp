@@ -165,7 +165,7 @@ Queue::QueueStatus bareReceiveNonBlock(BareQueueHandle& handle, U8* buffer, NATI
             status = Queue::QUEUE_NO_MORE_MSGS;
         }
         else {
-          // If this happens, a programming error or bit flip occured:
+          // If this happens, a programming error or bit flip occurred:
           FW_ASSERT(0);
         }
     }

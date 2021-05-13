@@ -3,7 +3,7 @@
 #
 # DESCRIPTION: This file contains the Formatters class
 #              which contains various routines to output
-#              formated strings for code generation.
+#              formatted strings for code generation.
 #
 # USAGE: Nominally each visitor will instance this and
 #        use the methods privately in conjunction with
@@ -163,7 +163,7 @@ class CommentFormatters:
 
     def _commentWrap(self, message, text, length):
         """
-        Return text comments wrapped at the specifief length.
+        Return text comments wrapped at the specified length.
 
         Steve: 03-01-08
         """
@@ -269,7 +269,7 @@ class CommentFormatters:
     def commentHeaderFormat(self, comment_stuff, type="iface"):
         """
         Method to format header comments and add interface type label. No limit
-        on line length imposed so it is assumed the XML is re='iface'asonable length
+        on line length imposed so it is assumed the XML is reasonable length
         text lines. Recognizes @code directives for doxygen.
         """
 
@@ -452,11 +452,11 @@ class Formatters:
 
     def capFirstCharTuple3(self, t, en):
         """
-        For three element tupple capitallize first character of select
+        For three element tuple capitalize first character of select
         elements.   They are enabled by binary bits (e.g. en=111 sets
         each element, en=010 set element 1, etc.)
         @param t: A three element tuple
-        @param en: A binary selection of which elements to capitallize.
+        @param en: A binary selection of which elements to capitalize.
         """
         i = en
         t2 = []
@@ -475,7 +475,7 @@ class Formatters:
 
     def capFirstChar(self, s):
         """
-        Capitallize first character of string name.
+        Capitalize first character of string name.
         """
         return s[0].upper() + s[1:]
 
@@ -492,7 +492,7 @@ class Formatters:
 
         @param id: The module id (name)
         @param name: The user specified function name
-        @param str:  A short string with '_' seperation.
+        @param str:  A short string with '_' separation.
         """
 
         name = name.lower()
@@ -551,7 +551,7 @@ class Formatters:
         """
         Return a mod_ok_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_ok", itype, verbose)
 
@@ -559,7 +559,7 @@ class Formatters:
         """
         Return a mod_ok_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_parse", itype, verbose)
 
@@ -567,7 +567,7 @@ class Formatters:
         """
         Return a mod_unpack_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         return self.functionStringName(id, name, "_ac_unpack", itype, verbose)
 
@@ -575,7 +575,7 @@ class Formatters:
         """
         Return a mod_unpack_name form name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         name_str = name + "_handler"
         return name_str
@@ -584,7 +584,7 @@ class Formatters:
         """
         Return the name of msg typedef from a import function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         @param name_sep: A string placed between the id and interface name
         """
 
@@ -617,7 +617,7 @@ class Formatters:
 
     def msgUnionArgName(self, msg_type):
         """
-        Return the name of a stardard argument for a union
+        Return the name of a standard argument for a union
         used to determine maximum size of a message type.
         @param msg_type: The Typedef msg name (must include 'AcMsg')
         """
@@ -638,7 +638,7 @@ class Formatters:
         Return the name of msg typedef
         from a input function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         id_list = id.split("_")
         name_list = name.split("_")
@@ -659,7 +659,7 @@ class Formatters:
         Return the name of command opcode
         from a input function name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         """
         name_list = name.split("_")
         name_list = list(map((lambda x: x.upper()), name_list))
@@ -682,7 +682,7 @@ class Formatters:
            and if exceeded then clip name.
         5. If all was ok return the command stem name.
         @param id: The module id.
-        @param name: Original function name with '_' seperation.
+        @param name: Original function name with '_' separation.
         @return: Valid command stem name stri
         """
 
@@ -699,7 +699,7 @@ class Formatters:
         # Make the string and clip to 32 chars.
         name_string = "_"
         name_string = name_string.join(name_list)[:max_stem_length]
-        # Check charactors
+        # Check characters
         if len(re.findall("[^A-Z0-9_]", name_string)) != 0:
             PRINT.info(
                 "ERROR: DETECTED INVALID CHARACTER IN COMMAND STEM NAME (%s)."
@@ -716,7 +716,7 @@ class Formatters:
         Called for generation of the mod_ac_msg.h
         code file.  If there are repeated stem
         names than through exception and stop
-        everthing.
+        everything.
         @param cmd_name_list: list of command function names.
         @return: TRUE if all command stem names are unique, else raise exception.
         """
@@ -1083,7 +1083,7 @@ class Formatters:
             if cpos <= apos + type_max + 1:
                 cpos = apos + type_max + 1
 
-            # place args and comments and put togeither the string.
+            # place args and comments and put together the string.
             i = 0
             func_arg_list = []
             for a in format_func_list[1:]:
@@ -1168,17 +1168,17 @@ class Formatters:
             pad = pad_len * " "
             # Build up formatted lines
             #
-            formated_line = type_and_name + "(\n"
-            formated_line += pad + arg_list[0] + ","
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = type_and_name + "(\n"
+            formatted_line += pad + arg_list[0] + ","
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
             for cnt in range(1, num_args - 1):
                 nxt = arg_list[cnt]
-                formated_line = formated_line + "\n" + pad + nxt + ","
-                self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+                formatted_line = formatted_line + "\n" + pad + nxt + ","
+                self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
-            formated_line = formated_line + "\n" + pad + arg_list[-1]
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = formatted_line + "\n" + pad + arg_list[-1]
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
         else:
             # Each argument goes on a new line, and we can't align with the lParen.
             # First line is just function name, subsequent lines are just args.
@@ -1192,27 +1192,27 @@ class Formatters:
             pad = " " * pad_len
             # Build up list of lines
             #
-            formated_line = type_and_name + "("
-            self._dlog(ddt, "B formated_line=\n%s" % formated_line)
+            formatted_line = type_and_name + "("
+            self._dlog(ddt, "B formatted_line=\n%s" % formatted_line)
             for cnt in range(0, num_args - 1):
                 nxt = arg_list[cnt]
-                formated_line = formated_line + "\n" + pad + nxt + ","
-                self._dlog(ddt, "B formatedLine=\n%s" % formated_line)
+                formatted_line = formatted_line + "\n" + pad + nxt + ","
+                self._dlog(ddt, "B formattedLine=\n%s" % formatted_line)
 
-            formated_line = formated_line + "\n" + pad + arg_list[-1]
-            self._dlog(ddt, "A formated_line=\n%s" % formated_line)
+            formatted_line = formatted_line + "\n" + pad + arg_list[-1]
+            self._dlog(ddt, "A formatted_line=\n%s" % formatted_line)
 
-        return formated_line
+        return formatted_line
 
     def argStringAlign(self, type_list, arg_list, pad_spaces=4):
         """
-        Method to align generatic type/argument
+        Method to align generic type/argument
         sets found in struct, typedefs and unions.
 
         Run this function again for alignment of
         comments on the end.
         @param type_list: list of argument type names.
-        @param arg_list:  list of argments corresponding to type names.
+        @param arg_list:  list of arguments corresponding to type names.
         @return str_list: a list of strings with args aligned.
         """
 

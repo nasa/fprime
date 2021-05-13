@@ -42,7 +42,7 @@ class ParserBase(abc.ABC):
     """
     Parsers must define several functions. They must define "get_parser", which will produce a parser to parse the
     arguments, and an optional "handle_arguments" function to do any necessary processing of the arguments. Note: when
-    handling arguments, the implementor should copy the incoming namespace if the original values of arguments will be
+    handling arguments, the implementer should copy the incoming namespace if the original values of arguments will be
     modified.
     """
 
@@ -72,7 +72,7 @@ class ParserBase(abc.ABC):
     ):
         """
         Create a parser for the given application using the description provided. This will then add all specified
-        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handel
+        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handle
         arguments methods will be called, and the final namespace will be returned.
 
         :param parser_classes: a list of ParserBase subclasses that will be used to
@@ -410,6 +410,25 @@ class GdsParser(ParserBase):
             type=str,
             help="Configuration for wx GUI. Ignored if not using wx.",
         )
+        parser.add_argument(
+            "--gui-addr",
+            dest="gui_addr",
+            action="store",
+            default="127.0.0.1",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+        parser.add_argument(
+            "--gui-port",
+            dest="gui_port",
+            action="store",
+            default="5000",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+
         return parser
 
     @classmethod

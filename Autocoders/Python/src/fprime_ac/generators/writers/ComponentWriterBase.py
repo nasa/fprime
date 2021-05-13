@@ -26,7 +26,7 @@ from fprime_ac.generators.writers import AbstractWriter
 from fprime_ac.models import ModelParser
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
@@ -446,6 +446,8 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.has_output_ports = len(c.output_ports) > 0
         c.has_typed_output_ports = len(c.typed_output_ports) > 0
         c.has_serial_output_ports = len(c.serial_output_ports) > 0
+        roles = [role for name, ptype, sync, priority, role, max_number in c.output_ports]
+        c.has_time_get = "TimeGet" in roles
 
     def initPortIncludes(self, obj, c):
         c.port_includes = list()
