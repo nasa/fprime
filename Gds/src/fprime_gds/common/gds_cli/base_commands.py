@@ -195,15 +195,15 @@ class QueryHistoryCommand(BaseCommand):
         else:
 
             def print_upcoming_item(min_start_time="NOW"):
-                item = cls._get_upcoming_item(api, search_filter, min_start_time)
-                cls._log(cls._get_item_string(item, json))
+                item_ = cls._get_upcoming_item(api, search_filter, min_start_time)
+                cls._log(cls._get_item_string(item_, json))
                 # Update time so we catch the next item since the last one
-                if item:
+                if item_:
                     min_start_time = predicates.greater_than(item.get_time())
                     min_start_time = filtering_utils.time_to_data_predicate(
                         min_start_time
                     )
-                return (min_start_time,)
+                return min_start_time,
 
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")
 
