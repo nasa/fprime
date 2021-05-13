@@ -63,4 +63,4 @@ class CmdPyLoader(python_loader.PythonLoader):
             id_dict[cmd_dict[self.OP_CODE_FIELD]] = cmd_temp
             name_dict[cmd_dict[self.MNEMONIC_FIELD]] = cmd_temp
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict
