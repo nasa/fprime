@@ -17,6 +17,7 @@ class SeqBinaryWriter:
     """
     Write out the Binary (ASTERIA) form of sequencer file.
     """
+
     def __init__(self, timebase=0xffff, config=None):
         """
         Constructor
@@ -43,7 +44,7 @@ class SeqBinaryWriter:
         command objects and seq_panel.
         """
 
-        def __time_tag(cmd_obj):
+        def __time_tag(cmd_object):
             """
             TODO: support a timebase in the cmd obj? This is mission specific, so it is tough to handle. For now
             I am hardcoding this to 2 which is TB_NONE
@@ -51,27 +52,27 @@ class SeqBinaryWriter:
             # return TimeType(timeBase=2, seconds=cmd_obj.getSeconds(), useconds=cmd_obj.getUseconds()).serialize()
             # TKC - new command time format
             return (
-                U32Type(cmd_obj.getSeconds()).serialize()
-                + U32Type(cmd_obj.getUseconds()).serialize()
+                    U32Type(cmd_object.getSeconds()).serialize()
+                    + U32Type(cmd_object.getUseconds()).serialize()
             )
 
-        def __descriptor(cmd_obj):
+        def __descriptor(cmd_obj_):
             # subtract 1 from the value because enum34 enums start at 1, and this can't be changed
-            return U8Type(cmd_obj.getDescriptor().value - 1).serialize()
+            return U8Type(cmd_obj_.getDescriptor().value - 1).serialize()
 
-        def __command(cmd_obj):
-          self.desc_obj.val = DataDescType["FW_PACKET_COMMAND"].value
-          self.opcode_obj.val = cmd_obj.getOpCode()
-          command = self.desc_obj.serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
-          command += self.opcode_obj.serialize()  # serialize opcode
-          # Command arguments
-          for arg in cmd_obj.getArgs():
-              command += arg[2].serialize()
-          return command
+        def __command(command_obj):
+            self.desc_obj.val = DataDescType["FW_PACKET_COMMAND"].value
+            self.opcode_obj.val = command_obj.getOpCode()
+            cmd = self.desc_obj.serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
+            cmd += self.opcode_obj.serialize()  # serialize opcode
+            # Command arguments
+            for arg in command_obj.getArgs():
+                cmd += arg[2].serialize()
+            return cmd
 
-        def __length(command):
-          self.len_obj.val = len(command)
-          return self.len_obj.serialize()
+        def __length(cmd):
+            self.len_obj.val = len(cmd)
+            return self.len_obj.serialize()
 
         def __print(byteBuffer):
             print("Byte buffer size: %d" % len(byteBuffer))
