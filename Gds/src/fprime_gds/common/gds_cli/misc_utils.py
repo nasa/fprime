@@ -114,7 +114,7 @@ def get_cmd_template_string(
 
     cmd_description = item.get_description()
     if cmd_description:
-        cmd_string += "Description: %s\n" % (cmd_description)
+        cmd_string += "Description: %s\n" % cmd_description
 
     for arg in item.get_args():
         arg_name, arg_description, arg_type = arg
