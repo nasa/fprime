@@ -150,7 +150,6 @@ class SeqFileParser:
                 options = ["%Y-%jT%H:%M:%S.%f", "%Y-%jT%H:%M:%S"]
                 return parseTimeStringOption(timeStr, options)
 
-            descriptor = None
             d = time[0]
             t = time[1:]
             if d == "R":
@@ -167,7 +166,7 @@ class SeqFileParser:
                 dt = parseAbsolute(t)
                 # See if timezone was specified. If not, use UTC
                 if dt.tzinfo is not None:
-                    print("Using timezone %s" % dt.tzinfo.tzname())
+                    print("Using timezone %s" % dt.tzinfo.tzname())  # TODO: tzname method is unfilled
                     epoch = datetime.fromtimestamp(0, dt.tzinfo)
                 else:
                     print("Using UTC timezone")
