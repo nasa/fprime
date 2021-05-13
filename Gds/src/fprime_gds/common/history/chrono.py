@@ -152,7 +152,8 @@ class ChronologicalHistory(History):
     ###########################################################################
     #   helper methods
     ###########################################################################
-    def __insert_chrono(self, data_object, ordered):
+    @staticmethod
+    def __insert_chrono(data_object, ordered):
         """
         traverses the existing order (back to front) and inserts the data object in the correct
         position chronologically.
@@ -187,7 +188,8 @@ class ChronologicalHistory(History):
         del ordered[:index]
         return index
 
-    def __get_index(self, start, ordered):
+    @staticmethod
+    def __get_index(start, ordered):
         """
         finds the index that start specifies
         Args:
