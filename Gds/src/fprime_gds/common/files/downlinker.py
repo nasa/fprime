@@ -48,7 +48,7 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         self.timer.setup(self.timeout, timeout)
         os.makedirs(self.__directory, exist_ok=True)
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Function called to pass data to the writer class
 
