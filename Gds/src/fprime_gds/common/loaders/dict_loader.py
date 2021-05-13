@@ -107,4 +107,4 @@ class DictLoader:
             for both should be data_template classes. This base class only
             returns empty dictionaries.
         """
-        return (dict(), dict())
+        return dict(), dict()
