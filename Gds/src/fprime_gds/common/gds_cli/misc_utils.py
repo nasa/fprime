@@ -50,7 +50,7 @@ def repeat_until_interrupt(func: Callable, *args):
     """
     try:
         while True:
-            new_args = func(*args) # lgtm [py/call/wrong-arguments]
+            new_args = func(*args)  # lgtm [py/call/wrong-arguments]
             if new_args:
                 args = new_args
     except KeyboardInterrupt:
@@ -114,7 +114,7 @@ def get_cmd_template_string(
 
     cmd_description = item.get_description()
     if cmd_description:
-        cmd_string += "Description: %s\n" % (cmd_description)
+        cmd_string += "Description: %s\n" % cmd_description
 
     for arg in item.get_args():
         arg_name, arg_description, arg_type = arg
