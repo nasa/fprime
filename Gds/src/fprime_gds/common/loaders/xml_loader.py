@@ -94,7 +94,8 @@ class XmlLoader(dict_loader.DictLoader):
         self.serializable_types = dict()
         self.array_types = dict()
 
-    def get_xml_tree(self, path):
+    @staticmethod
+    def get_xml_tree(path):
         """
         Reads the xml file at the given path and parses it using lxml
 
@@ -119,7 +120,8 @@ class XmlLoader(dict_loader.DictLoader):
 
         return element_tree.getroot()
 
-    def get_xml_section(self, section_name, xml_root):
+    @staticmethod
+    def get_xml_section(section_name, xml_root):
         """
         Retrieve the given section in the xml tree if it exists
 
