@@ -84,7 +84,8 @@ class EventDecoder(decoder.Decoder):
             print("Event decode error: id %d not in dictionary" % event_id)
             return None
 
-    def decode_args(self, arg_data, offset, template):
+    @staticmethod
+    def decode_args(arg_data, offset, template):
         """
         Decodes the serialized event arguments
 
