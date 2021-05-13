@@ -119,7 +119,7 @@ namespace Svc {
     this->sendFile(
         sourceFileName,
         destFileName,
-        (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::CommandResponse::EXECUTION_ERROR : Fw::CommandResponse::OK
+        (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::CommandResponse::OK : Fw::CommandResponse::EXECUTION_ERROR
     );
 
     // Assert telemetry
@@ -166,7 +166,7 @@ namespace Svc {
     this->component.doDispatch(); // Process return of cancel packet
 
     // Ensure initial send file command also receives a response.
-    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::CommandResponse::EXECUTION_ERROR : Fw::CommandResponse::OK;
+    Fw::CommandResponse resp = (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::CommandResponse::OK : Fw::CommandResponse::EXECUTION_ERROR;
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, resp);
 
