@@ -254,7 +254,7 @@ class FileUplinker(fprime_gds.common.handlers.DataHandler):
         self.__timeout.restart()
         self.__expected = self.file_encoder.data_callback(packet_data)[8:]
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Process incoming handshake data, and if it is the expected handshake, then it uplinks the next packet. In the
         file. Invalid handshakes are ignore. When finished a returning handshake puts the uplinker into idle state.
