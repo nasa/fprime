@@ -20,6 +20,7 @@ class TestHistory(History):
     ###########################################################################
     #   History Functions
     ###########################################################################
+
     def __init__(self, filter_pred=None):
         """
         Constructor used to set-up history. If the history is given a filter, it will ignore (drop)
@@ -39,7 +40,7 @@ class TestHistory(History):
 
         self.retrieved_cursor = 0
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Data callback to push an object on the history. This callback will only add data_objects
         that satisfy the filter predicate.
