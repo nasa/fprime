@@ -56,17 +56,17 @@ class SeqBinaryWriter:
                     + U32Type(cmd_object.getUseconds()).serialize()
             )
 
-        def __descriptor(cmd_object):
+        def __descriptor(cmd_obj_):
             # subtract 1 from the value because enum34 enums start at 1, and this can't be changed
-            return U8Type(cmd_object.getDescriptor().value - 1).serialize()
+            return U8Type(cmd_obj_.getDescriptor().value - 1).serialize()
 
-        def __command(cmd_object):
+        def __command(command_obj):
             self.desc_obj.val = DataDescType["FW_PACKET_COMMAND"].value
-            self.opcode_obj.val = cmd_object.getOpCode()
+            self.opcode_obj.val = command_obj.getOpCode()
             cmd = self.desc_obj.serialize()  # serialize combuffer type enum: FW_PACKET_COMMAND
             cmd += self.opcode_obj.serialize()  # serialize opcode
             # Command arguments
-            for arg in cmd_object.getArgs():
+            for arg in command_obj.getArgs():
                 cmd += arg[2].serialize()
             return cmd
 
@@ -74,8 +74,8 @@ class SeqBinaryWriter:
             self.len_obj.val = len(cmd)
             return self.len_obj.serialize()
 
-        def __print(byteBuffer):    # TODO: This function is not used and it is better to remove it
-            print(f"Byte buffer size: {len(byteBuffer)}")
+        def __print(byteBuffer):
+            print("Byte buffer size: %d" % len(byteBuffer))
             for entry in range(0, len(byteBuffer)):
                 print(
                     "Byte %d: 0x%02X (%c)"
@@ -167,8 +167,7 @@ class SeqBinaryWriter:
         """
         self.__fd.close()
 
-    @staticmethod
-    def computeCrc(buff):
+    def computeCrc(self, buff):
         # See http://stackoverflow.com/questions/30092226/how-to-calculate-crc32-with-python-to-match-online-results
         # RE: signed to unsigned CRC
         return zlib.crc32(buff) % (1 << 32)
@@ -191,8 +190,7 @@ class SeqAsciiWriter:
         """
         self.__fd = open(filename, "w")
 
-    @staticmethod
-    def __getCmdString(cmd_obj):
+    def __getCmdString(self, cmd_obj):
         """
         For an command return it stringified.
         """
