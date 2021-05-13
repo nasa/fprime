@@ -167,7 +167,8 @@ class SeqBinaryWriter:
         """
         self.__fd.close()
 
-    def computeCrc(self, buff):
+    @staticmethod
+    def computeCrc(buff):
         # See http://stackoverflow.com/questions/30092226/how-to-calculate-crc32-with-python-to-match-online-results
         # RE: signed to unsigned CRC
         return zlib.crc32(buff) % (1 << 32)
@@ -190,7 +191,8 @@ class SeqAsciiWriter:
         """
         self.__fd = open(filename, "w")
 
-    def __getCmdString(self, cmd_obj):
+    @staticmethod
+    def __getCmdString(cmd_obj):
         """
         For an command return it stringified.
         """
