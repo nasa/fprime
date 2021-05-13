@@ -42,7 +42,7 @@ class Command:
         Constructor
         """
 
-        ## Make sure correct types are passed
+        # Make sure correct types are passed
 
         if not isinstance(component, str):
             raise TypeMismatchException(str, type(component))
@@ -86,11 +86,11 @@ class Command:
         """
         Serializes command arguments
         """
-        ## first, serialize opcode
+        # first, serialize opcode
         opcode = U32Type(self.__opcode)
         ser_data = opcode.serialize()
 
-        ## then, serialize arguments
+        # then, serialize arguments
         for (arg_name, arg_desc, arg_type) in self.__arguments:
             ser_data += arg_type.serialize()
         return ser_data
@@ -134,7 +134,7 @@ class Command:
             raise TypeMismatchException(type(Descriptor.ABSOLUTE), type(descriptor))
         self.__desc = descriptor
 
-    ## value needs to be the Python class, not the raw value
+    # value needs to be the Python class, not the raw value
     def setArg(self, arg_name, arg_type):
         """
         Method to set up an argument value of any
@@ -142,7 +142,7 @@ class Command:
         @param arg_name: string name of the argument.
         @param arg_type: object type to store argument value in.
         """
-        ### double check argument types
+        # double check argument types
         if not isinstance(arg_name, str):
             raise TypeMismatchException(str, type(arg_name))
 
@@ -151,7 +151,7 @@ class Command:
 
         new_arg_list = list()
         found = False
-        ### search for argument
+        # search for argument
         for (arg, arg_desc, arg_value) in self.__arguments:
             if arg_name == arg:
                 arg_value = arg_type
