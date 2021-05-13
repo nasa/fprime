@@ -183,7 +183,7 @@ class CommandSendCommand(QueryHistoryCommand):
         # ======================================================================
 
     @classmethod
-    def handle_arguments(cls, *args, **kwargs):
+    def handle_arguments(cls, **kwargs):
         """
         Handle the given input arguments, then execute the command itself
 
