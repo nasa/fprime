@@ -39,8 +39,9 @@ class PythonLoader(dict_loader.DictLoader):
         the fields and their values. These dictionaries are then compiled into
         a list that is returned.
 
-        :param path: File Path to a folder containing python modules to load
-        :param use_superpkg: [Default=False] When true, modules will be imported
+        Args:
+            path: File Path to a folder containing python modules to load
+            user_superpkg: [Default=False] When true, modules will be imported
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
@@ -48,9 +49,10 @@ class PythonLoader(dict_loader.DictLoader):
                            when trying to import dictionaries from multiple
                            deployments.
 
-        :return: A list of dictionaries. Each dictionary represents one loaded module
-                and for keys has the names of the fields in the file and for values
-                has the values of those fields.
+        Returns:
+            A list of dictionaries. Each dictionary represents one loaded module
+            and for keys has the names of the fields in the file and for values
+            has the values of those fields.
         """
         modules = self.import_modules(path, use_superpkg)
 
@@ -67,13 +69,13 @@ class PythonLoader(dict_loader.DictLoader):
 
         return module_dicts
 
-    @staticmethod
-    def import_modules(path, use_superpkg):
+    def import_modules(self, path, use_superpkg):
         """
         Imports all modules in the given directory.
 
-        :param path: File Path to a folder containing python modules to load
-        :param use_superpkg: When true, modules will be imported
+        Args:
+            path: File Path to a folder containing python modules to load
+            user_superpkg: When true, modules will be imported
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
@@ -81,7 +83,8 @@ class PythonLoader(dict_loader.DictLoader):
                            when trying to import dictionaries from multiple
                            deployments.
 
-        :return: A list of module objects of all the newly imported modules
+        Returns:
+            A list of module objects of all the newly imported modules
         """
         # Verify path is a directory
         if not os.path.isdir(path):
