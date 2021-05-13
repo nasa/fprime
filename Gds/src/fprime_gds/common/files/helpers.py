@@ -223,7 +223,7 @@ def file_to_dict(files, uplink=True):
     Converts files to dictionary. This creates a new list of JSONable file dictionaries.
 
     :param files: list of TransmitFiles to convert
-    :param uplink:
+    :param uplink: # TODO: the parameter description should be fill by maintainer
     :return: list of dictionaries
     """
     current = []
