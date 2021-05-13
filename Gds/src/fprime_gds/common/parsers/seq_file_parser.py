@@ -6,13 +6,13 @@ from fprime_gds.common.models.common.command import Descriptor
 
 
 class SeqFileParser:
-    def parse(self, filename):
+    @staticmethod
+    def parse(filename):
         """
         Generator that parses an input sequence file and returns a tuple
         for each valid line of the sequence file.
-        @param seqfile: A sequence file name (usually a .seq extension)
-        @return A list of tuples:
-            (lineNumber, descriptor, seconds, useconds, mnemonic, arguments)
+        :param filename: TODO: the parameter description should be filled by maintainer
+        :return: A list of tuples: (lineNumber, descriptor, seconds, useconds, mnemonic, arguments)
         """
 
         def subQuoted(f, string):
