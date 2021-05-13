@@ -45,20 +45,19 @@ namespace ${namespace} {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""
 #if not item_comment == ""
-        ${item_name} = ${item_value}, //!< ${item_comment}
+    ${item_name} = ${item_value}, //!< ${item_comment}
 #else
-        ${item_name} = ${item_value},
+    ${item_name} = ${item_value},
 #end if
 #else
 #if not item_comment == ""
-        ${item_name}, //!< ${item_comment}
+    ${item_name}, //!< ${item_comment}
 #else
-        ${item_name},
+    ${item_name},
 #end if
 #end if
 #end for
-        ${name}_MAX = ${int(item_value) + 1},
-    } t;
+        } t;
   
     public:
   
@@ -68,7 +67,7 @@ namespace ${namespace} {
 
     enum {
         SERIALIZED_SIZE = sizeof(FwEnumStoreType),
-        ENUM_LENGTH = ${len($items_list)}
+        LENGTH = ${len($items_list)}
         };
 
     public:
