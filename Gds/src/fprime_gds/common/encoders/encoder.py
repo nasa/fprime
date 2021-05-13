@@ -52,13 +52,12 @@ class Encoder(
             config = ConfigManager()
         self.config = config
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Data callback which calls the encode_api function exactly once. Then it passes the results to all registered
         consumer. This should only need to be overridden in extraordinary circumstances.
 
         :param data: data bytes to be decoded
-        :param sender: (optional) sender id, otherwise None
         :return: returns the encoded data for reference
         """
         encoded = self.encode_api(data)
