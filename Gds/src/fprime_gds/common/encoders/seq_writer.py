@@ -74,8 +74,8 @@ class SeqBinaryWriter:
             self.len_obj.val = len(cmd)
             return self.len_obj.serialize()
 
-        def __print(byteBuffer):
-            print("Byte buffer size: %d" % len(byteBuffer))
+        def __print(byteBuffer):    # TODO: This function is not used and it is better to remove it
+            print(f"Byte buffer size: {len(byteBuffer)}")
             for entry in range(0, len(byteBuffer)):
                 print(
                     "Byte %d: 0x%02X (%c)"
