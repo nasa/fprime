@@ -131,7 +131,10 @@ class QueryHistoryCommand(BaseCommand):
             before filtering them
         :return: A string representation of "item"
         """
-        item_to_string = lambda x: cls._get_item_string(x, json)
+
+        def item_to_string(x):
+            return cls._get_item_string(x, json)
+
         return filtering_utils.get_full_filter_predicate(
             ids, components, search, to_str=item_to_string
         )
