@@ -120,13 +120,13 @@ class QueryHistoryCommand(BaseCommand):
     ) -> predicates.predicate:
         """
         Returns a predicate that can be used to filter any received messages.
-        This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
+        This is done to link printing code to filtering, so that filtering ALWAYS
+        filters the same strings as are printed.
 
         NOTE: Currently assumes that item list strings will contain the
         individual strings of each items to work with both, which there's no
         guarantee of if _get_item_list_string is overridden
 
-        :param item: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
             before filtering them
         :return: A string representation of "item"
