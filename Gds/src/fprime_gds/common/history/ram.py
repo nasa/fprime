@@ -28,11 +28,12 @@ class RamHistory(History):
         self.objects = []
         self.retrieved_cursors = {}
 
-    def data_callback(self, data, sender=None):
+    def data_callback(self, data):
         """
         Data callback to store
 
         :param data: object to store
+        :return: None
         """
         with self.lock:
             self.objects.append(data)
