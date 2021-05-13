@@ -37,6 +37,8 @@ class Timeout:
 
         :param callback: function called when timeout expires
         :param timeout: (optional) timeout duration. Default: 5 seconds
+        :param args:
+        :return: None
         """
         self.__timeout = timeout
         self.__callback = callback
@@ -95,7 +97,7 @@ class CFDPChecksum:
                 self.__value + struct.unpack_from(">I", calc_bytes, 0)[0]
             ) & 0xFFFFFFFF
             # Update pointers
-            data = data[4 - padding_len :]
+            data = data[4 - padding_len:]
             offset = offset + (4 - padding_len)
 
     @property
@@ -221,6 +223,7 @@ def file_to_dict(files, uplink=True):
     Converts files to dictionary. This creates a new list of JSONable file dictionaries.
 
     :param files: list of TransmitFiles to convert
+    :param uplink:
     :return: list of dictionaries
     """
     current = []
