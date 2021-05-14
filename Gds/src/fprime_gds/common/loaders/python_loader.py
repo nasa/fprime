@@ -41,7 +41,7 @@ class PythonLoader(dict_loader.DictLoader):
 
         Args:
             path: File Path to a folder containing python modules to load
-            user_superpkg: [Default=False] When true, modules will be imported
+            use_superpkg: [Default=False] When true, modules will be imported
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
@@ -69,13 +69,14 @@ class PythonLoader(dict_loader.DictLoader):
 
         return module_dicts
 
-    def import_modules(self, path, use_superpkg):
+    @staticmethod
+    def import_modules(path, use_superpkg):
         """
         Imports all modules in the given directory.
 
         Args:
             path: File Path to a folder containing python modules to load
-            user_superpkg: When true, modules will be imported
+            use_superpkg: When true, modules will be imported
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
