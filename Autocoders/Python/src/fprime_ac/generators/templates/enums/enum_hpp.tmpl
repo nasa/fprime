@@ -66,9 +66,11 @@ namespace ${namespace} {
     // ----------------------------------------------------------------------
 
     enum {
-        SERIALIZED_SIZE = sizeof(FwEnumStoreType),
-        NUM_CONSTANTS = ${len($items_list)}
+        SERIALIZED_SIZE = sizeof(FwEnumStoreType)
         };
+
+    //! Number of items in ${name} enum 
+    const U32 NUM_CONSTANTS = ${len($items_list)};
 
     public:
 
