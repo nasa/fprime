@@ -6,7 +6,6 @@
 #include <Os/File.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <RPI/Top/RpiSchedContexts.hpp>
-#include <Fw/Types/MallocAllocator.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
 enum {
