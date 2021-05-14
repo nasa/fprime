@@ -106,7 +106,7 @@ class ThreadedTCPSocketClient(DataHandler):
         self.__data_recv_thread.join()
         self.sock.close()
 
-    def data_callback(self, data):
+    def data_callback(self, data, sender=None):
         """
         Handles incoming data by sending it to a socket.
 
