@@ -36,7 +36,7 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
         self.f_telem.close()
         self.f_event.close()
 
-    def data_callback(self, data):
+    def data_callback(self, data, sender=None):
         if isinstance(data, ChData) or isinstance(data, PktData):
             self.f_telem.write(data.get_str(verbose=self.verbose, csv=self.csv) + "\n")
             self.f_telem.flush()
@@ -51,7 +51,7 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
             )
             self.f_command.flush()
 
-    def send(self, data):
+    def send(self, data, dest):
         """Send callback for the encoder
 
         Arguments:

@@ -28,7 +28,7 @@ class RamHistory(History):
         self.objects = []
         self.retrieved_cursors = {}
 
-    def data_callback(self, data):
+    def data_callback(self, data, sender=None):
         """
         Data callback to store
 
