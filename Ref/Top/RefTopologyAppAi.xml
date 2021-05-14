@@ -32,7 +32,6 @@
     <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
     <import_component_type>Svc/FileManager/FileManagerComponentAi.xml</import_component_type>
     <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
-    <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
     <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
     <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
     <import_component_type>Svc/StaticMemory/StaticMemoryComponentAi.xml</import_component_type>
@@ -55,7 +54,6 @@
     <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
     <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
     <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
-    <instance namespace="Svc" name="groundIf" type="GroundInterface" base_id="381"  base_id_window="20" />
     <instance namespace="Svc" name="linuxTime" type="Time" base_id="441"  base_id_window="20" />
     <instance namespace="Svc" name="staticMemory" type="StaticMemory" base_id="661"  base_id_window="20" />
     <instance namespace="Svc" name="downlink" type="Framer" base_id="681"  base_id_window="20" />
@@ -365,11 +363,6 @@
     </connection>
    
     <!-- Event Logger Binary Connections -->
-   
-    <connection name = "groundIfLog">
-        <source component = "groundIf" port = "Log" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-    </connection>
     <connection name = "PrmDbLog">
         <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -467,10 +460,6 @@
     </connection>
     <connection name = "HealthTextLog">
         <source component = "health" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-    </connection>
-    <connection name = "groundIfTextLog">
-        <source component = "groundIf" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
     <connection name = "FatalAdapterTextLog">
@@ -685,10 +674,6 @@
     </connection>
     <connection name = "fatalAdapterTime">
         <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-    </connection>
-    <connection name = "groundIfTime">
-        <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>
     <connection name = "recvBuffTime">

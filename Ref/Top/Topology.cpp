@@ -46,9 +46,6 @@ Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NU
 static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
 
-// Command Components
-Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
-
 // Driver Component
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 
@@ -157,7 +154,6 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    groundIf.init(0);
     comm.init(0);
     downlink.init(0);
     uplink.init(0);
