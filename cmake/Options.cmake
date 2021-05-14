@@ -18,6 +18,34 @@
 ####
 
 ####
+# `FPRIME_USE_STUBBED_DRIVERS:`
+#
+# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
+# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to used full driver implementations.
+###
+if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
+endif()
+
+####
+# `FPRIME_USE_BAREMETAL_SCHEDULER:`
+#
+# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
+# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
+# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the scheduler or OFF to use the OS thread scheduler.
+###
+if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
+endif()
+
+
+####
 # `CMAKE_DEBUG_OUTPUT:`
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
