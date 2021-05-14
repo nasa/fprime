@@ -66,7 +66,8 @@ namespace ${namespace} {
     // ----------------------------------------------------------------------
 
     enum {
-        SERIALIZED_SIZE = sizeof(FwEnumStoreType)
+        SERIALIZED_SIZE = sizeof(FwEnumStoreType),
+        NUM_CONSTANTS = ${len($items_list)}
         };
 
     public:
