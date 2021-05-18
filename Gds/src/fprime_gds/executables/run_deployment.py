@@ -122,7 +122,7 @@ def parse_args():
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
 
-    :param args: arguments to supply
+    :return: TODO: return value description should be filled by maintainer
     """
     # Get custom handlers for all executables we are running
     arg_handlers = [
@@ -296,7 +296,7 @@ def launch_app(app, port, address, logs, **_):
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
-    :param log_dir: log directory to place files into
+    :param logs: TODO: the parameter description should be filled by maintainer
     :return: process
     """
     app_name = os.path.basename(app)
