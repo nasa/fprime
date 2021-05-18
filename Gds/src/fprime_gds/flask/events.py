@@ -44,7 +44,6 @@ class EventHistory(flask_restful.Resource):
         Constructor used to setup time argument to this history.
 
         :param history: history object holding events
-        :param dictionary: dictionary holding events list
         """
         self.parser = flask_restful.reqparse.RequestParser()
         self.parser.add_argument(
@@ -66,7 +65,9 @@ class EventHistory(flask_restful.Resource):
                 "display_text",
                 format_string(event.template.format_str, tuple([arg.val for arg in event.args])),
             )
-            func = lambda this: this.display_text
+
+            def func(this):
+                return this.display_text
             setattr(event, "get_display_text", types.MethodType(func, event))
         return {"history": new_events}
 
