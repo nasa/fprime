@@ -185,7 +185,7 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_satisfies_all(self):
-        p_list = []
+        p_list = list()
         p_list.append(predicates.less_than(8))
         p_list.append(predicates.less_than(6))
         p_list.append(predicates.equal_to(4))
@@ -197,7 +197,7 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_satisfies_any(self):
-        p_list = []
+        p_list = list()
         p_list.append(predicates.less_than(8))
         p_list.append(predicates.less_than(6))
         p_list.append(predicates.equal_to(4))
