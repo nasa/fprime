@@ -133,7 +133,7 @@ def get_dictionary_path(current_args: argparse.Namespace) -> str:
     args.deploy = os.getcwd()
     args.config = None
     args = GdsParser.handle_arguments(args, kwargs={})
-    return args.dictionary
+    return args.dictionary  # TODO: expected type 'str', got 'None' instead
 
 
 def add_valid_dictionary(args: argparse.Namespace) -> argparse.Namespace:
