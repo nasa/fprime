@@ -32,6 +32,8 @@ class Filing:
         :param down_store: downlink storage directory
         :param file_encoder: file encoder for uplink
         :param file_decoder: file decoder for downlink
+        :param distributor: TODO: the parameters description should be filled bu maintainer
+        :param log_dir:
         """
         self.__uplinker = fprime_gds.common.files.uplinker.FileUplinker(file_encoder)
         self.__downlinker = fprime_gds.common.files.downlinker.FileDownlinker(
