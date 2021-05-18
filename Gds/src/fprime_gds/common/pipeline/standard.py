@@ -103,7 +103,8 @@ class StandardPipeline:
         """
         Setup logging based on the logging prefix supplied
 
-        :param prefix: logging prefix to use
+        :param log_dir: TODO: the parameter description should be filled by maintainer
+        :return: None
         """
         # Setup the logging pipeline (register it to all its data sources)
         logger = fprime_gds.common.logger.data_logger.DataLogger(
