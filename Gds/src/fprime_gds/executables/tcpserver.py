@@ -383,7 +383,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         header = packet[:4]
         header2 = packet[4:9]
         packet = packet[9:]
-        return (header + header2, packet)
+        return header + header2, packet
 
     @staticmethod
     def readData(header, packet):
@@ -392,7 +392,6 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         GUI receives telemetry.
         FSW receives commands of various lengths.
         """
-        data = ""
         header.split(b" ")[1].strip(b" ")
         # Read telemetry data here...
         tlm_packet_size = packet[:4]
