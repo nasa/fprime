@@ -65,7 +65,9 @@ class ChannelHistory(flask_restful.Resource):
                     "display_text",
                     chan.template.get_format_str() % (chan.val_obj.val),
                 )
-                func = lambda this: this.display_text
+
+                def func(this):
+                    return this.display_text
                 setattr(chan, "get_display_text", types.MethodType(func, chan))
         return {"history": new_channels}
 
