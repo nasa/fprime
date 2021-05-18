@@ -124,7 +124,8 @@ class APITestCases(unittest.TestCase):
         t.start()
         return t
 
-    def assert_lists_equal(self, expected, actual):
+    @staticmethod
+    def assert_lists_equal(expected, actual):
         assert len(expected) == len(
             actual
         ), "the given list should have had the length {}, but instead had {}\nExpected {}\nActual{}".format(
