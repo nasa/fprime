@@ -17,9 +17,10 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Svc/BufferManager/BufferManagerComponentImpl.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
-
-#include <Svc/GroundInterface/GroundInterface.hpp>
-
+#include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
+#include <Svc/Framer/FramerComponentImpl.hpp>
+#include <Svc/Deframer/DeframerComponentImpl.hpp>
+#include <Drv/TcpClient/TcpClientComponentImpl.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
@@ -66,8 +67,8 @@ extern Drv::LinuxGpioDriverComponentImpl gpio17Drv;
 
 extern Rpi::RpiDemoComponentImpl rpiDemo;
 
-extern Svc::GroundInterfaceComponentImpl groundIf;
-
-extern Drv::TcpClientComponentImpl uplinkComm;
-extern Drv::UdpComponentImpl downlinkComm;
+extern Svc::StaticMemoryComponentImpl staticMemory;
+extern Drv::TcpClientComponentImpl comm;
+extern Svc::FramerComponentImpl downlink;
+extern Svc::DeframerComponentImpl uplink;
 #endif

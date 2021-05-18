@@ -184,7 +184,8 @@ void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 void Tester ::connectPorts(void) {
     // buffersIn
-    for (NATIVE_INT_TYPE i = 0; i < 10; ++i) {
+    U32 max = std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
+    for (U32 i = 0; i < max; ++i) {
         this->connect_to_buffersIn(i, this->componentIn.get_buffersIn_InputPort(i));
     }
 
@@ -192,7 +193,7 @@ void Tester ::connectPorts(void) {
     this->connect_to_dataIn(0, this->componentOut.get_dataIn_InputPort(0));
 
     // buffersOut
-    for (NATIVE_INT_TYPE i = 0; i < 10; ++i) {
+    for (U32 i = 0; i < max; ++i) {
         this->componentOut.set_buffersOut_OutputPort(i, this->get_from_buffersOut(i));
     }
 
@@ -211,7 +212,8 @@ void Tester ::connectPorts(void) {
     // ----------------------------------------------------------------------
     // Connect serial output ports
     // ----------------------------------------------------------------------
-    for (NATIVE_INT_TYPE i = 0; i < 10; ++i) {
+    max = std::min(this->componentIn.getNum_portIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
+    for (U32 i = 0; i < max; ++i) {
         this->componentOut.set_portOut_OutputPort(i, this->get_from_portOut(i));
     }
 
@@ -219,7 +221,7 @@ void Tester ::connectPorts(void) {
     // Connect serial input ports
     // ----------------------------------------------------------------------
     // portIn
-    for (NATIVE_INT_TYPE i = 0; i < 10; ++i) {
+    for (U32 i = 0; i < max; ++i) {
         this->connect_to_portIn(i, this->componentIn.get_portIn_InputPort(i));
     }
 }

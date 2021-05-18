@@ -7,6 +7,7 @@ across a Tcp and/or UDP network interface.
 
 @author lestarch
 """
+import atexit
 import abc
 import logging
 import queue
@@ -34,8 +35,7 @@ def check_port(address, port):
         socket_trial.bind((address, port))
     except OSError as err:
         raise ValueError(
-            "Error with address/port of '{}:{}' : {}".format(
-                address, port, err)
+            "Error with address/port of '{}:{}' : {}".format(address, port, err)
         )
     finally:
         if socket_trial is not None:
@@ -50,7 +50,7 @@ class IpAdapter(fprime_gds.common.communication.adapters.base.BaseAdapter):
     """
 
     # Interval to send a KEEPALIVE packet. None will turn off KEEPALIVE.
-    KEEPALIVE_INTERVAL = None
+    KEEPALIVE_INTERVAL = 0.500
     # Data to send out as part of the KEEPALIVE packet. Should not be null nor empty.
     KEEPALIVE_DATA = b"sitting well"
     MAXIMUM_DATA_SIZE = 4096
@@ -77,12 +77,10 @@ class IpAdapter(fprime_gds.common.communication.adapters.base.BaseAdapter):
         # Keep alive thread
         try:
             # Setup the tcp and udp adapter and run a thread to service them
-            self.thtcp = threading.Thread(
-                target=self.th_handler, args=(self.tcp,))
+            self.thtcp = threading.Thread(target=self.th_handler, args=(self.tcp,))
             self.thtcp.daemon = True
             self.thtcp.start()
-            self.thudp = threading.Thread(
-                target=self.th_handler, args=(self.udp,))
+            self.thudp = threading.Thread(target=self.th_handler, args=(self.udp,))
             self.thudp.daemon = True
             self.thudp.start()
             # Start up a keep-alive ping if desired. This will hit the TCP uplink, and die if the connection is down
@@ -223,6 +221,7 @@ class IpHandler(abc.ABC):
         self.connected = IpHandler.CLOSED
         self.logger = logger
         self.post_connect = post_connect
+        atexit.register(self.stop)
 
     def open(self):
         """
@@ -401,6 +400,7 @@ class TcpHandler(IpHandler):
             self.client = None
             self.client_address = None
 
+
     def read_impl(self):
         """
         Specific read implementation for the TCP handler. This involves reading from the spawned client socket, not the
@@ -408,12 +408,8 @@ class TcpHandler(IpHandler):
         """
         data = self.client.recv(IpAdapter.MAXIMUM_DATA_SIZE)
         if not data:
-            try:
-                print("No more data. Closing the connection")
-                self.client.close()
-            except AttributeError:
-                print("Skip closing. Client connection is already closed.")
-                pass
+            self.close_impl()
+            self.open_impl()
         return data
 
     def write_impl(self, message):

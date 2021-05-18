@@ -15,10 +15,6 @@
 
 // List of context IDs
 enum {
-    DOWNLINK_PACKET_SIZE = 500,
-    DOWNLINK_BUFFER_STORE_SIZE = 2500,
-    DOWNLINK_BUFFER_QUEUE_SIZE = 5,
-    DOWNLINK_BUFFER_MGR_ID = 100,
     UPLINK_BUFFER_STORE_SIZE = 3000,
     UPLINK_BUFFER_QUEUE_SIZE = 30,
     UPLINK_BUFFER_MGR_ID = 200
@@ -45,9 +41,6 @@ Svc::ActiveRateGroupImpl rateGroup2Comp(FW_OPTIONAL_NAME("RG2"),rg2Context,FW_NU
 
 static NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
 Svc::ActiveRateGroupImpl rateGroup3Comp(FW_OPTIONAL_NAME("RG3"),rg3Context,FW_NUM_ARRAY_ELEMENTS(rg3Context));
-
-// Command Components
-Svc::GroundInterfaceComponentImpl groundIf(FW_OPTIONAL_NAME("GNDIF"));
 
 // Driver Component
 Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
@@ -77,8 +70,7 @@ Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
 
 Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
 
-Drv::UdpComponentImpl downlinkComm(FW_OPTIONAL_NAME("UdpDownlink"));
-Drv::TcpClientComponentImpl uplinkComm(FW_OPTIONAL_NAME("TcpUplink"));
+Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
 
 Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
@@ -158,9 +150,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     prmDb.init(10,0);
 
-    groundIf.init(0);
-    uplinkComm.init(0);
-    downlinkComm.init(0);
+    comm.init(0);
     downlink.init(0);
     uplink.init(0);
     fileUplink.init(30, 0);
@@ -269,15 +259,9 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         Fw::EightyCharString name("ReceiveTask");
-        // Downlink is UDP and only configured for sending
-        downlinkComm.configureSend(hostname, port_number);
-        Drv::SocketIpStatus openStatus = downlinkComm.open();
-        if (openStatus != Drv::SOCK_SUCCESS) {
-            Fw::Logger::logMsg("[WARNING] Failed to one downlink socket with status: %d\n", openStatus);
-        }
         // Uplink is configured for receive so a socket task is started
-        uplinkComm.configure(hostname, port_number);
-        uplinkComm.startSocketTask(name, 100, 10 * 1024);
+        comm.configure(hostname, port_number);
+        comm.startSocketTask(name, 100, 10 * 1024);
     }
     return false;
 }
@@ -310,8 +294,8 @@ void exitTasks(void) {
     (void) fileManager.ActiveComponentBase::join(NULL);
     (void) cmdSeq.ActiveComponentBase::join(NULL);
     (void) pingRcvr.ActiveComponentBase::join(NULL);
-    socketIpDriver.exitSocketTask();
-    (void) socketIpDriver.joinSocketTask(NULL);
+    comm.stopSocketTask();
+    (void) comm.joinSocketTask(NULL);
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }

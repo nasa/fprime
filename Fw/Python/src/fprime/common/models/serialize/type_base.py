@@ -20,6 +20,7 @@ class BaseType(abc.ABC):
         """
         Serializes the current object type.
         """
+        raise AbstractMethodException("serialize")
 
     @abc.abstractmethod
     def deserialize(self, data, offset):
@@ -47,7 +48,7 @@ class BaseType(abc.ABC):
         raise AbstractMethodException("to_jsonable")
 
 
-class ValueType(BaseType, abc.ABC):
+class ValueType(BaseType):
     """
     An abstract base type used to represent a single value. This defines the value property, allowing for setting and
     reading from the .val member.
