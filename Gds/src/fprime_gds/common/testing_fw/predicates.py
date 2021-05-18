@@ -244,7 +244,7 @@ class within_range(predicate):
         :param actual: the value to evaluate
         """
         try:
-            return actual >= self.lower_limit and actual <= self.upper_limit
+            return self.lower_limit <= actual <= self.upper_limit
         except TypeError:
             return False
 
