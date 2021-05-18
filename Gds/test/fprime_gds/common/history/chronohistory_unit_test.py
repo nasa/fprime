@@ -27,7 +27,8 @@ class HistoryTestCases(unittest.TestCase):
     def setUp(self):
         self.cHistory = ChronologicalHistory()
 
-    def get_range(self, length):
+    @staticmethod
+    def get_range(length):
         temp1 = ChTemplate(1, "Test Channel 1", "Chrono_Hist_Tester", I32Type())
         chList = []
         ts0 = TimeType()
@@ -36,7 +37,8 @@ class HistoryTestCases(unittest.TestCase):
             chList.append(ChData(I32Type(item), tsi, temp1))
         return chList
 
-    def assert_lists_equal(self, expected, actual):
+    @staticmethod
+    def assert_lists_equal(expected, actual):
         assert len(expected) == len(
             actual
         ), "the given list should have had the length {}, but instead had {}".format(
