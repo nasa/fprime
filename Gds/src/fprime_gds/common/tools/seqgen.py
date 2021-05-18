@@ -43,14 +43,18 @@ class SeqGenException(gseExceptions.GseControllerException):
 
 
 # except:
-#  __error("The Gse source code was not found in your $PYTHONPATH variable. Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
+#  __error("The Gse source code was not found in your $PYTHONPATH variable.
+#  Please set PYTHONPATH to something like: $BUILD_ROOT/Gse/src:$BUILD_ROOT/Gse/generated/$DEPLOYMENT_NAME")
 
 
 def generateSequence(inputFile, outputFile, dictionary, timebase):
     """
     Write a binary sequence file from a text sequence file
-    @param inputFile: A text input sequence file name (usually a .seq extension)
-    @param outputFile: An output binary sequence file name (usually a .bin extension)
+
+    :param inputFile: A text input sequence file name (usually a .seq extension)
+    :param outputFile: An output binary sequence file name (usually a .bin extension)
+    :param dictionary: TODO: the parameters description should be filled by maintainer
+    :param timebase:
     """
 
     # Check for files
