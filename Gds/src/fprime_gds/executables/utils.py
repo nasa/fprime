@@ -87,7 +87,7 @@ def run_wrapped_application(arguments, logfile=None, env=None, launch_time=None)
     :param arguments: arguments with the first being the executable.
     :param logfile: (optional) path to logfile to log to. Will overwrite.
     :param env: (optional) environment for the subprocess
-    :param: launch_time: (optional) time to wait before declaring the process stable
+    :param launch_time: (optional) time to wait before declaring the process stable
     :return: child process should it be needed.
     """
     # Write out run information for the calling user
