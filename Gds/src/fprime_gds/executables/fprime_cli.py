@@ -34,7 +34,8 @@ def add_connection_arguments(parser: argparse.ArgumentParser):
         "--dictionary",
         type=str,
         default=None,
-        help='path from the current working directory to the "<project name>Dictionary.xml" file for the project you\'re using the API with; if unused, tries to search the current working directory for such a file',
+        help='path from the current working directory to the "<project name>Dictionary.xml" file for the project'
+             'you\'re using the API with; if unused, tries to search the current working directory for such a file',
     )
     parser.add_argument(
         "-ip",
@@ -63,7 +64,8 @@ def add_retrieval_arguments(parser: argparse.ArgumentParser):
         "--timeout",
         type=float,
         default=0.0,
-        help="wait at most SECONDS seconds for a single new message, then exit (defaults to listening until the user exits via CTRL+C, and logging all messages)",
+        help="wait at most SECONDS seconds for a single new message, then exit (defaults to"
+             "listening until the user exits via CTRL+C, and logging all messages)",
         metavar="SECONDS",
     )
 
@@ -79,7 +81,8 @@ def add_search_arguments(parser: argparse.ArgumentParser, command_name: str):
         "--list",
         dest="is_printing_list",
         action="store_true",
-        help="list all possible %s types the current F Prime instance could produce, based on the %s dictionary, sorted by %s type ID"
+        help="list all possible %s types the current F Prime instance could produce,"
+             "based on the %s dictionary, sorted by %s type ID"
         % (command_name[:-1], command_name, command_name[:-1]),
     )
     parser.add_argument(
@@ -96,7 +99,8 @@ def add_search_arguments(parser: argparse.ArgumentParser, command_name: str):
         "--components",
         nargs="+",
         type=str,
-        help='only show %s from the given component name "COMP"; can provide multiple components to show %s from all components given'
+        help='only show %s from the given component name "COMP"; can provide multiple'
+             'components to show %s from all components given'
         % (command_name, command_name),
         metavar="COMP",
     )
@@ -212,7 +216,8 @@ class ChannelsParser(CliCommandParserBase):
         """
         channels_parser = parent_parser.add_parser(
             "channels",
-            description="print out new telemetry data that has been received from the F Prime instance, sorted by timestamp",
+            description="print out new telemetry data that has been received from"
+                        "the F Prime instance, sorted by timestamp",
         )
         return channels_parser
 
