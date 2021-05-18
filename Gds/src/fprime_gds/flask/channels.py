@@ -43,7 +43,6 @@ class ChannelHistory(flask_restful.Resource):
         Constructor used to setup time argument to this history.
 
         :param history: history object holding channel
-        :param dictionary: dictionary holding channel list
         """
         self.parser = flask_restful.reqparse.RequestParser()
         self.parser.add_argument(
