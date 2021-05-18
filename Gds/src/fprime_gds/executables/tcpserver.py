@@ -374,7 +374,8 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         # Process and send the packet of the message here...
         self.processNewPkt(header, data)
 
-    def readHeader(self, packet):
+    @staticmethod
+    def readHeader(packet):
         """
         Read the 9 byte header (e.g. "A5A5 GUI " or "A5A5 FSW "),
         or just read the "List\n" command.
@@ -400,7 +401,8 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
 
         return data
 
-    def processNewPkt(self, header, data):
+    @staticmethod
+    def processNewPkt(header, data):
         """
         Process a single command here header and data here.
         The command must always start with A5A5 except if it is a List.
