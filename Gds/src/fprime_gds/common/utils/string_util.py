@@ -9,6 +9,7 @@ Utility functions to process strings to be used in FPrime GDS
 
 import re
 
+
 def format_string(format_str, values):
     """
     Function to convert C-string style to python format
