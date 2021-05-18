@@ -34,7 +34,7 @@ Monkey patch setuptools to write faster console_scripts with this format:
 This is better.
 
 (c) 2016, Aaron Christianson
-http://github.com/ninjaaron/fast-entry_points
+https://github.com/ninjaaron/fast-entry_points
 """
 import re
 
