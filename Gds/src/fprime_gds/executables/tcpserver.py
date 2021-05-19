@@ -203,6 +203,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         """
         Read l bytes from socket.
         """
+        chunk = b""
         msg = b""
         n = 0
         while l > n:
