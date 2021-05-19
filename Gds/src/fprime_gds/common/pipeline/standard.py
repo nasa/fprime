@@ -103,7 +103,7 @@ class StandardPipeline:
         """
         Setup logging based on the logging prefix supplied
 
-        :param log_dir: TODO: the parameter description should be filled by maintainer
+        :param log_dir: logging output directory
         :return: None
         """
         # Setup the logging pipeline (register it to all its data sources)
