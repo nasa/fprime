@@ -217,6 +217,19 @@
                 </arg>
            </args>       
         </event>
+        <event id="10" name="OpCodeReregistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X is already registered to port %d" >
+            <comment>
+            Op code reregistered event
+            </comment>
+            <args>
+                <arg name="Opcode" type="U32">
+                    <comment>The opcode reregistered</comment>
+                </arg>          
+                <arg name="port" type="I32">
+                    <comment>The reregistration port</comment>
+                </arg>          
+            </args>
+        </event>
     </events>
     <telemetry>
         <channel id="0" name="CommandsDispatched" data_type="U32" update="on_change" abbrev="T002-1100">
