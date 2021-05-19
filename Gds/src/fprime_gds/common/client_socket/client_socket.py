@@ -111,6 +111,7 @@ class ThreadedTCPSocketClient(DataHandler):
         Handles incoming data by sending it to a socket.
 
         :param data: data to send to the client socket
+        :param sender: sender source of the data
         """
         self.send(data, self.dest)
 
