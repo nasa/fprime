@@ -37,7 +37,7 @@ class Timeout:
 
         :param callback: function called when timeout expires
         :param timeout: (optional) timeout duration. Default: 5 seconds
-        :param args:
+        :param args: TODO: the parameter description should be filled by maintainer
         :return: None
         """
         self.__timeout = timeout
