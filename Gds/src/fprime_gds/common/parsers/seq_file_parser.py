@@ -11,7 +11,7 @@ class SeqFileParser:
         """
         Generator that parses an input sequence file and returns a tuple
         for each valid line of the sequence file.
-        :param filename: TODO: the parameter description should be filled by maintainer
+        :param filename: A sequence file name (usually a .seq extension)
         :return: A list of tuples: (lineNumber, descriptor, seconds, useconds, mnemonic, arguments)
         """
 
