@@ -295,7 +295,7 @@ def launch_app(app, port, address, logs, **_):
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
-    :param logs: TODO: the parameter description should be filled by maintainer
+    :param logs: log directory to place files into
     :return: process
     """
     app_name = os.path.basename(app)
