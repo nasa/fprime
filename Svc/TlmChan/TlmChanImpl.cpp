@@ -6,15 +6,8 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 #include <cstring>
@@ -26,11 +19,7 @@
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1
     TlmChanImpl::TlmChanImpl(const char* name) : TlmChanComponentBase(name)
-#else
-    TlmChanImpl::TlmChanImpl()
-#endif
     {
         // clear data
         this->m_activeBuffer = 0;
@@ -42,10 +31,12 @@ namespace Svc {
         // clear buckets
         for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
             this->m_tlmEntries[0].buckets[entry].used = false;
+            this->m_tlmEntries[0].buckets[entry].updated = false;
             this->m_tlmEntries[0].buckets[entry].bucketNo = entry;
             this->m_tlmEntries[0].buckets[entry].next = 0;
             this->m_tlmEntries[0].buckets[entry].id = 0;
             this->m_tlmEntries[1].buckets[entry].used = false;
+            this->m_tlmEntries[1].buckets[entry].updated = false;
             this->m_tlmEntries[1].buckets[entry].bucketNo = entry;
             this->m_tlmEntries[1].buckets[entry].next = 0;
             this->m_tlmEntries[1].buckets[entry].id = 0;

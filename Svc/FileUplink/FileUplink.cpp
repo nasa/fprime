@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Svc/FileUplink/FileUplink.hpp>
@@ -105,6 +98,11 @@ namespace Svc {
   void FileUplink ::
     handleStartPacket(const Fw::FilePacket::StartPacket& startPacket)
   {
+    // Clear all event throttles in preparation for new start packet
+    this->log_WARNING_HI_FileUplink_FileWriteError_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_InvalidReceiveMode_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_PacketOutOfBounds_ThrottleClear();
+    this->log_WARNING_HI_FileUplink_PacketOutOfOrder_ThrottleClear();
     this->packetsReceived.packetReceived();
     if (this->receiveMode != START) {
       this->file.osFile.close();

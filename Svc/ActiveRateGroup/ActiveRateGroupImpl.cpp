@@ -8,31 +8,25 @@
 *
 *   Copyright 2014-2015, by the California Institute of Technology.
 *   ALL RIGHTS RESERVED. United States Government Sponsorship
-*   acknowledged. Any commercial use must be negotiated with the Office
-*   of Technology Transfer at the California Institute of Technology.
+*   acknowledged.
 *
-*   Information included herein is controlled under the International
-*   Traffic in Arms Regulations ("ITAR") by the U.S. Department of State.
-*   Export or transfer of this information to a Foreign Person or foreign
-*   entity requires an export license issued by the U.S. State Department
-*   or an ITAR exemption prior to the export or transfer.
 */
 
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-#include <Svc/ActiveRateGroup/ActiveRateGroupImplCfg.hpp>
+#include <ActiveRateGroupImplCfg.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
 
 namespace Svc {
 
-#if FW_OBJECT_NAMES == 1
     ActiveRateGroupImpl::ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
-        ActiveRateGroupComponentBase(compName),
-#else
-    ActiveRateGroupImpl::ActiveRateGroupImpl(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
-#endif
-        m_cycles(0), m_maxTime(0),m_cycleStarted(false),m_overrunThrottle(0),m_cycleSlips(0) {
+            ActiveRateGroupComponentBase(compName),
+            m_cycles(0), 
+            m_maxTime(0),
+            m_cycleStarted(false),
+            m_overrunThrottle(0),
+            m_cycleSlips(0) {
         FW_ASSERT(contexts);
         FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../../Autocoders/schema/default/component_schema.rnc" type="compact"?>
+
+<component name="UdpReceiver" kind="passive" namespace="Svc">
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <comment>Receives packets via a UDP connection</comment>
+    <ports>
+        <port name="Sched" data_type="Svc::Sched" kind="sync_input" >
+            <comment>
+            Input port to get called periodically for telemetry
+            </comment>
+        </port>
+        <port name="PortsOut" data_type="Serial" kind="output" max_number="10">
+            <comment>
+            Output ports to other components
+            </comment>
+        </port>
+    </ports>
+    <events>
+        <event id="0" name="UR_PortOpened" severity="ACTIVITY_HI" format_string = "UdpReceiver port %d opened">
+            <comment>
+            Connection opened
+            </comment>
+            <args>
+                <arg name = "port" type = "U32"/>
+            </args>
+        </event>
+        <event id="1" name="UR_SocketError" severity="WARNING_HI" format_string = "UdpReceiver socket error: %s">
+            <comment>
+            UDP port socket error
+            </comment>
+            <args>
+                <arg name = "error" type = "string" size="80"/>
+            </args>
+        </event>
+        <event id="2" name="UR_BindError" severity="WARNING_HI" format_string = "UdpReceiver bind error: %s">
+            <comment>
+            UDP port socket error
+            </comment>
+            <args>
+                <arg name = "error" type = "string" size="80"/>
+            </args>
+        </event>
+        <event id="3" name="UR_RecvError" severity="WARNING_HI" format_string = "UDPReceiver receive error: %s" throttle="5">
+            <comment>
+            UDP receive error
+            </comment>
+            <args>
+                <arg name = "error" type = "string" size="80"/>
+            </args>
+        </event>
+        <event id="4" name="UR_DecodeError" severity="WARNING_HI" format_string = "Port decode error in stage %d: %d" throttle="5">
+            <comment>
+            Port decode error
+            </comment>
+            <args>
+                <arg name="stage" type="ENUM">
+                    <enum name="DecodeStage">
+                        <item name="DECODE_SEQ"/>
+                        <item name="DECODE_PORT"/>
+                        <item name="DECODE_BUFFER"/>           
+                        <item name="PORT_SEND"/>           
+                    </enum>
+                </arg>
+                <arg name = "error" type = "I32"/>
+            </args>
+        </event>
+        <event id="5" name="UR_DroppedPacket" severity="WARNING_HI" format_string = "UDP packet(s) dropped (diff %d)" throttle="5">
+            <comment>
+            Dropped packet was detected
+            </comment>
+            <args>
+                <arg name = "diff" type = "U32"/>
+            </args>
+        </event>
+    </events>
+    <telemetry>
+        <channel id="0" name="UR_PacketsReceived" data_type="U32" update = "on_change">
+            <comment>
+            Number of packets received
+            </comment>
+        </channel>
+        <channel id="1" name="UR_BytesReceived" data_type="U32" update = "on_change">
+            <comment>
+            Number of bytes received
+            </comment>
+        </channel>
+        <channel id="2" name="UR_PacketsDropped" data_type="U32" update = "on_change">
+            <comment>
+            Number of packets dropped
+            </comment>
+        </channel>
+        <channel id="3" name="UR_DecodeErrors" data_type="U32" update = "on_change">
+            <comment>
+            Number of packet decode errors
+            </comment>
+        </channel>
+    </telemetry>
+</component>
+

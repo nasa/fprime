@@ -1,7 +1,7 @@
 #ifndef FW_OUTPUT_PORT_BASE_HPP
 #define FW_OUTPUT_PORT_BASE_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
@@ -14,7 +14,7 @@ namespace Fw {
         public:
 #if FW_PORT_SERIALIZATION == 1           
             void registerSerialPort(InputPortBase* port); // !< register a port for serialized calls
-            void invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
+            SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
 #endif            
 
         protected:

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "DEFAULT_VALUES">
+    <rule context="array">
+        <assert test="count(current()/default/value) = current()/size">Size greater than number of default values.</assert>
+    </rule>
+    </pattern>
+</schema>

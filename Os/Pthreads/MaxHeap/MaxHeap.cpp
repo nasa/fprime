@@ -10,21 +10,15 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 //
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ======================================================================
 
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 #include <stdio.h>
+#include <Fw/Logger/Logger.hpp>
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)
@@ -42,7 +36,7 @@ namespace Os {
     }
   
     MaxHeap::~MaxHeap() {
-      delete this->heap;
+      delete [] this->heap;
       this->heap = NULL;
     }
 
@@ -51,7 +45,7 @@ namespace Os {
       // The heap has already been created.. so delete
       // it and try again.
       if( NULL != this->heap ) {
-        delete this->heap;
+        delete [] this->heap;
         this->heap = NULL;
       }
 
@@ -129,7 +123,7 @@ namespace Os {
       // This will put the smallest value in the 
       // heap on the top, violating the heap property.
       NATIVE_UINT_TYPE index = this->size-1;
-      // printf("Putting on top: i: %u v: %d\n", index, this->heap[index].value);
+      // Fw::Logger::logMsg("Putting on top: i: %u v: %d\n", index, this->heap[index].value);
       this->heap[0]= this->heap[index];
       --this->size;
 
@@ -206,7 +200,7 @@ namespace Os {
         }
 
         // Swap the largest node with the current node:
-        // printf("Swapping: i: %u v: %d with i: %u v: %d\n", 
+        // Fw::Logger::logMsg("Swapping: i: %u v: %d with i: %u v: %d\n", 
         //   index, this->heap[index].value,
         //   largest, this->heap[largest].value);
         this->swap(index, largest);
@@ -267,22 +261,22 @@ namespace Os {
       NATIVE_UINT_TYPE index = 0;
       NATIVE_UINT_TYPE left;
       NATIVE_UINT_TYPE right;
-      printf("Printing Heap of Size: %d\n", this->size);
+      Fw::Logger::logMsg("Printing Heap of Size: %d\n", this->size);
       while(index < this->size) {
         left = LCHILD(index);
         right = RCHILD(index);
 
         if( left >= size && index == 0) {
-          printf("i: %u v: %d d: %u -> (NULL, NULL)\n",
+          Fw::Logger::logMsg("i: %u v: %d d: %u -> (NULL, NULL)\n",
             index, this->heap[index].value, this->heap[index].id);
         }
         else if( right >= size && left < size ) {
-          printf("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
+          Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, NULL)\n",
             index, this->heap[index].value, this->heap[index].id,
             left, this->heap[left].value, this->heap[left].id);
         }
         else if( right < size && left < size ) {
-          printf("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
+          Fw::Logger::logMsg("i: %u v: %d d: %u -> (i: %u v: %d d: %u, i: %u v: %d d: %u)\n",
             index, this->heap[index].value, this->heap[index].id,
             left, this->heap[left].value,this->heap[left].id,
             right, this->heap[right].value, this->heap[right].id);

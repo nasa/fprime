@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <!-- This is a common filefor both interface_schem and internal_interface_schema. These two were originally merged into this file, but had to be split as a work around to keep the same defenitions but not validate component files that had the interface tag in it. -->
+
+    <include href="common_elements.rng"/>
+
+
+    <start>
+        <ref name = "interface_root_define"></ref>
+    </start>
+
+    <define name = "interface_root_define">
+        <a:documentation>Used for interface files.</a:documentation>
+        <choice>
+            <!--Choice between interface or port root tag.-->
+            <element name = "interface">
+                <a:documentation>Allows for one interface.</a:documentation>
+                <ref name = "interface_define"></ref>
+            </element>
+
+            <element name = "port">
+                <a:documentation>Allows for one interface.</a:documentation>
+                <ref name = "interface_define"></ref>
+            </element>
+        </choice>
+
+    </define>
+
+
+
+    <define name = "interface_define">
+        <interleave>
+            <!-- Required Attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Interface name.</a:documentation>
+                <text/>
+            </attribute>
+
+            <!-- Optional Attributes -->
+
+            <optional>
+                <attribute name = "priority">
+                    <data type="integer"></data>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "namespace">
+                    <a:documentation>Namespace in which the interface is in.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+
+            <!-- Elements -->
+
+
+            <zeroOrMore>
+                <element name = "include_header">
+                    <a:documentation>Defines the header file of the interface.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <element name = "import_serializable_type">
+                    <a:documentation>Imports serializable types.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <element name = "import_enum_type">
+                    <a:documentation>Imports enum types.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <element name = "import_array_type">
+                    <a:documentation>Import array XML files.</a:documentation>
+                    <data type="anyURI"></data>
+                </element>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <ref name = "args_define"></ref>
+            </zeroOrMore>
+
+            <optional>
+                <ref name = "return_define"></ref>
+            </optional>
+
+            <optional>
+                <ref name = "comment_define"></ref>
+            </optional>
+
+        </interleave>
+    </define>
+
+
+
+    <define name = "args_define">
+        <element name = "args">
+            <a:documentation>One or more arguments.</a:documentation>
+            <zeroOrMore>
+                <ref name = "arg_define"></ref>
+            </zeroOrMore>
+        </element>
+    </define>
+
+
+
+</grammar>

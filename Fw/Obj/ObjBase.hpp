@@ -6,22 +6,15 @@
  * \copyright
  * Copyright 2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #ifndef FW_OBJ_BASE_HPP
 #define FW_OBJ_BASE_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
     
@@ -39,7 +32,6 @@ namespace Fw {
 
     class ObjBase {
         public:
-
 #if FW_OBJECT_NAMES == 1
 
             //!  \brief Returns the object's name
@@ -70,6 +62,7 @@ namespace Fw {
             virtual void toString(char* str, NATIVE_INT_TYPE size); //!< virtual method to get description of object
 #endif // FW_OBJECT_TO_STRING           
 #endif // FW_OBJECT_NAMES
+
 #if FW_OBJECT_REGISTRATION == 1
 
             //!  \brief static function to set object registry.
@@ -88,7 +81,8 @@ namespace Fw {
             
 #if FW_OBJECT_NAMES == 1
             char m_objName[FW_OBJ_NAME_MAX_SIZE]; //!< stores object name
-		
+#endif
+
             //!  \brief ObjBase constructor
             //!
             //!  The constructor for the base class. Protected so it will only be called
@@ -96,9 +90,6 @@ namespace Fw {
             //!
             //!  \param name Object name
             ObjBase(const char* name);
-#else
-            ObjBase(); // !< Constructor with no name
-#endif            
 
             //!  \brief Destructor
             //!

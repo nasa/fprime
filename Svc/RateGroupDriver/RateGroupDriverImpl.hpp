@@ -11,15 +11,8 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #ifndef SVC_RATEGROUPDRIVER_IMPL_HPP
@@ -51,11 +44,7 @@ namespace Svc {
             //!  \param numDividers size of dividers array
             //!
             //!  \return return value description
-#if FW_OBJECT_NAMES == 1        
             RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
-#else
-            RateGroupDriverImpl(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
-#endif
 
             //!  \brief RateGroupDriverImpl initialization function
             //!
@@ -80,6 +69,9 @@ namespace Svc {
             NATIVE_INT_TYPE m_ticks;
             //! rollover counter
             NATIVE_INT_TYPE m_rollover;
+        public:
+            //! Size of the devider table, provided as a constants to users passing the table in
+            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
     };
 
 }

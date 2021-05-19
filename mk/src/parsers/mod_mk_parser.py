@@ -9,6 +9,13 @@ import parsers.variable_list_parser
 # Fifth entry in list: make rule for generating code 
 
 xml_gen_dictionary = {
+                        'Enum': 
+                            [
+                            'EnumAi.xml',
+                            ['EnumAc.cpp',],
+                            ['EnumAc.hpp',],
+                            '\tcd $(BUILD_ROOT)/<module_dir> && $(MKDIR) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR) && $(AC_ENUM_GEN) $(notdir $<) $(DEP_FILE_ARG) $(BUILD_ROOT)/<module_dir>/$(AC_DEP_DIR)/$(basename $(notdir $<)).dep'
+                            ],
                         'Serializable': 
                             [
                             'SerializableAi.xml',
@@ -75,7 +82,7 @@ test_bin_target = """
 $(BUILD_ROOT)/<module_dir>/$(OUTPUT_DIR)/$(BIN_PREFIX)test_<last_dir>$(BIN_SUFFIX): $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_OBJS_<module_name>_$(BUILD))
 	$(MKDIR) $(@D)
 	$(LINK_LIB) $(LINK_LIB_FLAGS) $(LIBRARY_TO) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_OBJS_<module_name>_$(BUILD))
-	$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_LIBS_<module_name>_$(BUILD)) $(LINK_LIBS) $(LIBS_END) 
+	$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $(LIBS_START) $(basename $@)_test_lib$(LIB_SUFFIX) $(TEST_MODS_LIBS_<module_name>_$(BUILD)) $(TEST_LIBS_<module_name>_$(BUILD)) $(LINK_LIBS) $(LIBS_END) $(TEST_LINK_ARGS_<module_name>_$(BUILD))
 
 # clean unit test binary
 test_<module_name>_clean: $(foreach module,$(TEST_MODS_<module_name>_$(BUILD)),$(module)_bin_clean)
@@ -134,7 +141,7 @@ comp_helper_targets = """
 
 """
 
-class CfgParseError:
+class CfgParseError(Exception):
     def __init__(self, error):
         self.error = error
     def getErr(self):
@@ -154,6 +161,7 @@ class ModMkParser:
         self.post_defines_dictionary = {} # holds extra defines by target
         self.test_mods_dictionary = {} # hold module libraries to link test binary to 
         self.test_libs_dictionary = {} # hold libraries to link test binary
+        self.test_link_args_dictionary = {} # Hold special link arguments for test binaries
         self.ac_extra_list = [] # holds extra AC files
         
         self.subdir_parser_list = [] # holds a collection of parsers for each subdirectory 
@@ -177,21 +185,22 @@ class ModMkParser:
             self.test_source_dictionary[target] = []
             self.test_libs_dictionary[target] = []
             self.test_mods_dictionary[target] = []
+            self.test_link_args_dictionary[target] = []
             self.defines_dictionary[target] = ""
             self.post_defines_dictionary[target] = ""
 
-        for xml_type in xml_gen_dictionary.keys():
+        for xml_type in list(xml_gen_dictionary.keys()):
             self.xml_dictionary[xml_type] = []
         # stored for debugging printout
         self.subdir_list = []
         
-        if os.environ.has_key("PARSER_VERBOSE"):
-            print("Analyzing directory " + directory)
+        if "PARSER_VERBOSE" in os.environ:
+            print(("Analyzing directory " + directory))
         # check for file
         self.mod_file_name = directory + "/" + mod_make_cfg
         
         if not os.path.isfile(self.mod_file_name):
-            raise CfgParseError, "File %s does not exist." % self.mod_file_name
+            raise CfgParseError("File %s does not exist." % self.mod_file_name)
         
         # read in file
         file_lines = open(self.mod_file_name).readlines()
@@ -233,7 +242,7 @@ class ModMkParser:
             # make sure remaining text has "=" in it somewhere
             # by searching for "="
             if line.count("=") < 1:
-                raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
             (var,value) = line.split("=",1)
             var = var.strip()
             value = value.strip()
@@ -247,24 +256,24 @@ class ModMkParser:
                     # make sure remaining text is of form "var = val"
                     # by searching for "="
                     if line.count("=") != 1:
-                        raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     sources = value.split(" ")
                     for source in sources:
                         if source == "":
                             continue
                         if not os.path.isfile(os.environ["BUILD_ROOT"] + "/" + directory + "/" + source):
-                            raise CfgParseError,"File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,source)
+                            raise CfgParseError("File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,source))
                         if source.count(".xml"):
                             source_found = False
-                            for xml_type in xml_gen_dictionary.keys():
+                            for xml_type in list(xml_gen_dictionary.keys()):
                                 if source.count(xml_type):
                                     source_found = True
                                     self.xml_dictionary[xml_type] += source,
                             if not source_found:
                                 source_names = ""
-                                for xml_type in xml_gen_dictionary.keys():
+                                for xml_type in list(xml_gen_dictionary.keys()):
                                     source_names += "xx%sAi.xml "%xml_type
-                                raise CfgParseError,"File %s/%s/%s invalid. Should be one of \n\t%s" % (os.environ["BUILD_ROOT"],directory,source,source_names)
+                                raise CfgParseError("File %s/%s/%s invalid. Should be one of \n\t%s" % (os.environ["BUILD_ROOT"],directory,source,source_names))
                                  
                         else:
                             self.source_dictionary[target] += source,
@@ -273,13 +282,13 @@ class ModMkParser:
                     # make sure remaining text is of form "var = val"
                     # by searching for "="
                     if line.count("=") != 1:
-                        raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     headers = value.split(" ")
                     for header in headers:
                         if header == "":
                             continue
                         if not os.path.isfile(os.environ["BUILD_ROOT"] + "/" + directory + "/" + header):
-                            raise CfgParseError,"File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,header)
+                            raise CfgParseError("File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,header))
                         self.hdr_dictionary[target] += header,
                     
                                                 
@@ -287,26 +296,31 @@ class ModMkParser:
                     # make sure remaining text is of form "var = val"
                     # by searching for "="
                     if line.count("=") != 1:
-                        raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     test_sources = value.split(" ")
                     for source in test_sources:
                         if source == "":
                             continue
                         if not os.path.isfile(os.environ["BUILD_ROOT"] + "/" + directory + "/" + source):
                             if not source.count("_ac_"): # Only disregard missing _AC_ files. For unit tests that want to include AC files that are not generated yet.
-                                raise CfgParseError,"File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,source)
+                                raise CfgParseError("File %s/%s/%s not found." % (os.environ["BUILD_ROOT"],directory,source))
                     self.test_source_dictionary[target] = test_sources
                     
                 if var == "TEST_MODS" + starget:
                     if line.count("=") != 1:
-                        raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     self.test_mods_dictionary[target] = value.split(" ")
                     
                 if var == "TEST_LIBS" + starget:
                     if line.count("=") != 1:
-                        raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                     self.test_libs_dictionary[target] = value.split(" ")
                     
+                if var == "TEST_LINK_ARGS" + starget:
+                    if line.count("=") != 1:
+                        raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
+                    self.test_link_args_dictionary[target] = value.split(" ")
+
                 if var == "COMPARGS" + starget:
                     self.defines_dictionary[target] = value
                         
@@ -325,7 +339,7 @@ class ModMkParser:
                 # make sure remaining text is of form "var = val"
                 # by searching for "="
                 if line.count("=") != 1:
-                    raise CfgParseError, "Invalid entry found in %s line %i" % (self.mod_file_name,line_number)
+                    raise CfgParseError("Invalid entry found in %s line %i" % (self.mod_file_name,line_number))
                 if value != "":
                     self.subdir_list = value.split(" ")
                 
@@ -343,12 +357,12 @@ class ModMkParser:
     def generateVariables(self, file_descriptor):
         
         # generate this module's variables
-        if os.environ.has_key("PARSER_VERBOSE"):
-            print("Generating variables for %s" % self.module_name)
+        if "PARSER_VERBOSE" in os.environ:
+            print(("Generating variables for %s" % self.module_name))
         
         file_descriptor.write("\n# Module " + self.module_name + " make variables.\n")
 
-        for target in self.source_dictionary.keys():
+        for target in list(self.source_dictionary.keys()):
             # write source variable
             file_descriptor.write("\nSRC_" + self.module_name + target + " := \\\n")
             # write each source    
@@ -361,7 +375,7 @@ class ModMkParser:
             if target != "":
                 file_descriptor.write("\t\t$(SRC_" + self.module_name + ")\n")
 
-        for target in self.hdr_dictionary.keys():
+        for target in list(self.hdr_dictionary.keys()):
             # write header variable
             file_descriptor.write("\nHDR_" + self.module_name + target + " := \\\n")
             # write each header    
@@ -374,20 +388,20 @@ class ModMkParser:
                 file_descriptor.write("\t\t$(HDR_" + self.module_name + ")\n")
 
 
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             
             file_descriptor.write("\nSRC_XML_AC_%s_%s := \\\n"%(xml_type.upper(),self.module_name))
 
             for source in self.xml_dictionary[xml_type]:
                 # check to see if it is one of the special xml source files
                 key_found = False
-                for key in xml_gen_dictionary.keys():
+                for key in list(xml_gen_dictionary.keys()):
                     # print "Key: %s Replaced: %s" % (key,key.replace('%m',self.module_name))
                     if source.count(xml_gen_dictionary[key][xml_source_file_list_entry]):
                         file_descriptor.write("\t\t$(BUILD_ROOT)/%s/%s \\\n"%(self.directory,source))
                         key_found = True
                 if not key_found:
-                    raise CfgParseError, "Invalid XML file %s in %s"%(source,self.mod_file_name)
+                    raise CfgParseError("Invalid XML file %s in %s"%(source,self.mod_file_name))
 
             file_descriptor.write("\nSRC_AC_%s_%s := \\\n"%(xml_type.upper(),self.module_name))
         
@@ -395,7 +409,7 @@ class ModMkParser:
     
                 # check to see if it is one of the special xml source files
                 key_found = False
-                for key in xml_gen_dictionary.keys():
+                for key in list(xml_gen_dictionary.keys()):
                     # print "Key: %s Replaced: %s" % (key,key.replace('%m',self.module_name))
                     if source.count(xml_gen_dictionary[key][xml_source_file_list_entry]):
                         key_found = True
@@ -403,13 +417,13 @@ class ModMkParser:
                             gen_file = source.replace(xml_gen_dictionary[key][xml_source_file_list_entry],replacement)
                             file_descriptor.write("\t\t$(BUILD_ROOT)/" + self.directory + "/" + gen_file + " \\\n")
                 if not key_found:
-                    raise CfgParseError, "Invalid XML file %s in %s"%(source,self.mod_file_name)
+                    raise CfgParseError("Invalid XML file %s in %s"%(source,self.mod_file_name))
 
             file_descriptor.write("\nHDR_AC_%s_%s := \\\n"%(xml_type.upper(),self.module_name))
 
             for source in self.xml_dictionary[xml_type]:
                 # check to see if it is one of the special xml source files
-                for key in xml_gen_dictionary.keys():
+                for key in list(xml_gen_dictionary.keys()):
                     # print "Key: %s Replaced: %s" % (key,key.replace('%m',self.module_name))
                     if (source.count(xml_gen_dictionary[key][xml_source_file_list_entry])):
                         for replacement in xml_gen_dictionary[key][xml_hpp_file_list_entry]:
@@ -418,35 +432,35 @@ class ModMkParser:
 
         # add the XML sources together for tracking as a unit (e.g. for deletes/sloc)
         file_descriptor.write("\nSRC_XML_AC_%s := \\\n"%self.module_name)
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             file_descriptor.write("\t\t$(SRC_XML_AC_%s_%s) \\\n"%(xml_type.upper(),self.module_name))
         
         # add the sources together for tracking them as a unit (e.g. for deletes/sloc
         file_descriptor.write("\nSRC_AC_%s := \\\n"%self.module_name)
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             file_descriptor.write("\t\t$(SRC_AC_%s_%s) \\\n"%(xml_type.upper(),self.module_name))
             
         # add the headers together for tracking them as a unit (e.g. for deletes/sloc
         file_descriptor.write("\nHDR_AC_%s := \\\n"%self.module_name)
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             file_descriptor.write("\t\t$(HDR_AC_%s_%s) \\\n"%(xml_type.upper(),self.module_name))
 
         # generate variable for object list for non-common targets
-        for target in self.source_dictionary.keys():
+        for target in list(self.source_dictionary.keys()):
             if target != "":
                 file_descriptor.write("\n\nOBJS_" + self.module_name + target + " := $(foreach source,$(SRC_" + self.module_name + target + "),$(dir $(source))$(OUTPUT_DIR)/$(OBJ_PREFIX)$(basename $(notdir $(source)))$(OBJ_SUFFIX))\n" )
                 
         # generate variable for object list for XML targets
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             file_descriptor.write("\nOBJS_AC_" + xml_type.upper() + "_" + self.module_name + " := $(foreach source,$(SRC_AC_" + xml_type.upper() + "_" + self.module_name + "),$(dir $(source))$(OUTPUT_DIR)/$(OBJ_PREFIX)$(basename $(notdir $(source)))$(OBJ_SUFFIX))\n" )
         
         # add the objects together for the library build
         file_descriptor.write("\nOBJS_AC_%s := \\\n"%self.module_name)
-        for xml_type in self.xml_dictionary.keys():
+        for xml_type in list(self.xml_dictionary.keys()):
             file_descriptor.write("\t\t$(OBJS_AC_%s_%s) \\\n"%(xml_type.upper(),self.module_name))
         # generate test source. This could probably be refactored and combined with above, 
         # but this is the quickest way for now...
-        for target in self.test_source_dictionary.keys():
+        for target in list(self.test_source_dictionary.keys()):
             # write source variable
             file_descriptor.write("\nTEST_SRC_" + self.module_name + target + " := \\\n")
             # write each source    
@@ -458,13 +472,13 @@ class ModMkParser:
                 file_descriptor.write("\t\t$(TEST_SRC_" + self.module_name + ")\n")    
                 
         # generate variable for object list for non-common targets
-        for target in self.test_source_dictionary.keys():
+        for target in list(self.test_source_dictionary.keys()):
             if target != "":
                 file_descriptor.write("\nTEST_OBJS_" + self.module_name + target + " := $(foreach source,$(TEST_SRC_" + self.module_name + target + "),$(dir $(source))$(OUTPUT_DIR)/$(OBJ_PREFIX)$(basename $(notdir $(source)))$(OBJ_SUFFIX))\n" )
 
 
         # generate variable for object list for non-common targets
-        for target in self.test_mods_dictionary.keys():
+        for target in list(self.test_mods_dictionary.keys()):
 
             file_descriptor.write("\nTEST_MODS_LIBS_" + self.module_name + target + " := \\\n")
             # write each test module library    
@@ -486,7 +500,7 @@ class ModMkParser:
             if target != "":
                 file_descriptor.write("\t\t$(TEST_MODS_" + self.module_name + ")\n")    
 
-        for target in self.test_libs_dictionary.keys():
+        for target in list(self.test_libs_dictionary.keys()):
 
             file_descriptor.write("\nTEST_LIBS_" + self.module_name + target + " := \\\n")
             # write each test module library    
@@ -498,7 +512,19 @@ class ModMkParser:
             if target != "":
                 file_descriptor.write("\t\t$(TEST_LIBS_" + self.module_name + ")\n")    
         
-        for target in self.defines_dictionary.keys():
+        for target in list(self.test_link_args_dictionary.keys()):
+
+            file_descriptor.write("\nTEST_LINK_ARGS_" + self.module_name + target + " := \\\n")
+            # write each test module library    
+            for lib in self.test_link_args_dictionary[target]:
+                if lib != "":
+                    file_descriptor.write("\t\t" + lib + " \\\n")
+
+            # add variable for common modules
+            if target != "":
+                file_descriptor.write("\t\t$(TEST_LINK_ARGS_" + self.module_name + ")\n")    
+
+        for target in list(self.defines_dictionary.keys()):
             
             file_descriptor.write("\nDEFINES_" + self.directory_string + target + " := " + self.defines_dictionary[target] + " \\\n")
 
@@ -506,7 +532,7 @@ class ModMkParser:
             if target != "":
                 file_descriptor.write("\t\t$(DEFINES_" + self.directory_string + ")\n")    
 
-        for target in self.post_defines_dictionary.keys():
+        for target in list(self.post_defines_dictionary.keys()):
             
             file_descriptor.write("\nPOST_DEFINES_" + self.directory_string + target + " := " + self.post_defines_dictionary[target] + " \\\n")
 
@@ -522,8 +548,8 @@ class ModMkParser:
 
     def generateTargets(self, ac_file_descriptor, bin_file_descriptor):
         
-        if os.environ.has_key("PARSER_VERBOSE"):
-            print("Generating targets for %s" % self.module_name)
+        if "PARSER_VERBOSE" in os.environ:
+            print(("Generating targets for %s" % self.module_name))
             
         ai_srcs = ""
         
@@ -540,7 +566,7 @@ class ModMkParser:
         # Only create regular targets for modules
         if (self.isModule):
                 
-            for target in self.source_dictionary.keys():
+            for target in list(self.source_dictionary.keys()):
     
                 # write each source
                 for source in self.source_dictionary[target]:
@@ -558,18 +584,18 @@ class ModMkParser:
                         (base,extension) = os.path.splitext(source_file)
                         bin_file_descriptor.write("-include $(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/" + base + ".d\n")
                         bin_file_descriptor.write("$(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/$(OBJ_PREFIX)" + base + "$(OBJ_SUFFIX): $(BUILD_ROOT)/" + self.directory + "/" + source + "\n")
-                        if (extension == ".c"):
+                        if (extension == ".c" or extension == ".S" or extension == ".s"):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CC) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         elif ((extension == ".cpp") or (extension == ".cc") or (extension == ".asm")):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CXX) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CXXFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         else:
-                            raise CfgParseError,"Invalid Extension " + extension + " on file " + self.module_name + "/" + source
+                            raise CfgParseError("Invalid Extension " + extension + " on file " + self.module_name + "/" + source)
     
-            for xml_type in self.xml_dictionary.keys():
+            for xml_type in list(self.xml_dictionary.keys()):
     
                 for source in self.xml_dictionary[xml_type]:
                         # check to see if it is one of the xml source files
-                    for key in xml_gen_dictionary.keys():
+                    for key in list(xml_gen_dictionary.keys()):
                         if source.count(xml_gen_dictionary[key][xml_source_file_list_entry]):
                             tgt_list = []
                             for replacement in xml_gen_dictionary[key][xml_cpp_file_list_entry]:
@@ -583,7 +609,7 @@ class ModMkParser:
                                 elif ((extension == ".cpp") or (extension == ".cc")):
                                     bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CXX) $(INCLUDE_PATH)$(dir $<) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CXXFLAGS) $(AC_CXX_FLAGS) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                                 else:
-                                    raise CfgParseError,"Invalid Extension " + extension + " on file " + self.module_name + "/" + gen_file
+                                    raise CfgParseError("Invalid Extension " + extension + " on file " + self.module_name + "/" + gen_file)
                                 tgt_list += "$(BUILD_ROOT)/%s/%s " % (self.directory,gen_file),
                                 
                                 
@@ -622,7 +648,7 @@ class ModMkParser:
             bin_file_descriptor.write("\n# test file targets\n\n")    
     
             files_visited = []
-            for target in self.test_source_dictionary.keys():
+            for target in list(self.test_source_dictionary.keys()):
                 # write each source    
                 for source in self.test_source_dictionary[target]:
                     if source != "":
@@ -637,12 +663,12 @@ class ModMkParser:
                         (base,extension) = os.path.splitext(source_file)
                         bin_file_descriptor.write("-include $(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/" + base + ".d\n")
                         bin_file_descriptor.write("$(BUILD_ROOT)/" + self.directory + path + "/$(OUTPUT_DIR)/$(OBJ_PREFIX)" + base + "$(OBJ_SUFFIX): $(BUILD_ROOT)/" + self.directory + "/" + source + "\n")
-                        if (extension == ".c"):
+                        if (extension == ".c" or extension == ".S" or extension == ".s"):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CC) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         elif ((extension == ".cpp") or (extension == ".cc")):
                             bin_file_descriptor.write("\t$(MKDIR) $(@D)\n\t$(CXX) -DASSERT_FILE_ID=$(shell $(FILE_HASH) $(notdir $<)) $(DEFINES_" + self.directory_string + "_$(BUILD)) $(DEPEND_FILE)$(basename $@).d $(CXXFLAGS) $(INCLUDE_PATH)$(dir $<) $(POST_DEFINES_" + self.directory_string + "_$(BUILD)) $(COMPILE_ONLY) $(COMPILE_TO) $@ $<\n\n")
                         else:
-                            raise CfgParseError,"Invalid Extension " + extension + " on file " + self.directory + "/" + source
+                            raise CfgParseError("Invalid Extension " + extension + " on file " + self.directory + "/" + source)
                                     
             # write binary/clean target
             bin_file_descriptor.write("# test binary target\n")

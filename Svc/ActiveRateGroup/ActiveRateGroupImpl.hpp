@@ -8,14 +8,8 @@
 *
 *   Copyright 2014-2015, by the California Institute of Technology.
 *   ALL RIGHTS RESERVED. United States Government Sponsorship
-*   acknowledged. Any commercial use must be negotiated with the Office
-*   of Technology Transfer at the California Institute of Technology.
+*   acknowledged.
 *
-*   Information included herein is controlled under the International
-*   Traffic in Arms Regulations ("ITAR") by the U.S. Department of State.
-*   Export or transfer of this information to a Foreign Person or foreign
-*   entity requires an export license issued by the U.S. State Department
-*   or an ITAR exemption prior to the export or transfer.
 */
 
 #ifndef SVC_ACTIVERATEGROUP_IMPL_HPP
@@ -47,13 +41,8 @@ namespace Svc {
             //!         to each member component. The index of the array corresponds to the
             //!         output port number.
             //!  \param numContexts The number of elements in the context array.
-
-#if FW_OBJECT_NAMES == 1        
             ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
-#else
-            ActiveRateGroupImpl(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
-#endif
-      
+
             //!  \brief ActiveRateGroupImpl initialization function
             //!
             //!  The initialization function of the class initializes the member

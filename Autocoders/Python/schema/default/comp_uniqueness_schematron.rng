@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns="http://purl.oclc.org/dsdl/schematron">
+<pattern id = "UNIQUE_OP_COMP_CMD">
+    <rule context="command">
+        <assert test="count(//command/@opcode[. = current()/@opcode]) = 1">Command opcodes should be unique.</assert>
+    </rule>
+</pattern>
+<pattern id = "UNIQUE_ID_COMP_PARAM">
+    <rule context="parameter">
+        <assert test="count(//parameter/@id[. = current()/@id]) = 1">Parameter ID's should be unique.</assert>
+    </rule>
+</pattern>
+<pattern id = "UNIQUE_ID_COMP_EVR">
+    <rule context="event">
+        <assert test="count(//event/@id[. = current()/@id]) = 1">Event ID's should be unique.</assert>
+    </rule>
+</pattern>
+<pattern id = "UNIQUE_ID_COMP_CHAN">
+    <rule context="channel">
+        <assert test="count(//channel/@id[. = current()/@id]) = 1">Channel ID's should be unique.</assert>
+    </rule>
+</pattern>
+</schema>

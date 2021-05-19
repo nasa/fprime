@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    xmlns:elements="common_elements.rng"
+    xmlns:channel = "channel_schema.rng"
+    xmlns:event = "event_schema.rng"
+    xmlns:command = "command_schema.rng"
+    xmlns:interface  = "interface_schema.rng"
+    xmlns:parameters = "parameters_schema.rng"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+
+    <sch:pattern id = "TESTINGSCHEMATRON">
+        <sch:rule context="start">
+            <sch:assert test="@PARENT">Message.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+    <start>
+        <element name = "component">
+            <a:documentation>Component root tag.</a:documentation>
+            <ref name = "component_define"></ref>
+        </element>
+    </start>
+
+    <define name = "component_define">
+
+        <!-- Required attributes -->
+        <attribute name = "name">
+            <a:documentationa>Name of the component.</a:documentationa>
+            <text/>
+        </attribute>
+
+        <attribute name = "kind">
+            <a:documentation>Choice between active, passive, and queued.</a:documentation>
+            <ref name = "component_types_define"></ref>
+        </attribute>
+
+
+        <!-- Optional attributes -->
+
+        <optional>
+            <attribute name = "namespace" >
+                <a:documentation>The namespace in which the component is located in.</a:documentation>
+                <text/>
+            </attribute>
+        </optional>
+
+        <optional>
+            <attribute name = "modeler">
+                <data type = "boolean"/>
+            </attribute>
+        </optional>
+
+
+        <interleave>
+            <!-- Import externam XML files. -->
+            <zeroOrMore>
+                <ref name = "import_port_define"></ref>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <ref name = "import_dict_define"></ref>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <ref name  = "import_header_define"></ref>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <ref name = "import_serializable_define"></ref>
+            </zeroOrMore>
+            
+            <zeroOrMore>
+                <ref name = "import_enum_define"></ref>
+            </zeroOrMore>
+
+            <zeroOrMore>
+                <ref name = "import_array_define"></ref>
+            </zeroOrMore>
+
+            <!-- Optional elements -->
+
+            <optional>
+                <ref name = "ports_define"></ref>
+            </optional>
+
+            <optional>
+                <ref name = "comment_define"></ref>
+            </optional>
+
+
+            <!-- These elements can be imported from their own XML files -->
+            <optional>
+                <externalRef href="channel_schema.rng"></externalRef>
+            </optional>
+            <optional>
+                <externalRef href="event_schema.rng"></externalRef>
+            </optional>
+            <optional>
+                <externalRef href="command_schema.rng"></externalRef>
+            </optional>
+
+            <optional>
+                <externalRef href="internal_interface_schema.rng"></externalRef>
+            </optional>
+            <optional>
+                <externalRef href="parameters_schema.rng"></externalRef>
+            </optional>
+
+        </interleave>
+    </define>
+
+    <define name = "ports_define">
+        <element name = "ports">
+            <a:documentation>A collection of ports.</a:documentation>
+            <oneOrMore>
+                <ref name = "port_define"></ref>
+            </oneOrMore>
+        </element>
+    </define>
+
+    <define name = "port_define">
+        <element name = "port">
+            <a:documentation>Element that specifies eternal interfaces that can connect and be connected to.</a:documentation>
+
+            <!-- Required Attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the port.</a:documentation>
+                <text/>
+            </attribute>
+
+            <attribute name = "data_type">
+                <a:documentation>Type of data that is being accessed/sent from the port.</a:documentation>
+                <text/>
+            </attribute>
+
+            <attribute name = "kind">
+                <a:documentation>Defines if port is an input or an output port.</a:documentation>
+                <ref name = "port_types_define"></ref>
+            </attribute>
+
+            <!-- Optional Attributes -->
+
+            <optional>
+                <attribute name = "max_number">
+                    <a:documentation>Defines how many connections can be established to this port.</a:documentation>
+                    <elements:ref name = "id_or_system_var_define"></elements:ref>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "role">
+                    <a:documentation>Specifies what role this port plays or what this port is connected to.</a:documentation>
+                    <ref name = "component_role_define"></ref>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "priority">
+                    <a:documentation>Priority of port.</a:documentation>
+                    <data type="integer"></data>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "full">
+                    <a:documentation>Describes what to do with incoming items if full.</a:documentation>
+                    <elements:ref name = "full_items_define"></elements:ref>
+                </attribute>
+            </optional>
+
+            <!-- Optional Element -->
+
+            <optional>
+                <a:documentation>Optional element that can be inside the port tags.</a:documentation>
+                <ref name = "comment_define"></ref>
+            </optional>
+
+        </element>
+    </define>
+
+    <define name = "import_port_define">
+        <element name = "import_port_type">
+            <a:documentation>Path to port XML defenition.</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+
+    <define name = "import_dict_define">
+        <element name = "import_dictionary">
+            <a:documentation>Path to events,commands,or telemetry XML files.</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+
+    <define name = "import_header_define">
+        <element name = "include_header">
+            <a:documentation>Path to header file.</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+
+    <define name = "import_serializable_define">
+        <element name = "import_serializable_type" >
+            <a:documentation>Path to serializable types</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+    
+    <define name = "import_enum_define">
+        <element name = "import_enum_type" >
+            <a:documentation>Path to enum types</a:documentation>
+            <data type = "anyURI"></data>
+        </element>
+    </define>
+
+    <define name = "import_array_define">
+        <element name = "import_array_type">
+            <a:documentation>Import array XML files.</a:documentation>
+            <data type="anyURI"></data>
+        </element>
+    </define>
+
+</grammar>

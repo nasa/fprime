@@ -13,18 +13,13 @@
  * \copyright
  * Copyright 2013-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
+#ifndef FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
+#define FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 
@@ -51,3 +46,4 @@ namespace Fw {
 
 #endif // FW_OBJECT_REGISTRATION
 
+#endif // FW_OBJ_SIMPLE_OBJ_REGISTRY_HPP

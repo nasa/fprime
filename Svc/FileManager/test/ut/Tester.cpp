@@ -6,16 +6,11 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
+
+#include <fstream>
 
 #include "Tester.hpp"
 
@@ -59,32 +54,43 @@ namespace Svc {
     createDirectorySucceed(void) 
   {
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
-
     // Create test_dir
     this->createDirectory("test_dir");
+
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Assert success
     this->assertSuccess(
         FileManager::OPCODE_CREATEDIRECTORY
     );
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_dir exists
     this->system("test -d test_dir");
 
     // Clean up
     this->system("rmdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
   }
 
   void Tester ::
     createDirectoryFail(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Create test_dir
     this->system("rm -rf test_dir");
     this->system("mkdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to create test_dir (should fail)
     this->createDirectory("test_dir");
@@ -93,7 +99,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_CREATEDIRECTORY
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_DirectoryCreateError(
         0, 
         "test_dir", 
@@ -105,12 +111,15 @@ namespace Svc {
   void Tester ::
     moveFileSucceed(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1 and file2, if they exist
     this->system("rm -rf file1 file2");
 
     // Create file1
     this->system("touch file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Move file1 to file2
     this->moveFile("file1", "file2");
@@ -120,21 +129,28 @@ namespace Svc {
         FileManager::OPCODE_MOVEFILE
     );
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that file name changed
     this->system("! test -e file1");
     this->system("test -f file2");
 
     // Clean up
     this->system("rm file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
   }
 
   void Tester ::
     moveFileFail(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1, if it exists
     this->system("rm -rf file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to move file1 to file2 (should fail)
     this->moveFile("file1", "file2");
@@ -156,12 +172,15 @@ namespace Svc {
   void Tester ::
     removeDirectorySucceed(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
 
     // Create test_dir
     this->system("mkdir test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Remove test_dir
     this->removeDirectory("test_dir");
@@ -171,17 +190,23 @@ namespace Svc {
         FileManager::OPCODE_REMOVEDIRECTORY
     );
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_dir is not there
     this->system("! test -e test_dir");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     removeDirectoryFail(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
     this->system("rm -rf test_dir");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to remove test_dir (should fail)
     this->removeDirectory("test_dir");
@@ -190,7 +215,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_REMOVEDIRECTORY
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_DirectoryRemoveError(
         0,
         "test_dir",
@@ -202,12 +227,15 @@ namespace Svc {
   void Tester ::
     removeFileSucceed(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Create test_file
     this->system("touch test_file");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Remove test_file
     this->removeFile("test_file");
@@ -217,17 +245,23 @@ namespace Svc {
         FileManager::OPCODE_REMOVEFILE
     );
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_file is not there
     this->system("! test -e test_file");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     removeFileFail(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Attempt to remove test_file (should fail)
     this->removeFile("test_file");
@@ -236,7 +270,7 @@ namespace Svc {
     this->assertFailure(
         FileManager::OPCODE_REMOVEFILE
     );
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_FileRemoveError(
         0,
         "test_file",
@@ -248,39 +282,44 @@ namespace Svc {
   void Tester ::
     shellCommandSucceed(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Create test_file
     this->shellCommand("touch test_file", LOG_FILE);
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
 
     // Assert success
-    this->assertSuccess(
-        FileManager::OPCODE_SHELLCOMMAND,
-        1
-    );
+    this->assertSuccess(FileManager::OPCODE_SHELLCOMMAND);
     ASSERT_EVENTS_ShellCommandSucceeded_SIZE(1);
     ASSERT_EVENTS_ShellCommandSucceeded(0, "touch test_file");
 
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Check that test_file is there
     this->system("test -f test_file");
 
     // Clean up
     this->system("rm test_file");
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
   }
 
   void Tester ::
     shellCommandFail(void) 
   {
-
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
     this->system("rm -rf test_file");
 
     // Attempt to remove test_file (should fail)
     this->shellCommand("rm test_file", LOG_FILE);
-
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
     {
       // Assert failure
       this->assertFailure(
@@ -297,7 +336,92 @@ namespace Svc {
           status
       );
     }
+  }
 
+  void Tester ::
+    appendFileSucceed_newFile(void) 
+  {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2");
+
+    //================================================================
+    // Case 1: 1 normal files appended, new file created
+    this->system("echo 'file1 text' > file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+
+    this->appendFile("file1", "file2");
+    this->assertSuccess(FileManager::OPCODE_APPENDFILE);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // check new file exists and has correct text inside
+    this->system("test -e file2");
+    assertFileContent("file2", "file1 text\n", 12);
+
+    // Clean up
+    this->system("rm -rf file1 file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+  }
+
+  void Tester ::
+    appendFileSucceed_existingFile(void) 
+  {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2");
+
+    //================================================================
+    // Case 2: 2 normal files appended, stored in existing file
+    // create existing files
+    this->system("echo 'file1 text' > file1");
+    this->system("echo 'file2 text' > file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+
+    this->appendFile("file1", "file2");
+    this->assertSuccess(FileManager::OPCODE_APPENDFILE);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // check file still exists and has new text inside
+    this->system("test -e file2");
+    assertFileContent("file2", "file2 text\nfile1 text\n", 23);
+
+    // Clean up
+    this->system("rm -rf file1 file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+  }
+
+  void Tester ::
+    appendFileFail(void) 
+  {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // Remove testing files, if they exist
+    this->system("rm -rf file1 file2");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+
+    // Attempt to append from a non-existing source
+    this->appendFile("file1", "file2");
+
+    // Assert failure
+    this->assertFailure(
+        FileManager::OPCODE_APPENDFILE
+    );
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
+    ASSERT_EVENTS_AppendFileFailed(
+        0,
+        "file1",
+        "file2",
+        Os::FileSystem::INVALID_PATH
+    );
   }
 
   // ----------------------------------------------------------------------
@@ -440,6 +564,23 @@ namespace Svc {
   }
 
   void Tester ::
+    appendFile(
+        const char *const source,
+        const char *const target
+    )
+  {
+    Fw::CmdStringArg cmdSource(source);
+    Fw::CmdStringArg cmdTarget(target);
+    this->sendCmd_AppendFile(
+        INSTANCE,
+        CMD_SEQ,
+        cmdSource,
+        cmdTarget
+    );
+    this->component.doDispatch();
+  }
+
+  void Tester ::
     assertSuccess(
         const FwOpcodeType opcode,
         const U32 eventSize
@@ -461,6 +602,23 @@ namespace Svc {
   }
 
   void Tester ::
+    assertFileContent(
+          const char *const fileName,
+          const char *const expectedString,
+          const U32 length
+      ) const {
+    char fileString[length];
+    memset(fileString, 0, length);
+    std::ifstream file;
+    file.open(fileName);
+
+    file.read(fileString, length);
+    file.close();
+
+    ASSERT_STREQ(expectedString, fileString);
+  }
+
+  void Tester ::
     assertFailure(const FwOpcodeType opcode) const
   {
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -471,11 +629,19 @@ namespace Svc {
         Fw::COMMAND_EXECUTION_ERROR
     );
 
-    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SIZE(2);  // Starting event + Error
 
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_Errors_SIZE(1);
     ASSERT_TLM_Errors(0, 1);
+  }
+  void Tester ::
+    from_pingOut_handler(
+        const NATIVE_INT_TYPE portNum,
+        U32 key
+    )
+  {
+    this->pushFromPortEntry_pingOut(key);
   }
 
 } // end namespace Svc

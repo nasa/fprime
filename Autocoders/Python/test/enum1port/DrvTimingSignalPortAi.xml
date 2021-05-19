@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="DrvTimingSignal" namespace="Drv">
+    <comment>
+    Sample enum argument type within port
+    </comment>
+    <args>
+        <arg name="signal" type="ENUM">
+            <enum name="TimingSignal">
+                <item name="REAL_TIME_INTERRUPT"/>
+                <item name="NONE_REAL_TIME_INTERRUPT" value="7" comment="A non-RT interrupt fictional item"/>
+                <item name="TIMER" value="15"/>
+            </enum>
+            <comment>The ENUM argument</comment>
+		</arg>
+        <arg name="state" type="ENUM">
+            <enum name="TimingState">
+                <item name="STATE_HIGH"/>
+                <item name="STATE_LOW"/>
+            </enum>
+            <comment>The state argument</comment>
+        </arg>
+    </args>
+</interface>
+

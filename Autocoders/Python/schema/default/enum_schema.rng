@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+    
+    <start>
+        <ref name = "enum_root_define"></ref>
+    </start>
+    
+    <define name="enum_root_define">
+        <element name = "enum">
+            <a:documentation>Component root tag.</a:documentation>
+            
+            <!-- Required Attributes -->
+            <attribute name = "name">
+                <a:documentation>Name of the enum.</a:documentation>
+                <text/>
+            </attribute>
+            
+            <!-- Optional attributes -->
+            <optional>
+                <attribute name = "namespace">
+                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+            
+            <!-- Elements -->
+            <interleave>
+                <optional>
+                    <!-- Optional Comments -->
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+                <oneOrMore>
+                    <ref name = "item_definition"></ref>
+                </oneOrMore>
+            </interleave>
+        </element>
+    </define>
+    
+    <define name = "item_definition">
+        <element name = "item">
+            <a:documentation>Definition for a telemetry channel.</a:documentation>
+            
+            <!-- Required Attributes -->
+            <attribute name = "name">
+                <a:documentation>Name of the item.</a:documentation>
+                <text/>
+            </attribute>
+            
+            <!-- Optional Attributes -->
+            <optional>
+                <attribute name = "value">
+                    <data type = "integer"></data>
+                </attribute>
+            </optional>
+                
+            <optional>
+                <attribute name = "comment">
+                    <text/>
+                </attribute>
+            </optional>
+        </element>
+    </define>
+</grammar>

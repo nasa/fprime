@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <include href="common_elements.rng"/>
+
+    <start>
+        <element name = "serializable">
+
+            <!-- Required attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the serializable object.</a:documentation>
+                <text/>
+            </attribute>
+
+            <!-- Optional attributes -->
+
+            <optional>
+                <attribute name = "namespace">
+                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <text/>
+                </attribute>
+            </optional>
+
+            <optional>
+                <attribute name = "typeid">
+                    <a:documentation>ID for the object. If not declared, isfgen autogenerates one. Must be unique across all serlializable files.</a:documentation>
+                    <ref name = "id_define"></ref>
+                </attribute>
+            </optional>
+
+
+            <interleave>
+
+                <!-- Required elements -->
+
+                <ref name = "members_define"></ref>
+
+                <!-- Optional elements -->
+
+                <zeroOrMore>
+                    <element name = "import_serializable_type">
+                        <a:documentation>Import more serializable objects.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "include_header">
+                        <a:documentation>Import header files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+                
+                <zeroOrMore>
+                    <element name = "import_enum_type">
+                        <a:documentation>Import enum XML files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name = "import_array_type">
+                        <a:documentation>Import array XML files.</a:documentation>
+                        <data type="anyURI"></data>
+                    </element>
+                </zeroOrMore>
+
+                <optional>
+                    <!-- Optional Comments -->
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+
+            </interleave>
+
+        </element>
+    </start>
+
+    <define name = "members_define">
+        <!-- 'members' is just a tag that hold multiple 'member' tags -->
+        <element name = "members">
+            <a:documentation>A collection of memeber items to define the serializable object.</a:documentation>
+            <oneOrMore>
+                <ref name = "member_define"></ref>
+            </oneOrMore>
+        </element>
+    </define>
+
+    <define name = "member_define">
+        <!-- Defines each item that one of these objects can store -->
+        <element name = "member">
+            <a:documentation>Item define in the serializable object.</a:documentation>
+
+            <!-- Required attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the memeber item.</a:documentation>
+                <text/>
+            </attribute>
+
+
+            <!-- Optional attributes -->
+
+            <optional>
+                <a:documentation>Optional comment.</a:documentation>
+                <attribute name = "comment">
+                    <text></text>
+                </attribute>
+            </optional>
+
+            <optional>
+                <a:documentation>Format string</a:documentation>
+                <attribute name = "format">
+                    <text></text>
+                </attribute>
+            </optional>
+
+
+            <!-- Type, size, and internal enum define are defined withing this ref -->
+            <ref name = "type_size_choice_define"></ref>
+
+
+        </element>
+    </define>
+
+</grammar>

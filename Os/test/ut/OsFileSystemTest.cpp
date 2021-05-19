@@ -150,8 +150,9 @@ void testTestFileSystem() {
 	
 	printf("Reading the files in (%s)\n", cur_dir);
 	const int num_str = 5;
+        U32 num_2 = num_str;
 	Fw::EightyCharString str_array[num_str];
-	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array)) != Os::FileSystem::OP_OK) {
+	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array, num_2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to read files in (%s)\n", cur_dir);
 		printf("\tReturn status: %d\n", file_sys_status);
 		FW_ASSERT(0);

@@ -6,21 +6,14 @@
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #ifndef FW_BASIC_TYPES_HPP
 #define FW_BASIC_TYPES_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 #include <StandardTypes.hpp> // This header will be found be include paths by target. This hides different header files for each target.
 #ifdef __cplusplus
 extern "C" {
@@ -31,8 +24,11 @@ extern "C" {
 typedef int32_t NATIVE_INT_TYPE;
 typedef uint32_t NATIVE_UINT_TYPE;
 #else
+// Allow overriding of native types for systems whose stdint.h is malformed
+#ifndef FPRIME_OVERRIDE_NATIVE_TYPES
 typedef int NATIVE_INT_TYPE; //!< native integer type declaration
 typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declaration
+#endif
 #endif
 
 #if defined __GNUC__ || __llvm__
@@ -71,7 +67,9 @@ typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declara
 
 // compile-time assert
 #define COMPILE_TIME_ASSERT( condition, name )\
-    typedef char assert_failed_ ## name [ (condition) ? 1 : -1 ];
+  do { \
+   enum { assert_failed_ ## name = 1/(condition) }; \
+  } while(0)
 
 /*----------------------------------------------------------------------------*/
 typedef int8_t          I8; //!< 8-bit signed integer

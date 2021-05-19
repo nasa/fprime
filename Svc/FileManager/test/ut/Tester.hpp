@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef TESTER_HPP
@@ -89,6 +82,18 @@ namespace Svc {
       //!
       void shellCommandFail(void);
 
+      //! Append file (succeed, append to new file)
+      //!
+      void appendFileSucceed_newFile(void);
+
+      //! Append file (succeed, append to existing file)
+      //!
+      void appendFileSucceed_existingFile(void);
+
+      //! Append file (fail)
+      //!
+      void appendFileFail(void);
+
     private:
 
       // ----------------------------------------------------------------------
@@ -134,15 +139,33 @@ namespace Svc {
           const char *const logFileName
       );
 
+      //! Append 2 files together
+      void appendFile(
+          const char *const source,
+          const char *const target
+      );
+
       //! Assert successful command execution
       void assertSuccess(
           const FwOpcodeType opcode,
-          const U32 eventSize = 0
+          const U32 eventSize = 2 // Starting event + Error or Success msg
+      ) const;
+
+      //! Assert file content matches the expected string (up to the given size)
+      void assertFileContent(
+          const char *const fileName,
+          const char *const expectedString,
+          const U32 length
       ) const;
 
       //! Assert failed command execution
       void assertFailure(const FwOpcodeType opcode) const;
-
+      //! Handler for from_pingOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      );
     private:
 
       // ----------------------------------------------------------------------

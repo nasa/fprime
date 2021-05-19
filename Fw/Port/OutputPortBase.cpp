@@ -1,4 +1,4 @@
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <Fw/Port/OutputPortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
@@ -30,9 +30,9 @@ namespace Fw {
         this->m_serPort = port;
     }
     
-    void OutputPortBase::invokeSerial(SerializeBufferBase &buffer) {
+    SerializeStatus OutputPortBase::invokeSerial(SerializeBufferBase &buffer) {
         FW_ASSERT(this->m_serPort);
-        this->m_serPort->invokeSerial(buffer);
+        return this->m_serPort->invokeSerial(buffer);
     }
 #endif
     

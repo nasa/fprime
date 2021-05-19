@@ -8,10 +8,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Os/ValidateFile.hpp>
-#include <iostream>
 #include <stdio.h>
-
-using namespace std;
 
 namespace Svc {
 
@@ -20,18 +17,14 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   ComLogger ::
-#if FW_OBJECT_NAMES == 1
     ComLogger(const char* compName, const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength) :
-    ComLoggerComponentBase(compName), 
-#else
-    ComLogger(const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength) :
-#endif
-    maxFileSize(maxFileSize),
-    fileMode(CLOSED), 
-    byteCount(0),
-    writeErrorOccured(false),
-    openErrorOccured(false),
-    storeBufferLength(storeBufferLength)
+      ComLoggerComponentBase(compName), 
+      maxFileSize(maxFileSize),
+      fileMode(CLOSED), 
+      byteCount(0),
+      writeErrorOccured(false),
+      openErrorOccured(false),
+      storeBufferLength(storeBufferLength)
   {
     if( this->storeBufferLength ) {
       FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize); // must be a positive integer greater than buffer length size
@@ -169,15 +162,15 @@ namespace Svc {
 
     Os::File::Status ret = file.open((char*) this->fileName, Os::File::OPEN_WRITE);
     if( Os::File::OP_OK != ret ) {
-      if( !openErrorOccured ) { // throttle this event, otherwise a positive 
+      if( !this->openErrorOccured ) { // throttle this event, otherwise a positive
                                 // feedback event loop can occur!
         Fw::LogStringArg logStringArg((char*) this->fileName);
         this->log_WARNING_HI_FileOpenError(ret, logStringArg);
       }
-      openErrorOccured = true;
+      this->openErrorOccured = true;
     } else {
       // Reset event throttle:
-      openErrorOccured = false;
+      this->openErrorOccured = false;
 
       // Reset byte count:
       this->byteCount = 0;
@@ -217,7 +210,8 @@ namespace Svc {
       U8 buffer[sizeof(size)];
       Fw::SerialBuffer serialLength(&buffer[0], sizeof(size)); 
       serialLength.serialize(size);
-      if(writeToFile(serialLength.getBuffAddr(), serialLength.getBuffLength())) {
+      if(this->writeToFile(serialLength.getBuffAddr(),
+              static_cast<U16>(serialLength.getBuffLength()))) {
         this->byteCount += serialLength.getBuffLength();
       }
       else {
@@ -226,7 +220,7 @@ namespace Svc {
     }
 
     // Write buffer to file:
-    if(writeToFile(data.getBuffAddr(), size)) {
+    if(this->writeToFile(data.getBuffAddr(), size)) {
       this->byteCount += size;
     }
   }
@@ -240,16 +234,16 @@ namespace Svc {
     NATIVE_INT_TYPE size = length;
     Os::File::Status ret = file.write(data, size);
     if( Os::File::OP_OK != ret || size != (NATIVE_INT_TYPE) length ) {
-      if( !writeErrorOccured ) { // throttle this event, otherwise a positive 
+      if( !this->writeErrorOccured ) { // throttle this event, otherwise a positive
                                  // feedback event loop can occur!
         Fw::LogStringArg logStringArg((char*) this->fileName);
         this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
       }
-      writeErrorOccured = true;
+      this->writeErrorOccured = true;
       return false;
     }
 
-    writeErrorOccured = false;
+    this->writeErrorOccured = false;
     return true;
   }
 

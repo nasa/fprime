@@ -6,21 +6,16 @@
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  *
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #ifndef _ValidateFile_hpp_
 #define _ValidateFile_hpp_
 
 #define VFILE_HASH_CHUNK_SIZE (256)
+
+#include <Utils/Hash/HashBuffer.hpp>
 
 namespace Os {
     
@@ -46,11 +41,23 @@ namespace Os {
             OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
         } Status;
 
+        // also return hash
+        Status validate(const char* fileName, const char* hashFileName,
+                        Utils::HashBuffer &hashBuffer); 
+        //!< Validate the contents of a file 'fileName' against its hash
+
+        // for backwards compatibility
         Status validate(const char* fileName, const char* hashFileName); //!< Validate the contents of a file 'fileName' against its hash
                                                                                    //!< stored in 'hashFileName'
 
+        // also return hash
+        Status createValidation(const char* fileName, const char* hash,
+                                Utils::HashBuffer &hashBuffer);
+
+        // for backwards compatibility
         Status createValidation(const char* fileName, const char* hashFileName);   //!< Create a validation of the file 'fileName' and store it in
                                                                                              //!< in a file 'hashFileName'
+
     }
 }
 

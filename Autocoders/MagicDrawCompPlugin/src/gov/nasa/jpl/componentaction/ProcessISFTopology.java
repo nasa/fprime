@@ -185,8 +185,6 @@ public class ProcessISFTopology {
 					
 					physicalConnectionList = indexChecking(physicalConnectionSet);
 					
-					
-					
 					ISFSubsystem.topologyModel topModel = new ISFSubsystem.topologyModel(componentMap, physicalConnectionList);
 					topModel.baseID = ISFSubsystem.getBaseId(root);
 					topModel.instanceWindow = ISFSubsystem.getInstanceWindow(root);
@@ -212,7 +210,7 @@ public class ProcessISFTopology {
 	 * PHASE THREE FUNCTION
 	 * <p>
 	 * 
-	 * This function serves two purposes. The first is to convert the physicalConnectionSet to a physicalConnecitonList. The second is to perform index checking and correction on ports of the cmdReg/cmd or com/cmdResponse type.
+	 * This function serves two purposes. The first is to convert the physicalConnectionSet to a physicalConnectionList. The second is to perform index checking and correction on ports of the cmdReg/cmd or com/cmdResponse type.
 	 * 
 	 * <p>
 	 * 
@@ -262,20 +260,14 @@ public class ProcessISFTopology {
 		
 		for(ISFSubsystem.physicalConnectionType pct : pctSet){
 			String componentName = null;
-			
+
 			if(pct.sourcePortType.equals("Cmd")){
 				componentName = pct.source;
 			}
 			else if(pct.targetPortType.equals("CmdReg")){
 				componentName = pct.target;
 			}
-			else if(pct.sourcePortType.equals("CmdResponse") && pct.sourcePortName.equals("seqCmdStatus")){
-				componentName = pct.source;
-			}
-			else if(pct.targetPortType.equals("Com") && pct.targetPortName.equals("seqCmdBuff")){
-				componentName = pct.target;
-			}
-			
+
 			if(componentName != null){
 				if(!indexCorrectionMap.containsKey(componentName)){
 					indexCorrectionMap.put(componentName, new ArrayList<ISFSubsystem.physicalConnectionType>());
@@ -298,8 +290,11 @@ public class ProcessISFTopology {
 				for(int i = 1; i != indexCorrectionMap.get(compName).size(); i++){
 					currPCT = indexCorrectionMap.get(compName).get(i);
 					//Different Types
-					if((searchPCT.sourcePortType.equals("Cmd") &&  currPCT.targetPortType.equals("CmdReg")) || (searchPCT.sourcePortType.equals("CmdReg") &&  currPCT.targetPortType.equals("Cmd")) || 
-							(searchPCT.sourcePortType.equals("CmdResponse") &&  currPCT.targetPortType.equals("Com")) || (searchPCT.sourcePortType.equals("Com") &&  currPCT.targetPortType.equals("CmdResponse"))){
+					if(
+					       (searchPCT.sourcePortType.equals("Cmd") && currPCT.targetPortType.equals("CmdReg")) 
+					       || 
+					       (searchPCT.sourcePortType.equals("CmdReg") && currPCT.targetPortType.equals("Cmd"))
+					   ) {
 						//Check if they are of the same component
 						//System.out.println("Search PCT (source: " + searchPCT.source + "  , target: " + searchPCT.target + ") " + "Curr PCT (target: " + currPCT.target + "  , source: " + currPCT.source + ")");
 						if(searchPCT.source.equals(currPCT.target) && searchPCT.target.equals(currPCT.source)){
@@ -315,20 +310,6 @@ public class ProcessISFTopology {
 								currPCT.target_index = cmdRegOrderingIndex;
 								cmdRegOrderingIndex++;
 							}
-							else if(searchPCT.sourcePortType.equals("Com")){
-								currPCT.target_index  = searchPCT.source_index;
-								currPCT.source_index = cmdSeqOrderingIndex;
-								searchPCT.target_index = cmdSeqOrderingIndex;
-								cmdSeqOrderingIndex++;
-							}
-							else if (searchPCT.sourcePortType.equals("CmdResponse")){
-								searchPCT.target_index  = currPCT.source_index;
-								searchPCT.source_index = cmdSeqOrderingIndex;
-								currPCT.target_index = cmdSeqOrderingIndex;
-								cmdSeqOrderingIndex++;
-							}
-							
-							
 							noCompanionConn = false;
 							removeIndex = i;
 							break;
@@ -337,15 +318,7 @@ public class ProcessISFTopology {
 				}
 				
 				if(noCompanionConn){
-					//If no companion connection is found
-					if (searchPCT.sourcePortType.equals("Com") || searchPCT.targetPortType.equals("Com")){ //If the type is of commandSequence, don't thrown an error. 
-						pctList.add(searchPCT);
-						indexCorrectionMap.get(compName).remove(0);
-						cmdSeqOrderingIndex++;
-					}
-					else{
-						Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have an connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
-					}
+					Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have an connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
 				}
 				else{
 					pctList.add(searchPCT);

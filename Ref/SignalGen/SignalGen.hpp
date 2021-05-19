@@ -6,15 +6,8 @@
 // \copyright
 // Copyright (C) 2009-2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef Svc_SignalGen_HPP
@@ -33,8 +26,6 @@ namespace Ref {
     public SignalGenComponentBase
   {
 
-    typedef enum { TRIANGLE, SQUARE, SINE, NOISE } Signal;
-
     private:
     
         void schedIn_handler(
@@ -45,9 +36,10 @@ namespace Ref {
         void SignalGen_Settings_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq, /*!< The command sequence number*/
-        U32 Frequency, 
-        U32 Amplitude, 
-        U32 Phase
+        U32 Frequency,
+        F32 Amplitude,
+        F32 Phase,
+        Ref::SignalType SigType 
         );
 
         void SignalGen_Toggle_cmdHandler(
@@ -55,6 +47,10 @@ namespace Ref {
             U32 cmdSeq /*!< The command sequence number*/
         );
         void SignalGen_Skip_cmdHandler(
+        FwOpcodeType opCode, /*!< The opcode*/
+        U32 cmdSeq /*!< The command sequence number*/
+        );
+        void SignalGen_GenerateArray_cmdHandler(
         FwOpcodeType opCode, /*!< The opcode*/
         U32 cmdSeq /*!< The command sequence number*/
         );
@@ -75,16 +71,22 @@ namespace Ref {
     
         //! Destroy a SignalGen
         ~SignalGen(void);
-    
+
     private:
-        bool RUNNING;
-        bool SKIP_NEXT;
+        // Generate the next sample internal helper
+        F32 generateSample(U32 ticks);
+
+        // Memeber variables
         U32 sampleFrequency;
         U32 signalFrequency;
-        U32 signalAmplitude;
-        U32 signalPhase;
-        U32 sample;
-        Signal SignalType;      
+        F32 signalAmplitude;
+        F32 signalPhase;
+        U32 ticks;
+        SignalType sigType;
+        SignalSet sigHistory;
+        SignalPairSet sigPairHistory;
+        bool running;
+        bool skipOne;
 
   };
 };

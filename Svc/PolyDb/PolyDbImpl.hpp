@@ -6,22 +6,15 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 #ifndef POLYDBIMPL_HPP_
 #define POLYDBIMPL_HPP_
 
 #include <Svc/PolyDb/PolyDbComponentAc.hpp>
 #include <Fw/Types/PolyType.hpp>
-#include <Svc/PolyDb/PolyDbImplCfg.hpp>
+#include <PolyDbImplCfg.hpp>
 
 namespace Svc {
 
@@ -44,11 +37,8 @@ namespace Svc {
             //!  update is received.
             //!
 
-#if FW_OBJECT_NAMES == 1
             PolyDbImpl(const char* name);
-#else
-            PolyDbImpl();
-#endif
+
             //!  \brief PolyDbImpl initialization
             //!
             //!  The PolyDbImpl initialization function calls the base

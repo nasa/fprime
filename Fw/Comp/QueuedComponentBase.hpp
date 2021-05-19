@@ -14,14 +14,14 @@
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Os/Queue.hpp>
 #include <Os/Task.hpp>
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 
 namespace Fw {
     class QueuedComponentBase : public PassiveComponentBase {
         public:
 
-    		// FIXME: Had to make MsgDispatchStatus public for LLVM. Think LLVM is wrong.
+    		// Note: Had to make MsgDispatchStatus public for LLVM.
     		typedef enum {
 				MSG_DISPATCH_OK, //!< Dispatch was normal
 				MSG_DISPATCH_EMPTY, //!< No more messages in the queue
@@ -30,12 +30,7 @@ namespace Fw {
 			} MsgDispatchStatus;
 
         PROTECTED:
-
-#if FW_OBJECT_NAMES == 1
             QueuedComponentBase(const char* name); //!< Constructor
-#else
-            QueuedComponentBase(); //!< Constructor
-#endif
             virtual ~QueuedComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization function
             Os::Queue m_queue; //!< queue object for active component

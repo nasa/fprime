@@ -9,11 +9,7 @@ namespace Ref {
         public:
 
             // Only called by derived class
-#if FW_OBJECT_NAMES == 1    
             RecvBuffImpl(const char* compName);
-#else
-            RecvBuffImpl();
-#endif
          
             void init(void);
             ~RecvBuffImpl(void);
@@ -22,6 +18,7 @@ namespace Ref {
 
             // downcall for input port
             void Data_handler(NATIVE_INT_TYPE portNum, Drv::DataBuffer &buff);
+            Ref::PacketStat m_stats;
             U32 m_buffsReceived; // !< number of buffers received
             bool m_firstBuffReceived; // !< first buffer received or not
             U32 m_errBuffs; // !< number of buffers with errors received

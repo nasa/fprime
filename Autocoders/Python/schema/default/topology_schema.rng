@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+	xmlns="http://relaxng.org/ns/structure/1.0"
+	xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+	datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+	<include href="common_elements.rng"/>
+	<include href="common_types.rng"/>
+	<a:documentation>Test outside START</a:documentation>
+
+	<start>
+		<!-- Specifies that the root tag can either be "deployment" or "assembly". -->
+		<a:documentation>Test inside START</a:documentation>
+		<choice>
+			<element  name = "deployment">
+				<ref name = "root_defenition"></ref>
+			</element>
+			<element  name = "assembly">
+				<ref name = "root_defenition"></ref>
+			</element>
+		</choice>
+	</start>
+
+	<define name = "root_defenition">
+		<!-- Actual attributes and elements inside the root tag. -->
+
+		<!-- Attributes -->
+
+		<optional>
+			<attribute name="name">
+				<a:documentation>Name of the project.</a:documentation>
+			</attribute>
+		</optional>
+
+		<optional>
+			<attribute name="base_id">
+				<a:documentation>Specifies the base ID for the project.</a:documentation>
+				<ref name = "id_define"/>
+			</attribute>
+		</optional>
+
+		<optional>
+			<choice>
+				<attribute name="base_id_window" >
+					<a:documentation>Specifies the default ID range to use for the project. If this value is set to zero, ISFGen will find an appropriate range from the component XML files. Attribute tag 'base_id_range' can also be used.</a:documentation>
+					<data type="nonNegativeInteger"></data>
+				</attribute>
+				<attribute name="base_id_range">
+					<a:documentation>Specifies the default ID range to use for the project. If this value is set to zero, ISFGen will find an appropriate range from the component XML files. Attribute tag 'base_id_window' can also be used.</a:documentation>
+					<data type="nonNegativeInteger"></data>
+				</attribute>
+			</choice>
+		</optional>
+
+		<optional>
+			<attribute name="prepend_instance_name">
+				<a:documentation>If True, instance names will be prepended onto command,channel,and event generated dictionaries in single instance scenarios.</a:documentation>
+				<data type="boolean"/>
+			</attribute>
+		</optional>
+		<optional>
+			<attribute name="deployment">
+				<a:documentation>Name of the deployment.</a:documentation>
+			</attribute>
+		</optional>
+
+		<!-- Elements_ -->
+
+		<interleave>
+			<optional>
+				<ref name = "comment_define"></ref>
+			</optional>
+
+			<zeroOrMore>
+				<a:documentation>Import of component type XML files.</a:documentation>
+				<ref name = "import_defenition"></ref>
+			</zeroOrMore>
+
+			<oneOrMore>
+				<a:documentation>Declares instances of objects.</a:documentation>
+				<ref name = "instance_defenition"></ref>
+			</oneOrMore>
+
+			<oneOrMore>
+				<a:documentation>Creates connections between objects and their ports.</a:documentation>
+				<ref name = "connection_defenition"></ref>
+			</oneOrMore>
+		</interleave>
+
+	</define>
+
+	<define name = "import_defenition">
+		<!-- Defenition for "import_component_type" tags.-->
+		<element name = "import_component_type">
+			<a:documentation>Value should be a path to a component XML file that is used as an instance.</a:documentation>
+			<data type="anyURI"></data>
+		</element>
+	</define>
+
+	<define name = "instance_defenition">
+		<!-- Defines attributes for "instance" tags. -->
+		<element name = "instance">
+			<a:documentation>Instance of component within the model.</a:documentation>
+
+			<!-- Needed Attributes -->
+			<attribute name = "namespace">
+				<a:documentation>Specifies the name space for the instance object.</a:documentation>
+			</attribute>
+
+			<attribute name = "name">
+				<a:documentation>Specifies the name for the instance object.</a:documentation>
+			</attribute>
+
+			<attribute name = "type">
+				<a:documentation>Specifies the type of the instance object.</a:documentation>
+			</attribute>
+
+			<!-- Optional Attributes -->
+			<optional>
+				<attribute name = "dict_short_name">
+					<a:documentation>Specifies a name that can be used instead of the "name" attribute in ISFGen dictionaries.</a:documentation>
+				</attribute>
+			</optional>
+
+			<optional>
+				<attribute name = "kind">
+					<a:documentation>Specifies the kind of component.</a:documentation>
+					<ref name = "component_types_define"></ref>
+				</attribute>
+			</optional>
+
+			<optional>
+				<attribute name="base_id">
+					<a:documentation>Specifies a base ID for this instance.</a:documentation>
+					<ref name = "id_define"/>
+				</attribute>
+			</optional>
+
+			<optional>
+				<choice>
+					<attribute name="base_id_window">
+						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternativly use the "base_id_range" tag.</a:documentation>
+						<data type="nonNegativeInteger"></data>
+					</attribute>
+					<attribute name="base_id_range">
+						<a:documentation>Specifies an ID range the instance will occupy, starting at the base ID. Can alternativly use the "base_id_window" tag.</a:documentation>
+						<data type="nonNegativeInteger"></data>
+					</attribute>
+				</choice>
+			</optional>
+
+		</element>
+	</define>
+
+	<define name = "connection_defenition">
+		<element name = "connection">
+			<a:documentation>Creates a new connection between source and target objects.</a:documentation>
+			<!-- Attributes -->
+
+			<attribute name = "name">
+				<a:documentation>Specifies a unique connection name. EX: Connection1</a:documentation>
+			</attribute>
+
+			<optional>
+				<attribute name = "type">
+					<a:documentation>Specifies connection type.</a:documentation>
+				</attribute>
+			</optional>
+
+			<!-- Elements -->
+			<interleave>
+
+				<optional>
+					<ref name = "comment_define"></ref>
+				</optional>
+
+				<element name = "source">
+					<a:documentation>Source Connection End.</a:documentation>
+					<ref name = "connection_end_define"></ref>
+				</element>
+
+				<element name = "target">
+					<a:documentation>Target Connection End</a:documentation>
+					<ref name = "connection_end_define"></ref>
+				</element>
+
+			</interleave>
+		</element>
+	</define>
+
+	<define name = "connection_end_define">
+		<!-- Specifies attributes for both target and source components.-->
+		<a:documentation>Specifies information about a connection end.</a:documentation>
+
+		<!-- Required attributes -->
+
+		<attribute name = "component">
+			<a:documentation>Specifies the instance name of the connection end's component. Name must match an "name" attribute from specified "instance" tags.</a:documentation>
+		</attribute>
+
+		<attribute name = "port">
+			<a:documentation>Specifies the port name on the object that the connection is attached to.</a:documentation>
+			<text/>
+		</attribute>
+
+		<attribute name = "type">
+			<a:documentation>Specifies the type of the connection end. Generally, this type will match the "target" type, unless connected to a port of type serial.</a:documentation>
+			<text/>
+		</attribute>
+
+		<!-- Optional attributes -->
+
+		<optional>
+			<attribute name = "num">
+				<a:documentation>Specifies the multiplicity or index of a port that is being connected to. Generally, this value will be zero unless multiple indexes on the port exists.</a:documentation>
+				<data type="nonNegativeInteger"/>
+			</attribute>
+		</optional>
+	</define>
+
+
+</grammar>
+
+

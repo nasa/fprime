@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="Duck" kind="active" namespace="Duck">
+
+    <import_port_type>Msg2PortAi.xml</import_port_type>
+    <import_port_type>Msg1PortAi.xml</import_port_type>
+
+    <comment>A demonstration component with a few ports</comment>
+    <ports>
+
+        <port name="outputPort1" data_type="Msg2" kind="output">
+        	<comment> </comment>
+        </port>
+        <port name="outputPort2" data_type="Msg1" kind="output">
+        	<comment> </comment>
+        </port>
+        <port name="inputPort1" data_type="Msg2" kind="sync_input">
+        	<comment> </comment>
+        </port>
+        <port name="inputPort2" data_type="Msg2" kind="async_input">
+        	<comment> </comment>
+        </port>
+        <port name="inputPort3" data_type="Msg1" kind="async_input">
+        	<comment> </comment>
+        </port>
+    </ports>
+</component>

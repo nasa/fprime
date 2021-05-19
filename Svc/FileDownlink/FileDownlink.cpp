@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Svc/FileDownlink/FileDownlink.hpp>
@@ -149,9 +142,9 @@ namespace Svc {
 
     const U32 fileSize = this->file.size;
     FW_ASSERT(byteOffset < fileSize, byteOffset);
-    const U16 maxDataSize = this->downlinkPacketSize;
-    const U16 dataSize = (byteOffset + maxDataSize > fileSize) ?
-      fileSize - byteOffset : maxDataSize;
+    const U16 maxDataSize = static_cast<U16>(this->downlinkPacketSize);
+    const U16 dataSize = static_cast<U16>((byteOffset + maxDataSize > fileSize) ?
+      fileSize - byteOffset : maxDataSize);
     U8 buffer[dataSize];
 
     const Os::File::Status status = 

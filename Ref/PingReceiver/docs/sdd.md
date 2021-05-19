@@ -1,4 +1,4 @@
-<title>Ref::PingReceiver</title>
+\page RefPingReceiverComponent Ref::PingReceiver Component
 # Ref::PingReceiver Component
 
 ## 1. Introduction

@@ -1,7 +1,7 @@
 #ifndef FW_INPUT_PORT_BASE_HPP
 #define FW_INPUT_PORT_BASE_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
@@ -16,7 +16,7 @@ namespace Fw {
             void setPortNum(NATIVE_INT_TYPE portNum); // !< set the port number
 
 #if FW_PORT_SERIALIZATION           
-            virtual void invokeSerial(SerializeBufferBase &buffer) = 0; // !< invoke the port with a serialized version of the call
+            virtual SerializeStatus invokeSerial(SerializeBufferBase &buffer) = 0; // !< invoke the port with a serialized version of the call
 #endif            
 
         protected:

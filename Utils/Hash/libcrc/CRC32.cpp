@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Utils/Hash/Hash.hpp>
@@ -77,4 +70,21 @@ namespace Utils {
         buffer = bufferOut;
     }
 
+    void Hash ::
+      final(U32 &hashvalue)
+    {
+      FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
+      // For CRC32 we need to return the one's compliment of the result:
+      hashvalue = ~(this->hash_handle);
+    }
+
+    void Hash ::
+      setHashValue(HashBuffer &value)
+    {
+      Fw::SerializeStatus status = value.deserialize(this->hash_handle);
+      FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
+      // Expecting `value` to already be one's complement; so doing one's complement
+      // here for correct hash updates
+      this->hash_handle = ~this->hash_handle;
+    }
 }

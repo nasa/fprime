@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 
 <interface name="BufferSend" namespace="Fw">
-  <include_header>Fw/Buffer/BufferSerializableAc.hpp</include_header>
+    <import_serializable_type>Fw/Buffer/BufferSerializableAi.xml</import_serializable_type>
     <args>
         <arg name="fwBuffer" type="Fw::Buffer" pass_by="reference">
         </arg>

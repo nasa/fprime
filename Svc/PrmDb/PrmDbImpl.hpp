@@ -6,22 +6,15 @@
  * \copyright
  * Copyright 2009-2015, by the California Institute of Technology.
  * ALL RIGHTS RESERVED.  United States Government Sponsorship
- * acknowledged. Any commercial use must be negotiated with the Office
- * of Technology Transfer at the California Institute of Technology.
+ * acknowledged.
  * <br /><br />
- * This software may be subject to U.S. export control laws and
- * regulations.  By accepting this document, the user agrees to comply
- * with all U.S. export laws and regulations.  User has the
- * responsibility to obtain export licenses, or other export authority
- * as may be required before exporting such information to foreign
- * countries or providing access to foreign persons.
  */
 
 #ifndef PRMDBIMPL_HPP_
 #define PRMDBIMPL_HPP_
 
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
-#include <Svc/PrmDb/PrmDbImplCfg.hpp>
+#include <PrmDbImplCfg.hpp>
 #include <Fw/Types/EightyCharString.hpp>
 #include <Os/Mutex.hpp>
 
@@ -47,11 +40,8 @@ namespace Svc {
             //!
             //!  \param name component instance name
             //!  \param file file where parameters are stored.
-#if FW_OBJECT_NAMES == 1
             PrmDbImpl(const char* name, const char* file);
-#else
-            PrmDbImpl(const char* file);
-#endif
+
             //!  \brief PrmDb initialization function
             //!
             //!  The initialization function for the component creates the message

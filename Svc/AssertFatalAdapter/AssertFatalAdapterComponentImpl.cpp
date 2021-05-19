@@ -6,21 +6,15 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <assert.h>
 #include <stdio.h>
 
@@ -49,14 +43,9 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   AssertFatalAdapterComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     AssertFatalAdapterComponentImpl(
         const char *const compName
-    ) :
-      AssertFatalAdapterComponentBase(compName)
-#else
-    AssertFatalAdapterImpl(void)
-#endif
+    ) : AssertFatalAdapterComponentBase(compName)
   {
       // register component with adapter
       this->m_adapter.regAssertReporter(this);
@@ -96,7 +85,7 @@ namespace Svc {
                   arg1,arg2,arg3,arg4,arg5,arg6);
       } else {
           // Can't assert, what else can we do? Maybe somebody will see it.
-          (void)printf("Svc::AssertFatalAdapter not registered!\n");
+          Fw::Logger::logMsg("Svc::AssertFatalAdapter not registered!\n");
           assert(0);
       }
   }
@@ -137,7 +126,7 @@ namespace Svc {
 
       I8 msg[FW_ASSERT_TEXT_SIZE];
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      printf("%s\n",(const char*)msg);
+      fprintf(stderr, "%s\n",(const char*)msg);
 
       switch (numArgs) {
           case 0:

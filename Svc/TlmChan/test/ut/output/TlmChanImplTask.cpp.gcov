@@ -8,15 +8,8 @@
         -:    6: * \copyright
         -:    7: * Copyright 2009-2015, by the California Institute of Technology.
         -:    8: * ALL RIGHTS RESERVED.  United States Government Sponsorship
-        -:    9: * acknowledged. Any commercial use must be negotiated with the Office
-        -:   10: * of Technology Transfer at the California Institute of Technology.
+        -:    9: * acknowledged.
         -:   11: * <br /><br />
-        -:   12: * This software may be subject to U.S. export control laws and
-        -:   13: * regulations.  By accepting this document, the user agrees to comply
-        -:   14: * with all U.S. export laws and regulations.  User has the
-        -:   15: * responsibility to obtain export licenses, or other export authority
-        -:   16: * as may be required before exporting such information to foreign
-        -:   17: * countries or providing access to foreign persons.
         -:   18: */
         -:   19:
         -:   20:#include <Svc/TlmChan/TlmChanImpl.hpp>

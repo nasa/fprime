@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Running ${BUILD_ROOT}/Autocoders/test/cnt_only/test/ut/$1/test_ut"
-${BUILD_ROOT}/Autocoders/test/cnt_only/test/ut/$1/test_ut

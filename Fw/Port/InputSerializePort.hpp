@@ -1,7 +1,7 @@
 #ifndef FW_INPUT_SERIALIZE_PORT_HPP
 #define FW_INPUT_SERIALIZE_PORT_HPP
 
-#include <Fw/Cfg/Config.hpp>
+#include <FpConfig.hpp>
 
 #if FW_PORT_SERIALIZATION == 1
 
@@ -16,7 +16,7 @@ namespace Fw {
 
             void init(void);
 
-            void invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
+            SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
 
             typedef void (*CompFuncPtr)(Fw::PassiveComponentBase* callComp, NATIVE_INT_TYPE portNum, SerializeBufferBase &arg); //!< port callback definition
             void addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr); //!< call to register a component

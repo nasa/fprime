@@ -1,0 +1,17 @@
+
+class ${name}(SerializableType):
+
+
+    def __init__(self):
+    
+        m_list = [
+#for ($membername,$type,$format_string,$size) in $mem_list:
+#for $i in range($size)
+            ("$membername",$type,"$format_string"),
+#end for
+#end for
+        ]
+        
+        super(${name},self).__init__("${name}",m_list)
+                    
+

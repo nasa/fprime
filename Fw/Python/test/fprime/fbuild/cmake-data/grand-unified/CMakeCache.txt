@@ -1,0 +1,2 @@
+FPRIME_FRAMEWORK_PATH:PATH=/home/user11/fprime/Ref/..
+FPRIME_PROJECT_ROOT:PATH=/home/user11/fprime/Ref/..

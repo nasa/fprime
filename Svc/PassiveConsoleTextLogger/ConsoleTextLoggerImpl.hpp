@@ -1,7 +1,7 @@
 #ifndef SVC_TEXT_LOGGER_IMPL_HPP
 #define SVC_TEXT_LOGGER_IMPL_HPP
 
-#include <Svc/PassiveTextLogger/PassiveTextLoggerComponentAc.hpp>
+#include <Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAc.hpp>
 
 namespace Svc {
 
@@ -9,12 +9,8 @@ namespace Svc {
 		
 	public:
 
-		// Only called by derived class
-#if FW_OBJECT_NAMES == 1	    
+		// Only called by derived class 
 	    ConsoleTextLoggerImpl(const char* compName);
-#else
-        ConsoleTextLoggerImpl();
-#endif
 	    void init(void);
 		~ConsoleTextLoggerImpl(void);
 		

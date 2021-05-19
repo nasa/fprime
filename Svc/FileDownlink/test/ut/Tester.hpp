@@ -6,15 +6,8 @@
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
+// acknowledged.
 // 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef TESTER_HPP
@@ -143,8 +136,17 @@ namespace Svc {
       //!
       void from_bufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::Buffer buffer 
+          Fw::Buffer& buffer
       );
+
+      //! Handler for from_pingOut
+      //!
+      void from_pingOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 key /*!< Value to return to pinger*/
+      );
+
+
 
     private:
 
@@ -251,6 +253,10 @@ namespace Svc {
       //! The current sequence index
       //!
       U32 sequenceIndex;
+
+      //! A list of data buffers used by the tests (so we can free them)
+      //!
+      std::vector<U8*> downlinkDataBuffers;
 
   };
 

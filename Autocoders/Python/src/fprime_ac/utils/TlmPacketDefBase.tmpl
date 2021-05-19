@@ -1,0 +1,265 @@
+// This is a cheetah template for the telemetry layout cpp file generated from
+// the telemetry layout spreadsheet.
+//
+// 10/20/15, L.E. Day
+// 8 Apr 2016 Refactored: L. J. Reder
+
+\#include <string.h>
+\#include <stdio.h>
+\#include <assert.h>
+\#include <FpConfig.hpp>
+\#include <DiebApps/Ff3TelemetryCollector/TlmPacketDefBase.hpp>
+\#include <DiebApps/Ff3TelemetryCollector/TlmPacket.hpp>
+
+\#define    NUM_PACKETS        ($len($tlm_packet_list))
+\#define    MAX_PACKET_BYTES   ($tlm_max_packet_bytes)
+\#define    NUM_CYCLES         ($len($tlm_cycle_max_list))
+\#define    NUM_SCHED_CYCLES   ($tlm_cycle_id_arr_size)
+\#define    MAX_NUM_CHANNELS   ($tlm_max_num_chan)
+\#define    MAX_NUM_FREQ       ($tlm_max_num_freq)
+
+## Define the constants for each packet
+#set $i = 0
+#for pkt in $tlm_packet_list
+
+\#define    PKT${i}_PACKET_BYTES             ($pkt.m_bytes)
+\#define    PKT${i}_NUM_HEADER_FIELD         ($len($pkt.m_header_list))
+\#define    PKT${i}_NUM_GENERAL_HEADER_FIELD ($pkt.num_header_general_fields)
+\#define    PKT${i}_NUM_FIXED_FIELD          ($pkt.m_num_fixed_fields)
+\#define    PKT${i}_NUM_VARIABLE_FIELD       ($pkt.m_num_variable_fields)
+\#define    PKT${i}_MAX_FIELD_BITS           ($pkt.m_max_field_bits)
+
+#set $i = $i + 1
+#end for
+namespace TlmPacker
+{
+
+    // An array (list) of the packet IDs
+
+#echo "    const U32 packet_id_arr[NUM_PACKETS] = {"
+#for pkt in $tlm_packet_list
+#echo $str($pkt.m_id) + ", "
+#end for
+#echo "};"
+
+
+    // An array (list) of the maximum number of ID's scheduled within a cycle slot
+
+#echo "    const U32 cycle_max_arr[NUM_CYCLES] = {"
+#for pkt in $tlm_cycle_max_list
+#echo $str($pkt) + ", "
+#end for
+#echo "};"
+
+
+    // An array (list or lists) of sets of ID's scheduled within cycle slots (empty slots are set to -1)
+
+#echo "    const U32 cycle_id_arr[NUM_SCHED_CYCLES] = {"
+#for id_list in $tlm_cycle_id_list:
+#for id in id_list:
+#echo $str($id) + ", "
+#end for
+#end for
+#echo "};"
+
+
+    // Packet ID to Channel (1553 Sub-address) mapping is set up here
+
+    tlmPacketDefBase::channel_def pkt_channel_map[MAX_NUM_CHANNELS] =
+    {
+#for $pkt in $tlm_packet_list:
+#if $pkt.m_chan is not None:
+#echo "    {" + $str($pkt.m_id) + ", " + $str($pkt.m_chan) + "},\n"
+#end if
+#end for
+    };
+
+    // Packet ID to Frequency and Offset mapping is set up here
+    tlmPacketDefBase::sched_def pkt_sched_map[MAX_NUM_FREQ] =
+    {
+#for $pkt in $tlm_packet_list:
+#if $pkt.m_freq is not None:
+#echo "    {" + $str($pkt.m_id) + ", " + $str($pkt.m_freq) + ", " + $str($pkt.m_offset) + "},\n"
+#end if
+#end for
+    };
+
+#for $i in $range($len($tlm_packet_list))
+
+    // Below are the data to define each specific packet type
+
+    header_field_def		pkt${i}_header_fields[PKT${i}_NUM_HEADER_FIELD] =
+    {
+#for $j in range($len($tlm_packet_list[$i].m_header_list))
+#echo "	{" + $tlm_packet_list[$i].m_header_list[$j].m_type + ", "
+#echo $str($tlm_packet_list[$i].m_header_list[$j].m_bit_start) + ", "
+#echo $str($tlm_packet_list[$i].m_header_list[$j].m_bits) + "},\n"
+#end for
+    };
+
+    tlmPacketDefBase::field_def	pkt${i}_general_header_fields[PKT${i}_NUM_GENERAL_HEADER_FIELD] =
+    {
+#set $k = 0
+#for $j in range($len($tlm_packet_list[$i].m_header_list))
+#if ($tlm_packet_list[$i].m_header_list[$j].m_type == "HEADER_FIELD_FIELD")
+#echo "	{" + $str($k) + ", "
+#echo $str($tlm_packet_list[$i].m_header_list[$j].m_id) + ", "
+#echo $str($tlm_packet_list[$i].m_header_list[$j].m_bit_start) + ", "
+#echo $str($tlm_packet_list[$i].m_header_list[$j].m_bits) + "},\n"
+#set $k = $k + 1
+#end if
+#end for
+    };
+
+    fixed_field_def		pkt${i}_fixed_fields[PKT${i}_NUM_FIXED_FIELD] =
+    {
+#set $k = 0
+#for $j in range($len($tlm_packet_list[$i].m_item_list))
+#if ($tlm_packet_list[$i].m_item_list[$j].m_is_constant)
+#echo "	{" + $str($k) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_bit_start) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_bits) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_constant_value) + "},\n"
+#set $k = $k + 1
+#end if
+#end for
+    };
+
+    tlmPacketDefBase::field_def		pkt${i}_variable_fields[PKT${i}_NUM_VARIABLE_FIELD] =
+    {
+#for $j in range($len($tlm_packet_list[$i].m_item_list))
+#if (not $tlm_packet_list[$i].m_item_list[$j].m_is_constant and not $tlm_packet_list[$i].m_item_list[$j].m_is_reserve)
+#echo "	{" + $str($j) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_id) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_bit_start) + ", "
+#echo $str($tlm_packet_list[$i].m_item_list[$j].m_bits) + "},\n"
+#end if
+#end for
+    };
+#end for
+
+// Define concrete instances of each packet
+
+#for $i in $range(len($tlm_packet_list))
+
+    Cpkt pkt${i}($tlm_packet_list[$i].m_id, PKT${i}_MAX_FIELD_BITS, PKT${i}_NUM_GENERAL_HEADER_FIELD, PKT${i}_NUM_VARIABLE_FIELD,
+        PKT${i}_PACKET_BYTES, PKT${i}_NUM_FIXED_FIELD, PKT${i}_NUM_HEADER_FIELD,
+        pkt${i}_header_fields, pkt${i}_general_header_fields,
+        pkt${i}_fixed_fields, pkt${i}_variable_fields);
+#end for
+
+    tlmPacketDefBase *packet_list[NUM_PACKETS] =
+    {
+#for $i in $range($len($tlm_packet_list))
+        &pkt${i},
+#end for
+    };
+
+}
+
+U32 tlmPacketDefBase::getMaxPacketBytes(void) {
+    return MAX_PACKET_BYTES;
+}
+
+U32 tlmPacketDefBase::getMaxNumCycles(void) {
+    return NUM_CYCLES;
+}
+
+void tlmPacketDefBase::getPacketIdArray(int &num_pkt, const U32 * &pkt_arr)
+{
+    num_pkt = NUM_PACKETS;
+    pkt_arr = TlmPacker::packet_id_arr;
+}
+
+void tlmPacketDefBase::getPacketScheduledMaxArray(int &num_pkt, const U32 * &pkt_arr)
+{
+    num_pkt = NUM_CYCLES;
+    pkt_arr = TlmPacker::cycle_max_arr;
+}
+
+void tlmPacketDefBase::getPacketScheduledIdArray(int &num_pkt, const U32 * &pkt_arr)
+{
+    num_pkt = NUM_SCHED_CYCLES;
+    pkt_arr = TlmPacker::cycle_id_arr;
+}
+
+U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id)
+{
+    int i;
+    U16 missing_channel = 0xFFFF;
+    for(i = 0; i < MAX_NUM_CHANNELS; i++)
+    {
+        if(id == TlmPacker::pkt_channel_map[i].id)
+        {
+            return TlmPacker::pkt_channel_map[i].channel;
+        }
+    }
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
+    return missing_channel;
+}
+
+F32 tlmPacketDefBase::getDuration(void) {
+    return $tlm_duration;
+}
+
+
+F32 tlmPacketDefBase::getPeriod(void) {
+    return $tlm_period;
+}
+
+F32 tlmPacketDefBase::getPacketFreq(I32 id) {
+    int i;
+    F32 missing_freq = -1;
+    for(i = 0; i < MAX_NUM_FREQ; i++)
+    {
+        if(id == TlmPacker::pkt_sched_map[i].id)
+        {
+            return TlmPacker::pkt_sched_map[i].freq;
+        }
+    }
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
+    return missing_freq;
+}
+
+I32 tlmPacketDefBase::getPacketOffset(I32 id) {
+    int i;
+    I32 missing_offset = -1;
+    for(i = 0; i < MAX_NUM_FREQ; i++)
+    {
+        if(id == TlmPacker::pkt_sched_map[i].id)
+        {
+            return TlmPacker::pkt_sched_map[i].offset;
+        }
+    }
+    // Return a -1 in the form of 0xFF since unsigned type, for any missing channels
+    return missing_offset;
+}
+
+tlmPacketDefBase *tlmPacketDefBase::getPacketById(I32 packet_id)
+{
+    int i;
+    for (i = 0; i < NUM_PACKETS; i++)
+    {
+        if (packet_id == (I32)TlmPacker::packet_list[i]->getPacketId())
+        {
+            return TlmPacker::packet_list[i];
+        }
+    }
+    assert(0);
+    return TlmPacker::packet_list[i];
+}
+
+tlmPacketDefBase *tlmPacketDefBase::ingestPacket(I32 packet_id, const void *packet)
+{
+    for (int i = 0; i < NUM_PACKETS; i++)
+    {
+    if (packet_id == (I32)TlmPacker::packet_list[i]->getPacketId())
+    {
+        TlmPacker::packet_list[i]->ingestPacket(packet);
+        return TlmPacker::packet_list[i];
+    }
+    }
+    return 0;
+}
+
+

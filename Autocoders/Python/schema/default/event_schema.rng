@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <include href="common_elements.rng"/>
+    <include href="common_types.rng"/>
+
+    <start>
+        <ref name = "event_root_define"></ref>
+    </start>
+
+    <define name = "event_root_define">
+        <element name = "events">
+            <a:documentation>Defines different events for a component.</a:documentation>
+
+            <optional>
+                <attribute name = "event_base">
+                    <a:documentation>Base at which ids start from.</a:documentation>
+                    <ref name = "base_code_define"></ref>
+                </attribute>
+            </optional>
+
+
+            <oneOrMore>
+                <ref name = "event_define"></ref>
+            </oneOrMore>
+
+        </element>
+    </define>
+
+    <define name = "event_define">
+        <element name = "event">
+            <a:documentation>Defines a specific event for a component.</a:documentation>
+
+            <!-- Required Attributes -->
+
+            <attribute name = "name">
+                <a:documentation>Name of the event.</a:documentation>
+                <text/>
+            </attribute>
+
+            <attribute name = "id">
+                <a:documentation>Event ID.</a:documentation>
+                <ref name = "id_define"/>
+            </attribute>
+
+            <attribute name = "severity">
+                <a:documentation>Severity of event.</a:documentation>
+                <ref name = "severity_define"></ref>
+            </attribute>
+
+            <attribute name = "format_string">
+                <a:documentation>Output string that will be shown in ground system software.</a:documentation>
+                <text/>
+            </attribute>
+
+            <!-- Optional Attributes -->
+
+            <optional>
+                <attribute name = "throttle">
+                    <a:documentation>Determines how many of the events are generated before the program stops them.</a:documentation>
+                    <data type="nonNegativeInteger"></data>
+                </attribute>
+            </optional>
+
+            <interleave>
+                <optional>
+                    <ref name = "comment_define"></ref>
+                </optional>
+
+                <optional>
+                    <ref name = "args_define"></ref>
+                </optional>
+            </interleave>
+
+        </element>
+
+    </define>
+
+    <define name = "args_define">
+        <element name = "args">
+            <zeroOrMore>
+                <ref name = "external_arg_define"></ref>
+            </zeroOrMore>
+        </element>
+    </define>
+
+
+</grammar>

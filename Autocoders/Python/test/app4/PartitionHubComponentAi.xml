@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="PartitionHub" kind="passive" namespace="PartitionHub">
+
+    <comment>A demonstration component with a few ports</comment>
+    <ports>
+
+        <port name="PortA" data_type="Serial" kind="sync_input" max_number="2">
+        	<comment> </comment>
+        </port>
+
+        <port name="PortB" data_type="Serial" kind="output" max_number="2">
+        	<comment> </comment>
+        </port>
+
+    </ports>
+</component>
