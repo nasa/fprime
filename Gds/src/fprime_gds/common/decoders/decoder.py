@@ -44,6 +44,7 @@ class Decoder(
         consumer. This should only need to be overridden in extraordinary circumstances.
 
         :param data: data bytes to be decoded
+        :param sender: (optional) sender id, otherwise None
         """
         decoded = self.decode_api(data)
         if decoded is not None:
