@@ -16,12 +16,12 @@ class GseControllerException(Exception):
 
 class GseControllerUndefinedDirectoryException(GseControllerException):
     def __init__(self, val):
-        super().__init__(f"Path does not exist: {str(val)}")
+        super().__init__(f"Path does not exist: {str(val)}!")
 
 
 class GseControllerUndefinedFileException(GseControllerException):
     def __init__(self, val):
-        super().__init__(f"Path does not exist: {str(val)}")
+        super().__init__(f"Path does not exist: {str(val)}!")
 
 
 class GseControllerParsingException(GseControllerException):
@@ -36,4 +36,4 @@ class GseControllerMnemonicMismatchException(GseControllerException):
 
 class GseControllerStatusUpdateException(GseControllerException):
     def __init__(self, val):
-        super().__init__(f"Bad status update mode: {str(val)}")
+        super().__init__(f"Bad status update mode: {str(val)}!")
