@@ -127,6 +127,7 @@ class QueryHistoryCommand(BaseCommand):
         individual strings of each items to work with both, which there's no
         guarantee of if _get_item_list_string is overridden
 
+        :param search: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
             before filtering them
         :return: A string representation of "item"
