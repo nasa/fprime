@@ -85,8 +85,7 @@ def find_dict(root: Path) -> Path:
 
     if len(files) > 1:
         print(
-            "[ERROR] Multiple xml dictionaries found in dictionary location {}."
-            "Specify dictionary manually with --dictionary.".format(
+            "[ERROR] Multiple xml dictionaries found in dictionary location {}. Specify dictionary manually with --dictionary.".format(
                 dict_dir
             )
         )
