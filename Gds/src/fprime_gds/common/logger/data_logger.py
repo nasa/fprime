@@ -56,6 +56,7 @@ class DataLogger(fprime_gds.common.handlers.DataHandler):
 
         Arguments:
             data {bin} -- binary data packet
+            dest {string} -- where the data will be sent by the server
         """
 
         self.f_s.write(data)
