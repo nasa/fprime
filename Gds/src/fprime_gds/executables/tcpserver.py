@@ -483,8 +483,8 @@ def main(argv=None):
     global SERVER, LOCK
 
     program_name = os.path.basename(sys.argv[0])
-    program_license = "Copyright 2015 user_name (California Institute of Technology)" \
-                      "ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
+    program_license = "Copyright 2015 user_name (California Institute of Technology)                                            \
+                ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged."
     program_version = "v0.1"
     program_build_date = "%s" % __updated__
     program_version_string = "%prog {} ({})".format(program_version, program_build_date)
