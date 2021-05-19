@@ -3,7 +3,7 @@ layout: default
 title: "F´ Features"
 ---
 
-F´ has the following key features that enable robust embedded system design. These features enable projects to quickly
+F´ (or F Prime) has the following key features that enable robust embedded system design. These features enable projects to quickly
 develop embedded systems applications from design through test.
 
 ### Reusability
