@@ -58,7 +58,6 @@ class Encoder(
         consumer. This should only need to be overridden in extraordinary circumstances.
 
         :param data: data bytes to be decoded
-        :param sender: (optional) sender id, otherwise None
         :return: returns the encoded data for reference
         """
         encoded = self.encode_api(data)

@@ -42,7 +42,7 @@ def initialize_test_api(
     # instantiate Test API (log_path of "None" will disable Test API logging)
     api = IntegrationTestAPI(pipeline, log_path)
 
-    return (pipeline, api)
+    return pipeline, api
 
 
 def get_upcoming_event(

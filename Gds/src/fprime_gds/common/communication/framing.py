@@ -236,6 +236,6 @@ class TcpServerFramerDeframer(FramerDeframer):
         (data_len,) = struct.unpack_from(">I", data, 4)
         if len(data) < data_len + 8:
             return None, data
-        packet = data[8 : data_len + 8]
-        data = data[data_len + 8 :]
+        packet = data[8: data_len + 8]
+        data = data[data_len + 8:]
         return packet, data

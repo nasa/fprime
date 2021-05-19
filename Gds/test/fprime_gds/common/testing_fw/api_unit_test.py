@@ -124,7 +124,8 @@ class APITestCases(unittest.TestCase):
         t.start()
         return t
 
-    def assert_lists_equal(self, expected, actual):
+    @staticmethod
+    def assert_lists_equal(expected, actual):
         assert len(expected) == len(
             actual
         ), "the given list should have had the length {}, but instead had {}\nExpected {}\nActual{}".format(
@@ -176,6 +177,7 @@ class APITestCases(unittest.TestCase):
     def test_dummy_pipeline(self):
         length = 15
         event_list = self.get_severity_sequence(length)
+        # TODO: expected value for timestep parameter in fill_history_async is integer not float(0.1)
         t1 = self.fill_history_async(self.pipeline.enqueue_event, event_list, 0.1)
         print("waiting for queue to fill")
         pred = predicates.greater_than_or_equal_to(length // 2)

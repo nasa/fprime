@@ -24,11 +24,13 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include <Drv/BlockDriver/BlockDriverImpl.hpp>
+#include <Svc/GroundInterface/GroundInterface.hpp>
 #include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
 #include <Svc/Framer/FramerComponentImpl.hpp>
 #include <Svc/Deframer/DeframerComponentImpl.hpp>
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
+#include <Drv/Udp/UdpComponentImpl.hpp>
 
 void constructRefArchitecture(void);
 bool constructApp(bool dump, U32 port_number, char* hostname);
@@ -38,6 +40,7 @@ void exitTasks(void);
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
 extern Svc::CmdSequencerComponentImpl cmdSeq;
+extern Svc::GroundInterfaceComponentImpl groundIf;
 extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
@@ -60,7 +63,8 @@ extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
 extern Ref::PingReceiverComponentImpl pingRcvr;
 
 extern Svc::StaticMemoryComponentImpl staticMemory;
-extern Drv::TcpClientComponentImpl comm;
+extern Drv::TcpClientComponentImpl uplinkComm;
+extern Drv::UdpComponentImpl downlinkComm;
 extern Svc::FramerComponentImpl downlink;
 extern Svc::DeframerComponentImpl uplink;
 #endif

@@ -126,4 +126,4 @@ class PktXmlLoader(XmlLoader):
             id_dict[pkt_id] = pkt_temp
             name_dict[pkt_name] = pkt_temp
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict

@@ -85,7 +85,8 @@ def find_dict(root: Path) -> Path:
 
     if len(files) > 1:
         print(
-            "[ERROR] Multiple xml dictionaries found in dictionary location {}. Specify dictionary manually with --dictionary.".format(
+            "[ERROR] Multiple xml dictionaries found in dictionary location {}."
+            "Specify dictionary manually with --dictionary.".format(
                 dict_dir
             )
         )
@@ -121,7 +122,7 @@ def parse_args():
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
 
-    :param args: arguments to supply
+    :return: TODO: return value description should be filled by maintainer
     """
     # Get custom handlers for all executables we are running
     arg_handlers = [
@@ -284,7 +285,7 @@ def launch_html(tts_port, dictionary, connect_address, logs, gui_addr, gui_port,
                 "--port", str(gui_port)]
     ret = launch_process(gse_args, name="HTML GUI", env=gse_env, launch_time=2)
     if extras["gui"] == "html":
-        webbrowser.open(f"http://{str(gui_addr)}:{str(gui_port)}/", new=0, autoraise=True)
+        webbrowser.open(f"https://{str(gui_addr)}:{str(gui_port)}/", new=0, autoraise=True)
     return ret
 
 
@@ -295,7 +296,7 @@ def launch_app(app, port, address, logs, **_):
     :param app: application to launch
     :param port: port to connect to
     :param address: address to connect to
-    :param log_dir: log directory to place files into
+    :param logs: TODO: the parameter description should be filled by maintainer
     :return: process
     """
     app_name = os.path.basename(app)

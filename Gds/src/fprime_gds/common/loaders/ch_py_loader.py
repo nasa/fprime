@@ -76,4 +76,4 @@ class ChPyLoader(PythonLoader):
             id_dict[ch_dict[self.ID_FIELD]] = ch_temp
             name_dict[ch_dict[self.NAME_FIELD]] = ch_temp
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict

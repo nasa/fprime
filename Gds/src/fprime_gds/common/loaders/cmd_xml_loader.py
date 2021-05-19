@@ -71,4 +71,4 @@ class CmdXmlLoader(XmlLoader):
             id_dict[cmd_opcode] = cmd_temp
             name_dict["{}.{}".format(cmd_comp, cmd_mnemonic)] = cmd_temp
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict

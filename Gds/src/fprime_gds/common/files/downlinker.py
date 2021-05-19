@@ -133,8 +133,8 @@ class FileDownlinker(fprime_gds.common.handlers.DataHandler):
         """
         Handle cancel packet.
 
-        :param data: cancel packet, ignored.
-        :return:
+        :param _:
+        :return: None
         """
         # CANCEL Packets have no data
         if self.state != FileStates.RUNNING:

@@ -33,6 +33,7 @@ class RamHistory(History):
         Data callback to store
 
         :param data: object to store
+        :return: None
         """
         with self.lock:
             self.objects.append(data)

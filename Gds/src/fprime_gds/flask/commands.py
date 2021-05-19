@@ -57,7 +57,6 @@ class CommandHistory(flask_restful.Resource):
         Constructor: setup the parser for incoming command runs
 
         :param history: history object holding commands
-        :param dictionary: dictionary holding command list
         """
         self.parser = flask_restful.reqparse.RequestParser()
         self.parser.add_argument(

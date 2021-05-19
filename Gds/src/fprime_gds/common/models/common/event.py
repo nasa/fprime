@@ -33,7 +33,7 @@ class Event:
         Constructor
         """
 
-        ## Make sure correct types are passed
+        # Make sure correct types are passed
 
         if not isinstance(name, str):
             raise TypeMismatchException(str, type(name))

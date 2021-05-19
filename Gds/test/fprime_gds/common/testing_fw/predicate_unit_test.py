@@ -20,7 +20,8 @@ sys.path.insert(0, fprimeName)
 
 
 class PredicateTestCases(unittest.TestCase):
-    def check_str(self, pred):
+    @staticmethod
+    def check_str(pred):
         """
         Tests for the predicate class and it's functionality.
         """
@@ -31,7 +32,8 @@ class PredicateTestCases(unittest.TestCase):
         except NotImplementedError:
             assert False, "invoking str(pred) was not supported"
 
-    def test_NotImplemented(self):
+    @staticmethod
+    def test_NotImplemented():
         class dummyPred(predicates.predicate):
             pass
 
@@ -53,7 +55,8 @@ class PredicateTestCases(unittest.TestCase):
         except NotImplementedError:
             assert True, "invoking an incomplete subclass raised NotImplementedError"
 
-    def test_Implemented(self):
+    @staticmethod
+    def test_Implemented():
         pred = predicates.less_than(2)
         try:
             pred.__call__(2)
@@ -68,7 +71,8 @@ class PredicateTestCases(unittest.TestCase):
             assert False, "invoking __str__ on an complete subclass of predicate failed"
         assert True, "implemented predicate had no problems invoking functions"
 
-    def test_is_predicate(self):
+    @staticmethod
+    def test_is_predicate():
         class dummyPred:
             def __call__(self, item):
                 pass
@@ -181,7 +185,7 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_satisfies_all(self):
-        p_list = []
+        p_list = list()
         p_list.append(predicates.less_than(8))
         p_list.append(predicates.less_than(6))
         p_list.append(predicates.equal_to(4))
@@ -193,7 +197,7 @@ class PredicateTestCases(unittest.TestCase):
         self.check_str(pred)
 
     def test_satisfies_any(self):
-        p_list = []
+        p_list = list()
         p_list.append(predicates.less_than(8))
         p_list.append(predicates.less_than(6))
         p_list.append(predicates.equal_to(4))
@@ -204,7 +208,8 @@ class PredicateTestCases(unittest.TestCase):
         assert not pred(9), "9 satisfies only no predicates in the list"
         self.check_str(pred)
 
-    def test_args_predicates(self):
+    @staticmethod
+    def test_args_predicates():
         a_list = ["a", "p", "p", "l", "e"]
         pred = predicates.args_predicate(["a", "p", "p", "l", "e"])
         assert pred(a_list), "The list {} should have been accepted".format(a_list)

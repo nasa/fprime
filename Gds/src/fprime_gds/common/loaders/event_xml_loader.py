@@ -83,4 +83,4 @@ class EventXmlLoader(XmlLoader):
             id_dict[event_id] = event_temp
             name_dict[event_name] = event_temp
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict
