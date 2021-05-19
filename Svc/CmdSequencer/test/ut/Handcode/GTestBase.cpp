@@ -177,7 +177,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel CS_LoadCommands\n"
+      << " on telemetry channel CS_LoadCommands\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -227,7 +227,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel CS_CancelCommands\n"
+      << " on telemetry channel CS_CancelCommands\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -277,7 +277,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel CS_Errors\n"
+      << " on telemetry channel CS_Errors\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -327,7 +327,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel CS_CommandsExecuted\n"
+      << " on telemetry channel CS_CommandsExecuted\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -377,7 +377,7 @@ namespace Svc {
       << "  Line:     " << __ISF_callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel CS_SequencesCompleted\n"
+      << " on telemetry channel CS_SequencesCompleted\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

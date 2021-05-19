@@ -158,7 +158,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Data for input buffers
-      static const U8 data[COM_BUFFER_LENGTH];
+      static U8 data[COM_BUFFER_LENGTH];
 
   };
 

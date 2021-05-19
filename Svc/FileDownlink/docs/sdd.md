@@ -3,14 +3,22 @@
 
 ## 1 Introduction
 
-`FileDownlink` is an active ISF component.
-It manages downlink of files from the spacecraft.
+`FileDownlink` is an active F´ component that manages spacecraft file downlink. Both operators and
+components on the spacecraft can add files to the file queue, which `FileDownlink` will downlink
+from. Operators can enqueue files using the `SendFile` and `SendPartial` commands, and components
+can enqueue files using the `SendFile` port. The `FileComplete` port broadcasts when a file downlink
+initiated by a port completes, allowing components to detect when a previous enqueued file downlink
+has completed. To prevent a continuous stream of file downlink traffic from saturating the
+communication link, a cooldown can be configured to add a delay between the completion of a file
+downlink and starting on the next file in the queue.
 
 ## 2 Requirements
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-FD-001 | Upon command, `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
+FD-001 | `FileDownlink` shall queue up a list of files to downlink | The requirement provides the ability to simultaneously queue up multiple files for downlink from different sources | Test
+FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
+FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
 
 ## 3 Design
 
@@ -23,9 +31,8 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.html).
 
 2. One file downlink happens at a time.
 
-### 3.2 Block Description Diagram (BDD)
-
-![`FileDownlink` BDD](img/FileDownlinkBDD.jpg "FileDownlink")
+3. Both components and operators must be able to enqueue files, necessitating both a `SendFile`
+   command and port.
 
 ### 3.3 Ports
 
@@ -44,6 +51,9 @@ Name | Type | Role
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
+`sendFile` | `Svc::SendFileRequest` | guarded_input | Enqueues file for downlink
+`fileComplete` | `Svc::SendFileComplete` | output | Emits notifications when a file downlink initiated by a port completes
+`Run` | `Svc::Sched` | async_input | Periodic clock input used to trigger internal state machine
 <a name="bufferGet">`bufferGet`</a> | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | output (caller) | Requests buffers for sending file packets.
 <a name="bufferSendOut">`bufferSendOut`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | output | Sends buffers containing file packets.
 
@@ -52,8 +62,14 @@ Name | Type | Kind | Purpose
 `FileDownlink` has the following constants, initialized
 at component instantiation time:
 
-* *downlinkPacketSize*:
-The size of the packets to use on downlink.
+* *downlinkPacketSize*: The size of the packets to use on downlink.
+* *timeout*: Max amount of time in ms to wait for a buffer return before aborting downlink
+* *cooldown*: The amount of time in ms to wait in a cooldown state before starting next downlink.
+* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for timing timeouts and
+  cooldown.
+* *file queue depth*: The maximum number of files that can be held in the internal file downlink
+  queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
+  in a busy error response.
 
 ### 3.5 State
 
@@ -66,75 +82,31 @@ one of the following values:
 
 * CANCEL (2): `FileDownlink` is canceling a file downlink.
 
+* WAIT (3): `FileDownlink` is waiting for a buffer to be returned before sending another packet.
+
+* COOLDOWN (4): `FileDownlink` is waiting in a cooldown period before downlinking the next file.
+
 The initial value is IDLE.
 
 ### 3.6 Commands
 
 `FileDownlink` recognizes the commands described in the following sections.
 
-#### 3.6.1 SendFile
+#### 3.6.1 SendFile/SendPartial
 
-SendFile is an asynchronous command.
+SendFile is an asynchronous command that adds a file to the file downlink queue.
 It has two arguments:
 
-1. *sourceFileName*:
-The name of the on-board file to send.
+1. *sourceFileName*: The name of the on-board file to send.
+2. *destFileName*: The name of the destination file on the ground.
 
-2. *destFileName*:
-The name of the destination file on the ground.
+SendPartial also includes the following fields:
 
-When `File Downlink` receives this command, it carries
-out the following steps:
+3. *offset*: Position in file to start reading from.
+4. *length*: Amount of data to read. A length of 0 reads until the end of file.
 
-1. If *mode* = CANCEL, then 
-
-    a. Issue a *DownlinkCanceled* event.
-
-    b. set *mode* = IDLE and return.
-
-2. Set *mode* = DOWNLINK.
-
-3. Open the file *sourceFileName* for reading with file descriptor *d*.
-If there is any problem opening the file, then issue a
-*FileOpenError* warning and abort the command execution.
-
-4. Invoke *bufferGetCaller*
-to request a buffer whose size is the size of a START packet.
-Fill the buffer and send it out on *bufferSendOut*.
-
-5. Set a remainder *r* to the size of the file with descriptor *d*.
-
-6. While *r > 0* and *mode = DOWNLINK* do:
-
-    a. Let *n* be the smaller of *downlinkPacketSize* and *r*.
-
-    b. Invoke *bufferGetCaller* to request a buffer *B* whose size is 
-the size of a DATA packet with a data payload of *n* bytes.
-
-    c. Read the next *n* bytes out of the file with descriptor *d*.
-If there is any problem reading the file, then issue a
-*FileReadError* warning, close the file, and abort the command execution.
-
-    d. Fill *B* with (i) the data read the previous step and (ii) the appropriate
-metadata. Send *B* out on *bufferSendOut*.
-
-    e. Reduce *r* by *n*.
-
-7. Close the file with descriptor *d*.
-
-8. If *mode* = CANCEL, then
-
-    a. Invoke *bufferGetCaller* to request a buffer whose size 
-is the size of a CANCEL packet.
-Fill the packet and send it out on *bufferSendOut*.
-
-    b. Issue a *DownlinkCanceled* event.
-
-9. Otherwise invoke *bufferGetCaller* to request a buffer whose 
-size is the size of an END packet.
-Fill the buffer and send it out on *bufferSendOut*.
-
-10. Set *mode = IDLE*.
+When the downlink completes or fails, a CmdResponse packet will be sent indicating success or
+failure.
 
 #### 3.6.2 Cancel
 
@@ -142,11 +114,7 @@ Cancel is a synchronous command.
 If *mode* = DOWNLINK, it sets *mode* to CANCEL.
 Otherwise it does nothing.
 
-## 4 Dictionary
-
-Dictionaries: [HTML](FileDownlink.html) [MD](FileDownlink.md)
-
-## 5 Checklists
+## 4 Checklists
 
 Document | Link
 -------- | ----

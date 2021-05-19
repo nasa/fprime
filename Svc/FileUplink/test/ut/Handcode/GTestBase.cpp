@@ -108,7 +108,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel FileUplink_FilesReceived\n"
+      << " on telemetry channel FileUplink_FilesReceived\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -158,7 +158,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel FileUplink_PacketsReceived\n"
+      << " on telemetry channel FileUplink_PacketsReceived\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }
@@ -208,7 +208,7 @@ namespace Svc {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << index
-      << " on telmetry channel FileUplink_Warnings\n"
+      << " on telemetry channel FileUplink_Warnings\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

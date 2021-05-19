@@ -72,18 +72,19 @@ Vue.component("event-list", {
          */
         columnify(item) {
             let display_text = item.display_text;
-            // Remap command EVRs to expand opcode for visualization pruposes
+            // Remap command EVRs to expand opcode for visualization purposes
             let groups = null
             if (item.template.severity.value == "EventSeverity.COMMAND" && (groups = display_text.match(OPREG)) != null) {
-                let mnemonic = "UNKNOWN";
+                let component_mnemonic = "UNKNOWN"
                 let id = parseInt(groups[1]);
                 for (let command in this.commands) {
                     command = this.commands[command];
                     if (command.id == id) {
-                        mnemonic = command.mnemonic;
+                        component_mnemonic = command.full_name;
                     }
                 }
-                display_text = display_text.replace(OPREG, '<span title="' + groups[0] + '">' + mnemonic + '</span>');
+                const msg = '<span title="' + groups[0] + '">' + component_mnemonic + '</span>'
+                display_text = display_text.replace(OPREG, msg);
             }
             return [timeToString(item.time), "0x" + item.id.toString(16), item.template.full_name,
                 item.template.severity.value.replace("EventSeverity.", ""), display_text];

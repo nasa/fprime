@@ -188,12 +188,12 @@
         </event>
         <event id="7" name="NoOpReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP command" >
         	<comment>
-        	The command dispatcher has successfully recieved a NO-OP command
+        	The command dispatcher has successfully received a NO-OP command
         	</comment>
         </event>
         <event id="8" name="NoOpStringReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP string=%s" >
            <comment>
-           The command dispatcher has successfully recieved a NO-OP command from GUI with a string
+           The command dispatcher has successfully received a NO-OP command from GUI with a string
            </comment>
            <args>
                 <arg name="message" type="string" size="40">
@@ -216,6 +216,19 @@
                     <comment>Arg3</comment>
                 </arg>
            </args>       
+        </event>
+        <event id="10" name="OpCodeReregistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X is already registered to port %d" >
+            <comment>
+            Op code reregistered event
+            </comment>
+            <args>
+                <arg name="Opcode" type="U32">
+                    <comment>The opcode reregistered</comment>
+                </arg>          
+                <arg name="port" type="I32">
+                    <comment>The reregistration port</comment>
+                </arg>          
+            </args>
         </event>
     </events>
     <telemetry>

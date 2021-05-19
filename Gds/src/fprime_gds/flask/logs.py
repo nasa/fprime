@@ -16,7 +16,7 @@ class FlaskLogger(flask_restful.Resource):
         """
         Constructor used to setup the log directory.
 
-        :param logdir: log directory to search fo logs
+        :param logdir: log directory to search for logs
         """
         self.logdir = logdir
 

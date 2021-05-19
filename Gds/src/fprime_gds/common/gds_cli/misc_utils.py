@@ -50,7 +50,7 @@ def repeat_until_interrupt(func: Callable, *args):
     """
     try:
         while True:
-            new_args = func(*args)
+            new_args = func(*args) # lgtm [py/call/wrong-arguments]
             if new_args:
                 args = new_args
     except KeyboardInterrupt:

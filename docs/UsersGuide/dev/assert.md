@@ -40,15 +40,15 @@ compiler arguments.
 The assert can be configured in the following ways:
 
   - FW\_ASSERT\_LEVEL Sets the level or reporting for the asserts.
-    
+
       - FW\_NO\_ASSERT Shows the asserts turned off. The code to check
         the condition is not compiled. Some developers prefer this once
         the code has been tested to regain some processing performance.
-    
+
       - FW\_FILEID\_ASSERT Identifies an integer value for the file
         where the assert occurs (as opposed to \_\_FILE\_\_). It saves
         code space since no file name is stored.
-    
+
       - FW\_FILENAME\_ASSERT Identifies which file the assert occurred
         in. (The \_\_FILE\_\_ macro is used.)
 

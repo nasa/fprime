@@ -57,7 +57,7 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     endif()
     get_nearest_build_root("${FP_SOURCE_DIR}")
     file(RELATIVE_PATH NEW_BIN_DIR "${FPRIME_CLOSEST_BUILD_ROOT}" "${FP_SOURCE_DIR}")
-    # Add component subdirectories using normal add_subdirectory with overriden binary_dir
+    # Add component subdirectories using normal add_subdirectory with overridden binary_dir
     add_subdirectory("${FP_SOURCE_DIR}" "${NEW_BIN_DIR}" ${ARGN})
 endfunction(add_fprime_subdirectory)
 
@@ -169,7 +169,7 @@ function(register_fprime_module)
     elseif(DEFINED MOD_DEPS)
     	set(MD_IFS "${MOD_DEPS}")
     elseif(${CMAKE_DEBUG_OUTPUT})
-        message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
+        message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
     if (${ARGC} GREATER 2)
         set(MODULE_NAME "${ARGV2}")
@@ -180,6 +180,10 @@ function(register_fprime_module)
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
     generate_library("${MODULE_NAME}" "${SC_IFS}" "${MD_IFS}")
+
+    # Globally expose source and ac files to be used as necessary within unit test logic.
+    set(SOURCE_FILE "${SC_IFS}" PARENT_SCOPE)
+    set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
 endfunction(register_fprime_module)
 
 ####
@@ -188,6 +192,10 @@ endfunction(register_fprime_module)
 # Registers an executable using the fprime build system. This comes with dependency management and
 # fprime autocoding capabilities. This requires three variables to define the executable name,
 # autocoding and source inputs, and (optionally) any non-standard link dependencies.
+#
+# Executables will automatically install itself and its dependencies into the out-of-cache build
+# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. To skip this
+# installation step, set the SKIP_INSTALL variable before registering an executable.
 #
 # Required variables (defined in calling scope):
 #
@@ -248,12 +256,12 @@ endfunction(register_fprime_module)
 # ```
 # ### fprime Executable With Autocoding/Dependencies ###
 #
-# Developers can make executables or other utilites that take advantage of fprime autocoding
+# Developers can make executables or other utilities that take advantage of fprime autocoding
 # and fprime dependencies. These can be registered using the same executable registrar function
 # but should specify a specific executable name.
 #
 # ```
-# set(EXECUTABLE_NAME "MyUtitlity")
+# set(EXECUTABLE_NAME "MyUtility")
 #
 # set(SOURCE_FILES
 #   "${CMAKE_CURRENT_LIST_DIR)/ModuleAi.xml"
@@ -296,8 +304,18 @@ function(register_fprime_executable)
         message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Explicit call to module register
-    generate_executable("${EX_NAME}" "${SC_IFS}" "${MD_IFS}")
+    # Register executable and module with name '<exe name>_exe', then create an empty target with
+    # name '<exe name>' that depends on the executable. This enables additional post-processing
+    # targets that depend on the built executable.
+    generate_executable("${EX_NAME}_exe" "${SC_IFS}" "${MD_IFS}")
+    set_target_properties("${EX_NAME}_exe" PROPERTIES OUTPUT_NAME "${EX_NAME}")
+    add_custom_target(${EX_NAME} ALL)
+    add_dependencies("${EX_NAME}" "${EX_NAME}_exe")
+
+    # Only install into artifacts directory in release builds when SKIP_INSTALL is not set.
+    if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE")
+        add_dependencies("${EX_NAME}" "package_gen")
+    endif()
 endfunction(register_fprime_executable)
 
 ####
@@ -345,7 +363,7 @@ endfunction(register_fprime_executable)
 #   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
 #             these as positional arguments overrides any specified in the parent scope.
 #
-#   **Note:** UTs automaitcally depend on the module. In order to prevent this, explicitly pass in args
+#   **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
 #             to this module, excluding the module.
 #
 #         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
@@ -417,12 +435,13 @@ function(register_fprime_ut)
     else()
         set(MD_IFS "${MODULE_NAME_NO_SUFFIX}")
         if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "No exra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
+            message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
         endif()
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
     generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}")
+    setup_all_module_targets(FPRIME_UT_TARGET_LIST ${MODULE_NAME} "" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MD_IFS}")
 endfunction(register_fprime_ut)
 
 ####
@@ -444,25 +463,34 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** path to file defining above functions 
 ###
 function(register_fprime_target TARGET_FILE_PATH)
+    register_fprime_target_generic(FPRIME_TARGET_LIST ${TARGET_FILE_PATH})
+endfunction(register_fprime_target)
+
+function(register_fprime_ut_target TARGET_FILE_PATH)
+    register_fprime_target_generic(FPRIME_UT_TARGET_LIST ${TARGET_FILE_PATH})
+endfunction(register_fprime_ut_target)
+
+function(register_fprime_target_generic TARGET_LIST TARGET_FILE_PATH)
     # Check for some problems moving forward
     if (NOT EXISTS ${TARGET_FILE_PATH})
         message(FATAL_ERROR "${TARGET_FILE_PATH} does not exist.")
         return()
     endif()
     # Update the global list of target files
-    set(TMP "${FPRIME_TARGET_LIST}")
+    set(TMP "${${TARGET_LIST}}")
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
-    SET(FPRIME_TARGET_LIST "${TMP}" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targtes" FORCE)
+    SET(${TARGET_LIST} "${TMP}" CACHE INTERNAL "${TARGET_LIST}: custom fprime targets" FORCE)
+
     #Setup global target. Note: module targets found during module processing
     setup_global_target("${TARGET_FILE_PATH}")
-endfunction(register_fprime_target)
+endfunction(register_fprime_target_generic)
 
 #### Documentation links
 # Next Topics:
 #  - Setting Options: [Options](Options.md) are used to vary a CMake build.
 #  - Adding Deployment: [Deployments](deployment.md) create fprime builds.
-#  - Adding Module: [Modules](module.md) register fprime Ports, Compontents, etc.
+#  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
 ####

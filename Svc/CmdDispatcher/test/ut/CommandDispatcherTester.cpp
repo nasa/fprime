@@ -82,6 +82,24 @@ TEST(CmdDispTestNominal,NopTest) {
 
 }
 
+TEST(CmdDispTestNominal, ReregisterCommand) {
+    
+    TEST_CASE(102.1.3,"Reregister Command");
+    COMMENT("Verify user can call command registration port with the same opcode multiple times safely.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10,0);
+
+    Svc::CommandDispatcherImplTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl,tester);
+
+    tester.runCommandReregister();
+}
 
 TEST(CmdDispTestOffNominal,InvalidOpcodeDispatch) {
 

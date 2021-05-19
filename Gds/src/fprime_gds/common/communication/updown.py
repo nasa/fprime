@@ -146,7 +146,7 @@ class Uplinker:
     ):
         """Initializes the uplink class
 
-        Initialize the uplink class using a hardware adapter, ground hanler, and framer.  loopback is used to virtualize
+        Initialize the uplink class using a hardware adapter, ground handler, and framer.  loopback is used to virtualize
         the return packet handshake as FSW does not handle that.
 
         Args:
@@ -194,7 +194,7 @@ class Uplinker:
                     else:
                         UP_LOGGER.warning(
                             "Uplink failed to send %d bytes of data after %d retries",
-                            (len(framed), Uplinker.RETRY_COUNT),
+                            len(framed), Uplinker.RETRY_COUNT 
                         )
         # An OSError might occur during shutdown and is harmless. If we are not shutting down, this error should be
         # propagated up the stack.

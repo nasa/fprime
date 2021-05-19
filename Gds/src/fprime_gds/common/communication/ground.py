@@ -3,7 +3,7 @@ ground.py:
 
 Sets up the ground-side handlers for the comm layer. This allows the communications layer to send data and receive data
 to and from the rest of the ground system. This layer consists of an Abstract base class, which guarantees the methods
-available to to the comm layer, and currently a single implementation used to attach to the ThreadedTcpServer.
+available to the comm layer, and currently a single implementation used to attach to the ThreadedTcpServer.
 
 @author lestarch
 """
@@ -19,7 +19,7 @@ LOGGER = logging.getLogger("gds_sender")
 
 class GroundHandler(abc.ABC):
     """
-    Ground handler class interacts upstream from the comm adapter layer to the the greater ground system. This
+    Ground handler class interacts upstream from the comm adapter layer to the greater ground system. This
     effectively means handling the following functions:
 
     1. receive_all: receives any and all frames from the ground layer for uplink to the spacecraft

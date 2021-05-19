@@ -161,6 +161,23 @@ a == $item_value#slurp
       this->e = static_cast<t>(es);
     return status;
   }
+
+  \#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
+    void ${name} :: toString(Fw::StringBase& text) const {
+    const ${name}::t e = this->e;
+    switch (e) {
+#for $item_name,$item_value,$item_comment in $items_list:
+        case ${name}::${item_name}:
+          text = "${item_name}";
+          break;
+#end for
+        default:
+          text = "[invalid]";
+          break;
+    }
+  }
+  \#endif
+
 #if $namespace
 }
 #end if

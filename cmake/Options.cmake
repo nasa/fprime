@@ -18,6 +18,34 @@
 ####
 
 ####
+# `FPRIME_USE_STUBBED_DRIVERS:`
+#
+# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
+# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to used full driver implementations.
+###
+if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
+endif()
+
+####
+# `FPRIME_USE_BAREMETAL_SCHEDULER:`
+#
+# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
+# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
+# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the scheduler or OFF to use the OS thread scheduler.
+###
+if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
+endif()
+
+
+####
 # `CMAKE_DEBUG_OUTPUT:`
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
@@ -62,7 +90,7 @@ endif()
 # **Values:**
 # - Release: (default) standard flight build
 # - Testing: allow for unit tests and debug enabled build
-# - Debug: supplied by CMake and typlically unused for F prime
+# - Debug: supplied by CMake and typically unused for F prime
 #
 # e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 ####
@@ -111,7 +139,7 @@ endif()
 # any way bypassing that utility (e.g. inside your beloved IDE).
 #
 # These locations specify the locations of the needed F prime paths. These are described below. Defaults are set to
-# support the historical in-source deployments where F prime is merged with deployment code. Specifiy these settings if
+# support the historical in-source deployments where F prime is merged with deployment code. Specify these settings if
 # using the newer deployment structure. `fprime-util` does this for you.
 #
 # FPRIME_FRAMEWORK_PATH: location of F prime framework installation, always the directory above this file, however;
@@ -188,3 +216,8 @@ if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
 endif()
 
+# Settings for F artifacts installation destination
+if (NOT DEFINED FPRIME_INSTALL_DEST)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/" CACHE PATH "F prime artifacts installation directory" FORCE)
+endif()
+set(IGNORE_ME ${FPRIME_INSTALL_DEST}) # Prevent warning that FPRIME_INSTALL_DEST is unused

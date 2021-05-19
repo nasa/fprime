@@ -20,7 +20,7 @@
 import logging
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -145,6 +145,9 @@ class Component:
     def set_serializables(self, serializables):
         self.__serializable_obj_list = serializables
 
+    def set_xml_serializable_files(self, x):
+        self.__xml_serializable_files = x
+
     def set_xml_port_files(self, x):
         self.__xml_port_files = x
 
@@ -153,6 +156,9 @@ class Component:
 
     def get_xml_port_files(self):
         return self.__xml_port_files
+
+    def get_xml_serializable_files(self):
+        return self.__xml_serializable_files
 
     def get_c_header_files(self):
         return self.__c_header_files

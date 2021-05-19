@@ -67,7 +67,7 @@ class StandardPipeline:
         # Setup dictionaries encoders and decoders
         self.dictionaries.load_dictionaries(dictionary, packet_spec)
         self.coders.setup_coders(
-            self.dictionaries, self.distributor, self.client_socket
+            self.dictionaries, self.distributor, self.client_socket, config
         )
         self.histories.setup_histories(self.coders)
         self.files.setup_file_handling(

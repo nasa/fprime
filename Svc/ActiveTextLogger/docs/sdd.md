@@ -43,7 +43,7 @@ The `Svc::ActiveTextLogger` component provides an text logging function for the 
 
 #### 3.2.1 File Writing
 
-Once a valid file and max size is supplied via a public funtion call, the `Svc::ActiveTextLogger` component writes to that file as well as standard output.  The `Svc::ActiveTextLogger` component will stop writing to the file if it would exceed the maximum size.
+Once a valid file and max size is supplied via a public function call, the `Svc::ActiveTextLogger` component writes to that file as well as standard output.  The `Svc::ActiveTextLogger` component will stop writing to the file if it would exceed the maximum size.
 
 If the file supplied already exists, the `Svc::ActiveTextLogger` component will attempt to create a new file up to ten times by appending a integer suffix to end of the file name.
 

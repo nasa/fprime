@@ -45,7 +45,7 @@ class PythonLoader(dict_loader.DictLoader):
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
-                           name to be imported. This is esspecially important
+                           name to be imported. This is especially important
                            when trying to import dictionaries from multiple
                            deployments.
 
@@ -79,7 +79,7 @@ class PythonLoader(dict_loader.DictLoader):
                            using both the package and superpackage qualifiers
                            (from A.B import C instead of from B import C). This
                            allows multiple dictionaries with the same package
-                           name to be imported. This is esspecially important
+                           name to be imported. This is especially important
                            when trying to import dictionaries from multiple
                            deployments.
 
@@ -100,7 +100,7 @@ class PythonLoader(dict_loader.DictLoader):
         else:
             sys.path.append(superpkg_path)
 
-        # Make sure serializeable directory is imported
+        # Make sure serializable directory is imported
         sys.path.append(superpkg_path + os.sep + "serializable")
 
         # Compute a list of all files to import

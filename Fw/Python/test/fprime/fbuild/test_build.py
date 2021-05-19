@@ -28,7 +28,7 @@ def get_cmake_builder():
 
 def get_data_dir():
     """
-    Gets directory containing test-data specific to the builder being tested. This will enable new implementors, should
+    Gets directory containing test-data specific to the builder being tested. This will enable new implementers, should
     there be any, to implement their own build-directory structure.
 
     :return:
@@ -51,7 +51,7 @@ def test_hash_finder():
     builder = fprime.fbuild.builder.Build(
         fprime.fbuild.builder.BuildType.BUILD_NORMAL, dep_dir
     )
-    builder.load(build_dir=dep_dir / "build-fprime-automatic-native")
+    builder.load(local, build_dir=dep_dir / "build-fprime-automatic-native")
 
     assert builder.find_hashed_file(0xDEADBEEF) == ["Abc: 0xdeadbeef\n"]
     assert builder.find_hashed_file(0xC0DEC0DE) == ["HJK: 0xc0dec0de\n"]
@@ -165,7 +165,7 @@ def test_get_include_info():
             ("/opt/something/else/external-sw/NachoDeploy/SomeComp3", None),
         ],
     }
-    # Run through all the above data look for matching ansers
+    # Run through all the above data look for matching answers
     for key in test_data.keys():
         build_dir = os.path.join(get_data_dir(), key)
         # Test all path, truth pairs

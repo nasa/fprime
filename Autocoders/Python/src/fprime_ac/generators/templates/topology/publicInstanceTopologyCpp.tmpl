@@ -20,7 +20,7 @@ void $(name)Init(void) {
 #if $is_ptr:
     simpleReg_ptr = new Fw::SimpleObjRegistry();
 #else:
-    #pass ##If objects are being generated as instances they were instansiated in includes.
+    #pass ##If objects are being generated as instances they were instantiated in includes.
 #end if
 #if $kind.get_comment():
 // $kind.get_comment()

@@ -139,7 +139,7 @@ namespace Os {
 
     // If the buffer passed in is not big
     // enough, return false, and pass out
-    // the size of the messsage:
+    // the size of the message:
     if(storedSize > size){
       size = storedSize;
       return false;

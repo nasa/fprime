@@ -46,6 +46,7 @@ from . import encoder
 from fprime.common.models.serialize.numerical_types import U32Type
 from fprime_gds.common.data_types.cmd_data import CmdData
 from fprime_gds.common.utils.data_desc_type import DataDescType
+from fprime_gds.common.utils import config_manager
 
 
 class CmdEncoder(encoder.Encoder):
@@ -63,8 +64,15 @@ class CmdEncoder(encoder.Encoder):
         Returns:
             An initialized CmdEncoder object
         """
+
+        if config is None:
+            config = config_manager.ConfigManager().get_instance()
         super().__init__(config)
+
         self.len_obj = self.config.get_type("msg_len")
+        self.desc_obj = self.config.get_type("msg_desc")
+        self.opcode_obj = self.config.get_type("op_code")
+
 
     def encode_api(self, data):
         """
@@ -81,9 +89,11 @@ class CmdEncoder(encoder.Encoder):
 
         desc = U32Type(0x5A5A5A5A).serialize()
 
-        descriptor = U32Type(DataDescType["FW_PACKET_COMMAND"].value).serialize()
+        self.desc_obj.val = DataDescType["FW_PACKET_COMMAND"].value
+        descriptor = self.desc_obj.serialize()
 
-        op_code = U32Type(cmd_temp.get_op_code()).serialize()
+        self.opcode_obj.val = cmd_temp.get_op_code()
+        op_code = self.opcode_obj.serialize()
 
         arg_data = b""
         for arg in data.get_args():

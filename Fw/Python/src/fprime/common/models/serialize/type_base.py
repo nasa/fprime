@@ -20,6 +20,7 @@ class BaseType(abc.ABC):
         """
         Serializes the current object type.
         """
+        raise AbstractMethodException("serialize")
 
     @abc.abstractmethod
     def deserialize(self, data, offset):
@@ -47,7 +48,7 @@ class BaseType(abc.ABC):
         raise AbstractMethodException("to_jsonable")
 
 
-class ValueType(BaseType, abc.ABC):
+class ValueType(BaseType):
     """
     An abstract base type used to represent a single value. This defines the value property, allowing for setting and
     reading from the .val member.
@@ -63,7 +64,7 @@ class ValueType(BaseType, abc.ABC):
     @abc.abstractmethod
     def validate(self, val):
         """
-        Checks the val for validity with respect to the current type. This will raise TypeMissmatchException when the
+        Checks the val for validity with respect to the current type. This will raise TypeMismatchException when the
         validation fails of the val's type fails. It will raise TypeRangeException when val is out of range.
 
         :param val: value to validate

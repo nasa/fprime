@@ -33,11 +33,7 @@ from fprime_ac.utils.exceptions import (
     FprimeXmlException,
 )
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-# from __builtin__ import None
+import configparser
 
 # For Python determination
 
@@ -90,7 +86,7 @@ class XmlComponentParser:
         ## Dictionary of special_ports
         self.special_ports = self.Config._ConfigManager__prop["special_ports"]
 
-        ## get costants file name and read it in
+        ## get constants file name and read it in
         constants_file = self.Config.get("constants", "constants_file")
         if not os.path.isabs(constants_file):
             constants_file = os.path.join(ROOTDIR, constants_file)
@@ -103,6 +99,7 @@ class XmlComponentParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close() #Close the file, which is only used for the parsing above
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get("schema", "component"))
@@ -184,7 +181,7 @@ class XmlComponentParser:
                     raise OSError(stri)
                 PRINT.info("Reading external dictionary %s" % dict_file)
                 dict_fd = open(dict_file)
-                dict_parser = etree.XMLParser(remove_comments=True)
+                _ = etree.XMLParser(remove_comments=True)
                 dict_element_tree = etree.parse(dict_fd, parser=xml_parser)
 
                 component.append(dict_element_tree.getroot())
@@ -614,7 +611,7 @@ class XmlComponentParser:
                     n = event.attrib["name"]
                     s = event.attrib["severity"]
                     # FIXME: Move to configuration file
-                    serverity_list = [
+                    severity_list = [
                         "FATAL",
                         "WARNING_HI",
                         "WARNING_LO",
@@ -623,10 +620,10 @@ class XmlComponentParser:
                         "ACTIVITY_LO",
                         "DIAGNOSTIC",
                     ]
-                    if s not in serverity_list:
+                    if s not in severity_list:
                         PRINT.info(
                             "%s: Error: Event %s severity must be one of %s."
-                            % (xml_file, n, ",".join(serverity_list))
+                            % (xml_file, n, ",".join(severity_list))
                         )
                         sys.exit(-1)
                     f = event.attrib["format_string"]
@@ -1129,7 +1126,6 @@ class XmlComponentParser:
                 self.__add_to_import_port_list(implicitPorts)
 
         for p in self.__ports:
-            n = p.get_name()
             t = p.get_type()
             if "::" in t:
                 # PRINT.info("WARNING: Found namespace qualifier in port type definition (name=%s, type=%s) using namespace specified in XXXPortAi.xml file." % (n,t))
@@ -1238,7 +1234,7 @@ class XmlComponentParser:
                     validator_type,
                     ROOTDIR + self.Config.get(validator_type, validator_name),
                 )
-                PRINT.info(msg)
+                raise FprimeXmlException(msg)
 
     def is_component(self):
         """
@@ -1845,8 +1841,6 @@ class Event:
 
 
 if __name__ == "__main__":
-
-    xmlfile = "../../test/app1a/FujiComponentAi.xml"
     xmlfile = sys.argv[1]
 
     print("Component XML parse test (%s)" % xmlfile)

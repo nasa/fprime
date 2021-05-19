@@ -44,7 +44,7 @@
         </command>
     </commands>
     <ports>
-        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
+        <port name="CmdDisp" kind="async_input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
         <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
         <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
         <port name="aport" data_type="Another::Test2" kind="sync_input" >

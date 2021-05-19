@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+import platform
+import subprocess
 from enum import Enum
 
 filename = os.path.dirname(__file__)
@@ -22,12 +24,18 @@ class TestRefAppClass(object):
         cls.pipeline = StandardPipeline()
         config = ConfigManager()
         filename = os.path.dirname(__file__)
-        path = os.path.join(filename, "../../Top/RefTopologyAppDictionary.xml")
+        path = os.path.join(
+            filename,
+            "../../build-artifacts/{}/dict/RefTopologyAppDictionary.xml".format(
+                platform.system()
+            ),
+        )
         cls.pipeline.setup(config, path, "/tmp")
         cls.pipeline.connect("127.0.0.1", 50050)
         logpath = os.path.join(filename, "./logs")
         cls.api = IntegrationTestAPI(cls.pipeline, logpath)
         cls.case_list = []  # TODO find a better way to do this.
+        cls.dictionary = path
 
     @classmethod
     def teardown_class(cls):
@@ -93,7 +101,7 @@ class TestRefAppClass(object):
             severity: A valid FilterSeverity Enum Value (str) or an instance of FilterSeverity
             enabled: a boolean of whether or not to enable the given severity
         Return:
-            boolean of wether the report filter was set successfully.
+            boolean of whether the report filter was set successfully.
         """
         enabled = "ENABLED" if enabled else "DISABLED"
         if isinstance(severity, self.FilterSeverity):
@@ -102,12 +110,8 @@ class TestRefAppClass(object):
             severity = self.FilterSeverity[severity].name
         try:
             self.api.send_command(
-                "eventLogger.ALOG_SET_EVENT_REPORT_FILTER",
-                ["INPUT_" + severity, "INPUT_" + enabled],
-            )
-            self.api.send_command(
-                "eventLogger.ALOG_SET_EVENT_SEND_FILTER",
-                ["SEND_" + severity, "SEND_" + enabled],
+                "eventLogger.SET_EVENT_FILTER",
+                ["FILTER_" + severity, "FILTER_" + enabled],
             )
             return True
         except AssertionError:
@@ -258,3 +262,9 @@ class TestRefAppClass(object):
             self.api.assert_event_count(pred, actHI_events)
         finally:
             self.set_default_filters()
+
+    def test_seqgen(self):
+        """ Tests the seqgen code """
+        sequence = os.path.join(os.path.dirname(__file__), "test_seq.seq")
+        assert subprocess.run(["fprime-seqgen", "-d", self.dictionary, sequence, "/tmp/ref_test_int.bin"]).returncode == 0, "Failed to run fprime-seqgen"
+        self.assert_command("cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin"], max_delay=5)

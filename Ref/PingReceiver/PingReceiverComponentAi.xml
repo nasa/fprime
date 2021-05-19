@@ -32,7 +32,7 @@
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="PR_PingsDisabled" severity="ACTIVITY_HI" format_string = "PingReceiver ping responsed disabled" >
+        <event id="0" name="PR_PingsDisabled" severity="ACTIVITY_HI" format_string = "PingReceiver ping responses disabled" >
             <comment>
             Disabled ping responses
             </comment>

@@ -14,10 +14,12 @@
 #define SocketIpDriver_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Buffer/Buffer.hpp>
 #include "Drv/SocketIpDriver/SocketIpDriverComponentAc.hpp"
 #include <SocketIpDriverCfg.hpp>
 #include <Drv/SocketIpDriver/SocketHelper.hpp>
 #include <Drv/SocketIpDriver/SocketIpDriverTypes.hpp>
+#include <Os/Task.hpp>
 
 // Includes for the IP layer
 #ifdef TGT_OS_TYPE_VXWORKS
@@ -103,7 +105,7 @@ namespace Drv {
       // socket helper instance
       SocketHelper m_helper;
 
-      Os::Task m_recvTask;           //!< Os::Task to start for reciving data
+      Os::Task m_recvTask;           //!< Os::Task to start for receiving data
       Fw::Buffer m_buffer;           //!< Fw::Buffer used to pass data
       U8 m_backing_data[MAX_RECV_BUFFER_SIZE]; //!< Buffer used to store data
       bool m_stop; //!< Stop the receiving port

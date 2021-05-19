@@ -25,7 +25,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -84,7 +84,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_string(self, obj):
         """
-        Return a string of (type, name) args, comma seperated
+        Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes.
         """
         arg_str = ""
@@ -163,7 +163,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the concrete element to operation on.
+        @param obj: the instance of the concrete element to operation on.
         """
         # Build filename here...
         if self.__config.get("serialize", "XMLDefaultFileName") == "True":
@@ -199,7 +199,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 PRINT.info(msg)
                 sys.exit(-1)
 
-        # Open file for writting here...
+        # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
         if self.__fp is None:
@@ -221,7 +221,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Serial types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = includes1SerialH.includes1SerialH()
         self._writeTmpl(c, "includes1Visit")
@@ -230,7 +230,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = includes2SerialH.includes2SerialH()
         c.xml_includes_list = obj.get_xml_includes()
@@ -255,7 +255,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialH.namespaceSerialH()
         if obj.get_namespace() is None:
@@ -277,7 +277,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = publicSerialH.publicSerialH()
         c.name = obj.get_name()
@@ -288,7 +288,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = protectedSerialH.protectedSerialH()
         c.uuid = obj.get_typeid()
@@ -299,7 +299,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = privateSerialH.privateSerialH()
         self._writeTmpl(c, "privateVisit")

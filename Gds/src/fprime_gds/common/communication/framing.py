@@ -14,12 +14,7 @@ that implement this pattern. The current list of implementation classes are:
 import abc
 import copy
 import struct
-
-
-def CHECKSUM_CALC(_):
-    """ Initial checksum implementation for FpFramerDeframer. """
-    return 0xCAFECAFE
-
+from .checksum import calculate_checksum
 
 class FramerDeframer(abc.ABC):
     """
@@ -135,7 +130,7 @@ class FpFramerDeframer(FramerDeframer):
             FpFramerDeframer.HEADER_FORMAT, FpFramerDeframer.START_TOKEN, len(data)
         )
         framed += data
-        framed += struct.pack(">I", CHECKSUM_CALC(framed))
+        framed += struct.pack(">I", calculate_checksum(framed))
         return framed
 
     def deframe(self, data, no_copy=False):
@@ -174,7 +169,7 @@ class FpFramerDeframer(FramerDeframer):
                     ">{}sI".format(data_size), data, FpFramerDeframer.HEADER_SIZE
                 )
                 # If the checksum is valid, return the packet. Otherwise continue to rotate
-                if check == CHECKSUM_CALC(
+                if check == calculate_checksum(
                     data[: data_size + FpFramerDeframer.HEADER_SIZE]
                 ):
                     data = data[total_size:]

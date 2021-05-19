@@ -12,7 +12,7 @@
 <Enter a float to send to CompA:
 >3.140000
 
-<Comp_A Recieved Input: 3.140000
+<Comp_A Received Input: 3.140000
 >q}
 
 
@@ -26,7 +26,7 @@
 <Enter an unsigned-integer to send to CompA:
 >10
 
-<Comp_A Recieved Input: 10
+<Comp_A Received Input: 10
 >q}
 
 

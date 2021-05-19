@@ -1,4 +1,4 @@
-Identical to app1 except that component initalization is manually handled in Top.cpp instead of being auto generated
+Identical to app1 except that component initialization is manually handled in Top.cpp instead of being auto generated
 in the topology.
 
 Components are linked to the topology via Components.hpp.

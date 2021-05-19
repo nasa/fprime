@@ -1,0 +1,31 @@
+name: Spell checking
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+  pull_request_target:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+    types: ['opened', 'reopened', 'synchronize']
+
+jobs:
+  build:
+    name: Spell checking
+    runs-on: ubuntu-20.04
+    steps:
+    - name: checkout-merge
+      if: "contains(github.event_name, 'pull_request')"
+      uses: actions/checkout@v2.0.0
+      with:
+        ref: refs/pull/${{github.event.pull_request.number}}/merge
+        fetch-depth: 5
+    - name: checkout
+      if: "!contains(github.event_name, 'pull_request')"
+      uses: actions/checkout@v2.0.0
+      with:
+        fetch-depth: 5
+    - uses: check-spelling/check-spelling@0.0.17-alpha

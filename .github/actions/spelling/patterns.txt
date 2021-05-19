@@ -1,0 +1,42 @@
+# data urls
+"data:[^"]*"
+'data:[^']*'
+data:[-a-zA-Z=;:/0-9+]*,\S*
+
+(?:optionsString|symbolStylesString|modelElementStyleString|diagramViewStyleString)="[^"]+"
+<filePart[^>]*>[^<]*<
+'local:[^']*'
+"local:[^"]*"
+__sscaeProjectUsageGraphSerialization='[^']*'
+xmi:id="[^"]*"
+[_"]PROJECT[-0-9a-zA-Z_$?#=.]+
+
+# URL escaped characters
+\%[0-9A-F]{2}
+# hex in url queries
+=[0-9a-fA-F]+&
+# hex digits including css/html color classes:
+(?:[\\0][xX]|\\u|[uU]\+|#x?|\%23)[0-9a-fA-FgGrR_]{2,}(?:[uU]?[lL]{0,2}|u\d+)\b
+
+\@[0-9a-f]{8}\b
+
+# uuid:
+\b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b
+
+# man troff content
+\\f[BCIP]
+
+\&#x[AD];
+value="(?:[0-9a-f]{1,2} )*"
+\b(?:belongsTo|featuredBy|sections|sharePointID|user|ID)="[0-9a-zA-Z_ ]*"
+
+\ben masse\b
+
+# ignore long runs of a single character:
+\b([A-Za-z])\g{-1}{3,}\b
+
+# Ignore string sequence if it is assigned to a variable and has special symbols | \ / % * & %
+=\s*["'].*[\|\\\/\#\*\&\%].*["']
+
+# Ignore any text between inline back-ticks
+`(.*?)`

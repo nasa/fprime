@@ -14,7 +14,6 @@ import datetime
 import errno
 import importlib
 import os
-import platform
 import re
 import sys
 
@@ -43,7 +42,7 @@ class ParserBase(abc.ABC):
     """
     Parsers must define several functions. They must define "get_parser", which will produce a parser to parse the
     arguments, and an optional "handle_arguments" function to do any necessary processing of the arguments. Note: when
-    handling arguments, the implementor should copy the incoming namespace if the original values of arguments will be
+    handling arguments, the implementer should copy the incoming namespace if the original values of arguments will be
     modified.
     """
 
@@ -73,7 +72,7 @@ class ParserBase(abc.ABC):
     ):
         """
         Create a parser for the given application using the description provided. This will then add all specified
-        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handel
+        ParserBase subclasses' get_parser output as parent parses for the created parser. Then all of the handle
         arguments methods will be called, and the final namespace will be returned.
 
         :param parser_classes: a list of ParserBase subclasses that will be used to
@@ -263,23 +262,13 @@ class LogDeployParser(ParserBase):
             description="Process arguments needed to specify a logging", add_help=False
         )
         parser.add_argument(
-            "-d",
-            "--deployment",
-            dest="deploy",
-            action="store",
-            required=False,
-            type=str,
-            default=os.getcwd(),
-            help="Deployment directory for detecting dict, app, and logging. [default: %(default)s]",
-        )
-        parser.add_argument(
             "-l",
             "--logs",
             dest="logs",
             action="store",
-            default=None,
+            default=os.path.join(os.getcwd(), "logs"),
             type=str,
-            help="Logging directory. Created if non-existent. Default: deployment directory.",
+            help="Logging directory. Created if non-existent. [default: %(default)s]",
         )
         parser.add_argument(
             "--log-directly",
@@ -299,30 +288,14 @@ class LogDeployParser(ParserBase):
         :return: args namespace
         """
         args = copy.copy(args)
-        if args.deploy is not None and not os.path.isdir(args.deploy):
-            raise ValueError(
-                "Deployment directory {} does not exist".format(args.deploy)
-            )
-        # Find the log argument via the "logs" argument or the "deploy" argument
-        if args.deploy is None and args.logs is None:
-            raise ValueError(
-                "User must supply either the '--deployment' or '--logs' argument"
-            )
-        elif (
-            args.logs is None and args.deploy is not None and os.path.isdir(args.deploy)
-        ):
-            args.logs = os.path.join(args.deploy, "logs")
         # Get logging dir
-        if args.log_directly:
-            cls.first_log = args.logs
-        elif cls.first_log is None:
+        if not args.log_directly:
             args.logs = os.path.abspath(
                 os.path.join(
                     args.logs, datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
                 )
             )
-            cls.first_log = args.logs
-        args.logs = cls.first_log
+
         # Make sure directory exists
         try:
             os.makedirs(args.logs)
@@ -423,9 +396,10 @@ class GdsParser(ParserBase):
             "--dictionary",
             dest="dictionary",
             action="store",
+            default=None,
             required=False,
             type=str,
-            help="Path to dictionary. Overrides deploy if both are set",
+            help="Path to dictionary. Overrides automatic dictionary detection.",
         )
         parser.add_argument(
             "-c",
@@ -436,6 +410,25 @@ class GdsParser(ParserBase):
             type=str,
             help="Configuration for wx GUI. Ignored if not using wx.",
         )
+        parser.add_argument(
+            "--gui-addr",
+            dest="gui_addr",
+            action="store",
+            default="127.0.0.1",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+        parser.add_argument(
+            "--gui-port",
+            dest="gui_port",
+            action="store",
+            default="5000",
+            required=False,
+            type=str,
+            help="Set the GUI server address [default: %(default)s]",
+        )
+
         return parser
 
     @classmethod
@@ -451,24 +444,9 @@ class GdsParser(ParserBase):
         # Find dictionary setting via "dictionary" argument or the "deploy" argument
         if args.dictionary is not None and not os.path.exists(args.dictionary):
             raise ValueError(
-                "Dictionary path {} is not valid 'py_dict' nor XML file".format(
-                    args.dictionary
-                )
+                "Dictionary file {} does not exist".format(args.dictionary)
             )
-        elif args.deploy is not None and not args.dictionary:
-            xml_dict = ParserBase.find_in(".*Dictionary.xml", args.deploy, True)
-            py_dict = ParserBase.find_in("py_dict", args.deploy, False)
-            if xml_dict is None and py_dict is None:
-                raise ValueError(
-                    "Could not find python dictionary no XML dictionary in {}".format(
-                        args.deploy
-                    )
-                )
-            args.dictionary = py_dict if xml_dict is None else xml_dict
-        elif not args.deploy and not args.dictionary:
-            raise ValueError(
-                "User must supply either the '--dictionary' or '--deployment' argument"
-            )
+
         # Handle configuration arguments
         config = fprime_gds.common.utils.config_manager.ConfigManager()
         if args.config is not None and os.path.isfile(args.config):
@@ -511,7 +489,16 @@ class BinaryDeployment(ParserBase):
             action="store",
             required=False,
             type=str,
-            help="Path to app to run. Overrides deploy if both are set.",
+            help="Path to app to run. Overrides automatic app detection.",
+        )
+        parser.add_argument(
+            "-r",
+            "--root",
+            dest="root_dir",
+            action="store",
+            required=False,
+            type=str,
+            help="Root directory of build artifacts, used to automatically find app and dictionary. [default: install_dest field in settings.ini]",
         )
         return parser
 
@@ -530,21 +517,10 @@ class BinaryDeployment(ParserBase):
         args = copy.copy(args)
         if args.app is not None and not os.path.isfile(args.app):
             raise ValueError("F prime binary '{}' does not exist".format(args.app))
-        elif args.app is None and args.deploy is not None:
-            basename = os.path.basename(os.path.abspath(args.deploy))
-            args.app = ParserBase.find_in(
-                basename,
-                os.path.join(args.deploy, "bin", platform.system()),
-                is_file=True,
-            )
-            if args.app is None:
-                raise ValueError(
-                    "F prime binary '{}' not found in {}. Specify with '--app'".format(
-                        basename, args.deploy
-                    )
-                )
-        else:
+        if args.root_dir is not None and not os.path.isdir(args.root_dir):
             raise ValueError(
-                "User must supply either the '--dictionary' or '--deployment' argument"
+                "F prime artifacts root directory '{}' does not exist".format(
+                    args.root_dir
+                )
             )
         return args

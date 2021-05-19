@@ -328,7 +328,7 @@ Vue.component("fp-table", {
             this.$refs.allbox.indeterminate = true;
         },
         /**
-         * Clears everything from a view.  Everything will be displated.
+         * Clears everything from a view.  Everything will be displayed.
          */
         clearView: function() {
             this.view = [];
@@ -413,7 +413,7 @@ Vue.component("fp-table", {
         /**
          * calculatedHeaderColumns:
          *
-         * Computes the visible headers based on the fields to show. This allows this element to shink to a specified
+         * Computes the visible headers based on the fields to show. This allows this element to shrink to a specified
          * set of columns.
          *
          * @return {null|Uint8Array}
@@ -429,7 +429,7 @@ Vue.component("fp-table", {
          * Calculates a list of displayed items.
          */
         filteredItems: function() {
-            // Map loacal methods into the closure provided to the filtering function
+            // Map local methods into the closure provided to the filtering function
             let itemToColumns = this.itemToColumns;
             // Pre-filter step removes non-viewable items
             let items = [];
