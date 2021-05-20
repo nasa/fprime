@@ -20,6 +20,7 @@ from copy import deepcopy
 from lxml import etree
 
 from fprime.common.models.serialize.array_type import ArrayType
+from fprime_gds import MINIMUM_SUPPORTED_FRAMEWORK_VERSION, MAXIMUM_SUPPORTED_FRAMEWORK_VERSION
 
 # Custom type modules
 from fprime.common.models.serialize.bool_type import BoolType
@@ -116,8 +117,14 @@ class XmlLoader(dict_loader.DictLoader):
 
         # Parse xml and get element tree object we can retrieve data from
         element_tree = etree.parse(fd, parser=xml_parser)
+        root = element_tree.getroot()
 
-        return element_tree.getroot()
+        # Check version of the XML before continuing. Versions weren't published before 1.5.4.  Only check major minor
+        # and point versions to allow for development versions not "bumped" past a point version.
+        dict_version = root.attrib.get("framework_version", "1.5.4")
+        if dict_version < MINIMUM_SUPPORTED_FRAMEWORK_VERSION or dict_version[:5] > MAXIMUM_SUPPORTED_FRAMEWORK_VERSION:
+            raise UnsupportedDictionaryVersionException(dict_version)
+        return root
 
     def get_xml_section(self, section_name, xml_root):
         """
@@ -387,3 +394,11 @@ class XmlLoader(dict_loader.DictLoader):
             raise exceptions.GseControllerParsingException(
                 "Could not find type %s" % type_name
             )
+
+
+class UnsupportedDictionaryVersionException(Exception):
+    """ Dictionary is of unsupported version """
+    def __init__(self, version):
+        """ Create a dictionary of a specific version """
+        super().__init__("Dictionary version {} is not in supported range: {}-{}. Please upgrade fprime-gds."
+                         .format(version, MINIMUM_SUPPORTED_FRAMEWORK_VERSION, MAXIMUM_SUPPORTED_FRAMEWORK_VERSION))
