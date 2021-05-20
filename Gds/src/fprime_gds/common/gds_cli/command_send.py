@@ -88,8 +88,8 @@ class CommandSendCommand(QueryHistoryCommand):
         """
         # NOTE: Trying to create a blank CmdData causes errors, so currently
         # just using templates (i.e. this function does nothing)
-        # TODO: This lambda expression should be converted to function definition because of assignment statement below
-        create_empty_command = lambda cmd_template: cmd_template
+        def create_empty_command(cmd_template):
+            return cmd_template
 
         command_list = test_api_utils.get_item_list(
             item_dictionary=project_dictionary.command_id,

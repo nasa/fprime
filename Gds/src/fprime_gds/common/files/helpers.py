@@ -37,8 +37,7 @@ class Timeout:
 
         :param callback: function called when timeout expires
         :param timeout: (optional) timeout duration. Default: 5 seconds
-        :param args: TODO: the parameter description should be filled by maintainer
-        :return: None
+        :param args: args supplied to the python timer object
         """
         self.__timeout = timeout
         self.__callback = callback
@@ -223,7 +222,7 @@ def file_to_dict(files, uplink=True):
     Converts files to dictionary. This creates a new list of JSONable file dictionaries.
 
     :param files: list of TransmitFiles to convert
-    :param uplink:
+    :param uplink: is the file being uplinked. Default: True
     :return: list of dictionaries
     """
     current = []

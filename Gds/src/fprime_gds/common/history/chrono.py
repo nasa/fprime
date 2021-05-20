@@ -46,8 +46,8 @@ class ChronologicalHistory(History):
         that satisfy the filter predicate.
 
         Args:
-            :param data: object to store
-            :return: None
+            data: object to store
+            sender: unused API value
         """
         if self.filter(data):
             self.__insert_chrono(data, self.new_objects)

@@ -977,8 +977,7 @@ class IntegrationTestAPI(DataHandler):
 
         def requires_repeats(self):
             """
-            Returns a flag to determine if the history searcher needs repeated data objects
-            when receive order does not match chronological order.
+            Returns a flag to determine if the history searcher needs repeated data objects when receive order does not match chronological order.
             """
             return self.repeats
 
@@ -1076,7 +1075,7 @@ class IntegrationTestAPI(DataHandler):
         """
 
         class __ItemSearcher(self.__HistorySearcher):
-            def __init__(self, log, search_pred):   # TODO: search_pred is a shadow name
+            def __init__(self, log, search_pred):
                 super().__init__()
                 self.log = log
                 self.search_pred = search_pred
@@ -1125,7 +1124,7 @@ class IntegrationTestAPI(DataHandler):
         """
 
         class __SequenceSearcher(self.__HistorySearcher):
-            def __init__(self, log, seq_preds):     # TODO: seq_preds is a shadow name
+            def __init__(self, log, seq_preds):
                 super().__init__()
                 self.log = log
                 self.ret_val = []
@@ -1186,7 +1185,7 @@ class IntegrationTestAPI(DataHandler):
         """
 
         class __CountSearcher(self.__HistorySearcher):
-            def __init__(self, log, count, search_pred):    # TODO: count and  search_pred are shadow names
+            def __init__(self, log, count, search_pred):
                 super().__init__()
                 self.log = log
                 self.ret_val = []

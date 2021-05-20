@@ -76,7 +76,7 @@ class ParserBase(abc.ABC):
         arguments methods will be called, and the final namespace will be returned.
 
         :param parser_classes: a list of ParserBase subclasses that will be used to
-        :param description: TODO: the parameter description should be filled by maintainer
+        :param description: description passed ot the argument parser
         :return: namespace with all parsed arguments from all provided ParserBase subclasses
         """
         if kwargs is None:

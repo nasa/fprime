@@ -11,7 +11,7 @@ import argparse
 from copy import deepcopy
 import os
 import sys
-from typing import Callable, List
+from typing import Callable, List, Union
 
 import argcomplete
 
@@ -117,7 +117,7 @@ def add_search_arguments(parser: argparse.ArgumentParser, command_name: str):
     )
 
 
-def get_dictionary_path(current_args: argparse.Namespace) -> str:
+def get_dictionary_path(current_args: argparse.Namespace) -> Union[str, None]:
     """
     Returns the current project dictionary, either one provided by the user
     or the first one found in the current working directory. Raises an
@@ -129,7 +129,7 @@ def get_dictionary_path(current_args: argparse.Namespace) -> str:
     args.deploy = os.getcwd()
     args.config = None
     args = GdsParser.handle_arguments(args, kwargs={})
-    return args.dictionary  # TODO: expected type 'str', got 'None' instead
+    return args.dictionary
 
 
 def add_valid_dictionary(args: argparse.Namespace) -> argparse.Namespace:

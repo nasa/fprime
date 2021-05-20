@@ -109,7 +109,7 @@ class APITestCases(unittest.TestCase):
     ######################################################################################
     #   Test Case Helper Methods
     ######################################################################################
-    def fill_history(self, callback, items, timestep=0):
+    def fill_history(self, callback, items, timestep=0.0):
         for item in items:
             if timestep:
                 time.sleep(timestep)
@@ -118,7 +118,7 @@ class APITestCases(unittest.TestCase):
                     item.time = self.t0 + time.time()
             callback(item)
 
-    def fill_history_async(self, callback, items, timestep=1):
+    def fill_history_async(self, callback, items, timestep=1.0):
         t = threading.Thread(target=self.fill_history, args=(callback, items, timestep))
         self.threads.append(t)
         t.start()
@@ -177,7 +177,6 @@ class APITestCases(unittest.TestCase):
     def test_dummy_pipeline(self):
         length = 15
         event_list = self.get_severity_sequence(length)
-        # TODO: expected value for timestep parameter in fill_history_async is integer not float(0.1)
         t1 = self.fill_history_async(self.pipeline.enqueue_event, event_list, 0.1)
         print("waiting for queue to fill")
         pred = predicates.greater_than_or_equal_to(length // 2)

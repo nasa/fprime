@@ -78,8 +78,8 @@ class Channel:
         """
         Deserialize event arguments
         :param ser_data: Binary input of the channel value.
-        :param offset: TODO: the parameter and return value descriptions should be filled by maintainer
-        :return
+        :param offset: offset in data to deserialize from
+        :return: value from deserialized channel
         """
         # type_base.showBytes(ser_data[offset:])
         #

@@ -121,7 +121,7 @@ def parse_args():
     Gets an argument parsers to read the command line and process the arguments. Return
     the arguments in their namespace.
 
-    :return: TODO: return value description should be filled by maintainer
+    :return: parsed argument namespace
     """
     # Get custom handlers for all executables we are running
     arg_handlers = [

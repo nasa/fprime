@@ -68,7 +68,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         for data on the socket.  Packets for now are assumed to be separated
         by a newline.  For each packet, call processPkt.
         """
-        # TODO: In the following lines, instance attributes are defined outside of __init__ method
+
         self.partial = b""
         self.cmdQueue = []
         self.registered = False
@@ -109,7 +109,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         LOCK.release()
 
         print("Closed %s connection." % self.name.decode(DATA_ENCODING))
-        self.registered = False     # TODO: Instance attribute is defined outside of __init__ method
+        self.registered = False
         self.request.close()
 
     def getCmds(self, inputString, end_of_command=b"\n"):
@@ -121,7 +121,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             commands[0] = self.partial + commands[0]
             self.partial = b""
         if len(commands[-1]):
-            self.partial = commands[-1]     # TODO: Instance attribute is defined outside of __init__ method
+            self.partial = commands[-1]
             self.cmdQueue.extend(commands[:-1])
         else:
             self.cmdQueue.extend(commands[:-1])
@@ -129,7 +129,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
     def processQueue(self):
         for cmd in self.cmdQueue:
             self.processRegistration(cmd)
-        self.cmdQueue = []      # TODO: Instance attribute is defined outside of __init__ method
+        self.cmdQueue = []
 
     def processRegistration(self, cmd):
 
@@ -157,7 +157,6 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
             SERVER.dest_obj[name] = DestObj(name, self.request)
             LOCK.release()
 
-            # TODO: In the following lines, instance attributes are defined outside of __init__ method
             self.registered = True
             self.name = name
             self.id = process_id
@@ -260,6 +259,7 @@ class ThreadedTCPRequestHandler(socketserver.StreamRequestHandler):
         GUI receives telemetry.
         FSW receives commands of various lengths.
         """
+        data = b""
         if header == b"List":
             return b""
         elif header == b"Quit":
@@ -375,8 +375,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         # Process and send the packet of the message here...
         self.processNewPkt(header, data)
 
-    @staticmethod
-    def readHeader(packet):
+    def readHeader(self, packet):
         """
         Read the 9 byte header (e.g. "A5A5 GUI " or "A5A5 FSW "),
         or just read the "List\n" command.
@@ -384,25 +383,24 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
         header = packet[:4]
         header2 = packet[4:9]
         packet = packet[9:]
-        return header + header2, packet
+        return (header + header2, packet)
 
-    @staticmethod
-    def readData(header, packet):
+    def readData(self, header, packet):
         """
         Read the data part of the message sent to either GUI or FSW.
         GUI receives telemetry.
         FSW receives commands of various lengths.
         """
+        data = ""
         header.split(b" ")[1].strip(b" ")
         # Read telemetry data here...
         tlm_packet_size = packet[:4]
         size = struct.unpack(">I", tlm_packet_size)[0]
-        data = tlm_packet_size + packet[4: 4 + size]
+        data = tlm_packet_size + packet[4 : 4 + size]
 
         return data
 
-    @staticmethod
-    def processNewPkt(header, data):
+    def processNewPkt(self, header, data):
         """
         Process a single command here header and data here.
         The command must always start with A5A5 except if it is a List.

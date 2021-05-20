@@ -24,8 +24,7 @@ from fprime_gds.common.decoders import decoder
 class FileDecoder(decoder.Decoder):
     """Decoder class for file data"""
 
-    @staticmethod
-    def decode_api(data):
+    def decode_api(self, data):
         """
         Decodes the given data and returns the result.
 
