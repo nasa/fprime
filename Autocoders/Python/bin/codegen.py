@@ -35,6 +35,7 @@ from fprime_ac.utils import (
     TopDictGenerator,
 )
 from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
+from fprime_ac.utils.version import get_fprime_version
 
 # Generators to produce the code
 try:
@@ -409,6 +410,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         if opt.xml_topology_dict:
             topology_dict = etree.Element("dictionary")
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
+            topology_dict.attrib["framework_version"] = get_fprime_version()
 
             top_dict_gen = TopDictGenerator.TopDictGenerator(parsed_xml_dict, PRINT.debug)
             for comp in the_parsed_topology_xml.get_instances():
