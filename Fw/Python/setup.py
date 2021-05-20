@@ -78,6 +78,7 @@ to interact with the data coming from the FSW.
         "pexpect==4.8.0",
         "pytest==6.2.4",
         "Cheetah3==3.2.6.post2",
+        "setuptools-scm==6.0.1"
     ],
     extras_require={"dev": ["black==21.5b1", "pylama==7.7.1", "pylint==2.8.2", "pre-commit==2.12.1"]},
     # Setup and test requirements, not needed by normal install
