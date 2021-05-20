@@ -7,6 +7,7 @@
 ####
 import logging
 import os
+import sys
 
 import flask
 import flask_restful
@@ -131,7 +132,12 @@ def construct_app():
     return app, api
 
 
-app, _ = construct_app()
+try:
+    app, _ = construct_app()
+except Exception as exc:
+    print("[ERROR] {}".format(exc), file=sys.stderr)
+    sys.exit(1)
+
 
 
 @app.route("/js/<path:path>")
