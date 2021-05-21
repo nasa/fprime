@@ -481,7 +481,7 @@ Autocoders/templates/ExampleType.hpp. The method is as follows:
    value of that member should be the sum of the sizes of all the
    members. It can be done with the sizeof() function that is available
    to all C/C++ compilers. Optionally, a type identifier can be added
-   so that a sanity check can be done when the data are deserialized.
+   so that a confidence check can be done when the data are deserialized.
    That type should be serialized, and then checked against the
    enumeration when it is deserialized.
 

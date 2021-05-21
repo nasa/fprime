@@ -303,7 +303,7 @@ namespace Svc {
             // deserialize, since record size is serialized in file
             FW_ASSERT(Fw::FW_SERIALIZE_OK == buff.deserialize(recordSize));
 
-            // sanity check value. It can't be larger than the maximum parameter buffer size + id
+            // confidence check value. It can't be larger than the maximum parameter buffer size + id
             // or smaller than the record id
             if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
                 this->log_WARNING_HI_PrmFileReadError(PRM_READ_RECORD_SIZE_VALUE,recordNum,recordSize);
