@@ -20,6 +20,7 @@ class TestHistory(History):
     ###########################################################################
     #   History Functions
     ###########################################################################
+
     def __init__(self, filter_pred=None):
         """
         Constructor used to set-up history. If the history is given a filter, it will ignore (drop)

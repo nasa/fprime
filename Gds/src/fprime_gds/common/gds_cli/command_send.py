@@ -88,7 +88,8 @@ class CommandSendCommand(QueryHistoryCommand):
         """
         # NOTE: Trying to create a blank CmdData causes errors, so currently
         # just using templates (i.e. this function does nothing)
-        create_empty_command = lambda cmd_template: cmd_template
+        def create_empty_command(cmd_template):
+            return cmd_template
 
         command_list = test_api_utils.get_item_list(
             item_dictionary=project_dictionary.command_id,
@@ -106,7 +107,8 @@ class CommandSendCommand(QueryHistoryCommand):
         timeout=5.0,
     ):
         """
-        NOTE: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class, and should refactor when time's available
+        NOTE: Doesn't use _get_upcoming_item; sign that this should not use QueryHistory as a base class,
+        and should refactor when time's available
         """
 
     @classmethod
@@ -156,7 +158,7 @@ class CommandSendCommand(QueryHistoryCommand):
         try:
             api.send_command(command_name, arguments)
         except KeyError:
-            cls._log("'%s' is not a known command" % (command_name))
+            cls._log(f"{command_name} is not a known command")
             close_matches = CommandSendCommand.get_closest_commands(
                 pipeline.dictionaries, command_name
             )

@@ -99,7 +99,7 @@ class TCPGround(GroundHandler):
         """
         Send all packets out to the tcp socket server. This adds the framing data for the TCP Server.
 
-        :param packet: bytes object of data to write out to the socket server
+        :param frames: bytes object of data to write out to the socket server
         """
         for packet in frames:
             framed = self.deframer.frame(packet)

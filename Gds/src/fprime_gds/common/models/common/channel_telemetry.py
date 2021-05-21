@@ -39,7 +39,7 @@ class Channel:
         Constructor
         """
         #
-        ## Make sure correct types are passed
+        # Make sure correct types are passed
         #
         if not isinstance(name, str):
             raise TypeMismatchException(str, type(name))
@@ -77,7 +77,9 @@ class Channel:
     def deserialize(self, ser_data, offset):
         """
         Deserialize event arguments
-        @param ser_data: Binary input of the channel value.
+        :param ser_data: Binary input of the channel value.
+        :param offset: offset in data to deserialize from
+        :return: value from deserialized channel
         """
         # type_base.showBytes(ser_data[offset:])
         #

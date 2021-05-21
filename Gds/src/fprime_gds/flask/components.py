@@ -20,9 +20,11 @@ def setup_pipelined_components(
     Setup the standard pipeline and related components. This is done once, and then the resulting singletons are
     returned so that one object is used throughout the system.
 
+    :param debug: used to prevent the construction of the standard pipeline
     :param logger: logger to use for output
     :param config: GDS configuration
     :param dictionary: path to F prime dictionary
+    :param down_store:
     :param log_dir: log directory to write logs to, and serve logs from
     :param tts_address: address to the middleware layer
     :param tts_port: port of the middleware layer

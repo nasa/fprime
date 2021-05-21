@@ -11,7 +11,7 @@ import argparse
 from copy import deepcopy
 import os
 import sys
-from typing import Callable, List
+from typing import Callable, List, Union
 
 import argcomplete
 
@@ -117,7 +117,7 @@ def add_search_arguments(parser: argparse.ArgumentParser, command_name: str):
     )
 
 
-def get_dictionary_path(current_args: argparse.Namespace) -> str:
+def get_dictionary_path(current_args: argparse.Namespace) -> Union[str, None]:
     """
     Returns the current project dictionary, either one provided by the user
     or the first one found in the current working directory. Raises an

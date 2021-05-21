@@ -71,4 +71,4 @@ class EventPyLoader(python_loader.PythonLoader):
                 print("Type mismatch: %s" % error.getMsg())
                 raise error
 
-        return (id_dict, name_dict)
+        return id_dict, name_dict

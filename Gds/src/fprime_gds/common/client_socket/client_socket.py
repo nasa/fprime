@@ -43,7 +43,8 @@ class ThreadedTCPSocketClient(DataHandler):
         self.__data_recv_thread = threading.Thread(target=self.recv)
         self.stop_event = threading.Event()
 
-    def get_data_bytes(self, string_data):
+    @staticmethod
+    def get_data_bytes(string_data):
         """
         Convert the data bytes from string to bytes
 
@@ -52,7 +53,8 @@ class ThreadedTCPSocketClient(DataHandler):
         """
         return string_data.encode(DATA_ENCODING)
 
-    def get_data_string(self, bytes_data):
+    @staticmethod
+    def get_data_string(bytes_data):
         """
         Convert the data bytes from string to bytes
 

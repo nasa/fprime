@@ -109,7 +109,7 @@ class APITestCases(unittest.TestCase):
     ######################################################################################
     #   Test Case Helper Methods
     ######################################################################################
-    def fill_history(self, callback, items, timestep=0):
+    def fill_history(self, callback, items, timestep=0.0):
         for item in items:
             if timestep:
                 time.sleep(timestep)
@@ -118,13 +118,14 @@ class APITestCases(unittest.TestCase):
                     item.time = self.t0 + time.time()
             callback(item)
 
-    def fill_history_async(self, callback, items, timestep=1):
+    def fill_history_async(self, callback, items, timestep=1.0):
         t = threading.Thread(target=self.fill_history, args=(callback, items, timestep))
         self.threads.append(t)
         t.start()
         return t
 
-    def assert_lists_equal(self, expected, actual):
+    @staticmethod
+    def assert_lists_equal(expected, actual):
         assert len(expected) == len(
             actual
         ), "the given list should have had the length {}, but instead had {}\nExpected {}\nActual{}".format(

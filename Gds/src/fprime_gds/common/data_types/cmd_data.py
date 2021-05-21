@@ -153,7 +153,8 @@ class CmdData(sys_data.SysData):
         else:
             return "{}: {} : {}".format(time_str, name, arg_str)
 
-    def convert_arg_value(self, arg_val, arg_type):
+    @staticmethod
+    def convert_arg_value(arg_val, arg_type):
         if arg_val is None:
             raise CommandArgumentException(
                 "Argument value could not be converted to type object"
@@ -191,7 +192,7 @@ class CmdData(sys_data.SysData):
     def __str__(self):
         arg_str = ""
         for name, typ in zip(self.arg_names, self.args):
-            arg_str += ("%s : %s |") % (name, str(typ.val))
+            arg_str += "%s : %s |" % (name, str(typ.val))
         arg_str = "w/ args | " + arg_str
 
         arg_info = "%s " % self.template.mnemonic

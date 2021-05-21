@@ -120,18 +120,22 @@ class QueryHistoryCommand(BaseCommand):
     ) -> predicates.predicate:
         """
         Returns a predicate that can be used to filter any received messages.
-        This is done to link printing code to filtering, so that filtering ALWAYS filters the same strings as are printed.
+        This is done to link printing code to filtering, so that filtering ALWAYS
+        filters the same strings as are printed.
 
         NOTE: Currently assumes that item list strings will contain the
         individual strings of each items to work with both, which there's no
         guarantee of if _get_item_list_string is overridden
 
-        :param item: The F' item to convert to a string
+        :param search: The F' item to convert to a string
         :param json: Whether to convert each item to a JSON representation
             before filtering them
         :return: A string representation of "item"
         """
-        item_to_string = lambda x: cls._get_item_string(x, json)
+
+        def item_to_string(x):
+            return cls._get_item_string(x, json)
+
         return filtering_utils.get_full_filter_predicate(
             ids, components, search, to_str=item_to_string
         )
@@ -192,15 +196,15 @@ class QueryHistoryCommand(BaseCommand):
         else:
 
             def print_upcoming_item(min_start_time="NOW"):
-                item = cls._get_upcoming_item(api, search_filter, min_start_time)
-                cls._log(cls._get_item_string(item, json))
+                item_ = cls._get_upcoming_item(api, search_filter, min_start_time)
+                cls._log(cls._get_item_string(item_, json))
                 # Update time so we catch the next item since the last one
-                if item:
+                if item_:
                     min_start_time = predicates.greater_than(item.get_time())
                     min_start_time = filtering_utils.time_to_data_predicate(
                         min_start_time
                     )
-                return (min_start_time,)
+                return min_start_time,
 
             misc_utils.repeat_until_interrupt(print_upcoming_item, "NOW")
 

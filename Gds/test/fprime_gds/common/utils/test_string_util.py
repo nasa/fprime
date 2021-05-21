@@ -8,6 +8,7 @@ Tests format_string util
 import unittest
 from fprime_gds.common.utils.string_util import format_string
 
+
 class TestFormatString(unittest.TestCase):
 
     def test_format_with_no_issue(self):
@@ -36,6 +37,7 @@ class TestFormatString(unittest.TestCase):
         values = ("181", "0.123")
         with self.assertRaises(ValueError):
             self.assertEqual(format_string(template, values))
+
 
 if __name__ == '__main__':
     unittest.main()

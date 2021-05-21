@@ -32,6 +32,8 @@ class Filing:
         :param down_store: downlink storage directory
         :param file_encoder: file encoder for uplink
         :param file_decoder: file decoder for downlink
+        :param distributor: data distributor to register handshaking to
+        :param log_dir: log directory to output downlink logs
         """
         self.__uplinker = fprime_gds.common.files.uplinker.FileUplinker(file_encoder)
         self.__downlinker = fprime_gds.common.files.downlinker.FileDownlinker(

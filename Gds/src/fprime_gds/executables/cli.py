@@ -76,6 +76,7 @@ class ParserBase(abc.ABC):
         arguments methods will be called, and the final namespace will be returned.
 
         :param parser_classes: a list of ParserBase subclasses that will be used to
+        :param description: description passed ot the argument parser
         :return: namespace with all parsed arguments from all provided ParserBase subclasses
         """
         if kwargs is None:
@@ -284,7 +285,7 @@ class LogDeployParser(ParserBase):
         """
         Read the arguments specified in this parser and validate the expected inputs.
 
-        :param arg: parsed arguments as namespace
+        :param args: parsed arguments as namespace
         :return: args namespace
         """
         args = copy.copy(args)

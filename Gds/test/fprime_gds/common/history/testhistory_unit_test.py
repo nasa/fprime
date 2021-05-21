@@ -16,7 +16,8 @@ class HistoryTestCases(unittest.TestCase):
     def setUp(self):
         self.tHistory = TestHistory()
 
-    def assert_lists_equal(self, expected, actual):
+    @staticmethod
+    def assert_lists_equal(expected, actual):
         assert len(expected) == len(
             actual
         ), "the given list should have had the length {}, but instead had {}".format(

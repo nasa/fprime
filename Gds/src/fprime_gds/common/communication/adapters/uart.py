@@ -174,7 +174,6 @@ class SerialAdapter(fprime_gds.common.communication.adapters.base.BaseAdapter):
                 )
             )
         # Note: baud rate may not *always* work. These are a superset
-        baud = 0
         try:
             baud = int(args["baud"])
         except ValueError:

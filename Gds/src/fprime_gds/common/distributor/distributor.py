@@ -53,7 +53,8 @@ class Distributor:
         self.len_obj = config.get_type("msg_len")
         self.desc_obj = config.get_type("msg_desc")
 
-    # NOTE we could use either the type of the object or an enum as the type argument. It should indicate what the decoder decodes.
+    # NOTE we could use either the type of the object or an enum as the type argument.
+    # It should indicate what the decoder decodes.
 
     def register(self, typeof, obj):
         """
@@ -85,19 +86,19 @@ class Distributor:
 
         raw_msgs = []
         # Search data looking for key-frame
-        if not self.key_frame is None:
+        if self.key_frame is not None:
             while True:
                 # Check if we have enough data to parse a key
                 # if not, bail on the function
                 if len(data_left) < self.key_obj.getSize():
-                    return (data_left, raw_msgs)
+                    return data_left, raw_msgs
                 # Check leading key size bytes to see if it is the key
                 self.key_obj.deserialize(data_left, 0)
                 if self.key_obj.val != self.key_frame:
                     data_left = data_left[1:]
                     continue
                 # Key found break
-                data_left = data_left[self.key_obj.getSize() :]
+                data_left = data_left[self.key_obj.getSize():]
                 break
 
         # Keep parsing and then break when you can't parse no more
@@ -117,7 +118,7 @@ class Distributor:
 
             data_left = data_left[expected_len:]
 
-        return (data_left, raw_msgs)
+        return data_left, raw_msgs
 
     def parse_raw_msg_api(self, raw_msg):
         """
@@ -158,7 +159,7 @@ class Distributor:
         # Retrieve message section
         msg = raw_msg[offset:]
 
-        return (length, desc, msg)
+        return length, desc, msg
 
     def on_recv(self, data):
         """
