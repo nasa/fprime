@@ -35,17 +35,13 @@ class schema_test:
         """
         self.__validate_file(self.__schema_path, "RNG")
 
-        # Read schema file
-        relax_file_handler = open(self.__schema_path)
+        with open(self.__schema_path) as relax_file_handler:
 
-        # Parse schema file
-        relax_parsed = etree.parse(relax_file_handler)
+            # Parse schema file
+            relax_parsed = etree.parse(relax_file_handler)
 
-        # Compile schema file
-        self.__compiled = etree.RelaxNG(relax_parsed)
-
-        # Close schema file
-        relax_file_handler.close()
+            # Compile schema file
+            self.__compiled = etree.RelaxNG(relax_parsed)
 
     def __validate_file(self, file_name, extension):
         """
@@ -67,14 +63,11 @@ class schema_test:
         """
         Returns root tag assuming file path is correct
         """
-        # Read schema file
-        handler = open(file_path)
 
-        # Parse schema file
-        parsed = etree.parse(handler)
+        with open(file_path) as handler:
 
-        # Close schema file
-        handler.close()
+            # Parse schema file
+            parsed = etree.parse(handler)
 
         return parsed
 
@@ -156,9 +149,8 @@ class schema_test:
 
         if not xml_parsed:
             self.__validate_file(test_set[1], "XML")
-            xml_file_handler = open(test_set[1])
-            xml_parsed = etree.parse(xml_file_handler)
-            xml_file_handler.close()
+            with open(test_set[1]) as xml_file_handler:
+                xml_parsed = etree.parse(xml_file_handler)
 
         if test_set[2]:
             with pytest.raises(test_set[2]) as excinfo:

@@ -113,10 +113,10 @@ class XmlLoader(dict_loader.DictLoader):
         # Create xml parser
         xml_parser = etree.XMLParser(remove_comments=True)
 
-        fd = open(path)
+        with open(path) as fd:
 
-        # Parse xml and get element tree object we can retrieve data from
-        element_tree = etree.parse(fd, parser=xml_parser)
+            # Parse xml and get element tree object we can retrieve data from
+            element_tree = etree.parse(fd, parser=xml_parser)
 
         return element_tree.getroot()
 
