@@ -8,7 +8,7 @@
 #
 # User Install / Upgrade:
 # ```
-# pip install --upgrade ./Fw/Python
+# pip install --upgrade fprime-tools
 # ```
 #
 # Developer and Dynamic Installation:
@@ -16,7 +16,7 @@
 # pip install -e ./Fw/Python
 # ```
 ###
-
+import os
 from setuptools import find_packages, setup
 
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
@@ -28,8 +28,11 @@ setup(
     # Basic package information. Describes the package and the data contained inside. This
     # information should match the F prime description information.
     ####
-    name="fprime",
-    version="1.5.3",
+    name="fprime-tools",
+    use_scm_version = {
+        "root": os.path.join("..",".."),
+        "relative_to": __file__,
+    },
     license="Apache 2.0 License",
     description="F Prime Flight Software core data types",
     long_description="""
@@ -60,13 +63,14 @@ to interact with the data coming from the FSW.
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache 2.0",
         "Operating System :: Unix",
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
@@ -81,7 +85,7 @@ to interact with the data coming from the FSW.
     ],
     extras_require={"dev": ["black==21.5b1", "pylama==7.7.1", "pylint==2.8.2", "pre-commit==2.12.1"]},
     # Setup and test requirements, not needed by normal install
-    setup_requires=["pytest-runner==5.3.0"],
+    setup_requires=["pytest-runner==5.3.0","setuptools_scm==6.0.1"],
     tests_require=["pytest"],
     # Create a set of executable entry-points for running directly from the package
     entry_points={

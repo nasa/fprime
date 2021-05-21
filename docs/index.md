@@ -50,9 +50,7 @@ virtual environment), and building one of our reference applications. For full i
 
 ```
 git clone https://github.com/nasa/fprime.git
-cd fprime
-pip install --upgrade wheel setuptools pip
-pip install Fw/Python Gds/
+pip install --upgrade fprime-tools fprime-gds
 ```
 
 **Build the Ref Application**
