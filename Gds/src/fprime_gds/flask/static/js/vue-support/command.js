@@ -66,6 +66,10 @@ Vue.component("command-item", {
  * Input command form Vue object. This allows for sending commands from the GDS.
  */
 Vue.component("command-input", {
+    created: function() {
+        // Make command-input component accessible from other components
+        this.$root.$refs.command_input = this;
+    },
     data: function() {
         let keys = Object.keys(_datastore.commands).filter(command_name => {return command_name.indexOf("CMD_NO_OP") != -1;});
         let selected = (keys.length != 0) ? _datastore.commands[keys[0]] : Object.keys(_datastore.commands)[0];
@@ -124,6 +128,10 @@ Vue.component("command-input", {
                     }
                     _self.active = false;
                 });
+        },
+        selectCmd(cmd) {
+            // Change the selected command to the requested command
+            this.selected = cmd;
         }
     },
     computed: {
@@ -234,6 +242,15 @@ Vue.component("command-history", {
          */
         isItemHidden(item) {
             return listExistsAndItemNameNotInList(this.itemsShown, item);;
+        },
+        /**
+        * On double click on a row in command history table populate the 
+        * command and its arguments in the command input template
+        */
+        clickAction(item) {
+            let cmd = item;
+            cmd.full_name = item.template.full_name;
+            this.$root.$refs.command_input.selectCmd(cmd);
         }
     }
 });
