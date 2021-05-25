@@ -1,5 +1,3 @@
-Sponsors: [Paypal](https://www.paypal.com/donate?business=RBHMVN4AQGQE2&item_name=Donation&currency_code=BRL)
-
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
 [![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
@@ -172,11 +170,12 @@ The typed port connections provide strong compile-time guarantees of correctness
   * Prototype GDS CLI tool
   * Project custom dashboard support
 * Array, Enum type support and examples
-* Code linting and bug fixes
+* Code linting and fixes bug.
 
 
-Sponsors: www.paypal.me/leo.haim.nigri 
+Sponsors: 
 
-By: Leonardo Haim Nigri - BRL - 
+- [Paypal](https://www.paypal.com/donate?business=RBHMVN4AQGQE2&item_name=Donation&currency_code=BRL)
 
+- [Dogecoin Wallet] : D7RMk96j7BLzTcy1hVqF5fAtpA4khmsyvA
 
