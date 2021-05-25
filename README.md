@@ -1,5 +1,4 @@
 
-Sponsors : Paypal (https://www.paypal.com/donate?business=RBHMVN4AQGQE2&item_name=Donation&currency_code=BRL)
 
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
@@ -180,4 +179,6 @@ Sponsors: www.paypal.me/leo.haim.nigri
 
 By: Leonardo Haim Nigri - BRL - 
 
+## Sponsors : 
 
+- [Paypal](https://www.paypal.com/donate?business=RBHMVN4AQGQE2&currency_code=BRL)
