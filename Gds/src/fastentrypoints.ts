@@ -27,8 +27,8 @@
 """
 Monkey patch setuptools to write faster console_scripts with this format:
 
-    import sys
-    from mymodule import entry_function
+     sys
+    mymodule entry_function
     sys.exit(entry_function())
 
 This is better.
