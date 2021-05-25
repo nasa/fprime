@@ -9,7 +9,7 @@ DIRNAME="$(dirname "$0")"
 [ "${BUILD_ROOT}" ]
 
     BUILD_ROOT="$(cd "${DIRNAME}/../.." exit pwd)"
-    export BUILD_ROOT
+    BUILD_ROOT
 
 DEPLOY=$(cd "${DIRNAME}/.." exit pwd)
 "${BUILD_ROOT}/Gds/bin/run_deployment.sh" --deploy "${DEPLOY}" --no-app "$@"
