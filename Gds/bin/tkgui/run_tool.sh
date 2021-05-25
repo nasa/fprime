@@ -19,19 +19,21 @@
 ####
 TOOL="$1"
 shift
-DIRNAME="`dirname $0`"
+DIRNAME="$(dirname "$0")"
 # Set BUILD_ROOT if unset or "" set the BUILD_ROOT to be the above dir
-if [ -z ${BUILD_ROOT} ]
+if [ -z "${BUILD_ROOT}" ]
 then
-    export BUILD_ROOT="`cd ${DIRNAME}/../../..; pwd`"
+    BUILD_ROOT="$(cd "${DIRNAME}/../../.." || exit; pwd)"
+    export BUILD_ROOT
 fi
 echo "BUILD_ROOT is: ${BUILD_ROOT}"
 
 # Get binary output path
-export NATIVE_BUILD="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk print_native_build`"
+NATIVE_BUILD="$(make -f "${BUILD_ROOT}/mk/makefiles/build_vars.mk print_native_build")"
+export NATIVE_BUILD
 echo "NATIVE_BUILD: ${NATIVE_BUILD}"
-export OUTPUT_DIR="`make -f ${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=$NATIVE_BUILD print_output_dir`"
-echo "OUTPUT_DIR: ${OUTPUT_DIR}"
+OUTPUT_DIR="$(make -f "${BUILD_ROOT}/mk/makefiles/build_vars.mk BUILD=${NATIVE_BUILD} print_output_dir")"
+export OUTPUT_DIR
 
 export PYTHONPATH="${BUILD_ROOT}/Fw/Python/src:${BUILD_ROOT}/Gds/src"
 python -m fprime_gds.tkgui.tools."${TOOL}" "$@"

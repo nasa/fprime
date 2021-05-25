@@ -11,5 +11,5 @@
 # * information to foreign countries or providing access to foreign
 # * persons.
 # *
-DIRNAME="`dirname $0`"
+DIRNAME="$(dirname "$0")"
 "${DIRNAME}/helpers/run_tool.sh" seqgen "$@"
