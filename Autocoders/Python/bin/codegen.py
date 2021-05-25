@@ -34,7 +34,13 @@ from fprime_ac.utils import (
     Logger,
     TopDictGenerator,
 )
-from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
+ 
+ fprime_ac.utils.buildroot get_build_roots, search_for_file, set_build_roots
+
+ fprime_ac.utils.ct
+
+_gen  get_fprime_version
+ 
 
 # Generators to produce the code
 try:
@@ -199,7 +205,7 @@ def pinit():
 
     parser.add_option(
         "-x",
-        "--xml_topology_dict",
+        "--xml_iict",
         dest="xml_topology_dict",
         help="Generate XML GDS dictionary file",
         action="store_true",
@@ -409,8 +415,9 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         if opt.xml_topology_dict:
             topology_dict = etree.Element("dictionary")
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
+            topology_dict.attrib["framework_version"] = get_fprime_version()
 
-            top_dict_gen = TopDictGenerator.TopDictGenerator(parsed_xml_dict, PRINT.debug)
+topology_dict.attrib["framework_version"] = get_fprime_version()            top_dict_gen = TopDictGenerator.TopDictGenerator(parsed_xml_dict, PRINT.debug)
             for comp in the_parsed_topology_xml.get_instances():
                 comp_type = comp.get_type()
                 comp_name = comp.get_name()
@@ -1338,3 +1345,4 @@ if __name__ == "__main__":
         print(exc, file=sys.stderr)
         traceback.print_exc(file=sys.stdout)
         sys.exit(-1)
+
