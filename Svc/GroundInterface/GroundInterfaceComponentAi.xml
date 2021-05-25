@@ -9,6 +9,10 @@
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamSendPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamRecvPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamPollPortAi.xml</import_port_type>
     <import_dictionary>Svc/GroundInterface/Events.xml</import_dictionary>
     <ports>
 
@@ -19,7 +23,7 @@
         <port name="fileDownlinkBufferSendIn" data_type="Fw::BufferSend"  kind="guarded_input"    max_number="1">
         </port>
 
-        <port name="readCallback" data_type="Fw::BufferSend" kind="guarded_input" max_number="1">
+        <port name="readCallback" data_type="Drv::ByteStreamRecv" kind="guarded_input" max_number="1">
         </port>
 
         <port name="schedIn" data_type="Svc::Sched"  kind="guarded_input"    max_number="1">
@@ -38,10 +42,13 @@
         <port name="fileUplinkBufferGet" data_type="Fw::BufferGet"  kind="output"    max_number="1">
         </port>
 
-        <port name="write" data_type="Fw::BufferSend" kind="output" max_number="1">
+        <port name="write" data_type="Drv::ByteStreamSend" kind="output" max_number="1">
         </port>
 
-        <port name="readPoll" data_type="Fw::BufferSend" kind="output" max_number="1">
+        <port name="readPoll" data_type="Drv::ByteStreamPoll" kind="output" max_number="1">
+        </port>
+
+        <port name="readBufferReturn" data_type="Fw::BufferSend"  kind="output"    max_number="1">
         </port>
 
         <!-- Standard F prime ports -->
@@ -53,7 +60,5 @@
 
         <port name="Time" data_type="Time"  kind="output" role="TimeGet"    max_number="1">
         </port>
-
-
     </ports>
 </component>
