@@ -50,7 +50,6 @@ extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;
 extern Svc::FileUplink fileUplink;
 extern Svc::FileDownlink fileDownlink;
-extern Svc::BufferManager fileDownlinkBufferManager;
 extern Svc::BufferManager fileUplinkBufferManager;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;

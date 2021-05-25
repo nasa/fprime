@@ -304,7 +304,7 @@ namespace Svc {
   {
       // Construct illegal filePrefix, and set it via the friend:
       U8 filePrefix[2048];
-      U8 fileName[2048];
+      U8 fileName[2128];
       memset(fileName, 0, sizeof(fileName));
       memset(filePrefix, 0, sizeof(filePrefix));
       snprintf((char*) filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");

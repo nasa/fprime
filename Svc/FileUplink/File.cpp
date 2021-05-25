@@ -40,13 +40,16 @@ namespace Svc {
 
     Os::File::Status status;
     status = this->osFile.seek(byteOffset);
-    if (status != Os::File::OP_OK)
-      return status;
+    if (status != Os::File::OP_OK) {
+        return status;
+    }
 
     NATIVE_INT_TYPE intLength = length;
-    status = this->osFile.write(data, intLength);
-    if (status != Os::File::OP_OK)
-      return status;
+    //Note: not waiting for the file write to finish
+    status = this->osFile.write(data, intLength, false);
+    if (status != Os::File::OP_OK) {
+        return status;
+    }
 
     FW_ASSERT(static_cast<U32>(intLength) == length, intLength);
     this->checksum.update(data, byteOffset, length);

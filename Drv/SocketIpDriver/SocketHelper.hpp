@@ -31,8 +31,8 @@ namespace Drv {
                     );
             bool isOpened(void);
             SocketIpStatus open(void);
-            void send(BYTE* data, const U32 size); //Forwards to sendto, which on some OSes requires a non-const data pointer
-            SocketIpStatus recv(BYTE* data, I32 &size);
+            void send(U8* data, const U32 size); //Forwards to sendto, which on some OSes requires a non-const data pointer
+            SocketIpStatus recv(U8* data, I32 &size);
             void close(void);
 
         PRIVATE:

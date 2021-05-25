@@ -2,7 +2,7 @@
 <?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 
 <interface name="SerialWrite" namespace="Drv">
-  <import_serializable_type>Fw/Buffer/BufferSerializableAi.xml</import_serializable_type>
+  <include_header>Fw/Buffer/Buffer.hpp</include_header>
     <args>
         <arg name="serBuffer" type="Fw::Buffer" pass_by="reference">
         </arg>

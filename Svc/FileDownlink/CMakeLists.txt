@@ -7,6 +7,10 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SendFileStatusEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SendFileResponseSerializableAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SendFileRequestPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SendFileCompletePortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/FileDownlinkComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/FileDownlink.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/File.cpp"

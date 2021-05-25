@@ -533,7 +533,6 @@ if __name__ == "__main__":
     #    p.addEndVisitor('max',node_visit)
 
     #    root = p.parse()
-    root = p.parse_file(xmlfile1)
     root = p.parse_file(xmlfile2)
 
     print("Dump the xml file %s" % xmlfile1)

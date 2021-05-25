@@ -214,7 +214,7 @@ of build for deployments.
 **Installing the Ref Deployment and Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
-fprime-util install
+fprime-util build
 ./bin/Linux/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
@@ -223,14 +223,20 @@ Running the application as part of the development ground data system is shown b
 The user can also install a cross-compile.
 ```
 cd fprime/Ref
-fprime-util install raspberrypi
+fprime-util build raspberrypi
 ```
 
 ## Building and Running Unit Tests
 
 Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
-in preparation to run them.  The user can also just run "check" to build and run the unit tests.  **Note: no unit tests
-are currently supplied with the Ref application, and thus these commands may error.**
+in preparation to run them.  The user can also just run "check" to build and run the unit tests.
+
+Before building unit tests, the unit test build cache must be generated:
+
+```
+cd fprime/Ref
+fprime-util generate --ut
+```
 
 **Building Unit Test of SignalGen**
 ```

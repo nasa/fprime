@@ -1,6 +1,12 @@
 # F´: A Flight-Proven, Multi-Platform, Open-Source Flight Software Framework
 
-F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored, but not limited, to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
+[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:javascript)
+
+**Visit our landing page:**  [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/)
+
+F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the Jet Propulsion Laboratory, F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments. 
 
 F´ comprises several elements: 
 
@@ -12,9 +18,15 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
-F´ can be quickly install using the following instructions. F´ requires that the following utilities be installed: cmake, git, and Python 3.5+ with pip. Once these have been installed, users are 
-recommended to install F´ python dependencies. This is usually done in a Python virtual environment as this prevents issues at the system level, but is not required. Full installation instructions
-including virtual environment creation, and installation verification: [INSTALL.md](./docs/INSTALL.md). The following are the most basic steps for convenience.
+The following utilities are prerequisites to installing F´:
+
+- cmake
+- git
+- Python 3.5+ with pip
+
+Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required. 
+
+To install F´ quickly, enter:
 
 ```
 git clone https://github.com/nasa/fprime.git
@@ -23,34 +35,35 @@ pip install --upgrade wheel setuptools pip
 pip install Fw/Python Gds/
 ```
 
+For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md). 
+
 ## Example Deployments
 
-F´ comes with two example deployments. The deployments represent working F´ applications for help understanding F´. These examples may be used 
-as reference, or cloned to start a new project. More step-by-step tutorials are linked in the next section, but as these are complete applications
-it is recommended that the user at least build and run the first one to ensure that F´ is installed correctly.
+F´ comes with two example deployments. The deployments represent working F´ applications to help you understand F´. You can use these examples for reference, or clone them to start a new project. 
 
-[Ref](./Ref/README.md): The standard reference application demonstrates how most of the system components should be wired together. In addition,
-the reference application can be build on Linux or Mac OSX allowing the user to get started immediately without the need for embedded hardware.
+The next section links to more step-by-step tutorials, but it's a good idea to build and run at least the first example deployment to ensure that F´ is installed correctly.
 
-[RPI](./RPI/README.md): The Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded
-Linux computer). This application shows the user how to get started in the embedded world with cross-compiling, dirvers, and more. The Raspberry
-Pi was chosen as it is comercially available for a low price and runs Linux.
+**Example one:** [Ref](./Ref/README.md)
+
+   The standard reference application demonstrates how most of the system components should be wired together. The reference application can build on Linux or Mac OSX, allowing you to get started immediately without the need for embedded hardware.
+
+**Example two:** [RPI](./RPI/README.md)
+
+This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, dirvers, and more. The Raspberry Pi was chosen because it is comercially available for a low price and runs Linux.
 
 ## Tutorials
 
-F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system
- and topology design, tooling, and more. These tutorials are available here: [docs/Tutorials/README.md](./docs/Tutorials/README.md).
+F´ provides several tutorials in order to help understand and develop within the framework. These tutorials cover basic component creation, system and topology design, tooling, and more. These tutorials are available at [docs/Tutorials/README.md](./docs/Tutorials/README.md).
 
 ## Getting Help with F´
 
-As F´ becomes a community centered product line, there are more items available from the community at large. A mailing list is available
-at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
+As F´ becomes a community centered product line, there are more items available from the community at large. 
 
-In addition we have a community GitHub Organization containing third party contributions, further documentation of flight
-software development and more! [https://github.com/fprime-community](https://github.com/fprime-community).
+You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community).
 
-Issues can be submitted to: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
+The F´ community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
+You can open issues with this repository at: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
 
 ## F´ Features
 
@@ -74,7 +87,7 @@ F´ utilizes a point-to-point architecture. The architecture minimizes the use o
 	
 ### Adaptability
 
-F´is tailored to the level of complexity required for small missions. This makes it accessible and easy to use, while still supporting a wide variety of missions.
+F´ is tailored to the level of complexity required for small missions. This makes F´ accessible and easy to use while still supporting a wide variety of missions.
 
 ### Analyzability
 
@@ -92,8 +105,8 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 #### Release 1.1
 
- * Created a Raspberry Pi demo. Read about it [here.](RPI/README.md)
- * Added a tutorial [here.](docs/Tutorials/README.md)
+ * Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
+ * Added a tutorial [here](docs/Tutorials/README.md)
  * Updated Svc/BufferManager with bug fix
  * Fixed a bunch of shell permissions
  

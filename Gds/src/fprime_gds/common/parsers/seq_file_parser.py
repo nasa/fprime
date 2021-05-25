@@ -123,7 +123,7 @@ class SeqFileParser:
                 def parseTimeString(timeFmt):
                     try:
                         return datetime.strptime(timeStr, timeFmt)
-                    except:
+                    except ValueError:
                         return None
 
                 for fmt in timeFmts:

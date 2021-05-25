@@ -6,10 +6,10 @@
  *
  * @author mstarch
  */
-import {_loader} from "./loader.js"
-import {_uploader} from "./uploader.js"
+import {_loader} from "./loader.js";
+import {_uploader} from "./uploader.js";
 import  {_datastore} from "./datastore.js";
-
+import "../addons/enabled.js";
 //Import all vue objects such that the components are defined
 import "./vue-support/tabetc.js"
 

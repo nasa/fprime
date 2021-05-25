@@ -1,6 +1,0 @@
-File Contents:
-
-FileBuffer.hpp(.cpp) - A buffer containing an encoded file packet
-FilePacket.hpp(.cpp) - A packet containing a piece of an uplinked or downlinked file
-
-These are a work in progress
