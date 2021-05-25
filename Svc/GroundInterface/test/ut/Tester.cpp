@@ -130,8 +130,18 @@ namespace Svc {
     return m_incoming_file_buffer;
   }
 
-  void Tester ::
+  Drv::SendStatus Tester ::
     from_write_handler(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Buffer &fwBuffer
+    )
+  {
+      this->from_write_handler_helper(portNum, fwBuffer);
+      return Drv::SEND_OK;
+  }
+
+  void Tester ::
+    from_write_handler_helper(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
     )
@@ -168,7 +178,7 @@ namespace Svc {
     ASSERT_from_write_SIZE(1);
   }
 
-  void Tester ::
+  Drv::PollStatus Tester ::
     from_readPoll_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &fwBuffer
@@ -181,6 +191,16 @@ namespace Svc {
         outgoing[i] = incoming[i];
     }
     fwBuffer.setSize(m_incoming_buffer.getSize());
+    return Drv::POLL_OK;
+  }
+
+  void Tester ::
+    from_readBufferReturn_handler(
+        const NATIVE_INT_TYPE portNum,
+        Fw::Buffer &fwBuffer
+    )
+  {
+    this->pushFromPortEntry_readBufferReturn(fwBuffer);
   }
 
   // ----------------------------------------------------------------------
@@ -268,7 +288,29 @@ namespace Svc {
         0, 
         this->get_from_readPoll(0)
     );
+// readBufferReturn
+    this->component.set_readBufferReturn_OutputPort(
+        0, 
+        this->get_from_readBufferReturn(0)
+    );
 
+    // Log
+    this->component.set_Log_OutputPort(
+        0, 
+        this->get_from_Log(0)
+    );
+
+    // LogText
+    this->component.set_LogText_OutputPort(
+        0, 
+        this->get_from_LogText(0)
+    );
+
+    // Time
+    this->component.set_Time_OutputPort(
+        0, 
+        this->get_from_Time(0)
+    );
   }
 
   void Tester ::

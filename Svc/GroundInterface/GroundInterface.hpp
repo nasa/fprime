@@ -67,7 +67,8 @@ namespace Svc {
       //!
       void readCallback_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer,
+          Drv::RecvStatus recvStatus
       );
 
       //! Handler implementation for schedIn

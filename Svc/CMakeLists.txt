@@ -40,3 +40,4 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Time/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
+

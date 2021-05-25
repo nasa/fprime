@@ -8,10 +8,10 @@ It represents an ISF file packet.
 
 ## 2 Design
 
-The file packet format is similar to the Protocol Data Unit (PDU) format
-defined in the CCSDS File Delivery Protocol (CFDP).
+The file packet format is similar to the FramingProtocol Data Unit (PDU) format
+defined in the CCSDS File Delivery FramingProtocol (CFDP).
 See &sect; 5 of the
-[CCSDS File Delivery Protocol (CFDP) Recommended Standard](http://public.ccsds.org/publications/archive/727x0b4.pdf).
+[CCSDS File Delivery FramingProtocol (CFDP) Recommended Standard](http://public.ccsds.org/publications/archive/727x0b4.pdf).
 
 Each file packet contains the following data:
 

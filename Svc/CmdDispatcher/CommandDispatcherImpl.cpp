@@ -32,6 +32,19 @@ namespace Svc {
     }
 
     void CommandDispatcherImpl::compCmdReg_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode) {
+
+        if (ALLOW_REREGISTRATION) {
+            // search for opcode in dispatch table
+            for (U32 slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {
+                if ((this->m_entryTable[slot].used) and (opCode == this->m_entryTable[slot].opcode)) {
+                    // free the slot that was used for this duplicated opCode
+                    this->m_entryTable[slot].used = false;
+                    // assuming only one duplicate in the table break out of the loop
+                    break;
+                }
+            }
+        }
+
         // search for an empty slot
         bool slotFound = false;
         for (U32 slot = 0; slot < FW_NUM_ARRAY_ELEMENTS(this->m_entryTable); slot++) {

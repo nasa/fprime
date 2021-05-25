@@ -7,6 +7,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include <Fw/Logger/Logger.hpp>
 #include <string.h>
 
 namespace Svc {
@@ -73,10 +74,14 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     readCallback_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Buffer &buffer
+        Fw::Buffer &buffer,
+        Drv::RecvStatus recvStatus
     )
   {
-      processBuffer(buffer);
+      if (Drv::RECV_OK == recvStatus) {
+          processBuffer(buffer);
+      }
+      readBufferReturn_out(0, buffer);
   }
 
   void GroundInterfaceComponentImpl ::
@@ -89,8 +94,10 @@ namespace Svc {
       Fw::Buffer buffer = m_ext_buffer;
       // Call read poll if it is hooked up
       if (isConnected_readPoll_OutputPort(0)) {
-          readPoll_out(0, buffer);
-          processBuffer(buffer);
+          Drv::PollStatus status = readPoll_out(0, buffer);
+          if (status == Drv::POLL_OK) {
+              processBuffer(buffer);
+          }
       }
   }
 
@@ -118,7 +125,10 @@ namespace Svc {
       // Setup for sending by truncating unused data
       buffer.setSize(buffer_wrapper.getBuffLength());
       FW_ASSERT(buffer.getSize() == total_size, buffer.getSize(), total_size);
-      write_out(0, buffer);
+      Drv::SendStatus sendStatus = write_out(0, buffer);
+      if (Drv::SEND_OK != sendStatus) {
+          Fw::Logger::logMsg("Dropping outgoing packet of size %lu\n", buffer.getSize());
+      }
   }
 
   void GroundInterfaceComponentImpl ::
