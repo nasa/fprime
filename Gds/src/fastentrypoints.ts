@@ -112,4 +112,4 @@ easy_install.ScriptWriter.get_args = get_args
             "import fastentrypoints" not setup_content:
                 setup.seek(0)
                 setup.truncate()
-                setup.write("import fastentrypoints\n" setup_content)
+                setup.write("fastentrypoints\n" setup_content)
