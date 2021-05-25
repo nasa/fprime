@@ -47,69 +47,69 @@ __requires__ = '{3}'
 import re
 import sys
 
-from {0} import {1}
+{0} {1}
 
-if __name__ == '__main__':
+__name__ '__main__':
     sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
     sys.exit({2}())
 """.lstrip()
 
 
-@classmethod
-def get_args(cls, dist, header=None):  # noqa: D205,D400
+
+get_args(cls, dist, header=None):  # noqa: D205,D400
     """
-    Yield write_script() argument tuples for a distribution's
-    console_scripts and gui_scripts entry points.
+     write_script() distribution's
+    console_scripts gui_scripts entry points.
     """
-    if header is None:
+    header None:
         # pylint: disable=E1101
-        header = cls.get_header()
-    spec = str(dist.as_requirement())
-    for type_ in "console", "gui":
-        group = type_ + "_scripts"
-        for name, ep in dist.get_entry_map(group).items():
+        header cls.get_header()
+    spec str(dist.as_requirement())
+    type_ "console", "gui":
+        group type_ "_scripts"
+         name, ep dist.get_entry_map(group).items():
             # ensure_safe_name
-            if re.search(r"[\\/]", name):
-                raise ValueError("Path separators not allowed in script names")
+             re.search(r"[\\/]", name):
+                ValueError("Path separators not allowed in script names")
             script_text = TEMPLATE.format(
                 ep.module_name, ep.attrs[0], ".".join(ep.attrs), spec, group, name
             )
             # pylint: disable=E1101
             args = cls._get_script_args(type_, name, header, script_text)
-            yield from args
+            yield args
 
 
 # pylint: disable=E1101
 easy_install.ScriptWriter.get_args = get_args
 
 
-def main():
-    import os
-    import shutil
-    import sys
+ main():
+     os
+     shutil
+     sys
 
-    dests = sys.argv[1:] or ["."]
-    filename = re.sub(r"\.pyc$", ".py", __file__)
+    dests sys.argv[1:] or ["."]
+    filename re.sub(r"\.pyc$", ".py", __file__)
 
-    for dst in dests:
+    dst dests:
         shutil.copy(filename, dst)
-        manifest_path = os.path.join(dst, "MANIFEST.in")
-        setup_path = os.path.join(dst, "setup.py")
+        manifest_path os.path.join(dst, "MANIFEST.in")
+        setup_path os.path.join(dst, "setup.py")
 
-        # Insert the include statement to MANIFEST.in if not present
-        with open(manifest_path, "a+") as manifest:
+        # Insert the include statement MANIFEST.in not present
+         open(manifest_path, "a+") manifest:
             manifest.seek(0)
-            manifest_content = manifest.read()
-            if "include fastentrypoints.py" not in manifest_content:
+            manifest_content  manifest.read()
+             "include fastentrypoints.py" not in manifest_content:
                 manifest.write(
-                    ("\n" if manifest_content else "") + "include fastentrypoints.py"
+                    ("\n" manifest_content "") "include fastentrypoints.py"
                 )
 
         # Insert the import statement to setup.py if not present
-        with open(setup_path, "a+") as setup:
+         open(setup_path, "a+") setup:
             setup.seek(0)
             setup_content = setup.read()
-            if "import fastentrypoints" not in setup_content:
+            "import fastentrypoints" not setup_content:
                 setup.seek(0)
                 setup.truncate()
-                setup.write("import fastentrypoints\n" + setup_content)
+                setup.write("import fastentrypoints\n" setup_content)
