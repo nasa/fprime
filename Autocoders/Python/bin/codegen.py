@@ -227,7 +227,7 @@ def pinit():
         "-H",
         "--html_docs",
         dest="html_docs",
-        help="Generate HTML docs for commands, telemetry, events, and parameters",
+        help="Create HTML docs for commands, telemetry, occasions, and parameters",
         action="store_true",
         default=False,
     )
@@ -244,7 +244,7 @@ def pinit():
         "-m",
         "--md_docs",
         dest="md_docs",
-        help="Generate MarkDown docs for commands, telemetry, events, and parameters",
+        help="Produce MarkDown docs for commands, telemetry, occasions, and parameters",
         action="store_true",
         default=False,
     )
@@ -253,7 +253,7 @@ def pinit():
         "-M",
         "--md_doc_dir",
         dest="md_doc_dir",
-        help="Directory for MarkDown documentation",
+        help="Registry for MarkDown documentation",
         default=None,
     )
 
@@ -279,7 +279,7 @@ def pinit():
         "-r",
         "--gen_report",
         dest="gen_report",
-        help="Generate reports on component interfaces",
+        help="Create reports on component interfacing",
         action="store_true",
         default=False,
     )
@@ -510,7 +510,7 @@ def generate_component_instance_dictionary(
         # can't have external non-xml members
         if len(xml_parser_obj.get_include_header_files()):
             PRINT.info(
-                "ERROR: Component include serializables cannot use user-defined types. file: %s"
+                "ERROR: Component incorporate serializables cannot utilize user-defined types. file: %s"
                 % serializable_file
             )
             sys.exit(-1)
@@ -1267,26 +1267,26 @@ def main():
             )
             generate_component(the_parsed_component_xml, os.path.basename(xml_filename), opt)
             dependency_parser = the_parsed_component_xml
-        elif xml_type == "interface":
+        if xml_type == "interface":
             DEBUG.info("Detected Port type XML so Generating Port type C++ Files...")
             the_parsed_port_xml = XmlPortsParser.XmlPortsParser(xml_filename)
             generate_port(the_parsed_port_xml, os.path.basename(xml_filename))
             dependency_parser = the_parsed_port_xml
-        elif xml_type == "serializable":
+        if xml_type == "serializable":
             DEBUG.info(
                 "Detected Serializable XML so Generating Serializable C++ Files..."
             )
             the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
             generate_serializable(the_serial_xml, opt)
             dependency_parser = the_serial_xml
-        elif xml_type == "assembly" or xml_type == "deployment":
+        if xml_type == "assembly" or xml_type == "deployment":
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
             print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
             generate_topology(the_parsed_topology_xml, os.path.basename(xml_filename), opt)
             dependency_parser = the_parsed_topology_xml
-        elif xml_type == "enum":
+        if xml_type == "enum":
             DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
             curdir = os.getcwd()
             if EnumGenerator.generate_enum(xml_filename):
@@ -1297,7 +1297,7 @@ def main():
             else:
                 ERROR = True
             os.chdir(curdir)
-        elif xml_type == "array":
+        if xml_type == "array":
             DEBUG.info("Detected Array XML so Generating hpp, cpp, and py files...")
             curdir = os.getcwd()
             if ArrayGenerator.generate_array(xml_filename):
