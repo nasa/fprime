@@ -80,3 +80,5 @@ GTestBase.*
 fprime-venv
 xml
 depend
+
+.*
