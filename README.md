@@ -172,12 +172,7 @@ The typed port connections provide strong compile-time guarantees of correctness
   * Prototype GDS CLI tool
   * Project custom dashboard support
 * Array, Enum type support and examples
-* Code linting and bug fixes
 
-
-Sponsors: www.paypal.me/leo.haim.nigri 
-
-By: Leonardo Haim Nigri - BRL - 
 
 ## Sponsors : 
 
