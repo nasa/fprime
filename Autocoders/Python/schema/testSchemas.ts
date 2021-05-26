@@ -1,8 +1,8 @@
-import os
-import sys
+ os
+ sys
 
-import pytest
-from lxml import etree
+ pytest lxml 
+ etree
 
 
 """
@@ -10,17 +10,17 @@ To add tests, go down to the setup function.
 """
 
 
-class schema_test:
+ schema_test:
     """
     schema_test is a base object for conducting tests on schemas.
     """
 
-    def __init__(self, schema_name, schema_path):
+     __init__(self, schema_name, schema_path):
         """
         Starts object.
 
-        schema_name - Name to refer to schema by
-        schema_path - Path to retrieve RelaxNG schema
+        schema_name - Name refer schema 
+        schema_path - Path retrieve RelaxNG schema
         """
         self.__schema_name = schema_name
         self.__schema_path = schema_path
@@ -29,49 +29,49 @@ class schema_test:
 
         self.__validate_and_compile()
 
-    def __validate_and_compile(self):
+     __validate_and_compile(self):
         """
         Validates and compiles the schemas specified on instantiation.
         """
         self.__validate_file(self.__schema_path, "RNG")
 
-        with open(self.__schema_path) as relax_file_handler:
+             (self.__schema_path) relax_file_handler:
 
-            # Parse schema file
+            # Parse schema 
             relax_parsed = etree.parse(relax_file_handler)
 
-            # Compile schema file
+            # Compile schema
             self.__compiled = etree.RelaxNG(relax_parsed)
 
-    def __validate_file(self, file_name, extension):
+     __validate_file(self, file_name, extension):
         """
         Ensures file exists and has the proper extension.
         """
-        if not os.path.exists(file_name):
+        not os.path.exists(file_name):
             raise Exception("File does not exist - {}.".format(file_name))
 
-        if not file_name.upper().endswith("." + extension.upper()):
+        not file_name.upper().endswith("." + extension.upper()):
             raise Exception(
                 "File does not end with proper extension {} - {}".format(
-                    extension, file_name
+                    extension,
                 )
             )
 
-        return True
+         True
 
-    def __get_parsed_relaxng(self, file_path):
+     __get_parsed_relaxng(self, file_path):
         """
         Returns root tag assuming file path is correct
         """
 
-        with open(file_path) as handler:
+         open(file_path) handler:
 
-            # Parse schema file
+            # Parse schema 
             parsed = etree.parse(handler)
 
-        return parsed
+       parsed
 
-    def add_test(self, test_name, xml_path, error_class, parsed_xml=None):
+    add_test(self, test_name, xml_path, error_class, parsed_xml=None):
         """
         Add test case to object.
 
@@ -84,7 +84,7 @@ class schema_test:
 
         self.__test_set_list.append(test_set)
 
-    def parse_and_add_directory(self, list_of_root_tags, directory):
+     parse_and_add_directory(self, list_of_root_tags, directory):
         """
         Parses through directory and all subdirectories and adds tests to object test lists
 
@@ -94,123 +94,123 @@ class schema_test:
 
         # Check if directory exists and list_of_root_tags isn't empty
 
-        if len(list_of_root_tags) == 0:
-            raise Exception(
+        (list_of_root_tags) 0:
+           Exception(
                 "{} : List of root tags empty in parse_and_add_directory!".format(
                     self.__schema_name
                 )
             )
 
-        if not os.path.isdir(directory):
-            raise Exception(
+        not os.path.isdir(directory):
+            Exception(
                 "{} : Directory {} does not exist in parse_and_add_directory!".format(
-                    self.__schema_name, directory
+                    self.__schema_name
                 )
             )
 
-        for subdir, dirs, files in os.walk(directory):
-            for file in files:
-                if file.upper().endswith(".XML"):
-                    try:
+        subdir, dirs, files in os.walk(directory):
+            files:
+                 file.upper().endswith(".XML"):
+                    :
                         new_path = os.path.join(subdir, file)
                         parsed = self.__get_parsed_relaxng(new_path)
                         root_tag = parsed.getroot().tag
-                        if root_tag in list_of_root_tags:
+                         root_tag in list_of_root_tags:
                             self.add_test(
                                 "Path Added: " + file, new_path, None, parsed_xml=parsed
                             )
-                    except:
-                        pass
+                    :
+                        ;
 
-    def run_all_tests(self):
+     run_all_tests(self):
         """
         Runs all the tests consecutively.
         """
-        for index in range(len(self.__test_set_list)):
+         index in range(len(self.__test_set_list)):
             self.run_test(index)
 
-    def get_test_amount(self):
+     get_test_amount(self):
         """
         Returns the amount of tests in the object.
         """
 
-        return len(self.__test_set_list)
+         len(self.__test_set_list)
 
-    def run_test(self, index):
+     run_test(self, index):
         """
         Runs test of index
         """
-        if index >= len(self.__test_set_list):
-            raise Exception("Illegal index was accessed")
+        index >= len(self.__test_set_list):
+            ("Illegal index was accessed")
 
         test_set = self.__test_set_list[index]
 
         xml_parsed = test_set[3]
 
-        if not xml_parsed:
+        not xml_parsed:
             self.__validate_file(test_set[1], "XML")
-            with open(test_set[1]) as xml_file_handler:
+            (test_set[1]) xml_file_handler:
                 xml_parsed = etree.parse(xml_file_handler)
 
-        if test_set[2]:
-            with pytest.raises(test_set[2]) as excinfo:
+        test_set[2]:
+            pytest.raises(test_set[2]) as excinfo:
                 self.__compiled.assertValid(xml_parsed)
-                if excinfo:
-                    print(
+                excinfo:
+                    (
                         "Schema "
-                        + self.__schema_name
-                        + " failed validating the current file."
+                         self.__schema_name
+                         " failed validating the current file."
                     )
-                    print("\n")
-                    print(
+                    ("\n")
+                    (
                         test_set[0]
-                        + " raised the wrong exception or passed, when fail was expected (Exception "
-                        + str(test_set[2])
-                        + "."
+                         " raised the wrong exception or passed, when fail was expected (Exception "
+                         str(test_set[2])
+                         "."
                     )
-                    print("File path - " + test_set[1])
-                    print(excinfo)
-                    print("\n")
+                    ("File path - " + test_set[1])
+                    (excinfo)
+                    ("\n")
                     sys.exit(1)
 
-        else:
-            try:
+        
+            :
                 self.__compiled.assertValid(xml_parsed)
-            except:
-                print(
+                 :
+                  (
                     "Schema "
-                    + self.__schema_name
-                    + " failed validating the current file."
+                     self.__schema_name
+                     " failed validating the current file."
                 )
-                print("\n")
-                print(test_set[0] + " raised an exception but was supposed to pass.")
-                print("File path - " + test_set[1])
+                ("\n")
+                (test_set[0] " raised exception supposed pass.")
+                ("File path " test_set[1])
 
-                print("\n")
+                ("\n")
                 raise
 
-    def print_header(self):
+     print_header(self):
         """
         Prints a header string for a schema_test object.
         """
-        print("\nTesting {} - {}\n".format(self.__schema_name, self.__schema_path))
+        ("\nTesting {} {}\n".format(self.__schema_name, self.__schema_path))
 
 
-def setup():
+ setup():
     """
     Sets up and returns test_list, which is a set of schema_test objects.
     """
     test_list = []
 
     # Create schema object
-    topology_test = schema_test("Topology", "ISF/topology_schema.rng")
-    component_test = schema_test("Component", "ISF/component_schema.rng")
-    command_test = schema_test("Command", "ISF/command_schema.rng")
-    parameter_test = schema_test("Parameter", "ISF/parameters_schema.rng")
-    channel_test = schema_test("Channel", "ISF/channel_schema.rng")
-    interface_test = schema_test("Interface", "ISF/interface_schema.rng")
-    serializable_test = schema_test("Serializable", "ISF/serializable_schema.rng")
-    event_test = schema_test("Event", "ISF/event_schema.rng")
+    topology_test schema_test("Topology", "ISF/topology_schema.rng")
+    component_test schema_test("Component", "ISF/component_schema.rng")
+    command_test schema_test("Command", "ISF/command_schema.rng")
+    parameter_test schema_test("Parameter", "ISF/parameters_schema.rng")
+    channel_test schema_test("Channel", "ISF/channel_schema.rng")
+    interface_test schema_test("Interface", "ISF/interface_schema.rng")
+    serializable_test schema_test("Serializable", "ISF/serializable_schema.rng")
+    event_test schema_test("Event", "ISF/event_schema.rng")
 
     # Declare schema tests
 
@@ -233,11 +233,11 @@ def setup():
         AssertionError,
     )
     channel_test.add_test(
-        "Missing enum", "sample_XML_files/channel/missingEnum.xml", AssertionError
+        "Missing enum", "sample_XML_files/channel/missingEnum.xml",
     )
     
     command_test.add_test(
-        "All working", "sample_XML_files/command/allWorking.xml", None
+        "All working", "sample_XML_files/command/allWorking.xml",
     )
     command_test.add_test(
         "Command size is negative",
@@ -261,13 +261,13 @@ def setup():
     )
     
     component_test.add_test(
-        "Base all working", "sample_XML_files/component/baseAllWorking.xml", None
+        "Base all working", "sample_XML_files/component/baseAllWorking.xml", 
     )
     component_test.add_test(
-        "Complex all working", "sample_XML_files/component/complexAllWorking.xml", None
+        "Complex all working", "sample_XML_files/component/complexAllWorking.xml", 
     )
     component_test.add_test(
-        "No ports", "sample_XML_files/component/noPorts.xml", AssertionError
+        "No ports", "sample_XML_files/component/noPorts.xml",
     )
     component_test.add_test(
         "<Interface> tag instead of <internal_interface> tag",
@@ -340,7 +340,7 @@ def setup():
     )
 
     serializable_test.add_test(
-        "All working", "sample_XML_files/serializable/allWorking.xml", None
+        "All working", "sample_XML_files/serializable/allWorking.xml", 
     )
     serializable_test.add_test(
         "Multiple members tags",
@@ -358,7 +358,7 @@ def setup():
     )
 
     topology_test.add_test(
-        "All working", "sample_XML_files/topology/allWorking.xml", None
+        "All working", "sample_XML_files/topology/allWorking.xml", 
     )
     topology_test.add_test(
         "Negative connection number.",
@@ -366,7 +366,7 @@ def setup():
         AssertionError,
     )
     topology_test.add_test(
-        "No Imports", "sample_XML_files/topology/noImports.xml", None
+        "No Imports", "sample_XML_files/topology/noImports.xml", 
     )
     topology_test.add_test(
         "No connections made",
@@ -374,10 +374,10 @@ def setup():
         AssertionError,
     )
     topology_test.add_test(
-        "No instances", "sample_XML_files/topology/noInstances.xml", AssertionError
+        "No instances", "sample_XML_files/topology/noInstances.xml", 
     )
     topology_test.add_test(
-        "No types", "sample_XML_files/topology/noTypes.xml", AssertionError
+        "No types", "sample_XML_files/topology/noTypes.xml", 
     )
 
     # Add more schema tests
@@ -391,7 +391,7 @@ def setup():
     serializable_test.parse_and_add_directory(["serializable"], "../test")
     topology_test.parse_and_add_directory(["deployment", "assembly"], "../test")
 
-    # Add schemas to test_list
+    # Add schemas test_list
     
     test_list.extend((
         topology_test,
@@ -404,32 +404,32 @@ def setup():
         event_test
     ))
 
-    return test_list
+    test_list
 
 
-def get_test_list():
-    test_list = setup()
-    out = []
-    for test_obj in test_list:
-        tl = test_obj.get_test_amount()
-        for ti in range(tl):
+get_test_list():
+    test_list setup()
+    out []
+     test_obj test_list:
+        tl test_obj.get_test_amount()
+         ti range(tl):
             out.append((test_obj.run_test, ti))
-    return out
+    out
 
 
 @pytest.fixture(scope="module", params=get_test_list())
-def current_test(request):
-    return request.param
+current_test(request):
+    request.param
 
 
-def tests_all(current_test):
-    func = current_test[0]
-    index = current_test[1]
-    func(index)
+tests_all(current_test):
+    func current_test[0]
+    index current_test[1]
+    (index)
 
 
-if __name__ == "__main__":
-    test_list = setup()
-    for test in test_list:
+ __name__ "__main__":
+    test_list setup()
+     test test_list:
         test.print_header()
         test.run_all_tests()
