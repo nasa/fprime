@@ -38,7 +38,7 @@ class CMakeHandler:
     def __init__(self):
         """ Instantiate a basic CMake handler """
         self.settings = {}
-        # self.build_cache = CMakeBuildCache()
+        self._cmake_cache = None
         self.verbose = False
         try:
             self._run_cmake(["--help"], print_output=False)
@@ -50,6 +50,18 @@ class CMakeHandler:
     def set_verbose(self, verbose):
         """ Sets verbosity """
         self.verbose = verbose
+
+    def validate_cmake_cache(self, cmake_args, build_dir):
+        cmake_cache = self._read_cache(build_dir)
+        for key, expected in cmake_args.items():
+            actual = cmake_cache.get(key, None)
+            # Allow expected variables not to be set in cache.
+            # When building with a newer version of fprime-util and an older version of F prime,
+            # newer CMake options that aren't used by older versions of CMake won't be set in the cache
+            if actual is None:
+                continue
+            if str(expected) != actual:
+                raise CMakeInconsistentCacheException(key, expected, actual)
 
     def execute_known_target(
         self,
@@ -75,18 +87,13 @@ class CMakeHandler:
         assert build_dir is not None, "Invalid build dir supplied"
         build_dir = str(build_dir)
         cmake_args = {} if cmake_args is None else cmake_args
+        self.validate_cmake_cache(cmake_args, build_dir)
+
         make_args = {} if make_args is None else make_args
-        fleshed_args = list(
-            map(
-                lambda key: ("{}={}" if key.startswith("--") else "-D{}={}").format(
-                    key, cmake_args[key]
-                ),
-                cmake_args.keys(),
-            )
-        )
-        fleshed_args += ["--"] + list(
+        fleshed_args = ["--"] + list(
             map(lambda key: "{}={}".format(key, make_args[key]), make_args.keys())
         )
+
         module = self.get_cmake_module(path, build_dir)
         cmake_target = (
             module
@@ -233,10 +240,6 @@ class CMakeHandler:
         # We will CD for build, so this path must become absolute
         source_dir = os.path.abspath(source_dir)
         args = {} if args is None else args
-        if "FPRIME_LIBRARY_LOCATIONS" in args:
-            args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(
-                args["FPRIME_LIBRARY_LOCATIONS"]
-            )
         fleshed_args = map(
             lambda key: ("{}={}" if key.startswith("--") else "-D{}={}").format(
                 key, args[key]
@@ -338,19 +341,26 @@ class CMakeHandler:
     def _read_cache(self, build_dir):
         """
         Reads the cache from the associated build_dir. This will return a dictionary of cache variable name to
-        its value. This will not update internal state.
+        its value. The first run will call cmake to extract the cache and cache it internally. Subsequent
+        calls will return the cached cache.
 
         :param build_dir: build directory to harvest for cache variables
         :return: {<cmake cache variable>: <cmake cache value>}
         """
+        if self._cmake_cache is not None:
+            return self._cmake_cache
+
         reg = re.compile("([^:]+):[^=]*=(.*)")
         # Check that the build_dir is properly setup
         self._cmake_validate_build_dir(build_dir)
-        stdout, stderr = self._run_cmake(["-LA"], workdir=build_dir, print_output=False)
+        stdout, _ = self._run_cmake(["-LA"], workdir=build_dir, print_output=False)
         # Scan for lines in stdout that have non-None matches for the above regular expression
         valid_matches = filter(lambda item: item is not None, map(reg.match, stdout))
         # Return the dictionary composed from the match groups
-        return dict(map(lambda match: (match.group(1), match.group(2)), valid_matches))
+        self._cmake_cache = dict(
+            map(lambda match: (match.group(1), match.group(2)), valid_matches)
+        )
+        return self._cmake_cache
 
     @staticmethod
     def _cmake_validate_source_dir(source_dir):
@@ -397,6 +407,7 @@ class CMakeHandler:
             print("[CMAKE] Refreshing CMake build cache")
             environment["VERBOSE"] = "1"
         run_args.extend(["--target", "rebuild_cache"])
+        self._cmake_cache = None  # Clear internal cache of cmake variables
         self._run_cmake(run_args, write_override=True, environment=environment)
 
     def _run_cmake(
@@ -523,14 +534,14 @@ class CMakeException(FprimeException):
     """ Error occurred within this CMake package """
 
 
-class CMakeInconsistencyException(CMakeException):
-    """ Project CMakeLists.txt is inconsistent with build dir """
+class CMakeInconsistentCacheException(CMakeException):
+    """ Project CMakeCache.txt is inconsistent with settings.ini file """
 
-    def __init__(self, project_cmake, build_dir):
+    def __init__(self, key, expected, actual):
         """ Force an appropriate message """
         super().__init__(
-            "{} is inconsistent with build {}. Regenerate the build".format(
-                project_cmake, build_dir
+            "Expected CMake variable {} to be set to '{}', was actually set to '{}'. This is usually caused by updating the settings.ini file without purging and regenerating the accompanying build cache.".format(
+                key, expected, actual
             )
         )
 

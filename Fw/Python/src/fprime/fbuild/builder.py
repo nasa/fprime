@@ -408,6 +408,36 @@ class Build:
             )
         return toolchains[0]
 
+    def get_cmake_args(self) -> dict:
+        """Generates CMake arguments from deployment settings (settings.ini file)
+
+        Returns:
+            A dictionary of cmake settings
+        """
+        needed = [
+            ("FPRIME_FRAMEWORK_PATH", "framework_path"),
+            ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
+            ("FPRIME_PROJECT_ROOT", "project_root"),
+            ("FPRIME_SETTINGS_FILE", "settings_file"),
+            ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
+            ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
+            ("FPRIME_CONFIG_DIR", "config_dir"),
+            ("FPRIME_INSTALL_DEST", "install_dest"),
+        ]
+        cmake_args = {
+            cache: self.get_settings(setting, None)
+            for cache, setting in needed
+            if self.get_settings(setting, None) is not None
+        }
+
+        if "FPRIME_LIBRARY_LOCATIONS" in cmake_args:
+            cmake_args["FPRIME_LIBRARY_LOCATIONS"] = ";".join(
+                cmake_args["FPRIME_LIBRARY_LOCATIONS"]
+            )
+
+        cmake_args.update({"CMAKE_BUILD_TYPE": self.build_type.get_cmake_build_type()})
+        return cmake_args
+
     def execute(self, target: Target, context: Path, make_args: dict):
         """Execute a build target
 
@@ -423,6 +453,7 @@ class Build:
             target.cmake_target,
             self.build_dir,
             context.absolute(),
+            cmake_args=self.get_cmake_args(),
             make_args=make_args,
             top_target=isinstance(target, GlobalTarget),
             environment=self.settings.get("environment", None),
@@ -437,31 +468,10 @@ class Build:
             cmake_args: cmake arguments to pass into the generate step
         """
         try:
-            # Pass in needed F prime settings for the build read out of settings.ini
-            needed = [
-                ("FPRIME_FRAMEWORK_PATH", "framework_path"),
-                ("FPRIME_LIBRARY_LOCATIONS", "library_locations"),
-                ("FPRIME_PROJECT_ROOT", "project_root"),
-                ("FPRIME_SETTINGS_FILE", "settings_file"),
-                ("FPRIME_ENVIRONMENT_FILE", "environment_file"),
-                ("FPRIME_AC_CONSTANTS_FILE", "ac_constants"),
-                ("FPRIME_CONFIG_DIR", "config_dir"),
-                ("FPRIME_INSTALL_DEST", "install_dest"),
-            ]
-            cmake_args.update(
-                {
-                    cache: self.get_settings(setting, None)
-                    for cache, setting in needed
-                    if self.get_settings(setting, None) is not None
-                }
-            )
-            cmake_args.update(
-                {"CMAKE_BUILD_TYPE": self.build_type.get_cmake_build_type()}
-            )
             self.cmake.generate_build(
                 self.deployment,
                 self.build_dir,
-                cmake_args,
+                {**cmake_args, **self.get_cmake_args()},
                 environment=self.settings.get("environment", None),
             )
         except CMakeException as cexc:
