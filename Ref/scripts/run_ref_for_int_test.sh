@@ -18,6 +18,6 @@ then
     BUILD_ROOT="$(cd "${DIRNAME}/../.." || exit; pwd)"
     export BUILD_ROOT
 fi
-DEPLOY=$(cd "${DIRNAME}/.." || exit; pwd;)
-DICTIONARY=$(cd "${DIRNAME}/../Top/" || exit; pwd;)
+DEPLOY=$(cd "${DIRNAME}/.." || exit; pwd)
+DICTIONARY=$(cd "${DIRNAME}/../Top/" || exit; pwd)
 "${BUILD_ROOT}/Gds/bin/run_deployment.sh"--dictionary "${DICTIONARY}" --deploy "${DEPLOY}" -g none
