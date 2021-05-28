@@ -39,7 +39,10 @@ from fprime.common.models.serialize.numerical_types import (
 from fprime.common.models.serialize.serializable_type import SerializableType
 from fprime.common.models.serialize.string_type import StringType
 from fprime_gds.common.data_types import exceptions
-from fprime_gds.version import MINIMUM_SUPPORTED_FRAMEWORK_VERSION, MAXIMUM_SUPPORTED_FRAMEWORK_VERSION
+from fprime_gds.version import (
+    MINIMUM_SUPPORTED_FRAMEWORK_VERSION,
+    MAXIMUM_SUPPORTED_FRAMEWORK_VERSION,
+)
 
 # Custom Python Modules
 from . import dict_loader
@@ -122,12 +125,18 @@ class XmlLoader(dict_loader.DictLoader):
         # Check version of the XML before continuing. Versions weren't published before 1.5.4.  Only check major minor
         # and point versions to allow for development versions to be allowed.
         dict_version_string = root.attrib.get("framework_version", "1.5.4")
-        try:
-            dict_version = dict_version_string.split(".")
-            dict_version = tuple([int(item) for item in dict_version[0:3]])
-        except (ValueError, IndexError):
-                raise UnsupportedDictionaryVersionException(dict_version)
-        if dict_version < MINIMUM_SUPPORTED_FRAMEWORK_VERSION or dict_version > MAXIMUM_SUPPORTED_FRAMEWORK_VERSION:
+        digits = []
+        # Process through the tokens of the version until we hit something that is not an int
+        for token in dict_version_string.split("."):
+            try:
+                digits.append(int(token))
+            except ValueError:
+                break
+        dict_version = tuple(digits)
+        if (
+            dict_version < MINIMUM_SUPPORTED_FRAMEWORK_VERSION
+            or dict_version > MAXIMUM_SUPPORTED_FRAMEWORK_VERSION
+        ):
             raise UnsupportedDictionaryVersionException(dict_version)
         return root
 
@@ -404,11 +413,18 @@ class XmlLoader(dict_loader.DictLoader):
 
 class UnsupportedDictionaryVersionException(Exception):
     """ Dictionary is of unsupported version """
+
     def __init__(self, version):
         """ Create a dictionary of a specific version """
+
         def pretty(version_tuple):
             """ Pretty print version """
             return ".".join([str(item) for item in version_tuple])
-        super().__init__("Dictionary version {} is not in supported range: {}-{}. Please upgrade fprime-gds."
-                         .format(pretty(version), pretty(MINIMUM_SUPPORTED_FRAMEWORK_VERSION),
-                                 pretty(MAXIMUM_SUPPORTED_FRAMEWORK_VERSION)))
+
+        super().__init__(
+            "Dictionary version {} is not in supported range: {}-{}. Please upgrade fprime-gds.".format(
+                pretty(version),
+                pretty(MINIMUM_SUPPORTED_FRAMEWORK_VERSION),
+                pretty(MAXIMUM_SUPPORTED_FRAMEWORK_VERSION),
+            )
+        )
