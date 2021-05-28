@@ -1,120 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar
-    xmlns="http://relaxng.org/ns/structure/1.0"
-    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+        xmlns="http://relaxng.org/ns/structure/1.0"
+        xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+        datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
 
     <include href="common_elements.rng"/>
     <include href="common_types.rng"/>
 
     <start>
-        <ref name = "channel_root_define"></ref>
+        <ref name="channel_root_define"/>
     </start>
 
     <define name="channel_root_define">
-        <element name = "telemetry">
+        <element name="telemetry">
 
             <optional>
-                <attribute name = "telemetry_base">
+                <attribute name="telemetry_base">
                     <a:documentation>Base at which IDs start from.</a:documentation>
-                    <ref name = "base_code_define"></ref>
+                    <ref name="base_code_define"/>
                 </attribute>
             </optional>
 
-
             <oneOrMore>
-                <ref name = "channel_definition"></ref>
+                <ref name="channel_definition"/>
             </oneOrMore>
         </element>
     </define>
 
-    <define name = "channel_definition">
-        <element name = "channel">
+    <define name="channel_definition">
+        <element name="channel">
             <a:documentation>Definition for a telemetry channel.</a:documentation>
 
             <!-- Required Attributes -->
-
-            <attribute name = "id">
+            <attribute name="id">
                 <a:documentation>ID for the telemetry channel.</a:documentation>
-                <ref name = "id_define"/>
+                <ref name="id_define"/>
             </attribute>
 
-            <attribute name = "name">
+            <attribute name="name">
                 <a:documentation>Name of the telemetry channel.</a:documentation>
                 <text/>
             </attribute>
 
-
-
-
             <!-- Optional Attributes -->
             <optional>
-                <attribute name = "update">
+                <attribute name="update">
                     <a:documentation>Defines when the channel updates.</a:documentation>
-                    <ref name = "channel_update_define"></ref>
+                    <ref name="channel_update_define"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "abbrev">
+                <attribute name="abbrev">
                     <a:documentation>Required for AMPCS dictionary generation.</a:documentation>
                     <text/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "format_string">
-                    <a:documentation>Used to format data into readable content on the ground system software.</a:documentation>
-                    <text></text>
+                <attribute name="format_string">
+                    <a:documentation>Used to format data into readable content on the ground system software.
+                    </a:documentation>
+                    <text/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "high_yellow">
-                    <data type = "decimal"></data>
+                <attribute name="high_yellow">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "high_red">
-                    <data type = "decimal"></data>
+                <attribute name="high_red">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "high_orange">
-                    <data type = "decimal"></data>
+                <attribute name="high_orange">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "low_yellow">
-                    <data type = "decimal"></data>
+                <attribute name="low_yellow">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "low_red">
-                    <data type = "decimal"></data>
+                <attribute name="low_red">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
             <optional>
-                <attribute name = "low_orange">
-                    <data type = "decimal"></data>
+                <attribute name="low_orange">
+                    <data type="decimal"/>
                 </attribute>
             </optional>
 
-
-           <interleave>
-               <ref name = "type_size_choice_define"></ref>
-               <optional>
-                    <ref name = "comment_define"></ref>
+            <interleave>
+                <ref name="type_size_choice_define"/>
+                <optional>
+                    <ref name="comment_define"/>
                 </optional>
-           </interleave>
-
-
+            </interleave>
         </element>
     </define>
-
 </grammar>
