@@ -75,7 +75,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 
 # Set build type, when it hasn't been set
-if(NOT CMAKE_BUILD_TYPE) 
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)
 else()
     string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
@@ -211,13 +211,15 @@ endif()
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
     set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
 endif()
+
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
+set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
 # Settings for F artifacts installation destination
 if (NOT DEFINED FPRIME_INSTALL_DEST)
-    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/" CACHE PATH "F prime artifacts installation directory" FORCE)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/")
 endif()
-set(IGNORE_ME ${FPRIME_INSTALL_DEST}) # Prevent warning that FPRIME_INSTALL_DEST is unused
+set(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)
