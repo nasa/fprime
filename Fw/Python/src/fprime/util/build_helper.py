@@ -29,7 +29,8 @@ from fprime.fbuild.builder import (
     InvalidBuildCacheException,
     UnableToDetectDeploymentException,
 )
-
+from fprime.fbuild.interaction import confirm, new_component
+from fprime.fbuild.settings import IniSettings
 
 CMAKE_REG = re.compile(r"-D([a-zA-Z0-9_]+)=(.*)")
 
@@ -70,11 +71,7 @@ def validate(parsed, unknown):
         }
         cmake_args.update(d_args)
     # Build type only for generate, jobs only for non-generate
-    elif (
-        parsed.command != "info"
-        and parsed.command != "purge"
-        and parsed.command != "hash-to-file"
-    ):
+    elif parsed.command not in ["info", "purge", "hash-to-file", "new"]:
         parsed.settings = None  # Force to load from cache if possible
         make_args.update({"--jobs": (1 if parsed.jobs <= 0 else parsed.jobs)})
     return cmake_args, make_args
@@ -223,6 +220,13 @@ def parse_args(args):
         parents=[common_parser],
         add_help=False,
     )
+    # New functionality
+    subparsers.add_parser(
+        "new",
+        help="Generate a new component",
+        parents=[common_parser],
+        add_help=False,
+    )
     for target in Target.get_all_targets():
         add_target_parser(target, subparsers, common_parser, parsers)
     # Parse and prepare to run
@@ -237,18 +241,6 @@ def parse_args(args):
         sys.exit(1)
     cmake_args, make_args = validate(parsed, unknown)
     return parsed, cmake_args, make_args, parser
-
-
-def confirm():
-    """ Confirms the removal of the file with a yes or no input """
-    # Loop "forever" intended
-    while True:
-        confirm_input = input("Purge this directory (yes/no)?")
-        if confirm_input.lower() in ["y", "yes"]:
-            return True
-        if confirm_input.lower() in ["n", "no"]:
-            return False
-        print("{} is invalid.  Please use 'yes' or 'no'".format(confirm_input))
 
 
 def print_info(parsed, deployment):
@@ -343,6 +335,10 @@ def utility_entry(args):
             print_info(parsed, deployment)
         elif parsed.command == "info":
             print_info(parsed, deployment)
+        elif parsed.command == "new":
+            settings = IniSettings.load(deployment / "settings.ini", cwd)
+            status = new_component(cwd, deployment, parsed.platform, parsed.verbose, settings)
+            sys.exit(status)
         elif parsed.command == "hash-to-file":
             build = Build(build_type, deployment, verbose=parsed.verbose)
             lines = build.find_hashed_file(parsed.hash)
@@ -372,7 +368,7 @@ def utility_entry(args):
                         parsed.command.title(), build.build_dir
                     )
                 )
-                if parsed.force or confirm():
+                if parsed.force or confirm("Purge this directory (yes/no)?"):
                     build.purge()
 
             build = Build(BuildType.BUILD_NORMAL, deployment, verbose=parsed.verbose)
@@ -391,7 +387,7 @@ def utility_entry(args):
                     parsed.command.title(), install_dir
                 )
             )
-            if parsed.force or confirm():
+            if parsed.force or confirm("Purge installation directory (yes/no)?"):
                 build.purge_install()
         else:
             target = get_target(parsed)

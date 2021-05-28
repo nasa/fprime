@@ -29,8 +29,8 @@ setup(
     # information should match the F prime description information.
     ####
     name="fprime-tools",
-    use_scm_version = {
-        "root": os.path.join("..",".."),
+    use_scm_version={
+        "root": os.path.join("..", ".."),
         "relative_to": __file__,
     },
     license="Apache 2.0 License",
@@ -82,11 +82,25 @@ to interact with the data coming from the FSW.
         "pexpect==4.8.0",
         "pytest==6.2.4",
         "Cheetah3==3.2.6.post2",
-        "setuptools-scm==6.0.1"
+        "setuptools-scm==6.0.1",
+        "cookiecutter==1.7.2",
     ],
-    extras_require={"dev": ["black==21.5b1", "pylama==7.7.1", "pylint==2.8.2", "pre-commit==2.12.1"]},
+    extras_require={
+        "dev": [
+            "black==21.5b1",
+            "pylama==7.7.1",
+            "pylint==2.8.2",
+            "pre-commit==2.12.1",
+            "sphinx",
+            "sphinxcontrib.mermaid",
+            "sphinx-rtd-theme",
+            "sphinx-autoapi",
+            "sphinx-autoapi",
+            "recommonmark",
+        ]
+    },
     # Setup and test requirements, not needed by normal install
-    setup_requires=["pytest-runner==5.3.0","setuptools_scm==6.0.1"],
+    setup_requires=["pytest-runner==5.3.0", "setuptools_scm==6.0.1"],
     tests_require=["pytest"],
     # Create a set of executable entry-points for running directly from the package
     entry_points={
