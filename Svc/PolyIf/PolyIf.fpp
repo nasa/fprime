@@ -1,4 +1,5 @@
 module Svc {
+  
 
   enum MeasurementStatus {
     MEASUREMENT_OK = 0 @< Measurement was good
