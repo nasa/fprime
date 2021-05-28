@@ -16,8 +16,10 @@
 # pip install -e ./Fw/Python
 # ```
 ###
-import os
-from setuptools import find_packages, setup
+
+ os
+
+ setuptools  find_packages, setup
 
 # Setup a python package using setup-tools. This is a newer (and more recommended) technology
 # then distutils.
