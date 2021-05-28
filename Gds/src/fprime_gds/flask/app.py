@@ -11,7 +11,7 @@ import sys
 
 import flask
 import flask_restful
-import flask_uploads
+from fprime_gds.flask import flask_uploads
 
 import fprime_gds.flask.channels
 

@@ -15,7 +15,7 @@
 #
 # User Install / Upgrade:
 # ```
-# pip install --upgrade ./Gds
+# pip install --upgrade fprime-gds
 # ```
 #
 # Developer and Dynamic Installation:
@@ -44,7 +44,10 @@ setup(
     # information should match the F prime description information.
     ####
     name="fprime_gds",
-    version="1.5.0",
+    use_scm_version={
+        "root": "..",
+        "relative_to": __file__
+    },
     license="Apache 2.0 License",
     description="F Prime Flight Software Ground Data System layer.",
     long_description="""
@@ -92,28 +95,25 @@ integrated configuration with ground in-the-loop.
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache 2.0",
         "Operating System :: Unix",
         "Operating System :: POSIX",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
-        # uncomment if you test on these interpreters:
-        # 'Programming Language :: Python :: Implementation :: IronPython',
-        # 'Programming Language :: Python :: Implementation :: Jython',
-        # 'Programming Language :: Python :: Implementation :: Stackless',
     ],
     python_requires=">=3.6",
+    setup_requires=["setuptools_scm==6.0.1"],
     install_requires=[
         "flask==1.1.2",
         "pexpect==4.8.0",
         "pytest==6.2.4",
         "flask_restful==0.3.8",
-        "fprime>=1.3.0",
-        "flask_uploads @ git+https://github.com/maxcountryman/flask-uploads@f66d7dc93e684fa0a3a4350a38e41ae00483a796",
+        "fprime-tools>=1.5.4",
         "argcomplete==1.12.3",
     ],
     extras_require={
