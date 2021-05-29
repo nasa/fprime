@@ -224,12 +224,12 @@ namespace Svc {
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
 
-      // Verify file was closed and size didnt increase:
+      // Verify file was closed and size didn't increase:
       ASSERT_FALSE(this->component.m_log_file.m_openFile);
       ASSERT_EQ(past_size, this->component.m_log_file.m_currentFileSize);
       ASSERT_EQ(45U, this->component.m_log_file.m_maxFileSize);
 
-      // Read file to verify contents didnt change:
+      // Read file to verify contents didn't change:
       std::ifstream stream2("test_file_max");
       while(stream2) {
           char buf[256];

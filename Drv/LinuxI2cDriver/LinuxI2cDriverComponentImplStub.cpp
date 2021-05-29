@@ -26,8 +26,7 @@ namespace Drv {
   LinuxI2cDriverComponentImpl ::
     LinuxI2cDriverComponentImpl(
         const char *const compName
-    ) : LinuxI2cDriverComponentBase(compName),
-        m_fd(-1)
+    ) : LinuxI2cDriverComponentBase(compName)
   {
 
   }
@@ -64,7 +63,7 @@ namespace Drv {
         Fw::Buffer &serBuffer
     )
   {
-    return I2C_OK;
+    return I2cStatus::I2C_OK;
   }
 
   Drv::I2cStatus LinuxI2cDriverComponentImpl ::
@@ -74,7 +73,7 @@ namespace Drv {
         Fw::Buffer &serBuffer
     )
   {
-    return I2C_OK;
+    return I2cStatus::I2C_OK;
   }
 
 } // end namespace Drv

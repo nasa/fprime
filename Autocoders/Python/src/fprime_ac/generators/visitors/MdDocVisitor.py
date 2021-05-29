@@ -17,7 +17,7 @@ import sys
 from fprime_ac.generators.visitors import ComponentVisitorBase
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version

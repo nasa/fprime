@@ -10,7 +10,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 # Function `generate_executable:`
 #
-# Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
+# Top-level executable generation. Core allows for generation of UT specifics without affecting API.
 #
 # - **EXECUTABLE_NAME:** name of executable to be generated.
 # - **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
@@ -18,7 +18,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-  # their separate peices. 
+  # their separate pieces. 
   #
   # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
   # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
@@ -37,17 +37,6 @@ function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   endif()
   # Install the executable
   generate_module(${EXECUTABLE_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${LINK_DEPS}" "${MOD_DEPS}")
-  # Link library list output on per-module basis
-  # Install the executable, if not excluded and not testing
-  get_target_property(IS_EXCLUDE_FROM_ALL "${EXECUTABLE_NAME}" "EXCLUDE_FROM_ALL")
-  if ("${IS_EXCLUDE_FROM_ALL}" STREQUAL "IS_EXCLUDE_FROM_ALL-NOTFOUND" AND
-      NOT CMAKE_BUILD_TYPE STREQUAL "TESTING") 
-      install(TARGETS "${EXECUTABLE_NAME}"
-          RUNTIME DESTINATION "bin/${PLATFORM}"
-          LIBRARY DESTINATION "lib/${PLATFORM}"
-          ARCHIVE DESTINATION "lib/static/${PLATFORM}"
-      )
-  endif()
   if (CMAKE_DEBUG_OUTPUT)
 	  print_dependencies(${EXECUTABLE_NAME})
   endif()

@@ -78,7 +78,7 @@ def ParseNumDefine(defname, filename, loadfile=True):
     # define name to be uppercase? We will use any case for now. So,
     # we are looking for '#define id value'.
 
-    parser = Forward()
+    _ = Forward()
 
     keyword = Literal("#define").suppress()
     name = Literal(defname).suppress()
@@ -137,7 +137,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         if not os.path.isfile(filename):
             ##################
             # EddieB ENUM path fix but I replace try/except
-            # with existance test for MSL_ROOT.
+            # with existence test for MSL_ROOT.
             # LJR - 15 Nov. 2007
             ##################
             if "MSL_ROOT" in os.environ:
@@ -179,16 +179,16 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     # for named typedefs of enumerations. We are looking for 'typedef enum'
     # followd by the typename.
 
-    parser = Forward()
+    _ = Forward()
 
     keyword = Literal("typedef enum").suppress()
     typetoken = Literal(typename).suppress()
 
-    # 04/23/07: Fix allows for nagative numbers.
-    val = Word("=" + " " + "-" + nums) + restOfLine.suppress()
+    # 04/23/07: Fix allows for negative numbers.
+    _ = Word("=" + " " + "-" + nums) + restOfLine.suppress()
 
-    # 03/21/08: Fix allows hexidecimal numbers.
-    val = Word("=" + " " + "-" + decORhex) + restOfLine.suppress()
+    # 03/21/08: Fix allows hexadecimal numbers.
+    _ = Word("=" + " " + "-" + decORhex) + restOfLine.suppress()
 
     # 04/04/08: Fix allows (int) cast enumerations. TBD: Must fine
     # some way to suppress the inclusion of the (int) cast. We want
@@ -259,7 +259,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     val = 0
 
     # To debug this loop, set the watchForType value to be what you
-    # are interested in debgging, such as 'MrfType'
+    # are interested in debugging, such as 'MrfType'
     debugOnType = "no_debugging_desired_here_sir_carry_on"
 
     for i in range(len(toks)):
@@ -341,7 +341,7 @@ testdata = """
 * indicate the command processing status. This is used in conjunction
 * with the command reply handler.
 *
-* Note: The first two entries in this enumeration are intetionally
+* Note: The first two entries in this enumeration are intentionally
 * made to match the status of MsapFswStatus. Keep the primary success,
 * and fail conditions as 0 and 1 in this list.
 */

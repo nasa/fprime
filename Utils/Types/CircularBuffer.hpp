@@ -84,6 +84,12 @@ class CircularBuffer {
          */
         NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
 
+        /**
+         * Get the max size of buffer, not remaining.
+         * \return
+         */
+        NATIVE_UINT_TYPE get_capacity();
+
 #ifdef CIRCULAR_DEBUG
         void print();
 #endif

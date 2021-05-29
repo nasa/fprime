@@ -26,7 +26,7 @@ import logging
 # import sys
 # import time
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 from fprime_ac.generators.visitors import AbstractVisitor
 
@@ -70,7 +70,7 @@ class StartSource:
     def accept(self, visitor):
         """
         The operation in Visitor design pattern that takes a visitor as an argument
-        and calls the visitor's method that corresponds to this elememnt.
+        and calls the visitor's method that corresponds to this element.
         @raise Exception: if the given visitor is not a subclass of AbstractVisitor
         """
         # visitor should be extended from the AbstractVisitor class
@@ -86,7 +86,7 @@ class StartSource:
 
     def addVisitor(self, visitor):
         """
-        Add a visitor to the list of vistors.
+        Add a visitor to the list of visitors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
         """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):

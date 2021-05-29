@@ -8,7 +8,7 @@
 # 1. `gcov` must be available on the path
 # 2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
 # 
-# Once the CMake build directory has been created the user can run the CMake targers
+# Once the CMake build directory has been created the user can run the CMake targets
 # `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
 # _coverage targets perform the following steps:
 #
@@ -22,10 +22,10 @@
 # ```
 # make Svc_CmdDispatcher_Cmd
 # ```
-# **Note:** although a globale `coverage` target is created, it typically should not be used as
+# **Note:** although a global `coverage` target is created, it typically should not be used as
 # CTest provides better global coverage with the `Coverage` target.
 #
-# ## Detailed Function Desceiptions
+# ## Detailed Function Descriptions
 # 
 # The following functions are used to register the _coverage targets into the target system. They
 # are required for the system to register custom targets.
@@ -47,20 +47,27 @@ endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
 #
-# Creats each module's coverage targets.
+# Creates each module's coverage targets.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
+# - **GLOBAL_TARGET_NAME:** name of produced global target
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** hand specified dependencies of target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
-    # UTs don't supply directories, non modules don't get coverage
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" OR NOT "${FPRIME_OBJECT_TYPE}" STREQUAL "Library")
+function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+    # Protects against multiple calls to fprime_register_ut()
+    if (TARGET ${TARGET_NAME})
         return()
     endif()
+
+
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
+        return()
+    endif()
+
     # Test for the 'gcov' program or bail with WARNING
     find_program(GCOV_EXE "gcov")
     if (DEFINED GCOV_EXE-NOTFOUND)
@@ -75,10 +82,12 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
             list(APPEND COV_FILES ${SRC_IN})
         endif()
     endforeach()
-    # Check target for this module
-    if (NOT TARGET "${MODULE_NAME}_check")
-	    add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
+
+    # If unit test somehow has no source files, don't register coverage target
+    if(COV_FILES STREQUAL "")
+       return()
     endif()
+
     add_custom_target(
         ${TARGET_NAME}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
@@ -86,4 +95,5 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
         COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
     )
     add_dependencies(${TARGET_NAME} ${MODULE_NAME}_check)
+    add_dependencies(${GLOBAL_TARGET_NAME} ${TARGET_NAME})
 endfunction(add_module_target)

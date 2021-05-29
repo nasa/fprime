@@ -1,4 +1,0 @@
-# Comment only if first character
-$(MSL_ROOT)/ptf/tests/framework_tests/Delay10sec.py # A comment
-$(MSL_ROOT)/ptf/tests/framework_tests/ReturnStatus0.py # another comment
-$(MSL_ROOT)/ptf/tests/framework_tests/ReturnStatus4.py # some more comments

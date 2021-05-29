@@ -18,7 +18,7 @@
 #
 # ### `add_module_target` Specification:
 #
-# Adds a module-by-module target for this given target. Any subtargets for each module and thier
+# Adds a module-by-module target for this given target. Any subtargets for each module and their
 # commands should be registered via CMake's `add_custom_target("${TARGET_NAME}" ...)`. This command
 # is supplied with all of the modules knowledge. Add a `DEPENDS` call on AC_OUTPUTS to come after
 # the autocoding step.
@@ -92,13 +92,13 @@ function(setup_module_target MODULE_NAME TARGET_FILE_PATH AC_INPUTS SOURCE_FILES
 	# Include the file and look for definitions
     include("${TARGET_FILE_PATH}")
     get_target_name("${TARGET_FILE_PATH}")
-    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
+    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
 endfunction(setup_module_target)
 
 ####
 # Function `setup_all_module_targets`:
 #
-# Takes all registerd targets and sets up the module specific target from them. The list of targets
+# Takes all registered targets and sets up the module specific target from them. The list of targets
 # is read from the CACHE variable FPRIME_TARGET_LIST.
 #
 # - **MODULE_NAME:** name of the module
@@ -107,15 +107,12 @@ endfunction(setup_module_target)
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** module dependencies of the target
 ####
-function(setup_all_module_targets MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
-    foreach(ITEM ${FPRIME_TARGET_LIST})
+function(setup_all_module_targets TARGET_LIST MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+    foreach(ITEM ${${TARGET_LIST}})
         setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
-        get_target_name("${ITEM}")
-        if (TARGET "${MODULE_NAME}_${TARGET_NAME}" AND TARGET "${TARGET_NAME}")
-            add_dependencies("${TARGET_NAME}" "${MODULE_NAME}_${TARGET_NAME}")
-        endif()
-    endforeach(ITEM ${FPRIME_TARGET_LIST})
+    endforeach(ITEM ${${TARGET_LIST}})
 endfunction(setup_all_module_targets)
+
 #### Documentation links
 # See Also:
 #  - API: [API](../API.md) describes the `register_fprime_target` function

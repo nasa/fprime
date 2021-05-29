@@ -17,7 +17,7 @@ namespace Fw {
             virtual ~TrapHandler() {}; //!< destructor
             /**
              * Handles the incoming trap.
-             * Note: if user does not supply an implemeter of this
+             * Note: if user does not supply an implementer of this
              *       function, a do-nothing version will be run.
              * \param U32 trap: trap number
              */

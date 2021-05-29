@@ -1,3 +1,0 @@
-FPRIME_FRAMEWORK_PATH:PATH=/home/user11/Proj/fprime
-FPRIME_PROJECT_ROOT:PATH=/home/user11/Proj
-FPRIME_LIBRARY_LOCATIONS:PATH=/home/user11/Proj/lib1;/home/user11/Proj/lib2

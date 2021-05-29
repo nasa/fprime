@@ -150,44 +150,6 @@ TEST(ActiveLoggerTest,FatalTesting) {
 
 }
 
-TEST(ActiveLoggerTest,CircularBufferDump) {
-
-    TEST_CASE(100.1.3,"File dump of event circular buffers");
-
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
-
-    impl.init(10,0);
-
-    Svc::ActiveLoggerImplTester tester(impl);
-
-    tester.init();
-
-    // connect ports
-    connectPorts(impl,tester);
-
-    tester.runFileDump();
-
-}
-
-TEST(ActiveLoggerTest,CircularBufferDumpWithErrors) {
-
-    TEST_CASE(100.2.3,"File dump of event circular buffers with errors");
-
-    Svc::ActiveLoggerImpl impl("ActiveLoggerImpl");
-
-    impl.init(10,0);
-
-    Svc::ActiveLoggerImplTester tester(impl);
-
-    tester.init();
-
-    // connect ports
-    connectPorts(impl,tester);
-
-    tester.runFileDumpErrors();
-
-}
-
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

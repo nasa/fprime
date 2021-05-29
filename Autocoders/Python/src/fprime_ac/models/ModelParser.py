@@ -144,7 +144,7 @@ class ModelParser:
             return arg_type
         elif arg_type == "Serial":
             return arg_type
-        # Type already has specific namespace preffixed
+        # Type already has specific namespace prefixed
         elif "::" in arg_type:
             return arg_type
         else:
@@ -198,7 +198,7 @@ class ModelParser:
                 m = a.get_modifier()
                 e = None
                 #
-                # Store modifier as language symblol
+                # Store modifier as language symbol
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":
@@ -581,7 +581,6 @@ class ModelParser:
                 if isinstance(t, tuple):
                     if t[0][0].upper() == "ENUM":
                         t = t[0][1]
-                        typeinfo = "enum"
                     else:
                         print("ERROR: Expected ENUM type in event args list...")
                         sys.exit(-1)

@@ -30,7 +30,7 @@ namespace Drv {
     SocketIpDriverComponentImpl(
         const char *const compName
     ) : SocketIpDriverComponentBase(compName),
-        m_buffer(0xbeef, 0xbeef, reinterpret_cast<U64>(m_backing_data), sizeof(m_buffer)),
+        m_buffer(m_backing_data, sizeof(m_buffer)),
         m_stop(false)
   { }
 
@@ -71,7 +71,7 @@ namespace Drv {
 
           // If the network connection is open, read from it
           if (self->m_helper.isOpened()) {
-              BYTE* data = reinterpret_cast<U8*>(self->m_buffer.getdata());
+              U8* data = self->m_buffer.getData();
               FW_ASSERT(data);
               I32 size = 0;
               status = self->m_helper.recv(data,size);
@@ -82,7 +82,7 @@ namespace Drv {
                   // Ignore KEEPALIVE data and send out any other data.
                   if (memcmp(data, KEEPALIVE_CONST,
                          (size > static_cast<I32>(sizeof(KEEPALIVE_CONST)) - 1) ? sizeof(KEEPALIVE_CONST) -1 : size) != 0) {
-                      self->m_buffer.setsize(size);
+                      self->m_buffer.setSize(size);
                       self->recv_out(0, self->m_buffer);
                   }
               }
@@ -137,8 +137,8 @@ namespace Drv {
         Fw::Buffer &fwBuffer
     )
   {
-      U32 size = fwBuffer.getsize();
-      BYTE* data = reinterpret_cast<BYTE*>(fwBuffer.getdata());
+      U32 size = fwBuffer.getSize();
+      U8* data = fwBuffer.getData();
       FW_ASSERT(data);
       this->m_helper.send(data,size);
   }

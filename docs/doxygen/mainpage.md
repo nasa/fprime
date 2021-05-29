@@ -42,7 +42,7 @@ F´. This includes things like Mutexes, Queues, Tasks, and a File System.
 \subpage OsQueue
 
 
-\page Svc Svc Compontents Ports and Classes
+\page Svc Svc Components Ports and Classes
 
 The Svc package provides standard components to support greater F´ applications. This includes
 command and data handling components used for more complete applications.
@@ -113,7 +113,7 @@ functions.
 \page Utils Utils Classes
 
 The Utils package provides classes for general applications in F´ projects. These classes are for
-a varity of purposes.
+a variety of purposes.
 
 \subpage UtilsHashClass
 

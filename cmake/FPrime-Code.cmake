@@ -10,7 +10,7 @@
 # Libraries that make-up F prime. Hurray!
 # Ignore GTest for non-test builds
 if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
-    add_subdirectory("${FPRIME_FRAMEWORK_PATH}/gtest/" "${CMAKE_BINARY_DIR}/F-Prime/gtest")
+    include("${FPRIME_FRAMEWORK_PATH}/cmake/googletest-download/googletest.cmake")
     add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
 endif()
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Autocoders/" "${CMAKE_BINARY_DIR}/F-Prime/Autocoders")

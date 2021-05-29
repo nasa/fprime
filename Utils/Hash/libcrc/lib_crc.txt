@@ -33,10 +33,10 @@
       one's complement of the obtained CRC value.
 
    4. Only for CRC-DNP: After all input processing, the one's complement
-      of the CRC is calcluated and the two bytes of the CRC are swapped.
+      of the CRC is calculated and the two bytes of the CRC are swapped.
 
    5. Only for CRC-Kermit and CRC-SICK: After all input processing, the
-      one's complement of the CRC is calcluated and the two bytes of the CRC
+      one's complement of the CRC is calculated and the two bytes of the CRC
       are swapped.
 
 

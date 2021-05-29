@@ -63,8 +63,8 @@ namespace Svc {
     )
   {
     if (m_state == LOGGING_ON) {
-      const U8 *const addr = reinterpret_cast<U8*>(fwBuffer.getdata());
-      const U32 size = fwBuffer.getsize();
+      const U8 *const addr = fwBuffer.getData();
+      const U32 size = fwBuffer.getSize();
       m_file.logBuffer(addr, size);
     }
     this->bufferSendOut_out(0, fwBuffer);

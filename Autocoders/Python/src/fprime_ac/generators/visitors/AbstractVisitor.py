@@ -23,7 +23,7 @@ from fprime_ac.utils.buildroot import (
 )
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -65,7 +65,7 @@ class AbstractVisitor:
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.initFilesVisit() - Implementation Error: you must supply your own concrete implementation."
@@ -83,7 +83,7 @@ class AbstractVisitor:
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Port types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.includesVisit1() - Implementation Error: you must supply your own concrete implementation."
@@ -93,7 +93,7 @@ class AbstractVisitor:
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.includesVisit2() - Implementation Error: you must supply your own concrete implementation."
@@ -103,7 +103,7 @@ class AbstractVisitor:
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.namespaceVisit() - Implementation Error: you must supply your own concrete implementation."
@@ -112,7 +112,7 @@ class AbstractVisitor:
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.publicVisit() - Implementation Error: you must supply your own concrete implementation."
@@ -121,7 +121,7 @@ class AbstractVisitor:
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.protectedVisit() - Implementation Error: you must supply your own concrete implementation."
@@ -130,7 +130,7 @@ class AbstractVisitor:
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractVisitor.privateVisit() - Implementation Error: you must supply your own concrete implementation."

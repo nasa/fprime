@@ -95,8 +95,8 @@ namespace Svc {
       U8 fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U8 hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U32 byteCount;
-      bool writeErrorOccured;
-      bool openErrorOccured;
+      bool writeErrorOccurred;
+      bool openErrorOccurred;
       bool storeBufferLength;
       
       // ----------------------------------------------------------------------

@@ -1,6 +1,0 @@
-
-run - run native deployment
-
-isf_dict_install - install ISF dictionaries (for new instanced dictionaries only moves serializables)
-isf_dict_clean   - clean ISF Gse/generated deployment dictionaries
-
