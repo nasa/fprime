@@ -1,5 +1,5 @@
 /*
-* \author Tim Canham
+* \author L.H.N
 * \file
 * \brief
 *
@@ -13,21 +13,21 @@
 *
 */
 
-#include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-#include <Fw/Obj/SimpleObjRegistry.hpp>
+ <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
+ <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+ <Fw/Obj/SimpleObjRegistry.hpp>
 
-#include <gtest/gtest.h>
+ <gtest/gtest.h>
 
-#if FW_OBJECT_REGISTRATION == 1
-static Fw::SimpleObjRegistry simpleReg;
-#endif
+ FW_OBJECT_REGISTRATION == 1
+ Fw::SimpleObjRegistry simpleReg;
 
-void connectPorts(Svc::ActiveRateGroupImpl& impl, Svc::ActiveRateGroupImplTester& tester) {
+
+ connectPorts(Svc::ActiveRateGroupImpl& impl, Svc::ActiveRateGroupImplTester& tester) {
 
     tester.connect_to_CycleIn(0,impl.get_CycleIn_InputPort(0));
 
-    for (NATIVE_INT_TYPE portNum = 0; portNum < (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+     (NATIVE_INT_TYPE portNum = 0; portNum < (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(impl.m_RateGroupMemberOut_OutputPort); portNum++) {
         impl.set_RateGroupMemberOut_OutputPort(portNum,tester.get_from_RateGroupMemberOut(portNum));
     }
 
@@ -40,19 +40,19 @@ void connectPorts(Svc::ActiveRateGroupImpl& impl, Svc::ActiveRateGroupImplTester
     impl.set_PingOut_OutputPort(0,tester.get_from_PingOut(0));
     tester.connect_to_PingIn(0,impl.get_PingIn_InputPort(0));
 
-#if FW_PORT_TRACING
+FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
-#endif
+
 
     // simpleReg.dump();
 }
 
 TEST(ActiveRateGroupTest,NominalSchedule) {
 
-    for (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
+     (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
 
         NATIVE_UINT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
-        for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
+         (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
             contexts[i] = i + 1;
         }
 
@@ -74,10 +74,10 @@ TEST(ActiveRateGroupTest,NominalSchedule) {
 
 TEST(ActiveRateGroupTest,CycleOverrun) {
 
-    for (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
+     (NATIVE_INT_TYPE inst = 0; inst < 3; inst++) {
 
         NATIVE_UINT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
-        for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
+         (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
             contexts[i] = i + 1;
         }
 
@@ -99,7 +99,7 @@ TEST(ActiveRateGroupTest,CycleOverrun) {
 TEST(ActiveRateGroupTest,PingPort) {
 
     NATIVE_UINT_TYPE contexts[Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];
-    for (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
+     (U32 i = 0; i < Svc::ActiveRateGroupComponentBase::NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
         contexts[i] = i + 1;
     }
 
