@@ -113,9 +113,9 @@ TEST(ActiveRateGroupTest,PingPort) {
     tester.runPingTest();
 }
 
-int main(int argc, char* argv[]) {
+ main(argc, argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+     RUN_ALL_TESTS();
 }
 
 
