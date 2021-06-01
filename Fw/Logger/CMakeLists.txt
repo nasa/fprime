@@ -11,7 +11,6 @@ set(MOD_DEPS
 )
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Logger.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LogAssert.cpp"
 )
 register_fprime_module()
 
