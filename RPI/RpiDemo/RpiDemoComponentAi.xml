@@ -5,7 +5,6 @@
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
-<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="RpiDemo" kind="active" namespace="Rpi">
     <import_port_type>Drv/SpiDriverPorts/SpiReadWritePortAi.xml</import_port_type>
     <import_port_type>Drv/SerialDriverPorts/SerialReadPortAi.xml</import_port_type>

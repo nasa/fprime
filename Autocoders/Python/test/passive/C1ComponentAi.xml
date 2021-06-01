@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <component name="C1" kind="active" namespace="Passive">
     <import_port_type>VoidInterfaceAi.xml</import_port_type>
     <import_port_type>Msg1InterfaceAi.xml</import_port_type>
