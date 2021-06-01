@@ -87,7 +87,6 @@ invoke other components to send data buffers, events, telemetry, etc.
 The `GpsComponentAi.xml` file in the `Gps` subdirectory should look like:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <!-- GPS Tutorial: GpsComponentAi.xml
 
 This is the design of GPS component. The goal is to read GPS messages from a UART port, and produce Events, and
@@ -170,7 +169,6 @@ command will trigger code to emit an event, which will report if the GPS has "lo
 the `Gps` subdirectory should look like the following:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <!-- GPS Tutorial: GpsApp/Gps/Commands.xml
 
 This defines a single command to report the lock status of the GPS. This demonstrates a simple command that is useful
@@ -196,7 +194,6 @@ events, GPS locked and GPS lock lost. The `Events.xml` file in the `Gps` subdire
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <!-- GPS Tutorial: GpsApp/Gps/Events.xml
 
 This defines two events, one at activity hi level to report that lock has been acquired, and one at warning hi level to
@@ -222,7 +219,6 @@ GPS units and are the heart of our application. Our `Telemetry.xml` file in the 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <!-- GPS Tutorial: GpsApp/Gps/Telemetry.xml
 
 This defines four telemetry channels to report basic GPS information.

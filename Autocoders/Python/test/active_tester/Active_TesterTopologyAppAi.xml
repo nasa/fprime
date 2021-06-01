@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <assembly name = "Active_Tester">
 	<import_component_type>Autocoders/Python/test/active_tester/Simple_ActiveComponentAi.xml</import_component_type>
 	<import_component_type>Autocoders/Python/test/active_tester/Simple_Active_TesterComponentAi.xml</import_component_type>

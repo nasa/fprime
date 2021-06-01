@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../../Autocoders/Python/schema/ISF_Type_Schema.rnc" type="compact"?>
 <serializable namespace="Example" name="ArrSerial">
     <import_array_type>Autocoders/Python/test/array_xml/InternalTypeArrayAi.xml</import_array_type>
     <import_array_type>Autocoders/Python/test/array_xml/StringArrayArrayAi.xml</import_array_type>
