@@ -32,7 +32,7 @@ namespace Svc {
         public:
             //!  \brief PolyDbImpl constructor
             //!
-            //!  The constructor initializes the database to "MEASUREMENT_STALE."
+            //!  The constructor initializes the database to "MeasurementStatus::STALE."
             //!  All values retrieved will have this status until the first
             //!  update is received.
             //!
@@ -85,7 +85,7 @@ namespace Svc {
             //! \brief PolyDb database structure
             //!
             //! This structure stores the latest values of the measurements.
-            //! The statuses are all initialized to MEASUREMENT_STALE by the constructor.
+            //! The statuses are all initialized to MeasurementStatus::STALE by the constructor.
             //!
 
             struct t_dbStruct {

@@ -1,9 +1,9 @@
 module Svc {
 
   enum MeasurementStatus {
-    MEASUREMENT_OK = 0 @< Measurement was good
-    MEASUREMENT_FAILURE = 1 @< Failure to retrieve measurement
-    MEASUREMENT_STALE = 2 @< Measurement is stale
+    VALID = 0 @< Measurement was good
+    FAILURE = 1 @< Failure to retrieve measurement
+    STALE = 2 @< Measurement is stale
   }
 
   @ Port for setting and getting PolyType values
