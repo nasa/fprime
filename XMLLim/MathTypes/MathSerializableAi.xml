@@ -1,0 +1,16 @@
+<serializable namespace="XMLLim" name="MathOp">
+    <comment>
+    This value holds the values of a math operation
+    </comment>
+    <members>
+        <member name="val3" type="F32"/>
+        <member name="op" type="ENUM">
+            <enum name="Operation">
+                <item name="ADD"/>
+                <item name="SUB"/>
+                <item name="MULT"/>           
+                <item name="DIVIDE"/>           
+            </enum>
+        </member>
+    </members>
+</serializable>

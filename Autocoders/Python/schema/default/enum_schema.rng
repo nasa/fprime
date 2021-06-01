@@ -29,6 +29,14 @@
                 </attribute>
             </optional>
 
+            <optional>
+                <attribute name = "default">
+                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
             <!-- Elements -->
             <interleave>
                 <optional>
