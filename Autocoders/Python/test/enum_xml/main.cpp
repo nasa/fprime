@@ -179,6 +179,13 @@ TEST(EnumXML, OK) {
     Example::Enum1 enum3;
     Example::Serial1 serial1;
 
+    // Explicitly set enum1 to the default value
+    enum1 = 21;
+
+    // Check that other enums were initialized to default value
+    ASSERT_EQ(enum1, enum2);
+    ASSERT_EQ(enum1, enum3);
+
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;
 
