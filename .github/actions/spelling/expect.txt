@@ -1086,6 +1086,7 @@ noncomma
 nondetached
 NONINFRINGEMENT
 Nop
+noreturn
 normalwidths
 normpath
 NOSEQUENCEACTIVE
