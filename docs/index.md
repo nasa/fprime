@@ -3,7 +3,7 @@ title: "F´ A Flight Software and Embedded Systems Framework"
 layout: default
 ---
 
-F´ is a software framework for the rapid development and deployment of embedded systems and spaceflight applications.
+F´ (or F Prime) is a software framework for the rapid development and deployment of embedded systems and spaceflight applications.
 Originally developed at NASA's Jet Propulsion Laboratory, F´ is open-source software that has been successfully deployed
 for several space applications. It has been used for but is not limited to, CubeSats, SmallSats, instruments, and
 deployable.
@@ -50,9 +50,7 @@ virtual environment), and building one of our reference applications. For full i
 
 ```
 git clone https://github.com/nasa/fprime.git
-cd fprime
-pip install --upgrade wheel setuptools pip
-pip install Fw/Python Gds/
+pip install --upgrade fprime-tools fprime-gds
 ```
 
 **Build the Ref Application**

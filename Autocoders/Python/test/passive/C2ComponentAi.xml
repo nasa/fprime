@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="C2" kind="passive" namespace="Passive">
     <import_port_type>VoidInterfaceAi.xml</import_port_type>
     <import_port_type>Msg1InterfaceAi.xml</import_port_type>

@@ -82,3 +82,6 @@ xml
 depend
 
 .*
+
+/.idea/
+/venv/

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="GroundInterface" kind="passive" namespace="Svc" modeler="true">
     <import_port_type>Fw/Buffer/BufferSendPortAi.xml</import_port_type>

@@ -5,37 +5,20 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-
-
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplStub.cpp"
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
-	)
+if(NOT DEFINED FPRIME_USE_STUBBED_DRIVERS OR FPRIME_USE_STUBBED_DRIVERS)
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplStub.cpp"
+    )
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
+    )
 else()
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
-	)
+    message(FATAL_ERROR "Cannot use ${CMAKE_CURRENT_LIST_DIR} with platform ${CMAKE_SYSTEM_NAME}. Consider using -DFPRIME_USE_STUBBED_DRIVERS=ON")
 endif()
 
 register_fprime_module()

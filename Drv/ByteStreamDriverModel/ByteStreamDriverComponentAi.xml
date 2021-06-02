@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="ByteStreamDriverModel" kind="passive" namespace="Drv" modeler="true">
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
