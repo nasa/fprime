@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="CommandTester" kind="passive" namespace="Cmd">
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>

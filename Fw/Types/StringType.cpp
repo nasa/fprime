@@ -109,7 +109,10 @@ namespace Fw {
         const U32 length = this->length();
         FW_ASSERT(capacity > length, capacity, length);
         // Subtract 1 to leave space for null terminator
-        const U32 remaining = capacity - length - 1;
+        U32 remaining = capacity - length - 1;
+        if(size < remaining) {
+            remaining = size;
+        }
         FW_ASSERT(remaining < capacity, remaining, capacity);
         (void) strncat((char*) this->toChar(), buff, remaining);
     }

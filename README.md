@@ -30,9 +30,7 @@ To install F´ quickly, enter:
 
 ```
 git clone https://github.com/nasa/fprime.git
-cd fprime
-pip install --upgrade wheel setuptools pip
-pip install Fw/Python Gds/
+pip install --upgrade fprime-tools fprime-gds
 ```
 
 For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md). 

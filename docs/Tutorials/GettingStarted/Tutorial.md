@@ -93,7 +93,7 @@ In order to run CMake, a build cache needs to be generated.  This is typically d
 to compile against. It is usually done right after F´ is checked-out and repeated for each platform as they are added. It
 is a setup step and isn't formally part of the F´ development process.
 
-To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
+To run this tool, the developer will use the `generate` subcommand.  It takes one optional argument: the toolchain file
 used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
 setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 

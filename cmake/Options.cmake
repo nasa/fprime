@@ -18,6 +18,34 @@
 ####
 
 ####
+# `FPRIME_USE_STUBBED_DRIVERS:`
+#
+# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
+# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to used full driver implementations.
+###
+if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
+endif()
+
+####
+# `FPRIME_USE_BAREMETAL_SCHEDULER:`
+#
+# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
+# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
+# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the scheduler or OFF to use the OS thread scheduler.
+###
+if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
+endif()
+
+
+####
 # `CMAKE_DEBUG_OUTPUT:`
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
@@ -47,7 +75,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 
 # Set build type, when it hasn't been set
-if(NOT CMAKE_BUILD_TYPE) 
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)
 else()
     string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
@@ -183,13 +211,15 @@ endif()
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
     set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
 endif()
+
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
+set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
 # Settings for F artifacts installation destination
 if (NOT DEFINED FPRIME_INSTALL_DEST)
-    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/" CACHE PATH "F prime artifacts installation directory" FORCE)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/")
 endif()
-set(IGNORE_ME ${FPRIME_INSTALL_DEST}) # Prevent warning that FPRIME_INSTALL_DEST is unused
+set(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)

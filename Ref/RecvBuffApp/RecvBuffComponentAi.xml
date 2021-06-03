@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="RecvBuff" kind="passive" namespace="Ref">
     <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
     <import_serializable_type>Ref/RecvBuffApp/PacketStatSerializableAi.xml</import_serializable_type>
