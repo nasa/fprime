@@ -1,7 +1,7 @@
 module Svc {
 
   enum MeasurementStatus {
-    VALID = 0 @< Measurement was good
+    OK = 0 @< Measurement was good
     FAILURE = 1 @< Failure to retrieve measurement
     STALE = 2 @< Measurement is stale
   }

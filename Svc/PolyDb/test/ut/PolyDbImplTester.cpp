@@ -53,7 +53,7 @@ namespace Svc {
         bool r004Emitted = false;
 
         // read and write normal values for each entry in the database with each status type
-        for (MeasurementStatus::t mstatValue = MeasurementStatus::VALID; mstatValue <= MeasurementStatus::STALE;) {
+        for (MeasurementStatus::t mstatValue = MeasurementStatus::OK; mstatValue <= MeasurementStatus::STALE;) {
             MeasurementStatus mstat(mstatValue);
             for (U32 entry = 0; entry < POLYDB_NUM_DB_ENTRIES; entry++) {
                 if (not r001Emitted) {
