@@ -1,4 +1,4 @@
-## Installing the linter through fprime-extras
+# Installing the linter through fprime-extras
 
 The fprime-extras package includes a linter to assist with development of fprime applications.
 
