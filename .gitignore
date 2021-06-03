@@ -78,5 +78,3 @@ GTestBase.*
 **/DefaultDict/serializable/*
 /.idea/
 /venv/
-
-XMLLim/

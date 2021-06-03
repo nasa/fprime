@@ -1,0 +1,4 @@
+#!/bin/bash
+fprime-util purge
+fprime-util generate
+fprime-util build

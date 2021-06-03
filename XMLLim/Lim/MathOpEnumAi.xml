@@ -1,0 +1,6 @@
+<enum name="MathOp" namespace="XMLLim" default="ADD">
+    <item name="ADD" value="0" />
+    <item name="SUB" value="1"/>
+    <item name="MULT" value="2"/>           
+    <item name="DIVIDE" value="3"/>           
+</enum>
