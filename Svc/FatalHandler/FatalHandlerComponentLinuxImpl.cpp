@@ -28,8 +28,8 @@ namespace Svc {
         // for **nix, delay then exit with error code
         Fw::Logger::logMsg("FATAL %d handled.\n",(U32)Id,0,0,0,0,0);
         (void)Os::Task::delay(1000);
-        Fw::Logger::logMsg("Exiting with abort.\n",0,0,0,0,0,0);
-        (void)raise( SIGABRT );
+        Fw::Logger::logMsg("Exiting with segfault and core dump file.\n",0,0,0,0,0,0);
+        (void)raise( SIGSEGV );
         exit(1);
     }
 
