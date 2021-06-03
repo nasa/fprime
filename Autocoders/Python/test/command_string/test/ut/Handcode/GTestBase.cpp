@@ -70,7 +70,7 @@ namespace AcTest {
         const U32 __index,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
     const
   {

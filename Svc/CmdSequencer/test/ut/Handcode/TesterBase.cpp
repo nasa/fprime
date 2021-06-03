@@ -677,7 +677,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FW_ASSERT(portNum < this->getNum_to_cmdResponseIn(),static_cast<AssertArg>(portNum));
@@ -864,7 +864,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FW_ASSERT(callComp);
@@ -882,7 +882,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     CmdSequencerTesterBase* _testerBase =
@@ -1012,7 +1012,7 @@ namespace Svc {
     pushFromPortEntry_seqDone(
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FromPortEntry_seqDone _e = {
@@ -1058,7 +1058,7 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FW_ASSERT(portNum < this->getNum_from_seqDone(),static_cast<AssertArg>(portNum));
@@ -1076,7 +1076,7 @@ namespace Svc {
     cmdResponseIn(
         const FwOpcodeType opCode,
         const U32 seq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     CmdResponse e = { opCode, seq, response };

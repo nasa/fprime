@@ -81,7 +81,7 @@ namespace Svc {
         ASSERT_from_comCmdOut_SIZE(1);
         ASSERT_from_comCmdOut(0, comBuff, 0U);
         // Send status back
-        this->invoke_to_cmdResponseIn(0, i, 0, Fw::CommandResponse::OK);
+        this->invoke_to_cmdResponseIn(0, i, 0, Fw::CmdResponse::OK);
         this->clearAndDispatch();
         if (i < numCommands - 1) {
           // Assert events
@@ -112,7 +112,7 @@ namespace Svc {
           );
           // Assert command complete on seqDone
           ASSERT_from_seqDone_SIZE(1);
-          ASSERT_from_seqDone(0, 0U, 0U, Fw::CommandResponse(Fw::CommandResponse::OK));
+          ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
         }
         // No port call
         ASSERT_from_comCmdOut_SIZE(0);

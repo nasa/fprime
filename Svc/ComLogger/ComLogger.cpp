@@ -124,7 +124,7 @@ namespace Svc {
     )
   {
     this->closeFile();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   void ComLogger ::

@@ -102,7 +102,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::OK
+                Fw::CmdResponse::OK
                 );
 
         this->m_receivedPacket = false;
@@ -147,7 +147,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::OK
+                Fw::CmdResponse::OK
                 );
 
         this->m_receivedPacket = false;
@@ -170,7 +170,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
         this->clearHistory();
@@ -181,7 +181,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
         this->clearHistory();
@@ -192,7 +192,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
         this->clearHistory();
@@ -203,7 +203,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
     }
@@ -235,7 +235,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::CommandResponse::OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
@@ -251,7 +251,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::CommandResponse::OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
@@ -312,7 +312,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::EXECUTION_ERROR
+                Fw::CmdResponse::EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_ID_FILTER_LIST_FULL_SIZE(1);
@@ -331,7 +331,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::CommandResponse::OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_REMOVED_SIZE(1);
@@ -350,7 +350,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::EXECUTION_ERROR
+                Fw::CmdResponse::EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_ID_FILTER_NOT_FOUND_SIZE(1);
@@ -367,7 +367,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
         ASSERT_EVENTS_SIZE(0);
 
@@ -408,7 +408,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_DUMP_FILTER_STATE,
                 cmdSeq,
-                Fw::CommandResponse::OK
+                Fw::CmdResponse::OK
                 );
         ASSERT_EVENTS_SIZE(6+3);
         ASSERT_EVENTS_SEVERITY_FILTER_STATE_SIZE(6);
@@ -477,7 +477,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CommandResponse::OK
+                Fw::CmdResponse::OK
                 );
 
 

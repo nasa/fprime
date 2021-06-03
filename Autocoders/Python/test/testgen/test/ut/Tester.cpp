@@ -65,7 +65,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CommandResponse::OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -119,7 +119,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CommandResponse::OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -173,7 +173,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CommandResponse::OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -227,7 +227,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CommandResponse::OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();

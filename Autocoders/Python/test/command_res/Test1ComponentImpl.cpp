@@ -76,7 +76,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   void Test1ComponentImpl ::
@@ -88,7 +88,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Cmd

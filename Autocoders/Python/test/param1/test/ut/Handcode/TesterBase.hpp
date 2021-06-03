@@ -300,7 +300,7 @@ namespace Prm {
       virtual void cmdResponseIn(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          const Fw::CommandResponse response /*!< The command response*/
+          const Fw::CmdResponse response /*!< The command response*/
       );
 
       //! A type representing a command response
@@ -308,7 +308,7 @@ namespace Prm {
       typedef struct {
         FwOpcodeType opCode;
         U32 cmdSeq;
-        Fw::CommandResponse response;
+        Fw::CmdResponse response;
       } CmdResponse;
 
       //! The command response history
@@ -393,7 +393,7 @@ namespace Prm {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
       //! Static function for port from_ParamGet

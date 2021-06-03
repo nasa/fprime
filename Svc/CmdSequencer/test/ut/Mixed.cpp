@@ -90,7 +90,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CommandResponse::OK);
+      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -114,7 +114,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 2, 0, Fw::CommandResponse::OK);
+      this->invoke_to_cmdResponseIn(0, 2, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -149,7 +149,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 4, 0, Fw::CommandResponse::OK);
+      this->invoke_to_cmdResponseIn(0, 4, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -178,7 +178,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 6, 0, Fw::CommandResponse::OK);
+      this->invoke_to_cmdResponseIn(0, 6, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert that timer is clear - no scheduled command
       ASSERT_EQ(
@@ -195,7 +195,7 @@ namespace Svc {
       ASSERT_TLM_CS_CommandsExecuted(0, 4);
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::CommandResponse(Fw::CommandResponse::OK));
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
       // Run a cycle. Should be no output
       this->invoke_to_schedIn(0, 0);
       this->clearAndDispatch();

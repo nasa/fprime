@@ -70,7 +70,7 @@ namespace ExampleComponents {
         const U32 index,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
     const
   {

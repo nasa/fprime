@@ -13,8 +13,8 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdPacket.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CmdPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CmdRegPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/CmdResponseEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CmdResponsePortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CmdString.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CommandResponseEnumAi.xml"
 )
 register_fprime_module()

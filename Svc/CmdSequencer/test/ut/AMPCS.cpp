@@ -50,7 +50,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::CommandResponse::EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       Fw::EightyCharString crcFileName(fileName);
@@ -79,7 +79,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::CommandResponse::EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);

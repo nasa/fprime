@@ -106,7 +106,7 @@ namespace Components {
           const U32 __index, /*!< The index*/
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          const Fw::CommandResponse response /*!< The command response*/
+          const Fw::CmdResponse response /*!< The command response*/
       ) const;
 
     protected:

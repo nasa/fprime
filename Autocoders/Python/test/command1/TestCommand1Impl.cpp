@@ -31,5 +31,5 @@ void TestCommand1Impl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5
 
 void TestCommand1Impl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2, U8 arg3) {
 	printf("Got command args: %d %f %d\n", arg1, arg2, arg3 );
-	this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+	this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }

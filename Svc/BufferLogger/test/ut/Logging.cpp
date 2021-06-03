@@ -42,7 +42,7 @@ namespace Svc {
                 i,
                 BufferLogger::OPCODE_BL_CLOSEFILE,
                 i,
-                Fw::CommandResponse::OK
+                Fw::CmdResponse::OK
             );
           }
 
@@ -234,7 +234,7 @@ namespace Svc {
               0,
               BufferLogger::OPCODE_BL_SETLOGGING,
               0,
-              Fw::CommandResponse::OK
+              Fw::CmdResponse::OK
           );
         }
 

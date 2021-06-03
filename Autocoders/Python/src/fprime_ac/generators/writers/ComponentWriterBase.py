@@ -279,7 +279,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.param_opCode = ("opCode", "const FwOpcodeType", "The opcode")
         c.param_response = (
             "response",
-            "const Fw::CommandResponse",
+            "const Fw::CmdResponse",
             "The command response",
         )
 

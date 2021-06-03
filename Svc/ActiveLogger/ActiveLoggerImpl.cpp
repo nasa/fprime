@@ -126,11 +126,11 @@ namespace Svc {
               (FilterLevel < FILTER_WARNING_HI) or
               (FilterEnable < FILTER_ENABLED) or
               (FilterEnable > FILTER_DISABLED)) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
         this->m_filterState[FilterLevel].enabled = FilterEnable;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void ActiveLoggerImpl::SET_ID_FILTER_cmdHandler(
@@ -146,7 +146,7 @@ namespace Svc {
             case ID_DISABLED:
                 break;
             default:
-                this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::VALIDATION_ERROR);
+                this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
                 return;
         }
 
@@ -154,7 +154,7 @@ namespace Svc {
             // search list for existing entry
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
                     this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
                     return;
                 }
@@ -163,27 +163,27 @@ namespace Svc {
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == 0) {
                     this->m_filteredIDs[entry] = ID;
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
                     this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
                     return;
                 }
             }
             // if an empty slot was not found, send an error event
             this->log_WARNING_LO_ID_FILTER_LIST_FULL(ID);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         } else { // remove ID
             // search list for existing entry
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
                     this->m_filteredIDs[entry] = 0; // zero entry
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
                     this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
                     return;
                 }
             }
             // if it gets here, wasn't found
             this->log_WARNING_LO_ID_FILTER_NOT_FOUND(ID);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         }
 
     }
@@ -208,7 +208,7 @@ namespace Svc {
             }
         }
 
-        this->cmdResponse_out(opCode,cmdSeq,Fw::CommandResponse::OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void ActiveLoggerImpl::pingIn_handler(

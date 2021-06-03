@@ -507,7 +507,7 @@ namespace Svc {
           i,
           ComLogger::OPCODE_CLOSEFILE,
           i+1,
-          Fw::CommandResponse::OK
+          Fw::CmdResponse::OK
       );
     }
     
@@ -535,7 +535,7 @@ namespace Svc {
           i,
           ComLogger::OPCODE_CLOSEFILE,
           i+1,
-          Fw::CommandResponse::OK
+          Fw::CmdResponse::OK
       );
     }
 

@@ -190,7 +190,7 @@ namespace Cmd {
         const NATIVE_INT_TYPE portNum,
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FW_ASSERT(portNum < this->getNum_to_cmdStatusPort(),static_cast<AssertArg>(portNum));

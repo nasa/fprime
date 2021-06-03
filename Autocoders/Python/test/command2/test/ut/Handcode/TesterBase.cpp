@@ -259,7 +259,7 @@ namespace AcTest {
         const NATIVE_INT_TYPE portNum,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     TestCommandTesterBase* _testerBase =
@@ -285,7 +285,7 @@ namespace AcTest {
     cmdResponseIn(
         const FwOpcodeType opCode,
         const U32 seq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     CmdResponse e = { opCode, seq, response };

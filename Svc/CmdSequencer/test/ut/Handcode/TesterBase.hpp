@@ -306,7 +306,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       ) = 0;
 
       //! Handler base function for from_seqDone
@@ -315,7 +315,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
     protected:
@@ -370,7 +370,7 @@ namespace Svc {
       void pushFromPortEntry_seqDone(
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
       //! A history entry for from_seqDone
@@ -378,7 +378,7 @@ namespace Svc {
       typedef struct {
         FwOpcodeType opCode;
         U32 cmdSeq;
-        Fw::CommandResponse response;
+        Fw::CmdResponse response;
       } FromPortEntry_seqDone;
 
       //! The history for from_seqDone
@@ -405,7 +405,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
       //! Invoke the to port connected to schedIn
@@ -631,7 +631,7 @@ namespace Svc {
       virtual void cmdResponseIn(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          const Fw::CommandResponse response /*!< The command response*/
+          const Fw::CmdResponse response /*!< The command response*/
       );
 
       //! A type representing a command response
@@ -639,7 +639,7 @@ namespace Svc {
       typedef struct {
         FwOpcodeType opCode;
         U32 cmdSeq;
-        Fw::CommandResponse response;
+        Fw::CmdResponse response;
       } CmdResponse;
 
       //! The command response history
@@ -1540,7 +1540,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
       //! Static function for port from_timeCaller
@@ -1586,7 +1586,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
     private:

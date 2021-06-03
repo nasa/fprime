@@ -15,7 +15,7 @@ module Fw {
           )
 
   @ Enum representing a command response
-  enum CommandResponse {
+  enum CmdResponse {
     OK = 0 @< Command successfully executed
     INVALID_OPCODE = 1 @< Invalid opcode dispatched
     VALIDATION_ERROR = 2 @< Command failed validation
@@ -28,7 +28,7 @@ module Fw {
   port CmdResponse(
                     opCode: FwOpcodeType @< Command Op Code
                     cmdSeq: U32 @< Command Sequence
-                    response: CommandResponse @< The command response argument
+                    response: CmdResponse @< The command response argument
                   )
 
 }

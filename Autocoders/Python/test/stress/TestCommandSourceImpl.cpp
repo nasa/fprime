@@ -22,7 +22,7 @@ TestCommandSourceImpl::~TestCommandSourceImpl() {
 
 void TestCommandSourceImpl::cmdStatusPort_handler(
         NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq,
-        Fw::CommandResponse response) {
+        Fw::CmdResponse response) {
     this->printStatus(response);
 }
 
@@ -34,21 +34,21 @@ void TestCommandSourceImpl::init(void) {
     Cmd::CommandTesterComponentBase::init();
 }
 
-void TestCommandSourceImpl::printStatus(Fw::CommandResponse response) {
+void TestCommandSourceImpl::printStatus(Fw::CmdResponse response) {
     switch (response.e) {
-        case Fw::CommandResponse::OK:
+        case Fw::CmdResponse::OK:
             printf("COMMAND OK\n");
             break;
-        case Fw::CommandResponse::INVALID_OPCODE:
+        case Fw::CmdResponse::INVALID_OPCODE:
             printf("INVALID OPCODE\n");
             break;
-        case Fw::CommandResponse::VALIDATION_ERROR:
+        case Fw::CmdResponse::VALIDATION_ERROR:
             printf("VALIDATION ERROR\n");
             break;
-        case Fw::CommandResponse::FORMAT_ERROR:
+        case Fw::CmdResponse::FORMAT_ERROR:
             printf("FORMAT ERROR\n");
             break;
-        case Fw::CommandResponse::EXECUTION_ERROR:
+        case Fw::CmdResponse::EXECUTION_ERROR:
             printf("EXECUTION ERROR\n");
             break;
         default:

@@ -247,7 +247,7 @@ namespace Cmd {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           FwOpcodeType opCode, /*!< Command Op Code*/
           U32 cmdSeq, /*!< Command Sequence*/
-          Fw::CommandResponse response /*!< The command response argument*/
+          Fw::CmdResponse response /*!< The command response argument*/
       );
 
       //! Invoke the to port connected to cmdRegPort

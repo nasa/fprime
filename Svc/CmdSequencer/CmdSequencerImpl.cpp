@@ -97,13 +97,13 @@ namespace Svc {
             const Fw::CmdStringArg& fileName) {
 
         if (not this->requireRunMode(STOPPED)) {
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
         // load commands
         if (not this->loadFile(fileName)) {
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -115,7 +115,7 @@ namespace Svc {
             this->performCmd_Step();
         }
 
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(
@@ -125,13 +125,13 @@ namespace Svc {
     ) {
 
         if (!this->requireRunMode(STOPPED)) {
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
         // load commands
         if (not this->loadFile(fileName)) {
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -140,7 +140,7 @@ namespace Svc {
 
         this->log_ACTIVITY_HI_CS_SequenceValid(this->m_sequence->getLogFileName());
 
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 
     }
 
@@ -151,7 +151,7 @@ namespace Svc {
        ) {
 
         if (!this->requireRunMode(STOPPED)) {
-            this->seqDone_out(0,0,0,Fw::CommandResponse::EXECUTION_ERROR);
+            this->seqDone_out(0,0,0,Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -161,7 +161,7 @@ namespace Svc {
             Fw::CmdStringArg cmdStr(filename);
             const bool status = this->loadFile(cmdStr);
             if (!status) {
-              this->seqDone_out(0,0,0,Fw::CommandResponse::EXECUTION_ERROR);
+              this->seqDone_out(0,0,0,Fw::CmdResponse::EXECUTION_ERROR);
               return;
             }
         }
@@ -169,7 +169,7 @@ namespace Svc {
             // No sequence loaded
             this->log_WARNING_LO_CS_NoSequenceActive();
             this->error();
-            this->seqDone_out(0,0,0,Fw::CommandResponse::EXECUTION_ERROR);
+            this->seqDone_out(0,0,0,Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -194,7 +194,7 @@ namespace Svc {
         } else {
             this->log_WARNING_LO_CS_NoSequenceActive();
         }
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CommandResponse::OK);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     // ----------------------------------------------------------------------
@@ -227,7 +227,7 @@ namespace Svc {
         this->m_executedCount = 0;
         // write sequence done port with error, if connected
         if (this->isConnected_seqDone_OutputPort(0)) {
-            this->seqDone_out(0,0,0,Fw::CommandResponse::EXECUTION_ERROR);
+            this->seqDone_out(0,0,0,Fw::CmdResponse::EXECUTION_ERROR);
         }
 
     }
@@ -237,7 +237,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum,
           FwOpcodeType opcode,
           U32 cmdSeq,
-          Fw::CommandResponse response
+          Fw::CmdResponse response
       )
     {
         if (this->m_runMode == STOPPED) {
@@ -246,7 +246,7 @@ namespace Svc {
         } else {
             // clear command timeout
             this->m_cmdTimeoutTimer.clear();
-            if (response != Fw::CommandResponse::OK) {
+            if (response != Fw::CmdResponse::OK) {
                 this->commandError(this->m_executedCount, opcode, response.e);
                 this->performCmd_Cancel();
             } else if (this->m_runMode == RUNNING && this->m_stepMode == AUTO) {
@@ -297,17 +297,17 @@ namespace Svc {
         if (not this->m_sequence->hasMoreRecords()) {
             // No sequence loaded
             this->log_WARNING_LO_CS_NoSequenceActive();
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
         if (!this->requireRunMode(STOPPED)) {
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
         this->m_runMode = RUNNING;
         this->performCmd_Step();
         this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
-        this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::OK);
+        this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void CmdSequencerComponentImpl ::
@@ -322,9 +322,9 @@ namespace Svc {
                     this->m_executedCount
                 );
             }
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::OK);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     }
 
@@ -334,9 +334,9 @@ namespace Svc {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = AUTO;
             this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_AUTO_MODE);
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::OK);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     }
 
@@ -346,9 +346,9 @@ namespace Svc {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = MANUAL;
             this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_STEP_MODE);
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::OK);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
-            this->cmdResponse_out(opcode, cmdSeq, Fw::CommandResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     }
 
@@ -415,7 +415,7 @@ namespace Svc {
         this->m_executedCount = 0;
         // write sequence done port, if connected
         if (this->isConnected_seqDone_OutputPort(0)) {
-            this->seqDone_out(0,0,0,Fw::CommandResponse::OK);
+            this->seqDone_out(0,0,0,Fw::CmdResponse::OK);
         }
     }
 

@@ -384,7 +384,7 @@ namespace Svc {
       //Finish the file transfer
       void finishHelper(bool is_cancel);
       // Convert internal status enum to a command response;
-      Fw::CommandResponse statusToCmdResp(SendFileStatus status);
+      Fw::CmdResponse statusToCmdResp(SendFileStatus status);
       //Send response after completing file downlink
       void sendResponse(SendFileStatus resp);
 

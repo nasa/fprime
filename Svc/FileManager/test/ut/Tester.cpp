@@ -591,7 +591,7 @@ namespace Svc {
         0, 
         opcode,
         CMD_SEQ,
-        Fw::CommandResponse::OK
+        Fw::CmdResponse::OK
     );
 
     ASSERT_EVENTS_SIZE(eventSize);
@@ -626,7 +626,7 @@ namespace Svc {
         0, 
         opcode,
         CMD_SEQ,
-        Fw::CommandResponse::EXECUTION_ERROR
+        Fw::CmdResponse::EXECUTION_ERROR
     );
 
     ASSERT_EVENTS_SIZE(2);  // Starting event + Error
