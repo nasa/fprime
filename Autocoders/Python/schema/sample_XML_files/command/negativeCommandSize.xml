@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/command_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <commands opcode_base="$OPCODEBASE">
     <command kind="async" opcode="0" mnemonic="Flight Command Zero" size = "-10">
         <comment>Flight Command Zero executes very simple command.</comment>

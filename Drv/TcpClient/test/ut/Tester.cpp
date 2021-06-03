@@ -38,8 +38,8 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::TcpServerSocket server;
     server.configure("127.0.0.1", port, 0, 100);
     this->component.configure("127.0.0.1", port, 0, 100);
-    status2 = server.startup();
-    EXPECT_EQ(serverStat, SOCK_SUCCESS);
+    serverStat = server.startup();
+    ASSERT_EQ(serverStat, SOCK_SUCCESS);
 
     // Start up a receive thread
     if (recv_thread) {
@@ -48,7 +48,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
     }
 
     // Loop through a bunch of client disconnects
-    for (U32 i = 0; i < iterations && serverStat == SOCK_SUCCESS; i++) {
+    for (U32 i = 0; i < iterations; i++) {
         I32 size = sizeof(m_data_storage);
 
         // Not testing with reconnect thread, we will need to open ourselves
@@ -172,7 +172,7 @@ Fw::Buffer Tester ::
 // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts(void)
   {
 
     // send
@@ -189,19 +189,19 @@ Fw::Buffer Tester ::
 
     // recv
     this->component.set_recv_OutputPort(
-        0, 
+        0,
         this->get_from_recv(0)
     );
 
     // allocate
     this->component.set_allocate_OutputPort(
-        0, 
+        0,
         this->get_from_allocate(0)
     );
 
     // deallocate
     this->component.set_deallocate_OutputPort(
-        0, 
+        0,
         this->get_from_deallocate(0)
     );
 

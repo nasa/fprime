@@ -139,8 +139,7 @@ namespace Svc {
         }
 
         // Open the file (using CREATE so that it truncates an already existing file):
-        Os::File::Status stat = this->m_file.open(fileNameFinal,
-                                                  Os::File::OPEN_CREATE);
+        Os::File::Status stat = this->m_file.open(fileNameFinal, Os::File::OPEN_CREATE, false);
 
         // Bad status when trying to open the file:
         if (stat != Os::File::OP_OK) {

@@ -1,2 +1,0 @@
-Abc: 0xdeadbeef
-HJK: 0xc0dec0de
