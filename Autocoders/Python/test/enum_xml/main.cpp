@@ -178,10 +178,13 @@ TEST(EnumXML, OK) {
     Example::Enum1 enum1 = Example::Enum1::Item4;
     Example::Enum1 enum2;
     Example::Enum1 enum3;
-    
     Example::Enum2 enum4;
 
     Example::Serial1 serial1;
+
+    // Check that other enums were set to default value
+    ASSERT_EQ(enum1, enum2);
+    ASSERT_EQ(enum1, enum3);
 
     // Check that enum were set to uninitialized value
     ASSERT_EQ(enum4.e, 0);
