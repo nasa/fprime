@@ -33,7 +33,7 @@ The API documentation section contains the automatically generated documentation
     - [What is F´: a brief introduction](../index.md)
     - [Installing F´](../INSTALL.md)
     - [Installing F´ Console Autocomplete](./user/autocomplete.md)
-    - [Installing F´ Linter](./user/autocomplete.md)
+    - [Installing F´ Linter](./user/fprime-extras-install.md)
     - [Tutorials: A Hands On Guide to F´](../Tutorials/README.md)
 - F´ Users Manual: an in-depth description of F´ concepts
     - [A More Complete Introduction to F´](user/full-intro.md)
