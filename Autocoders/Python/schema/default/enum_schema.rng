@@ -31,7 +31,7 @@
 
             <optional>
                 <attribute name = "default">
-                    <a:documentation>Namespace of the serializable object.</a:documentation>
+                    <a:documentation>Default value of the enum.</a:documentation>
                     <text/>
                 </attribute>
 
