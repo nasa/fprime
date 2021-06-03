@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="Example" kind="active" namespace="ExampleComponents">
     <import_port_type>Autocoders/Python/templates/ExamplePortAi.xml</import_port_type>

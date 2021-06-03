@@ -38,6 +38,7 @@ namespace Svc {
                     FW_ASSERT(this->m_tlmEntries[this->m_activeBuffer].free < TLMCHAN_HASH_BUCKETS);
                     // add new bucket from free list
                     entryToUse = &this->m_tlmEntries[this->m_activeBuffer].buckets[this->m_tlmEntries[this->m_activeBuffer].free++];
+                    FW_ASSERT(prevEntry);
                     prevEntry->next = entryToUse;
                     // clear next pointer
                     entryToUse->next = 0;
