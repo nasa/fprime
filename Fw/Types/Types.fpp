@@ -7,4 +7,4 @@ module Fw {
 
     @ PolyType value
     type PolyType
-}
+    }
