@@ -14,3 +14,6 @@ constant GenericHubInputPorts = 10
 constant GenericHubOutputPorts = 10
 constant GenericHubInputBuffers = 10
 constant GenericHubOutputBuffers = 10
+
+# Outputs from the generic repeater.
+constant GenericRepeaterOutputPorts = 2
