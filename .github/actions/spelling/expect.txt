@@ -1073,6 +1073,7 @@ Nicolich
 ninjaaron
 nio
 NMEA
+nmsgs
 noargport
 NOBUFFERS
 NOCOLOR
