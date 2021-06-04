@@ -39,16 +39,16 @@ module Svc {
 
     # added necessary ports not in the original xml in order to compile
     @ Event port for emitting events
-    event port eventOut
+    event port Log
 
     @ Event port for emitting text events
-    text event port textEventOut
+    text event port LogText
 
     @ A port for getting the time
-    time get port timeGetOut
+    time get port Time
 
     @ A port for emitting telemetry
-    telemetry port tlmOut
+    telemetry port Tlm 
 
   }
 
