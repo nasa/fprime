@@ -102,7 +102,7 @@ functionality. This section will offer recommendations to migrate to version 2.0
 * F´ tooling (fprime-util and fprime-gds) should be installed using `pip install fprime-tools fprime-gds`
 * `Os::File::open` with the mode CREATE will now properly respect O_EXCL and error if the file exists. Pass in `false` as the final argument to override. 
 * Revise uses of `Fw::Buffer` to correct usage of member functions using camel case.  E.g. `Fw::Buffer::getsize` is now `Fw::Buffer::getSize`
-* The ground interface chain has been refactored. Projects may switch to using `Svc::Framer`, `Svc::Deframer`, and any implementor of `Drv::ByteStreamDriverModel` to supply the data.  See: TBD.  To continue using the old intefrace with the GDS run `fprime-gds --comm-checksum-type fixed`.
+* The ground interface chain has been refactored. Projects may switch to using `Svc::Framer`, `Svc::Deframer`, and any implementor of `Drv::ByteStreamDriverModel` to supply the data.  See: TBD.  To continue using the old interface with the GDS run `fprime-gds --comm-checksum-type fixed`.
 * `Svc::FileDownlink` may now be configured to turn off certain errors
 * `Svc::BufferManager` has been reworked to remove errors. When instantiating it please supply a memory allocator. `Ref` has an example of this.
 * A project must now enable F´ framework UTs using `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=ON`.  Project defined UTs are unaffected.
