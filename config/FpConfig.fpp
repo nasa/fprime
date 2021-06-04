@@ -19,3 +19,5 @@ constant GenericHubOutputBuffers = 10
 
 # Outputs from the generic repeater.
 constant GenericRepeaterOutputPorts = 2
+
+constant StaticMemoryAllocations = 4
