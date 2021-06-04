@@ -8,6 +8,8 @@ type POINTER_CAST
 
 #  Number of rate group member output ports for ActiveRateGroup
 constant ActiveRateGroupOutputPorts          =       10  
+# Used to drive rate groups
+constant RateGroupDriverRateGroupPorts       =       3   
 
 # Hub connections. Connections on all deployments should mirror these settings.
 constant GenericHubInputPorts = 10
