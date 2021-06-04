@@ -46,6 +46,7 @@ class SocketReadTask {
      * \param name: name of the task
      * \param priority: priority of the started task. See: Os::Task::start.
      * \param stack: stack size provided to the task. See: Os::Task::start.
+     * \param reconnect: automatically reconnect socket when closed. Default: true.
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start.
      */
     void startSocketTask(const Fw::StringBase &name,
