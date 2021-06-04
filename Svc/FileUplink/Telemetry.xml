@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!--======================================================================
 
@@ -13,7 +12,7 @@
 
   <channel
     id="0"
-    name="FileUplink_FilesReceived"
+    name="FilesReceived"
     data_type="U32"
     abbrev="T003-1000"
   >
@@ -22,7 +21,7 @@
 
   <channel
     id="1"
-    name="FileUplink_PacketsReceived"
+    name="PacketsReceived"
     data_type="U32"
     abbrev="T003-1100"
   >
@@ -31,7 +30,7 @@
 
   <channel
     id="2"
-    name="FileUplink_Warnings"
+    name="Warnings"
     data_type="U32"
     abbrev="T003-1200"
   >

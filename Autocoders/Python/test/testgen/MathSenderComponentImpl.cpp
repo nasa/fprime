@@ -21,14 +21,9 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   MathSenderComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     MathSenderComponentImpl(
         const char *const compName
-    ) :
-      MathSenderComponentBase(compName)
-#else
-    MathSenderComponentImpl(void)
-#endif
+    ) : MathSenderComponentBase(compName)
   {
 
   }
@@ -58,7 +53,8 @@ namespace Ref {
         F32 result
     )
   {
-    // TODO
+      this->tlmWrite_MS_RES(result);
+      this->log_ACTIVITY_HI_MS_RESULT(result);
   }
 
   // ----------------------------------------------------------------------
@@ -74,7 +70,41 @@ namespace Ref {
         MathOp operation
     )
   {
-    // TODO
+    MathOpTlm opTlm = ADD_TLM;
+    MathOperation opPort = MATH_ADD;
+    MathOpEv opEv = ADD_EV;
+
+    switch (operation) {
+      case ADD:
+          opTlm = ADD_TLM;
+          opPort = MATH_ADD;
+          opEv = ADD_EV;
+          break;
+      case SUBTRACT:
+          opTlm = SUB_TLM;
+          opPort = MATH_SUB;
+          opEv = SUB_EV;
+          break;
+      case MULTIPLY:
+          opTlm = MULT_TLM;
+          opPort = MATH_MULTIPLY;
+          opEv = MULT_EV;
+          break;
+      case DIVIDE:
+          opTlm = DIV_TLM;
+          opPort = MATH_DIVIDE;
+          opEv = DIV_EV;
+          break;
+      default:
+          FW_ASSERT(0,operation);
+    }
+
+    this->tlmWrite_MS_OP(opTlm);
+    this->tlmWrite_MS_VAL1(val1);
+    this->tlmWrite_MS_VAL2(val2);
+    this->log_ACTIVITY_LO_MS_COMMAND_RECV(val1,val2,opEv);
+    this->mathOut_out(0,val1,val2,opPort);
+    // reply with completion status
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 

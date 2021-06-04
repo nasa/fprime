@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: ComponentTestCppVisitor.py
 #
-# DESCRIPTION: A visitor for generating component test implemetation files.
+# DESCRIPTION: A visitor for generating component test implementation files.
 #
 # AUTHOR: bocchino
 # EMAIL:  bocchino@jpl.nasa.gov
@@ -23,7 +23,7 @@ except ImportError:
 
 class ComponentTestCppVisitor(TestVisitorBase.TestVisitorBase):
     """
-    A visitor for generating component implemetation files.
+    A visitor for generating component implementation files.
     """
 
     def __init__(self):

@@ -178,7 +178,7 @@ namespace Components {
       << "  Line:     " << __callSiteLineNumber << "\n"
       << "  Value:    Value at index "
       << __index
-      << " on telmetry channel somechan\n"
+      << " on telemetry channel somechan\n"
       << "  Expected: " << val << "\n"
       << "  Actual:   " << e.arg << "\n";
   }

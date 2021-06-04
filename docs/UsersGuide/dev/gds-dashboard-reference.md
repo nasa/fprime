@@ -45,7 +45,7 @@ values.
 | fields       | List of fields (columns) shown      | list    | any column field names |
 | filter-text  | Text to filter displayed items      | string  | any |
 | items-shown  | Names of items to restrict display  | list    | any |
-| compact      | Use minimalist display of component | keyword | | 
+| compact      | Use minimalist display of component | keyword | |
 
 Finally, here is a list of available components and which properties they allow.
 
@@ -146,7 +146,7 @@ component with a filter for command severity to display commands as received by 
 
 `event-list` displays a set of events as received by the GDS. This allows the user to monitor for all commands, or
 monitor for specific events. In addition, a filter may be used to look for certain severities. And example of the
-`event-list` component is shown below: 
+`event-list` component is shown below:
 
 ```xml
 <event-list

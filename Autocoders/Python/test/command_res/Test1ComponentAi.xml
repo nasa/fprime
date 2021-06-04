@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="Test1" kind="active" namespace="Cmd">
     <import_port_type>Autocoders/Python/test/command_res/Test2PortAi.xml</import_port_type>
@@ -44,7 +43,7 @@
         </command>
     </commands>
     <ports>
-        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
+        <port name="CmdDisp" kind="async_input" data_type="Fw::Cmd" max_number="1" role="Cmd"/>
         <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"/>
         <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"/>
         <port name="aport" data_type="Another::Test2" kind="sync_input" >

@@ -149,19 +149,19 @@
         -:  147:
        34:  148:        for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
        33:  149:            if (this->m_db[entry].used) {
-        -:  150:                // write delimeter
-        -:  151:                static const U8 delim = PRMDB_ENTRY_DELIMETER;
+        -:  150:                // write delimiter
+        -:  151:                static const U8 delim = PRMDB_ENTRY_DELIMITER;
        10:  152:                NATIVE_INT_TYPE writeSize = sizeof(delim);
        10:  153:                stat = paramFile.write(&delim,writeSize,true);
        10:  154:                if (stat != Os::File::OP_OK) {
         1:  155:                    this->unLock();
-        1:  156:                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMETER,numRecords,stat);
+        1:  156:                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER,numRecords,stat);
         1:  157:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         9:  158:                    return;
         -:  159:                }
         9:  160:                if (writeSize != sizeof(delim)) {
         1:  161:                    this->unLock();
-        1:  162:                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMETER_SIZE,numRecords,writeSize);
+        1:  162:                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER_SIZE,numRecords,writeSize);
         1:  163:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  164:                    return;
         -:  165:                }
@@ -262,11 +262,11 @@
         -:  260:
        26:  261:        for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
         -:  262:
-        -:  263:            U8 delimeter;
-       13:  264:            NATIVE_INT_TYPE readSize = sizeof(delimeter);
+        -:  263:            U8 delimiter;
+       13:  264:            NATIVE_INT_TYPE readSize = sizeof(delimiter);
         -:  265:
-        -:  266:            // read delimeter
-       13:  267:            Os::File::Status fStat = paramFile.read(&delimeter,readSize,true);
+        -:  266:            // read delimiter
+       13:  267:            Os::File::Status fStat = paramFile.read(&delimiter,readSize,true);
         -:  268:
         -:  269:            // check for end of file (read size 0)
        13:  270:            if (0 == readSize) {
@@ -274,17 +274,17 @@
         -:  272:            }
         -:  273:
        12:  274:            if (fStat != Os::File::OP_OK) {
-        1:  275:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER,recordNum,fStat);
+        1:  275:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER,recordNum,fStat);
        11:  276:                return;
         -:  277:            }
         -:  278:
-       11:  279:            if (sizeof(delimeter) != readSize) {
-        1:  280:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER_SIZE,recordNum,readSize);
+       11:  279:            if (sizeof(delimiter) != readSize) {
+        1:  280:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_SIZE,recordNum,readSize);
         1:  281:                return;
         -:  282:            }
         -:  283:
-       10:  284:            if (PRMDB_ENTRY_DELIMETER != delimeter) {
-        1:  285:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER_VALUE,recordNum,delimeter);
+       10:  284:            if (PRMDB_ENTRY_DELIMITER != delimiter) {
+        1:  285:                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_VALUE,recordNum,delimiter);
         1:  286:                return;
         -:  287:            }
         -:  288:

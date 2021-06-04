@@ -27,7 +27,7 @@ def set_build_roots(build_root_arg):
 
 def get_build_roots():
     """
-    Get the build root paths to use for handling mutliple roots for elements.
+    Get the build root paths to use for handling multiple roots for elements.
 
     :return: build roots
     """

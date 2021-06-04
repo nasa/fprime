@@ -196,7 +196,7 @@ namespace Drv {
           return false;
       }
 
-      // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Reciever
+      // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Receiver
       // TODO PARENB for parity bit
       /*
         Even parity (7E1):
@@ -287,8 +287,8 @@ namespace Drv {
           return;
       }
 
-      unsigned char* data = reinterpret_cast<unsigned char*>(serBuffer.getdata());
-      NATIVE_INT_TYPE xferSize = serBuffer.getsize();
+      unsigned char* data = serBuffer.getData();
+      NATIVE_INT_TYPE xferSize = serBuffer.getSize();
 
       NATIVE_INT_TYPE stat = ::write(this->m_fd,data,xferSize);
 
@@ -352,8 +352,8 @@ namespace Drv {
               }
 
               stat = ::read(comp->m_fd,
-                            reinterpret_cast<unsigned char*>(buff.getdata()),
-                            buff.getsize());
+                            buff.getData(),
+                            buff.getSize());
 
               // Good read:
               if (stat > 0) {
@@ -389,7 +389,7 @@ namespace Drv {
           } else {
 //              (void)clock_gettime(CLOCK_REALTIME,&stime);
 //              DEBUG_PRINT("<!<! Sending data to RceAdapter %u at %d %d\n", buff.getsize(), stime.tv_sec, stime.tv_nsec);
-              buff.setsize(sizeRead);
+              buff.setSize(sizeRead);
               serReadStat = Drv::SER_OK; // added by m.chase 03.06.2017
               //comp->serialRecv_out(0,buff,Drv::SER_OK);
           }

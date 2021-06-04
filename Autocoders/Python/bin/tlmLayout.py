@@ -26,7 +26,7 @@ import csv
 from Cheetah.Template import Template
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -206,7 +206,7 @@ class Packet:
             self.num_header_general_fields += 1
 
         else:
-            self.err_msg("Illegal heyword for header: '" + line[1] + "'")
+            self.err_msg("Illegal keyword for header: '" + line[1] + "'")
 
         if len(line) > 5:
             he.m_comment = line[5]
@@ -492,7 +492,7 @@ class Packet:
             print()
 
         if self.m_name == "":
-            self.err_msg("Preceeding packet has no name")
+            self.err_msg("Preceding packet has no name")
 
         p = copy.deepcopy(self)
         tlm_packet_list.append(p)

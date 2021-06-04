@@ -127,7 +127,7 @@ namespace Os {
       this->heap[0]= this->heap[index];
       --this->size;
 
-      // Now that the heap property is violdated, we 
+      // Now that the heap property is violated, we 
       // need to reorganize the heap to restore it's
       // heapy-ness.
       this->heapify();

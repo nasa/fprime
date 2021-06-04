@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: ComponentCppVisitor.py
 #
-# DESCRIPTION: A visitor for generating component implemetation files.
+# DESCRIPTION: A visitor for generating component implementation files.
 #
 # AUTHOR: bocchino
 # EMAIL:  bocchino@jpl.nasa.gov

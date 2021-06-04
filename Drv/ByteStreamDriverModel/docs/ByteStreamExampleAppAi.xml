@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly name = "ByteStreamExample">
+    <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
+    <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
+
+    <!-- Declare component instances - must match names in Components.hpp -->
+    <instance namespace="Svc" name="ground" type="GroundInterface" base_id="0"  base_id_window="20" />
+    <instance namespace="Drv" name="comm" type="ByteStreamDriverModel" base_id="100" base_id_window="20" />
+
+    <!-- Connections -->
+    <!-- Communications driver connections -->
+    <!-- @FPL START CommDriver -->
+    <connection name = "CommunicationSend">
+        <source component = "ground" port = "write" type = "Fw::BufferSend" num = "0"/>
+        <target component = "comm" port = "send" type = "Drv::ByteStreamRecv" num = "0"/>
+    </connection>
+    <connection name = "CommunicationRecv">
+        <source component = "ground" port = "readPoll" type = "Fw::BufferSend" num = "0"/>
+        <target component = "comm" port = "poll" type = "Drv::ByteStreamSend" num = "0"/>
+    </connection>
+    <!-- @FPL END -->
+</assembly>

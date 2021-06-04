@@ -19,7 +19,7 @@ namespace Fw {
 
     /*!
      *
-     * This class is an implementation of the MemAllocatr base class.
+     * This class is an implementation of the MemAllocator base class.
      * It uses the heap as the memory source.
      *
      * Since it is heap space, the identifier is unused, and memory is never recoverable.

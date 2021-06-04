@@ -66,6 +66,9 @@ namespace Os {
 #endif
             case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
+                if(include_excl) {
+                    flags |= O_EXCL;
+                }
                 break;
             case OPEN_APPEND:
                 flags = O_WRONLY | O_CREAT | O_APPEND;

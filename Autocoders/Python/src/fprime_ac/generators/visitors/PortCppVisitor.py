@@ -23,7 +23,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -76,7 +76,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_proto_string(self, obj):
         """
-        Return a string of (type, name) args, comma seperated
+        Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes.
         """
         args = obj.get_args()
@@ -118,7 +118,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_string(self, obj):
         """
-        Return a string of name args, comma seperated
+        Return a string of name args, comma separated
         for use in templates that generate method or function calls.
         """
         args = obj.get_args()
@@ -158,7 +158,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         # Build filename here...
         if self.__config.get("port", "XMLDefaultFileName") == "True":
@@ -187,7 +187,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                 PRINT.info(msg)
                 raise ValueError(msg)
 
-        # Open file for writting here...
+        # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
         if self.__fp is None:
@@ -203,7 +203,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Port types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         relative_path = self.relativePath()
         #
@@ -228,14 +228,14 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def namespaceVisit(self, obj):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = namespacePortCpp.namespacePortCpp()
         if obj.get_namespace() is None:
@@ -251,7 +251,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = publicPortCpp.publicPortCpp()
         c.name = obj.get_type()
@@ -279,7 +279,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def _replace_enum(self, t):
@@ -299,7 +299,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = privatePortCpp.privatePortCpp()
         c.name = obj.get_type()

@@ -1,3 +1,0 @@
-"Fw/Types Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Fw/Types)
-"Fw/Tlm Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Fw/Tlm)
-"Fw/Log Unit tests" $(BUILD_ROOT)/ptf/std/RebuildRunUnitTest.py ENV(MODULE=Fw/Log)

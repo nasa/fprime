@@ -4,12 +4,12 @@
 
 #include <RPI/Top/Components.hpp>
 
+#include <signal.h>
+#include <stdio.h>
+
 void print_usage() {
     (void) printf("Usage: ./RPI [options]\n-p\tport_number\n-a\thostname/IP address\n");
 }
-
-#include <signal.h>
-#include <stdio.h>
 
 volatile sig_atomic_t terminate = 0;
 

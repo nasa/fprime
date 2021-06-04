@@ -26,13 +26,12 @@ from fprime_ac.generators.writers import AbstractWriter
 from fprime_ac.models import ModelParser
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
     BuildRootMissingException,
     build_root_relative_path,
-    get_nearest_build_root,
 )
 
 #
@@ -353,7 +352,6 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
     def initIncludes(self, obj, c):
         self.initTypeIncludes(obj, c)
         self.initPortIncludes(obj, c)
-        self.initSerialIncludes(obj, c)
         self.initIncludeName(obj, c)
         self.initCompIncludePath(obj, c)
 
@@ -448,6 +446,8 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.has_output_ports = len(c.output_ports) > 0
         c.has_typed_output_ports = len(c.typed_output_ports) > 0
         c.has_serial_output_ports = len(c.serial_output_ports) > 0
+        roles = [role for name, ptype, sync, priority, role, max_number in c.output_ports]
+        c.has_time_get = "TimeGet" in roles
 
     def initPortIncludes(self, obj, c):
         c.port_includes = list()
@@ -785,19 +785,6 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         )
         c.param_msgSize = ("msgSize", "const NATIVE_INT_TYPE", "The message size")
         c.param_queueDepth = ("queueDepth", "const NATIVE_INT_TYPE", "The queue depth")
-
-    def initSerialIncludes(self, obj, c):
-        """
-        Include any headers for channel/parameter serializable includes
-        """
-        ser_includes = [si.get_xml_filename() for si in obj.get_serializables()]
-        s_includes = [
-            sinc.replace("Ai.xml", "Ac.hpp")
-            .replace(get_nearest_build_root(sinc) + "/", "")
-            .replace("/test/ut", "")
-            for sinc in ser_includes
-        ]
-        c.ser_includes = s_includes
 
     def initTelemetry(self, obj, c):
         """

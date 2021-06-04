@@ -245,7 +245,7 @@
        20:  243:                fileWriteSize = sizeof(delimiter);
        20:  244:                stat = file.write(&delimiter,fileWriteSize);
        20:  245:                if (stat != Os::File::OP_OK) {
-        1:  246:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_FATAL_DELIMETER,stat);
+        1:  246:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_FATAL_DELIMITER,stat);
         1:  247:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  248:                    file.close();
         1:  249:                    return;
@@ -275,7 +275,7 @@
        23:  273:                fileWriteSize = sizeof(delimiter);
        23:  274:                stat = file.write(&delimiter,fileWriteSize);
        23:  275:                if (stat != Os::File::OP_OK) {
-        1:  276:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_HI_DELIMETER,stat);
+        1:  276:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_HI_DELIMITER,stat);
         1:  277:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  278:                    file.close();
         1:  279:                    return;
@@ -305,7 +305,7 @@
        31:  303:                fileWriteSize = sizeof(delimiter);
        31:  304:                stat = file.write(&delimiter,fileWriteSize);
        31:  305:                if (stat != Os::File::OP_OK) {
-        1:  306:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_LO_DELIMETER,stat);
+        1:  306:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_WARNING_LO_DELIMITER,stat);
         1:  307:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  308:                    file.close();
         1:  309:                    return;
@@ -335,7 +335,7 @@
        29:  333:                fileWriteSize = sizeof(delimiter);
        29:  334:                stat = file.write(&delimiter,fileWriteSize);
        29:  335:                if (stat != Os::File::OP_OK) {
-        1:  336:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_COMMAND_DELIMETER,stat);
+        1:  336:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_COMMAND_DELIMITER,stat);
         1:  337:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  338:                    file.close();
         1:  339:                    return;
@@ -365,7 +365,7 @@
        27:  363:                fileWriteSize = sizeof(delimiter);
        27:  364:                stat = file.write(&delimiter,fileWriteSize);
        27:  365:                if (stat != Os::File::OP_OK) {
-        1:  366:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_HI_DELIMETER,stat);
+        1:  366:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_HI_DELIMITER,stat);
         1:  367:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  368:                    file.close();
         1:  369:                    return;
@@ -395,7 +395,7 @@
        25:  393:                fileWriteSize = sizeof(delimiter);
        25:  394:                stat = file.write(&delimiter,fileWriteSize);
        25:  395:                if (stat != Os::File::OP_OK) {
-        1:  396:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_LO_DELIMETER,stat);
+        1:  396:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_ACTIVITY_LO_DELIMITER,stat);
         1:  397:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  398:                    file.close();
         1:  399:                    return;
@@ -425,7 +425,7 @@
        53:  423:                fileWriteSize = sizeof(delimiter);
        53:  424:                stat = file.write(&delimiter,fileWriteSize);
        53:  425:                if (stat != Os::File::OP_OK) {
-        1:  426:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_DIAGNOSTIC_DELIMETER,stat);
+        1:  426:                    this->log_WARNING_HI_ALOG_FILE_WRITE_ERR(LOG_WRITE_DIAGNOSTIC_DELIMITER,stat);
         1:  427:                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
         1:  428:                    file.close();
         1:  429:                    return;

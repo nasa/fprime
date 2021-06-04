@@ -13,7 +13,7 @@ pip install -e fprime/Fw/Python[dev]
 pip install -e fprime/Gds/
 ```
 
-After you have installed the python packages you need to set up pre-commit hooks using the following command. This 
+After you have installed the python packages you need to set up pre-commit hooks using the following command. This
 ensures that for each commit, checks are performed before the developer commits the code.
 
 ```bash
@@ -36,7 +36,7 @@ pytest
 
 ## When and How to Format Your Code
 
-Everyone has their own habits and style when writing code. We are asking you to change your habits, but this is made 
+Everyone has their own habits and style when writing code. We are asking you to change your habits, but this is made
 easy through the use of a code formatter. This ensures your code is consistent with F´ so that reviewers and
 collaborators can more quickly comprehend what the code is doing. This can easily be done executing the `black`
 formatter right before you commit and push your code.
@@ -71,7 +71,7 @@ pre-commit hook by modifying the 'SKIP' environment variable in bash. For exampl
 SKIP=black git commit -m "foo"
 ```
 
-However this should only be used in an emergency. If SKIP is used for all of your commits it will dramaticall
+However this should only be used in an emergency. If SKIP is used for all of your commits it will dramatically
 reduce code quality over time.
 
 ### Why did we choose black
@@ -80,7 +80,7 @@ Black is an opinionated formatter that will format your code without any configu
 Why did we choose an “opinionated” formatter? In short, convention is so much more efficient than configuration.  With
 convention, everyone just does what is dictated (in this case from the tool) and there is no room for choice, which
 causes entropy in the project (e.g. one developer chooses spaces, another chooses tabs, and chaos results). As entropy
-increases, the code is harder to understand automated tooling stifled, and development becomes more difficult. Hence, 
+increases, the code is harder to understand automated tooling stifled, and development becomes more difficult. Hence,
 projects select coding styles, standards, best practices, etc. as a way to reduce entropy. By accepting an established
 opinion, we can gain the advantages of a well-ordered project via a tool.  Assuming the opinions of the tool are not too
 onerous, we’ll have a better project as a result.  Be like the Borg and just assimilate...
@@ -88,10 +88,10 @@ onerous, we’ll have a better project as a result.  Be like the Borg and just a
 ## Static Analysis
 
 While almost all projects require unit tests, not enough them consistently use static analysis to improve code quality.
-With a few simple commands static analysis will drastically reduce time wasted with simple errors or issues and increas
+With a few simple commands static analysis will drastically reduce time wasted with simple errors or issues and increase
 the lifecycle of your code.
 
-F uses Pylama to perform static analysis on our python code. Pylama contains pylint, pyflakes, pycodestyle(pep8), 
+F uses Pylama to perform static analysis on our python code. Pylama contains pylint, pyflakes, pycodestyle(pep8),
 mccabe, pydocstyle, radon, gjslint, eradicate, and Mypy. Combining the output from the tools that you want into a single
 file.
 

@@ -142,19 +142,19 @@ namespace Svc {
 
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_db); entry++) {
             if (this->m_db[entry].used) {
-                // write delimeter
-                static const U8 delim = PRMDB_ENTRY_DELIMETER;
+                // write delimiter
+                static const U8 delim = PRMDB_ENTRY_DELIMITER;
                 NATIVE_INT_TYPE writeSize = sizeof(delim);
                 stat = paramFile.write(&delim,writeSize,true);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMETER,numRecords,stat);
+                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER,numRecords,stat);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != sizeof(delim)) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMETER_SIZE,numRecords,writeSize);
+                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER_SIZE,numRecords,writeSize);
                     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
                     return;
                 }
@@ -255,11 +255,11 @@ namespace Svc {
 
         for (NATIVE_INT_TYPE entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++)  {
 
-            U8 delimeter;
-            NATIVE_INT_TYPE readSize = sizeof(delimeter);
+            U8 delimiter;
+            NATIVE_INT_TYPE readSize = sizeof(delimiter);
 
-            // read delimeter
-            Os::File::Status fStat = paramFile.read(&delimeter,readSize,true);
+            // read delimiter
+            Os::File::Status fStat = paramFile.read(&delimiter,readSize,true);
 
             // check for end of file (read size 0)
             if (0 == readSize) {
@@ -267,17 +267,17 @@ namespace Svc {
             }
 
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER,recordNum,fStat);
                 return;
             }
 
-            if (sizeof(delimeter) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER_SIZE,recordNum,readSize);
+            if (sizeof(delimiter) != readSize) {
+                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_SIZE,recordNum,readSize);
                 return;
             }
 
-            if (PRMDB_ENTRY_DELIMETER != delimeter) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMETER_VALUE,recordNum,delimeter);
+            if (PRMDB_ENTRY_DELIMITER != delimiter) {
+                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_VALUE,recordNum,delimiter);
                 return;
             }
 

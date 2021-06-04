@@ -73,8 +73,8 @@
 #define ASSERT_EVENTS_BL_Activated_SIZE(size) \
   this->assertEvents_BL_Activated_size(__FILE__, __LINE__, size)
 
-#define ASSERT_EVENTS_BL_Deativated_SIZE(size) \
-  this->assertEvents_BL_Deativated_size(__FILE__, __LINE__, size)
+#define ASSERT_EVENTS_BL_Deactivated_SIZE(size) \
+  this->assertEvents_BL_Deactivated_size(__FILE__, __LINE__, size)
 
 #define ASSERT_EVENTS_BL_NoLogFileOpenInitError_SIZE(size) \
   this->assertEvents_BL_NoLogFileOpenInitError_size(__FILE__, __LINE__, size)
@@ -336,10 +336,10 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Event: BL_Deativated
+      // Event: BL_Deactivated
       // ----------------------------------------------------------------------
 
-      void assertEvents_BL_Deativated_size(
+      void assertEvents_BL_Deactivated_size(
           const char *const __callSiteFileName, /*!< The name of the file containing the call site*/
           const U32 __callSiteLineNumber, /*!< The line number of the call site*/
           const U32 size /*!< The asserted size*/
