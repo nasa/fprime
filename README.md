@@ -94,22 +94,36 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 ## F´ Release Notes
 
-#### Release 1.0: 
+### Release 2.0: Release and Migration Notes
 
- * This is the initial release of the software to open source. See the license file for terms of use.
+Version 2.0.0 of F´ represents major improvements across the F´ framework. As such, some work may be required to migrate from other versions of F´ to the new 
+functionality. This section will offer recommendations to migrate to version 2.0.0 of F´.
 
-#### Release 1.01
+* F´ tooling (fprime-util and fprime-gds) should be installed using `pip install fprime-tools fprime-gds`
+* `Os::File::open` with the mode CREATE will now properly respect O_EXCL and error if the file exists. Pass in `false` as the final argument to override. 
+* Revise uses of `Fw::Buffer` to correct usage of member functions using camel case.  E.g. `Fw::Buffer::getsize` is now `Fw::Buffer::getSize`
+* The ground interface chain has been refactored. Projects may switch to using `Svc::Framer`, `Svc::Deframer`, and any implementor of `Drv::ByteStreamDriverModel` to supply the data.  See: TBD.  To continue using the old interface with the GDS run `fprime-gds --comm-checksum-type fixed`.
+* `Svc::FileDownlink` may now be configured to turn off certain errors
+* `Svc::BufferManager` has been reworked to remove errors. When instantiating it please supply a memory allocator. `Ref` has an example of this.
+* A project must now enable F´ framework UTs using `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=ON`.  Project defined UTs are unaffected.
+* Dictionaries, binaries, and other build output now are written to a deployments `build_artifacts` folder.
+
+### Release 1.0: 
+
+* This is the initial release of the software to open source. See the license file for terms of use.
+
+### Release 1.01
 
  * Updated contributor list. No code changes. 
 
-#### Release 1.1
+### Release 1.1
 
  * Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
  * Added a tutorial [here](docs/Tutorials/README.md)
  * Updated Svc/BufferManager with bug fix
  * Fixed a bunch of shell permissions
  
-#### Release 1.2
+### Release 1.2
 
 * Better MagicDraw Plugin
 * Prototype CMake build system. See: [CMake Documentation](./docs/UsersGuide/cmake/cmake-intro.md)
@@ -121,7 +135,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Purged inaccurate ITAR and Copyright notices
 * Misc. bug fixes
 
-#### Release 1.3
+### Release 1.3
 
 * New prototype HTML GUI
 * Python packages Fw/Python and Gds
@@ -130,7 +144,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Integration test API
 * Baremetal components
 
-#### Release 1.4
+### Release 1.4
 
 * Ref app no longer hangs on Linux exit
 * GDS improvements:
@@ -149,7 +163,7 @@ The typed port connections provide strong compile-time guarantees of correctness
 * Updated CmdSequencer
   * Uses new MemAllocator interface  
 
-#### Release 1.5
+### Release 1.5
 
 * Documentation improvements
   * New user's guide containing considerable content: [https://nasa.github.io/fprime/UsersGuide/guide.html](https://nasa.github.io/fprime/UsersGuide/guide.html)
