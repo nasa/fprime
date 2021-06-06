@@ -1,0 +1,8 @@
+locate constant ActiveRateGroupOutputPorts at "FpConfig.fpp"
+locate type FwChanIdType at "FpConfig.fpp"
+locate type FwEventIdType at "FpConfig.fpp"
+locate type FwOpcodeType at "FpConfig.fpp"
+locate type FwPrmIdType at "FpConfig.fpp"
+locate type NATIVE_INT_TYPE at "FpConfig.fpp"
+locate type NATIVE_UINT_TYPE at "FpConfig.fpp"
+locate type POINTER_CAST at "FpConfig.fpp"
