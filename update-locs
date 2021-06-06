@@ -1,3 +1,14 @@
 #!/bin/sh
 
-fpp-locate-defs `find . -name '*.fpp'` > locs.fpp
+subdirs="
+Drv
+Fw
+Ref
+config
+Svc
+"
+
+for dir in $subdirs
+do
+  (cd $dir; ./update-locs)
+done
