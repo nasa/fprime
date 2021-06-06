@@ -1,4 +1,4 @@
-locate constant ActiveRateGroupOutputPorts at "FpConfig.fpp"
+locate constant ActiveRateGroupOutputPorts at "AcConstants.fpp"
 locate type FwChanIdType at "FpConfig.fpp"
 locate type FwEventIdType at "FpConfig.fpp"
 locate type FwOpcodeType at "FpConfig.fpp"
