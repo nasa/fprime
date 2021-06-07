@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../lib/Darwin/libSTest.a CMakeFiles/STest.dir/STest/Random/bsd_random.o CMakeFiles/STest.dir/STest/Random/Random.o CMakeFiles/STest.dir/STest/Pick/Pick_default.o CMakeFiles/STest.dir/STest/Pick/Pick.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../lib/Darwin/libSTest.a

@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_LinuxTimer.a CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentImplTaskDelay.o CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentImplCommon.o CMakeFiles/Svc_LinuxTimer.dir/LinuxTimerComponentAc.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_LinuxTimer.a

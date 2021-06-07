@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libPortSelector.a CMakeFiles/PortSelector.dir/test/ut/PortSelector.o CMakeFiles/PortSelector.dir/test/ut/SocketTestHelper.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libPortSelector.a

@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_Deframer.a CMakeFiles/Svc_Deframer.dir/DeframerComponentImpl.o CMakeFiles/Svc_Deframer.dir/DeframerComponentAc.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_Deframer.a

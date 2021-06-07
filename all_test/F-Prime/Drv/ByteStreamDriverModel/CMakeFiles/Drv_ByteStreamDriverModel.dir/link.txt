@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_ByteStreamDriverModel.a CMakeFiles/Drv_ByteStreamDriverModel.dir/ByteStreamRecvPortAc.o CMakeFiles/Drv_ByteStreamDriverModel.dir/ByteStreamSendPortAc.o CMakeFiles/Drv_ByteStreamDriverModel.dir/ByteStreamPollPortAc.o CMakeFiles/Drv_ByteStreamDriverModel.dir/ByteStreamDriverComponentAc.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_ByteStreamDriverModel.a
