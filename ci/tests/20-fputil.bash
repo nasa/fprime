@@ -17,10 +17,10 @@ do
         warn_and_cont "RPI tools not installed, refusing to test."
         continue
     fi
-    # Check not RPI and Ref deployment to enable FRAMEWORK UTS
-    if [[ "${deployment}" != */RPI ]] && [[ "${deployment}" != */Ref ]]
+    # Check if RPI or Ref deployment to disable FRAMEWORK UTS
+    if [[ "${deployment}" == */RPI ]] || [[ "${deployment}" == */Ref ]]
     then
-        export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=ON"
+        export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
     fi 
     echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
     export CHECK_TARGET_PLATFORM="native"
