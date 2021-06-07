@@ -574,6 +574,8 @@ void PrmDbImplTester::runFileReadError(void) {
         // dispatch command
         this->sendCmd_PRM_SAVE_FILE(0,12);
         Fw::QueuedComponentBase::MsgDispatchStatus stat = this->m_impl.doDispatch();
+        ASSERT_EQ(stat, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
+
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);

@@ -115,6 +115,9 @@ namespace Os {
                 break;
             case OPEN_CREATE:
                 flags = O_WRONLY | O_CREAT | O_TRUNC;
+                if(include_excl) {
+                    flags |= O_EXCL;
+                }
                 break;
             default:
                 FW_ASSERT(0,(NATIVE_INT_TYPE)mode);

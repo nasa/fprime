@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <component name="Deframer" kind="passive" namespace="Svc" modeler="true">
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>

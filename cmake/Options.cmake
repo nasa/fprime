@@ -59,6 +59,33 @@ endif()
 ####
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
+####
+# `FPRIME_ENABLE_FRAMEWORK_UTS:`
+#
+# Allow a project to to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
+# does not affect project specified UTs.
+#
+# **Values:**
+# - ON: adds framework UT targets to the total list of targets
+# - OFF: (default) do not add framework UTs to the target list
+#
+# e.g. `-DFPRIME_ENABLE_FRAMEWORK_UTS=ON`
+####
+option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" OFF)
+
+####
+# `FPRIME_ENABLE_AUTOCODER_UTS:`
+#
+# When FPRIME_ENABLE_FRAMEWORK_UTS is set, this allows a projects to also enable running the autocoder UTs which do not
+# represent the correctness of the C++/product software, but rather the operation of the autocoder tools.
+#
+# **Values:**
+# - ON: (default) retains the autocoder UTs in the target list
+# - OFF: removes autocoder UTs from the target list
+#
+# e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
+####
+option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
 
 ####
 # `SKIP_TOOLS_CHECK:`
