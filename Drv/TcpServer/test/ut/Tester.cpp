@@ -37,7 +37,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
     ASSERT_NE(0, port);
 
     this->component.configure("127.0.0.1", port, 0, 100);
-    status2 = this->component.startup();
+    serverStat = this->component.startup();
     EXPECT_EQ(serverStat, SOCK_SUCCESS);
 
     // Start up a receive thread
@@ -169,7 +169,7 @@ Fw::Buffer Tester ::
 // ----------------------------------------------------------------------
 
 void Tester ::
-    connectPorts(void) 
+    connectPorts(void)
   {
 
     // send
@@ -186,19 +186,19 @@ void Tester ::
 
     // recv
     this->component.set_recv_OutputPort(
-        0, 
+        0,
         this->get_from_recv(0)
     );
 
     // allocate
     this->component.set_allocate_OutputPort(
-        0, 
+        0,
         this->get_from_allocate(0)
     );
 
     // deallocate
     this->component.set_deallocate_OutputPort(
-        0, 
+        0,
         this->get_from_deallocate(0)
     );
   }

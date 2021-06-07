@@ -1073,6 +1073,7 @@ Nicolich
 ninjaaron
 nio
 NMEA
+nmsgs
 noargport
 NOBUFFERS
 NOCOLOR
@@ -1086,6 +1087,7 @@ noncomma
 nondetached
 NONINFRINGEMENT
 Nop
+noreturn
 normalwidths
 normpath
 NOSEQUENCEACTIVE

@@ -5,7 +5,6 @@
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
-<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="Test" kind="active" namespace="Cmd">
     <comment>A component with a single interface</comment>
     <include_header>Autocoders/Python/test/interface1/UserSerializer.hpp</include_header>
