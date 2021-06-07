@@ -123,7 +123,7 @@ Fw::SerializeStatus ${name}::deserialize(Fw::SerializeBufferBase& buffer) {
 #for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
 #if $size == None or $typeinfo == "string":
 #if $typeinfo == "enum"
-    FwEnumStoreType int${member};
+    FwEnumStoreType int${member} = 0;
     stat = buffer.deserialize(int${member});
     this->m_${member} = static_cast<$type>(int${member});
 #else

@@ -29,7 +29,7 @@ namespace Os {
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        NATIVE_INT_TYPE size;
+        NATIVE_INT_TYPE size = 0;
         NATIVE_INT_TYPE cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
