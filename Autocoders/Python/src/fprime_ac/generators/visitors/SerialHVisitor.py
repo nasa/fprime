@@ -88,7 +88,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
@@ -111,7 +111,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = list()
 
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
