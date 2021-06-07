@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "../../../../../lib/Darwin/libAutocoders_Python_test_stress.a"
+  "../../../../../lib/Darwin/libAutocoders_Python_test_stress.pdb"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/QuaternionSerializableAc.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/QuaternionSerializableAc.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/Test2PortAc.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/Test2PortAc.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestCommandImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestCommandImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestCommandSourceImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestCommandSourceImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestComponentAc.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestComponentAc.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestLogRecvImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestLogRecvImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPortAc.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPortAc.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPrmSourceImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPrmSourceImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPtComponentAc.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPtComponentAc.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPtSourceImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestPtSourceImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestTelemRecvImpl.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/TestTelemRecvImpl.o.d"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/main.o"
+  "CMakeFiles/Autocoders_Python_test_stress.dir/main.o.d"
+  "QuaternionSerializableAc.cpp"
+  "QuaternionSerializableAc.hpp"
+  "Test2PortAc.cpp"
+  "Test2PortAc.hpp"
+  "TestComponentAc.cpp"
+  "TestComponentAc.hpp"
+  "TestPortAc.cpp"
+  "TestPortAc.hpp"
+  "TestPtComponentAc.cpp"
+  "TestPtComponentAc.hpp"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/Autocoders_Python_test_stress.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

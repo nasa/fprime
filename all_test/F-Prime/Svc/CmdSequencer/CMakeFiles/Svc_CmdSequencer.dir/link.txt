@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_CmdSequencer.a CMakeFiles/Svc_CmdSequencer.dir/CmdSequencerImpl.o CMakeFiles/Svc_CmdSequencer.dir/Events.o CMakeFiles/Svc_CmdSequencer.dir/FPrimeSequence.o CMakeFiles/Svc_CmdSequencer.dir/Sequence.o CMakeFiles/Svc_CmdSequencer.dir/formats/AMPCSSequence.o CMakeFiles/Svc_CmdSequencer.dir/CmdSequencerComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_CmdSequencer.a

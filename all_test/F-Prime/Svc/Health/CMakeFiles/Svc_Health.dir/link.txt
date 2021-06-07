@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_Health.a CMakeFiles/Svc_Health.dir/HealthComponentImpl.o CMakeFiles/Svc_Health.dir/Stub/HealthComponentStubChecks.o CMakeFiles/Svc_Health.dir/HealthComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_Health.a

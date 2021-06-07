@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libUtils_Hash.a CMakeFiles/Utils_Hash.dir/libcrc/CRC32.o CMakeFiles/Utils_Hash.dir/libcrc/lib_crc.o CMakeFiles/Utils_Hash.dir/HashBufferCommon.o CMakeFiles/Utils_Hash.dir/HashCommon.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libUtils_Hash.a

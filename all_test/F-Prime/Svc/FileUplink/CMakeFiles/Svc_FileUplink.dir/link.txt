@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_FileUplink.a CMakeFiles/Svc_FileUplink.dir/FileUplink.o CMakeFiles/Svc_FileUplink.dir/File.o CMakeFiles/Svc_FileUplink.dir/Warnings.o CMakeFiles/Svc_FileUplink.dir/FileUplinkComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_FileUplink.a

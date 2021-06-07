@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_crisscross.a CMakeFiles/Autocoders_Python_test_crisscross.dir/TestComponentAc.o CMakeFiles/Autocoders_Python_test_crisscross.dir/TestPortAc.o CMakeFiles/Autocoders_Python_test_crisscross.dir/QuaternionSerializableAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_crisscross.a

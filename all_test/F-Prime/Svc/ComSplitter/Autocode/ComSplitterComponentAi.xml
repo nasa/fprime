@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<component name="ComSplitter" kind="passive" namespace="Svc">
+
+  <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+
+  <ports>
+    <port name="comIn" kind="sync_input" data_type="Fw::Com" max_number="1"></port>
+    <port name="comOut" kind="output" data_type="Fw::Com" max_number="5"></port>
+  </ports>
+
+</component>

@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_AssertFatalAdapter.a CMakeFiles/Svc_AssertFatalAdapter.dir/AssertFatalAdapterComponentImpl.o CMakeFiles/Svc_AssertFatalAdapter.dir/AssertFatalAdapterComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_AssertFatalAdapter.a

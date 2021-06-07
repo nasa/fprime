@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_testgen.a CMakeFiles/Autocoders_Python_test_testgen.dir/MathSenderComponentImpl.o CMakeFiles/Autocoders_Python_test_testgen.dir/MathSenderComponentAc.o CMakeFiles/Autocoders_Python_test_testgen.dir/MathOpPortAc.o CMakeFiles/Autocoders_Python_test_testgen.dir/MathResultPortAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_testgen.a

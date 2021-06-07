@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_BlockDriver.a CMakeFiles/Drv_BlockDriver.dir/BlockDriverImpl.o CMakeFiles/Drv_BlockDriver.dir/BlockDriverComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_BlockDriver.a

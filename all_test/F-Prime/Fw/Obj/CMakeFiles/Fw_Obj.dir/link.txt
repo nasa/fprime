@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libFw_Obj.a CMakeFiles/Fw_Obj.dir/ObjBase.o CMakeFiles/Fw_Obj.dir/SimpleObjRegistry.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libFw_Obj.a

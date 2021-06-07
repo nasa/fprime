@@ -206,6 +206,11 @@ class XmlSerializeParser:
                     else:
                         c = None
 
+                    if "default" in list(member.attrib.keys()):
+                        d = member.attrib["default"]
+                    else:
+                        d = None
+
                     for member_tag in member:
                         if member_tag.tag == "enum" and t == "ENUM":
                             en = member_tag.attrib["name"]
@@ -220,6 +225,7 @@ class XmlSerializeParser:
                                     mc = mem.attrib["comment"].strip()
                                 else:
                                     mc = None
+
                                 enum_members.append((mn, v, mc))
                             t = ((t, en), enum_members)
                         else:
@@ -229,7 +235,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, s, f, c))
+                    self.__members.append((n, t, s, f, c, d))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_LinuxSerialDriver.a CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentImplCommon.o CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentImpl.o CMakeFiles/Drv_LinuxSerialDriver.dir/LinuxSerialDriverComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_LinuxSerialDriver.a

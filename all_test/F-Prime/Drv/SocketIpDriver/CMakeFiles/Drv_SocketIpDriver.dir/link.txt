@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_SocketIpDriver.a CMakeFiles/Drv_SocketIpDriver.dir/SocketIpDriverComponentImpl.o CMakeFiles/Drv_SocketIpDriver.dir/SocketHelper.o CMakeFiles/Drv_SocketIpDriver.dir/SocketIpDriverComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_SocketIpDriver.a

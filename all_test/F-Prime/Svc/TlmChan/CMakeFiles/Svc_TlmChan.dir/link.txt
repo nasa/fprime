@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_TlmChan.a CMakeFiles/Svc_TlmChan.dir/TlmChanImpl.o CMakeFiles/Svc_TlmChan.dir/TlmChanImplGet.o CMakeFiles/Svc_TlmChan.dir/TlmChanImplRecv.o CMakeFiles/Svc_TlmChan.dir/TlmChanImplTask.o CMakeFiles/Svc_TlmChan.dir/TlmChanComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_TlmChan.a

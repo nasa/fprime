@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_GpioDriverPorts.a CMakeFiles/Drv_GpioDriverPorts.dir/GpioWritePortAc.o CMakeFiles/Drv_GpioDriverPorts.dir/GpioReadPortAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_GpioDriverPorts.a
