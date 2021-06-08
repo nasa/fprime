@@ -66,12 +66,15 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 # does not affect project specified UTs.
 #
 # **Values:**
-# - ON: adds framework UT targets to the total list of targets
-# - OFF: (default) do not add framework UTs to the target list
+# - ON: (default) adds framework UT targets to the total list of targets
+# - OFF: do not add framework UTs to the target list
 #
-# e.g. `-DFPRIME_ENABLE_FRAMEWORK_UTS=ON`
+# e.g. `-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF`
 ####
-option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" OFF)
+option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
+if (NOT FPRIME_ENABLE_FRAMEWORK_UTS)
+    message(WARNING "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF will be deprecated in a future release")
+endif() 
 
 ####
 # `FPRIME_ENABLE_AUTOCODER_UTS:`
@@ -86,6 +89,9 @@ option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" OFF)
 # e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
 ####
 option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
+if (NOT FPRIME_ENABLE_AUTOCODER_UTS)
+    message(WARNING "-DFPRIME_ENABLE_AUTOCODER_UTS=OFF will be deprecated in a future release")
+endif() 
 
 ####
 # `SKIP_TOOLS_CHECK:`
