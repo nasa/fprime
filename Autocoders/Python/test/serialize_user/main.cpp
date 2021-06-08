@@ -2,6 +2,8 @@
 
 #include <Autocoders/Python/test/serialize_user/ExampleComponentImpl.hpp>
 
+#include <Autocoders/Python/test/serialize_user/ExampleSerializableAc.hpp>
+
 int main(int argc, char* argv[]) {
 
 #if FW_PORT_TRACING
@@ -31,6 +33,12 @@ int main(int argc, char* argv[]) {
     ANameSpace::UserSerializer arg;
     SomeUserStruct val = {12,29.6,2};
     arg.setVal(val);
+
+    Example3::ExampleSerializable serial1;
+
+    ASSERT(serial1.getT1(), 72);
+    ASSERT(serial1.getT2(), true);
+    ASSERT(serial1.getT4(), Example3::MEM2);
 
     port->invoke(-10,arg);
 
