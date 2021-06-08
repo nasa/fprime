@@ -22,7 +22,7 @@ function(dictgen MODULE_NAME AI_XML DEPS)
   get_filename_component(DICT_XML_NAME ${DICT_XML} NAME)
   get_filename_component(ID_CSV_XML_NAME ${ID_CSV_XML} NAME)
   get_filename_component(ID_LOG_XML_NAME ${ID_LOG_XML} NAME)
-  set(DICT_ROOT "${FPRIME_INSTALL_DEST}/${PLATFORM}/dict")
+  set(DICT_ROOT "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict")
   set(DICTIONARY_OUTPUT_FILE "${DICT_ROOT}/${DICT_XML_NAME}")
 
   add_custom_command(
