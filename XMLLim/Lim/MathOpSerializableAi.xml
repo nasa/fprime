@@ -1,6 +1,0 @@
-<serializable name="S">
-  <members>
-    <member name="a" type="U32" format="%u" default="232"/>
-    <member name="b" type="string" size="80" format="%s" default="abc"/>
-  </members>
-</serializable>
