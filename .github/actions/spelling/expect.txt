@@ -616,7 +616,6 @@ gcgandhi
 gcov
 gdiplus
 gencode
-gendoc
 genfile
 GENHUB
 GENREP
@@ -882,7 +881,6 @@ LCHILD
 ldl
 lemstarch
 len
-leq
 lestarch
 levelname
 lflag
@@ -1332,7 +1330,7 @@ Rcv
 rcvd
 RCVTIMEO
 RDONLY
-RDWR
+rdwr
 Readback
 readdir
 READERROR
@@ -1818,6 +1816,7 @@ vals
 valud
 ve
 venv
+VERSIONED
 versioning
 VFILE
 vhd
