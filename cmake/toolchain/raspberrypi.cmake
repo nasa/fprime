@@ -14,6 +14,7 @@
 ####
 # Set system name
 set(CMAKE_SYSTEM_NAME "Linux")
+set(CMAKE_SYSTEM_PROCESSOR "arm")
 
 # Location of pi toolchain
 set(RPI_TOOLCHAIN "$ENV{RPI_TOOLCHAIN_DIR}")
