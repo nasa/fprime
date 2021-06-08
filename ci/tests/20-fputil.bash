@@ -11,11 +11,17 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 # Loop over deployments and targets
 for deployment in ${FPUTIL_DEPLOYS}
 do
+    export CMAKE_EXTRA_SETTINGS=""
     if [[ "${deployment}" == */RPI ]] && [ ! -d "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf" ]
     then
         warn_and_cont "RPI tools not installed, refusing to test."
         continue
     fi
+    # Check if RPI or Ref deployment to disable FRAMEWORK UTS
+    if [[ "${deployment}" == */RPI ]] || [[ "${deployment}" == */Ref ]]
+    then
+        export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+    fi 
     echo -e "${BLUE}Testing ${deployment} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
     export CHECK_TARGET_PLATFORM="native"
     for target in "${FPUTIL_TARGETS[@]}"

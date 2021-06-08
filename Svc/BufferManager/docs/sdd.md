@@ -48,26 +48,23 @@ Name | Type | Role
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | guarded input | Receives buffers for deallocation
-<a name="bufferGetCallee">`bufferGetCallee`</a> | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
-<a name="schedIn">`schedIn`</a> | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.html) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
+`bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | guarded input | Receives buffers for deallocation
+`bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
+`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.html) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
 
 ### 3.4 Constants
 
 `BufferManager` maintains the following constants:
 
-* <a name="BUFFERMGR_MAX_NUM_BINS">*BUFFERMGR_MAX_NUM_BINS*</a>:
-The maximum number of bins (i.e. buffers pool of different sizes)
+* *BUFFERMGR_MAX_NUM_BINS*: The maximum number of bins (i.e. buffers pool of different sizes)
 
 ### 3.5 State
 
 `BufferManager` maintains the following state:
 
-* <a name="m_buffers">*m_buffers*</a>:
-A set of buffers to allocate to users.
+* *m_buffers*: A set of buffers to allocate to users.
 
-* <a name="AllocatedBuffer::allocated">*AllocatedBuffer::allocated*</a>:
-Indicates whether a particular buffer in the pool has been allocated to the user.
+* *AllocatedBuffer::allocated*: Indicates whether a particular buffer in the pool has been allocated to the user.
 
 ### 3.6 Port Behavior
 

@@ -25,12 +25,12 @@ class TaskRunner : TaskRegistry {
         /**
          * Add a task to the registry. These tasks will be run on a bare-metal
          * loop. The function used in this task may be overridden.
-         * \param Task* task: task to be added
+         * \param task: task to be added
          */
         void addTask(Task* task);
         /**
          * Remove a task to the registry. These tasks will no-longer be run.
-         * \param Task* task: task to be removed
+         * \param task: task to be removed
          */
         void removeTask(Task* task);
         /**

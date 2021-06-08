@@ -1,9 +1,10 @@
-\page SvcRateGroupDriverComponent Svc::RateGroupDriver Component
-# Svc::RateGroupDriver Component
+\page SvcActiveRateGroupComponent Svc::ActiveRateGroup Component
+# Svc::ActiveRateGroup Component
 
 ## 1. Introduction
 
 `Svc::ActiveRateGroup` is an active component that drives a set of components connected to `Svc::Sched` output ports. 
+It contains an asynchronous input `Svc::Cycle` port. This port sends a message which wakes the component task. 
 It contains an asynchronous input `Svc::Cycle` port. This port sends a message which wakes the component task. 
 The task invokes each output port in order, passing an argument indicating the order. It tracks execution time and detects overruns.
 
@@ -65,7 +66,7 @@ As described in the Functional Description section, the `Svc::ActiveRateGroup` c
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](ActiveRateGroup.html) [MD](ActiveRateGroup.md)
+TBD
 
 ## 5. Module Checklists
 
