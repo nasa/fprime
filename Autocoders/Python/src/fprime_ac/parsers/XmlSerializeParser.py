@@ -225,7 +225,6 @@ class XmlSerializeParser:
                                     mc = mem.attrib["comment"].strip()
                                 else:
                                     mc = None
-
                                 enum_members.append((mn, v, mc))
                             t = ((t, en), enum_members)
                         else:

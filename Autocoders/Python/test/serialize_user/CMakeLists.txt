@@ -5,7 +5,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ExamplePortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/ExampleSerializableAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/UserSerializer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ExampleComponentImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
