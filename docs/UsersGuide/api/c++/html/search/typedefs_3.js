@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['i8_5492',['I8',['../basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6',1,'BasicTypes.hpp']]]
+  ['native_5fint_5ftype',['NATIVE_INT_TYPE',['../_basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852',1,'BasicTypes.hpp']]],
+  ['native_5fuint_5ftype',['NATIVE_UINT_TYPE',['../_basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc',1,'BasicTypes.hpp']]]
 ];
