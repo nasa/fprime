@@ -231,8 +231,7 @@ if __name__ == "__main__":
     xml_parser = XmlEnumParser(xmlfile)
     print(
         "Enum name: %s, namespace: %s, default: %s, representation: %s"
-        % (xml_parser.get_name(), xml_parser.get_namespace(), xml_parser.get_default(),
-            xml_parser.get_representation())
+        % (xml_parser.get_name(), xml_parser.get_namespace(), xml_parser.get_default(), xml_parser.get_representation())
     )
     print("Items")
     for item in xml_parser.get_items():
