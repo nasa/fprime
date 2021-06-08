@@ -71,8 +71,6 @@ class UdpSocket : public IpSocket {
      *
      * \param hostname: socket uses for incoming transmissions. Must be of form x.x.x.x
      * \param port: port socket uses for incoming transmissions. Must NOT be 0.
-     * \param send_timeout_seconds: send timeout seconds portion
-     * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
     SocketIpStatus configureRecv(const char* hostname, const U16 port);
@@ -81,8 +79,7 @@ class UdpSocket : public IpSocket {
 
     /**
      * \brief bind the UDP to a port such that it can receive packets at the previously configured port
-     * \param address: address in x.x.x.x notation
-     * \param port: port to bind to
+     * \param fd: socket file descriptor used in bind
      * \return status of the bind
      */
     SocketIpStatus bind(NATIVE_INT_TYPE fd);

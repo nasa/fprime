@@ -35,7 +35,11 @@ namespace ${namespace} {
 
   ${name} :: ${name}(void):Serializable()
   {
-    this->e = (t)0;
+#if $default
+    this->e = (t) ${default};
+#else
+    this->e = (t) 0;
+#end if
   }
   
   ${name} :: ${name}(const t e):Serializable()
