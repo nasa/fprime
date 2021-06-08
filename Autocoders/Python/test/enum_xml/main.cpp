@@ -189,6 +189,10 @@ TEST(EnumXML, OK) {
     // Check that enum are set to uninitialized value
     ASSERT_EQ(enum4.e, 0);
 
+    // Check that the enum representation types are set correctly
+    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(I32));
+    ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
+
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;
 

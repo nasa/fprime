@@ -37,6 +37,14 @@
 
             </optional>
 
+            <optional>
+                <attribute name = "representation">
+                    <a:documentation>Representation type of the enum.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
             <!-- Elements -->
             <interleave>
                 <optional>
