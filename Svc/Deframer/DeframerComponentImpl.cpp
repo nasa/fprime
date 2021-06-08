@@ -72,7 +72,8 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
     Fw::SerializeBufferBase& serial = data.getSerializeRepr();
     serial.setBuffLen(data.getSize());
     // Serialized packet type is explicitly an I32 (4 bytes)
-    serial.deserialize(packet_type);
+    Fw::SerializeStatus status = serial.deserialize(packet_type);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Process variable type
     switch (packet_type) {
