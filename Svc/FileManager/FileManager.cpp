@@ -235,11 +235,14 @@ namespace Svc {
     const char evalStr[] = "eval '%s' 1>>%s 2>&1\n";
     const U32 bufferSize = sizeof(evalStr) - 4 + 2 * FW_CMD_STRING_MAX_SIZE;
     char buffer[bufferSize];
-    snprintf(
+    
+    I32 bytesCopied = snprintf(
         buffer, sizeof(buffer), evalStr,
         command.toChar(),
         logFileName.toChar()
     );
+    FW_ASSERT( bytesCopied >= 0 && bytesCopied < sizeof(buffer) );
+    
     const int status = system(buffer);
     return status;
   }
