@@ -99,14 +99,34 @@ The typed port connections provide strong compile-time guarantees of correctness
 Version 2.0.0 of F´ represents major improvements across the F´ framework. As such, some work may be required to migrate from other versions of F´ to the new 
 functionality. This section will offer recommendations to migrate to version 2.0.0 of F´.
 
+Features and Functionality:
+* New ground interface change improves stability and flexibility
+  * `Svc::Framer` and `Svc::Deframer` components may be used in place of `Svc::GroundInterface` 
+  * `Svc::Framer` and `Svc::Deframer` delegate to a user instantiated framing class allowing use of non-fprime framing protocols
+* `Drv::ByteStreamDriverModel` allows implementing drivers reading/writing streams of bytes using a single model
+* New IPv4 drivers implement `Drv::ByteStreamDriverModel` allowing choice or combination of uplink and downlink communications
+  * `Drv::TcpClient` is a tcp client that connects to a remote server
+  * `Drv::TcpServer` is a tcp server that allows connections from remote clients
+  * `Drv::Udp` allows UDP communications
+  * `Drv::SocketIpDriver` may be replaced using a choice of an above component.
+* `Svc::FileDownlink` now supports a queue of files to downlink and a port to trigger file downlinks
+* `Svc::FileDownlink` may now be configured to turn off certain errors
+* `Svc/GenericHub` is a basic instantiation of the hub pattern
+* Bug fixes and stability improvements
+
+Migration considerations:
 * F´ tooling (fprime-util and fprime-gds) should be installed using `pip install fprime-tools fprime-gds`
 * `Os::File::open` with the mode CREATE will now properly respect O_EXCL and error if the file exists. Pass in `false` as the final argument to override. 
 * Revise uses of `Fw::Buffer` to correct usage of member functions using camel case.  E.g. `Fw::Buffer::getsize` is now `Fw::Buffer::getSize`
-* The ground interface chain has been refactored. Projects may switch to using `Svc::Framer`, `Svc::Deframer`, and any implementor of `Drv::ByteStreamDriverModel` to supply the data.  See: TBD.  To continue using the old interface with the GDS run `fprime-gds --comm-checksum-type fixed`.
-* `Svc::FileDownlink` may now be configured to turn off certain errors
-* `Svc::BufferManager` has been reworked to remove errors. When instantiating it please supply a memory allocator. `Ref` has an example of this.
-* A project must now enable F´ framework UTs using `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=ON`.  Project defined UTs are unaffected.
-* Dictionaries, binaries, and other build output now are written to a deployments `build_artifacts` folder.
+* The ground interface chain has been refactored. Projects may switch to using `Svc::Framer`, `Svc::Deframer`, and any implementor of `Drv::ByteStreamDriverModel` to supply the data.  To continue using the old interface with the GDS run `fprime-gds --comm-checksum-type fixed`.
+* `Svc::BufferManager` has been reworked to remove errors. When instantiating it please supply a memory allocator as shown in `Ref`.
+* Dictionaries, binaries, and other build outputs now are written to a deployments `build_artifacts` folder.
+
+
+**Deprecated Funcntionality:** The following features are or will be deprecated soon and may be removed in future releases.
+* `Svc::GroundInterface` and `Drv::SocketIpDriver` should be replaced by the new ground system components.
+* Inlined enumerations (enumerations defined inside the definition of a command/event/channel) should be replaced by EnumAi.xml implementations
+* `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF` will be removed in favor of future `fprime-util check` variants
 
 ### Release 1.0: 
 
