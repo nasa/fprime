@@ -18,14 +18,11 @@ The user rarely needs to specify a platform file directly. It will be specified 
 in the chosen Toolchain file, or by the CMake system itself. However, if the user wants to control
 which platform file is used, the load is specified by the following rules:
 
-If the user specifies the platform from the command line using the command line option
-`-DPLATFORM=<NAME>` then that platform file will be used e.g. `-DPLATFORM=Darwin` will load the
-Darwin.cmake regardless of the Host system. This is usually used only in the case of running UTs.
-
 If the user specifies a CMake Toolchain file, then the platform file `${CMAKE_SYSTEM_NAME}.cmake`
-will be used. `${CMAKE_SYSTEM_NAME}` is set in the toolchain file.
+will be used. `${CMAKE_SYSTEM_NAME}` is set in the toolchain file and is typically set to a name like Linux, or Darwin
+but may be more specific if required.
 
-Otherwise, CMake sets the `${CMAKE_SYSTEM_NAME}` to be that of the Host system, and that platform
+Otherwise, CMake sets the `${CMAKE_SYSTEM_NAME}` automatically to be that of the Host system, and that platform
 will be used. e.g. when building on Linux, the platform file "Linux.cmake" will be used.
 
 ### Filling In CMake Platform by Example ###

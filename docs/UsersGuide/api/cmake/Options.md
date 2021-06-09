@@ -101,14 +101,6 @@ folder, although theoretically any CMake toolchain can be used. Default: none, w
 e.g. `-DCMAKE_TOOLCHAIN_FILE=/path/to/cmake/toolchain`
 
 
-## `PLATFORM:`
-
-Specifies the platform used when building the F prime using the CMake system. See:
-[platform.md](platform.md) for more information. Default: automatically detect platform file.
-
-e.g. `-DPLATFORM=/path/to/platform/cmake`
-
-
 ## Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
 `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 

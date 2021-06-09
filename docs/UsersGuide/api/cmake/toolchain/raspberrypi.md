@@ -13,8 +13,4 @@ running CMake or `fprime-util generate`.
 e.g. should the user install the tools in ``/home/user1` then the environment variable might be set using
 `export RPI_TOOLCHAIN_DIR=/home/user/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/`
 
-**Note:** this toolchain file sets the system name to `arm-linux-gnueabihf` to be similar to other raspberry pi
-toolchain files while providing a cleaner name of `raspberrypi`.  Its parallel platform file is therefore named
-`arm-linux-gnueabihf.cmake` in the platforms directory.
-
 
