@@ -30,7 +30,7 @@ F´ has the following features:
 | F´ Release                          |
 |-------------------------------------|
 | [v1.5 Series Documentation](https://nasa.github.io/fprime/v1.5) |
-| [Latest Documentation](./latest.md) As of: Wed Jun  9 17:12:50 UTC 2021 |
+| [Latest Documentation](./latest.md) As of: Wed Jun  9 17:32:40 UTC 2021 |
 
 ## F´ System Requirements
 
