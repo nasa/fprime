@@ -16,7 +16,7 @@ export NOCOLOR='\033[0m' # No Color
 ####
 function archive_logs()
 {
-    tar -czf "${FPRIME_DIR}/ci-logs.tar.gz" "${LOG_DIR}"
+    tar -czf "${FPRIME_DIR}/ci-logs.tar.gz" "${LOG_DIR}"/*
 }
 
 ####
