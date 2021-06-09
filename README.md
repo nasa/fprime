@@ -123,9 +123,9 @@ Migration considerations:
 * Dictionaries, binaries, and other build outputs now are written to a deployments `build_artifacts` folder.
 
 
-**Deprecated Funcntionality:** The following features are or will be deprecated soon and may be removed in future releases.
+**Deprecated Functionality:** The following features are or will be deprecated soon and may be removed in future releases.
 * `Svc::GroundInterface` and `Drv::SocketIpDriver` should be replaced by the new ground system components.
-* Inlined enumerations (enumerations defined inside the definition of a command/event/channel) should be replaced by EnumAi.xml implementations
+* Inline enumerations (enumerations defined inside the definition of a command/event/channel) should be replaced by EnumAi.xml implementations
 * `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF` will be removed in favor of future `fprime-util check` variants
 
 ### Release 1.0: 
