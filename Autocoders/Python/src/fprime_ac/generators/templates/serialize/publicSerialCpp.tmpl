@@ -3,11 +3,7 @@
 ${name}::${name}(void): Serializable() {
 #for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $default != None:
-#if $typeinfo == "string":
-    this->m_${member} = "${default}";
-#else
     this->m_${member} = ${default};
-#end if
 #end if
 #end for
 }
