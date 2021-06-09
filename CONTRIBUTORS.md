@@ -1,3 +1,9 @@
+**NOTE:** a full list of contriubtors is here https://github.com/nasa/fprime/graphs/contributors.
+
+This file contains a list of contributors and authors prior to proper tracking using the publically available Github. The above link is a better representation 
+of F´ contributors since the transition to open source.  This file will be removed in future releases.
+
+
 JPL Contributors to the F' Software Framework:
 
 * Adams, Derek
