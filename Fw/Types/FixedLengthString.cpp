@@ -35,16 +35,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void FixedLengthString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
     const FixedLengthString& FixedLengthString::operator=(const FixedLengthString& other) {
         this->copyBuff(other.m_buf,sizeof(this->m_buf));
         return *this;
@@ -69,7 +59,7 @@ namespace Fw {
     NATIVE_UINT_TYPE FixedLengthString::getCapacity(void) const {
         return STRING_SIZE;
     }
-    
+
     void FixedLengthString::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;

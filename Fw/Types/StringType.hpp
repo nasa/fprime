@@ -35,6 +35,7 @@ namespace Fw {
             const StringBase& operator=(const StringBase& src); //!< Assign another StringBase
 
             void appendBuff(const char* buff, NATIVE_UINT_TYPE size);
+            void copyBuff(const char* buff, NATIVE_UINT_TYPE size);
 
             void format(const char* formatString, ...); //!< write formatted string to buffer
 #ifdef BUILD_UT
@@ -48,7 +49,6 @@ namespace Fw {
         protected:
             StringBase(void);
             virtual ~StringBase(void);
-            virtual void copyBuff(const char* buff, NATIVE_UINT_TYPE size) = 0;
             virtual NATIVE_UINT_TYPE getCapacity(void) const = 0; //!< return size of buffer
 
         PRIVATE:
