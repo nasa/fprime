@@ -5,21 +5,18 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+set(MOD_DEPS Os)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentAi.xml"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImpl.cpp"
     )
+    register_fprime_module()
 else()
-    message(FATAL_ERROR "Cannot use ${CMAKE_CURRENT_LIST_DIR} with platform ${CMAKE_SYSTEM_NAME}.")
+    message(STATUS "Cannot use ${CMAKE_CURRENT_LIST_DIR} with platform ${CMAKE_SYSTEM_NAME}. Skipping.")
 endif()
-
-set(MOD_DEPS
-    Os
-)
-
-register_fprime_module()
 
 ### UTs ###
 # Note: this UT expects user input
