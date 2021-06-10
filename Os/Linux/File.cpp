@@ -98,6 +98,9 @@ namespace Os {
                 case EACCES:
                     stat = NO_PERMISSION;
                     break;
+                case EEXIST:
+                    stat = FILE_EXISTS;
+                    break;
                 default:
                     stat = OTHER_ERROR;
                     break;
