@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ref_1876',['Ref',['../namespace_ref.html',1,'']]]
+  ['ref',['Ref',['../namespace_ref.html',1,'']]]
 ];
