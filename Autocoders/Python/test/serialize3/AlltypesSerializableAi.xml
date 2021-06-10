@@ -5,9 +5,7 @@
     This is an optional comment describing the serializable class.
     </comment>
     <members>
-        <member name="i8" type="I8">
-            <default>43</default>
-        </member>
+        <member name="i8" type="I8"/>
         <member name="u8" type="U8"/>
         <member name="i16" type="I16"/>
         <member name="u16" type="U16"/>
@@ -16,15 +14,9 @@
         <member name="i64" type="I64"/>
         <member name="u64" type="U64"/>
         <member name="f32" type="F32"/>
-        <member name="f64" type="F64">
-            <default>1.2345</default>
-        </member>
-        <member name="str" type="string" size="20">
-            <default>"hello"</default>
-        </member>
-        <member name="b" type="bool">
-            <default>true</default>
-        </member>
+        <member name="f64" type="F64"/>
+        <member name="str" type="string" size="20"/>
+        <member name="b" type="bool"/>
         <member name="is" type="Ns::Something::Inttype"/>
     </members>
 </serializable>
