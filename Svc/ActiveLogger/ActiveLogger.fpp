@@ -4,13 +4,13 @@ module Svc {
   active component ActiveLogger {
 
     @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerCmdDict.xml
-    include "ActiveLoggerCmdDict.fpp"
+    include "ActiveLoggerCmdDict.fppi"
 
     @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerEvrDict.xml
-    include "ActiveLoggerEvrDict.fpp"
+    include "ActiveLoggerEvrDict.fppi"
 
     @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerIntIFDict.xml
-    include "ActiveLoggerIntIFDict.fpp"
+    include "ActiveLoggerIntIFDict.fppi"
 
     @ Telemetry input port
     sync input port LogRecv: Fw.Log
@@ -28,23 +28,23 @@ module Svc {
     output port pingOut: [1] Svc.Ping
 
     @ Port for receiving commands
-    command recv port CmdIn
+    command recv port CmdDisp
 
     @ Port for sending command registration requests
-    command reg port cmdRegOut
+    command reg port CmdStatus
 
     @ Port for sending command responses
     command resp port cmdResponseOut
 
     @ Port for emitting events
-    event port eventOut
+    event port Log
 
     @ Port for emitting text events
-    text event port textEventOut
+    text event port LogText
 
     @ Port for getting the time
     time get port timeGetOut
-
+    
   }
 
 }
