@@ -944,10 +944,10 @@ var NAVTREEINDEX =
 "class_drv_1_1_tcp_client_socket.html#a39e6851fe99a5dc5ea530ccd59bd6f56",
 "class_fw_1_1_log_assert_hook.html#a9b3b721b379e325f23d95a4513f5ec14",
 "class_fw_1_1_text_log_string.html#a3e5f0406d733c2b68969d480c9175350a1245e7540a5985587dd65bbf42d35824",
-"class_os_1_1_queue.html#a6c64e7323d96d1a960b58acb396d15cf",
-"class_svc_1_1_deframer_component_impl.html",
-"dir_4b4364554519ffbd82b240f5b975efee.html",
-"namespacemembers_enum.html"
+"class_os_1_1_queue.html#a6968c94e323391e62689e11826dfd3a8",
+"class_svc_1_1_console_text_logger_impl.html#afa4881d5447e33866ec9422ff7348d92",
+"dir_49e56c817e5e54854c35e136979f97ca.html",
+"namespacemembers.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

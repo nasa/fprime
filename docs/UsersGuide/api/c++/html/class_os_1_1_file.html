@@ -116,6 +116,7 @@ Public Types</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8">BAD_SIZE</a>, 
 <a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a289eef72a215a602fc6068cf4249218f">NOT_OPENED</a>, 
+<a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a6ff62ec7c069ae774bdabd0e2930e53a">FILE_EXISTS</a>, 
 <a class="el" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998">OTHER_ERROR</a>
 <br />
  }</td></tr>
@@ -234,6 +235,8 @@ Static Public Member Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a7ee286422e714489bb92d2228075f0b7a289eef72a215a602fc6068cf4249218f"></a>NOT_OPENED&#160;</td><td class="fielddoc"><p>file hasn't been opened yet </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a7ee286422e714489bb92d2228075f0b7a6ff62ec7c069ae774bdabd0e2930e53a"></a>FILE_EXISTS&#160;</td><td class="fielddoc"><p>file already exist (for CREATE with O_EXCL enabled) </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998"></a>OTHER_ERROR&#160;</td><td class="fielddoc"><p>A catch-all for other errors. Have to look in implementation-specific code. </p>
 </td></tr>
 </table>
@@ -328,7 +331,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>write size; will return amount written or errno </p>
 
-<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00314">314</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00317">317</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
 
 </div>
 </div>
@@ -350,7 +353,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>calculates the CRC32 of the file </p>
 
-<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00418">418</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00421">421</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
 
 </div>
 </div>
@@ -393,7 +396,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>flush data to disk. No-op on systems that do not support. </p>
 
-<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00380">380</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00383">383</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
 
 </div>
 </div>
@@ -599,7 +602,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00116">116</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_os_2_linux_2_file_8cpp_source.html#l00119">119</a> of file <a class="el" href="_os_2_linux_2_file_8cpp_source.html">File.cpp</a>.</p>
 
 </div>
 </div>

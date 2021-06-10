@@ -16,6 +16,7 @@ var class_os_1_1_file =
       [ "NO_PERMISSION", "class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a83c0f1e2305c076ddd6f15e48481de50", null ],
       [ "BAD_SIZE", "class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a332cbae4ad8df187e3772090e2576db8", null ],
       [ "NOT_OPENED", "class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a289eef72a215a602fc6068cf4249218f", null ],
+      [ "FILE_EXISTS", "class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a6ff62ec7c069ae774bdabd0e2930e53a", null ],
       [ "OTHER_ERROR", "class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998", null ]
     ] ],
     [ "File", "class_os_1_1_file.html#a0d2457873bd5ca69bec0738d18349176", null ],

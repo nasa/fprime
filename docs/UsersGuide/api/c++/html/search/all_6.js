@@ -31,6 +31,7 @@ var searchData=
   ['file_5fbad_5fsize',['FILE_BAD_SIZE',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1ab7d148f9eabd4ef83b60de94d9c31e63',1,'Os::ValidateFile']]],
   ['file_5fdoesnt_5fexist',['FILE_DOESNT_EXIST',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a5e6778d8da99f0fa5464161a5ad4bf41',1,'Os::ValidateFile']]],
   ['file_5fentry_5ffilename_5flen',['FILE_ENTRY_FILENAME_LEN',['../_file_downlink_8hpp.html#aec88f7c060ac606a3e1d39bb3cf03ff5',1,'FileDownlink.hpp']]],
+  ['file_5fexists',['FILE_EXISTS',['../class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a6ff62ec7c069ae774bdabd0e2930e53a',1,'Os::File']]],
   ['file_5flimit',['FILE_LIMIT',['../namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa98ccd3752199ffe0aca3bbb8dd891bc9',1,'Os::FileSystem']]],
   ['file_5fno_5fpermission',['FILE_NO_PERMISSION',['../namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1a05a25ab9c1043e8b2685b64e86da2c54',1,'Os::ValidateFile']]],
   ['file_5fopen_5ferror',['FILE_OPEN_ERROR',['../class_fw_1_1_serializable_file.html#a5f04d8113d943cbb949f693060a310eea320f765b82afed183e3f4545c02c2f65',1,'Fw::SerializableFile']]],
