@@ -9,63 +9,66 @@
 #
 # Note: the RPI toolchain is also installed to ensure that the RPI package is ready-to-go.
 #
-# Build this with the --target fprime-base
+# Build this with the -- fprime-base
 ####
-FROM ubuntu:18.04 AS fprime-base
+ ubuntu:18.04  fprime-base
 # Adding fprime user, group, and password fprime
-RUN groupadd fprime && \
+ groupadd fprime && \
     groupmod -g 1001 fprime && \
     useradd -ms /bin/bash -g root -G sudo,fprime -p fprime fprime && \
     usermod -u 1001 fprime && \
 # Installing system components
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt- update && apt- install -y --no-install-recommends \
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
     mkdir -p /opt/ && chown fprime:fprime /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# Change user and group of the virtual environment
-# Make fprime user default user
-ENV HOST fprime
-ENV USER fprime
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-USER fprime
-ENTRYPOINT ["/bin/bash"]
+# Change user and group the virtual environment
+# Make fprime user
+
+
+
+ HOST fprime
+ USER fprime
+ LANG C.UTF-3
+ LC_ALL C.UTF-3
+ fprime
+        ["/bin/bash"]
 
 ### **** **** Add Non-CI Images Here **** **** ###
-FROM fprime-base AS fprime-docker
-RUN     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
-        python3 -m venv /opt/fprime-venv/ && . /opt/fprime-venv/bin/activate && \
+ fprime-base AS fprime-docker
+     git clone --quiet https://github.com/nasa/fprime.git /opt/fprime && \
+        python3 -m venv /opt/fprime-venv/ . /opt/fprime-venv/bin/activate && \
         pip install --no-cache-dir fprime-tools fprime-gds && \
-        rm -r ~/.cache/pip && \
-        chown -R fprime:fprime /opt/fprime-venv && \
+        rm -r ~/.cache/pip  \
+        chown -R fprime:fprime /opt/fprime-venv  \
         chmod -R 775 /opt/fprime-venv
-ENV VIRTUAL_ENV "/opt/fprime-venv"
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ VIRTUAL_ENV "/opt/fprime-venv"
+  PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
 #
-# This sets up an image for use within a CI build system. This is currently configured for the
+# This sets up an image use within a CI build system. This is currently configured the
 # Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
 #
-# This is the last image in the file because the Jenkins server used by F prime does not expose
-# the --target argument for building the docker image.  As such, this image is the one built and
-# used for Jenkins.
+# This is the last image the file because the Jenkins server used by F prime does not expose
+# the -- argument  building the docker image.  As such, this image is the one built and
+# used Jenkins.
 ####
-FROM fprime-docker AS jenkins-ci
-USER root
-RUN groupadd jenkins && \
+ fprime-docker AS jenkins-ci
+ root
+ groupadd jenkins && \
     groupmod -g 1003 jenkins && \
-    useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins && \
+    useradd -ms /bin/bash -g root -G sudo,jenkins,fprime -p jenkins jenkins \
     usermod -u 1003 jenkins && \
     usermod -a -G fprime jenkins
-USER jenkins
-ENV HOST jenkins
-ENV USER jenkins
+ jenkins
+ HOST jenkins
+ USER jenkins
 # Paths and entrypoints
-ENV PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
-ENTRYPOINT ["/bin/bash"]
+ PATH "/opt/fprime-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ LANG C.UTF-3
+ LC_ALL C.UTF-3
+ CI_CLEAN_REPO "NO_REALLY_I_WANT_TO_NUKE_ALL_YOUR_BASE"
+       ["/bin/bash"]
