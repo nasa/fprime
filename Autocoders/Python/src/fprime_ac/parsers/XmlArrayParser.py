@@ -30,7 +30,7 @@ from fprime_ac.utils.exceptions import (
 )
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -77,7 +77,7 @@ class XmlArrayParser(object):
         self.Config = ConfigManager.ConfigManager.getInstance()
 
         typeslist = [
-            "I8",
+            "U8",
             "I8",
             "BYTE",
             "I16",
@@ -102,6 +102,7 @@ class XmlArrayParser(object):
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
+        fd.close() #Close the file, which is only used for the parsing above
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get("schema", "array"), "r")
@@ -270,4 +271,4 @@ if __name__ == "__main__":
         "Array name: %s, namespace: %s"
         % (xml_parser.get_name(), xml_parser.get_namespace())
     )
-    print("Size: %s, member type: %s" % (self.get_size(), self.get_type()))
+    print("Size: %s, member type: %s" % (xml_parser.get_size(), xml_parser.get_type()))

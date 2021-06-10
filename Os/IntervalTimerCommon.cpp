@@ -6,7 +6,7 @@
  * implementation away, or it is working on the raw values, as raw values.
  *
  * *Note:* If the RawTime object is using U32 upper to store seconds and U32 lower to store nano
- * seconds, then X86/IntervalTimer.cpp can be used, and the implementor need only fill in the
+ * seconds, then X86/IntervalTimer.cpp can be used, and the implementer need only fill in the
  * getRawTime function for the specific OS.
  */
 

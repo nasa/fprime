@@ -74,7 +74,7 @@ The `Svc::CmdDispatcher` component dispatches commands to other components:
 
 ## 4. Dictionary
 
-Dictionaries: [HTML](CmdDispatcher.html) [MD](CmdDispatcher.md)
+Dictionaries: [HTML](CmdDispatcher.html)
 
 ## 4. Module Checklists
 
@@ -86,13 +86,7 @@ Unit Test Checklist | [Link](Checklist_Unit_Test.xls)
 
 ## 5. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Summary](../test/ut/output/SvcCmdDispatcher_gcov.txt)
-
-[Coverage Output - `CommandDispatcherImpl.cpp`](../test/ut/output/CommandDispatcherImpl.cpp.gcov)
-
-[Coverage Output - `CommandDispatcherComponentAc.cpp`](../test/ut/output/CommandDispatcherComponentAc.cpp.gcov)
+To see unit test coverage run `fprime-util check --coverage`
 
 ## 6. Change Log
 
@@ -102,6 +96,7 @@ Date | Description
 7/22/2015 | Design review actions 
 9/16/2015 | Unit Test additions
 1/28/2016 | Added context value discussion
+5/17/2021 | Added CMD Reregistration option
 
 
 

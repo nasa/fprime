@@ -102,5 +102,5 @@ Note: this is not written yet.
 
 ## Conclusion
 
-In this guide we looked at setting up the most basic IDE settings.  You should now see all of our CMake targets and be 
+In this guide we looked at setting up the most basic IDE settings.  You should now see all of our CMake targets and be
 able to run and debug them.  More advanced usage is likely documented within the IDE's documentation.

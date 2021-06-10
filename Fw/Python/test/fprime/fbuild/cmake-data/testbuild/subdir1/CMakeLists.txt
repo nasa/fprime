@@ -1,1 +1,0 @@
-project(TOP CXX C S)

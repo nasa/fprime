@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "REF">
     <import_component_type>test/import/one</import_component_type>
     <import_component_type>test/import/two</import_component_type>

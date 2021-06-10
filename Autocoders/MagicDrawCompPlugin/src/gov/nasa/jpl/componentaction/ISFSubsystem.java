@@ -28,7 +28,7 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 public class ISFSubsystem {
 
 	/**
-	 * Used as a object to store the componentMap, physicalConnectionList, name, baseID, and instaneWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to 
+	 * Used as a object to store the componentMap, physicalConnectionList, name, baseID, and instanceWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to 
 	 * the XML output file. 
 	 *
 	 */
@@ -67,7 +67,7 @@ public class ISFSubsystem {
 	}
 
 	/**
-	 * Used as a dataObjet within the componentMap. The objects within this object are used to describe a leaf component. The methods are pretty self-explanatory. 
+	 * Used as a dataObject within the componentMap. The objects within this object are used to describe a leaf component. The methods are pretty self-explanatory. 
 	 *
 	 */
 	public static class componentType {
@@ -111,7 +111,7 @@ public class ISFSubsystem {
 
 	/**
 	 * The physicalConnectionType is used to describe connections. Connector objects can not be re-defined through the API, so when we find a source port with it's final target port, we make one 
-	 * of these objects to describe the connection. This includes the names of the ports, the type, the parent name, the multiplicities, and the actual conectorEnd.
+	 * of these objects to describe the connection. This includes the names of the ports, the type, the parent name, the multiplicities, and the actual connectorEnd.
 	 */
 	public static class physicalConnectionType {
 		String source;
@@ -636,7 +636,7 @@ public class ISFSubsystem {
 	 * Both getSourceConnEnd and getTargetConnEnd use this function. Incorporates error handling/checking.
 	 * <p>
 	 * The function checks the direction property of the first stereotype found in each port of the connector. 
-	 * Depending on what the connector can see within and around the system, the funcion will return what it sees as the source and what is sees as the target.
+	 * Depending on what the connector can see within and around the system, the function will return what it sees as the source and what is sees as the target.
 	 * 
 	 * @param c Connector
 	 * @param isSource true if looking for source end, false if looking for target end
@@ -694,7 +694,7 @@ public class ISFSubsystem {
 				}
 			}
 			catch(Exception e){
-				Utils.throwConnectorException("Port in " + c.getObjectParent().getHumanName() + "  does not have direction. (The connector end does not have a sterotype with a direction value)");
+				Utils.throwConnectorException("Port in " + c.getObjectParent().getHumanName() + "  does not have direction. (The connector end does not have a stereotype with a direction value)");
 			}
 		}
 	

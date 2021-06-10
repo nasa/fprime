@@ -8,18 +8,18 @@ advice on how to configure standard customization items as part of this CMake sy
 can be done using standard CMake patterns. Thus, the user is encouraged to study CMake if advice
 cannot be found herein.
 
-## Build F Prime Utilites
+## Build F Prime Utilities
 
-Adding a utility executable that dependns on F prime code is easy. Just perform a standard call to
+Adding a utility executable that depends on F prime code is easy. Just perform a standard call to
 `register_fprime_executable`. Care should be taken to set the variable `EXECUTABLE_NAME` before
 making this call in order to set the utility's name. This executable will then be output as part
 of the deployment's build. A separate tools deployment may be used to build only utilities.
 
 See: [API](API.md)
 
-## Cutsom Build-System Commands (Make Targets)
+## Custom Build-System Commands (Make Targets)
 
-Custom build targets that need to be build against modules, and global targets can be generated 
+Custom build targets that need to be build against modules, and global targets can be generated
 using the hook pattern. This pattern involves creating a file with two functions `add_global_target`
 and `add_module_target`. These functions are called to add targets to top-level and each module.
 Then this file ise registered with `register_fprime_target`.
@@ -59,7 +59,7 @@ use the `add_directory` cmake command to add the directory. Then use a `CMakeLis
 is used when the system does not depend on the files produced (directly) but may need a link
 dependency, and `add_custom_command` is used when the system needs access to the output files.
 
-Alternativley, `ExternalProject_Add` can be used if the external library requires download,
+Alternatively, `ExternalProject_Add` can be used if the external library requires download,
 version control, and building steps.
 
 **Supporting Documentation:**
@@ -67,6 +67,3 @@ version control, and building steps.
 2. [https://cmake.org/cmake/help/latest/command/add_custom_command.html](https://cmake.org/cmake/help/latest/command/add_custom_command.html)
 3. [https://cmake.org/cmake/help/latest/module/ExternalProject.html](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
 4. [https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf](https://blog.kitware.com/wp-content/uploads/2016/01/kitware_quarterly1009.pdf)
-
-
-

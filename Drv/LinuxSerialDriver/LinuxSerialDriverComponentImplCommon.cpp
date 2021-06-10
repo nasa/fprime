@@ -59,7 +59,7 @@ namespace Drv {
             }
         }
         this->m_readBuffMutex.unLock();
-        FW_ASSERT(found,Buffer.getbufferID(),Buffer.getmanagerID());
+        FW_ASSERT(found,Buffer.getContext());
 
     }
 

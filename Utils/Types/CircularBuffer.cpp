@@ -85,7 +85,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
     if ((sizeof(U8) + offset) > get_remaining_size(false)) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    value = *(m_head + offset);
+    value = *increment(m_head, offset);
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
@@ -145,6 +145,10 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
     ASSERT_CONSISTENT(m_store, m_size, m_head);
     ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
+}
+
+NATIVE_UINT_TYPE CircularBuffer ::get_capacity() {
+    return m_size;
 }
 
 #ifdef CIRCULAR_DEBUG

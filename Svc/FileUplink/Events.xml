@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!--======================================================================
 
@@ -13,7 +12,7 @@
 
   <event
     id="0"
-    name="FileUplink_BadChecksum"
+    name="BadChecksum"
     severity="WARNING_HI"
     format_string="Bad checksum value during receipt of file %s: computed 0x%08X, read 0x%08X"
   >
@@ -45,7 +44,7 @@
 
   <event
     id="1"
-    name="FileUplink_FileOpenError"
+    name="FileOpenError"
     severity="WARNING_HI"
     format_string="Could not open file %s"
   >
@@ -63,7 +62,7 @@
 
   <event
     id="2"
-    name="FileUplink_FileReceived"
+    name="FileReceived"
     severity="ACTIVITY_HI"
     format_string="Received file %s"
   >
@@ -81,7 +80,7 @@
 
   <event
     id="3"
-    name="FileUplink_FileWriteError"
+    name="FileWriteError"
     severity="WARNING_HI"
     format_string="Could not write to file %s"
     throttle="5"
@@ -100,7 +99,7 @@
 
   <event
     id="4"
-    name="FileUplink_InvalidReceiveMode"
+    name="InvalidReceiveMode"
     severity="WARNING_HI"
     format_string="Packet type %u received in mode %u"
     throttle="5"
@@ -126,7 +125,7 @@
 
   <event
     id="5"
-    name="FileUplink_PacketOutOfBounds"
+    name="PacketOutOfBounds"
     severity="WARNING_HI"
     format_string="Packet %u out of bounds for file %s"
     throttle="5"
@@ -152,7 +151,7 @@
 
   <event
     id="6"
-    name="FileUplink_PacketOutOfOrder"
+    name="PacketOutOfOrder"
     severity="WARNING_HI"
     format_string="Received packet %u after packet %u"
     throttle="20"
@@ -178,11 +177,29 @@
 
   <event
     id="7"
-    name="FileUplink_UplinkCanceled"
+    name="UplinkCanceled"
     severity="ACTIVITY_HI"
     format_string="Received CANCEL packet"
   >
     <comment>The File Uplink component received a CANCEL packet</comment>
   </event>
+
+  <event id="8"
+    name="DecodeError"
+    severity="WARNING_HI"
+    format_string="Unable to decode file packet. Status: %d"
+  >
+    <comment>Error decoding file packet</comment>
+    <args>
+      <arg
+        name="status"
+        type="I32"
+      >
+        <comment>The sequence index of the out-of-order packet</comment>
+      </arg>
+    </args>
+  </event>
+
+
 
 </events>

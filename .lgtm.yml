@@ -1,5 +1,5 @@
 ##############
-# Cofiguration file for LGTM.com
+# Configuration file for LGTM.com
 # Currently only needed for cpp code since python and js works by default
 #
 # @author: Hunter Paulson
@@ -28,8 +28,7 @@ extraction:
             # setup the venv and install packages
             - "python3 -m venv ./fprime-venv"
             - ". ./fprime-venv/bin/activate" 
-            - "pip install ./Fw/Python"
-            - "pip install ./Gds"
+            - "pip install fprime-tools fprime-gds"
         configure:   
             command:
         before_index:

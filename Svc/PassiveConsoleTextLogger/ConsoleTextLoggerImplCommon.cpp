@@ -6,7 +6,7 @@
 namespace Svc {
 
     ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName) :
-        PassiveTextLoggerComponentBase(compName),m_displayLine(2),m_pointerLine(0) {
+        PassiveTextLoggerComponentBase(compName) {
     }
 
     void ConsoleTextLoggerImpl::init(void) {

@@ -38,7 +38,7 @@ PROJECT_NAME           = "F´ Flight Software - C/C++ Documentation"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = NASA-v1.5.0
+PROJECT_NUMBER         = NASA-v1.6.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "A framework for building embedded system applications 
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           =
+PROJECT_LOGO           = ./docs/doxygen/logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -170,7 +170,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = ./ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
+STRIP_FROM_PATH        = ./ ./docs-build-for-docs/ ./docs-build-for-docs/F-Prime/ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -179,7 +179,7 @@ STRIP_FROM_PATH        = ./ ./Ref/build-fprime-automatic-default/ ./Ref/build-fp
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = ./ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
+STRIP_FROM_INC_PATH    = ./ ./docs-build-for-docs/ ./docs-build-for-docs/F-Prime/ ./Ref/build-fprime-automatic-default/ ./Ref/build-fprime-automatic-default/F-Prime/
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -455,7 +455,7 @@ LOOKUP_CACHE_SIZE      = 0
 # than 0 to get more control over the balance between CPU load and processing
 # speed. At this moment only the input processing can be done using multiple
 # threads. Since this is still an experimental feature the default is set to 1,
-# which efficively disables parallel processing. Please report any issues you
+# which effectively disables parallel processing. Please report any issues you
 # encounter. Generating dot graphs in parallel is controlled by the
 # DOT_NUM_THREADS setting.
 # Minimum value: 0, maximum value: 32, default value: 1.
@@ -915,7 +915,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */test/* */GTest/* */build-clion/* */build*ut/* */Autocoders/MagicDrawCompPlugin/* */cmake/* 
+EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */Autocoders/MagicDrawCompPlugin/* */cmake/* 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1316,7 +1316,7 @@ HTML_INDEX_NUM_ENTRIES = 100
 
 # If the GENERATE_DOCSET tag is set to YES, additional index files will be
 # generated that can be used as input for Apple's Xcode 3 integrated development
-# environment (see: https://developer.apple.com/xcode/), introduced with OSX
+# environment (see: https://developer.apple.com/xcode/), introduced with macOS
 # 10.5 (Leopard). To create a documentation set, doxygen will generate a
 # Makefile in the HTML output directory. Running make will produce the docset in
 # that directory and running make install will install the docset in
@@ -2161,7 +2161,7 @@ ENABLE_PREPROCESSING   = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2169,7 +2169,7 @@ MACRO_EXPANSION        = NO
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES, the include files in the
 # INCLUDE_PATH will be searched if a #include is found.
@@ -2201,7 +2201,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             =
+PREDEFINED             = "PROTECTED:=protected" "PRIVATE:=private"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

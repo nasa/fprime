@@ -61,7 +61,8 @@ def process_file(file_name, outdir):
     if os.path.basename(out_fn) == "CMakeLists.txt":
         out_fn = os.path.dirname(file_name)
     out_fn = out_fn.replace(".cmake", "").replace(".template", "") + ("-template.md" if out_fn.endswith(".template") else ".md")
-    assert out_fn != file_name, "File collision immenent"
+    if out_fn == file_name:
+        raise AssertionError("File collision imminent")
     relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)

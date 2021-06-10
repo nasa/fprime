@@ -26,7 +26,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -87,7 +87,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
     def DictStartVisit(self, obj, topology_model):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the event model to visit.
+        @param obj: the instance of the event model to visit.
         """
 
         # Build filename here...
@@ -136,7 +136,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
     def DictHeaderVisit(self, obj, topology_model):
         """
         Defined to generate header for  event python class.
-        @parms obj: the instance of the event model to operation on.
+        @param obj: the instance of the event model to operation on.
         """
 
         for fname in list(self.__fp.keys()):
@@ -150,7 +150,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
     def DictBodyVisit(self, obj, topology_model):
         """
         Defined to generate the body of the  Python event class
-        @parms obj: the instance of the event model to operation on.
+        @param obj: the instance of the event model to operation on.
         """
         try:
             instance_obj_list = topology_model.get_base_id_dict()[

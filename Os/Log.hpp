@@ -21,13 +21,17 @@ namespace Os {
              * Function called on the logger to log a message. This is abstract virtual method and
              * must be supplied by the subclass. This logger object should be registered with the
              * Fw::Log::registerLogger function.
-             * \param const char* fmt: format string in which to place arguments
-             * \param POINTER_CAST a1: first argument. (Default: 0)
-             * \param POINTER_CAST a2: second argument. (Default: 0)
-             * \param POINTER_CAST a3: third argument. (Default: 0)
-             * \param POINTER_CAST a4: forth argument. (Default: 0)
-             * \param POINTER_CAST a5: fifth argument. (Default: 0)
-             * \param POINTER_CAST a6: sixth argument. (Default: 0)
+             * \param fmt: format string in which to place arguments
+             * \param a0: zeroth argument. (Default: 0)
+             * \param a1: first argument. (Default: 0)
+             * \param a2: second argument. (Default: 0)
+             * \param a3: third argument. (Default: 0)
+             * \param a4: forth argument. (Default: 0)
+             * \param a5: fifth argument. (Default: 0)
+             * \param a6: sixth argument. (Default: 0)
+             * \param a7: seventh argument. (Default: 0)
+             * \param a8: eight argument. (Default: 0)
+             * \param a9: ninth argument. (Default: 0)
              */
             void log(
                 const char* fmt,

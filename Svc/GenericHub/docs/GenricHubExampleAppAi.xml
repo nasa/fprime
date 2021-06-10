@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+WARNING: this file sets up for visualization images in the SDD. It does not build as a topology
+-->
+<assembly name = "ByteStreamExample">
+
+    <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
+    <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
+    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
+
+    <!-- Declare component instances - must match names in Components.hpp -->
+    <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
+    <instance namespace="Svc" name="hub1" type="GenericHub" base_id="0"  base_id_window="20" />
+    <instance namespace="Svc" name="hub2" type="GenericHub" base_id="10"  base_id_window="20" />
+    <instance namespace="Drv" name="comm1" type="ByteStreamDriverModel" base_id="100" base_id_window="20" />
+    <instance namespace="Drv" name="comm2" type="ByteStreamDriverModel" base_id="100" base_id_window="20" />
+
+    <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="501"  base_id_window="20" />
+    <instance namespace="Svc" name="fileUplink" type="FileUplink" base_id="501"  base_id_window="20" />
+    <instance namespace="Ref" name="signal1" type="SignalGen" base_id="181"  base_id_window="20" />
+    <instance namespace="Ref" name="signal2" type="SignalGen" base_id="201"  base_id_window="20" />
+
+    <!-- Connections -->
+    <!-- Communications driver connections -->
+    <!-- @FPL START GenericHub 1 -->
+    <connection name = "SG1Disp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
+        <target component = "hub1" port = "portIn" type = "Serial" num = "0"/>
+    </connection>
+    <connection name = "SG2Disp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
+        <target component = "hub1" port = "portIn" type = "Serial" num = "1"/>
+    </connection>
+
+    <connection name = "CommunicationSend">
+        <source component = "hub1" port = "dataOut" type = "Drv::ByteStreamSend" num = "0"/>
+        <target component = "comm1" port = "send" type = "Drv::ByteStreamRSend" num = "0"/>
+    </connection>
+    <connection name = "CommunicationRecv">
+        <source component = "comm1" port = "readRecv" type = "Drv::ByteStreamRecv" num = "0"/>
+        <target component = "hub1" port = "dataIn" type = "Drv::ByteStreamRecv" num = "0"/>
+    </connection>
+
+    <connection name = "SG1Reg">
+        <source component = "hub1" port = "portOut" type = "Serial" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG1Reg">
+        <source component = "hub1" port = "portOut" type = "Serial" num = "1"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "Cmd" num = "1"/>
+    </connection>
+
+
+    <!-- @FPL END -->
+    <!-- @FPL START Top -->
+
+    <!-- FAKE connection -->
+    <connection name = "SG1Disp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "0"/>
+        <target component = "hub1" port = "portIn" type = "Serial" num = "0"/>
+    </connection>
+    <connection name = "SG2Disp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "1"/>
+        <target component = "hub1" port = "portIn" type = "Serial" num = "1"/>
+    </connection>
+
+
+
+    <connection name = "SG1Reg">
+        <source component = "hub1" port = "portOut" type = "Serial" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "Cmd" num = "0"/>
+    </connection>
+    <connection name = "SG1Reg">
+        <source component = "hub1" port = "portOut" type = "Serial" num = "1"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "Cmd" num = "1"/>
+    </connection>
+    <connection name = "hub2">
+        <source component = "hub1" port = "-- address bridge --" type = "bytes" num = "0"/>
+        <target component = "hub2" port = "-- address bridge --" type = "bytes" num = "0"/>
+    </connection>
+    <connection name = "SG1Disp">
+        <source component = "hub2" port = "portOut" type = "Cmd" num = "0"/>
+        <target component = "signal1" port = "cmdIn" type = "Serial" num = "0"/>
+    </connection>
+    <connection name = "SG2Disp">
+        <source component = "hub2" port = "portOut" type = "Cmd" num = "1"/>
+        <target component = "signal2" port = "cmdIn" type = "Serial" num = "0"/>
+    </connection>
+
+
+
+    <connection name = "SG1Reg2">
+        <source component = "signal1" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+        <target component = "hub2" port = "Serial" type = "portIn" num = "0"/>
+    </connection>
+    <connection name = "SG2Reg2">
+        <source component = "signal2" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+        <target component = "hub2" port = "Serial" type = "portIn" num = "1"/>
+    </connection>
+    <!-- @FPL END -->
+
+    <!-- @FPL START TopFile-->
+    <connection name = "fileDownlinkBufferSend">
+        <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "hub1" port = "buffersIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "hub2">
+        <source component = "hub1" port = "-- address bridge --" type = "bytes" num = "0"/>
+        <target component = "hub2" port = "-- address bridge --" type = "bytes" num = "0"/>
+    </connection>
+    <connection name = "groundIfIfFileUplinkBufferSend">
+        <source component = "hub2" port = "buffersOut" type = "BufferSend" num = "0"/>
+        <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <!-- @FPL END -->
+
+    <!-- @FPL START Generic Hub 2-->
+    <connection name = "CommunicationRecv">
+        <source component = "comm2" port = "readRecv" type = "Drv::ByteStreamRecv" num = "0"/>
+        <target component = "hub2" port = "dataIn" type = "Drv::ByteStreamRecv" num = "0"/>
+    </connection>
+    <connection name = "CommunicationSend">
+        <source component = "hub2" port = "dataOut" type = "Drv::ByteStreamSend" num = "0"/>
+        <target component = "comm2" port = "send" type = "Drv::ByteStreamRSend" num = "0"/>
+    </connection>
+
+    <connection name = "SG1Disp">
+        <source component = "hub2" port = "portOut" type = "Cmd" num = "0"/>
+        <target component = "signal1" port = "cmdIn" type = "Serial" num = "0"/>
+    </connection>
+    <connection name = "SG2Disp">
+        <source component = "hub2" port = "portOut" type = "Cmd" num = "1"/>
+        <target component = "signal2" port = "cmdIn" type = "Serial" num = "0"/>
+    </connection>
+
+    <connection name = "SG1Reg2">
+        <source component = "signal1" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+        <target component = "hub2" port = "Serial" type = "portIn" num = "0"/>
+    </connection>
+    <connection name = "SG2Reg2">
+        <source component = "signal2" port = "cmdRegOut" type = "CmdReg" num = "0"/>
+        <target component = "hub2" port = "Serial" type = "portIn" num = "1"/>
+    </connection>
+    <!-- @FPL END -->
+</assembly>

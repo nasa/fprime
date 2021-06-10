@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface name="NoArgs" namespace="ExampleComponents">
+    <comment>
+    A port with no arguments
+    </comment>
+</interface>

@@ -2,13 +2,13 @@
 # AC_Utils.cmake:
 #
 # Defines needed utility functions that are (or should be) dependent on any autocoding calls to
-# be made. Other utilites should go in *Utils.cmake*.
+# be made. Other utilities should go in *Utils.cmake*.
 ####
 
 ###
 # Function `cheetah`:
 #
-# This function sets up the ability to call cheetah to compile chetah templates and prepare them for use
+# This function sets up the ability to call cheetah to compile cheetah templates and prepare them for use
 # within the auto-coder. Here we setup the "compilation" of Cheetah templates.
 #
 # TODO: when/if the autocoder stops depending on generated templates, this function may be removed. Otherwise,
@@ -70,7 +70,7 @@ endfunction(serialns)
 # - **AC_FINAL_HEADER:** final position of the HPP file
 # - **AI_XML:** AI xml input to autocoder
 # - **XML_FILE_DEPS:** xml file dependencies
-# - **MOD_DEPS:** xml and hand specidied module dependencies
+# - **MOD_DEPS:** xml and hand specified module dependencies
 # - **Return: AC_OUTPUTS** (set in outer scope)
 ####
 function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD_DEPS)
@@ -98,7 +98,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
       FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
-      PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR} DICTIONARY_DIR=${DICTIONARY_DIR}
+      PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
       ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${CPP_NAME} ${HPP_NAME} ${CMAKE_CURRENT_BINARY_DIR}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}

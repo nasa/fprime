@@ -29,7 +29,7 @@ namespace Os {
         Utils::Hash hash;
         hash.init();
         U8 buffer[VFILE_HASH_CHUNK_SIZE];
-        NATIVE_INT_TYPE size;
+        NATIVE_INT_TYPE size = 0;
         NATIVE_INT_TYPE cnt = 0;
         while( cnt <= max_itr ) {
             // Read out chunk from file:
@@ -113,7 +113,7 @@ namespace Os {
         return status;
     }
 
-    // Enum and function for translating from a status to a validataion status: 
+    // Enum and function for translating from a status to a validation status: 
     typedef enum {
         FileType,
         HashFileType

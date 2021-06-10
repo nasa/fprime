@@ -15,12 +15,13 @@
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
+# - **GLOBAL_TARGET_NAME:** name of produced global target
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** hand specified dependencies of target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
     set(AI_XML "")
     foreach (AC_IN ${AC_INPUTS})
         if (AC_IN MATCHES ".*ComponentAi.xml")
@@ -31,7 +32,7 @@ function(add_module_target MODULE_NAME TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUT
     if ("${AI_XML}" STREQUAL "")
         return()
     endif()
-    string(REPLACE "CompnentAi.xml" "${AI_XML}" "ComponentImpl" BASE_TEMPLATE)
+    string(REPLACE "ComponentAi.xml" "${AI_XML}" "ComponentImpl" BASE_TEMPLATE)
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     # Try to generate dictionaries for every AC input file
     add_custom_target("${TARGET_NAME}" 

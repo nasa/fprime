@@ -55,7 +55,7 @@ namespace CFDP {
       //! Assign checksum to this
       const Checksum& operator=(const Checksum& checksum);
 
-      //! Comapre checksum and this for equality
+      //! Compare checksum and this for equality
       bool operator==(const Checksum& checksum) const;
 
       //! Compare checksum and this for inequality
@@ -63,9 +63,9 @@ namespace CFDP {
 
       //! Update the checksum value by accumulating the words in the data
       void update(
-          const U8 *const data, //! The data
-          const U32 offset, //! The offset of the start of the data, relative to the start of the file
-          const U32 length //! The length of the data in bytes
+          const U8 *const data, //!< The data
+          const U32 offset, //!< The offset of the start of the data, relative to the start of the file
+          const U32 length //!< The length of the data in bytes
       );
 
       //! Get the checksum value

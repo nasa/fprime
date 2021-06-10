@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
-<!--======================================================================
+<!--====================================================================== 
 
   Svc
   FileDownlink
@@ -13,22 +12,22 @@
 
   <command
     kind="async"
-    opcode="0"
-    mnemonic="FileDownlink_SendFile"
+    opcode="0x00"
+    mnemonic="SendFile"
   >
     <comment>Read a named file off the disk. Divide it into packets and send the packets for transmission to the ground.</comment>
     <args>
       <arg
         name="sourceFileName"
         type="string"
-        size="60"
+        size="100"
       >
         <comment>The name of the on-board file to send</comment>
       </arg>
       <arg
         name="destFileName"
         type="string"
-        size="60"
+        size="100"
       >
         <comment>The name of the destination file on the ground</comment>
       </arg>
@@ -36,11 +35,45 @@
   </command>
 
   <command
-    kind="sync"
-    opcode="1"
-    mnemonic="FileDownlink_Cancel"
+    kind="async"
+    opcode="0x01"
+    mnemonic="Cancel"
   >
     <comment>Cancel the downlink in progress, if any</comment>
   </command>
-
+  <command
+    kind="async"
+    opcode="0x02"
+    mnemonic="SendPartial"
+  >
+    <comment>Read a named file off the disk from a starting position. Divide it into packets and send the packets for transmission to the ground.</comment>
+    <args>
+      <arg
+        name="sourceFileName"
+        type="string"
+        size="100"
+      >
+        <comment>The name of the on-board file to send</comment>
+      </arg>
+      <arg
+        name="destFileName"
+        type="string"
+        size="100"
+      >
+        <comment>The name of the destination file on the ground</comment>
+      </arg>
+      <arg
+        name="startOffset"
+        type="U32"
+      >
+        <comment>Starting offset of the source file</comment>
+      </arg>
+      <arg
+        name="length"
+        type="U32"
+      >
+        <comment>Number of bytes to send from starting offset. Length of 0 implies until the end of the file</comment>
+      </arg>
+    </args>
+  </command>
 </commands>

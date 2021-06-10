@@ -50,7 +50,11 @@ namespace Drv {
 
         // TODO check value of len
         len = snprintf(buf, sizeof(buf), "%d", gpio);
-        (void) write(fd, buf, len); // TODO check return value
+        if(write(fd, buf, len) != len) {
+            (void) close(fd);
+            DEBUG_PRINT("gpio/export error!\n");
+            return -1;
+        }
         (void) close(fd);
 
 	/* NOTE(mereweth) - this is to allow systemd udev to make
@@ -77,7 +81,11 @@ namespace Drv {
 
         // TODO check value of len
         len = snprintf(buf, sizeof(buf), "%d", gpio);
-        (void) write(fd, buf, len); // TODO check return value
+        if(write(fd, buf, len) != len) {
+            (void) close(fd);
+            DEBUG_PRINT("gpio/unexport error!\n");
+            return -1;
+        }
         (void) close(fd);
 
 	/* NOTE(mereweth) - this is to allow systemd udev to make
@@ -105,12 +113,13 @@ namespace Drv {
             return -1;
         }
 
-        // TODO check return value
-        if (out_flag) {
-            (void) write(fd, "out", 4);
-        }
-        else {
-            (void) write(fd, "in", 3);
+        const char *dir = out_flag ? "out" : "in";
+        len = strlen(dir);
+
+        if (write(fd, dir, len) != len) {
+            (void) close(fd);
+            DEBUG_PRINT("gpio/direction error!\n");
+            return -1;
         }
 
         (void) close(fd);
@@ -127,16 +136,15 @@ namespace Drv {
 
         // TODO make value a enum or check its value
 
-        // TODO check return value
-        if (value) {
-            (void) write(fd, "1", 1);
-        }
-        else {
-            (void) write(fd, "0", 1);
+        const char *val = value ? "1" : "0";
+        const int len = 1;
+
+        if(write(fd, val, len) != len) {
+            DEBUG_PRINT("gpio/set value error!\n");
+            return -1;
         }
 
         DEBUG_PRINT("GPIO fd %d value %d written\n",fd,value);
-
         return 0;
     }
 
@@ -191,8 +199,13 @@ namespace Drv {
             return -1;
         }
 
-        // TODO check return value of write and strlen()
-        (void) write(fd, edge, strlen(edge) + 1);
+        len = strlen(edge) + 1;
+        if(write(fd, edge, len) != len) {
+            (void) close(fd);
+            DEBUG_PRINT("gpio/set-edge error!\n");
+            return -1;
+        }
+
         (void) close(fd);
         return 0;
     }
@@ -311,64 +324,63 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     intTaskEntry(void * ptr) {
 
-      FW_ASSERT(ptr);
-      LinuxGpioDriverComponentImpl* compPtr = (LinuxGpioDriverComponentImpl*) ptr;
+    FW_ASSERT(ptr);
+    LinuxGpioDriverComponentImpl* compPtr = (LinuxGpioDriverComponentImpl*) ptr;
+    FW_ASSERT(compPtr->m_fd != -1);
 
-      FW_ASSERT(compPtr->m_fd != -1);
+    // start GPIO interrupt
+    NATIVE_INT_TYPE stat;
+    stat = gpio_set_edge(compPtr->m_gpio, "rising");
+    if (-1 == stat) {
+      compPtr->log_WARNING_HI_GP_IntStartError(compPtr->m_gpio);
+      return;
+    }
 
-      // start GPIO interrupt
-      NATIVE_INT_TYPE stat;
-      stat = gpio_set_edge(compPtr->m_gpio, "rising");
-      if (-1 == stat) {
-          compPtr->log_WARNING_HI_GP_IntStartError(compPtr->m_gpio);
-          return;
-      }
+    // spin waiting for interrupt
+    while(not compPtr->m_quitThread) {
+        pollfd fdset[1];
+        NATIVE_INT_TYPE nfds = 1;
+        NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
 
-      // spin waiting for interrupt
-      while(not compPtr->m_quitThread) {
-          pollfd fdset[1];
-          NATIVE_INT_TYPE nfds = 1;
-          NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
+        memset((void*)fdset, 0, sizeof(fdset));
 
-          memset((void*)fdset, 0, sizeof(fdset));
+        fdset[0].fd = compPtr->m_fd;
+        fdset[0].events = POLLPRI;
+        stat = poll(fdset, nfds, timeout);
 
-          fdset[0].fd = compPtr->m_fd;
-          fdset[0].events = POLLPRI;
+        /*
+        * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
+        * so cant check for it to look for error:
+        * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
+        */
+        if (stat < 0) {
+            DEBUG_PRINT("stat: %d, revents: 0x%x, POLLERR: 0x%x, POLLIN: 0x%x, POLLPRI: 0x%x\n",
+                    stat, fdset[0].revents, POLLERR, POLLIN, POLLPRI); // TODO remove
+            compPtr->log_WARNING_HI_GP_IntWaitError(compPtr->m_gpio);
+            return;
+        }
 
-          stat = poll(fdset, nfds, timeout);
+        if (stat == 0) {
+            // continue to poll
+            DEBUG_PRINT("Krait timed out waiting for GPIO interrupt\n");
+            continue;
+        }
 
-          /*
-           * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
-           * so cant check for it to look for error:
-           * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
-           */
-          if (stat < 0) {
-              DEBUG_PRINT("stat: %d, revents: 0x%x, POLLERR: 0x%x, POLLIN: 0x%x, POLLPRI: 0x%x\n",
-                     stat, fdset[0].revents, POLLERR, POLLIN, POLLPRI); // TODO remove
-              compPtr->log_WARNING_HI_GP_IntWaitError(compPtr->m_gpio);
-              return;
-          }
+        // Asserting that number of fds w/ revents is 1:
+        FW_ASSERT(stat == 1, stat);  // TODO should i bother w/ this assert?
 
-          if (stat == 0) {
-              // continue to poll
-	          DEBUG_PRINT("Krait timed out waiting for GPIO interrupt\n");
-              continue;
-          }
+        // TODO what to do if POLLPRI not set?
 
-          // Asserting that number of fds w/ revents is 1:
-          FW_ASSERT(stat == 1, stat);  // TODO should i bother w/ this assert?
+        // TODO: if I take out the read then the poll just continually interrupts
+        // Read is only taking 22 usecs each time, so it is not blocking for long
+        if (fdset[0].revents & POLLPRI) {
 
-          // TODO what to do if POLLPRI not set?
-
-          // TODO: if I take out the read then the poll just continually interrupts
-          // Read is only taking 22 usecs each time, so it is not blocking for long
-          if (fdset[0].revents & POLLPRI) {
-
-              char *buf[MAX_BUF];
-              (void) lseek(fdset[0].fd, 0, SEEK_SET); // Must seek back to the starting
-              (void) read(fdset[0].fd, buf, MAX_BUF);
-              DEBUG_PRINT("\npoll() GPIO interrupt occurred w/ value: %c\n", buf[0]);
-          }
+            char *buf[MAX_BUF];
+            (void) lseek(fdset[0].fd, 0, SEEK_SET); // Must seek back to the starting
+            if(read(fdset[0].fd, buf, MAX_BUF) > 0) {
+                DEBUG_PRINT("\npoll() GPIO interrupt occurred w/ value: %c\n", buf[0]);
+            }
+        }
 
         // call interrupt ports
         Svc::TimerVal timerVal;
