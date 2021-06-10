@@ -12,4 +12,4 @@ TestComponentImpl.cpp(.hpp) - Developer-written test component.
 
 mod.mk - make configuration file listing sources to build
 
-test/ut - sample unit test for testing component
+test/ut - sample unit test for testing components
