@@ -126,6 +126,7 @@ Migration considerations:
 * `Svc::GroundInterface` and `Drv::SocketIpDriver` should be replaced by the new ground system components.
 * Inline enumerations (enumerations defined inside the definition of a command/event/channel) should be replaced by EnumAi.xml implementations
 * `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF` will be removed in favor of future `fprime-util check` variants
+* `Autocoders/MagicDrawCompPlugin` will be removed in a near-term release
 
 ### Release 1.0:
 
