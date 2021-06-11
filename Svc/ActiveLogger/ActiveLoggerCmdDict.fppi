@@ -8,8 +8,8 @@ enum EventLevel {
 }
 
 enum FilterEnabled {
-  FILTER_ENABLED = 0
-  FILTER_DISABLED = 1
+  ENABLED = 0
+  DISABLED = 1
 }
 
 @ Set filter for reporting events. Events are not stored in component.
