@@ -16,6 +16,7 @@ namespace Svc {
     typedef ActiveLogger_EventFilterState EventFilterState;
     typedef ActiveLogger_EventLevel EventLevel;
     typedef ActiveLogger_FilterEnabled FilterEnabled;
+    typedef ActiveLogger_IdFilterEnabled IdFilterEnabled;
 
     ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
         ActiveLoggerComponentBase(name)
@@ -143,20 +144,20 @@ namespace Svc {
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq, //!< The command sequence number
             U32 ID,
-            ActiveLogger_IdFilterEnabled IdFilterEnable //!< ID filter state
+            IdFilterEnabled idFilterEnabled //!< ID filter state
         ) {
 
         // check parameter
-        switch (IdFilterEnable.e) {
-            case ActiveLogger_IdFilterEnabled::ID_ENABLED:
-            case ActiveLogger_IdFilterEnabled::ID_DISABLED:
+        switch (idFilterEnabled.e) {
+            case IdFilterEnabled::ID_ENABLED:
+            case IdFilterEnabled::ID_DISABLED:
                 break;
             default:
                 this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
                 return;
         }
 
-        if (ActiveLogger_IdFilterEnabled::ID_ENABLED == IdFilterEnable.e) { // add ID
+        if (IdFilterEnabled::ID_ENABLED == idFilterEnabled.e) { // add ID
             // search list for existing entry
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
