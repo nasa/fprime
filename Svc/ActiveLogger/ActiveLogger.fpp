@@ -31,10 +31,10 @@ module Svc {
     command recv port CmdDisp
 
     @ Port for sending command registration requests
-    command reg port CmdStatus
+    command reg port CmdReg
 
     @ Port for sending command responses
-    command resp port cmdResponseOut
+    command resp port CmdStatus
 
     @ Port for emitting events
     event port Log
