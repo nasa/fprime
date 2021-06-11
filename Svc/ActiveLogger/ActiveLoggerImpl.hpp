@@ -30,14 +30,14 @@ namespace Svc {
             void SET_EVENT_FILTER_cmdHandler(
                     FwOpcodeType opCode,
                     U32 cmdSeq,
-                    ActiveLogger_EventLevel FilterLevel,
-                    ActiveLogger_FilterEnabled FilterEnable);
+                    ActiveLogger_EventLevel filterLevel,
+                    ActiveLogger_Enabled filterEnabled);
 
             void SET_ID_FILTER_cmdHandler(
                     FwOpcodeType opCode, //!< The opcode
                     U32 cmdSeq, //!< The command sequence number
                     U32 ID,
-                    ActiveLogger_IdFilterEnabled IdFilterEnable //!< ID filter state
+                    ActiveLogger_Enabled idFilterEnabled //!< ID filter state
                 );
 
             void DUMP_FILTER_STATE_cmdHandler(
@@ -54,7 +54,7 @@ namespace Svc {
 
             // Filter state
             struct t_filterState {
-                ActiveLogger_FilterEnabled enabled; //<! filter is enabled
+                ActiveLogger_Enabled enabled; //<! filter is enabled
             } m_filterState[ActiveLogger_EventLevel::NUM_CONSTANTS];
 
             // Working members

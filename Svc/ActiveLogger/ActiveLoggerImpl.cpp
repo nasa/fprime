@@ -5,29 +5,34 @@
  *      Author: tcanham
  */
 
+#include <stdio.h>
+
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 
 namespace Svc {
 
+    typedef ActiveLogger_Enabled Enabled;
+    typedef ActiveLogger_EventFilterState EventFilterState;
+    typedef ActiveLogger_EventLevel EventLevel;
 
     ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
         ActiveLoggerComponentBase(name)
     {
         // set filter defaults
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_WARNING_HI].enabled =
-                FILTER_WARNING_HI_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_WARNING_LO].enabled =
-                FILTER_WARNING_LO_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_COMMAND].enabled =
-                FILTER_COMMAND_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_ACTIVITY_HI].enabled =
-                FILTER_ACTIVITY_HI_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_ACTIVITY_LO].enabled =
-                FILTER_ACTIVITY_LO_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
-        this->m_filterState[ActiveLogger_EventLevel::FILTER_DIAGNOSTIC].enabled =
-                FILTER_DIAGNOSTIC_DEFAULT?ActiveLogger_FilterEnabled::FILTER_ENABLED:ActiveLogger_FilterEnabled::FILTER_DISABLED;
+        this->m_filterState[EventLevel::WARNING_HI].enabled =
+                FILTER_WARNING_HI_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
+        this->m_filterState[EventLevel::WARNING_LO].enabled =
+                FILTER_WARNING_LO_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
+        this->m_filterState[EventLevel::COMMAND].enabled =
+                FILTER_COMMAND_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
+        this->m_filterState[EventLevel::ACTIVITY_HI].enabled =
+                FILTER_ACTIVITY_HI_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
+        this->m_filterState[EventLevel::ACTIVITY_LO].enabled =
+                FILTER_ACTIVITY_LO_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
+        this->m_filterState[EventLevel::DIAGNOSTIC].enabled =
+                FILTER_DIAGNOSTIC_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
 
         memset(m_filteredIDs,0,sizeof(m_filteredIDs));
 
@@ -52,32 +57,32 @@ namespace Svc {
             case Fw::LogSeverity::FATAL: // always pass FATAL
                 break;
             case Fw::LogSeverity::WARNING_HI:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_WARNING_HI].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::WARNING_HI].enabled == Enabled::DISABLED) {
                    return;
                 }
                 break;
             case Fw::LogSeverity::WARNING_LO:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_WARNING_LO].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::WARNING_LO].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::COMMAND:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_COMMAND].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::COMMAND].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_HI:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_ACTIVITY_HI].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::ACTIVITY_HI].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_LO:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_ACTIVITY_LO].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::ACTIVITY_LO].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::DIAGNOSTIC:
-                if (this->m_filterState[ActiveLogger_EventLevel::FILTER_DIAGNOSTIC].enabled == ActiveLogger_FilterEnabled::FILTER_DISABLED) {
+                if (this->m_filterState[EventLevel::DIAGNOSTIC].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
@@ -122,11 +127,11 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, ActiveLogger_EventLevel filterLevel, ActiveLogger_FilterEnabled filterEnable) {
-        if (  (filterLevel.e > ActiveLogger_EventLevel::FILTER_DIAGNOSTIC) or
-              (filterLevel.e < ActiveLogger_EventLevel::FILTER_WARNING_HI) or
-              (filterEnable.e < ActiveLogger_FilterEnabled::FILTER_ENABLED) or
-              (filterEnable.e > ActiveLogger_FilterEnabled::FILTER_DISABLED)) {
+    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, EventLevel filterLevel, Enabled filterEnable) {
+        if (  (filterLevel.e > EventLevel::DIAGNOSTIC) or
+              (filterLevel.e < EventLevel::WARNING_HI) or
+              (filterEnable.e < Enabled::ENABLED) or
+              (filterEnable.e > Enabled::DISABLED)) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
@@ -138,20 +143,20 @@ namespace Svc {
             FwOpcodeType opCode, //!< The opcode
             U32 cmdSeq, //!< The command sequence number
             U32 ID,
-            ActiveLogger_IdFilterEnabled IdFilterEnable //!< ID filter state
+            Enabled idEnabled //!< ID filter state
         ) {
 
         // check parameter
-        switch (IdFilterEnable.e) {
-            case ActiveLogger_IdFilterEnabled::ID_ENABLED:
-            case ActiveLogger_IdFilterEnabled::ID_DISABLED:
+        switch (idEnabled.e) {
+            case Enabled::ENABLED:
+            case Enabled::DISABLED:
                 break;
             default:
                 this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
                 return;
         }
 
-        if (ActiveLogger_IdFilterEnabled::ID_ENABLED == IdFilterEnable.e) { // add ID
+        if (Enabled::ENABLED == idEnabled.e) { // add ID
             // search list for existing entry
             for (NATIVE_INT_TYPE entry = 0; entry < TELEM_ID_FILTER_SIZE; entry++) {
                 if (this->m_filteredIDs[entry] == ID) {
@@ -195,13 +200,12 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        //NUM_CONSTANTS is type U32 but can't be negative, so cast to NATIVE_INT_TYPE
-        for (NATIVE_INT_TYPE filter = 0; filter < static_cast<NATIVE_INT_TYPE>(ActiveLogger_EventLevel::NUM_CONSTANTS); filter++) {
-           ActiveLogger_EventFilterState filterState(static_cast<ActiveLogger_EventFilterState::t>(filter));
+        for (NATIVE_UINT_TYPE filter = 0; filter < EventLevel::NUM_CONSTANTS; filter++) {
+           EventFilterState filterState(static_cast<EventFilterState::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,
-                    ActiveLogger_FilterEnabled::FILTER_ENABLED == this->m_filterState[filter].enabled.e
-                    );
+                    Enabled::ENABLED == this->m_filterState[filter].enabled.e
+           );
         }
 
         // iterate through ID filter
