@@ -180,7 +180,7 @@ namespace Svc {
                 );
         this->clearHistory();
         reportFilterLevel = EventLevel::FILTER_WARNING_HI;
-        filterEnabled = static_cast<FilterEnabled::t>(-2);
+        filterEnabled.e = static_cast<FilterEnabled::t>(-2);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -192,7 +192,7 @@ namespace Svc {
         EventLevel eventLevel;
         this->clearHistory();
         FilterEnabled reportEnable = FilterEnabled::FILTER_ENABLED;
-        eventLevel = static_cast<EventLevel::t>(-1);
+        eventLevel.e = static_cast<EventLevel::t>(-1);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -205,7 +205,7 @@ namespace Svc {
         this->clearHistory();
         
         reportEnable = FilterEnabled::FILTER_ENABLED;
-        eventLevel = static_cast<EventLevel::t>(100);
+        eventLevel.e = static_cast<EventLevel::t>(100);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -215,7 +215,6 @@ namespace Svc {
                 Fw::CmdResponse::VALIDATION_ERROR
                 );
 
-#endif
     }
 
     void ActiveLoggerImplTester::runFilterEventNominal(void) {
@@ -385,7 +384,6 @@ namespace Svc {
     }
 
     void ActiveLoggerImplTester::runFilterDump(void) {
-#if 0
         U32 cmdSeq = 21;
         // set random set of filters
 
@@ -430,7 +428,6 @@ namespace Svc {
         ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,EventFilterState::FILT_ACTIVITY_HI,false);
         ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,EventFilterState::FILT_ACTIVITY_LO,true);
         ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,EventFilterState::FILT_DIAGNOSTIC,true);
-#endif
     }
 
     void ActiveLoggerImplTester::runEventFatal(void) {

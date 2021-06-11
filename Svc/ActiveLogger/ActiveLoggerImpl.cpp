@@ -5,6 +5,8 @@
  *      Author: tcanham
  */
 
+#include <stdio.h>
+
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
@@ -195,13 +197,12 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        //NUM_CONSTANTS is type U32 but can't be negative, so cast to NATIVE_INT_TYPE
-        for (NATIVE_INT_TYPE filter = 0; filter < static_cast<NATIVE_INT_TYPE>(ActiveLogger_EventLevel::NUM_CONSTANTS); filter++) {
+        for (NATIVE_UINT_TYPE filter = 0; filter < ActiveLogger_EventLevel::NUM_CONSTANTS; filter++) {
            ActiveLogger_EventFilterState filterState(static_cast<ActiveLogger_EventFilterState::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,
                     ActiveLogger_FilterEnabled::FILTER_ENABLED == this->m_filterState[filter].enabled.e
-                    );
+           );
         }
 
         // iterate through ID filter
