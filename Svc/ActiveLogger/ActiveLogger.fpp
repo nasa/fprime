@@ -4,12 +4,8 @@ module Svc {
   active component ActiveLogger {
 
     # ----------------------------------------------------------------------
-    # Included files 
+    # Internal ports
     # ----------------------------------------------------------------------
-
-    include "ActiveLoggerCmdDict.fppi"
-
-    include "ActiveLoggerEvrDict.fppi"
 
     include "ActiveLoggerIntIFDict.fppi"
 
@@ -53,7 +49,19 @@ module Svc {
 
     @ Port for getting the time
     time get port Time
-    
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    include "ActiveLoggerCmdDict.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events 
+    # ----------------------------------------------------------------------
+
+    include "ActiveLoggerEvrDict.fppi"
+ 
   }
 
 }

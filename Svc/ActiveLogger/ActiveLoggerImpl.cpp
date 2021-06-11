@@ -21,17 +21,17 @@ namespace Svc {
         ActiveLoggerComponentBase(name)
     {
         // set filter defaults
-        this->m_filterState[EventLevel::FILTER_WARNING_HI].enabled =
+        this->m_filterState[EventLevel::WARNING_HI].enabled =
                 FILTER_WARNING_HI_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
-        this->m_filterState[EventLevel::FILTER_WARNING_LO].enabled =
+        this->m_filterState[EventLevel::WARNING_LO].enabled =
                 FILTER_WARNING_LO_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
-        this->m_filterState[EventLevel::FILTER_COMMAND].enabled =
+        this->m_filterState[EventLevel::COMMAND].enabled =
                 FILTER_COMMAND_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
-        this->m_filterState[EventLevel::FILTER_ACTIVITY_HI].enabled =
+        this->m_filterState[EventLevel::ACTIVITY_HI].enabled =
                 FILTER_ACTIVITY_HI_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
-        this->m_filterState[EventLevel::FILTER_ACTIVITY_LO].enabled =
+        this->m_filterState[EventLevel::ACTIVITY_LO].enabled =
                 FILTER_ACTIVITY_LO_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
-        this->m_filterState[EventLevel::FILTER_DIAGNOSTIC].enabled =
+        this->m_filterState[EventLevel::DIAGNOSTIC].enabled =
                 FILTER_DIAGNOSTIC_DEFAULT?FilterEnabled::ENABLED:FilterEnabled::DISABLED;
 
         memset(m_filteredIDs,0,sizeof(m_filteredIDs));
@@ -57,32 +57,32 @@ namespace Svc {
             case Fw::LogSeverity::FATAL: // always pass FATAL
                 break;
             case Fw::LogSeverity::WARNING_HI:
-                if (this->m_filterState[EventLevel::FILTER_WARNING_HI].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::WARNING_HI].enabled == FilterEnabled::DISABLED) {
                    return;
                 }
                 break;
             case Fw::LogSeverity::WARNING_LO:
-                if (this->m_filterState[EventLevel::FILTER_WARNING_LO].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::WARNING_LO].enabled == FilterEnabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::COMMAND:
-                if (this->m_filterState[EventLevel::FILTER_COMMAND].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::COMMAND].enabled == FilterEnabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_HI:
-                if (this->m_filterState[EventLevel::FILTER_ACTIVITY_HI].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::ACTIVITY_HI].enabled == FilterEnabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_LO:
-                if (this->m_filterState[EventLevel::FILTER_ACTIVITY_LO].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::ACTIVITY_LO].enabled == FilterEnabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::DIAGNOSTIC:
-                if (this->m_filterState[EventLevel::FILTER_DIAGNOSTIC].enabled == FilterEnabled::DISABLED) {
+                if (this->m_filterState[EventLevel::DIAGNOSTIC].enabled == FilterEnabled::DISABLED) {
                     return;
                 }
                 break;
@@ -128,8 +128,8 @@ namespace Svc {
     }
 
     void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, EventLevel filterLevel, FilterEnabled filterEnable) {
-        if (  (filterLevel.e > EventLevel::FILTER_DIAGNOSTIC) or
-              (filterLevel.e < EventLevel::FILTER_WARNING_HI) or
+        if (  (filterLevel.e > EventLevel::DIAGNOSTIC) or
+              (filterLevel.e < EventLevel::WARNING_HI) or
               (filterEnable.e < FilterEnabled::ENABLED) or
               (filterEnable.e > FilterEnabled::DISABLED)) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
