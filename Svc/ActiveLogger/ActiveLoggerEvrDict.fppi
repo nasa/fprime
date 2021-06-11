@@ -1,10 +1,10 @@
 enum EventFilterState {
-  FILT_WARNING_HI = 0
-  FILT_WARNING_LO = 1
-  FILT_COMMAND = 2
-  FILT_ACTIVITY_HI = 3
-  FILT_ACTIVITY_LO = 4
-  FILT_DIAGNOSTIC = 5
+  WARNING_HI = 0
+  WARNING_LO = 1
+  COMMAND = 2
+  ACTIVITY_HI = 3
+  ACTIVITY_LO = 4
+  DIAGNOSTIC = 5
 }
 
 @ Dump severity filter state
