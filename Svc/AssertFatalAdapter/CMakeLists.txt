@@ -9,6 +9,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapterComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapterComponentImpl.cpp"
+
 )
 
 register_fprime_module()
