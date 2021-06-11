@@ -167,10 +167,10 @@ namespace Svc {
     void ActiveLoggerImplTester::runFilterInvalidCommands(void) {
 
         U32 cmdSeq = 21;
-        FilterEnabled filterEnabled(static_cast<FilterEnabled>(10));
+        //FilterEnabled filterEnabled(static_cast<FilterEnabled::t>(10));
         this->clearHistory();
         EventLevel reportFilterLevel = EventLevel::FILTER_WARNING_HI;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,static_cast<FilterEnabled>(10));
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,static_cast<FilterEnabled::t>(10));
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -181,7 +181,7 @@ namespace Svc {
 
         this->clearHistory();
         reportFilterLevel = EventLevel::FILTER_WARNING_HI;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::FilterEnabled)-2);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,static_cast<FilterEnabled::t>(-2));
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -192,7 +192,7 @@ namespace Svc {
         EventLevel eventLevel;
         this->clearHistory();
         FilterEnabled reportEnable = FilterEnabled::FILTER_ENABLED;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)-1,reportEnable);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,static_cast<EventLevel::t>(-1),reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -204,7 +204,7 @@ namespace Svc {
         this->clearHistory();
         
         reportEnable = FilterEnabled::FILTER_ENABLED;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)100,reportEnable);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,static_cast<EventLevel::t>(100),reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -366,7 +366,7 @@ namespace Svc {
         // Send an invalid argument
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,static_cast<ActiveLoggerComponentBase::IdFilterEnabled>(10));
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,static_cast<IdFilterEnabled::t>(10));
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
