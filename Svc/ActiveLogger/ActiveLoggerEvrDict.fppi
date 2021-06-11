@@ -9,7 +9,7 @@ enum EventFilterState {
 
 @ Dump severity filter state
 event SEVERITY_FILTER_STATE(
-                             $severity: EventFilterState @< The severity level
+                             $severity: eventFilterState @< The severity level
                              enabled: bool
                            ) \
   severity activity low \

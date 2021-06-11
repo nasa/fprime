@@ -17,9 +17,8 @@
 
 namespace Svc {
 
+    typedef ActiveLogger_Enabled Enabled;
     typedef ActiveLogger_EventLevel EventLevel;
-    typedef ActiveLogger_FilterEnabled FilterEnabled;
-    typedef ActiveLogger_IdFilterEnabled IdFilterEnabled;
     typedef ActiveLogger_EventFilterState EventFilterState;
 
     void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
@@ -101,7 +100,7 @@ namespace Svc {
         }
 
         this->clearHistory();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,FilterEnabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,Enabled::ENABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -146,7 +145,7 @@ namespace Svc {
 
         // Disable severity filter
         this->clearHistory();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,FilterEnabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -168,7 +167,7 @@ namespace Svc {
         U32 cmdSeq = 21;
         this->clearHistory();
         EventLevel reportFilterLevel = EventLevel::WARNING_HI;
-        FilterEnabled filterEnabled(static_cast<FilterEnabled::t>(10));
+        Enabled filterEnabled(static_cast<Enabled::t>(10));
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -179,7 +178,7 @@ namespace Svc {
                 );
         this->clearHistory();
         reportFilterLevel = EventLevel::WARNING_HI;
-        filterEnabled.e = static_cast<FilterEnabled::t>(-2);
+        filterEnabled.e = static_cast<Enabled::t>(-2);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -190,7 +189,7 @@ namespace Svc {
                 );
         EventLevel eventLevel;
         this->clearHistory();
-        FilterEnabled reportEnable = FilterEnabled::ENABLED;
+        Enabled reportEnable = Enabled::ENABLED;
         eventLevel.e = static_cast<EventLevel::t>(-1);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -203,7 +202,7 @@ namespace Svc {
 
         this->clearHistory();
         
-        reportEnable = FilterEnabled::ENABLED;
+        reportEnable = Enabled::ENABLED;
         eventLevel.e = static_cast<EventLevel::t>(100);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -235,7 +234,7 @@ namespace Svc {
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,IdFilterEnabled::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -251,7 +250,7 @@ namespace Svc {
             // send it again, to verify it will accept a second add
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,IdFilterEnabled::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -312,7 +311,7 @@ namespace Svc {
         // Try to add to the full filter. It should be rejected
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,IdFilterEnabled::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -331,7 +330,7 @@ namespace Svc {
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,IdFilterEnabled::ID_DISABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::DISABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -350,7 +349,7 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,IdFilterEnabled::ID_DISABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,Enabled::DISABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -367,8 +366,8 @@ namespace Svc {
         // Send an invalid argument
         this->clearHistory();
         this->clearEvents();
-        IdFilterEnabled idFilterEnabled(static_cast<IdFilterEnabled::t>(10));
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,idFilterEnabled);
+        Enabled idEnabled(static_cast<Enabled::t>(10));
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,idEnabled);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -386,22 +385,22 @@ namespace Svc {
         U32 cmdSeq = 21;
         // set random set of filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_HI,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_LO,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::COMMAND,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_HI,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_LO,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::DIAGNOSTIC,FilterEnabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::DIAGNOSTIC,Enabled::ENABLED);
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,IdFilterEnabled::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,13,IdFilterEnabled::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,13,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4000,IdFilterEnabled::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4000,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
@@ -480,7 +479,7 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,FilterEnabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -490,11 +489,11 @@ namespace Svc {
                 );
 
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,FilterEnabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,FilterEnabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,Enabled::DISABLED);
 
         this->m_receivedPacket = false;
 
@@ -528,12 +527,12 @@ namespace Svc {
 
         // turn off filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,FilterEnabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,FilterEnabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,Enabled::ENABLED);
 
     }
 

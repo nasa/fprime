@@ -7,7 +7,7 @@ enum EventLevel {
   DIAGNOSTIC = 5
 }
 
-enum FilterEnabled {
+enum Enabled {
   ENABLED = 0
   DISABLED = 1
 }
@@ -15,19 +15,14 @@ enum FilterEnabled {
 @ Set filter for reporting events. Events are not stored in component.
 sync command SET_EVENT_FILTER(
                                filterLevel: EventLevel @< Filter level
-                               filterEnabled: FilterEnabled @< Filter state
+                               filterEnabled: Enabled @< Filter state
                              ) \
   opcode 0
-
-enum IdFilterEnabled {
-  ID_ENABLED = 0
-  ID_DISABLED = 1
-}
 
 @ Filter a particular ID
 async command SET_ID_FILTER(
                              ID: U32
-                             idFilterEnabled: IdFilterEnabled @< ID filter state
+                             idFilterEnabled: Enabled @< ID filter state
                            ) \
   opcode 2
 
