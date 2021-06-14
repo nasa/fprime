@@ -1,4 +1,6 @@
 locate constant ActiveRateGroupOutputPorts at "AcConstants.fpp"
+locate constant CmdDispatcherComponentCommandPorts at "AcConstants.fpp"
+locate constant CmdDispatcherSequencePorts at "AcConstants.fpp"
 locate constant GenericHubInputBuffers at "AcConstants.fpp"
 locate constant GenericHubInputPorts at "AcConstants.fpp"
 locate constant GenericHubOutputBuffers at "AcConstants.fpp"
