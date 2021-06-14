@@ -56,7 +56,7 @@ class XmlEnumParser:
         self.__name = ""
         self.__namespace = None
         self.__default = None
-        self.__representation = None
+        self.__serialize_type = None
 
         self.__xml_filename = xml_file
         self.__items = []
@@ -108,10 +108,10 @@ class XmlEnumParser:
         else:
             self.__default = None
 
-        if "representation" in enum.attrib:
-            self.__representation = enum.attrib["representation"]
+        if "serialize_type" in enum.attrib:
+            self.__serialize_type = enum.attrib["serialize_type"]
         else:
-            self.__representation = None
+            self.__serialize_type = None
 
         for enum_tag in enum:
             if enum_tag.tag == "item":
@@ -213,8 +213,8 @@ class XmlEnumParser:
     def get_default(self):
         return self.__default
 
-    def get_representation(self):
-        return self.__representation
+    def get_serialize_type(self):
+        return self.__serialize_type
 
     def get_items(self):
         return self.__items
@@ -230,8 +230,8 @@ if __name__ == "__main__":
     print("Enum XML parse test (%s)" % xmlfile)
     xml_parser = XmlEnumParser(xmlfile)
     print(
-        "Enum name: %s, namespace: %s, default: %s, representation: %s"
-        % (xml_parser.get_name(), xml_parser.get_namespace(), xml_parser.get_default(), xml_parser.get_representation())
+        "Enum name: %s, namespace: %s, default: %s, serialize_type: %s"
+        % (xml_parser.get_name(), xml_parser.get_namespace(), xml_parser.get_default(), xml_parser.get_serialize_type())
     )
     print("Items")
     for item in xml_parser.get_items():

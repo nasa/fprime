@@ -152,8 +152,8 @@ a == $item_value#slurp
   Fw::SerializeStatus ${name} :: serialize(Fw::SerializeBufferBase& buffer) const
   {
     Fw::SerializeStatus status;
-#if $representation
-    status = buffer.serialize(static_cast<${representation}>(this->e));
+#if $serialize_type
+    status = buffer.serialize(static_cast<${serialize_type}>(this->e));
 #else
     status = buffer.serialize(static_cast<FwEnumStoreType>(this->e));
 #end if
@@ -163,8 +163,8 @@ a == $item_value#slurp
   Fw::SerializeStatus ${name} :: deserialize(Fw::SerializeBufferBase& buffer)
   {
     Fw::SerializeStatus status;
-#if $representation
-    ${representation} es;
+#if $serialize_type
+    ${serialize_type} es;
 #else
     FwEnumStoreType es;
 #end if

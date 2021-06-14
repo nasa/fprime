@@ -213,15 +213,31 @@ TEST(EnumXML, OK) {
     // Serialize enums
     U8 buffer1[1024];
     U8 buffer2[1024];
+    U8 buffer3[1024];
+    U8 buffer4[1024];
     Fw::SerialBuffer enumSerial1 = Fw::SerialBuffer(buffer1, sizeof(buffer1));
     Fw::SerialBuffer enumSerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
+    Fw::SerialBuffer enumSerial3 = Fw::SerialBuffer(buffer3, sizeof(buffer3));
+    Fw::SerialBuffer enumSerial4 = Fw::SerialBuffer(buffer4, sizeof(buffer4));
     ASSERT_EQ(enumSerial1.serialize(enum1), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum1" << endl;
 
     ASSERT_EQ(enumSerial2.serialize(enum2), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum2" << endl;
 
+    ASSERT_EQ(enumSerial3.serialize(enum3), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum3" << endl;
+
+    ASSERT_EQ(enumSerial4.serialize(enum4), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum4" << endl;
+
     cout << "Serialized enums" << endl;
+
+    // Check that the serialized types are correctly set
+    ASSERT_EQ(enumSerial1.getBuffLength(), sizeof(I32));
+    ASSERT_EQ(enumSerial2.getBuffLength(), sizeof(I32));
+    ASSERT_EQ(enumSerial3.getBuffLength(), sizeof(I32));
+    ASSERT_EQ(enumSerial4.getBuffLength(), sizeof(U64));
 
     // Deserialize enums
     ASSERT_EQ(enumSerial1.deserialize(enum1Save), Fw::FW_SERIALIZE_OK);
