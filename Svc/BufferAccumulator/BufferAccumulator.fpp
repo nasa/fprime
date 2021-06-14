@@ -3,13 +3,13 @@ module Svc {
   active component BufferAccumulator {
 
     @ FPP from XML: original path was Svc/BufferAccumulator/Commands.xml
-    include "Commands.fpp"
+    include "Commands.fppi"
 
     @ FPP from XML: original path was Svc/BufferAccumulator/Events.xml
-    include "Events.fpp"
+    include "Events.fppi"
 
     @ FPP from XML: original path was Svc/BufferAccumulator/Telemetry.xml
-    include "Telemetry.fpp"
+    include "Telemetry.fppi"
 
     async input port bufferSendInFill: [1] Fw.BufferSend
 
