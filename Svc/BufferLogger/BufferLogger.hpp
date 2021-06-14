@@ -240,7 +240,7 @@ namespace Svc {
       void BL_SetLogging_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          LogState state
+          BufferLogger_LogState state
       );
 
       //! Implementation for BL_FlushFile command handler
@@ -257,7 +257,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The logging state
-      LogState m_state;
+      BufferLogger_LogState m_state;
 
       //! The file
       File m_file;

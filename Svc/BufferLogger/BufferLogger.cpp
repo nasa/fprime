@@ -14,6 +14,7 @@
 
 namespace Svc {
 
+  typedef BufferLogger_LogState LogState;
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
@@ -21,7 +22,7 @@ namespace Svc {
   BufferLogger ::
       BufferLogger(const char *const compName) :
           BufferLoggerComponentBase(compName),
-          m_state(LOGGING_ON),
+          m_state(LogState::LOGGING_ON),
           m_file(*this)
   {
 
@@ -62,7 +63,7 @@ namespace Svc {
         Fw::Buffer& fwBuffer
     )
   {
-    if (m_state == LOGGING_ON) {
+    if (m_state == LogState::LOGGING_ON) {
       const U8 *const addr = fwBuffer.getData();
       const U32 size = fwBuffer.getSize();
       m_file.logBuffer(addr, size);
@@ -77,7 +78,7 @@ namespace Svc {
         U32 context
     )
   {
-    if (m_state == LOGGING_ON) {
+    if (m_state == LogState::LOGGING_ON) {
       const U8 *const addr = data.getBuffAddr();
       const U32 size = data.getBuffLength();
       m_file.logBuffer(addr, size);
@@ -133,7 +134,7 @@ namespace Svc {
   )
   {
     m_state = state;
-    if (state == LOGGING_OFF) {
+    if (state == LogState::LOGGING_OFF) {
       m_file.closeAndEmitEvent();
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
