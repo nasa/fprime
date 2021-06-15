@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="TimeTester" kind="passive" namespace="Time">
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>

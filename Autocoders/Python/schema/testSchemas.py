@@ -35,17 +35,13 @@ class schema_test:
         """
         self.__validate_file(self.__schema_path, "RNG")
 
-        # Read schema file
-        relax_file_handler = open(self.__schema_path)
+        with open(self.__schema_path) as relax_file_handler:
 
-        # Parse schema file
-        relax_parsed = etree.parse(relax_file_handler)
+            # Parse schema file
+            relax_parsed = etree.parse(relax_file_handler)
 
-        # Compile schema file
-        self.__compiled = etree.RelaxNG(relax_parsed)
-
-        # Close schema file
-        relax_file_handler.close()
+            # Compile schema file
+            self.__compiled = etree.RelaxNG(relax_parsed)
 
     def __validate_file(self, file_name, extension):
         """
@@ -67,14 +63,11 @@ class schema_test:
         """
         Returns root tag assuming file path is correct
         """
-        # Read schema file
-        handler = open(file_path)
 
-        # Parse schema file
-        parsed = etree.parse(handler)
+        with open(file_path) as handler:
 
-        # Close schema file
-        handler.close()
+            # Parse schema file
+            parsed = etree.parse(handler)
 
         return parsed
 
@@ -156,9 +149,8 @@ class schema_test:
 
         if not xml_parsed:
             self.__validate_file(test_set[1], "XML")
-            xml_file_handler = open(test_set[1])
-            xml_parsed = etree.parse(xml_file_handler)
-            xml_file_handler.close()
+            with open(test_set[1]) as xml_file_handler:
+                xml_parsed = etree.parse(xml_file_handler)
 
         if test_set[2]:
             with pytest.raises(test_set[2]) as excinfo:
@@ -243,7 +235,7 @@ def setup():
     channel_test.add_test(
         "Missing enum", "sample_XML_files/channel/missingEnum.xml", AssertionError
     )
-
+    
     command_test.add_test(
         "All working", "sample_XML_files/command/allWorking.xml", None
     )
@@ -267,7 +259,7 @@ def setup():
         "sample_XML_files/command/noStringSize.xml",
         AssertionError,
     )
-
+    
     component_test.add_test(
         "Base all working", "sample_XML_files/component/baseAllWorking.xml", None
     )
@@ -282,8 +274,9 @@ def setup():
         "sample_XML_files/component/interfaceOnly.xml",
         AssertionError,
     )
-
+    
     event_test.add_test("All working", "sample_XML_files/event/allWorking.xml", None)
+    
     event_test.add_test(
         "Event throttle negative",
         "sample_XML_files/event/negativeThrottle.xml",
@@ -399,14 +392,17 @@ def setup():
     topology_test.parse_and_add_directory(["deployment", "assembly"], "../test")
 
     # Add schemas to test_list
-    test_list.append(topology_test)
-    test_list.append(component_test)
-    test_list.append(command_test)
-    test_list.append(parameter_test)
-    test_list.append(channel_test)
-    test_list.append(interface_test)
-    test_list.append(serializable_test)
-    test_list.append(event_test)
+    
+    test_list.extend((
+        topology_test,
+        component_test,
+        command_test,
+        parameter_test,
+        channel_test,
+        interface_test,
+        serializable_test,
+        event_test
+    ))
 
     return test_list
 

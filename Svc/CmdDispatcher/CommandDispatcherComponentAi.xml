@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <component name="CommandDispatcher" kind="active" namespace="Svc">
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
@@ -216,6 +215,19 @@
                     <comment>Arg3</comment>
                 </arg>
            </args>       
+        </event>
+        <event id="10" name="OpCodeReregistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X is already registered to port %d" >
+            <comment>
+            Op code reregistered event
+            </comment>
+            <args>
+                <arg name="Opcode" type="U32">
+                    <comment>The opcode reregistered</comment>
+                </arg>          
+                <arg name="port" type="I32">
+                    <comment>The reregistration port</comment>
+                </arg>          
+            </args>
         </event>
     </events>
     <telemetry>

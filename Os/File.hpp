@@ -28,6 +28,7 @@ namespace Os {
                 NO_PERMISSION, //!<  No permission to read/write file
                 BAD_SIZE, //!<  Invalid size parameter
                 NOT_OPENED, //!<  file hasn't been opened yet
+                FILE_EXISTS, //!< file already exist (for CREATE with O_EXCL enabled)
                 OTHER_ERROR, //!<  A catch-all for other errors. Have to look in implementation-specific code
             } Status;
 

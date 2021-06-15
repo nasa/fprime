@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "RPI">
 
     <!-- Import component declarations -->
@@ -16,7 +15,6 @@
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
    <import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-   <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
    <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
@@ -24,12 +22,16 @@
    <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
    <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
+   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
+   <import_component_type>Svc/StaticMemory/StaticMemoryComponentAi.xml</import_component_type>
+   <import_component_type>Svc/Framer/FramerComponentAi.xml</import_component_type>
+   <import_component_type>Svc/Deframer/DeframerComponentAi.xml</import_component_type>
    <import_component_type>Drv/LinuxGpioDriver/LinuxGpioDriverComponentAi.xml</import_component_type>
    <import_component_type>Drv/LinuxSerialDriver/LinuxSerialDriverComponentAi.xml</import_component_type>
    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
    <import_component_type>RPI/RpiDemo/RpiDemoComponentAi.xml</import_component_type>
-   <import_component_type>Drv/SocketIpDriver/SocketIpDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -54,9 +56,16 @@
    <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="1000"  base_id_window="20" />
    
    <instance namespace="Svc" name="health" type="Health" base_id="1100"  base_id_window="20" />
-   
-   <instance namespace="Svc" name="groundIf" type="GroundInterface" base_id="1200"  base_id_window="20" />
-   
+
+   <instance namespace="Svc" name="staticMemory" type="StaticMemory" base_id="1200"  base_id_window="20" />
+   <instance namespace="Svc" name="downlink" type="Framer" base_id="1220"  base_id_window="20" />
+   <instance namespace="Svc" name="uplink" type="Deframer" base_id="1240"  base_id_window="20" />
+
+   <!-- Communications driver. May be swapped with other comm drivers like UART -->
+   <!-- Note: here we have tcp reliable uplink, and Udp (low latency) downlink -->
+   <instance namespace="Drv" name="comm" type="ByteStreamDriverModel" base_id="1260" base_id_window="20" />
+
+
    <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="1400"  base_id_window="20" />
    
    <instance namespace="Svc" name="linuxTime" type="Time" base_id="1500"  base_id_window="20" />
@@ -80,17 +89,72 @@
 
    <instance namespace="Rpi" name="rpiDemo" type="RpiDemo" base_id="2700"  base_id_window="100" />
 
-    <!-- Communications driver. May be swapped with other comm drivers like UART -->
-    <instance namespace="Drv" name="socketIpDriver" type="SocketIpDriver" base_id="2800" base_id_window="20" />
-
+    <!-- Connections -->
     <!-- Communications driver connections -->
-    <connection name = "CommunicationRecv">
-        <source component = "socketIpDriver" port = "recv" type = "Fw::BufferSend" num = "0"/>
-        <target component = "groundIf" port = "readCallback" type = "Fw::BufferSend" num = "0"/>
+    <connection name = "UplinkDrvAllocate">
+        <source component = "comm" port = "allocate" type = "Fw::BufferGet" num = "0"/>
+        <target component = "staticMemory" port = "bufferAllocate" type = "Fw::BufferGet" num = "0"/>
     </connection>
-    <connection name = "CommunicationSend">
-        <source component = "groundIf" port = "write" type = "Fw::BufferSend" num = "0"/>
-        <target component = "socketIpDriver" port = "send" type = "Fw::BufferSend" num = "0"/>
+    <connection name = "UplinkRecv">
+        <source component = "comm" port = "recv" type = "Drv::ByteStreamSend" num = "0"/>
+        <target component = "uplink" port = "framedIn" type = "Drv::ByteStreamSend" num = "0"/>
+    </connection>
+    <connection name = "UplinkDeallocate">
+        <source component = "uplink" port = "framedDeallocate" type = "Fw::BufferSend" num = "0"/>
+        <target component = "staticMemory" port = "bufferDeallocate" type = "Fw::BufferSend" num = "0"/>
+    </connection>
+    <!-- Uplink data connections -->
+    <connection name = "UplinkFileAllocate">
+        <source component = "uplink" port = "bufferAllocate" type = "BufferGet" num = "0"/>
+        <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
+    </connection>
+    <connection name = "UplinkCommands">
+        <source component = "uplink" port = "comOut" type = "Com" num = "0"/>
+        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
+    </connection>
+    <connection name = "UplinkBuffers">
+        <source component = "uplink" port = "bufferOut" type = "BufferSend" num = "0"/>
+        <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "UplinkFileAllocate">
+        <source component = "uplink" port = "bufferDeallocate" type = "BufferSend" num = "0"/>
+        <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "fileUplinkBuffIn">
+        <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
+    </connection>
+
+    <!-- Downlink ports -->
+    <connection name = "DownlinkAllocate">
+        <source component = "downlink" port = "framedAllocate" type = "Fw::BufferGet" num = "0"/>
+        <target component = "staticMemory" port = "bufferAllocate" type = "Drv::BufferGet" num = "1"/>
+    </connection>
+    <connection name = "DownlinkSend">
+        <source component = "downlink" port = "framedOut" type = "Fw::BufferSend" num = "0"/>
+        <target component = "comm" port = "send" type = "Drv::ByteStreamSend" num = "0"/>
+    </connection>
+    <connection name = "DownlinkDeallocate">
+        <source component = "comm" port = "deallocate" type = "Fw::BufferSend" num = "0"/>
+        <target component = "staticMemory" port = "bufferDeallocate" type = "Fw::BufferSend" num = "1"/>
+    </connection>
+
+    <!-- Downlink data connections -->
+    <connection name = "eventLoggerPkts">
+        <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "downlink" port = "comIn" type = "Com" num = "0"/>
+    </connection>
+    <connection name = "chanTlmPkts">
+        <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "downlink" port = "comIn" type = "Com" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkBufferSend">
+        <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
+        <target component = "downlink" port = "bufferIn" type = "BufferSend" num = "0"/>
+    </connection>
+    <connection name = "fileDownlinkBufferReturn">
+        <source component = "downlink" port = "bufferDeallocate" type = "BufferSend" num = "0"/>
+        <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
     </connection>
 
    <!-- Command Registration/Dispatch/Reply Connections -->
@@ -202,10 +266,6 @@
    
    <!-- Event Logger Binary Connections -->
    
-   <connection name = "GndIfLog">
-       <source component = "groundIf" port = "Log" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-   </connection>
    <connection name = "PrmDbLog">
        <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -295,10 +355,6 @@
    </connection>
    <connection name = "HealthTextLog">
        <source component = "health" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "GndIfTextLog">
-       <source component = "groundIf" port = "LogText" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
    <connection name = "FatalAdapterTextLog">
@@ -450,10 +506,6 @@
        <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
-   <connection name = "groundIfTime">
-       <source component = "groundIf" port = "Time" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-   </connection>
    <connection name = "RpiDemoTime">
        <source component = "rpiDemo" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
@@ -529,6 +581,11 @@
    <connection name = "cmdSeq">
        <source component = "rateGroup1HzComp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
         <target component = "cmdSeq" port = "schedIn" type = "Sched" num = "0"/>
+   </connection>
+   <!-- Note: This is optional if BufferManager stats are desired -->
+   <connection name = "Rg3UpBuffMan">
+        <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "2"/>
+        <target component = "fileUplinkBufferManager" port = "schedIn" type = "Sched" num = "0"/>
    </connection>
    
    <!-- Health Connections -->
@@ -618,48 +675,6 @@
         <target component = "health" port = "PingReturn" type = "Ping" num = "8"/>
    </connection>
 
-   <!-- Uplink Connections -->
-   
-   <!-- Uplink connection to command dispatcher should not conflict with command sequencer -->
-   <connection name = "cmdDispPkts">
-       <source component = "groundIf" port = "uplinkPort" type = "Com" num = "0"/>
-        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
-   </connection>
-
-   <connection name = "groundIfFileUplinkBufferGet">
-       <source component = "groundIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
-        <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-   </connection>
-   <connection name = "fileUplinkBuffIn">
-       <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
-   <connection name = "groundIfFileUplinkBufferSend">
-       <source component = "groundIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
-
-   <!-- Downlink Connections -->
-
-   <connection name = "eventLoggerPkts">
-       <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
-        <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
-   </connection>
-   
-   <connection name = "chanTlmPkts">
-       <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
-        <target component = "groundIf" port = "downlinkPort" type = "Com" num = "0"/>
-   </connection>
-   
-   <connection name = "fileDownlinkBufferSend">
-       <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "groundIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
-   <connection name = "fileDownlinkBufferReturn">
-       <source component = "groundIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
-       <target component = "fileDownlink" port = "bufferReturn" type = "BufferSend" num = "0"/>
-   </connection>
-   
    <!-- Fault Connections -->
    <connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>

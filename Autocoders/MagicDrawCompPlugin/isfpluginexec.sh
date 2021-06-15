@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while [[ $# > 0 ]]
+while [[ $# -gt 0 ]]
 do
         key="$1"
 
@@ -57,4 +57,4 @@ if [ -z "$BUILD_ROOT" ]; then
         echo WARNING: Environmental variable BUILD_ROOT is not defined
 fi
 
-eval $run
+eval "$run"
