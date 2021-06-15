@@ -589,6 +589,7 @@ fpconfighpp
 FPGA
 FPL
 fpp
+fppi
 FPport
 fprim
 fprime
