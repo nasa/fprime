@@ -8,6 +8,20 @@
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <comment>A component for dispatching commands</comment>
     <ports>
+        <port name="CmdDisp" kind="input" data_type="Fw::Cmd" max_number="1" role="Cmd"></port>
+
+        <port name="CmdReg" kind="output" data_type="Fw::CmdReg" max_number="1" role="CmdRegistration"></port>
+
+        <port name="CmdStatus" kind="output" data_type="Fw::CmdResponse" max_number="1" role="CmdResponse"></port>
+
+        <port name="Log" kind="output" data_type="Fw::Log" max_number="1" role="LogEvent"></port>
+
+        <port name="LogText" kind="output" data_type="Fw::LogText" max_number="1" role="LogTextEvent"></port>    
+
+        <port name="Time" kind="output" data_type="Fw::Time" max_number="1" role="TimeGet"></port>
+
+        <port name="Tlm" kind="output" data_type="Fw::Tlm" max_number="1" role="Telemetry"></port>
+
         <port name="compCmdSend" data_type="Fw::Cmd" kind="output" max_number="$CmdDispatcherComponentCommandPorts">
             <comment>
             Command dispatch port
