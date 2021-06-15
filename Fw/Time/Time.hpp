@@ -85,6 +85,7 @@ namespace Fw {
             TimeBase m_timeBase; // !< basis of time (defined by system)
             FwTimeContextStoreType m_timeContext; // !< user settable value. Could be reboot count, node, etc
     };
+    const static Time ZERO_TIME = Time();
 
 }
 
