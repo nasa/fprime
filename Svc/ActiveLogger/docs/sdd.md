@@ -1,3 +1,4 @@
+\page SvcActiveLoggerComponent Svc::ActiveLogger Component
 # Svc::ActiveLogger Component
 
 ## 1. Introduction
@@ -89,7 +90,7 @@ The `Svc::ActiveLogger` component accepts events from other components.
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](ActiveLogger.html) [MD](ActiveLogger.md)
+TBD
 
 ## 5. Module Checklists
 

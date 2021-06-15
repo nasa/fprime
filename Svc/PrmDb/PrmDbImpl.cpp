@@ -281,7 +281,7 @@ namespace Svc {
                 return;
             }
 
-            U32 recordSize;
+            U32 recordSize = 0;
             // read record size
             readSize = sizeof(recordSize);
 

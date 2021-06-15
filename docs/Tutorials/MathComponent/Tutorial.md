@@ -2102,7 +2102,7 @@ The `MathReceiver` component does not have a thread of its own, but relies on th
 ```xml
    <!-- Scheduler Connection -->
     <connection name = "MathReceiverRG">
-         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "4"/>
          <target component = "mathReceiver" port = "SchedIn" type = "Sched" num = "0"/>
     </connection>
 ```
