@@ -30,7 +30,7 @@
 #
 
 # __cplusplus
-extern "C" {
+ "C" {
 # // __cplusplus
 
 I32 CAssert0(FILE_NAME_ARG file, U32 lineNo); //!< C assert function
