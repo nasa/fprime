@@ -153,20 +153,6 @@
                 <arg name="Opcode" type="U32">
                     <comment>The opcode with the error</comment>
                 </arg>
-                <!-- These need to match CmdResponsePortAi.xml -->          
-            <!--
-		        <arg name="error" type="ENUM">
-		            <enum name="ErrorResponse">
-		                <item name="ERR_INVALID_OPCODE" comment="Invalid opcode dispatched"/>
-		                <item name="ERR_VALIDATION_ERROR" comment="Command failed validation"/>
-		                <item name="ERR_FORMAT_ERROR" comment="Command failed to deserialize"/>
-		                <item name="ERR_EXECUTION_ERROR" comment="Command had execution error"/>
-		                <item name="ERR_BUSY" comment="Component busy"/>
-                        <item name="ERR_UNEXP" comment="Unexpected response"/>
-		            </enum>
-		            <comment>The error value</comment>
-		        </arg>                         
-            -->
 		        <arg name="error" type="Fw::CmdResponse">
 		            <comment>The error value</comment>
 		        </arg>                         
