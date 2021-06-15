@@ -9,9 +9,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcher_CmdSerErrorEnumAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcher_ErrorResponseEnumAi.xml"
-
 )
 
 register_fprime_module()

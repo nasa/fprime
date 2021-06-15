@@ -11,10 +11,6 @@
 #include <stdio.h>
 
 namespace Svc {
-
-    typedef CommandDispatcher_CmdSerError CmdSerError;
-    typedef CommandDispatcher_ErrorResponse ErrorResponse;
-
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :
         CommandDispatcherComponentBase(name),
         m_seq(0),
@@ -65,28 +61,28 @@ namespace Svc {
         } else {
             this->m_numCmdErrors++;
             this->tlmWrite_CommandErrors(this->m_numCmdErrors);
-            ErrorResponse evrResp = ErrorResponse::ERR_UNEXP;
+            ErrorResponse evrResp = ERR_UNEXP;
             switch (response.e) {
                 case Fw::CmdResponse::INVALID_OPCODE:
-                    evrResp = ErrorResponse::ERR_INVALID_OPCODE;
+                    evrResp = ERR_INVALID_OPCODE;
                     break;
                 case Fw::CmdResponse::VALIDATION_ERROR:
-                    evrResp = ErrorResponse::ERR_VALIDATION_ERROR;
+                    evrResp = ERR_VALIDATION_ERROR;
                     break;
                 case Fw::CmdResponse::FORMAT_ERROR:
-                    evrResp = ErrorResponse::ERR_FORMAT_ERROR;
+                    evrResp = ERR_FORMAT_ERROR;
                     break;
                 case Fw::CmdResponse::EXECUTION_ERROR:
-                    evrResp = ErrorResponse::ERR_EXECUTION_ERROR;
+                    evrResp = ERR_EXECUTION_ERROR;
                     break;
                 case Fw::CmdResponse::BUSY:
-                    evrResp = ErrorResponse::ERR_BUSY;
+                    evrResp = ERR_BUSY;
                     break;
                 case Fw::CmdResponse::OK:
                     FW_ASSERT(0); // should never get here
                     break;
                 default:
-                    evrResp = ErrorResponse::ERR_UNEXP;
+                    evrResp = ERR_UNEXP;
                     break;
             }
             this->log_WARNING_HI_OpCodeError(opCode,evrResp);
@@ -102,7 +98,7 @@ namespace Svc {
                 portToCall = this->m_sequenceTracker[pending].callerPort;
                 context = this->m_sequenceTracker[pending].context;
                 FW_ASSERT(opCode == this->m_sequenceTracker[pending].opCode);
-                FW_ASSERT(portToCall < this->getNum_CmdStatus_OutputPorts());
+                FW_ASSERT(portToCall < this->getNum_seqCmdStatus_OutputPorts());
                 this->m_sequenceTracker[pending].used = false;
                 break;
             }
@@ -110,8 +106,8 @@ namespace Svc {
 
         if (portToCall != -1) {
             // call port to report status
-            if (this->isConnected_CmdStatus_OutputPort(portToCall)) {
-                this->CmdStatus_out(portToCall,opCode,context,response);
+            if (this->isConnected_seqCmdStatus_OutputPort(portToCall)) {
+                this->seqCmdStatus_out(portToCall,opCode,context,response);
             }
         }
     }
@@ -122,30 +118,30 @@ namespace Svc {
         Fw::SerializeStatus stat = cmdPkt.deserialize(data);
 
         if (stat != Fw::FW_SERIALIZE_OK) {
-            CmdSerError serErr = CmdSerError::ERR_UNEXP_STAT;
+            CmdSerError serErr = ERR_UNEXP_STAT;
             switch (stat) {
                 case Fw::FW_DESERIALIZE_BUFFER_EMPTY:
-                    serErr = CmdSerError::ERR_BUFFER_TOO_SMALL;
+                    serErr = ERR_BUFFER_TOO_SMALL;
                     break;
                 case Fw::FW_DESERIALIZE_FORMAT_ERROR:
-                    serErr = CmdSerError::ERR_BUFFER_FORMAT;
+                    serErr = ERR_BUFFER_FORMAT;
                     break;
                 case Fw::FW_DESERIALIZE_SIZE_MISMATCH:
-                    serErr = CmdSerError::ERR_SIZE_MISMATCH;
+                    serErr = ERR_SIZE_MISMATCH;
                     break;
                 case Fw::FW_DESERIALIZE_TYPE_MISMATCH:
-                    serErr = CmdSerError::ERR_TYPE_MISMATCH;
+                    serErr = ERR_TYPE_MISMATCH;
                     break;
                 case Fw::FW_SERIALIZE_OK:
                     FW_ASSERT(0); // should never get here
                     break;
                 default:
-                    serErr = CmdSerError::ERR_UNEXP_STAT;
+                    serErr = ERR_UNEXP_STAT;
                     break;
             }
             this->log_WARNING_HI_MalformedCommand(serErr);
-            if (this->isConnected_CmdStatus_OutputPort(portNum)) {
-                this->CmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::VALIDATION_ERROR);
+            if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+                this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::VALIDATION_ERROR);
             }
             return;
         }
@@ -162,7 +158,7 @@ namespace Svc {
         }
         if (entryFound and this->isConnected_compCmdSend_OutputPort(this->m_entryTable[entry].port)) {
             // register command in command tracker only if response port is connect
-            if (this->isConnected_CmdStatus_OutputPort(portNum)) {
+            if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
                 bool pendingFound = false;
 
                 for (U32 pending = 0; pending < FW_NUM_ARRAY_ELEMENTS(this->m_sequenceTracker); pending++) {
@@ -180,8 +176,8 @@ namespace Svc {
                 // if we couldn't find a slot to track the command, quit
                 if (not pendingFound) {
                     this->log_WARNING_HI_TooManyCommands(cmdPkt.getOpCode());
-                    if (this->isConnected_CmdStatus_OutputPort(portNum)) {
-                        this->CmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::EXECUTION_ERROR);
+                    if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+                        this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::EXECUTION_ERROR);
                     }
                     return;
                 }
@@ -199,8 +195,8 @@ namespace Svc {
         	this->log_WARNING_HI_InvalidCommand(cmdPkt.getOpCode());
         	this->m_numCmdErrors++;
         	// Fail command back to port, if connected
-        	if (this->isConnected_CmdStatus_OutputPort(portNum)) {
-        	    this->CmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::INVALID_OPCODE);
+        	if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
+        	    this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::INVALID_OPCODE);
         	}
         	this->tlmWrite_CommandErrors(this->m_numCmdErrors);
         }
