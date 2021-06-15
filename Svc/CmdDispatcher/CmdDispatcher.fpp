@@ -13,7 +13,7 @@ module Svc {
     async input port compCmdStat: Fw.CmdResponse
 
     @ Output Command Status Port
-    output port seqCmdStatus: [$CmdDispatcherSequencePorts] Fw.CmdResponse
+    output port CmdStatus: [$CmdDispatcherSequencePorts] Fw.CmdResponse
 
     @ Command buffer input port for sequencers or other sources of command buffers
     async input port seqCmdBuff: [$CmdDispatcherSequencePorts] Fw.Com
@@ -23,6 +23,27 @@ module Svc {
 
     @ Ping output port
     output port pingOut: [1] Svc.Ping
+
+    @ A port for receiving commands
+    command recv port CmdDisp
+
+    @ A port for sending command registration requests
+    command reg port CmdReg
+
+    @ A port for sending command responses
+    command resp port cmdResponseOut
+
+    @ Event port
+    event port Log
+
+    @ Text event port
+    text event port LogText
+
+    @ Time get port
+    time get port Time
+
+    @ A port for emitting telemetry
+    telemetry port Tlm
 
     @ No-op command
     async command CMD_NO_OP \
@@ -46,7 +67,6 @@ module Svc {
     async command CMD_CLEAR_TRACKING \
       opcode 3
 
-    @ FPP from XML: could not translate format string "Opcode 0x%04X registered to port %d slot %d"
     @ Op code registered event
     event OpCodeRegistered(
                             Opcode: U32 @< The opcode to register
@@ -55,9 +75,8 @@ module Svc {
                           ) \
       severity diagnostic \
       id 0 \
-      format "{}"
+      format "Opcode {} registered to port {} slot {}"
 
-    @ FPP from XML: could not translate format string "Opcode 0x%04X dispatched to port %d"
     @ Op code dispatched event
     event OpCodeDispatched(
                             Opcode: U32 @< The opcode dispatched
@@ -65,16 +84,15 @@ module Svc {
                           ) \
       severity command \
       id 1 \
-      format "{}"
+      format "Opcode {} dispatched to port {}"
 
-    @ FPP from XML: could not translate format string "Opcode 0x%04X completed"
     @ Op code completed event
     event OpCodeCompleted(
                            Opcode: U32 @< The I32 command argument
                          ) \
       severity command \
       id 2 \
-      format "{}"
+      format "Opcode {} completed"
 
     enum ErrorResponse {
       ERR_INVALID_OPCODE = 0 @< Invalid opcode dispatched
@@ -85,7 +103,6 @@ module Svc {
       ERR_UNEXP = 5 @< Unexpected response
     }
 
-    @ FPP from XML: could not translate format string "Opcode 0x%04X completed with error %d "
     @ Op code completed with error event
     event OpCodeError(
                        Opcode: U32 @< The opcode with the error
@@ -93,7 +110,7 @@ module Svc {
                      ) \
       severity warning high \
       id 3 \
-      format "{}"
+      format "Opcode {} completed with error {}"
 
     enum CmdSerError {
       ERR_BUFFER_TOO_SMALL = 0 @< Buffer too small
@@ -111,23 +128,21 @@ module Svc {
       id 4 \
       format "Received malformed command packet. Status: {}"
 
-    @ FPP from XML: could not translate format string "Invalid opcode 0x%04X received."
     @ Received an invalid opcode
     event InvalidCommand(
                           Opcode: U32 @< Invalid opcode
                         ) \
       severity warning high \
       id 5 \
-      format "{}"
+      format "Invalid opcode {} received"
 
-    @ FPP from XML: could not translate format string "Too many outstanding commands. opcode=0x%04X"
     @ Exceeded the number of commands that can be simultaneously executed
     event TooManyCommands(
                            Opcode: U32 @< The opcode that overflowed the list
                          ) \
       severity warning high \
       id 6 \
-      format "{}"
+      format "Too many outstanding commands. opcode={}"
 
     @ The command dispatcher has successfully received a NO-OP command
     event NoOpReceived \
@@ -153,7 +168,6 @@ module Svc {
       id 9 \
       format "TEST_CMD_1 args: I32: {}, F32: {f}, U8: {}"
 
-    @ FPP from XML: could not translate format string "Opcode 0x%04X is already registered to port %d"
     @ Op code reregistered event
     event OpCodeReregistered(
                               Opcode: U32 @< The opcode reregistered
@@ -161,7 +175,7 @@ module Svc {
                             ) \
       severity diagnostic \
       id 10 \
-      format "{}"
+      format "Opcode {} is already registered to port {}"
 
     @ Number of commands dispatched
     telemetry CommandsDispatched: U32 id 0 update on change

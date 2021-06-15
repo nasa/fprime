@@ -18,6 +18,10 @@
 
 namespace Svc {
 
+    typedef CommandDispatcher_CmdSerError CmdSerError;
+    typedef CommandDispatcher_ErrorResponse ErrorResponse;
+
+
     void CommandDispatcherImplTester::init(NATIVE_INT_TYPE instance) {
         CommandDispatcherGTestBase::init();
     }
@@ -37,7 +41,7 @@ namespace Svc {
         this->m_cmdSendRcvd = true;
     }
 
-    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response) {
+    void CommandDispatcherImplTester::from_CmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response) {
         this->m_seqStatusRcvd = true;
         this->m_seqStatusOpCode = opCode;
         this->m_seqStatusCmdSeq = cmdSeq;
@@ -513,7 +517,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, CommandDispatcherComponentBase::ERR_EXECUTION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, ErrorResponse::ERR_EXECUTION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -566,7 +570,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_INVALID_OPCODE);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,ErrorResponse::ERR_INVALID_OPCODE);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -620,7 +624,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_VALIDATION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,ErrorResponse::ERR_VALIDATION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -659,7 +663,7 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_MalformedCommand_SIZE(1);
-        ASSERT_EVENTS_MalformedCommand(0,CommandDispatcherComponentBase::ERR_TYPE_MISMATCH);
+        ASSERT_EVENTS_MalformedCommand(0,CmdSerError::ERR_TYPE_MISMATCH);
 
     }
 

@@ -21,7 +21,7 @@ void connectPorts(Svc::CommandDispatcherImpl& impl, Svc::CommandDispatcherImplTe
     tester.connect_to_compCmdReg(0,impl.get_compCmdReg_InputPort(0));
 
     impl.set_compCmdSend_OutputPort(0,tester.get_from_compCmdSend(0));
-    impl.set_seqCmdStatus_OutputPort(0,tester.get_from_seqCmdStatus(0));
+    impl.set_CmdStatus_OutputPort(0,tester.get_from_CmdStatus(0));
     // local dispatcher command registration
     impl.set_CmdReg_OutputPort(0,impl.get_compCmdReg_InputPort(1));
     impl.set_CmdStatus_OutputPort(0,impl.get_compCmdStat_InputPort(0));
