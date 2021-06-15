@@ -38,9 +38,6 @@ The `Svc::AssertFatalAdapter` component contains a private implementation of the
 
 #### 3.3.1 FW_ASSERT calls
 
-As described in the Functional Description section, the `Svc::ActiveRateGroup` component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:
-
-![System Tick Port Call](img/RateGroupCall.jpg) 
 
 ### 3.4 State
 
@@ -50,26 +47,7 @@ As described in the Functional Description section, the `Svc::ActiveRateGroup` c
 
 `Svc::AssertFatalAdapter` has no significant algorithms.
 
-## 4. Dictionaries
-
-Dictionaries: [HTML](AssertFatalAdapter.html) [MD](AssertFatalAdapter.md)
-
-## 5. Module Checklists
-
-Document | Link
--------- | ----
-None yet
-
-## 6. Unit Testing
-
-The unit test results are as follows:
-
-Log|Link
----|----
-Test Output|[Link](../test/ut/output/test.txt)
-Coverage Output|[Link](../test/ut/output/AssertFatalAdapterComponentImpl.cpp.gcov)
-
-## 7. Change Log
+## 4. Change Log
 
 Date | Description
 ---- | -----------

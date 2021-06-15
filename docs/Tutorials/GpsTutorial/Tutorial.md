@@ -1,5 +1,7 @@
 # F´ GPS Tutorial
 
+**WARNING:** this tutorial is under revision for use with F´ 2.0.0.
+
 In this guide, we will cover the basics of working with F´ by attaching a GPS receiver to a serial driver and running
 the application on a Raspberry PI. In order to fully benefit from this tutorial, the user should acquire any NMEA
 compatible UART GPS receiver and a raspberry pi.  In this tutorial, we use a NMEA GPS receiver with micro-USB such that
@@ -20,6 +22,9 @@ run the application against the F´ ground system.
 for use as a demo or to help debug issues that come up when going through the tutorial.
 
 ## Prerequisites
+
+This tutorial assumes the user has gone through and understood [Getting Started Tutorial](../GettingStarted/Tutorial.md)
+and [MathComponent Tutorial](../MathComponent/Tutorial.md)
 
 This tutorial requires the user to have some basic software skills and have installed F´. The prerequisite skills to
 understand this tutorial are as follows:
@@ -498,8 +503,8 @@ namespace GpsApp {
   {
       for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_UART_BUFFERS; buffer++) {
           //Assign the raw data to the buffer. Make sure to include the side of the region assigned.
-          this->m_recvBuffers[buffer].setdata((U64)this->m_uartBuffers[buffer]);
-          this->m_recvBuffers[buffer].setsize(UART_READ_BUFF_SIZE);
+          this->m_recvBuffers[buffer].setData((U64)this->m_uartBuffers[buffer]);
+          this->m_recvBuffers[buffer].setSize(UART_READ_BUFF_SIZE);
           // Invoke the port to send the buffer out.
           this->serialBufferOut_out(0, this->m_recvBuffers[buffer]);
       }
@@ -531,8 +536,8 @@ namespace GpsApp {
       float lat = 0.0f, lon = 0.0f;
       GpsPacket packet;
       // Grab the size (used amount of the buffer) and a pointer to the data in the buffer
-      U32 buffsize = static_cast<U32>(serBuffer.getsize());
-      char* pointer = reinterpret_cast<char*>(serBuffer.getdata());
+      U32 buffsize = static_cast<U32>(serBuffer.getSize());
+      char* pointer = reinterpret_cast<char*>(serBuffer.getData());
       // Check for invalid read status, log an error, return buffer and abort if there is a problem
       if (serial_status != Drv::SER_OK) {
           Fw::Logger::logMsg("[WARNING] Received buffer with bad packet: %d\n", serial_status);
@@ -959,7 +964,7 @@ This will generate the binary at `GpsApp/bin/arm-linux-gnueabihf/GpsApp`. The us
 before. Ensure that the system and network firewall allow through port 50000 from the PI to the host, and then run:
 
 ```shell
-fprime-gds -d . -n
+fprime-gds -n
 ```
 
 Assuming there is no firewall or other network limits between the PI and the host, the user can run the following from a

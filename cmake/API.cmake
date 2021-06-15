@@ -406,7 +406,7 @@ endfunction(register_fprime_executable)
 ####
 function(register_fprime_ut)
     #### CHECK UT BUILD ####
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" OR __FPRIME_NO_UT_GEN__)
         return()
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})

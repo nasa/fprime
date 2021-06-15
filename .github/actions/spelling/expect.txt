@@ -319,6 +319,7 @@ CYCLEIN
 CYCLEOUT
 Cyg
 cygwin
+czf
 daringfireball
 Daruwala
 DASSERT
@@ -616,7 +617,6 @@ gcgandhi
 gcov
 gdiplus
 gencode
-gendoc
 genfile
 GENHUB
 GENREP
@@ -683,6 +683,7 @@ gtest
 GTestbase
 gui
 Guire
+gz
 handcoded
 hardtoaccess
 hasattr
@@ -882,7 +883,6 @@ LCHILD
 ldl
 lemstarch
 len
-leq
 lestarch
 levelname
 lflag
@@ -1073,6 +1073,7 @@ Nicolich
 ninjaaron
 nio
 NMEA
+nmsgs
 noargport
 NOBUFFERS
 NOCOLOR
@@ -1086,6 +1087,7 @@ noncomma
 nondetached
 NONINFRINGEMENT
 Nop
+noreturn
 normalwidths
 normpath
 NOSEQUENCEACTIVE
@@ -1330,7 +1332,7 @@ Rcv
 rcvd
 RCVTIMEO
 RDONLY
-RDWR
+rdwr
 Readback
 readdir
 READERROR
@@ -1816,6 +1818,7 @@ vals
 valud
 ve
 venv
+VERSIONED
 versioning
 VFILE
 vhd

@@ -141,7 +141,6 @@ SocketIpStatus IpSocket::send(const U8* const data, const U32 size) {
     }
     // Attempt to send out data and retry as necessary
     for (U32 i = 0; (i < SOCKET_MAX_ITERATIONS) && (total < size); i++) {
-        sent = 0;
         // Send using my specific protocol
         sent = this->sendProtocol(data + total, size - total);
         // Error is EINTR or timeout just try again

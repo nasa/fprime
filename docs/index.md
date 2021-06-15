@@ -16,19 +16,22 @@ F´ has the following features:
 - A standard library of flight-worthy components
 - Testing tools for unit and system-level testing
 
-| F´ Resources                       |                                                                                                          |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Features                           | [Features](./features.md)                                                                                |
-| Projects                           | [Projects](./projects.md)                                                                                |
-| Installation                       | [INSTALL.md](./INSTALL.md)                                                                               |
-| Tutorials                          | [Tutorials](./Tutorials/README.md)                                                                       |
-| User Guide                         | [User Guide](./UsersGuide/guide.md)                                                                      |
-| Repository                         | [https://github.com/nasa/fprime](https://github.com/nasa/fprime)                                         |
-| Community Forum and Mailing List   | [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) |
-| Community GitHub Organization      | [https://github.com/fprime-community](https://github.com/fprime-community)                               |
-| Standard Reference Application     | [Ref](https://github.com/nasa/fprime/blob/master/Ref/README.md)                                          |
-| Raspberry PI Reference Application | [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md)                                          |
-| Architecture Overview              | [Architecture](./Architecture/FPrimeArchitectureShort.pdf)                                               |
+| F´ Information and External Resources |                                                                                                          |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Features                              | [Features](./features.md)                                                                                |
+| Projects                              | [Projects](./projects.md)                                                                                |
+| Repository                            | [https://github.com/nasa/fprime](https://github.com/nasa/fprime)                                         |
+| Community Forum and Mailing List      | [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/d/forum/fprime-community) |
+| Community GitHub Organization         | [https://github.com/fprime-community](https://github.com/fprime-community)                               |
+| Architecture Overview                 | [Architecture](./Architecture/FPrimeArchitectureShort.pdf)                                               |
+
+## F´ Documentation
+
+| F´ Release                          |
+|-------------------------------------|
+| [v1.5 Series Documentation](https://nasa.github.io/fprime/v1.5) |
+| [v2.0.0 Documentation](https://nasa.github.io/fprime/v2.0.0) |
+| [Latest Documentation](./latest.md) |
 
 ## F´ System Requirements
 

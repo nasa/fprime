@@ -74,7 +74,7 @@ The `Svc::CmdDispatcher` component dispatches commands to other components:
 
 ## 4. Dictionary
 
-Dictionaries: [HTML](CmdDispatcher.html) [MD](CmdDispatcher.md)
+Dictionaries: [HTML](CmdDispatcher.html)
 
 ## 4. Module Checklists
 

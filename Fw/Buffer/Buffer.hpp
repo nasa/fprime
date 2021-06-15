@@ -109,7 +109,7 @@ public:
     //! deserializes the pointer to said data, the size, and context. This is done for efficiency in moving around data,
     //! and is the primary usage of Fw::Buffer. To deserialize the wrapped data, use either the data pointer accessor
     //! or the serialize buffer base representation and deserialize from that.
-    //! \param serialBuffer: serialize buffer to read data into
+    //! \param buffer: serialize buffer to read data into
     //! \return: status of serialization
     Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
 

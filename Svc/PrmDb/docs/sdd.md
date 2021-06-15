@@ -90,7 +90,7 @@ Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
 
 ## 5. Dictionary
 
-Dictionaries: [HTML](PrmDb.html) [MD](PrmDb.md)
+TBD
 
 ## 6. Unit Testing
 
