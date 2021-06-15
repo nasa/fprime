@@ -1,8 +1,5 @@
 var NAVTREEINDEX19 =
 {
-"struct_s_h_a256state__st.html#a8a5e81981080254a7aa9ad6e11a4f253":[122,0,11,1],
-"struct_s_h_a256state__st.html#ac34962074aa1766470fae99d0e2aef9b":[122,0,11,4],
-"struct_s_h_a512state__st.html":[122,0,12],
 "struct_s_h_a512state__st.html#a6ee1efbf25637bc74437826688a6ed3b":[122,0,12,7],
 "struct_s_h_a512state__st.html#a883844a48a6badf07ab8d5a3b42fa0f6":[122,0,12,1],
 "struct_s_h_a512state__st.html#a8adc6d1037d156b3adcb14773fa8fe90":[122,0,12,4],
