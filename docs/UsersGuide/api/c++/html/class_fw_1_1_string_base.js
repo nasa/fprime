@@ -3,7 +3,7 @@ var class_fw_1_1_string_base =
     [ "StringBase", "class_fw_1_1_string_base.html#a2bfd9213f32623811445aeaadf2b1328", null ],
     [ "~StringBase", "class_fw_1_1_string_base.html#a0ffa82519bab8d01611fb0635a40f96b", null ],
     [ "appendBuff", "class_fw_1_1_string_base.html#aa2dd23b369f7b80333497dca85029e8a", null ],
-    [ "copyBuff", "class_fw_1_1_string_base.html#abfb5777117a8d862410030f42d94adba", null ],
+    [ "copyBuff", "class_fw_1_1_string_base.html#ab46c5526bd6729c02a3f1bbc02706fc1", null ],
     [ "format", "class_fw_1_1_string_base.html#afed767fd645227856ab456908530ec57", null ],
     [ "getCapacity", "class_fw_1_1_string_base.html#a4ad811f0367cceaf22a22bc16427f39b", null ],
     [ "length", "class_fw_1_1_string_base.html#a6fd20b91c4ca64fc58da5c725e72410a", null ],
