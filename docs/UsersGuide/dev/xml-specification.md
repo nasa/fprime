@@ -64,6 +64,8 @@ specification.
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |
 | enum                       | name      | Enumeration type name.                                                                                                                               |
+| enum                       | default      | Specifies the default value of the enumeration                                                                                                    |
+| enum                       | serialize_type      | Specifies the type value of the enumeration for serialization                                                                                                   |
 | item                       |           | Specifies a member of the enumeration.                                                                                                               |
 | item                       | name      | Specifies the name of the enumeration member.                                                                                                        |
 | item                       | value     | Assigns a value to the enumeration member. Member values in the enumeration follow C enumeration rules if not specified.                             |
@@ -187,6 +189,20 @@ The namespace consists of one or more identifiers separated by `::`.
 If the attribute `namespace` is missing, then the type is
 placed in the global namespace.
 
+* An optional attribute `default` which provides the default value
+of the enumeration.
+
+If the attribute `default` is missing, then the value of the
+enumeration is set to 0.
+
+* An optional attribute `serialize_type` which provides the type
+of the enumeration for serialization.
+
+If the attribute `serialize_type` is missing, then the serialization type is
+set to FwEnumStoreType or equivalently, I32.
+
+
+
 _Examples:_ Here is an XML enumeration `E` in the global namespace:
 
 `<enum name="E">` ... `</enum>`
@@ -194,6 +210,16 @@ _Examples:_ Here is an XML enumeration `E` in the global namespace:
 Here is an XML enumeration `E` in the namespace `A::B`:
 
 `<enum name="E" namespace="A::B">` ... `</enum>`
+
+Here is an XML enumeration `E` in the global namespace with default value Item2:
+
+`<enum name="E" default="Item2">` ... `</enum>`
+
+
+Here is an XML enumeration `E` in the global namespace with serialization type
+U64:
+
+`<enum name="E" serialize_type="U64">` ... `</enum>`
 
 **Enum children:**
 *enum_children* consists of the following, in any order:
