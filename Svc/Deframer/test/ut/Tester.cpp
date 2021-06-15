@@ -24,7 +24,6 @@ namespace Svc {
 
   Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(
                   Types::CircularBuffer& ring_buffer, U32& needed) {
-
     if ((ring_buffer.get_capacity()) <= ring_buffer.get_remaining_size()){
         m_parent.m_status = DEFRAMING_INVALID_SIZE;
         return DEFRAMING_INVALID_SIZE;
@@ -39,7 +38,7 @@ namespace Svc {
         ring_buffer.peek(buf.getData(), needed, 0);
         m_interface->route(buf);
         m_parent.m_status = DEFRAMING_STATUS_SUCCESS;
-        m_parent.m_remaining_size = ring_buffer.get_remaining_size();
+        m_parent.m_remaining_size += ring_buffer.get_remaining_size();
         return DEFRAMING_STATUS_SUCCESS;
 
     } else {
@@ -72,10 +71,11 @@ namespace Svc {
     void Tester ::test_incoming_frame(U32 buffer_size, 
                                       U32 expected_size) {
         U8 data[buffer_size];
+        ::memset(data, 0, buffer_size);
         Fw::Buffer recvBuffer(data, buffer_size);
         Drv::RecvStatus recvStatus = Drv::RecvStatus::RECV_OK;
         invoke_to_framedIn(0, recvBuffer, recvStatus);
-        ASSERT_EQ(m_remaining_size, expected_size);
+        ASSERT_EQ(m_remaining_size, buffer_size);
     }
 
     void Tester ::test_route(Fw::ComPacket::ComPacketType packet_type) {
@@ -112,6 +112,8 @@ namespace Svc {
   {
     this->m_has_port_out = true;
     this->pushFromPortEntry_bufferOut(fwBuffer);
+    // Have to clean up memory as in a normal mode, file downlink doesn't require deallocation
+    delete[] (fwBuffer.getData() - sizeof(I32));
   }
 
   Fw::Buffer Tester ::
@@ -133,6 +135,7 @@ namespace Svc {
     )
   {
     this->m_has_port_out = true;
+    delete[] fwBuffer.getData();
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
   }
 

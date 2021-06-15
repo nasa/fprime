@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="PassBy" kind="active" namespace="App">
     <import_port_type>Autocoders/Python/test/pass_by_attrib/Msg1PortAi.xml</import_port_type>
     <comment>A demonstration component with ports pass by value, pointer and type</comment>

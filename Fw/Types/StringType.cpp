@@ -11,12 +11,13 @@
  */
 
 #include <Fw/Types/StringType.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
@@ -104,12 +105,29 @@ namespace Fw {
         return this->toChar();
     }
 
+    void StringBase::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
+        FW_ASSERT(buff);
+
+        NATIVE_UINT_TYPE max = this->getCapacity();
+        if (size < max) {
+            max = size;
+        }
+
+        // check for self copy
+        if (buff != this->toChar()) {
+            Fw::StringUtils::string_copy((char*) this->toChar(),buff,max);
+        }
+    }
+
     void StringBase::appendBuff(const char* buff, NATIVE_UINT_TYPE size) {
         const U32 capacity = this->getCapacity();
         const U32 length = this->length();
         FW_ASSERT(capacity > length, capacity, length);
         // Subtract 1 to leave space for null terminator
-        const U32 remaining = capacity - length - 1;
+        U32 remaining = capacity - length - 1;
+        if(size < remaining) {
+            remaining = size;
+        }
         FW_ASSERT(remaining < capacity, remaining, capacity);
         (void) strncat((char*) this->toChar(), buff, remaining);
     }

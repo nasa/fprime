@@ -1,9 +1,0 @@
-File '/home/tim/source/isf/Svc/CmdDispatcher/CommandDispatcherImpl.cpp'
-Lines executed:100.00% of 104
-Creating 'CommandDispatcherImpl.cpp.gcov'
-
-File '/home/tim/source/isf/Svc/CmdDispatcher/CommandDispatcherComponentAc.cpp'
-Lines executed:89.61% of 741
-Creating 'CommandDispatcherComponentAc.cpp.gcov'
-
-Lines executed:90.89% of 845

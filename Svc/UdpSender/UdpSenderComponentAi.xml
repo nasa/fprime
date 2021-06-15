@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../../Autocoders/schema/default/component_schema.rnc" type="compact"?>
 
 <component name="UdpSender" kind="active" namespace="Svc">
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>

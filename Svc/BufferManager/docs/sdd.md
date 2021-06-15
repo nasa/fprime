@@ -4,15 +4,18 @@
 ## 1 Introduction
 
 `BufferManager` is a passive ISF component.
-It allocates and deallocates variable-sized buffers
-from a fixed-size store.
+It allocates a set of fixed-sized buffers as specified by the user. The overall memory for the buffers is allocated by a memory allocator provided to the component at runtime.
 
 ## 2 Requirements
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-ISF-BM-001 | `BufferManager` shall maintain a fixed-size store and shall provide a callee port on which another component may request and receive variable-size buffers allocated from the store. | This requirement provides variable-sized buffers that may be passed between components by reference. Such buffers are useful for transferring large data items of varying length, such as file packets and images. For such data items, a fixed-size buffer such as `Fw::ComBuffer` is not practical. | Test
-ISF-BM-002 | `BufferManager` shall provide an input port on which a component that has been given a buffer may return the buffer for deallocation. | Deallocation prevents the fixed-size store from becoming exhausted. Note that the component returning the buffer is generally the receiver, while the component requesting the buffer is generally the sender. See the [sequence diagram](#SequenceDiagram) below. | Test
+FPRIME-BM-001 | `BufferManager` shall allow the specification of multiple bins of buffers based on the size of the buffer|Allows for some optimization of memory usage if buffers of varying sizes are needed|Test|
+FPRIME-BM-002 | `BufferManager` shall allocate the first buffer larger than the requested size from the set of unallocated buffers, starting with the smallest set of buffers.|If a buffer from a smaller pool is not available, allow using larger buffers to avoid starving the user| Test|
+FPRIME-BM-003 | `BufferManager` shall return an empty buffer (size = 0) if no buffers are available|Allow the user to decide how to react to no memory|Test|
+FPRIME-BM-004 | `BufferManager` shall accept empty returned buffers without an assert|Just send a warning to cover the case where an empty buffer is returned by a component|Test
+FPRIME-BM-005 | `BufferManager` shall use a provided Fw::MemAllocator instance to request overall buffer memory|Let the user decide where the memory comes from|Test
+FPRIME-BM-006 | `BufferManager` shall allow buffers to be returned in any order|Do not restrict the lifetime or usage of buffers|Test
 
 ## 3 Design
 
@@ -26,8 +29,6 @@ set at component initialization, that is never exceeded.
 2. The store maintained by `BufferManager` has a fixed size, 
 set at component initialization.
 This fixed size is never exceeded by the outstanding allocations.
-
-3. Buffers are freed in the same order that they were allocated.
 
 ### 3.2 Block Description Diagram (BDD)
 
@@ -47,39 +48,23 @@ Name | Type | Role
 
 Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
-<a name="bufferSendIn">`bufferSendIn`</a> | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | guarded input | Receives buffers for deallocation
-<a name="bufferGetCallee">`bufferGetCallee`</a> | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
-
+`bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.html) | guarded input | Receives buffers for deallocation
+`bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.html) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
+`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.html) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
 
 ### 3.4 Constants
 
-`BufferManager` maintains the following constants, initialized
-when the component is instantiated:
+`BufferManager` maintains the following constants:
 
-* <a name="storeSize">*storeSize*</a>:
-The size of the store used to allocate buffers.
-
-* <a name="allocationQueueDepth">*allocationQueueDepth*</a>:
-The maximum number of buffers that may be allocated at any time.
+* *BUFFERMGR_MAX_NUM_BINS*: The maximum number of bins (i.e. buffers pool of different sizes)
 
 ### 3.5 State
 
 `BufferManager` maintains the following state:
 
-* <a name="store">*store*</a>:
-A fixed allocation of [*storeSize*](#storeSize) bytes.
+* *m_buffers*: A set of buffers to allocate to users.
 
-* <a name="allocationQueue">*allocationQueue*</a>:
-A doubly-ended queue of up to [*allocationQueueDepth*](#allocationQueueDepth)
-entries that maintains, for each outstanding allocation,
-an entry *E = (I, s)* consisting of a unique identifier *I*
-and a size *s*.
-
-* <a name="freeIndex">*freeIndex*</a>:
-An index pointing to the first free byte of the store.
-The initial value is zero.
-
-The identifiers *I* are 32-bit unsigned integers.
+* *AllocatedBuffer::allocated*: Indicates whether a particular buffer in the pool has been allocated to the user.
 
 ### 3.6 Port Behavior
 
@@ -88,52 +73,25 @@ The identifiers *I* are 32-bit unsigned integers.
 When `BufferManager` receives a request for a buffer of size *s* on
 [*bufferGetCallee*](#bufferGetCallee), it carries out the following steps:
 
-1. If *freeIndex + s > storeSize*, then issue a
-*StoreSizeExceeded* event and return an invalid buffer.
-
-2. Otherwise 
-
-    a. Assert that the size *s'* of [*allocationQueue*](#allocationQueue)
-is less than or equal to [*allocationQueueDepth*](#allocationQueueDepth).
-
-    b. If *s' = allocationQueueDepth*, then issue an *AllocationQueueFull*
-event and return an invalid buffer.
-
-    c. Otherwise
-
-      1. Create a fresh identifier *I*.
-
-      2. Compute the pointer *P* that points to byte [*freeIndex*](#freeIndex) of [*store*](#store).
-
-      3. Create an allocation queue entry *E = (I, s)*.
-
-      4. Push *E* onto the front of [*allocationQueue*](#allocationQueue).
-
-      5. Increase [*freeIndex*](#freeIndex) by *s*.
-
-      6. Create and return a valid
-[`Fw::Buffer`](../../../Fw/Buffer/docs/sdd.html) with `managerID` equal to the
-instance number of this component, `bufferID` equal to *I*, `data` equal to
-*P*, and `size` equal to *s*.
+1. Search for an unallocated buffer that is big enough to hold the requested buffer size.
+2. Mark the buffer as allocated.
+3. Return the `Fw::Buffer` instance to the user.
+4. If a free buffer cannot be found, return an empty buffer to the user.
 
 #### 3.6.2 bufferSendIn
 
 When `BufferManager` receives notification of a free buffer on
 [*bufferSendIn*](#bufferSendIn), it carries out the following steps:
 
-1. If [*allocationQueue*](#allocationQueue) is empty, then issue an
-*AllocationQueueEmpty* event.
+1. Check to see if it an empty buffer. If so, issue a WARNING_LO event and return.
+2. Extract the manager ID and buffer ID from the context member of the `Fw::Buffer` instance.
+3. If they are valid, use the buffer ID to find the allocated buffer.
+4. Clear the "allocated" flag to make the buffer available again.
 
-2. Otherwise
+#### 3.6.3 schedIn
 
-    a. Pull an entry *(I, s)* off the back of the queue.
+The `schedIn` port is optional. It doesn't need to be connected for `BufferManager` to function correctly. When `BufferManager` receives a call on this port, it will write all the defined telemetry values.
 
-    b. If *I* matches the identifier provided in the free notification, then
-decrease [*freeIndex*](#freeIndex) by *s*.
-
-    c. Otherwise issue an *IDMismatch* event.
-
- <a name="SequenceDiagram"></a>
 ### 3.7 Sequence Diagram
 
 The following sequence diagram shows the procedure for sending a buffer
@@ -150,18 +108,23 @@ to the [`bufferSendIn`](#bufferSendIn) port of `BufferManager` for deallocation.
 
 ![`BufferManager` Sending a Buffer](img/SendingABuffer.jpg "SequenceDiagram")
 
+### 3.8 Assertions
+
+`BufferManager` will assert under the following conditions:
+
+* A returned buffer has the incorrect manager ID.
+* A returned buffer has an incorrect buffer ID.
+* A returned buffer is returned with a correct buffer ID, but it isn't already allocated.
+* A returned buffer has an indicated size larger than originally allocated.
+* A returned buffer has a pointer different than the one originally allocated.
+
 ## 4 Dictionary
 
-Dictionaries: [HTML](BufferManager.html) [MD](BufferManager.md)
+TBD
 
 ## 5 Checklists
 
-Document | Link
--------- | ----
-Design | [Link](Checklist/design.xlsx)
-Code | [Link](Checklist/code.xlsx)
-Unit Test | [Link](Checklist/unit_test.xls)
 
 ## 6 Unit Testing
 
-TODO
+Completed.

@@ -37,16 +37,6 @@ namespace ${n} {
         return this->m_buf;
     }
 
-    void ${name}::${memname}String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
     Fw::SerializeStatus ${name}::${memname}String::serialize(Fw::SerializeBufferBase& buffer) const {
         NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
         // serialize string

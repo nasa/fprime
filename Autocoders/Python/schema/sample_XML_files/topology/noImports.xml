@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/topology_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <assembly name = "REF">
     <instance name="FlightModuleOne" namespace="SRC" type="FlightModule" dict_short_name = "FM1"/>
     <instance name="FlightModuleTwo" namespace="SRC" type="FlightModule" dict_short_name="FM2" base_id = "10"/>
