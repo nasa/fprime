@@ -37,6 +37,7 @@ namespace Svc {
         //!
         //!  \param fileName The name of the file to create.  Must be less than 80 characters.
         //!  \param maxSize The max size of the file
+        //!  \param maxBackups The max backups for the file. Default: 10
         //!
         //!  \return true if creating the file was successful, false otherwise
         bool set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups = 10);

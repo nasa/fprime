@@ -4,6 +4,7 @@
 #
 # Master script to run the CI process. This will setup and run the tests for the CI system.
 ####
+export CTEST_OUTPUT_ON_FAILURE=1
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
@@ -37,3 +38,4 @@ do
     /usr/bin/time "${test_script}" || fail_and_stop "${test_script} failed"
     echo -e "${GREEN}CI test ${test_script} SUCCESSFUL${NOCOLOR}"
 done
+archive_logs

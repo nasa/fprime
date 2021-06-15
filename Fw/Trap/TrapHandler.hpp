@@ -19,7 +19,7 @@ namespace Fw {
              * Handles the incoming trap.
              * Note: if user does not supply an implementer of this
              *       function, a do-nothing version will be run.
-             * \param U32 trap: trap number
+             * \param trap: trap number
              */
             virtual void doTrap(U32 trap) = 0;
     };

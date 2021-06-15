@@ -64,6 +64,15 @@ namespace Drv {
           Fw::Buffer &serBuffer 
       );
 
+      //! Handler implementation for writeRead
+      //!
+      Drv::I2cStatus  writeRead_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          U32 addr,
+          Fw::Buffer &writeBuffer,
+          Fw::Buffer &readBuffer
+      );
+
       // Prevent unused field error when using stub
       #ifndef STUBBED_LINUX_I2C_DRIVER
       NATIVE_INT_TYPE m_fd; //!< i2c file descriptor

@@ -158,7 +158,7 @@
 // Turn asserts on or off
 
 #define FW_NO_ASSERT                        1   //!< Asserts turned off
-#define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=<somevalue> to be set on the compile command line
+#define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
 #define FW_FILENAME_ASSERT                  3   //!< Uses the file name in the assert - image stores filenames
 
 #ifndef FW_ASSERT_LEVEL

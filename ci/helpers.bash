@@ -12,6 +12,14 @@ export PURPLE='\033[0;95m'
 export NOCOLOR='\033[0m' # No Color
 
 ####
+# archive_logs: create a log archive
+####
+function archive_logs()
+{
+    tar -czf "${FPRIME_DIR}/ci-logs.tar.gz" "${LOG_DIR}"/*
+}
+
+####
 # fail_and_stop:
 #
 # This function, when called outside a subshell, should print an error and stop the test. This will
@@ -31,6 +39,7 @@ function fail_and_stop()
         tail -30 "${LASTLOG}" 1>&2
         echo -e "---------------------------------------" 1>&2
     fi
+    archive_logs
     exit 1
 }
 ####
@@ -47,3 +56,4 @@ function warn_and_cont()
 
 export -f fail_and_stop
 export -f warn_and_cont
+export -f archive_logs
