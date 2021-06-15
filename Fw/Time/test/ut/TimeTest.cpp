@@ -5,9 +5,9 @@
  *      Author: tcanham
  */
 
-#include <Fw/Time/Time.hpp>
-#include <iostream>
-#include <gtest/gtest.h>
+# <Fw/Time/Time.hpp>
+# <iostream>
+# <gtest/gtest.h>
 
 TEST(TimeTestNominal,InstantiateTest) {
 
@@ -89,8 +89,8 @@ TEST(TimeTestNominal,CopyTest) {
 
 }
 
-int main(int argc, char* argv[]) {
+ main( argc, * argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+     RUN_ALL_TESTS();
 }
 
