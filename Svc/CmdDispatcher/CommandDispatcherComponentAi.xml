@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="CommandDispatcher" kind="active" namespace="Svc">
+    <import_enum_type>Fw/Cmd/CmdResponseEnumAi.xml</import_enum_type>
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
@@ -153,6 +154,7 @@
                     <comment>The opcode with the error</comment>
                 </arg>
                 <!-- These need to match CmdResponsePortAi.xml -->          
+            <!--
 		        <arg name="error" type="ENUM">
 		            <enum name="ErrorResponse">
 		                <item name="ERR_INVALID_OPCODE" comment="Invalid opcode dispatched"/>
@@ -162,6 +164,10 @@
 		                <item name="ERR_BUSY" comment="Component busy"/>
                         <item name="ERR_UNEXP" comment="Unexpected response"/>
 		            </enum>
+		            <comment>The error value</comment>
+		        </arg>                         
+            -->
+		        <arg name="error" type="Fw::CmdResponse">
 		            <comment>The error value</comment>
 		        </arg>                         
             </args>

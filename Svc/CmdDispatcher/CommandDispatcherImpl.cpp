@@ -61,31 +61,8 @@ namespace Svc {
         } else {
             this->m_numCmdErrors++;
             this->tlmWrite_CommandErrors(this->m_numCmdErrors);
-            ErrorResponse evrResp = ERR_UNEXP;
-            switch (response.e) {
-                case Fw::CmdResponse::INVALID_OPCODE:
-                    evrResp = ERR_INVALID_OPCODE;
-                    break;
-                case Fw::CmdResponse::VALIDATION_ERROR:
-                    evrResp = ERR_VALIDATION_ERROR;
-                    break;
-                case Fw::CmdResponse::FORMAT_ERROR:
-                    evrResp = ERR_FORMAT_ERROR;
-                    break;
-                case Fw::CmdResponse::EXECUTION_ERROR:
-                    evrResp = ERR_EXECUTION_ERROR;
-                    break;
-                case Fw::CmdResponse::BUSY:
-                    evrResp = ERR_BUSY;
-                    break;
-                case Fw::CmdResponse::OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    evrResp = ERR_UNEXP;
-                    break;
-            }
-            this->log_WARNING_HI_OpCodeError(opCode,evrResp);
+            FW_ASSERT(response.e != Fw::CmdResponse::OK);
+            this->log_WARNING_HI_OpCodeError(opCode,response);
         }
         // look for command source
         NATIVE_INT_TYPE portToCall = -1;

@@ -513,7 +513,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, CommandDispatcherComponentBase::ERR_EXECUTION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, Fw::CmdResponse::EXECUTION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -566,7 +566,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_INVALID_OPCODE);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,Fw::CmdResponse::INVALID_OPCODE);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
@@ -620,7 +620,7 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_VALIDATION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,Fw::CmdResponse::VALIDATION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
