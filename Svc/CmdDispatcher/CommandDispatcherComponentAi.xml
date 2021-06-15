@@ -2,6 +2,7 @@
 
 <component name="CommandDispatcher" kind="active" namespace="Svc">
     <import_enum_type>Fw/Cmd/CmdResponseEnumAi.xml</import_enum_type>
+    <import_enum_type>Fw/Types/DeserialStatusEnumAi.xml</import_enum_type>
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
@@ -163,15 +164,7 @@
             Received a malformed command packet
             </comment>
             <args>
-                <!-- These need to match Serializable.hpp -->    
-                <arg name="Status" type="ENUM">
-                    <enum name="CmdSerError">
-                        <item name="ERR_BUFFER_TOO_SMALL" comment="Buffer too small"/>
-                        <item name="ERR_BUFFER_FORMAT" comment="Buffer wrong format"/>
-                        <item name="ERR_SIZE_MISMATCH" comment="Buffer size mismatch"/>
-                        <item name="ERR_TYPE_MISMATCH" comment="Buffer type mismatch"/>
-                        <item name="ERR_UNEXP_STAT" comment="Unexpected status"/>
-                    </enum>
+                <arg name="Status" type="Fw::DeserialStatus">
                     <comment>The deserialization error</comment>
                 </arg>                         
             </args>

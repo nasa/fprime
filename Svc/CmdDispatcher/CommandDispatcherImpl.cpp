@@ -95,27 +95,7 @@ namespace Svc {
         Fw::SerializeStatus stat = cmdPkt.deserialize(data);
 
         if (stat != Fw::FW_SERIALIZE_OK) {
-            CmdSerError serErr = ERR_UNEXP_STAT;
-            switch (stat) {
-                case Fw::FW_DESERIALIZE_BUFFER_EMPTY:
-                    serErr = ERR_BUFFER_TOO_SMALL;
-                    break;
-                case Fw::FW_DESERIALIZE_FORMAT_ERROR:
-                    serErr = ERR_BUFFER_FORMAT;
-                    break;
-                case Fw::FW_DESERIALIZE_SIZE_MISMATCH:
-                    serErr = ERR_SIZE_MISMATCH;
-                    break;
-                case Fw::FW_DESERIALIZE_TYPE_MISMATCH:
-                    serErr = ERR_TYPE_MISMATCH;
-                    break;
-                case Fw::FW_SERIALIZE_OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    serErr = ERR_UNEXP_STAT;
-                    break;
-            }
+            Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
             this->log_WARNING_HI_MalformedCommand(serErr);
             if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
                 this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::VALIDATION_ERROR);

@@ -659,7 +659,7 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_MalformedCommand_SIZE(1);
-        ASSERT_EVENTS_MalformedCommand(0,CommandDispatcherComponentBase::ERR_TYPE_MISMATCH);
+        ASSERT_EVENTS_MalformedCommand(0,Fw::DeserialStatus::TYPE_MISMATCH);
 
     }
 
