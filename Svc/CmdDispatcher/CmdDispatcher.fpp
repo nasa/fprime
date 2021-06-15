@@ -4,19 +4,19 @@ module Svc {
   active component CommandDispatcher {
 
     @ Command dispatch port
-    output port compCmdSend: [$CmdDispatcherComponentCommandPorts] Fw.Cmd
+    output port compCmdSend: [CmdDispatcherComponentCommandPorts] Fw.Cmd
 
     @ Command Registration Port. max_number should match dispatch port.
-    guarded input port compCmdReg: [$CmdDispatcherComponentCommandPorts] Fw.CmdReg
+    guarded input port compCmdReg: [CmdDispatcherComponentCommandPorts] Fw.CmdReg
 
     @ Input Command Status Port
     async input port compCmdStat: Fw.CmdResponse
 
     @ Output Command Status Port
-    output port CmdStatus: [$CmdDispatcherSequencePorts] Fw.CmdResponse
+    output port CmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
 
     @ Command buffer input port for sequencers or other sources of command buffers
-    async input port seqCmdBuff: [$CmdDispatcherSequencePorts] Fw.Com
+    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com
 
     @ Ping input port
     async input port pingIn: [1] Svc.Ping
