@@ -6,8 +6,15 @@
 // \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
 // 
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include <Fw/Types/Assert.hpp>
@@ -77,22 +84,18 @@ namespace Svc {
 
     void CmdSequencerComponentImpl::Sequence ::
       allocateBuffer(
-          const NATIVE_INT_TYPE identifier,
+          NATIVE_INT_TYPE identifier,
           Fw::MemAllocator& allocator,
-          const NATIVE_UINT_TYPE bytes
+          NATIVE_UINT_TYPE bytes
       ) 
     {
         // has to be at least as big as a header
         FW_ASSERT(bytes >= Sequence::Header::SERIALIZED_SIZE);
-        bool recoverable; // don't care, since sequencer buffers don't need to survive reboot
+        bool recoverable;
         this->m_allocatorId = identifier;
-        NATIVE_UINT_TYPE actualSize = bytes; // set size to requested size
-
-        U8* mem = static_cast<U8*>(allocator.allocate(identifier,actualSize,recoverable));
-        FW_ASSERT(mem);
         this->m_buffer.setExtBuffer(
-            mem,
-            actualSize
+            static_cast<U8*>(allocator.allocate(identifier,bytes,recoverable)),
+            bytes
         );
     }
 

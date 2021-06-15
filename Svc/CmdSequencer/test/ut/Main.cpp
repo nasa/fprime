@@ -4,7 +4,6 @@
 
 #define ALL_TESTS 1
 
-#include "Os/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/Health.hpp"
 #include "Svc/CmdSequencer/test/ut/Immediate.hpp"
@@ -379,8 +378,6 @@ TEST(Relative, ValidateAMPCS) {
 #endif
 
 int main(int argc, char **argv) {
-  ///Must create the directory at initialization
-  Os::FileSystem::createDirectory("bin");
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

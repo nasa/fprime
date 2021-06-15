@@ -6,8 +6,15 @@
 // \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
 // 
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #ifndef Svc_CmdSequencerImpl_HPP
@@ -128,14 +135,14 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const FwTimeBaseStoreType currTimeBase, //!< The current time base
-                  const FwTimeBaseStoreType seqTimeBase //!< The sequence file time base
+                  const U32 currTimeBase, //!< The current time base
+                  const U32 seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch
               void timeContextMismatch(
-                  const FwTimeContextStoreType currTimeContext, //!< The current time context
-                  const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
+                  const U32 currTimeContext, //!< The current time context
+                  const U32 seqTimeContext //!< The sequence file time context
               );
 
             PRIVATE:
@@ -241,9 +248,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              const NATIVE_INT_TYPE identifier, //!< The identifier
+              NATIVE_INT_TYPE identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              const NATIVE_UINT_TYPE bytes //!< The number of bytes
+              NATIVE_UINT_TYPE bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -539,7 +546,11 @@ namespace Svc {
 
       //! Construct a CmdSequencer
       CmdSequencerComponentImpl(
+#if FW_OBJECT_NAMES == 1
           const char* compName //!< The component name
+#else
+          void
+#endif
       );
 
       //! Initialize a CmdSequencer
@@ -567,9 +578,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          const NATIVE_INT_TYPE identifier, //!< The identifier
+          NATIVE_INT_TYPE identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          const NATIVE_UINT_TYPE bytes //!< The number of bytes
+          NATIVE_UINT_TYPE bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.
@@ -618,6 +629,12 @@ namespace Svc {
           U32 key //!< Value to return to pinger
       );
 
+      //! Handler implementation for seqCancelIn
+      //!
+      void seqCancelIn_handler(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -649,7 +666,8 @@ namespace Svc {
       void CS_RUN_cmdHandler(
           FwOpcodeType opCode, //!< The opcode
           U32 cmdSeq, //!< The command sequence number
-          const Fw::CmdStringArg& fileName //!< The file name
+          const Fw::CmdStringArg& fileName, //!< The file name
+          SeqBlkState block /*!< Return command status when complete or not*/
       );
 
       //! Handler for command CS_START
@@ -779,6 +797,11 @@ namespace Svc {
 
       //! timeout timer
       Timer m_cmdTimeoutTimer;
+
+      //! Block mode for command status
+      SeqBlkState m_blockState;
+      FwOpcodeType m_opCode;
+      U32 m_cmdSeq;
 
   };
 

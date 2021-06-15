@@ -6,8 +6,15 @@
 // \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
 // 
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include "Fw/Types/Assert.hpp"
@@ -148,7 +155,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::Sequence::Events ::
-    timeBaseMismatch(const FwTimeBaseStoreType currTimeBase, const FwTimeBaseStoreType seqTimeBase)
+    timeBaseMismatch(const U32 currTimeBase, const U32 seqTimeBase)
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
     CmdSequencerComponentImpl& component = this->m_sequence.m_component;
@@ -162,8 +169,8 @@ namespace Svc {
 
   void CmdSequencerComponentImpl::Sequence::Events ::
     timeContextMismatch(
-        const FwTimeContextStoreType currTimeContext,
-        const FwTimeContextStoreType seqTimeContext
+        const U32 currTimeContext,
+        const U32 seqTimeContext
     )
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();

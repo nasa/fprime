@@ -6,8 +6,15 @@
 // \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
 //
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
 // ======================================================================
 
 #include <Fw/Types/Assert.hpp>
@@ -26,8 +33,13 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     CmdSequencerComponentImpl::
+#if FW_OBJECT_NAMES == 1
       CmdSequencerComponentImpl(const char* name) :
         CmdSequencerComponentBase(name),
+#else
+      CmdSequencerComponentImpl(void) :
+        CmdSequencerComponentBase(),
+#endif
         m_FPrimeSequence(*this),
         m_sequence(&this->m_FPrimeSequence),
         m_loadCmdCount(0),
@@ -38,7 +50,10 @@ namespace Svc {
         m_executedCount(0),
         m_totalExecutedCount(0),
         m_sequencesCompletedCount(0),
-        m_timeout(0)
+        m_timeout(0),
+        m_blockState(SEQ_NO_BLOCK),
+        m_opCode(0),
+        m_cmdSeq(0)
     {
 
     }
@@ -60,9 +75,9 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       allocateBuffer(
-          const NATIVE_INT_TYPE identifier,
+          NATIVE_INT_TYPE identifier,
           Fw::MemAllocator& allocator,
-          const NATIVE_UINT_TYPE bytes
+          NATIVE_UINT_TYPE bytes
       )
     {
         this->m_sequence->allocateBuffer(identifier, allocator, bytes);
@@ -94,12 +109,17 @@ namespace Svc {
     void CmdSequencerComponentImpl::CS_RUN_cmdHandler(
             FwOpcodeType opCode,
             U32 cmdSeq,
-            const Fw::CmdStringArg& fileName) {
+            const Fw::CmdStringArg& fileName,
+            SeqBlkState block) {
 
         if (not this->requireRunMode(STOPPED)) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
             return;
         }
+
+        this->m_blockState = block;
+        this->m_cmdSeq = cmdSeq;
+        this->m_opCode = opCode;
 
         // load commands
         if (not this->loadFile(fileName)) {
@@ -115,7 +135,9 @@ namespace Svc {
             this->performCmd_Step();
         }
 
-        this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+        if (SEQ_NO_BLOCK == this->m_blockState) {
+            this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+        }
     }
 
     void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(
@@ -184,6 +206,20 @@ namespace Svc {
         this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
     }
 
+    void CmdSequencerComponentImpl ::
+      seqCancelIn_handler(
+          const NATIVE_INT_TYPE portNum
+      ) {
+        if (RUNNING == this->m_runMode) {
+            this->performCmd_Cancel();
+            this->log_ACTIVITY_HI_CS_SequenceCanceled(this->m_sequence->getLogFileName());
+            ++this->m_cancelCmdCount;
+            this->tlmWrite_CS_CancelCommands(this->m_cancelCmdCount);
+        } else {
+            this->log_WARNING_LO_CS_NoSequenceActive();
+        }
+    }
+
     void CmdSequencerComponentImpl::CS_CANCEL_cmdHandler(
     FwOpcodeType opCode, U32 cmdSeq) {
         if (RUNNING == this->m_runMode) {
@@ -230,6 +266,11 @@ namespace Svc {
             this->seqDone_out(0,0,0,Fw::COMMAND_EXECUTION_ERROR);
         }
 
+        if (SEQ_BLOCK == this->m_blockState) {
+            this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+        }
+
+        this->m_blockState = SEQ_NO_BLOCK;
     }
 
     void CmdSequencerComponentImpl ::
@@ -304,6 +345,8 @@ namespace Svc {
             this->cmdResponse_out(opcode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
             return;
         }
+
+        this->m_blockState = SEQ_NO_BLOCK;
         this->m_runMode = RUNNING;
         this->performCmd_Step();
         this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
@@ -417,6 +460,13 @@ namespace Svc {
         if (this->isConnected_seqDone_OutputPort(0)) {
             this->seqDone_out(0,0,0,Fw::COMMAND_OK);
         }
+
+        if (SEQ_BLOCK == this->m_blockState) {
+            this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::COMMAND_OK);
+        }
+
+        this->m_blockState = SEQ_NO_BLOCK;
+
     }
 
     void CmdSequencerComponentImpl::commandComplete(const U32 opcode) {

@@ -8,6 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CmdSeqInPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/CmdSeqCancelPortAi.xml"
 )
 
 register_fprime_module()

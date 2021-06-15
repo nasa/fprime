@@ -6,8 +6,15 @@
 // \copyright
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// acknowledged. Any commercial use must be negotiated with the Office
+// of Technology Transfer at the California Institute of Technology.
 // 
+// This software may be subject to U.S. export control laws and
+// regulations.  By accepting this document, the user agrees to comply
+// with all U.S. export laws and regulations.  User has the
+// responsibility to obtain export licenses, or other export authority
+// as may be required before exporting such information to foreign
+// countries or providing access to foreign persons.
 // ====================================================================== 
 
 #include "Os/FileSystem.hpp"
@@ -47,7 +54,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -103,7 +110,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_FORMAT_ERROR
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -192,7 +199,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -258,7 +265,7 @@ namespace Svc {
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -285,7 +292,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -360,7 +367,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -408,7 +415,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -459,7 +466,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -510,7 +517,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
