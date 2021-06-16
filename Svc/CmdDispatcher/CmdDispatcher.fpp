@@ -3,19 +3,9 @@ module Svc {
   @ A component for dispatching commands
   active component CommandDispatcher {
 
-    command recv port CmdDisp
-
-    command reg port CmdReg
-
-    command resp port CmdStatus
-
-    event port Log
-
-    text event port LogText
-
-    time get port Time
-
-    telemetry port Tlm
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
 
     @ Command dispatch port
     output port compCmdSend: [$CmdDispatcherComponentCommandPorts] Fw.Cmd
@@ -38,6 +28,35 @@ module Svc {
     @ Ping output port
     output port pingOut: [1] Svc.Ping
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
+    @ Command receive port
+    command recv port CmdDisp
+
+    @ Command registration port
+    command reg port CmdReg
+
+    @ Command response port
+    command resp port CmdStatus
+
+    @ Event port
+    event port Log
+
+    @ Text event port
+    text event port LogText
+
+    @ Time get port
+    time get port Time
+
+    @ Telemetry port
+    telemetry port Tlm
+
+    # ----------------------------------------------------------------------
+    # Commands 
+    # ----------------------------------------------------------------------
+
     @ No-op command
     async command CMD_NO_OP \
       opcode 0
@@ -59,6 +78,10 @@ module Svc {
     @ Clear command tracking info to recover from components not returning status
     async command CMD_CLEAR_TRACKING \
       opcode 3
+
+    # ----------------------------------------------------------------------
+    # Events 
+    # ----------------------------------------------------------------------
 
     event OpCodeRegistered(
                             Opcode: U32 @< The opcode to register
@@ -151,6 +174,10 @@ module Svc {
       severity diagnostic \
       id 10 \
       format "Opcode 0x{x} is already registered to port {}"
+
+    # ----------------------------------------------------------------------
+    # Telemetry 
+    # ----------------------------------------------------------------------
 
     @ Number of commands dispatched
     telemetry CommandsDispatched: U32 id 0 update on change
