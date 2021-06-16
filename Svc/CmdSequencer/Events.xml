@@ -38,18 +38,7 @@
             <arg name="fileName" type="string" size="60">
                 <comment>The name of the sequence file</comment>
             </arg>
-            <arg name="stage" type="ENUM">
-                <enum name="FileReadStage">
-                    <item name="SEQ_READ_HEADER" />
-                    <item name="SEQ_READ_HEADER_SIZE" />
-                    <item name="SEQ_DESER_SIZE" />
-                    <item name="SEQ_DESER_NUM_RECORDS" />
-                    <item name="SEQ_DESER_TIME_BASE" />
-                    <item name="SEQ_DESER_TIME_CONTEXT" />
-                    <item name="SEQ_READ_SEQ_CRC" />
-                    <item name="SEQ_READ_SEQ_DATA" />
-                    <item name="SEQ_READ_SEQ_DATA_SIZE" />
-                </enum>
+            <arg name="stage" type="CmdSequencer_FileReadStage">
                 <comment>The read stage</comment>
             </arg>
             <arg name="error" type="I32">

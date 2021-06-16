@@ -21,9 +21,6 @@
 
 namespace Svc {
 
-    typedef CmdSequencer_FileReadStage FileReadStage;
-    typedef CmdSequencer_SeqMode SeqMode;
-
   class CmdSequencerComponentImpl : 
     public CmdSequencerComponentBase 
   {
@@ -77,8 +74,8 @@ namespace Svc {
                   READ_SEQ_DATA_SIZE,
                 } t;
 
-                //! Convert FileReadStage::t to CmdSequencerComponentImpl::FileReadStage
-                static CmdSequencerComponentImpl::FileReadStage 
+                //! Convert FileReadStage::t to CmdSequencer_FileReadStage
+                static CmdSequencer_FileReadStage::t
                   toComponentEnum(
                       const t fileReadStage //!< The file read stage
                   );
