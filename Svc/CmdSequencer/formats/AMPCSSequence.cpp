@@ -92,7 +92,7 @@ namespace Svc {
     }
     else {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER_SIZE,
           fileStatus
       );
       status = false;
@@ -213,7 +213,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           file.getLastError()
       );
       status = false;
@@ -231,7 +231,7 @@ namespace Svc {
       this->m_buffer.deserialize(this->m_crc.m_stored);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           serializeStatus
       );
       status = false;
@@ -282,7 +282,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER,
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER,
           file.getLastError()
       );
       status = false;
@@ -290,7 +290,7 @@ namespace Svc {
 
     if (status and readLen != sizeof this->m_sequenceHeader) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE, 
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER_SIZE, 
           readLen
       );
       status = false;
@@ -320,7 +320,7 @@ namespace Svc {
     // Check read status
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_DATA,
           file.getLastError()
       );
       return false;
@@ -329,7 +329,7 @@ namespace Svc {
     const NATIVE_UINT_TYPE readLenUint = readLen;
     if (readLenUint != size) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_DATA_SIZE,
           readLen
       );
       return false;
