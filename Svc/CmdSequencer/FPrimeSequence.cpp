@@ -181,7 +181,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER, 
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER, 
           file.getLastError()
       );
       status = false;
@@ -189,7 +189,7 @@ namespace Svc {
 
     if (status and readLen != Sequence::Header::SERIALIZED_SIZE) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER_SIZE,
           readLen
       );
       status = false;
@@ -217,7 +217,7 @@ namespace Svc {
     Fw::SerializeStatus serializeStatus = buffer.deserialize(header.m_fileSize);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_SIZE,
+          CmdSequencer_FileReadStage::SEQ_DESER_SIZE,
           serializeStatus
       );
       return false;
@@ -230,7 +230,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(header.m_numRecords);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_NUM_RECORDS,
+          CmdSequencer_FileReadStage::SEQ_DESER_NUM_RECORDS,
           serializeStatus
       );
       return false;
@@ -240,7 +240,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(tbase);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_TIME_BASE,
+          CmdSequencer_FileReadStage::SEQ_DESER_TIME_BASE,
           serializeStatus
       );
       return false;
@@ -250,7 +250,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(header.m_timeContext);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_TIME_CONTEXT,
+          CmdSequencer_FileReadStage::SEQ_DESER_TIME_CONTEXT,
           serializeStatus
       );
       return false;
@@ -273,7 +273,7 @@ namespace Svc {
     // check read status
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_DATA,
           file.getLastError()
       );
       return false;
@@ -281,7 +281,7 @@ namespace Svc {
     // check read size
     if ((NATIVE_INT_TYPE) size != readLen) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_DATA_SIZE,
           readLen
       );
       return false;
@@ -305,7 +305,7 @@ namespace Svc {
     U8 *const buffAddr = buffer.getBuffAddr();
     if (buffSize < crcSize) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           buffSize
       );
       return false;

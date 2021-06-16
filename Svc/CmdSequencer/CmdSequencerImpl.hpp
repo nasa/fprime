@@ -59,31 +59,6 @@ namespace Svc {
 
             public:
 
-              //! File read stage for error reporting
-              struct FileReadStage {
-
-                typedef enum {
-                  READ_HEADER,
-                  READ_HEADER_SIZE,
-                  DESER_SIZE,
-                  DESER_NUM_RECORDS,
-                  DESER_TIME_BASE,
-                  DESER_TIME_CONTEXT,
-                  READ_SEQ_CRC,
-                  READ_SEQ_DATA,
-                  READ_SEQ_DATA_SIZE,
-                } t;
-
-                //! Convert FileReadStage::t to CmdSequencer_FileReadStage
-                static CmdSequencer_FileReadStage::t
-                  toComponentEnum(
-                      const t fileReadStage //!< The file read stage
-                  );
-
-              }; 
-
-            public:
-
               //! Construct an Events object
               Events(
                   Sequence& sequence //!< The enclosing sequence
@@ -99,7 +74,7 @@ namespace Svc {
 
               //! File invalid
               void fileInvalid(
-                  const FileReadStage::t stage, //!< The file read stage
+                  const CmdSequencer_FileReadStage::t stage, //!< The file read stage
                   const I32 error //!< The error
               );
 
