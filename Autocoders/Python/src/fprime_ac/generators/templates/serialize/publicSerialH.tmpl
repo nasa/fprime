@@ -40,11 +40,11 @@ public:
 
 #for name,type,size,format,comment,typeinfo in $members:
 #if $size == None:
-    ${type} get${name}(void); //!< get member $name
+    ${type} get${name}(void) const; //!< get member $name
 #else if $typeinfo == 'string' or $typeinfo == 'extern':
-    const ${type}& get${name}(void); //!< get member $name
+    const ${type}& get${name}(void) const; //!< get member $name
 #else
-    const ${type}* get${name}(NATIVE_INT_TYPE& size); //!< get member $name
+    const ${type}* get${name}(NATIVE_INT_TYPE& size) const; //!< get member $name
 #end if
 #end for
 
