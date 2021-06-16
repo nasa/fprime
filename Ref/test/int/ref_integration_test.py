@@ -111,7 +111,7 @@ class TestRefAppClass(object):
         try:
             self.api.send_command(
                 "eventLogger.SET_EVENT_FILTER",
-                ["FILTER_" + severity, "FILTER_" + enabled],
+                [severity, enabled],
             )
             return True
         except AssertionError:

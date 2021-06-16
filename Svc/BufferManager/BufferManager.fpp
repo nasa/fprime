@@ -2,10 +2,8 @@ module Svc {
 
   passive component BufferManager {
 
-    @ FPP from XML: original path was Svc/BufferManager/Telemetry.xml
     include "Telemetry.fppi"
 
-    @ FPP from XML: original path was Svc/BufferManager/Events.xml
     include "Events.fppi"
 
     time get port timeCaller
@@ -14,9 +12,9 @@ module Svc {
 
     text event port textEventOut
 
-    guarded input port bufferSendIn: [1] Fw.BufferSend
+    guarded input port bufferSendIn: Fw.BufferSend
 
-    guarded input port bufferGetCallee: [1] Fw.BufferGet
+    guarded input port bufferGetCallee: Fw.BufferGet
 
     telemetry port tlmOut
 

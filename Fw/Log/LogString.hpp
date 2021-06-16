@@ -10,12 +10,12 @@ namespace Fw {
 
     class LogStringArg : public Fw::StringBase {
         public:
-        
+
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
                 SERIALIZED_SIZE = FW_LOG_STRING_MAX_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of two size words
             };
-        
+
             LogStringArg(const char* src);
             LogStringArg(const StringBase& src);
             LogStringArg(const LogStringArg& src);
@@ -25,7 +25,7 @@ namespace Fw {
             NATIVE_UINT_TYPE length(void) const;
             // This method is set by the autocode to the max length specified in the XML declaration for a particular event.
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
-            
+
             const LogStringArg& operator=(const LogStringArg& other); //!< equal operator for other strings
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const;
@@ -33,10 +33,9 @@ namespace Fw {
 #if FW_SERIALIZABLE_TO_STRING
             void toString(StringBase& text) const;
 #endif
-            
+
         private:
 
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy source buffer, overwriting
             NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

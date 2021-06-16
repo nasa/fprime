@@ -35,16 +35,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void InternalInterfaceString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
     SerializeStatus InternalInterfaceString::serialize(SerializeBufferBase& buffer) const {
         NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
         // serialize string as buffer
@@ -64,7 +54,7 @@ namespace Fw {
     NATIVE_UINT_TYPE InternalInterfaceString::getCapacity(void) const {
         return FW_INTERNAL_INTERFACE_STRING_MAX_SIZE;
     }
-    
+
     const InternalInterfaceString& InternalInterfaceString::operator=(const InternalInterfaceString& other) {
         this->copyBuff(other.m_buf,this->getCapacity());
         return *this;

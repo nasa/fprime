@@ -352,6 +352,7 @@ DEPRECATEDLIST
 deps
 deregistration
 deser
+Deserial
 deserialization
 deserialize
 deserialized
