@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="Health" kind="queued" namespace="Svc">
+    <import_enum_type>Fw/Types/EnabledEnumAi.xml</import_enum_type>
     <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_port_type>Svc/WatchDog/WatchDogPortAi.xml</import_port_type>
