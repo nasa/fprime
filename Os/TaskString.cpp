@@ -35,16 +35,6 @@ namespace Os {
         return this->m_buf;
     }
 
-    void TaskString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     const TaskString& TaskString::operator=(const TaskString& other) {
         this->copyBuff(other.m_buf,this->getCapacity());
         return *this;
@@ -69,7 +59,7 @@ namespace Os {
 
         return stat;
     }
-    
+
     void TaskString::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;

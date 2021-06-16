@@ -21,7 +21,7 @@
     ((void) ((cond) ? (0) : \
     (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
 #else
-#define FILE_NAME_ARG U8*
+#define FILE_NAME_ARG const U8*
 #define FW_ASSERT(cond, ...) \
     ((void) ((cond) ? (0) : \
     (Fw::SwAssert((U8*)__FILE__, __LINE__, ##__VA_ARGS__))))
