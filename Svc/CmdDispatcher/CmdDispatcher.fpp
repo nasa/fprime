@@ -3,47 +3,40 @@ module Svc {
   @ A component for dispatching commands
   active component CommandDispatcher {
 
+    command recv port CmdDisp
+
+    command reg port CmdReg
+
+    command resp port CmdStatus
+
+    event port Log
+
+    text event port LogText
+
+    time get port Time
+
+    telemetry port Tlm
+
     @ Command dispatch port
-    output port compCmdSend: [CmdDispatcherComponentCommandPorts] Fw.Cmd
+    output port compCmdSend: [$CmdDispatcherComponentCommandPorts] Fw.Cmd
 
     @ Command Registration Port. max_number should match dispatch port.
-    guarded input port compCmdReg: [CmdDispatcherComponentCommandPorts] Fw.CmdReg
+    guarded input port compCmdReg: [$CmdDispatcherComponentCommandPorts] Fw.CmdReg
 
     @ Input Command Status Port
     async input port compCmdStat: Fw.CmdResponse
 
     @ Output Command Status Port
-    output port CmdStatus: [CmdDispatcherSequencePorts] Fw.CmdResponse
+    output port seqCmdStatus: [$CmdDispatcherSequencePorts] Fw.CmdResponse
 
     @ Command buffer input port for sequencers or other sources of command buffers
-    async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com
+    async input port seqCmdBuff: [$CmdDispatcherSequencePorts] Fw.Com
 
     @ Ping input port
     async input port pingIn: [1] Svc.Ping
 
     @ Ping output port
     output port pingOut: [1] Svc.Ping
-
-    @ A port for receiving commands
-    command recv port CmdDisp
-
-    @ A port for sending command registration requests
-    command reg port CmdReg
-
-    @ A port for sending command responses
-    command resp port cmdResponseOut
-
-    @ Event port
-    event port Log
-
-    @ Text event port
-    text event port LogText
-
-    @ Time get port
-    time get port Time
-
-    @ A port for emitting telemetry
-    telemetry port Tlm
 
     @ No-op command
     async command CMD_NO_OP \
@@ -67,7 +60,6 @@ module Svc {
     async command CMD_CLEAR_TRACKING \
       opcode 3
 
-    @ Op code registered event
     event OpCodeRegistered(
                             Opcode: U32 @< The opcode to register
                             $port: I32 @< The registration port
@@ -75,7 +67,7 @@ module Svc {
                           ) \
       severity diagnostic \
       id 0 \
-      format "Opcode {} registered to port {} slot {}"
+      format "Opcode 0x{x} registered to port {} slot {}"
 
     @ Op code dispatched event
     event OpCodeDispatched(
@@ -84,7 +76,7 @@ module Svc {
                           ) \
       severity command \
       id 1 \
-      format "Opcode {} dispatched to port {}"
+      format "Opcode 0x{x} dispatched to port {}"
 
     @ Op code completed event
     event OpCodeCompleted(
@@ -92,37 +84,20 @@ module Svc {
                          ) \
       severity command \
       id 2 \
-      format "Opcode {} completed"
-
-    enum ErrorResponse {
-      ERR_INVALID_OPCODE = 0 @< Invalid opcode dispatched
-      ERR_VALIDATION_ERROR = 1 @< Command failed validation
-      ERR_FORMAT_ERROR = 2 @< Command failed to deserialize
-      ERR_EXECUTION_ERROR = 3 @< Command had execution error
-      ERR_BUSY = 4 @< Component busy
-      ERR_UNEXP = 5 @< Unexpected response
-    }
+      format "Opcode 0x{x} completed"
 
     @ Op code completed with error event
     event OpCodeError(
                        Opcode: U32 @< The opcode with the error
-                       error: ErrorResponse @< The error value
+                       error: Fw.CmdResponse @< The error value
                      ) \
       severity warning high \
       id 3 \
-      format "Opcode {} completed with error {}"
-
-    enum CmdSerError {
-      ERR_BUFFER_TOO_SMALL = 0 @< Buffer too small
-      ERR_BUFFER_FORMAT = 1 @< Buffer wrong format
-      ERR_SIZE_MISMATCH = 2 @< Buffer size mismatch
-      ERR_TYPE_MISMATCH = 3 @< Buffer type mismatch
-      ERR_UNEXP_STAT = 4 @< Unexpected status
-    }
+      format "Opcode 0x{x} completed with error {}"
 
     @ Received a malformed command packet
     event MalformedCommand(
-                            Status: CmdSerError @< The deserialization error
+                            Status: Fw.DeserialStatus @< The deserialization error
                           ) \
       severity warning high \
       id 4 \
@@ -134,7 +109,7 @@ module Svc {
                         ) \
       severity warning high \
       id 5 \
-      format "Invalid opcode {} received"
+      format "Invalid opcode 0x{x} received"
 
     @ Exceeded the number of commands that can be simultaneously executed
     event TooManyCommands(
@@ -142,7 +117,7 @@ module Svc {
                          ) \
       severity warning high \
       id 6 \
-      format "Too many outstanding commands. opcode={}"
+      format "Too many outstanding commands. opcode=0x{x}"
 
     @ The command dispatcher has successfully received a NO-OP command
     event NoOpReceived \
@@ -175,7 +150,7 @@ module Svc {
                             ) \
       severity diagnostic \
       id 10 \
-      format "Opcode {} is already registered to port {}"
+      format "Opcode 0x{x} is already registered to port {}"
 
     @ Number of commands dispatched
     telemetry CommandsDispatched: U32 id 0 update on change
