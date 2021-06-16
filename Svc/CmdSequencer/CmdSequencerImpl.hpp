@@ -21,6 +21,9 @@
 
 namespace Svc {
 
+    typedef CmdSequencer_FileReadStage FileReadStage;
+    typedef CmdSequencer_SeqMode SeqMode;
+
   class CmdSequencerComponentImpl : 
     public CmdSequencerComponentBase 
   {
