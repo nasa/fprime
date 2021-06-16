@@ -790,7 +790,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_ModeSwitched(
         0,
-        CmdSequencerComponentBase::SEQ_STEP_MODE
+        CmdSequencer_SeqMode::SEQ_STEP_MODE
     );
   }
 

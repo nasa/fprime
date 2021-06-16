@@ -212,11 +212,7 @@
         format_string="Sequencer switched to %d step mode">
         <comment>Switched step mode</comment>
         <args>
-            <arg name="mode" type="ENUM">
-                <enum name="SeqMode">
-                    <item name="SEQ_STEP_MODE" />
-                    <item name="SEQ_AUTO_MODE" />
-                </enum>
+            <arg name="mode" type="CmdSequencer_SeqMode">
                 <comment>The new mode</comment>
             </arg>
         </args>

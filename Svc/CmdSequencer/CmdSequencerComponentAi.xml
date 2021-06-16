@@ -3,6 +3,7 @@
 <component name="CmdSequencer" kind="active" namespace="Svc" modeler="true">
 
     <import_enum_type>Svc/CmdSequencer/CmdSequencer_FileReadStageEnumAi.xml</import_enum_type>
+    <import_enum_type>Svc/CmdSequencer/CmdSequencer_SeqModeEnumAi.xml</import_enum_type>
     <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
     <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
