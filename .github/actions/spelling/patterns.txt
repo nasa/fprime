@@ -40,3 +40,6 @@ value="(?:[0-9a-f]{1,2} )*"
 
 # Ignore any text between inline back-ticks
 `(.*?)`
+
+# Tar archive items 
+\b(?:\\n|)tar(?:\s+-[a-zA-Z]+|\s[a-z]+)+

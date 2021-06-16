@@ -176,7 +176,7 @@ namespace Fw {
         return *this;
     }
 
-#endif    
+#endif
 #if FW_HAS_64_BIT
 
     // U64 methods
@@ -497,6 +497,9 @@ namespace Fw {
 
         // store type
         SerializeStatus stat = buffer.serialize(static_cast<FwEnumStoreType> (this->m_dataType));
+        if(stat != FW_SERIALIZE_OK) {
+            return stat;
+        }
 
         // switch on type
         switch (this->m_dataType) {
@@ -532,7 +535,7 @@ namespace Fw {
             case TYPE_F64:
                 stat = buffer.serialize(this->m_val.f64Val);
                 break;
-#endif				
+#endif
             case TYPE_F32:
                 stat = buffer.serialize(this->m_val.f32Val);
                 break;
@@ -546,7 +549,7 @@ namespace Fw {
                 stat = FW_SERIALIZE_FORMAT_ERROR;
                 break;
             }
-        
+
         return stat;
     }
 
@@ -570,13 +573,13 @@ namespace Fw {
                     return buffer.deserialize(this->m_val.u16Val);
                 case TYPE_I16:
                     return buffer.deserialize(this->m_val.i16Val);
-#endif                    
+#endif
 #if FW_HAS_32_BIT
                 case TYPE_U32:
                     return buffer.deserialize(this->m_val.u32Val);
                 case TYPE_I32:
                     return buffer.deserialize(this->m_val.i32Val);
-#endif                    
+#endif
 #if FW_HAS_64_BIT
                 case TYPE_U64:
                     return buffer.deserialize(this->m_val.u64Val);
@@ -584,7 +587,7 @@ namespace Fw {
                     return buffer.deserialize(this->m_val.i64Val);
                 case TYPE_F64:
                     return buffer.deserialize(this->m_val.f64Val);
-#endif              
+#endif
                 case TYPE_F32:
                     return buffer.deserialize(this->m_val.f32Val);
                 case TYPE_BOOL:
@@ -621,7 +624,7 @@ namespace Fw {
             case TYPE_I16:
             	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i16Val);
                 break;
-#endif                
+#endif
 #if FW_HAS_32_BIT
             case TYPE_U32:
             	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u32Val);
@@ -629,7 +632,7 @@ namespace Fw {
             case TYPE_I32:
             	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i32Val);
                 break;
-#endif                
+#endif
 #if FW_HAS_64_BIT
             case TYPE_U64:
             	(void) snprintf(valString, sizeof(valString), "%llu ", (unsigned long long)this->m_val.u64Val);
@@ -656,7 +659,7 @@ namespace Fw {
             	(void) snprintf(valString, sizeof(valString), "%s ", "NT");
                 break;
         }
-        
+
         // NULL terminate
         valString[sizeof(valString)-1] = 0;
 

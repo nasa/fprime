@@ -15,19 +15,19 @@ module Svc {
     output port buffersOut: [$GenericHubOutputBuffers] Fw.BufferSend
 
     @ Buffer return from incoming bufferIn calls
-    output port bufferDeallocate: [1] Fw.BufferSend
+    output port bufferDeallocate: Fw.BufferSend
 
     @ Data output to remote hub
-    output port dataOut: [1] Fw.BufferSend
+    output port dataOut: Fw.BufferSend
 
     @ Data input from remote hub
-    sync input port dataIn: [1] Fw.BufferSend
+    sync input port dataIn: Fw.BufferSend
 
     @ Deallocation of buffer passed into data in
-    output port dataInDeallocate: [1] Fw.BufferSend
+    output port dataInDeallocate: Fw.BufferSend
 
     @ Allocation of buffer passed to passed out dataOut
-    output port dataOutAllocate: [1] Fw.BufferGet
+    output port dataOutAllocate: Fw.BufferGet
 
   }
 

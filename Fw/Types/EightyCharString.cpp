@@ -35,16 +35,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void EightyCharString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
     const EightyCharString& EightyCharString::operator=(const EightyCharString& other) {
         this->copyBuff(other.m_buf,sizeof(this->m_buf));
         return *this;
@@ -69,7 +59,7 @@ namespace Fw {
     NATIVE_UINT_TYPE EightyCharString::getCapacity(void) const {
         return STRING_SIZE;
     }
-    
+
     void EightyCharString::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;

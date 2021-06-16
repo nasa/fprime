@@ -33,21 +33,11 @@ class BareQueueHandle {
         //!< Actual queue used to store
         BufferQueue m_queue;
 };
-/**
-* Queue should be initialized with a NULL handle
-*/
+
 Queue::Queue() :
     m_handle(static_cast<POINTER_CAST>(NULL))
 { }
 
-/**
-* Create a new queue. The will also recreate the queue if it exists.
-* WARNING: this must be called only during initialization.
-* \param const Fw::StringBase &name: name of the queue
-* \param NATIVE_INT_TYPE depth: depth of the queue
-* \param NATIVE_INT_TYPE msgSize: message size
-* \return Queue::QueueStatus
-*/
 Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
     BareQueueHandle* handle = reinterpret_cast<BareQueueHandle*>(this->m_handle);
     // Queue has already been created... remove it and try again:
@@ -70,9 +60,7 @@ Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_
     #endif
     return QUEUE_OK;
 }
-/**
-* Cleans up the dynamic memory of this queue
-*/
+
 Queue::~Queue() {
     // Clean up the queue handle:
     BareQueueHandle* handle = reinterpret_cast<BareQueueHandle*>(this->m_handle);
@@ -81,9 +69,7 @@ Queue::~Queue() {
     }
     this->m_handle = static_cast<POINTER_CAST>(NULL);
 }
-/**
- * Helper function for sending non-blocking requests.
- */
+
 Queue::QueueStatus bareSendNonBlock(BareQueueHandle& handle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
     FW_ASSERT(handle.m_init);
     BufferQueue& queue = handle.m_queue;
@@ -95,10 +81,7 @@ Queue::QueueStatus bareSendNonBlock(BareQueueHandle& handle, const U8* buffer, N
     }
     return status;
 }
-/**
- * Helper function for sending blocking requests.
- * WARNING: since this is for baremetal, this *always* ASSERTS
- */
+
 Queue::QueueStatus bareSendBlock(BareQueueHandle& handle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
     FW_ASSERT(handle.m_init);
     BufferQueue& queue = handle.m_queue;

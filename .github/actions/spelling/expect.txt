@@ -319,6 +319,7 @@ CYCLEIN
 CYCLEOUT
 Cyg
 cygwin
+czf
 daringfireball
 Daruwala
 DASSERT
@@ -351,6 +352,7 @@ DEPRECATEDLIST
 deps
 deregistration
 deser
+Deserial
 deserialization
 deserialize
 deserialized
@@ -382,6 +384,7 @@ dll
 dlog
 dnp
 DNs
+doall
 docbook
 dockerfile
 docset
@@ -586,6 +589,8 @@ foundin
 fpconfighpp
 FPGA
 FPL
+fpp
+fppi
 FPport
 fprim
 fprime
@@ -616,7 +621,6 @@ gcgandhi
 gcov
 gdiplus
 gencode
-gendoc
 genfile
 GENHUB
 GENREP
@@ -672,6 +676,7 @@ GPINT
 gpio
 graphviz
 grayscales
+grep
 grnd
 GROUNDINTERFACERULES
 groupadd
@@ -683,6 +688,7 @@ gtest
 GTestbase
 gui
 Guire
+gz
 handcoded
 hardtoaccess
 hasattr
@@ -738,6 +744,7 @@ idl
 idx
 ieeetr
 iface
+ifchange
 ifcomment
 ifdef
 iflag
@@ -882,7 +889,6 @@ LCHILD
 ldl
 lemstarch
 len
-leq
 lestarch
 levelname
 lflag
@@ -919,6 +925,7 @@ loadfile
 localhost
 localtime
 LOCKGUARDTESTER
+locs
 LOGASSERT
 LOGFILE
 LOGFILECLOSED
@@ -1073,11 +1080,13 @@ Nicolich
 ninjaaron
 nio
 NMEA
+nmsgs
 noargport
 NOBUFFERS
 NOCOLOR
 NOCTTY
 nogen
+noinclude
 nolog
 NOLOGFILEOPENINITERROR
 nomagic
@@ -1086,6 +1095,7 @@ noncomma
 nondetached
 NONINFRINGEMENT
 Nop
+noreturn
 normalwidths
 normpath
 NOSEQUENCEACTIVE
@@ -1330,7 +1340,7 @@ Rcv
 rcvd
 RCVTIMEO
 RDONLY
-RDWR
+rdwr
 Readback
 readdir
 READERROR
@@ -1816,6 +1826,7 @@ vals
 valud
 ve
 venv
+VERSIONED
 versioning
 VFILE
 vhd
@@ -1870,6 +1881,7 @@ wx
 wxgui
 Xabcdefx
 xapian
+xargs
 xcode
 xdf
 xdffe

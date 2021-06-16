@@ -44,11 +44,13 @@ namespace Utils {
       // ----------------------------------------------------------------------
 
       //! Create a hash value all at once from raw data
-      //!
+      //! \param data: pointer to start of data
+      //! \param len: length of the data
+      //! \param buffer: filled with resulting hash value
       static void hash(
-          const void *data, //! Pointer to start of data
-          const NATIVE_INT_TYPE len, //! Length of the data
-          HashBuffer& buffer //! Resulting hash value
+          const void *data,
+          const NATIVE_INT_TYPE len,
+          HashBuffer& buffer
       );
 
     public:
@@ -68,10 +70,11 @@ namespace Utils {
       );
 
       //! Update an incremental computation with new data
-      //!
+      //! \param data: pointer to start of data to add to hash calculation
+      //! \param len: length of data to add to hash calculation
       void update(
-          const void *const data, //! Pointer to start of data
-          const NATIVE_INT_TYPE len //! Length of the data
+          const void *const data,
+          const NATIVE_INT_TYPE len
       );
 
       //! Finalize an incremental computation and return the result

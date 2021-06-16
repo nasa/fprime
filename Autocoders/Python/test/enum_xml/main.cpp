@@ -174,10 +174,20 @@ TEST(EnumXML, InvalidConstant) {
 
 TEST(EnumXML, OK) {
 
-    Example::Enum1 enum1;
+    // Explicitly set enum1 to the default value
+    Example::Enum1 enum1(Example::Enum1::Item4);
     Example::Enum1 enum2;
     Example::Enum1 enum3;
+    Example::Enum2 enum4;
+
     Example::Serial1 serial1;
+
+    // Check that other enums are set to default value
+    ASSERT_EQ(enum1, enum2);
+    ASSERT_EQ(enum1, enum3);
+
+    // Check that enum are set to uninitialized value
+    ASSERT_EQ(enum4.e, 0);
 
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;

@@ -1,18 +1,19 @@
 module Svc {
 
-  @ A component for storing telemetry
+  @ A component for logging events
   active component ActiveLogger {
 
-    @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerCmdDict.xml
-    include "ActiveLoggerCmdDict.fppi"
+    # ----------------------------------------------------------------------
+    # Internal ports
+    # ----------------------------------------------------------------------
 
-    @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerEvrDict.xml
-    include "ActiveLoggerEvrDict.fppi"
-
-    @ FPP from XML: original path was Svc/ActiveLogger/ActiveLoggerIntIFDict.xml
     include "ActiveLoggerIntIFDict.fppi"
 
-    @ Telemetry input port
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
+
+    @ Event input port
     sync input port LogRecv: Fw.Log
 
     @ Packet send port
@@ -27,14 +28,18 @@ module Svc {
     @ Ping output port
     output port pingOut: [1] Svc.Ping
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
     @ Port for receiving commands
     command recv port CmdDisp
 
     @ Port for sending command registration requests
-    command reg port CmdStatus
+    command reg port CmdReg
 
     @ Port for sending command responses
-    command resp port cmdResponseOut
+    command resp port CmdStatus
 
     @ Port for emitting events
     event port Log
@@ -43,8 +48,20 @@ module Svc {
     text event port LogText
 
     @ Port for getting the time
-    time get port timeGetOut
-    
+    time get port Time
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    include "ActiveLoggerCmdDict.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events 
+    # ----------------------------------------------------------------------
+
+    include "ActiveLoggerEvrDict.fppi"
+ 
   }
 
 }

@@ -17,8 +17,12 @@ set(MEM_TEST_CLI_OPTIONS '--leak-check=full --error-exitcode=100 --show-leak-kin
 # Enable testing, setup CTest, etc.
 enable_testing()
 include( CTest )
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND}
+add_custom_target(check
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND})
+add_custom_target(check_leak
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND}
                   --overwrite MemoryCheckCommand=/usr/bin/valgrind
                   --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                   -T MemCheck)

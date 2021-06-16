@@ -55,7 +55,7 @@ The `Svc::FatalHandler` handles FATAL notifications:
 
 ## 4. Dictionary
 
-Dictionaries: [HTML](FatalHandler.html) [MD](FatalHandler.md)
+TBD
 
 ## 4. Module Checklists
 

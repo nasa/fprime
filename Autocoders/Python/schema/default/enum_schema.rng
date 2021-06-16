@@ -29,6 +29,14 @@
                 </attribute>
             </optional>
 
+            <optional>
+                <attribute name = "default">
+                    <a:documentation>Default value of the enum.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
             <!-- Elements -->
             <interleave>
                 <optional>
