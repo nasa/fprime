@@ -11,6 +11,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BasicTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DeserialStatusEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/EightyCharString.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EnabledEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/FixedLengthString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/InternalInterfaceString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MallocAllocator.cpp"
