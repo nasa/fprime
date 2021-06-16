@@ -44,7 +44,7 @@ namespace Fw {
             //! Deallocate memory
             /*!
              * \param identifier the memory segment identifier (not used)
-             * \ptr the pointer to memory returned by allocate()
+             * \param ptr the pointer to memory returned by allocate()
              */
             void deallocate(
                     const NATIVE_UINT_TYPE identifier,

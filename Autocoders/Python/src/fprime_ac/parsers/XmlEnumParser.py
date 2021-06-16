@@ -55,6 +55,7 @@ class XmlEnumParser:
         """
         self.__name = ""
         self.__namespace = None
+        self.__default = None
 
         self.__xml_filename = xml_file
         self.__items = []
@@ -100,6 +101,11 @@ class XmlEnumParser:
             self.__namespace = enum.attrib["namespace"]
         else:
             self.__namespace = None
+
+        if "default" in enum.attrib:
+            self.__default = enum.attrib["default"]
+        else:
+            self.__default = None
 
         for enum_tag in enum:
             if enum_tag.tag == "item":
@@ -198,6 +204,9 @@ class XmlEnumParser:
     def get_namespace(self):
         return self.__namespace
 
+    def get_default(self):
+        return self.__default
+
     def get_items(self):
         return self.__items
 
@@ -212,8 +221,8 @@ if __name__ == "__main__":
     print("Enum XML parse test (%s)" % xmlfile)
     xml_parser = XmlEnumParser(xmlfile)
     print(
-        "Enum name: %s, namespace: %s"
-        % (xml_parser.get_name(), xml_parser.get_namespace())
+        "Enum name: %s, namespace: %s, default: %s"
+        % (xml_parser.get_name(), xml_parser.get_namespace(), xml_parser.get_default())
     )
     print("Items")
     for item in xml_parser.get_items():

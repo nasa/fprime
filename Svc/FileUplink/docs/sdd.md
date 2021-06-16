@@ -165,7 +165,7 @@ Upon receipt of a cancel packet *P*, `FileUplink` does the following:
 
 ## 4 Dictionary
 
-Dictionaries: [HTML](FileUplink.html) [MD](FileUplink.md)
+TBD
 
 ## 5 Checklists
 

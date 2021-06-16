@@ -29,7 +29,7 @@ function fputil_action {
         if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
         then
             echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-            fprime-util "generate" ${PLATFORM} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+            fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
                 || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
         fi
         cd "${WORKDIR}"
@@ -40,7 +40,7 @@ function fputil_action {
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         else
 	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
-            fprime-util ${TARGET} ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+            fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         fi
     ) || exit 1

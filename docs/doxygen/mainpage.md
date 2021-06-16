@@ -1,7 +1,7 @@
  \mainpage
 
 This is the F´ automatically generated documentation. The below guides represent the software
-description documentation for the F´ components. Included in the Namespace and Classes sections
+description documentation (SDD) for the F´ components. Included in the Namespace and Classes sections
 is the documentation of the C++ code.
 
 
@@ -13,7 +13,7 @@ are built.  Finally, of specific interest is Fw::Types providing the cored types
 
 \subpage FwBufferSerializableBufferGetBufferSend
 
-\subpage FwCmdFwCmdResponseCmdReg
+\subpage FwCmdFwCmdResponseFwCmdReg
 
 \subpage FwComPort
 
