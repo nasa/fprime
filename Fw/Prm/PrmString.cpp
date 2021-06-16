@@ -35,22 +35,12 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void ParamString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     SerializeStatus ParamString::serialize(SerializeBufferBase& buffer) const {
         NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
         // serialize string as buffer
         return buffer.serialize((U8*)this->m_buf,strSize);
     }
-    
+
     SerializeStatus ParamString::deserialize(SerializeBufferBase& buffer) {
         NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
         // deserialize string

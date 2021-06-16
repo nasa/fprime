@@ -1,246 +1,318 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<component name="CommandDispatcher" kind="active" namespace="Svc">
-    <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
-    <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
-    <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
-    <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <comment>A component for dispatching commands</comment>
-    <ports>
-        <port name="compCmdSend" data_type="Fw::Cmd" kind="output" max_number="$CmdDispatcherComponentCommandPorts">
-            <comment>
-            Command dispatch port
-            </comment>
-        </port>
-        <port name="compCmdReg" data_type="Fw::CmdReg" kind="guarded_input" max_number = "$CmdDispatcherComponentCommandPorts">
-            <comment>
-            Command Registration Port. max_number should match dispatch port.
-            </comment>
-        </port>
-        <port name="compCmdStat" data_type="Fw::CmdResponse" kind="async_input" >
-            <comment>
-            Input Command Status Port
-            </comment>
-        </port>
-        <port name="seqCmdStatus" data_type="Fw::CmdResponse" kind="output" max_number = "$CmdDispatcherSequencePorts">
-            <comment>
-            Output Command Status Port
-            </comment>
-        </port>
-        <port name="seqCmdBuff" data_type="Fw::Com" kind="async_input"  max_number = "$CmdDispatcherSequencePorts">
-            <comment>
-            Command buffer input port for sequencers or other sources of command buffers
-            </comment>
-        </port>
-        <port name="pingIn" data_type="Svc::Ping" kind="async_input"  max_number = "1">
-            <comment>
-            Ping input port
-            </comment>
-        </port>
-        <port name="pingOut" data_type="Svc::Ping" kind="output"  max_number = "1">
-            <comment>
-            Ping output port
-            </comment>
-        </port>
-    </ports>
-    <commands>
-        <!-- NO-OP command -->
-        <command kind="async" opcode="0" mnemonic="CMD_NO_OP" >
-            <comment>
-            No-op command
-            </comment>
-        </command>
-        <!-- NO_OP_STRING command -->
-        <command kind="async" opcode="1" mnemonic="CMD_NO_OP_STRING">
-            <comment>
-            No-op string command
-            </comment>
-            <args>
-                <arg name="arg1" type="string" size="40">
-                    <comment>The String command argument</comment>
-                </arg>
-            </args>
-        </command>        
-        <!--  TEST_CMD_1 command -->
-        <command kind="async" opcode="2" mnemonic="CMD_TEST_CMD_1" >
-            <comment>
-            No-op command
-            </comment>
-            <args>
-           		<arg name="arg1" type="I32">
-                    <comment>The I32 command argument</comment>
-                </arg>
-                <arg name="arg2" type="F32">
-                    <comment>The F32 command argument</comment>
-                </arg>
-                <arg name="arg3" type="U8">
-                    <comment>The U8 command argument</comment>
-                </arg>
-            </args>
-        </command>
-        <command kind="async" opcode="3" mnemonic="CMD_CLEAR_TRACKING" >
-            <comment>
-            Clear command tracking info to recover from components not returning status
-            </comment>
-        </command>
-    </commands>
-    <events>
-        <event id="0" name="OpCodeRegistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X registered to port %d slot %d" >
-            <comment>
-            Op code registered event
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The opcode to register</comment>
-                </arg>          
-                <arg name="port" type="I32">
-                    <comment>The registration port</comment>
-                </arg>          
-                <arg name="slot" type="I32">
-                    <comment>The dispatch slot it was placed in</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="OpCodeDispatched" severity="COMMAND" format_string = "Opcode 0x%04X dispatched to port %d" >
-            <comment>
-            Op code dispatched event
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The opcode dispatched</comment>
-                </arg>          
-                <arg name="port" type="I32">
-                    <comment>The port dispatched to</comment>
-                </arg>
-            </args>
-        </event>
-        <event id="2" name="OpCodeCompleted" severity="COMMAND" format_string = "Opcode 0x%04X completed" >
-            <comment>
-            Op code completed event
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The I32 command argument</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="3" name="OpCodeError" severity="WARNING_HI" format_string = "Opcode 0x%04X completed with error %d " >
-            <comment>
-            Op code completed with error event
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The opcode with the error</comment>
-                </arg>
-                <!-- These need to match CmdResponsePortAi.xml -->          
-		        <arg name="error" type="ENUM">
-		            <enum name="ErrorResponse">
-		                <item name="ERR_INVALID_OPCODE" comment="Invalid opcode dispatched"/>
-		                <item name="ERR_VALIDATION_ERROR" comment="Command failed validation"/>
-		                <item name="ERR_FORMAT_ERROR" comment="Command failed to deserialize"/>
-		                <item name="ERR_EXECUTION_ERROR" comment="Command had execution error"/>
-		                <item name="ERR_BUSY" comment="Component busy"/>
-                        <item name="ERR_UNEXP" comment="Unexpected response"/>
-		            </enum>
-		            <comment>The error value</comment>
-		        </arg>                         
-            </args>
-        </event>
-        <event id="4" name="MalformedCommand" severity="WARNING_HI" format_string = "Received malformed command packet. Status: %d" >
-            <comment>
-            Received a malformed command packet
-            </comment>
-            <args>
-                <!-- These need to match Serializable.hpp -->    
-                <arg name="Status" type="ENUM">
-                    <enum name="CmdSerError">
-                        <item name="ERR_BUFFER_TOO_SMALL" comment="Buffer too small"/>
-                        <item name="ERR_BUFFER_FORMAT" comment="Buffer wrong format"/>
-                        <item name="ERR_SIZE_MISMATCH" comment="Buffer size mismatch"/>
-                        <item name="ERR_TYPE_MISMATCH" comment="Buffer type mismatch"/>
-                        <item name="ERR_UNEXP_STAT" comment="Unexpected status"/>
-                    </enum>
-                    <comment>The deserialization error</comment>
-                </arg>                         
-            </args>
-        </event>
-        <event id="5" name="InvalidCommand" severity="WARNING_HI" format_string = "Invalid opcode 0x%04X received." >
-            <comment>
-            Received an invalid opcode
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>Invalid opcode</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="6" name="TooManyCommands" severity="WARNING_HI" format_string = "Too many outstanding commands. opcode=0x%04X" >
-            <comment>
-            Exceeded the number of commands that can be simultaneously executed
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The opcode that overflowed the list</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="7" name="NoOpReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP command" >
-        	<comment>
-        	The command dispatcher has successfully received a NO-OP command
-        	</comment>
-        </event>
-        <event id="8" name="NoOpStringReceived" severity="ACTIVITY_HI" format_string = "Received a NO-OP string=%s" >
-           <comment>
-           The command dispatcher has successfully received a NO-OP command from GUI with a string
-           </comment>
-           <args>
-                <arg name="message" type="string" size="40">
-                    <comment>The NO-OP string that is generated</comment>
-                </arg>
-           </args>       
-        </event>
-        <event id="9" name="TestCmd1Args" severity="ACTIVITY_HI" format_string = "TEST_CMD_1 args: I32: %d, F32: %f, U8: %d" >
-           <comment>
-           This log event message returns the TEST_CMD_1 arguments.
-           </comment>
-           <args>
-                <arg name="arg1" type="I32">
-                    <comment>Arg1</comment>
-                </arg>
-                <arg name="arg2" type="F32">
-                    <comment>Arg2</comment>
-                </arg>
-                <arg name="arg3" type="U8">
-                    <comment>Arg3</comment>
-                </arg>
-           </args>       
-        </event>
-        <event id="10" name="OpCodeReregistered" severity="DIAGNOSTIC" format_string = "Opcode 0x%04X is already registered to port %d" >
-            <comment>
-            Op code reregistered event
-            </comment>
-            <args>
-                <arg name="Opcode" type="U32">
-                    <comment>The opcode reregistered</comment>
-                </arg>          
-                <arg name="port" type="I32">
-                    <comment>The reregistration port</comment>
-                </arg>          
-            </args>
-        </event>
-    </events>
-    <telemetry>
-        <channel id="0" name="CommandsDispatched" data_type="U32" update="on_change" abbrev="T002-1100">
-            <comment>
-            Number of commands dispatched
-            </comment>
-        </channel>
-        <channel id="1" name="CommandErrors" data_type="U32" update="on_change" abbrev="T002-1000">
-            <comment>
-            Number of command errors
-            </comment>
-        </channel>
-    </telemetry>
-</component>
+<!-- =====================================================================
+CommandDispatcherComponentAi.xml
+Generated by fpp-to-xml
+====================================================================== -->
+<component namespace="Svc" name="CommandDispatcher" kind="active">
 
+  <comment>
+  A component for dispatching commands
+  </comment>
+
+  <import_enum_type>Fw/Cmd/CmdResponseEnumAi.xml</import_enum_type>
+  <import_enum_type>Fw/Types/DeserialStatusEnumAi.xml</import_enum_type>
+  <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+  <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+  <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+  <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+  <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+
+  <ports>
+    <port name="CmdDisp" data_type="Fw::Cmd" kind="input" role="Cmd" max_number="1">
+      <comment>
+      Command receive port
+      </comment>
+    </port>
+    <port name="CmdReg" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+      <comment>
+      Command registration port
+      </comment>
+    </port>
+    <port name="CmdStatus" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+      <comment>
+      Command response port
+      </comment>
+    </port>
+    <port name="Log" data_type="Fw::Log" kind="output" role="LogEvent" max_number="1">
+      <comment>
+      Event port
+      </comment>
+    </port>
+    <port name="LogText" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+      <comment>
+      Text event port
+      </comment>
+    </port>
+    <port name="Time" data_type="Fw::Time" kind="output" role="TimeGet" max_number="1">
+      <comment>
+      Time get port
+      </comment>
+    </port>
+    <port name="Tlm" data_type="Fw::Tlm" kind="output" role="Telemetry" max_number="1">
+      <comment>
+      Telemetry port
+      </comment>
+    </port>
+    <port name="compCmdReg" data_type="Fw::CmdReg" kind="guarded_input" max_number="$CmdDispatcherComponentCommandPorts">
+      <comment>
+      Command Registration Port. max_number should match dispatch port.
+      </comment>
+    </port>
+    <port name="compCmdSend" data_type="Fw::Cmd" kind="output" max_number="$CmdDispatcherComponentCommandPorts">
+      <comment>
+      Command dispatch port
+      </comment>
+    </port>
+    <port name="compCmdStat" data_type="Fw::CmdResponse" kind="async_input" max_number="1" full="assert">
+      <comment>
+      Input Command Status Port
+      </comment>
+    </port>
+    <port name="pingIn" data_type="Svc::Ping" kind="async_input" max_number="1" full="assert">
+      <comment>
+      Ping input port
+      </comment>
+    </port>
+    <port name="pingOut" data_type="Svc::Ping" kind="output" max_number="1">
+      <comment>
+      Ping output port
+      </comment>
+    </port>
+    <port name="seqCmdBuff" data_type="Fw::Com" kind="async_input" max_number="$CmdDispatcherSequencePorts" full="assert">
+      <comment>
+      Command buffer input port for sequencers or other sources of command buffers
+      </comment>
+    </port>
+    <port name="seqCmdStatus" data_type="Fw::CmdResponse" kind="output" max_number="$CmdDispatcherSequencePorts">
+      <comment>
+      Output Command Status Port
+      </comment>
+    </port>
+  </ports>
+
+  <commands>
+    <command kind="async" opcode="0x0" mnemonic="CMD_NO_OP" full="assert">
+      <comment>
+      No-op command
+      </comment>
+    </command>
+    <command kind="async" opcode="0x1" mnemonic="CMD_NO_OP_STRING" full="assert">
+      <comment>
+      No-op string command
+      </comment>
+      <args>
+        <arg name="arg1" type="string" size="40">
+          <comment>
+          The String command argument
+          </comment>
+        </arg>
+      </args>
+    </command>
+    <command kind="async" opcode="0x2" mnemonic="CMD_TEST_CMD_1" full="assert">
+      <comment>
+      No-op command
+      </comment>
+      <args>
+        <arg name="arg1" type="I32">
+          <comment>
+          The I32 command argument
+          </comment>
+        </arg>
+        <arg name="arg2" type="F32">
+          <comment>
+          The F32 command argument
+          </comment>
+        </arg>
+        <arg name="arg3" type="U8">
+          <comment>
+          The U8 command argument
+          </comment>
+        </arg>
+      </args>
+    </command>
+    <command kind="async" opcode="0x3" mnemonic="CMD_CLEAR_TRACKING" full="assert">
+      <comment>
+      Clear command tracking info to recover from components not returning status
+      </comment>
+    </command>
+  </commands>
+
+  <events>
+    <event id="0x0" name="OpCodeRegistered" severity="DIAGNOSTIC" format_string="Opcode 0x%x registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The opcode to register
+          </comment>
+        </arg>
+        <arg name="port" type="I32">
+          <comment>
+          The registration port
+          </comment>
+        </arg>
+        <arg name="slot" type="I32">
+          <comment>
+          The dispatch slot it was placed in
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x1" name="OpCodeDispatched" severity="COMMAND" format_string="Opcode 0x%x dispatched to port %d">
+      <comment>
+      Op code dispatched event
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The opcode dispatched
+          </comment>
+        </arg>
+        <arg name="port" type="I32">
+          <comment>
+          The port dispatched to
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x2" name="OpCodeCompleted" severity="COMMAND" format_string="Opcode 0x%x completed">
+      <comment>
+      Op code completed event
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The I32 command argument
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x3" name="OpCodeError" severity="WARNING_HI" format_string="Opcode 0x%x completed with error %s">
+      <comment>
+      Op code completed with error event
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The opcode with the error
+          </comment>
+        </arg>
+        <arg name="error" type="Fw::CmdResponse">
+          <comment>
+          The error value
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x4" name="MalformedCommand" severity="WARNING_HI" format_string="Received malformed command packet. Status: %s">
+      <comment>
+      Received a malformed command packet
+      </comment>
+      <args>
+        <arg name="Status" type="Fw::DeserialStatus">
+          <comment>
+          The deserialization error
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x5" name="InvalidCommand" severity="WARNING_HI" format_string="Invalid opcode 0x%x received">
+      <comment>
+      Received an invalid opcode
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          Invalid opcode
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x6" name="TooManyCommands" severity="WARNING_HI" format_string="Too many outstanding commands. opcode=0x%x">
+      <comment>
+      Exceeded the number of commands that can be simultaneously executed
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The opcode that overflowed the list
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x7" name="NoOpReceived" severity="ACTIVITY_HI" format_string="Received a NO-OP command">
+      <comment>
+      The command dispatcher has successfully received a NO-OP command
+      </comment>
+    </event>
+    <event id="0x8" name="NoOpStringReceived" severity="ACTIVITY_HI" format_string="Received a NO-OP string=%s">
+      <comment>
+      The command dispatcher has successfully received a NO-OP command from GUI with a string
+      </comment>
+      <args>
+        <arg name="message" type="string" size="40">
+          <comment>
+          The NO-OP string that is generated
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x9" name="TestCmd1Args" severity="ACTIVITY_HI" format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %u">
+      <comment>
+      This log event message returns the TEST_CMD_1 arguments.
+      </comment>
+      <args>
+        <arg name="arg1" type="I32">
+          <comment>
+          Arg1
+          </comment>
+        </arg>
+        <arg name="arg2" type="F32">
+          <comment>
+          Arg2
+          </comment>
+        </arg>
+        <arg name="arg3" type="U8">
+          <comment>
+          Arg3
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0xA" name="OpCodeReregistered" severity="DIAGNOSTIC" format_string="Opcode 0x%x is already registered to port %d">
+      <comment>
+      Op code reregistered event
+      </comment>
+      <args>
+        <arg name="Opcode" type="U32">
+          <comment>
+          The opcode reregistered
+          </comment>
+        </arg>
+        <arg name="port" type="I32">
+          <comment>
+          The reregistration port
+          </comment>
+        </arg>
+      </args>
+    </event>
+  </events>
+
+  <telemetry>
+    <channel id="0x0" name="CommandsDispatched" data_type="U32" update="on_change">
+      <comment>
+      Number of commands dispatched
+      </comment>
+    </channel>
+    <channel id="0x1" name="CommandErrors" data_type="U32" update="on_change">
+      <comment>
+      Number of command errors
+      </comment>
+    </channel>
+  </telemetry>
+
+</component>

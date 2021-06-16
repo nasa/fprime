@@ -35,16 +35,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void CmdStringArg::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     const CmdStringArg& CmdStringArg::operator=(const CmdStringArg& other) {
         this->copyBuff(other.m_buf,this->getCapacity());
         return *this;
@@ -55,7 +45,7 @@ namespace Fw {
         // serialize string
         return buffer.serialize((U8*)this->m_buf,strSize);
     }
-    
+
     SerializeStatus CmdStringArg::deserialize(SerializeBufferBase& buffer) {
         NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
         // deserialize string
@@ -69,7 +59,7 @@ namespace Fw {
     NATIVE_UINT_TYPE CmdStringArg::getCapacity(void) const {
         return FW_CMD_STRING_MAX_SIZE;
     }
-    
+
     void CmdStringArg::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
