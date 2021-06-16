@@ -1,43 +1,75 @@
 module Svc {
 
+  @ A component for running command sequences
   active component CmdSequencer {
 
-    @ FPP from XML: original path was Svc/CmdSequencer/Commands.xml
-    include "Commands.fppi"
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
 
-    @ FPP from XML: original path was Svc/CmdSequencer/Telemetry.xml
-    include "Telemetry.fppi"
-
-    @ FPP from XML: original path was Svc/CmdSequencer/Events.xml
-    include "Events.fppi"
-
-    command reg port cmdRegOut
-
-    text event port LogText
-
-    async input port pingIn: [1] Svc.Ping
-
-    telemetry port tlmOut
-
-    command resp port cmdResponseOut
-
-    time get port timeCaller
-
-    output port comCmdOut: [1] Fw.Com
-
-    output port pingOut: [1] Svc.Ping
-
-    async input port cmdResponseIn: [1] Fw.CmdResponse
-
+    @ Command receive port
     command recv port cmdIn
 
-    async input port schedIn: [1] Svc.Sched
+    @ Command resgistration port
+    command reg port cmdRegOut
 
-    async input port seqRunIn: [1] Svc.CmdSeqIn
+    @ Command response port
+    command resp port cmdResponseOut
 
+    @ Event port
     event port logOut
 
-    output port seqDone: [1] Fw.CmdResponse
+    @ Telemetry port
+    telemetry port tlmOut
+
+    @ Text event port
+    text event port LogText
+
+    @ Time get port
+    time get port timeCaller
+
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
+
+    @ Command response in port
+    async input port cmdResponseIn: Fw.CmdResponse
+
+    @ Ping in port
+    async input port pingIn: Svc.Ping
+
+    @ Ping out port
+    output port pingOut: Svc.Ping
+
+    @ Port for indicating sequence done
+    output port seqDone: Fw.CmdResponse
+
+    @ Port for requests to run sequences
+    async input port seqRunIn: Svc.CmdSeqIn
+
+    @ Port for sending sequence commands
+    output port comCmdOut: Fw.Com
+
+    @ Schedule in port
+    async input port schedIn: Svc.Sched
+
+    # ---------------------------------------------------------------------- 
+    # Commands
+    # ---------------------------------------------------------------------- 
+
+    include "Commands.fppi"
+
+    # ----------------------------------------------------------------------
+    # Telemetry 
+    # ----------------------------------------------------------------------
+
+    include "Telemetry.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events 
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
 
   }
 
