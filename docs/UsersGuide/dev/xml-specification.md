@@ -56,13 +56,13 @@ specification.
 | serializable               | name      | The class name for the serializable.                                                                                                                 |
 | serializable               | typeid    | An integer uniquely identifying the type. Optional; generated from hash otherwise. Should be unique across the application.                          |
 | comment                    |           | Used for a comment describing the type. Is placed as a Doxygen-compatible tag in the class declaration.                                              |
-| default                    |           | Specifies the default value of the member.                                                                                 |
 | members                    |           | Starts the region of the declaration where type members are specified.                                                                               |
 | member                     |           | Defines a member of the type.                                                                                                                        |
 | member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
+| member                     | default   | Specifies the default value of the member.                                                                              |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |
 | enum                       | name      | Enumeration type name.                                                                                                                               |
 | item                       |           | Specifies a member of the enumeration.                                                                                                               |

@@ -182,10 +182,6 @@ TEST(EnumXML, OK) {
 
     Example::Serial1 serial1;
 
-    // Check serializable default values are correctly set
-    ASSERT_EQ(serial1.getMember2(), 12345);
-    ASSERT_EQ(serial1.getMember3(), Example::Enum1::Item2);
-
     // Check that other enums are set to default value
     ASSERT_EQ(enum1, enum2);
     ASSERT_EQ(enum1, enum3);
