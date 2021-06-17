@@ -56,6 +56,7 @@ specification.
 | serializable               | name      | The class name for the serializable.                                                                                                                 |
 | serializable               | typeid    | An integer uniquely identifying the type. Optional; generated from hash otherwise. Should be unique across the application.                          |
 | comment                    |           | Used for a comment describing the type. Is placed as a Doxygen-compatible tag in the class declaration.                                              |
+| default                    |           | Specifies the default value of the member.                                                                                 |
 | members                    |           | Starts the region of the declaration where type members are specified.                                                                               |
 | member                     |           | Defines a member of the type.                                                                                                                        |
 | member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
@@ -95,11 +96,12 @@ this specification:
 ```xml
 <serializable name="Switch">
   <members>
-    <member name="state">
-      <enum name="SwitchState" type="ENUM">
-        <item name="OFF" value="0">
-        <item name="ON" value="1">
+    <member name="state" type="ENUM">
+      <enum name="SwitchState">
+        <item name="OFF" value="0"/>
+        <item name="ON" value="1"/>
       </enum>
+      <default>OFF</default>
     </member>
   </members>
 </serializable>
@@ -108,7 +110,8 @@ this specification:
 This file defines a Serializable type `Switch`
 with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
-enumerated constants `OFF` and `ON`.
+enumerated constants `OFF` and `ON`. Using the default child element,
+the default value will be OFF.
 
 Alternatively, you can specify an enumeration *E* as a separate XML type.
 Then you can do the following:
