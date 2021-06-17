@@ -172,9 +172,9 @@ namespace Svc {
         }
 
         this->m_pingTrackerEntries[entryIndex].enabled = enable.e;
-        HealthPingIsEnabled isEnabled = HEALTH_PING_DISABLED;
+        Fw::Enabled isEnabled(Fw::Enabled::DISABLED);
         if (enable == Fw::Enabled::ENABLED) {
-            isEnabled = HEALTH_PING_ENABLED;
+            isEnabled = Fw::Enabled::ENABLED;
         }
         Fw::LogStringArg arg;
         arg = entry;

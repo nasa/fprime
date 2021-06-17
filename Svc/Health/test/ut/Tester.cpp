@@ -438,7 +438,7 @@ namespace Svc {
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_DISABLED,name);
+          ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::DISABLED,name);
 
           // run a few cycles
           for (NATIVE_INT_TYPE cycle = 0; cycle < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; cycle++) {
@@ -467,7 +467,7 @@ namespace Svc {
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_ENABLED,name);
+          ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::ENABLED,name);
       }
   }
 
@@ -562,7 +562,7 @@ namespace Svc {
 	  this->dispatchAll();
 	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_pingTrackerEntries[0].enabled);
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_PING(0,HealthComponentBase::HEALTH_PING_DISABLED,"task0");
+      ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::DISABLED,"task0");
 
       this->clearEvents();
 	  U32 warn_val = 9;

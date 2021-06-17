@@ -124,11 +124,7 @@
             Report a particular entry on or off
             </comment>
             <args>
-                <arg name="enabled" type="ENUM">
-                    <enum name="HealthPingIsEnabled">
-                        <item name="HEALTH_PING_DISABLED"/>
-                        <item name="HEALTH_PING_ENABLED"/>
-                    </enum>
+                <arg name="enabled" type="Fw::Enabled">
                     <comment>If health pinging is enabled for a particular entry</comment>
                 </arg>
                 <arg name="entry" type="string" size="40">
