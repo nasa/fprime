@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <serializable namespace="Ns::Something" name="Inttype">
     <comment>
     This is an optional comment describing the serializable class.

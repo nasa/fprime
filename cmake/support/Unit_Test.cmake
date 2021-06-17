@@ -12,13 +12,19 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
     return()
 endif()
 
+set(MEM_TEST_CLI_OPTIONS '--leak-check=full --error-exitcode=100 --show-leak-kinds=all -v')
+
 # Enable testing, setup CTest, etc.
 enable_testing()
 include( CTest )
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND}
+add_custom_target(check
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND})
+add_custom_target(check_leak
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND}
                   --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                  --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
+                  --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                   -T MemCheck)
 
 ####
@@ -27,7 +33,7 @@ add_custom_target(check_leak COMMAND ${CMAKE_CTEST_COMMAND}
 # Performs registration of the autocoder step for the generation of GTestBase.hpp, GTestBase.cpp,
 # TesterBase.cpp, and TesterBase.hpp. These autocoding steps automate, and keep up-to-date the
 # above files saving time.
-# 
+#
 # - **EXE_NAME:** name of exe (unit test exe)
 # - **SOURCE_FILES:** source files to provide for autocoding
 ####
@@ -45,7 +51,7 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       set(TMP_AC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Autocode")
       get_module_name("${TMP_AC_DIR}")
       set(AC_TMP_MOD "${MODULE_NAME}_clean")
-      
+
       # This creates the temporary Autocoder directory. Since this is used by multiple generations
       # it must be created on the fly, and cleaned up afterword. The clean-up step here "generates"
       # a fake source
@@ -53,8 +59,8 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       add_custom_command(
         OUTPUT ${TMP_AC_DIR}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${TMP_AC_DIR}
-      )    
-      
+      )
+
       set(GTEST_SOURCE "${AUTOCODE_DIR}/GTestBase.cpp")
       set(BASE_SOURCE "${AUTOCODE_DIR}/TesterBase.cpp")
       set(GTEST_HEADER "${AUTOCODE_DIR}/GTestBase.hpp")
@@ -106,7 +112,7 @@ endfunction(unit_test_component_autocoder)
 ####
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-    # their separate pieces. 
+    # their separate pieces.
     #
     # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
     # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources
@@ -118,7 +124,7 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
         set(FPRIME_OBJECT_TYPE "Unit-Test")
     endif()
     generate_executable(${UT_EXE_NAME} "${SOURCE_FILES}" "${MOD_DEPS_INPUT}")
-    # Generate the UTs w/ autocoding and add the other sources  
+    # Generate the UTs w/ autocoding and add the other sources
     unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
     # Link modules
     target_link_libraries(
@@ -130,23 +136,33 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
     add_dependencies(check_leak ${UT_EXE_NAME})
-    
+
     # Check target for this module
+    # gcda files are generated per object file when executing a binary with coverage enabled
+    # make sure all existing coverage files are removed before running unit test executables
     if (NOT TARGET "${MODULE_NAME}_check")
-        add_custom_target("${MODULE_NAME}_check" COMMAND ${CMAKE_CTEST_COMMAND} --verbose)
+        add_custom_target(
+            "${MODULE_NAME}_check"
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND} --verbose
+        )
     endif()
     if (NOT TARGET "${MODULE_NAME}_check_leak")
-        add_custom_target("${MODULE_NAME}_check_leak" COMMAND ${CMAKE_CTEST_COMMAND}
-                              --overwrite MemoryCheckCommand=/usr/bin/valgrind
-                              --overwrite MemoryCheckCommandOptions=--leak-check=full --error-exitcode=100
-                              --verbose -T MemCheck)
+        add_custom_target(
+            "${MODULE_NAME}_check_leak"
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
+            COMMAND ${CMAKE_CTEST_COMMAND}
+                --overwrite MemoryCheckCommand=/usr/bin/valgrind
+                --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
+                --verbose -T MemCheck
+        )
     endif()
-    
+
     # Add top ut wrapper for this module
     if (NOT TARGET "${MODULE_NAME}_ut_exe")
       add_custom_target("${MODULE_NAME}_ut_exe")
     endif()
-    
+
     add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
     add_dependencies("${MODULE_NAME}_check_leak" ${UT_EXE_NAME})
     add_dependencies("${MODULE_NAME}_ut_exe" ${UT_EXE_NAME})

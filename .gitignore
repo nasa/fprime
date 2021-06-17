@@ -76,3 +76,5 @@ GTestBase.*
 /Fw/Python/src/fprime.egg-info
 /Gds/src/fprime_gds.egg-info
 **/DefaultDict/serializable/*
+/.idea/
+/venv/

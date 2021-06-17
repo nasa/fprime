@@ -304,7 +304,7 @@ The `CmdSequencer` does not have any significant state machines.
 
 ### 3.5 Component Dictionary
 
-Dictionaries: [HTML](CmdSequencer.html) [MD](CmdSequencer.md)
+TBD
 
 ### 3.6 Component Sequences
 

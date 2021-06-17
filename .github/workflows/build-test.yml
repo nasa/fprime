@@ -25,3 +25,10 @@ jobs:
     - name: F prime CI step
       uses: ./.github/actions/
       id: github-ci-action
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      with:
+        name: ci-logs
+        path: ci-logs.tar.gz
+        retention-days: 5

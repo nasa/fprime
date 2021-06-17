@@ -36,57 +36,69 @@ class CircularBuffer {
          *
          * Note: ownership of the supplied buffer is held until the circular buffer is destructed.
          *
-         * \param const U8* buffer: supplied buffer used as a data store.
-         * \param NATIVE_UINT_TYPE size: size of the supplied data store.
+         * \param buffer: supplied buffer used as a data store.
+         * \param size: size of the supplied data store.
          */
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
          * Serialize a given buffer into this this circular buffer. Will not accept more data then
          * space available. This means it will not overwrite existing data.
-         * \param const U8* buffer: supplied buffer to be serialized.
-         * \param NATIVE_UINT_TYPE size: size of the supplied buffer.
+         * \param buffer: supplied buffer to be serialized.
+         * \param size: size of the supplied buffer.
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus serialize(const U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
          * Deserialize data into the given variable without moving the head pointer
-         * \param U8& value: value to fill
+         * \param value: value to fill
+         * \param offset: offset from head to start peak. Default: 0
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0);
         /**
          * Deserialize data into the given variable without moving the head pointer
-         * \param U8& value: value to fill
+         * \param value: value to fill
+         * \param offset: offset from head to start peak. Default: 0
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0);
         /**
          * Deserialize data into the given variable without moving the head pointer
-         * \param U32& value: value to fill
+         * \param value: value to fill
+         * \param offset: offset from head to start peak. Default: 0
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0);
 
         /**
          * Deserialize data into the given buffer without moving the head variable.
-         * \param U32& value: value to fill
+         * \param buffer: buffer to fill with data of the peek
+         * \param size: size in bytes to peek at
+         * \param offset: offset from head to start peak. Default: 0
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0);
 
         /**
          * Rotate the head pointer effectively erasing data from the circular buffer and making
          * space. Cannot rotate more than the available space.
-         * \param NATIVE_UINT_TYPE amount: amount to rotate by (in bytes)
+         * \param amount: amount to rotate by (in bytes)
+         * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
         Fw::SerializeStatus rotate(NATIVE_UINT_TYPE amount);
 
         /**
          * Get the remaining size in this circular buffer.
-         * \param bool serialization: is this serialization (opposed to deserialization)
+         * \param serialization: is this serialization (opposed to deserialization)
+         * \return remaining size for serialization/deserialization
          */
         NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
 
         /**
          * Get the max size of buffer, not remaining.
-         * \return
+         * \return capacity total of the buffer
          */
         NATIVE_UINT_TYPE get_capacity();
 
@@ -96,8 +108,8 @@ class CircularBuffer {
     private:
         /**
          * Returns a wrap-incremented pointer.
-         * \param const U8* pointer: pointer to increment and wrap.
-         * \param NATIVE_UINT_TYPE amount: amount to increment
+         * \param pointer: pointer to increment and wrap.
+         * \param amount: amount to increment
          * \return: new pointer value
          */
         U8* increment(U8* const pointer, NATIVE_UINT_TYPE amount = 1);

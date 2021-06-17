@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../../Autocoders/Python/schema/ISF_Type_Schema.rnc" type="compact"?>
 <enum namespace = "Svc" name="SendFileStatus">
     <comment>Status of file transfer.</comment>
     <item name="OK" value="0"/>

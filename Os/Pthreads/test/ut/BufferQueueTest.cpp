@@ -104,6 +104,7 @@ int main() {
     count = queue2.getCount();
     maxCount = queue2.getMaxCount();
     FW_ASSERT(count == ii+1, count);
+    FW_ASSERT(maxCount == ii+1, maxCount);
   }
 
 #if PRIORITY_QUEUE
@@ -122,10 +123,9 @@ int main() {
     FW_ASSERT(ret, ret);
     FW_ASSERT(priority == orderedPriorities[ii], priority);
     FW_ASSERT(size == strlen(orderedMessages[ii]), strlen(orderedMessages[ii]));
-    printf("Popped '%s' at priority %d. Expected '%s' at priority %d.\n", 
+    printf("Popped '%s' at priority %d. Expected '%s' at priority %d.\n",
            temp, priority, orderedMessages[ii], orderedPriorities[ii]);
     FW_ASSERT(memcmp(temp, orderedMessages[ii], size) == 0, ii);
-    count = queue2.getCount();
     size = sizeof(temp) - 1; //Reset size
   }
 

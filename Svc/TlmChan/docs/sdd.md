@@ -73,7 +73,7 @@ A configuration value in `TlmChanImplCfg.h` defines a set of hash buckets to sto
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](TlmChan.html) [MD](TlmChan.md)
+TBD
 
 ## 5. Module Checklists
 
