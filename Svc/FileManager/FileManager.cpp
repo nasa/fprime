@@ -271,7 +271,7 @@ namespace Svc {
         opCode,
         cmdSeq,
         (status == Os::FileSystem::OP_OK) ?
-          Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR
     );
   }
 

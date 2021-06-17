@@ -60,20 +60,20 @@ namespace Svc {
 
     Fw::ParamValid PrmDbImpl::getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
         // search for entry
-        Fw::ParamValid stat = Fw::PARAM_INVALID;
+        Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if (this->m_db[entry].used) {
                 if (this->m_db[entry].id == id) {
                     val = this->m_db[entry].val;
-                    stat = Fw::PARAM_VALID;
+                    stat = Fw::ParamValid::VALID;
                     break;
                 }
             }
         }
 
         // if unable to find parameter, send error message
-        if (Fw::PARAM_INVALID == stat) {
+        if (Fw::ParamValid::INVALID == stat.e) {
             this->log_WARNING_LO_PrmIdNotFound(id);
         }
 
@@ -130,7 +130,7 @@ namespace Svc {
         Os::File::Status stat = paramFile.open(this->m_fileName.toChar(),Os::File::OPEN_WRITE);
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_OPEN,0,stat);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -149,13 +149,13 @@ namespace Svc {
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != sizeof(delim)) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 // serialize record size = id field + data
@@ -173,13 +173,13 @@ namespace Svc {
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_RECORD_SIZE,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != sizeof(writeSize)) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_RECORD_SIZE_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
 
@@ -198,13 +198,13 @@ namespace Svc {
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_ID,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != (NATIVE_INT_TYPE)buff.getBuffLength()) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_ID_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
 
@@ -215,13 +215,13 @@ namespace Svc {
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_VALUE,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != (NATIVE_INT_TYPE)this->m_db[entry].val.getBuffLength()) {
                     this->unLock();
                     this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_VALUE_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 numRecords++;
@@ -230,7 +230,7 @@ namespace Svc {
 
         this->unLock();
         this->log_ACTIVITY_HI_PrmFileSaveComplete(numRecords);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 
     }
 

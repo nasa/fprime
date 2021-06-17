@@ -182,7 +182,7 @@ namespace Svc {
       void sendFile(
           const char *const sourceFileName, //!< The source file name
           const char *const destFileName, //!< The destination file name
-          const Fw::CommandResponse response //!< The expected command response
+          const Fw::CmdResponse response //!< The expected command response
       );
 
       //! Command the FileDownlink component to send a file
@@ -191,7 +191,7 @@ namespace Svc {
       void sendFilePartial(
           const char *const sourceFileName, //!< The source file name
           const char *const destFileName, //!< The destination file name
-          const Fw::CommandResponse response, //!< The expected command response
+          const Fw::CmdResponse response, //!< The expected command response
           U32 startIndex, //!< The starting index
           U32 length //!< The amount of bytes to downlink
       );
@@ -200,7 +200,7 @@ namespace Svc {
       //! Assert a command response
       //!
       void cancel(
-          const Fw::CommandResponse response //!< The expected command response
+          const Fw::CmdResponse response //!< The expected command response
       );
 
       //! Remove a file

@@ -172,7 +172,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

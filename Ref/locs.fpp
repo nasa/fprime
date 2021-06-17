@@ -1,0 +1,5 @@
+locate type Ref.SignalInfo at "SignalGen/SignalGen.fpp"
+locate type Ref.SignalPair at "SignalGen/SignalGen.fpp"
+locate type Ref.SignalPairSet at "SignalGen/SignalGen.fpp"
+locate type Ref.SignalSet at "SignalGen/SignalGen.fpp"
+locate type Ref.SignalType at "SignalGen/SignalGen.fpp"

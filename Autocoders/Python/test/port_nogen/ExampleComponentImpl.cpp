@@ -45,7 +45,7 @@ namespace ExampleComponents {
         // write a value to a telemetry channel
         U32 chan = 12;
         this->tlmWrite_somechan(chan);
-        this->cmdResponse_out(opCode,cmdSeq, Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq, Fw::CmdResponse::OK);
     }
 
     void ExampleComponentImpl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2) {
@@ -53,7 +53,7 @@ namespace ExampleComponents {
         this->log_FATAL_SomeEvent(opCode,arg2, 0, str,ExampleComponentBase::EVENT_MEMB3);
         U32 tlmval = 0;
         this->tlmWrite_anotherchan(tlmval); // <! Example output port
-        this->cmdResponse_out(opCode,cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+        this->cmdResponse_out(opCode,cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
 

@@ -1,0 +1,21 @@
+#!/bin/sh -e
+
+export GREEN='\033[32m'
+export RED='\033[31m'
+export NO_COLOR='\033[0m'
+
+files=`find . -name CMakeLists.txt | xargs grep -l '^register_fprime_module' | sort | uniq`
+here=$PWD
+for file in $files
+do
+  dir=`dirname $file`
+  printf '%-60s' $dir
+  cd $dir
+  if fprime-util build > /dev/null 2>&1
+  then
+    echo $GREEN'OK'$NO_COLOR
+  else
+    echo $RED'FAILED'$NO_COLOR
+  fi
+  cd $here
+done

@@ -21,7 +21,7 @@ class LogTextImpl: public Log::LogTesterComponentBase {
         void init(void);
         void setTime(Fw::Time time);
     protected:
-        void textLogRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::TextLogSeverity severity, Fw::TextLogString &text);
+        void textLogRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::TextLogString &text);
     private:
 };
 

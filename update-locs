@@ -1,0 +1,14 @@
+#!/bin/sh
+
+subdirs="
+Drv
+Fw
+Ref
+config
+Svc
+"
+
+for dir in $subdirs
+do
+  (cd $dir; ./update-locs)
+done

@@ -152,7 +152,7 @@ namespace Svc {
             isEnabled = HEALTH_CHECK_ENABLED;
         }
         this->log_ACTIVITY_HI_HLTH_CHECK_ENABLE(isEnabled);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
 
@@ -161,13 +161,13 @@ namespace Svc {
         NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
 
         if (-1 == entryIndex) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
         // check enable value
         if (enable != HealthImpl::HLTH_PING_DISABLED && enable != HealthImpl::HLTH_PING_ENABLED) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
@@ -179,14 +179,14 @@ namespace Svc {
         Fw::LogStringArg arg;
         arg = entry;
         this->log_ACTIVITY_HI_HLTH_CHECK_PING(isEnabled,arg);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void HealthImpl::HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, U32 warningValue, U32 fatalValue) {
         // check to see if entry is in range
         NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
         if (-1 == entryIndex) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
@@ -195,7 +195,7 @@ namespace Svc {
             Fw::LogStringArg arg;
             arg = entry;
             this->log_WARNING_HI_HLTH_PING_INVALID_VALUES(arg,warningValue,fatalValue);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
@@ -203,7 +203,7 @@ namespace Svc {
         this->m_pingTrackerEntries[entryIndex].entry.fatalCycles = fatalValue;
         Fw::LogStringArg arg = entry;
         this->log_ACTIVITY_HI_HLTH_PING_UPDATED(arg,warningValue,fatalValue);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     NATIVE_INT_TYPE HealthImpl::findEntry(Fw::CmdStringArg entry) {

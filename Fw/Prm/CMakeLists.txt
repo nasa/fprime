@@ -6,9 +6,10 @@
 #
 ####
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/ParamValidEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PrmGetPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/PrmSetPortAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PrmString.cpp"
 )
 
