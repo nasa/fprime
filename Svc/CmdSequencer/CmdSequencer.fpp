@@ -10,7 +10,7 @@ module Svc {
     @ Command receive port
     command recv port cmdIn
 
-    @ Command resgistration port
+    @ Command registration port
     command reg port cmdRegOut
 
     @ Command response port
