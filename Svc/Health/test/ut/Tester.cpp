@@ -352,14 +352,14 @@ namespace Svc {
       this->clearTlm();
 
       //disable all monitoring
-      this->sendCmd_HLTH_ENABLE(0,0,HealthComponentBase::HLTH_CHK_DISABLED);
+      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
 
-      ASSERT_EQ(this->component.m_enabled, HealthComponentBase::HLTH_CHK_DISABLED);
+      ASSERT_EQ(this->component.m_enabled, Fw::Enabled::DISABLED);
 
       //invoke run handler 100 times
       for (U32 i = 0; i < 100; i++) {
@@ -377,14 +377,14 @@ namespace Svc {
       this->clearTlm();
 
      //enable all monitoring
-      this->sendCmd_HLTH_ENABLE(0,0,HealthComponentBase::HLTH_CHK_ENABLED);
+      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
 
-      ASSERT_EQ(this->component.m_enabled, HealthComponentBase::HLTH_CHK_ENABLED);
+      ASSERT_EQ(this->component.m_enabled, Fw::Enabled::ENABLED);
 
       this->clearEvents();
       this->clearTlm();
@@ -432,7 +432,7 @@ namespace Svc {
           char name[80];
           sprintf(name,"task%d",entry);
           Fw::CmdStringArg task(name);
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_DISABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::DISABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
@@ -461,7 +461,7 @@ namespace Svc {
           this->clearEvents();
           this->clearHistory();
 
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_ENABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::ENABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
@@ -544,23 +544,23 @@ namespace Svc {
 	  ASSERT_TLM_SIZE(0);
 	  ASSERT_CMD_RESPONSE_SIZE(0);
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_DISABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_DISABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 	  ASSERT_EVENTS_SIZE(1);
 	  ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
       this->clearEvents();
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_ENABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::ENABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_ENABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
 
       this->clearEvents();
-	  sendCmd_HLTH_PING_ENABLE(0, 0, carg, HealthImpl::HLTH_PING_DISABLED);
+	  sendCmd_HLTH_PING_ENABLE(0, 0, carg, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthImpl::HLTH_PING_DISABLED, this->component.m_pingTrackerEntries[0].enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_pingTrackerEntries[0].enabled);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_PING(0,HealthComponentBase::HEALTH_PING_DISABLED,"task0");
 
@@ -601,9 +601,9 @@ namespace Svc {
 	  ASSERT_EVENTS_SIZE(0);
 	  ASSERT_TLM_SIZE(0);
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_DISABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_DISABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 
 	  return;
 	  //invoke schedIn handler for 50 times
@@ -616,9 +616,9 @@ namespace Svc {
 	      ASSERT_TLM_SIZE(0);
 	  }
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_ENABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::ENABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_ENABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
 
 	  this->invoke_to_Run(0,0);
 
@@ -665,14 +665,15 @@ namespace Svc {
       ASSERT_TLM_SIZE(0);
 
       //send command with bad value
-      sendCmd_HLTH_PING_ENABLE(0,0,"task0",HealthImpl::PingEnabled_MAX);
+      Fw::Enabled badValue = static_cast<Fw::Enabled::t>(Fw::Enabled::NUM_CONSTANTS);
+      sendCmd_HLTH_PING_ENABLE(0,0,"task0",badValue);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
 
       //send command with bad ping entry
-      sendCmd_HLTH_PING_ENABLE(0,0,"notask",HealthImpl::HLTH_PING_ENABLED);
+      sendCmd_HLTH_PING_ENABLE(0,0,"notask",Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(2);

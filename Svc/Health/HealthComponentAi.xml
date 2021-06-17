@@ -33,11 +33,7 @@
             A command to enable or disable health checks
             </comment>
             <args>
-                <arg name="enable" type="ENUM">
-                    <enum name="HealthEnabled">
-                        <item name="HLTH_CHK_DISABLED"/>
-                        <item name="HLTH_CHK_ENABLED"/>
-                    </enum>
+                <arg name="enable" type="Fw::Enabled">
                     <comment>whether or not health checks are enabled</comment>
                 </arg>
              </args>
@@ -50,11 +46,7 @@
                 <arg name="entry" type="string" size="40">
                     <comment>The entry to enable/disable</comment>
                 </arg>          
-                <arg name="enable" type="ENUM">
-                    <enum name="PingEnabled">
-                        <item name="HLTH_PING_DISABLED"/>
-                        <item name="HLTH_PING_ENABLED"/>
-                    </enum>
+                <arg name="enable" type="Fw::Enabled">
                     <comment>whether or not a port is pinged</comment>
                 </arg>
              </args>
