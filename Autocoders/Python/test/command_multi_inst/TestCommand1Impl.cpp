@@ -39,7 +39,7 @@ void TestCommand1Impl::TEST_CMD_1_cmdHandler(
         SomeEnum arg4 /*!< The ENUM argument*/
     ) {
 	printf("Got command args: %d %f %d %d\n", arg1, arg2, arg3, arg4 );
-	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+	this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
 
 void TestCommand1Impl::TEST_CMD_2_cmdHandler(

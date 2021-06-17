@@ -55,7 +55,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       const CmdSequencerComponentImpl::FPrimeSequence::CRC& crc =
@@ -92,7 +92,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -111,7 +111,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -143,7 +143,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -176,7 +176,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -200,7 +200,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -238,7 +238,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -266,7 +266,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -295,7 +295,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -319,7 +319,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -338,7 +338,7 @@ namespace Svc {
       this->clearAndDispatch();
       // Assert seqDone response
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0U, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+      ASSERT_from_seqDone(0U, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR));
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
@@ -368,7 +368,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR)
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -397,7 +397,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -416,7 +416,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -447,7 +447,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -467,7 +467,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -499,7 +499,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -518,7 +518,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);

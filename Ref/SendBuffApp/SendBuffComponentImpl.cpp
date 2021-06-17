@@ -103,12 +103,12 @@ namespace Ref {
     void SendBuffImpl::SB_START_PKTS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->m_sendPackets = true;
         this->m_state = SEND_ACTIVE;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void SendBuffImpl::SB_INJECT_PKT_ERROR_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->m_injectError = true;
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void SendBuffImpl::SB_GEN_FATAL_cmdHandler(
@@ -119,7 +119,7 @@ namespace Ref {
             U32 arg3 /*!< Third FATAL Argument*/
         ) {
         this->log_FATAL_SendBuffFatal(arg1,arg2,arg3);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
         //! Handler for command SB_GEN_ASSERT
@@ -135,7 +135,7 @@ namespace Ref {
             U32 arg6 /*!< Sixth ASSERT Argument*/
         ) {
          FW_ASSERT(0,arg1,arg2,arg3,arg4,arg5,arg6);
-         this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
      }
 
     void SendBuffImpl::parameterUpdated(FwPrmIdType id) {

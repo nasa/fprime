@@ -383,6 +383,7 @@ dll
 dlog
 dnp
 DNs
+doall
 docbook
 dockerfile
 docset
@@ -587,6 +588,7 @@ foundin
 fpconfighpp
 FPGA
 FPL
+fpp
 FPport
 fprim
 fprime
@@ -672,6 +674,7 @@ GPINT
 gpio
 graphviz
 grayscales
+grep
 grnd
 GROUNDINTERFACERULES
 groupadd
@@ -739,6 +742,7 @@ idl
 idx
 ieeetr
 iface
+ifchange
 ifcomment
 ifdef
 iflag
@@ -919,6 +923,7 @@ loadfile
 localhost
 localtime
 LOCKGUARDTESTER
+locs
 LOGASSERT
 LOGFILE
 LOGFILECLOSED
@@ -1079,6 +1084,7 @@ NOBUFFERS
 NOCOLOR
 NOCTTY
 nogen
+noinclude
 nolog
 NOLOGFILEOPENINITERROR
 nomagic
@@ -1876,6 +1882,7 @@ wx
 wxgui
 Xabcdefx
 xapian
+xargs
 xcode
 xdf
 xdffe

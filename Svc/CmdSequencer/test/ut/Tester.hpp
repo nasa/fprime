@@ -261,7 +261,7 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, //!< The port number
           FwOpcodeType opCode, //!< Command Op Code
           U32 cmdSeq, //!< Command Sequence
-          Fw::CommandResponse response //!< The command response argument
+          Fw::CmdResponse response //!< The command response argument
       );
 
       //! Handler for from_comCmdOut
@@ -290,7 +290,7 @@ namespace Svc {
       void textLogIn(
           const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
       );
 #endif

@@ -440,7 +440,7 @@ namespace Svc {
           this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_DISABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::COMMAND_OK);
+          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
           ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_DISABLED,name);
@@ -469,7 +469,7 @@ namespace Svc {
           this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_ENABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::COMMAND_OK);
+          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
           ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_ENABLED,name);
@@ -674,14 +674,14 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
 
       //send command with bad ping entry
       sendCmd_HLTH_PING_ENABLE(0,0,"notask",HealthImpl::HLTH_PING_ENABLED);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(2);
-      ASSERT_CMD_RESPONSE(1,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(1,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_LOOKUP_ERROR_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_LOOKUP_ERROR(0,"notask");
@@ -693,7 +693,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::CmdResponse::VALIDATION_ERROR);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_PING_INVALID_VALUES_SIZE(1);
       ASSERT_EVENTS_HLTH_PING_INVALID_VALUES(0,"task0",10,9);
@@ -706,7 +706,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::CmdResponse::VALIDATION_ERROR);
 
       this->clearEvents();
       this->clearHistory();
@@ -757,7 +757,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

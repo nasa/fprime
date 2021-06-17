@@ -118,7 +118,7 @@ $emit_cpp_params([ $param_instance ])
     )
   {
 #for $ids, $prm_name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
-    this->m_param_${prm_name}_valid = Fw::PARAM_UNINIT;
+    this->m_param_${prm_name}_valid = Fw::ParamValid::UNINIT;
 #end for
 
     // Initialize base class
@@ -404,7 +404,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     ${tester_base}* _testerBase =
@@ -464,7 +464,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::TextLogSeverity severity,
+        Fw::LogSeverity severity,
         Fw::TextLogString &text
     )
   {
@@ -503,7 +503,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
       static_cast<${tester_base}*>(component);
 
     Fw::SerializeStatus _status;
-    Fw::ParamValid _ret = Fw::PARAM_VALID;
+    Fw::ParamValid _ret = Fw::ParamValid::VALID;
     val.resetSer();
 
     const U32 idBase = _testerBase->getIdBase();
@@ -704,7 +704,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
     cmdResponseIn(
         const FwOpcodeType opCode,
         const U32 seq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     CmdResponse e = { opCode, seq, response };
@@ -1081,7 +1081,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
     textLogIn(
         const U32 id,
         Fw::Time &timeTag,
-        const Fw::TextLogSeverity severity,
+        const Fw::LogSeverity severity,
         const Fw::TextLogString &text
     )
   {
@@ -1096,26 +1096,26 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
     )
   {
     const char *severityString = "UNKNOWN";
-    switch (e.severity) {
-      case Fw::TEXT_LOG_FATAL:
+    switch (e.severity.e) {
+      case Fw::LogSeverity::FATAL:
         severityString = "FATAL";
         break;
-      case Fw::TEXT_LOG_WARNING_HI:
+      case Fw::LogSeverity::WARNING_HI:
         severityString = "WARNING_HI";
         break;
-      case Fw::TEXT_LOG_WARNING_LO:
+      case Fw::LogSeverity::WARNING_LO:
         severityString = "WARNING_LO";
         break;
-      case Fw::TEXT_LOG_COMMAND:
+      case Fw::LogSeverity::COMMAND:
         severityString = "COMMAND";
         break;
-      case Fw::TEXT_LOG_ACTIVITY_HI:
+      case Fw::LogSeverity::ACTIVITY_HI:
         severityString = "ACTIVITY_HI";
         break;
-      case Fw::TEXT_LOG_ACTIVITY_LO:
+      case Fw::LogSeverity::ACTIVITY_LO:
         severityString = "ACTIVITY_LO";
         break;
-      case Fw::TEXT_LOG_DIAGNOSTIC:
+      case Fw::LogSeverity::DIAGNOSTIC:
        severityString = "DIAGNOSTIC";
         break;
       default:

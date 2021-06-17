@@ -8,6 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PolyPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/MeasurementStatusEnumAi.xml"
 )
 
 register_fprime_module()

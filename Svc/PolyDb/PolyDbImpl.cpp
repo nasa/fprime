@@ -13,7 +13,7 @@ namespace Svc {
     PolyDbImpl::PolyDbImpl(const char* name) : PolyDbComponentBase(name) {
         // initialize all entries to stale
         for (NATIVE_INT_TYPE entry = 0; entry < POLYDB_NUM_DB_ENTRIES; entry++) {
-            this->m_db[entry].status = MEASUREMENT_STALE;
+            this->m_db[entry].status = MeasurementStatus::STALE;
         }
     }
 

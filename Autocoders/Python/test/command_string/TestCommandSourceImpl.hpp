@@ -22,10 +22,10 @@ class TestCommandSourceImpl: public Cmd::CommandTesterComponentBase {
         void init(void);
         void test_TEST_CMD_1(I32 arg1, const Fw::CmdStringArg& arg2, I32 arg3);
     protected:
-        void cmdStatusPort_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CommandResponse response);
+        void cmdStatusPort_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response);
         void cmdRegPort_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode);
     private:
-        void printStatus(Fw::CommandResponse response);
+        void printStatus(Fw::CmdResponse response);
 };
 
 #endif /* TESTCOMMANDSOURCEIMPL_HPP_ */

@@ -407,7 +407,7 @@ $emit_hpp_params([ $param_opCode, $param_cmdSeq, $param_response ])
       typedef struct {
         FwOpcodeType opCode;
         U32 cmdSeq;
-        Fw::CommandResponse response;
+        Fw::CmdResponse response;
       } CmdResponse;
 
       //! The command response history
@@ -447,7 +447,7 @@ $emit_hpp_params([ $param_event_id, $param_timeTag, $param_log_severity, $param_
       //! Handle a text event
       //!
       virtual void textLogIn(
-$emit_hpp_params([ $param_event_id, $param_timeTag, $param_text_log_severity, $param_text ])
+$emit_hpp_params([ $param_event_id, $param_timeTag, $param_log_severity, $param_text ])
       );
 
       //! A history entry for the text log
@@ -455,7 +455,7 @@ $emit_hpp_params([ $param_event_id, $param_timeTag, $param_text_log_severity, $p
       typedef struct {
         U32 id;
         Fw::Time timeTag;
-        Fw::TextLogSeverity severity;
+        Fw::LogSeverity severity;
         Fw::TextLogString text;
       } TextLogEntry;
 

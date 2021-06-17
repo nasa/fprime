@@ -28,8 +28,8 @@ void TestPrmImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 
 }
 
 void TestPrmImpl::printParam(void) {
-    Fw::ParamValid valid = Fw::PARAM_INVALID;
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
     SomeEnum val = this->paramGet_enumparam(valid);
 
-    printf("Parameter is: %d %s\n",val,valid==Fw::PARAM_VALID?"VALID":"INVALID");
+    printf("Parameter is: %d %s\n",val,valid==Fw::ParamValid::VALID?"VALID":"INVALID");
 }

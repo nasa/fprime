@@ -128,7 +128,7 @@ namespace Svc {
         Fw::QueuedComponentBase::MsgDispatchStatus stat = this->m_impl.doDispatch();
         EXPECT_EQ(stat,Fw::QueuedComponentBase::MSG_DISPATCH_OK);
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_OK);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::OK);
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
         ASSERT_EVENTS_PrmFileSaveComplete(0,2);
@@ -178,7 +178,7 @@ namespace Svc {
         // ask for ID that isn't present
         this->clearEvents();
         Fw::ParamBuffer pBuff;
-        EXPECT_EQ(Fw::PARAM_INVALID,this->invoke_to_getPrm(0,0x1000,pBuff));
+        EXPECT_EQ(Fw::ParamValid::INVALID,this->invoke_to_getPrm(0,0x1000,pBuff).e);
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmIdNotFound_SIZE(1);
         ASSERT_EVENTS_PrmIdNotFound(0,0x1000);
@@ -332,7 +332,7 @@ namespace Svc {
         EXPECT_EQ(mstat,Fw::QueuedComponentBase::MSG_DISPATCH_OK);
 
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_OK);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::OK);
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
         ASSERT_EVENTS_PrmFileSaveComplete(0,4);
@@ -583,7 +583,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
 
         Os::clearOpenInterceptor();
 
@@ -612,7 +612,7 @@ void PrmDbImplTester::runFileReadError(void) {
         ASSERT_EVENTS_PrmFileWriteError(0,PrmDbImpl::PRM_WRITE_DELIMITER,0,Os::File::NOT_OPENED);
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
         Os::clearWriteInterceptor();
 
         // Test delimiter write size error
@@ -642,7 +642,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
 
         Os::clearWriteInterceptor();
 
@@ -667,7 +667,7 @@ void PrmDbImplTester::runFileReadError(void) {
         ASSERT_EVENTS_PrmFileWriteError(0,PrmDbImpl::PRM_WRITE_RECORD_SIZE,0,Os::File::NOT_OPENED);
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
         Os::clearWriteInterceptor();
 
         // Test record size write size error
@@ -694,7 +694,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
 
         Os::clearWriteInterceptor();
 
@@ -719,7 +719,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
 
         Os::clearWriteInterceptor();
 
@@ -747,7 +747,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
 
         Os::clearWriteInterceptor();
 
@@ -773,7 +773,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
         Os::clearWriteInterceptor();
 
         // Test parameter value write size error
@@ -800,7 +800,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
         Os::clearWriteInterceptor();
 
     }
