@@ -15,7 +15,7 @@ module Svc {
     output port framedDeallocate: [1] Fw.BufferSend
 
     output port framedPoll: [1] Drv.ByteStreamPoll
-
+    
     guarded input port schedIn: [1] Svc.Sched
 
   }
