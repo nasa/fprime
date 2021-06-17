@@ -198,7 +198,7 @@ If the attribute `default` is missing, then the value of the
 enumeration is set to 0.
 
 If the attribute `serialize_type` is missing, then the serialization type is
-set to FwEnumStoreType or equivalently, I32.
+set to FwEnumStoreType.
 
 
 
@@ -210,7 +210,8 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 
 `<enum name="E" namespace="A::B">` ... `</enum>`
 
-Here is an XML enumeration `E` in the global namespace with default value Item2:
+Here is an XML enumeration `E` in the global namespace with default value Item2 
+(Item2 is assumed to be the name attribute of one of the item definitions in the enum):
 
 `<enum name="E" default="Item2">` ... `</enum>`
 

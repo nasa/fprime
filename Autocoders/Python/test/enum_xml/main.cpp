@@ -191,7 +191,7 @@ TEST(EnumXML, OK) {
     ASSERT_EQ(enum4.e, 0);
 
     // Check that the enum representation types are set correctly
-    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(I32));
+    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
     ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
     ASSERT_EQ(Example::Enum3::SERIALIZED_SIZE, sizeof(U8));
 
@@ -241,9 +241,9 @@ TEST(EnumXML, OK) {
     cout << "Serialized enums" << endl;
 
     // Check that the serialized types are correctly set
-    ASSERT_EQ(enumSerial1.getBuffLength(), sizeof(I32));
-    ASSERT_EQ(enumSerial2.getBuffLength(), sizeof(I32));
-    ASSERT_EQ(enumSerial3.getBuffLength(), sizeof(I32));
+    ASSERT_EQ(enumSerial1.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial2.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial3.getBuffLength(), sizeof(FwEnumStoreType));
     ASSERT_EQ(enumSerial4.getBuffLength(), sizeof(U64));
     ASSERT_EQ(enumSerial5.getBuffLength(), sizeof(U8));
 
