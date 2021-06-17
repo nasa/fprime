@@ -200,8 +200,6 @@ enumeration is set to 0.
 If the attribute `serialize_type` is missing, then the serialization type is
 set to FwEnumStoreType.
 
-
-
 _Examples:_ Here is an XML enumeration `E` in the global namespace:
 
 `<enum name="E">` ... `</enum>`
