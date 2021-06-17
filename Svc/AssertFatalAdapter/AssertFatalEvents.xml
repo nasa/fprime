@@ -5,7 +5,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -18,7 +18,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -34,7 +34,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -53,7 +53,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -75,7 +75,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -100,7 +100,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -128,7 +128,7 @@
         An assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
@@ -159,7 +159,7 @@
         An unexpected assert happened
         </comment>
         <args>
-            <arg name="file" type="string" size="80">
+            <arg name="file" type="string" size="256">
                 <comment>The source file of the assert</comment>
             </arg>          
             <arg name="line" type="U32">
