@@ -188,8 +188,8 @@ The namespace consists of one or more identifiers separated by `::`.
 of the enumeration. This value must match the name attribute of 
 one of the item definitions within the enumeration (see below). 
 
-* An optional attribute `serialize_type` giving the type
-of the enumeration for serialization.
+* An optional attribute `serialize_type` giving the numeric type
+of the enumeration when serializing.
 
 If the attribute `namespace` is missing, then the type is
 placed in the global namespace.
