@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+ut_build_dir=../../build-fprime-automatic-native-ut
+
+if ! test -e $ut_build_dir
+then
+  fprime-util generate --ut
+fi
+fprime-util build --ut
+$ut_build_dir/bin/`uname`/Svc_AssertFatalAdapter_ut_exe
