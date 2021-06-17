@@ -357,7 +357,7 @@ namespace Svc {
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::DISABLED);
 
       ASSERT_EQ(this->component.m_enabled, Fw::Enabled::DISABLED);
 
@@ -382,7 +382,7 @@ namespace Svc {
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::ENABLED);
 
       ASSERT_EQ(this->component.m_enabled, Fw::Enabled::ENABLED);
 
@@ -548,14 +548,14 @@ namespace Svc {
 	  this->dispatchAll();
 	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 	  ASSERT_EVENTS_SIZE(1);
-	  ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
+	  ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::DISABLED);
       this->clearEvents();
 
 	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::ENABLED);
 	  this->dispatchAll();
 	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::ENABLED);
 
       this->clearEvents();
 	  sendCmd_HLTH_PING_ENABLE(0, 0, carg, Fw::Enabled::DISABLED);

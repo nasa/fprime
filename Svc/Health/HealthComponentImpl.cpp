@@ -147,9 +147,9 @@ namespace Svc {
 
     void HealthImpl::HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, Fw::Enabled enable) {
         this->m_enabled = enable;
-        HealthIsEnabled isEnabled = HEALTH_CHECK_DISABLED;
+        Fw::Enabled isEnabled = Fw::Enabled::DISABLED;
         if (enable == Fw::Enabled::ENABLED) {
-            isEnabled = HEALTH_CHECK_ENABLED;
+            isEnabled = Fw::Enabled::ENABLED;
         }
         this->log_ACTIVITY_HI_HLTH_CHECK_ENABLE(isEnabled);
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);

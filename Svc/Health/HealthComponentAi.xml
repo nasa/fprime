@@ -114,11 +114,7 @@
             Report checking turned on or off
             </comment>
             <args>
-                <arg name="enabled" type="ENUM">
-                    <enum name="HealthIsEnabled">
-                        <item name="HEALTH_CHECK_DISABLED"/>
-                        <item name="HEALTH_CHECK_ENABLED"/>
-                    </enum>
+                <arg name="enabled" type="Fw::Enabled">
                     <comment>If health checking is enabled</comment>
                 </arg>
             </args>
