@@ -25,7 +25,7 @@ var searchData=
   ['read_5fseq_5fdata_5fsize',['READ_SEQ_DATA_SIZE',['../struct_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events_1_1_file_read_stage.html#a8980a74abaf131b7d495182695ea888fa7eea5b310cc149d9c7e69ad731caa647',1,'Svc::CmdSequencerComponentImpl::Sequence::Events::FileReadStage']]],
   ['readdirectory',['readDirectory',['../namespace_os_1_1_file_system.html#ac43d1740a02902905c796387ccaf2e50',1,'Os::FileSystem::readDirectory(const char *path, const U32 maxNum, Fw::EightyCharString fileArray[])'],['../namespace_os_1_1_file_system.html#a98bd5e7ce73b337b8c7dd4bcf961630c',1,'Os::FileSystem::readDirectory(const char *path, const U32 maxNum, Fw::EightyCharString fileArray[], U32 &amp;numFiles)']]],
   ['readhash',['readHash',['../namespace_os.html#ac34db4dbb26ce4dedc2ec9591502a89b',1,'Os']]],
-  ['readinterceptor',['ReadInterceptor',['../namespace_os.html#afc614412346e05eb718ff0582f326fbc',1,'Os::ReadInterceptor()'],['../namespace_os.html#a5a1c65f464b716dc0dbc9ecbed22c3fd',1,'Os::readInterceptor()']]],
+  ['readinterceptor',['readInterceptor',['../namespace_os.html#a5a1c65f464b716dc0dbc9ecbed22c3fd',1,'Os::readInterceptor()'],['../namespace_os.html#afc614412346e05eb718ff0582f326fbc',1,'Os::ReadInterceptor()']]],
   ['readinterceptorptr',['readInterceptorPtr',['../namespace_os.html#a0e23ab1974f2567f0f21c229784a6dd2',1,'Os']]],
   ['readme_2emd',['README.md',['../ci_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../docker_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../docs_2v1_85_2_tutorials_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../docs_2v2_80_80_2_tutorials_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../_svc_2_cmd_sequencer_2formats_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../_svc_2_com_logger_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../_svc_2_com_splitter_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)'],['../_utils_2_hash_2_r_e_a_d_m_e_8md.html',1,'(Global Namespace)']]],
   ['readparamfile',['readParamFile',['../class_svc_1_1_prm_db_impl.html#a3d8724a694a1c46a7b2575252aa2334a',1,'Svc::PrmDbImpl']]],
@@ -36,7 +36,7 @@ var searchData=
   ['receivenonblock',['receiveNonBlock',['../namespace_os.html#acd99524ca51ff9ab4570ef3a7b3add96',1,'Os']]],
   ['receivenonblockipcstub',['receiveNonBlockIPCStub',['../namespace_os.html#ac00539d540a15cce2d7936199ba3fcb1',1,'Os']]],
   ['reconnect_5fautomatically',['RECONNECT_AUTOMATICALLY',['../_socket_ip_driver_cfg_8hpp.html#a632b81391d49d4604135a61b05a1ae4aa4122b4541563010c81d1f803fe785db1',1,'SocketIpDriverCfg.hpp']]],
-  ['record',['Record',['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html',1,'Svc::CmdSequencerComponentImpl::Sequence::Record'],['../struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html',1,'Svc::AMPCSSequence::Record'],['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html#a5ef6850c4aa15e287cc96f39465646bc',1,'Svc::CmdSequencerComponentImpl::Sequence::Record::Record()']]],
+  ['record',['Record',['../struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html',1,'Svc::AMPCSSequence::Record'],['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html',1,'Svc::CmdSequencerComponentImpl::Sequence::Record'],['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html#a5ef6850c4aa15e287cc96f39465646bc',1,'Svc::CmdSequencerComponentImpl::Sequence::Record::Record()']]],
   ['recordinvalid',['recordInvalid',['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html#ae26622ba5d4e0fda35eca7d4b909816e',1,'Svc::CmdSequencerComponentImpl::Sequence::Events']]],
   ['recordmismatch',['recordMismatch',['../class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_events.html#a3311f050b2b54b4dec63f791f50671b4',1,'Svc::CmdSequencerComponentImpl::Sequence::Events']]],
   ['recv',['recv',['../class_drv_1_1_ip_socket.html#a4f074de4b781102f945bdbde9d7a4f09',1,'Drv::IpSocket::recv()'],['../class_drv_1_1_socket_helper.html#a9dec99bde5b1dad509478a3045202c8e',1,'Drv::SocketHelper::recv()']]],
@@ -68,5 +68,6 @@ var searchData=
   ['rewind',['rewind',['../class_os_1_1_directory.html#a3d1f3bdbaeb5679eb6999cb9b6d727a1',1,'Os::Directory']]],
   ['rotate',['rotate',['../class_types_1_1_circular_buffer.html#af0569c4160d2f1b95cc383c1c4f69875',1,'Types::CircularBuffer']]],
   ['route',['route',['../class_deframing_protocol_interface.html#a81f42f25640179082027c07a4c136074',1,'DeframingProtocolInterface']]],
+  ['routine',['routine',['../struct_os_1_1_task_1_1_task_routine_wrapper.html#af01cd6df1663dbe369ddf788ff17b8c7',1,'Os::Task::TaskRoutineWrapper']]],
   ['run',['run',['../class_os_1_1_task_runner.html#a69bbc87400af9be23d6878309d120a7a',1,'Os::TaskRunner']]]
 ];

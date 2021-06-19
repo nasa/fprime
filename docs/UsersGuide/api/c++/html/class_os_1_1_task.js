@@ -1,5 +1,6 @@
 var class_os_1_1_task =
 [
+    [ "TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", "struct_os_1_1_task_1_1_task_routine_wrapper" ],
     [ "taskRoutine", "class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476", null ],
     [ "TaskStatus", "class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f", [
       [ "TASK_OK", "class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9", null ],

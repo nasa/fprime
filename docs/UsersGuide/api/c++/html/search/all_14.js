@@ -45,6 +45,7 @@ var searchData=
   ['taskregistry',['TaskRegistry',['../class_os_1_1_task_registry.html',1,'Os::TaskRegistry'],['../class_os_1_1_task_registry.html#ac25dec0638bc9726302e912d4ef0815f',1,'Os::TaskRegistry::TaskRegistry()']]],
   ['taskroot_2ecpp',['TaskRoot.cpp',['../_task_root_8cpp.html',1,'']]],
   ['taskroutine',['taskRoutine',['../class_os_1_1_task.html#a6c2417f2053779690cfa1f0f1062d476',1,'Os::Task']]],
+  ['taskroutinewrapper',['TaskRoutineWrapper',['../struct_os_1_1_task_1_1_task_routine_wrapper.html',1,'Os::Task']]],
   ['taskrunner',['TaskRunner',['../class_os_1_1_task_runner.html',1,'Os::TaskRunner'],['../class_os_1_1_task_runner.html#a8dc546780f4f735760ce995192778fbf',1,'Os::TaskRunner::TaskRunner()']]],
   ['taskrunner_2ecpp',['TaskRunner.cpp',['../_task_runner_8cpp.html',1,'']]],
   ['taskrunner_2ehpp',['TaskRunner.hpp',['../_task_runner_8hpp.html',1,'']]],
@@ -120,6 +121,6 @@ var searchData=
   ['trigger',['trigger',['../class_utils_1_1_rate_limiter.html#ab725e8b93afdd2c54d1c9a3de1de8075',1,'Utils::RateLimiter::trigger(Fw::Time time)'],['../class_utils_1_1_rate_limiter.html#a69039127a541298e48245c33ba575fa4',1,'Utils::RateLimiter::trigger()'],['../class_utils_1_1_token_bucket.html#aa14459e08df663d0f99a50dfad8869d8',1,'Utils::TokenBucket::trigger()']]],
   ['tst_5fcrc_2ec',['tst_crc.c',['../tst__crc_8c.html',1,'']]],
   ['tutorial_2emd',['Tutorial.md',['../v1_85_2_tutorials_2_full_system_tutorial_2_tutorial_8md.html',1,'(Global Namespace)'],['../v1_85_2_tutorials_2_getting_started_2_tutorial_8md.html',1,'(Global Namespace)'],['../v1_85_2_tutorials_2_gps_tutorial_2_tutorial_8md.html',1,'(Global Namespace)'],['../v1_85_2_tutorials_2_math_component_2_tutorial_8md.html',1,'(Global Namespace)'],['../v2_80_80_2_tutorials_2_full_system_tutorial_2_tutorial_8md.html',1,'(Global Namespace)'],['../v2_80_80_2_tutorials_2_getting_started_2_tutorial_8md.html',1,'(Global Namespace)'],['../v2_80_80_2_tutorials_2_gps_tutorial_2_tutorial_8md.html',1,'(Global Namespace)'],['../v2_80_80_2_tutorials_2_math_component_2_tutorial_8md.html',1,'(Global Namespace)']]],
-  ['type',['type',['../class_fw_1_1_file_packet_1_1_header.html#a266c7a4d752eb9c308c7f4f663daf1d2',1,'Fw::FilePacket::Header::type()'],['../union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501b',1,'Fw::FilePacket::Type()']]],
+  ['type',['Type',['../union_fw_1_1_file_packet.html#aa93c04640430be90bcf19d4b58f6501b',1,'Fw::FilePacket::Type()'],['../class_fw_1_1_file_packet_1_1_header.html#a266c7a4d752eb9c308c7f4f663daf1d2',1,'Fw::FilePacket::Header::type()']]],
   ['types',['Types',['../namespace_types.html',1,'']]]
 ];

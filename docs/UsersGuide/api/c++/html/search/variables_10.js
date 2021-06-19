@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['readinterceptor',['readInterceptor',['../namespace_os.html#a5a1c65f464b716dc0dbc9ecbed22c3fd',1,'Os']]],
-  ['readinterceptorptr',['readInterceptorPtr',['../namespace_os.html#a0e23ab1974f2567f0f21c229784a6dd2',1,'Os']]]
+  ['queue',['queue',['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle']]],
+  ['queuelock',['queueLock',['../class_os_1_1_queue_handle.html#a908bcca196ccf16d9ae4bba386f4292e',1,'Os::QueueHandle']]],
+  ['queuenotempty',['queueNotEmpty',['../class_os_1_1_queue_handle.html#a1ac4eaffe9a7a1f550c5515ed47f23e2',1,'Os::QueueHandle']]],
+  ['queuenotfull',['queueNotFull',['../class_os_1_1_queue_handle.html#ae195753a519fa765ac1176e05e1ba299',1,'Os::QueueHandle']]]
 ];

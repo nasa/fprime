@@ -190,8 +190,8 @@ var hierarchy =
     ] ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],
-    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
+    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html", [
       [ "Svc::AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", null ],
       [ "Svc::CmdSequencerComponentImpl::FPrimeSequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html", null ]
@@ -260,6 +260,7 @@ var hierarchy =
     [ "Os::TaskRegistry", "class_os_1_1_task_registry.html", [
       [ "Os::TaskRunner", "class_os_1_1_task_runner.html", null ]
     ] ],
+    [ "Os::Task::TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", null ],
     [ "Svc::AMPCSSequence::Record::Time", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time.html", null ],
     [ "TimeComponentBase", null, [
       [ "Svc::LinuxTimeImpl", "class_svc_1_1_linux_time_impl.html", null ]

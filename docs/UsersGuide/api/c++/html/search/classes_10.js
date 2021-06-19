@@ -4,6 +4,7 @@ var searchData=
   ['taskid',['TaskId',['../class_os_1_1_task_id.html',1,'Os']]],
   ['tasklock',['TaskLock',['../class_os_1_1_task_lock.html',1,'Os']]],
   ['taskregistry',['TaskRegistry',['../class_os_1_1_task_registry.html',1,'Os']]],
+  ['taskroutinewrapper',['TaskRoutineWrapper',['../struct_os_1_1_task_1_1_task_routine_wrapper.html',1,'Os::Task']]],
   ['taskrunner',['TaskRunner',['../class_os_1_1_task_runner.html',1,'Os']]],
   ['taskstring',['TaskString',['../class_os_1_1_task_string.html',1,'Os']]],
   ['tcpclientcomponentimpl',['TcpClientComponentImpl',['../class_drv_1_1_tcp_client_component_impl.html',1,'Drv']]],

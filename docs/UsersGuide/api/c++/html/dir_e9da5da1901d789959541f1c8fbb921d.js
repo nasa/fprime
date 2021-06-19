@@ -58,6 +58,7 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "SimpleQueueRegistry.hpp", "_simple_queue_registry_8hpp.html", null ],
     [ "Task.hpp", "_task_8hpp.html", [
       [ "Task", "class_os_1_1_task.html", "class_os_1_1_task" ],
+      [ "TaskRoutineWrapper", "struct_os_1_1_task_1_1_task_routine_wrapper.html", "struct_os_1_1_task_1_1_task_routine_wrapper" ],
       [ "TaskRegistry", "class_os_1_1_task_registry.html", "class_os_1_1_task_registry" ]
     ] ],
     [ "TaskCommon.cpp", "_task_common_8cpp.html", null ],
