@@ -9,7 +9,7 @@
 #
 # Note: the RPI toolchain is also installed to ensure that the RPI package is ready-to-go.
 #
-# Build this with the -- fprime-base
+# Build this the -- fprime-base
 ####
  ubuntu:18.04  fprime-base
 # Adding fprime user, group, and password fprime
@@ -22,7 +22,7 @@
     bash git build-essential cmake time python3 python3-setuptools python3-pip python3-venv valgrind && \
     mkdir -p /opt/ && chown fprime:fprime /opt/ && \
     git clone --quiet https://github.com/raspberrypi/tools.git /opt/rpi/tools && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt- clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Change user and group the virtual environment
 # Make fprime user
 
