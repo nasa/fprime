@@ -5,7 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+(CMAKE_BUILD_TYPE STREQUAL "")
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
     )
@@ -15,4 +15,4 @@ if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
         CFDP/Checksum
     )
     register_fprime_module()
-endif()
+()
