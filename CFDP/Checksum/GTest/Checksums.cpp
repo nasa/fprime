@@ -10,20 +10,20 @@
 // 
 // ====================================================================== 
 
-#include "CFDP/Checksum/GTest/Checksums.hpp"
+# "CFDP/Checksum/GTest/Checksums.hpp"
 
-namespace CFDP {
+ CFDP {
 
-  namespace GTest {
+   GTest {
 
-    void Checksums ::
-      compare(
-          const CFDP::Checksum& expected,
-          const CFDP::Checksum& actual
+     Checksums ::
+      (
+           CFDP::Checksum& expected,
+           CFDP::Checksum& actual
       ) 
     {
-      const U32 expectedValue = expected.getValue();
-      const U32 actualValue = actual.getValue();
+       U32 expectedValue = expected.getValue();
+       U32 actualValue = actual.getValue();
       ASSERT_EQ(expectedValue, actualValue);
     }
 
