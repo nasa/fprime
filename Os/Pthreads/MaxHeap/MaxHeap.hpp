@@ -98,7 +98,7 @@
     NATIVE_UINT_TYPE max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
 
     // The data structure for a node on the heap:
-    struct Node {
+     Node {
       NATIVE_INT_TYPE value; // the priority of the node
       NATIVE_UINT_TYPE order; // order in which node was pushed
       NATIVE_UINT_TYPE id; // unique id for this node 
