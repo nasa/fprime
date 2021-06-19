@@ -2,15 +2,15 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include "gtest/gtest.h"
+# "gtest/gtest.h"
 
-#include "CFDP/Checksum/Checksum.hpp"
+# "CFDP/Checksum/Checksum.hpp"
 
-using namespace CFDP;
+ CFDP;
 
-const U8 data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+ U8 data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
-const U32 expectedValue = 
+ U32 expectedValue = 
   (data[0] << 3*8) + (data[1] << 2*8) + (data[2] << 1*8) + data[3] +
   (data[4] << 3*8) + (data[5] << 2*8) + (data[6] << 1*8) + data[7];
 
@@ -49,8 +49,8 @@ TEST(Checksum, ThreePackets) {
   ASSERT_EQ(expectedValue, checksum.getValue());
 }
 
-int main(int argc, char **argv) {
+ main( argc,  **argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+   RUN_ALL_TESTS();
 }
 
