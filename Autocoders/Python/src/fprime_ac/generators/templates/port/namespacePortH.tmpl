@@ -43,7 +43,6 @@ namespace ${namespace} {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< serialization method
 
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy buffer, overwriting old string
             NATIVE_UINT_TYPE getCapacity(void) const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

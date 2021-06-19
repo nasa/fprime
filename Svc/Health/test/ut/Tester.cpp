@@ -305,6 +305,7 @@ namespace Svc {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+i+1,this->component.m_pingTrackerEntries[port].cycleCount);
           }
       }
+      this->invoke_to_Run(0,0);
 
       //check for expected warning EVRs from each entry
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
@@ -395,6 +396,7 @@ namespace Svc {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+1+i,this->component.m_pingTrackerEntries[entry].cycleCount);
           }
       }
+      this->invoke_to_Run(0,0);
 
       // Should be FATAL timeouts
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);

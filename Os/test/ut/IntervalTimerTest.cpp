@@ -1,3 +1,4 @@
+#include "gtest/gtest.h"
 #include <Os/IntervalTimer.hpp>
 #include <Os/Task.hpp>
 #include <cstdio>
@@ -11,6 +12,6 @@ void intervalTimerTest(void) {
     timer.start();
     Os::Task::delay(1000);
     timer.stop();
-
-    printf("Usec: %d\n",timer.getDiffUsec());
+    ASSERT_GE(timer.getDiffUsec(), 1000000);
+    ASSERT_LT(timer.getDiffUsec(), 1005000);
 }
