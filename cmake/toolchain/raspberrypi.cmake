@@ -9,33 +9,33 @@
 # variable `RPI_TOOLCHAIN_DIR` to the full path to the `arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf` directory before
 # running CMake or `fprime-util generate`.
 #
-# e.g. should the user install the tools in ``/home/user1` then the environment variable might be set using
+# e.g. should user install tools ``/home/user1` then the environment variable might be set using
 # `export RPI_TOOLCHAIN_DIR=/home/user/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/`
 ####
 # Set system name
 set(CMAKE_SYSTEM_NAME "Linux")
 set(CMAKE_SYSTEM_PROCESSOR "arm")
 
-# Location of pi toolchain
+# Location pi toolchain
 set(RPI_TOOLCHAIN "$ENV{RPI_TOOLCHAIN_DIR}")
-if ("${RPI_TOOLCHAIN}" STREQUAL "")
-    set(RPI_TOOLCHAIN "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf")
-endif()
+ ("${RPI_TOOLCHAIN}"  "")
+    (RPI_TOOLCHAIN "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf")
+()
 # Check toolchain directory exists
-IF(NOT EXISTS "${RPI_TOOLCHAIN}")
-    message(FATAL_ERROR "RPI toolchain not found at ${RPI_TOOLCHAIN}. Install it, set RPI_TOOLCHAIN_DIR environment variable, or choose another toolchain")
-endif()
+(NOT EXISTS "${RPI_TOOLCHAIN}")
+    (FATAL_ERROR "RPI toolchain not found at ${RPI_TOOLCHAIN}. Install it, set RPI_TOOLCHAIN_DIR environment variable, or choose another toolchain")
+()
 message(STATUS "Using RPI toolchain at: ${RPI_TOOLCHAIN}")
-# specify the cross compiler
+# specify cross compiler
 set(CMAKE_C_COMPILER "${RPI_TOOLCHAIN}/bin/arm-linux-gnueabihf-gcc")
 set(CMAKE_CXX_COMPILER "${RPI_TOOLCHAIN}/bin/arm-linux-gnueabihf-g++")
 
-# where is the target environment
+# where target environment
 set(CMAKE_FIND_ROOT_PATH  "${RPI_TOOLCHAIN}")
 
-# search for programs in the build host directories
+# search programs build host directories
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-# for libraries and headers in the target directories
+# libraries and headers target directories
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
