@@ -10,24 +10,24 @@
 // 
 // ====================================================================== 
 
-#ifndef GTest_CFDP_Checksums_HPP
-#define GTest_CFDP_Checksums_HPP
+# GTest_CFDP_Checksums_HPP
+# GTest_CFDP_Checksums_HPP
 
-#include "gtest/gtest.h"
+# "gtest/gtest.h"
 
-#include "CFDP/Checksum/Checksum.hpp"
+# "CFDP/Checksum/Checksum.hpp"
 
-namespace CFDP {
+ CFDP {
 
-  namespace GTest {
+   GTest {
 
-    //! Utilities for testing Checksum operations
+    //! Utilities testing Checksum operations
     //!
-    namespace Checksums {
+     Checksums {
 
-      void compare(
-          const CFDP::Checksum& expected, //!< Expected value
-          const CFDP::Checksum& actual //!< Actual value
+       (
+           CFDP::Checksum& expected, //!< Expected value
+           CFDP::Checksum& actual //!< Actual value
       );
 
     }
@@ -36,4 +36,4 @@ namespace CFDP {
 
 }
 
-#endif
+#
