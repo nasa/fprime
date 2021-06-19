@@ -10,12 +10,12 @@
 //
 // ======================================================================
 
-#ifndef OS_PTHREADS_MAX_HEAP_HPP
-#define OS_PTHREADS_MAX_HEAP_HPP
+# OS_PTHREADS_MAX_HEAP_HPP
+# OS_PTHREADS_MAX_HEAP_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+# "Fw/Types/BasicTypes.hpp"
 
-namespace Os {
+ Os {
 
   //! \class MaxHeap
   //! \brief A stable max heap data structure
@@ -24,9 +24,9 @@ namespace Os {
   //! be popped off the heap first. Items of equal value will be popped
   //! off in FIFO order. Insertion and deletion from the heap are both
   //! O(log(n)) time.
-  class MaxHeap {
+   MaxHeap {
     
-    public:
+    :
     //! \brief MaxHeap constructor
     //!
     //! Create a max heap object
@@ -43,7 +43,7 @@ namespace Os {
     //!
     //! \param capacity the maximum number of elements to store in the heap
     //!
-    bool create(NATIVE_UINT_TYPE capacity);
+     create(NATIVE_UINT_TYPE capacity);
     //! \brief Push an item onto the heap.
     //!
     //! The item will be put into the heap according to its value. The
@@ -53,7 +53,7 @@ namespace Os {
     //! \param value the value of the element to push onto the heap
     //! \param id the identifier of the element to push onto the heap
     //!
-    bool push(NATIVE_INT_TYPE value, NATIVE_UINT_TYPE id);
+     push(NATIVE_INT_TYPE value, NATIVE_UINT_TYPE id);
     //! \brief Pop an item from the heap.
     //!
     //! The item with the maximum value in the heap will be returned.
@@ -63,19 +63,19 @@ namespace Os {
     //! \param value the value of the element to popped from the heap
     //! \param id the identifier of the element popped from the heap
     //!
-    bool pop(NATIVE_INT_TYPE& value, NATIVE_UINT_TYPE& id);
+     pop(NATIVE_INT_TYPE& value, NATIVE_UINT_TYPE& id);
     //! \brief Is the heap full?
     //!
     //! Has the heap reach max size. No new items can be put on the
     //! heap if this function returns true.
     //!
-    bool isFull();
+     isFull();
     //! \brief Is the heap empty?
     //!
     //! Is the heap empty? No item can be popped from the heap if
     //! this function returns true.
     //!
-    bool isEmpty();
+     isEmpty();
     //! \brief Get the current number of elements on the heap.
     //!
     //! This function returns the current number of items on the
@@ -86,14 +86,14 @@ namespace Os {
     //!
     //! This function here is for debugging purposes.
     //!
-    void print();
-  
-    private:
+     print();
+
+    :
     // Private functions:
     // Ensure the heap meets the heap property:
-    void heapify();
+     heapify();
     // Swap two elements on the heap:
-    void swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
+     swap(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
     // Return the max between two elements on the heap:
     NATIVE_UINT_TYPE max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b);
 
@@ -113,4 +113,4 @@ namespace Os {
 
 }
 
-#endif // OS_PTHREADS_MAX_HEAP_HPP
+#   // OS_PTHREADS_MAX_HEAP_HPP
