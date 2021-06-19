@@ -4,7 +4,7 @@
 # The F prime base image is an Ubuntu 18.04 image with some basic packages installed to ensure that
 # the build tools and needed packages are installed. It also sets-up a virtual environment into
 # which the python packages can be installed. This step, however; is deferred to the next layer
-# of containers. It ensures the fprime virtual environment is writable by members in the fprime
+#  containers. It ensures the fprime virtual environment is writable by members in the fprime
 # group, and owned by an fprime user.
 #
 # Note: the RPI toolchain is also installed to ensure that the RPI package is ready-to-go.
@@ -49,7 +49,7 @@
 ####
 # F Prime CI Image:   **** Must Be Last Image In File ****
 #
-# This sets up an image use within a CI build system. This is currently configured the
+# This sets up an image use a CI build system. This is currently configured the
 # Jenkins CI system. This means a Jenkins user is created, setup and ready to run.
 #
 # This is the last image the file because the Jenkins server used by F prime does not expose
