@@ -143,10 +143,11 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
 
         return arg_list
 
-    def _get_args_array_string(self, obj):
+    def _get_args_proto_string_scalar_init(self, obj):
         """
         Return a string of (type, name) args, comma separated
-        for use in templates that generate prototypes.
+        for use in templates that generate prototypes where the array 
+        arguments are represented by single element values.
         """
         arg_str = ""
         contains_array = False
@@ -292,7 +293,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args_string = self._get_args_string(obj)
         c.args_mstring = self._get_args_string(obj, "src.m_")
         c.args_mstring_ptr = self._get_args_string(obj, "src->m_")
-        c.args_array_string = self._get_args_array_string(obj)
+        c.args_scalar_array_string = self._get_args_proto_string_scalar_init(obj)
         c.members = self._get_conv_mem_list(obj)
         self._writeTmpl(c, "publicVisit")
 
@@ -319,3 +320,4 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = obj.get_namespace().split("::")
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
+        

@@ -105,11 +105,12 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = arg_str.strip(", ")
         return arg_str
 
-    def _get_args_array_string(self, obj):
+    def _get_args_string_scalar_init(self, obj):
         """
         Return a string of (type, name) args, comma separated
-        with a single element type for arrays
-        for use in templates that generate prototypes.
+        where array arguments are represented by single element
+        values for use in templates that generate prototypes. 
+        If no arguments are arrays, function returns None.
         """
         arg_str = ""
         contains_array = False
@@ -308,7 +309,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         c = publicSerialH.publicSerialH()
         c.name = obj.get_name()
         c.args_proto = self._get_args_string(obj)
-        c.args_array = self._get_args_array_string(obj)
+        c.args_proto_scalar_init = self._get_args_string_scalar_init(obj)
         c.members = self._get_conv_mem_list(obj)
         self._writeTmpl(c, "publicVisit")
 

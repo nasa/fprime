@@ -29,8 +29,8 @@ public:
     ${name}(const ${name}* src); //!< pointer copy constructor
     ${name}(const ${name}& src); //!< reference copy constructor
     ${name}($args_proto); //!< constructor with arguments
-#if $args_array:
-    ${name}($args_array);
+#if $args_proto_scalar_init:
+    ${name}($args_proto_scalar_init); //!< constructor with arguments with scalars for array arguments
 #end if
     const ${name}& operator=(const ${name}& src); //!< equal operator
     bool operator==(const ${name}& src) const; //!< equality operator
