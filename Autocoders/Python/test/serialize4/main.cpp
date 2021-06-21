@@ -4,23 +4,17 @@
 
 using namespace std;
 
-TEST(EnumXML, DefaultValues) {
+TEST(Serialize4, ArrayScalarInit) {
 
-    Example::Serial1 serial1;
+    Example::Serial1 serial1 (0,"hello world",Example::SomeEnum::MEM2,2);
 
-    // Check serializable default values are correctly set
-    ASSERT_EQ(serial1.getMember1(), 12345);
-    ASSERT_EQ(serial1.getMember2(), "hello");
-    ASSERT_EQ(serial1.getMember3(), Example::MEM2);
 
-}
-
-TEST(EnumXML, ArrayScalarInit) {
-
-    Example::Serial1 serial1 (0,0,Example::Enum1::Item2,0);
-
-    // Check serializable default values are correctly set
-    ASSERT_EQ(serial1.getMember4(), 12345);
+    //Check serializable array member values are correctly set
+    NATIVE_INT_TYPE size;
+    const U32* serialMember4 = serial1.getMember4(size);
+    for (NATIVE_INT_TYPE _mem = 0; _mem < size; _mem++) {
+        ASSERT_EQ(serialMember4[0], 2);
+    }
 }
 
 int main(int argc, char* argv[]) {
