@@ -3,10 +3,14 @@ module Svc {
   @ A component for storing telemetry
   active component TlmChan {
 
-    @ Telemetry input port
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
+    @ Mutexed telemetry input port
     guarded input port TlmRecv: Fw.Tlm
 
-    @ Telemetry input port
+    @ Mutexed telemetry input port
     guarded input port TlmGet: Fw.Tlm
 
     @ Run port for starting packet send cycle
