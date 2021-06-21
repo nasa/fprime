@@ -147,7 +147,8 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes where the array 
-        arguments are represented by single element values.
+        arguments are represented by single element values. If no arguments
+        are arrays, function returns None.
         """
         arg_str = ""
         contains_array = False
@@ -320,4 +321,3 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             c.namespace_list = obj.get_namespace().split("::")
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
-        
