@@ -10,6 +10,9 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/HealthComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/HealthComponentImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Stub/HealthComponentStubChecks.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../../Fw/Types/EnabledEnumAi.xml"
+
+
 )
 
 register_fprime_module()
