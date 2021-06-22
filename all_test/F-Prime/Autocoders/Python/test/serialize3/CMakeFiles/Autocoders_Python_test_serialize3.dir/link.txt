@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_serialize3.a CMakeFiles/Autocoders_Python_test_serialize3.dir/AlltypesSerializableAc.o CMakeFiles/Autocoders_Python_test_serialize3.dir/InttypeSerializableAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_serialize3.a

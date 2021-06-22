@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_time_get.a CMakeFiles/Autocoders_Python_test_time_get.dir/TestTimeGetImpl.o CMakeFiles/Autocoders_Python_test_time_get.dir/TimeGetComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_time_get.a

@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_command_res.a CMakeFiles/Autocoders_Python_test_command_res.dir/Test1ComponentImpl.o CMakeFiles/Autocoders_Python_test_command_res.dir/Test1ComponentAc.o CMakeFiles/Autocoders_Python_test_command_res.dir/Test2PortAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_command_res.a

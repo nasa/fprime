@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_Cycle.a CMakeFiles/Svc_Cycle.dir/TimerVal.o CMakeFiles/Svc_Cycle.dir/CyclePortAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_Cycle.a

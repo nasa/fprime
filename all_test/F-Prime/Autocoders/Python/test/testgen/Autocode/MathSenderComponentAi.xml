@@ -1,0 +1,104 @@
+<component name="MathSender" kind="active" namespace="Ref">
+    <import_port_type>Autocoders/Python/test/testgen/MathOpPortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/testgen/MathResultPortAi.xml</import_port_type>
+    <comment>Component sending a math operation</comment>
+    <ports>
+        <port name="mathOut" data_type="Ref::MathOp" kind="output">
+            <comment>
+            Port for sending the math operation
+            </comment>
+        </port>
+        <port name="mathIn" data_type="Ref::MathResult" kind="async_input">
+            <comment>
+            Port for returning the math result
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="MS_DO_MATH">
+            <comment>
+            Do a math operation
+            </comment>
+            <args>
+                <arg name="val1" type="F32">
+                    <comment>The first value</comment>
+                </arg>          
+                <arg name="val2" type="F32">
+                    <comment>The second value</comment>
+                </arg>          
+                <arg name="operation" type="ENUM">
+                    <enum name="MathOp">
+                        <item name="ADD"/>
+                        <item name="SUBTRACT"/>
+                        <item name="MULTIPLY"/>           
+                        <item name="DIVIDE"/>           
+                    </enum>
+                    <comment>The operation to perform</comment>
+                </arg>
+             </args>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="MS_VAL1" data_type="F32">
+            <comment>
+            The first value
+            </comment>
+        </channel>
+        <channel id="1" name="MS_VAL2" data_type="F32">
+            <comment>
+            The second value
+            </comment>
+        </channel>
+        <channel id="2" name="MS_OP" data_type="ENUM">
+            <enum name="MathOpTlm">
+                <item name="ADD_TLM"/>
+                <item name="SUB_TLM"/>
+                <item name="MULT_TLM"/>           
+                <item name="DIV_TLM"/>           
+            </enum>
+            <comment>
+            The operation
+            </comment>
+        </channel>
+        <channel id="3" name="MS_RES" data_type="F32">
+            <comment>
+            The result
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %f %d"  >
+            <comment>
+            Math command received
+            </comment>
+            <args>
+                <arg name="val1" type="F32">
+                    <comment>The val1 argument</comment>
+                </arg>          
+                <arg name="val2" type="F32">
+                    <comment>The val2 argument</comment>
+                </arg>          
+                <arg name="op" type="ENUM">
+                    <comment>The requested operation</comment>
+	                <enum name="MathOpEv">
+	                    <item name="ADD_EV"/>
+	                    <item name="SUB_EV"/>
+	                    <item name="MULT_EV"/>           
+	                    <item name="DIV_EV"/>           
+	                </enum>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="MS_RESULT" severity="ACTIVITY_HI" format_string = "Math result is %f" >
+            <comment>
+            Received math result
+            </comment>
+            <args>
+                <arg name="result" type="F32">
+                    <comment>The math result</comment>
+                </arg>          
+            </args>
+        </event>
+    </events>
+</component>
+

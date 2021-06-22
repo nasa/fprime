@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_Ip.a CMakeFiles/Drv_Ip.dir/IpSocket.o CMakeFiles/Drv_Ip.dir/TcpClientSocket.o CMakeFiles/Drv_Ip.dir/TcpServerSocket.o CMakeFiles/Drv_Ip.dir/UdpSocket.o CMakeFiles/Drv_Ip.dir/SocketReadTask.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_Ip.a

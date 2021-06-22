@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_GenericRepeater.a CMakeFiles/Svc_GenericRepeater.dir/GenericRepeaterComponentImpl.o CMakeFiles/Svc_GenericRepeater.dir/GenericRepeaterComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_GenericRepeater.a

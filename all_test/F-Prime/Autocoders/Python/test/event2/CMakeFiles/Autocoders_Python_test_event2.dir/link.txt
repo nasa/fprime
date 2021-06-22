@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../../../lib/Darwin/libAutocoders_Python_test_event2.a CMakeFiles/Autocoders_Python_test_event2.dir/TestComponentAc.o CMakeFiles/Autocoders_Python_test_event2.dir/TestPortAc.o CMakeFiles/Autocoders_Python_test_event2.dir/QuaternionSerializableAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../../../lib/Darwin/libAutocoders_Python_test_event2.a

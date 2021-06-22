@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_Udp.a CMakeFiles/Drv_Udp.dir/UdpComponentImpl.o CMakeFiles/Drv_Udp.dir/ByteStreamDriverComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_Udp.a

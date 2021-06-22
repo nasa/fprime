@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libSvc_BufferManager.a CMakeFiles/Svc_BufferManager.dir/BufferManagerComponentImpl.o CMakeFiles/Svc_BufferManager.dir/BufferManagerComponentAc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libSvc_BufferManager.a

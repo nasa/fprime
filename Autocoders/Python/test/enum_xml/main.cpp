@@ -190,7 +190,7 @@ TEST(EnumXML, OK) {
     // Check that enum are set to uninitialized value
     ASSERT_EQ(enum4.e, 0);
 
-    // Check that the enum representation types are set correctly
+    // Check that the enum serializable types are set correctly
     ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
     ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
     ASSERT_EQ(Example::Enum3::SERIALIZED_SIZE, sizeof(U8));
