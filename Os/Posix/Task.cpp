@@ -121,7 +121,9 @@ namespace Os {
         }
 
         pthread_t* tid = new pthread_t;
-        this->m_routineWrapper = {.routine = routine, .arg = arg};
+        this->m_routineWrapper.routine = routine;
+        this->m_routineWrapper.arg = arg;
+
         stat = pthread_create(tid,&att,pthread_entry_wrapper,&this->m_routineWrapper);
 
         switch (stat) {
