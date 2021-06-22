@@ -2,32 +2,60 @@ module Svc {
 
   active component FileManager {
 
-    @ FPP from XML: original path was Svc/FileManager/Commands.xml
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
     include "Commands.fppi"
 
-    @ FPP from XML: original path was Svc/FileManager/Telemetry.xml
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
     include "Telemetry.fppi"
 
-    @ FPP from XML: original path was Svc/FileManager/Events.xml
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
     include "Events.fppi"
 
-    command recv port cmdIn
+    # ----------------------------------------------------------------------
+    # General Ports
+    # ----------------------------------------------------------------------
 
-    command reg port cmdRegOut
-
-    command resp port cmdResponseOut
-
-    event port eventOut
-
-    time get port timeCaller
-
-    telemetry port tlmOut
-
+    @ Ping input port
     async input port pingIn: [1] Svc.Ping
 
+    @ Ping output port
     output port pingOut: [1] Svc.Ping
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+    
+    @ Command receive port
+    command recv port cmdIn
+
+    @ Command Registration port
+    command reg port cmdRegOut
+
+    @ Command response port
+    command resp port cmdResponseOut
+
+    @ Log event port
+    event port eventOut
+
+    @ Log text event port
     text event port LogText
+
+    @ Time get port
+    time get port timeCaller
+    
+    @ Telemtry port
+    telemetry port tlmOut
+
+    
 
   }
 

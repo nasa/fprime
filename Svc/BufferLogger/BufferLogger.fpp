@@ -2,39 +2,57 @@ module Svc {
 
   active component BufferLogger {
 
-    @ FPP from XML: original path was Svc/BufferLogger/Commands.xml
+    
     include "Commands.fppi"
-
-    @ FPP from XML: original path was Svc/BufferLogger/Events.xml
+    
     include "Events.fppi"
-
-    @ FPP from XML: original path was Svc/BufferLogger/Telemetry.xml
+    
     include "Telemetry.fppi"
 
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
+
+    @ Buffer input port
     async input port bufferSendIn: [1] Fw.BufferSend
 
+    @ Buffer output port
     output port bufferSendOut: [1] Fw.BufferSend
 
-    command recv port cmdIn
-
-    command reg port cmdRegOut
-
-    command resp port cmdResponseOut
-
+    @ Packet input port
     async input port comIn: [1] Fw.Com
-
-    event port eventOut
-
-    text event port eventOutText
-
+    
+    @ Ping input port
     async input port pingIn: [1] Svc.Ping
 
+    @ Ping output port
     output port pingOut: [1] Svc.Ping
-
-    time get port timeCaller
 
     async input port schedIn: [1] Svc.Sched
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
+    @ Port for receiving commands
+    command recv port cmdIn
+
+    @ Port for sending command registration requests
+    command reg port cmdRegOut
+
+    @ Port for sending command respo
+    command resp port cmdResponseOut
+
+    @ Port for emitting events
+    event port eventOut
+
+    @ Port for emitting text events
+    text event port eventOutText
+
+    @ Port for getting the time
+    time get port timeCaller
+
+    @ Port for emitting telemtry
     telemetry port tlmOut
 
   }

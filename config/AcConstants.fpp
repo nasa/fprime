@@ -21,6 +21,12 @@ constant GenericRepeaterOutputPorts = 2
 @ Number of static memory allocations
 constant StaticMemoryAllocations = 4  
 
+@ Used to ping active components
+constant HealthPingPorts = 25
+
+@ Used for broadcasting completed file downlinks
+constant FileDownCompletePorts = 1
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------

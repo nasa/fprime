@@ -22,4 +22,10 @@ module Fw {
     TYPE_MISMATCH = 6 @< Deserialized type ID didn't match
   }
 
+  @ Enabled and disabled states
+  enum Enabled {
+    DISABLED @< Disabled state
+    ENABLED @< Enabled state
+  }
+
 }

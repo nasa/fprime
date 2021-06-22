@@ -207,7 +207,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::SEQ_READ_HEADER_SIZE,
           Os::FileSystem::OP_OK
       );
       // Assert telemetry
@@ -302,7 +302,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -326,7 +326,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -344,7 +344,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::SEQ_READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
