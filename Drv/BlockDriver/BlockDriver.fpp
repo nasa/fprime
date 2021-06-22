@@ -10,13 +10,13 @@ module Drv {
     async input port Sched: [1] Svc.Sched
 
     @ The input data buffer port
-    async input port BufferIn: [1] DataBuffer
+    async input port BufferIn: [1] Drv.DataBuffer
 
     @ The cycle outputs. Meant to be connected to rate group driver
-    output port CycleOut: [1] Cycle
+    output port CycleOut: [1] Svc.Cycle
 
     @ The output data buffer port
-    output port BufferOut: [1] DataBuffer
+    output port BufferOut: [1] Drv.DataBuffer
 
     @ Input ping port
     async input port PingIn: [1] Svc.Ping
