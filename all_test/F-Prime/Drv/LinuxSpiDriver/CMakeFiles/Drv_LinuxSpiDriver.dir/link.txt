@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libDrv_LinuxSpiDriver.a CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentImplCommon.o CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentImplStub.o CMakeFiles/Drv_LinuxSpiDriver.dir/LinuxSpiDriverComponentAc.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libDrv_LinuxSpiDriver.a

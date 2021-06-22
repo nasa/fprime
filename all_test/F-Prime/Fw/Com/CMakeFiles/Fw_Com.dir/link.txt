@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../../lib/Darwin/libFw_Com.a CMakeFiles/Fw_Com.dir/ComPacket.o CMakeFiles/Fw_Com.dir/ComBuffer.o CMakeFiles/Fw_Com.dir/ComPortAc.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../../lib/Darwin/libFw_Com.a
