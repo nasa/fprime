@@ -13,7 +13,7 @@ TEST(Serialize4, ArrayScalarInit) {
     NATIVE_INT_TYPE size;
     const U32* serialMember4 = serial1.getMember4(size);
     for (NATIVE_INT_TYPE _mem = 0; _mem < size; _mem++) {
-        ASSERT_EQ(serialMember4[0], 2);
+        ASSERT_EQ(serialMember4[_mem], 2);
     }
 }
 
