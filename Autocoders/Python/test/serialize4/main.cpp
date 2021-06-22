@@ -4,7 +4,7 @@
 
 using namespace std;
 
-TEST(EnumXML, OK) {
+TEST(DefaultValues, OK) {
 
     Example::Serial1 serial1;
 
