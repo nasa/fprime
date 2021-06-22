@@ -121,10 +121,10 @@ types, in port arguments, in telemetry channels, and in event arguments.
 
 As an example, you can create a file `SwitchStateEnumAi.xml` that specifies an
 XML enumeration type `SwitchState`
-with enumerated constants `OFF` and `ON`, like this:
+with enumerated constants `OFF` and `ON` and set to `OFF` by default, like this:
 
 ```xml
-<enum name="SwitchState">
+<enum name="SwitchState" default="OFF">
   <item name="OFF" value="0"/>
   <item name="ON" value="1"/>
 </enum>
