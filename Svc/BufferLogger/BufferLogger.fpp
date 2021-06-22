@@ -40,7 +40,7 @@ module Svc {
     @ Port for sending command registration requests
     command reg port cmdRegOut
 
-    @ Port for sending command respo
+    @ Port for sending command response
     command resp port cmdResponseOut
 
     @ Port for emitting events
@@ -52,7 +52,7 @@ module Svc {
     @ Port for getting the time
     time get port timeCaller
 
-    @ Port for emitting telemtry
+    @ Port for emitting telemetry
     telemetry port tlmOut
 
   }
