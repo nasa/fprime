@@ -3,17 +3,24 @@ module Svc {
   @ A component for turning FW_ASSERTs into FATALs
   passive component AssertFatalAdapter {
 
-    @ FPP from XML: original path was Svc/AssertFatalAdapter/AssertFatalEvents.xml
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
     include "AssertFatalEvents.fppi"
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
     @ Port for emitting events
-    event port eventOut
+    event port Log
 
     @ Port for emitting text events
-    text event port textEventOut
+    text event port LogText
 
     @ Port for getting the time
-    time get port timeGetOut
+    time get port Time
 
   }
 
