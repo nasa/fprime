@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"_svc_com_splitter_component.html#autotoc_md1663":[114,0,0],
 "_svc_deframer.html":[115],
 "_svc_deframer.html#autotoc_md1664":[115,0],
 "_svc_deframer.html#autotoc_md1665":[115,0,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "_svc_sched_port.html#autotoc_md1873":[5,23,0,1],
 "_svc_sched_port.html#autotoc_md1874":[5,23,0,1,0],
 "_svc_sched_port.html#autotoc_md1875":[5,23,0,1,0,0],
-"_svc_sched_port.html#autotoc_md1876":[5,23,0,1,0,1],
-"_svc_sched_port.html#autotoc_md1877":[5,23,0,2]
+"_svc_sched_port.html#autotoc_md1876":[5,23,0,1,0,1]
 };

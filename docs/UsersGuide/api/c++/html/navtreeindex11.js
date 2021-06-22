@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"autotoc_md724.html#autotoc_md777":[63,1,3,1,1],
 "autotoc_md724.html#autotoc_md782":[63,2],
 "autotoc_md724.html#autotoc_md783":[63,2,0],
 "autotoc_md724.html#autotoc_md784":[63,2,0,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX11 =
 "class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151":[122,0,1,0,0],
 "class_drv_1_1_block_driver_impl.html#a7114aa31c8fa06f120d5d33a1fc1c4c6":[122,0,1,0,2],
 "class_drv_1_1_data_buffer.html":[122,0,1,1],
-"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5":[122,0,1,1,4],
-"class_drv_1_1_data_buffer.html#a42ff4a4453fba3e91653ac6a71fa4af1":[122,0,1,1,3]
+"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5":[122,0,1,1,4]
 };
