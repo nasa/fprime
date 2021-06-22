@@ -2,7 +2,11 @@
 
 ${name}::${name}(void): Serializable() {
 #for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $default != None:
+#if $default != None and $size != None and $typeinfo != "string":
+    for (NATIVE_INT_TYPE _mem = 0; _mem < ${size}; _mem++) {
+        this->m_${member}[_mem] = ${default};
+    }
+#else if $default != None:
     this->m_${member} = ${default};
 #end if
 #end for
