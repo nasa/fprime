@@ -25,10 +25,10 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
     # Special ports 
@@ -37,25 +37,23 @@ module Svc {
     @ Command receive port
     command recv port cmdIn
 
-    @ Command Registration port
+    @ Command registration port
     command reg port cmdRegOut
 
     @ Command response port
     command resp port cmdResponseOut
 
-    @ Log event port
+    @ Event port
     event port eventOut
 
-    @ Log text event port
+    @ Text event port
     text event port LogText
 
     @ Time get port
     time get port timeCaller
     
-    @ Telemtry port
+    @ Telemetry port
     telemetry port tlmOut
-
-    
 
   }
 
