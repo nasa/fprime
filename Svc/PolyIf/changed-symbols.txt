@@ -1,0 +1,11 @@
+Old Symbol
+New Symbol
+
+Svc::MEASUREMENT_OK
+Svc::MeasurementStatus::OK
+
+Svc::MEASUREMENT_FAILURE
+Svc::MeasurementStatus::FAILURE
+
+Svc::MEASUREMENT_STALE
+Svc::MeasurementStatus::STALE
