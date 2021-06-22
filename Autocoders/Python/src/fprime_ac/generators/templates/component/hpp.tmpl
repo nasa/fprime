@@ -817,7 +817,7 @@ $emit_non_port_params(8, $params)
     #if $type == "string":
       #set $tlm_type = "Fw::TlmString&"
     #else if $typeinfo == "user"
-      #set $tlm_type = $type + "&"
+      #set $tlm_type = "const " + $type + "&"
     #else
       #set $tlm_type = $type
     #end if

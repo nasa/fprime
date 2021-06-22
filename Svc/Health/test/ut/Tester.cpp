@@ -14,8 +14,11 @@
 #include <Fw/Test/UnitTest.hpp>
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 2000
+#define MAX_HISTORY_SIZE (Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS)
 #define QUEUE_DEPTH (Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2)
+#define FLAG_KEY_VALUE 0xcafecafe
+
+FW_STATIC_ASSERT(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS < 0xcafecafe);
 
 namespace Svc {
 
@@ -642,7 +645,7 @@ namespace Svc {
 
       //send a bad ping return key
       this->override = true;
-      this->override_key = 50;
+      this->override_key = FLAG_KEY_VALUE;
 
       //invoke schedIn
       this->invoke_to_Run(0,0);
@@ -654,7 +657,7 @@ namespace Svc {
       for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           sprintf(name,"task%d",port);
-          ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,50);
+          ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,FLAG_KEY_VALUE);
       }
 
       this->clearEvents();
