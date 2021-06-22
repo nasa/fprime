@@ -4,7 +4,7 @@ var searchData=
   ['activeloggerimpl',['ActiveLoggerImpl',['../class_svc_1_1_active_logger_impl.html#a05ef1edae708c6f1ea8eba34b31c2b91',1,'Svc::ActiveLoggerImpl']]],
   ['activerategroupimpl',['ActiveRateGroupImpl',['../class_svc_1_1_active_rate_group_impl.html#aaf6727e76cba47ebef702f9c87ef318d',1,'Svc::ActiveRateGroupImpl']]],
   ['activetextloggercomponentimpl',['ActiveTextLoggerComponentImpl',['../class_svc_1_1_active_text_logger_component_impl.html#a7e93b881fae8ab1fe782794cbce93e30',1,'Svc::ActiveTextLoggerComponentImpl']]],
-  ['add',['add',['../class_fw_1_1_time.html#ad1ae370d5aeb1b1d14db8da9eed6b23e',1,'Fw::Time::add(Time &amp;a, Time &amp;b)'],['../class_fw_1_1_time.html#ad179a41d6d7c2e9111b6df9c9b4a600c',1,'Fw::Time::add(U32 seconds, U32 mseconds)']]],
+  ['add',['add',['../class_fw_1_1_time.html#a04bb5855a5c1a2ea0253f43eb0cc0cc3',1,'Fw::Time::add(const Time &amp;a, const Time &amp;b)'],['../class_fw_1_1_time.html#ad179a41d6d7c2e9111b6df9c9b4a600c',1,'Fw::Time::add(U32 seconds, U32 mseconds)']]],
   ['addfileextension',['addFileExtension',['../class_utils_1_1_hash.html#a12acc9e3174d1647c616fb0a499064cd',1,'Utils::Hash']]],
   ['addresstoip4',['addressToIp4',['../class_drv_1_1_ip_socket.html#ab660a3c4894811cf0a26cd1668f5c22e',1,'Drv::IpSocket']]],
   ['addtask',['addTask',['../class_os_1_1_task_runner.html#ad60a47b2efea520cc896712c1ade8276',1,'Os::TaskRunner::addTask()'],['../class_os_1_1_task_registry.html#a893ae3a10ab658f37e58de24428c4e19',1,'Os::TaskRegistry::addTask()']]],
