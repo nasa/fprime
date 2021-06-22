@@ -1,6 +1,6 @@
 module Svc {
 
-  @ A component for dispatching commands
+  @ A component for storing parameters
   active component PrmDb {
 
     # ----------------------------------------------------------------------
@@ -40,9 +40,6 @@ module Svc {
 
     @ Time get port
     time get port Time
-
-    @ Telemetry port
-    telemetry port Tlm
 
     # ----------------------------------------------------------------------
     # Commands
