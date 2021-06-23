@@ -412,7 +412,9 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
             topology_dict.attrib["framework_version"] = get_fprime_version()
 
-            top_dict_gen = TopDictGenerator.TopDictGenerator(parsed_xml_dict, PRINT.debug)
+            top_dict_gen = TopDictGenerator.TopDictGenerator(
+                parsed_xml_dict, PRINT.debug
+            )
             for comp in the_parsed_topology_xml.get_instances():
                 comp_type = comp.get_type()
                 comp_name = comp.get_name()
@@ -1267,7 +1269,9 @@ def main():
             the_parsed_component_xml = XmlComponentParser.XmlComponentParser(
                 xml_filename
             )
-            generate_component(the_parsed_component_xml, os.path.basename(xml_filename), opt)
+            generate_component(
+                the_parsed_component_xml, os.path.basename(xml_filename), opt
+            )
             dependency_parser = the_parsed_component_xml
         elif xml_type == "interface":
             DEBUG.info("Detected Port type XML so Generating Port type C++ Files...")
@@ -1286,7 +1290,9 @@ def main():
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
             print("Found assembly or deployment named: %s\n" % DEPLOYMENT)
-            generate_topology(the_parsed_topology_xml, os.path.basename(xml_filename), opt)
+            generate_topology(
+                the_parsed_topology_xml, os.path.basename(xml_filename), opt
+            )
             dependency_parser = the_parsed_topology_xml
         elif xml_type == "enum":
             DEBUG.info("Detected Enum XML so Generating hpp, cpp, and py files...")
