@@ -8,6 +8,7 @@ ignore$
 /doc/xml/
 /third-party/
 \.min\.
+\.auk$
 \.bak$
 \.bin$
 \.dat$
