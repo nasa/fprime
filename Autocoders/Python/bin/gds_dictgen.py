@@ -132,7 +132,9 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
     topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
     topology_dict.attrib["framework_version"] = get_fprime_version()
 
-    top_dict_gen = TopDictGenerator.TopDictGenerator(parsed_xml_dict, print if VERBOSE else lambda _: None)
+    top_dict_gen = TopDictGenerator.TopDictGenerator(
+        parsed_xml_dict, print if VERBOSE else lambda _: None
+    )
     for comp in the_parsed_topology_xml.get_instances():
         comp_type = comp.get_type()
         comp_name = comp.get_name()
