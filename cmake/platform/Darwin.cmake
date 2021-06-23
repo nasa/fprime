@@ -6,18 +6,18 @@
 ####
 add_definitions(-DTGT_OS_TYPE_DARWIN)
 
-set(FPRIME_USE_POSIX ON)
+set(FPRIME_USE_POSIX )
 # Set platform default for stubbed drivers
-if (NOT DEFINED FPRIME_USE_STUBBED_DRIVERS)
-   set(FPRIME_USE_STUBBED_DRIVERS ON)
-endif()
+ ( FPRIME_USE_STUBBED_DRIVERS)
+   set(FPRIME_USE_STUBBED_DRIVERS )
+()
 
 # Set platform default for baremetal scheduler drivers
-if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
-   set(FPRIME_USE_BAREMETAL_SCHEDULER OFF)
+ ( FPRIME_USE_BAREMETAL_SCHEDULER)
+   set(FPRIME_USE_BAREMETAL_SCHEDULER )
    message(STATUS "Requiring thread library")
-   FIND_PACKAGE ( Threads REQUIRED )
-endif()
+   FIND_PACKAGE ( Threads )
+()
 
-# Add linux include path which is compatible with Darwin for StandardTypes.hpp
-include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+# Add linux include path which is compatible Darwin StandardTypes.hpp
+(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
