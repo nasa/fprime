@@ -1,80 +1,69 @@
-old symbol
-new symbol
+Old Symbol
+New Symbol
 
-Svc::PrmWriteError::PRM_WRITE_OPEN
+Svc::PrmDbComponentBase::PrmWriteError
+Svc::PrmDb_PrmWriteError
+
+Svc::PrmDbComponentBase::PRM_WRITE_OPEN
 Svc::PrmDb_PrmWriteError::PRM_WRITE_OPEN
 
-Svc::PrmWriteError::PRM_WRITE_DELIMITER
+Svc::PrmDbComponentBase::PRM_WRITE_DELIMITER
 Svc::PrmDb_PrmWriteError::PRM_WRITE_DELIMITER
 
-Svc::PrmWriteError::PRM_WRITE_DELIMITER_SIZE
+Svc::PrmDbComponentBase::PRM_WRITE_DELIMITER_SIZE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_DELIMITER_SIZE
 
-Svc::PrmWriteError::PRM_WRITE_RECORD_SIZE
+Svc::PrmDbComponentBase::PRM_WRITE_RECORD_SIZE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_RECORD_SIZE
 
-Svc::PrmWriteError::PRM_WRITE_RECORD_SIZE_SIZE
+Svc::PrmDbComponentBase::PRM_WRITE_RECORD_SIZE_SIZE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_RECORD_SIZE_SIZE
 
-
-Svc::PrmWriteError::PRM_WRITE_PARAMETER_ID
+Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_ID
 Svc::PrmDb_PrmWriteError::PRM_WRITE_PARAMETER_ID
 
-
-Svc::PrmWriteError::PRM_WRITE_PARAMETER_ID_SIZE
+Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_ID_SIZE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_PARAMETER_ID_SIZE
 
-
-Svc::PrmWriteError::PRM_WRITE_PARAMETER_VALUE
+Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_VALUE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_PARAMETER_VALUE
 
-
-Svc::PrmWriteError::PRM_WRITE_PARAMETER_VALUE_SIZE
+Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_VALUE_SIZE
 Svc::PrmDb_PrmWriteError::PRM_WRITE_VALUE_SIZE
 
+Svc::PrmDbComponentBase::PrmReadError
+Svc::PrmDb_PrmReadError
 
-Svc::PrmReadError::PRM_READ_OPEN
+Svc::PrmDbComponentBase::PRM_READ_OPEN
 Svc::PrmDb_PrmReadError::PRM_READ_OPEN
 
-Svc::PrmReadError::PRM_READ_DELIMITER
+Svc::PrmDbComponentBase::PRM_READ_DELIMITER
 Svc::PrmDb_PrmReadError::PRM_READ_DELIMITER
 
-
-Svc::PrmReadError::PRM_READ_DELIMITER_SIZE
+Svc::PrmDbComponentBase::PRM_READ_DELIMITER_SIZE
 Svc::PrmDb_PrmReadError::PRM_READ_DELIMITER_SIZE
 
-
-Svc::PrmReadError::PRM_READ_DELIMITER_VALUE
+Svc::PrmDbComponentBase::PRM_READ_DELIMITER_VALUE
 Svc::PrmDb_PrmReadError::PRM_READ_DELIMITER_VALUE
 
-
-Svc::PrmReadError::PRM_READ_RECORD_SIZE
+Svc::PrmDbComponentBase::PRM_READ_RECORD_SIZE
 Svc::PrmDb_PrmReadError::PRM_READ_RECORD_SIZE
 
-
-Svc::PrmReadError::PRM_READ_RECORD_SIZE_SIZE
+Svc::PrmDbComponentBase::PRM_READ_RECORD_SIZE_SIZE
 Svc::PrmDb_PrmReadError::PRM_READ_RECORD_SIZE_SIZE
 
-
-Svc::PrmReadError::PRM_READ_RECORD_SIZE_VALUE
+Svc::PrmDbComponentBase::PRM_READ_RECORD_SIZE_VALUE
 Svc::PrmDb_PrmReadError::PRM_READ_RECORD_SIZE_VALUE
 
-
-Svc::PrmReadError::PRM_READ_PARAMETER_ID
+Svc::PrmDbComponentBase::PRM_READ_PARAMETER_ID
 Svc::PrmDb_PrmReadError::PRM_READ_PARAMETER_ID
 
-
-Svc::PrmReadError::PRM_READ_PARAMETER_ID_SIZE
+Svc::PrmDbComponentBase::PRM_READ_PARAMETER_ID_SIZE
 Svc::PrmDb_PrmReadError::PRM_READ_PARAMETER_ID_SIZE
 
-
-Svc::PrmReadError::PRM_READ_PARAMETER_VALUE
+Svc::PrmDbComponentBase::PRM_READ_PARAMETER_VALUE
 Svc::PrmDb_PrmReadError::PRM_READ_PARAMETER_VALUE
 
-
-Svc::PrmReadError::PRM_READ_PARAMETER_VALUE_SIZE
+Svc::PrmDbComponentBase::PRM_READ_PARAMETER_VALUE_SIZE
 Svc::PrmDb_PrmReadError::PRM_READ_PARAMETER_VALUE_SIZE
-
-
-
 
