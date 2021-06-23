@@ -4,6 +4,38 @@ module Svc {
   active component PrmDb {
 
     # ----------------------------------------------------------------------
+    # Types 
+    # ----------------------------------------------------------------------
+  
+    @ Parameter read error
+    enum PrmReadError {
+      OPEN
+      DELIMITER
+      DELIMITER_SIZE
+      DELIMITER_VALUE
+      RECORD_SIZE
+      RECORD_SIZE_SIZE
+      RECORD_SIZE_VALUE
+      PARAMETER_ID
+      PARAMETER_ID_SIZE
+      PARAMETER_VALUE
+      PARAMETER_VALUE_SIZE
+    }
+
+    @ Parameter write error
+    enum PrmWriteError {
+      OPEN
+      DELIMITER
+      DELIMITER_SIZE
+      RECORD_SIZE
+      RECORD_SIZE_SIZE
+      PARAMETER_ID
+      PARAMETER_ID_SIZE
+      PARAMETER_VALUE
+      PARAMETER_VALUE_SIZE
+    }
+
+    # ----------------------------------------------------------------------
     # General ports 
     # ----------------------------------------------------------------------
 
@@ -14,10 +46,10 @@ module Svc {
     async input port setPrm: Fw.PrmSet
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
     # Special ports 
@@ -59,7 +91,7 @@ module Svc {
                        ) \
       severity warning low \
       id 0 \
-      format "Parameter ID {} not found" \
+      format "Parameter ID 0x{x} not found" \
       throttle 5
 
     @ Parameter ID updated in database
@@ -68,7 +100,7 @@ module Svc {
                       ) \
       severity activity high \
       id 1 \
-      format "Parameter ID {} updated"
+      format "Parameter ID 0x{x} updated"
 
     @ Parameter database is full
     event PrmDbFull(
@@ -76,7 +108,7 @@ module Svc {
                    ) \
       severity fatal \
       id 2 \
-      format "Parameter DB full when adding ID {} "
+      format "Parameter DB full when adding ID 0x{x} "
 
 
     @ Parameter ID added to database
@@ -85,19 +117,7 @@ module Svc {
                     ) \
       severity activity high \
       id 3 \
-      format "Parameter ID {} added"
-
-    enum PrmWriteError {
-      PRM_WRITE_OPEN = 0
-      PRM_WRITE_DELIMITER = 1
-      PRM_WRITE_DELIMITER_SIZE = 2
-      PRM_WRITE_RECORD_SIZE = 3
-      PRM_WRITE_RECORD_SIZE_SIZE = 4
-      PRM_WRITE_PARAMETER_ID = 5
-      PRM_WRITE_PARAMETER_ID_SIZE = 6
-      PRM_WRITE_PARAMETER_VALUE = 7
-      PRM_WRITE_PARAMETER_VALUE_SIZE = 8
-    }
+      format "Parameter ID 0x{x} added"
 
     @ Failed to write parameter file
     event PrmFileWriteError(
@@ -116,20 +136,6 @@ module Svc {
       severity activity high \
       id 5 \
       format "Parameter file save completed. Wrote {} records."
-
-    enum PrmReadError {
-      PRM_READ_OPEN = 0
-      PRM_READ_DELIMITER = 1
-      PRM_READ_DELIMITER_SIZE = 2
-      PRM_READ_DELIMITER_VALUE = 3
-      PRM_READ_RECORD_SIZE = 4
-      PRM_READ_RECORD_SIZE_SIZE = 5
-      PRM_READ_RECORD_SIZE_VALUE = 6
-      PRM_READ_PARAMETER_ID = 7
-      PRM_READ_PARAMETER_ID_SIZE = 8
-      PRM_READ_PARAMETER_VALUE = 9
-      PRM_READ_PARAMETER_VALUE_SIZE = 10
-    }
 
     @ Failed to read parameter file
     event PrmFileReadError(

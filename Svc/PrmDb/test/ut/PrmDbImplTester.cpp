@@ -17,8 +17,8 @@
 
 namespace Svc {
 
-    typedef PrmDb_PrmWriteError WriteError;
-    typedef PrmDb_PrmReadError ReadError;
+    typedef PrmDb_PrmWriteError PrmWriteError;
+    typedef PrmDb_PrmReadError PrmReadError;
 
     void PrmDbImplTester::runNominalPopulate(void) {
 
@@ -360,7 +360,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_OPEN,0,Os::File::DOESNT_EXIST);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::OPEN,0,Os::File::DOESNT_EXIST);
         Os::clearOpenInterceptor();
 
         // Test delimiter read error
@@ -378,7 +378,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_DELIMITER,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::DELIMITER,0,Os::File::NOT_OPENED);
         Os::clearReadInterceptor();
 
         // Test delimiter read size error
@@ -398,7 +398,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_DELIMITER_SIZE,0,sizeof(U8) + 1);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::DELIMITER_SIZE,0,sizeof(U8) + 1);
         Os::clearReadInterceptor();
 
         // Test delimiter value error
@@ -418,7 +418,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_DELIMITER_VALUE,0,0x11);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::DELIMITER_VALUE,0,0x11);
 
         Os::clearReadInterceptor();
 
@@ -437,7 +437,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_RECORD_SIZE,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::RECORD_SIZE,0,Os::File::NOT_OPENED);
 
         Os::clearReadInterceptor();
 
@@ -458,7 +458,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_RECORD_SIZE_SIZE,0,sizeof(U32)+1);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::RECORD_SIZE_SIZE,0,sizeof(U32)+1);
 
         Os::clearReadInterceptor();
 
@@ -480,7 +480,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_RECORD_SIZE_VALUE,0,FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32) + 1);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::RECORD_SIZE_VALUE,0,FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32) + 1);
 
         Os::clearReadInterceptor();
 
@@ -499,7 +499,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_PARAMETER_ID,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::PARAMETER_ID,0,Os::File::NOT_OPENED);
 
         Os::clearReadInterceptor();
 
@@ -520,7 +520,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_PARAMETER_ID_SIZE,0,sizeof(FwPrmIdType)+1);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::PARAMETER_ID_SIZE,0,sizeof(FwPrmIdType)+1);
 
         Os::clearReadInterceptor();
 
@@ -539,7 +539,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_PARAMETER_VALUE,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::PARAMETER_VALUE,0,Os::File::NOT_OPENED);
 
         Os::clearReadInterceptor();
 
@@ -560,7 +560,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileReadError_SIZE(1);
-        ASSERT_EVENTS_PrmFileReadError(0,ReadError::PRM_READ_PARAMETER_VALUE_SIZE,0,sizeof(U32)+1);
+        ASSERT_EVENTS_PrmFileReadError(0,PrmReadError::PARAMETER_VALUE_SIZE,0,sizeof(U32)+1);
 
         Os::clearReadInterceptor();
 
@@ -582,7 +582,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_OPEN,0,Os::File::DOESNT_EXIST);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::OPEN,0,Os::File::DOESNT_EXIST);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -612,7 +612,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_DELIMITER,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::DELIMITER,0,Os::File::NOT_OPENED);
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
@@ -641,7 +641,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_DELIMITER_SIZE,0,sizeof(U8)+1);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::DELIMITER_SIZE,0,sizeof(U8)+1);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -667,7 +667,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_RECORD_SIZE,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::RECORD_SIZE,0,Os::File::NOT_OPENED);
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(0,PrmDbImpl::OPCODE_PRM_SAVE_FILE,12,Fw::CmdResponse::EXECUTION_ERROR);
@@ -693,7 +693,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_RECORD_SIZE_SIZE,0,sizeof(U32)+1);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::RECORD_SIZE_SIZE,0,sizeof(U32)+1);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -718,7 +718,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_PARAMETER_ID,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::PARAMETER_ID,0,Os::File::NOT_OPENED);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -746,7 +746,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_PARAMETER_ID_SIZE,0,sizeof(FwPrmIdType)+1);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::PARAMETER_ID_SIZE,0,sizeof(FwPrmIdType)+1);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -772,7 +772,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_PARAMETER_VALUE,0,Os::File::NOT_OPENED);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::PARAMETER_VALUE,0,Os::File::NOT_OPENED);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -799,7 +799,7 @@ void PrmDbImplTester::runFileReadError(void) {
         // check for failed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
-        ASSERT_EVENTS_PrmFileWriteError(0,WriteError::PRM_WRITE_PARAMETER_VALUE_SIZE,0,sizeof(U32)+1);
+        ASSERT_EVENTS_PrmFileWriteError(0,PrmWriteError::PARAMETER_VALUE_SIZE,0,sizeof(U32)+1);
 
         // check command status
         ASSERT_CMD_RESPONSE_SIZE(1);
