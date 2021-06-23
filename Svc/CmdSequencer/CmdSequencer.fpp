@@ -4,6 +4,29 @@ module Svc {
   active component CmdSequencer {
 
     # ----------------------------------------------------------------------
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ The sequencer mode
+    enum SeqMode {
+      STEP = 0
+      AUTO = 1
+    }
+
+    @ The stage of the file read operation
+    enum FileReadStage {
+      READ_HEADER
+      READ_HEADER_SIZE
+      DESER_SIZE
+      DESER_NUM_RECORDS
+      DESER_TIME_BASE
+      DESER_TIME_CONTEXT
+      READ_SEQ_CRC
+      READ_SEQ_DATA
+      READ_SEQ_DATA_SIZE
+    }
+
+    # ----------------------------------------------------------------------
     # Special ports 
     # ----------------------------------------------------------------------
 

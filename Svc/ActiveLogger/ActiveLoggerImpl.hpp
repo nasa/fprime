@@ -30,7 +30,7 @@ namespace Svc {
             void SET_EVENT_FILTER_cmdHandler(
                     FwOpcodeType opCode,
                     U32 cmdSeq,
-                    ActiveLogger_EventLevel filterLevel,
+                    ActiveLogger_FilterSeverity filterLevel,
                     ActiveLogger_Enabled filterEnabled);
 
             void SET_ID_FILTER_cmdHandler(
@@ -55,7 +55,7 @@ namespace Svc {
             // Filter state
             struct t_filterState {
                 ActiveLogger_Enabled enabled; //<! filter is enabled
-            } m_filterState[ActiveLogger_EventLevel::NUM_CONSTANTS];
+            } m_filterState[ActiveLogger_FilterSeverity::NUM_CONSTANTS];
 
             // Working members
             Fw::LogPacket m_logPacket; //!< packet buffer for assembling log packets
