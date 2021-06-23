@@ -1,0 +1,23 @@
+Old Symbol
+New Symbol
+
+Fw::CommandResponse
+Fw::CmdResponse
+
+Fw::COMMAND_OK
+Fw::CmdResponse::OK
+
+Fw::COMMAND_INVALID_OPCODE
+Fw::CmdResponse::INVALID_OPCODE
+
+Fw::COMMAND_VALIDATION_ERROR
+Fw::CmdResponse::VALIDATION_ERROR
+
+Fw::COMMAND_FORMAT_ERROR
+Fw::CmdResponse::FORMAT_ERROR
+
+Fw::COMMAND_EXECUTION_ERROR
+Fw::CmdResponse::EXECUTION_ERROR
+
+Fw::COMMAND_BUSY
+Fw::CmdResponse::BUSY
