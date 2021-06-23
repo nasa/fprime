@@ -30,6 +30,12 @@ module Drv {
                                  ) \
       priority 1
 
+    @ Time get port
+    time get port Time
+
+    @ Telemetry port
+    telemetry port Tlm
+
   }
 
 }
