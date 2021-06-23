@@ -68,7 +68,7 @@ event CS_FileCrcFailure(
                        ) \
   severity warning high \
   id 7 \
-  format "Sequence file {} had invalid CRC. Stored {x}, Computed {x}."
+  format "Sequence file {} had invalid CRC. Stored 0x{x}, Computed 0x{x}."
 
 @ The Command Sequencer issued a command and received a success status in return.
 event CS_CommandComplete(
