@@ -22,18 +22,6 @@ event CS_FileReadError(
   id 2 \
   format "Error reading sequence file {}"
 
-enum FileReadStage {
-  SEQ_READ_HEADER = 0
-  SEQ_READ_HEADER_SIZE = 1
-  SEQ_DESER_SIZE = 2
-  SEQ_DESER_NUM_RECORDS = 3
-  SEQ_DESER_TIME_BASE = 4
-  SEQ_DESER_TIME_CONTEXT = 5
-  SEQ_READ_SEQ_CRC = 6
-  SEQ_READ_SEQ_DATA = 7
-  SEQ_READ_SEQ_DATA_SIZE = 8
-}
-
 @ The sequence file format was invalid.
 event CS_FileInvalid(
                       fileName: string size 60 @< The name of the sequence file
@@ -162,11 +150,6 @@ event CS_UnexpectedCompletion(
   severity warning high \
   id 16 \
   format "Command complete status received while no sequences active. Opcode: {}"
-
-enum SeqMode {
-  SEQ_STEP_MODE = 0
-  SEQ_AUTO_MODE = 1
-}
 
 @ Switched step mode
 event CS_ModeSwitched(
