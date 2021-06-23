@@ -6,7 +6,7 @@ event BadChecksum(
                  ) \
   severity warning high \
   id 0 \
-  format "Bad checksum value during receipt of file {}: computed {}, read {}"
+  format "Bad checksum value during receipt of file {}: computed {x}, read {x}"
 
 @ An error occurred opening a file
 event FileOpenError(
