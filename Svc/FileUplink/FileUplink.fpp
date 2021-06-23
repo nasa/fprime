@@ -3,6 +3,38 @@ module Svc {
   active component FileUplink {
 
     # ----------------------------------------------------------------------
+    # General Ports
+    # ----------------------------------------------------------------------
+
+    @ Buffer send in
+    async input port bufferSendIn: Fw.BufferSend
+
+    @ Buffer send out
+    output port bufferSendOut: Fw.BufferSend
+    
+    @ Ping in
+    async input port pingIn: Svc.Ping
+
+    @ Ping out
+    output port pingOut: Svc.Ping
+
+    # ----------------------------------------------------------------------
+    # Special Ports
+    # ----------------------------------------------------------------------
+    
+    @ Time get
+    time get port timeCaller
+    
+    @ Telemetry
+    telemetry port tlmOut
+
+    @ Event
+    event port eventOut
+
+    @ Text event
+    text event port LogText
+
+    # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
 
@@ -13,41 +45,6 @@ module Svc {
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
-
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
-
-    @ 
-    async input port bufferSendIn: [1] Fw.BufferSend
-
-    @ 
-    output port bufferSendOut: [1] Fw.BufferSend
-    
-    @ 
-    async input port pingIn: [1] Svc.Ping
-
-    @ 
-    output port pingOut: [1] Svc.Ping
-
-    # ----------------------------------------------------------------------
-    # Special Ports
-    # ----------------------------------------------------------------------
-    
-    @ 
-    time get port timeCaller
-    
-    @ 
-    telemetry port tlmOut
-
-    @ 
-    event port eventOut
-    @ 
-    text event port LogText
-
-    
-
-    
 
   }
 
