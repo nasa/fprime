@@ -1,5 +1,6 @@
 module Svc {
 
+  @ A component for uplinking files
   active component FileUplink {
 
     # ----------------------------------------------------------------------
