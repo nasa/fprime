@@ -10,7 +10,7 @@ module Svc {
     include "AssertFatalEvents.fppi"
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Port for emitting events

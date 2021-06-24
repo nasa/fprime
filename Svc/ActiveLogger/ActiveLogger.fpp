@@ -4,7 +4,7 @@ module Svc {
   active component ActiveLogger {
 
     # ----------------------------------------------------------------------
-    # Types 
+    # Types
     # ----------------------------------------------------------------------
 
     @ Severity level for event filtering
@@ -41,7 +41,7 @@ module Svc {
       drop
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Event input port
@@ -60,7 +60,7 @@ module Svc {
     output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Port for receiving commands
@@ -104,7 +104,7 @@ module Svc {
       opcode 3
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     @ Dump severity filter state
@@ -147,7 +147,7 @@ module Svc {
       severity warning low \
       id 4 \
       format "ID filter ID {} not found."
- 
+
   }
 
 }

@@ -2,7 +2,7 @@ module Svc {
 
   @ A component that provides statically allocated memory
   passive component StaticMemory {
-    
+
     @ Mutexed buffer deallocate input port
     guarded input port bufferDeallocate: [StaticMemoryAllocations] Fw.BufferSend
 

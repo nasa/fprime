@@ -12,7 +12,7 @@ module Svc {
 
     @ Buffer send out
     output port bufferSendOut: Fw.BufferSend
-    
+
     @ Ping in
     async input port pingIn: Svc.Ping
 
@@ -22,10 +22,10 @@ module Svc {
     # ----------------------------------------------------------------------
     # Special Ports
     # ----------------------------------------------------------------------
-    
+
     @ Time get
     time get port timeCaller
-    
+
     @ Telemetry
     telemetry port tlmOut
 

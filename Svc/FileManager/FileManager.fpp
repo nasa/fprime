@@ -14,9 +14,9 @@ module Svc {
     output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
-    
+
     @ Command receive port
     command recv port cmdIn
 
@@ -34,7 +34,7 @@ module Svc {
 
     @ Time get port
     time get port timeCaller
-    
+
     @ Telemetry port
     telemetry port tlmOut
 

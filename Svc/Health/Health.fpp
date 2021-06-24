@@ -4,7 +4,7 @@ module Svc {
   queued component Health {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Ping output port
@@ -20,7 +20,7 @@ module Svc {
     output port WdogStroke: Svc.WatchDog
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port

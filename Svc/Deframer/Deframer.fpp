@@ -23,7 +23,7 @@ module Svc {
 
     @ Framed poll port
     output port framedPoll: [1] Drv.ByteStreamPoll
-    
+
     @ Mutexed Schedule in port
     guarded input port schedIn: [1] Svc.Sched
 

@@ -1,9 +1,9 @@
 module Svc {
 
   active component BufferLogger {
-    
+
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Buffer input port
@@ -14,7 +14,7 @@ module Svc {
 
     @ Packet input port
     async input port comIn: [1] Fw.Com
-    
+
     @ Ping input port
     async input port pingIn: [1] Svc.Ping
 
@@ -24,7 +24,7 @@ module Svc {
     async input port schedIn: [1] Svc.Sched
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Port for receiving commands
@@ -49,21 +49,21 @@ module Svc {
     telemetry port tlmOut
 
     # ----------------------------------------------------------------------
-    # Commands 
+    # Commands
     # ----------------------------------------------------------------------
 
     include "Commands.fppi"
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
-    
+
     include "Events.fppi"
 
     # ----------------------------------------------------------------------
-    # Telemetry 
+    # Telemetry
     # ----------------------------------------------------------------------
-    
+
     include "Telemetry.fppi"
 
   }

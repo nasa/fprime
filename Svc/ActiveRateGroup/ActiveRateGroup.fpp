@@ -4,7 +4,7 @@ module Svc {
   @ A rate group active component with input and output scheduler ports
   active component ActiveRateGroup {
 
-    # ----------------------------------------------------------------------  
+    # ----------------------------------------------------------------------
     # General Ports
     # ----------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ module Svc {
     output port PingOut: Ping
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     @ Informational event that rate group has started
@@ -50,7 +50,7 @@ module Svc {
     telemetry RgCycleSlips: U32 id 1 update on change
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Event port for emitting events
@@ -63,7 +63,7 @@ module Svc {
     time get port Time
 
     @ A port for emitting telemetry
-    telemetry port Tlm 
+    telemetry port Tlm
 
   }
 
