@@ -102,7 +102,7 @@ Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, F
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();
     m_framed = true;
-    return Drv::SEND_OK;
+    return Drv::SendStatus::SEND_OK;
 }
 
 // ----------------------------------------------------------------------
