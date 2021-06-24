@@ -1,49 +1,60 @@
 module Svc {
 
+  @ Send file status enum
+  enum SendFileStatus {
+    OK
+    ERROR
+    INVALID
+    BUSY
+  }
+
+  @ Send file response struct
+  struct SendFileResponse {
+    status: Svc.SendFileStatus
+    context: U32
+  }
+
+  @ FileDownlink response to send file request
+  port SendFileComplete(
+                         $resp: Svc.SendFileResponse
+                       )
+
+  @ Request that FileDownlink downlink a file
+  port SendFileRequest(
+                        sourceFileName: string size 100 @< Path of file to downlink
+                        destFileName: string size 100 @< Path to store downlinked file at
+                        offset: U32 @< Amount of data in bytes to downlink from file. 0 to read until end of file
+                        length: U32 @< Amount of data in bytes to downlink from file. 0 to read until end of file
+                      ) -> Svc.SendFileResponse
+
+
+  @ A component for downlinking files
   active component FileDownlink {
 
     # ----------------------------------------------------------------------
-    # Commands
-    # ----------------------------------------------------------------------
-
-    include "Commands.fppi"
-
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
-
-    include "Telemetry.fppi"
-
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
-
-    include "Events.fppi"
-
-    # ----------------------------------------------------------------------
-    # General Ports
+    # General ports 
     # ----------------------------------------------------------------------
 
     @ Run input port
-    async input port Run: [1] Svc.Sched
+    async input port Run: Svc.Sched
 
     @ Mutexed Sendfile input port
-    guarded input port SendFile: [1] Svc.SendFileRequest
+    guarded input port SendFile: Svc.SendFileRequest
 
     @ File complete output port
     output port FileComplete: [FileDownCompletePorts] Svc.SendFileComplete
 
     @ Buffer return input port
-    async input port bufferReturn: [1] Fw.BufferSend
+    async input port bufferReturn: Fw.BufferSend
 
     @ Buffer send output port
-    output port bufferSendOut: [1] Fw.BufferSend
+    output port bufferSendOut: Fw.BufferSend
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
     # Special ports 
@@ -69,6 +80,24 @@ module Svc {
 
     @ Telemetry port
     telemetry port tlmOut
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    include "Commands.fppi"
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    include "Telemetry.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
 
   }
 
