@@ -1,5 +1,6 @@
 module Svc {
 
+  @ A generic hub component
   passive component GenericHub {
 
     # ----------------------------------------------------------------------
@@ -13,10 +14,10 @@ module Svc {
     output port portOut: [GenericHubOutputPorts] serial
 
     @ Input array of generic ports shuttling in copy-free buffers form external sources
-    guarded input port buffersIn: [$GenericHubInputBuffers] Fw.BufferSend
+    guarded input port buffersIn: [GenericHubInputBuffers] Fw.BufferSend
 
     @ Output array of generic ports shuttling in copy-free buffers form external sources
-    output port buffersOut: [$GenericHubOutputBuffers] Fw.BufferSend
+    output port buffersOut: [GenericHubOutputBuffers] Fw.BufferSend
 
     @ Buffer return from incoming bufferIn calls
     output port bufferDeallocate: Fw.BufferSend
