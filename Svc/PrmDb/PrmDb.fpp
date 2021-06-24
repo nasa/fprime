@@ -139,7 +139,7 @@ module Svc {
 
     @ Failed to read parameter file
     event PrmFileReadError(
-                            stage: PrmReadError @< The write stage
+                            stage: PrmReadError @< The read stage
                             record: I32 @< The record that had the failure
                             error: I32 @< The error code
                           ) \
