@@ -7,21 +7,21 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Buffer input port
-    async input port bufferSendIn: [1] Fw.BufferSend
+    async input port bufferSendIn: Fw.BufferSend
 
     @ Buffer output port
-    output port bufferSendOut: [1] Fw.BufferSend
+    output port bufferSendOut: Fw.BufferSend
 
     @ Packet input port
-    async input port comIn: [1] Fw.Com
+    async input port comIn: Fw.Com
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
-    async input port schedIn: [1] Svc.Sched
+    async input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
     # Special ports
