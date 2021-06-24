@@ -1,6 +1,6 @@
 module Svc {
 
-  @ A component for dispatching commands
+  @ A polymorphic database component
   passive component PolyDb {
 
     @ Mutexed Port to get values
