@@ -1,13 +1,10 @@
 module Svc {
 
+  @ A component for managing memory buffers
   passive component BufferManager {
 
-    include "Telemetry.fppi"
-
-    include "Events.fppi"
-
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Mutex locked Buffer send in input port
@@ -15,12 +12,12 @@ module Svc {
 
     @ Mutex locked Buffer callee input port
     guarded input port bufferGetCallee: Fw.BufferGet
-    
+
     @ Schedule input port
     sync input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Port for getting the time
@@ -34,6 +31,18 @@ module Svc {
 
     @ Port for emitting Telemetry
     telemetry port tlmOut
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    include "Telemetry.fppi"
 
   }
 
