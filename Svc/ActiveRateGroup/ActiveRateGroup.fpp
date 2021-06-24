@@ -9,17 +9,16 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ The rate group cycle input
-    async input port CycleIn: [1] Cycle \
-      drop
+    async input port CycleIn: Cycle drop
 
     @ Scheduler output port to rate group members
     output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
 
     @ Ping input port for health
-    async input port PingIn: [1] Ping
+    async input port PingIn: Ping
 
     @ Ping output port for health
-    output port PingOut: [1] Ping
+    output port PingOut: Ping
 
     # ----------------------------------------------------------------------
     # Events 
