@@ -1,5 +1,6 @@
 module Svc {
 
+  @ A component for deframing framed input
   passive component Deframer {
 
     @ Com out port
