@@ -20,18 +20,15 @@ namespace Test {
             String(const StringBase& src); //!< other string constructor
             String(const String& src); //!< String string constructor
             String(void); //!< default constructor
+            String& operator=(const String& other); //!< assignment operator
+            String& operator=(const StringBase& other); //!< other string assignment operator
+            String& operator=(const char* other); //!< char* assignment operator
             ~String(void); //!< destructor
+
             const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of stored string
-
-            const String& operator=(const String& other); //!< equal operator
-
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
-
-        PRIVATE:
             NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+
+        private:
 
             char m_buf[STRING_SIZE]; //!< storage for string data
     };
