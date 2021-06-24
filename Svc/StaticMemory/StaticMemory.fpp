@@ -1,5 +1,6 @@
 module Svc {
 
+  @ A component that provides statically allocated memory
   passive component StaticMemory {
     
     @ Mutexed buffer deallocate input port
