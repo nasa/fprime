@@ -200,7 +200,7 @@ namespace Svc {
                 );
 
         this->clearHistory();
-        
+
         reportEnable = Enabled::ENABLED;
         eventLevel.e = static_cast<FilterSeverity::t>(100);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);

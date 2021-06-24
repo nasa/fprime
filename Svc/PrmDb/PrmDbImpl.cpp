@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 namespace Svc {
-    
+
 
     typedef PrmDb_PrmWriteError PrmWriteError;
     typedef PrmDb_PrmReadError PrmReadError;
