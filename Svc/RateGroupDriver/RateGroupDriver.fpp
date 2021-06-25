@@ -4,10 +4,10 @@ module Svc {
   passive component RateGroupDriver {
 
     @ Cycle input to the rate group driver
-    sync input port CycleIn: [1] Cycle
+    sync input port CycleIn: Cycle
 
     @ Cycle output from the rate group driver
-    output port CycleOut: [$RateGroupDriverRateGroupPorts] Cycle
+    output port CycleOut: [RateGroupDriverRateGroupPorts] Cycle
 
   }
 

@@ -86,7 +86,7 @@ depend_do()
   if test -n "$missing"
   then
     echo "WARNING: missing dependency files" 1>&2
-    echo $missing 1>&2
+    echo $missing | tr ' ' '\n' 1>&2
   fi
   # If the generated dependencies have not changed, then we don't
   # need to report a change upwards in the build

@@ -3,10 +3,6 @@ module Svc {
   @ A component for storing telemetry
   active component TlmChan {
 
-    # ----------------------------------------------------------------------
-    # Special ports 
-    # ----------------------------------------------------------------------
-
     @ Mutexed telemetry input port
     guarded input port TlmRecv: Fw.Tlm
 
@@ -20,10 +16,10 @@ module Svc {
     output port PktSend: Fw.Com
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
   }
 

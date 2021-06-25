@@ -1,26 +1,23 @@
 module Svc {
 
+  @ A component for logging Com buffers
   active component ComLogger {
 
-    include "Commands.fppi"
-
-    include "Events.fppi"
-
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Com input port
-    async input port comIn: [1] Fw.Com
+    async input port comIn: Fw.Com
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command registration port
@@ -40,6 +37,18 @@ module Svc {
 
     @ Time get port
     time get port timeCaller
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    include "Commands.fppi"
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
 
   }
 

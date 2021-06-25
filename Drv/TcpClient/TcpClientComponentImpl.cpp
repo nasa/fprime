@@ -50,7 +50,7 @@ Fw::Buffer TcpClientComponentImpl::getBuffer() {
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    this->recv_out(0, buffer, (status == SOCK_SUCCESS) ? RECV_OK : RECV_ERROR);
+    this->recv_out(0, buffer, (status == SOCK_SUCCESS) ? RecvStatus::RECV_OK : RecvStatus::RECV_ERROR);
 }
 
 // ----------------------------------------------------------------------
@@ -62,16 +62,16 @@ Drv::SendStatus TcpClientComponentImpl::send_handler(const NATIVE_INT_TYPE portN
     // Always return the buffer
     deallocate_out(0, fwBuffer);
     if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
-        return SEND_RETRY;
+        return SendStatus::SEND_RETRY;
     } else if (status != SOCK_SUCCESS) {
-        return SEND_ERROR;
+        return SendStatus::SEND_ERROR;
     }
-    return SEND_OK;
+    return SendStatus::SEND_OK;
 }
 
 Drv::PollStatus TcpClientComponentImpl::poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(0); // It is an error to call this handler on IP drivers
-    return Drv::POLL_ERROR;
+    return PollStatus::POLL_ERROR;
 }
 
 }  // end namespace Drv

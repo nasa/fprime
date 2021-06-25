@@ -4,7 +4,7 @@ module Svc {
   passive component PassiveTextLogger {
 
     @ Logging port
-    sync input port TextLogger: [1] Fw.LogText
+    sync input port TextLogger: Fw.LogText
 
   }
 

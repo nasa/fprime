@@ -18,8 +18,7 @@
 namespace Svc {
 
     typedef ActiveLogger_Enabled Enabled;
-    typedef ActiveLogger_EventLevel EventLevel;
-    typedef ActiveLogger_EventFilterState EventFilterState;
+    typedef ActiveLogger_FilterSeverity FilterSeverity;
 
     void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
         Svc::ActiveLoggerGTestBase::init();
@@ -73,26 +72,26 @@ namespace Svc {
 
         // enable report filter
         this->clearHistory();
-        EventLevel reportFilterLevel = EventLevel::WARNING_HI;
+        FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
 
         switch (filter.e) {
             case Fw::LogSeverity::WARNING_HI:
-                reportFilterLevel = EventLevel::WARNING_HI;
+                reportFilterLevel = FilterSeverity::WARNING_HI;
                 break;
             case Fw::LogSeverity::WARNING_LO:
-                reportFilterLevel = EventLevel::WARNING_LO;
+                reportFilterLevel = FilterSeverity::WARNING_LO;
                 break;
             case Fw::LogSeverity::COMMAND:
-                reportFilterLevel = EventLevel::COMMAND;
+                reportFilterLevel = FilterSeverity::COMMAND;
                 break;
             case Fw::LogSeverity::ACTIVITY_HI:
-                reportFilterLevel = EventLevel::ACTIVITY_HI;
+                reportFilterLevel = FilterSeverity::ACTIVITY_HI;
                 break;
             case Fw::LogSeverity::ACTIVITY_LO:
-                reportFilterLevel = EventLevel::ACTIVITY_LO;
+                reportFilterLevel = FilterSeverity::ACTIVITY_LO;
                 break;
             case Fw::LogSeverity::DIAGNOSTIC:
-                reportFilterLevel = EventLevel::DIAGNOSTIC;
+                reportFilterLevel = FilterSeverity::DIAGNOSTIC;
                 break;
             default:
                 ASSERT_TRUE(false);
@@ -166,7 +165,7 @@ namespace Svc {
 
         U32 cmdSeq = 21;
         this->clearHistory();
-        EventLevel reportFilterLevel = EventLevel::WARNING_HI;
+        FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
         Enabled filterEnabled(static_cast<Enabled::t>(10));
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -177,7 +176,7 @@ namespace Svc {
                 Fw::CmdResponse::VALIDATION_ERROR
                 );
         this->clearHistory();
-        reportFilterLevel = EventLevel::WARNING_HI;
+        reportFilterLevel = FilterSeverity::WARNING_HI;
         filterEnabled.e = static_cast<Enabled::t>(-2);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -187,10 +186,10 @@ namespace Svc {
                 cmdSeq,
                 Fw::CmdResponse::VALIDATION_ERROR
                 );
-        EventLevel eventLevel;
+        FilterSeverity eventLevel;
         this->clearHistory();
         Enabled reportEnable = Enabled::ENABLED;
-        eventLevel.e = static_cast<EventLevel::t>(-1);
+        eventLevel.e = static_cast<FilterSeverity::t>(-1);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -201,9 +200,9 @@ namespace Svc {
                 );
 
         this->clearHistory();
-        
+
         reportEnable = Enabled::ENABLED;
-        eventLevel.e = static_cast<EventLevel::t>(100);
+        eventLevel.e = static_cast<FilterSeverity::t>(100);
         this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
@@ -385,12 +384,12 @@ namespace Svc {
         U32 cmdSeq = 21;
         // set random set of filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_HI,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::WARNING_LO,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::COMMAND,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_HI,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::ACTIVITY_LO,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,EventLevel::DIAGNOSTIC,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::DIAGNOSTIC,Enabled::ENABLED);
 
         this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,Enabled::ENABLED);
         // dispatch message
@@ -420,12 +419,12 @@ namespace Svc {
                 );
         ASSERT_EVENTS_SIZE(6+3);
         ASSERT_EVENTS_SEVERITY_FILTER_STATE_SIZE(6);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(0,EventFilterState::WARNING_HI,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(1,EventFilterState::WARNING_LO,false);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(2,EventFilterState::COMMAND,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,EventFilterState::ACTIVITY_HI,false);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,EventFilterState::ACTIVITY_LO,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,EventFilterState::DIAGNOSTIC,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(0,FilterSeverity::WARNING_HI,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(1,FilterSeverity::WARNING_LO,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(2,FilterSeverity::COMMAND,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,FilterSeverity::ACTIVITY_HI,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,FilterSeverity::ACTIVITY_LO,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,FilterSeverity::DIAGNOSTIC,true);
     }
 
     void ActiveLoggerImplTester::runEventFatal(void) {
@@ -479,7 +478,7 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_HI,Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
@@ -489,11 +488,11 @@ namespace Svc {
                 );
 
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,Enabled::DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::COMMAND,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::DIAGNOSTIC,Enabled::DISABLED);
 
         this->m_receivedPacket = false;
 
@@ -527,12 +526,12 @@ namespace Svc {
 
         // turn off filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_HI,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::WARNING_LO,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::COMMAND,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_HI,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::ACTIVITY_LO,Enabled::ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,EventLevel::DIAGNOSTIC,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::DIAGNOSTIC,Enabled::ENABLED);
 
     }
 

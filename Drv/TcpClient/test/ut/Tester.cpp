@@ -72,7 +72,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, Drv::SEND_OK);
+            EXPECT_EQ(status, SendStatus::SEND_OK);
             status2 = server.recv(buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());

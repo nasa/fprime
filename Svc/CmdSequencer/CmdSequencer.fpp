@@ -4,7 +4,30 @@ module Svc {
   active component CmdSequencer {
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ The sequencer mode
+    enum SeqMode {
+      STEP = 0
+      AUTO = 1
+    }
+
+    @ The stage of the file read operation
+    enum FileReadStage {
+      READ_HEADER
+      READ_HEADER_SIZE
+      DESER_SIZE
+      DESER_NUM_RECORDS
+      DESER_TIME_BASE
+      DESER_TIME_CONTEXT
+      READ_SEQ_CRC
+      READ_SEQ_DATA
+      READ_SEQ_DATA_SIZE
+    }
+
+    # ----------------------------------------------------------------------
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -29,7 +52,7 @@ module Svc {
     time get port timeCaller
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Command response in port
@@ -53,20 +76,20 @@ module Svc {
     @ Schedule in port
     async input port schedIn: Svc.Sched
 
-    # ---------------------------------------------------------------------- 
+    # ----------------------------------------------------------------------
     # Commands
-    # ---------------------------------------------------------------------- 
+    # ----------------------------------------------------------------------
 
     include "Commands.fppi"
 
     # ----------------------------------------------------------------------
-    # Telemetry 
+    # Telemetry
     # ----------------------------------------------------------------------
 
     include "Telemetry.fppi"
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     include "Events.fppi"

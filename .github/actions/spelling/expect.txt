@@ -1007,6 +1007,7 @@ methodstub
 microcontrollers
 microsoft
 middleware
+mindepth
 MINGW
 mkdir
 mkdtemp
@@ -1792,6 +1793,7 @@ UNEXPECTEDCOMPLETION
 unexport
 unicode
 UNINIT
+uniq
 unistd
 Unithem
 unittest

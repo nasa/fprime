@@ -4,7 +4,7 @@ module Svc {
   queued component Health {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Ping output port
@@ -14,13 +14,13 @@ module Svc {
     async input port PingReturn: [HealthPingPorts] Svc.Ping
 
     @ Run port
-    sync input port Run: [1] Svc.Sched
+    sync input port Run: Svc.Sched
 
     @ Run port
-    output port WdogStroke: [1] Svc.WatchDog
+    output port WdogStroke: Svc.WatchDog
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -97,7 +97,7 @@ module Svc {
                              ) \
       severity fatal \
       id 0x2 \
-      format "Ping entry {} responded with wrong key {}"
+      format "Ping entry {} responded with wrong key 0x{x}"
 
     @ Report checking turned on or off
     event HLTH_CHECK_ENABLE(

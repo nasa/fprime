@@ -156,7 +156,7 @@ namespace Svc {
   {
     this->pushFromPortEntry_framedPoll(pollBuffer);
     // TODO: Return a value
-    return Drv::POLL_OK;
+    return Drv::PollStatus::POLL_OK;
   }
 
   // ----------------------------------------------------------------------

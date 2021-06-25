@@ -14,24 +14,23 @@
 namespace Svc {
 
     typedef ActiveLogger_Enabled Enabled;
-    typedef ActiveLogger_EventFilterState EventFilterState;
-    typedef ActiveLogger_EventLevel EventLevel;
+    typedef ActiveLogger_FilterSeverity FilterSeverity;
 
     ActiveLoggerImpl::ActiveLoggerImpl(const char* name) : 
         ActiveLoggerComponentBase(name)
     {
         // set filter defaults
-        this->m_filterState[EventLevel::WARNING_HI].enabled =
+        this->m_filterState[FilterSeverity::WARNING_HI].enabled =
                 FILTER_WARNING_HI_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
-        this->m_filterState[EventLevel::WARNING_LO].enabled =
+        this->m_filterState[FilterSeverity::WARNING_LO].enabled =
                 FILTER_WARNING_LO_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
-        this->m_filterState[EventLevel::COMMAND].enabled =
+        this->m_filterState[FilterSeverity::COMMAND].enabled =
                 FILTER_COMMAND_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
-        this->m_filterState[EventLevel::ACTIVITY_HI].enabled =
+        this->m_filterState[FilterSeverity::ACTIVITY_HI].enabled =
                 FILTER_ACTIVITY_HI_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
-        this->m_filterState[EventLevel::ACTIVITY_LO].enabled =
+        this->m_filterState[FilterSeverity::ACTIVITY_LO].enabled =
                 FILTER_ACTIVITY_LO_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
-        this->m_filterState[EventLevel::DIAGNOSTIC].enabled =
+        this->m_filterState[FilterSeverity::DIAGNOSTIC].enabled =
                 FILTER_DIAGNOSTIC_DEFAULT?Enabled::ENABLED:Enabled::DISABLED;
 
         memset(m_filteredIDs,0,sizeof(m_filteredIDs));
@@ -57,32 +56,32 @@ namespace Svc {
             case Fw::LogSeverity::FATAL: // always pass FATAL
                 break;
             case Fw::LogSeverity::WARNING_HI:
-                if (this->m_filterState[EventLevel::WARNING_HI].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::WARNING_HI].enabled == Enabled::DISABLED) {
                    return;
                 }
                 break;
             case Fw::LogSeverity::WARNING_LO:
-                if (this->m_filterState[EventLevel::WARNING_LO].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::WARNING_LO].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::COMMAND:
-                if (this->m_filterState[EventLevel::COMMAND].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::COMMAND].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_HI:
-                if (this->m_filterState[EventLevel::ACTIVITY_HI].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::ACTIVITY_HI].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::ACTIVITY_LO:
-                if (this->m_filterState[EventLevel::ACTIVITY_LO].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::ACTIVITY_LO].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
             case Fw::LogSeverity::DIAGNOSTIC:
-                if (this->m_filterState[EventLevel::DIAGNOSTIC].enabled == Enabled::DISABLED) {
+                if (this->m_filterState[FilterSeverity::DIAGNOSTIC].enabled == Enabled::DISABLED) {
                     return;
                 }
                 break;
@@ -127,9 +126,9 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, EventLevel filterLevel, Enabled filterEnable) {
-        if (  (filterLevel.e > EventLevel::DIAGNOSTIC) or
-              (filterLevel.e < EventLevel::WARNING_HI) or
+    void ActiveLoggerImpl::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, FilterSeverity filterLevel, Enabled filterEnable) {
+        if (  (filterLevel.e > FilterSeverity::DIAGNOSTIC) or
+              (filterLevel.e < FilterSeverity::WARNING_HI) or
               (filterEnable.e < Enabled::ENABLED) or
               (filterEnable.e > Enabled::DISABLED)) {
             this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
@@ -200,8 +199,8 @@ namespace Svc {
         ) {
 
         // first, iterate through severity filters
-        for (NATIVE_UINT_TYPE filter = 0; filter < EventLevel::NUM_CONSTANTS; filter++) {
-           EventFilterState filterState(static_cast<EventFilterState::t>(filter));
+        for (NATIVE_UINT_TYPE filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
+           FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
            this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
                     filterState,
                     Enabled::ENABLED == this->m_filterState[filter].enabled.e

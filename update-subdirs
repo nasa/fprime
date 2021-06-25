@@ -1,0 +1,10 @@
+#!/bin/sh
+
+files=`find . -mindepth 2 -maxdepth 2 -name update-subdirs | sed 's;^\./;;'`
+
+for file in $files
+do
+  dir=`dirname $file`
+  echo "updating subdirs in $dir"
+  (cd $dir; ./update-subdirs)
+done
