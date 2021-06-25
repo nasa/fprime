@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
 export FPRIME_ROOT=..
-export SUBDIRS="
-ByteStreamDriverModel
-"
+export SUBDIRS="`cat subdirs.txt`"
 . $FPRIME_ROOT/defs-root.sh

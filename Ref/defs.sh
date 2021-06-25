@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-export REF_ROOT=.
-export SUBDIRS="
-SignalGen
-"
-. $REF_ROOT/defs-root.sh
+export FPRIME_ROOT=..
+export SUBDIRS="`cat subdirs.txt`"
+. $FPRIME_ROOT/defs-root.sh

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+find . -mindepth 2 -name '*.fpp' | cut -d '/' -f 2 | sort | uniq > subdirs.txt
