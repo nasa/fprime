@@ -924,12 +924,12 @@ def generate_port(the_parsed_port_xml, port_file):
     #
     # Configure file names and each visitor here.
     #
-    type = the_parsed_port_xml.get_interface().get_name()
+    the_type = the_parsed_port_xml.get_interface().get_name()
     #
     # Configure each visitor here.
     #
     if "Ai" in port_file:
-        base = type
+        base = the_type
         h_instance_name = base + "_H"
         cpp_instance_name = base + "_Cpp"
     else:
@@ -1090,7 +1090,7 @@ def generate_serializable(the_serial_xml, opt):
     finishSource(model)
 
 
-def generate_dependency_file(filename, target_file, subst_path, parser, type):
+def generate_dependency_file(filename, target_file, subst_path, parser, the_type):
 
     # verify directory exists for dependency file and is directory
     if not os.path.isdir(os.path.dirname(filename)):
@@ -1121,14 +1121,14 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
 
     # assemble list of files
 
-    if type == "interface":
+    if the_type == "interface":
         file_list = (
             parser.get_include_header_files()
             + parser.get_includes_serial_files()
             + parser.get_include_enum_files()
             + parser.get_include_array_files()
         )
-    elif type == "component":
+    elif the_type == "component":
         file_list = (
             parser.get_port_type_files()
             + parser.get_header_files()
@@ -1137,14 +1137,14 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
             + parser.get_enum_type_files()
             + parser.get_array_type_files()
         )
-    elif type == "serializable":
+    elif the_type == "serializable":
         file_list = (
             parser.get_include_header_files()
             + parser.get_includes()
             + parser.get_include_enums()
             + parser.get_include_arrays()
         )
-    elif type == "assembly" or type == "deployment":
+    elif the_type == "assembly" or the_type == "deployment":
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
@@ -1152,7 +1152,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, type):
         # for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
     else:
-        PRINT.info(f"ERROR: Unrecognized dependency type {type}!")
+        PRINT.info(f"ERROR: Unrecognized dependency type {the_type}!")
         sys.exit(-1)
 
     # write dependencies
