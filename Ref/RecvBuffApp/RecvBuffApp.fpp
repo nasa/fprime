@@ -4,7 +4,14 @@ module Ref {
   passive component RecvBuff {
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # General Ports
+    # ----------------------------------------------------------------------
+
+    @ The data buffer input
+    sync input port Data: Drv.DataBuffer
+
+    # ----------------------------------------------------------------------
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -33,14 +40,6 @@ module Ref {
 
     @ A port for setting parameter values
     param set port ParamSet
-
-    
-    # ----------------------------------------------------------------------
-    # General Port
-    # ----------------------------------------------------------------------
-
-    @ The data buffer input
-    sync input port Data: Drv.DataBuffer
 
     # ----------------------------------------------------------------------
     # Events

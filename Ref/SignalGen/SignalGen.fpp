@@ -1,24 +1,35 @@
 module Ref {
 
+  struct SignalInfo {
+    $type: Ref.SignalType
+    history: Ref.SignalSet
+    pairHistory: Ref.SignalPairSet
+  }
+
+  struct SignalPair {
+    $time: F32 format "{f}"
+    value: F32 format "{f}"
+  }
+
+  array SignalPairSet = [4] Ref.SignalPair
+
+  array SignalSet = [4] F32 format "{f}"
+
+  enum SignalType {
+    TRIANGLE
+    SQUARE
+    SINE
+    NOISE
+  }
+
+  @ A component for generating periodic signals
   queued component SignalGen {
 
     # ----------------------------------------------------------------------
-    # Commands
+    # General Ports
     # ----------------------------------------------------------------------
-   
-    include "Commands.fppi"
-
-    # ----------------------------------------------------------------------
-    # Telemetry
-    # ----------------------------------------------------------------------
-   
-    include "Telemetry.fppi"
-
-    # ----------------------------------------------------------------------
-    # Events
-    # ----------------------------------------------------------------------
-   
-    include "Events.fppi"
+    
+    sync input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
     # Special ports 
@@ -46,43 +57,23 @@ module Ref {
     telemetry port tlmOut
 
     # ----------------------------------------------------------------------
-    # General Port
+    # Commands
     # ----------------------------------------------------------------------
-    
-    sync input port schedIn: Svc.Sched
+   
+    include "Commands.fppi"
 
-  }
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+   
+    include "Telemetry.fppi"
 
-  
-  struct SignalInfo {
-    $type: Ref.SignalType
-    history: Ref.SignalSet
-    pairHistory: Ref.SignalPairSet
-  }
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+   
+    include "Events.fppi"
 
-
-  struct SignalPair {
-    $time: F32 format "{f}"
-    value: F32 format "{f}"
-  }
-
-
-  array SignalPairSet = [4] Ref.SignalPair
-
-
-  array SignalSet = [4] F32 default [
-                                      0.0
-                                      0.0
-                                      0.0
-                                      0.0
-                                    ] format "{f}"
-
-
-  enum SignalType {
-    TRIANGLE = 0
-    SQUARE = 1
-    SINE = 2
-    NOISE = 3
   }
 
 }

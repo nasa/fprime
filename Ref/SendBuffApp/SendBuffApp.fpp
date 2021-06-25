@@ -4,7 +4,17 @@ module Ref {
   queued component SendBuff {
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # General Ports
+    # ----------------------------------------------------------------------
+
+    @ The rate group scheduler input
+    sync input port SchedIn: Svc.Sched
+
+    @ The data buffer output
+    output port Data: Drv.DataBuffer
+
+    # ----------------------------------------------------------------------
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -33,16 +43,6 @@ module Ref {
 
     @ Param set port
     param set port ParamSet
-
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
-
-    @ The rate group scheduler input
-    sync input port SchedIn: Svc.Sched
-
-    @ The data buffer output
-    output port Data: Drv.DataBuffer
 
     # ----------------------------------------------------------------------
     # Commands
