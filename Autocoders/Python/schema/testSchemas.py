@@ -1,8 +1,8 @@
-import os
-import sys
+ os
+ sys
 
-import pytest
-from lxml import etree
+ pytest
+ lxml  etree
 
 
 """
@@ -10,12 +10,13 @@ To add tests, go down to the setup function.
 """
 
 
-class schema_test:
+
+ schema_test:
     """
     schema_test is a base object for conducting tests on schemas.
     """
 
-    def __init__(self, schema_name, schema_path):
+     __init__(self, schema_name, schema_path):
         """
         Starts object.
 
@@ -29,13 +30,13 @@ class schema_test:
 
         self.__validate_and_compile()
 
-    def __validate_and_compile(self):
+     __validate_and_compile(self):
         """
         Validates and compiles the schemas specified on instantiation.
         """
         self.__validate_file(self.__schema_path, "RNG")
 
-        with open(self.__schema_path) as relax_file_handler:
+         open(self.__schema_path) as relax_file_handler:
 
             # Parse schema file
             relax_parsed = etree.parse(relax_file_handler)
@@ -43,35 +44,35 @@ class schema_test:
             # Compile schema file
             self.__compiled = etree.RelaxNG(relax_parsed)
 
-    def __validate_file(self, file_name, extension):
+     __validate_file(self, file_name, extension):
         """
         Ensures file exists and has the proper extension.
         """
-        if not os.path.exists(file_name):
-            raise Exception("File does not exist - {}.".format(file_name))
+         os.path.exists(file_name):
+             Exception("File does not exist - {}.".format(file_name))
 
-        if not file_name.upper().endswith("." + extension.upper()):
-            raise Exception(
+         file_name.upper().endswith("." + extension.upper()):
+             Exception(
                 "File does not end with proper extension {} - {}".format(
                     extension, file_name
                 )
             )
 
-        return True
+         True
 
-    def __get_parsed_relaxng(self, file_path):
+     __get_parsed_relaxng(self, file_path):
         """
         Returns root tag assuming file path is correct
         """
 
-        with open(file_path) as handler:
+         open(file_path) as handler:
 
             # Parse schema file
             parsed = etree.parse(handler)
 
-        return parsed
+         parsed
 
-    def add_test(self, test_name, xml_path, error_class, parsed_xml=None):
+    add_test(self, test_name, xml_path, error_class, parsed_xml=None):
         """
         Add test case to object.
 
@@ -84,7 +85,7 @@ class schema_test:
 
         self.__test_set_list.append(test_set)
 
-    def parse_and_add_directory(self, list_of_root_tags, directory):
+    parse_and_add_directory(self, list_of_root_tags, directory):
         """
         Parses through directory and all subdirectories and adds tests to object test lists
 
@@ -94,68 +95,68 @@ class schema_test:
 
         # Check if directory exists and list_of_root_tags isn't empty
 
-        if len(list_of_root_tags) == 0:
-            raise Exception(
+        len(list_of_root_tags) == 0:
+            Exception(
                 "{} : List of root tags empty in parse_and_add_directory!".format(
                     self.__schema_name
                 )
             )
 
-        if not os.path.isdir(directory):
+        os.path.isdir(directory):
             raise Exception(
                 "{} : Directory {} does not exist in parse_and_add_directory!".format(
                     self.__schema_name, directory
                 )
             )
 
-        for subdir, dirs, files in os.walk(directory):
-            for file in files:
-                if file.upper().endswith(".XML"):
-                    try:
+        subdir, dirs, files in os.walk(directory):
+            file in files:
+                 file.upper().endswith(".XML"):
+                    :
                         new_path = os.path.join(subdir, file)
                         parsed = self.__get_parsed_relaxng(new_path)
                         root_tag = parsed.getroot().tag
-                        if root_tag in list_of_root_tags:
+                          root_tag in list_of_root_tags:
                             self.add_test(
                                 "Path Added: " + file, new_path, None, parsed_xml=parsed
                             )
-                    except:
+                    :
                         pass
 
-    def run_all_tests(self):
+     run_all_tests(self):
         """
         Runs all the tests consecutively.
         """
-        for index in range(len(self.__test_set_list)):
+         index in range(len(self.__test_set_list)):
             self.run_test(index)
 
-    def get_test_amount(self):
+    get_test_amount(self):
         """
         Returns the amount of tests in the object.
         """
 
-        return len(self.__test_set_list)
+         len(self.__test_set_list)
 
-    def run_test(self, index):
+     run_test(self, index):
         """
         Runs test of index
         """
-        if index >= len(self.__test_set_list):
+         index >= len(self.__test_set_list):
             raise Exception("Illegal index was accessed")
 
         test_set = self.__test_set_list[index]
 
         xml_parsed = test_set[3]
 
-        if not xml_parsed:
+         xml_parsed:
             self.__validate_file(test_set[1], "XML")
             with open(test_set[1]) as xml_file_handler:
                 xml_parsed = etree.parse(xml_file_handler)
 
-        if test_set[2]:
-            with pytest.raises(test_set[2]) as excinfo:
+         test_set[2]:
+             pytest.raises(test_set[2]) as excinfo:
                 self.__compiled.assertValid(xml_parsed)
-                if excinfo:
+                 excinfo:
                     print(
                         "Schema "
                         + self.__schema_name
@@ -173,10 +174,10 @@ class schema_test:
                     print("\n")
                     sys.exit(1)
 
-        else:
-            try:
+        :
+            :
                 self.__compiled.assertValid(xml_parsed)
-            except:
+            :
                 print(
                     "Schema "
                     + self.__schema_name
@@ -187,16 +188,16 @@ class schema_test:
                 print("File path - " + test_set[1])
 
                 print("\n")
-                raise
+                
 
-    def print_header(self):
+     print_header(self):
         """
         Prints a header string for a schema_test object.
         """
         print("\nTesting {} - {}\n".format(self.__schema_name, self.__schema_path))
 
 
-def setup():
+ setup():
     """
     Sets up and returns test_list, which is a set of schema_test objects.
     """
@@ -406,32 +407,32 @@ def setup():
         )
     )
 
-    return test_list
+     test_list
 
 
-def get_test_list():
+ get_test_list():
     test_list = setup()
     out = []
-    for test_obj in test_list:
+     test_obj in test_list:
         tl = test_obj.get_test_amount()
         for ti in range(tl):
             out.append((test_obj.run_test, ti))
-    return out
+     out
 
 
 @pytest.fixture(scope="module", params=get_test_list())
-def current_test(request):
-    return request.param
+ current_test(request):
+     request.param
 
 
-def tests_all(current_test):
+ tests_all(current_test):
     func = current_test[0]
     index = current_test[1]
     func(index)
 
 
-if __name__ == "__main__":
+ __name__ == "__main__":
     test_list = setup()
-    for test in test_list:
+     test test_list:
         test.print_header()
         test.run_all_tests()
