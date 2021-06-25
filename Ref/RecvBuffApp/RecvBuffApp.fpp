@@ -93,7 +93,7 @@ module Ref {
 
     @ Value of Sensor1
     telemetry Sensor1: F32 id 1 \
-    format "4.2{f}V"
+    format "{.2f}V"
 
     @ Value of Sensor3
     telemetry Sensor2: F32 id 2
