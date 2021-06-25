@@ -20,7 +20,7 @@ namespace Ref {
         this->m_sendPackets = false;
         this->m_currPacketId = 0;
         this->m_firstPacketSent = false;
-        this->m_state = SEND_IDLE;
+        this->m_state = SendBuff_ActiveState::SEND_IDLE;
     }
 
     SendBuffImpl::~SendBuffImpl(void) {
@@ -102,7 +102,7 @@ namespace Ref {
 
     void SendBuffImpl::SB_START_PKTS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         this->m_sendPackets = true;
-        this->m_state = SEND_ACTIVE;
+        this->m_state = SendBuff_ActiveState::SEND_ACTIVE;
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
