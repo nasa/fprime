@@ -16,7 +16,7 @@ namespace Ref {
         this->m_sensor2 = 10.0;
         this->m_stats.setBuffRecv(0);
         this->m_stats.setBuffErr(0);
-        this->m_stats.setPacketStatus(PACKET_STATE_NO_PACKETS);
+        this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_NO_PACKETS);
     }
 
 
@@ -49,7 +49,7 @@ namespace Ref {
         // if first packet, send event
         if (not this->m_firstBuffReceived) {
             this->log_ACTIVITY_LO_FirstPacketReceived(id);
-            this->m_stats.setPacketStatus(PACKET_STATE_OK);
+            this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_OK);
             this->m_firstBuffReceived = true;
         }
 
@@ -65,7 +65,7 @@ namespace Ref {
             // send error event
             this->log_WARNING_HI_PacketChecksumError(id);
             // update stats
-            this->m_stats.setPacketStatus(PACKET_STATE_ERRORS);
+            this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_ERRORS);
         }
         // update sensor values
         this->m_sensor1 += 5.0;
