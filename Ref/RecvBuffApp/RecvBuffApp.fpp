@@ -1,5 +1,19 @@
 module Ref {
 
+  @ Packet receive status
+  enum PacketRecvStatus {
+    PACKET_STATE_NO_PACKETS = 0
+    PACKET_STATE_OK = 1
+    PACKET_STATE_ERRORS = 3 @< Receiver has seen errors
+  }
+
+  @ Some Packet Statistics
+  struct PacketStat {
+    BuffRecv: U32 @< Number of buffers received
+    BuffErr: U32 @< Number of buffers received with errors
+    PacketStatus: PacketRecvStatus @< Packet Status
+  }
+
   @ A rate group active component with input and output scheduler ports
   passive component RecvBuff {
 
@@ -113,19 +127,6 @@ module Ref {
         yellow 1
       }
 
-  }
-
-  enum PacketRecvStatus {
-    PACKET_STATE_NO_PACKETS = 0
-    PACKET_STATE_OK = 1
-    PACKET_STATE_ERRORS = 3 @< Receiver has seen errors
-  }
-
-  @ Some Packet Statistics
-  struct PacketStat {
-    BuffRecv: U32 @< Number of buffers received
-    BuffErr: U32 @< Number of buffers received with errors
-    PacketStatus: PacketRecvStatus @< Packet Status
   }
 
 }
