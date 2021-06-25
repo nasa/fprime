@@ -34,9 +34,17 @@ module Ref {
     @ A port for setting parameter values
     param set port ParamSet
 
+    
+    # ----------------------------------------------------------------------
+    # General Port
+    # ----------------------------------------------------------------------
 
     @ The data buffer input
     sync input port Data: Drv.DataBuffer
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
 
     @ First packet received
     event FirstPacketReceived(
@@ -62,6 +70,10 @@ module Ref {
       id 2 \
       format "BuffRecv Parameter {} was updated"
 
+    # ----------------------------------------------------------------------
+    # Parameters
+    # ----------------------------------------------------------------------
+
     @ A test parameter
     param parameter1: U32 default 10 id 0 \
       set opcode 0 \
@@ -71,6 +83,10 @@ module Ref {
     param parameter2: I16 default 11 id 1 \
       set opcode 2 \
       save opcode 3
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
 
     @ Packet Statistics
     telemetry PktState: Ref.PacketStat id 0

@@ -2,33 +2,58 @@ module Ref {
 
   queued component SignalGen {
 
-    
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+   
     include "Commands.fppi"
 
-    
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+   
     include "Telemetry.fppi"
 
-    
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+   
     include "Events.fppi"
 
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+    
+    @ Time get port
     time get port timeCaller
 
+    @ Command registration port
     command reg port cmdRegOut
 
+    @ Command received port
     command recv port cmdIn
 
-    sync input port schedIn: Svc.Sched
-
-    text event port logTextOut
-
-    event port logOut
-
+    @ Command response port
     command resp port cmdResponseOut
 
+    @ Text event port
+    text event port logTextOut
+
+    @ Event port
+    event port logOut
+
+    @ Telemetry port
     telemetry port tlmOut
+
+    # ----------------------------------------------------------------------
+    # General Port
+    # ----------------------------------------------------------------------
+    
+    sync input port schedIn: Svc.Sched
 
   }
 
+  
   struct SignalInfo {
     $type: Ref.SignalType
     history: Ref.SignalSet
