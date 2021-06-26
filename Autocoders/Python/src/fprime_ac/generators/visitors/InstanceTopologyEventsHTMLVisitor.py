@@ -154,7 +154,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Make a list of args into a string
         """
-        return ', '.join(args)
+        return ", ".join(args)
 
     def eventArgsStr(self):
         """

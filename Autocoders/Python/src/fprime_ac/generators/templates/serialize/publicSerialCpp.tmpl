@@ -44,13 +44,13 @@ void ${name}::set(${args_proto_string}) {
 
 #for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
 #if $size == None:
-${type} ${name}::get${member}(void) {
+${type} ${name}::get${member}(void) const {
     return this->m_${member};
 #else if $typeinfo == 'string' or $typeinfo == 'extern':
-const ${type}& ${name}::get${member}(void) {
+const ${type}& ${name}::get${member}(void) const {
     return this->m_${member};
 #else
-const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) {
+const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {
     size = ${size};
     return this->m_${member};
 #end if
