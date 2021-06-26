@@ -356,7 +356,7 @@ namespace Svc {
       this->clearTlm();
 
       //disable all monitoring
-      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::ENABLED);
+      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::DISABLED);
       this->dispatchAll();
 
       ASSERT_EVENTS_SIZE(1);
