@@ -655,6 +655,7 @@ getuser
 gh
 ghprb
 github
+gitpod
 gjslint
 globals
 gmail
@@ -1230,6 +1231,7 @@ pport
 PQueue
 Prashanth
 prealloc
+prebuilds
 PREDEF
 preds
 pregen
