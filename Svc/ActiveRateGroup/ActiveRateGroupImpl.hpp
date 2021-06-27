@@ -53,6 +53,11 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
 
+            //! Call this function to silence the slip WARNING_HI
+            //! Useful when first getting a system up and running without
+            //! flooding the system with EVRs and bringing down GDS
+            void silenceSlipWarning();
+
             //!  \brief ActiveRateGroupImpl destructor
             //!
             //!  The destructor of the class is empty
@@ -105,6 +110,8 @@ namespace Svc {
             NATIVE_UINT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS]; //!< Must match number of output ports
             NATIVE_INT_TYPE m_overrunThrottle; //!< throttle value for overrun events
             U32 m_cycleSlips; //!< tracks number of cycle slips
+            U32 m_prevSlipCycle; //!< Used to calc the cycle delta between slips to telemetry
+            bool m_silenceSlipWarning; //!< Flag to set for silencing the slip WARNING_HI
     };
 
 }

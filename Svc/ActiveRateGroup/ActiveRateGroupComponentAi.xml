@@ -44,6 +44,11 @@
             Cycle slips for rate group
             </comment>
         </channel>
+        <channel id="2" name="RgSlipCycleDelta" data_type="U32" abbrev="S001-002" update="on_change">
+            <comment>
+            Number of cycles between slips, useful for determining a period between slips
+            </comment>
+        </channel>
     </telemetry>
     <events>
         <event id="0" name="RateGroupStarted" severity="DIAGNOSTIC" format_string = "Rate group started." >

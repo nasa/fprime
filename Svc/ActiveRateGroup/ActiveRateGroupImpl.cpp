@@ -26,7 +26,9 @@ namespace Svc {
             m_maxTime(0),
             m_cycleStarted(false),
             m_overrunThrottle(0),
-            m_cycleSlips(0) {
+            m_cycleSlips(0),
+            m_prevSlipCycle(0),
+            m_silenceSlipWarning(false){
         FW_ASSERT(contexts);
         FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
@@ -41,6 +43,10 @@ namespace Svc {
     
     void ActiveRateGroupImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
         ActiveRateGroupComponentBase::init(queueDepth,instance);
+    }
+
+    void ActiveRateGroupImpl::silenceSlipWarning() {
+      this->m_silenceSlipWarning = true;
     }
 
     ActiveRateGroupImpl::~ActiveRateGroupImpl(void) {
@@ -83,7 +89,13 @@ namespace Svc {
         if (this->m_cycleStarted) {
             this->m_cycleSlips++;
             if (this->m_overrunThrottle < ACTIVE_RATE_GROUP_OVERRUN_THROTTLE) {
-                this->log_WARNING_HI_RateGroupCycleSlip(this->m_cycles);
+                //Push delta slip cycle tlm
+                this->tlmWrite_RgSlipCycleDelta(this->m_cycles-this->m_prevSlipCycle);
+                //Set previous cycle to the current
+                this->m_prevSlipCycle = this->m_cycles;
+                if(!m_silenceSlipWarning){
+                  this->log_WARNING_HI_RateGroupCycleSlip(this->m_cycles);
+                }
                 this->m_overrunThrottle++;
             }
             // update cycle cycle slips
