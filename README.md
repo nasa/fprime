@@ -17,6 +17,14 @@ F´ comprises several elements:
 
 ## Quick Installation Guide
 
+### In a browser
+
+To explore F´, you can start a development environment in your browser with the following button:
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/mikenikles/fprime/tree/automate-development-setup)
+
+### In your local environment
+
 The following utilities are prerequisites to installing F´:
 
 - [cmake](https://cmake.org/)
