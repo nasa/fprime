@@ -1,6 +1,7 @@
 tasks:
   - init: |
-      pip install --upgrade fprime-tools fprime-gds
+      pip install --upgrade fprime-tools
+      pip install --upgrade fprime-gds
       (
         cd Ref
         fprime-util generate
