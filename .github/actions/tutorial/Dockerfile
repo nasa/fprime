@@ -11,4 +11,4 @@ COPY gps-build /gps-build
 
 RUN ls -la
 
-#CMD ["./gps-build"]
+ENTRYPOINT ["/gps-build"]
