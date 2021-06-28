@@ -25,12 +25,17 @@ jobs:
         with:
           repository: r9pena/gps-tutorial
           path: gps-tutorial
-          submodules: recursive
 
-      # Build tutorial
+      # 
+      - name: checkout latest fprime repo
+        uses: actions/checkout@v2
+        with:
+          path: gps-tutorial/gps-tutorial
+
+      # Build tutorial test
       - name: tutorial-test
         uses: ./.github/actions/tutorial/
-        id: support-test
+        id: gps-build
 
       # Archive the outputs
       - name: 'Archive Logs'
