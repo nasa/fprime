@@ -31,7 +31,7 @@ TEST(DefaultValues, OK) {
     NATIVE_INT_TYPE size;
     const U32* serial1Member4 = serial1.getMember4(size);
     for (NATIVE_INT_TYPE _mem = 0; _mem < size; _mem++) {
-        ASSERT_EQ(serial1Member4[_mem], 2);
+        ASSERT_EQ(serial1Member4[_mem], 3);
     }
 }
 
