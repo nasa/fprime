@@ -20,7 +20,19 @@ TEST(DefaultValues, OK) {
     for (NATIVE_INT_TYPE _mem = 0; _mem < size; _mem++) {
         ASSERT_EQ(serial1Member4[_mem], 2);
     }
+}
 
+TEST(Serialize4, ArrayScalarInit) {
+
+    Example::Serial1 serial1 (0,"hello world",Example::SomeEnum::MEM2,2);
+
+
+    //Check serializable array member values are correctly set
+    NATIVE_INT_TYPE size;
+    const U32* serialMember4 = serial1.getMember4(size);
+    for (NATIVE_INT_TYPE _mem = 0; _mem < size; _mem++) {
+        ASSERT_EQ(serialMember4[_mem], 2);
+    }
 }
 
 int main(int argc, char* argv[]) {
