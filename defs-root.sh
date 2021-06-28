@@ -100,8 +100,9 @@ get_comma_deps()
   # Compute the files this build depends on
   included_deps=`cat depend/included.txt`
   import_deps=`cat depend/import.txt`
-  redo-ifchange $FPP_FILES $included_deps $deps
-  # Don't count included dependencies
+  # Redo if included or imported files change
+  redo-ifchange $FPP_FILES $included_deps $import_deps
+  # Send imported files to fpp
   if test -n "$import_deps"
   then
     echo $import_deps | sed 's/ /,/g'
