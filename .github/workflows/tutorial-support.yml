@@ -34,7 +34,7 @@ jobs:
 
       # Build tutorial test
       - name: tutorial-test
-        uses: ./.github/actions/tutorial/
+        uses: ./gps-tutorial/gps-tutorial/fprime/.github/actions/tutorial/
         id: github-tutorial-action
 
       # Archive the outputs
