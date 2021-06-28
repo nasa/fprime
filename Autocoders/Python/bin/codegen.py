@@ -419,7 +419,6 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 )
 
                 top_dict_gen.set_current_comp(comp)
-
                 top_dict_gen.check_for_enum_xml()
                 top_dict_gen.check_for_serial_xml()
                 top_dict_gen.check_for_commands()
