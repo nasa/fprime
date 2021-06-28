@@ -152,7 +152,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         contains_array = False
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
