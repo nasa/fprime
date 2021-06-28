@@ -62,6 +62,7 @@ specification.
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
+| default                    |           | Specifies the default value of the member (optional).                                                                              |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |
 | enum                       | name      | Enumeration type name.                                                                                                                               |
 | item                       |           | Specifies a member of the enumeration.                                                                                                               |
@@ -95,11 +96,12 @@ this specification:
 ```xml
 <serializable name="Switch">
   <members>
-    <member name="state">
-      <enum name="SwitchState" type="ENUM">
-        <item name="OFF" value="0">
-        <item name="ON" value="1">
+    <member name="state" type="ENUM">
+      <enum name="SwitchState">
+        <item name="OFF" value="0"/>
+        <item name="ON" value="1"/>
       </enum>
+      <default>OFF</default>
     </member>
   </members>
 </serializable>
@@ -108,7 +110,8 @@ this specification:
 This file defines a Serializable type `Switch`
 with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
-enumerated constants `OFF` and `ON`.
+enumerated constants `OFF` and `ON`. Using the default child element,
+the default value will be OFF.
 
 Alternatively, you can specify an enumeration *E* as a separate XML type.
 Then you can do the following:
@@ -609,7 +612,7 @@ specification.
 | port                       | max\_number     | Specifies the number of ports of this type. This allows multiple callers to the same type of port if knowing the source is necessary. Can be specified as an Fw/Cfg/AcConstants.ini file $VARIABLE value.                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | port                       | full            | Specifies the behavior for async ports when the message queue is full. One of *drop*, *block*, or *assert*, where *assert* is the default.                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | port                       | role            | Specifies the role of the port when the modeler=true.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                        |
-| commands                   |                 | Optional. Starts the section where software commands are defined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
+| commands                   |                 | Starts the section where software commands are defined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |
 | commands                   | opcode\_base    | Defines the base value for the opcodes in the commands. If this is specified, all opcodes will be added to this value. If it is missing, opcodes will be absolute. This tag can also have a variable of the form $VARIABLE referring to values in Fw/Cfg/AcConstants.ini.                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                        |
 | command                    |                 | Starts the definition for a particular command.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | command                    | mnemonic        | Defines a text label for the command. Can be alphanumeric with “\_” separators, but no spaces.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                        |
