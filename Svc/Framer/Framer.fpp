@@ -1,17 +1,24 @@
 module Svc {
 
+  @ A component for framing unframed input
   passive component Framer {
 
-    guarded input port comIn: [1] Fw.Com
+    @ Mutexed input communication port
+    guarded input port comIn: Fw.Com
 
-    guarded input port bufferIn: [1] Fw.BufferSend
+    @ Mutexed input Buffer send port
+    guarded input port bufferIn: Fw.BufferSend
 
-    output port bufferDeallocate: [1] Fw.BufferSend
+    @ Buffer send output port
+    output port bufferDeallocate: Fw.BufferSend
 
-    output port framedAllocate: [1] Fw.BufferGet
+    @ Framed allocate output port
+    output port framedAllocate: Fw.BufferGet
 
-    output port framedOut: [1] Drv.ByteStreamSend
+    @ Framed output port
+    output port framedOut: Drv.ByteStreamSend
 
+    @ Time get port
     time get port timeGet
 
   }

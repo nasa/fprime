@@ -333,7 +333,7 @@ namespace Svc {
     {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = AUTO;
-            this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_AUTO_MODE);
+            this->log_ACTIVITY_HI_CS_ModeSwitched(CmdSequencer_SeqMode::AUTO);
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -345,7 +345,7 @@ namespace Svc {
     {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = MANUAL;
-            this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_STEP_MODE);
+            this->log_ACTIVITY_HI_CS_ModeSwitched(CmdSequencer_SeqMode::STEP);
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);

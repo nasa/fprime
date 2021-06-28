@@ -45,7 +45,7 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
                                               Drv::RecvStatus recvStatus) {
-    if (Drv::RECV_OK == recvStatus) {
+    if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
         processBuffer(recvBuffer);
     }
     framedDeallocate_out(0, recvBuffer);
@@ -56,7 +56,7 @@ void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATI
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
         Drv::PollStatus status = framedPoll_out(0, buffer);
-        if (status == Drv::POLL_OK) {
+        if (status == Drv::PollStatus::POLL_OK) {
             processBuffer(buffer);
         }
     }

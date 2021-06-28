@@ -295,7 +295,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_HEADER,
+          CmdSequencer_FileReadStage::READ_HEADER,
           Os::File::NO_SPACE
       );
     }
@@ -343,7 +343,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA,
           Os::File::NO_SPACE
       );
     }
@@ -372,7 +372,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           2
       );
     }
@@ -790,7 +790,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_ModeSwitched(
         0,
-        CmdSequencerComponentBase::SEQ_STEP_MODE
+        CmdSequencer_SeqMode::STEP
     );
   }
 

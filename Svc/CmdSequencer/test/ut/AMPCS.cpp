@@ -86,7 +86,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           Os::FileSystem::INVALID_PATH
       );
       // Assert telemetry

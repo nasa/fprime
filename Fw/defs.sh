@@ -9,5 +9,6 @@ Log
 Prm
 Time
 Tlm
+Types
 "
 . $FPRIME_ROOT/defs-root.sh
