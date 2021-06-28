@@ -1,9 +1,8 @@
 @ Type of the output signal: SINE, TRIANGLE, etc.
 telemetry Type: Ref.SignalType id 0
 
-@ FPP from XML: could not translate format string "%2.4f"
 @ Single Y value of the output
-telemetry Output: F32 id 1
+telemetry Output: F32 id 1 format "{.4f}"
 
 @ Single (time, value) pair of the signal
 telemetry PairOutput: Ref.SignalPair id 2

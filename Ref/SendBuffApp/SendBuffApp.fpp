@@ -4,7 +4,27 @@ module Ref {
   queued component SendBuff {
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Types
+    # ----------------------------------------------------------------------
+
+    @ Active state
+    enum ActiveState {
+      SEND_IDLE
+      SEND_ACTIVE
+    }
+
+    # ----------------------------------------------------------------------
+    # General Ports
+    # ----------------------------------------------------------------------
+
+    @ The rate group scheduler input
+    sync input port SchedIn: Svc.Sched
+
+    @ The data buffer output
+    output port Data: Drv.DataBuffer
+
+    # ----------------------------------------------------------------------
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -33,16 +53,6 @@ module Ref {
 
     @ Param set port
     param set port ParamSet
-
-    # ----------------------------------------------------------------------
-    # General Ports
-    # ----------------------------------------------------------------------
-
-    @ The rate group scheduler input
-    sync input port SchedIn: Svc.Sched
-
-    @ The data buffer output
-    output port Data: Drv.DataBuffer
 
     # ----------------------------------------------------------------------
     # Commands
@@ -142,11 +152,6 @@ module Ref {
 
     @ Readback of Parameter4
     telemetry Parameter4: F32 id 3 update on change
-
-    enum ActiveState {
-      SEND_IDLE = 0
-      SEND_ACTIVE = 1
-    }
 
     @ Readback of Parameter4
     telemetry SendState: ActiveState id 4

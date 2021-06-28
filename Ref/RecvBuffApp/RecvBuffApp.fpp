@@ -1,10 +1,31 @@
 module Ref {
 
+  @ Packet receive status
+  enum PacketRecvStatus {
+    PACKET_STATE_NO_PACKETS = 0
+    PACKET_STATE_OK = 1
+    PACKET_STATE_ERRORS = 3 @< Receiver has seen errors
+  }
+
+  @ Some Packet Statistics
+  struct PacketStat {
+    BuffRecv: U32 @< Number of buffers received
+    BuffErr: U32 @< Number of buffers received with errors
+    PacketStatus: PacketRecvStatus @< Packet Status
+  }
+
   @ A rate group active component with input and output scheduler ports
   passive component RecvBuff {
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # General Ports
+    # ----------------------------------------------------------------------
+
+    @ The data buffer input
+    sync input port Data: Drv.DataBuffer
+
+    # ----------------------------------------------------------------------
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -33,14 +54,6 @@ module Ref {
 
     @ A port for setting parameter values
     param set port ParamSet
-
-    
-    # ----------------------------------------------------------------------
-    # General Port
-    # ----------------------------------------------------------------------
-
-    @ The data buffer input
-    sync input port Data: Drv.DataBuffer
 
     # ----------------------------------------------------------------------
     # Events
@@ -93,7 +106,7 @@ module Ref {
 
     @ Value of Sensor1
     telemetry Sensor1: F32 id 1 \
-    format "4.2{f}V"
+    format "{.2f}V"
 
     @ Value of Sensor3
     telemetry Sensor2: F32 id 2
@@ -114,19 +127,6 @@ module Ref {
         yellow 1
       }
 
-  }
-
-  enum PacketRecvStatus {
-    PACKET_STATE_NO_PACKETS = 0
-    PACKET_STATE_OK = 1
-    PACKET_STATE_ERRORS = 3 @< Receiver has seen errors
-  }
-
-  @ Some Packet Statistics
-  struct PacketStat {
-    BuffRecv: U32 @< Number of buffers received
-    BuffErr: U32 @< Number of buffers received with errors
-    PacketStatus: PacketRecvStatus @< Packet Status
   }
 
 }
