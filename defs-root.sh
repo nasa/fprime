@@ -80,8 +80,7 @@ depend_do()
   redo-ifchange $FPP_LOCS $FPP_FILES
   rm -rf $3
   mkdir $3
-  fpp-depend -m $3/missing.txt $FPP_LOCS $FPP_FILES > $3/noinclude.txt
-  fpp-depend -i $FPP_LOCS $FPP_FILES > $3/include.txt
+  fpp-depend -i $3/included.txt -m $3/missing.txt $FPP_LOCS $FPP_FILES > $3/import.txt
   missing=`cat $3/missing.txt`
   if test -n "$missing"
   then
@@ -99,12 +98,10 @@ get_comma_deps()
   # Recompute all dependencies
   redo-ifchange depend
   # Compute the files this build depends on
-  # Count included dependencies
-  build_deps=`cat depend/include.txt`
-  redo-ifchange $FPP_FILES $build_deps
-  # Compute the files to import
+  included_deps=`cat depend/included.txt`
+  import_deps=`cat depend/import.txt`
+  redo-ifchange $FPP_FILES $included_deps $deps
   # Don't count included dependencies
-  import_deps=`cat depend/noinclude.txt`
   if test -n "$import_deps"
   then
     echo $import_deps | sed 's/ /,/g'
