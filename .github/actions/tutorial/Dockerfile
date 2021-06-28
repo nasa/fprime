@@ -9,4 +9,6 @@ RUN  apt-get update && apt-get install -y --no-install-recommends doxygen && \
 
 COPY gps-build /gps-build
 
-CMD ["./gps-build"]
+CMD ["ls -la"]
+
+#CMD ["./gps-build"]
