@@ -4,7 +4,7 @@
 set -e
 set -x
 
-# git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
+git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
 cd gps-tutorial/fprime
 git fetch
 cd ../GpsApp
