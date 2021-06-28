@@ -8,7 +8,7 @@ on:
   push:
     branches: [ master, devel ]
   pull_request:
-    branches: [ master, devel ]
+    branches: [ master, devel, release/v3.0.0 ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -28,6 +28,7 @@ jobs:
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
+      if: always()
       with:
         name: ci-logs
         path: ci-logs.tar.gz

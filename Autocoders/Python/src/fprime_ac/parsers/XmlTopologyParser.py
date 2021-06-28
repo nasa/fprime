@@ -77,7 +77,7 @@ class XmlTopologyParser:
 
         self.__prepend_instance_name = False  # Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
         element_tree = etree.parse(fd)
-        fd.close() #Close the file, which is only used for the parsing above
+        fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate against schema
         relax_file_handler = open(ROOTDIR + self.__config.get("schema", "assembly"))

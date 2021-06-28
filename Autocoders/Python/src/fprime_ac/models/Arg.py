@@ -69,7 +69,7 @@ class Arg:
         return self.__comment
 
     def __eq__(self, other):
-        """ Equality checker """
+        """Equality checker"""
         if type(other) != type(self):
             return False
         return (
