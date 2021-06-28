@@ -103,7 +103,7 @@ class XmlSerializeParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
-        fd.close() #Close the file, which is only used for the parsing above
+        fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate new imports using their root tag as a key to find what schema to use
         rng_file = self.__config.get(
