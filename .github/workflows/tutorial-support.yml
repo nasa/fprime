@@ -23,7 +23,7 @@ jobs:
       - name: checkout GpsApp repo
         uses: actions/checkout@v2
         with:
-          repository: r9pena/gps-tutorial
+          repository: r9-pena/gps-tutorial
           path: gps-tutorial
 
       # 
