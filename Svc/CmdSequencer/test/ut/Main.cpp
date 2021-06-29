@@ -2,7 +2,7 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#define ALL_TESTS 1
+#define ALL_TESTS 0
 
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/Health.hpp"
@@ -322,17 +322,19 @@ TEST(Mixed, AutoByCommandAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.AutoByCommand();
 }
+#endif
 
 TEST(Mixed, Validate) {
   Svc::Mixed::Tester tester;
   tester.Validate();
 }
 
+#if 0
+
 TEST(Mixed, ValidateAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.Validate();
 }
-
 TEST(NoFiles, Init) {
   TEST_CASE(103.1.1,"Nominal Initialization");
   Svc::NoFiles::Tester tester;
