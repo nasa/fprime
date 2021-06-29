@@ -813,32 +813,23 @@ $emit_non_port_params(8, $params)
     // ----------------------------------------------------------------------
 
   #for $ids, $name, $type, $size, $update, $comment, $typeinfo in $channels:
+    #set $tlm_type = $type
+    #if $type == "string":
+      #set $tlm_type = "Fw::TlmString&"
+    #else if $typeinfo == "user"
+      #set $tlm_type = "const " + $type + "&"
+    #else
+      #set $tlm_type = $type
+    #end if
     //! Write telemetry channel $name
     //!
     #if not $comment is None
     /* $comment */
     #end if
-    #if $type == "string":
     void tlmWrite_${name}(
-        Fw::TlmString& arg $doxygen_post_comment("The telemetry value")
+        ${tlm_type} arg $doxygen_post_comment("The telemetry value"),
+        Fw::Time _tlmTime=Fw::Time() $doxygen_post_comment("Timestamp. Default: unspecified, request from getTime port")
     );
-    #else:
-      #if $typeinfo == "enum":
-    void tlmWrite_${name}(
-        ${type} arg $doxygen_post_comment("The telemetry value")
-    );
-      #else:
-        #if $typeinfo == "user":
-    void tlmWrite_${name}(
-        ${type}& arg $doxygen_post_comment("The telemetry value")
-    );
-        #else:
-    void tlmWrite_${name}(
-        ${type} arg $doxygen_post_comment("The telemetry value")
-    );
-        #end if
-      #end if
-    #end if
 
   #end for
 #end if
