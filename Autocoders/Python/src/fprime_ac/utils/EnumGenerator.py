@@ -37,7 +37,9 @@ def open_file(name, type):
     return fp
 
 
-def write_template(fp, c, name, namespace, default, serialize_type, items, max_value, comment):
+def write_template(
+    fp, c, name, namespace, default, serialize_type, items, max_value, comment
+):    
     """
     Set up and write out templates here
     """
@@ -75,14 +77,18 @@ def generate_enum(xml_file):
         #
         fp = open_file(name, "hpp")
         c = enum_hpp.enum_hpp()
-        write_template(fp, c, name, namespace, default, serialize_type, items, max_value, comment)
+        write_template(
+            fp, c, name, namespace, default, serialize_type, items, max_value, comment
+        )
         fp.close()
         #
         # Generate the cpp file
         #
         fp = open_file(name, "cpp")
         c = enum_cpp.enum_cpp()
-        write_template(fp, c, name, namespace, default, serialize_type, items, max_value, comment)
+        write_template(
+            fp, c, name, namespace, default, serialize_type, items, max_value, comment
+        )
         fp.close()
         return True
     else:
