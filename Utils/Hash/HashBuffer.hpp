@@ -71,7 +71,7 @@ namespace Utils {
             
             //! The buffer which stores the hash digest
             //!
-            U8 m_data[HASH_DIGEST_LENGTH]; // packet data buffer
+            U8 m_bufferData[HASH_DIGEST_LENGTH]; // packet data buffer
     };
 }
 

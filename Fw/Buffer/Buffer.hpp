@@ -161,7 +161,7 @@ public:
 
 PRIVATE:
     Fw::ExternalSerializeBuffer m_serialize_repr; //<! Representation for serialization and deserialization functions
-    U8* m_data; //<! data - A pointer to the data
+    U8* m_bufferData; //<! data - A pointer to the data
     U32 m_size; //<! size - The data size in bytes
     U32 m_context; //!< Creation context for disposal
 
