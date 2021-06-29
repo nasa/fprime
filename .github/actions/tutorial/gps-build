@@ -4,9 +4,9 @@
 set -e
 set -x
 
-git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
-cd gps-tutorial/fprime
-git fetch
-cd ../GpsApp
+#git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
+#cd gps-tutorial/fprime
+#git fetch
+cd GpsApp
 fprime-util generate
 fprime-util build
