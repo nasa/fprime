@@ -71,7 +71,7 @@ class TopDictGenerator:
                     member_size,
                     member_format_specifier,
                     member_comment,
-                    member_default
+                    member_default,
                 ) in serializable_model.get_members():
                     member_elem = etree.Element("member")
                     member_elem.attrib["name"] = member_name
