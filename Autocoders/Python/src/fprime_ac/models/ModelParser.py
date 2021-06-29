@@ -189,22 +189,33 @@ class ModelParser:
         for port in obj.get_ports():
             name = port.get_name()
             port_namespace = port.get_namespace()
+            sync = port.get_sync()
             args_dict[name] = list()
             # print "Port: %s" % name
             args = port.get_args()
             for a in args:
                 n = a.get_name()
                 t = a.get_type()
+                s = a.get_size()
                 m = a.get_modifier()
                 e = None
                 #
-                # Store modifier as language symbol
-                if m == "pointer":
-                    m = "*"
-                elif m == "reference":
-                    m = "&"
+                # Pass async port scalar arguments by value
+                # and async port non-scalar arguments by reference
+                if sync == "async":
+                    # Store modifier as language symbol
+                    if s == None:
+                        m = ""
+                    else:
+                        m = "&"
                 else:
-                    m = ""
+                    # Store modifier as language symbol
+                    if m == "pointer":
+                        m = "*"
+                    elif m == "reference":
+                        m = "&"
+                    else:
+                        m = ""
 
                 if t == "string":
                     t = n + "String"
