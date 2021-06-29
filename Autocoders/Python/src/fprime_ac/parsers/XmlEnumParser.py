@@ -236,7 +236,7 @@ if __name__ == "__main__":
             xml_parser.get_namespace(),
             xml_parser.get_default(),
             xml_parser.get_serialize_type(),
-        )    
+        )
     )
     print("Items")
     for item in xml_parser.get_items():

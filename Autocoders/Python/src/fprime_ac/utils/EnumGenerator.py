@@ -39,7 +39,7 @@ def open_file(name, type):
 
 def write_template(
     fp, c, name, namespace, default, serialize_type, items, max_value, comment
-):    
+):
     """
     Set up and write out templates here
     """
