@@ -31,7 +31,7 @@ jobs:
 
       # Build tutorial test
       - name: tutorial-test
-        uses: ./.github/actions/tutorial/
+        uses: ./fprime/.github/actions/tutorial/
         id: github-tutorial-action
 
       # Archive the outputs
