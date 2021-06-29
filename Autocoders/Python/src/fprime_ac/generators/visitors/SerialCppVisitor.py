@@ -140,13 +140,12 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 typeinfo = "extern"
 
             arg_list.append((name, mtype, size, format, comment, default, typeinfo))
-
         return arg_list
 
     def _get_args_proto_string_scalar_init(self, obj):
         """
         Return a string of (type, name) args, comma separated
-        for use in templates that generate prototypes where the array 
+        for use in templates that generate prototypes where the array
         arguments are represented by single element values. If no arguments
         are arrays, function returns None.
         """

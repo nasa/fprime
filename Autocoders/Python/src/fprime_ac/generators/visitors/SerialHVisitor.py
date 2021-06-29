@@ -109,7 +109,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a string of (type, name) args, comma separated
         where array arguments are represented by single element
-        values for use in templates that generate prototypes. 
+        values for use in templates that generate prototypes.
         If no arguments are arrays, function returns None.
         """
         arg_str = ""

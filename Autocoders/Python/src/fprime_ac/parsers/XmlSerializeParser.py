@@ -207,7 +207,7 @@ class XmlSerializeParser:
                         c = None
 
                     d = None
-                     
+
                     for member_tag in member:
                         if member_tag.tag == "enum" and t == "ENUM":
                             en = member_tag.attrib["name"]
