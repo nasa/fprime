@@ -1,6 +1,7 @@
 module Ref {
 
-  instance cmdDisp: Svc.CommandDispatcher base id 121
+  instance cmdDisp: Svc.CommandDispatcher base id 121 \
+    queue size 20 stack size 10 * 1024 priority 101
 
   instance chanTlm: Svc.TlmChan base id 61
 
