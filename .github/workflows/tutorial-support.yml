@@ -19,19 +19,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out latest version of the fprime repo
-      - name: checkout latest fprime repo
-        uses: actions/checkout@v2
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: checkout GpsApp repo
         uses: actions/checkout@v2
         with:
           repository: r9-pena/gps-tutorial
 
+      # Checks-out latest version of the fprime repo
+      - name: checkout latest fprime repo
+        uses: actions/checkout@v2
+
       # Build tutorial test
       - name: tutorial-test
-        uses: ./fprime/.github/actions/tutorial/
+        uses: ./.github/actions/tutorial/
         id: github-tutorial-action
 
       # Archive the outputs
