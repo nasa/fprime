@@ -1,3 +1,4 @@
+#include "gtest/gtest.h"
 #include <Os/Task.hpp>
 #include <stdio.h>
 #include <Fw/Types/EightyCharString.hpp>
@@ -23,7 +24,5 @@ void startTestTask(int iters) {
     testTask = new Os::Task();
     Fw::EightyCharString name("ATestTask");
     Os::Task::TaskStatus stat = testTask->start(name,12,100,10*1024,someTask,(void*) localIter);
-    if (stat != Os::Task::TASK_OK) {
-    	printf("Couldn't start task: %d\n",stat);
-    }
+    ASSERT_EQ(stat, Os::Task::TASK_OK);
 }

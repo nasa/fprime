@@ -78,12 +78,7 @@ Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-The unit test results are as follows:
-
-Log|Link
----|----
-Test Output|[Link](../test/ut/output/test.txt)
-Coverage Output|[Link](../test/ut/output/ActiveRateGroupImpl.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

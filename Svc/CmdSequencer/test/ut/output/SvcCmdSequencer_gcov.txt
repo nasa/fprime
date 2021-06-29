@@ -1,9 +1,0 @@
-File '/home/tim/source/isf/Svc/CmdSequencer/CmdSequencerImpl.cpp'
-Lines executed:96.11% of 386
-Creating 'CmdSequencerImpl.cpp.gcov'
-
-File '/home/tim/source/isf/Svc/CmdSequencer/CmdSequencerComponentAc.cpp'
-Lines executed:93.35% of 1369
-Creating 'CmdSequencerComponentAc.cpp.gcov'
-
-Lines executed:94.04% of 1778

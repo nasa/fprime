@@ -1,6 +1,8 @@
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <stdio.h>
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 namespace Fw {
 
@@ -612,51 +614,51 @@ namespace Fw {
 
         switch (this->m_dataType) {
             case TYPE_U8:
-                (void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u8Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu8 " ", this->m_val.u8Val);
                 break;
             case TYPE_I8:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i8Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId8 " ", this->m_val.i8Val);
                 break;
 #if FW_HAS_16_BIT
             case TYPE_U16:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u16Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu16 " ", this->m_val.u16Val);
                 break;
             case TYPE_I16:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i16Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId16 " ", this->m_val.i16Val);
                 break;
 #endif
 #if FW_HAS_32_BIT
             case TYPE_U32:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u32Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu32 " ", this->m_val.u32Val);
                 break;
             case TYPE_I32:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i32Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId32 " ", this->m_val.i32Val);
                 break;
 #endif
 #if FW_HAS_64_BIT
             case TYPE_U64:
-            	(void) snprintf(valString, sizeof(valString), "%llu ", (unsigned long long)this->m_val.u64Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu64 " ", this->m_val.u64Val);
                 break;
             case TYPE_I64:
-            	(void) snprintf(valString, sizeof(valString), "%lld ", (long long)this->m_val.i64Val);
+            	(void) snprintf(valString, sizeof(valString), "%" PRId64 " ", this->m_val.i64Val);
                 break;
 #endif
 #if FW_HAS_F64
             case TYPE_F64:
-            	(void) snprintf(valString, sizeof(valString), "%lg ", this->m_val.f64Val);
+                (void) snprintf(valString, sizeof(valString), "%lg ", this->m_val.f64Val);
                 break;
 #endif
             case TYPE_F32:
-            	(void) snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
+                (void) snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
                 break;
             case TYPE_BOOL:
-            	(void) snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal?"T":"F");
+                (void) snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal?"T":"F");
                 break;
             case TYPE_PTR:
-            	(void) snprintf(valString, sizeof(valString), "%p ", this->m_val.ptrVal);
+                (void) snprintf(valString, sizeof(valString), "%p ", this->m_val.ptrVal);
                 break;
             default:
-            	(void) snprintf(valString, sizeof(valString), "%s ", "NT");
+                (void) snprintf(valString, sizeof(valString), "%s ", "NT");
                 break;
         }
 
