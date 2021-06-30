@@ -1,8 +1,8 @@
-// ====================================================================== 
+// ======================================================================
 // \title  GroundInterface.cpp
 // \author lestarch
 // \brief  cpp file for GroundInterface component implementation class
-// ====================================================================== 
+// ======================================================================
 
 #include <Fw/Com/ComPacket.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
@@ -16,7 +16,7 @@ namespace Svc {
   const U32 GroundInterfaceComponentImpl::END_WORD = static_cast<U32>(0xcafecafe);
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   GroundInterfaceComponentImpl ::
@@ -33,7 +33,7 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     GroundInterfaceComponentBase::init(instance);
   }
@@ -129,7 +129,7 @@ namespace Svc {
 
       //read packet descriptor in size agnostic way
       U8 packet_descriptor_size = sizeof(FwPacketDescriptorType);
-      U8 packet_type_bytes[packet_descriptor_size];
+      U8 packet_type_bytes[sizeof(FwPacketDescriptorType)];
       Fw::SerializeStatus stat = m_in_ring.peek(packet_type_bytes, packet_descriptor_size, HEADER_SIZE);
       //m_in_ring.peek(packet_type, HEADER_SIZE); // this way is only valid for 4byte packet descriptors
       if(stat == Fw::FW_SERIALIZE_OK)
