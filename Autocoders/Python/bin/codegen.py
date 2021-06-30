@@ -414,9 +414,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
                 comp_type = comp.get_type()
                 comp_name = comp.get_name()
                 comp_id = int(comp.get_base_id())
-                PRINT.debug(
-                    f"Processing {comp_name} [{comp_type}] ({hex(comp_id)})"
-                )
+                PRINT.debug(f"Processing {comp_name} [{comp_type}] ({hex(comp_id)})")
 
                 top_dict_gen.set_current_comp(comp)
                 top_dict_gen.check_for_enum_xml()
