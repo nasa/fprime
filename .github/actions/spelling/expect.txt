@@ -25,6 +25,7 @@ acwrap
 acxz
 addoffset
 addon
+AddressSanitizer
 adminlist
 aeiouy
 afterstatinfo
@@ -598,6 +599,7 @@ fputil
 frontend
 frox
 frsize
+fsanitize
 fscanf
 fstream
 fstrength
@@ -1239,10 +1241,10 @@ Prepends
 prepeneding
 pri
 PRId
-PRIu
 printables
 printf
 println
+PRIu
 prm
 PRMDB
 PRMDBFULL

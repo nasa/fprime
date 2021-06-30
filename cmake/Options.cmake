@@ -130,9 +130,9 @@ endif()
 SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++03" CACHE STRING "C++ flags." FORCE)
 SET(CMAKE_C_FLAGS_RELEASE "-std=c99" CACHE STRING "C flags." FORCE)
 # Raise C++ standard to C++11 while unit testing to support googletest
-SET(CMAKE_CXX_FLAGS_TESTING "-std=c++11 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_CXX_FLAGS_TESTING "${CMAKE_CXX_FLAGS_TESTING} -std=c++11 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "-std=c99 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_C_FLAGS_TESTING "${CMAKE_C_FLAGS_TESTING} -std=c99 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C flags." FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)

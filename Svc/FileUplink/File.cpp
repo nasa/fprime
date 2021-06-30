@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.cpp
 // \author bocchino
 // \brief  cpp file for FileUplink::File
@@ -7,11 +7,12 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Svc {
 
@@ -19,12 +20,12 @@ namespace Svc {
     open(const Fw::FilePacket::StartPacket& startPacket)
   {
     const U32 length = startPacket.destinationPath.length;
-    char path[length + 1];
+    char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
     memcpy(path, startPacket.destinationPath.value, length);
     path[length] = 0;
-    this->size = startPacket.fileSize;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;
+    this->size = startPacket.fileSize;
     CFDP::Checksum checksum;
     this->checksum = checksum;
     return this->osFile.open(path, Os::File::OPEN_WRITE);
