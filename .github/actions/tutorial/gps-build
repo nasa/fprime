@@ -12,6 +12,7 @@ cd "$GITHUB_WORKSPACE"
 #cd gps-tutorial/fprime
 #git fetch
 
+cd gps-tutorial/fprime
 ls -la
 
 # Build GpsApp
