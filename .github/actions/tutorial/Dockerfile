@@ -7,6 +7,4 @@ RUN  apt-get update && apt-get install -y --no-install-recommends doxygen && \
 
 COPY gps-build /gps-build
 
-RUN ls -la
-
 ENTRYPOINT ["/gps-build"]
