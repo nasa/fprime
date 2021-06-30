@@ -24,10 +24,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: r9-pena/gps-tutorial
+          path: ./gps
 
       # Checks-out latest version of the fprime repo
       - name: checkout latest fprime repo
         uses: actions/checkout@v2
+        with:
+          path: ./fprime-repo
 
       # Build tutorial test
       - name: tutorial-test
