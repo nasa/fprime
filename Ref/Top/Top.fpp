@@ -1,19 +1,37 @@
 module Ref {
 
   instance cmdDisp: Svc.CommandDispatcher base id 121 \
-    queue size 20 stack size 10 * 1024 priority 101
+    queue size 20 \
+    stack size 10 * 1024 \
+    priority 101
 
-  instance chanTlm: Svc.TlmChan base id 61
+  instance chanTlm: Svc.TlmChan base id 61 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 97
 
-  instance prmDb: Svc.PrmDb base id 141
+  instance prmDb: Svc.PrmDb base id 141 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 96
 
-  instance cmdSeq: Svc.CmdSequencer base id 541
+  instance cmdSeq: Svc.CmdSequencer base id 541 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 100
 
-  instance eventLogger: Svc.ActiveLogger base id 421
+  instance eventLogger: Svc.ActiveLogger base id 421 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 98
 
-  instance $health: Svc.Health base id 361
+  instance $health: Svc.Health base id 361 \
+  queue size 25 
 
-  instance fileUplink: Svc.FileUplink base id 261
+  instance fileUplink: Svc.FileUplink base id 261 \
+  queue size 30 \
+  stack size 10 * 1024 \
+  priority 100
 
   instance fileUplinkBufferManager: Svc.BufferManager base id 301
 
