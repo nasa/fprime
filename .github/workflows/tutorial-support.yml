@@ -28,11 +28,11 @@ jobs:
       - name: checkout latest fprime repo
         uses: actions/checkout@v2
         with:
-          path: ./gps/gps-tutorial/
+          path: ./gps-tutorial
 
       # Build tutorial test
       - name: tutorial-test
-        uses: ./gps/gps-tutorial/fprime/.github/actions/tutorial/
+        uses: ./gps-tutorial/fprime/.github/actions/tutorial/
         id: github-tutorial-action
 
       # Archive the outputs
