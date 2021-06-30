@@ -202,7 +202,9 @@ class ModelParser:
                 #
                 # Pass async port scalar arguments by value
                 # and async port non-scalar arguments by reference
-                if sync == "async":
+                if m == "pointer":
+                    m = "*"
+                elif sync == "async":
                     # Store modifier as language symbol
                     if s == None:
                         m = ""
@@ -210,9 +212,7 @@ class ModelParser:
                         m = "&"
                 else:
                     # Store modifier as language symbol
-                    if m == "pointer":
-                        m = "*"
-                    elif m == "reference":
+                    if m == "reference":
                         m = "&"
                     else:
                         m = ""

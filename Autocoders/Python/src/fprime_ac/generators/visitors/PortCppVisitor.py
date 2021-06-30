@@ -106,10 +106,10 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             # Add modifier here - if any...
             if arg.get_modifier() == "pointer":
                 t = t + " *"
-            elif arg.get_modifier() == "reference":
+            elif arg.get_modifier() == "reference" or arg.get_size() != None:
                 t = t + " &"
             else:
-                t = t + " "
+                t = t + " " + str(arg.get_size())
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
