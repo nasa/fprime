@@ -32,6 +32,7 @@ namespace Svc {
  */
 class DeframingProtocol {
   public:
+    virtual ~DeframingProtocol(){};
     /**
      * \brief Status of the deframing call
      */

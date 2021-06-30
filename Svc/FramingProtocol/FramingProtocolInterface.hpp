@@ -25,6 +25,7 @@
  */
 class FramingProtocolInterface {
   public:
+    virtual ~FramingProtocolInterface(){};
     //! \brief allocation callback to allocate memory when framing
     //! \param size: size of the allocation request
     //! \return buffer wrapping allocated memory

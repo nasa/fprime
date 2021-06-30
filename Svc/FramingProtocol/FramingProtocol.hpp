@@ -33,6 +33,7 @@ class FramingProtocol {
     //! \brief constructor
     //!
     FramingProtocol();
+    virtual ~FramingProtocol(){};
 
     //! \brief setup function called to supply the interface used for allocation and sending
     //! \param interface: interface implementation, normally FramerComponentImpl
