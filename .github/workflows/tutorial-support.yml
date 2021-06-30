@@ -19,18 +19,26 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: checkout latest GpsApp repo
+        uses: actions/checkout@v2
+        with:
+          path: gps
+
       # Checks-out latest version of the fprime repo
       - name: checkout latest fprime repo
         uses: actions/checkout@v2
+        with:
+          path: gps/gps-tutorial/
 
       # Build tutorial test
       - name: tutorial-test
-        uses: ./.github/actions/tutorial/
+        uses: ./fprime/.github/actions/tutorial/
         id: github-tutorial-action
 
       # Archive the outputs
       - name: 'Archive Logs'
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: ci-logs
           path: ci-logs.tar.gz

@@ -5,13 +5,16 @@ set -e
 set -x
 
 # Clone community repo for GpsApp
-git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
+#git clone --recurse-submodules https://github.com/fprime-community/gps-tutorial.git
+cd "$GITHUB_WORKSPACE"
 
 # Update fprime directory w/ latest release
-cd gps-tutorial/fprime
-git fetch
+#cd gps-tutorial/fprime
+#git fetch
+
+ls -la
 
 # Build GpsApp
-cd ../GpsApp
-fprime-util generate
-fprime-util build
+#cd gps/GpsApp
+#fprime-util generate
+#fprime-util build
