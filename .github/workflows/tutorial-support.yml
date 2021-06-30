@@ -30,7 +30,7 @@ jobs:
       - name: checkout latest fprime repo
         uses: actions/checkout@v2
         with:
-          path: ./fprime-repo
+          path: ./fprime
 
       # Build tutorial test
       - name: tutorial-test

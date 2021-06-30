@@ -7,7 +7,7 @@ RUN  apt-get update && apt-get install -y --no-install-recommends doxygen && \
 
 COPY ./gps/gps-tutorial/GpsApp /
 
-COPY /fprime-repo /
+COPY /fprime /
 
 COPY gps-build /gps-build
 
