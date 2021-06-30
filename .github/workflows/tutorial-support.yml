@@ -22,13 +22,13 @@ jobs:
       - name: checkout latest GpsApp repo
         uses: actions/checkout@v2
         with:
-          path: gps
+          path: ./gps
 
       # Checks-out latest version of the fprime repo
       - name: checkout latest fprime repo
         uses: actions/checkout@v2
         with:
-          path: gps/gps-tutorial/
+          path: ./gps/gps-tutorial/
 
       # Build tutorial test
       - name: tutorial-test
