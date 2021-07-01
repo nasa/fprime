@@ -7,7 +7,7 @@ set -x
 # Change to GitHub workspace
 cd "$GITHUB_WORKSPACE"
 
-export FPRIME_DIR="$GITHUB_WORKSPACE/gps-tutotial/fprime/..; pwd)"
+export FPRIME_DIR="$GITHUB_WORKSPACE/gps-tutotial/fprime)"
 
 export SCRIPT_DIR="${FPRIME_DIR}/ci"
 . "${SCRIPT_DIR}/helpers.bash"
