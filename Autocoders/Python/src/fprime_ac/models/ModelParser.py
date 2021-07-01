@@ -206,7 +206,7 @@ class ModelParser:
                     m = "*"
                 elif sync == "async":
                     # Store modifier as language symbol
-                    if s == None:
+                    if TypesList.isPrimitiveType(t):
                         m = ""
                     else:
                         m = "&"

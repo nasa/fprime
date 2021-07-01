@@ -28,6 +28,7 @@ from fprime_ac.generators.visitors import AbstractVisitor
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import TypesList
 
 #
 # Import precompiled templates here
@@ -106,10 +107,12 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             # Add modifier here - if any...
             if arg.get_modifier() == "pointer":
                 t = t + " *"
-            elif arg.get_modifier() == "reference" or arg.get_size() != None:
+            elif arg.get_modifier() == "reference":
+                t = t + " &"
+            elif not TypesList.isPrimitiveType(t):
                 t = t + " &"
             else:
-                t = t + " " + str(arg.get_size())
+                t = t + " "
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
