@@ -35,9 +35,15 @@ module Ref {
 
   instance fileUplinkBufferManager: Svc.BufferManager base id 301
 
-  instance fileDownlink: Svc.FileDownlink base id 501
+  instance fileDownlink: Svc.FileDownlink base id 501 \
+  queue size 30 \
+  stack size 10 * 1024 \
+  priority 100
 
-  instance fileManager: Svc.FileManager base id 601
+  instance fileManager: Svc.FileManager base id 601 \
+  queue size 30 \
+  stack size 10 * 1024 \
+  priority 100
 
   instance textLogger: Svc.PassiveTextLogger base id 521
 
@@ -57,29 +63,50 @@ module Ref {
 
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 461
 
-  instance rateGroup1Comp: Svc.ActiveRateGroup base id 21
+  instance rateGroup1Comp: Svc.ActiveRateGroup base id 21 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 120
 
-  instance rateGroup2Comp: Svc.ActiveRateGroup base id 161
+  instance rateGroup2Comp: Svc.ActiveRateGroup base id 161 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 119
 
-  instance rateGroup3Comp: Svc.ActiveRateGroup base id 241
+  instance rateGroup3Comp: Svc.ActiveRateGroup base id 241 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 118
 
-  instance sendBuffComp: Ref.SendBuff base id 81
+  instance sendBuffComp: Ref.SendBuff base id 81 \
+  queue size 10
 
   instance recvBuffComp: Ref.RecvBuff base id 101
 
-  instance pingRcvr: Ref.PingReceiver base id 41
+  instance pingRcvr: Ref.PingReceiver base id 41 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 100
 
-  instance SG1: Ref.SignalGen base id 181
+  instance SG1: Ref.SignalGen base id 181 \
+  queue size 10 #instance 0
 
-  instance SG3: Ref.SignalGen base id 201
+  instance SG3: Ref.SignalGen base id 201 \
+  queue size 10 #instance 2
 
-  instance SG2: Ref.SignalGen base id 221
+  instance SG2: Ref.SignalGen base id 221 \
+  queue size 10 #instance 1
 
-  instance SG5: Ref.SignalGen base id 281
+  instance SG5: Ref.SignalGen base id 281 \
+  queue size 10 #instance 4
 
-  instance SG4: Ref.SignalGen base id 321
+  instance SG4: Ref.SignalGen base id 321 \
+  queue size 10 #instance 3
 
-  instance blockDrv: Drv.BlockDriver base id 481
+  instance blockDrv: Drv.BlockDriver base id 481 \
+  queue size 10 \
+  stack size 10 * 1024 \
+  priority 140
 
   topology Top {
 
