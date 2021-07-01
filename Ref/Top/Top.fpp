@@ -1,5 +1,5 @@
 module Ref {
-
+  @ Core C&DH Components
   instance cmdDisp: Svc.CommandDispatcher base id 121 \
     queue size 20 \
     stack size 10 * 1024 \
@@ -58,6 +58,9 @@ module Ref {
   instance downlink: Svc.Framer base id 681
 
   instance uplink: Svc.Deframer base id 701
+
+  @ Communications driver. May be swapped with other comm drivers like UART
+  @ Note: here we have tcp reliable uplink, and Udp (low latency) downlink
 
   instance comm: Drv.ByteStreamDriverModel base id 621
 
@@ -172,22 +175,36 @@ module Ref {
 
     instance blockDrv
 
+    @ Communications Driver Connections
+    @ TEST
+    connections UplinkDrvAllocate {
+        comm.allocate[0] -> staticMemory.bufferAllocate[0]
+      } 
+
     connections XML {
-      comm.allocate[0] -> staticMemory.bufferAllocate[0]
       comm.$recv[0] -> uplink.framedIn[0]
       uplink.framedDeallocate[0] -> staticMemory.bufferDeallocate[0]
+
+      #@ Uplink Data Connections
       uplink.bufferAllocate[0] -> fileUplinkBufferManager.bufferGetCallee[0]
       uplink.comOut[0] -> cmdDisp.seqCmdBuff[0]
       uplink.bufferOut[0] -> fileUplink.bufferSendIn[0]
       uplink.bufferDeallocate[0] -> fileUplinkBufferManager.bufferSendIn[0]
       fileUplink.bufferSendOut[0] -> fileUplinkBufferManager.bufferSendIn[0]
+
+      #@ Downlink Ports
       downlink.framedAllocate[0] -> staticMemory.bufferAllocate[1]
       downlink.framedOut[0] -> comm.send[0]
       comm.deallocate[0] -> staticMemory.bufferDeallocate[1]
+
+      #@ Downlink Data Connections
       eventLogger.PktSend[0] -> downlink.comIn[0]
       chanTlm.PktSend[0] -> downlink.comIn[0]
       fileDownlink.bufferSendOut[0] -> downlink.bufferIn[0]
       downlink.bufferDeallocate[0] -> fileDownlink.bufferReturn[0]
+
+      #@ Command Registration/Dispatch/Reply Connections
+      #@ Command Registration Ports - Registration port number must match dispatch port for each component
       eventLogger.CmdReg[0] -> cmdDisp.compCmdReg[0]
       cmdDisp.CmdReg[0] -> cmdDisp.compCmdReg[1]
       $health.CmdReg[0] -> cmdDisp.compCmdReg[2]
