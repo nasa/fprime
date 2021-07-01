@@ -7,9 +7,13 @@ set -x
 # Change to GitHub workspace
 cd "$GITHUB_WORKSPACE"
 
+gps-tutorial/fprime/ci/helpers.bash
+
 export FPRIME_DIR="$GITHUB_WORKSPACE/gps-tutotial/fprime"
 
 export SCRIPT_DIR="${FPRIME_DIR}/ci"
+${SCRIPT_DIR} ls -la
+
 . "${SCRIPT_DIR}/helpers.bash"
 
 export LOG_DIR="${FPRIME_DIR}/.github/actions/tutorial/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
