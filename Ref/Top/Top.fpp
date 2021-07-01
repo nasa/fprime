@@ -175,13 +175,8 @@ module Ref {
 
     instance blockDrv
 
-    @ Communications Driver Connections
-    @ TEST
-    connections UplinkDrvAllocate {
-        comm.allocate[0] -> staticMemory.bufferAllocate[0]
-      } 
-
     connections XML {
+      comm.allocate[0] -> staticMemory.bufferAllocate[0]
       comm.$recv[0] -> uplink.framedIn[0]
       uplink.framedDeallocate[0] -> staticMemory.bufferDeallocate[0]
 
