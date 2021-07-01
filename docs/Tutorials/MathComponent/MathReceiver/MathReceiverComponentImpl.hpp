@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathReceiverImpl.hpp
 // \author tcanham
 // \brief  hpp file for MathReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef MathReceiver_HPP
 #define MathReceiver_HPP
@@ -44,7 +44,7 @@ namespace Ref {
       //!
       ~MathReceiverComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -54,8 +54,8 @@ namespace Ref {
       //!
       void mathIn_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 val1, 
-          F32 val2, 
+          F32 val1,
+          F32 val2,
           MathOperation operation /*!< operation argument*/
       );
 
@@ -66,10 +66,8 @@ namespace Ref {
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
 
-    PRIVATE:
-
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for MR_SET_FACTOR1 command handler

@@ -79,7 +79,7 @@ namespace Drv {
       //!
       ~LinuxSerialDriverComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

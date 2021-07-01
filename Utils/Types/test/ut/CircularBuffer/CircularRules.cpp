@@ -16,7 +16,7 @@ namespace Types {
 
 
     RandomizeRule::RandomizeRule(const Fw::EightyCharString& name)
-        : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+        : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool RandomizeRule::precondition(const MockTypes::CircularState& state) {
@@ -31,7 +31,7 @@ namespace Types {
 
 
     SerializeOkRule::SerializeOkRule(const Fw::EightyCharString& name)
-        : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+        : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool SerializeOkRule::precondition(const MockTypes::CircularState& state) {
@@ -49,7 +49,7 @@ namespace Types {
 
 
     SerializeOverflowRule::SerializeOverflowRule(const Fw::EightyCharString& name)
-            : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool SerializeOverflowRule::precondition(const MockTypes::CircularState& state) {
@@ -64,7 +64,7 @@ namespace Types {
 
 
     PeekOkRule::PeekOkRule(const Fw::EightyCharString& name)
-            : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool PeekOkRule::precondition(const MockTypes::CircularState& state) {
@@ -129,7 +129,7 @@ namespace Types {
 
 
     PeekBadRule::PeekBadRule(const Fw::EightyCharString& name)
-            : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool PeekBadRule::precondition(const MockTypes::CircularState& state) {
@@ -175,7 +175,7 @@ namespace Types {
 
 
     RotateOkRule::RotateOkRule(const Fw::EightyCharString& name)
-            : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool RotateOkRule::precondition(const MockTypes::CircularState& state) {
@@ -190,7 +190,7 @@ namespace Types {
 
 
     RotateBadRule::RotateBadRule(const Fw::EightyCharString& name)
-            : STest::Rule<MockTypes::CircularState>(name.m_buf) {}
+            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
     bool RotateBadRule::precondition(const MockTypes::CircularState& state) {

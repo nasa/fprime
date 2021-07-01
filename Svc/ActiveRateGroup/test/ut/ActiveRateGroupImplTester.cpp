@@ -50,7 +50,7 @@ namespace Svc {
         // we can cause an overrun by calling the cycle port in the middle of the rate
         // group execution
         if (this->m_causeOverrun) {
-            TimerVal zero(0,0);
+            TimerVal zero(Os::IntervalTimer::RawTime{0,0});
             this->invoke_to_CycleIn(0,zero);
             this->m_causeOverrun = false;
         }
@@ -123,7 +123,7 @@ namespace Svc {
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_RateGroupStarted_SIZE(1);
 
-        Svc::TimerVal timer(1,2);
+        Svc::TimerVal timer(Os::IntervalTimer::RawTime{1,2});
 
         // run some more cycles to verify that event is sent and telemetry is updated
         for (NATIVE_INT_TYPE cycle = 0; cycle < ACTIVE_RATE_GROUP_OVERRUN_THROTTLE; cycle++) {

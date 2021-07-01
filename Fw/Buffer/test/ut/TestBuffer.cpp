@@ -11,7 +11,7 @@ void test_basic() {
     U8 faux[100];
     Fw::Buffer buffer;
     // Check basic guarantees
-    ASSERT_EQ(buffer.m_context, Fw::Buffer::NO_CONTEXT);
+    ASSERT_EQ(buffer.getContext(), Fw::Buffer::NO_CONTEXT);
     buffer.setData(data);
     buffer.setSize(sizeof(data));
     buffer.setContext(1234);
@@ -109,7 +109,7 @@ void test_serialization() {
 
     Fw::ExternalSerializeBuffer externalSerializeBuffer(wire, sizeof(wire));
     externalSerializeBuffer.serialize(buffer);
-    ASSERT_LT(externalSerializeBuffer.m_serLoc, sizeof(data));
+    ASSERT_LT(externalSerializeBuffer.getBuffLength(), sizeof(data));
 
     Fw::Buffer buffer_new;
     externalSerializeBuffer.deserialize(buffer_new);

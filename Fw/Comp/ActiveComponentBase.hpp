@@ -27,7 +27,7 @@ namespace Fw {
                 ACTIVE_COMPONENT_EXIT //!< message to exit active component task
             };
 
-        PROTECTED:
+        protected:
             ActiveComponentBase(const char* name); //!< Constructor
             virtual ~ActiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< initialization code
@@ -38,7 +38,7 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size); //!< create string description of component
 #endif
-        PRIVATE:
+        private:
             static void s_baseTask(void*); //!< function provided to task class for new thread.
             static void s_baseBareTask(void*); //!< function provided to task class for new thread.
     };

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpSenderImpl.hpp
 // \author tcanham
 // \brief  hpp file for UdpSender component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef UdpSender_HPP
 #define UdpSender_HPP
@@ -57,7 +57,7 @@ namespace Svc {
               const char* port /*!< server port */
       );
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -69,8 +69,6 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
-
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined serial input ports

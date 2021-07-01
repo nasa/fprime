@@ -722,7 +722,7 @@ namespace GpsApp {
       //!
       ~GpsComponentImpl(void);
 
-    PRIVATE:
+    private:
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
@@ -734,8 +734,6 @@ namespace GpsApp {
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
           Drv::SerialReadStatus &serial_status /*!< Status of read*/
       );
-
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Command handler implementations

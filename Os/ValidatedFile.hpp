@@ -53,7 +53,7 @@ namespace Os {
       //! \return The hash file buffer
       const Utils::HashBuffer& getHashBuffer(void) const;
 
-    PRIVATE:
+    private:
 
       //! The file name
       Fw::EightyCharString fileName;

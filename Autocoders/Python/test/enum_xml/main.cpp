@@ -209,8 +209,8 @@ TEST(EnumXML, OK) {
     // Serialize enums
     U8 buffer1[1024];
     U8 buffer2[1024];
-    Fw::SerialBuffer enumSerial1 = Fw::SerialBuffer(buffer1, sizeof(buffer1));
-    Fw::SerialBuffer enumSerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
+    Fw::SerialBuffer enumSerial1(buffer1, sizeof(buffer1));
+    Fw::SerialBuffer enumSerial2(buffer2, sizeof(buffer2));
     ASSERT_EQ(enumSerial1.serialize(enum1), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum1" << endl;
 

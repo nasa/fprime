@@ -60,7 +60,7 @@ namespace Drv {
       //! exit thread
       void exitThread(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

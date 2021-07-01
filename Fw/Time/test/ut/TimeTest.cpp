@@ -12,10 +12,10 @@
 TEST(TimeTestNominal,InstantiateTest) {
 
     Fw::Time time(TB_NONE,1,2);
-    ASSERT_EQ(time.m_timeBase,TB_NONE);
-    ASSERT_EQ(time.m_timeContext,0);
-    ASSERT_EQ(time.m_seconds,1);
-    ASSERT_EQ(time.m_useconds,2);
+    ASSERT_EQ(time.getTimeBase(),TB_NONE);
+    ASSERT_EQ(time.getContext(),0);
+    ASSERT_EQ(time.getSeconds(),1);
+    ASSERT_EQ(time.getUSeconds(),2);
     std::cout << time << std::endl;
 }
 
@@ -36,19 +36,19 @@ TEST(TimeTestNominal,MathTest) {
 
     // normal subtract
     Fw::Time time3 = Fw::Time::sub(time2,time1);
-    ASSERT_EQ(time3.m_timeBase,TB_NONE);
-    ASSERT_EQ(time3.m_timeContext,0);
-    ASSERT_EQ(time3.m_seconds,3000);
-    ASSERT_EQ(time3.m_useconds,1000);
+    ASSERT_EQ(time3.getTimeBase(),TB_NONE);
+    ASSERT_EQ(time3.getContext(),0);
+    ASSERT_EQ(time3.getSeconds(),3000);
+    ASSERT_EQ(time3.getUSeconds(),1000);
 
     // rollover subtract
     time1.set(1,999999);
     time2.set(2,000001);
     time3 = Fw::Time::sub(time2,time1);
-    ASSERT_EQ(time3.m_timeBase,TB_NONE);
-    ASSERT_EQ(time3.m_timeContext,0);
-    EXPECT_EQ(time3.m_seconds,0);
-    EXPECT_EQ(time3.m_useconds,2);
+    ASSERT_EQ(time3.getTimeBase(),TB_NONE);
+    ASSERT_EQ(time3.getContext(),0);
+    EXPECT_EQ(time3.getSeconds(),0);
+    EXPECT_EQ(time3.getUSeconds(),2);
 
 }
 

@@ -27,6 +27,7 @@ namespace Svc {
             };
 
             TimerVal(); //!< Default constructor
+            TimerVal(Os::IntervalTimer::RawTime time); //!< Create TimerVal from RawTime
 
             //!  \brief Timer copy constructor
             //!
@@ -35,6 +36,7 @@ namespace Svc {
             //!  \param other source timer value
 
             TimerVal(const TimerVal& other); //!< copy constructor
+
 
             //!  \brief Timer equal operator
             //!
@@ -88,8 +90,7 @@ namespace Svc {
 
             U32 diffUSec(const TimerVal& time); //!< takes difference between stored time and passed time
 
-        PRIVATE:
-            TimerVal(U32 upper, U32 lower); //!< Private constructor for testing
+        private:
             Os::IntervalTimer::RawTime m_timerVal; //!< Stored timer value
     };
 

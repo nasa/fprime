@@ -48,7 +48,7 @@ namespace Ref {
       //!
       ~MathSenderComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -60,8 +60,6 @@ namespace Ref {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           F32 result /*!< the result of the operation*/
       );
-
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Command handler implementations

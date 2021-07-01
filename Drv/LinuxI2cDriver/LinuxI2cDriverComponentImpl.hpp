@@ -42,7 +42,7 @@ namespace Drv {
       //!
       ~LinuxI2cDriverComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -52,16 +52,16 @@ namespace Drv {
       //!
       I2cStatus write_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 addr, 
-          Fw::Buffer &serBuffer 
+          U32 addr,
+          Fw::Buffer &serBuffer
       );
 
       //! Handler implementation for read
       //!
       I2cStatus read_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 addr, 
-          Fw::Buffer &serBuffer 
+          U32 addr,
+          Fw::Buffer &serBuffer
       );
 
       //! Handler implementation for writeRead

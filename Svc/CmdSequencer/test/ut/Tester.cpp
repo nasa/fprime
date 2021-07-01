@@ -43,13 +43,12 @@ namespace Svc {
         this->mallocator,
         BUFFER_SIZE
     );
-    this->component.preamble();
     this->component.setTimeout(TIMEOUT);
-    this->component.regCommands();  
+    this->component.regCommands();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester(void)
   {
     this->component.deallocateBuffer(this->mallocator);
   }
@@ -89,12 +88,12 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Virtual function interface 
+  // Virtual function interface
   // ----------------------------------------------------------------------
 
   void Tester ::
     executeCommandsAuto(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands,
         const U32 bound,
         const CmdExecMode::t mode
@@ -105,7 +104,7 @@ namespace Svc {
 
   void Tester ::
     executeCommandsError(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands
     )
   {
@@ -114,7 +113,7 @@ namespace Svc {
 
   void Tester ::
     executeCommandsManual(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands
     )
   {
@@ -130,7 +129,7 @@ namespace Svc {
         SequenceFiles::File& file,
         const U32 numCommands,
         const U32 bound
-    ) 
+    )
   {
     ASSERT_TRUE(false) << "parameterizedAutoByCommand is not implemented\n";
   }
@@ -140,7 +139,7 @@ namespace Svc {
         SequenceFiles::File& file,
         const U32 numCommands,
         const U32 bound
-    ) 
+    )
   {
 
     REQUIREMENT("ISF-CMDS-005");
@@ -242,7 +241,7 @@ namespace Svc {
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(
-          0, 
+          0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           validateCmdSeq,
           Fw::CmdResponse::EXECUTION_ERROR
@@ -686,7 +685,7 @@ namespace Svc {
     ASSERT_CMD_RESPONSE_SIZE(0);
     // Assert events
     ASSERT_EVENTS_SIZE(1);
-    const Fw::LogStringArg& fileName = 
+    const Fw::LogStringArg& fileName =
       this->component.m_sequence->getLogFileName();
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName.toChar());
   }

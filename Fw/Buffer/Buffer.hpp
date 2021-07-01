@@ -159,7 +159,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Buffer& obj);
 #endif
 
-PRIVATE:
+private:
     Fw::ExternalSerializeBuffer m_serialize_repr; //<! Representation for serialization and deserialization functions
     U8* m_data; //<! data - A pointer to the data
     U32 m_size; //<! size - The data size in bytes

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AMPCSSequence.hpp
 // \author Bocchino
 // \brief  AMPCSSequence interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_AMPCSSequence_HPP
 #define Svc_AMPCSSequence_HPP
@@ -19,7 +19,7 @@ namespace Svc {
 
   //! \class AMPCSSequence
   //! \brief A sequence in AMPCS format
-  class AMPCSSequence : 
+  class AMPCSSequence :
     public CmdSequencerComponentImpl::Sequence
   {
 
@@ -88,14 +88,10 @@ namespace Svc {
 
       };
 
-    public:
-
       //! Construct an AMPCSSequence
       AMPCSSequence(
           CmdSequencerComponentImpl& component //!< The enclosing component
       );
-
-    public:
 
       //! Load a sequence file
       //! \return Success or failure
@@ -122,7 +118,7 @@ namespace Svc {
       //! After calling this, hasMoreRecords should return false.
       void clear(void);
 
-    PRIVATE:
+    private:
 
       //! Read a CRC file
       //! \return Success or failure
@@ -201,8 +197,6 @@ namespace Svc {
       //! Validate the sequence records in the buffer
       //! \return Success or failure
       bool validateRecords(void);
-
-    PRIVATE:
 
       //! The sequence header
       SequenceHeader::t m_sequenceHeader;

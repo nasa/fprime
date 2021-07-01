@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathSenderImpl.hpp
 // \author tcanham
 // \brief  hpp file for MathSender component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef MathSender_HPP
 #define MathSender_HPP
@@ -44,7 +44,7 @@ namespace Ref {
       //!
       ~MathSenderComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -57,10 +57,8 @@ namespace Ref {
           F32 result /*!< the result of the operation*/
       );
 
-    PRIVATE:
-
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for MS_DO_MATH command handler

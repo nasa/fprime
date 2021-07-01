@@ -49,7 +49,7 @@ namespace TestComponents {
       //!
       ~TestSerialImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined serial input ports

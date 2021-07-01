@@ -37,7 +37,7 @@ class GenericRepeaterComponentImpl : public GenericRepeaterComponentBase {
     //!
     ~GenericRepeaterComponentImpl(void);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined serial input ports
     // ----------------------------------------------------------------------

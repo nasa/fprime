@@ -53,7 +53,7 @@ namespace Svc {
             //!
             //!  The destructor for this component is empty
             virtual ~CommandDispatcherImpl();
-        PROTECTED:
+
         PRIVATE:
             //!  \brief component command status handler
             //!

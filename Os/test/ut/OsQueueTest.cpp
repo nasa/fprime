@@ -8,10 +8,10 @@
 #include <signal.h>
 #include <pthread.h>
 
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
 #include <time.h>
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
 #include <sys/time.h>
 #endif
 
@@ -54,9 +54,8 @@ Os::Queue* createTestQueue(char *name, U32 size, I32 depth) {
     return testQueue;
 }
 
-MyTestSerializedBuffer getSendBuffer(I32 startByte) {
+void getSendBuffer(MyTestSerializedBuffer& sendBuff, I32 startByte) {
     Fw::SerializeStatus serStat;
-    MyTestSerializedBuffer sendBuff;
     NATIVE_UINT_TYPE size = sendBuff.getBuffCapacity() - sizeof(NATIVE_UINT_TYPE);
 
     // Fill serialized buffer with data:
@@ -68,7 +67,6 @@ MyTestSerializedBuffer getSendBuffer(I32 startByte) {
     }
     serStat = sendBuff.serialize(sendDataBuff, size);
     EXPECT_EQ(serStat,Fw::FW_SERIALIZE_OK);
-    return sendBuff;
 }
 
 void compareBuffers(MyTestSerializedBuffer& a, MyTestSerializedBuffer& b) {
@@ -94,7 +92,9 @@ void fillQueue(Os::Queue* queue) {
     // Note this loop should only need to go to QUEUE_SIZE,
     // but the SysV queues don't actually have a size, so
     // instead we loop until we get a queue full response:
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
+
     Os::Queue::QueueStatus stat;
     for( NATIVE_INT_TYPE ii = 0; ii < QUEUE_SIZE*100; ii++ ) {
         stat = queue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
@@ -131,7 +131,8 @@ extern "C" {
 Os::Queue* globalQueue = NULL;
 void alarm_send_block(int sig)
 {
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     Os::Queue::QueueStatus stat;
     stat = globalQueue->send(sendBuff, 0, Os::Queue::QUEUE_BLOCKING);
     EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
@@ -139,7 +140,8 @@ void alarm_send_block(int sig)
 
 void alarm_send_nonblock(int sig)
 {
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     Os::Queue::QueueStatus stat;
     stat = globalQueue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
     EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
@@ -178,7 +180,8 @@ void qtest_nonblock_send(void) {
     printf("-----------------------------\n");
     Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
 
     // TEST 1
     printf("Testing non-blocking send on queue full...\n");
@@ -208,7 +211,8 @@ void qtest_block_send(void) {
     printf("-----------------------------\n");
     Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
 
     // TEST 1
     printf("Testing blocking send on queue full with blocking receive...\n");
@@ -257,7 +261,8 @@ void qtest_block_receive(void) {
     Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     I32 prio; // not used
 
     // TEST 1
@@ -300,7 +305,8 @@ void qtest_block_receive(void) {
     NATIVE_INT_TYPE priorities[6] = {0, 50, 50, 99, 0, 16};
     for( I32 ii = 0; ii < 6; ii++ ) {
       // Generate a new send buffer for each enqueue:
-      MyTestSerializedBuffer sendBuff2 = getSendBuffer(sendBuffStart[ii]);
+      MyTestSerializedBuffer sendBuff2;
+      getSendBuffer(sendBuff2, sendBuffStart[ii]);
       stat = testQueue->send(sendBuff2, priorities[ii], Os::Queue::QUEUE_NONBLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
@@ -314,7 +320,8 @@ void qtest_block_receive(void) {
 #endif
     for( I32 ii = 0; ii < 6; ii++ ) {
       // Generate a new send buffer for each enqueue:
-      MyTestSerializedBuffer expectedSendBuff2 = getSendBuffer(expectedSendBuffStart[ii]);
+      MyTestSerializedBuffer expectedSendBuff2;
+      getSendBuffer(expectedSendBuff2, expectedSendBuffStart[ii]);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       EXPECT_EQ(prio,expectedPriorities[ii]);
@@ -337,7 +344,8 @@ void qtest_nonblock_receive(void) {
     Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     I32 prio; // not used
 
     // TEST 1
@@ -364,7 +372,8 @@ void qtest_nonblock_receive(void) {
     NATIVE_INT_TYPE priorities[6] = {0, 50, 50, 99, 0, 16};
     for( I32 ii = 0; ii < 6; ii++ ) {
       // Generate a new send buffer for each enqueue:
-      MyTestSerializedBuffer sendBuff2 = getSendBuffer(sendBuffStart[ii]);
+      MyTestSerializedBuffer sendBuff2;
+      getSendBuffer(sendBuff2, sendBuffStart[ii]);
       stat = testQueue->send(sendBuff2, priorities[ii], Os::Queue::QUEUE_NONBLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
@@ -378,7 +387,8 @@ void qtest_nonblock_receive(void) {
 #endif
     for( I32 ii = 0; ii < 6; ii++ ) {
       // Generate a new send buffer for each enqueue:
-      MyTestSerializedBuffer expectedSendBuff2 = getSendBuffer(expectedSendBuffStart[ii]);
+      MyTestSerializedBuffer expectedSendBuff2;
+      getSendBuffer(expectedSendBuff2, expectedSendBuffStart[ii]);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       EXPECT_EQ(prio,expectedPriorities[ii]);
@@ -400,26 +410,27 @@ void qtest_performance(void) {
     Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, 10);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     I32 prio; // not used
     F64 elapsedTime;
     I32 numIterations;
 
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     timespec stime;
     timespec etime;
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     timeval stime;
     timeval etime;
 #endif
 
     // TEST 1
     printf("Testing shallow queue...\n");
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&stime,0);
 #endif
     numIterations = 1000000;
@@ -437,12 +448,12 @@ void qtest_performance(void) {
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&etime,0);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
@@ -458,10 +469,10 @@ void qtest_performance(void) {
       if(stat == Os::Queue::QUEUE_FULL)
         break;
     }
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&stime,0);
 #endif
     numIterations = 1000000;
@@ -479,12 +490,12 @@ void qtest_performance(void) {
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
       EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&etime,0);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
@@ -509,7 +520,8 @@ void *run_task(void *ptr)
   Os::Queue::QueueStatus stat;
   I32 prio; // not used
   MyTestSerializedBuffer recvBuff;
-  MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+  MyTestSerializedBuffer sendBuff;
+  getSendBuffer(sendBuff, 0);
   for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
@@ -536,14 +548,15 @@ void qtest_concurrent(void) {
     Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, 10);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
-    MyTestSerializedBuffer sendBuff = getSendBuffer(0);
+    MyTestSerializedBuffer sendBuff;
+    getSendBuffer(sendBuff, 0);
     F64 elapsedTime;
 
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     timespec stime;
     timespec etime;
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     timeval stime;
     timeval etime;
 #endif
@@ -557,10 +570,10 @@ void qtest_concurrent(void) {
       if(stat == Os::Queue::QUEUE_FULL)
         break;
     }
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&stime,0);
 #endif
 
@@ -572,20 +585,20 @@ void qtest_concurrent(void) {
         EXPECT_TRUE(0);
       }
     }
-    
+
     for(U32 ii = 0; ii < NUM_THREADS; ++ii) {
       if(pthread_join(thread[ii], NULL)) {
-        EXPECT_TRUE(0);      
+        EXPECT_TRUE(0);
       }
     }
 #endif
 
-#if defined TGT_OS_TYPE_LINUX         
+#if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
 #endif
-#if defined TGT_OS_TYPE_DARWIN    
+#if defined TGT_OS_TYPE_DARWIN
     (void)gettimeofday(&etime,0);
     elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);

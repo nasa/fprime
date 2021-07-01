@@ -35,7 +35,7 @@ namespace Drv {
             SocketIpStatus recv(U8* data, I32 &size);
             void close(void);
 
-        PRIVATE:
+        private:
 
             SocketIpStatus openProtocol(NATIVE_INT_TYPE protocol, bool isInput = true);
 

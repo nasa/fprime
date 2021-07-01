@@ -123,7 +123,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
 
-  PRIVATE:
+  private:
 
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

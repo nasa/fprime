@@ -62,7 +62,7 @@ class FramerComponentImpl : public FramerComponentBase, public FramingProtocolIn
     //! \return Fw::Buffer containing allocation to write into
     Fw::Buffer allocate(const U32 size);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

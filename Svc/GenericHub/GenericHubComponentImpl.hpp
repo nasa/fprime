@@ -49,7 +49,7 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
     //!
     ~GenericHubComponentImpl(void);
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

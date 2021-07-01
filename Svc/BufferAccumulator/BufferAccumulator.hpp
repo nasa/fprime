@@ -23,7 +23,7 @@ namespace Svc {
     public BufferAccumulatorComponentBase
   {
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Types
@@ -64,7 +64,7 @@ namespace Svc {
             //! \return The capacity
             U32 getCapacity(void) const;
 
-        PRIVATE:
+        private:
 
           // ----------------------------------------------------------------------
           // Private member variables
@@ -125,7 +125,7 @@ namespace Svc {
       void deallocateQueue(Fw::MemAllocator& allocator);
 
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -159,8 +159,6 @@ namespace Svc {
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
 
-    PRIVATE:
-
       // ----------------------------------------------------------------------
       // Command handler implementations
       // ----------------------------------------------------------------------
@@ -172,7 +170,6 @@ namespace Svc {
           const U32 cmdSeq, //!< The command sequence number
           OpState mode //!< The mode
       );
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Private helper methods
@@ -180,8 +177,6 @@ namespace Svc {
 
       //! Send a stored buffer
       void sendStoredBuffer(void);
-
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Private member variables

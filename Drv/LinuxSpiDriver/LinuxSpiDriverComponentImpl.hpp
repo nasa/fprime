@@ -61,7 +61,7 @@ namespace Drv {
                       NATIVE_INT_TYPE select,
                       SpiFrequency clock);
 
-        PRIVATE:
+        private:
 
             // ----------------------------------------------------------------------
             // Handler implementations for user-defined typed input ports

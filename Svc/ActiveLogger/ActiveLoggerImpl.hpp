@@ -22,8 +22,8 @@ namespace Svc {
                     NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
                     NATIVE_INT_TYPE instance /*!< The instance number*/
                     ); //!< initialization function
-        PROTECTED:
-        PRIVATE:
+
+        private:
             void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
             void loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity& severity, Fw::LogBuffer &args);
 

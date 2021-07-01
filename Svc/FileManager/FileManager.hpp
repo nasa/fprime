@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileManager.hpp
 // \author bocchino
 // \brief  hpp file for FileManager component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_FileManager_HPP
 #define Svc_FileManager_HPP
@@ -45,10 +45,10 @@ namespace Svc {
       //!
       ~FileManager(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for CreateDirectory command handler
@@ -109,10 +109,8 @@ namespace Svc {
           U32 key /*!< Value to return to pinger*/
       );
 
-    PRIVATE:
-
       // ----------------------------------------------------------------------
-      // Helper methods 
+      // Helper methods
       // ----------------------------------------------------------------------
 
       //! A system command with no arguments
@@ -135,8 +133,6 @@ namespace Svc {
           const U32 cmdSeq, //!< The command sequence value
           const Os::FileSystem::Status status //!< The status
       );
-
-    PRIVATE:
 
       // ----------------------------------------------------------------------
       // Variables

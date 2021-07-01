@@ -33,7 +33,7 @@ namespace Fw {
 #if FW_SERIALIZABLE_TO_STRING
             void toString(StringBase& text) const;
 #endif
-        PRIVATE:
+        private:
             NATIVE_UINT_TYPE getCapacity(void) const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

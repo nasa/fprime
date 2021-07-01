@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  PingReceiverImpl.hpp
 // \author tim
 // \brief  hpp file for PingReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef PingReceiver_HPP
 #define PingReceiver_HPP
@@ -44,7 +44,7 @@ namespace Ref {
       //!
       ~PingReceiverComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

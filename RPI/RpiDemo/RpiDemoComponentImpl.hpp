@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RpiDemoImpl.hpp
 // \author tcanham
 // \brief  hpp file for RpiDemo component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef RpiDemo_HPP
 #define RpiDemo_HPP
@@ -49,7 +49,7 @@ namespace Rpi {
       //!
       ~RpiDemoComponentImpl(void);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
@@ -70,10 +70,8 @@ namespace Rpi {
           Drv::SerialReadStatus &status /*!< Status of read*/
       );
 
-    PRIVATE:
-
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for RD_SendString command handler

@@ -29,7 +29,7 @@ namespace Fw {
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
             SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
 
-        PRIVATE:
+        private:
             NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

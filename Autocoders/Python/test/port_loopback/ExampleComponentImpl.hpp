@@ -49,7 +49,7 @@ namespace ExampleComponents {
 
       void makePortCall(NATIVE_INT_TYPE port);
 
-    PRIVATE:
+    private:
 
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports

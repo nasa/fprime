@@ -36,7 +36,7 @@ namespace Fw {
             void get(I16& val); //!< I16 accessor
             bool isI16(void); //!< I16 checker
             PolyType& operator=(I16 val); //!< I16 operator=
-#endif            
+#endif
 #if FW_HAS_32_BIT
             PolyType(U32 val); //!< U32 constructor
             operator U32(); //!< U32 cast operator
@@ -108,7 +108,7 @@ namespace Fw {
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< Serialize function
             SerializeStatus deserialize(SerializeBufferBase& buffer); //!< Deserialize function
 
-        PRIVATE:
+        private:
 
             typedef enum {
                 TYPE_NOTYPE, // !< No type stored yet
@@ -138,7 +138,7 @@ namespace Fw {
 #if FW_HAS_32_BIT
                     U32 u32Val; //!< U32 data storage
                     I32 i32Val; //!< I32 data storage
-#endif                    
+#endif
 #if FW_HAS_64_BIT
                     U64 u64Val; //!< U64 data storage
                     I64 i64Val; //!< I64 data storage

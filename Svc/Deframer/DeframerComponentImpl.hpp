@@ -58,7 +58,7 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
     );
 
 
-  PRIVATE:
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

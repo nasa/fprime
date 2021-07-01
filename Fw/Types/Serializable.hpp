@@ -137,11 +137,11 @@ namespace Fw {
             bool operator==(const SerializeBufferBase& other) const;
             friend std::ostream& operator<<(std::ostream& os, const SerializeBufferBase& buff);
 #endif
-        PROTECTED:
+        protected:
 
             SerializeBufferBase(); //!< default constructor
 
-        PRIVATE:
+        private:
             // A no-implementation copy constructor here will prevent the default copy constructor from being called
             // accidentally, and without an implementation it will create an error for the developer instead.
             SerializeBufferBase(const SerializeBufferBase &src); //!< constructor with buffer as source
@@ -165,7 +165,7 @@ namespace Fw {
             U8* getBuffAddr(void);
             const U8* getBuffAddr(void) const ;
 
-        PRIVATE:
+        private:
 
             // no copying
             ExternalSerializeBuffer(ExternalSerializeBuffer& other);

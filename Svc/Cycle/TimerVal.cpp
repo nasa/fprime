@@ -15,9 +15,8 @@ namespace Svc {
         this->m_timerVal.lower = 0;
     }
 
-    TimerVal::TimerVal(U32 upper, U32 lower)  {
-        this->m_timerVal.upper = upper;
-        this->m_timerVal.lower = lower;
+    TimerVal::TimerVal(Os::IntervalTimer::RawTime time)  {
+        this->m_timerVal = time;
     }
 
     TimerVal::TimerVal(const TimerVal& other) : Fw::Serializable() {
