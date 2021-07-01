@@ -637,15 +637,15 @@ class TopoFactory:
         if inst.get_base_id() is None:
             b = None
         else:
-            if id > abs(int(inst.get_base_id())):
-                b = abs(int(inst.get_base_id())) + id
+            if id > abs(int(inst.get_base_id(), 0)):
+                b = abs(int(inst.get_base_id(), 0)) + id
                 PRINT.info(
                     "WARNING: {} instance adding instance supplied base ID to the topology supplied base ID (New ID is {}) because instance supplied base ID is smaller than the topology supplied base ID.".format(
                         n, b
                     )
                 )
             else:
-                b = abs(int(inst.get_base_id()))
+                b = abs(int(inst.get_base_id(), 0))
             PRINT.info("WARNING: %s instance resetting base id to %d" % (n, b))
         #
         # set window size or override it on instance basis
@@ -662,7 +662,7 @@ class TopoFactory:
         """
 
         if inst.get_base_id_window() is not None:
-            w = abs(int(inst.get_base_id_window()))
+            w = abs(int(inst.get_base_id_window(), 0))
             PRINT.info(
                 "{} instance resetting base id window range to instance specified size ({})".format(
                     n, w
