@@ -14,7 +14,7 @@ export SCRIPT_DIR="${FPRIME_DIR}/ci"
 . "${SCRIPT_DIR}/helpers.bash"
 
 export LOG_DIR="${FPRIME_DIR}/.github/actions/tutorial/ci-logs-$(date +"%Y-%m-%dT%H%M%S")"
-cd ${LOG_DIR}
+cd ${FPRIME_DIR}/.github/actions/tutorial
 ls -l
 mkdir -p "${LOG_DIR}"
 ls -l
