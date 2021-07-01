@@ -35,12 +35,3 @@ jobs:
       - name: tutorial-test
         uses: ./gps-tutorial/fprime/.github/actions/tutorial/
         id: github-tutorial-action
-
-      # Archive the outputs
-      - name: 'Archive Logs'
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: ci-logs
-          path: ci-logs.tar.gz
-          retention-days: 5
