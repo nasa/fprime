@@ -9,7 +9,7 @@ cd "$GITHUB_WORKSPACE"
 
 ls -la
 
-export FPRIME_DIR="$GITHUB_WORKSPACE/gps-tutotial/fprime"
+export FPRIME_DIR="$GITHUB_WORKSPACE/gps-tutorial/fprime"
 
 ${FPRIME_DIR} ls -la
 
