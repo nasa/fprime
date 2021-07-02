@@ -90,7 +90,7 @@ TEST(TimeTestNominal,CopyTest) {
 }
 
 TEST(TimeTestNominal,ZeroTimeEquality) {
-    Fw::Time time(TB_DONT_CARE,1,2);
+    Fw::Time time(TB_PROC_TIME,1,2);
     ASSERT_NE(time, Fw::ZERO_TIME);
     Fw::Time time2;
     ASSERT_EQ(time2, Fw::ZERO_TIME);
