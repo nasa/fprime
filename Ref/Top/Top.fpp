@@ -175,11 +175,15 @@ module Ref {
 
     instance blockDrv
 
-    connections XML {
+    @ Connections
+    connections ComDrv {
       comm.allocate[0] -> staticMemory.bufferAllocate[0]
       comm.$recv[0] -> uplink.framedIn[0]
       uplink.framedDeallocate[0] -> staticMemory.bufferDeallocate[0]
-
+    }
+  
+connections XML {
+      
       #@ Uplink Data Connections
       uplink.bufferAllocate[0] -> fileUplinkBufferManager.bufferGetCallee[0]
       uplink.comOut[0] -> cmdDisp.seqCmdBuff[0]
