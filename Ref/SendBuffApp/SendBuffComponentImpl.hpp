@@ -57,7 +57,7 @@ namespace Ref {
             void parameterUpdated(FwPrmIdType id); //!< Notification function for changed parameters
 
             // send state
-            ActiveState m_state;
+            SendBuff_ActiveState m_state;
 };
 
 }

@@ -2,6 +2,7 @@
 
 export FPRIME_ROOT=.
 export SUBDIRS="
+Drv
 Fw
 Ref
 Svc
