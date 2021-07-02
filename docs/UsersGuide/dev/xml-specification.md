@@ -62,6 +62,7 @@ specification.
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
+| default                    |           | Specifies the default value of the member (optional).                                                                              |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |
 | enum                       | name      | Enumeration type name.                                                                                                                               |
 | item                       |           | Specifies a member of the enumeration.                                                                                                               |
@@ -95,11 +96,12 @@ this specification:
 ```xml
 <serializable name="Switch">
   <members>
-    <member name="state">
-      <enum name="SwitchState" type="ENUM">
-        <item name="OFF" value="0">
-        <item name="ON" value="1">
+    <member name="state" type="ENUM">
+      <enum name="SwitchState">
+        <item name="OFF" value="0"/>
+        <item name="ON" value="1"/>
       </enum>
+      <default>OFF</default>
     </member>
   </members>
 </serializable>
@@ -108,7 +110,8 @@ this specification:
 This file defines a Serializable type `Switch`
 with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
-enumerated constants `OFF` and `ON`.
+enumerated constants `OFF` and `ON`. Using the default child element,
+the default value will be OFF.
 
 Alternatively, you can specify an enumeration *E* as a separate XML type.
 Then you can do the following:
