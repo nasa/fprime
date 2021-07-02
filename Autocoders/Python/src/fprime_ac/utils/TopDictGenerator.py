@@ -72,12 +72,15 @@ class TopDictGenerator:
                     member_size,
                     member_format_specifier,
                     member_comment,
+                    member_default,
                 ) in serializable_model.get_members():
                     member_elem = etree.Element("member")
                     member_elem.attrib["name"] = member_name
                     member_elem.attrib["format_specifier"] = member_format_specifier
                     if member_comment is not None:
                         member_elem.attrib["description"] = member_comment
+                    if member_default is not None:
+                        member_elem.attrib["default"] = member_default
                     if isinstance(member_type, tuple):
                         type_name = "{}::{}::{}".format(
                             serializable_type,
