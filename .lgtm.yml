@@ -11,12 +11,13 @@ path_classifiers:
     docs:
       - docs
 queries:
-  - include: cpp/incorrect-not-operator-usage
-  - include:
-      tags:
-        - "correctness"
-        - "reliability"
-
+    - include: cpp/incorrect-not-operator-usage
+    - include:
+        tags:
+            - "correctness"
+    - include:
+        tags:
+            - "reliability"
 extraction:
     cpp:
         prepare:
