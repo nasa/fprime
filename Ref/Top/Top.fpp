@@ -1,5 +1,9 @@
 module Ref {
 
+  # ----------------------------------------------------------------------
+  # Module Instances
+  # ----------------------------------------------------------------------
+
   @ Core C&DH Components
   instance cmdDisp: Svc.CommandDispatcher base id 121 \
     queue size 20 \
@@ -113,6 +117,10 @@ module Ref {
 
   topology Ref {
 
+    # ----------------------------------------------------------------------
+    # Topology Instances
+    # ----------------------------------------------------------------------
+
     instance cmdDisp
 
     instance chanTlm
@@ -175,35 +183,40 @@ module Ref {
 
     instance blockDrv
 
-    @ Connections
+    # ----------------------------------------------------------------------
+    # Connections
+    # ----------------------------------------------------------------------
+
     connections ComDrv {
-      comm.allocate[0] -> staticMemory.bufferAllocate[0]
-      comm.$recv[0] -> uplink.framedIn[0]
-      uplink.framedDeallocate[0] -> staticMemory.bufferDeallocate[0]
+      comm.allocate -> staticMemory.bufferAllocate
+      comm.$recv -> uplink.framedIn
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate
     }
   
-connections XML {
-      
-      #@ Uplink Data Connections
+    connections UplinkData{
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
       uplink.comOut -> cmdDisp.seqCmdBuff
       uplink.bufferOut -> fileUplink.bufferSendIn
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+    }
 
-      #@ Downlink Ports
+    connections DownlinkPorts{
       downlink.framedAllocate -> staticMemory.bufferAllocate[1]
       downlink.framedOut -> comm.send
       comm.deallocate -> staticMemory.bufferDeallocate[1]
+    }
 
-      #@ Downlink Data Connections
+    connections DownlinkData{
       eventLogger.PktSend -> downlink.comIn
       chanTlm.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
+    }
 
-      #@ Command Registration/Dispatch/Reply Connections
-      #@ Command Registration Ports - Registration port number must match dispatch port for each component
+    @ Command Registration/Dispatch/Reply Connections
+    @ Command Registration Ports - Registration port number must match dispatch port for each component
+    connections ComRegPorts {
       eventLogger.CmdReg -> cmdDisp.compCmdReg
       cmdDisp.CmdReg -> cmdDisp.compCmdReg[1]
       $health.CmdReg -> cmdDisp.compCmdReg[2]
@@ -219,6 +232,10 @@ connections XML {
       SG5.cmdRegOut -> cmdDisp.compCmdReg[12]
       pingRcvr.CmdReg -> cmdDisp.compCmdReg[13]
       fileManager.cmdRegOut -> cmdDisp.compCmdReg[14]
+    }
+
+    @ Command Dispatch Ports - Dispatch port number must match registration port for each component
+    connections CmdDispatch {
       cmdDisp.compCmdSend -> eventLogger.CmdDisp
       cmdDisp.compCmdSend[1] -> cmdDisp.CmdDisp
       cmdDisp.compCmdSend[2] -> $health.CmdDisp
@@ -234,6 +251,10 @@ connections XML {
       cmdDisp.compCmdSend[12] -> SG5.cmdIn
       cmdDisp.compCmdSend[13] -> pingRcvr.CmdDisp
       cmdDisp.compCmdSend[14] -> fileManager.cmdIn
+    }
+
+    @ Command Reply Ports - Go to the same response port on the dispatcher
+    connections ComReply {
       eventLogger.CmdStatus -> cmdDisp.compCmdStat
       cmdSeq.cmdResponseOut -> cmdDisp.compCmdStat
       prmDb.CmdStatus -> cmdDisp.compCmdStat
@@ -249,6 +270,10 @@ connections XML {
       SG3.cmdResponseOut -> cmdDisp.compCmdStat
       SG4.cmdResponseOut -> cmdDisp.compCmdStat
       SG5.cmdResponseOut -> cmdDisp.compCmdStat
+    }
+
+    @ Sequencer Connections - should not conflict with uplink port
+    connections Sequencer{
       cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn
       cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[1]
       prmDb.Log -> eventLogger.LogRecv
@@ -272,6 +297,10 @@ connections XML {
       SG4.logOut -> eventLogger.LogRecv
       SG5.logOut -> eventLogger.LogRecv
       pingRcvr.Log -> eventLogger.LogRecv
+    }
+
+
+    connections TextEventLogger{
       cmdSeq.LogText -> textLogger.TextLogger
       eventLogger.LogText -> textLogger.TextLogger
       $health.LogText -> textLogger.TextLogger
@@ -290,6 +319,9 @@ connections XML {
       sendBuffComp.LogText -> textLogger.TextLogger
       recvBuffComp.LogText -> textLogger.TextLogger
       fileDownlink.textEventOut -> textLogger.TextLogger
+    }
+
+    connections Telemetry{
       fileDownlink.tlmOut -> chanTlm.TlmRecv
       fileUplinkBufferManager.tlmOut -> chanTlm.TlmRecv
       fileUplink.tlmOut -> chanTlm.TlmRecv
@@ -309,10 +341,20 @@ connections XML {
       sendBuffComp.Tlm -> chanTlm.TlmRecv
       recvBuffComp.Tlm -> chanTlm.TlmRecv
       blockDrv.Tlm -> chanTlm.TlmRecv
+    }
+
+    connections Parameters{
       recvBuffComp.ParamGet -> prmDb.getPrm
       sendBuffComp.ParamGet -> prmDb.getPrm
       recvBuffComp.ParamSet -> prmDb.setPrm
       sendBuffComp.ParamSet -> prmDb.setPrm
+    }
+
+    #time pattern
+    #time connections source LinuxTime
+    #comment out below
+
+    connections Time{
       prmDb.Time -> linuxTime.timeGetPort
       eventLogger.Time -> linuxTime.timeGetPort
       rateGroup1Comp.Time -> linuxTime.timeGetPort
@@ -335,22 +377,41 @@ connections XML {
       sendBuffComp.Time -> linuxTime.timeGetPort
       pingRcvr.Time -> linuxTime.timeGetPort
       blockDrv.Time -> linuxTime.timeGetPort
+    }
+
+    @ Rate Group Connections
+    connections Linuxtimer{
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
+    }
+
+    connections RateGroup1{
       rateGroupDriverComp.CycleOut -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
+    }
+    
+    connections RateGroup2 {
       rateGroupDriverComp.CycleOut[1] -> rateGroup2Comp.CycleIn
       rateGroup2Comp.RateGroupMemberOut -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
+    }
+
+    connections RateGroup3{
       rateGroupDriverComp.CycleOut[2] -> rateGroup3Comp.CycleIn
       rateGroup3Comp.RateGroupMemberOut -> $health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
+    }
+  
+    @ The PingSend output port number should match the PingReturn input port number
+    @ Each port number pair must be unique
+    @ This order must match the pingEntries[] table in Ref/Top/Topology.cpp
+    connections Health{
       rateGroup1Comp.PingOut -> $health.PingReturn
       $health.PingSend -> rateGroup1Comp.PingIn
       $health.PingSend[1] -> rateGroup2Comp.PingIn
@@ -377,11 +438,19 @@ connections XML {
       blockDrv.PingOut -> $health.PingReturn[11]
       $health.PingSend[12] -> fileManager.pingIn
       fileManager.pingOut -> $health.PingReturn[12]
+    }
+    connections SocketGroupSysCom{}
+
+    @ Uplink connection to command dispatcher should not conflict with command sequencer
+    connections Uplink{}
+
+    connections Fault{
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
+    }
+
+    connections ReferenceApp{
       sendBuffComp.Data -> blockDrv.BufferIn
       blockDrv.BufferOut -> recvBuffComp.Data
     }
-
-  }
-
+  } 
 }
