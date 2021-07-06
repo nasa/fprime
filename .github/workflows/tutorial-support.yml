@@ -22,7 +22,7 @@ jobs:
       - name: checkout latest GpsApp repo
         uses: actions/checkout@v2
         with:
-          repository: r9-pena/gps-tutorial
+          repository: fprime-community/gps-tutorial
           path: ./gps-tutorial
 
       # Checks-out latest version of the fprime repo
