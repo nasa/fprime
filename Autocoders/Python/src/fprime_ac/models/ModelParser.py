@@ -207,7 +207,7 @@ class ModelParser:
                     m = "*"
                 elif sync == "async":
                     # Store modifier as language symbol
-                    if TypesList.isPrimitiveType(t) and not isEnum:
+                    if (TypesList.isPrimitiveType(t) or isEnum) and m == "value":
                         m = ""
                     else:
                         m = "&"
