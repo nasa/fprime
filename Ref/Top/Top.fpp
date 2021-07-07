@@ -243,27 +243,8 @@ module Ref {
       pingRcvr.Log -> eventLogger.LogRecv
     }
 
-
-    connections TextEventLogger{
-      cmdSeq.LogText -> textLogger.TextLogger
-      eventLogger.LogText -> textLogger.TextLogger
-      $health.LogText -> textLogger.TextLogger
-      fatalAdapter.LogText -> textLogger.TextLogger
-      prmDb.LogText -> textLogger.TextLogger
-      cmdDisp.LogText -> textLogger.TextLogger
-      rateGroup1Comp.LogText -> textLogger.TextLogger
-      rateGroup2Comp.LogText -> textLogger.TextLogger
-      rateGroup3Comp.LogText -> textLogger.TextLogger
-      pingRcvr.LogText -> textLogger.TextLogger
-      SG1.logTextOut -> textLogger.TextLogger
-      SG2.logTextOut -> textLogger.TextLogger
-      SG3.logTextOut -> textLogger.TextLogger
-      SG4.logTextOut -> textLogger.TextLogger
-      SG5.logTextOut -> textLogger.TextLogger
-      sendBuffComp.LogText -> textLogger.TextLogger
-      recvBuffComp.LogText -> textLogger.TextLogger
-      fileDownlink.textEventOut -> textLogger.TextLogger
-    }
+    @ Text Event connections
+    text event connections instance textLogger
 
     connections Telemetry{
       fileDownlink.tlmOut -> chanTlm.TlmRecv
