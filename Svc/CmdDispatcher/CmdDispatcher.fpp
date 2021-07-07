@@ -2,7 +2,7 @@ module Svc {
 
   @ A component for dispatching commands
   active component CommandDispatcher {
-
+    
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
@@ -27,6 +27,8 @@ module Svc {
 
     @ Ping output port
     output port pingOut: Svc.Ping
+
+    match compCmdSend with compCmdReg
 
     # ----------------------------------------------------------------------
     # Special ports
