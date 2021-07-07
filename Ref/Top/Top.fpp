@@ -351,33 +351,8 @@ module Ref {
     }
 
     #time pattern
-    #time connections source LinuxTime
-    #comment out below
-
-    connections Time{
-      prmDb.Time -> linuxTime.timeGetPort
-      eventLogger.Time -> linuxTime.timeGetPort
-      rateGroup1Comp.Time -> linuxTime.timeGetPort
-      rateGroup2Comp.Time -> linuxTime.timeGetPort
-      rateGroup3Comp.Time -> linuxTime.timeGetPort
-      cmdSeq.timeCaller -> linuxTime.timeGetPort
-      $health.Time -> linuxTime.timeGetPort
-      fileUplinkBufferManager.timeCaller -> linuxTime.timeGetPort
-      cmdDisp.Time -> linuxTime.timeGetPort
-      fileUplink.timeCaller -> linuxTime.timeGetPort
-      fileDownlink.timeCaller -> linuxTime.timeGetPort
-      fileManager.timeCaller -> linuxTime.timeGetPort
-      fatalAdapter.Time -> linuxTime.timeGetPort
-      recvBuffComp.Time -> linuxTime.timeGetPort
-      SG1.timeCaller -> linuxTime.timeGetPort
-      SG2.timeCaller -> linuxTime.timeGetPort
-      SG3.timeCaller -> linuxTime.timeGetPort
-      SG4.timeCaller -> linuxTime.timeGetPort
-      SG5.timeCaller -> linuxTime.timeGetPort
-      sendBuffComp.Time -> linuxTime.timeGetPort
-      pingRcvr.Time -> linuxTime.timeGetPort
-      blockDrv.Time -> linuxTime.timeGetPort
-    }
+    time connections instance linuxTime
+    
 
     @ Rate Group Connections
     connections Linuxtimer{
