@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpReceiverImpl.hpp
 // \author tcanham
 // \brief  hpp file for UdpReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef UdpReceiver_HPP
 #define UdpReceiver_HPP
@@ -42,7 +42,7 @@ namespace Svc {
 
       //! Destroy object UdpReceiver
       //!
-      ~UdpReceiverComponentImpl(void);
+      ~UdpReceiverComponentImpl();
 
       //! Open the connection
       void open(
@@ -71,7 +71,7 @@ namespace Svc {
       );
 
       static void workerTask(void* ptr); //!< worker task entry point
-      void doRecv(void); //!< receives a single packet (helps unit testing)
+      void doRecv(); //!< receives a single packet (helps unit testing)
       Os::Task m_socketTask;
 
       NATIVE_INT_TYPE m_fd; //!< socket file descriptor
@@ -89,12 +89,12 @@ namespace Svc {
           UdpSerialBuffer();
 #endif
 
-          NATIVE_UINT_TYPE getBuffCapacity(void) const {
+          NATIVE_UINT_TYPE getBuffCapacity() const {
             return sizeof(m_buff);
           }
 
           // Get the max number of bytes that can be serialized
-          NATIVE_UINT_TYPE getBuffSerLeft(void) const {
+          NATIVE_UINT_TYPE getBuffSerLeft() const {
 
             const NATIVE_UINT_TYPE size  = getBuffCapacity();
             const NATIVE_UINT_TYPE loc = getBuffLength();
@@ -107,11 +107,11 @@ namespace Svc {
             }
           }
 
-          U8* getBuffAddr(void) {
+          U8* getBuffAddr() {
             return m_buff;
           }
 
-          const U8* getBuffAddr(void) const {
+          const U8* getBuffAddr() const {
             return m_buff;
           }
 

@@ -339,7 +339,7 @@ namespace Os {
       return receiveBlockIPCStub(queueHandle, buffer, capacity, actualSize, priority);
   }
 
-  NATIVE_INT_TYPE IPCQueue::getNumMsgs(void) const {
+  NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -348,7 +348,7 @@ namespace Os {
       return queue->getCount();
   }
 
-  NATIVE_INT_TYPE IPCQueue::getMaxMsgs(void) const {
+  NATIVE_INT_TYPE IPCQueue::getMaxMsgs() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -357,7 +357,7 @@ namespace Os {
       return queue->getMaxCount();
   }
 
-  NATIVE_INT_TYPE IPCQueue::getQueueSize(void) const {
+  NATIVE_INT_TYPE IPCQueue::getQueueSize() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -366,7 +366,7 @@ namespace Os {
       return queue->getDepth();
   }
 
-  NATIVE_INT_TYPE IPCQueue::getMsgSize(void) const {
+  NATIVE_INT_TYPE IPCQueue::getMsgSize() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;

@@ -34,18 +34,18 @@ namespace Os {
              * Capture a start time of the interval timed by the interval timer. This fills the
              * start RawTime of the interval.
              */
-            void start(void);
+            void start();
             /**
              * Capture a stop time of the interval timed by the interval timer. This fills the
              * stop RawTime of the interval.
              */
-            void stop(void);
+            void stop();
             /**
              * Returns the difference in usecond difference between start and stop times. The caller
              * must have called start and stop previously.
              * \return U32: microseconds difference in the interval
              */
-            U32 getDiffUsec(void);
+            U32 getDiffUsec();
 
             //------------ Platform Functions ------------
             // Platform functions, typically do need to be implemented by an OS support package, as

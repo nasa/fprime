@@ -114,17 +114,17 @@ namespace Fw {
 
             SerializeStatus deserialize(SerializeBufferBase& val);  //!< serialize a serialized buffer
 
-            void resetSer(void); //!< reset to beginning of buffer to reuse for serialization
-            void resetDeser(void); //!< reset deserialization to beginning
+            void resetSer(); //!< reset to beginning of buffer to reuse for serialization
+            void resetDeser(); //!< reset deserialization to beginning
 
             SerializeStatus deserializeSkip(NATIVE_UINT_TYPE numBytesToSkip); //!< Skips the number of specified bytes for deserialization
-            virtual NATIVE_UINT_TYPE getBuffCapacity(void) const = 0; //!< returns capacity, not current size, of buffer
+            virtual NATIVE_UINT_TYPE getBuffCapacity() const = 0; //!< returns capacity, not current size, of buffer
             NATIVE_UINT_TYPE getBuffLength() const; //!< returns current buffer size
             NATIVE_UINT_TYPE getBuffLeft() const; //!< returns how much deserialization buffer is left
-            virtual U8* getBuffAddr(void) = 0; //!< gets buffer address for data filling
-            virtual const U8* getBuffAddr(void) const = 0; //!< gets buffer address for data reading, const version
-            const U8* getBuffAddrLeft(void) const; //!< gets address of remaining non-deserialized data.
-            U8* getBuffAddrSer(void); //!< gets address of end of serialization. DANGEROUS! Need to know max buffer size and adjust when done
+            virtual U8* getBuffAddr() = 0; //!< gets buffer address for data filling
+            virtual const U8* getBuffAddr() const = 0; //!< gets buffer address for data reading, const version
+            const U8* getBuffAddrLeft() const; //!< gets address of remaining non-deserialized data.
+            U8* getBuffAddrSer(); //!< gets address of end of serialization. DANGEROUS! Need to know max buffer size and adjust when done
             SerializeStatus setBuff(const U8* src, NATIVE_UINT_TYPE length); //!< sets buffer contents and size
             SerializeStatus setBuffLen(NATIVE_UINT_TYPE length); //!< sets buffer length manually after filling with data
             SerializeStatus copyRaw(SerializeBufferBase& dest, NATIVE_UINT_TYPE size); //!< directly copies buffer without looking for a size in the stream.
@@ -158,12 +158,12 @@ namespace Fw {
             ExternalSerializeBuffer(U8* buffPtr, NATIVE_UINT_TYPE size); //!< construct with external buffer
             ExternalSerializeBuffer(); //!< default constructor
             void setExtBuffer(U8* buffPtr, NATIVE_UINT_TYPE size); //!< Set the external buffer
-            void clear(void); //!< clear external buffer
+            void clear(); //!< clear external buffer
 
             // pure virtual functions
-            NATIVE_UINT_TYPE getBuffCapacity(void) const;
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const ;
+            NATIVE_UINT_TYPE getBuffCapacity() const;
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const ;
 
         PRIVATE:
 

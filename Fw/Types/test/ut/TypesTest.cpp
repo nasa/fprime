@@ -22,14 +22,14 @@
 
 class SerializeTestBuffer: public Fw::SerializeBufferBase {
     public:
-        NATIVE_UINT_TYPE getBuffCapacity(void) const { // !< returns capacity, not current size, of buffer
+        NATIVE_UINT_TYPE getBuffCapacity() const { // !< returns capacity, not current size, of buffer
             return sizeof(m_testBuff);
         }
 
-        U8* getBuffAddr(void) { // !< gets buffer address for data filling
+        U8* getBuffAddr() { // !< gets buffer address for data filling
             return m_testBuff;
         }
-        const U8* getBuffAddr(void) const { // !< gets buffer address for data reading
+        const U8* getBuffAddr() const { // !< gets buffer address for data reading
             return m_testBuff;
         }
     private:
@@ -690,12 +690,12 @@ TEST(PerformanceTest, ClassCopyTest) {
 
 }
 
-void printSizes(void) {
+void printSizes() {
     printf("Sizeof TestStruct: %lu\n", sizeof(TestStruct));
     printf("Sizeof MySerializable: %lu\n", sizeof(MySerializable));
 }
 
-void AssertTest(void) {
+void AssertTest() {
 
     printf("Assert Tests\n");
 
@@ -738,47 +738,47 @@ void AssertTest(void) {
 
             };
 
-            void doAssert(void) {
+            void doAssert() {
                 this->m_asserted = true;
             }
 
-            FILE_NAME_ARG getFile(void) {
+            FILE_NAME_ARG getFile() {
                 return this->m_file;
             }
 
-            NATIVE_UINT_TYPE getLineNo(void) {
+            NATIVE_UINT_TYPE getLineNo() {
                 return this->m_lineNo;
             }
 
-            NATIVE_UINT_TYPE getNumArgs(void) {
+            NATIVE_UINT_TYPE getNumArgs() {
                 return this->m_numArgs;
             }
 
-            AssertArg getArg1(void) {
+            AssertArg getArg1() {
                 return this->m_arg1;
             }
 
-            AssertArg getArg2(void) {
+            AssertArg getArg2() {
                 return this->m_arg2;
             }
 
-            AssertArg getArg3(void) {
+            AssertArg getArg3() {
                 return this->m_arg3;
             }
 
-            AssertArg getArg4(void) {
+            AssertArg getArg4() {
                 return this->m_arg4;
             }
 
-            AssertArg getArg5(void) {
+            AssertArg getArg5() {
                 return this->m_arg5;
             }
 
-            AssertArg getArg6(void) {
+            AssertArg getArg6() {
                 return this->m_arg6;
             }
 
-            bool asserted(void) {
+            bool asserted() {
                 bool didAssert = this->m_asserted;
                 this->m_asserted = false;
                 return didAssert;

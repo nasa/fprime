@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  DataPacket.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket::DataPacket
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -30,7 +30,7 @@ namespace Fw {
   }
 
   U32 FilePacket::DataPacket ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return
       this->header.bufferSize() +
@@ -74,11 +74,11 @@ namespace Fw {
   }
 
   U32 FilePacket::DataPacket ::
-    fixedLengthSize(void) const
+    fixedLengthSize() const
   {
     return
       this->header.bufferSize() +
-      sizeof(this->byteOffset) + 
+      sizeof(this->byteOffset) +
       sizeof(this->dataSize);
   }
 

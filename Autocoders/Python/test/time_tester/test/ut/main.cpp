@@ -11,9 +11,9 @@
 class ATester : public Time::TimeTesterGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Time::TimeTesterGTestBase("comp",10) {
+        ATester() : Time::TimeTesterGTestBase("comp",10) {
 #else
-        ATester(void) : Time::TimeTesterGTestBase(10)  {
+        ATester() : Time::TimeTesterGTestBase(10)  {
 #endif
     }
 

@@ -50,7 +50,7 @@ namespace Svc {
   }
 
   ComLogger ::
-    ~ComLogger(void)
+    ~ComLogger()
   {
     // Close file:
     // this->closeFile();

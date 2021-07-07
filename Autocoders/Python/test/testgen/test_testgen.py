@@ -82,10 +82,10 @@ def write_tester_lines(fileopen, section_type):
     if section_type == "TESTER_HEADERS":
         fileopen.write("\t\t//! Test operation command\n")
         fileopen.write("\t\t//!\n")
-        fileopen.write("\t\tvoid testAddCommand(void);\n")
-        fileopen.write("\t\tvoid testSubCommand(void);\n")
-        fileopen.write("\t\tvoid testMultCommand(void);\n")
-        fileopen.write("\t\tvoid testDivCommand(void);\n")
+        fileopen.write("\t\tvoid testAddCommand();\n")
+        fileopen.write("\t\tvoid testSubCommand();\n")
+        fileopen.write("\t\tvoid testMultCommand();\n")
+        fileopen.write("\t\tvoid testDivCommand();\n")
 
 
 def file_diff(file1, file2):

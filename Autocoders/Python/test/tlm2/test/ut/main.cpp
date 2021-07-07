@@ -8,9 +8,9 @@
 class ATester : public Tlm::TestTlmGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Tlm::TestTlmGTestBase("comp",10) {
+        ATester() : Tlm::TestTlmGTestBase("comp",10) {
 #else
-        ATester(void) : Tlm::TestTlmGTestBase(10)  {
+        ATester() : Tlm::TestTlmGTestBase(10)  {
 #endif
     }
 };

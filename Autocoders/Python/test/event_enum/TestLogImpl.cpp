@@ -19,7 +19,7 @@ TestLogImpl::TestLogImpl() : Somewhere::TestLogComponentBase()
 TestLogImpl::~TestLogImpl() {
 }
 
-void TestLogImpl::init(void) {
+void TestLogImpl::init() {
     Somewhere::TestLogComponentBase::init();
 }
 

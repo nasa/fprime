@@ -23,7 +23,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
       ExampleGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Example")
   {
@@ -32,7 +32,7 @@ namespace ExampleComponents {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -42,7 +42,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testNoArgs(void)
+    testNoArgs()
   {
     this->invoke_to_noArgPort(0);
     this->invoke_to_asyncNoArgPort(0);
@@ -56,7 +56,7 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // noArgPort
@@ -91,7 +91,7 @@ namespace ExampleComponents {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

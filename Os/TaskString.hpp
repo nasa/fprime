@@ -13,10 +13,10 @@ namespace Os {
             TaskString(const char* src); //!< char buffer constructor
             TaskString(const StringBase& src); //!< Copy constructor
             TaskString(const TaskString& src); //!< Copy constructor
-            TaskString(void); //!< default constructor
-            ~TaskString(void); //!< destructor
-            const char* toChar(void) const; //!< get pointer to internal char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< return current string length
+            TaskString(); //!< default constructor
+            ~TaskString(); //!< destructor
+            const char* toChar() const; //!< get pointer to internal char buffer
+            NATIVE_UINT_TYPE length() const; //!< return current string length
 
             Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const;
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
@@ -24,7 +24,7 @@ namespace Os {
             const TaskString& operator=(const TaskString& other); //!< equal operator
 
         private:
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            NATIVE_UINT_TYPE getCapacity() const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_TASK_NAME_MAX_SIZE]; //!< buffer for string

@@ -19,10 +19,10 @@ namespace Fw {
             TextLogString(const char* src);
             TextLogString(const StringBase& src);
             TextLogString(const TextLogString& src);
-            TextLogString(void);
-            ~TextLogString(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
+            TextLogString();
+            ~TextLogString();
+            const char* toChar() const;
+            NATIVE_UINT_TYPE length() const;
 
             const TextLogString& operator=(const TextLogString& other); //!< equal operator for other strings
 
@@ -30,7 +30,7 @@ namespace Fw {
             SerializeStatus deserialize(SerializeBufferBase& buffer);
 
         private:
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            NATIVE_UINT_TYPE getCapacity() const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_LOG_TEXT_BUFFER_SIZE];

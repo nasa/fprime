@@ -90,11 +90,11 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -106,34 +106,34 @@ namespace Svc {
       //! Downlink F
       //! Verify that the downlinked file matches F
       //!
-      void downlink(void);
+      void downlink();
 
       //! Cause a file open error
       //!
-      void fileOpenError(void);
+      void fileOpenError();
 
       //! Start and then cancel a downlink
       //!
-      void cancelDownlink(void);
+      void cancelDownlink();
 
       //! Send a cancel command in idle mode
       //!
-      void cancelInIdleMode(void);
+      void cancelInIdleMode();
 
       //! Create a file F
       //! Downlink partial F
       //! Verify that the downlinked file matches F
       //!
-      void downlinkPartial(void);
+      void downlinkPartial();
 
       //! Timeout
       //!
-      void timeout(void);
+      void timeout();
 
       //! sendFilePort
       //! Test downlinking a file via a port
       //!
-      void sendFilePort(void);
+      void sendFilePort();
 
     private:
 
@@ -170,11 +170,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
       //! Command the FileDownlink component to send a file
       //! Assert a command response

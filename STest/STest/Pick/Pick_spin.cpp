@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Pick_spin.cpp
 // \author AUTO-GENERATED: DO NOT EDIT
 // \brief  Pick_spin implementation
@@ -33,20 +33,20 @@ namespace STest {
       }
 
       //! Pick a random U32
-      U32 pickRandU32(void) {
+      U32 pickRandU32() {
         assert(initialized);
         const U32 randU32 = STest::Random::lowerUpper(0, 0xFFFFFFFFU);
         return values[randU32 % NUM_RANDOM_VALUES];
       }
 
       //! Pick a double value in the interval [0, 1]
-      double inUnitInterval(void) {
+      double inUnitInterval() {
         const U32 randU32 = pickRandU32();
         const F64 ratio = static_cast<F64>(randU32) / 0xFFFFFFFFU;
         return ratio;
       }
 
-      void init(void) {
+      void init() {
         for (U32 i = 0; i < NUM_RANDOM_SEEDS; ++i) {
           seeds[i] = STest::Random::lowerUpper(0, 0xFFFFFFFFU);
         }

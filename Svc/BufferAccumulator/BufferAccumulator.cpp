@@ -42,7 +42,7 @@ namespace Svc {
   }
 
   BufferAccumulator ::
-    ~BufferAccumulator(void)
+    ~BufferAccumulator()
   {
   }
 
@@ -157,7 +157,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void BufferAccumulator ::
-    sendStoredBuffer(void)
+    sendStoredBuffer()
   {
     FW_ASSERT(this->send);
     Fw::Buffer buffer;

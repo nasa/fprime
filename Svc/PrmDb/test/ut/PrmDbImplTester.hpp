@@ -20,14 +20,14 @@ namespace Svc {
             PrmDbImplTester(Svc::PrmDbImpl& inst);
             virtual ~PrmDbImplTester();
 
-            void runNominalPopulate(void);
-            void runNominalSaveFile(void);
-            void runNominalLoadFile(void);
-            void runMissingExtraParams(void);
-            void runFileReadError(void);
-            void runFileWriteError(void);
+            void runNominalPopulate();
+            void runNominalSaveFile();
+            void runNominalLoadFile();
+            void runMissingExtraParams();
+            void runFileReadError();
+            void runFileWriteError();
 
-            void runRefPrmFile(void);
+            void runRefPrmFile();
 
             void init(NATIVE_INT_TYPE instance = 0);
 
@@ -39,7 +39,7 @@ namespace Svc {
                 U32 key /*!< Value to return to pinger*/
             );
             Svc::PrmDbImpl& m_impl;
-            void resetEvents(void);
+            void resetEvents();
 
             // open call modifiers
 

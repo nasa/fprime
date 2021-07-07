@@ -23,10 +23,10 @@ namespace Ref {
         this->m_state = SendBuff_ActiveState::SEND_IDLE;
     }
 
-    SendBuffImpl::~SendBuffImpl(void) {
+    SendBuffImpl::~SendBuffImpl() {
 
     }
-    
+
     void SendBuffImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
         SendBuffComponentBase::init(queueDepth,instance);
     }
@@ -89,7 +89,7 @@ namespace Ref {
     }
 
     void SendBuffImpl::toString(char* str, I32 buffer_size) {
-#if FW_OBJECT_NAMES == 1    
+#if FW_OBJECT_NAMES == 1
         (void) snprintf(str, buffer_size, "Send Buff Component: %s: count: %d Buffs: %d", this->m_objName,
                         (int) this->m_invocations, (int) this->m_buffsSent);
         str[buffer_size-1] = 0;

@@ -45,7 +45,7 @@ namespace ExampleComponents {
 
       //! Destroy object Example
       //!
-      ~ExampleComponentImpl(void);
+      ~ExampleComponentImpl();
 
       void makePortCall(NATIVE_INT_TYPE port);
 

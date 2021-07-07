@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TooLargeFile.cpp
 // \author Rob Bocchino
 // \brief  TooLargeFile implementation
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
@@ -55,7 +55,7 @@ namespace Svc {
         AMPCSSequence::Record::TimeFlag::RELATIVE;
       const AMPCSSequence::Record::Time::t time = 0;
       const U32 dataSize = this->getDataSize();
-      const U32 cmdFieldSize = 
+      const U32 cmdFieldSize =
         dataSize
         - sizeof(AMPCSSequence::Record::TimeFlag::Serial::t)
         - sizeof(AMPCSSequence::Record::Time::t)
@@ -66,7 +66,7 @@ namespace Svc {
       cmdField.setBuffLen(cmdFieldSize);
       AMPCS::Records::serialize(timeFlag, time, cmdField, buffer);
       ASSERT_EQ(
-          sizeof(AMPCSSequence::SequenceHeader::t) + dataSize, 
+          sizeof(AMPCSSequence::SequenceHeader::t) + dataSize,
           buffer.getBuffLength()
       );
       // CRC
@@ -74,7 +74,7 @@ namespace Svc {
     }
 
     U32 TooLargeFile ::
-      getDataSize(void) const 
+      getDataSize() const
     {
       return 2 * this->bufferSize;
     }

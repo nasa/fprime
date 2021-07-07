@@ -85,7 +85,7 @@ namespace Svc {
   }
 
   FileDownlink ::
-    ~FileDownlink(void)
+    ~FileDownlink()
   {
 
   }
@@ -433,7 +433,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendCancelPacket(void)
+    sendCancelPacket()
   {
     Fw::Buffer buffer;
     const Fw::FilePacket::CancelPacket cancelPacket = {
@@ -451,7 +451,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendEndPacket(void)
+    sendEndPacket()
   {
     const Fw::FilePacket::Header header = {
       Fw::FilePacket::T_END,
@@ -471,7 +471,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendStartPacket(void)
+    sendStartPacket()
   {
     Fw::FilePacket::StartPacket startPacket;
     startPacket.initialize(
@@ -501,7 +501,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    enterCooldown(void)
+    enterCooldown()
   {
     this->file.osFile.close();
     this->mode.set(Mode::COOLDOWN);

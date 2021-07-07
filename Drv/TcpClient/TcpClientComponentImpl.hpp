@@ -42,7 +42,7 @@ class TcpClientComponentImpl : public ByteStreamDriverModelComponentBase, public
     /**
      * \brief Destroy the component
      */
-    ~TcpClientComponentImpl(void);
+    ~TcpClientComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket

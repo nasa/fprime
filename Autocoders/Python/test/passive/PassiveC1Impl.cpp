@@ -11,13 +11,13 @@ namespace Passive {
 
         }
 
-        C1Impl::~C1Impl(void) {
+        C1Impl::~C1Impl() {
 
         }
 
         // Internal call - implemented by hand.
         // downcall for input port Ext1
-        I32 C1Impl::Ext1_Void_handler(void) {
+        I32 C1Impl::Ext1_Void_handler() {
 			printf("*** %s: Ext1_Void_handler down-call\n", this->m_objName);
 			this->Void_Void_out();
             return 0;

@@ -20,18 +20,18 @@ namespace Fw {
         this->copyBuff(src.m_buf, sizeof(this->m_buf));
     }
 
-    InternalInterfaceString::InternalInterfaceString(void) : StringBase()  {
+    InternalInterfaceString::InternalInterfaceString() : StringBase()  {
         this->m_buf[0] = 0;
     }
 
-    InternalInterfaceString::~InternalInterfaceString(void) {
+    InternalInterfaceString::~InternalInterfaceString() {
     }
 
-    NATIVE_UINT_TYPE InternalInterfaceString::length(void) const {
+    NATIVE_UINT_TYPE InternalInterfaceString::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* InternalInterfaceString::toChar(void) const {
+    const char* InternalInterfaceString::toChar() const {
         return this->m_buf;
     }
 
@@ -51,7 +51,7 @@ namespace Fw {
         return stat;
     }
 
-    NATIVE_UINT_TYPE InternalInterfaceString::getCapacity(void) const {
+    NATIVE_UINT_TYPE InternalInterfaceString::getCapacity() const {
         return FW_INTERNAL_INTERFACE_STRING_MAX_SIZE;
     }
 

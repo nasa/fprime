@@ -27,7 +27,7 @@ namespace AcTest {
     ) :
       TestCommandComponentBase(compName)
 #else
-    TestCommandImpl(void)
+    TestCommandImpl()
 #endif
   {
 
@@ -43,7 +43,7 @@ namespace AcTest {
   }
 
   TestCommandComponentImpl ::
-    ~TestCommandComponentImpl(void)
+    ~TestCommandComponentImpl()
   {
 
   }

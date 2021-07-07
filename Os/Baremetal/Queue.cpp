@@ -207,7 +207,7 @@ Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_I
     return bareReceiveBlock(handle, buffer, capacity, actualSize, priority);
 }
 
-NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
+NATIVE_INT_TYPE Queue::getNumMsgs() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -218,7 +218,7 @@ NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
     return queue.getCount();
 }
 
-NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
+NATIVE_INT_TYPE Queue::getMaxMsgs() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -229,7 +229,7 @@ NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
     return queue.getMaxCount();
 }
 
-NATIVE_INT_TYPE Queue::getQueueSize(void) const {
+NATIVE_INT_TYPE Queue::getQueueSize() const {
       //Check if the handle is null or check the underlying queue is null
       if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
           (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -240,7 +240,7 @@ NATIVE_INT_TYPE Queue::getQueueSize(void) const {
       return queue.getDepth();
   }
 
-NATIVE_INT_TYPE Queue::getMsgSize(void) const {
+NATIVE_INT_TYPE Queue::getMsgSize() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {

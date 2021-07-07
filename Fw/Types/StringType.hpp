@@ -22,8 +22,8 @@
 namespace Fw {
     class StringBase : public Serializable {
         public:
-            virtual const char* toChar(void) const = 0; //<! Convert to a C-style char*
-            virtual NATIVE_UINT_TYPE length(void) const = 0; //!< Get length of string
+            virtual const char* toChar() const = 0; //<! Convert to a C-style char*
+            virtual NATIVE_UINT_TYPE length() const = 0; //!< Get length of string
             const char* operator+=(const char* src); //!< Concatenate a char*
             const StringBase& operator+=(const StringBase& src); //!< Concatenate a StringBase
             bool operator==(const StringBase& other) const; //!< Check for equality with StringBase
@@ -47,9 +47,9 @@ namespace Fw {
 #endif
 
         protected:
-            StringBase(void);
-            virtual ~StringBase(void);
-            virtual NATIVE_UINT_TYPE getCapacity(void) const = 0; //!< return size of buffer
+            StringBase();
+            virtual ~StringBase();
+            virtual NATIVE_UINT_TYPE getCapacity() const = 0; //!< return size of buffer
 
         PRIVATE:
             // A no-implementation copy constructor here will prevent the default copy constructor from being called

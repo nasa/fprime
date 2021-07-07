@@ -42,7 +42,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
     /**
      * \brief Destroy the component
      */
-    ~UdpComponentImpl(void);
+    ~UdpComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket

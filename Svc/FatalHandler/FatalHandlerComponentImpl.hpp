@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FatalHandlerImpl.hpp
 // \author tcanham
 // \brief  hpp file for FatalHandler component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef FatalHandler_HPP
 #define FatalHandler_HPP
@@ -41,7 +41,7 @@ namespace Svc {
 
       //! Destroy object FatalHandler
       //!
-      ~FatalHandlerComponentImpl(void);
+      ~FatalHandlerComponentImpl();
 
     PRIVATE:
 

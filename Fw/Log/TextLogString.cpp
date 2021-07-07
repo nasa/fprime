@@ -20,18 +20,18 @@ namespace Fw {
         this->copyBuff(src.m_buf,sizeof(this->m_buf));
     }
 
-    TextLogString::TextLogString(void): StringBase()  {
+    TextLogString::TextLogString(): StringBase()  {
         this->m_buf[0] = 0;
     }
 
-    TextLogString::~TextLogString(void) {
+    TextLogString::~TextLogString() {
     }
 
-    NATIVE_UINT_TYPE TextLogString::length(void) const {
+    NATIVE_UINT_TYPE TextLogString::length() const {
         return (NATIVE_UINT_TYPE) strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* TextLogString::toChar(void) const {
+    const char* TextLogString::toChar() const {
         return this->m_buf;
     }
 
@@ -51,7 +51,7 @@ namespace Fw {
         return stat;
     }
 
-    NATIVE_UINT_TYPE TextLogString::getCapacity(void) const {
+    NATIVE_UINT_TYPE TextLogString::getCapacity() const {
         return FW_LOG_TEXT_BUFFER_SIZE;
     }
 

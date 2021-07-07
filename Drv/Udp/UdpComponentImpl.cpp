@@ -40,7 +40,7 @@ SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 p
     return m_socket.configureRecv(hostname, port);
 }
 
-UdpComponentImpl::~UdpComponentImpl(void) {}
+UdpComponentImpl::~UdpComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods

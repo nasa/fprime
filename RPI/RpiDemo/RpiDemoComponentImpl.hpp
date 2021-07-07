@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RpiDemoImpl.hpp
 // \author tcanham
 // \brief  hpp file for RpiDemo component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef RpiDemo_HPP
 #define RpiDemo_HPP
@@ -47,7 +47,7 @@ namespace Rpi {
 
       //! Destroy object RpiDemo
       //!
-      ~RpiDemoComponentImpl(void);
+      ~RpiDemoComponentImpl();
 
     PRIVATE:
 
@@ -73,7 +73,7 @@ namespace Rpi {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for RD_SendString command handler
@@ -127,7 +127,7 @@ namespace Rpi {
 
 
       // This will be called once when task starts up
-      void preamble(void);
+      void preamble();
 
       // telemetry values
       U32 m_uartWriteBytes;

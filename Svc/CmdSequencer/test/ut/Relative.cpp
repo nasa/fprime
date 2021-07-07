@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Relative.cpp
 // \author Canham/Bocchino
 // \brief  Test relative command sequences
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/Relative.hpp"
@@ -19,7 +19,7 @@ namespace Svc {
   namespace Relative {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -30,11 +30,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      AutoByCommand(void)
+      AutoByCommand()
     {
       const U32 numRecords = 3;
       SequenceFiles::RelativeFile file(numRecords, this->format);
@@ -44,7 +44,7 @@ namespace Svc {
     }
 
     void Tester ::
-      Validate(void)
+      Validate()
     {
       const U32 numRecords = 5;
       SequenceFiles::RelativeFile file(numRecords, this->format);
@@ -52,12 +52,12 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Private helper methods 
+    // Private helper methods
     // ----------------------------------------------------------------------
 
     void Tester ::
       executeCommandsAuto(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands,
           const U32 bound,
           const CmdExecMode::t mode

@@ -34,7 +34,7 @@ SocketIpStatus TcpServerComponentImpl::configure(const char* hostname,
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
-TcpServerComponentImpl::~TcpServerComponentImpl(void) {}
+TcpServerComponentImpl::~TcpServerComponentImpl() {}
 
 SocketIpStatus TcpServerComponentImpl::startup() {
     return  this->m_socket.startup();

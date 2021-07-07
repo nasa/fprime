@@ -35,7 +35,7 @@ SocketIpStatus TcpClientComponentImpl::configure(const char* hostname,
     return m_socket.configure(hostname, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
-TcpClientComponentImpl::~TcpClientComponentImpl(void) {}
+TcpClientComponentImpl::~TcpClientComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods

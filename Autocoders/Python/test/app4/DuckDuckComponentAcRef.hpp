@@ -40,7 +40,7 @@ namespace Duck {
         DuckBase();
 #endif
 
-        virtual ~DuckBase(void);
+        virtual ~DuckBase();
         virtual void init(NATIVE_INT_TYPE queueDepth);
 
         // downcalls for input ports
@@ -59,11 +59,11 @@ namespace Duck {
         // upcalls for output ports
         void outputPort1_Msg2_out(NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
         void outputPort2_Msg1_out(NATIVE_INT_TYPE portNum, U32 cmd);
-        NATIVE_INT_TYPE m_getNumoutputPort1Msg2OutputPorts(void);
-        NATIVE_INT_TYPE m_getNumoutputPort2Msg1OutputPorts(void);
-        NATIVE_INT_TYPE m_getNuminputPort1Msg2InputPorts(void);
-        NATIVE_INT_TYPE m_getNuminputPort2Msg2InputPorts(void);
-        NATIVE_INT_TYPE m_getNuminputPort3Msg1InputPorts(void);
+        NATIVE_INT_TYPE m_getNumoutputPort1Msg2OutputPorts();
+        NATIVE_INT_TYPE m_getNumoutputPort2Msg1OutputPorts();
+        NATIVE_INT_TYPE m_getNuminputPort1Msg2InputPorts();
+        NATIVE_INT_TYPE m_getNuminputPort2Msg2InputPorts();
+        NATIVE_INT_TYPE m_getNuminputPort3Msg1InputPorts();
 
         // check to see if output port is connected
         bool m_isConnectedoutputPort1Msg2OutputPorts(NATIVE_INT_TYPE portNum);
@@ -82,9 +82,9 @@ namespace Duck {
         static void m_p_inputPort1_Msg2_in(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
         static void m_p_inputPort2_Msg2_in(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, Fw::EightyCharString str, U32 cmd);
         static void m_p_inputPort3_Msg1_in(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, U32 cmd);
-        virtual void preamble(void); //!< A function that will be called before the event loop is entered
-        virtual MsgDispatchStatus doDispatch(void); //!< Function that will be run in new task context
-        virtual void finalizer(void); //!< Function run after task loop exits
+        virtual void preamble(); //!< A function that will be called before the event loop is entered
+        virtual MsgDispatchStatus doDispatch(); //!< Function that will be run in new task context
+        virtual void finalizer(); //!< Function run after task loop exits
 
     };
 };

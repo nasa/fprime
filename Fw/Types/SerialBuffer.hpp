@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SerialBuffer.hpp
 // \author bocchino
 // \brief  hpp file for SerialBuffer type
@@ -7,8 +7,8 @@
 // Copyright (C) 2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Fw_SerialBuffer_HPP
 #define Fw_SerialBuffer_HPP
@@ -28,7 +28,7 @@ namespace Fw {
     public:
 
       // ----------------------------------------------------------------------
-      // Construction 
+      // Construction
       // ----------------------------------------------------------------------
 
       //! Construct a SerialBuffer
@@ -44,20 +44,20 @@ namespace Fw {
       // Pure virtual methods from SerializeBufferBase
       // ----------------------------------------------------------------------
 
-      NATIVE_UINT_TYPE getBuffCapacity(void) const;
+      NATIVE_UINT_TYPE getBuffCapacity() const;
 
-      U8* getBuffAddr(void);
+      U8* getBuffAddr();
 
-      const U8* getBuffAddr(void) const;
+      const U8* getBuffAddr() const;
 
     public:
 
       // ----------------------------------------------------------------------
-      // Public instance methods 
+      // Public instance methods
       // ----------------------------------------------------------------------
 
       //! Fill the buffer to capacity with preexisting data
-      void fill(void);
+      void fill();
 
       //! Push n bytes onto the buffer
       SerializeStatus pushBytes(
@@ -74,7 +74,7 @@ namespace Fw {
     private:
 
       // ----------------------------------------------------------------------
-      // Data 
+      // Data
       // ----------------------------------------------------------------------
 
       //! The data

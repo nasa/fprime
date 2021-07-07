@@ -2,7 +2,7 @@
 #define TOP_TARGET_INIT_HPP
 
 extern "C" {
-  void localTargetInit(void);
+  void localTargetInit();
 }
 
 #endif

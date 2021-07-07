@@ -7,7 +7,7 @@ namespace Fw {
         SerializeStatus stat = this->setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
-    
+
     CmdArgBuffer::CmdArgBuffer() {
     }
 
@@ -25,15 +25,15 @@ namespace Fw {
         return *this;
     }
 
-    NATIVE_UINT_TYPE CmdArgBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE CmdArgBuffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 
-    const U8* CmdArgBuffer::getBuffAddr(void) const {
+    const U8* CmdArgBuffer::getBuffAddr() const {
         return this->m_data;
     }
 
-    U8* CmdArgBuffer::getBuffAddr(void) {
+    U8* CmdArgBuffer::getBuffAddr() {
         return this->m_data;
     }
 

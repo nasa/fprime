@@ -20,30 +20,30 @@ namespace Fw {
                 :
                 Fw::ObjBase(0),
                 m_connObj(0)
-#if FW_PORT_TRACING == 1     
+#if FW_PORT_TRACING == 1
                 ,m_trace(false),
                 m_override_trace(false)
-#endif                
+#endif
     {
-        
+
     }
-    
-    PortBase::~PortBase(void) {
-        
+
+    PortBase::~PortBase() {
+
     }
-    
-    void PortBase::init(void) {
+
+    void PortBase::init() {
         ObjBase::init();
-        
+
     }
-    
-    bool PortBase::isConnected(void) {
+
+    bool PortBase::isConnected() {
         return m_connObj == 0?false:true;
     }
 
-#if FW_PORT_TRACING == 1    
-    
-    void PortBase::trace(void) {
+#if FW_PORT_TRACING == 1
+
+    void PortBase::trace() {
         bool do_trace = false;
 
         if (this->m_override_trace) {
@@ -73,7 +73,7 @@ namespace Fw {
     }
 
 #endif // FW_PORT_TRACING
-    
+
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
     void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
@@ -84,7 +84,7 @@ namespace Fw {
     }
 #endif // FW_OBJECT_TO_STRING
 #endif // FW_OBJECT_NAMES
-    
-    
+
+
 }
 

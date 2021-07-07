@@ -33,7 +33,7 @@ namespace Svc {
         this->clearPortCalls();
     }
 
-    void ActiveRateGroupImplTester::clearPortCalls(void) {
+    void ActiveRateGroupImplTester::clearPortCalls() {
         memset(this->m_callLog,0,sizeof(this->m_callLog));
         this->m_callOrder = 0;
     }
@@ -303,7 +303,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroupImplTester::runPingTest(void) {
+    void ActiveRateGroupImplTester::runPingTest() {
         // invoke ping port
         this->invoke_to_PingIn(0,0x123);
         // dispatch message

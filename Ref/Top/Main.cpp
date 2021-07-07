@@ -18,7 +18,7 @@ static void sighandler(int signum) {
     terminate = 1;
 }
 
-void run1cycle(void) {
+void run1cycle() {
     // call interrupt to emulate a clock
     blockDrv.callIsr();
     Os::Task::delay(1000); //10Hz

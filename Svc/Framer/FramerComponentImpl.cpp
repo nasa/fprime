@@ -30,7 +30,7 @@ void FramerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     FramerComponentBase::init(instance);
 }
 
-FramerComponentImpl ::~FramerComponentImpl(void) {}
+FramerComponentImpl ::~FramerComponentImpl() {}
 
 void FramerComponentImpl ::setup(FramingProtocol& protocol) {
     FW_ASSERT(m_protocol == NULL);

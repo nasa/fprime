@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// Tester.hpp 
+// Tester.hpp
 // ----------------------------------------------------------------------
 
 #ifndef TESTER_HPP
@@ -24,18 +24,18 @@ namespace Svc {
 
     public:
       Tester(const char *const compName);
-      ~Tester(void);
+      ~Tester();
 
-      void testLogging(void);
-      void testLoggingNoLength(void);
-      void openError(void);
-      void writeError(void);
-      void closeFileCommand(void);
+      void testLogging();
+      void testLoggingNoLength();
+      void openError();
+      void writeError();
+      void closeFileCommand();
     private:
-      void connectPorts(void);
-      void initComponents(void);
-      void dispatchOne(void);
-      void dispatchAll(void);
+      void connectPorts();
+      void initComponents();
+      void dispatchOne();
+      void dispatchAll();
       //! Handler for from_pingOut
       //!
       void from_pingOut_handler(

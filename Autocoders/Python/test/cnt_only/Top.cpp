@@ -18,7 +18,7 @@ Duck::DuckImpl* Huey_ptr = new Duck::DuckImpl("Duck");
 Duck::DuckImpl* Duey_ptr = new Duck::DuckImpl("Duck");
 
 extern "C" {
-	void dumparch(void);
+	void dumparch();
 	void dumpobj(const char* objName);
 }
 

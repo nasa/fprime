@@ -6,7 +6,7 @@ namespace Simple_Active{
     Simple_ActiveImpl::Simple_ActiveImpl(const char* compName) : Simple_ActiveComponentBase(compName){
     }
 
-    Simple_ActiveImpl::~Simple_ActiveImpl(void){
+    Simple_ActiveImpl::~Simple_ActiveImpl(){
     }
 
     void Simple_ActiveImpl::init(NATIVE_INT_TYPE queueDepth){

@@ -43,7 +43,7 @@ namespace Svc {
           NATIVE_INT_TYPE instance //!< The instance number
       );
 
-      ~ComLogger(void);
+      ~ComLogger();
 
       // ----------------------------------------------------------------------
       // Handler implementations
@@ -73,7 +73,7 @@ namespace Svc {
       // Constants:
       // ----------------------------------------------------------------------
       // The maximum size of a filename
-      enum { 
+      enum {
         MAX_FILENAME_SIZE = NAME_MAX, // as defined in limits.h
         MAX_PATH_SIZE = PATH_MAX
       };
@@ -98,10 +98,10 @@ namespace Svc {
       bool writeErrorOccurred;
       bool openErrorOccurred;
       bool storeBufferLength;
-      
+
       // ----------------------------------------------------------------------
       // File functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       void openFile(
       );
 
@@ -115,10 +115,10 @@ namespace Svc {
 
       // ----------------------------------------------------------------------
       // Helper functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       bool writeToFile(
-        void* data, 
+        void* data,
         U16 length
       );
 

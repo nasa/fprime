@@ -11,7 +11,7 @@ namespace Partition {
 
 		}
 
-		PartitionImpl::~PartitionImpl(void) {
+		PartitionImpl::~PartitionImpl() {
 
 		}
 

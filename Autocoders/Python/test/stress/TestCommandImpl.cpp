@@ -60,7 +60,7 @@ void TestCommand1Impl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I3
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
 
-void TestCommand1Impl::printParam(void) {
+void TestCommand1Impl::printParam() {
     Fw::ParamValid valid = Fw::ParamValid::INVALID;
     const U32& prmRef = this->paramGet_someparam(valid);
 

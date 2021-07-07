@@ -75,7 +75,7 @@ class IpSocket {
      *
      * \return true if socket is open, false otherwise
      */
-    bool isOpened(void);
+    bool isOpened();
 
     /**
      * \brief open the IP socket for communications
@@ -93,7 +93,7 @@ class IpSocket {
      * Note: delegates to openProtocol for protocol specific implementation
      * \return status of open
      */
-    SocketIpStatus open(void);
+    SocketIpStatus open();
     /**
      * \brief send data out the IP socket from the given buffer
      *
@@ -132,7 +132,7 @@ class IpSocket {
      * Closes the socket opened by the open call. In this case of the TcpServer, this does NOT close server's listening
      * port (call `shutdown`) but will close the active client connection.
      */
-    void close(void);
+    void close();
 
   PROTECTED:
 

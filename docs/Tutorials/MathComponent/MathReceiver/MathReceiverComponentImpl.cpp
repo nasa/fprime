@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathReceiverImpl.cpp
 // \author tcanham
 // \brief  cpp file for MathReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Ref/MathReceiver/MathReceiverComponentImpl.hpp>
@@ -17,7 +17,7 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   MathReceiverComponentImpl ::
@@ -34,13 +34,13 @@ namespace Ref {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     MathReceiverComponentBase::init(queueDepth, instance);
   }
 
   MathReceiverComponentImpl ::
-    ~MathReceiverComponentImpl(void)
+    ~MathReceiverComponentImpl()
   {
 
   }
@@ -103,11 +103,11 @@ namespace Ref {
       while (stat != MSG_DISPATCH_EMPTY) {
           stat = this->doDispatch();
       }
-      
+
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
 
   void MathReceiverComponentImpl ::

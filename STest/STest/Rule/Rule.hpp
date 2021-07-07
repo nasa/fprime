@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Rule.hpp
 // \author bocchino
 // \brief  Rule interface for scenario testing
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_Rule_HPP
 #define STest_Rule_HPP
@@ -22,7 +22,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct object Rule
@@ -35,21 +35,21 @@ namespace STest {
       }
 
       //! Destroy object Rule
-      virtual ~Rule(void) {
+      virtual ~Rule() {
 
       }
 
     public:
 
       // ----------------------------------------------------------------------
-      // Public instance methods 
+      // Public instance methods
       // ----------------------------------------------------------------------
 
       //! Apply the rule
       void apply(
           State& state //!< The system state
       ) {
-        ASSERT_TRUE(this->precondition(state)) 
+        ASSERT_TRUE(this->precondition(state))
           << "precondition failed applying rule " << this->name;
         this->action(state);
       }
@@ -63,7 +63,7 @@ namespace STest {
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected instance methods 
+      // Protected instance methods
       // ----------------------------------------------------------------------
 
       //! Perform the action associated with the rule
@@ -74,7 +74,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Public member variables 
+      // Public member variables
       // ----------------------------------------------------------------------
 
       //! The name of the rule

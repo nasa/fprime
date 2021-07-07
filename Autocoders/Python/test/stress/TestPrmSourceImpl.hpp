@@ -18,7 +18,7 @@ class TestParamSourceImpl: public Prm::ParamTesterComponentBase {
         TestParamSourceImpl();
 #endif
         virtual ~TestParamSourceImpl();
-        void init(void);
+        void init();
         void setPrm(U32 val);
     protected:
     private:

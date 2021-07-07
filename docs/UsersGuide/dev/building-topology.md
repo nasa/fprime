@@ -104,7 +104,7 @@ follows:
 
 Get command input port:
 
-> Fw::InputFwCmdPort\* get\_CmdDisp\_InputPort(void);
+> Fw::InputFwCmdPort\* get\_CmdDisp\_InputPort();
 
 Set command status port:
 

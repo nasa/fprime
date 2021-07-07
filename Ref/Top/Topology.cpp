@@ -114,16 +114,16 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
 #if FW_PORT_TRACING
     Fw::PortBase::setTrace(false);
-#endif    
+#endif
     staticMemory.init(0);
     // Initialize rate group driver
     rateGroupDriverComp.init();
 
     // Initialize the rate groups
     rateGroup1Comp.init(10,0);
-    
+
     rateGroup2Comp.init(10,1);
-    
+
     rateGroup3Comp.init(10,2);
 
     // Initialize block driver
@@ -138,7 +138,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 #endif
 
     eventLogger.init(10,0);
-    
+
     linuxTime.init(0);
 
     chanTlm.init(10,0);
@@ -254,7 +254,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     pingRcvr.start(0, 100, 10*1024);
 
-   
+
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
@@ -266,7 +266,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     return false;
 }
 
-void exitTasks(void) {
+void exitTasks() {
     rateGroup1Comp.exit();
     rateGroup2Comp.exit();
     rateGroup3Comp.exit();

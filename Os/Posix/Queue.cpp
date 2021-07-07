@@ -33,7 +33,7 @@ namespace Os {
             FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
             this->handle = m_handle;
         }
-        ~QueueHandle() { 
+        ~QueueHandle() {
             // Destroy the handle:
             if (-1 != this->handle) {
                 (void) mq_close(this->handle);
@@ -95,7 +95,7 @@ namespace Os {
           return QUEUE_UNINITIALIZED;
         }
         this->m_handle = (POINTER_CAST) queueHandle;
-        
+
         Queue::s_numQueues++;
 
         return QUEUE_OK;
@@ -118,13 +118,13 @@ namespace Os {
         if (-1 == handle) {
             return QUEUE_UNINITIALIZED;
         }
-        
+
         if (NULL == buffer) {
             return QUEUE_EMPTY_BUFFER;
         }
 
         bool keepTrying = true;
-        int ret; 
+        int ret;
         while (keepTrying) {
             NATIVE_INT_TYPE stat = mq_send(handle, (const char*) buffer, size, priority);
             if (-1 == stat) {
@@ -142,7 +142,7 @@ namespace Os {
                             return QUEUE_FULL;
                         } else {
                             // Go to sleep until we receive a signal that something was taken off the queue:
-                            // Note: pthread_cont_wait must be called "with mutex locked by the calling 
+                            // Note: pthread_cont_wait must be called "with mutex locked by the calling
                             // thread or undefined behavior results." - from the docs
                             ret = pthread_mutex_lock(mp);
                             FW_ASSERT(ret == 0, errno);
@@ -162,7 +162,7 @@ namespace Os {
                 FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
             }
         }
-       
+
         return QUEUE_OK;
     }
 
@@ -179,15 +179,15 @@ namespace Os {
         }
 
         ssize_t size;
-        int ret; 
+        int ret;
         bool notFinished = true;
         while (notFinished) {
             size = mq_receive(handle, (char*) buffer, (size_t) capacity,
-#ifdef TGT_OS_TYPE_VXWORKS        		
+#ifdef TGT_OS_TYPE_VXWORKS
                         (int*)&priority);
 #else
                         (unsigned int*) &priority);
-#endif        
+#endif
 
             if (-1 == size) { // error
                 switch (errno) {
@@ -202,7 +202,7 @@ namespace Os {
                             return QUEUE_NO_MORE_MSGS;
                         } else {
                             // Go to sleep until we receive a signal that something was put on the queue:
-                            // Note: pthread_cont_wait must be called "with mutex locked by the calling 
+                            // Note: pthread_cont_wait must be called "with mutex locked by the calling
                             // thread or undefined behavior results." - from the docs
                             ret = pthread_mutex_lock(mp);
                             FW_ASSERT(ret == 0, errno);
@@ -229,7 +229,7 @@ namespace Os {
         return QUEUE_OK;
     }
 
-    NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
+    NATIVE_INT_TYPE Queue::getNumMsgs() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 
@@ -239,12 +239,12 @@ namespace Os {
         return (U32) attr.mq_curmsgs;
     }
 
-    NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
+    NATIVE_INT_TYPE Queue::getMaxMsgs() const {
         //FW_ASSERT(0);
         return 0;
     }
 
-    NATIVE_INT_TYPE Queue::getQueueSize(void) const {
+    NATIVE_INT_TYPE Queue::getQueueSize() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 
@@ -254,7 +254,7 @@ namespace Os {
         return (U32) attr.mq_maxmsg;
     }
 
-    NATIVE_INT_TYPE Queue::getMsgSize(void) const {
+    NATIVE_INT_TYPE Queue::getMsgSize() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 

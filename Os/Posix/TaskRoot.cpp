@@ -176,11 +176,11 @@ namespace Os {
         FW_ASSERT(0);
     }
 
-    void Task::resume(void) {
+    void Task::resume() {
         FW_ASSERT(0);
     }
 
-    bool Task::isSuspended(void) {
+    bool Task::isSuspended() {
         FW_ASSERT(0);
         return false;
     }

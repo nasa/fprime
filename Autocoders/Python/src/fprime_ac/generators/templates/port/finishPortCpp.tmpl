@@ -1,16 +1,16 @@
 
-Output${name}Port::Output${name}Port(void) :
+Output${name}Port::Output${name}Port() :
             Fw::OutputPortBase(),
     m_port(0) {
 }
 
-void Output${name}Port::init(void) {
+void Output${name}Port::init() {
     Fw::OutputPortBase::init();
 }
 
 void Output${name}Port::addCallPort(Input${name}Port* callPort) {
     FW_ASSERT(callPort);
-    
+
     this->m_port = callPort;
     this->m_connObj = callPort;
 \#if FW_PORT_SERIALIZATION == 1
@@ -23,7 +23,7 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
     this->trace();
 \#endif
 
-\#if FW_PORT_SERIALIZATION            
+\#if FW_PORT_SERIALIZATION
     FW_ASSERT(this->m_port||this->m_serPort);
 \#else
     FW_ASSERT(this->m_port);
@@ -34,7 +34,7 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
 #else
     if (this->m_port) {
         this->m_port->invoke(${args_string});
-\#if FW_PORT_SERIALIZATION            
+\#if FW_PORT_SERIALIZATION
     } else if (this->m_serPort) {
 
         Fw::SerializeStatus status;
@@ -49,17 +49,17 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
   #else:
         status = _buffer.serialize($arg[0]);
   #end if
-  #set $num = $num + 1      
+  #set $num = $num + 1
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
 
- #end for        
+ #end for
         status = this->m_serPort->invokeSerial(_buffer);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == status,static_cast<AssertArg>(status));
     }
 \#else
-    }    
+    }
 \#endif
-#end if ## no return value            
+#end if ## no return value
 
 } // end Output${name}Port::invoke(...)
 

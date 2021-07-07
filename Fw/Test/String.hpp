@@ -19,10 +19,10 @@ namespace Test {
             String(const char* src); //!< char* source constructor
             String(const StringBase& src); //!< other string constructor
             String(const String& src); //!< String string constructor
-            String(void); //!< default constructor
-            ~String(void); //!< destructor
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of stored string
+            String(); //!< default constructor
+            ~String(); //!< destructor
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE length() const; //!< returns length of stored string
 
             const String& operator=(const String& other); //!< equal operator
 
@@ -30,7 +30,7 @@ namespace Test {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
 
         PRIVATE:
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[STRING_SIZE]; //!< storage for string data

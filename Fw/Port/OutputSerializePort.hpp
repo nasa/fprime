@@ -13,22 +13,22 @@ namespace Fw {
         public:
             OutputSerializePort();
             virtual ~OutputSerializePort();
-            virtual void init(void);
-            
+            virtual void init();
+
         protected:
-            
-            
+
+
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size);
-#endif            
-            
+#endif
+
         private:
 
             OutputSerializePort(OutputSerializePort*);
             OutputSerializePort(OutputSerializePort&);
             OutputSerializePort& operator=(OutputSerializePort&);
     };
-    
+
 }
 
 #endif // FW_OUTPUT_SERIALIZE_PORT_HPP

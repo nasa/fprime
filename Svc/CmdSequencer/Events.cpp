@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Events.cpp
 // \author Bocchino
 // \brief  Implementation for CmdSequencerComponentImpl::Sequence::Events
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Types/Assert.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
@@ -49,7 +49,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::Sequence::Events ::
-    fileNotFound(void)
+    fileNotFound()
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
     CmdSequencerComponentImpl& component = this->m_sequence.m_component;
@@ -58,7 +58,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::Sequence::Events ::
-    fileReadError(void)
+    fileReadError()
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
     CmdSequencerComponentImpl& component = this->m_sequence.m_component;

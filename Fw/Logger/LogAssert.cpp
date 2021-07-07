@@ -71,7 +71,7 @@ namespace Fw {
         // do nothing since reportAssert() sends message
     }
 
-    void LogAssertHook::doAssert(void) {
+    void LogAssertHook::doAssert() {
     }
 
 } // namespace Fw

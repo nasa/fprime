@@ -30,7 +30,7 @@ namespace Svc {
 
       ComSplitter(const char* compName);
 
-      ~ComSplitter(void);
+      ~ComSplitter();
 
       void init(NATIVE_INT_TYPE instance);
 

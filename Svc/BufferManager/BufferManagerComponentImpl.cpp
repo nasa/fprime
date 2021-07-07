@@ -51,13 +51,13 @@ namespace Svc {
   }
 
   BufferManagerComponentImpl ::
-    ~BufferManagerComponentImpl(void)
+    ~BufferManagerComponentImpl()
   {
       this->cleanup();
   }
 
   void BufferManagerComponentImpl ::
-    cleanup(void)
+    cleanup()
   {
       FW_ASSERT(this->m_buffers);
       FW_ASSERT(this->m_allocator);
@@ -73,7 +73,7 @@ namespace Svc {
           this->m_setup = false;
       }
   }
-  
+
 
   // ----------------------------------------------------------------------
   // Handler implementations for user-defined typed input ports
@@ -164,7 +164,7 @@ namespace Svc {
     // walk through bins and add up the sizes
     for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
-            memorySize += 
+            memorySize +=
                 (this->m_bufferBins.bins[bin].bufferSize * this->m_bufferBins.bins[bin].numBuffers) + // allocate each set of buffer memory
                 (static_cast<NATIVE_UINT_TYPE>(sizeof(AllocatedBuffer)) * this->m_bufferBins.bins[bin].numBuffers); // allocate the structs to track the buffers
             this->m_numStructs += this->m_bufferBins.bins[bin].numBuffers;
@@ -190,7 +190,7 @@ namespace Svc {
     for (NATIVE_UINT_TYPE bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
         if (this->m_bufferBins.bins[bin].numBuffers) {
             for (NATIVE_UINT_TYPE binEntry = 0; binEntry < this->m_bufferBins.bins[bin].numBuffers; binEntry++) {
-                // placement new for Fw::Buffer instance. We don't need the new() return value, 
+                // placement new for Fw::Buffer instance. We don't need the new() return value,
                 // because we know where the Fw::Buffer instance is
                 U32 context = (this->m_mgrId << 16) | currStruct;
                 (void) new(&this->m_buffers[currStruct].buff) Fw::Buffer(bufferMem,this->m_bufferBins.bins[bin].bufferSize,context);
@@ -202,7 +202,7 @@ namespace Svc {
             }
         }
     }
-      
+
     // check some assertions
     FW_ASSERT(bufferMem == (static_cast<U8*>(memory) + memorySize));
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);

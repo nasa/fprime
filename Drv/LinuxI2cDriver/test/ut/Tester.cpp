@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  LinuxI2cDriver.hpp
 // \author tcanham
 // \brief  cpp file for LinuxI2cDriver test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -18,11 +18,11 @@
 namespace Drv {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxI2cDriver")
@@ -36,13 +36,13 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -60,11 +60,11 @@ namespace Drv {
 
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // write
@@ -79,7 +79,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

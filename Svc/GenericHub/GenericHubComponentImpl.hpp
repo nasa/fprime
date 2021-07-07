@@ -47,7 +47,7 @@ class GenericHubComponentImpl : public GenericHubComponentBase {
 
     //! Destroy object GenericHub
     //!
-    ~GenericHubComponentImpl(void);
+    ~GenericHubComponentImpl();
 
   PRIVATE:
     // ----------------------------------------------------------------------

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BoundedIteratedScenario.hpp
 // \author bocchino
 // \brief  Run an iterated scenario, bounding the number of iterations
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_BoundedIteratedScenario_HPP
 #define STest_BoundedIteratedScenario_HPP
@@ -24,7 +24,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a BoundedIteratedScenario
@@ -41,7 +41,7 @@ namespace STest {
       }
 
       //! Destroy a BoundedIteratedScenario
-      virtual ~BoundedIteratedScenario(void) {
+      virtual ~BoundedIteratedScenario() {
 
       }
 
@@ -71,7 +71,7 @@ namespace STest {
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The number of iterations

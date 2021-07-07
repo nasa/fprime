@@ -19,10 +19,10 @@ namespace Fw {
             InternalInterfaceString(const char* src); //!< char* source constructor
             InternalInterfaceString(const StringBase& src); //!< other string constructor
             InternalInterfaceString(const InternalInterfaceString& src); //!< other string constructor
-            InternalInterfaceString(void); //!< default constructor
-            ~InternalInterfaceString(void); //!< destructor
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of stored string
+            InternalInterfaceString(); //!< default constructor
+            ~InternalInterfaceString(); //!< destructor
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE length() const; //!< returns length of stored string
 
             const InternalInterfaceString& operator=(const InternalInterfaceString& other); //!< equal operator
 
@@ -30,7 +30,7 @@ namespace Fw {
             SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
 
         PRIVATE:
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE]; //!< storage for string data

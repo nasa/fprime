@@ -52,11 +52,11 @@ namespace Fw {
         return stat;
     }
 
-    FwOpcodeType CmdPacket::getOpCode(void) const {
+    FwOpcodeType CmdPacket::getOpCode() const {
         return this->m_opcode;
     }
 
-    CmdArgBuffer& CmdPacket::getArgBuffer(void) {
+    CmdArgBuffer& CmdPacket::getArgBuffer() {
         return this->m_argBuffer;
     }
 

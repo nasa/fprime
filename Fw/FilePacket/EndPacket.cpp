@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  EndPacket.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket::EndPacket
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <string.h>
 
@@ -28,7 +28,7 @@ namespace Fw {
   }
 
   U32 FilePacket::EndPacket ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return this->header.bufferSize() + sizeof(this->checksumValue);
   }
@@ -58,12 +58,12 @@ namespace Fw {
   }
 
   SerializeStatus FilePacket::EndPacket ::
-    fromSerialBuffer(SerialBuffer& serialBuffer) 
+    fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
     FW_ASSERT(this->header.type == T_END);
 
-    const SerializeStatus status = 
+    const SerializeStatus status =
       serialBuffer.deserialize(this->checksumValue);
 
     return status;

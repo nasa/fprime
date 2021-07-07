@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Util/test/ut/LockGuardTester.hpp
 // \author vwong
 // \brief  hpp file for LockGuard test harness implementation class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef LOCKGUARDTESTER_HPP
 #define LOCKGUARDTESTER_HPP
@@ -31,19 +31,19 @@ namespace Utils {
 
       //! Construct object LockGuardTester
       //!
-      LockGuardTester(void);
+      LockGuardTester();
 
       //! Destroy object LockGuardTester
       //!
-      ~LockGuardTester(void);
+      ~LockGuardTester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
-      void testLocking(void);
+      void testLocking();
 
     private:
 
@@ -53,7 +53,7 @@ namespace Utils {
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

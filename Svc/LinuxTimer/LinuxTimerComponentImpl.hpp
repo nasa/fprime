@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  LinuxTimerImpl.hpp
 // \author tim
 // \brief  hpp file for LinuxTimer component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef LinuxTimer_HPP
 #define LinuxTimer_HPP
@@ -41,13 +41,13 @@ namespace Svc {
 
       //! Destroy object LinuxTimer
       //!
-      ~LinuxTimerComponentImpl(void);
+      ~LinuxTimerComponentImpl();
 
       //! Start timer
       void startTimer(NATIVE_INT_TYPE interval); //!< interval in milliseconds
 
       //! Quit timer
-      void quit(void);
+      void quit();
 
       bool m_quit; //!< flag to quit
 

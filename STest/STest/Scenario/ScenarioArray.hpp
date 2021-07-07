@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ScenarioArray.hpp
 // \author bocchino
 // \brief  An array of scenarios
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_ScenarioArray_HPP
 #define STest_ScenarioArray_HPP
@@ -24,7 +24,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a ScenarioArray object
@@ -42,19 +42,19 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Public instance methods 
+      // Public instance methods
       // ----------------------------------------------------------------------
-      
+
       //! Get a random index into the array
       //! \return The index
-      U32 getRandomIndex(void) const {
+      U32 getRandomIndex() const {
         const U32 index = Random::startLength(0, this->size);
         assert(index < this->size);
         return index;
       }
 
       //! Reset the sequence index and reset all child scenarios
-      void reset(void) {
+      void reset() {
         this->sequenceIndex = 0;
         for (U32 i = 0; i < this->size; ++i) {
           this->scenarios[i]->reset();
@@ -62,7 +62,7 @@ namespace STest {
       }
 
       //! Return the next scenario in the sequence
-      Scenario<State>* nextScenario(void) {
+      Scenario<State>* nextScenario() {
         Scenario<State>* scenario = NULL;
         if (this->sequenceIndex < this->size) {
           scenario = this->scenarios[this->sequenceIndex];
@@ -75,7 +75,7 @@ namespace STest {
       }
 
       //! Get the scenarios
-      Scenario<State>** getScenarios(void) const {
+      Scenario<State>** getScenarios() const {
         assert(this->scenarios != NULL);
         return this->scenarios;
       }
@@ -83,7 +83,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Public member variables 
+      // Public member variables
       // ----------------------------------------------------------------------
 
       //! The number of scenarios in the array

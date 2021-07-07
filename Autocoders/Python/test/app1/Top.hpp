@@ -4,7 +4,7 @@
 extern void constructArchitecture();
 
 extern "C" {
-  void localTargetInit(void);
+  void localTargetInit();
 }
 
 #endif

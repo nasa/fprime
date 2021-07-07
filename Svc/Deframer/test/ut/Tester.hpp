@@ -35,11 +35,11 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -67,35 +67,35 @@ namespace Svc {
       //!
       void from_bufferOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_bufferAllocate
       //!
       Fw::Buffer from_bufferAllocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 size 
+          U32 size
       );
 
       //! Handler for from_bufferDeallocate
       //!
       void from_bufferDeallocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_framedDeallocate
       //!
       void from_framedDeallocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_framedPoll
       //!
       Drv::PollStatus from_framedPoll_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &pollBuffer 
+          Fw::Buffer &pollBuffer
       );
 
     private:
@@ -106,11 +106,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
