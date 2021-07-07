@@ -202,11 +202,12 @@ class ModelParser:
                 #
                 # Pass async port scalar arguments by value
                 # and async port non-scalar arguments by reference
+                isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
                 if m == "pointer":
                     m = "*"
                 elif sync == "async":
                     # Store modifier as language symbol
-                    if TypesList.isPrimitiveType(t):
+                    if TypesList.isPrimitiveType(t) and not isEnum:
                         m = ""
                     else:
                         m = "&"

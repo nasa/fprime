@@ -37,4 +37,6 @@ def isPrimitiveType(type):
         "F32",
         "F64",
         "bool",
+        "FwOpcodeType",
+        "ENUM"
     ]
