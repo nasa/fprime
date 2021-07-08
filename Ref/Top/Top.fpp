@@ -248,8 +248,12 @@ module Ref {
       pingRcvr.Log -> eventLogger.LogRecv
     }
 
-    @ Text Event connections
+    @ Text Event Connections
     text event connections instance textLogger
+
+    #doesnt work because chanTlm has two input ports and it doesn't know which to use
+    #@ Telemetry Connections
+    #telemetry connections instance chanTlm
 
     connections Telemetry{
       fileDownlink.tlmOut -> chanTlm.TlmRecv
@@ -312,34 +316,8 @@ module Ref {
     @ The PingSend output port number should match the PingReturn input port number
     @ Each port number pair must be unique
     @ This order must match the pingEntries[] table in Ref/Top/Topology.cpp
-    connections Health{
-      rateGroup1Comp.PingOut -> $health.PingReturn
-      $health.PingSend -> rateGroup1Comp.PingIn
-      $health.PingSend[1] -> rateGroup2Comp.PingIn
-      rateGroup2Comp.PingOut -> $health.PingReturn[1]
-      $health.PingSend[2] -> rateGroup3Comp.PingIn
-      rateGroup3Comp.PingOut -> $health.PingReturn[2]
-      $health.PingSend[3] -> cmdDisp.pingIn
-      cmdDisp.pingOut -> $health.PingReturn[3]
-      $health.PingSend[4] -> eventLogger.pingIn
-      eventLogger.pingOut -> $health.PingReturn[4]
-      $health.PingSend[5] -> cmdSeq.pingIn
-      cmdSeq.pingOut -> $health.PingReturn[5]
-      $health.PingSend[6] -> chanTlm.pingIn
-      chanTlm.pingOut -> $health.PingReturn[6]
-      $health.PingSend[7] -> prmDb.pingIn
-      prmDb.pingOut -> $health.PingReturn[7]
-      $health.PingSend[8] -> fileUplink.pingIn
-      fileUplink.pingOut -> $health.PingReturn[8]
-      $health.PingSend[9] -> fileDownlink.pingIn
-      fileDownlink.pingOut -> $health.PingReturn[9]
-      $health.PingSend[10] -> pingRcvr.PingIn
-      pingRcvr.PingOut -> $health.PingReturn[10]
-      $health.PingSend[11] -> blockDrv.PingIn
-      blockDrv.PingOut -> $health.PingReturn[11]
-      $health.PingSend[12] -> fileManager.pingIn
-      fileManager.pingOut -> $health.PingReturn[12]
-    }
+    health connections instance $health
+
     connections SocketGroupSysCom{}
 
     @ Uplink connection to command dispatcher should not conflict with command sequencer
