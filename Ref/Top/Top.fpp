@@ -263,7 +263,7 @@ module Ref {
     
 
     @ Rate Group Connections
-    connections Linuxtimer{
+    connections linuxTimer{
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
     }
 
