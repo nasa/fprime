@@ -214,6 +214,11 @@ module Ref {
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
     }
 
+    # no idea what event connections this refers to; doesnt change the code at all if included or left out
+    #@ Event Connections
+    #event connections instance eventLogger
+
+    @ Command connections
     command connections instance cmdDisp
 
     @ Sequencer Connections - should not conflict with uplink port
@@ -268,14 +273,10 @@ module Ref {
       blockDrv.Tlm -> chanTlm.TlmRecv
     }
 
-    connections Parameters{
-      recvBuffComp.ParamGet -> prmDb.getPrm
-      sendBuffComp.ParamGet -> prmDb.getPrm
-      recvBuffComp.ParamSet -> prmDb.setPrm
-      sendBuffComp.ParamSet -> prmDb.setPrm
-    }
+    @ Parameters Connections
+    param connections instance prmDb
 
-    #time pattern
+    @ Time Connections
     time connections instance linuxTime
     
 

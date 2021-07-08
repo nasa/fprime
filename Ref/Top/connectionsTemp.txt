@@ -103,3 +103,10 @@ connections Time{
       recvBuffComp.LogText -> textLogger.TextLogger
       fileDownlink.textEventOut -> textLogger.TextLogger
     }
+
+    connections Parameters{
+      recvBuffComp.ParamGet -> prmDb.getPrm
+      sendBuffComp.ParamGet -> prmDb.getPrm
+      recvBuffComp.ParamSet -> prmDb.setPrm
+      sendBuffComp.ParamSet -> prmDb.setPrm
+    }

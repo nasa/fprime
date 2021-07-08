@@ -27,7 +27,7 @@ module Svc {
 
     @ Ping output port
     output port pingOut: Svc.Ping
-
+    
     match compCmdSend with compCmdReg
 
     # ----------------------------------------------------------------------
