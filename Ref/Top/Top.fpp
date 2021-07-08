@@ -252,30 +252,8 @@ module Ref {
     text event connections instance textLogger
 
     #doesnt work because chanTlm has two input ports and it doesn't know which to use
-    #@ Telemetry Connections
-    #telemetry connections instance chanTlm
-
-    connections Telemetry{
-      fileDownlink.tlmOut -> chanTlm.TlmRecv
-      fileUplinkBufferManager.tlmOut -> chanTlm.TlmRecv
-      fileUplink.tlmOut -> chanTlm.TlmRecv
-      fileManager.tlmOut -> chanTlm.TlmRecv
-      cmdSeq.tlmOut -> chanTlm.TlmRecv
-      cmdDisp.Tlm -> chanTlm.TlmRecv
-      rateGroup1Comp.Tlm -> chanTlm.TlmRecv
-      rateGroup2Comp.Tlm -> chanTlm.TlmRecv
-      rateGroup3Comp.Tlm -> chanTlm.TlmRecv
-      $health.Tlm -> chanTlm.TlmRecv
-      SG1.tlmOut -> chanTlm.TlmRecv
-      SG2.tlmOut -> chanTlm.TlmRecv
-      SG3.tlmOut -> chanTlm.TlmRecv
-      SG4.tlmOut -> chanTlm.TlmRecv
-      SG5.tlmOut -> chanTlm.TlmRecv
-      pingRcvr.Tlm -> chanTlm.TlmRecv
-      sendBuffComp.Tlm -> chanTlm.TlmRecv
-      recvBuffComp.Tlm -> chanTlm.TlmRecv
-      blockDrv.Tlm -> chanTlm.TlmRecv
-    }
+    @ Telemetry Connections
+    telemetry connections instance chanTlm
 
     @ Parameters Connections
     param connections instance prmDb
