@@ -213,6 +213,8 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     // set health ping entries
 
+    // This order must match the order of the connections to
+    // the health component in the topology
     Svc::HealthImpl::PingEntry pingEntries[] = {
         {3,5,getHealthName(blockDrv)}, // 0
         {3,5,getHealthName(chanTlm)}, // 1
