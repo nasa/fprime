@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <Ref/Top/Components.hpp>
+#include <Ref/Top/RefTopologyAc.hpp>
 
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
