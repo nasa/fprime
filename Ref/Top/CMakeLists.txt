@@ -7,8 +7,9 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
+  #"${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
+  "${CMAKE_CURRENT_LIST_DIR}/Topology2.cpp"  
   "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
 )
 # Note: supply non-explicit dependencies here
@@ -18,5 +19,29 @@ set(MOD_DEPS
   # Communication Implementations
   Drv/Udp
   Drv/TcpClient
+  # Component dependencies from XML
+  Drv/BlockDriver
+  Ref/PingReceiver
+  Ref/RecvBuffApp
+  Ref/SendBuffApp
+  Ref/SignalGen
+  Svc/ActiveLogger
+  Svc/ActiveRateGroup
+  Svc/AssertFatalAdapter
+  Svc/BufferManager
+  Svc/CmdDispatcher
+  Svc/CmdSequencer
+  Svc/Deframer
+  Svc/FatalHandler
+  Svc/FileDownlink
+  Svc/FileManager
+  Svc/FileUplink
+  Svc/Framer
+  Svc/Health
+  Svc/PassiveConsoleTextLogger
+  Svc/PrmDb
+  Svc/RateGroupDriver
+  Svc/StaticMemory
+  Svc/TlmChan
 )
 register_fprime_executable()
