@@ -42,6 +42,13 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+                                                   FwOpcodeType opcode,
+                                                   U32 cmdSeq,
+                                                   Fw::CmdResponse response) {
+  // Nothing to do
+}
+
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
                                               Drv::RecvStatus recvStatus) {

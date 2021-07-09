@@ -136,8 +136,8 @@ module Ref {
     }
 
     connections Sequencer {
-      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.sequencer] -> cmdSeq.cmdResponseIn
       cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.sequencer]
+      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.sequencer] -> cmdSeq.cmdResponseIn
     }
 
     connections Uplink {
