@@ -14,13 +14,13 @@ void print_usage(const char* app) {
 volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
-    exitTasks();
+    Ref::exitTasks();
     terminate = 1;
 }
 
 void run1cycle(void) {
     // call interrupt to emulate a clock
-    blockDrv.callIsr();
+    Ref::blockDrv.callIsr();
     Os::Task::delay(1000); //10Hz
 }
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    bool quit = constructApp(dump, port_number, hostname);
+    bool quit = Ref::constructApp(dump, port_number, hostname);
     if (quit) {
         return 0;
     }

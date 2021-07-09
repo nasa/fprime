@@ -30,37 +30,43 @@
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
 
-void constructRefArchitecture(void);
-bool constructApp(bool dump, U32 port_number, char* hostname);
-void exitTasks(void);
+namespace Ref {
+
+  void constructRefArchitecture(void);
+  bool constructApp(bool dump, U32 port_number, char* hostname);
+  void exitTasks(void);
 
 
-extern Svc::RateGroupDriverImpl rateGroupDriverComp;
-extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
-extern Svc::CmdSequencerComponentImpl cmdSeq;
-extern Svc::ConsoleTextLoggerImpl textLogger;
-extern Svc::ActiveLoggerImpl eventLogger;
-extern Svc::LinuxTimeImpl linuxTime;
-extern Svc::TlmChanImpl chanTlm;
-extern Svc::CommandDispatcherImpl cmdDisp;
-extern Svc::PrmDbImpl prmDb;
-extern Svc::FileUplink fileUplink;
-extern Svc::FileDownlink fileDownlink;
-extern Svc::FileManager fileManager;
-extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
-extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
-extern Svc::FatalHandlerComponentImpl fatalHandler;
-extern Svc::HealthImpl health;
+  extern Svc::RateGroupDriverImpl rateGroupDriverComp;
+  extern Svc::ActiveRateGroupImpl rateGroup1Comp, rateGroup2Comp, rateGroup3Comp;
+  extern Svc::CmdSequencerComponentImpl cmdSeq;
+  extern Svc::ConsoleTextLoggerImpl textLogger;
+  extern Svc::ActiveLoggerImpl eventLogger;
+  extern Svc::LinuxTimeImpl linuxTime;
+  extern Svc::TlmChanImpl chanTlm;
+  extern Svc::CommandDispatcherImpl cmdDisp;
+  extern Svc::PrmDbImpl prmDb;
+  extern Svc::FileUplink fileUplink;
+  extern Svc::FileDownlink fileDownlink;
+  extern Svc::FileManager fileManager;
+  extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
+  extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
+  extern Svc::FatalHandlerComponentImpl fatalHandler;
+  extern Svc::HealthImpl health;
 
-extern Drv::BlockDriverImpl blockDrv;
+  extern Drv::BlockDriverImpl blockDrv;
 
-extern Ref::RecvBuffImpl recvBuffComp;
-extern Ref::SendBuffImpl sendBuffComp;
-extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
-extern Ref::PingReceiverComponentImpl pingRcvr;
+  extern Ref::RecvBuffImpl recvBuffComp;
+  extern Ref::SendBuffImpl sendBuffComp;
+  extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
+  extern Ref::PingReceiverComponentImpl pingRcvr;
 
-extern Svc::StaticMemoryComponentImpl staticMemory;
-extern Drv::TcpClientComponentImpl comm;
-extern Svc::FramerComponentImpl downlink;
-extern Svc::DeframerComponentImpl uplink;
+  extern Svc::StaticMemoryComponentImpl staticMemory;
+  extern Drv::TcpClientComponentImpl comm;
+  extern Svc::FramerComponentImpl downlink;
+  extern Svc::DeframerComponentImpl uplink;
+
+}
+
 #endif
+
