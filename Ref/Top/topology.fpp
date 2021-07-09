@@ -93,6 +93,10 @@ module Ref {
 
     }
 
+    connections FaultProtection {
+      eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
+    }
+
     connections RateGroups {
 
       # Block driver
@@ -119,10 +123,6 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
 
-    }
-
-    connections FaultProtection {
-      eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
     }
 
     connections Ref {
