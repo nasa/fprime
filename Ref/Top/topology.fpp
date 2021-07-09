@@ -88,7 +88,6 @@ module Ref {
       fileDownlink.bufferSendOut -> downlink.bufferIn
 
       downlink.framedAllocate -> staticMemory.bufferAllocate[Ports.StaticMemory.downlink]
-
       downlink.framedOut -> comm.send
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
@@ -144,10 +143,8 @@ module Ref {
       comm.$recv -> uplink.framedIn
 
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-
       uplink.comOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.uplink]
       uplink.bufferOut -> fileUplink.bufferSendIn
-
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
 
