@@ -53,7 +53,7 @@ module Ref {
     text event connections instance textLogger
 
     time connections instance linuxTime
-    
+
     health connections instance $health
 
     # ----------------------------------------------------------------------
@@ -93,7 +93,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
 
     }
-  
+
     connections FaultProtection {
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
     }
@@ -121,6 +121,6 @@ module Ref {
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
     }
 
-  } 
+  }
 
 }
