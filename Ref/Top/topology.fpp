@@ -1,7 +1,7 @@
 module Ref {
 
   # ----------------------------------------------------------------------
-  # Symbolic constants for port numbers 
+  # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
 
   module Ports {

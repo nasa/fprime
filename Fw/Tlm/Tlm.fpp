@@ -10,7 +10,7 @@ module Fw {
           )
 
 
-  @ Port for querying telemetry
+  @ Port for getting telemetry
   port TlmGet(
                $id: FwChanIdType @< Telemetry Channel ID
                ref timeTag: Fw.Time @< Time Tag

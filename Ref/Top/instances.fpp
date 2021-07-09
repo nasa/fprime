@@ -1,7 +1,7 @@
 module Ref {
 
   # ----------------------------------------------------------------------
-  # Defaults 
+  # Defaults
   # ----------------------------------------------------------------------
 
   module Default {
@@ -86,7 +86,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   instance $health: Svc.Health base id 0x2000 \
-    queue size 25 
+    queue size 25
 
   instance SG1: Ref.SignalGen base id 0x2100 \
     queue size Default.queueSize
