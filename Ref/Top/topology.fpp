@@ -1,5 +1,26 @@
 module Ref {
 
+  @ Symbolic names for port numbers
+  module Ports {
+
+    enum CmdDispatcher {
+      sequencer
+      uplink
+    }
+
+    enum RateGroups {
+      rateGroup1
+      rateGroup2
+      rateGroup3
+    }
+
+    enum StaticMemory {
+      downlink
+      uplink
+    }
+
+  }
+
   topology Ref {
 
     # ----------------------------------------------------------------------
@@ -61,33 +82,42 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
-      downlink.framedAllocate -> staticMemory.bufferAllocate[1]
-      downlink.framedOut -> comm.send
-      comm.deallocate -> staticMemory.bufferDeallocate[1]
-      eventLogger.PktSend -> downlink.comIn
+
       chanTlm.PktSend -> downlink.comIn
+      eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
+
+      downlink.framedAllocate -> staticMemory.bufferAllocate[Ports.StaticMemory.downlink]
+
+      downlink.framedOut -> comm.send
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
+
+      comm.deallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.downlink]
+
     }
 
     connections RateGroups {
 
+      # Block driver
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
 
-      rateGroupDriverComp.CycleOut -> rateGroup1Comp.CycleIn
-      rateGroup1Comp.RateGroupMemberOut -> SG1.schedIn
+      # Rate group 1
+      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
+      rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
 
-      rateGroupDriverComp.CycleOut[1] -> rateGroup2Comp.CycleIn
-      rateGroup2Comp.RateGroupMemberOut -> cmdSeq.schedIn
+      # Rate group 2
+      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
+      rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
 
-      rateGroupDriverComp.CycleOut[2] -> rateGroup3Comp.CycleIn
-      rateGroup3Comp.RateGroupMemberOut -> $health.Run
+      # Rate group 3
+      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
+      rateGroup3Comp.RateGroupMemberOut[0] -> $health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
@@ -104,21 +134,25 @@ module Ref {
     }
 
     connections Sequencer {
-      # Should not conflict with uplink port
-      cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn
-      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[1]
+      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.sequencer] -> cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.sequencer]
     }
 
     connections Uplink {
-      comm.allocate -> staticMemory.bufferAllocate
+
+      comm.allocate -> staticMemory.bufferAllocate[Ports.StaticMemory.uplink]
       comm.$recv -> uplink.framedIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate
+
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      # Uplink connection to command dispatcher should not conflict with command sequencer
-      uplink.comOut -> cmdDisp.seqCmdBuff
+
+      uplink.comOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.uplink]
       uplink.bufferOut -> fileUplink.bufferSendIn
+
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+
     }
 
   }
