@@ -6,11 +6,6 @@ module Ref {
 
   module Ports {
 
-    enum CmdDispatcher {
-      sequencer
-      uplink
-    }
-
     enum RateGroups {
       rateGroup1
       rateGroup2
@@ -136,22 +131,22 @@ module Ref {
     }
 
     connections Sequencer {
-      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.sequencer]
-      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.sequencer] -> cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
 
     connections Uplink {
 
       comm.allocate -> staticMemory.bufferAllocate[Ports.StaticMemory.uplink]
       comm.$recv -> uplink.framedIn
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
+
+      uplink.comOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
 
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.comOut -> cmdDisp.seqCmdBuff[Ports.CmdDispatcher.uplink]
       uplink.bufferOut -> fileUplink.bufferSendIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
-      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.uplink] -> uplink.cmdResponseIn
-
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
     }

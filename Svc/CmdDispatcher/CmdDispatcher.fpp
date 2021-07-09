@@ -28,7 +28,13 @@ module Svc {
     @ Ping output port
     output port pingOut: Svc.Ping
 
+    # ----------------------------------------------------------------------
+    # Port matching specifiers
+    # ----------------------------------------------------------------------
+
     match compCmdSend with compCmdReg
+
+    match seqCmdStatus with seqCmdBuff
 
     # ----------------------------------------------------------------------
     # Special ports
