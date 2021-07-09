@@ -19,6 +19,8 @@ module Svc {
     @ Run port
     output port WdogStroke: Svc.WatchDog
 
+    match PingSend with PingReturn
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------

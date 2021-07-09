@@ -214,19 +214,19 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // set health ping entries
 
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,getHealthName(rateGroup1Comp)}, // 0
-        {3,5,getHealthName(rateGroup2Comp)}, // 1
-        {3,5,getHealthName(rateGroup3Comp)}, // 2
-        {3,5,getHealthName(cmdDisp)}, // 3
+        {3,5,getHealthName(blockDrv)}, // 0
+        {3,5,getHealthName(chanTlm)}, // 1
+        {3,5,getHealthName(cmdDisp)}, // 2
+        {3,5,getHealthName(cmdSeq)}, // 3
         {3,5,getHealthName(eventLogger)}, // 4
-        {3,5,getHealthName(cmdSeq)}, // 5
-        {3,5,getHealthName(chanTlm)}, // 6
-        {3,5,getHealthName(prmDb)}, // 7
-        {3,5,getHealthName(fileUplink)}, // 8
-        {3,5,getHealthName(fileDownlink)}, // 9
-        {3,5,getHealthName(pingRcvr)}, // 10
-        {3,5,getHealthName(blockDrv)}, // 11
-        {3,5,getHealthName(fileManager)}, // 12
+        {3,5,getHealthName(fileDownlink)}, // 5
+        {3,5,getHealthName(fileManager)}, // 6
+        {3,5,getHealthName(fileUplink)}, // 7
+        {3,5,getHealthName(pingRcvr)}, // 8
+        {3,5,getHealthName(prmDb)}, // 9
+        {3,5,getHealthName(rateGroup1Comp)}, // 10
+        {3,5,getHealthName(rateGroup2Comp)}, // 11
+        {3,5,getHealthName(rateGroup3Comp)}, // 12
     };
 
     // register ping table
