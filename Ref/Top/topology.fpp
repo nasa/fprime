@@ -60,67 +60,38 @@ module Ref {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
-    connections ComDrv {
-      comm.allocate -> staticMemory.bufferAllocate
-      comm.$recv -> uplink.framedIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate
-    }
-  
-    @ Uplink connection to command dispatcher should not conflict with command sequencer
-    connections UplinkData {
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.comOut -> cmdDisp.seqCmdBuff
-      uplink.bufferOut -> fileUplink.bufferSendIn
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
-      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-    }
-
-    connections DownlinkPorts {
+    connections Downlink {
       downlink.framedAllocate -> staticMemory.bufferAllocate[1]
       downlink.framedOut -> comm.send
       comm.deallocate -> staticMemory.bufferDeallocate[1]
-    }
-
-    connections DownlinkData{
       eventLogger.PktSend -> downlink.comIn
       chanTlm.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
     }
 
+    connections RateGroups {
 
-    @ Sequencer Connections - should not conflict with uplink port
-    connections Sequencer {
-      cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn
-      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[1]
-    }
-
-    connections BlockDriver {
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
-    }
 
-    connections RateGroup1 {
       rateGroupDriverComp.CycleOut -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
-    }
-    
-    connections RateGroup2 {
+
       rateGroupDriverComp.CycleOut[1] -> rateGroup2Comp.CycleIn
       rateGroup2Comp.RateGroupMemberOut -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
-    }
 
-    connections RateGroup3{
       rateGroupDriverComp.CycleOut[2] -> rateGroup3Comp.CycleIn
       rateGroup3Comp.RateGroupMemberOut -> $health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
       rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
+
     }
   
     connections FaultProtection {
@@ -130,6 +101,24 @@ module Ref {
     connections Ref {
       sendBuffComp.Data -> blockDrv.BufferIn
       blockDrv.BufferOut -> recvBuffComp.Data
+    }
+
+    connections Sequencer {
+      # Should not conflict with uplink port
+      cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[1]
+    }
+
+    connections Uplink {
+      comm.allocate -> staticMemory.bufferAllocate
+      comm.$recv -> uplink.framedIn
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate
+      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
+      # Uplink connection to command dispatcher should not conflict with command sequencer
+      uplink.comOut -> cmdDisp.seqCmdBuff
+      uplink.bufferOut -> fileUplink.bufferSendIn
+      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
     }
 
   } 
