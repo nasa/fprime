@@ -150,6 +150,7 @@ module Ref {
       uplink.bufferOut -> fileUplink.bufferSendIn
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      cmdDisp.seqCmdStatus[Ports.CmdDispatcher.uplink] -> uplink.cmdResponseIn
 
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
