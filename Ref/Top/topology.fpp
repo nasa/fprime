@@ -1,6 +1,9 @@
 module Ref {
 
-  @ Symbolic names for port numbers
+  # ----------------------------------------------------------------------
+  # Symbolic constants for port numbers 
+  # ----------------------------------------------------------------------
+
   module Ports {
 
     enum CmdDispatcher {
@@ -24,7 +27,7 @@ module Ref {
   topology Ref {
 
     # ----------------------------------------------------------------------
-    # Instance specifiers
+    # Instances used in the topology
     # ----------------------------------------------------------------------
 
     instance $health
