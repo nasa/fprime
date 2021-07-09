@@ -193,7 +193,8 @@ module Ref {
       uplink.framedDeallocate -> staticMemory.bufferDeallocate
     }
   
-    connections UplinkData{
+    @ Uplink connection to command dispatcher should not conflict with command sequencer
+    connections UplinkData {
       uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
       uplink.comOut -> cmdDisp.seqCmdBuff
       uplink.bufferOut -> fileUplink.bufferSendIn
@@ -201,7 +202,7 @@ module Ref {
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
     }
 
-    connections DownlinkPorts{
+    connections DownlinkPorts {
       downlink.framedAllocate -> staticMemory.bufferAllocate[1]
       downlink.framedOut -> comm.send
       comm.deallocate -> staticMemory.bufferDeallocate[1]
@@ -214,60 +215,29 @@ module Ref {
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
     }
 
-    # no idea what event connections this refers to; doesnt change the code at all if included or left out
-    #@ Event Connections
-    #event connections instance eventLogger
+    event connections instance eventLogger
 
-    @ Command connections
     command connections instance cmdDisp
 
     @ Sequencer Connections - should not conflict with uplink port
-    connections Sequencer{
+    connections Sequencer {
       cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn
       cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff[1]
-      prmDb.Log -> eventLogger.LogRecv
-      fileUplink.eventOut -> eventLogger.LogRecv
-      eventLogger.Log -> eventLogger.LogRecv
-      fileUplinkBufferManager.eventOut -> eventLogger.LogRecv
-      cmdDisp.Log -> eventLogger.LogRecv
-      cmdSeq.logOut -> eventLogger.LogRecv
-      fatalAdapter.Log -> eventLogger.LogRecv
-      $health.Log -> eventLogger.LogRecv
-      fileDownlink.eventOut -> eventLogger.LogRecv
-      fileManager.eventOut -> eventLogger.LogRecv
-      rateGroup1Comp.Log -> eventLogger.LogRecv
-      rateGroup2Comp.Log -> eventLogger.LogRecv
-      rateGroup3Comp.Log -> eventLogger.LogRecv
-      sendBuffComp.Log -> eventLogger.LogRecv
-      recvBuffComp.Log -> eventLogger.LogRecv
-      SG1.logOut -> eventLogger.LogRecv
-      SG2.logOut -> eventLogger.LogRecv
-      SG3.logOut -> eventLogger.LogRecv
-      SG4.logOut -> eventLogger.LogRecv
-      SG5.logOut -> eventLogger.LogRecv
-      pingRcvr.Log -> eventLogger.LogRecv
     }
 
-    @ Text Event Connections
     text event connections instance textLogger
 
-    #doesnt work because chanTlm has two input ports and it doesn't know which to use
-    @ Telemetry Connections
     telemetry connections instance chanTlm
 
-    @ Parameters Connections
     param connections instance prmDb
 
-    @ Time Connections
     time connections instance linuxTime
     
-
-    @ Rate Group Connections
-    connections linuxTimer{
+    connections BlockDriver {
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
     }
 
-    connections RateGroup1{
+    connections RateGroup1 {
       rateGroupDriverComp.CycleOut -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
@@ -296,16 +266,12 @@ module Ref {
     @ This order must match the pingEntries[] table in Ref/Top/Topology.cpp
     health connections instance $health
 
-    connections SocketGroupSysCom{}
-
-    @ Uplink connection to command dispatcher should not conflict with command sequencer
-    connections Uplink{}
 
     connections Fault{
       eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
     }
 
-    connections ReferenceApp{
+    connections ReferenceApp {
       sendBuffComp.Data -> blockDrv.BufferIn
       blockDrv.BufferOut -> recvBuffComp.Data
     }
