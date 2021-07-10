@@ -8,15 +8,17 @@
 
 namespace Ref {
 
-  // TODO
+  // Declare the block driver here so that main can see it
   extern Drv::BlockDriverImpl blockDrv;
 
   namespace Allocation {
 
+    // Malloc allcator for topology construction
     extern Fw::MallocAllocator mallocator;
     
   }
 
+  // State for topology construction
   struct TopologyState {
     TopologyState() :
       hostName(""),
@@ -37,6 +39,7 @@ namespace Ref {
     U32 portNumber;
   };
 
+  // Health ping entries
   namespace PingEntries {
     namespace blockDrv { enum { WARN = 3, FATAL = 5 }; }
     namespace chanTlm { enum { WARN = 3, FATAL = 5 }; }
