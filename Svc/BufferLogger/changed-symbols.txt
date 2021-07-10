@@ -1,0 +1,12 @@
+Old Symbol
+New Symbol
+
+Svc::BufferLoggerComponentBase::LogState
+Svc::BufferLogger_LogState
+
+Svc::BufferLoggerComponentBase::LOGGING_ON
+Svc::BufferLogger_LogState::LOGGING_ON
+
+Svc::BufferLoggerComponentBase::LOGGING_OFF
+Svc::BufferLogger_LogState::LOGGING_OFF
+

@@ -10,6 +10,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BufferLoggerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/BufferLogger.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/BufferLoggerFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BufferLogger_LogStateEnumAi.xml"
 )
 
 register_fprime_module()

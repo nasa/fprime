@@ -9,6 +9,9 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamRecvPortAi.xml"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamSendPortAi.xml"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamPollPortAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/PollStatusEnumAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/RecvStatusEnumAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/SendStatusEnumAi.xml"
     "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverComponentAi.xml"
 )
 

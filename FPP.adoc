@@ -1,0 +1,21 @@
+= FPP
+
+This branch contains a partial FPP (F Prime Prime) model of
+the F Prime core distribution.
+
+== Requirements
+
+To build the FPP model, first do the following:
+
+. Install the
+https://github.com/bocchino/redo[redo]
+build system.
+
+. Install the
+https://github.com/fprime-community/fpp[FPP compiler].
+
+== Building the Model
+
+To build the FPP model, run `redo -j4` at the command line.
+The system will detect the available FPP files and
+use them to generate the corresponding F Prime XML files.

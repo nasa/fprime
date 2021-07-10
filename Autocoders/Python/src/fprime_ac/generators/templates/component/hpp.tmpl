@@ -683,7 +683,7 @@ $emit_non_port_params(8, $params)
     void cmdResponse_out(
         FwOpcodeType opCode, $doxygen_post_comment("The opcode")
         U32 cmdSeq, $doxygen_post_comment("The command sequence number")
-        Fw::CommandResponse response $doxygen_post_comment("The command response")
+        Fw::CmdResponse response $doxygen_post_comment("The command response")
     );
 
 #end if
@@ -1203,7 +1203,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The command response
     //!
-    Fw::CommandResponse paramSet_${name}(
+    Fw::CmdResponse paramSet_${name}(
         Fw::SerializeBufferBase &val $doxygen_post_comment("The serialization buffer")
     );
 
@@ -1219,7 +1219,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The command response
     //!
-    Fw::CommandResponse paramSave_${name}(void);
+    Fw::CmdResponse paramSave_${name}(void);
 
   #end for
 #end if

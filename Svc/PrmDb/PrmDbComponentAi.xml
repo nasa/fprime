@@ -1,156 +1,205 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<component name="PrmDb" kind="active" namespace="Svc">
-    <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
-    <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <comment>A component for dispatching commands</comment>
-    <ports>
-        <port name="getPrm" data_type="Fw::PrmGet" kind="guarded_input">
-            <comment>
-            Port to get parameter values
-            </comment>
-        </port>
-        <port name="setPrm" data_type="Fw::PrmSet" kind="async_input">
-            <comment>
-            Port to update parameters
-            </comment>
-        </port>
-        <port name="pingIn" data_type="Svc::Ping" kind="async_input"  max_number = "1">
-            <comment>
-            Ping input port
-            </comment>
-        </port>
-        <port name="pingOut" data_type="Svc::Ping" kind="output"  max_number = "1">
-            <comment>
-            Ping output port
-            </comment>
-        </port>
-    </ports>
-    <commands>
-        <command kind="async" opcode="0" mnemonic="PRM_SAVE_FILE" >
-            <comment>
-            Command to save parameter image to file. Uses file name passed to constructor
-            </comment>
-        </command>
-    </commands>
-    <events>
-        <event id="0" name="PrmIdNotFound" severity="WARNING_LO" format_string = "Parameter ID 0x%08X not found" throttle="5">
-            <comment>
-            Parameter ID not found in database.
-            </comment>
-            <args>
-                <arg name="Id" type="U32" >
-                    <comment>The parameter ID</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="PrmIdUpdated" severity="ACTIVITY_HI" format_string = "Parameter ID 0x%08X updated" >
-            <comment>
-            Parameter ID updated in database
-            </comment>
-            <args>
-                <arg name="Id" type="U32" >
-                    <comment>The parameter ID</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="2" name="PrmDbFull" severity="FATAL" format_string = "Parameter DB full when adding ID 0x%08X" >
-            <comment>
-            Parameter database is full
-            </comment>
-            <args>
-                <arg name="Id" type="U32" >
-                    <comment>The parameter ID</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="3" name="PrmIdAdded" severity="ACTIVITY_HI" format_string = "Parameter ID 0x%08X added" >
-            <comment>
-            Parameter ID added to database
-            </comment>
-            <args>
-                <arg name="Id" type="U32" >
-                    <comment>The parameter ID</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="4" name="PrmFileWriteError" severity="WARNING_HI" format_string = "Parameter write failed in stage %d with record %d and error %d" >
-            <comment>
-            Failed to write parameter file
-            </comment>
-            <args>
-                <arg name="stage" type="ENUM">
-                    <enum name="PrmWriteError">
-                        <item name="PRM_WRITE_OPEN"/>
-                        <item name="PRM_WRITE_DELIMITER"/>
-                        <item name="PRM_WRITE_DELIMITER_SIZE"/>
-                        <item name="PRM_WRITE_RECORD_SIZE"/>
-                        <item name="PRM_WRITE_RECORD_SIZE_SIZE"/>
-                        <item name="PRM_WRITE_PARAMETER_ID"/>
-                        <item name="PRM_WRITE_PARAMETER_ID_SIZE"/>
-                        <item name="PRM_WRITE_PARAMETER_VALUE"/>
-                        <item name="PRM_WRITE_PARAMETER_VALUE_SIZE"/>
-                    </enum>
-                    <comment>The write stage</comment>
-                </arg>
-                <arg name="record" type="I32">
-                    <comment>The record that had the failure</comment>
-                </arg>          
-                <arg name="error" type="I32">
-                    <comment>The error code</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="5" name="PrmFileSaveComplete" severity="ACTIVITY_HI" format_string = "Parameter file save completed. Wrote %d records." >
-            <comment>
-            Save of parameter file completed
-            </comment>
-            <args>
-                <arg name="records" type="U32">
-                    <comment>The number of records saved</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="6" name="PrmFileReadError" severity="WARNING_HI" format_string = "Parameter file read failed in stage %d with record %d and error %d" >
-            <comment>
-            Failed to read parameter file
-            </comment>
-            <args>
-                <arg name="stage" type="ENUM">
-                    <enum name="PrmReadError">
-                        <item name="PRM_READ_OPEN"/>
-                        <item name="PRM_READ_DELIMITER"/>
-                        <item name="PRM_READ_DELIMITER_SIZE"/>
-                        <item name="PRM_READ_DELIMITER_VALUE"/>
-                        <item name="PRM_READ_RECORD_SIZE"/>
-                        <item name="PRM_READ_RECORD_SIZE_SIZE"/>
-                        <item name="PRM_READ_RECORD_SIZE_VALUE"/>
-                        <item name="PRM_READ_PARAMETER_ID"/>
-                        <item name="PRM_READ_PARAMETER_ID_SIZE"/>
-                        <item name="PRM_READ_PARAMETER_VALUE"/>
-                        <item name="PRM_READ_PARAMETER_VALUE_SIZE"/>
-                    </enum>
-                    <comment>The write stage</comment>
-                </arg>          
-                <arg name="record" type="I32">
-                    <comment>The record that had the failure</comment>
-                </arg>          
-                <arg name="error" type="I32">
-                    <comment>The error code</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="7" name="PrmFileLoadComplete" severity="ACTIVITY_HI" format_string = "Parameter file load completed. Read %d records." >
-            <comment>
-            Load of parameter file completed
-            </comment>
-            <args>
-                <arg name="records" type="U32">
-                    <comment>The number of records loaded</comment>
-                </arg>          
-            </args>
-        </event>
-    </events>    
-</component>
+<!-- =====================================================================
+PrmDbComponentAi.xml
+Generated by fpp-to-xml
+====================================================================== -->
+<component namespace="Svc" name="PrmDb" kind="active">
 
+  <comment>
+  A component for storing parameters
+  </comment>
+
+  <import_enum_type>Svc/PrmDb/PrmDb_PrmReadErrorEnumAi.xml</import_enum_type>
+  <import_enum_type>Svc/PrmDb/PrmDb_PrmWriteErrorEnumAi.xml</import_enum_type>
+  <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+  <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
+  <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
+  <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+  <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+
+  <ports>
+    <port name="CmdDisp" data_type="Fw::Cmd" kind="input" role="Cmd" max_number="1">
+      <comment>
+      Command receive port
+      </comment>
+    </port>
+    <port name="CmdReg" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+      <comment>
+      Command registration port
+      </comment>
+    </port>
+    <port name="CmdStatus" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+      <comment>
+      Command response port
+      </comment>
+    </port>
+    <port name="Log" data_type="Fw::Log" kind="output" role="LogEvent" max_number="1">
+      <comment>
+      Event port
+      </comment>
+    </port>
+    <port name="LogText" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+      <comment>
+      Text event port
+      </comment>
+    </port>
+    <port name="Time" data_type="Fw::Time" kind="output" role="TimeGet" max_number="1">
+      <comment>
+      Time get port
+      </comment>
+    </port>
+    <port name="getPrm" data_type="Fw::PrmGet" kind="guarded_input" max_number="1">
+      <comment>
+      Port to get parameter values
+      </comment>
+    </port>
+    <port name="pingIn" data_type="Svc::Ping" kind="async_input" max_number="1" full="assert">
+      <comment>
+      Ping input port
+      </comment>
+    </port>
+    <port name="pingOut" data_type="Svc::Ping" kind="output" max_number="1">
+      <comment>
+      Ping output port
+      </comment>
+    </port>
+    <port name="setPrm" data_type="Fw::PrmSet" kind="async_input" max_number="1" full="assert">
+      <comment>
+      Port to update parameters
+      </comment>
+    </port>
+  </ports>
+
+  <commands>
+    <command kind="async" opcode="0x0" mnemonic="PRM_SAVE_FILE" full="assert">
+      <comment>
+      Command to save parameter image to file. Uses file name passed to constructor
+      </comment>
+    </command>
+  </commands>
+
+  <events>
+    <event id="0x0" name="PrmIdNotFound" severity="WARNING_LO" format_string="Parameter ID 0x%x not found" throttle="5">
+      <comment>
+      Parameter ID not found in database.
+      </comment>
+      <args>
+        <arg name="Id" type="U32">
+          <comment>
+          The parameter ID
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x1" name="PrmIdUpdated" severity="ACTIVITY_HI" format_string="Parameter ID 0x%x updated">
+      <comment>
+      Parameter ID updated in database
+      </comment>
+      <args>
+        <arg name="Id" type="U32">
+          <comment>
+          The parameter ID
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x2" name="PrmDbFull" severity="FATAL" format_string="Parameter DB full when adding ID 0x%x ">
+      <comment>
+      Parameter database is full
+      </comment>
+      <args>
+        <arg name="Id" type="U32">
+          <comment>
+          The parameter ID
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x3" name="PrmIdAdded" severity="ACTIVITY_HI" format_string="Parameter ID 0x%x added">
+      <comment>
+      Parameter ID added to database
+      </comment>
+      <args>
+        <arg name="Id" type="U32">
+          <comment>
+          The parameter ID
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x4" name="PrmFileWriteError" severity="WARNING_HI" format_string="Parameter write failed in stage %s with record %d and error %d">
+      <comment>
+      Failed to write parameter file
+      </comment>
+      <args>
+        <arg name="stage" type="Svc::PrmDb_PrmWriteError">
+          <comment>
+          The write stage
+          </comment>
+        </arg>
+        <arg name="record" type="I32">
+          <comment>
+          The record that had the failure
+          </comment>
+        </arg>
+        <arg name="error" type="I32">
+          <comment>
+          The error code
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x5" name="PrmFileSaveComplete" severity="ACTIVITY_HI" format_string="Parameter file save completed. Wrote %u records.">
+      <comment>
+      Save of parameter file completed
+      </comment>
+      <args>
+        <arg name="records" type="U32">
+          <comment>
+          The number of records saved
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x6" name="PrmFileReadError" severity="WARNING_HI" format_string="Parameter file read failed in stage %s with record %d and error %d">
+      <comment>
+      Failed to read parameter file
+      </comment>
+      <args>
+        <arg name="stage" type="Svc::PrmDb_PrmReadError">
+          <comment>
+          The read stage
+          </comment>
+        </arg>
+        <arg name="record" type="I32">
+          <comment>
+          The record that had the failure
+          </comment>
+        </arg>
+        <arg name="error" type="I32">
+          <comment>
+          The error code
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x7" name="PrmFileLoadComplete" severity="ACTIVITY_HI" format_string="Parameter file load completed. Read %u records.">
+      <comment>
+      Load of parameter file completed
+      </comment>
+      <args>
+        <arg name="records" type="U32">
+          <comment>
+          The number of records loaded
+          </comment>
+        </arg>
+      </args>
+    </event>
+  </events>
+
+</component>

@@ -65,7 +65,7 @@ namespace Ref {
           U32 cmdSeq /*!< The command sequence number*/
       ) {
       this->m_inhibitPings = true;
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Ref

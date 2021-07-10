@@ -46,5 +46,5 @@ void TestCommand1Impl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I3
     }
 
     printf("Got command args: %d \"%s\" %s\n", arg1, arg2.toChar(),enum_str);
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }

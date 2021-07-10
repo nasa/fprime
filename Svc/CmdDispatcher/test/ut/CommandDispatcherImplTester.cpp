@@ -37,7 +37,7 @@ namespace Svc {
         this->m_cmdSendRcvd = true;
     }
 
-    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CommandResponse response) {
+    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response) {
         this->m_seqStatusRcvd = true;
         this->m_seqStatusOpCode = opCode;
         this->m_seqStatusCmdSeq = cmdSeq;
@@ -141,7 +141,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_OK);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::OK);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
@@ -162,7 +162,7 @@ namespace Svc {
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImplTester::runNopCommands(void) {
@@ -232,7 +232,7 @@ namespace Svc {
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_NO_OP,this->m_seqStatusOpCode);
         // Verify correct context value is passed back.
         ASSERT_EQ((U32)12,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
 
         // send NO_OP_STRING command
         this->clearEvents();
@@ -260,7 +260,7 @@ namespace Svc {
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING,this->m_seqStatusOpCode);
         ASSERT_EQ((U32)13,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
 
         // send TEST_CMD_1 command
         this->m_seqStatusRcvd = false;
@@ -291,7 +291,7 @@ namespace Svc {
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1,this->m_seqStatusOpCode);
         ASSERT_EQ((U32)14,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImplTester::runCommandReregister(void) {
@@ -406,7 +406,7 @@ namespace Svc {
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode+1);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_INVALID_OPCODE);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::INVALID_OPCODE);
     }
 
     void CommandDispatcherImplTester::runFailedCommand(void) {
@@ -501,7 +501,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
@@ -513,12 +513,12 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, CommandDispatcherComponentBase::ERR_EXECUTION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, Fw::CmdResponse::EXECUTION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::EXECUTION_ERROR);
 
         // dispatch a test command
         currSeq++;
@@ -554,7 +554,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_INVALID_OPCODE);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::INVALID_OPCODE);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
@@ -566,13 +566,13 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_INVALID_OPCODE);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,Fw::CmdResponse::INVALID_OPCODE);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
         ASSERT_EQ(testContext,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_INVALID_OPCODE);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::INVALID_OPCODE);
 
         currSeq++;
         // dispatch a test command
@@ -608,7 +608,7 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
@@ -620,13 +620,13 @@ namespace Svc {
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_VALIDATION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,Fw::CmdResponse::VALIDATION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
         ASSERT_EQ(testContext,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_VALIDATION_ERROR);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::VALIDATION_ERROR);
     }
 
     void CommandDispatcherImplTester::runInvalidCommand(void) {
@@ -659,7 +659,7 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_MalformedCommand_SIZE(1);
-        ASSERT_EVENTS_MalformedCommand(0,CommandDispatcherComponentBase::ERR_TYPE_MISMATCH);
+        ASSERT_EVENTS_MalformedCommand(0,Fw::DeserialStatus::TYPE_MISMATCH);
 
     }
 
@@ -873,7 +873,7 @@ namespace Svc {
 
         clearHistory();
         // send command complete
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_OK);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::OK);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // verify no status returned
