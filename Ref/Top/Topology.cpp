@@ -1311,117 +1311,87 @@ namespace Ref {
   //bool constructApp(bool dump, U32 port_number, char* hostname) {
   void constructApp(const TopologyState& state) {
 
-      SG1.init(10,0);
-      SG2.init(10,1);
-      SG3.init(10,2);
-      SG4.init(10,3);
-      SG5.init(10,4);
-      blockDrv.init(10);
-      chanTlm.init(10,0);
-      cmdDisp.init(20,0);
-      cmdSeq.init(10,0);
-      comm.init(0);
-      downlink.init(0);
-      eventLogger.init(10,0);
-      fatalAdapter.init(0);
-      fatalHandler.init(0);
-      fileDownlink.init(30, 0);
-      fileManager.init(30, 0);
-      fileUplink.init(30, 0);
-      fileUplinkBufferManager.init(0);
-      health.init(25,0);
-      linuxTime.init(0);
-      pingRcvr.init(10);
-      prmDb.init(10,0);
-      rateGroup1Comp.init(10,0);
-      rateGroup2Comp.init(10,1);
-      rateGroup3Comp.init(10,2);
-      rateGroupDriverComp.init();
-      recvBuffComp.init();
-      sendBuffComp.init(10);
-      staticMemory.init(0);
-      textLogger.init();
-      uplink.init(0);
+    initComponents(state);
 
-      cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
-      fileDownlink.configure(1000, 1000, 1000, 10);
+    cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
+    fileDownlink.configure(1000, 1000, 1000, 10);
 
-      downlink.setup(ConfigObjects::downlink::framing);
-      uplink.setup(ConfigObjects::uplink::deframing);
+    downlink.setup(ConfigObjects::downlink::framing);
+    uplink.setup(ConfigObjects::uplink::deframing);
 
-      // Set base IDs
-      setBaseIds();
+    // Set base IDs
+    setBaseIds();
 
-      // Connect components
-      connectComponents();
+    // Connect components
+    connectComponents();
 
-      /* Register commands */
-      sendBuffComp.regCommands();
-      recvBuffComp.regCommands();
-      cmdSeq.regCommands();
-      cmdDisp.regCommands();
-      eventLogger.regCommands();
-      prmDb.regCommands();
-      fileDownlink.regCommands();
-      fileManager.regCommands();
-      SG1.regCommands();
-      SG2.regCommands();
-      SG3.regCommands();
-      SG4.regCommands();
-      SG5.regCommands();
-      health.regCommands();
-      pingRcvr.regCommands();
+    /* Register commands */
+    sendBuffComp.regCommands();
+    recvBuffComp.regCommands();
+    cmdSeq.regCommands();
+    cmdDisp.regCommands();
+    eventLogger.regCommands();
+    prmDb.regCommands();
+    fileDownlink.regCommands();
+    fileManager.regCommands();
+    SG1.regCommands();
+    SG2.regCommands();
+    SG3.regCommands();
+    SG4.regCommands();
+    SG5.regCommands();
+    health.regCommands();
+    pingRcvr.regCommands();
 
-      // read parameters
-      prmDb.readParamFile();
-      recvBuffComp.loadParameters();
-      sendBuffComp.loadParameters();
+    // read parameters
+    prmDb.readParamFile();
+    recvBuffComp.loadParameters();
+    sendBuffComp.loadParameters();
 
-      // set up BufferManager instances
-      Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
-      memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
-      {
-        using namespace ConfigConstants::fileUplinkBufferManager;
-        upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
-        upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
-        fileUplinkBufferManager.setup(
-            MGR_ID,
-            0,
-            Allocation::mallocator,
-            upBuffMgrBins
-        );
-      }
-
-      // register ping table
-      health.setPingEntries(
-          ConfigObjects::health::pingEntries,
-          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
-          0x123
+    // set up BufferManager instances
+    Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+    memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
+    {
+      using namespace ConfigConstants::fileUplinkBufferManager;
+      upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
+      upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+      fileUplinkBufferManager.setup(
+          MGR_ID,
+          0,
+          Allocation::mallocator,
+          upBuffMgrBins
       );
+    }
 
-      rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
-      rateGroup2Comp.start(0, 119,10 * 1024);
-      rateGroup3Comp.start(0, 118,10 * 1024);
-      blockDrv.start(0,140,10*1024);
-      cmdDisp.start(0,101,10*1024);
-      cmdSeq.start(0,100,10*1024);
-      eventLogger.start(0,98,10*1024);
-      chanTlm.start(0,97,10*1024);
-      prmDb.start(0,96,10*1024);
+    // register ping table
+    health.setPingEntries(
+        ConfigObjects::health::pingEntries,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
+        0x123
+    );
 
-      fileDownlink.start(0, 100, 10*1024);
-      fileUplink.start(0, 100, 10*1024);
-      fileManager.start(0, 100, 10*1024);
+    rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
+    rateGroup2Comp.start(0, 119,10 * 1024);
+    rateGroup3Comp.start(0, 118,10 * 1024);
+    blockDrv.start(0,140,10*1024);
+    cmdDisp.start(0,101,10*1024);
+    cmdSeq.start(0,100,10*1024);
+    eventLogger.start(0,98,10*1024);
+    chanTlm.start(0,97,10*1024);
+    prmDb.start(0,96,10*1024);
 
-      pingRcvr.start(0, 100, 10*1024);
+    fileDownlink.start(0, 100, 10*1024);
+    fileUplink.start(0, 100, 10*1024);
+    fileManager.start(0, 100, 10*1024);
 
-      // Initialize socket server if and only if there is a valid specification
-      if (state.hostName != NULL && state.portNumber != 0) {
-          Fw::EightyCharString name("ReceiveTask");
-          // Uplink is configured for receive so a socket task is started
-          comm.configure(state.hostName, state.portNumber);
-          comm.startSocketTask(name, 100, 10 * 1024);
-      }
+    pingRcvr.start(0, 100, 10*1024);
+
+    // Initialize socket server if and only if there is a valid specification
+    if (state.hostName != NULL && state.portNumber != 0) {
+        Fw::EightyCharString name("ReceiveTask");
+        // Uplink is configured for receive so a socket task is started
+        comm.configure(state.hostName, state.portNumber);
+        comm.startSocketTask(name, 100, 10 * 1024);
+    }
   }
 
   // TODO: Break into three phases: exit, stop threads, and tear down components
