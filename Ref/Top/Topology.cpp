@@ -1188,16 +1188,20 @@ namespace Ref {
       recvBuffComp.regCommands();
     }
 
+    // Read parameters
+    void readParameters() {
+      prmDb.readParamFile();
+    }
+
     // Load parameters
     void loadParameters() {
-      // TODO: Move this to reg commands?
-      prmDb.readParamFile();
       sendBuffComp.loadParameters();
       recvBuffComp.loadParameters();
     }
 
     // Start tasks
     void startTasks(const TopologyState& state) {
+#if 1
       blockDrv.start(
         TaskIds::blockDrv,
         Priorities::blockDrv,
@@ -1263,6 +1267,35 @@ namespace Ref {
         Priorities::prmDb,
         StackSizes::prmDb
       );
+      // Initialize socket server if and only if there is a valid specification
+      if (state.hostName != NULL && state.portNumber != 0) {
+          Fw::EightyCharString name("ReceiveTask");
+          // Uplink is configured for receive so a socket task is started
+          comm.configure(state.hostName, state.portNumber);
+          comm.startSocketTask(name, 100, 10 * 1024);
+      }
+#else
+      blockDrv.start(0,140,10*1024);
+      chanTlm.start(0,97,10*1024);
+      cmdDisp.start(0,101,10*1024);
+      cmdSeq.start(0,100,10*1024);
+      eventLogger.start(0,98,10*1024);
+      fileDownlink.start(0, 100, 10*1024);
+      fileManager.start(0, 100, 10*1024);
+      fileUplink.start(0, 100, 10*1024);
+      pingRcvr.start(0, 100, 10*1024);
+      prmDb.start(0,96,10*1024);
+      rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
+      rateGroup2Comp.start(0, 119,10 * 1024);
+      rateGroup3Comp.start(0, 118,10 * 1024);
+      // Initialize socket server if and only if there is a valid specification
+      if (state.hostName != NULL && state.portNumber != 0) {
+          Fw::EightyCharString name("ReceiveTask");
+          // Uplink is configured for receive so a socket task is started
+          comm.configure(state.hostName, state.portNumber);
+          comm.startSocketTask(name, 100, 10 * 1024);
+      }
+#endif
     }
 
     // Stop tasks
@@ -1315,6 +1348,7 @@ namespace Ref {
     setBaseIds();
     connectComponents();
     regCommands();
+    readParameters();
     loadParameters();
     startTasks(state);
   }
@@ -1330,40 +1364,16 @@ namespace Ref {
   // TODO: Migrate this to area above, with appropriate changes
   // ======================================================================
 
-  // TODO: Replace specialized arguments with RefTopologyState.
-  // TODO: Reorganize into the FPP phases
+  // TODO: Replace with setup
   void constructApp(const TopologyState& state) {
-
     initComponents(state);
     configComponents(state);
     setBaseIds();
     connectComponents();
     regCommands();
+    readParameters();
     loadParameters();
-
-
-    // Start tasks
-    blockDrv.start(0,140,10*1024);
-    chanTlm.start(0,97,10*1024);
-    cmdDisp.start(0,101,10*1024);
-    cmdSeq.start(0,100,10*1024);
-    eventLogger.start(0,98,10*1024);
-    fileDownlink.start(0, 100, 10*1024);
-    fileManager.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    pingRcvr.start(0, 100, 10*1024);
-    prmDb.start(0,96,10*1024);
-    rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
-    rateGroup2Comp.start(0, 119,10 * 1024);
-    rateGroup3Comp.start(0, 118,10 * 1024);
-    // Initialize socket server if and only if there is a valid specification
-    if (state.hostName != NULL && state.portNumber != 0) {
-        Fw::EightyCharString name("ReceiveTask");
-        // Uplink is configured for receive so a socket task is started
-        comm.configure(state.hostName, state.portNumber);
-        comm.startSocketTask(name, 100, 10 * 1024);
-    }
-
+    startTasks(state);
   }
 
   // TODO: Break into three phases: exit, stop threads, and tear down components
