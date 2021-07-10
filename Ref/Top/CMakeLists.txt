@@ -8,9 +8,9 @@
 ####
 set(SOURCE_FILES
   #"${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyDefs.cpp"  
-  "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
-  "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
+  "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAc.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyDefs.cpp"
 )
 # Note: supply non-explicit dependencies here
 set(MOD_DEPS

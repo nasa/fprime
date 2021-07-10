@@ -2,8 +2,8 @@
 #define RefTopologyDefs_HPP
 
 #include "Drv/BlockDriver/BlockDriverImpl.hpp"
-#include <Fw/Types/MallocAllocator.hpp>
-#include <Svc/FramingProtocol/FprimeProtocol.hpp>
+#include "Fw/Types/MallocAllocator.hpp"
+#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Ref {
 

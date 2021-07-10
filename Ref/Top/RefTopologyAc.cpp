@@ -1260,7 +1260,11 @@ namespace Ref {
           Fw::EightyCharString name("ReceiveTask");
           // Uplink is configured for receive so a socket task is started
           comm.configure(state.hostName, state.portNumber);
-          comm.startSocketTask(name, 100, 10 * 1024);
+          comm.startSocketTask(
+              name,
+              ConfigConstants::comm::PRIORITY,
+              ConfigConstants::comm::STACK_SIZE
+          );
       }
     }
 
