@@ -37,16 +37,9 @@ namespace Ref {
 
     namespace ConfigObjects {
 
-      Fw::MallocAllocator mallocator;
-
-      Os::Log osLogger;
-      Svc::FprimeDeframing deframing;
-      Svc::FprimeFraming framing;
-
-      NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
-      NATIVE_UINT_TYPE rg1Context[] = {0,0,0,0,0,0,0,0,0,0};
-      NATIVE_UINT_TYPE rg2Context[] = {0,0,0,0,0,0,0,0,0,0};
-      NATIVE_UINT_TYPE rg3Context[] = {0,0,0,0,0,0,0,0,0,0};
+      namespace downlink {
+        Svc::FprimeFraming framing;
+      }
 
       namespace health {
         Svc::HealthImpl::PingEntry pingEntries[] = {
@@ -118,6 +111,26 @@ namespace Ref {
         };
       }
 
+      namespace rateGroup1Comp {
+        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+      }
+
+      namespace rateGroup2Comp {
+        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+      }
+
+      namespace rateGroup3Comp {
+        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+      }
+
+      namespace rateGroupDriverComp {
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
+      }
+
+      namespace uplink {
+        Svc::FprimeDeframing deframing;
+      }
+
     }
 
   }
@@ -134,22 +147,22 @@ namespace Ref {
     // rateGroup1Comp
     Svc::ActiveRateGroupImpl rateGroup1Comp(
         FW_OPTIONAL_NAME("rateGroup1Comp"),
-        ConfigObjects::rg1Context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg1Context)
+        ConfigObjects::rateGroup1Comp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
 
     // rateGroup2Comp
     Svc::ActiveRateGroupImpl rateGroup2Comp(
         FW_OPTIONAL_NAME("rateGroup2Comp"),
-        ConfigObjects::rg2Context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg2Context)
+        ConfigObjects::rateGroup2Comp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
 
     // rateGroup3Comp
     Svc::ActiveRateGroupImpl rateGroup3Comp(
         FW_OPTIONAL_NAME("rateGroup3Comp"),
-        ConfigObjects::rg3Context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg3Context)
+        ConfigObjects::rateGroup3Comp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
 
     // cmdDisp
@@ -221,8 +234,8 @@ namespace Ref {
     // rateGroupDriverComp
     Svc::RateGroupDriverImpl rateGroupDriverComp(
         FW_OPTIONAL_NAME("rateGroupDriverComp"),
-        ConfigObjects::rgDivs,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rgDivs)
+        ConfigObjects::rateGroupDriverComp::rgDivs,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
 
     // recvBuffComp
@@ -1297,46 +1310,43 @@ namespace Ref {
   // TODO: Reorganize into the FPP phases
   bool constructApp(bool dump, U32 port_number, char* hostname) {
 
-      staticMemory.init(0);
-      rateGroupDriverComp.init();
-      rateGroup1Comp.init(10,0);
-      rateGroup2Comp.init(10,1);
-      rateGroup3Comp.init(10,2);
-      blockDrv.init(10);
-      recvBuffComp.init();
-      sendBuffComp.init(10);
-      textLogger.init();
-      eventLogger.init(10,0);
-      linuxTime.init(0);
-      chanTlm.init(10,0);
-      cmdDisp.init(20,0);
-      cmdSeq.init(10,0);
-      prmDb.init(10,0);
-      comm.init(0);
-      downlink.init(0);
-      uplink.init(0);
-      fileUplink.init(30, 0);
-      fileDownlink.init(30, 0);
-      fileManager.init(30, 0);
-      fileUplinkBufferManager.init(0);
       SG1.init(10,0);
       SG2.init(10,1);
       SG3.init(10,2);
       SG4.init(10,3);
       SG5.init(10,4);
+      blockDrv.init(10);
+      chanTlm.init(10,0);
+      cmdDisp.init(20,0);
+      cmdSeq.init(10,0);
+      comm.init(0);
+      downlink.init(0);
+      eventLogger.init(10,0);
       fatalAdapter.init(0);
       fatalHandler.init(0);
+      fileDownlink.init(30, 0);
+      fileManager.init(30, 0);
+      fileUplink.init(30, 0);
+      fileUplinkBufferManager.init(0);
       health.init(25,0);
+      linuxTime.init(0);
       pingRcvr.init(10);
+      prmDb.init(10,0);
+      rateGroup1Comp.init(10,0);
+      rateGroup2Comp.init(10,1);
+      rateGroup3Comp.init(10,2);
+      rateGroupDriverComp.init();
+      recvBuffComp.init();
+      sendBuffComp.init(10);
+      staticMemory.init(0);
+      textLogger.init();
+      uplink.init(0);
 
-      cmdSeq.allocateBuffer(0,ConfigObjects::mallocator,5*1024);
+      cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
       fileDownlink.configure(1000, 1000, 1000, 10);
 
-      {
-        using namespace ConfigObjects;
-        downlink.setup(framing);
-        uplink.setup(deframing);
-      }
+      downlink.setup(ConfigObjects::downlink::framing);
+      uplink.setup(ConfigObjects::uplink::deframing);
 
       // Set base IDs
       setBaseIds();
@@ -1376,7 +1386,7 @@ namespace Ref {
         fileUplinkBufferManager.setup(
             MGR_ID,
             0,
-            ConfigObjects::mallocator,
+            Allocation::mallocator,
             upBuffMgrBins
         );
       }
@@ -1451,7 +1461,7 @@ namespace Ref {
       (void) comm.joinSocketTask(NULL);
 
       // Tear down components
-      cmdSeq.deallocateBuffer(ConfigObjects::mallocator);
+      cmdSeq.deallocateBuffer(Allocation::mallocator);
       fileUplinkBufferManager.cleanup();
   }
 

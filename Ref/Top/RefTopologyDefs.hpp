@@ -17,6 +17,12 @@
 
 namespace Ref {
 
+  namespace Allocation {
+
+    extern Fw::MallocAllocator mallocator;
+    
+  }
+
   // TODO: Redefine TopologyState
   typedef int TopologyState;
 
