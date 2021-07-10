@@ -16,22 +16,6 @@ namespace Ref {
   namespace {
 
     // ----------------------------------------------------------------------
-    // Component configuration constants 
-    // ----------------------------------------------------------------------
-
-    namespace ConfigConstants {
-
-      namespace fileUplinkBufferManager {
-        enum {
-          STORE_SIZE = 3000,
-          QUEUE_SIZE = 30,
-          MGR_ID = 200
-        };
-      }
-
-    }
-
-    // ----------------------------------------------------------------------
     // Component configuration objects
     // ----------------------------------------------------------------------
 
@@ -112,19 +96,19 @@ namespace Ref {
       }
 
       namespace rateGroup1Comp {
-        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+        NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
       }
 
       namespace rateGroup2Comp {
-        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+        NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
       }
 
       namespace rateGroup3Comp {
-        NATIVE_UINT_TYPE context[] = {0,0,0,0,0,0,0,0,0,0};
+        NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
       }
 
       namespace rateGroupDriverComp {
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = {1,2,4};
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
       }
 
       namespace uplink {
@@ -133,16 +117,12 @@ namespace Ref {
 
     }
 
-  }
-
-  // TODO
-  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("blockDrv"));
-
-  namespace {
-
     // ----------------------------------------------------------------------
     // Component instances
     // ----------------------------------------------------------------------
+
+    // blockDriver
+    // Declared in RefTopologyDefs.cpp
 
     // rateGroup1Comp
     Svc::ActiveRateGroupImpl rateGroup1Comp(
@@ -229,7 +209,7 @@ namespace Ref {
     Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
     // prmDb
-    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"),"PrmDb.dat");
+    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
 
     // rateGroupDriverComp
     Svc::RateGroupDriverImpl rateGroupDriverComp(
@@ -291,11 +271,20 @@ namespace Ref {
 
     // Configure components
     void configComponents(const TopologyState& state) {
-      cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
+      cmdSeq.allocateBuffer(
+          0,
+          Allocation::mallocator,
+          ConfigConstants::cmdSeq::BUFFER_SIZE
+      );
       downlink.setup(ConfigObjects::downlink::framing);
-      fileDownlink.configure(1000, 1000, 1000, 10);
+      fileDownlink.configure(
+          ConfigConstants::fileDownlink::TIMEOUT,
+          ConfigConstants::fileDownlink::COOLDOWN,
+          ConfigConstants::fileDownlink::CYCLE_TIME,
+          ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
+      );
       Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
-      memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
+      memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
       {
         using namespace ConfigConstants::fileUplinkBufferManager;
         upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
@@ -310,7 +299,7 @@ namespace Ref {
       health.setPingEntries(
           ConfigObjects::health::pingEntries,
           FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
-          0x123
+          ConfigConstants::health::WATCHDOG_CODE
       );
       uplink.setup(ConfigObjects::uplink::deframing);
     }
