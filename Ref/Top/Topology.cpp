@@ -13,19 +13,6 @@
 
 namespace Ref {
 
-  extern Drv::TcpClientComponentImpl comm;
-  extern Ref::SendBuffImpl sendBuffComp;
-  extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
-  extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
-  extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
-  extern Svc::ConsoleTextLoggerImpl textLogger;
-  extern Svc::DeframerComponentImpl uplink;
-  extern Svc::FatalHandlerComponentImpl fatalHandler;
-  extern Svc::FramerComponentImpl downlink;
-  extern Svc::HealthImpl health;
-  extern Svc::LinuxTimeImpl linuxTime;
-  extern Svc::PrmDbImpl prmDb;
-
   namespace {
 
     // ----------------------------------------------------------------------
@@ -34,11 +21,13 @@ namespace Ref {
 
     namespace ConfigConstants {
 
-      enum {
-          UPLINK_BUFFER_STORE_SIZE = 3000,
-          UPLINK_BUFFER_QUEUE_SIZE = 30,
-          UPLINK_BUFFER_MGR_ID = 200
-      };
+      namespace fileUplinkBufferManager {
+        enum {
+          STORE_SIZE = 3000,
+          QUEUE_SIZE = 30,
+          MGR_ID = 200
+        };
+      }
 
     }
 
@@ -133,52 +122,14 @@ namespace Ref {
 
   }
 
-  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
-
-  Ref::SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("SBC"));
-
-  Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
-
-  Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
-
-  Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
-
-  Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
-
-  Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
-
-  Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-
-  Ref::SignalGen SG1(FW_OPTIONAL_NAME("signalGen1"));
-
-  Ref::SignalGen SG2(FW_OPTIONAL_NAME("signalGen2"));
-
-  Ref::SignalGen SG3(FW_OPTIONAL_NAME("signalGen3"));
-
-  Ref::SignalGen SG4(FW_OPTIONAL_NAME("signalGen4"));
-
-  Ref::SignalGen SG5(FW_OPTIONAL_NAME("signalGen5"));
-
-  Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-
-  Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
-
-  Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
-
-  Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
+  // TODO
+  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("blockDrv"));
 
   namespace {
 
     // ----------------------------------------------------------------------
     // Component instances
     // ----------------------------------------------------------------------
-
-#if 0
-    // TODO: Move component instance definitions here.
-
-    // blockDrv
-    Drv::BlockDriver blockDrv(FW_OPTIONAL_NAME("blockDrv"));
-#endif
 
     // rateGroup1Comp
     Svc::ActiveRateGroupImpl rateGroup1Comp(
@@ -225,12 +176,11 @@ namespace Ref {
     // chanTlm
     Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
 
-#if 0
-    // prmDb
-    Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"));
+    // comm
+    Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
 
-    // health
-    Svc::Health health(FW_OPTIONAL_NAME("health"));
+    // sendBuffComp
+    SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
 
     // SG1
     SignalGen SG1(FW_OPTIONAL_NAME("SG1"));
@@ -247,28 +197,26 @@ namespace Ref {
     // SG5
     SignalGen SG5(FW_OPTIONAL_NAME("SG5"));
 
-    // sendBuffComp
-    SendBuff sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
-
-    // comm
-    Drv::ByteStreamDriverModel comm(FW_OPTIONAL_NAME("comm"));
-
-    // downlink
-    Svc::Framer downlink(FW_OPTIONAL_NAME("downlink"));
-
     // fatalAdapter
-    Svc::AssertFatalAdapter fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-
-    // fatalHandler
-    Svc::FatalHandler fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+    Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
 
     // fileUplinkBufferManager
-    Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+    Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+
+    // fatalHandler
+    Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+
+    // downlink
+    Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+
+    // health
+    Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
 
     // linuxTime
-    Svc::Time linuxTime(FW_OPTIONAL_NAME("linuxTime"));
+    Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
-#endif
+    // prmDb
+    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"),"PrmDb.dat");
 
     // rateGroupDriverComp
     Svc::RateGroupDriverImpl rateGroupDriverComp(
@@ -283,13 +231,11 @@ namespace Ref {
     // staticMemory
     Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
 
-#if 0
     // textLogger
-    Svc::PassiveTextLogger textLogger(FW_OPTIONAL_NAME("textLogger"));
+    Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));
 
     // uplink
-    Svc::Deframer uplink(FW_OPTIONAL_NAME("uplink"));
-#endif
+    Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
 
     // ----------------------------------------------------------------------
     // Private functions
@@ -1424,10 +1370,15 @@ namespace Ref {
       Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
       memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
       {
-        using namespace ConfigConstants;
-        upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_STORE_SIZE;
-        upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_QUEUE_SIZE;
-        fileUplinkBufferManager.setup(UPLINK_BUFFER_MGR_ID,0,ConfigObjects::mallocator,upBuffMgrBins);
+        using namespace ConfigConstants::fileUplinkBufferManager;
+        upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
+        upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+        fileUplinkBufferManager.setup(
+            MGR_ID,
+            0,
+            ConfigObjects::mallocator,
+            upBuffMgrBins
+        );
       }
 
       // register ping table
