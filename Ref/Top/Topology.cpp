@@ -291,7 +291,28 @@ namespace Ref {
 
     // Configure components
     void configComponents(const TopologyState& state) {
-      // TODO
+      cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
+      downlink.setup(ConfigObjects::downlink::framing);
+      fileDownlink.configure(1000, 1000, 1000, 10);
+      health.setPingEntries(
+          ConfigObjects::health::pingEntries,
+          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
+          0x123
+      );
+      Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+      memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
+      {
+        using namespace ConfigConstants::fileUplinkBufferManager;
+        upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
+        upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+        fileUplinkBufferManager.setup(
+            MGR_ID,
+            0,
+            Allocation::mallocator,
+            upBuffMgrBins
+        );
+      }
+      uplink.setup(ConfigObjects::uplink::deframing);
     }
 
     // Set component base Ids
@@ -1288,6 +1309,7 @@ namespace Ref {
 
   void setup(const TopologyState& state) {
     initComponents(state);
+    configComponents(state);
     setBaseIds();
     connectComponents();
     regCommands();
@@ -1312,17 +1334,8 @@ namespace Ref {
   void constructApp(const TopologyState& state) {
 
     initComponents(state);
-
-    cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
-    fileDownlink.configure(1000, 1000, 1000, 10);
-
-    downlink.setup(ConfigObjects::downlink::framing);
-    uplink.setup(ConfigObjects::uplink::deframing);
-
-    // Set base IDs
+    configComponents(state);
     setBaseIds();
-
-    // Connect components
     connectComponents();
 
     /* Register commands */
@@ -1342,49 +1355,25 @@ namespace Ref {
     health.regCommands();
     pingRcvr.regCommands();
 
-    // read parameters
+    // Load parameters
     prmDb.readParamFile();
     recvBuffComp.loadParameters();
     sendBuffComp.loadParameters();
 
-    // set up BufferManager instances
-    Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
-    memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
-    {
-      using namespace ConfigConstants::fileUplinkBufferManager;
-      upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
-      upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
-      fileUplinkBufferManager.setup(
-          MGR_ID,
-          0,
-          Allocation::mallocator,
-          upBuffMgrBins
-      );
-    }
-
-    // register ping table
-    health.setPingEntries(
-        ConfigObjects::health::pingEntries,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
-        0x123
-    );
-
-    rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
-    rateGroup2Comp.start(0, 119,10 * 1024);
-    rateGroup3Comp.start(0, 118,10 * 1024);
+    // Start tasks
     blockDrv.start(0,140,10*1024);
+    chanTlm.start(0,97,10*1024);
     cmdDisp.start(0,101,10*1024);
     cmdSeq.start(0,100,10*1024);
     eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
-
     fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
     fileManager.start(0, 100, 10*1024);
-
+    fileUplink.start(0, 100, 10*1024);
     pingRcvr.start(0, 100, 10*1024);
-
+    prmDb.start(0,96,10*1024);
+    rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
+    rateGroup2Comp.start(0, 119,10 * 1024);
+    rateGroup3Comp.start(0, 118,10 * 1024);
     // Initialize socket server if and only if there is a valid specification
     if (state.hostName != NULL && state.portNumber != 0) {
         Fw::EightyCharString name("ReceiveTask");
@@ -1392,6 +1381,7 @@ namespace Ref {
         comm.configure(state.hostName, state.portNumber);
         comm.startSocketTask(name, 100, 10 * 1024);
     }
+
   }
 
   // TODO: Break into three phases: exit, stop threads, and tear down components
