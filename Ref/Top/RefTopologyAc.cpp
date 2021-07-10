@@ -342,12 +342,136 @@ namespace Ref {
     // Connect components
     void connectComponents() {
 
+      // Command
+      cmdDisp.set_compCmdSend_OutputPort(
+          0,
+          SG1.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          1,
+          SG2.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          2,
+          SG3.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          3,
+          SG4.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          4,
+          SG5.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          5,
+          cmdDisp.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          6,
+          cmdSeq.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          7,
+          eventLogger.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          8,
+          fileDownlink.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          9,
+          fileManager.get_cmdIn_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          10,
+          health.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          11,
+          pingRcvr.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          12,
+          prmDb.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          13,
+          recvBuffComp.get_CmdDisp_InputPort(0)
+      );
+      cmdDisp.set_compCmdSend_OutputPort(
+          14,
+          sendBuffComp.get_CmdDisp_InputPort(0)
+      );
+
+      // CommandRegistration
+      SG1.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(0)
+      );
+      SG2.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(1)
+      );
+      SG3.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(2)
+      );
+      SG4.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(3)
+      );
+      SG5.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(4)
+      );
+      cmdDisp.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(5)
+      );
+      cmdSeq.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(6)
+      );
+      eventLogger.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(7)
+      );
+      fileDownlink.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(8)
+      );
+      fileManager.set_cmdRegOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(9)
+      );
+      health.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(10)
+      );
+      pingRcvr.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(11)
+      );
+      prmDb.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(12)
+      );
+      recvBuffComp.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(13)
+      );
+      sendBuffComp.set_CmdReg_OutputPort(
+          0,
+          cmdDisp.get_compCmdReg_InputPort(14)
+      );
+
       // CommandResponse
-      sendBuffComp.set_CmdStatus_OutputPort(
+      SG1.set_cmdResponseOut_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
-      SG4.set_cmdResponseOut_OutputPort(
+      SG2.set_cmdResponseOut_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
@@ -355,15 +479,11 @@ namespace Ref {
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
+      SG4.set_cmdResponseOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdStat_InputPort(0)
+      );
       SG5.set_cmdResponseOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      cmdSeq.set_cmdResponseOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      fileDownlink.set_cmdResponseOut_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
@@ -371,19 +491,15 @@ namespace Ref {
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
+      cmdSeq.set_cmdResponseOut_OutputPort(
+          0,
+          cmdDisp.get_compCmdStat_InputPort(0)
+      );
       eventLogger.set_CmdStatus_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
-      prmDb.set_CmdStatus_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      SG1.set_cmdResponseOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      SG2.set_cmdResponseOut_OutputPort(
+      fileDownlink.set_cmdResponseOut_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
@@ -395,16 +511,28 @@ namespace Ref {
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
+      pingRcvr.set_CmdStatus_OutputPort(
+          0,
+          cmdDisp.get_compCmdStat_InputPort(0)
+      );
+      prmDb.set_CmdStatus_OutputPort(
+          0,
+          cmdDisp.get_compCmdStat_InputPort(0)
+      );
       recvBuffComp.set_CmdStatus_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
-      pingRcvr.set_CmdStatus_OutputPort(
+      sendBuffComp.set_CmdStatus_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
 
       // Downlink
+      chanTlm.set_PktSend_OutputPort(
+          0,
+          downlink.get_comIn_InputPort(0)
+      );
       comm.set_deallocate_OutputPort(
           0,
           staticMemory.get_bufferDeallocate_InputPort(0)
@@ -413,263 +541,223 @@ namespace Ref {
           0,
           fileDownlink.get_bufferReturn_InputPort(0)
       );
-      downlink.set_framedOut_OutputPort(
-          0,
-          comm.get_send_InputPort(0)
-      );
       downlink.set_framedAllocate_OutputPort(
           0,
           staticMemory.get_bufferAllocate_InputPort(0)
       );
-      fileDownlink.set_bufferSendOut_OutputPort(
+      downlink.set_framedOut_OutputPort(
           0,
-          downlink.get_bufferIn_InputPort(0)
+          comm.get_send_InputPort(0)
       );
       eventLogger.set_PktSend_OutputPort(
           0,
           downlink.get_comIn_InputPort(0)
       );
-      chanTlm.set_PktSend_OutputPort(
+      fileDownlink.set_bufferSendOut_OutputPort(
           0,
-          downlink.get_comIn_InputPort(0)
+          downlink.get_bufferIn_InputPort(0)
       );
 
-      // Command
-      cmdDisp.set_compCmdSend_OutputPort(
-          11,
-          pingRcvr.get_CmdDisp_InputPort(0)
-      );
-      cmdDisp.set_compCmdSend_OutputPort(
+      // Events
+      SG1.set_logOut_OutputPort(
           0,
-          SG1.get_cmdIn_InputPort(0)
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          12,
-          prmDb.get_CmdDisp_InputPort(0)
+      SG2.set_logOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          10,
-          health.get_CmdDisp_InputPort(0)
+      SG3.set_logOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          1,
-          SG2.get_cmdIn_InputPort(0)
+      SG4.set_logOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          8,
-          fileDownlink.get_cmdIn_InputPort(0)
+      SG5.set_logOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          7,
-          eventLogger.get_CmdDisp_InputPort(0)
+      cmdDisp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          2,
-          SG3.get_cmdIn_InputPort(0)
+      cmdSeq.set_logOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          5,
-          cmdDisp.get_CmdDisp_InputPort(0)
+      eventLogger.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          14,
-          sendBuffComp.get_CmdDisp_InputPort(0)
+      fatalAdapter.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          13,
-          recvBuffComp.get_CmdDisp_InputPort(0)
+      fileDownlink.set_eventOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          9,
-          fileManager.get_cmdIn_InputPort(0)
+      fileManager.set_eventOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          3,
-          SG4.get_cmdIn_InputPort(0)
+      fileUplink.set_eventOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          6,
-          cmdSeq.get_cmdIn_InputPort(0)
+      fileUplinkBufferManager.set_eventOut_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
-      cmdDisp.set_compCmdSend_OutputPort(
-          4,
-          SG5.get_cmdIn_InputPort(0)
+      health.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      pingRcvr.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      prmDb.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      rateGroup1Comp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      rateGroup2Comp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      rateGroup3Comp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      recvBuffComp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
+      );
+      sendBuffComp.set_Log_OutputPort(
+          0,
+          eventLogger.get_LogRecv_InputPort(0)
       );
 
-      // RateGroups
-      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
-          3,
-          fileUplinkBufferManager.get_schedIn_InputPort(0)
-      );
-      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
-          2,
-          blockDrv.get_Sched_InputPort(0)
-      );
-      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
-          1,
-          SG5.get_schedIn_InputPort(0)
-      );
-      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
+      // FaultProtection
+      eventLogger.set_FatalAnnounce_OutputPort(
           0,
-          health.get_Run_InputPort(0)
-      );
-      rateGroupDriverComp.set_CycleOut_OutputPort(
-          2,
-          rateGroup3Comp.get_CycleIn_InputPort(0)
-      );
-      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
-          3,
-          SG4.get_schedIn_InputPort(0)
-      );
-      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
-          2,
-          SG3.get_schedIn_InputPort(0)
-      );
-      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
-          1,
-          sendBuffComp.get_SchedIn_InputPort(0)
-      );
-      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
-          0,
-          cmdSeq.get_schedIn_InputPort(0)
-      );
-      rateGroupDriverComp.set_CycleOut_OutputPort(
-          1,
-          rateGroup2Comp.get_CycleIn_InputPort(0)
-      );
-      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
-          3,
-          fileDownlink.get_Run_InputPort(0)
-      );
-      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
-          2,
-          chanTlm.get_Run_InputPort(0)
-      );
-      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
-          1,
-          SG2.get_schedIn_InputPort(0)
-      );
-      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
-          0,
-          SG1.get_schedIn_InputPort(0)
-      );
-      rateGroupDriverComp.set_CycleOut_OutputPort(
-          0,
-          rateGroup1Comp.get_CycleIn_InputPort(0)
-      );
-      blockDrv.set_CycleOut_OutputPort(
-          0,
-          rateGroupDriverComp.get_CycleIn_InputPort(0)
+          fatalHandler.get_FatalReceive_InputPort(0)
       );
 
       // Health
-      fileDownlink.set_pingOut_OutputPort(
+      blockDrv.set_PingOut_OutputPort(
           0,
-          health.get_PingReturn_InputPort(5)
+          health.get_PingReturn_InputPort(0)
       );
-      health.set_PingSend_OutputPort(
-          5,
-          fileDownlink.get_pingIn_InputPort(0)
-      );
-      pingRcvr.set_PingOut_OutputPort(
+      chanTlm.set_pingOut_OutputPort(
           0,
-          health.get_PingReturn_InputPort(8)
-      );
-      fileUplink.set_pingOut_OutputPort(
-          0,
-          health.get_PingReturn_InputPort(7)
-      );
-      cmdSeq.set_pingOut_OutputPort(
-          0,
-          health.get_PingReturn_InputPort(3)
+          health.get_PingReturn_InputPort(1)
       );
       cmdDisp.set_pingOut_OutputPort(
           0,
           health.get_PingReturn_InputPort(2)
       );
+      cmdSeq.set_pingOut_OutputPort(
+          0,
+          health.get_PingReturn_InputPort(3)
+      );
       eventLogger.set_pingOut_OutputPort(
           0,
           health.get_PingReturn_InputPort(4)
       );
-      health.set_PingSend_OutputPort(
-          8,
-          pingRcvr.get_PingIn_InputPort(0)
-      );
-      rateGroup2Comp.set_PingOut_OutputPort(
+      fileDownlink.set_pingOut_OutputPort(
           0,
-          health.get_PingReturn_InputPort(11)
+          health.get_PingReturn_InputPort(5)
       );
-      blockDrv.set_PingOut_OutputPort(
+      fileManager.set_pingOut_OutputPort(
           0,
-          health.get_PingReturn_InputPort(0)
+          health.get_PingReturn_InputPort(6)
       );
-      health.set_PingSend_OutputPort(
-          10,
-          rateGroup1Comp.get_PingIn_InputPort(0)
-      );
-      chanTlm.set_pingOut_OutputPort(
+      fileUplink.set_pingOut_OutputPort(
           0,
-          health.get_PingReturn_InputPort(1)
+          health.get_PingReturn_InputPort(7)
       );
       health.set_PingSend_OutputPort(
           0,
           blockDrv.get_PingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
-          9,
-          prmDb.get_pingIn_InputPort(0)
+          1,
+          chanTlm.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
           2,
           cmdDisp.get_pingIn_InputPort(0)
-      );
-      rateGroup3Comp.set_PingOut_OutputPort(
-          0,
-          health.get_PingReturn_InputPort(12)
-      );
-      prmDb.set_pingOut_OutputPort(
-          0,
-          health.get_PingReturn_InputPort(9)
-      );
-      health.set_PingSend_OutputPort(
-          4,
-          eventLogger.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
           3,
           cmdSeq.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
-          12,
-          rateGroup3Comp.get_PingIn_InputPort(0)
+          4,
+          eventLogger.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
-          7,
-          fileUplink.get_pingIn_InputPort(0)
-      );
-      health.set_PingSend_OutputPort(
-          1,
-          chanTlm.get_pingIn_InputPort(0)
-      );
-      fileManager.set_pingOut_OutputPort(
-          0,
-          health.get_PingReturn_InputPort(6)
+          5,
+          fileDownlink.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
           6,
           fileManager.get_pingIn_InputPort(0)
       );
       health.set_PingSend_OutputPort(
+          7,
+          fileUplink.get_pingIn_InputPort(0)
+      );
+      health.set_PingSend_OutputPort(
+          8,
+          pingRcvr.get_PingIn_InputPort(0)
+      );
+      health.set_PingSend_OutputPort(
+          9,
+          prmDb.get_pingIn_InputPort(0)
+      );
+      health.set_PingSend_OutputPort(
+          10,
+          rateGroup1Comp.get_PingIn_InputPort(0)
+      );
+      health.set_PingSend_OutputPort(
           11,
           rateGroup2Comp.get_PingIn_InputPort(0)
+      );
+      health.set_PingSend_OutputPort(
+          12,
+          rateGroup3Comp.get_PingIn_InputPort(0)
+      );
+      pingRcvr.set_PingOut_OutputPort(
+          0,
+          health.get_PingReturn_InputPort(8)
+      );
+      prmDb.set_pingOut_OutputPort(
+          0,
+          health.get_PingReturn_InputPort(9)
       );
       rateGroup1Comp.set_PingOut_OutputPort(
           0,
           health.get_PingReturn_InputPort(10)
       );
+      rateGroup2Comp.set_PingOut_OutputPort(
+          0,
+          health.get_PingReturn_InputPort(11)
+      );
+      rateGroup3Comp.set_PingOut_OutputPort(
+          0,
+          health.get_PingReturn_InputPort(12)
+      );
 
       // Parameters
-      sendBuffComp.set_ParamGet_OutputPort(
+      recvBuffComp.set_ParamGet_OutputPort(
           0,
           prmDb.get_getPrm_InputPort(0)
       );
@@ -677,7 +765,7 @@ namespace Ref {
           0,
           prmDb.get_setPrm_InputPort(0)
       );
-      recvBuffComp.set_ParamGet_OutputPort(
+      sendBuffComp.set_ParamGet_OutputPort(
           0,
           prmDb.get_getPrm_InputPort(0)
       );
@@ -686,42 +774,80 @@ namespace Ref {
           prmDb.get_setPrm_InputPort(0)
       );
 
-      // Uplink
-      fileUplink.set_bufferSendOut_OutputPort(
+      // RateGroups
+      blockDrv.set_CycleOut_OutputPort(
           0,
-          fileUplinkBufferManager.get_bufferSendIn_InputPort(0)
+          rateGroupDriverComp.get_CycleIn_InputPort(0)
       );
-      uplink.set_bufferDeallocate_OutputPort(
+      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
           0,
-          fileUplinkBufferManager.get_bufferSendIn_InputPort(0)
+          SG1.get_schedIn_InputPort(0)
       );
-      uplink.set_bufferOut_OutputPort(
-          0,
-          fileUplink.get_bufferSendIn_InputPort(0)
-      );
-      uplink.set_bufferAllocate_OutputPort(
-          0,
-          fileUplinkBufferManager.get_bufferGetCallee_InputPort(0)
-      );
-      cmdDisp.set_seqCmdStatus_OutputPort(
+      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
           1,
-          uplink.get_cmdResponseIn_InputPort(0)
+          SG2.get_schedIn_InputPort(0)
       );
-      uplink.set_comOut_OutputPort(
-          0,
-          cmdDisp.get_seqCmdBuff_InputPort(1)
+      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
+          2,
+          chanTlm.get_Run_InputPort(0)
       );
-      uplink.set_framedDeallocate_OutputPort(
-          0,
-          staticMemory.get_bufferDeallocate_InputPort(1)
+      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
+          3,
+          fileDownlink.get_Run_InputPort(0)
       );
-      comm.set_recv_OutputPort(
+      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
           0,
-          uplink.get_framedIn_InputPort(0)
+          cmdSeq.get_schedIn_InputPort(0)
       );
-      comm.set_allocate_OutputPort(
+      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
+          1,
+          sendBuffComp.get_SchedIn_InputPort(0)
+      );
+      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
+          2,
+          SG3.get_schedIn_InputPort(0)
+      );
+      rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
+          3,
+          SG4.get_schedIn_InputPort(0)
+      );
+      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
           0,
-          staticMemory.get_bufferAllocate_InputPort(1)
+          health.get_Run_InputPort(0)
+      );
+      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
+          1,
+          SG5.get_schedIn_InputPort(0)
+      );
+      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
+          2,
+          blockDrv.get_Sched_InputPort(0)
+      );
+      rateGroup3Comp.set_RateGroupMemberOut_OutputPort(
+          3,
+          fileUplinkBufferManager.get_schedIn_InputPort(0)
+      );
+      rateGroupDriverComp.set_CycleOut_OutputPort(
+          0,
+          rateGroup1Comp.get_CycleIn_InputPort(0)
+      );
+      rateGroupDriverComp.set_CycleOut_OutputPort(
+          1,
+          rateGroup2Comp.get_CycleIn_InputPort(0)
+      );
+      rateGroupDriverComp.set_CycleOut_OutputPort(
+          2,
+          rateGroup3Comp.get_CycleIn_InputPort(0)
+      );
+
+      // Ref
+      blockDrv.set_BufferOut_OutputPort(
+          0,
+          recvBuffComp.get_Data_InputPort(0)
+      );
+      sendBuffComp.set_Data_OutputPort(
+          0,
+          blockDrv.get_BufferIn_InputPort(0)
       );
 
       // Sequencer
@@ -735,47 +861,15 @@ namespace Ref {
       );
 
       // Telemetry
-      rateGroup2Comp.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      pingRcvr.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      fileUplink.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      rateGroup1Comp.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      cmdDisp.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      SG3.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      fileUplinkBufferManager.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      sendBuffComp.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
       SG1.set_tlmOut_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      recvBuffComp.set_Tlm_OutputPort(
+      SG2.set_tlmOut_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      cmdSeq.set_tlmOut_OutputPort(
+      SG3.set_tlmOut_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
@@ -787,23 +881,15 @@ namespace Ref {
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      rateGroup3Comp.set_Tlm_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      SG2.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
       blockDrv.set_Tlm_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      fileManager.set_tlmOut_OutputPort(
+      cmdDisp.set_Tlm_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      health.set_Tlm_OutputPort(
+      cmdSeq.set_tlmOut_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
@@ -811,199 +897,57 @@ namespace Ref {
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-
-      // CommandRegistration
-      prmDb.set_CmdReg_OutputPort(
+      fileManager.set_tlmOut_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(12)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      fileManager.set_cmdRegOut_OutputPort(
+      fileUplink.set_tlmOut_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(9)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      sendBuffComp.set_CmdReg_OutputPort(
+      fileUplinkBufferManager.set_tlmOut_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(14)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      recvBuffComp.set_CmdReg_OutputPort(
+      health.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(13)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      fileDownlink.set_cmdRegOut_OutputPort(
+      pingRcvr.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(8)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      SG1.set_cmdRegOut_OutputPort(
+      rateGroup1Comp.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(0)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      SG2.set_cmdRegOut_OutputPort(
+      rateGroup2Comp.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(1)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      health.set_CmdReg_OutputPort(
+      rateGroup3Comp.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(10)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      pingRcvr.set_CmdReg_OutputPort(
+      recvBuffComp.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(11)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
-      eventLogger.set_CmdReg_OutputPort(
+      sendBuffComp.set_Tlm_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(7)
-      );
-      SG5.set_cmdRegOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(4)
-      );
-      SG3.set_cmdRegOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(2)
-      );
-      cmdDisp.set_CmdReg_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(5)
-      );
-      cmdSeq.set_cmdRegOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(6)
-      );
-      SG4.set_cmdRegOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(3)
-      );
-
-      // Time
-      pingRcvr.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      health.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      fileUplink.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      downlink.set_timeGet_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      fileUplinkBufferManager.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      cmdDisp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      eventLogger.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      fatalAdapter.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      recvBuffComp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      rateGroup1Comp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      blockDrv.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      fileManager.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      SG5.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      SG3.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      SG2.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      rateGroup2Comp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      prmDb.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      sendBuffComp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      SG4.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      rateGroup3Comp.set_Time_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      cmdSeq.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      fileDownlink.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      SG1.set_timeCaller_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-
-      // Ref
-      blockDrv.set_BufferOut_OutputPort(
-          0,
-          recvBuffComp.get_Data_InputPort(0)
-      );
-      sendBuffComp.set_Data_OutputPort(
-          0,
-          blockDrv.get_BufferIn_InputPort(0)
+          chanTlm.get_TlmRecv_InputPort(0)
       );
 
       // TextEvents
-      cmdSeq.set_LogText_OutputPort(
+      SG1.set_logTextOut_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-      sendBuffComp.set_LogText_OutputPort(
+      SG2.set_logTextOut_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-      rateGroup3Comp.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      prmDb.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      health.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      recvBuffComp.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      fileDownlink.set_textEventOut_OutputPort(
+      SG3.set_logTextOut_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
@@ -1015,31 +959,11 @@ namespace Ref {
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-      rateGroup2Comp.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
       cmdDisp.set_LogText_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-      SG1.set_logTextOut_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      fileUplink.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      pingRcvr.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      SG3.set_logTextOut_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      rateGroup1Comp.set_LogText_OutputPort(
+      cmdSeq.set_LogText_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
@@ -1051,11 +975,15 @@ namespace Ref {
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
+      fileDownlink.set_textEventOut_OutputPort(
+          0,
+          textLogger.get_TextLogger_InputPort(0)
+      );
       fileManager.set_LogText_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-      SG2.set_logTextOut_OutputPort(
+      fileUplink.set_LogText_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
@@ -1063,97 +991,169 @@ namespace Ref {
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
-
-      // Events
-      health.set_Log_OutputPort(
+      health.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      rateGroup2Comp.set_Log_OutputPort(
+      pingRcvr.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      rateGroup1Comp.set_Log_OutputPort(
+      prmDb.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      rateGroup3Comp.set_Log_OutputPort(
+      rateGroup1Comp.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      eventLogger.set_Log_OutputPort(
+      rateGroup2Comp.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      SG2.set_logOut_OutputPort(
+      rateGroup3Comp.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      SG1.set_logOut_OutputPort(
+      recvBuffComp.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
-      SG5.set_logOut_OutputPort(
+      sendBuffComp.set_LogText_OutputPort(
           0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      sendBuffComp.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      pingRcvr.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      recvBuffComp.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      SG4.set_logOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      fileUplink.set_eventOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      SG3.set_logOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      fileUplinkBufferManager.set_eventOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      prmDb.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      fileManager.set_eventOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      cmdDisp.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      fileDownlink.set_eventOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      fatalAdapter.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      cmdSeq.set_logOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
+          textLogger.get_TextLogger_InputPort(0)
       );
 
-      // FaultProtection
-      eventLogger.set_FatalAnnounce_OutputPort(
+      // Time
+      SG1.set_timeCaller_OutputPort(
           0,
-          fatalHandler.get_FatalReceive_InputPort(0)
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      SG2.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      SG3.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      SG4.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      SG5.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      blockDrv.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      cmdDisp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      cmdSeq.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      downlink.set_timeGet_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      eventLogger.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      fatalAdapter.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      fileDownlink.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      fileManager.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      fileUplink.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      fileUplinkBufferManager.set_timeCaller_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      health.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      pingRcvr.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      prmDb.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      rateGroup1Comp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      rateGroup2Comp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      rateGroup3Comp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      recvBuffComp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+      sendBuffComp.set_Time_OutputPort(
+          0,
+          linuxTime.get_timeGetPort_InputPort(0)
+      );
+
+      // Uplink
+      cmdDisp.set_seqCmdStatus_OutputPort(
+          1,
+          uplink.get_cmdResponseIn_InputPort(0)
+      );
+      comm.set_allocate_OutputPort(
+          0,
+          staticMemory.get_bufferAllocate_InputPort(1)
+      );
+      comm.set_recv_OutputPort(
+          0,
+          uplink.get_framedIn_InputPort(0)
+      );
+      fileUplink.set_bufferSendOut_OutputPort(
+          0,
+          fileUplinkBufferManager.get_bufferSendIn_InputPort(0)
+      );
+      uplink.set_bufferAllocate_OutputPort(
+          0,
+          fileUplinkBufferManager.get_bufferGetCallee_InputPort(0)
+      );
+      uplink.set_bufferDeallocate_OutputPort(
+          0,
+          fileUplinkBufferManager.get_bufferSendIn_InputPort(0)
+      );
+      uplink.set_bufferOut_OutputPort(
+          0,
+          fileUplink.get_bufferSendIn_InputPort(0)
+      );
+      uplink.set_comOut_OutputPort(
+          0,
+          cmdDisp.get_seqCmdBuff_InputPort(1)
+      );
+      uplink.set_framedDeallocate_OutputPort(
+          0,
+          staticMemory.get_bufferDeallocate_InputPort(1)
       );
 
     }
