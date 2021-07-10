@@ -1294,23 +1294,26 @@ namespace Ref {
 
     // Free threads
     void freeThreads(const TopologyState& state) {
-      blockDrv.ActiveComponentBase::join(NULL);
-      rateGroup1Comp.ActiveComponentBase::join(NULL);
-      rateGroup2Comp.ActiveComponentBase::join(NULL);
-      rateGroup3Comp.ActiveComponentBase::join(NULL);
-      cmdDisp.ActiveComponentBase::join(NULL);
-      cmdSeq.ActiveComponentBase::join(NULL);
-      fileDownlink.ActiveComponentBase::join(NULL);
-      fileManager.ActiveComponentBase::join(NULL);
-      fileUplink.ActiveComponentBase::join(NULL);
-      pingRcvr.ActiveComponentBase::join(NULL);
-      eventLogger.ActiveComponentBase::join(NULL);
-      chanTlm.ActiveComponentBase::join(NULL);
-      prmDb.ActiveComponentBase::join(NULL);
+      (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
+      (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
+      (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
+      (void) blockDrv.ActiveComponentBase::join(NULL);
+      (void) cmdDisp.ActiveComponentBase::join(NULL);
+      (void) eventLogger.ActiveComponentBase::join(NULL);
+      (void) chanTlm.ActiveComponentBase::join(NULL);
+      (void) prmDb.ActiveComponentBase::join(NULL);
+      (void) fileUplink.ActiveComponentBase::join(NULL);
+      (void) fileDownlink.ActiveComponentBase::join(NULL);
+      (void) fileManager.ActiveComponentBase::join(NULL);
+      (void) cmdSeq.ActiveComponentBase::join(NULL);
+      (void) pingRcvr.ActiveComponentBase::join(NULL);
+      comm.stopSocketTask();
+      (void) comm.joinSocketTask(NULL);
     }
 
     void tearDownComponents(const TopologyState& state) {
-      // TODO
+      cmdSeq.deallocateBuffer(Allocation::mallocator);
+      fileUplinkBufferManager.cleanup();
     }
 
   }
@@ -1334,51 +1337,6 @@ namespace Ref {
     stopTasks(state);
     freeThreads(state);
     tearDownComponents(state);
-  }
-
-  // ======================================================================
-  // OLD F PRIME XML
-  // TODO: Migrate this to area above, with appropriate changes
-  // ======================================================================
-
-  // TODO: Break into three phases: exit, stop threads, and tear down components
-  void exitTasks(void) {
-
-      // Stop tasks
-      rateGroup1Comp.exit();
-      rateGroup2Comp.exit();
-      rateGroup3Comp.exit();
-      blockDrv.exit();
-      cmdDisp.exit();
-      eventLogger.exit();
-      chanTlm.exit();
-      prmDb.exit();
-      fileUplink.exit();
-      fileDownlink.exit();
-      fileManager.exit();
-      cmdSeq.exit();
-      pingRcvr.exit();
-
-      // Free threads
-      (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
-      (void) blockDrv.ActiveComponentBase::join(NULL);
-      (void) cmdDisp.ActiveComponentBase::join(NULL);
-      (void) eventLogger.ActiveComponentBase::join(NULL);
-      (void) chanTlm.ActiveComponentBase::join(NULL);
-      (void) prmDb.ActiveComponentBase::join(NULL);
-      (void) fileUplink.ActiveComponentBase::join(NULL);
-      (void) fileDownlink.ActiveComponentBase::join(NULL);
-      (void) fileManager.ActiveComponentBase::join(NULL);
-      (void) cmdSeq.ActiveComponentBase::join(NULL);
-      (void) pingRcvr.ActiveComponentBase::join(NULL);
-      comm.stopSocketTask();
-      (void) comm.joinSocketTask(NULL);
-
-      // Tear down components
-      cmdSeq.deallocateBuffer(Allocation::mallocator);
-      fileUplinkBufferManager.cleanup();
   }
 
 }

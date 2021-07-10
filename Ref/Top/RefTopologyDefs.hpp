@@ -1,21 +1,14 @@
 #ifndef RefTopologyDefs_HPP
 #define RefTopologyDefs_HPP
 
-#include <Fw/Types/Assert.hpp>
-#include <Os/Task.hpp>
-#include <Fw/Logger/Logger.hpp>
-#include <Os/Log.hpp>
+#include "Drv/BlockDriver/BlockDriverImpl.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
-
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <getopt.h>
-#include <stdlib.h>
-#include <ctype.h>
-#endif
-
 namespace Ref {
+
+  // TODO
+  extern Drv::BlockDriverImpl blockDrv;
 
   namespace Allocation {
 
@@ -24,8 +17,14 @@ namespace Ref {
   }
 
   struct TopologyState {
+    TopologyState() :
+      hostName(""),
+      portNumber(0)
+    {
+
+    }
     TopologyState(
-        char *hostName,
+        const char *hostName,
         U32 portNumber
     ) :
       hostName(hostName),
@@ -33,7 +32,7 @@ namespace Ref {
     {
 
     }
-    char* hostName;
+    const char* hostName;
     U32 portNumber;
   };
 
@@ -52,9 +51,6 @@ namespace Ref {
     namespace rateGroup2Comp { enum { WARN = 3, FATAL = 5 }; }
     namespace rateGroup3Comp { enum { WARN = 3, FATAL = 5 }; }
   }
-
-  // TODO
-  void exitTasks(void);
 
 }
 

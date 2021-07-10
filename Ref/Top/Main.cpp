@@ -11,10 +11,12 @@ void print_usage(const char* app) {
 #include <signal.h>
 #include <stdio.h>
 
+Ref::TopologyState state;
+
 volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
-    Ref::exitTasks();
+    Ref::teardown(state);
     terminate = 1;
 }
 
@@ -69,7 +71,7 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    Ref::TopologyState state(hostname, port_number);
+    state = Ref::TopologyState(hostname, port_number);
     Ref::setup(state);
 
     // register signal handlers to exit program
