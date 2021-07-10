@@ -54,8 +54,6 @@ namespace Ref {
   }
 
   // TODO
-  void constructRefArchitecture(void);
-  void constructApp(const TopologyState& state);
   void exitTasks(void);
 
 }
