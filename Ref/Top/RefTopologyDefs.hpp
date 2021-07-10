@@ -23,8 +23,19 @@ namespace Ref {
     
   }
 
-  // TODO: Redefine TopologyState
-  typedef int TopologyState;
+  struct TopologyState {
+    TopologyState(
+        char *hostName,
+        U32 portNumber
+    ) :
+      hostName(hostName),
+      portNumber(portNumber)
+    {
+
+    }
+    char* hostName;
+    U32 portNumber;
+  };
 
   namespace PingEntries {
     namespace blockDrv { enum { WARN = 3, FATAL = 5 }; }
@@ -41,6 +52,11 @@ namespace Ref {
     namespace rateGroup2Comp { enum { WARN = 3, FATAL = 5 }; }
     namespace rateGroup3Comp { enum { WARN = 3, FATAL = 5 }; }
   }
+
+  // TODO
+  void constructRefArchitecture(void);
+  void constructApp(const TopologyState& state);
+  void exitTasks(void);
 
 }
 

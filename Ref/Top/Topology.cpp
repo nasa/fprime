@@ -1308,7 +1308,8 @@ namespace Ref {
 
   // TODO: Replace specialized arguments with RefTopologyState.
   // TODO: Reorganize into the FPP phases
-  bool constructApp(bool dump, U32 port_number, char* hostname) {
+  //bool constructApp(bool dump, U32 port_number, char* hostname) {
+  void constructApp(const TopologyState& state) {
 
       SG1.init(10,0);
       SG2.init(10,1);
@@ -1415,13 +1416,12 @@ namespace Ref {
       pingRcvr.start(0, 100, 10*1024);
 
       // Initialize socket server if and only if there is a valid specification
-      if (hostname != NULL && port_number != 0) {
+      if (state.hostName != NULL && state.portNumber != 0) {
           Fw::EightyCharString name("ReceiveTask");
           // Uplink is configured for receive so a socket task is started
-          comm.configure(hostname, port_number);
+          comm.configure(state.hostName, state.portNumber);
           comm.startSocketTask(name, 100, 10 * 1024);
       }
-      return false;
   }
 
   // TODO: Break into three phases: exit, stop threads, and tear down components

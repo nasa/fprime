@@ -69,10 +69,8 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    bool quit = Ref::constructApp(dump, port_number, hostname);
-    if (quit) {
-        return 0;
-    }
+    Ref::TopologyState state(hostname, port_number);
+    Ref::constructApp(state);
 
     // register signal handlers to exit program
     signal(SIGINT,sighandler);
