@@ -1171,6 +1171,7 @@ namespace Ref {
 
     // Register commands
     void regCommands() {
+#if 1
       cmdDisp.regCommands();
       cmdSeq.regCommands();
       fileDownlink.regCommands();
@@ -1186,6 +1187,23 @@ namespace Ref {
       SG5.regCommands();
       sendBuffComp.regCommands();
       recvBuffComp.regCommands();
+#else
+      SG1.regCommands();
+      SG2.regCommands();
+      SG3.regCommands();
+      SG4.regCommands();
+      SG5.regCommands();
+      cmdDisp.regCommands();
+      cmdSeq.regCommands();
+      eventLogger.regCommands();
+      fileDownlink.regCommands();
+      fileManager.regCommands();
+      health.regCommands();
+      pingRcvr.regCommands();
+      prmDb.regCommands();
+      recvBuffComp.regCommands();
+      sendBuffComp.regCommands();
+#endif
     }
 
     // Load parameters
@@ -1330,30 +1348,14 @@ namespace Ref {
 
   // TODO: Replace specialized arguments with RefTopologyState.
   // TODO: Reorganize into the FPP phases
-  //bool constructApp(bool dump, U32 port_number, char* hostname) {
   void constructApp(const TopologyState& state) {
 
     initComponents(state);
     configComponents(state);
     setBaseIds();
     connectComponents();
+    regCommands();
 
-    /* Register commands */
-    sendBuffComp.regCommands();
-    recvBuffComp.regCommands();
-    cmdSeq.regCommands();
-    cmdDisp.regCommands();
-    eventLogger.regCommands();
-    prmDb.regCommands();
-    fileDownlink.regCommands();
-    fileManager.regCommands();
-    SG1.regCommands();
-    SG2.regCommands();
-    SG3.regCommands();
-    SG4.regCommands();
-    SG5.regCommands();
-    health.regCommands();
-    pingRcvr.regCommands();
 
     // Load parameters
     prmDb.readParamFile();
