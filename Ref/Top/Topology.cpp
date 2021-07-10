@@ -13,31 +13,18 @@
 
 namespace Ref {
 
-  extern Svc::RateGroupDriverImpl rateGroupDriverComp;
-  extern Svc::ActiveRateGroupImpl rateGroup2Comp;
-  extern Svc::ActiveRateGroupImpl rateGroup3Comp;
-  extern Svc::CmdSequencerComponentImpl cmdSeq;
-  extern Svc::ConsoleTextLoggerImpl textLogger;
-  extern Svc::ActiveLoggerImpl eventLogger;
-  extern Svc::LinuxTimeImpl linuxTime;
-  extern Svc::TlmChanImpl chanTlm;
-  extern Svc::CommandDispatcherImpl cmdDisp;
-  extern Svc::PrmDbImpl prmDb;
-  extern Svc::FileUplink fileUplink;
-  extern Svc::FileDownlink fileDownlink;
-  extern Svc::FileManager fileManager;
-  extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
-  extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
-  extern Svc::FatalHandlerComponentImpl fatalHandler;
-  extern Svc::HealthImpl health;
-  extern Ref::RecvBuffImpl recvBuffComp;
+  extern Drv::TcpClientComponentImpl comm;
   extern Ref::SendBuffImpl sendBuffComp;
   extern Ref::SignalGen SG1 , SG2, SG3, SG4, SG5;
-  extern Ref::PingReceiverComponentImpl pingRcvr;
-  extern Svc::StaticMemoryComponentImpl staticMemory;
-  extern Drv::TcpClientComponentImpl comm;
-  extern Svc::FramerComponentImpl downlink;
+  extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
+  extern Svc::BufferManagerComponentImpl fileUplinkBufferManager;
+  extern Svc::ConsoleTextLoggerImpl textLogger;
   extern Svc::DeframerComponentImpl uplink;
+  extern Svc::FatalHandlerComponentImpl fatalHandler;
+  extern Svc::FramerComponentImpl downlink;
+  extern Svc::HealthImpl health;
+  extern Svc::LinuxTimeImpl linuxTime;
+  extern Svc::PrmDbImpl prmDb;
 
   namespace {
 
@@ -60,6 +47,8 @@ namespace Ref {
     // ----------------------------------------------------------------------
 
     namespace ConfigObjects {
+
+      Fw::MallocAllocator mallocator;
 
       Os::Log osLogger;
       Svc::FprimeDeframing deframing;
@@ -142,6 +131,44 @@ namespace Ref {
 
     }
 
+  }
+
+  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
+
+  Ref::SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("SBC"));
+
+  Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
+
+  Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
+
+  Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
+
+  Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
+
+  Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+
+  Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+
+  Ref::SignalGen SG1(FW_OPTIONAL_NAME("signalGen1"));
+
+  Ref::SignalGen SG2(FW_OPTIONAL_NAME("signalGen2"));
+
+  Ref::SignalGen SG3(FW_OPTIONAL_NAME("signalGen3"));
+
+  Ref::SignalGen SG4(FW_OPTIONAL_NAME("signalGen4"));
+
+  Ref::SignalGen SG5(FW_OPTIONAL_NAME("signalGen5"));
+
+  Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
+
+  Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+
+  Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+
+  Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
+
+  namespace {
+
     // ----------------------------------------------------------------------
     // Component instances
     // ----------------------------------------------------------------------
@@ -160,18 +187,25 @@ namespace Ref {
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg1Context)
     );
 
-#if 0
     // rateGroup2Comp
-    Svc::ActiveRateGroup rateGroup2Comp(FW_OPTIONAL_NAME("rateGroup2Comp"));
+    Svc::ActiveRateGroupImpl rateGroup2Comp(
+        FW_OPTIONAL_NAME("rateGroup2Comp"),
+        ConfigObjects::rg2Context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg2Context)
+    );
 
     // rateGroup3Comp
-    Svc::ActiveRateGroup rateGroup3Comp(FW_OPTIONAL_NAME("rateGroup3Comp"));
+    Svc::ActiveRateGroupImpl rateGroup3Comp(
+        FW_OPTIONAL_NAME("rateGroup3Comp"),
+        ConfigObjects::rg3Context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg3Context)
+    );
 
     // cmdDisp
-    Svc::CommandDispatcher cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
+    Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
 
     // cmdSeq
-    Svc::CmdSequencer cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
+    Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
 
     // fileDownlink
     Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
@@ -183,14 +217,15 @@ namespace Ref {
     Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
     // pingRcvr
-    PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
+    PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
 
     // eventLogger
-    Svc::ActiveLogger eventLogger(FW_OPTIONAL_NAME("eventLogger"));
+    Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
 
     // chanTlm
-    Svc::TlmChan chanTlm(FW_OPTIONAL_NAME("chanTlm"));
+    Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
 
+#if 0
     // prmDb
     Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"));
 
@@ -233,15 +268,22 @@ namespace Ref {
     // linuxTime
     Svc::Time linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
+#endif
+
     // rateGroupDriverComp
-    Svc::RateGroupDriver rateGroupDriverComp(FW_OPTIONAL_NAME("rateGroupDriverComp"));
+    Svc::RateGroupDriverImpl rateGroupDriverComp(
+        FW_OPTIONAL_NAME("rateGroupDriverComp"),
+        ConfigObjects::rgDivs,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rgDivs)
+    );
 
     // recvBuffComp
-    RecvBuff recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
+    RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
 
     // staticMemory
-    Svc::StaticMemory staticMemory(FW_OPTIONAL_NAME("staticMemory"));
+    Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
 
+#if 0
     // textLogger
     Svc::PassiveTextLogger textLogger(FW_OPTIONAL_NAME("textLogger"));
 
@@ -1305,90 +1347,6 @@ namespace Ref {
   // TODO: Migrate this to area above, with appropriate changes
   // ======================================================================
 
-  // TODO: Move to instance creation
-  Svc::RateGroupDriverImpl rateGroupDriverComp(
-      FW_OPTIONAL_NAME("RGDvr"),
-      ConfigObjects::rgDivs,
-      FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rgDivs)
-  );
-
-  Svc::ActiveRateGroupImpl rateGroup2Comp(
-      FW_OPTIONAL_NAME("RG2"),
-      ConfigObjects::rg2Context,
-      FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg2Context)
-  );
-
-  Svc::ActiveRateGroupImpl rateGroup3Comp(
-      FW_OPTIONAL_NAME("RG3"),
-      ConfigObjects::rg3Context,
-      FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg3Context)
-  );
-
-  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
-
-  Ref::RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("RBC"));
-
-  Ref::SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("SBC"));
-
-  Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("TLOG"));
-
-  Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
-
-  Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
-
-  Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
-
-  Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
-
-  Fw::MallocAllocator mallocator;
-  Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("CMDSEQ"));
-
-  Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("PRM"),"PrmDb.dat");
-
-  Ref::PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("PngRecv"));
-
-  Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("Tcp"));
-
-  Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
-
-  Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
-
-  Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-  Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
-
-  Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-
-  Ref::SignalGen SG1(FW_OPTIONAL_NAME("signalGen1"));
-
-  Ref::SignalGen SG2(FW_OPTIONAL_NAME("signalGen2"));
-
-  Ref::SignalGen SG3(FW_OPTIONAL_NAME("signalGen3"));
-
-  Ref::SignalGen SG4(FW_OPTIONAL_NAME("signalGen4"));
-
-  Ref::SignalGen SG5(FW_OPTIONAL_NAME("signalGen5"));
-
-  Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-
-  Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
-
-  Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
-
-  Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
-
-  Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
-
-  // TODO: Eliminate this. The FPP code generator inserts the correct
-  // names into pingEntries.
-  const char* getHealthName(Fw::ObjBase& comp) {
-     #if FW_OBJECT_NAMES == 1
-         return comp.getObjName();
-     #else
-        return "[no object name]"
-     #endif
-  }
-
   // TODO: Replace specialized arguments with RefTopologyState.
   // TODO: Reorganize into the FPP phases
   bool constructApp(bool dump, U32 port_number, char* hostname) {
@@ -1425,7 +1383,7 @@ namespace Ref {
       health.init(25,0);
       pingRcvr.init(10);
 
-      cmdSeq.allocateBuffer(0,mallocator,5*1024);
+      cmdSeq.allocateBuffer(0,ConfigObjects::mallocator,5*1024);
       fileDownlink.configure(1000, 1000, 1000, 10);
 
       {
@@ -1469,27 +1427,15 @@ namespace Ref {
         using namespace ConfigConstants;
         upBuffMgrBins.bins[0].bufferSize = UPLINK_BUFFER_STORE_SIZE;
         upBuffMgrBins.bins[0].numBuffers = UPLINK_BUFFER_QUEUE_SIZE;
-        fileUplinkBufferManager.setup(UPLINK_BUFFER_MGR_ID,0,mallocator,upBuffMgrBins);
+        fileUplinkBufferManager.setup(UPLINK_BUFFER_MGR_ID,0,ConfigObjects::mallocator,upBuffMgrBins);
       }
 
-      Svc::HealthImpl::PingEntry pingEntries[] = {
-          {3,5,getHealthName(blockDrv)},
-          {3,5,getHealthName(chanTlm)},
-          {3,5,getHealthName(cmdDisp)},
-          {3,5,getHealthName(cmdSeq)},
-          {3,5,getHealthName(eventLogger)},
-          {3,5,getHealthName(fileDownlink)},
-          {3,5,getHealthName(fileManager)},
-          {3,5,getHealthName(fileUplink)},
-          {3,5,getHealthName(pingRcvr)},
-          {3,5,getHealthName(prmDb)},
-          {3,5,getHealthName(rateGroup1Comp)},
-          {3,5,getHealthName(rateGroup2Comp)},
-          {3,5,getHealthName(rateGroup3Comp)},
-      };
-
       // register ping table
-      health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
+      health.setPingEntries(
+          ConfigObjects::health::pingEntries,
+          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
+          0x123
+      );
 
       rateGroup1Comp.start(0, Priorities::rateGroup1Comp, 10 * 1024);
       rateGroup2Comp.start(0, 119,10 * 1024);
@@ -1554,7 +1500,7 @@ namespace Ref {
       (void) comm.joinSocketTask(NULL);
 
       // Tear down components
-      cmdSeq.deallocateBuffer(mallocator);
+      cmdSeq.deallocateBuffer(ConfigObjects::mallocator);
       fileUplinkBufferManager.cleanup();
   }
 
