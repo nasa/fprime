@@ -9,8 +9,8 @@
 // All rights reserved.
 // ======================================================================
 
-#ifndef FppConstantsAc_HPP
-#define FppConstantsAc_HPP
+#ifndef RefTop_FppConstantsAc_HPP
+#define RefTop_FppConstantsAc_HPP
 
 #include "Fw/Types/BasicTypes.hpp"
 

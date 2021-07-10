@@ -3,6 +3,7 @@
 
 #include "Drv/BlockDriver/BlockDriverImpl.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
+#include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Ref {

@@ -136,7 +136,7 @@ cpp_do()
   fi
   rm -rf $3
   mkdir $3
-  fpp-to-cpp -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
+  fpp-to-cpp $FPP_TO_CPP_OPTS -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
 }
 
 # Locate uses
