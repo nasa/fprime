@@ -5,9 +5,9 @@
  *      Author: tcanham
  */
 
-#include <Fw/Time/Time.hpp>
-#include <iostream>
-#include <gtest/gtest.h>
+# <Fw/Time/Time.hpp>
+# <iostream>
+# <gtest/gtest.h>
 
 TEST(TimeTestNominal,InstantiateTest) {
 
