@@ -294,11 +294,6 @@ namespace Ref {
       cmdSeq.allocateBuffer(0,Allocation::mallocator,5*1024);
       downlink.setup(ConfigObjects::downlink::framing);
       fileDownlink.configure(1000, 1000, 1000, 10);
-      health.setPingEntries(
-          ConfigObjects::health::pingEntries,
-          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
-          0x123
-      );
       Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
       memset(&upBuffMgrBins,0,sizeof(upBuffMgrBins));
       {
@@ -312,6 +307,11 @@ namespace Ref {
             upBuffMgrBins
         );
       }
+      health.setPingEntries(
+          ConfigObjects::health::pingEntries,
+          FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
+          0x123
+      );
       uplink.setup(ConfigObjects::uplink::deframing);
     }
 
@@ -1171,7 +1171,6 @@ namespace Ref {
 
     // Register commands
     void regCommands() {
-#if 1
       cmdDisp.regCommands();
       cmdSeq.regCommands();
       fileDownlink.regCommands();
@@ -1187,27 +1186,12 @@ namespace Ref {
       SG5.regCommands();
       sendBuffComp.regCommands();
       recvBuffComp.regCommands();
-#else
-      SG1.regCommands();
-      SG2.regCommands();
-      SG3.regCommands();
-      SG4.regCommands();
-      SG5.regCommands();
-      cmdDisp.regCommands();
-      cmdSeq.regCommands();
-      eventLogger.regCommands();
-      fileDownlink.regCommands();
-      fileManager.regCommands();
-      health.regCommands();
-      pingRcvr.regCommands();
-      prmDb.regCommands();
-      recvBuffComp.regCommands();
-      sendBuffComp.regCommands();
-#endif
     }
 
     // Load parameters
     void loadParameters() {
+      // TODO: Move this to reg commands?
+      prmDb.readParamFile();
       sendBuffComp.loadParameters();
       recvBuffComp.loadParameters();
     }
@@ -1355,12 +1339,8 @@ namespace Ref {
     setBaseIds();
     connectComponents();
     regCommands();
+    loadParameters();
 
-
-    // Load parameters
-    prmDb.readParamFile();
-    recvBuffComp.loadParameters();
-    sendBuffComp.loadParameters();
 
     // Start tasks
     blockDrv.start(0,140,10*1024);
@@ -1389,7 +1369,7 @@ namespace Ref {
   // TODO: Break into three phases: exit, stop threads, and tear down components
   void exitTasks(void) {
 
-      // Exit
+      // Stop tasks
       rateGroup1Comp.exit();
       rateGroup2Comp.exit();
       rateGroup3Comp.exit();
@@ -1404,8 +1384,7 @@ namespace Ref {
       cmdSeq.exit();
       pingRcvr.exit();
 
-      // Stop tasks
-      // join the component threads with NULL pointers to free them
+      // Free threads
       (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
       (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
       (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
