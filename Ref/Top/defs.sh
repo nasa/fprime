@@ -2,6 +2,7 @@
 
 export FPRIME_ROOT=../..
 export FPP_FILES="
+init.fpp
 instances.fpp
 topology.fpp
 "

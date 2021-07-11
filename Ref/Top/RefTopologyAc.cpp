@@ -21,10 +21,6 @@ namespace Ref {
 
     namespace ConfigObjects {
 
-      namespace downlink {
-        Svc::FprimeFraming framing;
-      }
-
       namespace health {
         Svc::HealthImpl::PingEntry pingEntries[] = {
           {
@@ -95,6 +91,10 @@ namespace Ref {
         };
       }
 
+      namespace downlink {
+        Svc::FprimeFraming framing;
+      }
+
       namespace rateGroup1Comp {
         NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
       }
@@ -121,7 +121,7 @@ namespace Ref {
     // Component instances
     // ----------------------------------------------------------------------
 
-    // blockDriver
+    // blockDrv
     // Declared in RefTopologyDefs.cpp
 
     // rateGroup1Comp

@@ -29,6 +29,7 @@ then
 fi
 export FRAMEWORK_FPP_LOCS="
 $FPRIME_ROOT/Drv/locs.fpp
+$FPRIME_ROOT/Fpp/locs.fpp
 $FPRIME_ROOT/Fw/locs.fpp
 $FPRIME_ROOT/Ref/locs.fpp
 $FPRIME_ROOT/Svc/locs.fpp
