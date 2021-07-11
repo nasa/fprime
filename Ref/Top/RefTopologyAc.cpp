@@ -21,6 +21,10 @@ namespace Ref {
 
     namespace ConfigObjects {
 
+      namespace downlink {
+        Svc::FprimeFraming framing;
+      }
+
       namespace health {
         Svc::HealthImpl::PingEntry pingEntries[] = {
           {
@@ -91,10 +95,6 @@ namespace Ref {
         };
       }
 
-      namespace downlink {
-        Svc::FprimeFraming framing;
-      }
-
       namespace rateGroup1Comp {
         NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
       }
@@ -121,8 +121,71 @@ namespace Ref {
     // Component instances
     // ----------------------------------------------------------------------
 
+    // SG1
+    SignalGen SG1(FW_OPTIONAL_NAME("SG1"));
+
+    // SG2
+    SignalGen SG2(FW_OPTIONAL_NAME("SG2"));
+
+    // SG3
+    SignalGen SG3(FW_OPTIONAL_NAME("SG3"));
+
+    // SG4
+    SignalGen SG4(FW_OPTIONAL_NAME("SG4"));
+
+    // SG5
+    SignalGen SG5(FW_OPTIONAL_NAME("SG5"));
+
     // blockDrv
     // Declared in RefTopologyDefs.cpp
+
+    // chanTlm
+    Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
+
+    // cmdDisp
+    Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
+
+    // cmdSeq
+    Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
+
+    // comm
+    Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
+
+    // downlink
+    Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+
+    // eventLogger
+    Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
+
+    // fatalAdapter
+    Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
+
+    // fatalHandler
+    Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+
+    // fileDownlink
+    Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
+
+    // fileManager
+    Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
+
+    // fileUplink
+    Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
+
+    // fileUplinkBufferManager
+    Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+
+    // health
+    Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+
+    // linuxTime
+    Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
+
+    // pingRcvr
+    PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
+
+    // prmDb
+    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
 
     // rateGroup1Comp
     Svc::ActiveRateGroupImpl rateGroup1Comp(
@@ -145,72 +208,6 @@ namespace Ref {
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
 
-    // cmdDisp
-    Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
-
-    // cmdSeq
-    Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
-
-    // fileDownlink
-    Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
-
-    // fileManager
-    Svc::FileManager fileManager(FW_OPTIONAL_NAME("fileManager"));
-
-    // fileUplink
-    Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
-
-    // pingRcvr
-    PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
-
-    // eventLogger
-    Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
-
-    // chanTlm
-    Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
-
-    // comm
-    Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
-
-    // sendBuffComp
-    SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
-
-    // SG1
-    SignalGen SG1(FW_OPTIONAL_NAME("SG1"));
-
-    // SG2
-    SignalGen SG2(FW_OPTIONAL_NAME("SG2"));
-
-    // SG3
-    SignalGen SG3(FW_OPTIONAL_NAME("SG3"));
-
-    // SG4
-    SignalGen SG4(FW_OPTIONAL_NAME("SG4"));
-
-    // SG5
-    SignalGen SG5(FW_OPTIONAL_NAME("SG5"));
-
-    // fatalAdapter
-    Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-
-    // fileUplinkBufferManager
-    Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
-
-    // fatalHandler
-    Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
-
-    // downlink
-    Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
-
-    // health
-    Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-
-    // linuxTime
-    Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-
-    // prmDb
-    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
-
     // rateGroupDriverComp
     Svc::RateGroupDriverImpl rateGroupDriverComp(
         FW_OPTIONAL_NAME("rateGroupDriverComp"),
@@ -220,6 +217,9 @@ namespace Ref {
 
     // recvBuffComp
     RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
+
+    // sendBuffComp
+    SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
 
     // staticMemory
     Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
@@ -236,34 +236,34 @@ namespace Ref {
 
     // Initialize components
     void initComponents(const TopologyState& state) {
-      blockDrv.init(QueueSizes::blockDrv);
-      rateGroup1Comp.init(QueueSizes::rateGroup1Comp, InstanceIds::rateGroup1Comp);
-      rateGroup2Comp.init(QueueSizes::rateGroup2Comp, InstanceIds::rateGroup2Comp);
-      rateGroup3Comp.init(QueueSizes::rateGroup3Comp, InstanceIds::rateGroup3Comp);
-      cmdDisp.init(QueueSizes::cmdDisp, InstanceIds::cmdDisp);
-      cmdSeq.init(QueueSizes::cmdSeq, InstanceIds::cmdSeq);
-      fileDownlink.init(QueueSizes::fileDownlink, InstanceIds::fileDownlink);
-      fileManager.init(QueueSizes::fileManager, InstanceIds::fileManager);
-      fileUplink.init(QueueSizes::fileUplink, InstanceIds::fileUplink);
-      pingRcvr.init(QueueSizes::pingRcvr, InstanceIds::pingRcvr);
-      eventLogger.init(QueueSizes::eventLogger, InstanceIds::eventLogger);
-      chanTlm.init(QueueSizes::chanTlm, InstanceIds::chanTlm);
-      prmDb.init(QueueSizes::prmDb, InstanceIds::prmDb);
-      health.init(QueueSizes::health, InstanceIds::health);
       SG1.init(QueueSizes::SG1, InstanceIds::SG1);
       SG2.init(QueueSizes::SG2, InstanceIds::SG2);
       SG3.init(QueueSizes::SG3, InstanceIds::SG3);
       SG4.init(QueueSizes::SG4, InstanceIds::SG4);
       SG5.init(QueueSizes::SG5, InstanceIds::SG5);
-      sendBuffComp.init(QueueSizes::sendBuffComp, InstanceIds::sendBuffComp);
+      blockDrv.init(QueueSizes::blockDrv);
+      chanTlm.init(QueueSizes::chanTlm, InstanceIds::chanTlm);
+      cmdDisp.init(QueueSizes::cmdDisp, InstanceIds::cmdDisp);
+      cmdSeq.init(QueueSizes::cmdSeq, InstanceIds::cmdSeq);
       comm.init(InstanceIds::comm);
       downlink.init(InstanceIds::downlink);
+      eventLogger.init(QueueSizes::eventLogger, InstanceIds::eventLogger);
       fatalAdapter.init(InstanceIds::fatalAdapter);
       fatalHandler.init(InstanceIds::fatalHandler);
+      fileDownlink.init(QueueSizes::fileDownlink, InstanceIds::fileDownlink);
+      fileManager.init(QueueSizes::fileManager, InstanceIds::fileManager);
+      fileUplink.init(QueueSizes::fileUplink, InstanceIds::fileUplink);
       fileUplinkBufferManager.init(InstanceIds::fileUplinkBufferManager);
+      health.init(QueueSizes::health, InstanceIds::health);
       linuxTime.init(InstanceIds::linuxTime);
+      pingRcvr.init(QueueSizes::pingRcvr, InstanceIds::pingRcvr);
+      prmDb.init(QueueSizes::prmDb, InstanceIds::prmDb);
+      rateGroup1Comp.init(QueueSizes::rateGroup1Comp, InstanceIds::rateGroup1Comp);
+      rateGroup2Comp.init(QueueSizes::rateGroup2Comp, InstanceIds::rateGroup2Comp);
+      rateGroup3Comp.init(QueueSizes::rateGroup3Comp, InstanceIds::rateGroup3Comp);
       rateGroupDriverComp.init();
       recvBuffComp.init();
+      sendBuffComp.init(QueueSizes::sendBuffComp, InstanceIds::sendBuffComp);
       staticMemory.init(InstanceIds::staticMemory);
       textLogger.init();
       uplink.init(InstanceIds::uplink);
@@ -1160,21 +1160,21 @@ namespace Ref {
 
     // Register commands
     void regCommands() {
-      cmdDisp.regCommands();
-      cmdSeq.regCommands();
-      fileDownlink.regCommands();
-      fileManager.regCommands();
-      pingRcvr.regCommands();
-      eventLogger.regCommands();
-      prmDb.regCommands();
-      health.regCommands();
       SG1.regCommands();
       SG2.regCommands();
       SG3.regCommands();
       SG4.regCommands();
       SG5.regCommands();
-      sendBuffComp.regCommands();
+      cmdDisp.regCommands();
+      cmdSeq.regCommands();
+      eventLogger.regCommands();
+      fileDownlink.regCommands();
+      fileManager.regCommands();
+      health.regCommands();
+      pingRcvr.regCommands();
+      prmDb.regCommands();
       recvBuffComp.regCommands();
+      sendBuffComp.regCommands();
     }
 
     // Read parameters
@@ -1184,8 +1184,8 @@ namespace Ref {
 
     // Load parameters
     void loadParameters() {
-      sendBuffComp.loadParameters();
       recvBuffComp.loadParameters();
+      sendBuffComp.loadParameters();
     }
 
     // Start tasks
@@ -1195,20 +1195,10 @@ namespace Ref {
         Priorities::blockDrv,
         StackSizes::blockDrv
       );
-      rateGroup1Comp.start(
-        TaskIds::rateGroup1Comp,
-        Priorities::rateGroup1Comp,
-        StackSizes::rateGroup1Comp
-      );
-      rateGroup2Comp.start(
-        TaskIds::rateGroup2Comp,
-        Priorities::rateGroup2Comp,
-        StackSizes::rateGroup2Comp
-      );
-      rateGroup3Comp.start(
-        TaskIds::rateGroup3Comp,
-        Priorities::rateGroup3Comp,
-        StackSizes::rateGroup3Comp
+      chanTlm.start(
+        TaskIds::chanTlm,
+        Priorities::chanTlm,
+        StackSizes::chanTlm
       );
       cmdDisp.start(
         TaskIds::cmdDisp,
@@ -1219,6 +1209,11 @@ namespace Ref {
         TaskIds::cmdSeq,
         Priorities::cmdSeq,
         StackSizes::cmdSeq
+      );
+      eventLogger.start(
+        TaskIds::eventLogger,
+        Priorities::eventLogger,
+        StackSizes::eventLogger
       );
       fileDownlink.start(
         TaskIds::fileDownlink,
@@ -1240,20 +1235,25 @@ namespace Ref {
         Priorities::pingRcvr,
         StackSizes::pingRcvr
       );
-      eventLogger.start(
-        TaskIds::eventLogger,
-        Priorities::eventLogger,
-        StackSizes::eventLogger
-      );
-      chanTlm.start(
-        TaskIds::chanTlm,
-        Priorities::chanTlm,
-        StackSizes::chanTlm
-      );
       prmDb.start(
         TaskIds::prmDb,
         Priorities::prmDb,
         StackSizes::prmDb
+      );
+      rateGroup1Comp.start(
+        TaskIds::rateGroup1Comp,
+        Priorities::rateGroup1Comp,
+        StackSizes::rateGroup1Comp
+      );
+      rateGroup2Comp.start(
+        TaskIds::rateGroup2Comp,
+        Priorities::rateGroup2Comp,
+        StackSizes::rateGroup2Comp
+      );
+      rateGroup3Comp.start(
+        TaskIds::rateGroup3Comp,
+        Priorities::rateGroup3Comp,
+        StackSizes::rateGroup3Comp
       );
       // Initialize socket server if and only if there is a valid specification
       if (state.hostName != NULL && state.portNumber != 0) {
@@ -1271,35 +1271,35 @@ namespace Ref {
     // Stop tasks
     void stopTasks(const TopologyState& state) {
       blockDrv.exit();
-      rateGroup1Comp.exit();
-      rateGroup2Comp.exit();
-      rateGroup3Comp.exit();
+      chanTlm.exit();
       cmdDisp.exit();
       cmdSeq.exit();
+      eventLogger.exit();
       fileDownlink.exit();
       fileManager.exit();
       fileUplink.exit();
       pingRcvr.exit();
-      eventLogger.exit();
-      chanTlm.exit();
       prmDb.exit();
+      rateGroup1Comp.exit();
+      rateGroup2Comp.exit();
+      rateGroup3Comp.exit();
     }
 
     // Free threads
     void freeThreads(const TopologyState& state) {
       (void) blockDrv.ActiveComponentBase::join(NULL);
-      (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
+      (void) chanTlm.ActiveComponentBase::join(NULL);
       (void) cmdDisp.ActiveComponentBase::join(NULL);
       (void) cmdSeq.ActiveComponentBase::join(NULL);
+      (void) eventLogger.ActiveComponentBase::join(NULL);
       (void) fileDownlink.ActiveComponentBase::join(NULL);
       (void) fileManager.ActiveComponentBase::join(NULL);
       (void) fileUplink.ActiveComponentBase::join(NULL);
       (void) pingRcvr.ActiveComponentBase::join(NULL);
-      (void) eventLogger.ActiveComponentBase::join(NULL);
-      (void) chanTlm.ActiveComponentBase::join(NULL);
       (void) prmDb.ActiveComponentBase::join(NULL);
+      (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
+      (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
+      (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
       comm.stopSocketTask();
       (void) comm.joinSocketTask(NULL);
     }
