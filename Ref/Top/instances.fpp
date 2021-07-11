@@ -146,7 +146,7 @@ module Ref {
     at "../../Svc/RateGroupDriver/RateGroupDriverImpl.hpp"
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4700 \
-    at "../../Ref/RecvBuffApp/RecvBuffComponentImpl.hpp"
+    at "../RecvBuffApp/RecvBuffComponentImpl.hpp"
 
   instance staticMemory: Svc.StaticMemory base id 0x4800 \
     at "../../Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
