@@ -5,7 +5,7 @@
 ####
 # Set platform default for baremetal scheduler drivers
 if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
-   set(FPRIME_USE_BAREMETAL_SCHEDULE OFF)
+   set(FPRIME_USE_BAREMETAL_SCHEDULER OFF)
    message(STATUS "Requiring thread library")
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
