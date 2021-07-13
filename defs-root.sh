@@ -153,6 +153,15 @@ locate_uses_do()
   fpp-locate-uses $import_deps $FPP_FILES
 }
 
+# Unconnected ports
+unconnected_do()
+{
+  redo-ifchange depend
+  import_deps=`cat depend/import.txt`
+  fpp-check -u $3 $import_deps $FPP_FILES
+  cat $3 1>&2
+}
+
 # Update generated files
 update()
 {
