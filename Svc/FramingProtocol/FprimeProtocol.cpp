@@ -109,6 +109,10 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
         return DeframingProtocol::DEFRAMING_INVALID_CHECKSUM;
     }
     Fw::Buffer buffer = m_interface->allocate(size);
+    // some allocators may return buffers larger than requested
+    // that causes issues in routing. adjust size
+    FW_ASSERT(buffer.getSize() >= size);
+    buffer.setSize(size);
     ring.peek(buffer.getData(), size, FP_FRAME_HEADER_SIZE);
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
