@@ -25,6 +25,8 @@ jobs:
     - name: F prime CI step
       uses: ./.github/actions/
       id: github-ci-action
+      with:
+        test_type: "QUICK"
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
