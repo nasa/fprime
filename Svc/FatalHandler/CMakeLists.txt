@@ -6,11 +6,20 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
+
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp"
 )
+
+if(FPRIME_USE_BAREMETAL_SCHEDULER)
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentBaremetalImpl.cpp")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks") 
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentVxWorksImpl.cpp")
+else()
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp")
+endif()
+
 set(MOD_DEPS
   Os
   Fw/Logger

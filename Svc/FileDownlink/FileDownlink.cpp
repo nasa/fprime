@@ -179,7 +179,7 @@ namespace Svc {
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::ERROR, __UINT32_MAX__);
+      return SendFileResponse(SendFileStatus::ERROR, U32_MAX);
     }
     return SendFileResponse(SendFileStatus::OK, entry.context);
   }
@@ -241,7 +241,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context =__UINT32_MAX__
+      .context = U32_MAX
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -274,7 +274,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context = __UINT32_MAX__
+      .context = U32_MAX
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
