@@ -60,7 +60,7 @@
             Internal interrupt reporting interface
             </comment>
             <args>
-                <arg name="interrupt" type="U32">
+                <arg name="interrupt_val" type="U32">
                     <comment>The interrupt register value</comment>
                 </arg>          
             </args>
