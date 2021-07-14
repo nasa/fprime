@@ -10,18 +10,33 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 TESTS="${@}"
 export TEST_TYPE="FULL"
-if (( $# ==  0 )) || [[ "${TESTS}" == "FULL" ]]
+if ( $# ==  0 )
 then
-    TESTS="$(ls "${SCRIPT_DIR}/tests"/*)"
-elif [[ "${TESTS}" == "QUICK" ]]
+    echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
+elif [[ "${TESTS}" == "20-fputil" ]]
 then
-    TESTS="${SCRIPT_DIR}/tests/20-fputil.bash ${SCRIPT_DIR}/tests/30-ints.bash"
-    export TEST_TYPE="QUICK"    
-elif [[ "${TESTS}" == "STATIC" ]]
+    TESTS="${SCRIPT_DIR}/tests/20-fputil.bash"
+    export TEST_TYPE="20-fputil"
+elif [[ "${TESTS}" == "30-ints" ]]
 then
-    TESTS="${SCRIPT_DIR}/tests/40-pylama.bash"
-    export TEST_TYPE="STATIC"    
-fi
+    TESTS="${SCRIPT_DIR}/tests/30-ints.bash"
+    export TEST_TYPE="30-ints"
+fi  
+
+# TESTS="${@}"
+# export TEST_TYPE="FULL"
+# if (( $# ==  0 )) || [[ "${TESTS}" == "FULL" ]]
+# then
+#     TESTS="$(ls "${SCRIPT_DIR}/tests"/*)"
+# elif [[ "${TESTS}" == "QUICK" ]]
+# then
+#     TESTS="${SCRIPT_DIR}/tests/20-fputil.bash ${SCRIPT_DIR}/tests/30-ints.bash"
+#     export TEST_TYPE="QUICK"    
+# elif [[ "${TESTS}" == "STATIC" ]]
+# then
+#     TESTS="${SCRIPT_DIR}/tests/40-pylama.bash"
+#     export TEST_TYPE="STATIC"    
+# fi
 
 #### NEEDED ENVIRONMENT ####
 export FPRIME_DIR="$(cd ${SCRIPT_DIR}/..; pwd)"
