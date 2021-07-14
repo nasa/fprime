@@ -9,6 +9,10 @@ module Ref {
   // Declared in RefTopologyDefs.cpp
   """
 
+  init blockDrv phase Fpp.ToCpp.Phases.initComponents """
+  blockDrv.init(QueueSizes::blockDrv);
+  """
+
   # ----------------------------------------------------------------------
   # chanTlm
   # ----------------------------------------------------------------------
@@ -34,15 +38,34 @@ module Ref {
   };
 
   """
+
   init cmdSeq phase Fpp.ToCpp.Phases.instances """
   Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
+  """
+
+  init cmdSeq phase Fpp.ToCpp.Phases.configComponents """
+      cmdSeq.allocateBuffer(
+          0,
+          Allocation::mallocator,
+          ConfigConstants::cmdSeq::BUFFER_SIZE
+      );
+  """
+
+  init cmdSeq phase Fpp.ToCpp.Phases.tearDownComponents """
+  cmdSeq.deallocateBuffer(Allocation::mallocator);
   """
 
   # ----------------------------------------------------------------------
   # comm
   # ----------------------------------------------------------------------
+  
   init comm phase Fpp.ToCpp.Phases.instances """
   Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
+  """
+
+  init comm phase Fpp.ToCpp.Phases.freeThreads """
+  comm.stopSocketTask();
+  (void) comm.joinSocketTask(NULL);
   """
 
   # ----------------------------------------------------------------------
@@ -55,6 +78,10 @@ module Ref {
 
   init downlink phase Fpp.ToCpp.Phases.instances """
   Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+  """
+
+  init downlink phase Fpp.ToCpp.Phases.configComponents """
+  downlink.setup(ConfigObjects::downlink::framing);
   """
 
   # ----------------------------------------------------------------------
@@ -89,12 +116,53 @@ module Ref {
   Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
   """
 
+  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.configComponents """
+  Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+  memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
+  {
+    using namespace ConfigConstants::fileUplinkBufferManager;
+    upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
+    upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+    fileUplinkBufferManager.setup(
+        MGR_ID,
+        0,
+        Allocation::mallocator,
+        upBuffMgrBins
+    );
+  }
+  """
+
+  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.tearDownComponents """
+  fileUplinkBufferManager.cleanup();
+  """
+
+  # ----------------------------------------------------------------------
+  # fileDownlink
+  # ----------------------------------------------------------------------
+  
+  init fileDownlink phase Fpp.ToCpp.Phases.configComponents """
+  fileDownlink.configure(
+      ConfigConstants::fileDownlink::TIMEOUT,
+      ConfigConstants::fileDownlink::COOLDOWN,
+      ConfigConstants::fileDownlink::CYCLE_TIME,
+      ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
+  );
+  """
+
   # ----------------------------------------------------------------------
   # health
   # ----------------------------------------------------------------------
 
   init $health phase Fpp.ToCpp.Phases.instances """
   Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+  """
+
+  init $health phase Fpp.ToCpp.Phases.configComponents """
+  health.setPingEntries(
+      ConfigObjects::health::pingEntries,
+      FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
+      ConfigConstants::health::WATCHDOG_CODE
+  );
   """
 
   # ----------------------------------------------------------------------
@@ -119,6 +187,10 @@ module Ref {
 
   init prmDb phase Fpp.ToCpp.Phases.instances """
   Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
+  """
+
+  init prmDb phase Fpp.ToCpp.Phases.readParameters """
+  prmDb.readParamFile();
   """
 
   # ----------------------------------------------------------------------
@@ -185,12 +257,20 @@ module Ref {
   );
   """
 
+  init rateGroupDriverComp phase Fpp.ToCpp.Phases.initComponents """
+  rateGroupDriverComp.init();
+  """
+
   # ----------------------------------------------------------------------
   # recvBuffComp
   # ----------------------------------------------------------------------
 
   init recvBuffComp phase Fpp.ToCpp.Phases.instances """
   RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
+  """
+
+  init recvBuffComp phase Fpp.ToCpp.Phases.initComponents """
+  recvBuffComp.init();
   """
 
   # ----------------------------------------------------------------------
@@ -217,6 +297,10 @@ module Ref {
   Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));
   """
 
+  init textLogger phase Fpp.ToCpp.Phases.initComponents """
+  textLogger.init();
+  """
+
   # ----------------------------------------------------------------------
   # uplink
   # ----------------------------------------------------------------------
@@ -224,8 +308,29 @@ module Ref {
   init uplink phase Fpp.ToCpp.Phases.configObjects """
   Svc::FprimeDeframing deframing;
   """
+
   init uplink phase Fpp.ToCpp.Phases.instances """
   Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
   """
 
+  init uplink phase Fpp.ToCpp.Phases.configComponents """
+  uplink.setup(ConfigObjects::uplink::deframing);
+  """
+  # Note: this more so has to do with comm but in translation should 
+  # be at the bottom of the start phase, so it is in uplink to preserve 
+  # alphabetical organization
+  init uplink phase Fpp.ToCpp.Phases.startTasks """
+  // Initialize socket server if and only if there is a valid specification
+  if (state.hostName != NULL && state.portNumber != 0) {
+      Fw::EightyCharString name("ReceiveTask");
+      // Uplink is configured for receive so a socket task is started
+      comm.configure(state.hostName, state.portNumber);
+      comm.startSocketTask(
+          name,
+          ConfigConstants::comm::PRIORITY,
+          ConfigConstants::comm::STACK_SIZE
+      );
+  }
+  """
+  
 }
