@@ -1,5 +1,9 @@
 var NAVTREEINDEX5 =
 {
+"_svc_com_logger_component.html#autotoc_md1660":[5,8,0],
+"_svc_com_logger_component.html#autotoc_md1661":[5,8,0,0],
+"_svc_com_splitter_component.html":[114],
+"_svc_com_splitter_component.html#autotoc_md1662":[114,0],
 "_svc_com_splitter_component.html#autotoc_md1663":[114,0,0],
 "_svc_deframer.html":[115],
 "_svc_deframer.html#autotoc_md1664":[115,0],
@@ -245,9 +249,5 @@ var NAVTREEINDEX5 =
 "_svc_rate_group_driver_component.html#autotoc_md1870":[5,22,0,6],
 "_svc_sched_port.html":[5,23],
 "_svc_sched_port.html#autotoc_md1871":[5,23,0],
-"_svc_sched_port.html#autotoc_md1872":[5,23,0,0],
-"_svc_sched_port.html#autotoc_md1873":[5,23,0,1],
-"_svc_sched_port.html#autotoc_md1874":[5,23,0,1,0],
-"_svc_sched_port.html#autotoc_md1875":[5,23,0,1,0,0],
-"_svc_sched_port.html#autotoc_md1876":[5,23,0,1,0,1]
+"_svc_sched_port.html#autotoc_md1872":[5,23,0,0]
 };

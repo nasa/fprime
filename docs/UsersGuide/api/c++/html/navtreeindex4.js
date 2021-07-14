@@ -1,5 +1,9 @@
 var NAVTREEINDEX4 =
 {
+"_serializable_8hpp.html":[123,0,4,16,26],
+"_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32":[123,0,4,16,26,3],
+"_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a081fc0fbbe6583a95792b117952048ed":[123,0,4,16,26,3,4],
+"_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a269bdee8bf9686602ce5ef408bff6b84":[123,0,4,16,26,3,3],
 "_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020":[123,0,4,16,26,3,0],
 "_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a8c20f1ae2805eec3b09bef0102b40f44":[123,0,4,16,26,3,1],
 "_serializable_8hpp.html#aa232625e63c0c60a1fced2933334fc32a8ca511e2e0942c71da47b1af369ca71a":[123,0,4,16,26,3,6],
@@ -245,9 +249,5 @@ var NAVTREEINDEX4 =
 "_svc_cmd_sequencer_component.html#autotoc_md1658":[5,6,0,5],
 "_svc_cmd_sequencer_formats.html":[5,7],
 "_svc_cmd_sequencer_formats.html#autotoc_md1659":[5,7,0],
-"_svc_com_logger_component.html":[5,8],
-"_svc_com_logger_component.html#autotoc_md1660":[5,8,0],
-"_svc_com_logger_component.html#autotoc_md1661":[5,8,0,0],
-"_svc_com_splitter_component.html":[114],
-"_svc_com_splitter_component.html#autotoc_md1662":[114,0]
+"_svc_com_logger_component.html":[5,8]
 };

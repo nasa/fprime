@@ -1,5 +1,9 @@
 var NAVTREEINDEX11 =
 {
+"autotoc_md724.html#autotoc_md767":[63,1,3,0,1],
+"autotoc_md724.html#autotoc_md768":[63,1,3,0,2],
+"autotoc_md724.html#autotoc_md771":[63,1,3,1],
+"autotoc_md724.html#autotoc_md772":[63,1,3,1,0],
 "autotoc_md724.html#autotoc_md777":[63,1,3,1,1],
 "autotoc_md724.html#autotoc_md782":[63,2],
 "autotoc_md724.html#autotoc_md783":[63,2,0],
@@ -245,9 +249,5 @@ var NAVTREEINDEX11 =
 "class_deframing_protocol_interface.html#ac9963f0ce93d1343f8510a73b3e75409":[122,0,9,0],
 "class_drv_1_1_block_driver_impl.html":[122,0,1,0],
 "class_drv_1_1_block_driver_impl.html#a15beb1575f09a19671294675ab72051d":[122,0,1,0,1],
-"class_drv_1_1_block_driver_impl.html#a33c9240569a3586ceeec2b636187304e":[122,0,1,0,3],
-"class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151":[122,0,1,0,0],
-"class_drv_1_1_block_driver_impl.html#a7114aa31c8fa06f120d5d33a1fc1c4c6":[122,0,1,0,2],
-"class_drv_1_1_data_buffer.html":[122,0,1,1],
-"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5":[122,0,1,1,4]
+"class_drv_1_1_block_driver_impl.html#a33c9240569a3586ceeec2b636187304e":[122,0,1,0,3]
 };

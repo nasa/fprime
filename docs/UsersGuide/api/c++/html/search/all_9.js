@@ -4,6 +4,8 @@ var searchData=
   ['integration_20test_20api',['Integration Test API',['../autotoc_md388.html',1,'']]],
   ['ipv4_20socket_20implementations',['IPv4 Socket Implementations',['../_drv_ip.html',1,'']]],
   ['i8',['I8',['../_basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6',1,'BasicTypes.hpp']]],
+  ['i8_5fmax',['I8_MAX',['../_basic_types_8hpp.html#a06aab1f97b965931eb9b623f9cc4952d',1,'BasicTypes.hpp']]],
+  ['i8_5fmin',['I8_MIN',['../_basic_types_8hpp.html#a50b6c3c5a46f347eb58da649285ddaa8',1,'BasicTypes.hpp']]],
   ['implementation_2emd',['implementation.md',['../v1_85_2_users_guide_2dev_2implementation_8md.html',1,'(Global Namespace)'],['../v2_80_80_2_users_guide_2dev_2implementation_8md.html',1,'(Global Namespace)']]],
   ['incnummsgdropped',['incNumMsgDropped',['../class_fw_1_1_queued_component_base.html#a5775ad86da71610cfb74c4d6107a83d1',1,'Fw::QueuedComponentBase']]],
   ['incomparable',['INCOMPARABLE',['../class_fw_1_1_time.html#a84869d06d1fdfb1050ff43da9c95abecaf75a4bea358b1d514ae00d6d2f6cac70',1,'Fw::Time']]],
