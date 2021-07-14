@@ -1,10 +1,10 @@
 name: 'F prime CI'
 description: 'Runs continuous integration testing on F prime'
 inputs:
-  test_type:
+  test1:
     description: Test number to run
     required: true
-    default: 1
+    default: '1'
 runs:
   using: 'docker'
   image: 'Dockerfile'

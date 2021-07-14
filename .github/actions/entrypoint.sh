@@ -9,5 +9,5 @@ then
     /autodoc.bash
 else
     echo $*
-    #"$GITHUB_WORKSPACE/ci/master.bash" $1   
+    #"$GITHUB_WORKSPACE/ci/master.bash" $*   
 fi
