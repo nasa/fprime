@@ -1,3 +1,5 @@
+# See https://github.com/check-spelling/check-spelling/wiki/Configuration-Examples:-patterns
+
 # data urls
 "data:[^"]*"
 'data:[^']*'
@@ -23,8 +25,9 @@ xmi:id="[^"]*"
 # uuid:
 \b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b
 
+# https://www.gnu.org/software/groff/manual/groff.html
 # man troff content
-\\f[BCIP]
+\\f[BCIPR]
 
 \&#x[AD];
 value="(?:[0-9a-f]{1,2} )*"
@@ -43,3 +46,6 @@ value="(?:[0-9a-f]{1,2} )*"
 
 # Tar archive items 
 \b(?:\\n|)tar(?:\s+-[a-zA-Z]+|\s[a-z]+)+
+
+# slashes after spaces are not in paths
+LaTeX \\.* \\
