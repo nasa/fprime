@@ -33,9 +33,9 @@ namespace Fw {
             virtual ~CmdArgBuffer();  //!< destructor
             const CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const;  //!< return capacity of buffer (how much it can hold)
-            U8* getBuffAddr(void);  //!< return address of buffer (non const version)
-            const U8* getBuffAddr(void) const;  //!< return address of buffer (const version)
+            NATIVE_UINT_TYPE getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
+            U8* getBuffAddr();  //!< return address of buffer (non const version)
+            const U8* getBuffAddr() const;  //!< return address of buffer (const version)
 
         private:
             U8 m_data[FW_CMD_ARG_BUFFER_MAX_SIZE]; //!< command argument buffer

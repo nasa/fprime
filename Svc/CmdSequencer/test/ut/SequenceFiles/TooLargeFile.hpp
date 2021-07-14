@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TooLargeFile.hpp
 // \author Rob Bocchino
 // \brief  TooLargeFile interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_SequenceFiles_TooLargeFile_HPP
 #define Svc_SequenceFiles_TooLargeFile_HPP
@@ -46,7 +46,7 @@ namespace Svc {
         );
 
         //! Get the data size
-        U32 getDataSize(void) const;
+        U32 getDataSize() const;
 
       public:
 

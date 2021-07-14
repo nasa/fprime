@@ -30,11 +30,11 @@ namespace Somewhere {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
 
     public:
@@ -44,7 +44,7 @@ namespace Somewhere {
       // ----------------------------------------------------------------------
 
       //! test event throttling
-      void doEventThrottleTest(void);
+      void doEventThrottleTest();
 
     private:
 
@@ -54,11 +54,11 @@ namespace Somewhere {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  GenericRepeater.hpp
 // \author joshuaa
 // \brief  cpp file for GenericRepeater test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,11 +19,11 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
       GenericRepeaterGTestBase("Tester", MAX_HISTORY_SIZE),
       component("GenericRepeater"),
       m_num_msg_per_port()
@@ -33,17 +33,17 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testRepeater(void)
+    testRepeater()
   {
     m_msg.resetSer();
     for(U8 i = 0; i < 32; i++) {
@@ -73,10 +73,10 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
-  void Tester::connectPorts(void) 
+  void Tester::connectPorts()
   {
     // Only connecting 2/4 ports to verify that repeater doesn't send to disconnected ports
     for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
@@ -100,7 +100,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

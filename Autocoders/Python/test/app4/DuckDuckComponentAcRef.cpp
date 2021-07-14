@@ -38,15 +38,15 @@ namespace Duck {
                     SERIALIZATION_SIZE = sizeof(BuffUnion) + sizeof(NATIVE_INT_TYPE) + sizeof(I32)
                 };
 
-                I32 getBuffCapacity(void) const {
+                I32 getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -156,7 +156,7 @@ namespace Duck {
 	}
 
 
-	DuckBase::~DuckBase(void) {
+	DuckBase::~DuckBase() {
 	}
 
     // Up-calls, calls for output ports
@@ -170,23 +170,23 @@ namespace Duck {
         m_outputPort2Msg1OutputPort[portNum].invoke(cmd);
     }
 
-    NATIVE_INT_TYPE DuckBase::m_getNumoutputPort1Msg2OutputPorts(void) {
+    NATIVE_INT_TYPE DuckBase::m_getNumoutputPort1Msg2OutputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_outputPort1Msg2OutputPort);
     }
 
-    NATIVE_INT_TYPE DuckBase::m_getNumoutputPort2Msg1OutputPorts(void) {
+    NATIVE_INT_TYPE DuckBase::m_getNumoutputPort2Msg1OutputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_outputPort2Msg1OutputPort);
     }
 
-    NATIVE_INT_TYPE DuckBase::m_getNuminputPort1Msg2InputPorts(void) {
+    NATIVE_INT_TYPE DuckBase::m_getNuminputPort1Msg2InputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_inputPort1Msg2InputPort);
     }
 
-    NATIVE_INT_TYPE DuckBase::m_getNuminputPort2Msg2InputPorts(void) {
+    NATIVE_INT_TYPE DuckBase::m_getNuminputPort2Msg2InputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_inputPort2Msg2InputPort);
     }
 
-    NATIVE_INT_TYPE DuckBase::m_getNuminputPort3Msg1InputPorts(void) {
+    NATIVE_INT_TYPE DuckBase::m_getNuminputPort3Msg1InputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_inputPort3Msg1InputPort);
     }
 
@@ -253,16 +253,16 @@ namespace Duck {
         FW_ASSERT(qStatus == Os::Queue::QUEUE_OK);
     }
 
-    void DuckBase::preamble(void) {
+    void DuckBase::preamble() {
         // default - empty
     }
 
-    void DuckBase::finalizer(void) {
+    void DuckBase::finalizer() {
         // default - empty
     }
 
     // task entry point for active task
-    Fw::QueuedComponentBase::MsgDispatchStatus DuckBase::doDispatch(void) {
+    Fw::QueuedComponentBase::MsgDispatchStatus DuckBase::doDispatch() {
         ComponentIpcSerializableBuffer msg;
         I32 priority;
         Os::Queue::QueueStatus msgStatus = this->m_queue.receive(msg,priority);

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileManager/test/ut/Tester.hpp
 // \author bocchino
 // \brief  hpp file for FileManager test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -30,69 +30,69 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Create directory (succeed)
       //!
-      void createDirectorySucceed(void);
+      void createDirectorySucceed();
 
       //! Create directory (fail)
       //!
-      void createDirectoryFail(void);
+      void createDirectoryFail();
 
       //! Move file (succeed)
       //!
-      void moveFileSucceed(void);
+      void moveFileSucceed();
 
       //! Move file (fail)
       //!
-      void moveFileFail(void);
+      void moveFileFail();
 
       //! Remove directory (succeed)
       //!
-      void removeDirectorySucceed(void);
+      void removeDirectorySucceed();
 
       //! Remove directory (fail)
       //!
-      void removeDirectoryFail(void);
+      void removeDirectoryFail();
 
       //! Remove file (succeed)
       //!
-      void removeFileSucceed(void);
+      void removeFileSucceed();
 
       //! Remove file (fail)
       //!
-      void removeFileFail(void);
+      void removeFileFail();
 
       //! Shell command (succeed)
       //!
-      void shellCommandSucceed(void);
+      void shellCommandSucceed();
 
       //! Shell command (fail)
       //!
-      void shellCommandFail(void);
+      void shellCommandFail();
 
       //! Append file (succeed, append to new file)
       //!
-      void appendFileSucceed_newFile(void);
+      void appendFileSucceed_newFile();
 
       //! Append file (succeed, append to existing file)
       //!
-      void appendFileSucceed_existingFile(void);
+      void appendFileSucceed_existingFile();
 
       //! Append file (fail)
       //!
-      void appendFileFail(void);
+      void appendFileFail();
 
     private:
 
@@ -102,11 +102,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
       //! Perform a system call and assert success
       //!

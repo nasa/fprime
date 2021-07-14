@@ -5,46 +5,46 @@
 
 extern "C" {
   void startTestTask(int iters);
-  void qtest_block_receive(void);
-  void qtest_nonblock_receive(void);
-  void qtest_nonblock_send(void);
-  void qtest_block_send(void);
-  void qtest_performance(void);
-  void qtest_concurrent(void);
-  void intervalTimerTest(void);
-  void fileSystemTest(void);
+  void qtest_block_receive();
+  void qtest_nonblock_receive();
+  void qtest_nonblock_send();
+  void qtest_block_send();
+  void qtest_performance();
+  void qtest_concurrent();
+  void intervalTimerTest();
+  void fileSystemTest();
   void validateFileTest(const char* filename);
 }
 const char* filename;
-TEST(Nominal, StartTestTask) { 
+TEST(Nominal, StartTestTask) {
    startTestTask(10);
    sleep(15);
 }
-TEST(Nominal, QTestBlockRecv) { 
+TEST(Nominal, QTestBlockRecv) {
    qtest_block_receive();
 }
-TEST(Nominal, QTestNonBlockRecv) { 
+TEST(Nominal, QTestNonBlockRecv) {
    qtest_nonblock_receive();
 }
-TEST(Nominal, QTestNonBlockSend) { 
+TEST(Nominal, QTestNonBlockSend) {
    qtest_nonblock_send();
 }
-TEST(Nominal, QTestBlockSend) { 
+TEST(Nominal, QTestBlockSend) {
    qtest_block_send();
 }
-TEST(Nominal, QTestPerformance) { 
+TEST(Nominal, QTestPerformance) {
    qtest_performance();
 }
-TEST(Nominal, QTestConcurrentTest) { 
+TEST(Nominal, QTestConcurrentTest) {
    qtest_concurrent();
 }
-TEST(Nominal, IntervalTimerTest) { 
+TEST(Nominal, IntervalTimerTest) {
    intervalTimerTest();
 }
-TEST(Nominal, FileSystemTest) { 
+TEST(Nominal, FileSystemTest) {
    fileSystemTest();
 }
-TEST(Nominal, ValidateFileTest) { 
+TEST(Nominal, ValidateFileTest) {
    validateFileTest(filename);
 }
 

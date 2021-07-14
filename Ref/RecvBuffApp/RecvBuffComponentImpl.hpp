@@ -10,9 +10,9 @@ namespace Ref {
 
             // Only called by derived class
             RecvBuffImpl(const char* compName);
-         
-            void init(void);
-            ~RecvBuffImpl(void);
+
+            void init();
+            ~RecvBuffImpl();
 
         private:
 

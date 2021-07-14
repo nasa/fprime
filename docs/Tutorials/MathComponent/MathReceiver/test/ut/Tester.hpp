@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathReceiver/test/ut/Tester.hpp
 // \author tcanham
 // \brief  hpp file for MathReceiver test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -30,25 +30,25 @@ namespace Ref {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! To do
       //!
-      void testAddCommand(void);
-      void testSubCommand(void);
-      void testMultCommand(void);
-      void testDivCommand(void);
-      void testThrottle(void);
+      void testAddCommand();
+      void testSubCommand();
+      void testMultCommand();
+      void testDivCommand();
+      void testThrottle();
 
     private:
 
@@ -71,11 +71,11 @@ namespace Ref {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

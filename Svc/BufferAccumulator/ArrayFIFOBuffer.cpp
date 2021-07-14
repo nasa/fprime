@@ -35,7 +35,7 @@ namespace Svc {
   BufferAccumulator::ArrayFIFOBuffer ::
     ~ArrayFIFOBuffer()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
@@ -93,13 +93,13 @@ namespace Svc {
   }
 
   U32 BufferAccumulator::ArrayFIFOBuffer ::
-    getSize(void) const
+    getSize() const
   {
     return this->size;
   }
 
   U32 BufferAccumulator::ArrayFIFOBuffer ::
-    getCapacity(void) const
+    getCapacity() const
   {
     return this->capacity;
   }

@@ -23,7 +23,7 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       TestSerialGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestSerial")
@@ -37,7 +37,7 @@ namespace TestComponents {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -47,7 +47,7 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void)
+    toDo()
   {
     // TODO
   }
@@ -70,13 +70,13 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

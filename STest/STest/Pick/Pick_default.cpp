@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Pick_default.cpp
 // \author AUTO-GENERATED: DO NOT EDIT
 // \brief  Pick_default implementation
@@ -16,7 +16,7 @@ namespace STest {
 
   namespace Pick {
 
-    double inUnitInterval(void) {
+    double inUnitInterval() {
       return STest::Random::inUnitInterval();
     }
 

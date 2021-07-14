@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Buffers.cpp
 // \author Rob Bocchino
 // \brief  F Prime sequence file headers
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "gtest/gtest.h"
 #include "Os/File.hpp"
@@ -21,19 +21,19 @@ namespace Svc {
     namespace Buffers {
 
       NATIVE_UINT_TYPE FileBuffer ::
-        getBuffCapacity(void) const 
+        getBuffCapacity() const
       {
         return sizeof(m_buff);
       }
 
       U8* FileBuffer ::
-        getBuffAddr(void) 
+        getBuffAddr()
       {
         return m_buff;
       }
 
       const U8* FileBuffer ::
-        getBuffAddr(void) const 
+        getBuffAddr() const
       {
         return m_buff;
       }

@@ -20,11 +20,11 @@ namespace Ref {
     }
 
 
-    void RecvBuffImpl::init(void) {
+    void RecvBuffImpl::init() {
         RecvBuffComponentBase::init();
     }
-    
-    RecvBuffImpl::~RecvBuffImpl(void) {
+
+    RecvBuffImpl::~RecvBuffImpl() {
 
     }
 
@@ -78,7 +78,7 @@ namespace Ref {
     }
 
     void RecvBuffImpl::toString(char* str, I32 buffer_size) {
-#if FW_OBJECT_NAMES == 1    
+#if FW_OBJECT_NAMES == 1
         (void)snprintf(str, buffer_size, "RecvBuffImpl: %s: ATM recd count: %d", this->m_objName,
                         (int) this->m_buffsReceived);
 #else

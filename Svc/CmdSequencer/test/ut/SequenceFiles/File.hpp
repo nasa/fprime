@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.hpp
 // \author Rob Bocchino
 // \brief  File interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_SequenceFiles_File_HPP
 #define Svc_SequenceFiles_File_HPP
@@ -24,9 +24,9 @@ namespace Svc {
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Types
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Binary file formats
         struct Format {
@@ -87,7 +87,7 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Constructors and destructors 
+        // Constructors and destructors
         // ----------------------------------------------------------------------
 
         //! Construct a File with default initialization
@@ -102,12 +102,12 @@ namespace Svc {
         );
 
         //! Destroy a file
-        virtual ~File(void);
+        virtual ~File();
 
       public:
 
         // ----------------------------------------------------------------------
-        // Public instance methods 
+        // Public instance methods
         // ----------------------------------------------------------------------
 
         // Set the name from the given base name
@@ -116,13 +116,13 @@ namespace Svc {
         );
 
         //! Write the file to the disk
-        void write(void);
+        void write();
 
         //! Remove the file from the disk
-        void remove(void);
+        void remove();
 
         //! Get the file name
-        const Fw::EightyCharString& getName(void) const;
+        const Fw::EightyCharString& getName() const;
 
         //! Get error info for the file
         void getErrorInfo(
@@ -132,7 +132,7 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Virtual interface 
+        // Virtual interface
         // ----------------------------------------------------------------------
 
         //! Serialize the file in F Prime format
@@ -148,16 +148,16 @@ namespace Svc {
       private:
 
         // ----------------------------------------------------------------------
-        // Private member variables 
+        // Private member variables
         // ----------------------------------------------------------------------
 
         //! The file name
         Fw::EightyCharString name;
 
       public:
-        
+
         // ----------------------------------------------------------------------
-        // Public member variables 
+        // Public member variables
         // ----------------------------------------------------------------------
 
         //! The file format

@@ -10,7 +10,7 @@ namespace Utils {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
-    
+
     HashBuffer::~HashBuffer() {
     }
 
@@ -37,15 +37,15 @@ namespace Utils {
         return !(*this == other);
     }
 
-    const U8* HashBuffer::getBuffAddr(void) const {
+    const U8* HashBuffer::getBuffAddr() const {
         return this->m_data;
     }
 
-    U8* HashBuffer::getBuffAddr(void) {
+    U8* HashBuffer::getBuffAddr() {
         return this->m_data;
     }
 
-    NATIVE_UINT_TYPE HashBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE HashBuffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 }

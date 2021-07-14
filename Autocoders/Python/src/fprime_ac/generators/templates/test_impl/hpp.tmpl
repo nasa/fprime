@@ -34,11 +34,11 @@ namespace ${namespace} {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -48,7 +48,7 @@ namespace ${namespace} {
 
       //! To do
       //!
-      void toDo(void);
+      void toDo();
 
 #if len($typed_user_output_ports) > 0:
     private:
@@ -93,11 +93,11 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

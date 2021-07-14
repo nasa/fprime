@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ConditionalIteratedScenario.hpp
 // \author bocchino
 // \brief  Iterate a scenario while a condition holds
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_ConditionalIteratedScenario_HPP
 #define STest_ConditionalIteratedScenario_HPP
@@ -24,7 +24,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a ConditionalIteratedScenario
@@ -40,7 +40,7 @@ namespace STest {
       }
 
       //! Destroy object ConditionalIteratedScenario
-      virtual ~ConditionalIteratedScenario(void) {
+      virtual ~ConditionalIteratedScenario() {
 
       }
 
@@ -51,7 +51,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by IteratedScenario
-      void reset_IteratedScenario(void) {
+      void reset_IteratedScenario() {
         this->scenario.reset();
         this->done = this->scenario.isDone();
       }
@@ -75,14 +75,14 @@ namespace STest {
 
       //! The virtual implementation of isDone required by IteratedScenario
       //! \return Whether the scenario is done
-      bool isDone_IteratedScenario(void) const {
+      bool isDone_IteratedScenario() const {
         return this->done;
       }
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected virtual methods 
+      // Protected virtual methods
       // ----------------------------------------------------------------------
 
       //! The virtual condition required by ConditionalIteratedScenario
@@ -99,7 +99,7 @@ namespace STest {
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected member variables 
+      // Protected member variables
       // ----------------------------------------------------------------------
 
       //! The scenario to run

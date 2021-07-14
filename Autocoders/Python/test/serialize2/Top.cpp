@@ -17,14 +17,14 @@ Ref::Gnc::GncMeasurement* S3_ptr = 0;
 
 class SerializeTestBuffer : public Fw::SerializeBufferBase {
     public:
-        I32 getBuffCapacity(void) const { // !< returns capacity, not current size, of buffer
+        I32 getBuffCapacity() const { // !< returns capacity, not current size, of buffer
             return sizeof(m_testBuff);
         }
 
-        U8* getBuffAddr(void) { // !< gets buffer address for data filling
+        U8* getBuffAddr() { // !< gets buffer address for data filling
             return m_testBuff;
         }
-        const U8* getBuffAddr(void) const { // !< gets buffer address for data reading
+        const U8* getBuffAddr() const { // !< gets buffer address for data reading
             return m_testBuff;
         }
     private:

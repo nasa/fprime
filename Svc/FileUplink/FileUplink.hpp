@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileUplink.hpp
 // \author bocchino
 // \brief  hpp file for FileUplink component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_FileUplink_HPP
 #define Svc_FileUplink_HPP
@@ -26,7 +26,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Types 
+      // Types
       // ----------------------------------------------------------------------
 
       //! The ReceiveMode type
@@ -36,10 +36,10 @@ namespace Svc {
       class File {
 
         public:
-          
+
           //! The file size
           U32 size;
-         
+
           //! The file name
           Fw::LogStringArg name;
 
@@ -78,14 +78,14 @@ namespace Svc {
         public:
 
           //! Construct a FilesReceived object
-          FilesReceived(FileUplink *const fileUplink) : 
-            n(0), fileUplink(fileUplink) 
+          FilesReceived(FileUplink *const fileUplink) :
+            n(0), fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a received file
-          void fileReceived(void) {
+          void fileReceived() {
             ++this->n;
             this->fileUplink->tlmWrite_FilesReceived(n);
           }
@@ -106,14 +106,14 @@ namespace Svc {
         public:
 
           //! Construct a PacketsReceived object
-          PacketsReceived(FileUplink *const fileUplink) : 
+          PacketsReceived(FileUplink *const fileUplink) :
             n(0), fileUplink(fileUplink)
           { }
 
         public:
 
           //! Record a packet received
-          void packetReceived(void) {
+          void packetReceived() {
             ++this->n;
             this->fileUplink->tlmWrite_PacketsReceived(n);
           }
@@ -134,7 +134,7 @@ namespace Svc {
         public:
 
           //! Construct an Warnings object
-          Warnings(FileUplink *const fileUplink) : 
+          Warnings(FileUplink *const fileUplink) :
             n(0), fileUplink(fileUplink)
           { }
 
@@ -170,7 +170,7 @@ namespace Svc {
         PRIVATE:
 
           //! Record a warning
-          void warning(void) {
+          void warning() {
             ++this->n;
             this->fileUplink->tlmWrite_Warnings(n);
           }
@@ -206,7 +206,7 @@ namespace Svc {
 
       //! Destroy object FileUplink
       //!
-      ~FileUplink(void);
+      ~FileUplink();
 
     PRIVATE:
 
@@ -232,7 +232,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private helper functions 
+      // Private helper functions
       // ----------------------------------------------------------------------
 
       //! Handle a start packet
@@ -245,7 +245,7 @@ namespace Svc {
       void handleEndPacket(const Fw::FilePacket::EndPacket& endPacket);
 
       //! Handle a cancel packet
-      void handleCancelPacket(void);
+      void handleCancelPacket();
 
       //! Check sequence index
       void checkSequenceIndex(const U32 sequenceIndex);
@@ -254,15 +254,15 @@ namespace Svc {
       void compareChecksums(const Fw::FilePacket::EndPacket& endPacket);
 
       //! Go to START mode
-      void goToStartMode(void);
+      void goToStartMode();
 
       //! Go to DATA mode
-      void goToDataMode(void);
+      void goToDataMode();
 
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Member variables 
+      // Member variables
       // ----------------------------------------------------------------------
 
       //! The receive mode

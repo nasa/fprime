@@ -19,7 +19,7 @@ class TestCommandSourceImpl: public Cmd::CommandTesterComponentBase {
         TestCommandSourceImpl();
 #endif
         virtual ~TestCommandSourceImpl();
-        void init(void);
+        void init();
         void test_TEST_CMD_1(I32 arg1, I32 arg2);
     protected:
         void cmdStatusPort_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response);

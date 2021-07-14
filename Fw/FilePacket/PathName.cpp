@@ -26,7 +26,7 @@ namespace Fw {
   }
 
   U32 FilePacket::PathName ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return sizeof(this->length) + this->length;
   }

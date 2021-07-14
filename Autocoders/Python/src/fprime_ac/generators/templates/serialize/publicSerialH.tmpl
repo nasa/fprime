@@ -25,7 +25,7 @@ public:
 #end if
     }; //!< serializable size of ${name}
 
-    ${name}(void); //!< Default constructor
+    ${name}(); //!< Default constructor
     ${name}(const ${name}* src); //!< pointer copy constructor
     ${name}(const ${name}& src); //!< reference copy constructor
     ${name}($args_proto); //!< constructor with arguments
@@ -40,9 +40,9 @@ public:
 
 #for name,type,size,format,comment,typeinfo in $members:
 #if $size == None:
-    ${type} get${name}(void) const; //!< get member $name
+    ${type} get${name}() const; //!< get member $name
 #else if $typeinfo == 'string' or $typeinfo == 'extern':
-    const ${type}& get${name}(void) const; //!< get member $name
+    const ${type}& get${name}() const; //!< get member $name
 #else
     const ${type}* get${name}(NATIVE_INT_TYPE& size) const; //!< get member $name
 #end if

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathReceiver.hpp
 // \author tcanham
 // \brief  cpp file for MathReceiver test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,11 +19,11 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       MathReceiverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathReceiver")
@@ -37,17 +37,17 @@ namespace Ref {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testAddCommand(void) 
+    testAddCommand()
   {
       // load parameters
       this->component.loadParameters();
@@ -62,7 +62,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       // Since factor1 is the default value of 0, result will be zero
       ASSERT_from_mathOut(0,0.0);
       // verify telemetry and events
@@ -120,7 +120,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       // Now that factor1 is updated, the result should be:
       F32 result = (2.0+3.0)*2.0;
       ASSERT_from_mathOut(0,result);
@@ -171,7 +171,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       // Now that factor2 parameter is updated, the result should be:
       result = (2.0+3.0)*2.0/3.0;
       ASSERT_from_mathOut(0,result);
@@ -193,11 +193,11 @@ namespace Ref {
       ASSERT_TLM_MR_OPERATION_SIZE(1);
       // check for the correct value of the channel
       ASSERT_TLM_MR_OPERATION(0,checkOp);
-      
+
 }
 
   void Tester ::
-    testSubCommand(void) 
+    testSubCommand()
   {
       // set the test value for the parameter before loading - it will be initialized to this value
       this->paramSet_factor2(5.0,Fw::PARAM_VALID);
@@ -222,7 +222,7 @@ namespace Ref {
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
+
       // clear the history
       this->clearHistory();
 
@@ -240,7 +240,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       ASSERT_from_mathOut(0,result);
       // verify telemetry and events
 
@@ -260,7 +260,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testMultCommand(void) 
+    testMultCommand()
   {
       // set the test value for the parameter before loading - it will be initialized to this value
       this->paramSet_factor2(-1.0,Fw::PARAM_VALID);
@@ -285,7 +285,7 @@ namespace Ref {
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
+
       // clear the history
       this->clearHistory();
 
@@ -303,7 +303,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       ASSERT_from_mathOut(0,result);
       // verify telemetry and events
 
@@ -323,7 +323,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testDivCommand(void) 
+    testDivCommand()
   {
       // set the test value for the parameter before loading - it will be initialized to this value
       this->paramSet_factor2(25.0,Fw::PARAM_VALID);
@@ -348,7 +348,7 @@ namespace Ref {
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
+
       // clear the history
       this->clearHistory();
 
@@ -366,7 +366,7 @@ namespace Ref {
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // check that only the port we expected was invoked
       ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
+      // check that the component did the operation correctly.
       ASSERT_from_mathOut(0,result);
       // verify telemetry and events
 
@@ -386,11 +386,11 @@ namespace Ref {
   }
 
   void Tester ::
-    testThrottle(void) 
+    testThrottle()
   {
 
       // send the number of commands required to throttle the event
-      // Use the autocoded value so the unit test passes if the 
+      // Use the autocoded value so the unit test passes if the
       // throttle value is changed
       for (NATIVE_UINT_TYPE cycle = 0; cycle < MathReceiverComponentBase::EVENTID_MR_SET_FACTOR1_THROTTLE; cycle++) {
           // send the command to set factor1 to 2.0
@@ -407,11 +407,11 @@ namespace Ref {
           ASSERT_TLM_MR_FACTOR1(0,2.0);
           ASSERT_TLM_MR_FACTOR1S_SIZE(1);
           ASSERT_TLM_MR_FACTOR1S(0,cycle+1);
-          
+
           // verify the command response was sent
           ASSERT_CMD_RESPONSE_SIZE(1);
           ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-          
+
           // clear the history
           this->clearHistory();
       }
@@ -432,7 +432,7 @@ namespace Ref {
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
+
       // clear the history
       this->clearHistory();
 
@@ -443,7 +443,7 @@ namespace Ref {
       // verify clear event was sent
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_MR_THROTTLE_CLEARED_SIZE(1);
-      
+
       // clear the history
       this->clearHistory();
       // sending the command will now produce the event again
@@ -471,11 +471,11 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // mathIn
@@ -498,62 +498,62 @@ namespace Ref {
 
     // mathOut
     this->component.set_mathOut_OutputPort(
-        0, 
+        0,
         this->get_from_mathOut(0)
     );
 
     // CmdStatus
     this->component.set_CmdStatus_OutputPort(
-        0, 
+        0,
         this->get_from_CmdStatus(0)
     );
 
     // CmdReg
     this->component.set_CmdReg_OutputPort(
-        0, 
+        0,
         this->get_from_CmdReg(0)
     );
 
     // ParamGet
     this->component.set_ParamGet_OutputPort(
-        0, 
+        0,
         this->get_from_ParamGet(0)
     );
 
     // ParamSet
     this->component.set_ParamSet_OutputPort(
-        0, 
+        0,
         this->get_from_ParamSet(0)
     );
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

@@ -21,10 +21,10 @@
 
 namespace Fw {
 
-    StringBase::StringBase(void) {
+    StringBase::StringBase() {
     }
 
-    StringBase::~StringBase(void) {
+    StringBase::~StringBase() {
     }
 
     const char* StringBase::operator+=(const char* src) {

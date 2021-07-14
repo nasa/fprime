@@ -20,18 +20,18 @@ namespace Os {
         this->copyBuff(src.m_buf,sizeof(this->m_buf));
     }
 
-    TaskString::TaskString(void) {
+    TaskString::TaskString() {
         this->m_buf[0] = 0;
     }
 
-    TaskString::~TaskString(void) {
+    TaskString::~TaskString() {
     }
 
-    NATIVE_UINT_TYPE TaskString::length(void) const {
+    NATIVE_UINT_TYPE TaskString::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* TaskString::toChar(void) const {
+    const char* TaskString::toChar() const {
         return this->m_buf;
     }
 
@@ -40,7 +40,7 @@ namespace Os {
         return *this;
     }
 
-    NATIVE_UINT_TYPE TaskString::getCapacity(void) const {
+    NATIVE_UINT_TYPE TaskString::getCapacity() const {
         return FW_TASK_NAME_MAX_SIZE;
     }
 

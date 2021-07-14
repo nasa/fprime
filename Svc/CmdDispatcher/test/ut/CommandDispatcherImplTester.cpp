@@ -44,7 +44,7 @@ namespace Svc {
         this->m_seqStatusCmdResponse = response;
     }
 
-    void CommandDispatcherImplTester::runNominalDispatch(void) {
+    void CommandDispatcherImplTester::runNominalDispatch() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -165,7 +165,7 @@ namespace Svc {
         ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
-    void CommandDispatcherImplTester::runNopCommands(void) {
+    void CommandDispatcherImplTester::runNopCommands() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -294,12 +294,12 @@ namespace Svc {
         ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
-    void CommandDispatcherImplTester::runCommandReregister(void) {
+    void CommandDispatcherImplTester::runCommandReregister() {
         // register built-in commands
         this->m_impl.regCommands();
         // clear reg events
         this->clearEvents();
-        
+
         // register our own command
         FwOpcodeType testOpCode = 0x50;
         this->invoke_to_compCmdReg(0,0x50);
@@ -320,14 +320,14 @@ namespace Svc {
         ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
         ASSERT_EQ(this->m_impl.m_entryTable[4].opcode,testOpCode);
         ASSERT_EQ(this->m_impl.m_entryTable[4].port,0);
-        
+
         // verify re-registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeReregistered_SIZE(1);
         ASSERT_EVENTS_OpCodeReregistered(0,testOpCode,0);
     }
 
-    void CommandDispatcherImplTester::runInvalidOpcodeDispatch(void) {
+    void CommandDispatcherImplTester::runInvalidOpcodeDispatch() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -409,7 +409,7 @@ namespace Svc {
         ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::INVALID_OPCODE);
     }
 
-    void CommandDispatcherImplTester::runFailedCommand(void) {
+    void CommandDispatcherImplTester::runFailedCommand() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -629,7 +629,7 @@ namespace Svc {
         ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::VALIDATION_ERROR);
     }
 
-    void CommandDispatcherImplTester::runInvalidCommand(void) {
+    void CommandDispatcherImplTester::runInvalidCommand() {
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
@@ -663,7 +663,7 @@ namespace Svc {
 
     }
 
-    void CommandDispatcherImplTester::runOverflowCommands(void) {
+    void CommandDispatcherImplTester::runOverflowCommands() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -761,7 +761,7 @@ namespace Svc {
 
     }
 
-    void CommandDispatcherImplTester::runClearCommandTracking(void) {
+    void CommandDispatcherImplTester::runClearCommandTracking() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {

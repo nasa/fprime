@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AssertFatalAdapterImpl.hpp
 // \author tcanham
 // \brief  hpp file for AssertFatalAdapter component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef AssertFatalAdapter_HPP
 #define AssertFatalAdapter_HPP
@@ -41,7 +41,7 @@ namespace Svc {
 
       //! Destroy object AssertFatalAdapter
       //!
-      ~AssertFatalAdapterComponentImpl(void);
+      ~AssertFatalAdapterComponentImpl();
 
       //! Report the assert as a FATAL
       void reportAssert(
@@ -77,7 +77,7 @@ namespace Svc {
                   );
 
               // Prevent actual assert since FATAL handler will deal with it
-              void doAssert(void);
+              void doAssert();
 
               AssertFatalAdapterComponentImpl* m_compPtr;
       };

@@ -23,7 +23,7 @@ namespace Svc {
     PolyDbImplTester::~PolyDbImplTester() {
     }
 
-    void PolyDbImplTester::runNominalReadWrite(void) {
+    void PolyDbImplTester::runNominalReadWrite() {
 
         enum {
             NUM_TEST_VALS = 12 // one for each type supported

@@ -70,14 +70,14 @@ namespace Svc {
             //!  \brief Returns the current timer value
 		    //!
 		    //!
-            Os::IntervalTimer::RawTime getTimerVal(void) const;
+            Os::IntervalTimer::RawTime getTimerVal() const;
 
             //!  \brief Function to store a timer value
             //!
             //!  This function calls the Os::IntervalTimer function to store a timer value in the private data of the object
             //!
 
-            void take(void); //!< Take raw time
+            void take(); //!< Take raw time
 
             //!  \brief Compute difference function
             //!

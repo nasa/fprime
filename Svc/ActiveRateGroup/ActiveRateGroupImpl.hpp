@@ -57,7 +57,7 @@ namespace Svc {
             //!
             //!  The destructor of the class is empty
 
-            ~ActiveRateGroupImpl(void);
+            ~ActiveRateGroupImpl();
 
         PRIVATE:
 
@@ -97,7 +97,7 @@ namespace Svc {
             //!  It issues and event indicating that the task has started.
             //!
 
-            void preamble(void);
+            void preamble();
 
             U32 m_cycles; //!< cycles executed
             U32 m_maxTime; //!< maximum execution time in microseconds

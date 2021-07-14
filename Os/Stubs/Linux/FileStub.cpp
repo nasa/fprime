@@ -34,7 +34,7 @@ namespace Os {
         readInterceptorPtr = ptr;
     }
 
-    void clearReadInterceptor(void) {
+    void clearReadInterceptor() {
         readInterceptor = 0;
     }
 
@@ -43,7 +43,7 @@ namespace Os {
         writeInterceptorPtr = ptr;
     }
 
-    void clearWriteInterceptor(void) {
+    void clearWriteInterceptor() {
         writeInterceptor = 0;
     }
 
@@ -52,7 +52,7 @@ namespace Os {
         openInterceptorPtr = ptr;
     }
 
-    void clearOpenInterceptor(void) {
+    void clearOpenInterceptor() {
         openInterceptor = 0;
     }
 
@@ -61,7 +61,7 @@ namespace Os {
         seekInterceptorPtr = ptr;
     }
 
-    void clearSeekInterceptor(void) {
+    void clearSeekInterceptor() {
         seekInterceptor = 0;
     }
 
@@ -414,16 +414,16 @@ namespace Os {
         return stat;
     }
 
-    void File::close(void) {
+    void File::close() {
         (void)::close(this->m_fd);
         this->m_mode = OPEN_NO_MODE;
     }
 
-    NATIVE_INT_TYPE File::getLastError(void) {
+    NATIVE_INT_TYPE File::getLastError() {
         return lastError;
     }
 
-    const char* File::getLastErrorString(void) {
+    const char* File::getLastErrorString() {
         return strerror(this->m_lastError);
     }
 

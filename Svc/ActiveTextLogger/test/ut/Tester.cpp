@@ -18,7 +18,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       ActiveTextLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ActiveTextLogger")
@@ -32,7 +32,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -42,7 +42,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-  run_nominal_test(void)
+  run_nominal_test()
   {
       printf("Testing writing to console\n");
 
@@ -164,7 +164,7 @@ namespace Svc {
   }
 
   void Tester ::
-  run_off_nominal_test(void)
+  run_off_nominal_test()
   {
       // TODO file errors- use the Os/Stubs?
 
@@ -357,7 +357,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // TextLogger
@@ -372,7 +372,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

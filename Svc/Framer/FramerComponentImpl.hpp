@@ -50,7 +50,7 @@ class FramerComponentImpl : public FramerComponentBase, public FramingProtocolIn
 
     //! Destroy object Framer
     //!
-    ~FramerComponentImpl(void);
+    ~FramerComponentImpl();
 
     //! \brief Allocation callback used to request memory for the framer
     //!

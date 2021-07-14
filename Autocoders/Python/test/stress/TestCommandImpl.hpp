@@ -19,7 +19,7 @@ class TestCommand1Impl: public StressTest::TestCommandComponentBase {
 #endif
         void init(NATIVE_INT_TYPE queueDepth);
         virtual ~TestCommand1Impl();
-        void printParam(void);
+        void printParam();
         void genTlm(Ref::Gnc::Quaternion val);
         void sendEvent(I32 arg1, F32 arg2, U8 arg3);
     private:

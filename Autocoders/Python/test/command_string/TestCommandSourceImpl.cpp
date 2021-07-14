@@ -30,7 +30,7 @@ void TestCommandSourceImpl::cmdRegPort_handler(NATIVE_INT_TYPE portNum, FwOpcode
     printf("Received registration for opcode %d\n",opCode);
 }
 
-void TestCommandSourceImpl::init(void) {
+void TestCommandSourceImpl::init() {
     Cmd::CommandTesterComponentBase::init();
 }
 

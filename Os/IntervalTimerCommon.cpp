@@ -22,16 +22,16 @@ namespace Os {
     }
 
     IntervalTimer::~IntervalTimer() {}
-    
+
     void IntervalTimer::start() {
         getRawTime(this->m_startTime);
     }
-    
+
     void IntervalTimer::stop() {
         getRawTime(this->m_stopTime);
     }
 
-    U32 IntervalTimer::getDiffUsec(void) {
+    U32 IntervalTimer::getDiffUsec() {
         return getDiffUsec(this->m_stopTime, this->m_startTime);
     }
 }

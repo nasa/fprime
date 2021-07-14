@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  StaticMemory.hpp
 // \author mstarch
 // \brief  cpp file for StaticMemory test harness implementation class
@@ -7,7 +7,7 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
+//
 // ======================================================================
 #include "Tester.hpp"
 
@@ -17,11 +17,11 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
       StaticMemoryGTestBase("Tester", MAX_HISTORY_SIZE),
       component("StaticMemory")
   {
@@ -30,17 +30,17 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-      test_allocate(void)
+      test_allocate()
   {
      Fw::Buffer allocations[StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS];
       for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
@@ -62,11 +62,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // bufferDeallocate
@@ -91,7 +91,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

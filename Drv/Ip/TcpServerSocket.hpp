@@ -38,14 +38,14 @@ class TcpServerSocket : public IpSocket {
      * connect. This call does not block, block occurs on `open` while waiting to accept incoming clients.
      * \return status of the server socket setup.
      */
-    SocketIpStatus startup(void);
+    SocketIpStatus startup();
 
     /**
      * \brief Shutdown client socket, and listening server socket
      *
      *
      */
-    void shutdown(void);
+    void shutdown();
 
   PROTECTED:
     /**

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health.hpp
 // \author Tim, J.Perez
 // \brief  hpp file for Health component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Health_HPP
 #define Health_HPP
@@ -75,14 +75,14 @@ namespace Svc {
             //!  \brief Component destructor
             //!
             //!  The destructor for HealthImpl is empty
-            ~HealthImpl(void);
+            ~HealthImpl();
 
         PROTECTED:
 
             //!  \brief additional checks function
             //!
             //!  Does additional checks based on the platform
-            virtual void doOtherChecks(void);
+            virtual void doOtherChecks();
 
         PRIVATE:
 

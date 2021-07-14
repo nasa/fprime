@@ -20,7 +20,7 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominalReadWrite(void);
+            void runNominalReadWrite();
     };
 
 } /* namespace Svc */

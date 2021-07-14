@@ -45,7 +45,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
     if (this->doAllocateQueue) {
       Fw::MallocAllocator buffAccumMallocator;
@@ -58,7 +58,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    AccumNoAllocate(void)
+    AccumNoAllocate()
   {
     // TODO (mereweth) - make something sensible happen when no-one sets us up
   }
@@ -99,7 +99,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // bufferSendInFill
@@ -188,7 +188,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

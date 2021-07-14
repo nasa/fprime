@@ -1,10 +1,10 @@
     /// Input $name port description
     /// $desc
-    
+
     class Output${name}Port : public Fw::OutputPortBase {
-      public: 
-        Output${name}Port(void);
-        void init(void);
+      public:
+        Output${name}Port();
+        void init();
         void addCallPort(Input${name}Port* callPort);
         ${return_type}invoke($args_string);
       protected:
@@ -14,7 +14,7 @@
 #if $namespace_list != None
  #for $namespace in $reversed($namespace_list)
 } // end namespace $namespace
- #end for    
+ #end for
 #end if
 \#endif /* ${name_space.upper()}_${name.upper()}_PORT_HPP_ */
 

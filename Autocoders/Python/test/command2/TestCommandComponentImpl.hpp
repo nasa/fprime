@@ -46,7 +46,7 @@ namespace AcTest {
 
       //! Destroy object TestCommand
       //!
-      ~TestCommandComponentImpl(void);
+      ~TestCommandComponentImpl();
 
     PRIVATE:
 

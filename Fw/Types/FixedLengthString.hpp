@@ -19,10 +19,10 @@ namespace Fw {
             FixedLengthString(const char* src); //!< char* source constructor
             FixedLengthString(const StringBase& src); //!< other string constructor
             FixedLengthString(const FixedLengthString& src); //!< FixedLengthString string constructor
-            FixedLengthString(void); //!< default constructor
-            ~FixedLengthString(void); //!< destructor
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of stored string
+            FixedLengthString(); //!< default constructor
+            ~FixedLengthString(); //!< destructor
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE length() const; //!< returns length of stored string
 
             const FixedLengthString& operator=(const FixedLengthString& other); //!< equal operator
 
@@ -30,7 +30,7 @@ namespace Fw {
             SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
 
         PRIVATE:
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[STRING_SIZE]; //!< storage for string data

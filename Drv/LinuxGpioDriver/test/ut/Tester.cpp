@@ -27,7 +27,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       LinuxGpioDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("GP")
@@ -43,7 +43,7 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -152,7 +152,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
       // gpioRead
@@ -196,7 +196,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

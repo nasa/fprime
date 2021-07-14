@@ -33,11 +33,11 @@ namespace Svc {
 
     }
 
-    RateGroupDriverImpl::~RateGroupDriverImpl(void) {
+    RateGroupDriverImpl::~RateGroupDriverImpl() {
 
     }
-    
-    void RateGroupDriverImpl::init(void) {
+
+    void RateGroupDriverImpl::init() {
         RateGroupDriverComponentBase::init();
     }
 
@@ -55,7 +55,7 @@ namespace Svc {
                 }
             }
         }
-        
+
         // rollover the tick value when the tick count reaches the rollover value
         // the rollover value is the product of all the dividers. See comment in constructor.
         this->m_ticks = (this->m_ticks + 1) % this->m_rollover;

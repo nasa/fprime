@@ -42,7 +42,7 @@ namespace ExampleComponents {
 
       //! Destroy object Example
       //!
-      ~ExampleComponentImpl(void);
+      ~ExampleComponentImpl();
 
     PRIVATE:
 

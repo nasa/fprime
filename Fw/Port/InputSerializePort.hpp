@@ -14,7 +14,7 @@ namespace Fw {
             InputSerializePort();
             virtual ~InputSerializePort();
 
-            void init(void);
+            void init();
 
             SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
 
@@ -25,15 +25,15 @@ namespace Fw {
 
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size);
-#endif            
-            
+#endif
+
         private:
             CompFuncPtr m_func; //!< pointer to port callback function
             InputSerializePort(InputSerializePort*);
             InputSerializePort(InputSerializePort&);
             InputSerializePort& operator=(InputSerializePort&);
     };
-        
+
 }
 
 #endif // FW_INPUT_SERIALIZE_PORT_HPP

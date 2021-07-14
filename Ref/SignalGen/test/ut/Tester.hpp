@@ -30,11 +30,11 @@ namespace Ref {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,7 +44,7 @@ namespace Ref {
 
       //! To do
       //!
-      void test_start(void);
+      void test_start();
 
     private:
 
@@ -54,11 +54,11 @@ namespace Ref {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

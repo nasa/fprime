@@ -8,7 +8,7 @@
 
 namespace ANameSpace {
 
-UserSerializer::UserSerializer(void): Serializable() {
+UserSerializer::UserSerializer(): Serializable() {
 
 }
 

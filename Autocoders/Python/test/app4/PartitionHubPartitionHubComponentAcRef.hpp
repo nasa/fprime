@@ -36,7 +36,7 @@ namespace PartitionHub {
         PartitionHubBase();
 #endif
 
-        virtual ~PartitionHubBase(void);
+        virtual ~PartitionHubBase();
         virtual void init(NATIVE_INT_TYPE queueDepth);
 
         // downcalls for input ports
@@ -45,8 +45,8 @@ namespace PartitionHub {
         void PortA_Serialize_handler_base(NATIVE_INT_TYPE portNum, Fw::SerializeBufferBase &Buffer);
         // upcalls for output ports
         void PortB_Serialize_out(NATIVE_INT_TYPE portNum, Fw::SerializeBufferBase &Buffer);
-        NATIVE_INT_TYPE m_getNumPortASerializeInputPorts(void);
-        NATIVE_INT_TYPE m_getNumPortBSerializeOutputPorts(void);
+        NATIVE_INT_TYPE m_getNumPortASerializeInputPorts();
+        NATIVE_INT_TYPE m_getNumPortBSerializeOutputPorts();
 
         // check to see if output port is connected
         bool m_isConnectedPortBSerializeOutputPorts(NATIVE_INT_TYPE portNum);

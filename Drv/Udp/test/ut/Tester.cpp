@@ -100,7 +100,7 @@ void Tester::test_with_loop(U32 iterations, bool recv_thread) {
     }
 }
 
-Tester ::Tester(void)
+Tester ::Tester()
     : ByteStreamDriverModelGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ByteStreamDriverModel"),
       m_data_buffer(m_data_storage, 0), m_spinner(true) {
@@ -109,13 +109,13 @@ Tester ::Tester(void)
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_basic_messaging(void) {
+void Tester ::test_basic_messaging() {
     test_with_loop(1);
 }
 
@@ -123,11 +123,11 @@ void Tester ::test_multiple_messaging() {
     test_with_loop(100);
 }
 
-void Tester ::test_receive_thread(void) {
+void Tester ::test_receive_thread() {
     test_with_loop(1, true);
 }
 
-void Tester ::test_advanced_reconnect(void) {
+void Tester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
@@ -170,7 +170,7 @@ Fw::Buffer Tester ::
 // ----------------------------------------------------------------------
 
 void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // send
@@ -187,25 +187,25 @@ void Tester ::
 
     // recv
     this->component.set_recv_OutputPort(
-        0, 
+        0,
         this->get_from_recv(0)
     );
 
     // allocate
     this->component.set_allocate_OutputPort(
-        0, 
+        0,
         this->get_from_allocate(0)
     );
 
     // deallocate
     this->component.set_deallocate_OutputPort(
-        0, 
+        0,
         this->get_from_deallocate(0)
     );
 
   }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

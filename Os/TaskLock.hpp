@@ -12,8 +12,8 @@
 namespace Os {
     class TaskLock {
         public:
-            static I32 lock(void); //!< Lock task switching
-            static I32 unLock(void); //!< Unlock task switching
+            static I32 lock(); //!< Lock task switching
+            static I32 unLock(); //!< Unlock task switching
     };
 }
 

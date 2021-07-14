@@ -8,7 +8,7 @@ namespace Simple_Active{
     class Simple_ActiveImpl : public Simple_ActiveComponentBase{
     public:
         Simple_ActiveImpl(const char* compName);
-        ~Simple_ActiveImpl(void);
+        ~Simple_ActiveImpl();
         void init(NATIVE_INT_TYPE queueDepth);
     private:
         void U32_Async_handler(NATIVE_INT_TYPE portNum, U32 int_arg);

@@ -23,19 +23,19 @@ namespace Fw {
         this->copyBuff(src.m_buf,sizeof(this->m_buf));
     }
 
-    LogStringArg::LogStringArg(void)
+    LogStringArg::LogStringArg()
             : StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
         this->m_buf[0] = 0;
     }
 
-    LogStringArg::~LogStringArg(void) {
+    LogStringArg::~LogStringArg() {
     }
 
-    NATIVE_UINT_TYPE LogStringArg::length(void) const {
+    NATIVE_UINT_TYPE LogStringArg::length() const {
         return (NATIVE_UINT_TYPE) strnlen(this->m_buf,sizeof(m_buf));
     }
 
-    const char* LogStringArg::toChar(void) const {
+    const char* LogStringArg::toChar() const {
         return this->m_buf;
     }
 
@@ -97,7 +97,7 @@ namespace Fw {
         this->m_maxSer = FW_MIN(size,FW_LOG_STRING_MAX_SIZE);
     }
 
-    NATIVE_UINT_TYPE LogStringArg::getCapacity(void) const {
+    NATIVE_UINT_TYPE LogStringArg::getCapacity() const {
         return FW_LOG_STRING_MAX_SIZE;
     }
 

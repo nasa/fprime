@@ -53,7 +53,7 @@ namespace Svc {
           );
 
           //! Destroy a File object
-          ~File(void);
+          ~File();
 
         public:
 
@@ -77,15 +77,15 @@ namespace Svc {
           );
 
           //! Close the file and emit an event
-          void closeAndEmitEvent(void);
+          void closeAndEmitEvent();
 
           //! Flush the file
-          bool flush(void);
+          bool flush();
 
         PRIVATE:
 
           //! Open the file
-          void open(void);
+          void open();
 
           //! Write a buffer to a file
           //! \return Success or failure
@@ -108,10 +108,10 @@ namespace Svc {
           );
 
           //! Write a hash file
-          void writeHashFile(void);
+          void writeHashFile();
 
           //! Close the file
-          void close(void);
+          void close();
 
         PRIVATE:
 

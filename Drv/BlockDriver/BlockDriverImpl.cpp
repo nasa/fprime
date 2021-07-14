@@ -13,8 +13,8 @@ namespace Drv {
     void BlockDriverImpl::init(NATIVE_INT_TYPE queueDepth) {
         BlockDriverComponentBase::init(queueDepth);
     }
-    
-    BlockDriverImpl::~BlockDriverImpl(void) {
+
+    BlockDriverImpl::~BlockDriverImpl() {
 
     }
 
@@ -33,14 +33,14 @@ namespace Drv {
         // just a pass-through
         this->BufferOut_out(0,buffer);
     }
-    
+
     void BlockDriverImpl::Sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
     }
 
-    void BlockDriverImpl::callIsr(void) {
+    void BlockDriverImpl::callIsr() {
         s_driverISR(this);
     }
-    
+
     void BlockDriverImpl::s_driverISR(void* arg) {
         FW_ASSERT(arg);
         // cast argument to component instance

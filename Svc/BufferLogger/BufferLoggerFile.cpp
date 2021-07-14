@@ -37,7 +37,7 @@ namespace Svc {
   }
 
   BufferLogger::File ::
-    ~File(void)
+    ~File()
   {
     this->close();
   }
@@ -104,7 +104,7 @@ namespace Svc {
   }
 
   void BufferLogger::File ::
-    closeAndEmitEvent(void)
+    closeAndEmitEvent()
   {
     if (this->mode == File::Mode::OPEN) {
       this->close();
@@ -118,7 +118,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void BufferLogger::File ::
-    open(void)
+    open()
   {
     FW_ASSERT(this->mode == File::Mode::CLOSED);
 
@@ -218,7 +218,7 @@ namespace Svc {
   }
 
   void BufferLogger::File ::
-    writeHashFile(void)
+    writeHashFile()
   {
     Os::ValidatedFile validatedFile(this->name.toChar());
     const Os::ValidateFile::Status status =
@@ -234,7 +234,7 @@ namespace Svc {
   }
 
   bool BufferLogger::File ::
-  flush(void)
+  flush()
   {
     return true;
     // NOTE(if your fprime uses buffered file I/O, re-enable this)
@@ -255,7 +255,7 @@ namespace Svc {
   }
 
   void BufferLogger::File ::
-    close(void)
+    close()
   {
     if (this->mode == File::Mode::OPEN) {
       // Close file

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Buffers.hpp
 // \author Rob Bocchino
 // \brief  Sequence file buffers
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_SequenceFiles_Buffers_HPP
 #define Svc_SequenceFiles_Buffers_HPP
@@ -34,11 +34,11 @@ namespace Svc {
 
         public:
 
-          NATIVE_UINT_TYPE getBuffCapacity(void) const;
+          NATIVE_UINT_TYPE getBuffCapacity() const;
 
-          U8* getBuffAddr(void);
+          U8* getBuffAddr();
 
-          const U8* getBuffAddr(void) const;
+          const U8* getBuffAddr() const;
 
         private:
 

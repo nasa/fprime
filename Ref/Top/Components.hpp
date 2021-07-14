@@ -30,9 +30,9 @@
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
 
-void constructRefArchitecture(void);
+void constructRefArchitecture();
 bool constructApp(bool dump, U32 port_number, char* hostname);
-void exitTasks(void);
+void exitTasks();
 
 
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;

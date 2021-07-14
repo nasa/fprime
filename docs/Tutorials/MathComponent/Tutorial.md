@@ -1248,10 +1248,10 @@ The `Tester.hpp` stub can be updated to include the declarations of the unit tes
 
       //! Test operation command
       //!
-      void testAddCommand(void);
-      void testSubCommand(void);
-      void testMultCommand(void);
-      void testDivCommand(void);
+      void testAddCommand();
+      void testSubCommand();
+      void testMultCommand();
+      void testDivCommand();
 
     private:
     ...
@@ -1269,7 +1269,7 @@ Add a member function to the implementation class in `Tester.cpp` to implement t
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testAddCommand(void)
+    testAddCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
@@ -1688,7 +1688,7 @@ The full unit test code for the `MathReceiver` component can be found in the `do
 
 ```c++
   void Tester ::
-    testAddCommand(void)
+    testAddCommand()
   {
       // load parameters
       this->component.loadParameters();
@@ -1704,7 +1704,7 @@ It is a way to test default settings for parameters.
 
 ```c++
   void Tester ::
-    testSubCommand(void)
+    testSubCommand()
   {
       // set the test value for the parameter before loading - it will be initialized to this value
       this->paramSet_factor2(5.0,Fw::PARAM_VALID);
@@ -1737,7 +1737,7 @@ The `Ref::Mathop` class is the C++ implementation of the serializable type defin
 
 ```c++
   void Tester ::
-    testThrottle(void)
+    testThrottle()
   {
 ```
 
@@ -1755,7 +1755,7 @@ The header file should be updated to include the `testThrottle` method as a publ
 `Tester.hpp`, line 51:
 
 ```c++
-void testThrottle(void);
+void testThrottle();
 ```
 
 

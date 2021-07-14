@@ -24,15 +24,15 @@ namespace Svc {
         class WorkingBuffer : public Fw::SerializeBufferBase {
             public:
 
-                NATIVE_UINT_TYPE getBuffCapacity(void) const {
+                NATIVE_UINT_TYPE getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -51,7 +51,7 @@ namespace Svc {
         PrmDbComponentBase::init(queueDepth,instance);
     }
 
-    void PrmDbImpl::clearDb(void) {
+    void PrmDbImpl::clearDb() {
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             this->m_db[entry].used = false;
             this->m_db[entry].id = 0;
@@ -240,7 +240,7 @@ namespace Svc {
     PrmDbImpl::~PrmDbImpl() {
     }
 
-    void PrmDbImpl::readParamFile(void) {
+    void PrmDbImpl::readParamFile() {
         // load file. FIXME: Put more robust file checking, such as a CRC.
         Os::File paramFile;
 

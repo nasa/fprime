@@ -19,7 +19,7 @@ extern Duck::DuckImpl Huey;
 extern Duck::DuckImpl Duey;
 
 extern "C" {
-	void dumparch(void);
+	void dumparch();
 	void dumpobj(const char* objName);
 }
 

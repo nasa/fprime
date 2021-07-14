@@ -7,7 +7,7 @@ namespace Fw {
 
 #if FW_OBJECT_REGISTRATION == 1
     ObjRegistry* ObjBase::s_objRegistry = 0;
-#endif    
+#endif
 
 #if FW_OBJECT_NAMES == 1
     ObjBase::ObjBase(const char* objName) {
@@ -22,21 +22,21 @@ namespace Fw {
 
     }
 #endif
-   
-    void ObjBase::init(void) {
-#if FW_OBJECT_REGISTRATION        
+
+    void ObjBase::init() {
+#if FW_OBJECT_REGISTRATION
         if (ObjBase::s_objRegistry) {
             ObjBase::s_objRegistry->regObject(this);
         }
-#endif        
+#endif
     }
 
     ObjBase::~ObjBase() {
 
     }
 
-#if FW_OBJECT_NAMES == 1    
-    const char* ObjBase::getObjName(void) {
+#if FW_OBJECT_NAMES == 1
+    const char* ObjBase::getObjName() {
         return this->m_objName;
     }
 
@@ -49,14 +49,14 @@ namespace Fw {
         (void)snprintf(str, size, "Obj: %s",this->m_objName);
         str[size-1] = 0;
     }
-#endif    
 #endif
-    
-#if FW_OBJECT_REGISTRATION == 1    
+#endif
+
+#if FW_OBJECT_REGISTRATION == 1
     void ObjBase::setObjRegistry(ObjRegistry* reg) {
         ObjBase::s_objRegistry = reg;
     }
-    
+
     ObjRegistry::~ObjRegistry() {
     }
 

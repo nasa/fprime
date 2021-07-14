@@ -16,7 +16,7 @@
 namespace Drv {
 
   LinuxSerialDriverComponentImpl ::
-    ~LinuxSerialDriverComponentImpl(void)
+    ~LinuxSerialDriverComponentImpl()
   {
 
   }
@@ -44,6 +44,6 @@ namespace Drv {
   }
 
   void LinuxSerialDriverComponentImpl ::
-    quitReadThread(void) {
+    quitReadThread() {
   }
 } // end namespace Drv

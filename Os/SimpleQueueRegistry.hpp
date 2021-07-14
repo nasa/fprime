@@ -31,7 +31,7 @@ namespace Os {
             SimpleQueueRegistry(); //!< constructor
             virtual ~SimpleQueueRegistry(); //!< destructor
             void regQueue(Queue* obj); //!< method called by queue init() methods to register a new queue
-            void dump(void); //!< dump list of queues and stats
+            void dump(); //!< dump list of queues and stats
     };
 
 } /* namespace Os */

@@ -23,12 +23,12 @@ namespace Utils {
   // ----------------------------------------------------------------------
 
   LockGuardTester ::
-    LockGuardTester(void)
+    LockGuardTester()
   {
   }
 
   LockGuardTester ::
-    ~LockGuardTester(void)
+    ~LockGuardTester()
   {
 
   }
@@ -49,7 +49,7 @@ namespace Utils {
   }
 
   void LockGuardTester ::
-    testLocking(void)
+    testLocking()
   {
     TaskData data;
     data.i = 0;
@@ -79,7 +79,7 @@ namespace Utils {
   // ----------------------------------------------------------------------
 
   void LockGuardTester ::
-    initComponents(void)
+    initComponents()
   {
   }
 

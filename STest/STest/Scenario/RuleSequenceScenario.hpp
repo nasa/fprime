@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RuleSequenceScenario.hpp
 // \author bocchino
 // \brief  Apply a fixed sequence of rules
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RuleSequenceScenario_HPP
 #define STest_RuleSequenceScenario_HPP
@@ -27,7 +27,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RuleSequenceScenario from an array of rules
@@ -47,7 +47,7 @@ namespace STest {
       }
 
       //! Destroy object RuleSequenceScenario
-      ~RuleSequenceScenario(void) {
+      ~RuleSequenceScenario() {
         assert(this->scenarioArray != NULL);
         Scenario<State>* *const scenarios = this->scenarioArray->getScenarios();
         assert(scenarios != NULL);

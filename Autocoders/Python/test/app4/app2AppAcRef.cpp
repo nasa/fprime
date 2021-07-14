@@ -16,12 +16,12 @@ PartitionHub::PartitionHubImpl* hub1Comp_ptr = 0;
 Duck::DuckImpl* hueyComp_ptr = 0;
 
 extern "C" {
-    void dumparch(void);
+    void dumparch();
     void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
     simpleRegPtr->dump();
 }
 
@@ -30,7 +30,7 @@ void dumpobj(const char* objName) {
 }
 
 
-void constructArchitecture(void) {
+void constructArchitecture() {
     Fw::PortBase::setTrace(true);
 
     simpleRegPtr = new Fw::SimpleObjRegistry();

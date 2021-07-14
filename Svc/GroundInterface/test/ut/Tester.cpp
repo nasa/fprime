@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  GroundInterface.hpp
 // \author mstarch
 // \brief  cpp file for GroundInterface test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,11 +19,11 @@ U8 file_back_buffer[10240];
 
 namespace Svc {
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       GroundInterfaceGTestBase("Tester", MAX_HISTORY_SIZE),
       component("GroundInterface")
@@ -45,9 +45,9 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
 
@@ -184,11 +184,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // downlinkPort
@@ -217,62 +217,62 @@ namespace Svc {
 
     // fileUplinkBufferSendOut
     this->component.set_fileUplinkBufferSendOut_OutputPort(
-        0, 
+        0,
         this->get_from_fileUplinkBufferSendOut(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // uplinkPort
     this->component.set_uplinkPort_OutputPort(
-        0, 
+        0,
         this->get_from_uplinkPort(0)
     );
 
     // fileDownlinkBufferSendOut
     this->component.set_fileDownlinkBufferSendOut_OutputPort(
-        0, 
+        0,
         this->get_from_fileDownlinkBufferSendOut(0)
     );
 
     // fileUplinkBufferGet
     this->component.set_fileUplinkBufferGet_OutputPort(
-        0, 
+        0,
         this->get_from_fileUplinkBufferGet(0)
     );
 
     // write
     this->component.set_write_OutputPort(
-        0, 
+        0,
         this->get_from_write(0)
     );
 
     // readPoll
     this->component.set_readPoll_OutputPort(
-        0, 
+        0,
         this->get_from_readPoll(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

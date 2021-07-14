@@ -3,7 +3,7 @@
 ##
 
 //Set base id section
-void set$(name)Ids(void){
+void set$(name)Ids(){
 #for $id_string in $component_reference_ids:
 	${id_string}
 #end for
@@ -14,7 +14,7 @@ void set$(name)Ids(void){
 #if $connect_only:
     #pass
 #else:
-void $(name)Init(void) {
+void $(name)Init() {
 ###
     Fw::PortBase::setTrace(true);
 #if $is_ptr:
@@ -41,7 +41,7 @@ void $(name)Init(void) {
 ###
 }
 
-void $(name)Start(void) {
+void $(name)Start() {
     // Active component startup
     // start(identifier, priority, stack_size)
 #for $startup_template  in $component_startups:
@@ -49,7 +49,7 @@ void $(name)Start(void) {
 #end for
 }
 
-void $(name)Register(void) {
+void $(name)Register() {
     // Command registration
 #for $cmdReg in $command_registrations:
     ${cmdReg}
@@ -59,7 +59,7 @@ void $(name)Register(void) {
 #end if
 
 
-void construct$(name)Architecture(void) {
+void construct$(name)Architecture() {
 #if $connect_only:
    #pass
 #else:
@@ -95,7 +95,7 @@ void construct$(name)Architecture(void) {
 #if $connect_only:
     #pass
 #else:
-void exitTasks(void) {
+void exitTasks() {
    // Task cleanup
 #for $teardown_template in $component_teardowns:
     ${teardown_template}

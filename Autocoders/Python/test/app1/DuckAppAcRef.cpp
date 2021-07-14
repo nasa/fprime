@@ -19,11 +19,11 @@ Duck::DuckImpl* hueyComp_ptr = 0;
 Duck::DuckImpl* dueyComp_ptr = 0;
 
 extern "C" {
-    void dumparch(void);
+    void dumparch();
     void dumpobj(const char* objName);
 }
 
-void dumparch(void) {
+void dumparch() {
     simpleRegPtr->dump();
 }
 
@@ -31,7 +31,7 @@ void dumpobj(const char* objName) {
     simpleRegPtr->dump(objName);
 }
 
-void constructArchitecture(void) {
+void constructArchitecture() {
     Fw::PortBase::setTrace(true);
 
     simpleRegPtr = new Fw::SimpleObjRegistry();

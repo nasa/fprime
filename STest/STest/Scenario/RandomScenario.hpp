@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RandomScenario.hpp
 // \author bocchino
 // \brief  Apply rules in a random sequence
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RandomScenario_HPP
 #define STest_RandomScenario_HPP
@@ -25,7 +25,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RandomScenario from an array of rules
@@ -45,7 +45,7 @@ namespace STest {
       }
 
       //! Destroy a RandomScenario
-      ~RandomScenario(void) {
+      ~RandomScenario() {
         assert(this->scenarioArray != NULL);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();
         assert(scenarios != NULL);

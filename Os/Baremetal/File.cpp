@@ -18,7 +18,7 @@ namespace Os {
         return NOT_OPENED;
     }
 
-    bool File::isOpen(void) {
+    bool File::isOpen() {
       return false;
     }
 
@@ -34,13 +34,13 @@ namespace Os {
         return NOT_OPENED;
     }
 
-    void File::close(void) {}
+    void File::close() {}
 
-    NATIVE_INT_TYPE File::getLastError(void) {
+    NATIVE_INT_TYPE File::getLastError() {
         return 0;
     }
 
-    const char* File::getLastErrorString(void) {
+    const char* File::getLastErrorString() {
         return "FileBad";
     }
 

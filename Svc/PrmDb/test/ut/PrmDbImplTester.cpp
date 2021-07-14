@@ -20,7 +20,7 @@ namespace Svc {
     typedef PrmDb_PrmWriteError PrmWriteError;
     typedef PrmDb_PrmReadError PrmReadError;
 
-    void PrmDbImplTester::runNominalPopulate(void) {
+    void PrmDbImplTester::runNominalPopulate() {
 
         // clear database
         this->m_impl.clearDb();
@@ -114,7 +114,7 @@ namespace Svc {
         ASSERT_EVENTS_PrmIdAdded(0,id);
     }
 
-    void PrmDbImplTester::runNominalSaveFile(void) {
+    void PrmDbImplTester::runNominalSaveFile() {
         // fill with data
         this->runNominalPopulate();
         // save the data
@@ -138,7 +138,7 @@ namespace Svc {
 
     }
 
-    void PrmDbImplTester::runNominalLoadFile(void) {
+    void PrmDbImplTester::runNominalLoadFile() {
         // save the data
         this->clearEvents();
 
@@ -174,7 +174,7 @@ namespace Svc {
 
     }
 
-    void PrmDbImplTester::runMissingExtraParams(void) {
+    void PrmDbImplTester::runMissingExtraParams() {
 
         // load up database
         this->runNominalPopulate();
@@ -206,7 +206,7 @@ namespace Svc {
 
     }
 
-    void PrmDbImplTester::runRefPrmFile(void) {
+    void PrmDbImplTester::runRefPrmFile() {
 
         {
             // ID = 00x1000
@@ -347,7 +347,7 @@ namespace Svc {
     }
 
 
-void PrmDbImplTester::runFileReadError(void) {
+void PrmDbImplTester::runFileReadError() {
 
         // File open error
 
@@ -566,7 +566,7 @@ void PrmDbImplTester::runFileReadError(void) {
 
     }
 
-    void PrmDbImplTester::runFileWriteError(void) {
+    void PrmDbImplTester::runFileWriteError() {
 
         // File open error
 

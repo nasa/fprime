@@ -19,10 +19,10 @@ namespace Fw {
             TlmString(const char* src);
             TlmString(const StringBase& src);
             TlmString(const TlmString& src);
-            TlmString(void);
-            ~TlmString(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
+            TlmString();
+            ~TlmString();
+            const char* toChar() const;
+            NATIVE_UINT_TYPE length() const;
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
 
             const TlmString& operator=(const TlmString& other); //!< equal operator for other strings
@@ -34,7 +34,7 @@ namespace Fw {
             void toString(StringBase& text) const;
 #endif
         PRIVATE:
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            NATIVE_UINT_TYPE getCapacity() const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_TLM_STRING_MAX_SIZE];

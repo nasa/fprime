@@ -85,15 +85,15 @@ namespace Fw {
         this->m_timeTag = timeTag;
     }
 
-    FwChanIdType TlmPacket::getId(void) {
+    FwChanIdType TlmPacket::getId() {
         return this->m_id;
     }
 
-    Time& TlmPacket::getTimeTag(void) {
+    Time& TlmPacket::getTimeTag() {
         return this->m_timeTag;
     }
 
-    TlmBuffer& TlmPacket::getTlmBuffer(void) {
+    TlmBuffer& TlmPacket::getTlmBuffer() {
         return this->m_tlmBuffer;
     }
 

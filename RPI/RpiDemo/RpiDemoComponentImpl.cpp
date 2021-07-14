@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RpiDemoImpl.cpp
 // \author tcanham
 // \brief  cpp file for RpiDemo component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
@@ -19,7 +19,7 @@
 namespace Rpi {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   RpiDemoComponentImpl ::
@@ -29,7 +29,7 @@ namespace Rpi {
     ) :
       RpiDemoComponentBase(compName)
 #else
-    RpiDemoImpl(void)
+    RpiDemoImpl()
 #endif
     ,m_uartWriteBytes(0)
     ,m_uartReadBytes(0)
@@ -48,18 +48,18 @@ namespace Rpi {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     RpiDemoComponentBase::init(queueDepth, instance);
   }
 
   RpiDemoComponentImpl ::
-    ~RpiDemoComponentImpl(void)
+    ~RpiDemoComponentImpl()
   {
 
   }
 
-  void RpiDemoComponentImpl::preamble(void) {
+  void RpiDemoComponentImpl::preamble() {
       // send buffers to UART driver
       for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_RPI_UART_BUFFERS; buffer++) {
           // assign buffers to buffer containers
@@ -148,7 +148,7 @@ namespace Rpi {
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
 
   void RpiDemoComponentImpl ::
@@ -163,10 +163,10 @@ namespace Rpi {
       txt.setData((U8*)text.toChar());
       this->UartWrite_out(0,txt);
       this->m_uartWriteBytes += text.length();
-      
+
       Fw::LogStringArg arg = text;
       this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
-      
+
       this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 

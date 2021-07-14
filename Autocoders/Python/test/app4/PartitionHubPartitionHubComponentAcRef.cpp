@@ -62,7 +62,7 @@ namespace PartitionHub {
 	}
 
 
-	PartitionHubBase::~PartitionHubBase(void) {
+	PartitionHubBase::~PartitionHubBase() {
 	}
 
     // Up-calls, calls for output ports
@@ -71,11 +71,11 @@ namespace PartitionHub {
         m_PortBSerializeOutputPort[portNum].invokeSerial(Buffer);
     }
 
-    NATIVE_INT_TYPE PartitionHubBase::m_getNumPortASerializeInputPorts(void) {
+    NATIVE_INT_TYPE PartitionHubBase::m_getNumPortASerializeInputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_PortASerializeInputPort);
     }
 
-    NATIVE_INT_TYPE PartitionHubBase::m_getNumPortBSerializeOutputPorts(void) {
+    NATIVE_INT_TYPE PartitionHubBase::m_getNumPortBSerializeOutputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_PortBSerializeOutputPort);
     }
 
