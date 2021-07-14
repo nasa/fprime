@@ -1714,6 +1714,7 @@ virtualized
 vlist
 vm
 VMIN
+vscode
 vsnprintf
 VTIME
 vtype
