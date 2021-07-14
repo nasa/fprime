@@ -63,9 +63,30 @@ module Ref {
   Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
   """
 
+  init comm phase Fpp.ToCpp.Phases.configConstants """
+    enum {
+      PRIORITY = 100,
+      STACK_SIZE = Default::stackSize
+    };
+    """
+
   init comm phase Fpp.ToCpp.Phases.freeThreads """
   comm.stopSocketTask();
   (void) comm.joinSocketTask(NULL);
+  """
+
+  init comm phase Fpp.ToCpp.Phases.startTasks """
+  // Initialize socket server if and only if there is a valid specification
+  if (state.hostName != NULL && state.portNumber != 0) {
+      Fw::EightyCharString name("ReceiveTask");
+      // Uplink is configured for receive so a socket task is started
+      comm.configure(state.hostName, state.portNumber);
+      comm.startSocketTask(
+          name,
+          ConfigConstants::comm::PRIORITY,
+          ConfigConstants::comm::STACK_SIZE
+      );
+  }
   """
 
   # ----------------------------------------------------------------------
@@ -109,6 +130,28 @@ module Ref {
   """
 
   # ----------------------------------------------------------------------
+  # fileDownlink
+  # ----------------------------------------------------------------------
+  
+  init fileDownlink phase Fpp.ToCpp.Phases.configComponents """
+  fileDownlink.configure(
+      ConfigConstants::fileDownlink::TIMEOUT,
+      ConfigConstants::fileDownlink::COOLDOWN,
+      ConfigConstants::fileDownlink::CYCLE_TIME,
+      ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
+  );
+  """
+
+    init fileDownlink phase Fpp.ToCpp.Phases.configConstants """
+    enum {
+      TIMEOUT = 1000,
+      COOLDOWN = 1000,
+      CYCLE_TIME = 1000,
+      FILE_QUEUE_DEPTH = 10
+    };
+    """
+
+  # ----------------------------------------------------------------------
   # fileUplinkBufferManager
   # ----------------------------------------------------------------------
 
@@ -132,21 +175,16 @@ module Ref {
   }
   """
 
-  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.tearDownComponents """
-  fileUplinkBufferManager.cleanup();
+  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.configConstants """
+  enum {
+    STORE_SIZE = 3000,
+    QUEUE_SIZE = 30,
+    MGR_ID = 200
+  };
   """
 
-  # ----------------------------------------------------------------------
-  # fileDownlink
-  # ----------------------------------------------------------------------
-  
-  init fileDownlink phase Fpp.ToCpp.Phases.configComponents """
-  fileDownlink.configure(
-      ConfigConstants::fileDownlink::TIMEOUT,
-      ConfigConstants::fileDownlink::COOLDOWN,
-      ConfigConstants::fileDownlink::CYCLE_TIME,
-      ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
-  );
+  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.tearDownComponents """
+  fileUplinkBufferManager.cleanup();
   """
 
   # ----------------------------------------------------------------------
@@ -163,6 +201,12 @@ module Ref {
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
       ConfigConstants::health::WATCHDOG_CODE
   );
+  """
+
+  init $health phase Fpp.ToCpp.Phases.configConstants """
+  enum {
+    WATCHDOG_CODE = 0x123
+  };
   """
 
   # ----------------------------------------------------------------------
@@ -315,22 +359,6 @@ module Ref {
 
   init uplink phase Fpp.ToCpp.Phases.configComponents """
   uplink.setup(ConfigObjects::uplink::deframing);
-  """
-  # Note: this more so has to do with comm but in translation should 
-  # be at the bottom of the start phase, so it is in uplink to preserve 
-  # alphabetical organization
-  init uplink phase Fpp.ToCpp.Phases.startTasks """
-  // Initialize socket server if and only if there is a valid specification
-  if (state.hostName != NULL && state.portNumber != 0) {
-      Fw::EightyCharString name("ReceiveTask");
-      // Uplink is configured for receive so a socket task is started
-      comm.configure(state.hostName, state.portNumber);
-      comm.startSocketTask(
-          name,
-          ConfigConstants::comm::PRIORITY,
-          ConfigConstants::comm::STACK_SIZE
-      );
-  }
   """
   
 }

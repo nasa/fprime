@@ -1210,6 +1210,17 @@ namespace Ref {
         Priorities::cmdSeq,
         StackSizes::cmdSeq
       );
+      // Initialize socket server if and only if there is a valid specification
+      if (state.hostName != NULL && state.portNumber != 0) {
+          Fw::EightyCharString name("ReceiveTask");
+          // Uplink is configured for receive so a socket task is started
+          comm.configure(state.hostName, state.portNumber);
+          comm.startSocketTask(
+              name,
+              ConfigConstants::comm::PRIORITY,
+              ConfigConstants::comm::STACK_SIZE
+          );
+      }
       eventLogger.start(
         TaskIds::eventLogger,
         Priorities::eventLogger,
@@ -1255,17 +1266,6 @@ namespace Ref {
         Priorities::rateGroup3Comp,
         StackSizes::rateGroup3Comp
       );
-      // Initialize socket server if and only if there is a valid specification
-      if (state.hostName != NULL && state.portNumber != 0) {
-          Fw::EightyCharString name("ReceiveTask");
-          // Uplink is configured for receive so a socket task is started
-          comm.configure(state.hostName, state.portNumber);
-          comm.startSocketTask(
-              name,
-              ConfigConstants::comm::PRIORITY,
-              ConfigConstants::comm::STACK_SIZE
-          );
-      }
     }
 
     // Stop tasks
@@ -1291,6 +1291,8 @@ namespace Ref {
       (void) chanTlm.ActiveComponentBase::join(NULL);
       (void) cmdDisp.ActiveComponentBase::join(NULL);
       (void) cmdSeq.ActiveComponentBase::join(NULL);
+      comm.stopSocketTask();
+      (void) comm.joinSocketTask(NULL);
       (void) eventLogger.ActiveComponentBase::join(NULL);
       (void) fileDownlink.ActiveComponentBase::join(NULL);
       (void) fileManager.ActiveComponentBase::join(NULL);
@@ -1300,10 +1302,9 @@ namespace Ref {
       (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
       (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
       (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
-      comm.stopSocketTask();
-      (void) comm.joinSocketTask(NULL);
     }
 
+    // Tear down components
     void tearDownComponents(const TopologyState& state) {
       cmdSeq.deallocateBuffer(Allocation::mallocator);
       fileUplinkBufferManager.cleanup();
