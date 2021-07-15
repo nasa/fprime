@@ -11,13 +11,13 @@ namespace Passive {
 
         }
 
-        C2Impl::~C2Impl(void) {
+        C2Impl::~C2Impl() {
 
         }
 
         // Internal call - implemented by hand.
         // downcall for input port Void
-        I32 C2Impl::Void_Void_handler(void) {
+        I32 C2Impl::Void_Void_handler() {
 			printf("*** %s: Void_Void_handler down-call\n", this->m_objName);
             return 0;
         }

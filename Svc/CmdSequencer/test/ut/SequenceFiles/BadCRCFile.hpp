@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BadCRCFile.hpp
 // \author Rob Bocchino
 // \brief  BadCRCFile interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_SequenceFiles_BadCRCFile_HPP
 #define Svc_SequenceFiles_BadCRCFile_HPP
@@ -45,7 +45,7 @@ namespace Svc {
         );
 
         //! Get the CRC
-        const CmdSequencerComponentImpl::FPrimeSequence::CRC& getCRC(void) const;
+        const CmdSequencerComponentImpl::FPrimeSequence::CRC& getCRC() const;
 
       private:
 

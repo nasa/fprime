@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AMPCS.cpp
 // \author Rob Bocchino
 // \brief  AMPCS-specific tests
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Os/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
@@ -18,22 +18,22 @@ namespace Svc {
   namespace AMPCS {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
-      Tester(void) :
+      Tester() :
         Svc::Tester(SequenceFiles::File::Format::AMPCS)
     {
 
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      MissingCRC(void)
+      MissingCRC()
     {
       // Write the file
       SequenceFiles::MissingCRCFile file(this->format);
@@ -63,7 +63,7 @@ namespace Svc {
     }
 
     void Tester ::
-      MissingFile(void) 
+      MissingFile()
     {
       // Remove the file
       SequenceFiles::MissingFile file(this->format);

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RateLimiterTester.hpp
 // \author vwong
 // \brief  cpp file for RateLimiter test harness implementation class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include "RateLimiterTester.hpp"
 #include <time.h>
@@ -17,26 +17,26 @@
 namespace Utils {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   RateLimiterTester ::
-    RateLimiterTester(void)
+    RateLimiterTester()
   {
   }
 
   RateLimiterTester ::
-    ~RateLimiterTester(void) 
+    ~RateLimiterTester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void RateLimiterTester ::
-    testCounterTriggering(void) 
+    testCounterTriggering()
   {
     U32 testCycles[] = {0, 5, 50, 832};
     for (U32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(testCycles); i++) {
@@ -71,7 +71,7 @@ namespace Utils {
   }
 
   void RateLimiterTester ::
-    testTimeTriggering(void) 
+    testTimeTriggering()
   {
     U32 testCycles[] = {0, 5, 50, 832};
     for (U32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(testCycles); i++) {
@@ -108,7 +108,7 @@ namespace Utils {
   }
 
   void RateLimiterTester ::
-    testCounterAndTimeTriggering(void) 
+    testCounterAndTimeTriggering()
   {
     RateLimiter limiter;
 
@@ -148,11 +148,11 @@ namespace Utils {
 
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void RateLimiterTester ::
-    initComponents(void) 
+    initComponents()
   {
   }
 

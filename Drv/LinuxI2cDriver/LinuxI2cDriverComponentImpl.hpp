@@ -40,7 +40,7 @@ namespace Drv {
       bool open(const char* device);
       //! Destroy object LinuxI2cDriver
       //!
-      ~LinuxI2cDriverComponentImpl(void);
+      ~LinuxI2cDriverComponentImpl();
 
     PRIVATE:
 
@@ -52,16 +52,16 @@ namespace Drv {
       //!
       I2cStatus write_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 addr, 
-          Fw::Buffer &serBuffer 
+          U32 addr,
+          Fw::Buffer &serBuffer
       );
 
       //! Handler implementation for read
       //!
       I2cStatus read_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 addr, 
-          Fw::Buffer &serBuffer 
+          U32 addr,
+          Fw::Buffer &serBuffer
       );
 
       //! Handler implementation for writeRead

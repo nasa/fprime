@@ -14,7 +14,7 @@ namespace Ref {
     ) :
       MathSenderComponentBase(compName)
 #else
-    MathSenderComponentImpl(void)
+    MathSenderComponentImpl()
 #endif
   {
 
@@ -30,7 +30,7 @@ namespace Ref {
   }
 
   MathSenderComponentImpl ::
-    ~MathSenderComponentImpl(void)
+    ~MathSenderComponentImpl()
   {
 
   }

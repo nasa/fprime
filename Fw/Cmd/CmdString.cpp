@@ -20,18 +20,18 @@ namespace Fw {
         this->copyBuff(src.m_buf,this->getCapacity());
     }
 
-    CmdStringArg::CmdStringArg(void) : StringBase() {
+    CmdStringArg::CmdStringArg() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    CmdStringArg::~CmdStringArg(void) {
+    CmdStringArg::~CmdStringArg() {
     }
 
-    NATIVE_UINT_TYPE CmdStringArg::length(void) const {
+    NATIVE_UINT_TYPE CmdStringArg::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* CmdStringArg::toChar(void) const {
+    const char* CmdStringArg::toChar() const {
         return this->m_buf;
     }
 
@@ -56,7 +56,7 @@ namespace Fw {
         return stat;
     }
 
-    NATIVE_UINT_TYPE CmdStringArg::getCapacity(void) const {
+    NATIVE_UINT_TYPE CmdStringArg::getCapacity() const {
         return FW_CMD_STRING_MAX_SIZE;
     }
 

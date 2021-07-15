@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathSenderImpl.cpp
 // \author tcanham
 // \brief  cpp file for MathSender component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Ref/MathSender/MathSenderComponentImpl.hpp>
@@ -17,7 +17,7 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   MathSenderComponentImpl ::
@@ -32,13 +32,13 @@ namespace Ref {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     MathSenderComponentBase::init(queueDepth, instance);
   }
 
   MathSenderComponentImpl ::
-    ~MathSenderComponentImpl(void)
+    ~MathSenderComponentImpl()
   {
 
   }
@@ -58,7 +58,7 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Command handler implementations 
+  // Command handler implementations
   // ----------------------------------------------------------------------
 
   void MathSenderComponentImpl ::

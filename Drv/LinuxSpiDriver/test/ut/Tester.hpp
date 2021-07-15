@@ -30,11 +30,11 @@ namespace Drv {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -54,11 +54,11 @@ namespace Drv {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
       void textLogIn(const FwEventIdType id, //!< The event ID
                 Fw::Time& timeTag, //!< The time

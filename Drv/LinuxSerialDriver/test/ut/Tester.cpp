@@ -62,7 +62,7 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
       // kill thread
       this->component.quitReadThread();
@@ -158,7 +158,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // serialSend
@@ -206,7 +206,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

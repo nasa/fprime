@@ -32,9 +32,9 @@ namespace Fw {
             virtual ~TlmBuffer();
             const TlmBuffer& operator=(const TlmBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         PRIVATE:
             U8 m_data[FW_TLM_BUFFER_MAX_SIZE]; // command argument buffer

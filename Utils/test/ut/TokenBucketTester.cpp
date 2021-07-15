@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TokenBucketTester.hpp
 // \author vwong
 // \brief  cpp file for TokenBucket test harness implementation class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include "TokenBucketTester.hpp"
 #include <time.h>
@@ -17,26 +17,26 @@
 namespace Utils {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   TokenBucketTester ::
-    TokenBucketTester(void)
+    TokenBucketTester()
   {
   }
 
   TokenBucketTester ::
-    ~TokenBucketTester(void) 
+    ~TokenBucketTester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void TokenBucketTester ::
-    testTriggering(void) 
+    testTriggering()
   {
     const U32 interval = 1000000;
     U32 testMaxTokens[] = {1, 5, 50, 832};
@@ -68,7 +68,7 @@ namespace Utils {
   }
 
   void TokenBucketTester ::
-    testReconfiguring(void) 
+    testReconfiguring()
   {
     U32 initialInterval = 1000000;
     U32 initialMaxTokens = 5;
@@ -111,7 +111,7 @@ namespace Utils {
   }
 
   void TokenBucketTester ::
-    testInitialSettings(void) 
+    testInitialSettings()
   {
     U32 interval = 1000000;
     U32 maxTokens = 5;
@@ -133,11 +133,11 @@ namespace Utils {
 
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void TokenBucketTester ::
-    initComponents(void) 
+    initComponents()
   {
   }
 

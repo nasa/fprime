@@ -30,13 +30,13 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Log file open error
-        void LogFileOpen(void);
+        void LogFileOpen();
 
         //! Log file write error
-        void LogFileWrite(void);
+        void LogFileWrite();
 
         //! Log file validation error
-        void LogFileValidation(void);
+        void LogFileValidation();
 
     };
 

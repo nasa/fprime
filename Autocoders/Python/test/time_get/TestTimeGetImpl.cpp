@@ -15,7 +15,7 @@ TimeGetTesterImpl::TimeGetTesterImpl(const char* name) : TimeGet::TimeGetTesterC
 TimeGetTesterImpl::~TimeGetTesterImpl() {
 }
 
-void TimeGetTesterImpl::init(void) {
+void TimeGetTesterImpl::init() {
     TimeGet::TimeGetTesterComponentBase::init();
 }
 

@@ -36,7 +36,7 @@ class StaticMemoryComponentImpl : public StaticMemoryComponentBase {
 
     //! Destroy object StaticMemory
     //!
-    ~StaticMemoryComponentImpl(void);
+    ~StaticMemoryComponentImpl();
 
   PRIVATE:
 

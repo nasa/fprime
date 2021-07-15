@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RandomlyBoundedScenario.hpp
 // \author bocchino
 // \brief  Run a scenario, applying a random bound on the number of steps
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RandomlyBoundedScenario_HPP
 #define STest_RandomlyBoundedScenario_HPP
@@ -25,7 +25,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RandomlyBoundedScenario
@@ -45,7 +45,7 @@ namespace STest {
       }
 
       //! Destroy object RandomlyBoundedScenario
-      virtual ~RandomlyBoundedScenario(void) {
+      virtual ~RandomlyBoundedScenario() {
         if (this->boundedScenario != NULL) {
           delete this->boundedScenario;
         }
@@ -58,13 +58,13 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
+      void reset_Scenario() {
         if (this->boundedScenario != NULL) {
           delete this->boundedScenario;
         }
         const U32 bound = Random::startLength(this->start, this->length);
         this->boundedScenario = new BoundedScenario<State>(
-            this->name, 
+            this->name,
             this->scenario,
             bound
         );
@@ -83,7 +83,7 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
+      bool isDone_Scenario() const {
         assert(this->boundedScenario != NULL);
         return this->boundedScenario->isDone();
       }
@@ -91,7 +91,7 @@ namespace STest {
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The scenario to run

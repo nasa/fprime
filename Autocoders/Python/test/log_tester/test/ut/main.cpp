@@ -11,9 +11,9 @@
 class ATester : public Log::LogTesterGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Log::LogTesterGTestBase("comp",10) {
+        ATester() : Log::LogTesterGTestBase("comp",10) {
 #else
-        ATester(void) : Log::LogTesterGTestBase(10)  {
+        ATester() : Log::LogTesterGTestBase(10)  {
 #endif
     }
 

@@ -92,7 +92,7 @@ status can be checked before calling via this function:
 A method in the base class can be called to get the number of ports
 available. The method has the following naming scheme:
 
-> NATIVE\_INT\_TYPE getNum\_\<port name\>\_\<direction\>Ports(void);
+> NATIVE\_INT\_TYPE getNum\_\<port name\>\_\<direction\>Ports();
 
 where
 

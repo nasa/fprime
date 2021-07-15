@@ -20,18 +20,18 @@ namespace Fw {
         this->copyBuff(src.m_buf,this->getCapacity());
     }
 
-    ParamString::ParamString(void) : StringBase()  {
+    ParamString::ParamString() : StringBase()  {
         this->m_buf[0] = 0;
     }
 
-    ParamString::~ParamString(void) {
+    ParamString::~ParamString() {
     }
 
-    NATIVE_UINT_TYPE ParamString::length(void) const {
+    NATIVE_UINT_TYPE ParamString::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* ParamString::toChar(void) const {
+    const char* ParamString::toChar() const {
         return this->m_buf;
     }
 
@@ -51,7 +51,7 @@ namespace Fw {
         return stat;
     }
 
-    NATIVE_UINT_TYPE ParamString::getCapacity(void) const {
+    NATIVE_UINT_TYPE ParamString::getCapacity() const {
         return FW_PARAM_STRING_MAX_SIZE;
     }
 

@@ -19,18 +19,18 @@ namespace ${n} {
         this->copyBuff(src.toChar(),this->getCapacity());
     }
 
-    ${argname}String::${argname}String(void): StringBase() {
+    ${argname}String::${argname}String(): StringBase() {
         this->m_buf[0] = 0;
     }
 
-    ${argname}String::~${argname}String(void) {
+    ${argname}String::~${argname}String() {
     }
 
-    NATIVE_UINT_TYPE ${argname}String::length(void) const {
+    NATIVE_UINT_TYPE ${argname}String::length() const {
         return (NATIVE_UINT_TYPE)strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* ${argname}String::toChar(void) const {
+    const char* ${argname}String::toChar() const {
         return this->m_buf;
     }
 
@@ -50,7 +50,7 @@ namespace ${n} {
         return stat;
     }
 
-    NATIVE_UINT_TYPE ${argname}String::getCapacity(void) const {
+    NATIVE_UINT_TYPE ${argname}String::getCapacity() const {
         return sizeof(this->m_buf);
     }
 
@@ -86,15 +86,15 @@ namespace ${n} {
         return other;
     }
 
-    NATIVE_UINT_TYPE ${argname}Buffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE ${argname}Buffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 
-    const U8* ${argname}Buffer::getBuffAddr(void) const {
+    const U8* ${argname}Buffer::getBuffAddr() const {
         return this->m_data;
     }
 
-    U8* ${argname}Buffer::getBuffAddr(void) {
+    U8* ${argname}Buffer::getBuffAddr() {
         return this->m_data;
     }
 
@@ -106,15 +106,15 @@ namespace ${n} {
         class ${name}PortBuffer : public Fw::SerializeBufferBase {
 
             public:
-                NATIVE_UINT_TYPE getBuffCapacity(void) const {
+                NATIVE_UINT_TYPE getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 

@@ -27,7 +27,7 @@ void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdTyp
     printf("ID: %d TLM value is %d. Time is %d:%d base: %d\n",id,tlmVal,timeTag.getSeconds(),timeTag.getUSeconds(),timeTag.getTimeBase());
 }
 
-void TestTelemRecvImpl::init(void) {
+void TestTelemRecvImpl::init() {
     Tlm::TelemTesterComponentBase::init();
 }
 

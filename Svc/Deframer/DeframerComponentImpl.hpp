@@ -50,7 +50,7 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
 
     //! Destroy object Deframer
     //!
-    ~DeframerComponentImpl(void);
+    ~DeframerComponentImpl();
 
     //! Setup the object
     //!

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SignalGen.hpp
 // \author mstarch
 // \brief  cpp file for SignalGen test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,11 +19,11 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
       SignalGenGTestBase("Tester", MAX_HISTORY_SIZE),
       component("SignalGen")
   {
@@ -32,17 +32,17 @@ namespace Ref {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    test_start(void) 
+    test_start()
   {
        ASSERT_TLM_Output_SIZE(0);
        sendCmd_SignalGen_Toggle(0, 0);
@@ -53,11 +53,11 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // cmdIn
@@ -74,37 +74,37 @@ namespace Ref {
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
-        0, 
+        0,
         this->get_from_timeCaller(0)
     );
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdRegOut(0)
     );
 
     // logTextOut
     this->component.set_logTextOut_OutputPort(
-        0, 
+        0,
         this->get_from_logTextOut(0)
     );
 
     // logOut
     this->component.set_logOut_OutputPort(
-        0, 
+        0,
         this->get_from_logOut(0)
     );
 
     // cmdResponseOut
     this->component.set_cmdResponseOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdResponseOut(0)
     );
 
     // tlmOut
     this->component.set_tlmOut_OutputPort(
-        0, 
+        0,
         this->get_from_tlmOut(0)
     );
 
@@ -114,7 +114,7 @@ namespace Ref {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

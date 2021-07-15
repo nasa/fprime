@@ -2,12 +2,12 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Drv {
-        
+
     DataBuffer::DataBuffer(const U8 *args, NATIVE_UINT_TYPE size) {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
-    
+
     DataBuffer::DataBuffer() {
     }
 
@@ -25,15 +25,15 @@ namespace Drv {
         return *this;
     }
 
-    NATIVE_UINT_TYPE DataBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE DataBuffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 
-    const U8* DataBuffer::getBuffAddr(void) const {
+    const U8* DataBuffer::getBuffAddr() const {
         return this->m_data;
     }
 
-    U8* DataBuffer::getBuffAddr(void) {
+    U8* DataBuffer::getBuffAddr() {
         return this->m_data;
     }
 

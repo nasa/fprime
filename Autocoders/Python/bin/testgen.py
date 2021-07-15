@@ -253,9 +253,7 @@ def generate_tests(opt, component_model):
                     override_dict[override_name] = len(test_cases)
                 elif "void " in line:
                     # Parse method name out of definition
-                    name = (
-                        line[line.index("void ") + 5 :].replace("(void);", "").strip()
-                    )
+                    name = line[line.index("void ") + 5 :].replace("();", "").strip()
                     test_cases.append(name)
 
         if len(test_cases) > 1:

@@ -60,7 +60,7 @@ namespace Os {
         Status stat = OP_OK;
         DIR* dir = reinterpret_cast<DIR*>(this->m_dir);
 
-        // no errors defined 
+        // no errors defined
         ::rewinddir(dir);
 
         return stat;
@@ -113,11 +113,11 @@ namespace Os {
         return stat;
     }
 
-    bool Directory::isOpen(void) {
+    bool Directory::isOpen() {
         return this->m_dir > 0;
     }
 
-    void Directory::close(void) {
+    void Directory::close() {
         if (this->isOpen()) {
             DIR* dir = reinterpret_cast<DIR*>(this->m_dir);
             (void)::closedir(dir);
@@ -125,11 +125,11 @@ namespace Os {
         this->m_dir = 0;
     }
 
-    NATIVE_INT_TYPE Directory::getLastError(void) {
+    NATIVE_INT_TYPE Directory::getLastError() {
         return this->m_lastError;
     }
 
-    const char* Directory::getLastErrorString(void) {
+    const char* Directory::getLastErrorString() {
         return strerror(this->m_lastError);
     }
 

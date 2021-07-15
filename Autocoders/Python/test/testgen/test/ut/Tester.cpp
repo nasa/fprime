@@ -11,7 +11,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       MathSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathSender")
@@ -25,7 +25,7 @@ namespace Ref {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -34,7 +34,7 @@ namespace Ref {
   // Tests
   // ----------------------------------------------------------------------
   void Tester ::
-    testAddCommand(void)
+    testAddCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
@@ -88,7 +88,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testSubCommand(void)
+    testSubCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::SUBTRACT);
@@ -142,7 +142,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testMultCommand(void)
+    testMultCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::MULTIPLY);
@@ -196,7 +196,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testDivCommand(void)
+    testDivCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::DIVIDE);
@@ -249,7 +249,7 @@ namespace Ref {
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
   void Tester ::
-    toDo(void)
+    toDo()
   {
     // TODO
   }
@@ -274,7 +274,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // mathIn
@@ -333,7 +333,7 @@ namespace Ref {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

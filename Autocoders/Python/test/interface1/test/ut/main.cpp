@@ -9,9 +9,9 @@
 class ATester : public Cmd::TestGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Cmd::TestGTestBase("comp",10) {
+        ATester() : Cmd::TestGTestBase("comp",10) {
 #else
-        ATester(void) : Cmd::TestGTestBase(10)  {
+        ATester() : Cmd::TestGTestBase(10)  {
 #endif
     }
 };

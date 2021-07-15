@@ -46,7 +46,7 @@ namespace Ref {
 
       //! Destroy object MathSender
       //!
-      ~MathSenderComponentImpl(void);
+      ~MathSenderComponentImpl();
 
     PRIVATE:
 

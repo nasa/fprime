@@ -78,11 +78,11 @@ namespace Fw {
             virtual void printAssert(const I8* msg);
             // do assert action. By default, calls assert.
             // Called after reportAssert()
-            virtual void doAssert(void);
+            virtual void doAssert();
             // register the hook
-            void registerHook(void);
+            void registerHook();
             // deregister the hook
-            void deregisterHook(void);
+            void deregisterHook();
 
         protected:
         private:

@@ -54,7 +54,7 @@ namespace Drv {
 
             //! Destroy object LinuxSpiDriver
             //!
-            ~LinuxSpiDriverComponentImpl(void);
+            ~LinuxSpiDriverComponentImpl();
 
             //! Open device
             bool open(NATIVE_INT_TYPE device,

@@ -20,7 +20,7 @@ LogTextImpl::LogTextImpl() :
 LogTextImpl::~LogTextImpl() {
 }
 
-void LogTextImpl::init(void) {
+void LogTextImpl::init() {
     Log::LogTesterComponentBase::init();
 }
 

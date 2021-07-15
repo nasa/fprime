@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Hash.hpp
 // \author dinkel
 // \brief  hpp file for Hash class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef UTILS_HASH_BUFFER_HPP
 #define UTILS_HASH_BUFFER_HPP
@@ -19,14 +19,14 @@
 #include <Utils/Hash/HashConfig.hpp>
 
 namespace Utils {
-  
+
     //! \class HashBuffer
     //! \brief An container class for holding a hash buffer
     //!
     class HashBuffer : public Fw::SerializeBufferBase {
         public:
             // ----------------------------------------------------------------------
-            // Construction and destruction 
+            // Construction and destruction
             // ----------------------------------------------------------------------
 
             //! Construct a HashBuffer object
@@ -39,9 +39,9 @@ namespace Utils {
             //!
             virtual ~HashBuffer();
 
-            // ---------------------------------------------------------------------- 
+            // ----------------------------------------------------------------------
             // Public instance methods
-            // ---------------------------------------------------------------------- 
+            // ----------------------------------------------------------------------
 
             //! Assign a hash buffer from another hash buffer
             //!
@@ -57,18 +57,18 @@ namespace Utils {
 
             //! Get the total buffer length of a hash buffer
             //!
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
 
             //! Get a pointer to the buffer within the hash buffer
             //!
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         private:
             // ----------------------------------------------------------------------
-            // Private member variables 
+            // Private member variables
             // ----------------------------------------------------------------------
-            
+
             //! The buffer which stores the hash digest
             //!
             U8 m_data[HASH_DIGEST_LENGTH]; // packet data buffer

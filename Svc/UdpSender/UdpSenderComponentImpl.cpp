@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpSenderImpl.cpp
 // \author tcanham
 // \brief  cpp file for UdpSender component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/UdpSender/UdpSenderComponentImpl.hpp>
@@ -25,7 +25,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   UdpSenderComponentImpl ::
@@ -45,13 +45,13 @@ namespace Svc {
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE msgSize,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     UdpSenderComponentBase::init(queueDepth, msgSize, instance);
   }
 
   UdpSenderComponentImpl ::
-    ~UdpSenderComponentImpl(void)
+    ~UdpSenderComponentImpl()
   {
       if (this->m_fd != -1) {
           close(this->m_fd);

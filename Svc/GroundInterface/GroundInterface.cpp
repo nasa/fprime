@@ -1,8 +1,8 @@
-// ====================================================================== 
+// ======================================================================
 // \title  GroundInterface.cpp
 // \author lestarch
 // \brief  cpp file for GroundInterface component implementation class
-// ====================================================================== 
+// ======================================================================
 
 #include <Fw/Com/ComPacket.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
@@ -16,7 +16,7 @@ namespace Svc {
   const U32 GroundInterfaceComponentImpl::END_WORD = static_cast<U32>(0xcafecafe);
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   GroundInterfaceComponentImpl ::
@@ -33,13 +33,13 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     GroundInterfaceComponentBase::init(instance);
   }
 
   GroundInterfaceComponentImpl ::
-    ~GroundInterfaceComponentImpl(void)
+    ~GroundInterfaceComponentImpl()
   {
 
   }

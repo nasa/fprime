@@ -11,7 +11,7 @@ namespace Duck {
 
         }
 
-        DuckImpl::~DuckImpl(void) {
+        DuckImpl::~DuckImpl() {
 
         }
 

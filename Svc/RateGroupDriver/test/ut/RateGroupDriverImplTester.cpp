@@ -25,7 +25,7 @@ namespace Svc {
         this->clearPortCalls();
     }
 
-    void RateGroupDriverImplTester::clearPortCalls(void) {
+    void RateGroupDriverImplTester::clearPortCalls() {
         memset(this->m_portCalls,0,sizeof(this->m_portCalls));
     }
 

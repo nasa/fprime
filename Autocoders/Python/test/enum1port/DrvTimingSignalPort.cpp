@@ -12,15 +12,15 @@ namespace Drv {
         class TimingSignalPortBuffer : public Fw::SerializeBufferBase {
 
             public:
-                NATIVE_INT_TYPE getBuffCapacity(void) const {
+                NATIVE_INT_TYPE getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -32,11 +32,11 @@ namespace Drv {
 
     }
 
-    InputTimingSignalPort::InputTimingSignalPort(void) :
+    InputTimingSignalPort::InputTimingSignalPort() :
             m_func(0) {
     }
 
-    void InputTimingSignalPort::init(void) {
+    void InputTimingSignalPort::init() {
         Fw::InputPortBase::init();
     }
 
@@ -81,11 +81,11 @@ namespace Drv {
     }
 #endif
 
-    OutputTimingSignalPort::OutputTimingSignalPort(void) :
+    OutputTimingSignalPort::OutputTimingSignalPort() :
             m_port(0) {
     }
 
-    void OutputTimingSignalPort::init(void) {
+    void OutputTimingSignalPort::init() {
         Fw::OutputPortBase::init();
     }
 

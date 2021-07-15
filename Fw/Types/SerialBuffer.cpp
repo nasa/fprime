@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SerialBuffer.cpp
 // \author bocchino
 // \brief  cpp file for SerialBuffer type
@@ -7,8 +7,8 @@
 // Copyright (C) 2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -19,33 +19,33 @@ namespace Fw {
     SerialBuffer(
         U8 *const data,
         const U32 capacity
-    ) : 
+    ) :
       data(data),
       capacity(capacity)
   {
-  
+
   }
 
   NATIVE_UINT_TYPE SerialBuffer ::
-    getBuffCapacity(void) const
+    getBuffCapacity() const
   {
     return capacity;
   }
 
-  U8* SerialBuffer :: 
-    getBuffAddr(void)
+  U8* SerialBuffer ::
+    getBuffAddr()
   {
     return data;
   }
 
   const U8* SerialBuffer ::
-    getBuffAddr(void) const 
+    getBuffAddr() const
   {
     return data;
   }
 
   void SerialBuffer ::
-    fill(void)
+    fill()
   {
     const SerializeStatus status = this->setBuffLen(this->capacity);
     FW_ASSERT(status == FW_SERIALIZE_OK);

@@ -10,7 +10,7 @@ namespace App2 {
 
         // Only called by derived class
         VoidArgImpl(const char* compName);
-        ~VoidArgImpl(void);
+        ~VoidArgImpl();
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:

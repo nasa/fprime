@@ -886,9 +886,9 @@ class Formatters:
         if len(args) == 0:
 
             if proto == True:
-                function_str = name.strip() + "(void);"
+                function_str = name.strip() + "();"
             else:
-                function_str = name.strip() + "(void) {"
+                function_str = name.strip() + "() {"
 
             return function_str
 

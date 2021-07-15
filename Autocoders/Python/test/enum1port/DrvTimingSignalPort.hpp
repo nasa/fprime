@@ -16,8 +16,8 @@ namespace Drv {
       public:
         typedef void (*CompFuncPtr)(Fw::ComponentBase* callComp, NATIVE_INT_TYPE portNum, TimingSignal signal);
 
-        InputTimingSignalPort(void);
-        void init(void);
+        InputTimingSignalPort();
+        void init();
         void addCallComp(Fw::ComponentBase* callComp, CompFuncPtr funcPtr);
         void invoke(TimingSignal signal);
       protected:
@@ -30,8 +30,8 @@ namespace Drv {
 
     class OutputTimingSignalPort : public Fw::OutputPortBase {
       public:
-        OutputTimingSignalPort(void);
-        void init(void);
+        OutputTimingSignalPort();
+        void init();
         void addCallPort(Drv::InputTimingSignalPort* callPort);
         void invoke(TimingSignal signal);
       protected:

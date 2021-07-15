@@ -33,10 +33,10 @@ class ${name} : public Fw::Serializable {
             ${memname}String(const char* src); //!< char array constructor
             ${memname}String(const Fw::StringBase& src); //!< string base constructor
             ${memname}String(const ${memname}String& src); //!< string base constructor
-            ${memname}String(void); //!< default constructor
-            virtual ~${memname}String(void); //!< destructor
-            const char* toChar(void) const; //!< retrieves char buffer of string
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of string
+            ${memname}String(); //!< default constructor
+            virtual ~${memname}String(); //!< destructor
+            const char* toChar() const; //!< retrieves char buffer of string
+            NATIVE_UINT_TYPE length() const; //!< returns length of string
             bool operator==(const ${memname}String& src) const; //!< equality operator
 
             const ${memname}String& operator=(const ${memname}String& other); //!< equal operator for other strings
@@ -45,7 +45,7 @@ class ${name} : public Fw::Serializable {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
 
         private:
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            NATIVE_UINT_TYPE getCapacity() const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[${size}]; //!< buffer for string storage

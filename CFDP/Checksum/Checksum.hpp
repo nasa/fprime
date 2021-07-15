@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CFDP/Checksum/Checksum.hpp
 // \author bocchino
 // \brief  hpp file for CFDP checksum class
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef CFDP_Checksum_HPP
 #define CFDP_Checksum_HPP
@@ -18,20 +18,20 @@
 namespace CFDP {
 
   //! \class Checksum
-  //! \brief Class representing a CFDP checksum 
+  //! \brief Class representing a CFDP checksum
   //!
   class Checksum {
 
     public:
 
       // ----------------------------------------------------------------------
-      // Types 
+      // Types
       // ----------------------------------------------------------------------
 
     public:
 
       // ----------------------------------------------------------------------
-      // Construction and destruction 
+      // Construction and destruction
       // ----------------------------------------------------------------------
 
       //! Construct a fresh Checksum object
@@ -48,9 +48,9 @@ namespace CFDP {
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Public instance methods
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Assign checksum to this
       const Checksum& operator=(const Checksum& checksum);
@@ -69,12 +69,12 @@ namespace CFDP {
       );
 
       //! Get the checksum value
-      U32 getValue(void) const;
+      U32 getValue() const;
 
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private instance methods 
+      // Private instance methods
       // ----------------------------------------------------------------------
 
       //! Add a four-byte aligned word to the checksum value
@@ -98,7 +98,7 @@ namespace CFDP {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The accumulated checksum value

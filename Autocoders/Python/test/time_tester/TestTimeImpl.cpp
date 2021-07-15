@@ -27,7 +27,7 @@ void TestTimeImpl::timeGetPort_handler(
     time = this->m_time;
 }
 
-void TestTimeImpl::init(void) {
+void TestTimeImpl::init() {
     Time::TimeTesterComponentBase::init();
 }
 

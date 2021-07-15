@@ -51,7 +51,7 @@ namespace Svc {
         this->m_fatalID = Id;
     }
 
-    void ActiveLoggerImplTester::runEventNominal(void) {
+    void ActiveLoggerImplTester::runEventNominal() {
         REQUIREMENT("AL-001");
 
         this->writeEvent(29,Fw::LogSeverity::WARNING_HI,10);
@@ -161,7 +161,7 @@ namespace Svc {
         ASSERT_FALSE(this->m_receivedPacket);
     }
 
-    void ActiveLoggerImplTester::runFilterInvalidCommands(void) {
+    void ActiveLoggerImplTester::runFilterInvalidCommands() {
 
         U32 cmdSeq = 21;
         this->clearHistory();
@@ -214,7 +214,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerImplTester::runFilterEventNominal(void) {
+    void ActiveLoggerImplTester::runFilterEventNominal() {
 
         for (Fw::LogSeverity::t sev = Fw::LogSeverity::WARNING_HI; sev <= Fw::LogSeverity::DIAGNOSTIC; sev = (Fw::LogSeverity::t)((NATIVE_INT_TYPE)sev + 1)) {
             this->runWithFilters(sev);
@@ -222,7 +222,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerImplTester::runFilterIdNominal(void) {
+    void ActiveLoggerImplTester::runFilterIdNominal() {
 
         U32 cmdSeq = 21;
 
@@ -380,7 +380,7 @@ namespace Svc {
 
     }
 
-    void ActiveLoggerImplTester::runFilterDump(void) {
+    void ActiveLoggerImplTester::runFilterDump() {
         U32 cmdSeq = 21;
         // set random set of filters
 
@@ -427,7 +427,7 @@ namespace Svc {
         ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,FilterSeverity::DIAGNOSTIC,true);
     }
 
-    void ActiveLoggerImplTester::runEventFatal(void) {
+    void ActiveLoggerImplTester::runEventFatal() {
         Fw::LogBuffer buff;
         U32 val = 10;
         FwEventIdType id = 29;

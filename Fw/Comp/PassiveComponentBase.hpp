@@ -15,13 +15,13 @@ namespace Fw {
             );
             //! Get the ID base
             //! \return The ID base
-            U32 getIdBase(void) const;
-            
+            U32 getIdBase() const;
+
         PROTECTED:
             PassiveComponentBase(const char* name); //!< Named constructor
             virtual ~PassiveComponentBase(); //!< Destructor
             void init(NATIVE_INT_TYPE instance); //!< Initialization function
-            NATIVE_INT_TYPE getInstance(void) const;
+            NATIVE_INT_TYPE getInstance() const;
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size); //!< returns string description of component
 #endif

@@ -35,8 +35,8 @@
 // Main app
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
 
-void constructRPIArchitecture(void);
-void exitTasks(void);
+void constructRPIArchitecture();
+void exitTasks();
 void constructApp(U32 port_number, char* hostname);
 
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;

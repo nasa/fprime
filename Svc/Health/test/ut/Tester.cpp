@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health.hpp
 // \author jdperez
 // \brief  cpp file for Health test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 #include <Fw/Test/UnitTest.hpp>
@@ -23,11 +23,11 @@ FW_STATIC_ASSERT(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS < 0xcafecaf
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
       HealthGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Health")
   {
@@ -36,9 +36,9 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
@@ -76,11 +76,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // PingReturn
@@ -113,50 +113,50 @@ namespace Svc {
 
     // WdogStroke
     this->component.set_WdogStroke_OutputPort(
-        0, 
+        0,
         this->get_from_WdogStroke(0)
     );
 
     // CmdStatus
     this->component.set_CmdStatus_OutputPort(
-        0, 
+        0,
         this->get_from_CmdStatus(0)
     );
 
     // CmdReg
     this->component.set_CmdReg_OutputPort(
-        0, 
+        0,
         this->get_from_CmdReg(0)
     );
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
 
@@ -184,7 +184,7 @@ namespace Svc {
   }
 
   void Tester ::
-  	  dispatchAll(void)
+  	  dispatchAll()
   {
 	  HealthComponentBase::MsgDispatchStatus stat = HealthComponentBase::MSG_DISPATCH_OK;
       while (HealthComponentBase::MSG_DISPATCH_OK == stat) {
@@ -198,7 +198,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-  nominalTlm(void)
+  nominalTlm()
   {
 	  TEST_CASE(900.1.1,"Nominal Telemetry");
 	  REQUIREMENT("ISF-HTH-001");
@@ -234,7 +234,7 @@ namespace Svc {
   }
 
   void Tester ::
-  warningTlm(void)
+  warningTlm()
   {
       TEST_CASE(900.1.2,"Warning Telemetry");
       REQUIREMENT("ISF-HTH-002");
@@ -268,7 +268,7 @@ namespace Svc {
 
 
   void Tester ::
-  faultTlm(void)
+  faultTlm()
   {
       TEST_CASE(900.1.3,"Fault Telemetry");
       REQUIREMENT("ISF-HTH-003");
@@ -323,7 +323,7 @@ namespace Svc {
   }
 
   void Tester ::
-  disableAllMonitoring(void)
+  disableAllMonitoring()
   {
       TEST_CASE(900.1.4,"Enable/Disable all monitoring");
       REQUIREMENT("ISF-HTH-004");
@@ -413,7 +413,7 @@ namespace Svc {
   }
 
   void Tester ::
-  disableOneMonitoring(void)
+  disableOneMonitoring()
   {
       TEST_CASE(900.1.5,"Enable/Disable individual monitors");
       REQUIREMENT("ISF-HTH-005");
@@ -477,7 +477,7 @@ namespace Svc {
   }
 
   void Tester ::
-  updatePingTimeout(void)
+  updatePingTimeout()
   {
       TEST_CASE(900.1.6,"Update ping timeouts");
       REQUIREMENT("ISF-HTH-006");
@@ -515,7 +515,7 @@ namespace Svc {
   }
 
   void Tester ::
-  watchdogCheck(void)
+  watchdogCheck()
   {
       TEST_CASE(900.1.7,"Watchdog check");
       REQUIREMENT("ISF-HTH-007");
@@ -537,7 +537,7 @@ namespace Svc {
   }
 
   void Tester ::
-  nominalCmd(void)
+  nominalCmd()
   {
 	  TEST_CASE(900.1.8,"Nominal Command");
 	  COMMENT("Process command during quiescent (no telemetry readout) period.");
@@ -587,7 +587,7 @@ namespace Svc {
 
 
   void Tester ::
-  nominal2CmdsDuringTlm(void)
+  nominal2CmdsDuringTlm()
   {
 	  TEST_CASE(900.1.9,"Nominal 2 commands called during telemetry readouts.");
 	  COMMENT("Process commands during busy (telemetry readout) period.");
@@ -634,7 +634,7 @@ namespace Svc {
 
 
   void Tester ::
-  miscellaneous(void)
+  miscellaneous()
   {
       TEST_CASE(900.1.10,"Miscellaneous remaining tests.");
       COMMENT("Case 1: Ping port anomalies.");

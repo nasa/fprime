@@ -29,7 +29,7 @@ void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
 }
 
-DeframerComponentImpl ::~DeframerComponentImpl(void) {}
+DeframerComponentImpl ::~DeframerComponentImpl() {}
 
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
     FW_ASSERT(m_protocol == NULL);

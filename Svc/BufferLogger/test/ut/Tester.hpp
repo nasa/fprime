@@ -42,7 +42,7 @@ namespace Svc {
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
       // ----------------------------------------------------------------------
       // Tests (rest are in Errors, Health, and Logging classes)
@@ -51,7 +51,7 @@ namespace Svc {
     public:
 
       //! No-one called initLog
-      void LogNoInit(void);
+      void LogNoInit();
 
     private:
 
@@ -80,10 +80,10 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Dispatch one message on the queue
-      void dispatchOne(void);
+      void dispatchOne();
 
       //! Dispatch all messages on the queue
-      void dispatchAll(void);
+      void dispatchAll();
 
       //! Generate a test time
       Fw::Time generateTestTime(
@@ -135,11 +135,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     protected:
 

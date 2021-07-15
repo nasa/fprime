@@ -20,18 +20,18 @@ namespace Test {
         this->copyBuff(src.m_buf, sizeof(this->m_buf));
     }
 
-    String::String(void) : StringBase() {
+    String::String() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    String::~String(void) {
+    String::~String() {
     }
 
-    NATIVE_UINT_TYPE String::length(void) const {
+    NATIVE_UINT_TYPE String::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* String::toChar(void) const {
+    const char* String::toChar() const {
         return this->m_buf;
     }
 
@@ -56,7 +56,7 @@ namespace Test {
         return stat;
     }
 
-    NATIVE_UINT_TYPE String::getCapacity(void) const {
+    NATIVE_UINT_TYPE String::getCapacity() const {
         return STRING_SIZE;
     }
 

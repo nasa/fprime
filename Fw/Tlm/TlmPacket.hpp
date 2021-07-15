@@ -28,9 +28,9 @@ namespace Fw {
             void setTlmBuffer(TlmBuffer& buffer);
             void setTimeTag(Time& timeTag);
             // getters
-            FwChanIdType getId(void);
-            Time& getTimeTag(void);
-            TlmBuffer& getTlmBuffer(void);
+            FwChanIdType getId();
+            Time& getTimeTag();
+            TlmBuffer& getTlmBuffer();
 
         PROTECTED:
             FwChanIdType m_id; // !< Channel id

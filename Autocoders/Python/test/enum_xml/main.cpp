@@ -21,7 +21,7 @@ using namespace std;
 Example::ExampleEnumImpl* inst1 = 0;
 Example::ExampleEnumImpl* inst2 = 0;
 
-void constructArchitecture(void) {
+void constructArchitecture() {
 
     // Instantiate the inst1 and inst2
     inst1   = new Example::ExampleEnumImpl("inst1");

@@ -32,7 +32,7 @@ namespace Drv {
         // TODO
     }
 
-    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl(void) {
+    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
 
     }
 

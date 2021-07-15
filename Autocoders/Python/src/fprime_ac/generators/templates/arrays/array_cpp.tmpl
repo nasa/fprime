@@ -45,22 +45,22 @@ namespace ${namespace} {
         this->copyBuff(src.toChar(),this->getCapacity());
     }
 
-    ${name}::${name}String::${name}String(void): StringBase() {
+    ${name}::${name}String::${name}String(): StringBase() {
         this->m_buf[0] = 0;
     }
 
-    ${name}::${name}String::~${name}String(void) {
+    ${name}::${name}String::~${name}String() {
     }
 
     bool ${name}::${name}String::operator==(const ${name}String& src) const {
         return (0 == strncmp(this->m_buf,src.m_buf,sizeof(this->m_buf)));
     }
 
-    NATIVE_UINT_TYPE ${name}::${name}String::length(void) const {
+    NATIVE_UINT_TYPE ${name}::${name}String::length() const {
         return (NATIVE_UINT_TYPE)strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* ${name}::${name}String::toChar(void) const {
+    const char* ${name}::${name}String::toChar() const {
         return this->m_buf;
     }
 
@@ -80,7 +80,7 @@ namespace ${namespace} {
         return stat;
     }
 
-    NATIVE_UINT_TYPE ${name}::${name}String::getCapacity(void) const {
+    NATIVE_UINT_TYPE ${name}::${name}String::getCapacity() const {
         return sizeof(this->m_buf);
     }
 
@@ -101,7 +101,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   ${name} ::
-    ${name}(void) :
+    ${name}() :
       Serializable()
   {
     *this = ${name}(

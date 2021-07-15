@@ -36,7 +36,7 @@ void TestLogRecvImpl::logRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType
 
 }
 
-void TestLogRecvImpl::init(void) {
+void TestLogRecvImpl::init() {
     LogTextImpl::init();
 }
 

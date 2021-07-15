@@ -61,7 +61,7 @@ namespace Svc {
         }
     }
 
-    HealthImpl::~HealthImpl(void) {
+    HealthImpl::~HealthImpl() {
 
     }
 

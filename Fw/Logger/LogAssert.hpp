@@ -30,7 +30,7 @@ namespace Fw {
                 AssertArg arg6
             );
             void printAssert(const I8* msg);
-            void doAssert(void);
+            void doAssert();
     };
 
 }

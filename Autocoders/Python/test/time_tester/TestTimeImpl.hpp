@@ -18,7 +18,7 @@ class TestTimeImpl: public Time::TimeTesterComponentBase {
         TestTimeImpl();
 #endif
         virtual ~TestTimeImpl();
-        void init(void);
+        void init();
         void setTime(Fw::Time time);
     protected:
         void timeGetPort_handler(

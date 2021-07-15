@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileUplink/test/ut/Tester.hpp
 // \author bocchino
 // \brief  hpp file for FileUplink test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -32,61 +32,61 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Send a file
       //!
-      void sendFile(void);
+      void sendFile();
 
       //! Send a file with a bad checksum value
       //!
-      void badChecksum(void);
+      void badChecksum();
 
       //! Cause a file open error
       //!
-      void fileOpenError(void);
+      void fileOpenError();
 
       //! Cause a file write error
       //!
-      void fileWriteError(void);
+      void fileWriteError();
 
       //! Send a START packet in DATA mode
       //!
-      void startPacketInDataMode(void);
+      void startPacketInDataMode();
 
       //! Send a DATA packet in START mode
       //!
-      void dataPacketInStartMode(void);
+      void dataPacketInStartMode();
 
       //! Send an END packet in START mode
       //!
-      void endPacketInStartMode(void);
+      void endPacketInStartMode();
 
       //! Send a file with an out-of-bounds packet
       //!
-      void packetOutOfBounds(void);
+      void packetOutOfBounds();
 
       //! Send a file with an out-of-order packet
       //!
-      void packetOutOfOrder(void);
+      void packetOutOfOrder();
 
       //! Send a CANCEL packet in START mode
       //!
-      void cancelPacketInStartMode(void);
+      void cancelPacketInStartMode();
 
       //! Send a CANCEL packet in DATA mode
       //!
-      void cancelPacketInDataMode(void);
+      void cancelPacketInDataMode();
 
     private:
 
@@ -118,11 +118,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
       //! Send a FilePacket
       //!
@@ -149,7 +149,7 @@ namespace Svc {
 
       //! Send a CancelPacket
       //!
-      void sendCancelPacket(void);
+      void sendCancelPacket();
 
       //! Verify file data
       //!

@@ -10,7 +10,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   ComSplitter ::
@@ -21,7 +21,7 @@ namespace Svc {
   }
 
   ComSplitter ::
-    ~ComSplitter(void)
+    ~ComSplitter()
   {
 
   }

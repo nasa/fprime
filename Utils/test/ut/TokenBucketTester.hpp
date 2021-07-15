@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Util/test/ut/TokenBucketTester.hpp
 // \author vwong
 // \brief  hpp file for TokenBucket test harness implementation class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef TOKENBUCKETTESTER_HPP
 #define TOKENBUCKETTESTER_HPP
@@ -31,21 +31,21 @@ namespace Utils {
 
       //! Construct object TokenBucketTester
       //!
-      TokenBucketTester(void);
+      TokenBucketTester();
 
       //! Destroy object TokenBucketTester
       //!
-      ~TokenBucketTester(void);
+      ~TokenBucketTester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
-      void testTriggering(void);
-      void testReconfiguring(void);
-      void testInitialSettings(void);
+      void testTriggering();
+      void testReconfiguring();
+      void testInitialSettings();
 
     private:
 
@@ -55,7 +55,7 @@ namespace Utils {
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

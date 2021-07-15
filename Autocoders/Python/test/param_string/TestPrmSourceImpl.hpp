@@ -19,7 +19,7 @@ class TestParamSourceImpl: public Prm::ParamTesterComponentBase {
         TestParamSourceImpl();
 #endif
         virtual ~TestParamSourceImpl();
-        void init(void);
+        void init();
         void setPrm(Fw::ParamString& val);
     protected:
         Fw::ParamValid paramGetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val);

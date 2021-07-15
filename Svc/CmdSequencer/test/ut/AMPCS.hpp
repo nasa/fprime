@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AMPCS.hpp
 // \author Rob bocchino
 // \brief  AMPCS-specific tests
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_AMPCS_HPP
 #define Svc_AMPCS_HPP
@@ -31,19 +31,19 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Construct object Tester
-        Tester(void);
+        Tester();
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Tests
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Missing CRC
-        void MissingCRC(void);
+        void MissingCRC();
 
         //! Missing file
-        void MissingFile(void);
+        void MissingFile();
 
     };
 

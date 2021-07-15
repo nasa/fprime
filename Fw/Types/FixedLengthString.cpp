@@ -20,18 +20,18 @@ namespace Fw {
         this->copyBuff(src.m_buf, sizeof(this->m_buf));
     }
 
-    FixedLengthString::FixedLengthString(void) : StringBase() {
+    FixedLengthString::FixedLengthString() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    FixedLengthString::~FixedLengthString(void) {
+    FixedLengthString::~FixedLengthString() {
     }
 
-    NATIVE_UINT_TYPE FixedLengthString::length(void) const {
+    NATIVE_UINT_TYPE FixedLengthString::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* FixedLengthString::toChar(void) const {
+    const char* FixedLengthString::toChar() const {
         return this->m_buf;
     }
 
@@ -56,7 +56,7 @@ namespace Fw {
         return stat;
     }
 
-    NATIVE_UINT_TYPE FixedLengthString::getCapacity(void) const {
+    NATIVE_UINT_TYPE FixedLengthString::getCapacity() const {
         return STRING_SIZE;
     }
 

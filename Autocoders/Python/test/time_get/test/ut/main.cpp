@@ -6,7 +6,7 @@
 // Here we test to ensure test harness generates correctly
 class ATester : public TimeGet::TimeGetTesterGTestBase {
     public:
-        ATester(void) : TimeGet::TimeGetTesterGTestBase("comp",10) {}
+        ATester() : TimeGet::TimeGetTesterGTestBase("comp",10) {}
 };
 
 int main(int argc, char* argv[]) {

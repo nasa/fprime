@@ -1,7 +1,7 @@
 ##
 ## Template to stamp out serializable enums .cpp file
 ##
-// ====================================================================== 
+// ======================================================================
 // \title  ${name}
 // \author Auto-generated
 // \brief  cpp file for ${name}
@@ -11,7 +11,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
@@ -33,7 +33,7 @@ namespace ${namespace} {
   // Constructors
   // ----------------------------------------------------------------------
 
-  ${name} :: ${name}(void):Serializable()
+  ${name} :: ${name}():Serializable()
   {
 #if $default
     this->e = (t) ${default};
@@ -41,27 +41,27 @@ namespace ${namespace} {
     this->e = (t) 0;
 #end if
   }
-  
+
   ${name} :: ${name}(const t e):Serializable()
   {
     this->e = e;
   }
-  
+
   ${name} :: ${name}(const ${name}& other):Serializable()
   {
     this->e = other.e;
   }
-  
+
   // ----------------------------------------------------------------------
   // Instance methods
   // ----------------------------------------------------------------------
-  
+
   const ${name}& ${name} :: operator=(const ${name}& other)
   {
     this->e = other.e;
     return *this;
   }
-  
+
   const ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
@@ -89,7 +89,7 @@ a == $item_value#slurp
     this->e = static_cast<t>(a);
     return *this;
   }
-  
+
   const ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
@@ -119,17 +119,17 @@ a == $item_value#slurp
     this->e = static_cast<t>(a);
     return *this;
   }
-  
+
   bool ${name} :: operator==(const ${name}& other) const
   {
     return this->e == other.e;
   }
-  
+
   bool ${name} :: operator!=(const ${name}& other) const
   {
     return !(*this == other);
   }
-  
+
 \#ifdef BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
     os << "${name}::";
@@ -148,14 +148,14 @@ a == $item_value#slurp
     return os;
   }
 \#endif
-  
+
   Fw::SerializeStatus ${name} :: serialize(Fw::SerializeBufferBase& buffer) const
   {
     Fw::SerializeStatus status;
     status = buffer.serialize(static_cast<FwEnumStoreType>(this->e));
     return status;
   }
-  
+
   Fw::SerializeStatus ${name} :: deserialize(Fw::SerializeBufferBase& buffer)
   {
     Fw::SerializeStatus status;

@@ -11,7 +11,7 @@ namespace App2 {
 
         }
 
-        VoidArgImpl::~VoidArgImpl(void) {
+        VoidArgImpl::~VoidArgImpl() {
 
         }
 

@@ -38,7 +38,7 @@ namespace ExampleComponents {
   }
 
   ExampleComponentImpl ::
-    ~ExampleComponentImpl(void)
+    ~ExampleComponentImpl()
   {
 
   }

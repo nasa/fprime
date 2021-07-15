@@ -22,7 +22,7 @@ TestCommand1Impl::~TestCommand1Impl() {
     // TODO Auto-generated destructor stub
 }
 
-void TestCommand1Impl::init(void) {
+void TestCommand1Impl::init() {
     Test1ComponentBase::init();
 }
 

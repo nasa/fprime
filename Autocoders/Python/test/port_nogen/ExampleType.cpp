@@ -5,7 +5,7 @@
 #endif
 namespace ANameSpace {
 
-mytype::mytype(void): Serializable() {
+mytype::mytype(): Serializable() {
 
 }
 
@@ -31,7 +31,7 @@ bool mytype::operator==(const mytype& src) const {
     return (this->m_val == src.m_val);
 }
 
-U32 mytype::getVal(void) {
+U32 mytype::getVal() {
     return this->m_val;
 }
 

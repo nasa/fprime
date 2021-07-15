@@ -95,7 +95,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isOpened(void) {
+bool IpSocket::isOpened() {
     bool is_open = false;
     m_lock.lock();
     is_open = m_open;
@@ -103,7 +103,7 @@ bool IpSocket::isOpened(void) {
     return is_open;
 }
 
-void IpSocket::close(void) {
+void IpSocket::close() {
     m_lock.lock();
     if (this->m_fd != -1) {
         (void)::shutdown(this->m_fd, SHUT_RDWR);
@@ -114,7 +114,7 @@ void IpSocket::close(void) {
     m_lock.unLock();
 }
 
-SocketIpStatus IpSocket::open(void) {
+SocketIpStatus IpSocket::open() {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket

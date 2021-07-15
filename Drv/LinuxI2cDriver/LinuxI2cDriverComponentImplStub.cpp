@@ -40,7 +40,7 @@ namespace Drv {
   }
 
   LinuxI2cDriverComponentImpl ::
-    ~LinuxI2cDriverComponentImpl(void)
+    ~LinuxI2cDriverComponentImpl()
   {
 
   }
