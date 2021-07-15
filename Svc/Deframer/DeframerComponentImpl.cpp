@@ -117,6 +117,7 @@ void DeframerComponentImpl ::processRing() {
         // Successful deframing consumes messages
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
             m_in_ring.rotate(needed);
+            needed = 0; // Must reset needed after a successful deframe
         }
         // Error statuses  reset needed and rotate away 1 byte
         else if (status != DeframingProtocol::DEFRAMING_MORE_NEEDED) {
