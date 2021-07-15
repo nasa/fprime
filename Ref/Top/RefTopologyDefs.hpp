@@ -15,7 +15,7 @@ namespace Ref {
 
     // Malloc allocator for topology construction
     extern Fw::MallocAllocator mallocator;
-    
+
   }
 
   // State for topology construction
