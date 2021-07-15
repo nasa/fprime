@@ -3,5 +3,4 @@
 . ./defs.sh
 
 redo-ifchange xml cpp
-update xml/*.xml
-# Don't update cpp for now
+update cpp/*.{hpp,cpp} xml/*.xml
