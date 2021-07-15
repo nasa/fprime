@@ -18,6 +18,7 @@ do
         continue
     fi
     # Check if RPI or Ref deployment to disable FRAMEWORK UTS
+    # RP - These are the only 2 deployments used by the 20-fputil CI
     if [[ "${deployment}" == */RPI ]] || [[ "${deployment}" == */Ref ]]
     then
         export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
@@ -26,11 +27,13 @@ do
     export CHECK_TARGET_PLATFORM="native"
     for target in "${FPUTIL_TARGETS[@]}"
     do
+        # RP - This if stmt is only used for the 20-fputil CI
         if [[ "${TEST_TYPE}" != "20-fputil" ]] || [[ "${target}" == "generate" ]]
         then
             rm -rf "${deployment}/build-fprime-automatic-"*
         fi
         fputil_action "${deployment}" "${target}"
+        # RP - This if stmt is only used for the 20-fputil CI
         if [[ "${TEST_TYPE}" != "20-fputil" ]]
         then
             "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning repository"

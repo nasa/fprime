@@ -56,7 +56,7 @@ function integration_test {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
     export ROOTDIR="${WORKDIR}/build-artifacts"
-    if [[ "${TEST_TYPE}" != "QUICK" ]]
+    if [[ "${TEST_TYPE}" != "30-fputil" ]]
     then
         fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
     fi
