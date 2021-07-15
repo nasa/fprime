@@ -26,12 +26,12 @@ do
     export CHECK_TARGET_PLATFORM="native"
     for target in "${FPUTIL_TARGETS[@]}"
     do
-        if [[ "${TEST_TYPE}" != "QUICK" ]] || [[ "${target}" == "generate" ]]
+        if [[ "${TEST_TYPE}" != "20-fputil" ]] || [[ "${target}" == "generate" ]]
         then
             rm -rf "${deployment}/build-fprime-automatic-"*
         fi
         fputil_action "${deployment}" "${target}"
-        if [[ "${TEST_TYPE}" != "QUICK" ]]
+        if [[ "${TEST_TYPE}" != "20-fputil" ]]
         then
             "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning repository"
         fi
