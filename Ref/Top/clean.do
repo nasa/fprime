@@ -3,4 +3,4 @@
 . ./defs.sh
 
 clean_do
-rm -rf cpp unconnected
+rm -rf cpp unconnected visual
