@@ -70,11 +70,6 @@ module Ref {
     };
     """
 
-  init comm phase Fpp.ToCpp.Phases.freeThreads """
-  comm.stopSocketTask();
-  (void) comm.joinSocketTask(NULL);
-  """
-
   init comm phase Fpp.ToCpp.Phases.startTasks """
   // Initialize socket server if and only if there is a valid specification
   if (state.hostName != NULL && state.portNumber != 0) {
@@ -87,6 +82,11 @@ module Ref {
           ConfigConstants::comm::STACK_SIZE
       );
   }
+  """
+
+  init comm phase Fpp.ToCpp.Phases.freeThreads """
+  comm.stopSocketTask();
+  (void) comm.joinSocketTask(NULL);
   """
 
   # ----------------------------------------------------------------------
@@ -133,6 +133,15 @@ module Ref {
   # fileDownlink
   # ----------------------------------------------------------------------
 
+  init fileDownlink phase Fpp.ToCpp.Phases.configConstants """
+  enum {
+    TIMEOUT = 1000,
+    COOLDOWN = 1000,
+    CYCLE_TIME = 1000,
+    FILE_QUEUE_DEPTH = 10
+  };
+  """
+
   init fileDownlink phase Fpp.ToCpp.Phases.configComponents """
   fileDownlink.configure(
       ConfigConstants::fileDownlink::TIMEOUT,
@@ -142,18 +151,17 @@ module Ref {
   );
   """
 
-    init fileDownlink phase Fpp.ToCpp.Phases.configConstants """
-    enum {
-      TIMEOUT = 1000,
-      COOLDOWN = 1000,
-      CYCLE_TIME = 1000,
-      FILE_QUEUE_DEPTH = 10
-    };
-    """
-
   # ----------------------------------------------------------------------
   # fileUplinkBufferManager
   # ----------------------------------------------------------------------
+
+  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.configConstants """
+  enum {
+    STORE_SIZE = 3000,
+    QUEUE_SIZE = 30,
+    MGR_ID = 200
+  };
+  """
 
   init fileUplinkBufferManager phase Fpp.ToCpp.Phases.instances """
   Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
@@ -175,14 +183,6 @@ module Ref {
   }
   """
 
-  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.configConstants """
-  enum {
-    STORE_SIZE = 3000,
-    QUEUE_SIZE = 30,
-    MGR_ID = 200
-  };
-  """
-
   init fileUplinkBufferManager phase Fpp.ToCpp.Phases.tearDownComponents """
   fileUplinkBufferManager.cleanup();
   """
@@ -190,6 +190,12 @@ module Ref {
   # ----------------------------------------------------------------------
   # health
   # ----------------------------------------------------------------------
+
+  init $health phase Fpp.ToCpp.Phases.configConstants """
+  enum {
+    WATCHDOG_CODE = 0x123
+  };
+  """
 
   init $health phase Fpp.ToCpp.Phases.instances """
   Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
@@ -201,12 +207,6 @@ module Ref {
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::health::pingEntries),
       ConfigConstants::health::WATCHDOG_CODE
   );
-  """
-
-  init $health phase Fpp.ToCpp.Phases.configConstants """
-  enum {
-    WATCHDOG_CODE = 0x123
-  };
   """
 
   # ----------------------------------------------------------------------
