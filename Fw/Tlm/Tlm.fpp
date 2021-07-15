@@ -9,7 +9,6 @@ module Fw {
             ref val: TlmBuffer @< Buffer containing serialized telemetry value
           )
 
-
   @ Port for getting telemetry
   port TlmGet(
                $id: FwChanIdType @< Telemetry Channel ID
