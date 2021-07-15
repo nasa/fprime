@@ -58,7 +58,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # comm
   # ----------------------------------------------------------------------
-  
+
   init comm phase Fpp.ToCpp.Phases.instances """
   Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
   """
@@ -108,7 +108,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # eventLogger
   # ----------------------------------------------------------------------
-  
+
   init eventLogger phase Fpp.ToCpp.Phases.instances """
   Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
   """
@@ -132,7 +132,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # fileDownlink
   # ----------------------------------------------------------------------
-  
+
   init fileDownlink phase Fpp.ToCpp.Phases.configComponents """
   fileDownlink.configure(
       ConfigConstants::fileDownlink::TIMEOUT,
@@ -240,7 +240,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # rateGroup1Comp
   # ----------------------------------------------------------------------
-  
+
   init rateGroup1Comp phase Fpp.ToCpp.Phases.configObjects """
   NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   """
@@ -256,7 +256,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # rateGroup2Comp
   # ----------------------------------------------------------------------
-  
+
   init rateGroup2Comp phase Fpp.ToCpp.Phases.configObjects """
   NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   """
@@ -272,7 +272,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # rateGroup3Comp
   # ----------------------------------------------------------------------
-  
+
   init rateGroup3Comp phase Fpp.ToCpp.Phases.configObjects """
   NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   """
@@ -288,7 +288,7 @@ module Ref {
   # ----------------------------------------------------------------------
   # rateGroupDriverComp
   # ----------------------------------------------------------------------
-  
+
   init rateGroupDriverComp phase Fpp.ToCpp.Phases.configObjects """
   NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
   """
@@ -360,5 +360,5 @@ module Ref {
   init uplink phase Fpp.ToCpp.Phases.configComponents """
   uplink.setup(ConfigObjects::uplink::deframing);
   """
-  
+
 }
