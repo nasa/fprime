@@ -1,13 +1,10 @@
-ignore$
-/html/
 (?:^|/)(?i)COPYRIGHT
 (?:^|/)(?i)LICEN[CS]E
 (?:^|/)vendor/
-^\.github/
-^Autocoders/Python/test/.*\.xml$
 /doc/xml/
+/html/
 /third-party/
-\.min\.
+ignore$
 \.bak$
 \.bin$
 \.dat$
@@ -23,6 +20,7 @@ ignore$
 \.md5$
 \.mdxml$
 \.mdzip$
+\.min\.
 \.otf$
 \.pdf$
 \.png$
@@ -39,3 +37,9 @@ ignore$
 \.xls$
 \.xlsx$
 \.xsd$
+^Autocoders/Python/test/.*\.xml$
+^Autocoders/Python/test/param1/test/ut/Tester\.hpp$
+^config/PolyDbImplCfg\.hpp$
+^config/PrmDbImplTesterCfg\.hpp$
+^RPI/settings\.ini$
+^\.github/

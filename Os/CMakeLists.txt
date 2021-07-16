@@ -80,6 +80,7 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
         endif()
     endforeach()
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
 endif()
 register_fprime_module()
 
@@ -97,8 +98,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
 )
-## TODO: **BROKEN UT**, validation of File fails
-#register_fprime_ut()
+register_fprime_ut()
 
 # Second UT Pthreads
 set(UT_SOURCE_FILES

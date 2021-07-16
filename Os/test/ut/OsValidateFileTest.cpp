@@ -1,4 +1,5 @@
 #include <Os/ValidateFile.hpp>
+#include "gtest/gtest.h"
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
 #include <Utils/Hash/HashBuffer.hpp>
@@ -6,14 +7,13 @@
 
 #include <stdio.h>
 
-void testValidateFile() {
+void testValidateFile(const char* fileName) {
 
     Os::ValidateFile::Status validateStatus;
     Os::FileSystem::Status fsStatus;
-    const char fileName[] = "mod.mk";
     const char nonexistentFileName[] = "thisfiledoesnotexist";
-    const char hashFileName[] = "mod.mk.hashed";
-    const char hardtoaccessHashFileName[] = "thisdirdoesnotexist/mod.mk.hashed";
+    const char hashFileName[] = "hashed.hashed";
+    const char hardtoaccessHashFileName[] = "thisdirdoesnotexist/hashed.hashed";
     
     // Create a hash file:
     printf("Creating hash for file %s in %s\n", fileName, hashFileName);
@@ -21,7 +21,8 @@ void testValidateFile() {
     if ( Os::ValidateFile::VALIDATION_OK != validateStatus ) {
         printf("\tFailed to hash file %s into hash file %s.\n", fileName, hashFileName);
         printf("\tReturn status: %d\n", validateStatus);
-        FW_ASSERT(0);
+        fflush(stdout);
+        EXPECT_TRUE(0);
         return;
     }
 
@@ -31,7 +32,7 @@ void testValidateFile() {
     if ( Os::ValidateFile::FILE_DOESNT_EXIST != validateStatus ) {
         printf("\tFile %s was found and hashed, but it shouldn't exist.\n", nonexistentFileName);
         printf("\tReturn status: %d\n", validateStatus);
-        FW_ASSERT(0);
+        EXPECT_TRUE(0);
         return;
     }
 
@@ -41,7 +42,7 @@ void testValidateFile() {
     if ( Os::ValidateFile::VALIDATION_FILE_DOESNT_EXIST != validateStatus ) {
         printf("\tFile %s was found and hashed, but hash %s  shouldn't exist.\n", fileName, hardtoaccessHashFileName);
         printf("\tReturn status: %d\n", validateStatus);
-        FW_ASSERT(0);
+        EXPECT_TRUE(0);
         return;
     }
 
@@ -52,11 +53,11 @@ void testValidateFile() {
     if( Os::FileSystem::OP_OK != fsStatus ) {
     	printf("\tFailed to get file size of %s\n", hashFileName);
     	printf("\tReturn status: %d\n", fsStatus);
-    	FW_ASSERT(0);
+    	EXPECT_TRUE(0);
     	return;
     }
     Utils::HashBuffer buf;
-    FW_ASSERT(fileSize == buf.getBuffCapacity());
+    EXPECT_TRUE(fileSize == buf.getBuffCapacity());
 
     // Validate file:
     printf("Validating file %s against hash file %s\n", fileName, hashFileName);
@@ -64,7 +65,7 @@ void testValidateFile() {
     if ( Os::ValidateFile::VALIDATION_OK != validateStatus ) {
         printf("\tFailed to validate file %s against hash file %s.\n", fileName, hashFileName);
         printf("\tReturn status: %d\n", validateStatus);
-        FW_ASSERT(0);
+        EXPECT_TRUE(0);
         return;
     }
 
@@ -74,7 +75,7 @@ void testValidateFile() {
     if ( Os::ValidateFile::VALIDATION_FAIL != validateStatus ) {
         printf("\tSucceeded in validating file %s against hash file %s. But this should fail.\n", fileName, fileName);
         printf("\tReturn status: %d\n", validateStatus);
-        FW_ASSERT(0);
+        EXPECT_TRUE(0);
         return;
     }
 
@@ -84,15 +85,15 @@ void testValidateFile() {
     if( Os::FileSystem::OP_OK != fsStatus ) {
     	printf("\tFailed to remove file (%s)\n", hashFileName);
     	printf("\tReturn status: %d\n", fsStatus);
-    	FW_ASSERT(0);
+    	EXPECT_TRUE(0);
     	return;
     }
 }
 
 extern "C" {
-    void validateFileTest(void);
+    void validateFileTest(const char* filename);
 }
 
-void validateFileTest(void) {
-    testValidateFile(); 
+void validateFileTest(const char* filename) {
+    testValidateFile(filename); 
 }

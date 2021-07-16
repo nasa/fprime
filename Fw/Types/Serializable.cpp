@@ -622,7 +622,7 @@ namespace Fw {
         }
         // otherwise, set destination buffer to data from deserialization pointer plus size
         SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc],size);
-        if (FW_SERIALIZE_OK) {
+        if (stat == FW_SERIALIZE_OK) {
             this->m_deserLoc += size;
         }
         return stat;

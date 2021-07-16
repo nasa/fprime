@@ -66,7 +66,11 @@ namespace ${namespace} {
     // ----------------------------------------------------------------------
 
     enum {
+#if $serialize_type
+        SERIALIZED_SIZE = sizeof(${serialize_type})
+#else
         SERIALIZED_SIZE = sizeof(FwEnumStoreType)
+#end if
         };
 
     //! Number of items in ${name} enum 

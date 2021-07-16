@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<enum namespace = "Example" name="Enum3" serialize_type="U8">
+    <comment>Test enum_xml example enum</comment>
+    <item name="Item1" value="-1952875139"/>
+    <item name="Item2" value="2"/>
+    <item name="Item3" comment="Test Item" value="2000999333"/>
+    <item name="Item4" value="21"/>
+    <item name="Item5" value="-8324876"/>
+</enum>

@@ -89,6 +89,13 @@ TEST(TimeTestNominal,CopyTest) {
 
 }
 
+TEST(TimeTestNominal,ZeroTimeEquality) {
+    Fw::Time time(TB_PROC_TIME,1,2);
+    ASSERT_NE(time, Fw::ZERO_TIME);
+    Fw::Time time2;
+    ASSERT_EQ(time2, Fw::ZERO_TIME);
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -161,10 +161,14 @@ namespace Fw {
       )
     {
 #if FW_USE_TIME_BASE
-      FW_ASSERT(time1.getTimeBase() == time2.getTimeBase(), time1.getTimeBase(), time2.getTimeBase() );
+      if (time1.getTimeBase() != time2.getTimeBase()) {
+          return INCOMPARABLE;
+      }
 #endif
 #if FW_USE_TIME_CONTEXT
-      FW_ASSERT(time1.getContext() == time2.getContext(), time1.getContext(), time2.getContext() );
+      if (time1.getContext() != time2.getContext()) {
+          return INCOMPARABLE;
+      }
 #endif
       const U32 s1 = time1.getSeconds();
       const U32 s2 = time2.getSeconds();
@@ -186,9 +190,9 @@ namespace Fw {
 
     Time Time ::
       add(
-        Time& a,
-        Time& b
-      ) 
+        const Time& a,
+        const Time& b
+      )
     {
 #if FW_USE_TIME_BASE
       FW_ASSERT(a.getTimeBase() == b.getTimeBase(), a.getTimeBase(), b.getTimeBase() );
@@ -209,8 +213,8 @@ namespace Fw {
 
     Time Time ::
       sub(
-        Time& minuend, //!< Time minuend
-        Time& subtrahend //!< Time subtrahend
+        const Time& minuend, //!< Time minuend
+        const Time& subtrahend //!< Time subtrahend
     )
     {
 #if FW_USE_TIME_BASE
