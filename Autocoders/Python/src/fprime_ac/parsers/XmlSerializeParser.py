@@ -103,7 +103,7 @@ class XmlSerializeParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
-        fd.close() #Close the file, which is only used for the parsing above
+        fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate new imports using their root tag as a key to find what schema to use
         rng_file = self.__config.get(
@@ -206,6 +206,8 @@ class XmlSerializeParser:
                     else:
                         c = None
 
+                    d = None
+
                     for member_tag in member:
                         if member_tag.tag == "enum" and t == "ENUM":
                             en = member_tag.attrib["name"]
@@ -222,6 +224,8 @@ class XmlSerializeParser:
                                     mc = None
                                 enum_members.append((mn, v, mc))
                             t = ((t, en), enum_members)
+                        elif member_tag.tag == "default":
+                            d = member_tag.text
                         else:
                             PRINT.info(
                                 "%s: Invalid member tag %s in serializable member %s"
@@ -229,7 +233,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, s, f, c))
+                    self.__members.append((n, t, s, f, c, d))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

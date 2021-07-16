@@ -85,14 +85,7 @@ Unit Test Checklist  | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-File | Contents
----- | --------
-Unit Test Output | [Link](../test/ut/output/test.txt)
-Coverage - TlmChanImpl.cpp | [Link](../test/ut/output/TlmChanImpl.cpp.gcov)
-Coverage - TlmChanImplGet.cpp | [Link](../test/ut/output/TlmChanImplGet.cpp.gcov)
-Coverage - TlmChanImplRecv.cpp | [Link](../test/ut/output/TlmChanImplRecv.cpp.gcov)
-Coverage - TlmChanImplTask.cpp | [Link](../test/ut/output/TlmChanImplTask.cpp.gcov)
-Coverage - TlmChanComponentAc.cpp | [Link](../test/ut/output/TlmChanComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

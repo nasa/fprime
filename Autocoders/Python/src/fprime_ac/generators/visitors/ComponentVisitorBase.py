@@ -68,7 +68,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Make a list of args into a string
         """
-        return ', '.join(args)
+        return ", ".join(args)
 
     def buildFileName(self, obj):
         """
@@ -436,9 +436,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.has_output_ports = len(c.output_ports) > 0
         c.has_typed_output_ports = len(c.typed_output_ports) > 0
         c.has_serial_output_ports = len(c.serial_output_ports) > 0
-        roles = [role for name, ptype, sync, priority, role, max_number in c.output_ports]
+        roles = [
+            role for name, ptype, sync, priority, role, max_number in c.output_ports
+        ]
         c.has_time_get = "TimeGet" in roles
-
 
     def initPortIncludes(self, obj, c):
         c.port_includes = list()
@@ -780,10 +781,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         Include any headers for channel/parameter serializable includes
         """
         ser_includes = self.__model_parser.uniqueList(obj.get_xml_serializable_files())
-        s_includes = [
-            sinc.replace("Ai.xml", "Ac.hpp")
-            for sinc in ser_includes
-        ]
+        s_includes = [sinc.replace("Ai.xml", "Ac.hpp") for sinc in ser_includes]
         c.ser_includes = s_includes
 
     def initTelemetry(self, obj, c):

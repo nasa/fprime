@@ -12,18 +12,13 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
 )
 
-message(STATUS "${CMAKE_SYSTEM_NAME} System}")
-
-if(CMAKE_SYSTEM_NAME STREQUAL "VxWorks")
-  list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentVxWorksImpl.cpp"
-  )
+if(FPRIME_USE_BAREMETAL_SCHEDULER)
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentBaremetalImpl.cpp")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "VxWorks") 
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentVxWorksImpl.cpp")
 else()
-  list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp"
-  )
+  list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp")
 endif()
-
 
 set(MOD_DEPS
   Os

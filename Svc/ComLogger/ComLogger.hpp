@@ -17,6 +17,13 @@
 #include <stdio.h>
 #include <cstdarg>
 
+// some limits.h don't have PATH_MAX
+#ifdef PATH_MAX
+#define COMLOGGER_PATH_MAX PATH_MAX
+#else
+#define COMLOGGER_PATH_MAX 255
+#endif
+
 namespace Svc {
 
   class ComLogger :
@@ -75,7 +82,7 @@ namespace Svc {
       // The maximum size of a filename
       enum { 
         MAX_FILENAME_SIZE = NAME_MAX, // as defined in limits.h
-        MAX_PATH_SIZE = PATH_MAX
+        MAX_PATH_SIZE = COMLOGGER_PATH_MAX
       };
 
       // The filename data:

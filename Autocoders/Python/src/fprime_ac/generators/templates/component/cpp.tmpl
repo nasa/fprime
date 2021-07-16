@@ -890,22 +890,17 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
-  void ${class_name} ::
+    #set $tlm_type = $type
     #if $type == "string":
-    tlmWrite_${tlmname}(Fw::TlmString& arg)
+      #set $tlm_type = "Fw::TlmString&"
+    #else if $typeinfo == "user"
+      #set $tlm_type = "const " + $type + "&"
     #else
-      #if $typeinfo == "enum":
-    tlmWrite_${tlmname}(${type} arg)
-      #else
-        #if $typeinfo == "user":
-    tlmWrite_${tlmname}(${type}& arg)
-        #else
-    tlmWrite_${tlmname}(${type} arg)
-        #end if
-      #end if
+      #set $tlm_type = $type
     #end if
+  void ${class_name} ::
+    tlmWrite_${tlmname}(${tlm_type} arg, Fw::Time _tlmTime)
   {
-
     #if $update == "on_change"
     // Check to see if it is the first time
     if (not this->m_first_update_$tlmname) {
@@ -923,8 +918,7 @@ namespace ${namespace} {
 
     #end if
     if (this->m_${Tlm_Name}_OutputPort[0].isConnected()) {
-      Fw::Time _tlmTime;
-      if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
+      if (this->m_${Time_Name}_OutputPort[0].isConnected() && _tlmTime ==  Fw::ZERO_TIME) {
          this->m_${Time_Name}_OutputPort[0].invoke( _tlmTime);
       }
       Fw::TlmBuffer _tlmBuff;

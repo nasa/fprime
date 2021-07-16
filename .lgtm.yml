@@ -8,18 +8,19 @@
 
 
 path_classifiers:
-    test:
-      - "/Gds/test"
-      - "/Fw/Python/test"
     docs:
-      - "/docs"
+      - docs
 queries:
-    # Not excluding any results right now because we want to be alerted for all issues and fixes
-    # In the future we may exclude depreciated code like ptf/ and Gds/src/wxgui/
-    # - exclude:          
+    - include: cpp/incorrect-not-operator-usage
+    - include:
+        tags:
+            - "correctness"
+    - include:
+        tags:
+            - "reliability"
 extraction:
     cpp:
-        prepare:    
+        prepare:
             packages:
                 - "python3"
                 - "python3-pip"
@@ -27,12 +28,12 @@ extraction:
         after_prepare:
             # setup the venv and install packages
             - "python3 -m venv ./fprime-venv"
-            - ". ./fprime-venv/bin/activate" 
+            - ". ./fprime-venv/bin/activate"
             - "pip install fprime-tools fprime-gds"
-        configure:   
+        configure:
             command:
         before_index:
             - "fprime-util generate"
-        index:   
+        index:
             build_command:
                 - "fprime-util build --all"

@@ -179,7 +179,7 @@ namespace Svc {
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::ERROR, __UINT32_MAX__);
+      return SendFileResponse(SendFileStatus::ERROR, U32_MAX);
     }
     return SendFileResponse(SendFileStatus::OK, entry.context);
   }
@@ -241,7 +241,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context =__UINT32_MAX__
+      .context = U32_MAX
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -274,7 +274,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context = __UINT32_MAX__
+      .context = U32_MAX
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -402,7 +402,7 @@ namespace Svc {
     FW_ASSERT(byteOffset < this->endOffset);
     const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
     const U32 dataSize = (byteOffset + maxDataSize > this->endOffset) ? (this->endOffset - byteOffset) : maxDataSize;
-    U8 buffer[dataSize];
+    U8 buffer[FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE];
     //This will be last data packet sent
     if (dataSize + byteOffset == this->endOffset) {
         this->lastCompletedType = Fw::FilePacket::T_DATA;

@@ -46,7 +46,8 @@ namespace Fw {
             typedef enum {
               LT = -1,
               EQ = 0,
-              GT = 1
+              GT = 1,
+              INCOMPARABLE = 2
             } Comparison;
 
             //! \return time zero
@@ -62,15 +63,15 @@ namespace Fw {
             //! Add two times
             //! \return The result
             static Time add(
-                Time& a, //!< Time a
-                Time& b //!< Time b
+                const Time& a, //!< Time a
+                const Time& b //!< Time b
             );
 
             //! Subtract subtrahend from minuend
             //! \return The result
             static Time sub(
-                Time& minuend, //!< Value being subtracted from
-                Time& subtrahend //!< Value being subtracted
+                const Time& minuend, //!< Value being subtracted from
+                const Time& subtrahend //!< Value being subtracted
             );
 
             // add seconds and microseconds to existing time
@@ -85,6 +86,7 @@ namespace Fw {
             TimeBase m_timeBase; // !< basis of time (defined by system)
             FwTimeContextStoreType m_timeContext; // !< user settable value. Could be reboot count, node, etc
     };
+    const static Time ZERO_TIME = Time();
 
 }
 
