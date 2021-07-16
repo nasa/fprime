@@ -1,0 +1,59 @@
+<packets name="RefPackets" namespace="Ref" size="100">
+
+    <import_topology>Ref/Top/RefTopologyAppAi.xml</import_topology>
+
+    <packet name="CDH" id="1" level="1">
+        <channel name="cmdDisp.CommandsDispatched"/>
+        <channel name="rateGroup1Comp.RgMaxTime"/>
+        <channel name="rateGroup2Comp.RgMaxTime"/>
+        <channel name="rateGroup3Comp.RgMaxTime"/>
+        <channel name="cmdSeq.CS_LoadCommands"/>
+        <channel name="cmdSeq.CS_CancelCommands"/>
+        <channel name="cmdSeq.CS_CommandsExecuted"/>
+        <channel name="cmdSeq.CS_SequencesCompleted"/>
+        <channel name="fileUplink.FileUplink_FilesReceived"/>
+        <channel name="fileUplink.FileUplink_PacketsReceived"/>
+        <channel name="fileUplinkBufferManager.BufferManager_NumAllocatedBuffers"/>
+        <channel name="fileUplinkBufferManager.BufferManager_AllocatedSize"/>
+        <channel name="fileDownlinkBufferManager.BufferManager_NumAllocatedBuffers"/>
+        <channel name="fileDownlinkBufferManager.BufferManager_AllocatedSize"/>
+        <channel name="fileDownlink.FileDownlink_FilesSent"/>
+        <channel name="fileDownlink.FileDownlink_PacketsSent"/>
+    </packet>
+
+    <packet name="CDHErrors" id="2" level="1">
+        <channel name="rateGroup1Comp.RgCycleSlips"/>
+        <channel name="rateGroup2Comp.RgCycleSlips"/>
+        <channel name="rateGroup3Comp.RgCycleSlips"/>
+        <channel name="cmdSeq.CS_Errors"/>
+        <channel name="fileUplink.FileUplink_Warnings"/>
+        <channel name="fileDownlink.FileDownlink_Warnings"/>
+        <channel name="health.PingLateWarnings"/>
+    </packet>
+
+    <packet name="RefPkt" id="3" level="1">
+        <channel name="pingRcvr.PR_NumPings"/>
+        <channel name="sendBuffComp.PacketsSent"/>
+        <channel name="sendBuffComp.NumErrorsInjected"/>
+        <channel name="sendBuffComp.Parameter3"/>
+        <channel name="sendBuffComp.Parameter4"/>
+        <channel name="sendBuffComp.SendState"/>
+        <channel name="recvBuffComp.PktState"/>
+        <channel name="recvBuffComp.Sensor1"/>
+        <channel name="recvBuffComp.Sensor2"/>
+        <channel name="recvBuffComp.Parameter1"/>
+        <channel name="recvBuffComp.Parameter2"/>
+        <channel name="SG1.SignalGen_Output"/>
+        <channel name="SG2.SignalGen_Output"/>
+        <channel name="SG3.SignalGen_Output"/>
+        <channel name="SG4.SignalGen_Output"/>
+        <channel name="SG5.SignalGen_Output"/>
+        <channel name="blockDrv.BD_Cycles"/>
+    </packet>
+
+    <!-- Ignored packets -->
+
+    <ignore>
+        <channel name="cmdDisp.CommandErrors"/>
+    </ignore>
+</packets>

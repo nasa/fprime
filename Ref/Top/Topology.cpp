@@ -61,6 +61,8 @@ Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
 
 Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
 
+Svc::TlmPacketizer pktTlm(FW_OPTIONAL_NAME("PTLM"));
+
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
 
 Fw::MallocAllocator mallocator;

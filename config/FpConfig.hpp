@@ -74,6 +74,10 @@
 #define FwPrmIdType U32                     //!< Type representation for a parameter id
 #endif
 
+#ifndef FwTlmPacketizeIdType
+#define FwTlmPacketizeIdType U16            //!< Packetized telemetry packet id
+#endif
+
 // How big the size of a buffer (or string) representation is
 #ifndef FwBuffSizeType
 #define FwBuffSizeType U16                  //!< Type representation for storing a buffer or string size
