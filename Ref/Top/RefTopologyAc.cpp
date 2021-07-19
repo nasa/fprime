@@ -306,37 +306,37 @@ namespace Ref {
 
     // Set component base Ids
     void setBaseIds() {
-      blockDrv.setIdBase(0x100);
-      rateGroup1Comp.setIdBase(0x200);
-      rateGroup2Comp.setIdBase(0x300);
-      rateGroup3Comp.setIdBase(0x400);
-      cmdDisp.setIdBase(0x500);
-      cmdSeq.setIdBase(0x600);
-      fileDownlink.setIdBase(0x700);
-      fileManager.setIdBase(0x800);
-      fileUplink.setIdBase(0x900);
-      pingRcvr.setIdBase(0xA00);
-      eventLogger.setIdBase(0xB00);
-      chanTlm.setIdBase(0xC00);
-      prmDb.setIdBase(0xD00);
-      health.setIdBase(0x2000);
-      SG1.setIdBase(0x2100);
-      SG2.setIdBase(0x2200);
-      SG3.setIdBase(0x2300);
-      SG4.setIdBase(0x2400);
-      SG5.setIdBase(0x2500);
-      sendBuffComp.setIdBase(0x2600);
-      comm.setIdBase(0x4000);
-      downlink.setIdBase(0x4100);
-      fatalAdapter.setIdBase(0x4200);
-      fatalHandler.setIdBase(0x4300);
-      fileUplinkBufferManager.setIdBase(0x4400);
-      linuxTime.setIdBase(0x4500);
-      rateGroupDriverComp.setIdBase(0x4600);
-      recvBuffComp.setIdBase(0x4700);
-      staticMemory.setIdBase(0x4800);
-      textLogger.setIdBase(0x4900);
-      uplink.setIdBase(0x4A00);
+      blockDrv.setIdBase(BaseIds::blockDrv);
+      rateGroup1Comp.setIdBase(BaseIds::rateGroup1Comp);
+      rateGroup2Comp.setIdBase(BaseIds::rateGroup2Comp);
+      rateGroup3Comp.setIdBase(BaseIds::rateGroup3Comp);
+      cmdDisp.setIdBase(BaseIds::cmdDisp);
+      cmdSeq.setIdBase(BaseIds::cmdSeq);
+      fileDownlink.setIdBase(BaseIds::fileDownlink);
+      fileManager.setIdBase(BaseIds::fileManager);
+      fileUplink.setIdBase(BaseIds::fileUplink);
+      pingRcvr.setIdBase(BaseIds::pingRcvr);
+      eventLogger.setIdBase(BaseIds::eventLogger);
+      chanTlm.setIdBase(BaseIds::chanTlm);
+      prmDb.setIdBase(BaseIds::prmDb);
+      health.setIdBase(BaseIds::health);
+      SG1.setIdBase(BaseIds::SG1);
+      SG2.setIdBase(BaseIds::SG2);
+      SG3.setIdBase(BaseIds::SG3);
+      SG4.setIdBase(BaseIds::SG4);
+      SG5.setIdBase(BaseIds::SG5);
+      sendBuffComp.setIdBase(BaseIds::sendBuffComp);
+      comm.setIdBase(BaseIds::comm);
+      downlink.setIdBase(BaseIds::downlink);
+      fatalAdapter.setIdBase(BaseIds::fatalAdapter);
+      fatalHandler.setIdBase(BaseIds::fatalHandler);
+      fileUplinkBufferManager.setIdBase(BaseIds::fileUplinkBufferManager);
+      linuxTime.setIdBase(BaseIds::linuxTime);
+      rateGroupDriverComp.setIdBase(BaseIds::rateGroupDriverComp);
+      recvBuffComp.setIdBase(BaseIds::recvBuffComp);
+      staticMemory.setIdBase(BaseIds::staticMemory);
+      textLogger.setIdBase(BaseIds::textLogger);
+      uplink.setIdBase(BaseIds::uplink);
     }
 
     // Connect components
