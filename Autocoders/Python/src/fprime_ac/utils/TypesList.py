@@ -12,7 +12,7 @@ types_list = [
     "U64",
     "F32",
     "F64",
-    "bool"
+    "bool",
 ]
 
 # additional types allowed in ports
@@ -22,7 +22,7 @@ port_types_list = [
     "FwEventIdType",
     "FwPrmIdType",
     "NATIVE_INT_TYPE",
-    "NATIVE_UINT_TYPE"
+    "NATIVE_UINT_TYPE",
 ]
 
 
