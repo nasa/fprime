@@ -6,40 +6,40 @@
     </comment>
     <args>
         <arg name="Arg1" type="U32" pass_by="pointer">
-            <comment>Example enum arg</comment>
+            <comment>Example scalar arg, pass_by pointer</comment>
         </arg>
         <arg name="Arg2" type="U32" pass_by="reference">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example scalar arg, pass by reference</comment>
         </arg>
         <arg name="Arg3" type="U32" pass_by="value">
-            <comment>Example enum arg</comment>
+            <comment>Example scalar arg, pass by value</comment>
         </arg>
         <arg name="Arg4" type="U32">
-            <comment>Example enum arg</comment>
+            <comment>Example scalar arg, pass by value (default)</comment>
         </arg>
         <arg name="Arg5" type="ExampleType" pass_by="pointer">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example object arg, pass by pointer</comment>
         </arg>
         <arg name="Arg6" type="ExampleType" pass_by="reference">
-            <comment>Example enum arg</comment>
+            <comment>Example object arg, pass by reference</comment>
         </arg>
         <arg name="Arg7" type="ExampleType" pass_by="value">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example object arg, pass by value</comment>
         </arg>
         <arg name="Arg8" type="ExampleType">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example object arg, pass by const reference if async (default)</comment>
         </arg>
         <arg name="Arg9" type="string" size="5" pass_by="pointer">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example string arg, pass by pointer</comment>
         </arg>
         <arg name="Arg10" type="string" size="5" pass_by="reference">
-            <comment>Example enum arg</comment>
+            <comment>Example string arg, pass by reference</comment>
         </arg>
         <arg name="Arg11" type="string" size="5" pass_by="value">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example string arg, pass by value</comment>
         </arg>
         <arg name="Arg12" type="string" size="5">
-            <comment>Example serial arg with enum member</comment>
+            <comment>Example string arg, pass by const reference if async (default)</comment>
         </arg>
     </args>
 </interface>
