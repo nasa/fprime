@@ -116,10 +116,12 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 t = t + " *"
             elif arg.get_modifier() == "reference":
                 t = t + " &"
-            elif not TypesList.isPrimitiveType(t) and not isEnum:
-                t = t + " &"
-            else:
+            elif arg.get_modifier() == "value":
                 t = t + " "
+            elif TypesList.isPrimitiveType(t) or isEnum:
+                t = t + " "
+            else:
+                t = "const " + t + " &"
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
@@ -183,7 +185,10 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             ]:
                 t = "sizeof(" + t + cl
             else:
-                t = t + "::SERIALIZED_SIZE"
+                if arg.get_modifier() == "pointer":
+                    t = "sizeof(" + t + "*)"
+                else:
+                    t = t + "::SERIALIZED_SIZE"
             arg_str += t
             arg_str += " + "
         arg_str = arg_str.strip(" + ")

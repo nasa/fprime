@@ -9,13 +9,13 @@
         <arg name="arg1" type="I32" >
             <comment>A built-in type argument</comment>
         </arg>
-        <arg name="arg2" type="ANameSpace::mytype">
+        <arg name="arg2" type="ANameSpace::mytype" pass_by="value">
             <comment>A user-defined type argument</comment>
         </arg>
         <arg name="arg3" type="U8">
             <comment>The third argument</comment>
         </arg>
-        <arg name="arg4" type="Example3::ExampleSerializable">
+        <arg name="arg4" type="Example3::ExampleSerializable" pass_by="value">
             <comment>The third argument</comment>
         </arg>
         <arg name="arg5" type="ENUM">

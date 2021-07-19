@@ -11,7 +11,7 @@
         <arg name="arg5" type="F32">
             <comment>The second argument</comment>
         </arg>
-        <arg name="arg6" type="Ref::Gnc::Quaternion">
+        <arg name="arg6" type="Ref::Gnc::Quaternion" pass_by="value">
             <comment>The third argument</comment>
         </arg>
     </args>

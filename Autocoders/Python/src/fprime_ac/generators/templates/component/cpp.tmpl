@@ -1628,7 +1628,7 @@ namespace ${namespace} {
     );
 
       #set $args = $port_args[$instance]
-      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum in $args:
+      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum, $non_const_arg_type in $args:
     // Serialize argument $arg_name
         #if $arg_modifier == '*':
     _status = msg.serialize(static_cast<void *>($arg_name));
@@ -1788,20 +1788,20 @@ namespace ${namespace} {
       case ${instance.upper()}_${type.upper()}: {
 
       #set $args = $port_args[$instance]
-      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum in $args
+      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum, $non_const_arg_type in $args
         // Deserialize argument $arg_name
         #if $arg_modifier == '*':
-        $arg_type *$arg_name;
+        $non_const_arg_type *$arg_name;
         void* ${arg_name}PtrTemp;
         deserStatus = msg.deserialize(${arg_name}PtrTemp);
         $arg_name = static_cast<$arg_type*>(${arg_name}PtrTemp);
         #else if $arg_enum == "ENUM"
-        $arg_type $arg_name;
+        $non_const_arg_type $arg_name;
         FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = msg.deserialize(${arg_name}Int);
         $arg_name = ($arg_type) ${arg_name}Int;
         #else
-        $arg_type $arg_name;
+        $non_const_arg_type $arg_name;
         deserStatus = msg.deserialize($arg_name);
         #end if
         FW_ASSERT(

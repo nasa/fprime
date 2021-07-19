@@ -198,25 +198,25 @@ class ModelParser:
                 t = a.get_type()
                 s = a.get_size()
                 m = a.get_modifier()
+                non_const_arg_type = a.get_type()
                 e = None
                 #
                 # Pass async port scalar arguments by value
                 # and async port non-scalar arguments by reference
                 isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
+                isConstReference = False
+                
                 if m == "pointer":
                     m = "*"
-                elif sync == "async":
-                    # Store modifier as language symbol
-                    if (TypesList.isPrimitiveType(t) or isEnum) and m == "value":
-                        m = ""
-                    else:
-                        m = "&"
+                elif m == "reference":
+                    m = "&"
+                elif m == "value":
+                    m = ""
+                elif TypesList.isPrimitiveType(t) or isEnum:
+                    m = ""
                 else:
-                    # Store modifier as language symbol
-                    if m == "reference":
-                        m = "&"
-                    else:
-                        m = ""
+                    isConstReference = True
+                    m = "&"
 
                 if t == "string":
                     t = n + "String"
@@ -242,7 +242,10 @@ class ModelParser:
                 #    c = ""
                 #    m = "&"
                 # print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n, t, c, m, e))
+                non_const_arg_type = t
+                if isConstReference:
+                    t = "const " + t
+                args_dict[name].append((n, t, c, m, e, non_const_arg_type))
         return args_dict
 
     def getPortArgsPrototypeStringDict(self, obj):

@@ -89,7 +89,7 @@
     $LTLT "  Actual:   " $LTLT index $LTLT "\n"; \
     const FromPortEntry_${instance}& _e = \
       this->fromPortHistory_${instance}->at(index); \
-      #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum in $params
+      #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum, $non_const in $params
     ASSERT_EQ(_${param_name}, _e.${param_name}) \
     $failure_message \
     $LTLT "  Value:    Value of argument $param_name at index " \
