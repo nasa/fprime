@@ -201,11 +201,11 @@ class ModelParser:
                 non_const_arg_type = a.get_type()
                 e = None
                 #
-                # Pass async port scalar arguments by value
-                # and async port non-scalar arguments by reference
+                # Pass async port scalar arguments as specified
+                # and async port non-specified non-scalar arguments by reference
                 isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
                 isConstReference = False
-                
+
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":

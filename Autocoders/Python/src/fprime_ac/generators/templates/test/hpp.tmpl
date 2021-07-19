@@ -244,7 +244,7 @@ $emit_hpp_port_params($params)
       //! A history entry for from_${instance}
       //!
       typedef struct {
-      #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum, $non_const in $params:
+      #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum, $non_const_arg_type in $params:
         #if $param_modifier in ('*')
           $param_type $param_modifier${param_name};
         #else

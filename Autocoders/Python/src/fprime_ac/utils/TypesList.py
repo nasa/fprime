@@ -14,6 +14,7 @@ types_list = [
     "F64",
     "bool",
 ]
+
 # additional types allowed in ports
 port_types_list = [
     "FwOpcodeType",
@@ -26,4 +27,3 @@ port_types_list = [
 
 def isPrimitiveType(type):
     return type in (types_list + port_types_list)
-

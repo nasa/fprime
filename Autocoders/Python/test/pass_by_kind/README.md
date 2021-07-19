@@ -1,6 +1,6 @@
-# Autocoders/Python/test/enum_xml
+# Autocoders/Python/test/pass_by_kind
 
-This directory contains unit tests for the Python enum XML code generator.
+This directory contains unit tests for the Python pass_by attribute XML code generator.
 
 To use this directory, you must have installed F Prime, and you must be inside 
 the F Prime Python virtual environment.
