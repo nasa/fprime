@@ -9,18 +9,20 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
 export TEST="${@}"
-export TEST_TYPE="FULL"
-if [[ "${TEST}" == "" ]] || [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
-then
-    TEST_RUN="${SCRIPT_DIR}/tests/20-fputil.bash"
-    export TEST_TYPE="20-fputil"
-elif [[ "${TEST}" == "30-ints" ]]
-then
-    TEST_RUN="${SCRIPT_DIR}/tests/30-ints.bash"
-    export TEST_TYPE="30-ints"
-else
-    echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
-fi  
+TEST_RUN="${SCRIPT_DIR}/tests/${TEST}.bash"
+export TEST_TYPE="${TEST}"
+
+# if [[ "${TEST}" == "" ]] || [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
+# then
+#     TEST_RUN="${SCRIPT_DIR}/tests/20-fputil.bash"
+#     export TEST_TYPE="20-fputil"
+# elif [[ "${TEST}" == "30-ints" ]]
+# then
+#     TEST_RUN="${SCRIPT_DIR}/tests/30-ints.bash"
+#     export TEST_TYPE="30-ints"
+# else
+#     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
+# fi  
 
 # TESTS="${@}"
 # export TEST_TYPE="FULL"
@@ -47,9 +49,10 @@ mkdir -p "${LOG_DIR}"
 ####
 # . "${SCRIPT_DIR}/bootstrap.bash" 
 
-echo -e "${BLUE}Starting CI test ${TEST_RUN}${NOCOLOR}"
+# Run the test script
+echo -e "${BLUE}Starting CI test ${TEST_RUN} ${TEST}${NOCOLOR}"
 /usr/bin/time "${TEST_RUN}" || fail_and_stop "${TEST} failed"
-echo -e "${GREEN}CI test ${TEST_RUN} SUCCESSFUL${NOCOLOR}"
+echo -e "${GREEN}CI test ${TEST_RUN} ${TEST} SUCCESSFUL${NOCOLOR}"
 
 
 # Loop through all scripts in  tests directory and run them
