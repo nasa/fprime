@@ -3,6 +3,7 @@ var class_drv_1_1_socket_read_task =
     [ "SocketReadTask", "class_drv_1_1_socket_read_task.html#ad9b83b99c853f55a016bf33805858b9f", null ],
     [ "~SocketReadTask", "class_drv_1_1_socket_read_task.html#a6f80890b2a5f97d07f1613d37e071f15", null ],
     [ "close", "class_drv_1_1_socket_read_task.html#a3e99c88eed967c35990a122539eed249", null ],
+    [ "connected", "class_drv_1_1_socket_read_task.html#a01f23457f3c50c166ec4960fd5b53a11", null ],
     [ "getBuffer", "class_drv_1_1_socket_read_task.html#a3a74bde5c804e6816d3d015cef74f31d", null ],
     [ "getSocketHandler", "class_drv_1_1_socket_read_task.html#a45ad2655c7da2d8d6d893a3f984788d5", null ],
     [ "joinSocketTask", "class_drv_1_1_socket_read_task.html#af657830adad4fd10c11af43f3c840a61", null ],

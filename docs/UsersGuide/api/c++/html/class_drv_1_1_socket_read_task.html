@@ -144,6 +144,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:abc94a3b38263cbc7bb5339166e547bc7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#abc94a3b38263cbc7bb5339166e547bc7">sendBuffer</a> (<a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> buffer, <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> status)=0</td></tr>
 <tr class="memdesc:abc94a3b38263cbc7bb5339166e547bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sends a buffer to filled with data  <a href="#abc94a3b38263cbc7bb5339166e547bc7">More...</a><br /></td></tr>
 <tr class="separator:abc94a3b38263cbc7bb5339166e547bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01f23457f3c50c166ec4960fd5b53a11"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html#a01f23457f3c50c166ec4960fd5b53a11">connected</a> ()=0</td></tr>
+<tr class="memdesc:a01f23457f3c50c166ec4960fd5b53a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the IPv4 system has been connected  <a href="#a01f23457f3c50c166ec4960fd5b53a11">More...</a><br /></td></tr>
+<tr class="separator:a01f23457f3c50c166ec4960fd5b53a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
@@ -239,7 +242,36 @@ Protected Attributes</h2></td></tr>
 <p>Typically stopping the socket read task will close the connection. However, in cases where the read task will not be started, this function may be used to close the socket.</p>
 <p>Note: this just delegates to the handler </p>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00043">43</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00048">48</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a01f23457f3c50c166ec4960fd5b53a11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01f23457f3c50c166ec4960fd5b53a11">&#9670;&nbsp;</a></span>connected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Drv::SocketReadTask::connected </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>called when the IPv4 system has been connected </p>
+
+<p>Implemented in <a class="el" href="class_drv_1_1_tcp_server_component_impl.html#afe77a7df8807b13d17edd53820d5f133">Drv::TcpServerComponentImpl</a>, <a class="el" href="class_drv_1_1_udp_component_impl.html#a5ce29c36b3af593da4e5ad7d961a25b6">Drv::UdpComponentImpl</a>, and <a class="el" href="class_drv_1_1_tcp_client_component_impl.html#a22bef66f9f2b5ce75cd108bc8a631035">Drv::TcpClientComponentImpl</a>.</p>
 
 </div>
 </div>
@@ -332,7 +364,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>: <a class="el" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a> passed back from the <a class="el" href="class_os_1_1_task.html#a9c1ef3f82767ad505098eba28b79c4c0" title="Wait for task to finish. ">Os::Task::join</a> call. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00047">47</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00052">52</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
 
 </div>
 </div>
@@ -393,7 +425,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00056">56</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00061">61</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
 
 </div>
 </div>
@@ -520,7 +552,7 @@ Protected Attributes</h2></td></tr>
 <p>stop the socket read task and close the associated socket. </p>
 <p>Called to stop the socket read task. It is an error to call this before the thread has been started using the startSocketTask call. This will stop the read task and close the client socket. </p>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00051">51</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8cpp_source.html#l00056">56</a> of file <a class="el" href="_socket_read_task_8cpp_source.html">SocketReadTask.cpp</a>.</p>
 
 </div>
 </div>
@@ -547,7 +579,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Force reconnection. </p>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00144">144</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00149">149</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
 
 </div>
 </div>
@@ -573,7 +605,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Stops the task when set to true. </p>
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00145">145</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00150">150</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
 
 </div>
 </div>
@@ -597,7 +629,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00143">143</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_socket_read_task_8hpp_source.html#l00148">148</a> of file <a class="el" href="_socket_read_task_8hpp_source.html">SocketReadTask.hpp</a>.</p>
 
 </div>
 </div>

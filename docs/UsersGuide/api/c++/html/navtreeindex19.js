@@ -1,5 +1,9 @@
 var NAVTREEINDEX19 =
 {
+"struct_os_1_1_priority_queue.html#aee98c7bb840177db531e6ac28377a2f7":[122,0,3,15,0],
+"struct_os_1_1_priority_queue.html#af395dca91cbfd691b5bc53bbcc2cebac":[122,0,3,15,1],
+"struct_os_1_1_task_1_1_task_routine_wrapper.html":[122,0,3,20,0],
+"struct_os_1_1_task_1_1_task_routine_wrapper.html#af01cd6df1663dbe369ddf788ff17b8c7":[122,0,3,20,0,1],
 "struct_os_1_1_task_1_1_task_routine_wrapper.html#af3b682d26749d8e685cdd4c0db86621b":[122,0,3,20,0,0],
 "struct_s_h_a256state__st.html":[122,0,11],
 "struct_s_h_a256state__st.html#a02ad38687202dc1f21f78925599ec5ca":[122,0,11,3],
