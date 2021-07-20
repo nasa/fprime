@@ -1,12 +1,7 @@
 # Many unit tests were broken before the switch to cmake
 # There are also missing dependencies between test cases.
 
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/active_tester")
-# Broken topology
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app1")
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/app2")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array_xml")
-#add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/cnt_only")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_multi_inst")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_res")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command_string")
@@ -16,7 +11,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/command2")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/comp_diff_namespace")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/comp_no_namespace")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum_return_port")
-#Note: is currently set up as a pytest, uses console input so shouldn't be run as ut
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum_xml")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum1port")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/event_enum")
