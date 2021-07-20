@@ -36,7 +36,6 @@ module Ref {
   enum {
     BUFFER_SIZE = 5*1024
   };
-
   """
 
   init cmdSeq phase Fpp.ToCpp.Phases.instances """
