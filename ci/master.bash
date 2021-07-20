@@ -8,17 +8,17 @@ export CTEST_OUTPUT_ON_FAILURE=1
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
-TEST="${@}"
+DEPLOYMENT="${@}"
 export TEST_TYPE="FULL"
 if ( $# ==  0 )
 then
     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
-elif [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
+elif [[ "${DEPLOYMENT}" == "Ref" ]] || [[ "${DEPLOYMENT}" == "RPI" ]]
 then
-    export DEPLOYMENT = "${TEST}"
+    export DEPLOYMENT
     TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
     export TEST_TYPE="20-fputil"
-elif [[ "${TEST}" == "30-ints" ]]
+elif [[ "${DEPLOYMENT}" == "30-ints" ]]
 then
     TEST="${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="30-ints"
