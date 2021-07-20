@@ -10,10 +10,7 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 DEPLOYMENT="${@}"
 export TEST_TYPE="FULL"
-if ( $# ==  0 )
-then
-    echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
-elif [[ "${DEPLOYMENT}" == "Ref" ]] || [[ "${DEPLOYMENT}" == "RPI" ]]
+if [[ "${DEPLOYMENT}" == "Ref" ]] || [[ "${DEPLOYMENT}" == "RPI" ]]
 then
     export DEPLOYMENT
     TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
@@ -22,6 +19,9 @@ elif [[ "${DEPLOYMENT}" == "30-ints" ]]
 then
     TEST="${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="30-ints"
+else
+then
+    echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
 fi  
 
 # TESTS="${@}"
