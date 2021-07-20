@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<interface name="Void" namespace="App2a">
-    <comment>
-        Void Interface to send an async call without any arguments.
-    </comment>
-</interface>
-
