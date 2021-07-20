@@ -6,7 +6,7 @@
 ####
 export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check --all")
 # export FPUTIL_DEPLOYS="${FPRIME_DIR} ${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
-export FPUTIL_DEPLOYS="${FPRIME_DIR}/${TEST_TYPE}"
+export FPUTIL_DEPLOYS="${FPRIME_DIR}/${DEPLOYMENT}"
 export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 ####
 # fputil_action:

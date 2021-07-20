@@ -13,11 +13,11 @@ export TEST_TYPE="FULL"
 if ( $# ==  0 )
 then
     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
-elif [[ "${TEST}" == "Ref" ] || [ "${TEST}" == "RPI" ]]
+elif [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
 then
-    export TEST_TYPE = "${TEST}"
+    export DEPLOYMENT = "${TEST}"
     TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
-    #export TEST_TYPE="20-fputil"
+    export TEST_TYPE="20-fputil"
 elif [[ "${TEST}" == "30-ints" ]]
 then
     TEST="${SCRIPT_DIR}/tests/30-ints.bash"
