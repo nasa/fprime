@@ -20,7 +20,6 @@ then
     TEST="${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="30-ints"
 else
-then
     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
 fi  
 
