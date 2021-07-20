@@ -206,7 +206,8 @@ namespace Svc {
     // check that the initiation pointer made it to the end of allocated space
     U8* const CURR_PTR = bufferMem;
     U8* const END_PTR = static_cast<U8*>(memory) + memorySize;
-    FW_ASSERT(CURR_PTR == END_PTR, reinterpret_cast<U64>(CURR_PTR), reinterpret_cast<U64>(END_PTR));
+    FW_ASSERT(CURR_PTR == END_PTR, 
+        reinterpret_cast<POINTER_CAST>(CURR_PTR), reinterpret_cast<POINTER_CAST>(END_PTR));
     // secondary init verification
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
     // indicate setup is done
