@@ -37,7 +37,12 @@ void SocketReadTask::startSocketTask(const Fw::StringBase &name,
 }
 
 SocketIpStatus SocketReadTask::open() {
-    return this->getSocketHandler().open();
+    SocketIpStatus status = this->getSocketHandler().open();
+    // Call connected any time the open is successful
+    if (Drv::SOCK_SUCCESS == status) {
+        this->connected();
+    }
+    return status;
 }
 
 void SocketReadTask::close() {
@@ -60,7 +65,7 @@ void SocketReadTask::readTask(void* pointer) {
     do {
         // Open a network connection if it has not already been open
         if ((not self->getSocketHandler().isOpened()) and (not self->m_stop) and
-            ((status = self->getSocketHandler().open()) != SOCK_SUCCESS)) {
+            ((status = self->open()) != SOCK_SUCCESS)) {
             Fw::Logger::logMsg("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
             Os::Task::delay(SOCKET_RETRY_INTERVAL_MS);
         }
