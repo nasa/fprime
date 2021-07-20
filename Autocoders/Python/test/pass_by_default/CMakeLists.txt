@@ -19,7 +19,7 @@ set(UT_MOD_DEPS
 
 # List all .cpp files as UT_SOURCE_FILES. Only the UT build is allowed.
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Component1Impl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Component1.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/AllTypes.cpp"
 

@@ -189,20 +189,18 @@ class ModelParser:
         for port in obj.get_ports():
             name = port.get_name()
             port_namespace = port.get_namespace()
-            sync = port.get_sync()
             args_dict[name] = list()
             # print "Port: %s" % name
             args = port.get_args()
             for a in args:
                 n = a.get_name()
                 t = a.get_type()
-                s = a.get_size()
                 m = a.get_modifier()
                 non_const_arg_type = a.get_type()
                 e = None
                 #
-                # Pass async port scalar arguments as specified
-                # and async port non-specified non-scalar arguments by reference
+                # Pass port scalar and specified arguments as specified
+                # and port non-specified non-scalar arguments by const reference
                 isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
                 isConstReference = False
 
