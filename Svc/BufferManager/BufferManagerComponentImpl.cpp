@@ -123,7 +123,7 @@ namespace Svc {
       FW_ASSERT(m_buffers);
       // find smallest buffer based on size.
       for (NATIVE_UINT_TYPE buff = 0; buff < this->m_numStructs; buff++) {
-          if ((not this->m_buffers[buff].allocated) and (size < this->m_buffers[buff].size)) {
+          if ((not this->m_buffers[buff].allocated) and (size <= this->m_buffers[buff].size)) {
               this->m_buffers[buff].allocated = true;
               this->m_currBuffs++;
               if (this->m_currBuffs > this->m_highWater) {
@@ -203,8 +203,12 @@ namespace Svc {
         }
     }
       
-    // check some assertions
-    FW_ASSERT(bufferMem == (static_cast<U8*>(memory) + memorySize));
+    // check that the initiation pointer made it to the end of allocated space
+    U8* const CURR_PTR = bufferMem;
+    U8* const END_PTR = static_cast<U8*>(memory) + memorySize;
+    FW_ASSERT(CURR_PTR == END_PTR, 
+        reinterpret_cast<POINTER_CAST>(CURR_PTR), reinterpret_cast<POINTER_CAST>(END_PTR));
+    // secondary init verification
     FW_ASSERT(currStruct == this->m_numStructs,currStruct,this->m_numStructs);
     // indicate setup is done
     this->m_setup = true;
