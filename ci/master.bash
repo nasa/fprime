@@ -8,18 +8,19 @@ export CTEST_OUTPUT_ON_FAILURE=1
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
-TESTS="${@}"
+TEST="${@}"
 export TEST_TYPE="FULL"
 if ( $# ==  0 )
 then
     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
-elif [[ "${TESTS}" == "20-fputil" ]]
+elif [[ "${TEST}" == "Ref" ] || [ "${TEST}" == "RPI" ]]
 then
-    TESTS="${SCRIPT_DIR}/tests/20-fputil.bash"
-    export TEST_TYPE="20-fputil"
-elif [[ "${TESTS}" == "30-ints" ]]
+    export TEST_TYPE = "${TEST}"
+    TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
+    #export TEST_TYPE="20-fputil"
+elif [[ "${TEST}" == "30-ints" ]]
 then
-    TESTS="${SCRIPT_DIR}/tests/30-ints.bash"
+    TEST="${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="30-ints"
 fi  
 
@@ -46,14 +47,19 @@ mkdir -p "${LOG_DIR}"
 ####
 # RP - Remove after refactor. Tools should be installed in Docker image.
 ####
-. "${SCRIPT_DIR}/bootstrap.bash" 
+# . "${SCRIPT_DIR}/bootstrap.bash" 
+
+echo -e "${BLUE}Starting CI test ${TEST}${NOCOLOR}"
+/usr/bin/time "${TEST}" || fail_and_stop "${TEST} failed"
+echo -e "${GREEN}CI test ${TEST} SUCCESSFUL${NOCOLOR}"
+
 
 # Loop through all scripts in  tests directory and run them
-for test_script in ${TESTS}
-do
-    "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning directory"
-    echo -e "${BLUE}Starting CI test ${test_script}${NOCOLOR}"
-    /usr/bin/time "${test_script}" || fail_and_stop "${test_script} failed"
-    echo -e "${GREEN}CI test ${test_script} SUCCESSFUL${NOCOLOR}"
-done
+# for test_script in ${TESTS}
+# do
+#     # "${SCRIPT_DIR}/clean.bash" || fail_and_stop "Cleaning directory"
+#     echo -e "${BLUE}Starting CI test ${test_script}${NOCOLOR}"
+#     /usr/bin/time "${test_script}" || fail_and_stop "${test_script} failed"
+#     echo -e "${GREEN}CI test ${test_script} SUCCESSFUL${NOCOLOR}"
+# done
 archive_logs
