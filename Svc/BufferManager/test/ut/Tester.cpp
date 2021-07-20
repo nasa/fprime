@@ -206,7 +206,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           // Get the buffers
-          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
           // check allocation state
           ASSERT_TRUE(this->component.m_buffers[b].allocated);
           // check stats
@@ -217,7 +217,7 @@ namespace Svc {
 
 
       // should send back empty buffer
-      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
       ASSERT_EQ(1,this->component.m_noBuffs);
 
       // check telemetry
@@ -311,7 +311,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
-          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN0_BUFFER_SIZE-1);
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN0_BUFFER_SIZE);
           // check allocation state
           ASSERT_TRUE(this->component.m_buffers[b].allocated);
           // check stats
@@ -323,7 +323,7 @@ namespace Svc {
       REQUIREMENT("FPRIME-BM-003");
 
       // should send back empty buffer
-      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+      Fw::Buffer noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
       ASSERT_EQ(1,this->component.m_noBuffs);
 
       // check telemetry
@@ -385,7 +385,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
-          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
           // check allocation state - should be allocating from bin 1
           ASSERT_TRUE(this->component.m_buffers[b+BIN0_NUM_BUFFERS].allocated);
           // check stats
@@ -393,7 +393,7 @@ namespace Svc {
       }
 
       // should send back empty buffer
-      noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE-1);
+      noBuff = this->invoke_to_bufferGetCallee(0,BIN1_BUFFER_SIZE);
       ASSERT_EQ(2,this->component.m_noBuffs);
 
       // check telemetry
@@ -444,7 +444,7 @@ namespace Svc {
 
       for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
           // Get the buffers
-          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE-1);
+          buffs[b] = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE);
           // check allocation state - should be allocating from bin 1
           ASSERT_TRUE(this->component.m_buffers[b+BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS].allocated);
           // check stats
@@ -452,7 +452,7 @@ namespace Svc {
       }
 
       // should send back empty buffer
-      noBuff = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE-1);
+      noBuff = this->invoke_to_bufferGetCallee(0,BIN2_BUFFER_SIZE);
       ASSERT_EQ(3,this->component.m_noBuffs);
 
       // check telemetry
