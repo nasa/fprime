@@ -7,6 +7,7 @@ var class_svc_1_1_deframing_protocol =
       [ "DEFRAMING_MORE_NEEDED", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0", null ],
       [ "DEFRAMING_MAX_STATUS", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea", null ]
     ] ],
+    [ "~DeframingProtocol", "class_svc_1_1_deframing_protocol.html#a94f72004ab905dfb1746f256b84ef143", null ],
     [ "DeframingProtocol", "class_svc_1_1_deframing_protocol.html#a00a71e5338d4462f3b7900e2a8a6f472", null ],
     [ "deframe", "class_svc_1_1_deframing_protocol.html#a1dea66ee21da29ad814e44d1fd497e5e", null ],
     [ "setup", "class_svc_1_1_deframing_protocol.html#ac656727b2c6d3b0879ac097639cf9da8", null ],

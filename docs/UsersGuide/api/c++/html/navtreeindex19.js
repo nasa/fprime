@@ -1,5 +1,10 @@
 var NAVTREEINDEX19 =
 {
+"struct_os_1_1_interval_timer_1_1_raw_time.html#abf905ddfcf4d31a552336992c6368d6c":[122,0,3,8,0,1],
+"struct_os_1_1_priority_queue.html":[122,0,3,15],
+"struct_os_1_1_priority_queue.html#a6318800585607deb5f5997c0f23ee528":[122,0,3,15,3],
+"struct_os_1_1_priority_queue.html#a6355f15ca4a8906fd715e1e0cdda006f":[122,0,3,15,2],
+"struct_os_1_1_priority_queue.html#a922e0426e6cc3f8cb7429d8505c78248":[122,0,3,15,4],
 "struct_os_1_1_priority_queue.html#aee98c7bb840177db531e6ac28377a2f7":[122,0,3,15,0],
 "struct_os_1_1_priority_queue.html#af395dca91cbfd691b5bc53bbcc2cebac":[122,0,3,15,1],
 "struct_os_1_1_task_1_1_task_routine_wrapper.html":[122,0,3,20,0],

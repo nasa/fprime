@@ -1,6 +1,7 @@
 var class_drv_1_1_ip_socket =
 [
     [ "IpSocket", "class_drv_1_1_ip_socket.html#a1c937ae98faa3a8d2ce5cff0fd16aaca", null ],
+    [ "~IpSocket", "class_drv_1_1_ip_socket.html#a38ffb51359aa6330a04038092284c952", null ],
     [ "addressToIp4", "class_drv_1_1_ip_socket.html#ab660a3c4894811cf0a26cd1668f5c22e", null ],
     [ "close", "class_drv_1_1_ip_socket.html#ac7f2a40b811e4b73f65bf49b2f4c6c57", null ],
     [ "configure", "class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55", null ],
