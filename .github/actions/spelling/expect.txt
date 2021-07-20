@@ -461,6 +461,7 @@ enumparam
 eobj
 eol
 EPERM
+eps
 EROFS
 errfile
 errmsg

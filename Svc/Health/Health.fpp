@@ -1,6 +1,6 @@
 module Svc {
 
-  @ A component to check the health of other components
+  @ A component for checking the health of active components
   queued component Health {
 
     # ----------------------------------------------------------------------
@@ -18,6 +18,12 @@ module Svc {
 
     @ Run port
     output port WdogStroke: Svc.WatchDog
+
+    # ----------------------------------------------------------------------
+    # Port matching specifiers
+    # ----------------------------------------------------------------------
+
+    match PingSend with PingReturn
 
     # ----------------------------------------------------------------------
     # Special ports

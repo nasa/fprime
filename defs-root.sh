@@ -29,6 +29,7 @@ then
 fi
 export FRAMEWORK_FPP_LOCS="
 $FPRIME_ROOT/Drv/locs.fpp
+$FPRIME_ROOT/Fpp/locs.fpp
 $FPRIME_ROOT/Fw/locs.fpp
 $FPRIME_ROOT/Ref/locs.fpp
 $FPRIME_ROOT/Svc/locs.fpp
@@ -136,7 +137,7 @@ cpp_do()
   fi
   rm -rf $3
   mkdir $3
-  fpp-to-cpp -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
+  fpp-to-cpp $FPP_TO_CPP_OPTS -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
 }
 
 # Locate uses
@@ -150,6 +151,15 @@ locate_uses_do()
     import_deps="-i $FPP_LOCS"
   fi
   fpp-locate-uses $import_deps $FPP_FILES
+}
+
+# Unconnected ports
+unconnected_do()
+{
+  redo-ifchange depend
+  import_deps=`cat depend/import.txt`
+  fpp-check -u $3 $import_deps $FPP_FILES
+  cat $3 1>&2
 }
 
 # Update generated files

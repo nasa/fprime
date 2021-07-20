@@ -27,6 +27,9 @@ module Svc {
     @ Mutexed Schedule in port
     guarded input port schedIn: Svc.Sched
 
+    @ Port for receiving command responses
+    sync input port cmdResponseIn: Fw.CmdResponse
+
   }
 
 }

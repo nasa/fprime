@@ -1,4 +1,5 @@
 locate component Drv.BlockDriver at "BlockDriver/BlockDriver.fpp"
+locate component Drv.ByteStreamDriverModel at "ByteStreamDriverModel/ByteStreamDriverModel.fpp"
 locate port Drv.ByteStreamPoll at "ByteStreamDriverModel/ByteStreamDriverModel.fpp"
 locate port Drv.ByteStreamRecv at "ByteStreamDriverModel/ByteStreamDriverModel.fpp"
 locate port Drv.ByteStreamSend at "ByteStreamDriverModel/ByteStreamDriverModel.fpp"
