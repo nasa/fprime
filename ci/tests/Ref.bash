@@ -1,6 +1,6 @@
 #!/bin/bash
 ####
-# ref.bash:
+# Ref.bash:
 #
 # Run the tests on the software through fp-util.
 ####
