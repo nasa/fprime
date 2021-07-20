@@ -10,7 +10,7 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 export TEST="${@}"
 export TEST_TYPE="FULL"
-if [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
+if [[ "${TEST}" == "" ]] || [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
 then
     TEST_RUN="${SCRIPT_DIR}/tests/20-fputil.bash"
     export TEST_TYPE="20-fputil"
@@ -45,7 +45,7 @@ mkdir -p "${LOG_DIR}"
 ####
 # RP - Remove after refactor. Tools should be installed in Docker image.
 ####
-. "${SCRIPT_DIR}/bootstrap.bash" 
+# . "${SCRIPT_DIR}/bootstrap.bash" 
 
 echo -e "${BLUE}Starting CI test ${TEST_RUN}${NOCOLOR}"
 /usr/bin/time "${TEST_RUN}" || fail_and_stop "${TEST} failed"

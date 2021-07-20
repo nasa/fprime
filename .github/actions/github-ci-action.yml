@@ -4,7 +4,7 @@ inputs:
   test:
     description: Test number to run
     required: true
-    default: '1'
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
