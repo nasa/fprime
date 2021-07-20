@@ -28,9 +28,9 @@ do
     # RP - This if stmt is only used for the 20-fputil CI
     if [[ "${target}" == "generate" ]]
     then
-        rm -rf "${DEPLOYMENT}/build-fprime-automatic-"*
+        rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
     fi
-    fputil_action "${DEPLOYMENT}" "${target}"
+    fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 done
 
 # Loop over deployments and targets

@@ -8,15 +8,15 @@ export CTEST_OUTPUT_ON_FAILURE=1
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
-export DEPLOYMENT="${@}"
+export TEST="${@}"
 export TEST_TYPE="FULL"
-if [[ "${DEPLOYMENT}" == "Ref" ]] || [[ "${DEPLOYMENT}" == "RPI" ]]
+if [[ "${TEST}" == "Ref" ]] || [[ "${TEST}" == "RPI" ]]
 then
-    TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
+    TEST_RUN="${SCRIPT_DIR}/tests/20-fputil.bash"
     export TEST_TYPE="20-fputil"
-elif [[ "${DEPLOYMENT}" == "30-ints" ]]
+elif [[ "${TEST}" == "30-ints" ]]
 then
-    TEST="${SCRIPT_DIR}/tests/30-ints.bash"
+    TEST_RUN="${SCRIPT_DIR}/tests/30-ints.bash"
     export TEST_TYPE="30-ints"
 else
     echo "===================NOTHING WAS DONE++++++++++++++++++++++++++++++"
@@ -47,9 +47,9 @@ mkdir -p "${LOG_DIR}"
 ####
 # . "${SCRIPT_DIR}/bootstrap.bash" 
 
-echo -e "${BLUE}Starting CI test ${TEST}${NOCOLOR}"
-/usr/bin/time "${TEST}" || fail_and_stop "${TEST} failed"
-echo -e "${GREEN}CI test ${TEST} SUCCESSFUL${NOCOLOR}"
+echo -e "${BLUE}Starting CI test ${TEST_RUN}${NOCOLOR}"
+/usr/bin/time "${TEST_RUN}" || fail_and_stop "${TEST} failed"
+echo -e "${GREEN}CI test ${TEST_RUN} SUCCESSFUL${NOCOLOR}"
 
 
 # Loop through all scripts in  tests directory and run them
