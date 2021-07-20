@@ -45,7 +45,7 @@ mkdir -p "${LOG_DIR}"
 ####
 # RP - Remove after refactor. Tools should be installed in Docker image.
 ####
-# . "${SCRIPT_DIR}/bootstrap.bash" 
+. "${SCRIPT_DIR}/bootstrap.bash" 
 
 echo -e "${BLUE}Starting CI test ${TEST_RUN}${NOCOLOR}"
 /usr/bin/time "${TEST_RUN}" || fail_and_stop "${TEST} failed"
