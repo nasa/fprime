@@ -8,11 +8,10 @@ export CTEST_OUTPUT_ON_FAILURE=1
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
-DEPLOYMENT="${@}"
+export DEPLOYMENT="${@}"
 export TEST_TYPE="FULL"
 if [[ "${DEPLOYMENT}" == "Ref" ]] || [[ "${DEPLOYMENT}" == "RPI" ]]
 then
-    export DEPLOYMENT
     TEST="${SCRIPT_DIR}/tests/20-fputil.bash"
     export TEST_TYPE="20-fputil"
 elif [[ "${DEPLOYMENT}" == "30-ints" ]]
