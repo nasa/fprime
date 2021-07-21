@@ -40,7 +40,6 @@ ${name}::${name}(${args_scalar_array_string}) : Serializable() {
 
 #end if
 
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 const ${name}& ${name}::operator=(const ${name}& src) {
     this->set(${args_mstring});
     return src;
@@ -48,24 +47,15 @@ const ${name}& ${name}::operator=(const ${name}& src) {
 
 bool ${name}::operator==(const ${name}& src) const {
     return (
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
         (src.m_$member == this->m_$member) &&
 #end for
         true);
 }
 
 void ${name}::set(${args_proto_string}) {
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length == None:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
     this->m_${member} = ${member};
 #else
     for (NATIVE_INT_TYPE _mem = 0; _mem < FW_MIN(${member}Size,${array_length}); _mem++) {
@@ -75,15 +65,9 @@ void ${name}::set(${args_proto_string}) {
 #end for
 }
 
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size == None:
-${type} ${name}::get${member}() const {
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length == None and $typeinfo != 'string':
 ${type} ${name}::get${member}(void) const {
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
     return this->m_${member};
 #else if $typeinfo == 'string' or $typeinfo == 'extern':
 const ${type}& ${name}::get${member}() const {
@@ -96,13 +80,9 @@ const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {
 }
 
 #end for
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size == None:
-=======
+
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length == None and $typeinfo != 'string':
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 void ${name}::set${member}(${type} val) {
     this->m_${member} = val;
 }
@@ -126,13 +106,8 @@ Fw::SerializeStatus ${name}::serialize(Fw::SerializeBufferBase& buffer) const {
     stat = buffer.serialize((U32)${name}::TYPE_ID);
 \#endif
 
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length == None:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 #if $typeinfo == "enum":
     stat = buffer.serialize((FwEnumStoreType)this->m_${member});
 #else
@@ -169,13 +144,8 @@ Fw::SerializeStatus ${name}::deserialize(Fw::SerializeBufferBase& buffer) {
     }
 \#endif
 
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length == None:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 #if $typeinfo == "enum"
     FwEnumStoreType int${member} = 0;
     stat = buffer.deserialize(int${member});
@@ -204,13 +174,8 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     static const char * formatString =
        "("
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members[0:-1]:
-#if $size != None and typeinfo != "string":
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members[0:-1]:
 #if array_length != None:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
        "$member = "
 #for $elem in range(0,int($array_length)-1):
        "[$format]"
@@ -233,11 +198,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     // declare strings to hold any serializable toString() arguments
 
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 #if $typeinfo == "extern":
 
     Fw::EightyCharString ${member}Str;
@@ -247,15 +208,9 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
     (void)snprintf(outputString,FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE,formatString
-<<<<<<< HEAD
-#for ($member,$type,$size,$format,$comment,$typeinfo) in $members:
-#if $size != None and $typeinfo != "string":
-#for $elem in range(0,int($size)):
-=======
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_length != None:
 #for $elem in range(0,int($array_length)):
->>>>>>> 1e4e7af7c... Preliminary changes to support array_length
 #if $type == "bool":
        ,this->m_${member}[$elem]?"T":"F"
 #else if $type == "enum":

@@ -85,7 +85,6 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-
         for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
