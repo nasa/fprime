@@ -894,6 +894,7 @@ namespace ${namespace} {
     #if $type == "string":
       #set $tlm_type = "Fw::TlmString&"
     #else if $typeinfo == "user"
+ patch-20
       #set $tlm_type = $type + "&"
     #else
       #set $tlm_type = $type
@@ -912,6 +913,15 @@ namespace ${namespace} {
   void ${class_name} ::
     tlmWrite_${tlmname}(${tlm_type} arg, Fw::Time& _tlmTime)
   {
+      #set $tlm_type = "const " + $type + "&"
+    #else
+      #set $tlm_type = $type
+    #end if
+  void ${class_name} ::
+    tlmWrite_${tlmname}(${tlm_type} arg, Fw::Time _tlmTime)
+  {
+  
+  devel
     #if $update == "on_change"
     // Check to see if it is the first time
     if (not this->m_first_update_$tlmname) {
@@ -929,7 +939,13 @@ namespace ${namespace} {
 
     #end if
     if (this->m_${Tlm_Name}_OutputPort[0].isConnected()) {
+    patch-20
 
+
+      if (this->m_${Time_Name}_OutputPort[0].isConnected() && _tlmTime ==  Fw::ZERO_TIME) {
+         this->m_${Time_Name}_OutputPort[0].invoke( _tlmTime);
+      }
+      devel
       Fw::TlmBuffer _tlmBuff;
     #if $type == "string":
       arg.setMaxSerialize($size);
