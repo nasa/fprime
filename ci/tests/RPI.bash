@@ -4,7 +4,6 @@
 #
 # Run the tests on the software through fp-util.
 ####
-
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
 
