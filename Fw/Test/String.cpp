@@ -35,16 +35,6 @@ namespace Test {
         return this->m_buf;
     }
 
-    void String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
     const String& String::operator=(const String& other) {
         this->copyBuff(other.m_buf,sizeof(this->m_buf));
         return *this;
@@ -69,7 +59,7 @@ namespace Test {
     NATIVE_UINT_TYPE String::getCapacity(void) const {
         return STRING_SIZE;
     }
-    
+
     void String::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
