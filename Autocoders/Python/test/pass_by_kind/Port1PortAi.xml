@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface name="Port1" namespace="Example">
-    <import_serializable_type>Autocoders/Python/test/pass_by_default/ExampleTypeSerializableAi.xml</import_serializable_type>
+    <import_serializable_type>Autocoders/Python/test/pass_by_kind/ExampleTypeSerializableAi.xml</import_serializable_type>
     <comment>
     Port with example args
     </comment>

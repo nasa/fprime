@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include <Autocoders/Python/test/pass_by_default/Port1PortAc.hpp>
-#include <Autocoders/Python/test/pass_by_default/AllTypes.hpp>
+#include <Autocoders/Python/test/pass_by_kind/Port1PortAc.hpp>
+#include <Autocoders/Python/test/pass_by_kind/AllTypes.hpp>
 
 namespace Example {
 
