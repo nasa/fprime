@@ -43,11 +43,11 @@ module Ref {
   """
 
   init cmdSeq phase Fpp.ToCpp.Phases.configComponents """
-      cmdSeq.allocateBuffer(
-          0,
-          Allocation::mallocator,
-          ConfigConstants::cmdSeq::BUFFER_SIZE
-      );
+  cmdSeq.allocateBuffer(
+      0,
+      Allocation::mallocator,
+      ConfigConstants::cmdSeq::BUFFER_SIZE
+  );
   """
 
   init cmdSeq phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -63,11 +63,11 @@ module Ref {
   """
 
   init comm phase Fpp.ToCpp.Phases.configConstants """
-    enum {
-      PRIORITY = 100,
-      STACK_SIZE = Default::stackSize
-    };
-    """
+  enum {
+    PRIORITY = 100,
+    STACK_SIZE = Default::stackSize
+  };
+  """
 
   init comm phase Fpp.ToCpp.Phases.startTasks """
   // Initialize socket server if and only if there is a valid specification
