@@ -262,11 +262,5 @@ int main(int argc, char* argv[]) {
 
     int status = RUN_ALL_TESTS();
 
-    cout << "Deleting components..." << endl;
-    delete inst1;
-    delete inst2;
-
-    cout << "Completed..." << endl;
-
     return status;
 }
