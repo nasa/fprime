@@ -1,9 +1,9 @@
 @ Instance initializers
 module Ref {
 
-  # ----------------------------------------------------------------------
+  # 
   # blockDrv
-  # ----------------------------------------------------------------------
+  #
 
   init blockDrv phase Fpp.ToCpp.Phases.instances """
   // Declared in RefTopologyDefs.cpp
@@ -13,24 +13,24 @@ module Ref {
   blockDrv.init(QueueSizes::blockDrv);
   """
 
-  # ----------------------------------------------------------------------
-  # chanTlm
-  # ----------------------------------------------------------------------
+  # 
+  # 
+  #
 
   init chanTlm phase Fpp.ToCpp.Phases.instances """
   Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
   """
 
-  # ----------------------------------------------------------------------
+  # 
   # cmdDisp
-  # ----------------------------------------------------------------------
+  #
   init cmdDisp phase Fpp.ToCpp.Phases.instances """
   Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
   """
 
-  # ----------------------------------------------------------------------
+  #
   # cmdSeq
-  # ----------------------------------------------------------------------
+  #
 
   init cmdSeq phase Fpp.ToCpp.Phases.configConstants """
   enum {
@@ -38,11 +38,11 @@ module Ref {
   };
   """
 
-  init cmdSeq phase Fpp.ToCpp.Phases.instances """
+   cmdSeq phase Fpp.ToCpp.Phases.instances """
   Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
   """
 
-  init cmdSeq phase Fpp.ToCpp.Phases.configComponents """
+   cmdSeq phase Fpp.ToCpp.Phases.configComponents """
       cmdSeq.allocateBuffer(
           0,
           Allocation::mallocator,
@@ -50,13 +50,13 @@ module Ref {
       );
   """
 
-  init cmdSeq phase Fpp.ToCpp.Phases.tearDownComponents """
+   cmdSeq phase Fpp.ToCpp.Phases.tearDownComponents """
   cmdSeq.deallocateBuffer(Allocation::mallocator);
   """
 
-  # ----------------------------------------------------------------------
+  # 
   # comm
-  # ----------------------------------------------------------------------
+  # 
 
   init comm phase Fpp.ToCpp.Phases.instances """
   Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
