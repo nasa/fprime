@@ -44,7 +44,7 @@ namespace Svc {
             //!  \param numDividers size of dividers array
             //!
             //!  \return return value description
-            RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+            RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE offsets[], NATIVE_INT_TYPE numDividers);
 
             //!  \brief RateGroupDriverImpl initialization function
             //!
@@ -64,6 +64,9 @@ namespace Svc {
 
             //! divider array
             NATIVE_INT_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
+
+            //! offset array
+            NATIVE_INT_TYPE m_offsets[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! tick counter
             NATIVE_INT_TYPE m_ticks;
