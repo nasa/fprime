@@ -93,6 +93,9 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_length is not None:
+                arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
+                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_length is not None:
@@ -119,6 +122,9 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_length is not None:
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+                contains_array = True
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_length is not None:

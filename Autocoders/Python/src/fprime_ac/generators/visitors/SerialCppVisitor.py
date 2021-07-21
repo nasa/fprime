@@ -90,6 +90,9 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_length is not None:
+                arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
+                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_length is not None:
@@ -110,7 +113,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         args = obj.get_members()
         arg_str = ""
         for arg in args:
-            if arg[2] is not None and arg[1] != "string":
+            if arg[2] is not None:
                 arg_str += prefix + "%s" % arg[0]
                 arg_str += ", "
                 arg_str += "%s" % arg[2]
@@ -156,6 +159,9 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_length is not None:
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+                contains_array = True
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_length is not None:

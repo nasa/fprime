@@ -3,6 +3,7 @@
     <comment>
     Some Example Members
     </comment>
+    <include_header>Autocoders/Python/test/serialize4/ExampleType.hpp</include_header>
     <members>
         <member name="Member1" type="U32" comment = "Example member 1">
             <default>12345</default>
@@ -21,6 +22,10 @@
         <member name="Member4" type="U32" array_length="3" comment = "Example member 4">
             <default>3</default>
         </member>
+        <member name="Member5" type="string" size="5" array_length="2" comment = "Example member 4">
+            <default>"hello"</default>
+        </member>
+        <member name="Member6" type="ANameSpace::mytype" array_length="2" comment = "Example member 6"/>
     </members>
 </serializable>
 

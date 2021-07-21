@@ -66,11 +66,11 @@ void ${name}::set(${args_proto_string}) {
 }
 
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $array_length == None and $typeinfo != 'string':
+#if $array_length == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
 ${type} ${name}::get${member}(void) const {
     return this->m_${member};
-#else if $typeinfo == 'string' or $typeinfo == 'extern':
-const ${type}& ${name}::get${member}() const {
+#else if $array_length == None and ($typeinfo == 'string' or $typeinfo == 'extern'):
+const ${type}& ${name}::get${member}(void) const {
     return this->m_${member};
 #else
 const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {
@@ -82,11 +82,11 @@ const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {
 #end for
 
 #for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $array_length == None and $typeinfo != 'string':
+#if $array_length == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
 void ${name}::set${member}(${type} val) {
     this->m_${member} = val;
 }
-#else if $typeinfo == 'string' or $typeinfo == 'extern':
+#else if $array_length == None and ($typeinfo == 'string' or $typeinfo == 'extern'):
 void ${name}::set${member}(const ${type}& val) {
     this->m_${member} = val;
 }
