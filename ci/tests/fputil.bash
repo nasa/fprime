@@ -26,12 +26,12 @@ function fputil_action {
         PLATFORM=""
 
         # Generate is only needed when it isn't being tested
-        # if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
-        # then
-        #     echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        #     fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
-        #         || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        # fi
+        if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
+        then
+            echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+            fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+                || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+        fi
         cd "${WORKDIR}"
         if [[ "${TARGET}" != "generate" ]] && [[ "${TARGET}" != "generate --ut" ]]
         then
@@ -59,10 +59,10 @@ function integration_test {
 
     echo "${WORKDIR}"
     echo "${ROOTDIR}"
-    # if [[ "${TEST_TYPE}" != "30-fputil" ]]
-    # then
-    #     fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
-    # fi
+    if [[ "${TEST_TYPE}" != "30-fputil" ]]
+    then
+        fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
+    fi
     (
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
