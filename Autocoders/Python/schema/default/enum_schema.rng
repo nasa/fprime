@@ -37,6 +37,14 @@
 
             </optional>
 
+            <optional>
+                <attribute name = "serialize_type">
+                    <a:documentation>Serialization type of the enum.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
             <!-- Elements -->
             <interleave>
                 <optional>

@@ -3,7 +3,7 @@
 namespace ${n} {
  #end for
 #end if
-#for ($memname,$type,$size,$format,$comment) in $mem_list:
+#for ($memname,$type,$size,$format,$comment,$default) in $mem_list:
 #if $type == "string":
 
     ${name}::${memname}String::${memname}String(const char* src): StringBase() {
@@ -35,16 +35,6 @@ namespace ${n} {
 
     const char* ${name}::${memname}String::toChar(void) const {
         return this->m_buf;
-    }
-
-    void ${name}::${memname}String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
     }
 
     Fw::SerializeStatus ${name}::${memname}String::serialize(Fw::SerializeBufferBase& buffer) const {

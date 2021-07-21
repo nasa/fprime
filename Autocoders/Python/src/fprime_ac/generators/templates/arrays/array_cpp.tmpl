@@ -1,7 +1,7 @@
 ##
 ## Template to stamp out serializable arrays .cpp file
 ##
-// ====================================================================== 
+// ======================================================================
 // \title  ${name}
 // \author Auto-generated
 // \brief  cpp file for ${name}
@@ -11,7 +11,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
@@ -62,16 +62,6 @@ namespace ${namespace} {
 
     const char* ${name}::${name}String::toChar(void) const {
         return this->m_buf;
-    }
-
-    void ${name}::${name}String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
     }
 
     Fw::SerializeStatus ${name}::${name}String::serialize(Fw::SerializeBufferBase& buffer) const {
@@ -127,8 +117,8 @@ namespace ${namespace} {
   #set $i = $i + 1
   #end for
   }
-  
-  ${name} :: 
+
+  ${name} ::
     ${name}(const ElementType (&a)[SIZE]) :
       Serializable()
   {
@@ -137,9 +127,9 @@ namespace ${namespace} {
       this->elements[index] = a[index];
     }
   }
-  
+
   #if $size != 1:
-  ${name} :: 
+  ${name} ::
     ${name}(const ElementType& e) :
       Serializable()
   {
@@ -149,8 +139,8 @@ namespace ${namespace} {
     }
   }
   #end if
-  
-  ${name} :: 
+
+  ${name} ::
     ${name}(
 #for $i in $range(1, $size + 1)
 #if $i != $size:
@@ -168,7 +158,7 @@ namespace ${namespace} {
 #set $k = $k + 1
 #end for
   }
-  
+
   ${name} ::
     ${name}(const ${name}& other) :
       Serializable()
@@ -178,27 +168,27 @@ namespace ${namespace} {
       this->elements[index] = other.elements[index];
     }
   }
-  
+
   // ----------------------------------------------------------------------
   // Public functions
   // ----------------------------------------------------------------------
-  
-  
+
+
   ${name}::ElementType& ${name} ::
     operator[](const U32 i)
   {
     FW_ASSERT(i < SIZE);
     return this->elements[i];
   }
-  
+
   const ${name}::ElementType& ${name} ::
     operator[](const U32 i) const
   {
     FW_ASSERT(i < SIZE);
     return this->elements[i];
   }
-  
-  
+
+
   const ${name}& ${name} ::
     operator=(const ${name}& other)
   {
@@ -207,7 +197,7 @@ namespace ${namespace} {
     }
     return *this;
   }
-  
+
   const ${name}& ${name} ::
     operator=(const ElementType (&a)[SIZE])
   {
@@ -216,7 +206,7 @@ namespace ${namespace} {
     }
     return *this;
   }
-  
+
   const ${name}& ${name} ::
     operator=(const ElementType& e)
   {
@@ -225,9 +215,9 @@ namespace ${namespace} {
     }
     return *this;
   }
-  
+
   bool ${name} ::
-    operator==(const ${name}& other) const 
+    operator==(const ${name}& other) const
   {
     for (U32 i = 0; i < SIZE; ++i) {
       if (!((*this)[i] == other[i])) {
@@ -236,9 +226,9 @@ namespace ${namespace} {
     }
     return true;
   }
-  
+
   bool ${name} ::
-    operator!=(const ${name}& other) const 
+    operator!=(const ${name}& other) const
   {
     return !(*this == other);
   }
@@ -288,7 +278,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 }
 
 \#endif
-  
+
 \#ifdef BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
     Fw::EightyCharString temp;
@@ -298,7 +288,7 @@ void ${name}::toString(Fw::StringBase& text) const {
     return os;
   }
 \#endif
-  
+
   Fw::SerializeStatus ${name} ::
     serialize(Fw::SerializeBufferBase& buffer) const
   {
@@ -311,7 +301,7 @@ void ${name}::toString(Fw::StringBase& text) const {
     }
     return status;
   }
-  
+
   Fw::SerializeStatus ${name} ::
     deserialize(Fw::SerializeBufferBase& buffer)
   {

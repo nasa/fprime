@@ -23,7 +23,7 @@
     ((void) ((cond) ? (0) : \
     (CAssert0(ASSERT_FILE_ID, __LINE__))))
 #else
-#define FILE_NAME_ARG U8*
+#define FILE_NAME_ARG const U8*
 #define FW_CASSERT(cond) \
     ((void) ((cond) ? (0) : \
     (CAssert0((U8*)__FILE__, __LINE__))))

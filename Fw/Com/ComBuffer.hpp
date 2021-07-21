@@ -37,7 +37,7 @@ namespace Fw {
             const U8* getBuffAddr(void) const;
 
         private:
-            U8 m_data[FW_COM_BUFFER_MAX_SIZE]; // packet data buffer
+            U8 m_bufferData[FW_COM_BUFFER_MAX_SIZE]; // packet data buffer
     };
 
 }

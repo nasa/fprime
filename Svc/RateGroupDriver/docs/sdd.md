@@ -87,9 +87,7 @@ Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Output - `RateGroupDriverImpl.cpp`](../test/ut/output/RateGroupDriverImpl.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

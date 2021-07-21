@@ -1,14 +1,14 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SerializableFile.cpp
-// \author dinkel 
-// \brief  cpp file for SerializableFile 
+// \author dinkel
+// \brief  cpp file for SerializableFile
 //
 // \copyright
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/SerializableFile/SerializableFile.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -20,7 +20,7 @@ namespace Fw {
     allocator(allocator),
     recoverable(false), // for compiler; not used
     actualSize(maxSerializedSize),
-    buffer( (U8 *const) this->allocator->allocate(0, actualSize, recoverable), actualSize)
+    buffer( (U8 *) this->allocator->allocate(0, actualSize, recoverable), actualSize)
   {
     // assert if allocator returns smaller size
     FW_ASSERT(maxSerializedSize == actualSize,maxSerializedSize,actualSize);
@@ -30,7 +30,7 @@ namespace Fw {
   SerializableFile::~SerializableFile() {
     this->allocator->deallocate(0, this->buffer.getBuffAddr());
   }
-  
+
   SerializableFile::Status SerializableFile::load(const char* fileName, Serializable& serializable) {
     Os::File file;
     Os::File::Status status;
@@ -76,7 +76,7 @@ namespace Fw {
     NATIVE_INT_TYPE size = length;
     status = file.write(this->buffer.getBuffAddr(), length);
     if( (Os::File::OP_OK != status) ||
-        (length != size) ) 
+        (length != size) )
     {
       file.close();
       return FILE_WRITE_ERROR;
