@@ -295,6 +295,13 @@
                     <a:documentation>The size of the argument.</a:documentation>
                     <data type="nonNegativeInteger"/>
                 </attribute>
+
+                <optional>
+                    <attribute name="array_length">
+                        <a:documentation>The size of the argument.</a:documentation>
+                        <data type="nonNegativeInteger"/>
+                    </attribute>
+                </optional>
             </group>
 
             <!--Choice two: Type = ENUM and Enum element inside block -->
@@ -347,7 +354,7 @@
                 </choice>
 
                 <optional>
-                    <attribute name="size">
+                    <attribute name="array_length">
                         <a:documentation>The size of the argument.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>

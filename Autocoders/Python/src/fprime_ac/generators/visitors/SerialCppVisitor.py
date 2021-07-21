@@ -85,14 +85,15 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment) in obj.get_members():
+
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
-            elif mtype == "string":
+            elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size is not None:
+            elif array_length is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -128,7 +129,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = list()
 
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -139,9 +140,35 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             elif mtype not in typelist:
                 typeinfo = "extern"
 
-            arg_list.append((name, mtype, size, format, comment, typeinfo))
-
+            arg_list.append((name, mtype, array_length, size, format, comment, default, typeinfo))
         return arg_list
+
+    def _get_args_proto_string_scalar_init(self, obj):
+        """
+        Return a string of (type, name) args, comma separated
+        for use in templates that generate prototypes where the array
+        arguments are represented by single element values. If no arguments
+        are arrays, function returns None.
+        """
+        arg_str = ""
+        contains_array = False
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
+            if isinstance(mtype, tuple):
+                arg_str += "{} {}, ".format(mtype[0][1], name)
+            elif mtype == "string" and array_length is None:
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype not in typelist:
+                arg_str += "const {}& {}, ".format(mtype, name)
+            elif array_length is not None:
+                arg_str += "const {} {}, ".format(mtype, name)
+                contains_array = True
+            else:
+                arg_str += "{} {}".format(mtype, name)
+                arg_str += ", "
+        if not contains_array:
+            return None
+        arg_str = arg_str.strip(", ")
+        return arg_str
 
     def _writeTmpl(self, c, visit_str):
         """

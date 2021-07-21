@@ -19,7 +19,7 @@ namespace ${n} {
 
 class ${name} : public Fw::Serializable {
 
-#for ($memname,$type,$size,$format,$comment) in $mem_list:
+#for ($memname,$type,$aray_length,$size,$format,$comment,$default) in $mem_list:
 #if $type == "string":
 
   public:
