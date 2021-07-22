@@ -64,7 +64,7 @@ function integration_test {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" ## 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n -r "${ROOTDIR}" -g none -l &
         GDS_PID=$!
         # run the app with valgrind in the background
         valgrind  \
