@@ -64,7 +64,7 @@ function integration_test {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
+        fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" ## 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         valgrind  \
@@ -75,7 +75,7 @@ function integration_test {
             --show-leak-kinds=all \
             --track-origins=yes \
             # --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
+            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 &
         VALGRIND_PID=$!
 
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
