@@ -34,6 +34,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/autocoder/autocoder.cmake")
 
 # Set the install directory for the package
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
@@ -55,6 +56,11 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
 
 register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+
+register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/fpp.cmake")
+register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-xml.cmake")
+
+
 
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.

@@ -7,14 +7,13 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImpl.cpp"
 )
 
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
 )

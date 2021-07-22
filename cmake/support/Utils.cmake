@@ -72,22 +72,22 @@ endfunction(get_module_name)
 # - **HPP_SOURCE:** source .hpp file to add
 # - **MODULE_NAME:** (inherited from parent) name of the module to add generated sources too
 ####
-function(add_generated_sources CPP_SOURCE HPP_SOURCE)
-  if (CMAKE_DEBUG_OUTPUT)
-    message(STATUS "\tGenerated files: ${CPP_SOURCE} ${HPP_SOURCE}")
-  endif()
-  set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
-  # Add auto-coded sources to the module as sources
-  target_sources(
-    ${MODULE_NAME}
-    PRIVATE ${CPP_SOURCE} ${HPP_SOURCE}
-  )
-  # Set those files as generated to prevent build errors
-  set_source_files_properties(${CPP_SOURCE} PROPERTIES GENERATED TRUE)
-  set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
-  # Includes the source, so that the Ac files can include source headers
-  target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-endfunction(add_generated_sources)
+#function(add_generated_sources CPP_SOURCE HPP_SOURCE)
+#  if (CMAKE_DEBUG_OUTPUT)
+#    message(STATUS "\tGenerated files: ${CPP_SOURCE} ${HPP_SOURCE}")
+#  endif()
+#  set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
+#  # Add auto-coded sources to the module as sources
+#  target_sources(
+#    ${MODULE_NAME}
+#    PRIVATE ${CPP_SOURCE} ${HPP_SOURCE}
+#  )
+#  # Set those files as generated to prevent build errors
+#  set_source_files_properties(${CPP_SOURCE} PROPERTIES GENERATED TRUE)
+#  set_source_files_properties(${HPP_SOURCE} PROPERTIES GENERATED TRUE)
+#  # Includes the source, so that the Ac files can include source headers
+#  target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#endfunction(add_generated_sources)
 
 ####
 # Function `fprime_ai_info`:
@@ -100,36 +100,36 @@ endfunction(add_generated_sources)
 # - **XML_PATH:** full path to the XML used for sources.
 # - **MODULE_NAME:** name of the module soliciting new dependencies
 ####
-function(fprime_ai_info XML_PATH MODULE_NAME)
-  # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
-  set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-  execute_process(
-      COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
-	  RESULT_VARIABLE ERR_RETURN
-	  OUTPUT_VARIABLE AI_OUTPUT
-  )
-  if(ERR_RETURN)
-     message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
-  endif()
-  # Next parse the output matching one line at a time, then consuming it and matching the next
-  string(REGEX MATCH   "([^\r\n]+)" XML_TYPE "${AI_OUTPUT}")
-  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
-  string(REGEX MATCH   "^([^\r\n]+)" MODULE_DEPENDENCIES "${AI_OUTPUT}")
-  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
-  string(REGEX MATCH   "^([^\r\n]+)" FILE_DEPENDENCIES "${AI_OUTPUT}")
-
-  # Next compute the needed variants of the items needed. This
-  string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
-  get_filename_component(XML_NAME "${INPUT_FILE}" NAME)
-  string(REGEX REPLACE "(${XML_TYPE})?Ai.xml" "" AC_OBJ_NAME "${XML_NAME}")
-
-  # Finally, set all variables into parent scope
-  set(XML_TYPE "${XML_TYPE}" PARENT_SCOPE)
-  set(XML_LOWER_TYPE "${XML_LOWER_TYPE}" PARENT_SCOPE)
-  set(AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
-  set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-  set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-endfunction(fprime_ai_info)
+#function(fprime_ai_info XML_PATH MODULE_NAME)
+#  # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
+#  set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
+#  execute_process(
+#      COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
+#	  RESULT_VARIABLE ERR_RETURN
+#	  OUTPUT_VARIABLE AI_OUTPUT
+#  )
+#  if(ERR_RETURN)
+#     message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
+#  endif()
+#  # Next parse the output matching one line at a time, then consuming it and matching the next
+#  string(REGEX MATCH   "([^\r\n]+)" XML_TYPE "${AI_OUTPUT}")
+#  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
+#  string(REGEX MATCH   "^([^\r\n]+)" MODULE_DEPENDENCIES "${AI_OUTPUT}")
+#  string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
+#  string(REGEX MATCH   "^([^\r\n]+)" FILE_DEPENDENCIES "${AI_OUTPUT}")
+#
+#  # Next compute the needed variants of the items needed. This
+#  string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
+#  get_filename_component(XML_NAME "${INPUT_FILE}" NAME)
+#  string(REGEX REPLACE "(${XML_TYPE})?Ai.xml" "" AC_OBJ_NAME "${XML_NAME}")
+#
+#  # Finally, set all variables into parent scope
+#  set(XML_TYPE "${XML_TYPE}" PARENT_SCOPE)
+#  set(XML_LOWER_TYPE "${XML_LOWER_TYPE}" PARENT_SCOPE)
+#  set(AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
+#  set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
+#  set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+#endfunction(fprime_ai_info)
 
 ####
 # Function `split_source_files`:
@@ -140,20 +140,20 @@ endfunction(fprime_ai_info)
 # - **Return: AUTOCODER_INPUT_FILES** (set in parent scope)
 # - **Return: SOURCE_FILES** (set in parent scope)
 ####
-function(split_source_files SOURCE_INPUT_FILES)
-    set(AC "")
-    set(SC "")
-    foreach (INPUTFILE ${SOURCE_INPUT_FILES})
-        if (INPUTFILE MATCHES ".*\\.xml$" OR INPUTFILE MATCHES ".*\\.txt")
-            list(APPEND AC ${INPUTFILE})
-        else()
-            list(APPEND SC ${INPUTFILE})
-        endif()
-    endforeach()
-	# Return the variables to calling scope
-	set(AUTOCODER_INPUT_FILES "${AC}" PARENT_SCOPE)
-	set(SOURCE_FILES "${SC}" PARENT_SCOPE)
-endfunction(split_source_files)
+#function(split_source_files SOURCE_INPUT_FILES)
+#    set(AC "")
+#    set(SC "")
+#    foreach (INPUTFILE ${SOURCE_INPUT_FILES})
+#        if (INPUTFILE MATCHES ".*\\.xml$" OR INPUTFILE MATCHES ".*\\.txt")
+#            list(APPEND AC ${INPUTFILE})
+#        else()
+#            list(APPEND SC ${INPUTFILE})
+#        endif()
+#    endforeach()
+#	# Return the variables to calling scope
+#	set(AUTOCODER_INPUT_FILES "${AC}" PARENT_SCOPE)
+#	set(SOURCE_FILES "${SC}" PARENT_SCOPE)
+#endfunction(split_source_files)
 
 ####
 # Function `split_dependencies`:
@@ -164,20 +164,20 @@ endfunction(split_source_files)
 # - **Return: LINK_DEPS** (set in parent scope)
 # - **Return: MOD_DEPS** (set in parent scope)
 ####
-function(split_dependencies DEPS_INPUT)
-    set(LD "")
-    set(FD "")
-    foreach (INPUTFILE ${DEPS_INPUT})
-        if (INPUTFILE MATCHES "^-l.*")
-            list(APPEND LD ${INPUTFILE})
-        else()
-            list(APPEND FD ${INPUTFILE})
-        endif()
-    endforeach()
-	# Return the variables to calling scope
-	set(LINK_DEPS "${LD}" PARENT_SCOPE)
-	set(MOD_DEPS "${FD}" PARENT_SCOPE)
-endfunction(split_dependencies)
+#function(split_dependencies DEPS_INPUT)
+#    set(LD "")
+#    set(FD "")
+#    foreach (INPUTFILE ${DEPS_INPUT})
+#        if (INPUTFILE MATCHES "^-l.*")
+#            list(APPEND LD ${INPUTFILE})
+#        else()
+#            list(APPEND FD ${INPUTFILE})
+#        endif()
+#    endforeach()
+#	# Return the variables to calling scope
+#	set(LINK_DEPS "${LD}" PARENT_SCOPE)
+#	set(MOD_DEPS "${FD}" PARENT_SCOPE)
+#endfunction(split_dependencies)
 ####
 # Function `set_hash_flag`:
 #
@@ -192,22 +192,34 @@ function(set_hash_flag SRC)
     file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")
     SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS -DASSERT_FILE_ID="0x${HASH_32}")
 endfunction(set_hash_flag)
+
+
 ####
-# Function `print_dependencies`:
+# Function `print_property`:
+#
+# Prints a given property for the module.
+# - **TARGET**: target to print properties
+# - **PROPERTY**: name of property to print
+####
+function (print_property TARGET PROPERTY)
+    get_target_property(OUT "${TARGET}" "${PROPERTY}")
+    if (NOT OUT MATCHES ".*-NOTFOUND")
+        message(STATUS "[F´ Module] ${TARGET} ${PROPERTY}:")
+        foreach (PROPERTY IN LISTS OUT)
+            message(STATUS "[F´ Module]    ${PROPERTY}")
+        endforeach()
+    endif()
+endfunction(print_property)
+
+####
+# Function `introspect`:
 #
 # Prints the dependency list of the module supplied as well as the include directories.
 #
 # - **MODULE_NAME**: module name to print dependencies
 ####
-function(print_dependencies MODULE_NAME)
-     get_target_property(OUT "${MODULE_NAME}" INCLUDE_DIRECTORIES)
-     if (OUT MATCHES ".*-NOTFOUND")
-       set(OUT "--none--")
-     endif()
-     message(STATUS "\tInclude Directories: ${OUT}")
-     get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
-     if (OUT MATCHES ".*-NOTFOUND")
-       set(OUT "--none--")
-     endif()
-     message(STATUS "\tLinks dependencies: ${OUT}")
-endfunction(print_dependencies)
+function(introspect MODULE_NAME)
+    print_property("${MODULE_NAME}" SOURCES)
+    print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
+    print_property("${MODULE_NAME}" LINK_LIBRARIES)
+endfunction(introspect)
