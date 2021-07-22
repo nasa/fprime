@@ -66,15 +66,20 @@ function(get_dependencies AC_INPUT_FILE)
     # Should have been inherited from previous call to `get_generated_files`
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(FPP_IMPORTED "${IMPORTED}" PARENT_SCOPE)
 endfunction(get_dependencies)
 
 
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES)
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_SEP_FPP "${FPRIME_BUILD_LOCATIONS}")
-    string(REGEX REPLACE ";" ","  FILE_DEPENDENCIES_SEP "${FILE_DEPENDENCIES}")
+    string(REGEX REPLACE ";" ","  FPP_IMPORTED_SEP "${FPP_IMPORTED}")
+    set(INCLUDES)
+    if (FPP_IMPORTED_SEP)
+        set(INCLUDES "-i" "${FPP_IMPORTED_SEP}")
+    endif()
     add_custom_command(
             OUTPUT  ${GENERATED_FILES}
-            COMMAND fpp-to-xml "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" "-i" "${FILE_DEPENDENCIES_SEP}"
+            COMMAND fpp-to-xml "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
                 "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
             DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
     )

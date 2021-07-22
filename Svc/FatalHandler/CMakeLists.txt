@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentLinuxImpl.cpp"
 )

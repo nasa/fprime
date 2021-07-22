@@ -14,7 +14,7 @@ function(get_generated_files AC_INPUT_FILE)
     # other as a source file input.  Generated files will follow a convention and would not generate dependencies.
     if (AC_INPUT_FILE MATCHES "^${CMAKE_CURRENT_BINARY_DIR}.*")
         get_filename_component(AC_INPUT_NAME "${AC_INPUT_FILE}" NAME)
-        foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable")
+        foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable" "Array")
             if (AC_INPUT_NAME MATCHES ".*${AI_TYPE}Ai.xml$")
                 set(XML_TYPE "${AI_TYPE}")
                 break()
