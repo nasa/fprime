@@ -8,6 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/RefPacketsAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
   "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
 )
