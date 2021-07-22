@@ -26,12 +26,12 @@ function fputil_action {
         PLATFORM=""
 
         # Generate is only needed when it isn't being tested
-        if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
-        then
-            echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-            fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
-                || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        fi
+        # if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
+        # then
+        #     echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+        #     fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
+        #         || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
+        # fi
         cd "${WORKDIR}"
         if [[ "${TARGET}" != "generate" ]] && [[ "${TARGET}" != "generate --ut" ]]
         then
@@ -57,12 +57,9 @@ function integration_test {
     export WORKDIR="${1}"
     export ROOTDIR="${WORKDIR}/build-artifacts"
 
-    echo "${WORKDIR}"
-    echo "${ROOTDIR}"
-    if [[ "${TEST_TYPE}" != "30-fputil" ]]
-    then
-        fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
-    fi
+    # fprime-util generate
+    # fprime-util "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
+
     (
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
@@ -77,7 +74,7 @@ function integration_test {
             --leak-check=full \
             --show-leak-kinds=all \
             --track-origins=yes \
-            --log-file=${LOG_DIR}/gds-logs/valgrind.log \
+            # --log-file=${LOG_DIR}/gds-logs/valgrind.log \
             ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
         VALGRIND_PID=$!
 
