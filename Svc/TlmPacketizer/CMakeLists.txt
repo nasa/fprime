@@ -16,7 +16,7 @@ register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_CORE_DIR}/Svc/TlmPacketizer/TlmPacketizerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/TlmPacketizerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )

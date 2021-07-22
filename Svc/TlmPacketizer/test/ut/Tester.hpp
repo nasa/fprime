@@ -21,7 +21,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/TlmPacketizer/TlmPacketizerComponentImpl.hpp"
+#include "Svc/TlmPacketizer/TlmPacketizer.hpp"
 
 namespace Svc {
 
@@ -147,7 +147,7 @@ namespace Svc {
 
       //! The component under test
       //!
-      TlmPacketizerComponentImpl component;
+      TlmPacketizer component;
 
       Fw::Time m_testTime; //!< store test time for packets
       bool m_timeSent; //!< flag when time was sent
