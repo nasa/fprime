@@ -4,6 +4,7 @@
 #
 # Helpers to test via FP util
 ####
+set -e
 export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check --all")
 # export FPUTIL_DEPLOYS="${FPRIME_DIR} ${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/${TEST}"
@@ -60,10 +61,13 @@ function integration_test {
     export ROOTDIR="${WORKDIR}/build-artifacts"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
 
+    CMAKE_EXTRA_SETTINGS=""
+    PLATFORM=""
+
     cd "${WORKDIR}"
-    fprime-util "generate" || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
-    cd "${ROOTDIR}"
-    fprime-util "build" --jobs "${JOBS}" || fail_and_stop "Failed to build before integration test"
+    fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
+    cd "${WORKDIR}/"
+    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} || fail_and_stop "Failed to build before integration test"
 
     (
         mkdir -p "${LOG_DIR}/gds-logs"
