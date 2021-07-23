@@ -63,10 +63,10 @@ function integration_test {
     PLATFORM=""
 
     cd "${WORKDIR}"
-    fprime-util "generate" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \ 
+    fprime-util "generate" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
         || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
     cd "${WORKDIR}/"
-    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \ 
+    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
         || fail_and_stop "Failed to build before integration test"
 
     (
