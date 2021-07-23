@@ -23,16 +23,8 @@ function fputil_action {
     export WORKDIR="${DEPLOYMENT}/${3}"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
-        cd "${DEPLOYMENT}"
         PLATFORM=""
 
-        # Generate is only needed when it isn't being tested
-        # if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
-        # then
-        #     echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        #     fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
-        #         || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        # fi
         cd "${WORKDIR}"
         if [[ "${TARGET}" != "generate" ]] && [[ "${TARGET}" != "generate --ut" ]]
         then
