@@ -108,7 +108,7 @@ namespace Ref {
       }
 
       namespace rateGroupDriverComp {
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
+        NATIVE_UINT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
       }
 
       namespace uplink {

@@ -6,23 +6,23 @@
 
 namespace Svc {
 
-    RateGroupDriverImpl::RateGroupDriverImpl(const char* compName, I32 dividers[], I32 numDividers) :
+    RateGroupDriverImpl::RateGroupDriverImpl(const char* compName, NATIVE_UINT_TYPE* dividers, NATIVE_UINT_TYPE numDividers) :
         RateGroupDriverComponentBase(compName),
     m_ticks(0),m_rollover(1)
     {
 
         // double check arguments
         FW_ASSERT(dividers);
-        FW_ASSERT(numDividers <= static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
+        FW_ASSERT(numDividers <= static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
                 numDividers,
-                static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)));
+                static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)));
         // verify port/table size matches
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
                 static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
                 this->getNum_CycleOut_OutputPorts());
         // clear table
         ::memset(this->m_dividers,0,sizeof(this->m_dividers));
-        for (NATIVE_INT_TYPE entry = 0; entry < numDividers; entry++) {
+        for (U32 entry = 0; entry < numDividers; entry++) {
             this->m_dividers[entry] = dividers[entry];
             // rollover value should be product of all dividers to make sure integer rollover doesn't jump cycles
             // only use non-zero dividers

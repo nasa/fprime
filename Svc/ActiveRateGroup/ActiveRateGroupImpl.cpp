@@ -20,7 +20,7 @@
 
 namespace Svc {
 
-    ActiveRateGroupImpl::ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
+    ActiveRateGroupImpl::ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE* contexts, NATIVE_UINT_TYPE numContexts) :
             ActiveRateGroupComponentBase(compName),
             m_cycles(0),
             m_maxTime(0),

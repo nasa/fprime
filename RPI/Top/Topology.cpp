@@ -21,7 +21,7 @@ Svc::FprimeFraming framing;
 
 // Rate Group Dividers for 10Hz and 1Hz
 
-static NATIVE_INT_TYPE rgDivs[] = {1,10,0};
+static NATIVE_UINT_TYPE rgDivs[] = {1,10,0};
 Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV",rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
 
 // Context array variables are passed to rate group members if needed to distinguish one call from another
