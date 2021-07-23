@@ -215,7 +215,7 @@ of build for deployments.
 ```
 cd fprime/Ref
 fprime-util build
-./bin/Linux/Ref # Run the deployment
+./build-artifacts/Linux/bin/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.
