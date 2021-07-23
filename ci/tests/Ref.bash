@@ -27,5 +27,5 @@ do
     echo "$[${END} - ${START}]"
 done
 
-echo -e "${BLUE}Testing ${INT_DEPLOYS} against integration tests${NOCOLOR}"
-integration_test "${INT_DEPLOYS}"
+# echo -e "${BLUE}Testing ${INT_DEPLOYS} against integration tests${NOCOLOR}"
+# integration_test "${INT_DEPLOYS}"
