@@ -58,8 +58,7 @@ function integration_test {
     export ROOTDIR="${WORKDIR}/build-artifacts"
 
     cd "${WORKDIR}"
-    PLATFORM = ""
-    fprime-util "generate" "${PLATFORM}" || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
+    fprime-util "generate" || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
     fprime-util "build" || fail_and_stop "Failed to build before integration test"
 
     (
