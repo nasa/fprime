@@ -25,8 +25,6 @@ function fputil_action {
     (
         cd "${DEPLOYMENT}"
         PLATFORM=""
-        echo "${3}"
-        echo "${WORKDIR}"
 
         # Generate is only needed when it isn't being tested
         # if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "20-fputil" ]]
@@ -67,7 +65,7 @@ function integration_test {
     cd "${WORKDIR}"
     fprime-util "generate" || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
     cd "${WORKDIR}/"
-    fprime-util "build" || fail_and_stop "Failed to build before integration test"
+    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} || fail_and_stop "Failed to build before integration test"
 
     (
         mkdir -p "${LOG_DIR}/gds-logs"
