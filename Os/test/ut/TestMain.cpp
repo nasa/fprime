@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 extern "C" {
-  void startTestTask(int iters);
+  void startTestTask();
   void qtest_block_receive();
   void qtest_nonblock_receive();
   void qtest_nonblock_send();
@@ -17,8 +17,7 @@ extern "C" {
 }
 const char* filename;
 TEST(Nominal, StartTestTask) {
-   startTestTask(10);
-   sleep(15);
+   startTestTask();
 }
 TEST(Nominal, QTestBlockRecv) {
    qtest_block_receive();

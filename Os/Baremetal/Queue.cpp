@@ -10,6 +10,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>
 
+#include <new>
 #include <stdio.h>
 
 namespace Os {
@@ -46,7 +47,7 @@ Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_
         handle = NULL;
     }
     //New queue handle, check for success or return error
-    handle = new BareQueueHandle;
+    handle = new(std::nothrow) BareQueueHandle;
     if (NULL == handle || !handle->create(depth, msgSize)) {
         return QUEUE_UNINITIALIZED;
     }
