@@ -73,7 +73,7 @@ function integration_test {
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
         echo "[INFO] Starting headless GDS layer"
-        fprime-gds -n -r "${ROOTDIR}" -g none -l &
+        fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
         valgrind  \
@@ -83,14 +83,14 @@ function integration_test {
             --leak-check=full \
             --show-leak-kinds=all \
             --track-origins=yes \
-            # --log-file=${LOG_DIR}/gds-logs/valgrind.log \
-            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 &
+            --log-file=${LOG_DIR}/gds-logs/valgrind.log \
+            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
         VALGRIND_PID=$!
 
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
         sleep ${SLEEP_TIME}
         # Check the above started successfully
-        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to run GDS layer headlessly"
+        ps -p ${GDS_PID} || fail_and_stop "Failed to run GDS layer headlessly"
         ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start Ref with Valgrind"
         # Run integration tests
         (
