@@ -12,8 +12,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow contains 4 jobs. One for every CI test."
+  Framework:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -26,12 +26,81 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        test_type: "QUICK"
+        test: Framework
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
       if: always()
       with:
-        name: ci-logs
+        name: ci-framework-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  Ref:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      uses: ./.github/actions/
+      id: github-ci-action
+      with:
+        test: 'Ref'
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-ref-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  RPI:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      uses: ./.github/actions/
+      id: github-ci-action
+      with:
+        test: 'RPI'
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-rpi-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  Integration:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      uses: ./.github/actions/
+      id: github-ci-action
+      with:
+        test: '30-ints'
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-int-logs
         path: ci-logs.tar.gz
         retention-days: 5

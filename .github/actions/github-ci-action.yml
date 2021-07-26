@@ -1,12 +1,12 @@
 name: 'F prime CI'
 description: 'Runs continuous integration testing on F prime'
 inputs:
-  test_type:
+  test:
     description: Test number to run
     required: true
-    default: 1
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.test_type }}
+    - ${{ inputs.test }}
