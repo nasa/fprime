@@ -4,9 +4,11 @@
 #
 # Run the tests on the software through fp-util.
 ####
+# Directory to be used for Ref CI test
+export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
+
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
-
 . ${SCRIPT_DIR}/tests/fputil.bash
 
 export CMAKE_EXTRA_SETTINGS=""

@@ -4,6 +4,9 @@
 #
 # Integration tests for CI
 ####
+# Directory to be used for Integration CI test
+export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
+
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
 
