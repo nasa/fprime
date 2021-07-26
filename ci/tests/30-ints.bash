@@ -14,4 +14,4 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 
 # Run integration tests
 echo -e "${BLUE}Testing ${INT_DEPLOYS} against integration tests${NOCOLOR}"
-integration_test "${INT_DEPLOYS}"
+integration_test "${FPUTIL_DEPLOYS}"
