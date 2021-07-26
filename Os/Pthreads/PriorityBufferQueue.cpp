@@ -18,6 +18,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <string.h>
 #include <stdio.h>
+#include <new>
 
 // This is a priority queue implementation implemented using a stable max heap.
 // Elements pushed onto the queue will be popped off in priority order.
@@ -67,25 +68,25 @@ namespace Os {
 
   bool BufferQueue::initialize(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
     // Create the priority queue data structure on the heap:
-    MaxHeap* heap = new MaxHeap;
+    MaxHeap* heap = new(std::nothrow) MaxHeap;
     if (NULL == heap) {
       return false;
     }
     if( !heap->create(depth) ) {
       return false;
     }
-    U8* data = new U8[depth*(sizeof(msgSize) + msgSize)];  
+    U8* data = new(std::nothrow) U8[depth*(sizeof(msgSize) + msgSize)];
     if (NULL == data) {
       return false;
     }
-    NATIVE_UINT_TYPE* indexes = new NATIVE_UINT_TYPE[depth];
+    NATIVE_UINT_TYPE* indexes = new(std::nothrow) NATIVE_UINT_TYPE[depth];
     if (NULL == indexes) {
       return false;
     }
     for(NATIVE_UINT_TYPE ii = 0; ii < depth; ++ii) {
         indexes[ii] = getBufferIndex(ii);
     }
-    PriorityQueue* priorityQueue = new PriorityQueue;
+    PriorityQueue* priorityQueue = new(std::nothrow) PriorityQueue;
     if (NULL == priorityQueue) {
       return false;
     }
@@ -104,18 +105,18 @@ namespace Os {
     {
       MaxHeap* heap = pQueue->heap;
       if (NULL != heap) {
-        delete heap; 
+        delete heap;
       }
       U8* data = pQueue->data;
       if (NULL != data) {
-        delete [] data; 
+        delete [] data;
       }
       NATIVE_UINT_TYPE* indexes = pQueue->indexes;
       if (NULL != indexes)
       {
-        delete [] indexes; 
+        delete [] indexes;
       }
-      delete pQueue; 
+      delete pQueue;
     }
     this->queue = NULL;
   }
@@ -129,7 +130,7 @@ namespace Os {
 
     // Get an available data index:
     NATIVE_UINT_TYPE index = checkoutIndex(pQueue, this->depth);
-    
+
     // Insert the data into the heap:
     bool ret = heap->push(priority, index);
     FW_ASSERT(ret, ret);
@@ -139,7 +140,7 @@ namespace Os {
 
     return true;
   }
- 
+
   bool BufferQueue::dequeue(U8* buffer, NATIVE_UINT_TYPE& size, NATIVE_INT_TYPE &priority) {
 
     // Extract queue handle variables:

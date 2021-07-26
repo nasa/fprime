@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <pthread.h>
+#include <new>
 
 namespace Os {
 
@@ -90,7 +91,7 @@ namespace Os {
         }
 
         // Set up queue handle:
-        QueueHandle* queueHandle = new QueueHandle(handle);
+        QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
         if (NULL == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }

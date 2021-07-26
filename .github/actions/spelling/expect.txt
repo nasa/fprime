@@ -1042,6 +1042,7 @@ nostdlib
 notask
 notchars
 NOTFOUND
+nothrow
 NOTYPE
 Nowicki
 npm

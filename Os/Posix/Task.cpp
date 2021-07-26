@@ -15,6 +15,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <new>
 #include <Fw/Logger/Logger.hpp>
 
 typedef void* (*pthread_func_ptr)(void*);
@@ -120,7 +121,12 @@ namespace Os {
             Task::s_taskRegistry->addTask(this);
         }
 
-        pthread_t* tid = new pthread_t;
+        pthread_t* tid = new(std::nothrow) pthread_t;
+        if (tid == NULL) {
+            Fw::Logger::logMsg("failed to allocate pthread_t\n");
+            return TASK_UNKNOWN_ERROR;
+        }
+
         this->m_routineWrapper.routine = routine;
         this->m_routineWrapper.arg = arg;
 

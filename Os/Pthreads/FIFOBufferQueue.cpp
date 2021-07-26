@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  FIFOBufferQueue.hpp
 // \author dinkel
-// \brief  An implementation of BufferQueue which uses a FIFO data 
+// \brief  An implementation of BufferQueue which uses a FIFO data
 //         structure for the queue. Priority is ignored.
 //
 // \copyright
@@ -13,7 +13,9 @@
 
 #include "Os/Pthreads/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
+
 #include <string.h>
+#include <new>
 
 // This is a simple FIFO queue implementation which ignores priority
 namespace Os {
@@ -33,11 +35,11 @@ namespace Os {
   /////////////////////////////////////////////////////
 
   bool BufferQueue::initialize(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
-    U8* data = new U8[depth*(sizeof(msgSize) + msgSize)];  
+    U8* data = new(std::nothrow) U8[depth*(sizeof(msgSize) + msgSize)];
     if (NULL == data) {
       return false;
     }
-    FIFOQueue* fifoQueue = new FIFOQueue;
+    FIFOQueue* fifoQueue = new(std::nothrow) FIFOQueue;
     if (NULL == fifoQueue) {
       return false;
     }
@@ -56,7 +58,7 @@ namespace Os {
       if (NULL != data) {
         delete [] data;
       }
-      delete fQueue; 
+      delete fQueue;
     }
     this->queue = NULL;
   }
@@ -75,20 +77,20 @@ namespace Os {
     ++fQueue->tail;
     return true;
   }
- 
+
   bool BufferQueue::dequeue(U8* buffer, NATIVE_UINT_TYPE& size, NATIVE_INT_TYPE &priority) {
     (void) priority;
 
     FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->queue);
     U8* data = fQueue->data;
-    
+
     // Get the buffer from the queue:
     NATIVE_UINT_TYPE index = getBufferIndex(fQueue->head);
     bool ret = this->dequeueBuffer(buffer, size, data, index);
     if(!ret) {
       return false;
     }
-    
+
     // Increment head of fifo:
     ++fQueue->head;
     return true;
