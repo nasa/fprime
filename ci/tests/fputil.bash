@@ -81,7 +81,7 @@ function integration_test {
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
         sleep ${SLEEP_TIME}
         # Check the above started successfully
-        ps -p ${GDS_PID} || fail_and_stop "Failed to run GDS layer headlessly"
+        ps -p ${GDS_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to run GDS layer headlessly"
         ps -p ${VALGRIND_PID} 2> /dev/null 1> /dev/null || fail_and_stop "Failed to start Ref with Valgrind"
         # Run integration tests
         (
