@@ -88,15 +88,17 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
                 while (not m_spinner) {}
             }
         }
-        this->component.close();
-        client.close();
+        client.close(); // Client must be closed first or the server risks binding to an existing address
+        // Properly stop the client on the last iteration
+        if ((1 + i) == iterations && recv_thread) {
+            this->component.shutdown();
+            this->component.stopSocketTask();
+            this->component.joinSocketTask(NULL);
+        } else {
+            this->component.close();
+        }
     }
-    // Wait for the receiver to shutdown
-    if (recv_thread) {
-        this->component.shutdown();
-        this->component.stopSocketTask();
-        this->component.joinSocketTask(NULL);
-    }
+    ASSERT_from_ready_SIZE(iterations);
 }
 
 Tester ::Tester(void)
@@ -141,6 +143,10 @@ void Tester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvB
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
     m_spinner = true;
     delete[] recvBuffer.getData();
+}
+
+void Tester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer Tester ::
@@ -188,6 +194,12 @@ void Tester ::
     this->component.set_recv_OutputPort(
         0,
         this->get_from_recv(0)
+    );
+
+    // recv
+    this->component.set_ready_OutputPort(
+      0,
+      this->get_from_ready(0)
     );
 
     // allocate

@@ -134,6 +134,11 @@ class SocketReadTask {
     virtual void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) = 0;
 
     /**
+     * \brief called when the IPv4 system has been connected
+     */
+    virtual void connected() = 0;
+
+    /**
      * \brief a task designed to read from the socket and output incoming data
      *
      * \param pointer: pointer to "this" component
