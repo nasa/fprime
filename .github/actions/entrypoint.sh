@@ -4,7 +4,7 @@
 set -e
 set -x
 cd "$GITHUB_WORKSPACE"
-if "$GITHUB_WORKFLOW" == "Autodocs"
+if [ "$GITHUB_WORKFLOW" == "Autodocs" ]
 then
     /autodoc.bash
 else

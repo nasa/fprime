@@ -18,9 +18,8 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # :param deploy($2): deployment to run on
 ####
 function fputil_action {
-    export DEPLOYMENT="${1}"
+    export WORKDIR="${1}"
     export TARGET="${2}"
-    export WORKDIR="${DEPLOYMENT}/${3}"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
         PLATFORM=""

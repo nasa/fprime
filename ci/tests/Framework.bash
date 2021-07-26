@@ -18,5 +18,5 @@ do
     then
         rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
     fi
-    fputil_action "${FPUTIL_DEPLOYS}" "${target}"
+    fputil_action "${FPRIME_DIR}" "${target}"
 done
