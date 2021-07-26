@@ -3,7 +3,7 @@
 namespace ${n} {
  #end for
 #end if
-#for ($memname,$type,$aray_length,$size,$format,$comment,$default) in $mem_list:
+#for ($memname,$type,$aray_length,$size,$format,$comment) in $mem_list:
 #if $type == "string":
 
     ${name}::${memname}String::${memname}String(const char* src): StringBase() {

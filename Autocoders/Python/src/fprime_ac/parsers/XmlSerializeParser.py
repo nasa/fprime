@@ -254,7 +254,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, array_length, size, f, c, d))
+                    self.__members.append((n, t, array_length, size, f, c))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

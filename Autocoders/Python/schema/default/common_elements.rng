@@ -282,12 +282,18 @@
                     <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name="type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
-                        <value>string</value>
+                        <choice>
+                            <value>string</value>
+                            <value>buffer</value>
+                        </choice>
                     </attribute>
 
                     <attribute name="data_type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
-                        <value>string</value>
+                        <choice>
+                            <value>string</value>
+                            <value>buffer</value>
+                        </choice>
                     </attribute>
                 </choice>
 
