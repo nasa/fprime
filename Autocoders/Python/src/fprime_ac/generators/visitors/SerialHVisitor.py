@@ -155,8 +155,9 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             elif mtype not in typelist:
                 typeinfo = "extern"
 
-            arg_list.append((name, mtype, array_length, size, format, comment, typeinfo))
-
+            arg_list.append(
+                (name, mtype, array_length, size, format, comment, typeinfo)
+            )
         return arg_list
 
     def _get_enum_string_list(self, enum_list):
