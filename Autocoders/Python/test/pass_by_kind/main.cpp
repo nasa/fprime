@@ -28,18 +28,15 @@ TEST(PassByTest, OK) {
 
     // Invoke sync and async ports and pass pass arguments
     inst1.get_AsyncPort_InputPort(0)->invoke(
-        &(async_args.arg1),
+        &async_args.arg1,
         async_args.arg2,
         async_args.arg3,
-        async_args.arg4,
-        &async_args.arg5,
+        &async_args.arg4,
+        async_args.arg5,
         async_args.arg6,
-        async_args.arg7,
+        &async_args.arg7,
         async_args.arg8,
-        &async_args.arg9,
-        async_args.arg10,
-        async_args.arg11,
-        async_args.arg12
+        async_args.arg9
     );
     inst1.doDispatch();
 
@@ -48,15 +45,12 @@ TEST(PassByTest, OK) {
         &sync_args.arg1,
         sync_args.arg2,
         sync_args.arg3,
-        sync_args.arg4,
-        &sync_args.arg5,
+        &sync_args.arg4,
+        sync_args.arg5,
         sync_args.arg6,
-        sync_args.arg7,
+        &sync_args.arg7,
         sync_args.arg8,
-        &sync_args.arg9,
-        sync_args.arg10,
-        sync_args.arg11,
-        sync_args.arg12
+        sync_args.arg9
     );
     inst1.doDispatch();
 

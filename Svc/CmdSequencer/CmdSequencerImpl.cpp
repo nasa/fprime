@@ -237,7 +237,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum,
           FwOpcodeType opcode,
           U32 cmdSeq,
-          Fw::CmdResponse response
+          const Fw::CmdResponse& response
       )
     {
         if (this->m_runMode == STOPPED) {

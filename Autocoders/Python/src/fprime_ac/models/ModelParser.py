@@ -208,8 +208,6 @@ class ModelParser:
                     m = "*"
                 elif m == "reference":
                     m = "&"
-                elif m == "value":
-                    m = ""
                 elif TypesList.isPrimitiveType(t) or isEnum:
                     m = ""
                 else:

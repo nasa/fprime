@@ -63,7 +63,7 @@ namespace Svc {
       const NATIVE_INT_TYPE portNum,
       FwOpcodeType opCode,
       U32 cmdSeq,
-      Fw::CmdResponse response
+      const Fw::CmdResponse& response
     )
   {
     this->pushFromPortEntry_seqDone(opCode, cmdSeq, response);

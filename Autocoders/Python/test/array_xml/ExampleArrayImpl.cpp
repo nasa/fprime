@@ -18,7 +18,7 @@ namespace Example {
         Component1ComponentBase::init(queueDepth);
     }
 
-    void ExampleArrayImpl::ExArrayIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
+    void ExampleArrayImpl::ExArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::ArrayType& array1, const Example::ArrSerial& serial1) {
         Fw::EightyCharString s;
         array1.toString(s);
 
@@ -26,7 +26,7 @@ namespace Example {
         this->ArrayOut_out(0, array1, serial1);
     }
 
-    void ExampleArrayImpl::ArrayIn_handler(NATIVE_INT_TYPE portNum, Example::ArrayType array1, Example::ArrSerial serial1) {
+    void ExampleArrayImpl::ArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::ArrayType& array1, const Example::ArrSerial& serial1) {
         Fw::EightyCharString s;
         array1.toString(s);
 

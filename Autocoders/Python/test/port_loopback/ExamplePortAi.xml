@@ -17,7 +17,7 @@
             </enum>
             <comment>The ENUM argument</comment>
         </arg>
-        <arg name="arg6" type="string" size="20" pass_by="value"></arg>
+        <arg name="arg6" type="string" size="20"></arg>
     </args>
 </interface>
 

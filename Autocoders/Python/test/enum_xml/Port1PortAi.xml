@@ -6,10 +6,10 @@
     Port with example args
     </comment>
     <args>
-        <arg name="Arg1" type="Example::Enum1" pass_by="value">
+        <arg name="Arg1" type="Example::Enum1">
             <comment>Example enum arg</comment>
         </arg>
-        <arg name="Arg2" type="Example::Serial1" pass_by="value">
+        <arg name="Arg2" type="Example::Serial1">
             <comment>Example serial arg with enum member</comment>
         </arg>
     </args>

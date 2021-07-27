@@ -37,7 +37,7 @@ namespace Svc {
     void ActiveTextLoggerComponentImpl::TextLogger_handler(NATIVE_INT_TYPE portNum,
                                                   FwEventIdType id,
                                                   Fw::Time &timeTag,
-                                                  Fw::LogSeverity severity,
+                                                  const Fw::LogSeverity& severity,
                                                   Fw::TextLogString &text)
     {
 

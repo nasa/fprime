@@ -8,7 +8,7 @@
         <arg name="arg4" type="I32" >
             <comment>The first argument</comment>
         </arg>
-        <arg name="arg5" type="Ref::Gnc::Quaternion" pass_by="value">
+        <arg name="arg5" type="Ref::Gnc::Quaternion">
             <comment>The second argument</comment>
         </arg>
         <arg name="arg6" type="U8">

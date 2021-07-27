@@ -135,7 +135,7 @@ void Tester ::test_advanced_reconnect() {
     from_recv_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &recvBuffer,
-        RecvStatus recvStatus
+        const RecvStatus &recvStatus
     )
   {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);

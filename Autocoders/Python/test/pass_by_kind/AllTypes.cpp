@@ -11,11 +11,9 @@ namespace Example {
         arg1 = 0;
         arg2 = 0;
         arg3 = 0;
-        arg4 = 0;
+        arg4.setstate(0);
         arg5.setstate(0);
         arg6.setstate(0);
-        arg7.setstate(0);
-        arg8.setstate(0);
         // Store whether port is async
         this->is_async = is_async;
     }
@@ -41,11 +39,9 @@ namespace Example {
         ASSERT_EQ(this->arg1, pointer_expected);
         ASSERT_EQ(this->arg2, reference_expected);
         ASSERT_EQ(this->arg3, value_expected);
-        ASSERT_EQ(this->arg4, value_expected);
-        ASSERT_EQ((this->arg5).getstate(), pointer_expected);
-        ASSERT_EQ((this->arg6).getstate(), reference_expected);
-        ASSERT_EQ((this->arg7).getstate(), value_expected);
-        ASSERT_EQ((this->arg8).getstate(), constref_expected);
+        ASSERT_EQ((this->arg4).getstate(), pointer_expected);
+        ASSERT_EQ((this->arg5).getstate(), reference_expected);
+        ASSERT_EQ((this->arg6).getstate(), constref_expected);
     }
 
 }

@@ -25,7 +25,7 @@ TestCommandSourceImpl::~TestCommandSourceImpl() {
 
 void TestCommandSourceImpl::cmdStatusPort_handler(
         NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq,
-        Fw::CmdResponse response) {
+        const Fw::CmdResponse& response) {
     this->printStatus(response);
 }
 

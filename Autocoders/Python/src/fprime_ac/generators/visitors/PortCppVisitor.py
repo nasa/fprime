@@ -111,8 +111,6 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                 t = t + " *"
             elif arg.get_modifier() == "reference":
                 t = t + " &"
-            elif arg.get_modifier() == "value":
-                t = t + " "
             elif TypesList.isPrimitiveType(t) or isEnum:
                 t = t + " "
             else:

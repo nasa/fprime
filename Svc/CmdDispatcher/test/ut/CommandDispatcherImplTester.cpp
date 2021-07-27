@@ -37,7 +37,7 @@ namespace Svc {
         this->m_cmdSendRcvd = true;
     }
 
-    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response) {
+    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         this->m_seqStatusRcvd = true;
         this->m_seqStatusOpCode = opCode;
         this->m_seqStatusCmdSeq = cmdSeq;

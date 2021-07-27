@@ -246,9 +246,9 @@ $emit_hpp_port_params($params)
       typedef struct {
       #for $param_name, $param_type, $param_comment, $param_modifier, $param_enum, $non_const_arg_type in $params:
         #if $param_modifier in ('*')
-          $param_type $param_modifier${param_name};
+          $non_const_arg_type $param_modifier${param_name};
         #else
-          $param_type ${param_name};
+          $non_const_arg_type ${param_name};
         #end if
       #end for
       } FromPortEntry_${instance};

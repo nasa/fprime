@@ -8,10 +8,10 @@
     Example port with arg
     </comment>
     <args>
-        <arg name="Arg1" type="Example::ArrayType" pass_by="value">
+        <arg name="Arg1" type="Example::ArrayType">
             <comment>Example array arg</comment>
         </arg>
-        <arg name="Arg2" type="Example::ArrSerial" pass_by="value">
+        <arg name="Arg2" type="Example::ArrSerial">
             <comment>Example serial arg w array</comment>
         </arg>
     </args>
