@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serializable namespace="Example" name="Serial1">
+    <comment>
+    Some Example Members
+    </comment>
+    <members>
+        <member name="Member1" type="U32" comment = "Example member 1"/>
+        <member name="Member2" type="string" size="16" comment = "Example member 2"/>
+        <member name="Member3" type="ENUM" comment = "Example member 3">
+            <enum name="SomeEnum">
+                <item name="MEM1"/>
+                <item name="MEM2" value="7" />
+                <item name="MEM3" value="15"/>
+            </enum>
+        </member>
+        <member name="Member4" type="U32" array_length="3" comment = "Example member 4"/>
+        <member name="Member5" type="string" size="16" array_length="2" comment = "Example member 5"/>
+    </members>
+</serializable>

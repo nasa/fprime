@@ -192,6 +192,8 @@ void ${name}::toString(Fw::StringBase& text) const {
        ,this->m_${member}[$elem]?"T":"F"
 #else if $type == "enum":
        ,(NATIVE_INT_TYPE)this->m_${member}[$elem]
+#else if $typeinfo == "string":
+       ,this->m_${member}[$elem].toChar()
 #else:
        ,this->m_${member}[$elem]
 #end if
