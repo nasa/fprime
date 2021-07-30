@@ -35,7 +35,7 @@ from fprime_ac.parsers import XmlTopologyParser
 
 from lxml import etree
 from Cheetah.Template import Template
-from fprime_ac.utils.buildroot import search_for_file, set_build_roots, build_root_relative_path
+from fprime_ac.utils.buildroot import search_for_file, set_build_roots, get_nearest_build_root
 
 header_file_template = """
 
@@ -62,7 +62,7 @@ impl_file_template = """
 \#include <Svc/TlmPacketizer/TlmPacketizerTypes.hpp>
 \#include <${output_header}>
 
-\#include <Fw/Cfg/Config.hpp>
+\#include <FpConfig.hpp>
 \#include <Fw/Types/BasicTypes.hpp>
 \#include <Fw/Time/Time.hpp>
 
@@ -373,8 +373,8 @@ class TlmPacketParser(object):
         else:
             raise TlmPacketParseValueError("Invalid xml type %s"%element_tree.getroot().tag)
         
-        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace("Ai","")
-        file_dir = os.path.dirname(xml_filename).replace(build_root.build_root_relative_path() ,"")
+        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace("Ai","") 
+        file_dir = os.path.dirname(xml_filename).replace(get_nearest_build_root(xml_filename) + os.sep ,"")
         
         
         missing_channels = False
