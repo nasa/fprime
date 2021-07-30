@@ -715,12 +715,12 @@ namespace Svc {
       ASSERT_from_PktSend_SIZE(0);
 
       // send command to manually send a packet
-      this->sendCmd_TPK_SEND_PKT(0,12,4);
+      this->sendCmd_SEND_PKT(0,12,4);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_TPK_PacketSent(0,4);
+      ASSERT_EVENTS_PacketSent(0,4);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_TPK_SEND_PKT,12,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_OK);
       // dispatch run call to send packet
       this->invoke_to_Run(0,0);
       this->component.doDispatch();
@@ -737,12 +737,12 @@ namespace Svc {
 
       // send command to manually send a packet
       this->clearHistory();
-      this->sendCmd_TPK_SEND_PKT(0,12,8);
+      this->sendCmd_SEND_PKT(0,12,8);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_TPK_PacketSent(0,8);
+      ASSERT_EVENTS_PacketSent(0,8);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_TPK_SEND_PKT,12,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_OK);
       // dispatch run call to send packet
       this->invoke_to_Run(0,0);
       this->component.doDispatch();
@@ -752,12 +752,12 @@ namespace Svc {
       // Try to send invalid packet
       // send command to manually send a packet
       this->clearHistory();
-      this->sendCmd_TPK_SEND_PKT(0,12,20);
+      this->sendCmd_SEND_PKT(0,12,20);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_TPK_PacketNotFound(0,20);
+      ASSERT_EVENTS_PacketNotFound(0,20);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_TPK_SEND_PKT,12,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_VALIDATION_ERROR);
 
   }
 
@@ -808,14 +808,14 @@ namespace Svc {
 
       // send the command to select packet level 1
       this->clearHistory();
-      this->sendCmd_TPK_SET_LEVEL(0,13,1);
+      this->sendCmd_SET_LEVEL(0,13,1);
       this->component.doDispatch();
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_TPK_LevelSet_SIZE(1);
-      ASSERT_EVENTS_TPK_LevelSet(0,1);
+      ASSERT_EVENTS_LevelSet_SIZE(1);
+      ASSERT_EVENTS_LevelSet(0,1);
       ASSERT_TLM_SIZE(1);
-      ASSERT_TLM_TPK_SendLevel_SIZE(1);
-      ASSERT_TLM_TPK_SendLevel(0,1);
+      ASSERT_TLM_SendLevel_SIZE(1);
+      ASSERT_TLM_SendLevel(0,1);
 
       // send the packets
       // first channel
@@ -910,15 +910,15 @@ return;
           this->clearEvents();
           this->invoke_to_TlmRecv(0,channel,ts,buff);
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_TPK_NoChan_SIZE(1);
-          ASSERT_EVENTS_TPK_NoChan(0,channel);
+          ASSERT_EVENTS_NoChan_SIZE(1);
+          ASSERT_EVENTS_NoChan(0,channel);
       }
 
       // One more channel should not emit event
       this->clearEvents();
       this->invoke_to_TlmRecv(0,1000+TLMPACKETIZER_MAX_MISSING_TLM_CHECK,ts,buff);
       ASSERT_EVENTS_SIZE(0);
-      ASSERT_EVENTS_TPK_NoChan_SIZE(0);
+      ASSERT_EVENTS_NoChan_SIZE(0);
 
       // sending the missing channels again should emit no events
 
@@ -926,7 +926,7 @@ return;
           this->clearEvents();
           this->invoke_to_TlmRecv(0,channel,ts,buff);
           ASSERT_EVENTS_SIZE(0);
-          ASSERT_EVENTS_TPK_NoChan_SIZE(0);
+          ASSERT_EVENTS_NoChan_SIZE(0);
       }
 
   }
