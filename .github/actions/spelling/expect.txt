@@ -130,6 +130,7 @@ bodychars
 bodytext
 bools
 boolt
+bootlin
 bootup
 brc
 bre
@@ -1633,8 +1634,8 @@ tt
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
