@@ -92,17 +92,17 @@ namespace Svc {
           U32 key /*!< Value to return to pinger*/
       );
 
-      //! Implementation for TPK_SET_LEVEL command handler
+      //! Implementation for SET_LEVEL command handler
       //! Set telemetry send leve
-      void TPK_SET_LEVEL_cmdHandler(
+      void SET_LEVEL_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           U32 level /*!< The I32 command argument*/
       );
 
-      //! Implementation for TPK_SEND_PKT command handler
+      //! Implementation for SEND_PKT command handler
       //! Force a packet to be sent
-      void TPK_SEND_PKT_cmdHandler(
+      void SEND_PKT_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           U32 id /*!< The packet ID*/
@@ -119,7 +119,7 @@ namespace Svc {
           NATIVE_UINT_TYPE id; //!< channel id
           NATIVE_UINT_TYPE level; //!< channel level
           bool updated; //!< if packet had any updates during last cycle
-          bool requested; //!< if the packet was requested with TPK_SEND_PKT in the last cycle
+          bool requested; //!< if the packet was requested with SEND_PKT in the last cycle
       };
 
       // buffers for filling with telemetry

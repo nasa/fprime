@@ -465,7 +465,7 @@
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
     <connection name = "TlmPktEvt">
-         <source component = "tlmPkt" port = "Log" type = "Log" num = "0"/>
+         <source component = "pktTlm" port = "Log" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
    
@@ -775,10 +775,12 @@
          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
          <target component = "fileDownlink" port = "Run" type = "Sched" num = "0"/>
     </connection>
+    <!-- Add back in when packets are configured - will assert if not configured
     <connection name = "Rg1PktTlm">
          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "4"/>
          <target component = "pktTlm" port = "Run" type = "Sched" num = "0"/>
     </connection>
+    -->
 
     <!-- Rate Group 2 -->
     <connection name = "Rg2Drv">
@@ -939,10 +941,10 @@
     </connection>
     <connection name = "pktTlmPingSend">
         <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
-        <target component = "chanTlm" port = "pingIn" type = "Ping" num = "0"/>
+        <target component = "pktTlm" port = "pingIn" type = "Ping" num = "0"/>
     </connection>
     <connection name = "pktTlmPingRecv">
-        <source component = "chanTlm" port = "pingOut" type = "Ping" num = "0"/>
+        <source component = "pktTlm" port = "pingOut" type = "Ping" num = "0"/>
         <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
     </connection>
 

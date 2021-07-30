@@ -36,7 +36,7 @@
         </port>
     </ports>
     <commands>
-        <command kind="async" opcode="0" mnemonic="TPK_SET_LEVEL" >
+        <command kind="async" opcode="0" mnemonic="SET_LEVEL" >
             <comment>
             Set telemetry send level
             </comment>
@@ -46,7 +46,7 @@
                 </arg>
             </args>
         </command>
-        <command kind="async" opcode="1" mnemonic="TPK_SEND_PKT" >
+        <command kind="async" opcode="1" mnemonic="SEND_PKT" >
             <comment>
             Force a packet to be sent
             </comment>
@@ -58,7 +58,7 @@
         </command>
     </commands>
     <events>
-        <event id="0" name="TPK_NoChan" severity="WARNING_LO" format_string = "Telemetry ID 0x%08X not packetized">
+        <event id="0" name="NoChan" severity="WARNING_LO" format_string = "Telemetry ID 0x%08X not packetized">
             <comment>
             Telemetry channel is not part of a telemetry packet.
             </comment>
@@ -68,7 +68,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="1" name="TPK_LevelSet" severity="ACTIVITY_HI" format_string = "Telemetry send level to %d">
+        <event id="1" name="LevelSet" severity="ACTIVITY_HI" format_string = "Telemetry send level to %d">
             <comment>
             Telemetry send level set
             </comment>
@@ -78,7 +78,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="2" name="TPK_MaxLevelExceed" severity="WARNING_LO" format_string = "Requested send level %d higher than max packet level of %d">
+        <event id="2" name="MaxLevelExceed" severity="WARNING_LO" format_string = "Requested send level %d higher than max packet level of %d">
             <comment>
             Telemetry send level set
             </comment>
@@ -91,7 +91,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="3" name="TPK_PacketSent" severity="ACTIVITY_LO" format_string = "Sent packet ID %d">
+        <event id="3" name="PacketSent" severity="ACTIVITY_LO" format_string = "Sent packet ID %d">
             <comment>
             Packet manually sent
             </comment>
@@ -101,7 +101,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="4" name="TPK_PacketNotFound" severity="WARNING_LO" format_string = "Could not find packet ID %d">
+        <event id="4" name="PacketNotFound" severity="WARNING_LO" format_string = "Could not find packet ID %d">
             <comment>
             Couldn't find the packet to send
             </comment>
@@ -113,7 +113,7 @@
         </event>
     </events>    
     <telemetry>
-        <channel id="0" name="TPK_SendLevel" data_type="U32">
+        <channel id="0" name="SendLevel" data_type="U32">
             <comment>
             Telemetry send level
             </comment>

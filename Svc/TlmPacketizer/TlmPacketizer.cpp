@@ -341,7 +341,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void TlmPacketizer ::
-    TPK_SET_LEVEL_cmdHandler(
+    SET_LEVEL_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         U32 level
@@ -349,15 +349,15 @@ namespace Svc {
   {
       this->m_startLevel = level;
       if (level > this->m_maxLevel) {
-          this->log_WARNING_LO_TPK_MaxLevelExceed(level,this->m_maxLevel);
+          this->log_WARNING_LO_MaxLevelExceed(level,this->m_maxLevel);
       }
-      this->tlmWrite_TPK_SendLevel(level);
-      this->log_ACTIVITY_HI_TPK_LevelSet(level);
+      this->tlmWrite_SendLevel(level);
+      this->log_ACTIVITY_HI_LevelSet(level);
       this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
   }
 
   void TlmPacketizer ::
-    TPK_SEND_PKT_cmdHandler(
+    SEND_PKT_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         U32 id
@@ -373,14 +373,14 @@ namespace Svc {
               this->m_fillBuffers[pkt].requested = true;
               this->m_lock.unLock();
 
-              this->log_ACTIVITY_LO_TPK_PacketSent(id);
+              this->log_ACTIVITY_LO_PacketSent(id);
               break;
           }
       }
 
       // couldn't find it
       if (pkt == this->m_numPackets) {
-          log_WARNING_LO_TPK_PacketNotFound(id);
+          log_WARNING_LO_PacketNotFound(id);
           this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_VALIDATION_ERROR);
           return;
       }
@@ -402,7 +402,7 @@ namespace Svc {
           } else if (not this->m_missTlmCheck[slot].checked) {
               this->m_missTlmCheck[slot].checked = true;
               this->m_missTlmCheck[slot].id = id;
-              this->log_WARNING_LO_TPK_NoChan(id);
+              this->log_WARNING_LO_NoChan(id);
               return;
           }
       }

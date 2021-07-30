@@ -144,6 +144,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     linuxTime.init(0);
 
     chanTlm.init(10,0);
+    pktTlm.init(10,0);
 
     cmdDisp.init(20,0);
 
@@ -200,6 +201,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     SG5.regCommands();
     health.regCommands();
     pingRcvr.regCommands();
+    pktTlm.regCommands();
 
     // read parameters
     prmDb.readParamFile();
@@ -229,6 +231,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         {3,5,getHealthName(pingRcvr)}, // 10
         {3,5,getHealthName(blockDrv)}, // 11
         {3,5,getHealthName(fileManager)}, // 12
+        {3,5,getHealthName(pktTlm)}, // 13
     };
 
     // register ping table
@@ -248,6 +251,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     // start telemetry
     eventLogger.start(0,98,10*1024);
     chanTlm.start(0,97,10*1024);
+    pktTlm.start(0,97,10*1024);
     prmDb.start(0,96,10*1024);
 
     fileDownlink.start(0, 100, 10*1024);
@@ -276,6 +280,7 @@ void exitTasks(void) {
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
+    pktTlm.exit();
     prmDb.exit();
     fileUplink.exit();
     fileDownlink.exit();
