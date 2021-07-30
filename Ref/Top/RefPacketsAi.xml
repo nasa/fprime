@@ -11,14 +11,12 @@
         <channel name="cmdSeq.CS_CancelCommands"/>
         <channel name="cmdSeq.CS_CommandsExecuted"/>
         <channel name="cmdSeq.CS_SequencesCompleted"/>
-        <channel name="fileUplink.FileUplink_FilesReceived"/>
-        <channel name="fileUplink.FileUplink_PacketsReceived"/>
-        <channel name="fileUplinkBufferManager.BufferManager_NumAllocatedBuffers"/>
-        <channel name="fileUplinkBufferManager.BufferManager_AllocatedSize"/>
-        <channel name="fileDownlinkBufferManager.BufferManager_NumAllocatedBuffers"/>
-        <channel name="fileDownlinkBufferManager.BufferManager_AllocatedSize"/>
-        <channel name="fileDownlink.FileDownlink_FilesSent"/>
-        <channel name="fileDownlink.FileDownlink_PacketsSent"/>
+        <channel name="fileUplink.FilesReceived"/>
+        <channel name="fileUplink.PacketsReceived"/>
+        <channel name="fileUplinkBufferManager.TotalBuffs"/>
+        <channel name="fileUplinkBufferManager.CurrBuffs"/>
+        <channel name="fileDownlink.FilesSent"/>
+        <channel name="fileDownlink.PacketsSent"/>
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">
@@ -26,8 +24,8 @@
         <channel name="rateGroup2Comp.RgCycleSlips"/>
         <channel name="rateGroup3Comp.RgCycleSlips"/>
         <channel name="cmdSeq.CS_Errors"/>
-        <channel name="fileUplink.FileUplink_Warnings"/>
-        <channel name="fileDownlink.FileDownlink_Warnings"/>
+        <channel name="fileUplink.Warnings"/>
+        <channel name="fileDownlink.Warnings"/>
         <channel name="health.PingLateWarnings"/>
     </packet>
 
@@ -43,11 +41,11 @@
         <channel name="recvBuffComp.Sensor2"/>
         <channel name="recvBuffComp.Parameter1"/>
         <channel name="recvBuffComp.Parameter2"/>
-        <channel name="SG1.SignalGen_Output"/>
-        <channel name="SG2.SignalGen_Output"/>
-        <channel name="SG3.SignalGen_Output"/>
-        <channel name="SG4.SignalGen_Output"/>
-        <channel name="SG5.SignalGen_Output"/>
+        <channel name="SG1.Output"/>
+        <channel name="SG2.Output"/>
+        <channel name="SG3.Output"/>
+        <channel name="SG4.Output"/>
+        <channel name="SG5.Output"/>
         <channel name="blockDrv.BD_Cycles"/>
     </packet>
 
