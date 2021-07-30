@@ -15,7 +15,7 @@ The requirements for `Svc::TlmPacketizer` are as follows:
 | TPK-002 | The `Svc::TlmPacketizer` component shall time tag each packet | Unit Test |
 | TPK-003 | The `Svc::TlmPacketizer` component shall keep the latest value of each channel | Unit Test |
 | TPK-004 | The `Svc::TlmPacketizer` component shall uniquely identify each packet | Unit Test |
-| TPK-005 | The `Svc::TlmPacketizer` component shall write all packets when the schduler call is made | Unit Test |
+| TPK-005 | The `Svc::TlmPacketizer` component shall write all packets when the scheduler call is made | Unit Test |
 
 
 ## 3. Design
