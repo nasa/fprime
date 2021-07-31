@@ -125,6 +125,11 @@ class TlmPacketParser(object):
     def __init__(self, verbose = False, dependency = None):
         self.verbose = verbose
         self.dependency = dependency
+        self.size_dict = dict()
+
+    def add_type_size(self, type, size):
+        PRINT.debug("Type: %s size: %d"%(type,size))
+        self.size_dict[type] = size
     
     def get_type_size(self,type_name, size):
         
@@ -198,7 +203,7 @@ class TlmPacketParser(object):
     
         xml_list = []
         for parsed_xml_type in parsed_xml_dict:
-            if parsed_xml_dict[parsed_xml_type] == None:
+            if parsed_xml_dict[parsed_xml_type] is None:
                 print("ERROR: XML of type {} is being used, but has not been parsed correctly. Check if file exists or add xml file with the 'import_component_type' tag to the Topology file.".format(parsed_xml_type))
                 raise Exception()
             xml_list.append(parsed_xml_dict[parsed_xml_type])
@@ -206,7 +211,6 @@ class TlmPacketParser(object):
         topology_model.set_instance_xml_list(xml_list)
         
         ch_size_dict = dict()
-        serializable_size_dict = dict()
         
         for comp in the_parsed_topology_xml.get_instances():
             comp_name = comp.get_name()
@@ -216,12 +220,12 @@ class TlmPacketParser(object):
                 PRINT.debug("Processing %s"%comp_name)
 
             # check for included XML types
-            serializable_size_dict.update(self.process_enum_files(parsed_xml_dict[comp_type].get_enum_type_files()))
-            serializable_size_dict.update(self.process_array_files(parsed_xml_dict[comp_type].get_array_type_files()))
-            serializable_size_dict.update(self.process_serializable_files(parsed_xml_dict[comp_type].get_serializable_type_files()))
+            self.process_enum_files(parsed_xml_dict[comp_type].get_enum_type_files())
+            self.process_array_files(parsed_xml_dict[comp_type].get_array_type_files())
+            self.process_serializable_files(parsed_xml_dict[comp_type].get_serializable_type_files())
     
             # check for channels
-            if (parsed_xml_dict[comp_type].get_channels() != None):
+            if (parsed_xml_dict[comp_type].get_channels() is not None):
                 for chan in parsed_xml_dict[comp_type].get_channels():
                     channel_name = comp_name + "." + chan.get_name()
                     if self.verbose:
@@ -231,11 +235,11 @@ class TlmPacketParser(object):
                     if type(chan_type) == type(tuple()):
                         chan_size = 4
                     # if channel is serializable
-                    elif chan_type in serializable_size_dict:
-                        chan_size = serializable_size_dict[chan_type]
+                    elif chan_type in self.size_dict:
+                        chan_size = self.size_dict[chan_type]
                     else:
                         chan_size = self.get_type_size(chan_type,chan.get_size())
-                    if chan_size == None:
+                    if chan_size is None:
                         print("Component %s channel %s type \"%s\" not found!"%(comp_name,channel_name,chan_type))
                         sys.exit(-1)
                     chan_id = int(chan.get_ids()[0],0) + comp_id;
@@ -301,7 +305,7 @@ class TlmPacketParser(object):
                 # read in topology file 
                 if entry.tag == "import_topology":
                     top_file = search_for_file("Packet",entry.text)
-                    if top_file == None:
+                    if top_file is None:
                         raise TlmPacketParseIOError("import file %s not found"%entry.text)
                     the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(top_file)
                     deployment = the_parsed_topology_xml.get_deployment()
@@ -309,7 +313,7 @@ class TlmPacketParser(object):
                         print("Found assembly or deployment named: %s\n" % deployment)
                     channel_size_dict = self.generate_channel_size_dict(the_parsed_topology_xml, xml_filename)
                 elif entry.tag == "packet":
-                    if channel_size_dict == None:
+                    if channel_size_dict is None:
                         raise TlmPacketParseValueError("%s: Topology import must be before packet definitions"%xml_filename)
                     packet_size = 0
                     packet_name = entry.attrib['name']
@@ -340,8 +344,7 @@ class TlmPacketParser(object):
                     packet_size += (11 + 2 + 4) # raw packet size + time tag + packet id + packet descriptor
                     if (packet_size > max_size):
                         raise TlmPacketParseValueError("Packet %s is too large. Size: %d max: %d"%(packet_name,packet_size,max_size))
-                    if self.verbose:
-                        print("Packet %s size %d"%(packet_name,packet_size))
+                    print("Packet %s size %d/%d"%(packet_name,packet_size,max_size))
                     total_packet_size += packet_size
                     
                     if packet_level in size_dict:
@@ -354,7 +357,7 @@ class TlmPacketParser(object):
                     vfd.close()
 
                 elif entry.tag == "ignore":
-                    if channel_size_dict == None:
+                    if channel_size_dict is None:
                         raise TlmPacketParseValueError("%s: Topology import must be before packet definitions"%xml_filename)
                     for channel in entry:
                         channel_name = channel.attrib['name']
@@ -386,8 +389,7 @@ class TlmPacketParser(object):
                 missing_channels = True
                 
         if missing_channels:
-            pass
-            #raise TlmPacketParseValueError("Channels missing from packets")
+            raise TlmPacketParseValueError("Channels missing from packets")
         
         header = "%sAc.hpp"%output_file_base
         source = "%sAc.cpp"%output_file_base
@@ -408,71 +410,65 @@ class TlmPacketParser(object):
         source_target = target_directory + os.sep + source
      
         # write dependency file
-        if self.dependency != None:
+        if self.dependency is not None:
             dependency_file_txt = "\n%s %s: %s\n"%(source_target, header_target, top_file)
             open(self.dependency,'w').write(dependency_file_txt)
 
     def process_serializable_files(self, serializable_file_list):
-        serializable_size_dict = dict()
         for serializable_file in serializable_file_list:
             serializable_file = search_for_file("Serializable", serializable_file)
             serializable_model = XmlSerializeParser.XmlSerializeParser(serializable_file)
             # process XML includes
-            serializable_size_dict.update(self.process_enum_files(serializable_model.get_include_enums()))
-            serializable_size_dict.update(self.process_array_files(serializable_model.get_include_arrays()))
-            serializable_size_dict.update(self.process_serializable_files(serializable_model.get_includes()))
+            self.process_enum_files(serializable_model.get_include_enums())
+            self.process_array_files(serializable_model.get_include_arrays())
+            self.process_serializable_files(serializable_model.get_includes())
             serializable_type = serializable_model.get_namespace() + "::" + serializable_model.get_name()
             serializable_size = 0
             for (member_name, member_type, member_size, member_format_specifier, member_comment, _) in serializable_model.get_members():
                 # if enumeration
                 if type(member_type) == type(tuple()):
                     type_size = 4 # Fixme: can we put this in a constant somewhere?
-                elif member_type in serializable_size_dict.keys(): # See if it is a registered type
-                    type_size = serializable_size_dict[member_type]
+                elif member_type in self.size_dict.keys(): # See if it is a registered type
+                    type_size = self.size_dict[member_type]
                 else:
                     type_size = self.get_type_size(member_type,member_size)
-                if (type_size == None):
+                if (type_size is None):
                     print("Illegal type %s in serializable %s"%(member_type,serializable_type))
                     sys.exit(-1)
                 serializable_size += type_size
-            serializable_size_dict[serializable_type] = serializable_size
+            self.add_type_size(serializable_type,serializable_size)
             if self.verbose:
                 print("Serializable %s size %d"%(serializable_type,serializable_size))
-        return serializable_size_dict
 
     def process_enum_files(self, enum_file_list):
-        enum_dict = dict()
         for enum_file in enum_file_list:
             enum_file = search_for_file("Enumeration", enum_file)
             enum_model = XmlEnumParser.XmlEnumParser(enum_file)
             enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
-            enum_dict[enum_type] = 4 # Fixme: can we put this in a constant somewhere?
-        return enum_dict
+            self.add_type_size(enum_type,4) # Fixme: can we put this in a constant somewhere?
 
     def process_array_files(self, array_file_list):
-        array_dict = dict()
         for array_file in array_file_list:
             array_file = search_for_file("Array", array_file)
             array_model = XmlArrayParser.XmlArrayParser(array_file)
             # process any XML includes
-            array_dict.update(self.process_enum_files(array_model.get_include_enum_files()))
-            array_dict.update(self.process_array_files(array_model.get_include_array_files()))
-            array_dict.update(self.process_serializable_files(array_model.get_includes()))
+            self.process_enum_files(array_model.get_include_enum_files())
+            self.process_array_files(array_model.get_include_array_files())
+            self.process_serializable_files(array_model.get_includes())
             array_type = array_model.get_namespace() + "::" + array_model.get_name()
-            array_size = array_model.get_size()
+            array_size = int(array_model.get_size())
             elem_type = array_model.get_type()
-            type_size = None
+            elem_type_size = None
             if type(elem_type) == type(tuple()):
-                type_size = 4 # Fixme: can we put this in a constant somewhere?
-            elif elem_type in array_dict.keys(): # See if it is a registered type
-                type_size = array_dict[elem_type]
+                elem_type_size = 4 # Fixme: can we put this in a constant somewhere?
+            elif elem_type in self.size_dict.keys(): # See if it is a registered type
+                elem_type_size = self.size_dict[elem_type]
             else:
-                type_size = self.get_type_size(elem_type,1)
-            if (type_size == None):
+                elem_type_size = self.get_type_size(elem_type,1) # Fixme: strings?
+            if (elem_type_size is None):
                 print("Illegal type %s in array %s"%(elem_type,array_type))
                 sys.exit(-1)
-            array_dict[array_type] = 4 # Fixme: can we put this in a constant somewhere?
-        return array_dict
+            self.add_type_size(array_type,elem_type_size*array_size) 
 
 
 def pinit():
