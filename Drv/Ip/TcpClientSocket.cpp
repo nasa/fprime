@@ -36,6 +36,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 namespace Drv {
 
@@ -73,6 +74,7 @@ SocketIpStatus TcpClientSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     // TCP requires connect to the socket to allow for communication
     if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
         ::close(socketFd);
+        printf("Failed: %s\n",strerror(errno));
         return SOCK_FAILED_TO_CONNECT;
     }
 
