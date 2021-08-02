@@ -130,6 +130,7 @@ bodychars
 bodytext
 bools
 boolt
+bootlin
 bootup
 brc
 bre
@@ -447,7 +448,6 @@ endl
 endloc
 endswith
 enduml
-enewcommand
 ENOENT
 ENOSPC
 ENOTDIR
@@ -481,7 +481,6 @@ EVENTID
 eventname
 evr
 evt
-ewcommand
 EXAMPLECOMPONENTIMPL
 excinfo
 exe
@@ -503,6 +502,7 @@ fd
 fdset
 featuredarticles
 FEEDNAME
+ffff
 fflush
 Ffs
 fgetc
@@ -555,6 +555,7 @@ fputil
 frontend
 frox
 frsize
+fsanitize
 fscanf
 fstream
 fstrength
@@ -1006,7 +1007,7 @@ ncsl
 NDELAY
 ndiffs
 netdb
-Netscape's
+Netscape
 newloc
 newroot
 newself
@@ -1067,7 +1068,7 @@ odo
 oflag
 okidocki
 oldeol
-OMG's
+OMG
 onchange
 onlinepubs
 OParg
@@ -1148,7 +1149,6 @@ pollpri
 POLYDB
 POLYDBCOMP
 POLYDBIMPL
-POLYDBIMPLCFG
 popd
 popen
 portlist
@@ -1178,7 +1178,6 @@ prm
 PRMDB
 PRMDBIMPL
 PRMDBIMPLTESTER
-PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
 prmname
 probs
@@ -1276,6 +1275,7 @@ relaxng
 relpath
 REMOVEDIRECTORY
 REMOVEFILE
+renewcommand
 reparse
 reserializing
 resname
@@ -1426,7 +1426,6 @@ spidev
 splitext
 splitlines
 sprintf
-SQL's
 Sqlite
 sramanan
 srand
@@ -1782,6 +1781,7 @@ XPath
 xsh
 Xss
 Xvfb
+xxxx
 XYZZY
 yacc
 yacgen

@@ -88,7 +88,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
@@ -105,13 +105,40 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = arg_str.strip(", ")
         return arg_str
 
+    def _get_args_string_scalar_init(self, obj):
+        """
+        Return a string of (type, name) args, comma separated
+        where array arguments are represented by single element
+        values for use in templates that generate prototypes.
+        If no arguments are arrays, function returns None.
+        """
+        arg_str = ""
+        contains_array = False
+        for (name, mtype, size, format, comment, default) in obj.get_members():
+            if isinstance(mtype, tuple):
+                arg_str += "{} {}, ".format(mtype[0][1], name)
+            elif mtype == "string":
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype not in typelist:
+                arg_str += "const {}& {}, ".format(mtype, name)
+            elif size is not None:
+                arg_str += "const {} {}, ".format(mtype, name)
+                contains_array = True
+            else:
+                arg_str += "{} {}".format(mtype, name)
+                arg_str += ", "
+        if not contains_array:
+            return None
+        arg_str = arg_str.strip(", ")
+        return arg_str
+
     def _get_conv_mem_list(self, obj):
         """
         Return a list of port argument tuples
         """
         arg_list = list()
 
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -282,6 +309,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         c = publicSerialH.publicSerialH()
         c.name = obj.get_name()
         c.args_proto = self._get_args_string(obj)
+        c.args_proto_scalar_init = self._get_args_string_scalar_init(obj)
         c.members = self._get_conv_mem_list(obj)
         self._writeTmpl(c, "publicVisit")
 
