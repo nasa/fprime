@@ -78,14 +78,6 @@ module Ref {
   """
 
   # ----------------------------------------------------------------------
-  # fatalAdapter
-  # ----------------------------------------------------------------------
-
-  init fatalAdapter phase Fpp.ToCpp.Phases.instances """
-  Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
-  """
-
-  # ----------------------------------------------------------------------
   # fatalHandler
   # ----------------------------------------------------------------------
 

@@ -21,7 +21,7 @@
 #include "Ref/Top/RefTopologyDefs.hpp"
 #include "Svc/ActiveLogger/ActiveLogger.hpp"
 #include "Svc/ActiveRateGroup/ActiveRateGroup.hpp"
-#include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
+#include "Svc/AssertFatalAdapter/AssertFatalAdapter.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
 #include "Svc/CmdDispatcher/CommandDispatcher.hpp"
 #include "Svc/CmdSequencer/CmdSequencer.hpp"

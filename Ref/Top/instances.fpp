@@ -117,8 +117,7 @@ module Ref {
 
   instance downlink: Svc.Framer base id 0x4100
 
-  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200 \
-    at "../../Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
+  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200
 
   instance fatalHandler: Svc.FatalHandler base id 0x4300 \
     at "../../Svc/FatalHandler/FatalHandlerComponentImpl.hpp"

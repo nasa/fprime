@@ -158,7 +158,7 @@ namespace Ref {
     Svc::ActiveLogger eventLogger(FW_OPTIONAL_NAME("eventLogger"));
 
     // fatalAdapter
-    Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
+    Svc::AssertFatalAdapter fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
 
     // fatalHandler
     Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
