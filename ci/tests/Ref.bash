@@ -18,6 +18,8 @@ mkdir -p "${LOG_DIR}"
 # Directory to be used for Ref CI test
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
 
+echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
+
 export CMAKE_EXTRA_SETTINGS=""
 # For Ref deployment to disable FRAMEWORK UTS
 export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
@@ -32,3 +34,5 @@ do
     fi
     fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 done
+
+echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Ref SUCCESSFUL${NOCOLOR}"
