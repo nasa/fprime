@@ -23,7 +23,7 @@
 #include "Svc/ActiveRateGroup/ActiveRateGroup.hpp"
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
-#include "Svc/CmdDispatcher/CommandDispatcherImpl.hpp"
+#include "Svc/CmdDispatcher/CommandDispatcher.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
 #include "Svc/Deframer/DeframerComponentImpl.hpp"
 #include "Svc/FatalHandler/FatalHandlerComponentImpl.hpp"

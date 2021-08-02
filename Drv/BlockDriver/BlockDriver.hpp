@@ -1,6 +1,6 @@
 // ======================================================================
 // BlockDriver.hpp
-// Standardization header for BlockDriverImpl
+// Standardization header for BlockDriver
 // ======================================================================
 
 #ifndef Drv_BlockDriver_HPP

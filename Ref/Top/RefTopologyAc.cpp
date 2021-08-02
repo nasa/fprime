@@ -143,7 +143,7 @@ namespace Ref {
     Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
 
     // cmdDisp
-    Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
+    Svc::CommandDispatcher cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
 
     // cmdSeq
     Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));

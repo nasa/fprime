@@ -37,7 +37,6 @@ module Ref {
     priority 118
 
   instance cmdDisp: Svc.CommandDispatcher base id 0x0500 \
-    at "../../Svc/CmdDispatcher/CommandDispatcherImpl.hpp" \
     queue size 20 \
     stack size Default.stackSize \
     priority 101

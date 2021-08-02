@@ -1,6 +1,6 @@
 // ======================================================================
 // ActiveRateGroup.hpp
-// Standardization header for ActiveRateGroupImpl
+// Standardization header for ActiveRateGroup
 // ======================================================================
 
 #ifndef Svc_ActiveRateGroup_HPP
