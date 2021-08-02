@@ -73,10 +73,6 @@ module Ref {
   Svc::FprimeFraming framing;
   """
 
-  init downlink phase Fpp.ToCpp.Phases.instances """
-  Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
-  """
-
   init downlink phase Fpp.ToCpp.Phases.configComponents """
   downlink.setup(ConfigObjects::downlink::framing);
   """

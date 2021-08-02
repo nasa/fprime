@@ -152,7 +152,7 @@ namespace Ref {
     Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
 
     // downlink
-    Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+    Svc::Framer downlink(FW_OPTIONAL_NAME("downlink"));
 
     // eventLogger
     Svc::ActiveLogger eventLogger(FW_OPTIONAL_NAME("eventLogger"));

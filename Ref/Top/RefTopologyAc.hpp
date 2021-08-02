@@ -30,7 +30,7 @@
 #include "Svc/FileDownlink/FileDownlink.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "Svc/FileUplink/FileUplink.hpp"
-#include "Svc/Framer/FramerComponentImpl.hpp"
+#include "Svc/Framer/Framer.hpp"
 #include "Svc/Health/Health.hpp"
 #include "Svc/LinuxTime/LinuxTimeImpl.hpp"
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"

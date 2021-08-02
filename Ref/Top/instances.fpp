@@ -115,8 +115,7 @@ module Ref {
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
     at "../../Drv/TcpClient/TcpClient.hpp"
 
-  instance downlink: Svc.Framer base id 0x4100 \
-    at "../../Svc/Framer/FramerComponentImpl.hpp"
+  instance downlink: Svc.Framer base id 0x4100
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200 \
     at "../../Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
