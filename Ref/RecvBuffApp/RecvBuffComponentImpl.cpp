@@ -20,8 +20,8 @@ namespace Ref {
     }
 
 
-    void RecvBuffImpl::init() {
-        RecvBuffComponentBase::init();
+    void RecvBuffImpl::init(NATIVE_INT_TYPE instanceId) {
+        RecvBuffComponentBase::init(instanceId);
     }
 
     RecvBuffImpl::~RecvBuffImpl() {

@@ -15,7 +15,7 @@
 #include "Drv/BlockDriver/BlockDriver.hpp"
 #include "Drv/TcpClient/TcpClient.hpp"
 #include "Ref/PingReceiver/PingReceiver.hpp"
-#include "Ref/RecvBuffApp/RecvBuffComponentImpl.hpp"
+#include "Ref/RecvBuffApp/RecvBuff.hpp"
 #include "Ref/SendBuffApp/SendBuff.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 #include "Ref/Top/RefTopologyDefs.hpp"
@@ -35,7 +35,7 @@
 #include "Svc/LinuxTime/LinuxTime.hpp"
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
 #include "Svc/PrmDb/PrmDb.hpp"
-#include "Svc/RateGroupDriver/RateGroupDriverImpl.hpp"
+#include "Svc/RateGroupDriver/RateGroupDriver.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"
 

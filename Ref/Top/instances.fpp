@@ -126,11 +126,9 @@ module Ref {
   instance linuxTime: Svc.Time base id 0x4500 \
     at "../../Svc/LinuxTime/LinuxTime.hpp"
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600 \
-    at "../../Svc/RateGroupDriver/RateGroupDriverImpl.hpp"
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600
 
-  instance recvBuffComp: Ref.RecvBuff base id 0x4700 \
-    at "../RecvBuffApp/RecvBuffComponentImpl.hpp"
+  instance recvBuffComp: Ref.RecvBuff base id 0x4700
 
   instance staticMemory: Svc.StaticMemory base id 0x4800 \
     at "../../Svc/StaticMemory/StaticMemoryComponentImpl.hpp"

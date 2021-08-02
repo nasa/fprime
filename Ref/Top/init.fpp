@@ -222,31 +222,15 @@ module Ref {
   # ----------------------------------------------------------------------
 
   init rateGroupDriverComp phase Fpp.ToCpp.Phases.configObjects """
-  NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
+  NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
   """
 
   init rateGroupDriverComp phase Fpp.ToCpp.Phases.instances """
-  Svc::RateGroupDriverImpl rateGroupDriverComp(
+  Svc::RateGroupDriver rateGroupDriverComp(
       FW_OPTIONAL_NAME("rateGroupDriverComp"),
       ConfigObjects::rateGroupDriverComp::rgDivs,
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
   );
-  """
-
-  init rateGroupDriverComp phase Fpp.ToCpp.Phases.initComponents """
-  rateGroupDriverComp.init();
-  """
-
-  # ----------------------------------------------------------------------
-  # recvBuffComp
-  # ----------------------------------------------------------------------
-
-  init recvBuffComp phase Fpp.ToCpp.Phases.instances """
-  RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
-  """
-
-  init recvBuffComp phase Fpp.ToCpp.Phases.initComponents """
-  recvBuffComp.init();
   """
 
   # ----------------------------------------------------------------------

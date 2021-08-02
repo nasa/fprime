@@ -108,7 +108,7 @@ namespace Ref {
       }
 
       namespace rateGroupDriverComp {
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
       }
 
       namespace uplink {
@@ -209,14 +209,14 @@ namespace Ref {
     );
 
     // rateGroupDriverComp
-    Svc::RateGroupDriverImpl rateGroupDriverComp(
+    Svc::RateGroupDriver rateGroupDriverComp(
         FW_OPTIONAL_NAME("rateGroupDriverComp"),
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
 
     // recvBuffComp
-    RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
+    RecvBuff recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
 
     // sendBuffComp
     SendBuff sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
@@ -261,8 +261,8 @@ namespace Ref {
       rateGroup1Comp.init(QueueSizes::rateGroup1Comp, InstanceIds::rateGroup1Comp);
       rateGroup2Comp.init(QueueSizes::rateGroup2Comp, InstanceIds::rateGroup2Comp);
       rateGroup3Comp.init(QueueSizes::rateGroup3Comp, InstanceIds::rateGroup3Comp);
-      rateGroupDriverComp.init();
-      recvBuffComp.init();
+      rateGroupDriverComp.init(InstanceIds::rateGroupDriverComp);
+      recvBuffComp.init(InstanceIds::recvBuffComp);
       sendBuffComp.init(QueueSizes::sendBuffComp, InstanceIds::sendBuffComp);
       staticMemory.init(InstanceIds::staticMemory);
       textLogger.init();
