@@ -8,7 +8,7 @@
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
 
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
-. "${SCRIPT_DIR}/../helpers.bash"
+. "${FPRIME_DIR}/ci/helpers.bash"
 . ${SCRIPT_DIR}/fputil.bash
 
 export CMAKE_EXTRA_SETTINGS=""
