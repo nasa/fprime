@@ -8,7 +8,6 @@ namespace Ref {
 
   }
 
-  // Declare block driver here so it is visible in Main
-  Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("blockDrv"));
+  Drv::BlockDriver blockDrv(FW_OPTIONAL_NAME("blockDrv"));
 
 }
