@@ -11,7 +11,7 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 #### NEEDED ENVIRONMENT ####
 export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
-export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
+export LOG_DIR="${FPRIME_DIR}/ci-Framework-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
 # Directory to be used for Ref CI test
@@ -33,3 +33,5 @@ done
 
 # Test Completed
 echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Framework SUCCESSFUL${NOCOLOR}"
+
+archive_logs

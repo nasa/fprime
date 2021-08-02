@@ -36,3 +36,5 @@ done
 
 # Test Completed
 echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Ref SUCCESSFUL${NOCOLOR}"
+
+archive_logs
