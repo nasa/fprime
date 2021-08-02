@@ -37,7 +37,7 @@
 #include "Svc/PrmDb/PrmDbImpl.hpp"
 #include "Svc/RateGroupDriver/RateGroupDriverImpl.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
-#include "Svc/TlmChan/TlmChanImpl.hpp"
+#include "Svc/TlmChan/TlmChan.hpp"
 
 namespace Ref {
 

@@ -140,7 +140,7 @@ namespace Ref {
     // Declared in RefTopologyDefs.cpp
 
     // chanTlm
-    Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
+    Svc::TlmChan chanTlm(FW_OPTIONAL_NAME("chanTlm"));
 
     // cmdDisp
     Svc::CommandDispatcher cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));

@@ -72,7 +72,6 @@ module Ref {
     priority 98
 
   instance chanTlm: Svc.TlmChan base id 0x0C00 \
-    at "../../Svc/TlmChan/TlmChanImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 97
