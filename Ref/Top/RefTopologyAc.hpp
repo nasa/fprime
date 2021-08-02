@@ -34,7 +34,7 @@
 #include "Svc/Health/HealthComponentImpl.hpp"
 #include "Svc/LinuxTime/LinuxTimeImpl.hpp"
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
-#include "Svc/PrmDb/PrmDbImpl.hpp"
+#include "Svc/PrmDb/PrmDb.hpp"
 #include "Svc/RateGroupDriver/RateGroupDriverImpl.hpp"
 #include "Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"

@@ -185,7 +185,7 @@ namespace Ref {
     PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
 
     // prmDb
-    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
+    Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
 
     // rateGroup1Comp
     Svc::ActiveRateGroupImpl rateGroup1Comp(

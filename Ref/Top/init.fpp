@@ -190,7 +190,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   init prmDb phase Fpp.ToCpp.Phases.instances """
-  Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
+  Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
   """
 
   init prmDb phase Fpp.ToCpp.Phases.readParameters """

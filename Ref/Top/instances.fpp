@@ -77,7 +77,6 @@ module Ref {
     priority 97
 
   instance prmDb: Svc.PrmDb base id 0x0D00 \
-    at "../../Svc/PrmDb/PrmDbImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 96
