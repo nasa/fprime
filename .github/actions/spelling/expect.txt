@@ -67,7 +67,6 @@ arijitdas
 arinc
 arity
 arpa
-ASerialize
 asm
 aspx
 ASTRING
@@ -112,7 +111,6 @@ batchmode
 bbd
 bc
 bcm
-BDRV
 BDV
 bfree
 bibtex
@@ -130,11 +128,11 @@ bodychars
 bodytext
 bools
 boolt
+bootlin
 bootup
 brc
 bre
 bsd
-BSerialize
 bslash
 buf
 BUFFERALLOCATE
@@ -215,7 +213,6 @@ CMDREG
 cmds
 CMDSEQ
 cmp
-cn
 cnt
 cntx
 cobj
@@ -241,7 +238,6 @@ config
 configparser
 configurability
 configurator
-Connectedoutput
 cooldown
 coor
 coravy
@@ -398,13 +394,11 @@ DSTUBBED
 DSYNC
 DTGT
 dtor
-DUCKCOMP
 Duerschmid
 duey
 dumparch
 dumpobj
 DVI
-Dvr
 DWN
 dylib
 EACCES
@@ -447,7 +441,6 @@ endl
 endloc
 endswith
 enduml
-enewcommand
 ENOENT
 ENOSPC
 ENOTDIR
@@ -481,7 +474,6 @@ EVENTID
 eventname
 evr
 evt
-ewcommand
 EXAMPLECOMPONENTIMPL
 excinfo
 exe
@@ -503,6 +495,7 @@ fd
 fdset
 featuredarticles
 FEEDNAME
+ffff
 fflush
 Ffs
 fgetc
@@ -541,7 +534,7 @@ formatline
 foundin
 fpconfighpp
 FPGA
-FPL
+fpl
 fpp
 fppi
 FPport
@@ -555,6 +548,7 @@ fputil
 frontend
 frox
 frsize
+fsanitize
 fscanf
 fstream
 fstrength
@@ -587,7 +581,6 @@ getcwd
 getdata
 getdefaultencoding
 getenv
-getexample
 getextern
 gethostbyname
 gethostname
@@ -733,7 +726,6 @@ inode
 inorder
 INPCK
 Inputline
-INPUTPORT
 installable
 INSTALLDIR
 instanceof
@@ -892,7 +884,6 @@ LTIMER
 LTLT
 LVL
 lxml
-lxr
 MACROFILE
 magicdraw
 mailto
@@ -1006,6 +997,7 @@ ncsl
 NDELAY
 ndiffs
 netdb
+Netscape
 Netscape's
 newloc
 newroot
@@ -1024,7 +1016,6 @@ noargport
 NOCOLOR
 NOCTTY
 nogen
-noinclude
 nolog
 nomagic
 nonblock
@@ -1053,8 +1044,6 @@ NSPACES
 nukenewlines
 nullptr
 numargs
-Numinput
-Numoutput
 nums
 nxt
 objclass
@@ -1067,6 +1056,7 @@ odo
 oflag
 okidocki
 oldeol
+OMG
 OMG's
 onchange
 onlinepubs
@@ -1113,7 +1103,6 @@ params
 PARENB
 PARODD
 parseable
-PARTITIONHUBCOMP
 PASSIVEC
 pathmaker
 pbuild
@@ -1148,7 +1137,6 @@ pollpri
 POLYDB
 POLYDBCOMP
 POLYDBIMPL
-POLYDBIMPLCFG
 popd
 popen
 portlist
@@ -1178,7 +1166,6 @@ prm
 PRMDB
 PRMDBIMPL
 PRMDBIMPLTESTER
-PRMDBIMPLTESTERCFG
 PRMDBLIMPLCFG
 prmname
 probs
@@ -1249,7 +1236,6 @@ RBF
 Rce
 RCHILD
 rcs
-Rcv
 rcvd
 RCVTIMEO
 RDONLY
@@ -1276,6 +1262,7 @@ relaxng
 relpath
 REMOVEDIRECTORY
 REMOVEFILE
+renewcommand
 reparse
 reserializing
 resname
@@ -1339,7 +1326,6 @@ searchdata
 SEARCHENGINE
 segfault
 sendfile
-sendline
 SENDPARTIAL
 sendto
 seqgen
@@ -1360,7 +1346,6 @@ SETLOGGING
 setname
 setop
 setopt
-setoutput
 setprotocol
 setquaternion
 setresult
@@ -1782,6 +1767,7 @@ XPath
 xsh
 Xss
 Xvfb
+xxxx
 XYZZY
 yacc
 yacgen

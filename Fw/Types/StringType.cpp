@@ -12,11 +12,9 @@
 
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
 
 namespace Fw {
@@ -81,7 +79,7 @@ namespace Fw {
 
 #if FW_SERIALIZABLE_TO_STRING
     void StringBase::toString(StringBase& text) const {
-        text = this->toChar();
+        text = *this;
     }
 #endif
 
@@ -93,30 +91,16 @@ namespace Fw {
     }
 #endif
 
-    const StringBase& StringBase::operator=(const StringBase& other) {
-        this->copyBuff(other.toChar(), this->getCapacity());
+    StringBase& StringBase::operator=(const StringBase& other) {
+        Fw::StringUtils::string_copy(const_cast<char *>(this->toChar()), other.toChar(), this->getCapacity());
         return *this;
     }
 
     // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
     // call the empty constructor and then call their own copy function
-    const char* StringBase::operator=(const char* other) { // lgtm[cpp/rule-of-two]
-        this->copyBuff(other, this->getCapacity());
-        return this->toChar();
-    }
-
-    void StringBase::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-
-        NATIVE_UINT_TYPE max = this->getCapacity();
-        if (size < max) {
-            max = size;
-        }
-
-        // check for self copy
-        if (buff != this->toChar()) {
-            Fw::StringUtils::string_copy((char*) this->toChar(),buff,max);
-        }
+    StringBase& StringBase::operator=(const char* other) { // lgtm[cpp/rule-of-two]
+        Fw::StringUtils::string_copy(const_cast<char *>(this->toChar()), other, this->getCapacity());
+        return *this;
     }
 
     void StringBase::appendBuff(const char* buff, NATIVE_UINT_TYPE size) {
@@ -129,7 +113,23 @@ namespace Fw {
             remaining = size;
         }
         FW_ASSERT(remaining < capacity, remaining, capacity);
-        (void) strncat((char*) this->toChar(), buff, remaining);
+        (void) strncat(const_cast<char *>(this->toChar()), buff, remaining);
     }
 
+    NATIVE_UINT_TYPE StringBase::length(void) const {
+        return strnlen(this->toChar(),this->getCapacity());
+    }
+
+    SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
+        return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),this->length());
+    }
+
+    SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
+        NATIVE_UINT_TYPE maxSize = this->getCapacity() - 1;
+        char *raw = const_cast<char *>(this->toChar());
+        SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw),maxSize);
+        // Null terminate deserialized string
+        raw[maxSize] = 0;
+        return stat;
+    }
 }

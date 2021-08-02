@@ -45,6 +45,7 @@ enum SocketIpStatus {
 class IpSocket {
   public:
     IpSocket();
+    virtual ~IpSocket(){};
     /**
      * \brief configure the ip socket with host and transmission timeouts
      *

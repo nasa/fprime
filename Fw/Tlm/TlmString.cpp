@@ -1,23 +1,19 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Tlm/TlmString.hpp>
-#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 namespace Fw {
 
     TlmString::TlmString(const char* src) :  StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     TlmString::TlmString(const StringBase& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     TlmString::TlmString(const TlmString& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     TlmString::TlmString() : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
@@ -96,7 +92,7 @@ namespace Fw {
     }
 
     const TlmString& TlmString::operator=(const TlmString& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 

@@ -20,18 +20,15 @@ namespace Fw {
             EightyCharString(const StringBase& src); //!< other string constructor
             EightyCharString(const EightyCharString& src); //!< EightyCharString string constructor
             EightyCharString(); //!< default constructor
+            EightyCharString& operator=(const EightyCharString& other); //!< assignment operator
+            EightyCharString& operator=(const StringBase& other); //!< other string assignment operator
+            EightyCharString& operator=(const char* other); //!< char* assignment operator
             ~EightyCharString(); //!< destructor
+
             const char* toChar() const; //!< gets char buffer
-            NATIVE_UINT_TYPE length() const; //!< returns length of stored string
+            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
 
-            const EightyCharString& operator=(const EightyCharString& other); //!< equal operator
-
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
-            SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
-
-        PRIVATE:
-            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+        private:
 
             char m_buf[STRING_SIZE]; //!< storage for string data
     };
