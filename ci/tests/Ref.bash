@@ -4,12 +4,17 @@
 #
 # Run the tests on the software through fp-util.
 ####
+export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
+. "${SCRIPT_DIR}/helpers.bash"
+. ${SCRIPT_DIR}/fputil.bash
+
+#### NEEDED ENVIRONMENT ####
+export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
+export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
+mkdir -p "${LOG_DIR}"
+
 # Directory to be used for Ref CI test
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
-
-export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
-. "${FPRIME_DIR}/ci/helpers.bash"
-. ${SCRIPT_DIR}/fputil.bash
 
 export CMAKE_EXTRA_SETTINGS=""
 # For Ref deployment to disable FRAMEWORK UTS
