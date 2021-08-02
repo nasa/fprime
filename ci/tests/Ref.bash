@@ -9,7 +9,9 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . ${SCRIPT_DIR}/fputil.bash
 
 #### NEEDED ENVIRONMENT ####
-export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
+export FPRIME_DIR="$(cd ${SCRIPT_DIR}/..; pwd)"
+echo "Script: ${SCRIPT_DIR}"
+echo "FPrime: ${FPRIME_DIR}"
 export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
