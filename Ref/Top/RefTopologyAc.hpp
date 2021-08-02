@@ -32,7 +32,7 @@
 #include "Svc/FileUplink/FileUplink.hpp"
 #include "Svc/Framer/Framer.hpp"
 #include "Svc/Health/Health.hpp"
-#include "Svc/LinuxTime/LinuxTimeImpl.hpp"
+#include "Svc/LinuxTime/LinuxTime.hpp"
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
 #include "Svc/PrmDb/PrmDb.hpp"
 #include "Svc/RateGroupDriver/RateGroupDriverImpl.hpp"

@@ -36,7 +36,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   init comm phase Fpp.ToCpp.Phases.instances """
-  Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
+  Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
   """
 
   init comm phase Fpp.ToCpp.Phases.configConstants """
@@ -154,7 +154,7 @@ module Ref {
   # ----------------------------------------------------------------------
 
   init linuxTime phase Fpp.ToCpp.Phases.instances """
-  Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
+  Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
   """
 
   # ----------------------------------------------------------------------
@@ -178,7 +178,7 @@ module Ref {
   """
 
   init rateGroup1Comp phase Fpp.ToCpp.Phases.instances """
-  Svc::ActiveRateGroupImpl rateGroup1Comp(
+  Svc::ActiveRateGroup rateGroup1Comp(
       FW_OPTIONAL_NAME("rateGroup1Comp"),
       ConfigObjects::rateGroup1Comp::context,
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
@@ -194,7 +194,7 @@ module Ref {
   """
 
   init rateGroup2Comp phase Fpp.ToCpp.Phases.instances """
-  Svc::ActiveRateGroupImpl rateGroup2Comp(
+  Svc::ActiveRateGroup rateGroup2Comp(
       FW_OPTIONAL_NAME("rateGroup2Comp"),
       ConfigObjects::rateGroup2Comp::context,
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
@@ -210,7 +210,7 @@ module Ref {
   """
 
   init rateGroup3Comp phase Fpp.ToCpp.Phases.instances """
-  Svc::ActiveRateGroupImpl rateGroup3Comp(
+  Svc::ActiveRateGroup rateGroup3Comp(
       FW_OPTIONAL_NAME("rateGroup3Comp"),
       ConfigObjects::rateGroup3Comp::context,
       FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)

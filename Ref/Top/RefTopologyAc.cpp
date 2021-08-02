@@ -149,7 +149,7 @@ namespace Ref {
     Svc::CmdSequencer cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
 
     // comm
-    Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
+    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
 
     // downlink
     Svc::Framer downlink(FW_OPTIONAL_NAME("downlink"));
@@ -179,7 +179,7 @@ namespace Ref {
     Svc::Health health(FW_OPTIONAL_NAME("health"));
 
     // linuxTime
-    Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
+    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
     // pingRcvr
     PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
@@ -188,21 +188,21 @@ namespace Ref {
     Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
 
     // rateGroup1Comp
-    Svc::ActiveRateGroupImpl rateGroup1Comp(
+    Svc::ActiveRateGroup rateGroup1Comp(
         FW_OPTIONAL_NAME("rateGroup1Comp"),
         ConfigObjects::rateGroup1Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
 
     // rateGroup2Comp
-    Svc::ActiveRateGroupImpl rateGroup2Comp(
+    Svc::ActiveRateGroup rateGroup2Comp(
         FW_OPTIONAL_NAME("rateGroup2Comp"),
         ConfigObjects::rateGroup2Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
 
     // rateGroup3Comp
-    Svc::ActiveRateGroupImpl rateGroup3Comp(
+    Svc::ActiveRateGroup rateGroup3Comp(
         FW_OPTIONAL_NAME("rateGroup3Comp"),
         ConfigObjects::rateGroup3Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
