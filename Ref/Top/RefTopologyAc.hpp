@@ -20,7 +20,7 @@
 #include "Ref/SignalGen/SignalGen.hpp"
 #include "Ref/Top/RefTopologyDefs.hpp"
 #include "Svc/ActiveLogger/ActiveLoggerImpl.hpp"
-#include "Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp"
+#include "Svc/ActiveRateGroup/ActiveRateGroup.hpp"
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
 #include "Svc/CmdDispatcher/CommandDispatcherImpl.hpp"

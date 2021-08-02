@@ -22,19 +22,16 @@ module Ref {
     priority 140
 
   instance rateGroup1Comp: Svc.ActiveRateGroup base id 0x0200 \
-    at "../../Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 120
 
   instance rateGroup2Comp: Svc.ActiveRateGroup base id 0x0300 \
-    at "../../Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 119
 
   instance rateGroup3Comp: Svc.ActiveRateGroup base id 0x0400 \
-    at "../../Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 118
