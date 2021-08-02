@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef RateGroupDriverImpl RateGroupDriver;
+  using RateGroupDriver = RateGroupDriverImpl;
 
 }
 

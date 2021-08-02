@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef DeframerComponentImpl Deframer;
+  using Deframer = DeframerComponentImpl;
 
 }
 

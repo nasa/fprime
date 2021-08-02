@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef AssertFatalAdapterComponentImpl AssertFatalAdapter;
+  using AssertFatalAdapter = AssertFatalAdapterComponentImpl;
 
 }
 

@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef TlmChanImpl TlmChan;
+  using TlmChan = TlmChanImpl;
 
 }
 

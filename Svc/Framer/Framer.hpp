@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef FramerComponentImpl Framer;
+  using Framer = FramerComponentImpl;
 
 }
 

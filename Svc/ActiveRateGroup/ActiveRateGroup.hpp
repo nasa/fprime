@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  typedef ActiveRateGroupImpl ActiveRateGroup;
+  using ActiveRateGroup = ActiveRateGroupImpl;
 
 }
 
