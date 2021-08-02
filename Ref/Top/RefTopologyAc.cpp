@@ -173,7 +173,7 @@ namespace Ref {
     Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
     // fileUplinkBufferManager
-    Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+    Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
 
     // health
     Svc::Health health(FW_OPTIONAL_NAME("health"));
@@ -283,7 +283,7 @@ namespace Ref {
           ConfigConstants::fileDownlink::CYCLE_TIME,
           ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
       );
-      Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+      Svc::BufferManager::BufferBins upBuffMgrBins;
       memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
       {
         using namespace ConfigConstants::fileUplinkBufferManager;

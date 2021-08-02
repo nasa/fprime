@@ -111,12 +111,8 @@ module Ref {
   };
   """
 
-  init fileUplinkBufferManager phase Fpp.ToCpp.Phases.instances """
-  Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
-  """
-
   init fileUplinkBufferManager phase Fpp.ToCpp.Phases.configComponents """
-  Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+  Svc::BufferManager::BufferBins upBuffMgrBins;
   memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
   {
     using namespace ConfigConstants::fileUplinkBufferManager;

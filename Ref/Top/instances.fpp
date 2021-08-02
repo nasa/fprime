@@ -121,8 +121,7 @@ module Ref {
 
   instance fatalHandler: Svc.FatalHandler base id 0x4300
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400 \
-    at "../../Svc/BufferManager/BufferManagerComponentImpl.hpp"
+  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400
 
   instance linuxTime: Svc.Time base id 0x4500 \
     at "../../Svc/LinuxTime/LinuxTimeImpl.hpp"
