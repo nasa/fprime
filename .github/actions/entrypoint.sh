@@ -9,5 +9,5 @@ then
     /autodoc.bash
 else
     #echo "$INPUT_TEST1"
-    "$GITHUB_WORKSPACE/ci/master.bash" $INPUT_TEST   
+    [ "$GITHUB_WORKSPACE/ci/$INPUT_TEST.bash" ]   
 fi

@@ -10,4 +10,4 @@ runs:
   image: 'Dockerfile'
   # args:
   #   - ${{ inputs.test }}
-  entrypoint: '${{ inputs.test }}.bash'
+  # entrypoint: '${{ inputs.test }}.bash'
