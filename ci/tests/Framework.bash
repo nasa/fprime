@@ -15,7 +15,7 @@ export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
 # Directory to be used for Ref CI test
-export FPUTIL_DEPLOYS="${FPRIME_DIR}/RPI"
+export FPUTIL_DEPLOYS="${FPRIME_DIR}"
 
 echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
 
