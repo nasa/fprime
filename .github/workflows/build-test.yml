@@ -26,7 +26,8 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        test: Framework
+        args:
+          test: Framework
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -49,7 +50,8 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        test: 'Ref'
+        args:
+          test: 'Ref'
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -72,7 +74,8 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        test: 'RPI'
+        args:
+          test: 'RPI'
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -95,7 +98,8 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        test: '30-ints'
+        args:
+          test: '30-ints'
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
