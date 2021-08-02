@@ -14,7 +14,7 @@
 
 #include "Drv/BlockDriver/BlockDriver.hpp"
 #include "Drv/TcpClient/TcpClientComponentImpl.hpp"
-#include "Ref/PingReceiver/PingReceiverComponentImpl.hpp"
+#include "Ref/PingReceiver/PingReceiver.hpp"
 #include "Ref/RecvBuffApp/RecvBuffComponentImpl.hpp"
 #include "Ref/SendBuffApp/SendBuffComponentImpl.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"

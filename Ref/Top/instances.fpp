@@ -62,7 +62,6 @@ module Ref {
     priority 100
 
   instance pingRcvr: Ref.PingReceiver base id 0x0A00 \
-    at "../PingReceiver/PingReceiverComponentImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100

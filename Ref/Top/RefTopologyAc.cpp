@@ -182,7 +182,7 @@ namespace Ref {
     Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
     // pingRcvr
-    PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
+    PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
 
     // prmDb
     Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
