@@ -10,7 +10,7 @@
 
 namespace Drv {
 
-  typedef TcpClientComponentImpl TcpClient;
+  using TcpClient = TcpClientComponentImpl;
 
 }
 

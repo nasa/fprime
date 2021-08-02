@@ -10,7 +10,7 @@
 
 namespace Ref {
 
-  typedef SendBuffImpl SendBuff;
+  using SendBuff = SendBuffImpl;
 
 }
 
