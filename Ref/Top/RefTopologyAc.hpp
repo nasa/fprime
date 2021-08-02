@@ -13,7 +13,7 @@
 #define Ref_RefTopologyAc_HPP
 
 #include "Drv/BlockDriver/BlockDriver.hpp"
-#include "Drv/TcpClient/TcpClientComponentImpl.hpp"
+#include "Drv/TcpClient/TcpClient.hpp"
 #include "Ref/PingReceiver/PingReceiver.hpp"
 #include "Ref/RecvBuffApp/RecvBuffComponentImpl.hpp"
 #include "Ref/SendBuffApp/SendBuff.hpp"

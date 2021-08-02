@@ -113,7 +113,7 @@ module Ref {
   @ Communications driver. May be swapped with other comm drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
-    at "../../Drv/TcpClient/TcpClientComponentImpl.hpp"
+    at "../../Drv/TcpClient/TcpClient.hpp"
 
   instance downlink: Svc.Framer base id 0x4100 \
     at "../../Svc/Framer/FramerComponentImpl.hpp"
