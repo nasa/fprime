@@ -241,7 +241,7 @@ namespace Ref {
       SG3.init(QueueSizes::SG3, InstanceIds::SG3);
       SG4.init(QueueSizes::SG4, InstanceIds::SG4);
       SG5.init(QueueSizes::SG5, InstanceIds::SG5);
-      blockDrv.init(QueueSizes::blockDrv);
+      blockDrv.init(QueueSizes::blockDrv, InstanceIds::blockDrv);
       chanTlm.init(QueueSizes::chanTlm, InstanceIds::chanTlm);
       cmdDisp.init(QueueSizes::cmdDisp, InstanceIds::cmdDisp);
       cmdSeq.init(QueueSizes::cmdSeq, InstanceIds::cmdSeq);

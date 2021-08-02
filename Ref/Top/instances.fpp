@@ -17,7 +17,6 @@ module Ref {
   # ----------------------------------------------------------------------
 
   instance blockDrv: Drv.BlockDriver base id 0x0100 \
-    at "../../Drv/BlockDriver/BlockDriverImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 140

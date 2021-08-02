@@ -9,10 +9,6 @@ module Ref {
   // Declared in RefTopologyDefs.cpp
   """
 
-  init blockDrv phase Fpp.ToCpp.Phases.initComponents """
-  blockDrv.init(QueueSizes::blockDrv);
-  """
-
   # ----------------------------------------------------------------------
   # chanTlm
   # ----------------------------------------------------------------------
