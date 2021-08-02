@@ -86,7 +86,6 @@ module Ref {
   # ----------------------------------------------------------------------
 
   instance $health: Svc.Health base id 0x2000 \
-    at "../../Svc/Health/HealthComponentImpl.hpp" \
     queue size 25
 
   instance SG1: Ref.SignalGen base id 0x2100 \

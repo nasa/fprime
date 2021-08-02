@@ -165,10 +165,6 @@ module Ref {
   };
   """
 
-  init $health phase Fpp.ToCpp.Phases.instances """
-  Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
-  """
-
   init $health phase Fpp.ToCpp.Phases.configComponents """
   health.setPingEntries(
       ConfigObjects::health::pingEntries,

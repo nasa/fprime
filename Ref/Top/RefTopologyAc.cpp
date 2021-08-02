@@ -176,7 +176,7 @@ namespace Ref {
     Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
 
     // health
-    Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+    Svc::Health health(FW_OPTIONAL_NAME("health"));
 
     // linuxTime
     Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));

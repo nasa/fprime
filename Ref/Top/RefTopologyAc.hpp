@@ -31,7 +31,7 @@
 #include "Svc/FileManager/FileManager.hpp"
 #include "Svc/FileUplink/FileUplink.hpp"
 #include "Svc/Framer/FramerComponentImpl.hpp"
-#include "Svc/Health/HealthComponentImpl.hpp"
+#include "Svc/Health/Health.hpp"
 #include "Svc/LinuxTime/LinuxTimeImpl.hpp"
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
 #include "Svc/PrmDb/PrmDb.hpp"
