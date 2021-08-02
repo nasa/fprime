@@ -26,7 +26,7 @@
 #include "Svc/CmdDispatcher/CommandDispatcher.hpp"
 #include "Svc/CmdSequencer/CmdSequencer.hpp"
 #include "Svc/Deframer/DeframerComponentImpl.hpp"
-#include "Svc/FatalHandler/FatalHandlerComponentImpl.hpp"
+#include "Svc/FatalHandler/FatalHandler.hpp"
 #include "Svc/FileDownlink/FileDownlink.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "Svc/FileUplink/FileUplink.hpp"

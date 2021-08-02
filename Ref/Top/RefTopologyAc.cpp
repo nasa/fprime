@@ -161,7 +161,7 @@ namespace Ref {
     Svc::AssertFatalAdapter fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
 
     // fatalHandler
-    Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+    Svc::FatalHandler fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
     // fileDownlink
     Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));

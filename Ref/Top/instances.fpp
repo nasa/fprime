@@ -119,8 +119,7 @@ module Ref {
 
   instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200
 
-  instance fatalHandler: Svc.FatalHandler base id 0x4300 \
-    at "../../Svc/FatalHandler/FatalHandlerComponentImpl.hpp"
+  instance fatalHandler: Svc.FatalHandler base id 0x4300
 
   instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400 \
     at "../../Svc/BufferManager/BufferManagerComponentImpl.hpp"
