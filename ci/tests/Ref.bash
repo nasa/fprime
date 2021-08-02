@@ -8,8 +8,8 @@
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
 
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
-. "${SCRIPT_DIR}/helpers.bash"
-. ${SCRIPT_DIR}/tests/fputil.bash
+. "${SCRIPT_DIR}/../helpers.bash"
+. ${SCRIPT_DIR}/fputil.bash
 
 export CMAKE_EXTRA_SETTINGS=""
 # For Ref deployment to disable FRAMEWORK UTS
