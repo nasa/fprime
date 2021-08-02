@@ -155,7 +155,7 @@ namespace Ref {
     Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
 
     // eventLogger
-    Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
+    Svc::ActiveLogger eventLogger(FW_OPTIONAL_NAME("eventLogger"));
 
     // fatalAdapter
     Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));

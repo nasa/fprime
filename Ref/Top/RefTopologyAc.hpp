@@ -19,7 +19,7 @@
 #include "Ref/SendBuffApp/SendBuffComponentImpl.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 #include "Ref/Top/RefTopologyDefs.hpp"
-#include "Svc/ActiveLogger/ActiveLoggerImpl.hpp"
+#include "Svc/ActiveLogger/ActiveLogger.hpp"
 #include "Svc/ActiveRateGroup/ActiveRateGroup.hpp"
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"

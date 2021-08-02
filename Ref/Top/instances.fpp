@@ -67,7 +67,6 @@ module Ref {
     priority 100
 
   instance eventLogger: Svc.ActiveLogger base id 0x0B00 \
-    at "../../Svc/ActiveLogger/ActiveLoggerImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 98
