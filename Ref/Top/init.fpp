@@ -234,18 +234,6 @@ module Ref {
   """
 
   # ----------------------------------------------------------------------
-  # textLogger
-  # ----------------------------------------------------------------------
-
-  init textLogger phase Fpp.ToCpp.Phases.instances """
-  Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));
-  """
-
-  init textLogger phase Fpp.ToCpp.Phases.initComponents """
-  textLogger.init();
-  """
-
-  # ----------------------------------------------------------------------
   # uplink
   # ----------------------------------------------------------------------
 

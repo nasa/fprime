@@ -132,8 +132,7 @@ module Ref {
 
   instance staticMemory: Svc.StaticMemory base id 0x4800
 
-  instance textLogger: Svc.PassiveTextLogger base id 0x4900 \
-    at "../../Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
+  instance textLogger: Svc.PassiveTextLogger base id 0x4900
 
   instance uplink: Svc.Deframer base id 0x4A00 \
     at "../../Svc/Deframer/DeframerComponentImpl.hpp"

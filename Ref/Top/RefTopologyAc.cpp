@@ -225,7 +225,7 @@ namespace Ref {
     Svc::StaticMemory staticMemory(FW_OPTIONAL_NAME("staticMemory"));
 
     // textLogger
-    Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));
+    Svc::PassiveTextLogger textLogger(FW_OPTIONAL_NAME("textLogger"));
 
     // uplink
     Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
@@ -265,7 +265,7 @@ namespace Ref {
       recvBuffComp.init(InstanceIds::recvBuffComp);
       sendBuffComp.init(QueueSizes::sendBuffComp, InstanceIds::sendBuffComp);
       staticMemory.init(InstanceIds::staticMemory);
-      textLogger.init();
+      textLogger.init(InstanceIds::textLogger);
       uplink.init(InstanceIds::uplink);
     }
 

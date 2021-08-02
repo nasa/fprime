@@ -33,7 +33,7 @@
 #include "Svc/Framer/Framer.hpp"
 #include "Svc/Health/Health.hpp"
 #include "Svc/LinuxTime/LinuxTime.hpp"
-#include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
+#include "Svc/PassiveConsoleTextLogger/PassiveTextLogger.hpp"
 #include "Svc/PrmDb/PrmDb.hpp"
 #include "Svc/RateGroupDriver/RateGroupDriver.hpp"
 #include "Svc/StaticMemory/StaticMemory.hpp"

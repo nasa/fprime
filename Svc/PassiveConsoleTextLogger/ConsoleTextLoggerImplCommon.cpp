@@ -9,8 +9,8 @@ namespace Svc {
         PassiveTextLoggerComponentBase(compName) {
     }
 
-    void ConsoleTextLoggerImpl::init() {
-        PassiveTextLoggerComponentBase::init();
+    void ConsoleTextLoggerImpl::init(NATIVE_INT_TYPE instanceId) {
+        PassiveTextLoggerComponentBase::init(instanceId);
     }
 
     ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
