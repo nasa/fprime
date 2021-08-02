@@ -2,8 +2,7 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#define ALL_TESTS 0
-
+#include <Os/FileSystem.hpp>
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/Health.hpp"
 #include "Svc/CmdSequencer/test/ut/Immediate.hpp"
@@ -16,7 +15,6 @@
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
 #include "Svc/CmdSequencer/test/ut/UnitTest.hpp"
 
-#if ALL_TESTS
 TEST(AMPCS, MissingCRC) {
   Svc::AMPCS::Tester tester;
   tester.MissingCRC();
@@ -322,14 +320,12 @@ TEST(Mixed, AutoByCommandAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.AutoByCommand();
 }
-#endif
 
 TEST(Mixed, Validate) {
   Svc::Mixed::Tester tester;
   tester.Validate();
 }
 
-#if 0
 
 TEST(Mixed, ValidateAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
@@ -377,9 +373,10 @@ TEST(Relative, ValidateAMPCS) {
   Svc::Relative::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.Validate();
 }
-#endif
 
 int main(int argc, char **argv) {
+  // Create ./bin directory for test files
+  Os::FileSystem::createDirectory("./bin");
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
