@@ -67,7 +67,6 @@ arijitdas
 arinc
 arity
 arpa
-ASerialize
 asm
 aspx
 ASTRING
@@ -112,7 +111,6 @@ batchmode
 bbd
 bc
 bcm
-BDRV
 BDV
 bfree
 bibtex
@@ -135,7 +133,6 @@ bootup
 brc
 bre
 bsd
-BSerialize
 bslash
 buf
 BUFFERALLOCATE
@@ -216,7 +213,6 @@ CMDREG
 cmds
 CMDSEQ
 cmp
-cn
 cnt
 cntx
 cobj
@@ -242,7 +238,6 @@ config
 configparser
 configurability
 configurator
-Connectedoutput
 cooldown
 coor
 coravy
@@ -399,13 +394,11 @@ DSTUBBED
 DSYNC
 DTGT
 dtor
-DUCKCOMP
 Duerschmid
 duey
 dumparch
 dumpobj
 DVI
-Dvr
 DWN
 dylib
 EACCES
@@ -541,7 +534,7 @@ formatline
 foundin
 fpconfighpp
 FPGA
-FPL
+fpl
 fpp
 fppi
 FPport
@@ -588,7 +581,6 @@ getcwd
 getdata
 getdefaultencoding
 getenv
-getexample
 getextern
 gethostbyname
 gethostname
@@ -734,7 +726,6 @@ inode
 inorder
 INPCK
 Inputline
-INPUTPORT
 installable
 INSTALLDIR
 instanceof
@@ -893,7 +884,6 @@ LTIMER
 LTLT
 LVL
 lxml
-lxr
 MACROFILE
 magicdraw
 mailto
@@ -1008,6 +998,7 @@ NDELAY
 ndiffs
 netdb
 Netscape
+Netscape's
 newloc
 newroot
 newself
@@ -1025,7 +1016,6 @@ noargport
 NOCOLOR
 NOCTTY
 nogen
-noinclude
 nolog
 nomagic
 nonblock
@@ -1054,8 +1044,6 @@ NSPACES
 nukenewlines
 nullptr
 numargs
-Numinput
-Numoutput
 nums
 nxt
 objclass
@@ -1069,6 +1057,7 @@ oflag
 okidocki
 oldeol
 OMG
+OMG's
 onchange
 onlinepubs
 OParg
@@ -1114,7 +1103,6 @@ params
 PARENB
 PARODD
 parseable
-PARTITIONHUBCOMP
 PASSIVEC
 pathmaker
 pbuild
@@ -1248,7 +1236,6 @@ RBF
 Rce
 RCHILD
 rcs
-Rcv
 rcvd
 RCVTIMEO
 RDONLY
@@ -1339,7 +1326,6 @@ searchdata
 SEARCHENGINE
 segfault
 sendfile
-sendline
 SENDPARTIAL
 sendto
 seqgen
@@ -1360,7 +1346,6 @@ SETLOGGING
 setname
 setop
 setopt
-setoutput
 setprotocol
 setquaternion
 setresult
@@ -1426,6 +1411,7 @@ spidev
 splitext
 splitlines
 sprintf
+SQL's
 Sqlite
 sramanan
 srand
