@@ -13,7 +13,7 @@
 			<p_send>3.140000</p_send>
 		</p_group>
 		<p_group>
-			<p_expect>Comp_A Recieved Input: 3.140000</p_expect>
+			<p_expect>Comp_A Received Input: 3.140000</p_expect>
 			<p_send>q</p_send>
 		</p_group>
 	</test_case>
@@ -31,7 +31,7 @@
 			<p_send>10</p_send>
 		</p_group>
 		<p_group>
-			<p_expect>Comp_A Recieved Input: 10</p_expect>
+			<p_expect>Comp_A Received Input: 10</p_expect>
 			<p_send>q</p_send>
 		</p_group>
 	</test_case>

@@ -6,7 +6,7 @@ This tutorial will walk the user through the basic usage of the F´ development 
 through the above installation guide, and has a working F´ installation.
 
 The goal of this Tutorial is to build familiarity with the F´environment and tools. It does not walk the user through
-creation of new F´ items, but rather users the existing F´ `Ref` example as a place to operate the tools, learn the
+creation of new F´ items, but rather use the existing F´ `Ref` example as a place to operate the tools, learn the
 environment, and learn F´.
 
 The full development process is covered in the [Math Component Tutorial](../MathComponent/Tutorial.md), which will build
@@ -20,7 +20,7 @@ walk the F´ development process steps against existing reference goals.
 
 ## F´ Terminology
 
-This section will cover basic terminology used in this and other tutorial with respect to F´.  It may be used as a
+This section will cover basic terminology used in this and other tutorials with respect to F´.  It may be used as a
 reference for keywords that have specific meaning in an F´ project.
 
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
@@ -204,18 +204,11 @@ cd fprime/Ref
 fprime-util build raspberrypi
 ```
 
-## Installing the F´ Executable and Dictionaries
-
-Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
-quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
-of build for deployments.
-
-**Installing the Ref Deployment and Running the Binary Assuming Linux**
+**Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
 fprime-util build
-./bin/Linux/Ref # Run the deployment
+./build-artifacts/Linux/bin/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.

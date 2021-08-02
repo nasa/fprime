@@ -320,9 +320,7 @@ TBD
 
 ## 5 Unit Testing
 
-[CmdSequencerImpl.cpp](../test/ut/output/CmdSequencerImpl.cpp.gcov)
-
-[CmdSequencerComponentAc.cpp](../test/ut/output/CmdSequencerComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 6 Change log
 Date | Change Description

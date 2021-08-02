@@ -102,13 +102,7 @@ Unit Test Checklist | [Link](Checklist_Unit_test.xlsx)
 
 ## 6. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Output - `ActiveLoggerImpl.cpp`](../test/ut/output/ActiveLoggerImpl.cpp.gcov)
-
-[Coverage Output - `ActiveLoggerComponentAc.cpp`](../test/ut/output/ActiveLoggerComponentAc.cpp.gcov)
-
-[Report](../test/ut/output/SvcActiveLogger_gcov.txt)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

@@ -1,3 +1,4 @@
+#include "gtest/gtest.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -12,65 +13,43 @@ extern "C" {
   void qtest_concurrent(void);
   void intervalTimerTest(void);
   void fileSystemTest(void);
-  void validateFileTest(void);
+  void validateFileTest(const char* filename);
 }
-
-void run_test(int test_num)
-{
-	switch(test_num) {
-		case 0:
-			startTestTask(10);
-			sleep(15);
-			break;
-		case 1:
-			qtest_block_receive();
-			break;
-		case 2:
-			qtest_nonblock_receive();
-			break;
-    case 3:
-      qtest_nonblock_send();
-      break;
-    case 4:
-      qtest_block_send();
-      break;
-		case 5:
-			qtest_performance();
-			break;
-    case 6:
-      qtest_concurrent();
-      break;
-		case 7:
-			intervalTimerTest();
-			break;
-		case 8:
-			fileSystemTest();
-			break;
-		case 9:
-			validateFileTest();
-			break;
-		default:
-			fprintf(stderr, "Invalid test number: %d\n", test_num);
-			break;
-	}
-
+const char* filename;
+TEST(Nominal, StartTestTask) { 
+   startTestTask(10);
+   sleep(15);
+}
+TEST(Nominal, QTestBlockRecv) { 
+   qtest_block_receive();
+}
+TEST(Nominal, QTestNonBlockRecv) { 
+   qtest_nonblock_receive();
+}
+TEST(Nominal, QTestNonBlockSend) { 
+   qtest_nonblock_send();
+}
+TEST(Nominal, QTestBlockSend) { 
+   qtest_block_send();
+}
+TEST(Nominal, QTestPerformance) { 
+   qtest_performance();
+}
+TEST(Nominal, QTestConcurrentTest) { 
+   qtest_concurrent();
+}
+TEST(Nominal, IntervalTimerTest) { 
+   intervalTimerTest();
+}
+TEST(Nominal, FileSystemTest) { 
+   fileSystemTest();
+}
+TEST(Nominal, ValidateFileTest) { 
+   validateFileTest(filename);
 }
 
 int main(int argc, char* argv[]) {
-
-  if( argc != 2 ) {
-    printf("Running all test cases\n");
-
-    for(int i = 0; i < 10; i++)
-    {
-      run_test(i);
-    }
-  }
-  else
-  {
-    int test_num = atoi(argv[1]);
-    run_test(test_num);
-  }
-
-  return 0;
+    filename = argv[0];
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

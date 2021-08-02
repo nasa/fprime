@@ -35,8 +35,8 @@ def setup_opt_parse():
 
 def validate_xml(xml_list):
     """
-    Iterates through XML list, shows an error if an XML file is not an XML file or does not exist. 
-    
+    Iterates through XML list, shows an error if an XML file is not an XML file or does not exist.
+
     A list of valid XML files is returned (Not valid files are thrown out)
     """
 
@@ -55,7 +55,7 @@ def validate_xml(xml_list):
 def recursive_xml_parse(tree_obj):
     """
     returns a list of items
-    [tagName , [(argKey:argVal)] , [" " or [tagName , [] , []] ] ] 
+    [tagName , [(argKey:argVal)] , [" " or [tagName , [] , []] ] ]
     """
     out_obj = [tree_obj.tag, [], []]
 
@@ -96,7 +96,7 @@ def tag_object_to_string(tag_obj):
 def diff_files(xml_list):
     """
     Finds the difference between topology XML files, ignoring  ordering and names in "connection" tags
-    
+
     Iterate through root tag elements
     Create a dictionary with file_dict[tag] = [list of tag objects]
     """
