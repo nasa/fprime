@@ -104,7 +104,6 @@ module Ref {
     queue size Default.queueSize
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
-    at "../SendBuffApp/SendBuffComponentImpl.hpp" \
     queue size Default.queueSize
 
   # ----------------------------------------------------------------------

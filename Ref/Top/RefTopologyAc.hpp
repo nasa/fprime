@@ -16,7 +16,7 @@
 #include "Drv/TcpClient/TcpClientComponentImpl.hpp"
 #include "Ref/PingReceiver/PingReceiver.hpp"
 #include "Ref/RecvBuffApp/RecvBuffComponentImpl.hpp"
-#include "Ref/SendBuffApp/SendBuffComponentImpl.hpp"
+#include "Ref/SendBuffApp/SendBuff.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 #include "Ref/Top/RefTopologyDefs.hpp"
 #include "Svc/ActiveLogger/ActiveLogger.hpp"

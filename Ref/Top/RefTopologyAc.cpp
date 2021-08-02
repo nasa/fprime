@@ -219,7 +219,7 @@ namespace Ref {
     RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
 
     // sendBuffComp
-    SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
+    SendBuff sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
 
     // staticMemory
     Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
