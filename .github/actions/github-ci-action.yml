@@ -8,5 +8,6 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.test }}
+  # args:
+  #   - ${{ inputs.test }}
+  entrypoint: '${{ inputs.test }}.bash'

@@ -26,7 +26,7 @@ jobs:
       uses: ./.github/actions/
       id: github-ci-action
       with:
-        args: Framework
+        test: Framework
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
