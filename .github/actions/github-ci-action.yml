@@ -10,4 +10,4 @@ runs:
   image: 'Dockerfile'
   # args:
   #   - ${{ inputs.test }}
-  # entrypoint: '${{ inputs.test }}.bash'
+  entrypoint: '$GITHUB_WORKSPACE/ci/tests/${{ inputs.test }}.bash'
