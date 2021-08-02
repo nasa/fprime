@@ -38,7 +38,7 @@ namespace Ref {
   }
 
   PingReceiverComponentImpl ::
-    ~PingReceiverComponentImpl())
+    ~PingReceiverComponentImpl()
   {
 
   }
