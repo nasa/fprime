@@ -130,8 +130,7 @@ module Ref {
 
   instance recvBuffComp: Ref.RecvBuff base id 0x4700
 
-  instance staticMemory: Svc.StaticMemory base id 0x4800 \
-    at "../../Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
+  instance staticMemory: Svc.StaticMemory base id 0x4800
 
   instance textLogger: Svc.PassiveTextLogger base id 0x4900 \
     at "../../Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"

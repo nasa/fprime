@@ -222,7 +222,7 @@ namespace Ref {
     SendBuff sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
 
     // staticMemory
-    Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
+    Svc::StaticMemory staticMemory(FW_OPTIONAL_NAME("staticMemory"));
 
     // textLogger
     Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));

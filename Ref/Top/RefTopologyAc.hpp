@@ -36,7 +36,7 @@
 #include "Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp"
 #include "Svc/PrmDb/PrmDb.hpp"
 #include "Svc/RateGroupDriver/RateGroupDriver.hpp"
-#include "Svc/StaticMemory/StaticMemoryComponentImpl.hpp"
+#include "Svc/StaticMemory/StaticMemory.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"
 
 namespace Ref {
