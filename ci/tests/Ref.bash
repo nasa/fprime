@@ -10,8 +10,6 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 #### NEEDED ENVIRONMENT ####
 export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
-echo "Script: ${SCRIPT_DIR}"
-echo "FPrime: ${FPRIME_DIR}"
 export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
@@ -25,6 +23,7 @@ export CMAKE_EXTRA_SETTINGS=""
 export CMAKE_EXTRA_SETTINGS="${CMAKE_EXTRA_SETTINGS} -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
  
 echo -e "${BLUE}Testing ${FPUTIL_DEPLOYS} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
+
 export CHECK_TARGET_PLATFORM="native"
 for target in "${FPUTIL_TARGETS[@]}"
 do
@@ -35,4 +34,5 @@ do
     fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 done
 
+# Test Completed
 echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Ref SUCCESSFUL${NOCOLOR}"
