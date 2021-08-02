@@ -134,7 +134,6 @@ module Ref {
 
   instance textLogger: Svc.PassiveTextLogger base id 0x4900
 
-  instance uplink: Svc.Deframer base id 0x4A00 \
-    at "../../Svc/Deframer/DeframerComponentImpl.hpp"
+  instance uplink: Svc.Deframer base id 0x4A00
 
 }

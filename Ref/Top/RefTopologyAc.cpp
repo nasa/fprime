@@ -228,7 +228,7 @@ namespace Ref {
     Svc::PassiveTextLogger textLogger(FW_OPTIONAL_NAME("textLogger"));
 
     // uplink
-    Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
+    Svc::Deframer uplink(FW_OPTIONAL_NAME("uplink"));
 
     // ----------------------------------------------------------------------
     // Private functions

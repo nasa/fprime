@@ -241,10 +241,6 @@ module Ref {
   Svc::FprimeDeframing deframing;
   """
 
-  init uplink phase Fpp.ToCpp.Phases.instances """
-  Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
-  """
-
   init uplink phase Fpp.ToCpp.Phases.configComponents """
   uplink.setup(ConfigObjects::uplink::deframing);
   """
