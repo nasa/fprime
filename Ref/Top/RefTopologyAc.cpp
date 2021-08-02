@@ -146,7 +146,7 @@ namespace Ref {
     Svc::CommandDispatcher cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
 
     // cmdSeq
-    Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
+    Svc::CmdSequencer cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
 
     // comm
     Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));

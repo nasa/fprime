@@ -27,10 +27,6 @@ module Ref {
   };
   """
 
-  init cmdSeq phase Fpp.ToCpp.Phases.instances """
-  Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
-  """
-
   init cmdSeq phase Fpp.ToCpp.Phases.configComponents """
   cmdSeq.allocateBuffer(
       0,

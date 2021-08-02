@@ -24,7 +24,7 @@
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 #include "Svc/BufferManager/BufferManagerComponentImpl.hpp"
 #include "Svc/CmdDispatcher/CommandDispatcher.hpp"
-#include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
+#include "Svc/CmdSequencer/CmdSequencer.hpp"
 #include "Svc/Deframer/DeframerComponentImpl.hpp"
 #include "Svc/FatalHandler/FatalHandlerComponentImpl.hpp"
 #include "Svc/FileDownlink/FileDownlink.hpp"

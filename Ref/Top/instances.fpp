@@ -42,7 +42,6 @@ module Ref {
     priority 101
 
   instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
-    at "../../Svc/CmdSequencer/CmdSequencerImpl.hpp" \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100
