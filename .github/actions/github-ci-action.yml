@@ -8,6 +8,6 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  # args:
-  #   - ${{ inputs.test }}
-  entrypoint: '$GITHUB_WORKSPACE/ci/tests/${{ inputs.test }}.bash'
+  args:
+    - ${{ inputs.test }}
+  # entrypoint: '$GITHUB_WORKSPACE/ci/tests/${{ inputs.test }}.bash'
