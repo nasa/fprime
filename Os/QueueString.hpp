@@ -14,20 +14,18 @@ namespace Os {
             QueueString(const StringBase& src); //!< copy constructor
             QueueString(const QueueString& src); //!< copy constructor
             QueueString(void); //!< default constructor
+            QueueString& operator=(const QueueString& other); //!< assignment operator
+            QueueString& operator=(const StringBase& other); //!< other string assignment operator
+            QueueString& operator=(const char* other); //!< char* assignment operator
             ~QueueString(void); //!< destructor
-            const char* toChar(void) const; //!< get pointer to char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< get current length of string
 
-            const QueueString& operator=(const QueueString& other); //!< equal operator
+            const char* toChar(void) const; //!< get pointer to char buffer
+            NATIVE_UINT_TYPE getCapacity(void) const ;
 
         private:
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const { return Fw::FW_SERIALIZE_NO_ROOM_LEFT; } //!< disabled
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer)  { return Fw::FW_SERIALIZE_NO_ROOM_LEFT; } //!< disabled
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+
             char m_buf[FW_QUEUE_NAME_MAX_SIZE]; //!< buffer for string
     };
-
 }
 
 #endif
