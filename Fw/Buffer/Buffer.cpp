@@ -35,11 +35,15 @@ Buffer::Buffer(const Buffer& src) : Serializable(),
 {}
 
 Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
-    m_serialize_repr(data, size),
+    m_serialize_repr(),
     m_bufferData(data),
     m_size(size),
     m_context(context)
-{}
+{
+    if(m_bufferData != NULL){
+        this->m_serialize_repr.setExtBuffer(m_bufferData, m_size);
+    }
+}
 
 Buffer& Buffer::operator=(const Buffer& src) {
     // Ward against self-assignment
