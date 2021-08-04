@@ -102,7 +102,7 @@ files.
 | StringType.hpp(.cpp)              | Declares a string base class                                                                        |
 | Serializable.hpp(.cpp)            | Declares the serializable base classes and helper functions                                         |
 | PolyType.hpp(.cpp)                | Describes a serializable polymorphic type class that can be used to uniformly store different types |
-| EightyCharString.hpp(.cpp)        | An eighty-character string available for general usage if the developer does not wish to write one  |
+| String.hpp(.cpp)       | A fixed length string available for general usage if the developer does not wish to write one       |
 | InternalInterfaceString.hpp(.cpp) | A string class used by internal interfaces when a string argument is specified                      |
 
 ### Obj

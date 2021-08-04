@@ -12,8 +12,8 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/QueueString.hpp>
 
 namespace Svc {
 
@@ -65,7 +65,7 @@ namespace Svc {
     this->configured = true;
 
     Os::Queue::QueueStatus stat = fileQueue.create(
-      Fw::EightyCharString("fileDownlinkQueue"),
+      Os::QueueString("fileDownlinkQueue"),
       fileQueueDepth,
       sizeof(struct FileEntry)
     );

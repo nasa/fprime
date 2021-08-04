@@ -1,7 +1,7 @@
 module Fw {
 
-  @ An 80-character string
-  type EightyCharString
+  @ An fixed length string
+  type String
 
   @ A value of polymorphic type
   type PolyType

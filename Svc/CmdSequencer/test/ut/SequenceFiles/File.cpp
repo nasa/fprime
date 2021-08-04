@@ -62,7 +62,7 @@ namespace Svc {
       this->name += ".bin";
     }
 
-    const Fw::EightyCharString& File ::
+    const Fw::StringBase& File ::
       getName() const
     {
       return this->name;

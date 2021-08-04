@@ -10,8 +10,8 @@ namespace Utils {
 
     void Hash ::
       addFileExtension(
-          const Fw::EightyCharString& baseName,
-          Fw::EightyCharString& extendedName
+          const Fw::StringBase& baseName,
+          Fw::StringBase& extendedName
     ) {
       extendedName.format("%s%s", baseName.toChar(), HASH_EXTENSION_STRING);
     }

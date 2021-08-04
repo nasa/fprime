@@ -6,7 +6,7 @@
 
 #ifdef BUILD_UT
 #include <iomanip>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #endif
 
 // Some macros/functions to optimize for architectures
@@ -29,7 +29,7 @@ namespace Fw {
 
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Serializable& val) {
-        Fw::EightyCharString out;
+        Fw::String out;
         val.toString(out);
 
         os << out;

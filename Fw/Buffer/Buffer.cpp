@@ -14,7 +14,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 #if FW_SERIALIZABLE_TO_STRING
-    #include <Fw/Types/EightyCharString.hpp>
+    #include <Fw/Types/String.hpp>
 #endif
 #include <cstring>
 
@@ -171,7 +171,7 @@ void Buffer::toString(Fw::StringBase& text) const {
 
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Buffer& obj) {
-        Fw::EightyCharString str;
+        Fw::String str;
         obj.toString(str);
         os << str.toChar();
         return os;

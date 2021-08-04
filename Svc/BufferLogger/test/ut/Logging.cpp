@@ -52,7 +52,7 @@ namespace Svc {
 
         //! Check that files exist
         void checkFilesExist() {
-          const Fw::EightyCharString& fileName = this->component.m_file.name;
+          const Fw::String& fileName = this->component.m_file.name;
           this->checkFileExists(fileName);
           this->checkHashFileExists(fileName);
         }
@@ -60,7 +60,7 @@ namespace Svc {
       public:
 
         void test() {
-          this->component.m_file.baseName = Fw::EightyCharString("CloseFileTester");
+          this->component.m_file.baseName = Fw::String("CloseFileTester");
           ASSERT_EVENTS_SIZE(0);
           this->sendCloseFileCommands(3);
           this->sendComBuffers(3);
@@ -101,7 +101,7 @@ namespace Svc {
           this->sendCmd_BL_OpenFile(0, 0, baseName);
           this->dispatchOne();
           // Create file name
-          Fw::EightyCharString currentFileName;
+          Fw::String currentFileName;
           currentFileName.format(
               "%s%s%s",
               this->component.m_file.prefix.toChar(),
@@ -142,7 +142,7 @@ namespace Svc {
           // Check files
           for (U32 i = 0; i < numFiles; ++i) {
             // Create file name
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
             if (i == 0) {
                 fileName.format(
                     "%s%s%s",
@@ -240,7 +240,7 @@ namespace Svc {
 
         //! Test logging on
         void testLoggingOn() {
-          this->component.m_file.baseName = Fw::EightyCharString("OnOffTester");
+          this->component.m_file.baseName = Fw::String("OnOffTester");
           this->sendData();
           this->setState(BufferLogger_LogState::LOGGING_OFF);
           this->checkLogFileIntegrity(

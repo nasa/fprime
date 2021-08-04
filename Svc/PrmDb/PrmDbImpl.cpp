@@ -7,7 +7,6 @@
 
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 
 #include <Os/File.hpp>
 
