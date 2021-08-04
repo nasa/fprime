@@ -4,6 +4,8 @@
 #
 # Run the tests on the software through fp-util.
 ####
+export CTEST_OUTPUT_ON_FAILURE=1
+
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/../helpers.bash"
 . ${SCRIPT_DIR}/fputil.bash

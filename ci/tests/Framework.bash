@@ -4,7 +4,8 @@
 #
 # Run the tests on the software through fp-util.
 ####
-# Directory to be used for Framework CI test
+export CTEST_OUTPUT_ON_FAILURE=1
+
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/../helpers.bash"
 . ${SCRIPT_DIR}/fputil.bash
@@ -14,7 +15,7 @@ export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
 export LOG_DIR="${FPRIME_DIR}/ci-Framework-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
-# Directory to be used for Ref CI test
+# Directory to be used for Framework CI test
 export FPUTIL_DEPLOYS="${FPRIME_DIR}"
 
 echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
