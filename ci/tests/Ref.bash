@@ -4,8 +4,6 @@
 #
 # Run the tests on the software through fp-util.
 ####
-# apt-get update && apt-get install -y --no-install-recommends doxygen && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && pip3 --no-cache-dir install fprime-tools fprime-gds
-
 export CTEST_OUTPUT_ON_FAILURE=1
 
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
