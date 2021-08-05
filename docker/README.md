@@ -13,10 +13,7 @@ the need to ensure every worker has F´ build dependencies installed.
 
 Our Dockerfile is organized into substages. The first stage is setup with just the tools installed
 and the entrypoint is setup to be a generic `bash` prompt. This stage may be used for projects
-that want their developers using Docker as an environment.  The other stage is the Jenkins-CI stage
-that adds in the needed user setup for running continuous integration on Jenkins CI. 
-> **Note:** F´ CI using GitHub actions is done off from the base image, as these Actions do not require extensive
-user setup like Jenkins.
+that want their developers using Docker as an environment.  
 
 ### Building Docker Images
 
@@ -29,14 +26,8 @@ as few files as possible.
 
 **Build fprime-base**
 ```
-cd fprime/mk/docker
+cd fprime/docker
 docker build --target fprime-base -t fprime-base:latest .
-```
-
-**Build fprime-ci**
-```
-cd fprime/mk/docker
-docker build --target jenkins-ci -t fprime-base:latest .
 ```
 
 ### Publishing Docker Image to DockerHub
@@ -65,11 +56,6 @@ Dependencies are installed in one step. This includes an update and install of U
 packages, running the ubuntu-packages script, and install the pip dependencies. Finally, the the
 app-cache is cleaned. Doing all this in one step prevents excessive Docker image size bloat by
 reducing the number of temporary file system layers.
-
-The user "jenkins" is created, given root permissions, and set as the user for when the
-container is run. The PATH and ENTRYPOINT is set for when the container runs. Currently, the ENTRYPOINT
-is set to a `bash` shell such that the container will provide a terminal and "run forever", which is
-needed for Jenkins CI.
 
 ## Manual Docker Usage
 
