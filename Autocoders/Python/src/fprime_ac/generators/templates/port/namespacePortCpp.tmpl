@@ -92,20 +92,30 @@ namespace ${n} {
 
             public:
                 NATIVE_UINT_TYPE getBuffCapacity() const {
-                    return sizeof(m_buff);
+                    return Input${name}Port::SERIALIZED_SIZE;
                 }
 
                 U8* getBuffAddr() {
+#if len($arg_list) > 0:
                     return m_buff;
+#else
+                    return nullptr;
+#end if
                 }
 
                 const U8* getBuffAddr() const {
+#if len($arg_list) > 0:
                     return m_buff;
+#else
+                    return nullptr;
+#end if
                 }
 
         private:
 
+#if len($arg_list) > 0:
             U8 m_buff[Input${name}Port::SERIALIZED_SIZE];
+#end if
 
         };
 
