@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health.hpp
 // \author jdperez
 // \brief  cpp file for Health test harness implementation class
@@ -7,24 +7,27 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 #include <Fw/Test/UnitTest.hpp>
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 2000
+#define MAX_HISTORY_SIZE (Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS)
 #define QUEUE_DEPTH (Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2)
+#define FLAG_KEY_VALUE 0xcafecafe
+
+FW_STATIC_ASSERT(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS < 0xcafecafe);
 
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
       HealthGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Health")
   {
@@ -33,9 +36,9 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
@@ -73,11 +76,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // PingReturn
@@ -110,50 +113,50 @@ namespace Svc {
 
     // WdogStroke
     this->component.set_WdogStroke_OutputPort(
-        0, 
+        0,
         this->get_from_WdogStroke(0)
     );
 
     // CmdStatus
     this->component.set_CmdStatus_OutputPort(
-        0, 
+        0,
         this->get_from_CmdStatus(0)
     );
 
     // CmdReg
     this->component.set_CmdReg_OutputPort(
-        0, 
+        0,
         this->get_from_CmdReg(0)
     );
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
 
@@ -181,7 +184,7 @@ namespace Svc {
   }
 
   void Tester ::
-  	  dispatchAll(void)
+  	  dispatchAll()
   {
 	  HealthComponentBase::MsgDispatchStatus stat = HealthComponentBase::MSG_DISPATCH_OK;
       while (HealthComponentBase::MSG_DISPATCH_OK == stat) {
@@ -195,7 +198,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-  nominalTlm(void)
+  nominalTlm()
   {
 	  TEST_CASE(900.1.1,"Nominal Telemetry");
 	  REQUIREMENT("ISF-HTH-001");
@@ -231,7 +234,7 @@ namespace Svc {
   }
 
   void Tester ::
-  warningTlm(void)
+  warningTlm()
   {
       TEST_CASE(900.1.2,"Warning Telemetry");
       REQUIREMENT("ISF-HTH-002");
@@ -265,7 +268,7 @@ namespace Svc {
 
 
   void Tester ::
-  faultTlm(void)
+  faultTlm()
   {
       TEST_CASE(900.1.3,"Fault Telemetry");
       REQUIREMENT("ISF-HTH-003");
@@ -305,6 +308,7 @@ namespace Svc {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+i+1,this->component.m_pingTrackerEntries[port].cycleCount);
           }
       }
+      this->invoke_to_Run(0,0);
 
       //check for expected warning EVRs from each entry
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
@@ -319,7 +323,7 @@ namespace Svc {
   }
 
   void Tester ::
-  disableAllMonitoring(void)
+  disableAllMonitoring()
   {
       TEST_CASE(900.1.4,"Enable/Disable all monitoring");
       REQUIREMENT("ISF-HTH-004");
@@ -352,14 +356,14 @@ namespace Svc {
       this->clearTlm();
 
       //disable all monitoring
-      this->sendCmd_HLTH_ENABLE(0,0,HealthComponentBase::HLTH_CHK_DISABLED);
+      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::DISABLED);
       this->dispatchAll();
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::DISABLED);
 
-      ASSERT_EQ(this->component.m_enabled, HealthComponentBase::HLTH_CHK_DISABLED);
+      ASSERT_EQ(this->component.m_enabled, Fw::Enabled::DISABLED);
 
       //invoke run handler 100 times
       for (U32 i = 0; i < 100; i++) {
@@ -377,14 +381,14 @@ namespace Svc {
       this->clearTlm();
 
      //enable all monitoring
-      this->sendCmd_HLTH_ENABLE(0,0,HealthComponentBase::HLTH_CHK_ENABLED);
+      this->sendCmd_HLTH_ENABLE(0,0,Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::ENABLED);
 
-      ASSERT_EQ(this->component.m_enabled, HealthComponentBase::HLTH_CHK_ENABLED);
+      ASSERT_EQ(this->component.m_enabled, Fw::Enabled::ENABLED);
 
       this->clearEvents();
       this->clearTlm();
@@ -395,6 +399,7 @@ namespace Svc {
               ASSERT_EQ(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2+1+i,this->component.m_pingTrackerEntries[entry].cycleCount);
           }
       }
+      this->invoke_to_Run(0,0);
 
       // Should be FATAL timeouts
       ASSERT_EVENTS_SIZE(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS);
@@ -408,7 +413,7 @@ namespace Svc {
   }
 
   void Tester ::
-  disableOneMonitoring(void)
+  disableOneMonitoring()
   {
       TEST_CASE(900.1.5,"Enable/Disable individual monitors");
       REQUIREMENT("ISF-HTH-005");
@@ -432,13 +437,13 @@ namespace Svc {
           char name[80];
           sprintf(name,"task%d",entry);
           Fw::CmdStringArg task(name);
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_DISABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::DISABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::COMMAND_OK);
+          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_DISABLED,name);
+          ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::DISABLED,name);
 
           // run a few cycles
           for (NATIVE_INT_TYPE cycle = 0; cycle < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; cycle++) {
@@ -461,18 +466,18 @@ namespace Svc {
           this->clearEvents();
           this->clearHistory();
 
-          this->sendCmd_HLTH_PING_ENABLE(0,10,name,HealthComponentBase::HLTH_PING_ENABLED);
+          this->sendCmd_HLTH_PING_ENABLE(0,10,name,Fw::Enabled::ENABLED);
           this->dispatchAll();
           ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::COMMAND_OK);
+          ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,10,Fw::CmdResponse::OK);
 
           ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_HLTH_CHECK_PING(0,Svc::HealthComponentBase::HEALTH_PING_ENABLED,name);
+          ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::ENABLED,name);
       }
   }
 
   void Tester ::
-  updatePingTimeout(void)
+  updatePingTimeout()
   {
       TEST_CASE(900.1.6,"Update ping timeouts");
       REQUIREMENT("ISF-HTH-006");
@@ -510,7 +515,7 @@ namespace Svc {
   }
 
   void Tester ::
-  watchdogCheck(void)
+  watchdogCheck()
   {
       TEST_CASE(900.1.7,"Watchdog check");
       REQUIREMENT("ISF-HTH-007");
@@ -532,7 +537,7 @@ namespace Svc {
   }
 
   void Tester ::
-  nominalCmd(void)
+  nominalCmd()
   {
 	  TEST_CASE(900.1.8,"Nominal Command");
 	  COMMENT("Process command during quiescent (no telemetry readout) period.");
@@ -544,25 +549,25 @@ namespace Svc {
 	  ASSERT_TLM_SIZE(0);
 	  ASSERT_CMD_RESPONSE_SIZE(0);
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_DISABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_DISABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 	  ASSERT_EVENTS_SIZE(1);
-	  ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_DISABLED);
+	  ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::DISABLED);
       this->clearEvents();
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_ENABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::ENABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_ENABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,HealthComponentBase::HEALTH_CHECK_ENABLED);
+      ASSERT_EVENTS_HLTH_CHECK_ENABLE(0,Fw::Enabled::ENABLED);
 
       this->clearEvents();
-	  sendCmd_HLTH_PING_ENABLE(0, 0, carg, HealthImpl::HLTH_PING_DISABLED);
+	  sendCmd_HLTH_PING_ENABLE(0, 0, carg, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthImpl::HLTH_PING_DISABLED, this->component.m_pingTrackerEntries[0].enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_pingTrackerEntries[0].enabled);
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_HLTH_CHECK_PING(0,HealthComponentBase::HEALTH_PING_DISABLED,"task0");
+      ASSERT_EVENTS_HLTH_CHECK_PING(0,Fw::Enabled::DISABLED,"task0");
 
       this->clearEvents();
 	  U32 warn_val = 9;
@@ -582,7 +587,7 @@ namespace Svc {
 
 
   void Tester ::
-  nominal2CmdsDuringTlm(void)
+  nominal2CmdsDuringTlm()
   {
 	  TEST_CASE(900.1.9,"Nominal 2 commands called during telemetry readouts.");
 	  COMMENT("Process commands during busy (telemetry readout) period.");
@@ -601,9 +606,9 @@ namespace Svc {
 	  ASSERT_EVENTS_SIZE(0);
 	  ASSERT_TLM_SIZE(0);
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_DISABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::DISABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_DISABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 
 	  return;
 	  //invoke schedIn handler for 50 times
@@ -616,9 +621,9 @@ namespace Svc {
 	      ASSERT_TLM_SIZE(0);
 	  }
 
-	  sendCmd_HLTH_ENABLE(0,0, HealthComponentBase::HLTH_CHK_ENABLED);
+	  sendCmd_HLTH_ENABLE(0,0, Fw::Enabled::ENABLED);
 	  this->dispatchAll();
-	  ASSERT_EQ(HealthComponentBase::HLTH_CHK_ENABLED, this->component.m_enabled);
+	  ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
 
 	  this->invoke_to_Run(0,0);
 
@@ -629,7 +634,7 @@ namespace Svc {
 
 
   void Tester ::
-  miscellaneous(void)
+  miscellaneous()
   {
       TEST_CASE(900.1.10,"Miscellaneous remaining tests.");
       COMMENT("Case 1: Ping port anomalies.");
@@ -640,7 +645,7 @@ namespace Svc {
 
       //send a bad ping return key
       this->override = true;
-      this->override_key = 50;
+      this->override_key = FLAG_KEY_VALUE;
 
       //invoke schedIn
       this->invoke_to_Run(0,0);
@@ -652,7 +657,7 @@ namespace Svc {
       for (NATIVE_INT_TYPE port = 0; port < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; port++) {
           char name[80];
           sprintf(name,"task%d",port);
-          ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,50);
+          ASSERT_EVENTS_HLTH_PING_WRONG_KEY(port,name,FLAG_KEY_VALUE);
       }
 
       this->clearEvents();
@@ -665,18 +670,19 @@ namespace Svc {
       ASSERT_TLM_SIZE(0);
 
       //send command with bad value
-      sendCmd_HLTH_PING_ENABLE(0,0,"task0",HealthImpl::PingEnabled_MAX);
+      Fw::Enabled badValue = static_cast<Fw::Enabled::t>(Fw::Enabled::NUM_CONSTANTS);
+      sendCmd_HLTH_PING_ENABLE(0,0,"task0",badValue);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
 
       //send command with bad ping entry
-      sendCmd_HLTH_PING_ENABLE(0,0,"notask",HealthImpl::HLTH_PING_ENABLED);
+      sendCmd_HLTH_PING_ENABLE(0,0,"notask",Fw::Enabled::ENABLED);
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(2);
-      ASSERT_CMD_RESPONSE(1,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(1,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_LOOKUP_ERROR_SIZE(1);
       ASSERT_EVENTS_HLTH_CHECK_LOOKUP_ERROR(0,"notask");
@@ -688,7 +694,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::CmdResponse::VALIDATION_ERROR);
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_HLTH_PING_INVALID_VALUES_SIZE(1);
       ASSERT_EVENTS_HLTH_PING_INVALID_VALUES(0,"task0",10,9);
@@ -701,7 +707,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_CHNG_PING,0,Fw::CmdResponse::VALIDATION_ERROR);
 
       this->clearEvents();
       this->clearHistory();
@@ -752,7 +758,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

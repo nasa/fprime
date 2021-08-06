@@ -15,18 +15,25 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <new>
 #include <Fw/Logger/Logger.hpp>
 
 typedef void* (*pthread_func_ptr)(void*);
 
-//#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
-#define DEBUG_PRINT(x,...)
+void* pthread_entry_wrapper(void* arg) {
+    FW_ASSERT(arg);
+    Os::Task::TaskRoutineWrapper *task = reinterpret_cast<Os::Task::TaskRoutineWrapper*>(arg);
+    FW_ASSERT(task->routine);
+    task->routine(task->arg);
+    return NULL;
+}
 
 namespace Os {
-    Task::Task() : m_handle(0), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false) {
+    Task::Task() : m_handle(0), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
     }
 
     Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+        FW_ASSERT(routine);
 
         this->m_name = "TP_";
         this->m_name += name;
@@ -37,7 +44,6 @@ namespace Os {
         this->m_name += pid;
 #endif
         this->m_identifier = identifier;
-
         Task::TaskStatus tStat = TASK_OK;
 
         pthread_attr_t att;
@@ -115,8 +121,16 @@ namespace Os {
             Task::s_taskRegistry->addTask(this);
         }
 
-        pthread_t* tid = new pthread_t;
-        stat = pthread_create(tid,&att,(pthread_func_ptr)routine,arg);
+        pthread_t* tid = new(std::nothrow) pthread_t;
+        if (tid == NULL) {
+            Fw::Logger::logMsg("failed to allocate pthread_t\n");
+            return TASK_UNKNOWN_ERROR;
+        }
+
+        this->m_routineWrapper.routine = routine;
+        this->m_routineWrapper.arg = arg;
+
+        stat = pthread_create(tid,&att,pthread_entry_wrapper,&this->m_routineWrapper);
 
         switch (stat) {
             case 0:
@@ -192,16 +206,16 @@ namespace Os {
         FW_ASSERT(0);
     }
 
-    void Task::resume(void) {
+    void Task::resume() {
         FW_ASSERT(0);
     }
 
-    bool Task::isSuspended(void) {
+    bool Task::isSuspended() {
         FW_ASSERT(0);
         return false;
     }
 
-    TaskId Task::getOsIdentifier(void) {
+    TaskId Task::getOsIdentifier() {
         TaskId T;
         return T;
     }
@@ -214,7 +228,6 @@ namespace Os {
         stat = pthread_join(*((pthread_t*) this->m_handle), value_ptr);
 
         if (stat != 0) {
-            DEBUG_PRINT("join: %s\n", strerror(errno));
             return TASK_JOIN_ERROR;
         }
         else {

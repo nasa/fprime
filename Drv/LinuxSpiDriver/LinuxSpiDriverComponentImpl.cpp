@@ -167,7 +167,7 @@ namespace Drv {
 
     }
 
-    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl(void) {
+    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
         DEBUG_PRINT("Closing SPI device %d\n",this->m_fd);
         (void) close(this->m_fd);
     }

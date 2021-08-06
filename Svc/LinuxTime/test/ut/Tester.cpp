@@ -12,34 +12,34 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(const char *const compName) : 
+    Tester(const char *const compName) :
       TimeGTestBase(compName, 0),
       linuxTime("LinuxTime")
   {
     this->init();
     this->linuxTime.init(INSTANCE);
     this->connect_to_timeGetPort(
-        0, 
+        0,
         this->linuxTime.get_timeGetPort_InputPort(0)
     );
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    getTime(void) 
+    getTime()
   {
     Fw::Time time;
     this->invoke_to_timeGetPort(0,time);

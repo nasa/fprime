@@ -20,7 +20,7 @@ namespace Svc {
   namespace Errors {
 
     void Tester ::
-      LogFileOpen(void)
+      LogFileOpen()
     {
       // Remove buf directory
       (void) system("rm -rf buf");
@@ -81,7 +81,7 @@ namespace Svc {
     }
 
     void Tester ::
-      LogFileWrite(void)
+      LogFileWrite()
     {
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
       ASSERT_EVENTS_SIZE(0);
@@ -162,7 +162,7 @@ namespace Svc {
     }
 
     void Tester ::
-      LogFileValidation(void)
+      LogFileValidation()
     {
       this->component.m_file.baseName = Fw::EightyCharString("LogFileValidation");
 

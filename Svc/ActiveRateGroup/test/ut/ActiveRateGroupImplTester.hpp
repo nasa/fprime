@@ -30,7 +30,7 @@ namespace Svc {
 
             void runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
             void runCycleOverrun(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
-            void runPingTest(void);
+            void runPingTest();
 
         private:
 
@@ -45,7 +45,7 @@ namespace Svc {
 
             Svc::ActiveRateGroupImpl& m_impl;
 
-            void clearPortCalls(void);
+            void clearPortCalls();
 
             struct {
                 bool portCalled;

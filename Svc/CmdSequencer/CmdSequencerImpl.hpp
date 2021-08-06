@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CmdSequencerImpl.hpp
 // \author Bocchino/Canham
 // \brief  hpp file for CmdSequencer component implementation class
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
@@ -21,8 +21,8 @@
 
 namespace Svc {
 
-  class CmdSequencerComponentImpl : 
-    public CmdSequencerComponentBase 
+  class CmdSequencerComponentImpl :
+    public CmdSequencerComponentBase
   {
 
     PRIVATE:
@@ -59,31 +59,6 @@ namespace Svc {
 
             public:
 
-              //! File read stage for error reporting
-              struct FileReadStage {
-
-                typedef enum {
-                  READ_HEADER,
-                  READ_HEADER_SIZE,
-                  DESER_SIZE,
-                  DESER_NUM_RECORDS,
-                  DESER_TIME_BASE,
-                  DESER_TIME_CONTEXT,
-                  READ_SEQ_CRC,
-                  READ_SEQ_DATA,
-                  READ_SEQ_DATA_SIZE,
-                } t;
-
-                //! Convert FileReadStage::t to CmdSequencerComponentImpl::FileReadStage
-                static CmdSequencerComponentImpl::FileReadStage 
-                  toComponentEnum(
-                      const t fileReadStage //!< The file read stage
-                  );
-
-              }; 
-
-            public:
-
               //! Construct an Events object
               Events(
                   Sequence& sequence //!< The enclosing sequence
@@ -99,15 +74,15 @@ namespace Svc {
 
               //! File invalid
               void fileInvalid(
-                  const FileReadStage::t stage, //!< The file read stage
+                  const CmdSequencer_FileReadStage::t stage, //!< The file read stage
                   const I32 error //!< The error
               );
 
               //! File not found
-              void fileNotFound(void);
+              void fileNotFound();
 
               //! File read error
-              void fileReadError(void);
+              void fileReadError();
 
               //! File size error
               void fileSizeError(
@@ -153,7 +128,7 @@ namespace Svc {
           );
 
           //! Destroy a Sequence object
-          virtual ~Sequence(void);
+          virtual ~Sequence();
 
         public:
 
@@ -175,7 +150,7 @@ namespace Svc {
             public:
 
               //! Construct a Header object
-              Header(void);
+              Header();
 
             public:
 
@@ -218,8 +193,8 @@ namespace Svc {
             public:
 
               //! Construct a Record object
-              Record(void) :
-                m_descriptor(END_OF_SEQUENCE) 
+              Record() :
+                m_descriptor(END_OF_SEQUENCE)
               {
 
               }
@@ -256,14 +231,14 @@ namespace Svc {
 
           //! Get the file name
           //! \return The file name
-          Fw::CmdStringArg& getFileName(void);
+          Fw::CmdStringArg& getFileName();
 
           //! Get the log file name
           //! \return The log file name
-          Fw::LogStringArg& getLogFileName(void);
+          Fw::LogStringArg& getLogFileName();
 
           //! Get the sequence header
-          const Header& getHeader(void) const;
+          const Header& getHeader() const;
 
           //! Load a sequence file
           //! \return Success or failure
@@ -273,7 +248,7 @@ namespace Svc {
 
           //! Query whether the sequence has any more records
           //! \return Yes or no
-          virtual bool hasMoreRecords(void) const = 0;
+          virtual bool hasMoreRecords() const = 0;
 
           //! Get the next record in the sequence
           //! Asserts on failure
@@ -282,13 +257,13 @@ namespace Svc {
           ) = 0;
 
           //! Reset the sequence to the beginning.
-          //! After calling this, hasMoreRecords should return true, 
+          //! After calling this, hasMoreRecords should return true,
           //! unless the sequence has no records
-          virtual void reset(void) = 0;
+          virtual void reset() = 0;
 
           //! Clear the sequence records.
           //! After calling this, hasMoreRecords should return false
-          virtual void clear(void) = 0;
+          virtual void clear() = 0;
 
         PROTECTED:
 
@@ -306,7 +281,7 @@ namespace Svc {
 
           //! Serialize buffer to hold the binary sequence data
           Fw::ExternalSerializeBuffer m_buffer;
-          
+
           //! The allocator ID
           NATIVE_INT_TYPE m_allocatorId;
 
@@ -334,10 +309,10 @@ namespace Svc {
           struct CRC {
 
             //! Construct a CRC
-            CRC(void);
+            CRC();
 
             //! Initialize computed CRC
-            void init(void);
+            void init();
 
             //! Update computed CRC
             void update(
@@ -346,7 +321,7 @@ namespace Svc {
             );
 
             //! Finalize computed CRC
-            void finalize(void);
+            void finalize();
 
             //! Computed CRC
             U32 m_computed;
@@ -373,7 +348,7 @@ namespace Svc {
 
           //! Query whether the sequence has any more records
           //! \return Yes or no
-          bool hasMoreRecords(void) const;
+          bool hasMoreRecords() const;
 
           //! Get the next record in the sequence.
           //! Asserts on failure
@@ -384,42 +359,42 @@ namespace Svc {
           //! Reset the sequence to the beginning.
           //! After calling this, hasMoreRecords should return true, unless
           //! the sequence has no records.
-          void reset(void);
+          void reset();
 
           //! Clear the sequence records.
           //! After calling this, hasMoreRecords should return false.
-          void clear(void);
+          void clear();
 
         PRIVATE:
 
           //! Read a sequence file
           //! \return Success or failure
-          bool readFile(void);
+          bool readFile();
 
           //! Read an open sequence file
           //! \return Success or failure
-          bool readOpenFile(void);
+          bool readOpenFile();
 
           //! Read a binary sequence header from the sequence file
           //! into the buffer
           //! \return Success or failure
-          bool readHeader(void);
+          bool readHeader();
 
           //! Deserialize the binary sequence header from the buffer
           //! \return Success or failure
-          bool deserializeHeader(void);
+          bool deserializeHeader();
 
           //! Read records and CRC into buffer
           //! \return Success or failure
-          bool readRecordsAndCRC(void);
+          bool readRecordsAndCRC();
 
           //! Extract CRC from record data
           //! \return Success or failure
-          bool extractCRC(void);
+          bool extractCRC();
 
           //! Validate the CRC
           //! \return Success or failure
-          bool validateCRC(void);
+          bool validateCRC();
 
           //! Deserialize a record from a buffer
           //! \return Serialize status
@@ -454,7 +429,7 @@ namespace Svc {
 
           //! Validate the sequence records in the buffer
           //! \return Success or failure
-          bool validateRecords(void);
+          bool validateRecords();
 
         PRIVATE:
 
@@ -469,7 +444,7 @@ namespace Svc {
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Private classes 
+      // Private classes
       // ----------------------------------------------------------------------
 
       //! \class Timer
@@ -486,8 +461,8 @@ namespace Svc {
         public:
 
           //! Construct a Timer object
-          Timer(void) :
-            m_state(CLEAR) 
+          Timer() :
+            m_state(CLEAR)
           {
 
           }
@@ -501,7 +476,7 @@ namespace Svc {
           }
 
           //! Clear the timer
-          void clear(void) {
+          void clear() {
             this->m_state = CLEAR;
           }
 
@@ -548,7 +523,7 @@ namespace Svc {
           const NATIVE_INT_TYPE instance //!< The instance number
       );
 
-      //! (Optional) Set a timeout. 
+      //! (Optional) Set a timeout.
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
       void setTimeout(
@@ -556,14 +531,14 @@ namespace Svc {
       );
 
       //! (Optional) Set the sequence format.
-      //! CmdSequencer will use the sequence object you pass in 
+      //! CmdSequencer will use the sequence object you pass in
       //! to load and run sequences. By default, it uses an FPrimeSequence
       //! object.
       void setSequenceFormat(
           Sequence& sequence //!< The sequence object
       );
 
-      //! Give the sequence a memory buffer. 
+      //! Give the sequence a memory buffer.
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
@@ -584,7 +559,7 @@ namespace Svc {
       );
 
       //! Destroy a CmdDispatcherComponentBase
-      ~CmdSequencerComponentImpl(void);
+      ~CmdSequencerComponentImpl();
 
     PRIVATE:
 
@@ -597,7 +572,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum, //!< The port number
           FwOpcodeType opcode, //!< The command opcode
           U32 cmdSeq, //!< The command sequence number
-          Fw::CommandResponse response //!< The command response
+          Fw::CmdResponse response //!< The command response
       );
 
       //! Handler for input port schedIn
@@ -688,10 +663,10 @@ namespace Svc {
       );
 
       //! Perform a Cancel command
-      void performCmd_Cancel(void);
+      void performCmd_Cancel();
 
       //! Perform a Step command
-      void performCmd_Step(void);
+      void performCmd_Step();
 
       //! Perform a Step command with a relative time
       void performCmd_Step_RELATIVE(
@@ -709,10 +684,10 @@ namespace Svc {
       );
 
       //! Record a sequence complete event
-      void sequenceComplete(void);
+      void sequenceComplete();
 
       //! Record an error
-      void error(void);
+      void error();
 
       //! Record an error in executing a sequence command
       void commandError(

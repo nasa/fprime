@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Scenario.hpp
 // \author bocchino
 // \brief  A test scenario
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_Scenario_HPP
 #define STest_Scenario_HPP
@@ -27,7 +27,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a Scenario object
@@ -41,18 +41,18 @@ namespace STest {
       }
 
       //! Destroy a Scenario object
-      virtual ~Scenario(void) {
+      virtual ~Scenario() {
 
       }
 
     public:
 
       // ----------------------------------------------------------------------
-      // Public instance methods 
+      // Public instance methods
       // ----------------------------------------------------------------------
 
       //! Reset the scenario state
-      void reset(void) {
+      void reset() {
         this->reset_Scenario();
       }
 
@@ -80,18 +80,18 @@ namespace STest {
 
       //! Query whether the scenario is done
       //! \return Whether the scenario is done
-      bool isDone(void) const {
+      bool isDone() const {
         return this->isDone_Scenario();
       }
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected virtual methods 
+      // Protected virtual methods
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      virtual void reset_Scenario(void) = 0;
+      virtual void reset_Scenario() = 0;
 
       //! The virtual implementation of nextRule required by Scenario
       //! \return The next rule, assuming isDone() is false, or NULL if none
@@ -101,12 +101,12 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      virtual bool isDone_Scenario(void) const = 0;
+      virtual bool isDone_Scenario() const = 0;
 
     private:
 
       // ----------------------------------------------------------------------
-      // Private helper functions 
+      // Private helper functions
       // ----------------------------------------------------------------------
 
       //! Run helper function
@@ -125,7 +125,7 @@ namespace STest {
           rule = this->nextRule(state);
         }
       }
-        
+
       //! Apply the next rule
       //! \return The number of steps taken
       void applyNextRule(
@@ -143,7 +143,7 @@ namespace STest {
       }
 
       //! Set showRules
-      void setShowRules(void) {
+      void setShowRules() {
         const int status = system("test -f show-rules");
         if (status == 0) {
           showRules = true;
@@ -153,7 +153,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Public member variables 
+      // Public member variables
       // ----------------------------------------------------------------------
 
       //! The name of the scenario
@@ -162,7 +162,7 @@ namespace STest {
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! Whether to report rule applications

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FPrimeSequence.cpp
 // \author Bocchino/Canham
 // \brief  CmdSequencerComponentImpl::FPrimeSequence implementation
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Types/Assert.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
@@ -19,7 +19,7 @@ extern "C" {
 namespace Svc {
 
   CmdSequencerComponentImpl::FPrimeSequence::CRC ::
-    CRC(void) :
+    CRC() :
       m_computed(INITIAL_COMPUTED_VALUE),
       m_stored(0)
   {
@@ -27,13 +27,13 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence::CRC ::
-    init(void) 
+    init()
   {
     this->m_computed = INITIAL_COMPUTED_VALUE;
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence::CRC ::
-    update(const BYTE* buffer, NATIVE_UINT_TYPE bufferSize) 
+    update(const BYTE* buffer, NATIVE_UINT_TYPE bufferSize)
   {
     FW_ASSERT(buffer);
     for(NATIVE_UINT_TYPE index = 0; index < bufferSize; index++) {
@@ -42,7 +42,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence::CRC ::
-    finalize(void)
+    finalize()
   {
     this->m_computed = ~this->m_computed;
   }
@@ -55,7 +55,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    validateCRC(void)
+    validateCRC()
   {
     bool result = true;
     if (this->m_crc.m_stored != this->m_crc.m_computed) {
@@ -69,7 +69,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    loadFile(const Fw::CmdStringArg& fileName) 
+    loadFile(const Fw::CmdStringArg& fileName)
   {
 
     // make sure there is a buffer allocated
@@ -87,7 +87,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    hasMoreRecords(void) const
+    hasMoreRecords() const
   {
     return this->m_buffer.getBuffLeft() > 0;
   }
@@ -100,19 +100,19 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence ::
-    reset(void)
+    reset()
   {
     this->m_buffer.resetDeser();
   }
 
   void CmdSequencerComponentImpl::FPrimeSequence ::
-    clear(void)
+    clear()
   {
     this->m_buffer.resetSer();
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    readFile(void) 
+    readFile()
   {
 
     bool result;
@@ -138,7 +138,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    readOpenFile(void) 
+    readOpenFile()
   {
     U8 *const buffAddr = this->m_buffer.getBuffAddr();
     this->m_crc.init();
@@ -158,7 +158,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    readHeader(void)
+    readHeader()
   {
 
     Os::File& file = this->m_sequenceFile;
@@ -171,7 +171,7 @@ namespace Svc {
     const NATIVE_UINT_TYPE capacity = buffer.getBuffCapacity();
     FW_ASSERT(
         capacity >= static_cast<NATIVE_UINT_TYPE>(readLen),
-        capacity, 
+        capacity,
         readLen
     );
     Os::File::Status fileStatus = file.read(
@@ -181,7 +181,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER, 
+          CmdSequencer_FileReadStage::READ_HEADER,
           file.getLastError()
       );
       status = false;
@@ -189,26 +189,26 @@ namespace Svc {
 
     if (status and readLen != Sequence::Header::SERIALIZED_SIZE) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           readLen
       );
       status = false;
     }
 
     if (status) {
-      const Fw::SerializeStatus serializeStatus = 
+      const Fw::SerializeStatus serializeStatus =
         buffer.setBuffLen(readLen);
       FW_ASSERT(
           serializeStatus == Fw::FW_SERIALIZE_OK,
           serializeStatus
       );
     }
-    
+
     return status;
   }
-  
+
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    deserializeHeader(void)
+    deserializeHeader()
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     Header& header = this->m_header;
@@ -217,7 +217,7 @@ namespace Svc {
     Fw::SerializeStatus serializeStatus = buffer.deserialize(header.m_fileSize);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_SIZE,
+          CmdSequencer_FileReadStage::DESER_SIZE,
           serializeStatus
       );
       return false;
@@ -230,7 +230,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(header.m_numRecords);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_NUM_RECORDS,
+          CmdSequencer_FileReadStage::DESER_NUM_RECORDS,
           serializeStatus
       );
       return false;
@@ -240,7 +240,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(tbase);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_TIME_BASE,
+          CmdSequencer_FileReadStage::DESER_TIME_BASE,
           serializeStatus
       );
       return false;
@@ -250,7 +250,7 @@ namespace Svc {
     serializeStatus = buffer.deserialize(header.m_timeContext);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::DESER_TIME_CONTEXT,
+          CmdSequencer_FileReadStage::DESER_TIME_CONTEXT,
           serializeStatus
       );
       return false;
@@ -259,7 +259,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    readRecordsAndCRC(void)
+    readRecordsAndCRC()
   {
     Os::File& file = this->m_sequenceFile;
     const NATIVE_UINT_TYPE size = this->m_header.m_fileSize;
@@ -273,7 +273,7 @@ namespace Svc {
     // check read status
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA,
           file.getLastError()
       );
       return false;
@@ -281,20 +281,20 @@ namespace Svc {
     // check read size
     if ((NATIVE_INT_TYPE) size != readLen) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           readLen
       );
       return false;
     }
     // set buffer size
-    Fw::SerializeStatus serializeStatus = 
+    Fw::SerializeStatus serializeStatus =
      buffer.setBuffLen(size);
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
     return true;
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    extractCRC(void)
+    extractCRC()
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     U32& crc = this->m_crc.m_stored;
@@ -305,7 +305,7 @@ namespace Svc {
     U8 *const buffAddr = buffer.getBuffAddr();
     if (buffSize < crcSize) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           buffSize
       );
       return false;
@@ -330,11 +330,11 @@ namespace Svc {
   {
     U32 recordSize;
 
-    Fw::SerializeStatus status = 
+    Fw::SerializeStatus status =
      this->deserializeDescriptor(record.m_descriptor);
 
     if (
-      status == Fw::FW_SERIALIZE_OK and 
+      status == Fw::FW_SERIALIZE_OK and
       record.m_descriptor == Record::END_OF_SEQUENCE
     ) {
       return Fw::FW_SERIALIZE_OK;
@@ -420,7 +420,7 @@ namespace Svc {
   }
 
   bool CmdSequencerComponentImpl::FPrimeSequence ::
-    validateRecords(void)
+    validateRecords()
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     const U32 numRecords = this->m_header.m_numRecords;

@@ -78,15 +78,15 @@ namespace Fw {
         this->m_timeTag = timeTag;
     }
 
-    FwEventIdType LogPacket::getId(void) {
+    FwEventIdType LogPacket::getId() {
         return this->m_id;
     }
 
-    Fw::Time& LogPacket::getTimeTag(void) {
+    Fw::Time& LogPacket::getTimeTag() {
         return this->m_timeTag;
     }
 
-    LogBuffer& LogPacket::getLogBuffer(void) {
+    LogBuffer& LogPacket::getLogBuffer() {
          return this->m_logBuffer;
     }
 

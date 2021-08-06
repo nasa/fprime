@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AssertFatalAdapter.hpp
 // \author tcanham
 // \brief  cpp file for AssertFatalAdapter test harness implementation class
@@ -7,10 +7,11 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
+#include "Fw/Types/StringUtils.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -21,7 +22,7 @@ namespace Svc {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    Tester::Tester(void) :
+    Tester::Tester() :
 #if FW_OBJECT_NAMES == 1
                     AssertFatalAdapterGTestBase("Tester", MAX_HISTORY_SIZE), component(
                             "AssertFatalAdapter")
@@ -34,7 +35,7 @@ namespace Svc {
         this->connectPorts();
     }
 
-    Tester::~Tester(void) {
+    Tester::~Tester() {
 
     }
 
@@ -42,10 +43,11 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester::testAsserts(void) {
+    void Tester::testAsserts() {
 
         U32 lineNo;
-        const char * file = __FILE__;
+        char file[80 + 1]; // Limit to 80  characters in the port call
+        (void) Fw::StringUtils::string_copy(file, __FILE__, sizeof(file));
 
         // FW_ASSERT_0
 
@@ -100,7 +102,7 @@ namespace Svc {
     // Helper methods
     // ----------------------------------------------------------------------
 
-    void Tester::connectPorts(void) {
+    void Tester::connectPorts() {
 
         // Time
         this->component.set_Time_OutputPort(0, this->get_from_Time(0));
@@ -113,7 +115,7 @@ namespace Svc {
 
     }
 
-    void Tester::initComponents(void) {
+    void Tester::initComponents() {
         this->init();
         this->component.init(
         INSTANCE);
@@ -121,7 +123,7 @@ namespace Svc {
 
     void Tester::textLogIn(const FwEventIdType id, //!< The event ID
             Fw::Time& timeTag, //!< The time
-            const Fw::TextLogSeverity severity, //!< The severity
+            const Fw::LogSeverity severity, //!< The severity
             const Fw::TextLogString& text //!< The event string
             ) {
         TextLogEntry e = { id, timeTag, severity, text };

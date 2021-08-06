@@ -137,7 +137,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runNominalChannel(void) {
+    void TlmChanImplTester::runNominalChannel() {
 
         this->clearBuffs();
         // send first buffer
@@ -166,7 +166,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runMultiChannel(void) {
+    void TlmChanImplTester::runMultiChannel() {
 
 
         FwChanIdType IDs[] = {
@@ -197,7 +197,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runTooManyChannels(void) {
+    void TlmChanImplTester::runTooManyChannels() {
 
         // This will assert, so disable after testing
 
@@ -211,7 +211,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runOffNominal(void) {
+    void TlmChanImplTester::runOffNominal() {
 
         // Ask for a packet that isn't written yet
         Fw::TlmBuffer buff;
@@ -230,7 +230,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::clearBuffs(void) {
+    void TlmChanImplTester::clearBuffs() {
         this->m_numBuffs = 0;
         for (NATIVE_INT_TYPE n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
             this->m_rcvdBuffer[n].resetSer();
@@ -248,7 +248,7 @@ namespace Svc {
                 );
     }
 
-    void TlmChanImplTester::dumpHash(void) {
+    void TlmChanImplTester::dumpHash() {
 //        printf("**Buffer 0\n");
         for (NATIVE_INT_TYPE slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
             printf("Slot: %d\n",slot);

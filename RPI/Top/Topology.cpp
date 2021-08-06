@@ -94,7 +94,7 @@ void constructApp(U32 port_number, char* hostname) {
     // Initialize the rate groups
     rateGroup10HzComp.init(10,0);
     rateGroup1HzComp.init(10,1);
-    
+
 #if FW_ENABLE_TEXT_LOGGING
     textLogger.init();
 #endif
@@ -250,7 +250,7 @@ void constructApp(U32 port_number, char* hostname) {
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     uartDrv.quitReadThread();
     linuxTimer.quit();
     rateGroup1HzComp.exit();

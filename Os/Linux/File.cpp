@@ -112,7 +112,7 @@ namespace Os {
         return stat;
     }
 
-    bool File::isOpen(void) {
+    bool File::isOpen() {
       return this->m_fd > 0;
     }
 
@@ -402,7 +402,7 @@ namespace Os {
         return stat;
     }
 
-    void File::close(void) {
+    void File::close() {
         if ((this->m_fd != -1) and (this->m_mode != OPEN_NO_MODE)) {
             (void)::close(this->m_fd);
             this->m_fd = -1;
@@ -410,11 +410,11 @@ namespace Os {
         this->m_mode = OPEN_NO_MODE;
     }
 
-    NATIVE_INT_TYPE File::getLastError(void) {
+    NATIVE_INT_TYPE File::getLastError() {
         return this->m_lastError;
     }
 
-    const char* File::getLastErrorString(void) {
+    const char* File::getLastErrorString() {
         return strerror(this->m_lastError);
     }
 

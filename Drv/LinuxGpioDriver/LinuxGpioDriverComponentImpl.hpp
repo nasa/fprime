@@ -42,7 +42,7 @@ namespace Drv {
 
       //! Destroy object LinuxGpioDriver
       //!
-      ~LinuxGpioDriverComponentImpl(void);
+      ~LinuxGpioDriverComponentImpl();
 
       //! Start interrupt task
       Os::Task::TaskStatus startIntTask(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE cpuAffinity = -1);
@@ -58,7 +58,7 @@ namespace Drv {
       bool open(NATIVE_INT_TYPE gpio, GpioDirection direction);
 
       //! exit thread
-      void exitThread(void);
+      void exitThread();
 
     PRIVATE:
 

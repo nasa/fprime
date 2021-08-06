@@ -62,7 +62,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.stopSocketTask();
     (void) comm.joinSocketTask(NULL);

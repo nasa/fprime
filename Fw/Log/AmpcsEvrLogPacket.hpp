@@ -33,11 +33,11 @@ namespace Fw {
             void setCatSeqNum(U32 catSeqNum);
             void setLogBuffer(LogBuffer& buffer);
 
-            const U8* getTaskName(void) const;
-            U32 getId(void) const;
-            U32 getOverSeqNum(void) const;
-            U32 getCatSeqNum(void) const;
-            LogBuffer& getLogBuffer(void);
+            const U8* getTaskName() const;
+            U32 getId() const;
+            U32 getOverSeqNum() const;
+            U32 getCatSeqNum() const;
+            LogBuffer& getLogBuffer();
 
         protected:
             U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];

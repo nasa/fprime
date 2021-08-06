@@ -53,7 +53,7 @@ namespace Svc {
           );
 
           //! Destroy a File object
-          ~File(void);
+          ~File();
 
         public:
 
@@ -77,15 +77,15 @@ namespace Svc {
           );
 
           //! Close the file and emit an event
-          void closeAndEmitEvent(void);
+          void closeAndEmitEvent();
 
           //! Flush the file
-          bool flush(void);
+          bool flush();
 
         PRIVATE:
 
           //! Open the file
-          void open(void);
+          void open();
 
           //! Write a buffer to a file
           //! \return Success or failure
@@ -108,10 +108,10 @@ namespace Svc {
           );
 
           //! Write a hash file
-          void writeHashFile(void);
+          void writeHashFile();
 
           //! Close the file
-          void close(void);
+          void close();
 
         PRIVATE:
 
@@ -240,7 +240,7 @@ namespace Svc {
       void BL_SetLogging_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          LogState state
+          BufferLogger_LogState state
       );
 
       //! Implementation for BL_FlushFile command handler
@@ -257,7 +257,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The logging state
-      LogState m_state;
+      BufferLogger_LogState m_state;
 
       //! The file
       File m_file;

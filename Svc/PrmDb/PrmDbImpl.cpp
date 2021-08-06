@@ -16,20 +16,23 @@
 
 namespace Svc {
 
+
+    typedef PrmDb_PrmWriteError PrmWriteError;
+    typedef PrmDb_PrmReadError PrmReadError;
     // anonymous namespace for buffer declaration
     namespace {
         class WorkingBuffer : public Fw::SerializeBufferBase {
             public:
 
-                NATIVE_UINT_TYPE getBuffCapacity(void) const {
+                NATIVE_UINT_TYPE getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -48,7 +51,7 @@ namespace Svc {
         PrmDbComponentBase::init(queueDepth,instance);
     }
 
-    void PrmDbImpl::clearDb(void) {
+    void PrmDbImpl::clearDb() {
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             this->m_db[entry].used = false;
             this->m_db[entry].id = 0;
@@ -60,20 +63,20 @@ namespace Svc {
 
     Fw::ParamValid PrmDbImpl::getPrm_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
         // search for entry
-        Fw::ParamValid stat = Fw::PARAM_INVALID;
+        Fw::ParamValid stat = Fw::ParamValid::INVALID;
 
         for (I32 entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
             if (this->m_db[entry].used) {
                 if (this->m_db[entry].id == id) {
                     val = this->m_db[entry].val;
-                    stat = Fw::PARAM_VALID;
+                    stat = Fw::ParamValid::VALID;
                     break;
                 }
             }
         }
 
         // if unable to find parameter, send error message
-        if (Fw::PARAM_INVALID == stat) {
+        if (Fw::ParamValid::INVALID == stat.e) {
             this->log_WARNING_LO_PrmIdNotFound(id);
         }
 
@@ -129,8 +132,8 @@ namespace Svc {
 
         Os::File::Status stat = paramFile.open(this->m_fileName.toChar(),Os::File::OPEN_WRITE);
         if (stat != Os::File::OP_OK) {
-            this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_OPEN,0,stat);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::OPEN,0,stat);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -148,14 +151,14 @@ namespace Svc {
                 stat = paramFile.write(&delim,writeSize,true);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER,numRecords,stat);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != sizeof(delim)) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_DELIMITER_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER_SIZE,numRecords,writeSize);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 // serialize record size = id field + data
@@ -172,14 +175,14 @@ namespace Svc {
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,true);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_RECORD_SIZE,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE,numRecords,stat);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != sizeof(writeSize)) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_RECORD_SIZE_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE,numRecords,writeSize);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
 
@@ -197,14 +200,14 @@ namespace Svc {
                 stat = paramFile.write(buff.getBuffAddr(),writeSize,true);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_ID,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID,numRecords,stat);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != (NATIVE_INT_TYPE)buff.getBuffLength()) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_ID_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE,numRecords,writeSize);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
 
@@ -214,14 +217,14 @@ namespace Svc {
                 stat = paramFile.write(this->m_db[entry].val.getBuffAddr(),writeSize,true);
                 if (stat != Os::File::OP_OK) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_VALUE,numRecords,stat);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE,numRecords,stat);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 if (writeSize != (NATIVE_INT_TYPE)this->m_db[entry].val.getBuffLength()) {
                     this->unLock();
-                    this->log_WARNING_HI_PrmFileWriteError(PRM_WRITE_PARAMETER_VALUE_SIZE,numRecords,writeSize);
-                    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+                    this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE,numRecords,writeSize);
+                    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
                     return;
                 }
                 numRecords++;
@@ -230,20 +233,20 @@ namespace Svc {
 
         this->unLock();
         this->log_ACTIVITY_HI_PrmFileSaveComplete(numRecords);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 
     }
 
     PrmDbImpl::~PrmDbImpl() {
     }
 
-    void PrmDbImpl::readParamFile(void) {
+    void PrmDbImpl::readParamFile() {
         // load file. FIXME: Put more robust file checking, such as a CRC.
         Os::File paramFile;
 
         Os::File::Status stat = paramFile.open(this->m_fileName.toChar(),Os::File::OPEN_READ);
         if (stat != Os::File::OP_OK) {
-            this->log_WARNING_HI_PrmFileReadError(PRM_READ_OPEN,0,stat);
+            this->log_WARNING_HI_PrmFileReadError(PrmReadError::OPEN,0,stat);
             return;
         }
 
@@ -267,17 +270,17 @@ namespace Svc {
             }
 
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER,recordNum,fStat);
                 return;
             }
 
             if (sizeof(delimiter) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_SIZE,recordNum,readSize);
                 return;
             }
 
             if (PRMDB_ENTRY_DELIMITER != delimiter) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_DELIMITER_VALUE,recordNum,delimiter);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::DELIMITER_VALUE,recordNum,delimiter);
                 return;
             }
 
@@ -287,11 +290,11 @@ namespace Svc {
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,true);
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_RECORD_SIZE,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE,recordNum,fStat);
                 return;
             }
             if (sizeof(recordSize) != readSize) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_RECORD_SIZE_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_SIZE,recordNum,readSize);
                 return;
             }
             // set serialized size to read size
@@ -306,7 +309,7 @@ namespace Svc {
             // sanity check value. It can't be larger than the maximum parameter buffer size + id
             // or smaller than the record id
             if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_RECORD_SIZE_VALUE,recordNum,recordSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE,recordNum,recordSize);
                 return;
             }
 
@@ -316,11 +319,11 @@ namespace Svc {
 
             fStat = paramFile.read(buff.getBuffAddr(),readSize,true);
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_PARAMETER_ID,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID,recordNum,fStat);
                 return;
             }
             if (sizeof(parameterId) != static_cast<NATIVE_INT_TYPE>(readSize)) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_PARAMETER_ID_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_ID_SIZE,recordNum,readSize);
                 return;
             }
 
@@ -341,11 +344,11 @@ namespace Svc {
             fStat = paramFile.read(this->m_db[entry].val.getBuffAddr(),readSize);
 
             if (fStat != Os::File::OP_OK) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_PARAMETER_VALUE,recordNum,fStat);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE,recordNum,fStat);
                 return;
             }
             if (static_cast<U32>(readSize) != recordSize-sizeof(parameterId)) {
-                this->log_WARNING_HI_PrmFileReadError(PRM_READ_PARAMETER_VALUE_SIZE,recordNum,readSize);
+                this->log_WARNING_HI_PrmFileReadError(PrmReadError::PARAMETER_VALUE_SIZE,recordNum,readSize);
                 return;
             }
 

@@ -19,7 +19,7 @@ TestTlmImpl::TestTlmImpl() : Tlm::TestTlmComponentBase()
 TestTlmImpl::~TestTlmImpl() {
 }
 
-void TestTlmImpl::init(void) {
+void TestTlmImpl::init() {
     Tlm::TestTlmComponentBase::init();
 }
 

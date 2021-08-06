@@ -19,7 +19,7 @@ TestPrmImpl::TestPrmImpl() : Prm::TestPrmComponentBase()
 TestPrmImpl::~TestPrmImpl() {
 }
 
-void TestPrmImpl::init(void) {
+void TestPrmImpl::init() {
     Prm::TestPrmComponentBase::init();
 }
 
@@ -27,9 +27,9 @@ void TestPrmImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 
 
 }
 
-void TestPrmImpl::printParam(void) {
-    Fw::ParamValid valid = Fw::PARAM_INVALID;
+void TestPrmImpl::printParam() {
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
     const U32& prmRef = this->paramGet_someparam(valid);
 
-    printf("Parameter is: %d %s\n",prmRef,valid==Fw::PARAM_VALID?"VALID":"INVALID");
+    printf("Parameter is: %d %s\n",prmRef,valid==Fw::ParamValid::VALID?"VALID":"INVALID");
 }

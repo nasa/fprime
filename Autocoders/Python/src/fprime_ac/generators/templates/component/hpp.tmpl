@@ -218,7 +218,7 @@ namespace ${namespace} {
     //!
     //! Connect the dispatcher first
     //!
-    void regCommands(void);
+    void regCommands();
 
 #end if
 #if $has_parameters:
@@ -232,7 +232,7 @@ namespace ${namespace} {
     //!
     //! Connect the parameter first
     //!
-    void loadParameters(void);
+    void loadParameters();
 
 #end if
   PROTECTED:
@@ -264,7 +264,7 @@ namespace ${namespace} {
 
     //! Destroy a ${name}ComponentBase object
     //!
-    virtual ~${name}ComponentBase(void);
+    virtual ~${name}ComponentBase();
 
 #if $has_guarded_ports
   PROTECTED:
@@ -278,11 +278,11 @@ namespace ${namespace} {
 
     //! Lock the guarded mutex
     //!
-    virtual void lock(void);
+    virtual void lock();
 
     //! Unlock the guarded mutex
     //!
-    virtual void unLock(void);
+    virtual void unLock();
 
 #end if
 #if len($handlers_typed) > 0:
@@ -466,7 +466,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The number of $instance input ports
     //!
-    NATIVE_INT_TYPE getNum_${instance}_InputPorts(void);
+    NATIVE_INT_TYPE getNum_${instance}_InputPorts();
 
   #end for
 
@@ -496,7 +496,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The number of $instance output ports
     //!
-    NATIVE_INT_TYPE getNum_${instance}_OutputPorts(void);
+    NATIVE_INT_TYPE getNum_${instance}_OutputPorts();
     #if $role =="LogTextEvent":
 \#endif
     #end if
@@ -541,7 +541,7 @@ $emit_port_params(8, $params)
 
     //! Dispatch a message on the queue
     //!
-    virtual MsgDispatchStatus doDispatch(void);
+    virtual MsgDispatchStatus doDispatch();
 
 #end if
 #if len($command_enums) > 0:
@@ -683,7 +683,7 @@ $emit_non_port_params(8, $params)
     void cmdResponse_out(
         FwOpcodeType opCode, $doxygen_post_comment("The opcode")
         U32 cmdSeq, $doxygen_post_comment("The command sequence number")
-        Fw::CommandResponse response $doxygen_post_comment("The command response")
+        Fw::CmdResponse response $doxygen_post_comment("The command response")
     );
 
 #end if
@@ -762,7 +762,7 @@ $emit_non_port_params(8, $params)
 
   #if $throttle != None
     // reset throttle value for ${name}
-    void log_${severity}_${name}_ThrottleClear(void);
+    void log_${severity}_${name}_ThrottleClear();
   #end if
 
 #end for
@@ -813,32 +813,23 @@ $emit_non_port_params(8, $params)
     // ----------------------------------------------------------------------
 
   #for $ids, $name, $type, $size, $update, $comment, $typeinfo in $channels:
+    #set $tlm_type = $type
+    #if $type == "string":
+      #set $tlm_type = "Fw::TlmString&"
+    #else if $typeinfo == "user"
+      #set $tlm_type = "const " + $type + "&"
+    #else
+      #set $tlm_type = $type
+    #end if
     //! Write telemetry channel $name
     //!
     #if not $comment is None
     /* $comment */
     #end if
-    #if $type == "string":
     void tlmWrite_${name}(
-        Fw::TlmString& arg $doxygen_post_comment("The telemetry value")
+        ${tlm_type} arg $doxygen_post_comment("The telemetry value"),
+        Fw::Time _tlmTime=Fw::Time() $doxygen_post_comment("Timestamp. Default: unspecified, request from getTime port")
     );
-    #else:
-      #if $typeinfo == "enum":
-    void tlmWrite_${name}(
-        ${type} arg $doxygen_post_comment("The telemetry value")
-    );
-      #else:
-        #if $typeinfo == "user":
-    void tlmWrite_${name}(
-        ${type}& arg $doxygen_post_comment("The telemetry value")
-    );
-        #else:
-    void tlmWrite_${name}(
-        ${type} arg $doxygen_post_comment("The telemetry value")
-    );
-        #end if
-      #end if
-    #end if
 
   #end for
 #end if
@@ -853,7 +844,7 @@ $emit_non_port_params(8, $params)
     //!
     //! \return The current time
     //!
-    Fw::Time getTime(void);
+    Fw::Time getTime();
 
 #end if
 #if len($parameter_enums) > 0:
@@ -978,7 +969,7 @@ $emit_non_port_params(8, $params)
     //! Internal Interface handler for $name
     //!
     #if len($params) == 0:
-    virtual void ${name}_internalInterfaceHandler(void) = 0;
+    virtual void ${name}_internalInterfaceHandler() = 0;
     #else
     virtual void ${name}_internalInterfaceHandler(
 $emit_non_port_params(8, $params)
@@ -997,7 +988,7 @@ $emit_non_port_params(8, $params)
     //! Base class function for $name
     //!
     #if len($params) == 0:
-    void ${name}_internalInterfaceInvoke(void);
+    void ${name}_internalInterfaceInvoke();
     #else
     void ${name}_internalInterfaceInvoke(
 $emit_non_port_params(8, $params)
@@ -1133,7 +1124,7 @@ $emit_port_params(8, $params)
 
     //! Called in the message loop to dispatch a message from the queue
     //!
-    virtual MsgDispatchStatus doDispatch(void);
+    virtual MsgDispatchStatus doDispatch();
 
 #end if
 #if $has_guarded_ports or $has_parameters:
@@ -1212,7 +1203,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The command response
     //!
-    Fw::CommandResponse paramSet_${name}(
+    Fw::CmdResponse paramSet_${name}(
         Fw::SerializeBufferBase &val $doxygen_post_comment("The serialization buffer")
     );
 
@@ -1228,7 +1219,7 @@ $emit_port_params(8, $params)
     //!
     //! \return The command response
     //!
-    Fw::CommandResponse paramSave_${name}(void);
+    Fw::CmdResponse paramSave_${name}();
 
   #end for
 #end if

@@ -110,7 +110,9 @@ def assert_exists(expected, install_dest, start_time):
         expect = expect.replace(
             "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
         )
-        expect = expect.replace("<FPRIME_INSTALL>", os.path.join(install_dest, platform.system()))
+        expect = expect.replace(
+            "<FPRIME_INSTALL>", os.path.join(install_dest, platform.system())
+        )
         assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(
             expect
         )

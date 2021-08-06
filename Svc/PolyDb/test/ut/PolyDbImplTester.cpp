@@ -23,7 +23,7 @@ namespace Svc {
     PolyDbImplTester::~PolyDbImplTester() {
     }
 
-    void PolyDbImplTester::runNominalReadWrite(void) {
+    void PolyDbImplTester::runNominalReadWrite() {
 
         enum {
             NUM_TEST_VALS = 12 // one for each type supported
@@ -53,7 +53,8 @@ namespace Svc {
         bool r004Emitted = false;
 
         // read and write normal values for each entry in the database with each status type
-        for (MeasurementStatus mstat = MEASUREMENT_OK; mstat <= MEASUREMENT_STALE;) {
+        for (MeasurementStatus::t mstatValue = MeasurementStatus::OK; mstatValue <= MeasurementStatus::STALE;) {
+            MeasurementStatus mstat(mstatValue);
             for (U32 entry = 0; entry < POLYDB_NUM_DB_ENTRIES; entry++) {
                 if (not r001Emitted) {
                     REQUIREMENT("PDB-001");
@@ -82,9 +83,9 @@ namespace Svc {
                     REQUIREMENT("PDB-004");
                     r004Emitted = true;
                 }
-                ASSERT_EQ(mstat,checkStat);
+                ASSERT_EQ(mstatValue,checkStat.e);
             }
-            mstat = (MeasurementStatus)((NATIVE_INT_TYPE)mstat + 1);
+            mstatValue = (MeasurementStatus::t)((NATIVE_INT_TYPE)mstatValue + 1);
         }
 
     }

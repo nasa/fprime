@@ -50,11 +50,11 @@ namespace Svc {
             //!
             //!  The init() function initializes the autocoded base class
 
-            void init(void);
+            void init(NATIVE_INT_TYPE instanceId = 0);
 
             //!  \brief RateGroupDriverImpl destructor
 
-            ~RateGroupDriverImpl(void);
+            ~RateGroupDriverImpl();
 
         PRIVATE:
 

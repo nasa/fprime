@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpReceiverImpl.cpp
 // \author tcanham
 // \brief  cpp file for UdpReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/UdpReceiver/UdpReceiverComponentImpl.hpp>
@@ -28,7 +28,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   UdpReceiverComponentImpl ::
@@ -49,13 +49,13 @@ namespace Svc {
   void UdpReceiverComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     UdpReceiverComponentBase::init(instance);
   }
 
   UdpReceiverComponentImpl ::
-    ~UdpReceiverComponentImpl(void)
+    ~UdpReceiverComponentImpl()
   {
       if (this->m_fd != -1) {
           close(this->m_fd);
@@ -133,7 +133,7 @@ namespace Svc {
       }
   }
 
-  void UdpReceiverComponentImpl::doRecv(void) {
+  void UdpReceiverComponentImpl::doRecv() {
 
       // wait for data from the socket
       NATIVE_INT_TYPE psize = recvfrom(

@@ -50,24 +50,30 @@ def main():
     os.chdir(sys.argv[1])
     for dirpath, dirnames, filenames in os.walk("."):
         for filename in filenames:
-            if ".cmake" in filename or filename == "CMakeLists.txt" or filename.endswith("CMakeLists.txt.template"):
+            if (
+                ".cmake" in filename
+                or filename == "CMakeLists.txt"
+                or filename.endswith("CMakeLists.txt.template")
+            ):
                 process_file(os.path.join(dirpath, filename), outdir)
 
 
 def process_file(file_name, outdir):
-    """ Process a file """
+    """Process a file"""
     # Read a line, and output it
     out_fn = file_name
     if os.path.basename(out_fn) == "CMakeLists.txt":
         out_fn = os.path.dirname(file_name)
-    out_fn = out_fn.replace(".cmake", "").replace(".template", "") + ("-template.md" if out_fn.endswith(".template") else ".md")
+    out_fn = out_fn.replace(".cmake", "").replace(".template", "") + (
+        "-template.md" if out_fn.endswith(".template") else ".md"
+    )
     if out_fn == file_name:
         raise AssertionError("File collision imminent")
     relative_fn = out_fn
     out_fn = os.path.join(outdir, out_fn)
     os.makedirs(os.path.dirname(out_fn), exist_ok=True)
     # Open both files, and loop over all the lines reading and writing each
-    print("[{}]({})".format(os.path.basename(out_fn).replace(".md",""), relative_fn))
+    print("[{}]({})".format(os.path.basename(out_fn).replace(".md", ""), relative_fn))
     with open(file_name, "r") as in_file_handle:
         with open(out_fn, "w") as out_file_handle:
             state = DocState.SEARCH

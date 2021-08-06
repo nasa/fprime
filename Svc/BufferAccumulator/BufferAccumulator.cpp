@@ -42,7 +42,7 @@ namespace Svc {
   }
 
   BufferAccumulator ::
-    ~BufferAccumulator(void)
+    ~BufferAccumulator()
   {
   }
 
@@ -149,7 +149,7 @@ namespace Svc {
     else {
       this->send = false;
     }
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   // ----------------------------------------------------------------------
@@ -157,7 +157,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void BufferAccumulator ::
-    sendStoredBuffer(void)
+    sendStoredBuffer()
   {
     FW_ASSERT(this->send);
     Fw::Buffer buffer;

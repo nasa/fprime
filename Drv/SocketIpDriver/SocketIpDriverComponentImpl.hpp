@@ -55,7 +55,7 @@ namespace Drv {
 
       //! Destroy object SocketIpDriver
       //!
-      ~SocketIpDriverComponentImpl(void);
+      ~SocketIpDriverComponentImpl();
 
       //! Open up the socket port, ready for communications
       //!
@@ -81,7 +81,7 @@ namespace Drv {
               NATIVE_INT_TYPE cpuAffinity = -1 //!< CPU affinity of the task to start
       );
 
-      //! Task to join nondetached pthreads 
+      //! Task to join nondetached pthreads
       //!
       Os::Task::TaskStatus joinSocketTask(void** value_ptr);
 
@@ -99,7 +99,7 @@ namespace Drv {
       //!
       void send_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       // socket helper instance

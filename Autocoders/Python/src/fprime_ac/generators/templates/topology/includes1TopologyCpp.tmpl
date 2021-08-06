@@ -30,12 +30,12 @@ using namespace std;
 //#end for
 
 extern "C" {
-    void dumparch(void);
+    void dumparch();
     void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
 #if $is_ptr:
     simpleReg_ptr->dump();
 #else:

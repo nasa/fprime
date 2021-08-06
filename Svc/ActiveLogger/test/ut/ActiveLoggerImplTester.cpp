@@ -17,6 +17,9 @@
 
 namespace Svc {
 
+    typedef ActiveLogger_Enabled Enabled;
+    typedef ActiveLogger_FilterSeverity FilterSeverity;
+
     void ActiveLoggerImplTester::init(NATIVE_INT_TYPE instance) {
         Svc::ActiveLoggerGTestBase::init();
     }
@@ -48,10 +51,10 @@ namespace Svc {
         this->m_fatalID = Id;
     }
 
-    void ActiveLoggerImplTester::runEventNominal(void) {
+    void ActiveLoggerImplTester::runEventNominal() {
         REQUIREMENT("AL-001");
 
-        this->writeEvent(29,Fw::LOG_WARNING_HI,10);
+        this->writeEvent(29,Fw::LogSeverity::WARNING_HI,10);
     }
 
     void ActiveLoggerImplTester::runWithFilters(Fw::LogSeverity filter) {
@@ -69,26 +72,26 @@ namespace Svc {
 
         // enable report filter
         this->clearHistory();
-        ActiveLoggerImpl::EventLevel reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
+        FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
 
-        switch (filter) {
-            case Fw::LOG_WARNING_HI:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
+        switch (filter.e) {
+            case Fw::LogSeverity::WARNING_HI:
+                reportFilterLevel = FilterSeverity::WARNING_HI;
                 break;
-            case Fw::LOG_WARNING_LO:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_LO;
+            case Fw::LogSeverity::WARNING_LO:
+                reportFilterLevel = FilterSeverity::WARNING_LO;
                 break;
-            case Fw::LOG_COMMAND:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_COMMAND;
+            case Fw::LogSeverity::COMMAND:
+                reportFilterLevel = FilterSeverity::COMMAND;
                 break;
-            case Fw::LOG_ACTIVITY_HI:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_ACTIVITY_HI;
+            case Fw::LogSeverity::ACTIVITY_HI:
+                reportFilterLevel = FilterSeverity::ACTIVITY_HI;
                 break;
-            case Fw::LOG_ACTIVITY_LO:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_ACTIVITY_LO;
+            case Fw::LogSeverity::ACTIVITY_LO:
+                reportFilterLevel = FilterSeverity::ACTIVITY_LO;
                 break;
-            case Fw::LOG_DIAGNOSTIC:
-                reportFilterLevel = ActiveLoggerImpl::FILTER_DIAGNOSTIC;
+            case Fw::LogSeverity::DIAGNOSTIC:
+                reportFilterLevel = FilterSeverity::DIAGNOSTIC;
                 break;
             default:
                 ASSERT_TRUE(false);
@@ -96,13 +99,13 @@ namespace Svc {
         }
 
         this->clearHistory();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,Enabled::ENABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::COMMAND_OK
+                Fw::CmdResponse::OK
                 );
 
         this->m_receivedPacket = false;
@@ -141,13 +144,13 @@ namespace Svc {
 
         // Disable severity filter
         this->clearHistory();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::COMMAND_OK
+                Fw::CmdResponse::OK
                 );
 
         this->m_receivedPacket = false;
@@ -158,65 +161,68 @@ namespace Svc {
         ASSERT_FALSE(this->m_receivedPacket);
     }
 
-    void ActiveLoggerImplTester::runFilterInvalidCommands(void) {
+    void ActiveLoggerImplTester::runFilterInvalidCommands() {
 
         U32 cmdSeq = 21;
-
         this->clearHistory();
-        ActiveLoggerImpl::EventLevel reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::FilterEnabled)10);
+        FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
+        Enabled filterEnabled(static_cast<Enabled::t>(10));
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
+                );
+        this->clearHistory();
+        reportFilterLevel = FilterSeverity::WARNING_HI;
+        filterEnabled.e = static_cast<Enabled::t>(-2);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,filterEnabled);
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(
+                0,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                cmdSeq,
+                Fw::CmdResponse::VALIDATION_ERROR
+                );
+        FilterSeverity eventLevel;
+        this->clearHistory();
+        Enabled reportEnable = Enabled::ENABLED;
+        eventLevel.e = static_cast<FilterSeverity::t>(-1);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
+        ASSERT_CMD_RESPONSE_SIZE(1);
+        ASSERT_CMD_RESPONSE(
+                0,
+                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
+                cmdSeq,
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
         this->clearHistory();
-        reportFilterLevel = ActiveLoggerImpl::FILTER_WARNING_HI;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,reportFilterLevel,(ActiveLoggerImpl::FilterEnabled)-2);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
 
-        this->clearHistory();
-        ActiveLoggerImpl::FilterEnabled reportEnable = ActiveLoggerImpl::FILTER_ENABLED;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)-1,reportEnable);
+        reportEnable = Enabled::ENABLED;
+        eventLevel.e = static_cast<FilterSeverity::t>(100);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,eventLevel,reportEnable);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
-                );
-
-        this->clearHistory();
-        reportEnable = ActiveLoggerImpl::FILTER_ENABLED;
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,(ActiveLoggerImpl::EventLevel)100,reportEnable);
-        ASSERT_CMD_RESPONSE_SIZE(1);
-        ASSERT_CMD_RESPONSE(
-                0,
-                ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
-                cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
 
     }
 
-    void ActiveLoggerImplTester::runFilterEventNominal(void) {
+    void ActiveLoggerImplTester::runFilterEventNominal() {
 
-        for (Fw::LogSeverity sev = Fw::LOG_WARNING_HI; sev <= Fw::LOG_DIAGNOSTIC; sev = (Fw::LogSeverity)((NATIVE_INT_TYPE)sev + 1)) {
+        for (Fw::LogSeverity::t sev = Fw::LogSeverity::WARNING_HI; sev <= Fw::LogSeverity::DIAGNOSTIC; sev = (Fw::LogSeverity::t)((NATIVE_INT_TYPE)sev + 1)) {
             this->runWithFilters(sev);
         }
 
     }
 
-    void ActiveLoggerImplTester::runFilterIdNominal(void) {
+    void ActiveLoggerImplTester::runFilterIdNominal() {
 
         U32 cmdSeq = 21;
 
@@ -227,7 +233,7 @@ namespace Svc {
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -235,7 +241,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::COMMAND_OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
@@ -243,7 +249,7 @@ namespace Svc {
             // send it again, to verify it will accept a second add
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_ENABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::ENABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -251,7 +257,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::COMMAND_OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_ENABLED_SIZE(1);
@@ -274,7 +280,7 @@ namespace Svc {
 
             this->m_receivedPacket = false;
 
-            this->invoke_to_LogRecv(0,id,timeTag,Fw::LOG_ACTIVITY_HI,buff);
+            this->invoke_to_LogRecv(0,id,timeTag,Fw::LogSeverity::ACTIVITY_HI,buff);
 
             // should not get a packet
             ASSERT_FALSE(this->m_receivedPacket);
@@ -295,7 +301,7 @@ namespace Svc {
 
         this->m_receivedPacket = false;
 
-        this->invoke_to_LogRecv(0,id,timeTag,Fw::LOG_FATAL,buff);
+        this->invoke_to_LogRecv(0,id,timeTag,Fw::LogSeverity::FATAL,buff);
         this->m_impl.doDispatch();
 
         // should get a packet anyway
@@ -304,7 +310,7 @@ namespace Svc {
         // Try to add to the full filter. It should be rejected
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,TELEM_ID_FILTER_SIZE+1,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -312,7 +318,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::COMMAND_EXECUTION_ERROR
+                Fw::CmdResponse::EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_ID_FILTER_LIST_FULL_SIZE(1);
@@ -323,7 +329,7 @@ namespace Svc {
         for (NATIVE_INT_TYPE filterID = 1; filterID <= TELEM_ID_FILTER_SIZE; filterID++) {
             this->clearHistory();
             this->clearEvents();
-            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,ActiveLoggerComponentBase::ID_DISABLED);
+            this->sendCmd_SET_ID_FILTER(0,cmdSeq,filterID,Enabled::DISABLED);
             // dispatch message
             this->m_impl.doDispatch();
             ASSERT_CMD_RESPONSE_SIZE(1);
@@ -331,7 +337,7 @@ namespace Svc {
                     0,
                     ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                     cmdSeq,
-                    Fw::COMMAND_OK
+                    Fw::CmdResponse::OK
                     );
             ASSERT_EVENTS_SIZE(1);
             ASSERT_EVENTS_ID_FILTER_REMOVED_SIZE(1);
@@ -342,7 +348,7 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,ActiveLoggerComponentBase::ID_DISABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,Enabled::DISABLED);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -350,7 +356,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::COMMAND_EXECUTION_ERROR
+                Fw::CmdResponse::EXECUTION_ERROR
                 );
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_ID_FILTER_NOT_FOUND_SIZE(1);
@@ -359,7 +365,8 @@ namespace Svc {
         // Send an invalid argument
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,static_cast<ActiveLoggerComponentBase::IdFilterEnabled>(10));
+        Enabled idEnabled(static_cast<Enabled::t>(10));
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,10,idEnabled);
         // dispatch message
         this->m_impl.doDispatch();
         ASSERT_CMD_RESPONSE_SIZE(1);
@@ -367,32 +374,32 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::COMMAND_VALIDATION_ERROR
+                Fw::CmdResponse::VALIDATION_ERROR
                 );
         ASSERT_EVENTS_SIZE(0);
 
     }
 
-    void ActiveLoggerImplTester::runFilterDump(void) {
+    void ActiveLoggerImplTester::runFilterDump() {
         U32 cmdSeq = 21;
         // set random set of filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,0,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,0,FilterSeverity::DIAGNOSTIC,Enabled::ENABLED);
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,13,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,13,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
-        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4000,ActiveLoggerComponentBase::ID_ENABLED);
+        this->sendCmd_SET_ID_FILTER(0,cmdSeq,4000,Enabled::ENABLED);
         // dispatch message
         this->m_impl.doDispatch();
 
@@ -408,19 +415,19 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_DUMP_FILTER_STATE,
                 cmdSeq,
-                Fw::COMMAND_OK
+                Fw::CmdResponse::OK
                 );
         ASSERT_EVENTS_SIZE(6+3);
         ASSERT_EVENTS_SEVERITY_FILTER_STATE_SIZE(6);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(0,ActiveLoggerImpl::FILT_WARNING_HI,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(1,ActiveLoggerImpl::FILT_WARNING_LO,false);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(2,ActiveLoggerImpl::FILT_COMMAND,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,ActiveLoggerImpl::FILT_ACTIVITY_HI,false);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,ActiveLoggerImpl::FILT_ACTIVITY_LO,true);
-        ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,ActiveLoggerImpl::FILT_DIAGNOSTIC,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(0,FilterSeverity::WARNING_HI,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(1,FilterSeverity::WARNING_LO,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(2,FilterSeverity::COMMAND,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(3,FilterSeverity::ACTIVITY_HI,false);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(4,FilterSeverity::ACTIVITY_LO,true);
+        ASSERT_EVENTS_SEVERITY_FILTER_STATE(5,FilterSeverity::DIAGNOSTIC,true);
     }
 
-    void ActiveLoggerImplTester::runEventFatal(void) {
+    void ActiveLoggerImplTester::runEventFatal() {
         Fw::LogBuffer buff;
         U32 val = 10;
         FwEventIdType id = 29;
@@ -433,7 +440,7 @@ namespace Svc {
 
         this->m_receivedPacket = false;
 
-        this->invoke_to_LogRecv(0,id,timeTag,Fw::LOG_FATAL,buff);
+        this->invoke_to_LogRecv(0,id,timeTag,Fw::LogSeverity::FATAL,buff);
 
         // should not have received packet
         ASSERT_FALSE(this->m_receivedPacket);
@@ -471,25 +478,25 @@ namespace Svc {
 
         this->clearHistory();
         this->clearEvents();
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_HI,Enabled::DISABLED);
         ASSERT_CMD_RESPONSE_SIZE(1);
         ASSERT_CMD_RESPONSE(
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::COMMAND_OK
+                Fw::CmdResponse::OK
                 );
 
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_DISABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::COMMAND,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_HI,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_LO,Enabled::DISABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::DIAGNOSTIC,Enabled::DISABLED);
 
         this->m_receivedPacket = false;
 
-        this->invoke_to_LogRecv(0,id,timeTag,Fw::LOG_FATAL,buff);
+        this->invoke_to_LogRecv(0,id,timeTag,Fw::LogSeverity::FATAL,buff);
 
         // should not have received packet
         ASSERT_FALSE(this->m_receivedPacket);
@@ -519,12 +526,12 @@ namespace Svc {
 
         // turn off filters
 
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_HI,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_WARNING_LO,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_COMMAND,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_HI,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_ACTIVITY_LO,ActiveLoggerImpl::FILTER_ENABLED);
-        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,ActiveLoggerImpl::FILTER_DIAGNOSTIC,ActiveLoggerImpl::FILTER_ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::WARNING_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::COMMAND,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_HI,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::ACTIVITY_LO,Enabled::ENABLED);
+        this->sendCmd_SET_EVENT_FILTER(0,cmdSeq,FilterSeverity::DIAGNOSTIC,Enabled::ENABLED);
 
     }
 
@@ -605,7 +612,7 @@ namespace Svc {
 
     void ActiveLoggerImplTester::textLogIn(const FwEventIdType id, //!< The event ID
             Fw::Time& timeTag, //!< The time
-            const Fw::TextLogSeverity severity, //!< The severity
+            const Fw::LogSeverity severity, //!< The severity
             const Fw::TextLogString& text //!< The event string
             ) {
         TextLogEntry e = { id, timeTag, severity, text };

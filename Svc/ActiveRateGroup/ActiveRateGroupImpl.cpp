@@ -22,7 +22,7 @@ namespace Svc {
 
     ActiveRateGroupImpl::ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
             ActiveRateGroupComponentBase(compName),
-            m_cycles(0), 
+            m_cycles(0),
             m_maxTime(0),
             m_cycleStarted(false),
             m_overrunThrottle(0),
@@ -38,16 +38,16 @@ namespace Svc {
             this->m_contexts[entry] = contexts[entry];
         }
     }
-    
+
     void ActiveRateGroupImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
         ActiveRateGroupComponentBase::init(queueDepth,instance);
     }
 
-    ActiveRateGroupImpl::~ActiveRateGroupImpl(void) {
+    ActiveRateGroupImpl::~ActiveRateGroupImpl() {
 
     }
 
-    void ActiveRateGroupImpl::preamble(void) {
+    void ActiveRateGroupImpl::preamble() {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 

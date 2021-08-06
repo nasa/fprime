@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.cpp
 // \author Rob Bocchino
 // \brief  File implementation
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Types/EightyCharString.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
@@ -38,7 +38,7 @@ namespace Svc {
     }
 
     File ::
-      ~File(void)
+      ~File()
     {
 
     }
@@ -63,7 +63,7 @@ namespace Svc {
     }
 
     const Fw::EightyCharString& File ::
-      getName(void) const
+      getName() const
     {
       return this->name;
     }
@@ -92,7 +92,7 @@ namespace Svc {
     }
 
     void File ::
-      write(void)
+      write()
     {
       Buffers::FileBuffer buffer;
       switch (this->format) {
@@ -110,7 +110,7 @@ namespace Svc {
     }
 
     void File ::
-      remove(void)
+      remove()
     {
       Fw::EightyCharString s("rm -f ");
       s += this->getName();

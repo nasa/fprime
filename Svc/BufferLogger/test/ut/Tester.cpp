@@ -57,7 +57,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -67,7 +67,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    LogNoInit(void)
+    LogNoInit()
   {
     this->component.m_file.baseName = Fw::EightyCharString("LogNoInit");
     // NOTE (mereweth) - make something sensible happen when no-one calls initLog()
@@ -104,7 +104,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // bufferSendIn
@@ -188,7 +188,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -197,13 +197,13 @@ namespace Svc {
   }
 
   void Tester ::
-    dispatchOne(void)
+    dispatchOne()
   {
     this->component.doDispatch();
   }
 
   void Tester ::
-    dispatchAll(void)
+    dispatchAll()
   {
     while(this->component.m_queue.getNumMsgs() > 0)
       this->dispatchOne();

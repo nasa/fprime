@@ -6,16 +6,16 @@ STATIC Os::Mutex intLockEmulator;
 namespace Os {
     InterruptLock::InterruptLock() : m_key(0) {}
     InterruptLock::~InterruptLock() {}
-    
-    void InterruptLock::lock(void) {
+
+    void InterruptLock::lock() {
         intLockEmulator.lock();
     }
 
-    void InterruptLock::unLock(void) {
+    void InterruptLock::unLock() {
         intLockEmulator.unLock();
     }
-    
-        
+
+
 }
 
 

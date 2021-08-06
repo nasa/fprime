@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateEOS.cpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with EOS record
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/ImmediateEOS.hpp"
@@ -19,7 +19,7 @@ namespace Svc {
   namespace ImmediateEOS {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -30,11 +30,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      AutoByCommand(void) 
+      AutoByCommand()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -44,7 +44,7 @@ namespace Svc {
     }
 
     void Tester ::
-      Cancel(void) 
+      Cancel()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -54,7 +54,7 @@ namespace Svc {
     }
 
     void Tester ::
-      FileErrors(void) 
+      FileErrors()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -62,7 +62,7 @@ namespace Svc {
     }
 
     void Tester ::
-      InvalidManualCommands(void) 
+      InvalidManualCommands()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -70,7 +70,7 @@ namespace Svc {
     }
 
     void Tester ::
-      Manual(void) 
+      Manual()
     {
       const U32 numRecords = 5;
       const U32 numCommands = numRecords - 1;
@@ -79,7 +79,7 @@ namespace Svc {
     }
 
     void Tester ::
-      NewSequence(void) 
+      NewSequence()
     {
       const U32 numRecords = 5;
       const U32 numCommands = numRecords - 1;
@@ -89,7 +89,7 @@ namespace Svc {
     }
 
     void Tester ::
-      AutoByPort(void) 
+      AutoByPort()
     {
       const U32 numRecords = 5;
       const U32 numCommands = numRecords - 1;
@@ -99,7 +99,7 @@ namespace Svc {
     }
 
     void Tester ::
-      SequenceTimeout(void) 
+      SequenceTimeout()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -107,7 +107,7 @@ namespace Svc {
     }
 
     void Tester ::
-      UnexpectedCommandResponse(void) 
+      UnexpectedCommandResponse()
     {
       const U32 numRecords = 5;
       const U32 numCommands = numRecords - 1;
@@ -117,7 +117,7 @@ namespace Svc {
     }
 
     void Tester ::
-      Validate(void) 
+      Validate()
     {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateEOSFile file(numRecords, this->format);
@@ -125,12 +125,12 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Private helper methods 
+    // Private helper methods
     // ----------------------------------------------------------------------
 
     void Tester ::
       executeCommandsManual(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands
       )
     {
@@ -147,7 +147,7 @@ namespace Svc {
             this->component.m_cmdTimeoutTimer.m_state
         );
         // Send command response
-        this->invoke_to_cmdResponseIn(0, i, 0, Fw::COMMAND_OK);
+        this->invoke_to_cmdResponseIn(0, i, 0, Fw::CmdResponse::OK);
         this->clearAndDispatch();
         // Assert events
         ASSERT_EVENTS_SIZE(1);

@@ -77,7 +77,7 @@ class XmlTopologyParser:
 
         self.__prepend_instance_name = False  # Used to turn off prepending instance name in the situation where instance dicts are being generated and only one instance of an object is created
         element_tree = etree.parse(fd)
-        fd.close() #Close the file, which is only used for the parsing above
+        fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate against schema
         relax_file_handler = open(ROOTDIR + self.__config.get("schema", "assembly"))
@@ -516,28 +516,3 @@ class Instance:
 
     def get_dict_short_name(self):
         return self.__dict_short_name
-
-
-if __name__ == "__main__":
-
-    xmlfile = "../../test/app1a/DuckAppAi.xml"
-
-    print("Topology XML parse test (%s)" % xmlfile)
-
-    xml_topology_parser = XmlTopologyParser(xmlfile)
-    instances = xml_topology_parser.get_instances()
-    connections = xml_topology_parser.get_connections()
-
-    print("Topology XML: %s" % xml_topology_parser.is_topology())
-    print("Namespace: %s" % xml_topology_parser.get_namespace())
-    print("Comment: %s" % xml_topology_parser.get_comment())
-
-    print("Instances:")
-    for x in instances:
-        print("Name: {}, Type: {}".format(x.get_name(), x.get_type()))
-    print("Connections:")
-    for c in connections:
-        print("Name: {}, Type: {}".format(c.get_name(), c.get_type()))
-        print("Source: Component is %s, Port is %s, Port Type is %s" % (c.get_source()))
-        print("Target: Component is %s, Port is %s, Port Type is %s" % (c.get_target()))
-        print("Comment: %s" % c.get_comment())

@@ -99,15 +99,15 @@ namespace ${namespace} {
             sizeof(NATIVE_INT_TYPE)
         };
 
-        NATIVE_UINT_TYPE getBuffCapacity(void) const {
+        NATIVE_UINT_TYPE getBuffCapacity() const {
           return sizeof(m_buff);
         }
 
-        U8* getBuffAddr(void) {
+        U8* getBuffAddr() {
           return m_buff;
         }
 
-        const U8* getBuffAddr(void) const {
+        const U8* getBuffAddr() const {
           return m_buff;
         }
 
@@ -209,7 +209,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   void ${class_name} ::
-    regCommands(void)
+    regCommands()
   {
     FW_ASSERT(this->m_${CmdReg_Name}_OutputPort[0].isConnected());
   #for $mnemonic, $opcodes, $sync, $priority, $full, $comment in $commands:
@@ -284,7 +284,7 @@ namespace ${namespace} {
   // Parameter loading
   // ----------------------------------------------------------------------
 
-  void ${class_name}::loadParameters(void) {
+  void ${class_name}::loadParameters() {
 
     Fw::ParamBuffer buff;
     Fw::SerializeStatus stat = Fw::FW_SERIALIZE_OK;
@@ -321,7 +321,7 @@ namespace ${namespace} {
     // Deserialize value
     this->m_paramLock.lock();
 
-    if (this->m_param_${prmname}_valid == Fw::PARAM_VALID) {
+    if (this->m_param_${prmname}_valid == Fw::ParamValid::VALID) {
     #if $typeinfo == "enum":
       FwEnumStoreType ${prmname}Val = 0;
       stat = buff.deserialize(${prmname}Val);
@@ -332,13 +332,13 @@ namespace ${namespace} {
       // If there was a deserialization issue, mark it invalid.
       if (stat != Fw::FW_SERIALIZE_OK) {
     #if $default == None:
-        this->m_param_${prmname}_valid = Fw::PARAM_INVALID;
+        this->m_param_${prmname}_valid = Fw::ParamValid::INVALID;
     #else if $type == "string":
-        this->m_param_${prmname}_valid = Fw::PARAM_DEFAULT;
+        this->m_param_${prmname}_valid = Fw::ParamValid::DEFAULT;
         // set default value
         this->m_${prmname} = "${default}";
     #else
-        this->m_param_${prmname}_valid = Fw::PARAM_DEFAULT;
+        this->m_param_${prmname}_valid = Fw::ParamValid::DEFAULT;
         // set default value
         this->m_${prmname} = ${default};
     #end if
@@ -349,11 +349,11 @@ namespace ${namespace} {
       // No default
     #else if $type == "string":
       // set default value
-      this->m_param_${prmname}_valid = Fw::PARAM_DEFAULT;
+      this->m_param_${prmname}_valid = Fw::ParamValid::DEFAULT;
       this->m_${prmname} = "${default}";
     #else
       // set default value
-      this->m_param_${prmname}_valid = Fw::PARAM_DEFAULT;
+      this->m_param_${prmname}_valid = Fw::ParamValid::DEFAULT;
       this->m_${prmname} = ${default};
     #end if
     }
@@ -400,7 +400,7 @@ namespace ${namespace} {
   #end for
 
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
-    this->m_param_${prmname}_valid = Fw::PARAM_UNINIT;
+    this->m_param_${prmname}_valid = Fw::ParamValid::UNINIT;
   #end for
   }
 
@@ -575,7 +575,7 @@ namespace ${namespace} {
 \#if FW_ENABLE_TEXT_LOGGING == 1
     #end if
   NATIVE_INT_TYPE ${class_name} ::
-    getNum_${instance}_${direction}Ports(void)
+    getNum_${instance}_${direction}Ports()
   {
     return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
         this->m_${instance}_${direction}Port
@@ -664,7 +664,7 @@ namespace ${namespace} {
       #end for
     #end if
       {
-        Fw::CommandResponse _cstat = compPtr->paramSet_${prmname}(args);
+        Fw::CmdResponse _cstat = compPtr->paramSet_${prmname}(args);
         compPtr->cmdResponse_out(
             opCode,
             cmdSeq,
@@ -682,7 +682,7 @@ namespace ${namespace} {
       #end for
     #end if
       {
-        Fw::CommandResponse _cstat = compPtr->paramSave_${prmname}();
+        Fw::CmdResponse _cstat = compPtr->paramSave_${prmname}();
         compPtr->cmdResponse_out(
             opCode,
             cmdSeq,
@@ -694,7 +694,7 @@ namespace ${namespace} {
       default: {
         compPtr->cmdResponse_out(
             opCode,cmdSeq,
-            Fw::COMMAND_INVALID_OPCODE
+            Fw::CmdResponse::INVALID_OPCODE
         );
         break;
       }
@@ -707,7 +707,7 @@ namespace ${namespace} {
     cmdResponse_out(
         FwOpcodeType opCode,
         U32 cmdSeq,
-        Fw::CommandResponse response
+        Fw::CmdResponse response
     )
   {
     FW_ASSERT(this->m_${CmdStatus_Name}_OutputPort[0].isConnected());
@@ -751,7 +751,7 @@ namespace ${namespace} {
       if (this->m_${CmdStatus_Name}_OutputPort[0].isConnected()) {
         this->m_${CmdStatus_Name}_OutputPort[0].invoke(
             opCode,
-            cmdSeq,Fw::COMMAND_FORMAT_ERROR
+            cmdSeq,Fw::CmdResponse::FORMAT_ERROR
         );
       }
       return;
@@ -766,7 +766,7 @@ namespace ${namespace} {
       if (this->m_${CmdStatus_Name}_OutputPort[0].isConnected()) {
         this->m_${CmdStatus_Name}_OutputPort[0].invoke(
             opCode,
-            cmdSeq,Fw::COMMAND_FORMAT_ERROR
+            cmdSeq,Fw::CmdResponse::FORMAT_ERROR
         );
       }
       return;
@@ -890,22 +890,17 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
-  void ${class_name} ::
+    #set $tlm_type = $type
     #if $type == "string":
-    tlmWrite_${tlmname}(Fw::TlmString& arg)
+      #set $tlm_type = "Fw::TlmString&"
+    #else if $typeinfo == "user"
+      #set $tlm_type = "const " + $type + "&"
     #else
-      #if $typeinfo == "enum":
-    tlmWrite_${tlmname}(${type} arg)
-      #else
-        #if $typeinfo == "user":
-    tlmWrite_${tlmname}(${type}& arg)
-        #else
-    tlmWrite_${tlmname}(${type} arg)
-        #end if
-      #end if
+      #set $tlm_type = $type
     #end if
+  void ${class_name} ::
+    tlmWrite_${tlmname}(${tlm_type} arg, Fw::Time _tlmTime)
   {
-
     #if $update == "on_change"
     // Check to see if it is the first time
     if (not this->m_first_update_$tlmname) {
@@ -923,8 +918,7 @@ namespace ${namespace} {
 
     #end if
     if (this->m_${Tlm_Name}_OutputPort[0].isConnected()) {
-      Fw::Time _tlmTime;
-      if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
+      if (this->m_${Time_Name}_OutputPort[0].isConnected() && _tlmTime ==  Fw::ZERO_TIME) {
          this->m_${Time_Name}_OutputPort[0].invoke( _tlmTime);
       }
       Fw::TlmBuffer _tlmBuff;
@@ -979,7 +973,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   Fw::Time ${class_name} ::
-    getTime(void)
+    getTime()
   {
     if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
       Fw::Time _time;
@@ -1054,7 +1048,7 @@ namespace ${namespace} {
     if (this->m_${ParamGet_Name}_OutputPort[0].isConnected()) {
       return this->m_${ParamGet_Name}_OutputPort[0].invoke(id,buff);
     } else {
-      return Fw::PARAM_INVALID;
+      return Fw::ParamValid::INVALID;
     }
 
   }
@@ -1064,7 +1058,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   #for $ids, $prmname, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
-  Fw::CommandResponse ${class_name} ::
+  Fw::CmdResponse ${class_name} ::
     paramSet_${prmname}(Fw::SerializeBufferBase &val)
   {
 
@@ -1072,7 +1066,7 @@ namespace ${namespace} {
     FwEnumStoreType _local_val = 0;
     Fw::SerializeStatus _stat = val.deserialize(_local_val);
     if (_stat != Fw::FW_SERIALIZE_OK) {
-      return Fw::COMMAND_VALIDATION_ERROR;
+      return Fw::CmdResponse::VALIDATION_ERROR;
     }
 
     this->m_paramLock.lock();
@@ -1086,19 +1080,19 @@ namespace ${namespace} {
       #end if
     Fw::SerializeStatus _stat = val.deserialize(_local_val);
     if (_stat != Fw::FW_SERIALIZE_OK) {
-      return Fw::COMMAND_VALIDATION_ERROR;
+      return Fw::CmdResponse::VALIDATION_ERROR;
     }
 
     // Assign value only if successfully deserialized
     this->m_paramLock.lock();
     this->m_${prmname} = _local_val;
     #end if
-    this->m_param_${prmname}_valid = Fw::PARAM_VALID;
+    this->m_param_${prmname}_valid = Fw::ParamValid::VALID;
     this->m_paramLock.unLock();
 
     // Call notifier
     this->parameterUpdated(PARAMID_${prmname.upper});
-    return Fw::COMMAND_OK;
+    return Fw::CmdResponse::OK;
 
   }
 
@@ -1106,8 +1100,8 @@ namespace ${namespace} {
   // Parameter save functions
   // ----------------------------------------------------------------------
 
-  Fw::CommandResponse ${class_name} ::
-    paramSave_${prmname}(void)
+  Fw::CmdResponse ${class_name} ::
+    paramSave_${prmname}()
   {
 
     if (this->m_${ParamSet_Name}_OutputPort[0].isConnected()) {
@@ -1123,7 +1117,7 @@ namespace ${namespace} {
     #end if
       this->m_paramLock.unLock();
       if (stat != Fw::FW_SERIALIZE_OK) {
-        return Fw::COMMAND_VALIDATION_ERROR;
+        return Fw::CmdResponse::VALIDATION_ERROR;
       }
 
       FwPrmIdType id = 0;
@@ -1148,11 +1142,11 @@ namespace ${namespace} {
           id,
           saveBuff
       );
-      return Fw::COMMAND_OK;
+      return Fw::CmdResponse::OK;
 
     }
 
-    return Fw::COMMAND_EXECUTION_ERROR;
+    return Fw::CmdResponse::EXECUTION_ERROR;
 
   }
 
@@ -1294,7 +1288,7 @@ namespace ${namespace} {
 
       this->m_${LogEvent_Name}_OutputPort[0].invoke(
           _id,
-          _logTime,Fw::LOG_${severity},
+          _logTime,Fw::LogSeverity::${severity},
           _logBuff
       );
 
@@ -1344,7 +1338,7 @@ namespace ${namespace} {
       Fw::TextLogString _logString = _textBuffer;
       this->m_${LogTextEvent_Name}_OutputPort[0].invoke(
           _id,
-          _logTime,Fw::TEXT_LOG_${severity},
+          _logTime,Fw::LogSeverity::${severity},
           _logString
       );
 
@@ -1354,7 +1348,7 @@ namespace ${namespace} {
   }
 
   #if $throttle != None
-    void ${class_name}::log_${severity}_${eventname}_ThrottleClear(void) {
+    void ${class_name}::log_${severity}_${eventname}_ThrottleClear() {
         // reset throttle counter
         this->m_${eventname}Throttle = 0;
     }
@@ -1374,7 +1368,7 @@ namespace ${namespace} {
         $internal_interface_param_strs[$ifname]
     )
     #else
-    ${ifname}_internalInterfaceInvoke(void)
+    ${ifname}_internalInterfaceInvoke()
     #end if
   {
 
@@ -1434,13 +1428,13 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   void ${class_name} ::
-    lock(void)
+    lock()
   {
     this->m_guardedPortMutex.lock();
   }
 
   void ${class_name} ::
-    unLock(void)
+    unLock()
   {
     this->m_guardedPortMutex.unLock();
   }
@@ -1735,7 +1729,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   Fw::QueuedComponentBase::MsgDispatchStatus ${class_name} ::
-    doDispatch(void)
+    doDispatch()
   {
 #if $needs_msg_size:
     U8 msgBuff[this->m_msgSize];
@@ -1901,7 +1895,7 @@ namespace ${namespace} {
             this->cmdResponse_out(
                 opCode,
                 cmdSeq,
-                Fw::COMMAND_FORMAT_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
             );
           }
           // Don't crash the task if bad arguments were passed from the ground
@@ -1914,7 +1908,7 @@ namespace ${namespace} {
 \#if FW_CMD_CHECK_RESIDUAL
         if (args.getBuffLeft() != 0) {
           if (this->m_${CmdStatus_Name}_OutputPort[0].isConnected()) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_FORMAT_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::FORMAT_ERROR);
           }
           // Don't crash the task if bad arguments were passed from the ground
           break;

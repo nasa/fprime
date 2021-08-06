@@ -33,11 +33,11 @@ class Tester : public FramerGTestBase {
   public:
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester();
 
     //! Destroy object Tester
     //!
-    ~Tester(void);
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------
@@ -82,11 +82,11 @@ class Tester : public FramerGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts();
 
     //! Initialize components
     //!
-    void initComponents(void);
+    void initComponents();
 
   private:
     // ----------------------------------------------------------------------

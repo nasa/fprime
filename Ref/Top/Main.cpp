@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <Ref/Top/Components.hpp>
+#include <Ref/Top/RefTopologyAc.hpp>
 
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
@@ -11,16 +11,18 @@ void print_usage(const char* app) {
 #include <signal.h>
 #include <stdio.h>
 
+Ref::TopologyState state;
+
 volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
-    exitTasks();
+    Ref::teardown(state);
     terminate = 1;
 }
 
-void run1cycle(void) {
+void run1cycle() {
     // call interrupt to emulate a clock
-    blockDrv.callIsr();
+    Ref::blockDrv.callIsr();
     Os::Task::delay(1000); //10Hz
 }
 
@@ -69,10 +71,8 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    bool quit = constructApp(dump, port_number, hostname);
-    if (quit) {
-        return 0;
-    }
+    state = Ref::TopologyState(hostname, port_number);
+    Ref::setup(state);
 
     // register signal handlers to exit program
     signal(SIGINT,sighandler);

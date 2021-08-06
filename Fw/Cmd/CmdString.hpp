@@ -19,19 +19,16 @@ namespace Fw {
             CmdStringArg(const char* src);
             CmdStringArg(const StringBase& src);
             CmdStringArg(const CmdStringArg& src);
-            CmdStringArg(void);
-            ~CmdStringArg(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
+            CmdStringArg();
+            CmdStringArg& operator=(const CmdStringArg& other);
+            CmdStringArg& operator=(const StringBase& other);
+            CmdStringArg& operator=(const char* other);
+            ~CmdStringArg();
 
-            const CmdStringArg& operator=(const CmdStringArg& other); //!< equal operator for other strings
-
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
+            const char* toChar() const;
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
 
         private:
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_CMD_STRING_MAX_SIZE];
     };

@@ -235,7 +235,7 @@ def setup():
     channel_test.add_test(
         "Missing enum", "sample_XML_files/channel/missingEnum.xml", AssertionError
     )
-    
+
     command_test.add_test(
         "All working", "sample_XML_files/command/allWorking.xml", None
     )
@@ -259,7 +259,7 @@ def setup():
         "sample_XML_files/command/noStringSize.xml",
         AssertionError,
     )
-    
+
     component_test.add_test(
         "Base all working", "sample_XML_files/component/baseAllWorking.xml", None
     )
@@ -274,9 +274,9 @@ def setup():
         "sample_XML_files/component/interfaceOnly.xml",
         AssertionError,
     )
-    
+
     event_test.add_test("All working", "sample_XML_files/event/allWorking.xml", None)
-    
+
     event_test.add_test(
         "Event throttle negative",
         "sample_XML_files/event/negativeThrottle.xml",
@@ -392,17 +392,19 @@ def setup():
     topology_test.parse_and_add_directory(["deployment", "assembly"], "../test")
 
     # Add schemas to test_list
-    
-    test_list.extend((
-        topology_test,
-        component_test,
-        command_test,
-        parameter_test,
-        channel_test,
-        interface_test,
-        serializable_test,
-        event_test
-    ))
+
+    test_list.extend(
+        (
+            topology_test,
+            component_test,
+            command_test,
+            parameter_test,
+            channel_test,
+            interface_test,
+            serializable_test,
+            event_test,
+        )
+    )
 
     return test_list
 

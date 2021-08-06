@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathSender/test/ut/Tester.hpp
 // \author tcanham
 // \brief  hpp file for MathSender test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -30,24 +30,24 @@ namespace Ref {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Test operation command
       //!
-      void testAddCommand(void);
-      void testSubCommand(void);
-      void testMultCommand(void);
-      void testDivCommand(void);
+      void testAddCommand();
+      void testSubCommand();
+      void testMultCommand();
+      void testDivCommand();
 
     private:
 
@@ -59,8 +59,8 @@ namespace Ref {
       //!
       void from_mathOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 val1, 
-          F32 val2, 
+          F32 val1,
+          F32 val2,
           MathOperation operation /*!< operation argument*/
       );
 
@@ -72,11 +72,11 @@ namespace Ref {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

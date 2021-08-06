@@ -11,7 +11,7 @@ namespace Example {
 
 		// Only called by derived class
 		ExampleArrayImpl(const char* compName);
-		~ExampleArrayImpl(void);
+		~ExampleArrayImpl();
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:

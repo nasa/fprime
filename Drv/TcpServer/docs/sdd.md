@@ -41,7 +41,7 @@ This status is an enumeration whose values are described in the following table:
 The Drv::TcpServerComponentImpl must be configured with the address of the remote connection, and the socket must be
 open to begin. Usually, the user runs the Drv::TcpServerComponentImpl engaging its read thread, which will automatically
 open the  connection. The component is passive and has no commands meaning users should `init`, `configure`, and
-`startSocketTask`. In addition to these methods shared with the Drv::TcpClientComponentImpl, the server provides 
+`startSocketTask`. In addition to these methods shared with the Drv::TcpClientComponentImpl, the server provides
 `startup` and `shutdown` methods to start and stop the listening socket. It `startup` must be run before the read task
 is started and `shutdown` should be called before the task is stopped.
 
@@ -64,7 +64,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.shutdown();
     comm.stopSocketTask();

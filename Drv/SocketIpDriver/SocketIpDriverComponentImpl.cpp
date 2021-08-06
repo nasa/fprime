@@ -43,7 +43,7 @@ namespace Drv {
   }
 
   SocketIpDriverComponentImpl ::
-    ~SocketIpDriverComponentImpl(void)
+    ~SocketIpDriverComponentImpl()
   {}
 
   SocketIpStatus SocketIpDriverComponentImpl :: configure(

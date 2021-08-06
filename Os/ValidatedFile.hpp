@@ -33,25 +33,25 @@ namespace Os {
 
       //! Validate the file
       //! \return Status
-      Os::ValidateFile::Status validate(void);
+      Os::ValidateFile::Status validate();
 
       //! Create the hash file
       //! \return Status
-      Os::ValidateFile::Status createHashFile(void);
+      Os::ValidateFile::Status createHashFile();
 
     public:
 
       //! Get the file name
       //! \return The file name
-      const Fw::EightyCharString& getFileName(void) const;
+      const Fw::EightyCharString& getFileName() const;
 
       //! Get the hash file name
       //! \return The hash file name
-      const Fw::EightyCharString& getHashFileName(void) const;
+      const Fw::EightyCharString& getHashFileName() const;
 
       //! Get the hash file buffer
       //! \return The hash file buffer
-      const Utils::HashBuffer& getHashBuffer(void) const;
+      const Utils::HashBuffer& getHashBuffer() const;
 
     PRIVATE:
 

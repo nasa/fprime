@@ -61,7 +61,7 @@ namespace Utils {
 
       //! Initialize a Hash object for incremental hash computation
       //!
-      void init(void);
+      void init();
 
       //! Set hash value to specified value
       //!
@@ -90,7 +90,7 @@ namespace Utils {
       //! Get the file extension for the supported hash type
       //! E.g., could return "SHA256"
       //!
-      static const char* getFileExtensionString(void);
+      static const char* getFileExtensionString();
 
       //! Add the extension for the supported hash type
       //!
@@ -101,7 +101,7 @@ namespace Utils {
 
       //! Get the length of the file extension string
       //!
-      static NATIVE_UINT_TYPE getFileExtensionLength(void);
+      static NATIVE_UINT_TYPE getFileExtensionLength();
 
     private:
 

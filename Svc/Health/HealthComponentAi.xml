@@ -1,194 +1,274 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="Health" kind="queued" namespace="Svc">
-    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
-    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
-    <import_port_type>Svc/WatchDog/WatchDogPortAi.xml</import_port_type>
-    <comment>A component to check the health of other components</comment>
-    <ports>
-        <port name="PingSend" data_type="Svc::Ping" kind="output" max_number="$HealthPingPorts">
-            <comment>
-            Ping output port
-            </comment>
-        </port>
-        <port name="PingReturn" data_type="Svc::Ping" kind="async_input" max_number="$HealthPingPorts">
-            <comment>
-            Ping return port
-            </comment>
-        </port>
-        <port name="Run" data_type="Svc::Sched" kind="sync_input" max_number="1">
-            <comment>
-            Run port
-            </comment>
-        </port>
-        <port name="WdogStroke" data_type="Svc::WatchDog" kind="output" max_number="1">
-            <comment>
-            Run port
-            </comment>
-        </port>
-    </ports>
-    <commands>
-        <command kind="async" opcode="0x0" mnemonic="HLTH_ENABLE">
-            <comment>
-            A command to enable or disable health checks
-            </comment>
-            <args>
-                <arg name="enable" type="ENUM">
-                    <enum name="HealthEnabled">
-                        <item name="HLTH_CHK_DISABLED"/>
-                        <item name="HLTH_CHK_ENABLED"/>
-                    </enum>
-                    <comment>whether or not health checks are enabled</comment>
-                </arg>
-             </args>
-        </command>
-        <command kind="async" opcode="0x1" mnemonic="HLTH_PING_ENABLE" >
-            <comment>
-            Ignore a particular ping entry
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry to enable/disable</comment>
-                </arg>          
-                <arg name="enable" type="ENUM">
-                    <enum name="PingEnabled">
-                        <item name="HLTH_PING_DISABLED"/>
-                        <item name="HLTH_PING_ENABLED"/>
-                    </enum>
-                    <comment>whether or not a port is pinged</comment>
-                </arg>
-             </args>
-        </command>
-        <command kind="async" opcode="0x2" mnemonic="HLTH_CHNG_PING" >
-            <comment>
-            Change ping value
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry to modify</comment>
-                </arg>          
-                <arg name="warningValue" type="U32">
-                    <comment>Ping warning threshold</comment>
-                </arg>
-                <arg name="fatalValue" type="U32">
-                    <comment>Ping fatal threshold</comment>
-                </arg>
-             </args>
-        </command>
-    </commands>
-    <telemetry>
-        <channel id="0x0" name="PingLateWarnings" data_type="U32" abbrev="T001-1234">
-            <comment>
-            Number of overrun warnings
-            </comment>
-        </channel>
-    </telemetry>
-    <events>
-        <event id="0x0" name="HLTH_PING_WARN" severity="WARNING_HI" format_string = "Ping entry %s late warning" >
-            <comment>
-            Warn that a ping target is longer than the warning value
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry passing the warning level</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x1" name="HLTH_PING_LATE" severity="FATAL" format_string = "Ping entry %s did not respond" >
-            <comment>
-            Declare FATAL since task is no longer responding
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry passing the warning level</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x2" name="HLTH_PING_WRONG_KEY" severity="FATAL" format_string = "Ping entry %s responded with wrong key 0x%08X" >
-            <comment>
-            Declare FATAL since task is no longer responding
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry passing the warning level</comment>
-                </arg>          
-                <arg name="badKey" type="U32">
-                    <comment>The incorrect key value</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x3" name="HLTH_CHECK_ENABLE" severity="ACTIVITY_HI" format_string = "Health checking set to %d" >
-            <comment>
-            Report checking turned on or off
-            </comment>
-            <args>
-                <arg name="enabled" type="ENUM">
-                    <enum name="HealthIsEnabled">
-                        <item name="HEALTH_CHECK_DISABLED"/>
-                        <item name="HEALTH_CHECK_ENABLED"/>
-                    </enum>
-                    <comment>If health checking is enabled</comment>
-                </arg>
-            </args>
-        </event>
-        <event id="0x4" name="HLTH_CHECK_PING" severity="ACTIVITY_HI" format_string = "Health checking set to %d for %s" >
-            <comment>
-            Report a particular entry on or off
-            </comment>
-            <args>
-                <arg name="enabled" type="ENUM">
-                    <enum name="HealthPingIsEnabled">
-                        <item name="HEALTH_PING_DISABLED"/>
-                        <item name="HEALTH_PING_ENABLED"/>
-                    </enum>
-                    <comment>If health pinging is enabled for a particular entry</comment>
-                </arg>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry passing the warning level</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x5" name="HLTH_CHECK_LOOKUP_ERROR" severity="WARNING_LO" format_string = "Couldn't find entry %s" >
-            <comment>
-            Entry was not found
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry passing the warning level</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x6" name="HLTH_PING_UPDATED" severity="ACTIVITY_HI" format_string = "Health ping for %s changed to WARN %d FATAL %d" >
-            <comment>
-            Report changed ping
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry changed</comment>
-                </arg>          
-                <arg name="warn" type="U32">
-                    <comment>The new warning value</comment>
-                </arg>          
-                <arg name="fatal" type="U32">
-                    <comment>The new FATAL value</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="0x7" name="HLTH_PING_INVALID_VALUES" severity="WARNING_HI" format_string = "Health ping for %s invalid values: WARN %d FATAL %d" >
-            <comment>
-            Report changed ping
-            </comment>
-            <args>
-                <arg name="entry" type="string" size="40">
-                    <comment>The entry changed</comment>
-                </arg>          
-                <arg name="warn" type="U32">
-                    <comment>The new warning value</comment>
-                </arg>          
-                <arg name="fatal" type="U32">
-                    <comment>The new FATAL value</comment>
-                </arg>          
-            </args>
-        </event>
-    </events>
-</component>
 
+<!-- =====================================================================
+HealthComponentAi.xml
+Generated by fpp-to-xml
+====================================================================== -->
+<component namespace="Svc" name="Health" kind="queued">
+
+  <comment>
+  A component for checking the health of active components
+  </comment>
+
+  <import_enum_type>Fw/Types/EnabledEnumAi.xml</import_enum_type>
+  <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+  <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+  <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+  <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+  <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+  <import_port_type>Svc/WatchDog/WatchDogPortAi.xml</import_port_type>
+
+  <ports>
+    <port name="CmdDisp" data_type="Fw::Cmd" kind="input" role="Cmd" max_number="1">
+      <comment>
+      Command receive port
+      </comment>
+    </port>
+    <port name="CmdReg" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+      <comment>
+      Command registration port
+      </comment>
+    </port>
+    <port name="CmdStatus" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+      <comment>
+      Command response port
+      </comment>
+    </port>
+    <port name="Log" data_type="Fw::Log" kind="output" role="LogEvent" max_number="1">
+      <comment>
+      Event port
+      </comment>
+    </port>
+    <port name="LogText" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+      <comment>
+      Text event port
+      </comment>
+    </port>
+    <port name="PingReturn" data_type="Svc::Ping" kind="async_input" max_number="$HealthPingPorts" full="assert">
+      <comment>
+      Ping return port
+      </comment>
+    </port>
+    <port name="PingSend" data_type="Svc::Ping" kind="output" max_number="$HealthPingPorts">
+      <comment>
+      Ping output port
+      </comment>
+    </port>
+    <port name="Run" data_type="Svc::Sched" kind="sync_input" max_number="1">
+      <comment>
+      Run port
+      </comment>
+    </port>
+    <port name="Time" data_type="Fw::Time" kind="output" role="TimeGet" max_number="1">
+      <comment>
+      Time get port
+      </comment>
+    </port>
+    <port name="Tlm" data_type="Fw::Tlm" kind="output" role="Telemetry" max_number="1">
+      <comment>
+      Telemetry port
+      </comment>
+    </port>
+    <port name="WdogStroke" data_type="Svc::WatchDog" kind="output" max_number="1">
+      <comment>
+      Run port
+      </comment>
+    </port>
+  </ports>
+
+  <commands>
+    <command kind="async" opcode="0x0" mnemonic="HLTH_ENABLE" full="assert">
+      <comment>
+      A command to enable or disable health checks
+      </comment>
+      <args>
+        <arg name="enable" type="Fw::Enabled">
+          <comment>
+          whether or not health checks are enabled
+          </comment>
+        </arg>
+      </args>
+    </command>
+    <command kind="async" opcode="0x1" mnemonic="HLTH_PING_ENABLE" full="assert">
+      <comment>
+      Ignore a particular ping entry
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry to enable/disable
+          </comment>
+        </arg>
+        <arg name="enable" type="Fw::Enabled">
+          <comment>
+          whether or not a port is pinged
+          </comment>
+        </arg>
+      </args>
+    </command>
+    <command kind="async" opcode="0x2" mnemonic="HLTH_CHNG_PING" full="assert">
+      <comment>
+      Change ping value
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry to modify
+          </comment>
+        </arg>
+        <arg name="warningValue" type="U32">
+          <comment>
+          Ping warning threshold
+          </comment>
+        </arg>
+        <arg name="fatalValue" type="U32">
+          <comment>
+          Ping fatal threshold
+          </comment>
+        </arg>
+      </args>
+    </command>
+  </commands>
+
+  <events>
+    <event id="0x0" name="HLTH_PING_WARN" severity="WARNING_HI" format_string="Ping entry %s late warning">
+      <comment>
+      Warn that a ping target is longer than the warning value
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry passing the warning level
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x1" name="HLTH_PING_LATE" severity="FATAL" format_string="Ping entry %s did not respond">
+      <comment>
+      Declare FATAL since task is no longer responding
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry passing the warning level
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x2" name="HLTH_PING_WRONG_KEY" severity="FATAL" format_string="Ping entry %s responded with wrong key 0x%x">
+      <comment>
+      Declare FATAL since task is no longer responding
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry passing the warning level
+          </comment>
+        </arg>
+        <arg name="badKey" type="U32">
+          <comment>
+          The incorrect key value
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x3" name="HLTH_CHECK_ENABLE" severity="ACTIVITY_HI" format_string="Health checking set to %s">
+      <comment>
+      Report checking turned on or off
+      </comment>
+      <args>
+        <arg name="enabled" type="Fw::Enabled">
+          <comment>
+          If health checking is enabled
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x4" name="HLTH_CHECK_PING" severity="ACTIVITY_HI" format_string="Health checking set to %s for %s">
+      <comment>
+      Report a particular entry on or off
+      </comment>
+      <args>
+        <arg name="enabled" type="Fw::Enabled">
+          <comment>
+          If health pinging is enabled for a particular entry
+          </comment>
+        </arg>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry passing the warning level
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x5" name="HLTH_CHECK_LOOKUP_ERROR" severity="WARNING_LO" format_string="Couldn't find entry %s">
+      <comment>
+      Entry was not found
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry passing the warning level
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x6" name="HLTH_PING_UPDATED" severity="ACTIVITY_HI" format_string="Health ping for %s changed to WARN %u FATAL %u">
+      <comment>
+      Report changed ping
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry changed
+          </comment>
+        </arg>
+        <arg name="warn" type="U32">
+          <comment>
+          The new warning value
+          </comment>
+        </arg>
+        <arg name="fatal" type="U32">
+          <comment>
+          The new FATAL value
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x7" name="HLTH_PING_INVALID_VALUES" severity="WARNING_HI" format_string="Health ping for %s invalid values: WARN %u FATAL %u">
+      <comment>
+      Report changed ping
+      </comment>
+      <args>
+        <arg name="entry" type="string" size="40">
+          <comment>
+          The entry changed
+          </comment>
+        </arg>
+        <arg name="warn" type="U32">
+          <comment>
+          The new warning value
+          </comment>
+        </arg>
+        <arg name="fatal" type="U32">
+          <comment>
+          The new FATAL value
+          </comment>
+        </arg>
+      </args>
+    </event>
+  </events>
+
+  <telemetry>
+    <channel id="0x0" name="PingLateWarnings" data_type="U32" update="always">
+      <comment>
+      Number of overrun warnings
+      </comment>
+    </channel>
+  </telemetry>
+
+</component>

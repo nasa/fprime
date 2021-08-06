@@ -26,7 +26,7 @@ namespace Fw {
   }
 
   U32 FilePacket::PathName ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return sizeof(this->length) + this->length;
   }
@@ -44,7 +44,7 @@ namespace Fw {
 
     {
       const U8* addrLeft = serialBuffer.getBuffAddrLeft();
-      U8 bytes[this->length];
+      U8 bytes[MAX_LENGTH];
       const SerializeStatus status =
         serialBuffer.popBytes(bytes, this->length);
       if (status != FW_SERIALIZE_OK)

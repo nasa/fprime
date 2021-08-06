@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  InvalidFiles.hpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with EOS record
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_InvalidFiles_HPP
 #define Svc_InvalidFiles_HPP
@@ -32,51 +32,51 @@ namespace Svc {
 
         //! Construct object Tester
         Tester(
-            const SequenceFiles::File::Format::t format = 
+            const SequenceFiles::File::Format::t format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Tests
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Bad CRC
-        void BadCRC(void);
+        void BadCRC();
 
         //! Bad record descriptor
-        void BadRecordDescriptor(void);
+        void BadRecordDescriptor();
 
         //! Bad time base
-        void BadTimeBase(void);
+        void BadTimeBase();
 
         //! Bad time context
-        void BadTimeContext(void);
+        void BadTimeContext();
 
         //! Empty file
-        void EmptyFile(void);
+        void EmptyFile();
 
         //! Extra data after command records
-        void DataAfterRecords(void);
+        void DataAfterRecords();
 
         //! File too large
-        void FileTooLarge(void);
+        void FileTooLarge();
 
         //! Microseconds field too short
-        void USecFieldTooShort(void);
+        void USecFieldTooShort();
 
         //! Missing CRC
-        void MissingCRC(void);
+        void MissingCRC();
 
         //! Missing file
-        void MissingFile(void);
+        void MissingFile();
 
         //! Size field too large
-        void SizeFieldTooLarge(void);
+        void SizeFieldTooLarge();
 
         //! Size field too small
-        void SizeFieldTooSmall(void);
+        void SizeFieldTooSmall();
 
     };
 
