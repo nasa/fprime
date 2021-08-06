@@ -4,9 +4,13 @@
 set -e
 set -x
 cd "$GITHUB_WORKSPACE"
-if [ "$GITHUB_WORKFLOW" != "Autodocs" ]
-then
+ [ "$GITHUB_WORKFLOW" != "Autodocs" ]
+
     "$GITHUB_WORKSPACE/ci/master.bash" QUICK
+ patch-27
 else
+
+
+ patch-20
     /autodoc.bash
-fi
+
