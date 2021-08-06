@@ -14,6 +14,8 @@
 #include "Os/Log.hpp"
 #include <Drv/Ip/test/ut/PortSelector.hpp>
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
+#include <errno.h>
+#include <string.h>
 
 Os::Log logger;
 
@@ -38,6 +40,9 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     this->component.configure("127.0.0.1", port, 0, 100);
     serverStat = this->component.startup();
+    if (serverStat != SOCK_SUCCESS) {
+        printf("Error: %s\n", strerror(errno));
+    }
     EXPECT_EQ(serverStat, SOCK_SUCCESS);
 
     // Start up a receive thread
