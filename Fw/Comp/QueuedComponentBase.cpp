@@ -1,7 +1,7 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <FpConfig.hpp>
+#include <Os/QueueString.hpp>
 
 #include <stdio.h>
 
@@ -14,7 +14,7 @@ namespace Fw {
     QueuedComponentBase::~QueuedComponentBase() {
 
     }
-    
+
     void QueuedComponentBase::init(NATIVE_INT_TYPE instance) {
         PassiveComponentBase::init(instance);
     }
@@ -25,10 +25,10 @@ namespace Fw {
         buffer[size-1] = 0;
     }
 #endif
-    
+
     Os::Queue::QueueStatus QueuedComponentBase::createQueue(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-        
-        Fw::EightyCharString queueName;
+
+        Os::QueueString queueName;
 #if FW_OBJECT_NAMES == 1
         queueName = this->m_objName;
 #else

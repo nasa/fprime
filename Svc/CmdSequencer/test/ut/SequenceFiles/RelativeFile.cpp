@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RelativeFile.cpp
 // \author Rob Bocchino
 // \brief  RelativeFile implementation
@@ -7,6 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
@@ -23,7 +25,7 @@ namespace Svc {
         File(format),
         n(n)
     {
-      Fw::EightyCharString s;
+      Fw::String s;
       s.format("relative_%u", n);
       this->setName(s.toChar());
     }

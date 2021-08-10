@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  File.cpp
 // \author Rob Bocchino
 // \brief  File implementation
@@ -60,8 +60,8 @@ namespace Svc {
       this->name += ".bin";
     }
 
-    const Fw::EightyCharString& File ::
-      getName(void) const
+    const Fw::StringBase& File ::
+      getName() const
     {
       return this->name;
     }
@@ -90,7 +90,7 @@ namespace Svc {
     }
 
     void File ::
-      write(void)
+      write()
     {
       Buffers::FileBuffer buffer;
       switch (this->format) {
@@ -108,7 +108,7 @@ namespace Svc {
     }
 
     void File ::
-      remove(void)
+      remove()
     {
       Fw::EightyCharString s("rm -f ");
       s += this->getName();

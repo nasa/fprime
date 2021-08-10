@@ -19,7 +19,7 @@
     #include <stdio.h> // snprintf
     #ifdef BUILD_UT
         #include <iostream>
-        #include <Fw/Types/EightyCharString.hpp>
+        #include <Fw/Types/String.hpp>
     #endif
 #endif
 
