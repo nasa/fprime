@@ -200,7 +200,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 #for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $typeinfo == "extern":
 
-    Fw::EightyCharString ${member}Str;
+    Fw::String ${member}Str;
     this->m_${member}.toString(${member}Str);
 #end if
 #end for
@@ -242,7 +242,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 
 \#ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
-        Fw::EightyCharString str;
+        Fw::String str;
         obj.toString(str);
         os << str.toChar();
         return os;

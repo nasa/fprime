@@ -7,7 +7,7 @@
 
 namespace Fw {
 
-    class FixedLengthString : public Fw::StringBase {
+    class String : public Fw::StringBase {
         public:
 
             enum {
@@ -16,14 +16,14 @@ namespace Fw {
                 SERIALIZED_SIZE = STRING_SIZE + sizeof(FwBuffSizeType) //!< Serialized size is size of buffer + size field
             };
 
-            FixedLengthString(const char* src); //!< char* source constructor
-            FixedLengthString(const StringBase& src); //!< other string constructor
-            FixedLengthString(const FixedLengthString& src); //!< FixedLengthString string constructor
-            FixedLengthString(); //!< default constructor
-            FixedLengthString& operator=(const FixedLengthString& other); //!< assignment operator
-            FixedLengthString& operator=(const StringBase& other); //!< other string assignment operator
-            FixedLengthString& operator=(const char* other); //!< char* assignment operator
-            ~FixedLengthString(); //!< destructor
+            String(const char* src); //!< char* source constructor
+            String(const StringBase& src); //!< other string constructor
+            String(const String& src); //!< String string constructor
+            String(); //!< default constructor
+            String& operator=(const String& other); //!< assignment operator
+            String& operator=(const StringBase& other); //!< other string assignment operator
+            String& operator=(const char* other); //!< char* assignment operator
+            ~String(); //!< destructor
 
             const char* toChar() const; //!< gets char buffer
             NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size

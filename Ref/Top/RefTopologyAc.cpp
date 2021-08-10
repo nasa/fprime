@@ -1212,7 +1212,7 @@ namespace Ref {
       );
       // Initialize socket server if and only if there is a valid specification
       if (state.hostName != NULL && state.portNumber != 0) {
-          Fw::EightyCharString name("ReceiveTask");
+          Os::TaskString name("ReceiveTask");
           // Uplink is configured for receive so a socket task is started
           comm.configure(state.hostName, state.portNumber);
           comm.startSocketTask(

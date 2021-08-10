@@ -107,12 +107,12 @@ namespace Svc {
 
       //! Check that file exists
       void checkFileExists(
-          const Fw::EightyCharString& fileName //!< The file name
+          const Fw::StringBase& fileName //!< The file name
       );
 
       //! Check that hash file exists
       void checkHashFileExists(
-          const Fw::EightyCharString& fileName //!< The file name
+          const Fw::StringBase& fileName //!< The file name
       );
 
       //! Check the integrity of a log file

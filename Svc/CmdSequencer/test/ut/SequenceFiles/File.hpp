@@ -47,7 +47,7 @@ namespace Svc {
           struct Open {
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -58,7 +58,7 @@ namespace Svc {
             U32 waitCount;
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -69,7 +69,7 @@ namespace Svc {
             U32 waitCount;
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -122,7 +122,7 @@ namespace Svc {
         void remove();
 
         //! Get the file name
-        const Fw::EightyCharString& getName() const;
+        const Fw::StringBase& getName() const;
 
         //! Get error info for the file
         void getErrorInfo(
@@ -152,7 +152,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! The file name
-        Fw::EightyCharString name;
+        Fw::String name;
 
       public:
 

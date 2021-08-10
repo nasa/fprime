@@ -3,7 +3,6 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Os {
