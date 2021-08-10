@@ -1,9 +1,0 @@
-File '/home/tim/source/isf/Svc/ActiveLogger/ActiveLoggerImpl.cpp'
-Lines executed:98.61% of 288
-Creating 'ActiveLoggerImpl.cpp.gcov'
-
-File '/home/tim/source/isf/Svc/ActiveLogger/ActiveLoggerComponentAc.cpp'
-Lines executed:80.95% of 567
-Creating 'ActiveLoggerComponentAc.cpp.gcov'
-
-Lines executed:86.90% of 855

@@ -8,14 +8,16 @@ on:
   push:
     branches: [ master, devel ]
   pull_request:
-    branches: [ master, devel ]
+    branches: [ master, devel, release/v3.0.0 ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  # This workflow contains 4 jobs. One for every CI test."
+  Framework:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container: 
+      image: nasafprime/fprime-base:latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -23,12 +25,78 @@ jobs:
     - uses: actions/checkout@v2
     # Runs the CI action internal to the repository
     - name: F prime CI step
-      uses: ./.github/actions/
-      id: github-ci-action
+      run: ./ci/tests/Framework.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
+      if: always()
       with:
-        name: ci-logs
+        name: ci-framework-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  Ref:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: 
+      image: nasafprime/fprime-base:latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      run: ./ci/tests/Ref.bash
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-ref-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  RPI:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: 
+      image: nasafprime/fprime-base:latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      run: ./ci/tests/RPI.bash
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-rpi-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  Integration:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: 
+      image: nasafprime/fprime-base:latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs the CI action internal to the repository
+    - name: F prime CI step
+      run: ./ci/tests/30-ints.bash
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-int-logs
         path: ci-logs.tar.gz
         retention-days: 5

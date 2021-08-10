@@ -1,5 +1,13 @@
 name: 'F prime CI'
 description: 'Runs continuous integration testing on F prime'
+inputs:
+  test:
+    description: Test number to run
+    required: true
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.test }}
+  # entrypoint: '$GITHUB_WORKSPACE/ci/tests/${{ inputs.test }}.bash'

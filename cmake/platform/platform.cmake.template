@@ -62,7 +62,7 @@ set(CMAKE_CXX_FLAGS
 #         directory. NOTE: when running without threads, remove this line.
 #         Here there is a check for the using baremetal scheduler
 if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
-   set(FPRIME_USE_BAREMETAL_SCHEDULE OFF)
+   set(FPRIME_USE_BAREMETAL_SCHEDULER OFF)
    message(STATUS "Requiring thread library")
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
