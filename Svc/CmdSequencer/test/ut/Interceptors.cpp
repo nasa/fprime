@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Interceptors.cpp
 // \author Canham/Bocchino
 // \brief  Implementation for Tester::Interceptors
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/Tester.hpp"
@@ -17,20 +17,20 @@
 namespace Svc {
 
   Tester::Interceptors::Open ::
-    Open(void) :
+    Open() :
       fileStatus(Os::File::OP_OK)
   {
 
   }
 
   void Tester::Interceptors::Open ::
-    enable(void)
+    enable()
   {
     Os::registerOpenInterceptor(registerFunction, this);
   }
 
   void Tester::Interceptors::Open ::
-    disable(void)
+    disable()
   {
     Os::clearOpenInterceptor();
   }
@@ -56,7 +56,7 @@ namespace Svc {
   }
 
   Tester::Interceptors::Read ::
-    Read(void) :
+    Read() :
       errorType(ErrorType::NONE),
       waitCount(0),
       size(0),
@@ -66,13 +66,13 @@ namespace Svc {
   }
 
   void Tester::Interceptors::Read ::
-    enable(void)
+    enable()
   {
     Os::registerReadInterceptor(registerFunction, this);
   }
 
   void Tester::Interceptors::Read ::
-    disable(void)
+    disable()
   {
     Os::clearReadInterceptor();
   }

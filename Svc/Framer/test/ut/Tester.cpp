@@ -30,7 +30,7 @@ void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPack
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void)
+Tester ::Tester()
     :
       FramerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Framer"),
@@ -44,7 +44,7 @@ Tester ::Tester(void)
     component.setup(this->m_mock);
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -102,14 +102,14 @@ Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, F
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();
     m_framed = true;
-    return Drv::SEND_OK;
+    return Drv::SendStatus::SEND_OK;
 }
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // comIn
     this->connect_to_comIn(0, this->component.get_comIn_InputPort(0));
 
@@ -129,7 +129,7 @@ void Tester ::connectPorts(void) {
     this->component.set_timeGet_OutputPort(0, this->get_from_timeGet(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

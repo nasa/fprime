@@ -23,14 +23,14 @@ TestParamSourceImpl::~TestParamSourceImpl() {
 Fw::ParamValid TestParamSourceImpl::paramGetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
 
     val = this->m_prm;
-    return Fw::PARAM_VALID;
+    return Fw::ParamValid::VALID;
 }
 
 void TestParamSourceImpl::paramSetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
 
 }
 
-void TestParamSourceImpl::init(void) {
+void TestParamSourceImpl::init() {
     Prm::ParamTesterComponentBase::init();
 }
 

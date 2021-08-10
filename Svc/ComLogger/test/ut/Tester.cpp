@@ -17,7 +17,7 @@ namespace Svc {
   Tester ::
     Tester(
         const char *const compName
-    ) : 
+    ) :
       ComLoggerGTestBase(compName, 30),
       comLogger("ComLogger", FILE_STR, MAX_BYTES_PER_FILE)
   {
@@ -26,13 +26,13 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
     comLogger.set_cmdRegOut_OutputPort(0, this->get_from_cmdRegOut(0));
     comLogger.set_cmdResponseOut_OutputPort(0, this->get_from_cmdResponseOut(0));
@@ -43,30 +43,30 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->comLogger.init(QUEUE_DEPTH, 0);
   }
 
   void Tester ::
-    dispatchOne(void)
+    dispatchOne()
   {
     this->comLogger.doDispatch();
   }
-  
+
   void Tester ::
-    dispatchAll(void)
+    dispatchAll()
   {
     while(this->comLogger.m_queue.getNumMsgs() > 0)
       this->dispatchOne();
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
   void Tester ::
-    testLogging(void) 
+    testLogging()
   {
       U8 fileName[2048];
       U8 prevFileName[2048];
@@ -85,7 +85,7 @@ namespace Svc {
       Fw::ComBuffer buffer(&data[0], sizeof(data));
 
       Fw::SerializeStatus stat;
-      
+
       for(int j = 0; j < 3; j++)
       {
         // Test times for the different iterations:
@@ -188,7 +188,7 @@ namespace Svc {
   }
 
   void Tester ::
-    testLoggingNoLength(void) 
+    testLoggingNoLength()
   {
       U8 fileName[2048];
       U8 prevFileName[2048];
@@ -208,7 +208,7 @@ namespace Svc {
       // Make sure that noLengthMode is enabled:
       comLogger.storeBufferLength = false;
       comLogger.maxFileSize = MAX_BYTES_PER_FILE_NO_LENGTH;
-      
+
       for(int j = 0; j < 3; j++)
       {
         // Test times for the different iterations:
@@ -300,7 +300,7 @@ namespace Svc {
   }
 
   void Tester ::
-    openError(void) 
+    openError()
   {
       // Construct illegal filePrefix, and set it via the friend:
       U8 filePrefix[2048];
@@ -310,13 +310,13 @@ namespace Svc {
       snprintf((char*) filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
       strncpy((char*) comLogger.filePrefix, (char*) filePrefix, sizeof(comLogger.filePrefix));
-      
+
       ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       const U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
       Fw::ComBuffer buffer(data, sizeof(data));
-      
+
       Fw::Time testTime(TB_NONE, 4, 9876543);
       setTestTime(testTime);
 
@@ -345,7 +345,7 @@ namespace Svc {
       snprintf((char*) filePrefix, sizeof(filePrefix), "good_");
 
       strncpy((char*) comLogger.filePrefix, (char*) filePrefix, sizeof(comLogger.filePrefix));
-      
+
       ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
 
       snprintf((char*) fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, (U32) testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
@@ -369,7 +369,7 @@ namespace Svc {
       snprintf((char*) filePrefix, sizeof(filePrefix), "illegal/fname?;\\*");
 
       strncpy((char*) comLogger.filePrefix, (char*) filePrefix, sizeof(comLogger.filePrefix));
-      
+
       ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
 
       snprintf((char*) fileName, sizeof(fileName), "%s_%d_%d_%06d.com", filePrefix, (U32) testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
@@ -388,14 +388,14 @@ namespace Svc {
   }
 
   void Tester ::
-    writeError(void) 
+    writeError()
   {
       ASSERT_TRUE(comLogger.fileMode == ComLogger::CLOSED);
       ASSERT_EVENTS_SIZE(0);
 
       const U8 data[4] = {0xde,0xad,0xbe,0xef};
       Fw::ComBuffer buffer(data, sizeof(data));
-      
+
       Fw::Time testTime(TB_NONE, 5, 9876543);
       setTestTime(testTime);
 
@@ -419,7 +419,7 @@ namespace Svc {
       // Construct filename:
       U8 fileName[2048];
       memset(fileName, 0, sizeof(fileName));
-      snprintf((char*) fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, (U32) testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());  
+      snprintf((char*) fileName, sizeof(fileName), "%s_%d_%d_%06d.com", FILE_STR, (U32) testTime.getTimeBase(), testTime.getSeconds(), testTime.getUSeconds());
 
       // Check generated events:
       // We should only see a single event because write
@@ -475,7 +475,7 @@ namespace Svc {
   }
 
   void Tester ::
-    closeFileCommand(void) 
+    closeFileCommand()
   {
     Os::File file;
     U8 fileName[2048];
@@ -507,10 +507,10 @@ namespace Svc {
           i,
           ComLogger::OPCODE_CLOSEFILE,
           i+1,
-          Fw::COMMAND_OK
+          Fw::CmdResponse::OK
       );
     }
-    
+
     const U8 data[COM_BUFFER_LENGTH] = {0xde,0xad,0xbe,0xef};
     Fw::ComBuffer buffer(data, sizeof(data));
 
@@ -535,7 +535,7 @@ namespace Svc {
           i,
           ComLogger::OPCODE_CLOSEFILE,
           i+1,
-          Fw::COMMAND_OK
+          Fw::CmdResponse::OK
       );
     }
 

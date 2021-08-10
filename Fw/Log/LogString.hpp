@@ -19,10 +19,10 @@ namespace Fw {
             LogStringArg(const char* src);
             LogStringArg(const StringBase& src);
             LogStringArg(const LogStringArg& src);
-            LogStringArg(void);
-            ~LogStringArg(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
+            LogStringArg();
+            ~LogStringArg();
+            const char* toChar() const;
+            NATIVE_UINT_TYPE length() const;
             // This method is set by the autocode to the max length specified in the XML declaration for a particular event.
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
 
@@ -36,7 +36,7 @@ namespace Fw {
 
         private:
 
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_LOG_STRING_MAX_SIZE];

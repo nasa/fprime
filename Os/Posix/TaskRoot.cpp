@@ -17,6 +17,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include <new>
 
 //#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);
 #define DEBUG_PRINT(x,...)
@@ -89,7 +90,11 @@ namespace Os {
             Task::s_taskRegistry->addTask(this);
         }
 
-        pthread_t* tid = new pthread_t;
+        pthread_t* tid = new(std::nothrow) pthread_t;
+        if (tid == NULL) {
+            Fw::Logger::logMsg("failed to allocate pthread_t\n");
+            return TASK_UNKNOWN_ERROR;
+        }
 
         stat = pthread_create(tid,&att,(pthread_func_ptr)routine,arg);
 
@@ -176,11 +181,11 @@ namespace Os {
         FW_ASSERT(0);
     }
 
-    void Task::resume(void) {
+    void Task::resume() {
         FW_ASSERT(0);
     }
 
-    bool Task::isSuspended(void) {
+    bool Task::isSuspended() {
         FW_ASSERT(0);
         return false;
     }

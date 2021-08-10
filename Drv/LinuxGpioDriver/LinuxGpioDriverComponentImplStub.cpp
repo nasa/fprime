@@ -49,12 +49,12 @@ namespace Drv {
    }
 
   LinuxGpioDriverComponentImpl ::
-    ~LinuxGpioDriverComponentImpl(void)
+    ~LinuxGpioDriverComponentImpl()
   {
 
   }
 
   void LinuxGpioDriverComponentImpl ::
-    exitThread(void) {
+    exitThread() {
   }
 } // end namespace Drv

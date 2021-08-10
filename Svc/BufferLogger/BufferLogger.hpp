@@ -15,7 +15,7 @@
 
 #include "Svc/BufferLogger/BufferLoggerComponentAc.hpp"
 #include "Os/File.hpp"
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/String.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/Mutex.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -53,7 +53,7 @@ namespace Svc {
           );
 
           //! Destroy a File object
-          ~File(void);
+          ~File();
 
         public:
 
@@ -67,7 +67,7 @@ namespace Svc {
 
           //! Set base file name
           void setBaseName(
-              const Fw::EightyCharString& baseName //!< The base file name; used with prefix, unique counter value, and suffix
+              const Fw::StringBase& baseName //!< The base file name; used with prefix, unique counter value, and suffix
           );
 
           //! Log a buffer
@@ -77,15 +77,15 @@ namespace Svc {
           );
 
           //! Close the file and emit an event
-          void closeAndEmitEvent(void);
+          void closeAndEmitEvent();
 
           //! Flush the file
-          bool flush(void);
+          bool flush();
 
         PRIVATE:
 
           //! Open the file
-          void open(void);
+          void open();
 
           //! Write a buffer to a file
           //! \return Success or failure
@@ -108,10 +108,10 @@ namespace Svc {
           );
 
           //! Write a hash file
-          void writeHashFile(void);
+          void writeHashFile();
 
           //! Close the file
-          void close(void);
+          void close();
 
         PRIVATE:
 
@@ -119,13 +119,13 @@ namespace Svc {
           BufferLogger& bufferLogger;
 
           //! The prefix to use for file names
-          Fw::EightyCharString prefix;
+          Fw::String prefix;
 
           //! The suffix to use for file names
-          Fw::EightyCharString suffix;
+          Fw::String suffix;
 
           //! The file name base
-          Fw::EightyCharString baseName;
+          Fw::String baseName;
 
           //! The counter to use for the same file name
           NATIVE_UINT_TYPE fileCounter;
@@ -137,7 +137,7 @@ namespace Svc {
           U8 sizeOfSize;
 
           //! The name of the currently open file
-          Fw::EightyCharString name;
+          Fw::String name;
 
           // The current mode
           Mode::t mode;
@@ -240,7 +240,7 @@ namespace Svc {
       void BL_SetLogging_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          LogState state
+          BufferLogger_LogState state
       );
 
       //! Implementation for BL_FlushFile command handler
@@ -257,7 +257,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! The logging state
-      LogState m_state;
+      BufferLogger_LogState m_state;
 
       //! The file
       File m_file;

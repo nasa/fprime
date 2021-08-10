@@ -10,6 +10,7 @@ set(MOD_DEPS
 )
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TlmPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/TlmGetPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmString.cpp"

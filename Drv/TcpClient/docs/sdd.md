@@ -51,13 +51,13 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     comm.init(0);
     ...
     if (hostname != NULL && port_number != 0) {
-        Fw::EightyCharString name("ReceiveTask");
+        Os::TaskString name("ReceiveTask");
         comm.configure(hostname, port_number);
         comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.stopSocketTask();
     (void) comm.joinSocketTask(NULL);

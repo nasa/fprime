@@ -17,6 +17,13 @@
 #include <stdio.h>
 #include <cstdarg>
 
+// some limits.h don't have PATH_MAX
+#ifdef PATH_MAX
+#define COMLOGGER_PATH_MAX PATH_MAX
+#else
+#define COMLOGGER_PATH_MAX 255
+#endif
+
 namespace Svc {
 
   class ComLogger :
@@ -43,7 +50,7 @@ namespace Svc {
           NATIVE_INT_TYPE instance //!< The instance number
       );
 
-      ~ComLogger(void);
+      ~ComLogger();
 
       // ----------------------------------------------------------------------
       // Handler implementations
@@ -73,9 +80,9 @@ namespace Svc {
       // Constants:
       // ----------------------------------------------------------------------
       // The maximum size of a filename
-      enum { 
+      enum {
         MAX_FILENAME_SIZE = NAME_MAX, // as defined in limits.h
-        MAX_PATH_SIZE = PATH_MAX
+        MAX_PATH_SIZE = COMLOGGER_PATH_MAX
       };
 
       // The filename data:
@@ -98,10 +105,10 @@ namespace Svc {
       bool writeErrorOccurred;
       bool openErrorOccurred;
       bool storeBufferLength;
-      
+
       // ----------------------------------------------------------------------
       // File functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       void openFile(
       );
 
@@ -115,10 +122,10 @@ namespace Svc {
 
       // ----------------------------------------------------------------------
       // Helper functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       bool writeToFile(
-        void* data, 
+        void* data,
         U16 length
       );
 

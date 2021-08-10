@@ -9,10 +9,11 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapterComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapterComponentImpl.cpp"
+
 )
 
 register_fprime_module()
-# UTs #
+# UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"

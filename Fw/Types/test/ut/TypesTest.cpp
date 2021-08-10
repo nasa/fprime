@@ -22,14 +22,14 @@
 
 class SerializeTestBuffer: public Fw::SerializeBufferBase {
     public:
-        NATIVE_UINT_TYPE getBuffCapacity(void) const { // !< returns capacity, not current size, of buffer
+        NATIVE_UINT_TYPE getBuffCapacity() const { // !< returns capacity, not current size, of buffer
             return sizeof(m_testBuff);
         }
 
-        U8* getBuffAddr(void) { // !< gets buffer address for data filling
+        U8* getBuffAddr() { // !< gets buffer address for data filling
             return m_testBuff;
         }
-        const U8* getBuffAddr(void) const { // !< gets buffer address for data reading
+        const U8* getBuffAddr() const { // !< gets buffer address for data reading
             return m_testBuff;
         }
     private:
@@ -690,12 +690,12 @@ TEST(PerformanceTest, ClassCopyTest) {
 
 }
 
-void printSizes(void) {
+void printSizes() {
     printf("Sizeof TestStruct: %lu\n", sizeof(TestStruct));
     printf("Sizeof MySerializable: %lu\n", sizeof(MySerializable));
 }
 
-void AssertTest(void) {
+void AssertTest() {
 
     printf("Assert Tests\n");
 
@@ -738,47 +738,47 @@ void AssertTest(void) {
 
             };
 
-            void doAssert(void) {
+            void doAssert() {
                 this->m_asserted = true;
             }
 
-            FILE_NAME_ARG getFile(void) {
+            FILE_NAME_ARG getFile() {
                 return this->m_file;
             }
 
-            NATIVE_UINT_TYPE getLineNo(void) {
+            NATIVE_UINT_TYPE getLineNo() {
                 return this->m_lineNo;
             }
 
-            NATIVE_UINT_TYPE getNumArgs(void) {
+            NATIVE_UINT_TYPE getNumArgs() {
                 return this->m_numArgs;
             }
 
-            AssertArg getArg1(void) {
+            AssertArg getArg1() {
                 return this->m_arg1;
             }
 
-            AssertArg getArg2(void) {
+            AssertArg getArg2() {
                 return this->m_arg2;
             }
 
-            AssertArg getArg3(void) {
+            AssertArg getArg3() {
                 return this->m_arg3;
             }
 
-            AssertArg getArg4(void) {
+            AssertArg getArg4() {
                 return this->m_arg4;
             }
 
-            AssertArg getArg5(void) {
+            AssertArg getArg5() {
                 return this->m_arg5;
             }
 
-            AssertArg getArg6(void) {
+            AssertArg getArg6() {
                 return this->m_arg6;
             }
 
-            bool asserted(void) {
+            bool asserted() {
                 bool didAssert = this->m_asserted;
                 this->m_asserted = false;
                 return didAssert;
@@ -874,6 +874,7 @@ TEST(TypesTest, CheckAssertTest) {
 }
 
 TEST(TypesTest,PolyTest) {
+    Fw::EightyCharString str;
 
     // U8 Type  ===============================================================
     U8 in8 = 13;
@@ -885,12 +886,15 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(in8, out8);
 
     // Test assigning to polytype and return type of assignment
-    in8 = 21;
+    in8 = 218;
     // Can assign Polytype to U8 via overridden cast operator
     out8 = (pt = in8);
-    ASSERT_EQ((U8) pt, (U8) 21);
+    ASSERT_EQ((U8) pt, (U8) 218);
     ASSERT_EQ((U8) pt, in8);
     ASSERT_EQ(out8, in8);
+
+    pt.toString(str);
+    ASSERT_STREQ(str.toChar(), "218 ");
 
     // U16 Type  ==============================================================
     U16 inU16 = 34;
@@ -900,10 +904,13 @@ TEST(TypesTest,PolyTest) {
     outU16 = (U16) ptU16;
     ASSERT_EQ(inU16, outU16);
 
-    inU16 = 55;
+    inU16 = 45000;
     outU16 = (ptU16 = inU16);
     ASSERT_EQ((U16) ptU16, inU16);
     ASSERT_EQ(outU16, inU16);
+
+    ptU16.toString(str);
+    ASSERT_STREQ(str.toChar(), "45000 ");
 
     // U32 Type  ==============================================================
     U32 inU32 = 89;
@@ -913,10 +920,13 @@ TEST(TypesTest,PolyTest) {
     outU32 = (U32) ptU32;
     ASSERT_EQ(inU32, outU32);
 
-    inU32 = 144;
+    inU32 = 3222111000;
     outU32 = (ptU32 = inU32);
     ASSERT_EQ((U32) ptU32, inU32);
     ASSERT_EQ(outU32, inU32);
+
+    ptU32.toString(str);
+    ASSERT_STREQ(str.toChar(), "3222111000 ");
 
     // U64 Type  ==============================================================
     U64 inU64 = 233;
@@ -926,10 +936,13 @@ TEST(TypesTest,PolyTest) {
     outU64 = (U64) ptU64;
     ASSERT_EQ(inU64, outU64);
 
-    inU64 = 377;
+    inU64 = 555444333222111;
     outU64 = (ptU64 = inU64);
     ASSERT_EQ((U64) ptU64, inU64);
     ASSERT_EQ(outU64, inU64);
+
+    ptU64.toString(str);
+    ASSERT_STREQ(str.toChar(), "555444333222111 ");
 
     // I8 Type  ===============================================================
     I8 inI8 = 2;
@@ -939,10 +952,13 @@ TEST(TypesTest,PolyTest) {
     outI8 = (I8) ptI8;
     ASSERT_EQ(inI8, outI8);
 
-    inI8 = 3;
+    inI8 = -3;
     outI8 = (ptI8 = inI8);
     ASSERT_EQ((I8) ptI8, inI8);
     ASSERT_EQ(outI8, inI8);
+
+    ptI8.toString(str);
+    ASSERT_STREQ(str.toChar(), "-3 ");
 
     // I16 Type  ==============================================================
     I16 inI16 = 5;
@@ -952,10 +968,13 @@ TEST(TypesTest,PolyTest) {
     outI16 = (I16) ptI16;
     ASSERT_EQ(inI16, outI16);
 
-    inI16 = 7;
+    inI16 = -7;
     outI16 = (ptI16 = inI16);
     ASSERT_EQ((I16) ptI16, inI16);
     ASSERT_EQ(outI16, inI16);
+
+    ptI16.toString(str);
+    ASSERT_STREQ(str.toChar(), "-7 ");
 
     // I32 Type  ==============================================================
     I32 inI32 = 11;
@@ -965,10 +984,13 @@ TEST(TypesTest,PolyTest) {
     outI32 = (I32) ptI32;
     ASSERT_EQ(inI32, outI32);
 
-    inI32 = 13;
+    inI32 = -13;
     outI32 = (ptI32 = inI32);
     ASSERT_EQ((I32) ptI32, inI32);
     ASSERT_EQ(outI32, inI32);
+
+    ptI32.toString(str);
+    ASSERT_STREQ(str.toChar(), "-13 ");
 
     // I64 Type  ==============================================================
     I64 inI64 = 17;
@@ -978,10 +1000,13 @@ TEST(TypesTest,PolyTest) {
     outI64 = (I64) ptI64;
     ASSERT_EQ(inI64, outI64);
 
-    inI64 = 19;
+    inI64 = -19;
     outI64 = (ptI64 = inI64);
     ASSERT_EQ((I64) ptI64, inI64);
     ASSERT_EQ(outI64, inI64);
+
+    ptI64.toString(str);
+    ASSERT_STREQ(str.toChar(), "-19 ");
 
     // F32 Type  ==============================================================
     F32 inF32 = 23.32;

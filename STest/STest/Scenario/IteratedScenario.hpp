@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  IteratedScenario.hpp
 // \author bocchino
 // \brief  Iterate over a collection of scenarios
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_IteratedScenario_HPP
 #define STest_IteratedScenario_HPP
@@ -26,7 +26,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct an IteratedScenario
@@ -36,18 +36,18 @@ namespace STest {
         Scenario<State>(name),
         currentScenario(NULL)
       {
-        
+
       }
 
       //! Destroy an IteratedScenario
-      virtual ~IteratedScenario(void) {
+      virtual ~IteratedScenario() {
 
       }
 
     public:
 
       // ----------------------------------------------------------------------
-      // Public instance methods 
+      // Public instance methods
       // ----------------------------------------------------------------------
 
       //! Return the next scenario to run
@@ -72,7 +72,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
+      void reset_Scenario() {
         this->currentScenario = NULL;
         this->reset_IteratedScenario();
       }
@@ -90,7 +90,7 @@ namespace STest {
           rule = this->currentScenario->nextRule(state);
         }
         while (
-            this->currentScenario != NULL and 
+            this->currentScenario != NULL and
             this->currentScenario->isDone() and
             rule == NULL
         ) {
@@ -104,18 +104,18 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
+      bool isDone_Scenario() const {
         return this->isDone_IteratedScenario();
       }
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected virtual methods 
+      // Protected virtual methods
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by IteratedScenario
-      virtual void reset_IteratedScenario(void) = 0;
+      virtual void reset_IteratedScenario() = 0;
 
       //! The virtual implementation of nextScenario required by IteratedScenario
       //! \return The next scenario, assuming isDone() is false, or NULL if none
@@ -125,12 +125,12 @@ namespace STest {
 
       //! The virtual implementation of isDone required by IteratedScenario
       //! \return Whether the scenario is done
-      virtual bool isDone_IteratedScenario(void) const = 0;
+      virtual bool isDone_IteratedScenario() const = 0;
 
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The current scenario in the iteration

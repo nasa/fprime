@@ -90,7 +90,7 @@ namespace Fw {
             AssertArg arg4,
             AssertArg arg5,
             AssertArg arg6
-         ) 
+         )
     {
         I8 destBuffer[256];
         defaultReportAssert
@@ -111,13 +111,13 @@ namespace Fw {
         this->printAssert(destBuffer);
     }
 
-    void AssertHook::doAssert(void) {
+    void AssertHook::doAssert() {
         assert(0);
     }
 
     STATIC AssertHook* s_assertHook = NULL;
 
-    void AssertHook::registerHook(void) {
+    void AssertHook::registerHook() {
         this->previousHook = s_assertHook;
         s_assertHook = this;
     }

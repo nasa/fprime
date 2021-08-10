@@ -6,7 +6,7 @@
 
 #ifdef BUILD_UT
 #include <iomanip>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #endif
 
 // Some macros/functions to optimize for architectures
@@ -29,7 +29,7 @@ namespace Fw {
 
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Serializable& val) {
-        Fw::EightyCharString out;
+        Fw::String out;
         val.toString(out);
 
         os << out;
@@ -562,12 +562,12 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
-    void SerializeBufferBase::resetSer(void) {
+    void SerializeBufferBase::resetSer() {
         this->m_deserLoc = 0;
         this->m_serLoc = 0;
     }
 
-    void SerializeBufferBase::resetDeser(void) {
+    void SerializeBufferBase::resetDeser() {
         this->m_deserLoc = 0;
     }
 
@@ -584,7 +584,7 @@ namespace Fw {
         return FW_SERIALIZE_OK;
     }
 
-    NATIVE_UINT_TYPE SerializeBufferBase::getBuffLength(void) const {
+    NATIVE_UINT_TYPE SerializeBufferBase::getBuffLength() const {
         return this->m_serLoc;
     }
 
@@ -611,7 +611,7 @@ namespace Fw {
         }
     }
 
-    NATIVE_UINT_TYPE SerializeBufferBase::getBuffLeft(void) const {
+    NATIVE_UINT_TYPE SerializeBufferBase::getBuffLeft() const {
         return this->m_serLoc - this->m_deserLoc;
     }
 
@@ -622,7 +622,7 @@ namespace Fw {
         }
         // otherwise, set destination buffer to data from deserialization pointer plus size
         SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc],size);
-        if (FW_SERIALIZE_OK) {
+        if (stat == FW_SERIALIZE_OK) {
             this->m_deserLoc += size;
         }
         return stat;
@@ -650,12 +650,12 @@ namespace Fw {
 
     // return address of buffer not yet deserialized. This is used
     // to copy the remainder of a buffer.
-    const U8* SerializeBufferBase::getBuffAddrLeft(void) const {
+    const U8* SerializeBufferBase::getBuffAddrLeft() const {
         return &this->getBuffAddr()[this->m_deserLoc];
     }
 
     //!< gets address of end of serialization. Used to manually place data at the end
-    U8* SerializeBufferBase::getBuffAddrSer(void) {
+    U8* SerializeBufferBase::getBuffAddrSer() {
         return &this->getBuffAddr()[this->m_serLoc];
     }
 
@@ -708,20 +708,20 @@ namespace Fw {
         this->m_buffSize = size;
     }
 
-    void ExternalSerializeBuffer::clear(void) {
+    void ExternalSerializeBuffer::clear() {
         this->m_buff = 0;
         this->m_buffSize = 0;
     }
 
-    NATIVE_UINT_TYPE ExternalSerializeBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE ExternalSerializeBuffer::getBuffCapacity() const {
         return this->m_buffSize;
     }
 
-    U8* ExternalSerializeBuffer::getBuffAddr(void) {
+    U8* ExternalSerializeBuffer::getBuffAddr() {
         return this->m_buff;
     }
 
-    const U8* ExternalSerializeBuffer::getBuffAddr(void) const {
+    const U8* ExternalSerializeBuffer::getBuffAddr() const {
         return this->m_buff;
     }
 

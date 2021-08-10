@@ -28,7 +28,7 @@ namespace ExampleComponents {
     ) :
       ExampleComponentBase(compName)
 #else
-    ExampleImpl(void)
+    ExampleImpl()
 #endif
   {
 
@@ -43,7 +43,7 @@ namespace ExampleComponents {
   }
 
   ExampleComponentImpl ::
-    ~ExampleComponentImpl(void)
+    ~ExampleComponentImpl()
   {
 
   }

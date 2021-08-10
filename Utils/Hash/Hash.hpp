@@ -13,7 +13,7 @@
 #ifndef UTILS_HASH_HPP
 #define UTILS_HASH_HPP
 
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/StringType.hpp"
 #include <Utils/Hash/HashBuffer.hpp>
 
 namespace Utils {
@@ -61,7 +61,7 @@ namespace Utils {
 
       //! Initialize a Hash object for incremental hash computation
       //!
-      void init(void);
+      void init();
 
       //! Set hash value to specified value
       //!
@@ -90,18 +90,18 @@ namespace Utils {
       //! Get the file extension for the supported hash type
       //! E.g., could return "SHA256"
       //!
-      static const char* getFileExtensionString(void);
+      static const char* getFileExtensionString();
 
       //! Add the extension for the supported hash type
       //!
       static void addFileExtension(
-          const Fw::EightyCharString& baseName, //!< The base name
-          Fw::EightyCharString& extendedName //!< The extended name
+          const Fw::StringBase& baseName, //!< The base name
+          Fw::StringBase& extendedName //!< The extended name
       );
 
       //! Get the length of the file extension string
       //!
-      static NATIVE_UINT_TYPE getFileExtensionLength(void);
+      static NATIVE_UINT_TYPE getFileExtensionLength();
 
     private:
 

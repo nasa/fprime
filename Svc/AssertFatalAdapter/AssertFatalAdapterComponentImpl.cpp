@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AssertFatalAdapterImpl.cpp
 // \author tcanham
 // \brief  cpp file for AssertFatalAdapter component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
@@ -39,7 +39,7 @@ namespace Fw {
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   AssertFatalAdapterComponentImpl ::
@@ -57,13 +57,13 @@ namespace Svc {
   void AssertFatalAdapterComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     AssertFatalAdapterComponentBase::init(instance);
   }
 
   AssertFatalAdapterComponentImpl ::
-    ~AssertFatalAdapterComponentImpl(void)
+    ~AssertFatalAdapterComponentImpl()
   {
 
   }
@@ -100,7 +100,7 @@ namespace Svc {
   AssertFatalAdapterComponentImpl::AssertFatalAdapter::~AssertFatalAdapter() {
   }
 
-  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert(void) {
+  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert() {
       // do nothing since there will be a FATAL
   }
 

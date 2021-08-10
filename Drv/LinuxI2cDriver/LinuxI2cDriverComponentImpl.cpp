@@ -49,7 +49,7 @@ namespace Drv {
   }
 
   LinuxI2cDriverComponentImpl ::
-    ~LinuxI2cDriverComponentImpl(void)
+    ~LinuxI2cDriverComponentImpl()
   {
     if (-1 != this->m_fd) { // check if file is open
       ::close(this->m_fd);

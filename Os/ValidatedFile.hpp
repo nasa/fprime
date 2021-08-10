@@ -13,7 +13,7 @@
 #ifndef OS_ValidatedFile_HPP
 #define OS_ValidatedFile_HPP
 
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/String.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/ValidateFile.hpp"
 
@@ -33,33 +33,33 @@ namespace Os {
 
       //! Validate the file
       //! \return Status
-      Os::ValidateFile::Status validate(void);
+      Os::ValidateFile::Status validate();
 
       //! Create the hash file
       //! \return Status
-      Os::ValidateFile::Status createHashFile(void);
+      Os::ValidateFile::Status createHashFile();
 
     public:
 
       //! Get the file name
       //! \return The file name
-      const Fw::EightyCharString& getFileName(void) const;
+      const Fw::StringBase& getFileName() const;
 
       //! Get the hash file name
       //! \return The hash file name
-      const Fw::EightyCharString& getHashFileName(void) const;
+      const Fw::StringBase& getHashFileName() const;
 
       //! Get the hash file buffer
       //! \return The hash file buffer
-      const Utils::HashBuffer& getHashBuffer(void) const;
+      const Utils::HashBuffer& getHashBuffer() const;
 
     PRIVATE:
 
       //! The file name
-      Fw::EightyCharString fileName;
+      Fw::String fileName;
 
       //! The hash file name
-      Fw::EightyCharString hashFileName;
+      Fw::String hashFileName;
 
       //! The hash value after creating or loading a validation file
       Utils::HashBuffer hashBuffer;

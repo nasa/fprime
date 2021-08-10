@@ -30,11 +30,11 @@ namespace Svc {
         this->m_timerVal.lower = other.m_timerVal.lower;
     }
 
-    Os::IntervalTimer::RawTime TimerVal::getTimerVal(void) const {
+    Os::IntervalTimer::RawTime TimerVal::getTimerVal() const {
     	return this->m_timerVal;
     }
 
-    void TimerVal::take(void) {
+    void TimerVal::take() {
         Os::IntervalTimer::getRawTime(this->m_timerVal);
     }
 

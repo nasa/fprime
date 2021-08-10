@@ -2,7 +2,7 @@
 // \title  Queue.cpp
 // \author dinkel
 // \brief  Queue implementation using the pthread library. This is NOT
-//         an IPC queue. It is meant to be used between threads within 
+//         an IPC queue. It is meant to be used between threads within
 //         the same address space.
 //
 // \copyright
@@ -19,9 +19,10 @@
 #include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <new>
 
 namespace Os {
-  
+
   // A helper class which stores variables for the queue handle.
   // The queue itself, a pthread condition variable, and pthread
   // mutex are contained within this container class.
@@ -36,7 +37,7 @@ namespace Os {
       ret = pthread_mutex_init(&this->queueLock, NULL);
       FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
     }
-    ~QueueHandle() { 
+    ~QueueHandle() {
       (void) pthread_cond_destroy(&this->queueNotEmpty);
       (void) pthread_cond_destroy(&this->queueNotFull);
       (void) pthread_mutex_destroy(&this->queueLock);
@@ -64,7 +65,7 @@ namespace Os {
     }
 
     // Create queue handle:
-    queueHandle = new QueueHandle;
+    queueHandle = new(std::nothrow) QueueHandle;
     if (NULL == queueHandle) {
       return QUEUE_UNINITIALIZED;
     }
@@ -110,7 +111,7 @@ namespace Os {
     bool pushSucceeded = queue->push(buffer, size, priority);
 
     if(pushSucceeded) {
-      // Push worked - wake up a thread that might be waiting on 
+      // Push worked - wake up a thread that might be waiting on
       // the other end of the queue:
       NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotEmpty);
       FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
@@ -125,7 +126,7 @@ namespace Os {
     FW_ASSERT(ret == 0, errno);
     ////////////////////////////////
     ///////////////////////////////
-   
+
     return status;
   }
 
@@ -149,7 +150,7 @@ namespace Os {
       NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotFull, queueLock);
       FW_ASSERT(ret == 0, errno);
     }
-    
+
     // Push item onto queue:
     bool pushSucceeded = queue->push(buffer, size, priority);
 
@@ -159,7 +160,7 @@ namespace Os {
     // unless there was a programming error or a bit flip.
     FW_ASSERT(pushSucceeded, pushSucceeded);
 
-    // Push worked - wake up a thread that might be waiting on 
+    // Push worked - wake up a thread that might be waiting on
     // the other end of the queue:
     ret = pthread_cond_signal(queueNotEmpty);
     FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
@@ -182,7 +183,7 @@ namespace Os {
     if (NULL == queueHandle) {
         return QUEUE_UNINITIALIZED;
     }
-    
+
     if (NULL == buffer) {
         return QUEUE_EMPTY_BUFFER;
     }
@@ -224,11 +225,11 @@ namespace Os {
         actualSize = (NATIVE_INT_TYPE) size;
         priority = pri;
 
-        // Pop worked - wake up a thread that might be waiting on 
+        // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
         NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
-      } 
+      }
       else {
         actualSize = 0;
         if( size > (NATIVE_UINT_TYPE) capacity ) {
@@ -278,7 +279,7 @@ namespace Os {
         NATIVE_INT_TYPE ret = pthread_cond_wait(queueNotEmpty, queueLock);
         FW_ASSERT(ret == 0, errno);
       }
-      
+
       // Get an item off of the queue:
       bool popSucceeded = queue->pop(buffer, size, pri);
 
@@ -287,11 +288,11 @@ namespace Os {
         actualSize = (NATIVE_INT_TYPE) size;
         priority = pri;
 
-        // Pop worked - wake up a thread that might be waiting on 
+        // Pop worked - wake up a thread that might be waiting on
         // the send end of the queue:
         NATIVE_INT_TYPE ret = pthread_cond_signal(queueNotFull);
         FW_ASSERT(ret == 0, errno); // If this fails, something horrible happened.
-      } 
+      }
       else {
         actualSize = 0;
         if( size > (NATIVE_UINT_TYPE) capacity ) {
@@ -340,7 +341,7 @@ namespace Os {
       return receiveBlock(queueHandle, buffer, capacity, actualSize, priority);
   }
 
-  NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
+  NATIVE_INT_TYPE Queue::getNumMsgs() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -349,7 +350,7 @@ namespace Os {
       return queue->getCount();
   }
 
-  NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
+  NATIVE_INT_TYPE Queue::getMaxMsgs() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -358,7 +359,7 @@ namespace Os {
       return queue->getMaxCount();
   }
 
-  NATIVE_INT_TYPE Queue::getQueueSize(void) const {
+  NATIVE_INT_TYPE Queue::getQueueSize() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;
@@ -367,7 +368,7 @@ namespace Os {
       return queue->getDepth();
   }
 
-  NATIVE_INT_TYPE Queue::getMsgSize(void) const {
+  NATIVE_INT_TYPE Queue::getMsgSize() const {
       QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
       if (NULL == queueHandle) {
           return 0;

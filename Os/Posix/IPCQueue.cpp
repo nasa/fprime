@@ -19,6 +19,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <new>
 
 #define IPC_QUEUE_TIMEOUT_SEC (1)
 
@@ -84,7 +85,7 @@ namespace Os {
         }
 
         // Set up queue handle:
-        QueueHandle* queueHandle = new QueueHandle(handle);
+        QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
         if (NULL == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }
@@ -221,7 +222,7 @@ namespace Os {
         return QUEUE_OK;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getNumMsgs(void) const {
+    NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 
@@ -231,12 +232,12 @@ namespace Os {
         return (U32) attr.mq_curmsgs;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getMaxMsgs(void) const {
+    NATIVE_INT_TYPE IPCQueue::getMaxMsgs() const {
         //FW_ASSERT(0);
         return 0;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getQueueSize(void) const {
+    NATIVE_INT_TYPE IPCQueue::getQueueSize() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 
@@ -246,7 +247,7 @@ namespace Os {
         return (U32) attr.mq_maxmsg;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getMsgSize(void) const {
+    NATIVE_INT_TYPE IPCQueue::getMsgSize() const {
         QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
         mqd_t handle = queueHandle->handle;
 

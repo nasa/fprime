@@ -20,7 +20,7 @@ namespace ANameSpace {
             TYPE_ID = 2000
         };
 
-        mytype(void); // Default constructor
+        mytype(); // Default constructor
         mytype(const mytype* src); // copy constructor
         mytype(const mytype& src); // copy constructor
         mytype(U32 arg); // constructor with arguments
@@ -29,7 +29,7 @@ namespace ANameSpace {
 
         void setVal(U32 arg); // set values
 
-        U32 getVal(void);
+        U32 getVal();
 
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const;
         Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);

@@ -47,7 +47,7 @@ $emit_non_port_params($params_init_cpp)
   }
 
   ${name}ComponentImpl ::
-    ~${name}ComponentImpl(void)
+    ~${name}ComponentImpl()
   {
 
   }
@@ -64,7 +64,7 @@ $emit_non_port_params($params_init_cpp)
 $emit_port_params([ $param_portNum ] + $port_params[instance])
     )
   {
-    #if $return_type[:-1] == "void":    
+    #if $return_type[:-1] == "void":
     // TODO
     #else:
     // TODO return
@@ -103,7 +103,7 @@ $emit_non_port_params([ $param_opCode, $param_cmdSeq ] + $params)
     )
   {
     // TODO
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   #end for

@@ -111,7 +111,7 @@ class TestRefAppClass(object):
         try:
             self.api.send_command(
                 "eventLogger.SET_EVENT_FILTER",
-                ["FILTER_" + severity, "FILTER_" + enabled],
+                [severity, enabled],
             )
             return True
         except AssertionError:
@@ -264,7 +264,20 @@ class TestRefAppClass(object):
             self.set_default_filters()
 
     def test_seqgen(self):
-        """ Tests the seqgen code """
+        """Tests the seqgen code"""
         sequence = os.path.join(os.path.dirname(__file__), "test_seq.seq")
-        assert subprocess.run(["fprime-seqgen", "-d", self.dictionary, sequence, "/tmp/ref_test_int.bin"]).returncode == 0, "Failed to run fprime-seqgen"
-        self.assert_command("cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin"], max_delay=5)
+        assert (
+            subprocess.run(
+                [
+                    "fprime-seqgen",
+                    "-d",
+                    self.dictionary,
+                    sequence,
+                    "/tmp/ref_test_int.bin",
+                ]
+            ).returncode
+            == 0
+        ), "Failed to run fprime-seqgen"
+        self.assert_command(
+            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin"], max_delay=5
+        )

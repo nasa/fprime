@@ -8,7 +8,7 @@
 
 namespace ANameSpace {
 
-UserSerializer::UserSerializer(void): Serializable() {
+UserSerializer::UserSerializer(): Serializable() {
 
 }
 
@@ -44,8 +44,9 @@ Fw::SerializeStatus UserSerializer::serialize(Fw::SerializeBufferBase& buffer) c
 
 Fw::SerializeStatus UserSerializer::deserialize(Fw::SerializeBufferBase& buffer) {
     NATIVE_UINT_TYPE serSize = sizeof(m_struct);
-    return buffer.deserialize((U8*)&m_struct,serSize);
+    Fw::SerializeStatus stat =  buffer.deserialize((U8*)&m_struct,serSize);
     FW_ASSERT(serSize == sizeof(m_struct));
+    return stat;
 }
 
 

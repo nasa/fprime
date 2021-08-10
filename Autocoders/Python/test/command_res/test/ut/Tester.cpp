@@ -23,7 +23,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
@@ -37,7 +37,7 @@ namespace Cmd {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -47,7 +47,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-      residualTest(void)
+      residualTest()
   {
       // This test will do different things based on the configuration macro FW_CMD_CHECK_RESIDUAL
       // If it is on, a command failure will be checked. If not, command success will be checked.
@@ -73,11 +73,11 @@ namespace Cmd {
 #if FW_CMD_CHECK_RESIDUAL
       // should fail
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::COMMAND_FORMAT_ERROR);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::CmdResponse::FORMAT_ERROR);
 #else
       // should pass
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_1,10,Fw::CmdResponse::OK);
 #endif
 
       // second async command
@@ -101,11 +101,11 @@ namespace Cmd {
 #if FW_CMD_CHECK_RESIDUAL
       // should fail
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::COMMAND_FORMAT_ERROR);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::CmdResponse::FORMAT_ERROR);
 #else
       // should pass
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,Test1ComponentBase::OPCODE_TEST_CMD_2,20,Fw::CmdResponse::OK);
 #endif
 
   }
@@ -115,7 +115,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // aport
@@ -145,7 +145,7 @@ namespace Cmd {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(QUEUE_DEPTH,

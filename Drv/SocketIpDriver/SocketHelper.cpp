@@ -83,11 +83,11 @@ namespace Drv {
         return SOCK_SUCCESS;
     }
 
-    bool SocketHelper::isOpened(void) {
+    bool SocketHelper::isOpened() {
         return (-1 != this->m_socketInFd);
     }
 
-    void SocketHelper::close(void) {
+    void SocketHelper::close() {
         if (this->m_socketInFd != -1) {
             (void) ::close(this->m_socketInFd);
         }
@@ -95,7 +95,7 @@ namespace Drv {
         this->m_socketOutFd = -1;
     }
 
-    SocketIpStatus SocketHelper::open(void) {
+    SocketIpStatus SocketHelper::open() {
 
         SocketIpStatus status = SOCK_SUCCESS;
         // Only the input (TCP) socket needs closing

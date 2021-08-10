@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <string.h>
+#include <new>
 
 #define CAS(a_ptr, a_oldVal, a_newVal) __sync_bool_compare_and_swap(a_ptr, a_oldVal, a_newVal)
 
@@ -19,8 +20,9 @@ namespace Os {
         // Must have at least 2 messages in the queue
         FW_ASSERT(maxmsg >= 2, maxmsg);
 
-        m_index = new QueueNode[maxmsg]; // Allocate an index entry for each msg
-        m_data = new U8[maxmsg * msgsize];  // Allocate data for each msg
+        m_index = new(std::nothrow) QueueNode[maxmsg]; // Allocate an index entry for each msg
+        m_data = new(std::nothrow) U8[maxmsg * msgsize];  // Allocate data for each msg
+        FW_ASSERT(m_index != NULL);
         FW_ASSERT(m_data != NULL);
 
         for (int i = 0, j = 1; i < maxmsg; i++, j++) {

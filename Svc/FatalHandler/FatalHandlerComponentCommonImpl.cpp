@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FatalHandlerImpl.cpp
 // \author tcanham
 // \brief  cpp file for FatalHandler component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
@@ -17,7 +17,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   FatalHandlerComponentImpl ::
@@ -31,13 +31,13 @@ namespace Svc {
   void FatalHandlerComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     FatalHandlerComponentBase::init(instance);
   }
 
   FatalHandlerComponentImpl ::
-    ~FatalHandlerComponentImpl(void)
+    ~FatalHandlerComponentImpl()
   {
 
   }

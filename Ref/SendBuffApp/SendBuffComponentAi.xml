@@ -1,167 +1,258 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="SendBuff" kind="queued" namespace="Ref">
-    <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
-    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
-    <comment>A rate group active component with input and output scheduler ports</comment>
-    <ports>
-        <!-- Input scheduler port -->
-        <port name="SchedIn" data_type="Sched" kind="sync_input" max_number="1">
-            <comment>
-            The rate group scheduler input
-            </comment>
-        </port>
-    
-        <!-- Output data buffer port -->
-        <port name="Data" data_type="Drv::DataBuffer" kind="output" max_number="1">
-            <comment>
-            The data buffer output
-            </comment>
-        </port>
-    </ports>
-    <commands>
-        <command kind="async" opcode="0" mnemonic="SB_START_PKTS">
-            <comment>
-            Command to start sending packets
-            </comment>
-        </command>
-        <command kind="async" opcode="1" mnemonic="SB_INJECT_PKT_ERROR" >
-            <comment>
-            Send a bad packet
-            </comment>
-        </command>
-        <command kind="async" opcode="2" mnemonic="SB_GEN_FATAL" >
-            <comment>
-            Generate a FATAL EVR
-            </comment>
-            <args>
-                <arg name="arg1" type="U32">
-                    <comment>First FATAL Argument</comment>
-                </arg>          
-                <arg name="arg2" type="U32">
-                    <comment>Second FATAL Argument</comment>
-                </arg>          
-                <arg name="arg3" type="U32">
-                    <comment>Third FATAL Argument</comment>
-                </arg>          
-             </args>
-        </command>
-        <command kind="async" opcode="3" mnemonic="SB_GEN_ASSERT" >
-            <comment>
-            Generate an ASSERT
-            </comment>
-            <args>
-                <arg name="arg1" type="U32">
-                    <comment>First ASSERT Argument</comment>
-                </arg>          
-                <arg name="arg2" type="U32">
-                    <comment>Second ASSERT Argument</comment>
-                </arg>          
-                <arg name="arg3" type="U32">
-                    <comment>Third ASSERT Argument</comment>
-                </arg>          
-                <arg name="arg4" type="U32">
-                    <comment>Fourth ASSERT Argument</comment>
-                </arg>          
-                <arg name="arg5" type="U32">
-                    <comment>Fifth ASSERT Argument</comment>
-                </arg>          
-                <arg name="arg6" type="U32">
-                    <comment>Sixth ASSERT Argument</comment>
-                </arg>          
-             </args>
-        </command>
-    </commands>
-    <telemetry>
-        <channel id="0" name="PacketsSent" data_type="U64" abbrev="R001-0000">
-            <comment>
-            Number of packets sent
-            </comment>
-        </channel>
-        <channel id="1" name="NumErrorsInjected" data_type="U32"  abbrev="R000-1000" update="on_change">
-            <comment>
-            Number of errors injected
-            </comment>
-        </channel>
-        <channel id="2" name="Parameter3" data_type="U8" abbrev="R000-2000" update="on_change">
-            <comment>
-            Readback of Parameter3
-            </comment>
-        </channel>
-        <channel id="3" name="Parameter4" data_type="F32" abbrev="R000-3000" update="on_change">
-            <comment>
-            Readback of Parameter4
-            </comment>
-        </channel>
-        <channel id="4" name="SendState" data_type="ENUM" abbrev="R000-4000">
-            <enum name="ActiveState">
-                <item name="SEND_IDLE"/>
-                <item name="SEND_ACTIVE"/>
-            </enum>
-            <comment>
-            Readback of Parameter4
-            </comment>
-        </channel>
-    </telemetry>
-    <events>
-        <event id="0" name="FirstPacketSent" severity="ACTIVITY_HI" format_string = "First packet ID %d received" >
-            <comment>
-            First packet send
-            </comment>
-            <args>
-                <arg name="id" type="U32">
-                    <comment>The ID argument</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="1" name="PacketErrorInserted" severity="WARNING_HI" format_string = "Inserted error in packet ID %d" >
-            <comment>
-            Packet checksum error
-            </comment>
-            <args>
-                <arg name="id" type="U32">
-                    <comment>The ID argument</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="2" name="BuffSendParameterUpdated" severity="ACTIVITY_LO" format_string = "BuffSend Parameter %d was updated" >
-            <comment>
-            Report parameter update
-            </comment>
-            <args>
-                <arg name="id" type="U32">
-                    <comment>The ID argument</comment>
-                </arg>          
-            </args>
-        </event>
-        <event id="3" name="SendBuffFatal" severity="FATAL" format_string = "Test Fatal: %d %d %d" >
-            <comment>
-            A test FATAL
-            </comment>
-            <args>
-                <arg name="arg1" type="U32">
-                    <comment>First FATAL argument</comment>
-                </arg>          
-                <arg name="arg2" type="U32">
-                    <comment>Second FATAL argument</comment>
-                </arg>          
-                <arg name="arg3" type="U32">
-                    <comment>Second FATAL argument</comment>
-                </arg>          
-            </args>
-        </event>
-    </events>
-    <parameters>
-        <parameter id="0" set_opcode="10" save_opcode="11" name="parameter3" data_type="U8" default="12">
-            <comment>
-            A test parameter
-            </comment>
-        </parameter>
-        <parameter id="1" set_opcode="12" save_opcode="13" name="parameter4" data_type="F32" default="13.14">
-            <comment>
-            A test parameter
-            </comment>
-        </parameter>
-    </parameters>    
-    
-</component>
 
+<!-- =====================================================================
+SendBuffComponentAi.xml
+Generated by fpp-to-xml
+====================================================================== -->
+<component namespace="Ref" name="SendBuff" kind="queued">
+
+  <comment>
+  A rate group active component with input and output scheduler ports
+  </comment>
+
+  <import_enum_type>Ref/SendBuffApp/SendBuff_ActiveStateEnumAi.xml</import_enum_type>
+  <import_port_type>Drv/DataTypes/DataBufferPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdRegPortAi.xml</import_port_type>
+  <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
+  <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
+  <import_port_type>Fw/Prm/PrmGetPortAi.xml</import_port_type>
+  <import_port_type>Fw/Prm/PrmSetPortAi.xml</import_port_type>
+  <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+  <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+  <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+
+  <ports>
+    <port name="CmdDisp" data_type="Fw::Cmd" kind="input" role="Cmd" max_number="1">
+      <comment>
+      Command receive port
+      </comment>
+    </port>
+    <port name="CmdReg" data_type="Fw::CmdReg" kind="output" role="CmdRegistration" max_number="1">
+      <comment>
+      Command registration port
+      </comment>
+    </port>
+    <port name="CmdStatus" data_type="Fw::CmdResponse" kind="output" role="CmdResponse" max_number="1">
+      <comment>
+      Command response port
+      </comment>
+    </port>
+    <port name="Data" data_type="Drv::DataBuffer" kind="output" max_number="1">
+      <comment>
+      The data buffer output
+      </comment>
+    </port>
+    <port name="Log" data_type="Fw::Log" kind="output" role="LogEvent" max_number="1">
+      <comment>
+      Event port
+      </comment>
+    </port>
+    <port name="LogText" data_type="Fw::LogText" kind="output" role="LogTextEvent" max_number="1">
+      <comment>
+      Text event port
+      </comment>
+    </port>
+    <port name="ParamGet" data_type="Fw::PrmGet" kind="output" role="ParamGet" max_number="1">
+      <comment>
+      Param get port
+      </comment>
+    </port>
+    <port name="ParamSet" data_type="Fw::PrmSet" kind="output" role="ParamSet" max_number="1">
+      <comment>
+      Param set port
+      </comment>
+    </port>
+    <port name="SchedIn" data_type="Svc::Sched" kind="sync_input" max_number="1">
+      <comment>
+      The rate group scheduler input
+      </comment>
+    </port>
+    <port name="Time" data_type="Fw::Time" kind="output" role="TimeGet" max_number="1">
+      <comment>
+      Time get port
+      </comment>
+    </port>
+    <port name="Tlm" data_type="Fw::Tlm" kind="output" role="Telemetry" max_number="1">
+      <comment>
+      Telemetry port
+      </comment>
+    </port>
+  </ports>
+
+  <commands>
+    <command kind="async" opcode="0x0" mnemonic="SB_START_PKTS" full="assert">
+      <comment>
+      Command to start sending packets
+      </comment>
+    </command>
+    <command kind="async" opcode="0x1" mnemonic="SB_INJECT_PKT_ERROR" full="assert">
+      <comment>
+      Send a bad packet
+      </comment>
+    </command>
+    <command kind="async" opcode="0x2" mnemonic="SB_GEN_FATAL" full="assert">
+      <comment>
+      Generate a FATAL EVR
+      </comment>
+      <args>
+        <arg name="arg1" type="U32">
+          <comment>
+          First FATAL Argument
+          </comment>
+        </arg>
+        <arg name="arg2" type="U32">
+          <comment>
+          Second FATAL Argument
+          </comment>
+        </arg>
+        <arg name="arg3" type="U32">
+          <comment>
+          Third FATAL Argument
+          </comment>
+        </arg>
+      </args>
+    </command>
+    <command kind="async" opcode="0x3" mnemonic="SB_GEN_ASSERT" full="assert">
+      <comment>
+      Generate an ASSERT
+      </comment>
+      <args>
+        <arg name="arg1" type="U32">
+          <comment>
+          First ASSERT Argument
+          </comment>
+        </arg>
+        <arg name="arg2" type="U32">
+          <comment>
+          Second ASSERT Argument
+          </comment>
+        </arg>
+        <arg name="arg3" type="U32">
+          <comment>
+          Third ASSERT Argument
+          </comment>
+        </arg>
+        <arg name="arg4" type="U32">
+          <comment>
+          Fourth ASSERT Argument
+          </comment>
+        </arg>
+        <arg name="arg5" type="U32">
+          <comment>
+          Fifth ASSERT Argument
+          </comment>
+        </arg>
+        <arg name="arg6" type="U32">
+          <comment>
+          Sixth ASSERT Argument
+          </comment>
+        </arg>
+      </args>
+    </command>
+  </commands>
+
+  <events>
+    <event id="0x0" name="FirstPacketSent" severity="ACTIVITY_HI" format_string="First packet ID %u received">
+      <comment>
+      First packet send
+      </comment>
+      <args>
+        <arg name="id" type="U32">
+          <comment>
+          The ID argument
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x1" name="PacketErrorInserted" severity="WARNING_HI" format_string="Inserted error in packet ID %u">
+      <comment>
+      Packet checksum error
+      </comment>
+      <args>
+        <arg name="id" type="U32">
+          <comment>
+          The ID argument
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x2" name="BuffSendParameterUpdated" severity="ACTIVITY_LO" format_string="BuffSend Parameter %u was updated">
+      <comment>
+      Report parameter update
+      </comment>
+      <args>
+        <arg name="id" type="U32">
+          <comment>
+          The ID argument
+          </comment>
+        </arg>
+      </args>
+    </event>
+    <event id="0x3" name="SendBuffFatal" severity="FATAL" format_string="Test Fatal: %u %u %u">
+      <comment>
+      A test FATAL
+      </comment>
+      <args>
+        <arg name="arg1" type="U32">
+          <comment>
+          First FATAL argument
+          </comment>
+        </arg>
+        <arg name="arg2" type="U32">
+          <comment>
+          Second FATAL argument
+          </comment>
+        </arg>
+        <arg name="arg3" type="U32">
+          <comment>
+          Second FATAL argument
+          </comment>
+        </arg>
+      </args>
+    </event>
+  </events>
+
+  <parameters>
+    <parameter id="0x0" set_opcode="0xA" save_opcode="0xB" name="parameter3" data_type="U8" default="12">
+      <comment>
+      A test parameter
+      </comment>
+    </parameter>
+    <parameter id="0x1" set_opcode="0xC" save_opcode="0xD" name="parameter4" data_type="F32" default="13.14">
+      <comment>
+      A test parameter
+      </comment>
+    </parameter>
+  </parameters>
+
+  <telemetry>
+    <channel id="0x0" name="PacketsSent" data_type="U64" update="always">
+      <comment>
+      Number of packets sent
+      </comment>
+    </channel>
+    <channel id="0x1" name="NumErrorsInjected" data_type="U32" update="on_change">
+      <comment>
+      Number of errors injected
+      </comment>
+    </channel>
+    <channel id="0x2" name="Parameter3" data_type="U8" update="on_change">
+      <comment>
+      Readback of Parameter3
+      </comment>
+    </channel>
+    <channel id="0x3" name="Parameter4" data_type="F32" update="on_change">
+      <comment>
+      Readback of Parameter4
+      </comment>
+    </channel>
+    <channel id="0x4" name="SendState" data_type="Ref::SendBuff_ActiveState" update="always">
+      <comment>
+      Readback of Parameter4
+      </comment>
+    </channel>
+  </telemetry>
+
+</component>

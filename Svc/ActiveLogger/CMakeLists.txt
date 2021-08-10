@@ -9,6 +9,8 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger_EnabledEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger_FilterSeverityEnumAi.xml"
 )
 
 register_fprime_module()

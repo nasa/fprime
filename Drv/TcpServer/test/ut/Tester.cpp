@@ -42,7 +42,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Start up a receive thread
     if (recv_thread) {
-        Fw::EightyCharString name("receiver thread");
+        Os::TaskString name("receiver thread");
         this->component.startSocketTask(name, 50, 1024, true);
     }
 
@@ -74,7 +74,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
             m_data_buffer.setSize(sizeof(m_data_storage));
             Drv::Test::fill_random_buffer(m_data_buffer);
             Drv::SendStatus status = invoke_to_send(0, m_data_buffer);
-            EXPECT_EQ(status, Drv::SEND_OK);
+            EXPECT_EQ(status, SendStatus::SEND_OK);
             status2 = client.recv(buffer, size);
             EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
             EXPECT_EQ(size, m_data_buffer.getSize());
@@ -88,18 +88,20 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
                 while (not m_spinner) {}
             }
         }
-        this->component.close();
-        client.close();
+        client.close(); // Client must be closed first or the server risks binding to an existing address
+        // Properly stop the client on the last iteration
+        if ((1 + i) == iterations && recv_thread) {
+            this->component.shutdown();
+            this->component.stopSocketTask();
+            this->component.joinSocketTask(NULL);
+        } else {
+            this->component.close();
+        }
     }
-    // Wait for the receiver to shutdown
-    if (recv_thread) {
-        this->component.shutdown();
-        this->component.stopSocketTask();
-        this->component.joinSocketTask(NULL);
-    }
+    ASSERT_from_ready_SIZE(iterations);
 }
 
-Tester ::Tester(void)
+Tester ::Tester()
     : ByteStreamDriverModelGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ByteStreamDriverModel"),
       m_data_buffer(m_data_storage, 0), m_spinner(true) {
@@ -108,13 +110,13 @@ Tester ::Tester(void)
     ::memset(m_data_storage, 0, sizeof(m_data_storage));
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_basic_messaging(void) {
+void Tester ::test_basic_messaging() {
     test_with_loop(1);
 }
 
@@ -122,11 +124,11 @@ void Tester ::test_multiple_messaging() {
     test_with_loop(100);
 }
 
-void Tester ::test_receive_thread(void) {
+void Tester ::test_receive_thread() {
     test_with_loop(1, true);
 }
 
-void Tester ::test_advanced_reconnect(void) {
+void Tester ::test_advanced_reconnect() {
     test_with_loop(10, true); // Up to 10 * RECONNECT_MS
 }
 
@@ -141,6 +143,10 @@ void Tester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvB
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
     m_spinner = true;
     delete[] recvBuffer.getData();
+}
+
+void Tester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer Tester ::
@@ -169,7 +175,7 @@ Fw::Buffer Tester ::
 // ----------------------------------------------------------------------
 
 void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // send
@@ -190,6 +196,12 @@ void Tester ::
         this->get_from_recv(0)
     );
 
+    // recv
+    this->component.set_ready_OutputPort(
+      0,
+      this->get_from_ready(0)
+    );
+
     // allocate
     this->component.set_allocate_OutputPort(
         0,
@@ -203,7 +215,7 @@ void Tester ::
     );
   }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

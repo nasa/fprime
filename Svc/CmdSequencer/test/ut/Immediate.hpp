@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Immediate.hpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with  record
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_Immediate_HPP
 #define Svc_Immediate_HPP
@@ -32,64 +32,64 @@ namespace Svc {
 
         //! Construct object Tester
         Tester(
-            const SequenceFiles::File::Format::t format = 
+            const SequenceFiles::File::Format::t format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Tests
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Don't load any sequence, then try to run a sequence
-        void NeverLoaded(void);
+        void NeverLoaded();
 
         //! Inject file errors
-        void FileErrors(void);
+        void FileErrors();
 
-        //! Load a sequence, then run a sequence, then try to run a pre-loaded 
+        //! Load a sequence, then run a sequence, then try to run a pre-loaded
         //! sequence
-        void LoadRunRun(void);
+        void LoadRunRun();
 
         //! Run a complete sequence and then issue a command response
-        void UnexpectedCommandResponse(void);
+        void UnexpectedCommandResponse();
 
         //! Run a sequence and, while it is running, start a new sequence
         //! The new sequence should cause an error
-        void NewSequence(void);
+        void NewSequence();
 
         //! Run a sequence manually
-        void Manual(void);
+        void Manual();
 
         //! Run a sequence with failed commands
-        void FailedCommands(void);
+        void FailedCommands();
 
         //! Run an automatic sequence by command
-        void AutoByCommand(void);
+        void AutoByCommand();
 
         //! Run an automatic sequence through a port call
-        void AutoByPort(void);
+        void AutoByPort();
 
         //! Send invalid manual commands while a sequence is running
-        void InvalidManualCommands(void);
+        void InvalidManualCommands();
 
         //! Load a sequence on initialization and then run it
-        void LoadOnInit(void);
+        void LoadOnInit();
 
         //! Sequence timeout
-        void SequenceTimeout(void);
+        void SequenceTimeout();
 
         //! Start and cancel a sequence
-        void Cancel(void);
+        void Cancel();
 
         //! Validate a sequence file
-        void Validate(void);
+        void Validate();
 
       private:
 
         // ----------------------------------------------------------------------
-        // Private helper methods 
+        // Private helper methods
         // ----------------------------------------------------------------------
 
         //! Execute commands for a manual sequence

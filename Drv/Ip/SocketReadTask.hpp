@@ -83,7 +83,7 @@ class SocketReadTask {
      * Called to stop the socket read task. It is an error to call this before the thread has been started using the
      * startSocketTask call. This will stop the read task and close the client socket.
      */
-    void stopSocketTask(void);
+    void stopSocketTask();
 
     /**
      * \brief joins to the stopping read task to wait for it to close
@@ -132,6 +132,11 @@ class SocketReadTask {
      * \return Fw::Buffer filled with data to send out
      */
     virtual void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) = 0;
+
+    /**
+     * \brief called when the IPv4 system has been connected
+     */
+    virtual void connected() = 0;
 
     /**
      * \brief a task designed to read from the socket and output incoming data

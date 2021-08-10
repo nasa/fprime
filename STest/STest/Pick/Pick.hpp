@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Pick.hpp
 // \author AUTO-GENERATED: DO NOT EDIT
 // \brief  Pick interface
@@ -24,7 +24,7 @@ namespace STest {
   namespace Pick {
 
     //! Pick a double value in the interval [0, 1]
-    double inUnitInterval(void);
+    double inUnitInterval();
 
     //! Return a U32 value in the range given by [start, start + length - 1].
     //! For example, startLength(5, 3) returns a number
@@ -46,7 +46,7 @@ namespace STest {
 
     //! Return an arbitrary U32 value
     //! \return The U32 value
-    U32 any(void);
+    U32 any();
 
   }
 

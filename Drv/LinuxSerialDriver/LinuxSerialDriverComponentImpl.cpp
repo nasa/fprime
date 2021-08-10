@@ -13,7 +13,7 @@
 
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <Fw/Types/EightyCharString.hpp>
+#include <Os/TaskString.hpp>
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
@@ -264,7 +264,7 @@ namespace Drv {
   }
 
   LinuxSerialDriverComponentImpl ::
-    ~LinuxSerialDriverComponentImpl(void)
+    ~LinuxSerialDriverComponentImpl()
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing UART device %d\n", this->m_fd);
@@ -400,14 +400,14 @@ namespace Drv {
   void LinuxSerialDriverComponentImpl ::
     startReadThread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
 
-      Fw::EightyCharString task("SerReader");
+      Os::TaskString task("SerReader");
       Os::Task::TaskStatus stat = this->m_readTask.start(task, 0, priority, stackSize,
                                                          serialReadTaskEntry, this, cpuAffinity);
       FW_ASSERT(stat == Os::Task::TASK_OK, stat);
   }
 
   void LinuxSerialDriverComponentImpl ::
-    quitReadThread(void) {
+    quitReadThread() {
       this->m_quitReadThread = true;
   }
 

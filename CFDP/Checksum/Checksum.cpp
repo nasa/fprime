@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CFDP/Checksum/Checksum.cpp
 // \author bocchino
 // \brief  cpp file for CFDP checksum class
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "CFDP/Checksum/Checksum.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -49,25 +49,25 @@ namespace CFDP {
     this->value = checksum.value;
     return *this;
   }
-    
+
   bool Checksum ::
     operator==(const Checksum& checksum) const
   {
     return this->value == checksum.value;
   }
-    
+
   bool Checksum ::
     operator!=(const Checksum& checksum) const
   {
     return not (*this == checksum);
   }
-  
+
   U32 Checksum ::
-    getValue(void) const
+    getValue() const
   {
     return this->value;
   }
-  
+
   void Checksum ::
     update(
         const U8 *const data,
@@ -97,7 +97,7 @@ namespace CFDP {
     if (index < length) {
       const U8 wordLength = static_cast<U8>(length - index);
       this->addWordUnaligned(
-          &data[index], 
+          &data[index],
           static_cast<U8>(offset + index),
           wordLength
       );
@@ -111,12 +111,12 @@ namespace CFDP {
     for (U8 i = 0; i < 4; ++i)
       addByteAtOffset(word[i], i);
   }
-  
-  void Checksum :: 
+
+  void Checksum ::
     addWordUnaligned(
         const U8 *word,
-        const U8 position, 
-        const U8 length 
+        const U8 position,
+        const U8 length
     )
   {
     FW_ASSERT(length < 4);

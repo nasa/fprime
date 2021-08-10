@@ -1,12 +1,14 @@
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <stdio.h>
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 namespace Fw {
 
     // U8 methods
 
-    PolyType::PolyType(void) {
+    PolyType::PolyType() {
         this->m_dataType = TYPE_NOTYPE;
     }
 
@@ -25,7 +27,7 @@ namespace Fw {
         val = this->m_val.u8Val;
     }
 
-    bool PolyType::isU8(void) {
+    bool PolyType::isU8() {
         return (TYPE_U8 == this->m_dataType);
     }
 
@@ -52,7 +54,7 @@ namespace Fw {
         val = this->m_val.i8Val;
     }
 
-    bool PolyType::isI8(void) {
+    bool PolyType::isI8() {
         return (TYPE_I8 == this->m_dataType);
     }
 
@@ -81,7 +83,7 @@ namespace Fw {
         val = this->m_val.u16Val;
     }
 
-    bool PolyType::isU16(void) {
+    bool PolyType::isU16() {
         return (TYPE_U16 == this->m_dataType);
     }
 
@@ -108,7 +110,7 @@ namespace Fw {
         val = this->m_val.i16Val;
     }
 
-    bool PolyType::isI16(void) {
+    bool PolyType::isI16() {
         return (TYPE_I16 == this->m_dataType);
     }
 
@@ -139,7 +141,7 @@ namespace Fw {
         val = this->m_val.u32Val;
     }
 
-    bool PolyType::isU32(void) {
+    bool PolyType::isU32() {
         return (TYPE_U32 == this->m_dataType);
     }
 
@@ -166,7 +168,7 @@ namespace Fw {
         val = this->m_val.i32Val;
     }
 
-    bool PolyType::isI32(void) {
+    bool PolyType::isI32() {
         return (TYPE_I32 == this->m_dataType);
     }
 
@@ -196,7 +198,7 @@ namespace Fw {
         val = this->m_val.u64Val;
     }
 
-    bool PolyType::isU64(void) {
+    bool PolyType::isU64() {
         return (TYPE_U64 == this->m_dataType);
     }
 
@@ -223,7 +225,7 @@ namespace Fw {
         val = this->m_val.i64Val;
     }
 
-    bool PolyType::isI64(void) {
+    bool PolyType::isI64() {
         return (TYPE_I64 == this->m_dataType);
     }
 
@@ -252,7 +254,7 @@ namespace Fw {
         val = this->m_val.f64Val;
     }
 
-    bool PolyType::isF64(void) {
+    bool PolyType::isF64() {
         return (TYPE_F64 == this->m_dataType);
     }
 
@@ -278,7 +280,7 @@ namespace Fw {
         val = this->m_val.f32Val;
     }
 
-    bool PolyType::isF32(void) {
+    bool PolyType::isF32() {
         return (TYPE_F32 == this->m_dataType);
     }
 
@@ -303,7 +305,7 @@ namespace Fw {
         val = this->m_val.boolVal;
     }
 
-    bool PolyType::isBool(void) {
+    bool PolyType::isBool() {
         return (TYPE_BOOL == this->m_dataType);
     }
 
@@ -328,7 +330,7 @@ namespace Fw {
         val = this->m_val.ptrVal;
     }
 
-    bool PolyType::isPtr(void) {
+    bool PolyType::isPtr() {
         return (TYPE_PTR == this->m_dataType);
     }
 
@@ -343,7 +345,7 @@ namespace Fw {
         this->m_val = original.m_val;
     }
 
-    PolyType::~PolyType(void) {
+    PolyType::~PolyType() {
     }
 
     const PolyType& PolyType::operator=(const PolyType &src) {
@@ -612,51 +614,51 @@ namespace Fw {
 
         switch (this->m_dataType) {
             case TYPE_U8:
-                (void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u8Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu8 " ", this->m_val.u8Val);
                 break;
             case TYPE_I8:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i8Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId8 " ", this->m_val.i8Val);
                 break;
 #if FW_HAS_16_BIT
             case TYPE_U16:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u16Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu16 " ", this->m_val.u16Val);
                 break;
             case TYPE_I16:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i16Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId16 " ", this->m_val.i16Val);
                 break;
 #endif
 #if FW_HAS_32_BIT
             case TYPE_U32:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.u32Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu32 " ", this->m_val.u32Val);
                 break;
             case TYPE_I32:
-            	(void) snprintf(valString, sizeof(valString), "%d ", this->m_val.i32Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRId32 " ", this->m_val.i32Val);
                 break;
 #endif
 #if FW_HAS_64_BIT
             case TYPE_U64:
-            	(void) snprintf(valString, sizeof(valString), "%llu ", (unsigned long long)this->m_val.u64Val);
+                (void) snprintf(valString, sizeof(valString), "%" PRIu64 " ", this->m_val.u64Val);
                 break;
             case TYPE_I64:
-            	(void) snprintf(valString, sizeof(valString), "%lld ", (long long)this->m_val.i64Val);
+            	(void) snprintf(valString, sizeof(valString), "%" PRId64 " ", this->m_val.i64Val);
                 break;
 #endif
 #if FW_HAS_F64
             case TYPE_F64:
-            	(void) snprintf(valString, sizeof(valString), "%lg ", this->m_val.f64Val);
+                (void) snprintf(valString, sizeof(valString), "%lg ", this->m_val.f64Val);
                 break;
 #endif
             case TYPE_F32:
-            	(void) snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
+                (void) snprintf(valString, sizeof(valString), "%g ", this->m_val.f32Val);
                 break;
             case TYPE_BOOL:
-            	(void) snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal?"T":"F");
+                (void) snprintf(valString, sizeof(valString), "%s ", this->m_val.boolVal?"T":"F");
                 break;
             case TYPE_PTR:
-            	(void) snprintf(valString, sizeof(valString), "%p ", this->m_val.ptrVal);
+                (void) snprintf(valString, sizeof(valString), "%p ", this->m_val.ptrVal);
                 break;
             default:
-            	(void) snprintf(valString, sizeof(valString), "%s ", "NT");
+                (void) snprintf(valString, sizeof(valString), "%s ", "NT");
                 break;
         }
 

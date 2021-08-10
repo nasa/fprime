@@ -1,7 +1,7 @@
 ##
 ## This template will produce the constructArchitecture() global function that instances components and connects them.
 ##
-void construct$(name)Architecture(void) {
+void construct$(name)Architecture() {
 ###
 #if $connect_only:
     #pass
@@ -64,7 +64,7 @@ void construct$(name)Architecture(void) {
 #if $connect_only:
     #pass
 #else:
-void exitTasks(void) {
+void exitTasks() {
    // Task cleanup
 #for $teardown_template in $component_teardowns:
     ${teardown_template}

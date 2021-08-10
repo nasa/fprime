@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpReceiverImpl.cpp
 // \author tcanham
 // \brief  cpp file for UdpReceiver component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/UdpReceiver/UdpReceiverComponentImpl.hpp>
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Os/TaskString.hpp>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__)
 #define DEBUG_PRINT(x,...)
@@ -28,7 +28,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   UdpReceiverComponentImpl ::
@@ -49,13 +49,13 @@ namespace Svc {
   void UdpReceiverComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     UdpReceiverComponentBase::init(instance);
   }
 
   UdpReceiverComponentImpl ::
-    ~UdpReceiverComponentImpl(void)
+    ~UdpReceiverComponentImpl()
   {
       if (this->m_fd != -1) {
           close(this->m_fd);
@@ -98,7 +98,7 @@ namespace Svc {
           NATIVE_UINT_TYPE stackSize, /*!< stack size */
           NATIVE_UINT_TYPE affinity /*!< cpu affinity */
           ) {
-      Fw::EightyCharString name(this->getObjName());
+      Os::TaskString name(this->getObjName());
       Os::Task::TaskStatus stat = this->m_socketTask.start(
               name,
               0,
@@ -133,7 +133,7 @@ namespace Svc {
       }
   }
 
-  void UdpReceiverComponentImpl::doRecv(void) {
+  void UdpReceiverComponentImpl::doRecv() {
 
       // wait for data from the socket
       NATIVE_INT_TYPE psize = recvfrom(

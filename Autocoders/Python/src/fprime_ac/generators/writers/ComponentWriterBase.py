@@ -279,7 +279,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.param_opCode = ("opCode", "const FwOpcodeType", "The opcode")
         c.param_response = (
             "response",
-            "const Fw::CommandResponse",
+            "const Fw::CmdResponse",
             "The command response",
         )
 
@@ -446,7 +446,9 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.has_output_ports = len(c.output_ports) > 0
         c.has_typed_output_ports = len(c.typed_output_ports) > 0
         c.has_serial_output_ports = len(c.serial_output_ports) > 0
-        roles = [role for name, ptype, sync, priority, role, max_number in c.output_ports]
+        roles = [
+            role for name, ptype, sync, priority, role, max_number in c.output_ports
+        ]
         c.has_time_get = "TimeGet" in roles
 
     def initPortIncludes(self, obj, c):

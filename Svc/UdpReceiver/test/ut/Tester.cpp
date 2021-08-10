@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpReceiver.hpp
 // \author tcanham
 // \brief  cpp file for UdpReceiver test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 #include <sys/types.h>
@@ -25,11 +25,11 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       UdpReceiverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("UdpReceiver")
@@ -43,13 +43,13 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester::openTest(const char* port) {
@@ -96,11 +96,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // Sched
@@ -111,25 +111,25 @@ namespace Svc {
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
@@ -144,7 +144,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
     for (NATIVE_INT_TYPE i = 0; i < 10; ++i) {
       this->component.set_PortsOut_OutputPort(
-          i, 
+          i,
           this->get_from_PortsOut(i)
       );
     }
@@ -154,7 +154,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -201,7 +201,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

@@ -9,6 +9,8 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/PrmDbComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/PrmDbImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PrmDb_PrmReadErrorEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PrmDb_PrmWriteErrorEnumAi.xml"
 )
 
 register_fprime_module()

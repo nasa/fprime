@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateEOS.hpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with EOS record
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_ImmediateEOS_HPP
 #define Svc_ImmediateEOS_HPP
@@ -32,49 +32,49 @@ namespace Svc {
 
         //! Construct object Tester
         Tester(
-            const SequenceFiles::File::Format::t format = 
+            const SequenceFiles::File::Format::t format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Tests
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Inject file errors
-        void FileErrors(void);
+        void FileErrors();
 
         //! Run a complete sequence and then issue a command response
-        void UnexpectedCommandResponse(void);
+        void UnexpectedCommandResponse();
 
         //! Run a sequence and, while it is running, start a new sequence
         //! The new sequence should cause an error
-        void NewSequence(void);
+        void NewSequence();
 
         //! Run a sequence manually
-        void Manual(void);
+        void Manual();
 
         //! Run an automatic sequence by command
-        void AutoByCommand(void);
+        void AutoByCommand();
 
         //! Run an automatic sequence through a port call
-        void AutoByPort(void);
+        void AutoByPort();
 
         //! Send invalid manual commands while a sequence is running
-        void InvalidManualCommands(void);
+        void InvalidManualCommands();
 
         //! Sequence timeout
-        void SequenceTimeout(void);
+        void SequenceTimeout();
 
         //! Start and cancel a sequence
-        void Cancel(void);
+        void Cancel();
 
         //! Validate a sequence file
-        void Validate(void);
+        void Validate();
 
         // ----------------------------------------------------------------------
-        // Private helper methods 
+        // Private helper methods
         // ----------------------------------------------------------------------
 
       private:

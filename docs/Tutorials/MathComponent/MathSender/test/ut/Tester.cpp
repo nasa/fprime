@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathSender.hpp
 // \author tcanham
 // \brief  cpp file for MathSender test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,11 +19,11 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       MathSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathSender")
@@ -37,17 +37,17 @@ namespace Ref {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testAddCommand(void)
+    testAddCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
@@ -97,11 +97,11 @@ namespace Ref {
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expected value of the event arguments
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
   void Tester ::
-    testSubCommand(void)
+    testSubCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::SUBTRACT);
@@ -151,11 +151,11 @@ namespace Ref {
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expect value of the event
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
   void Tester ::
-    testMultCommand(void)
+    testMultCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::MULTIPLY);
@@ -205,11 +205,11 @@ namespace Ref {
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expect value of the event
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
 
   void Tester ::
-    testDivCommand(void)
+    testDivCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::DIVIDE);
@@ -259,7 +259,7 @@ namespace Ref {
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
       // verify the expect value of the event
-      ASSERT_EVENTS_MS_RESULT(0,10.0);     
+      ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
@@ -277,11 +277,11 @@ namespace Ref {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // mathIn
@@ -298,50 +298,50 @@ namespace Ref {
 
     // mathOut
     this->component.set_mathOut_OutputPort(
-        0, 
+        0,
         this->get_from_mathOut(0)
     );
 
     // CmdStatus
     this->component.set_CmdStatus_OutputPort(
-        0, 
+        0,
         this->get_from_CmdStatus(0)
     );
 
     // CmdReg
     this->component.set_CmdReg_OutputPort(
-        0, 
+        0,
         this->get_from_CmdReg(0)
     );
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

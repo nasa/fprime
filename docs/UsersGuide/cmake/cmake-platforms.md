@@ -13,4 +13,4 @@ out in order to generate the new platform file. It will guide the user through t
 piece.
 
 To understand the platform template: [Platform Template File](../api/cmake/platform/platform-template.md)
-To use the template: [fprime Platform Template](https://github.com/nasa/fprime/cmake/platform/platform.cmake.template)
+To use the template: [fprime Platform Template](https://github.com/nasa/fprime/blob/devel/cmake/platform/platform.cmake.template)

@@ -18,7 +18,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       ActiveTextLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ActiveTextLogger")
@@ -32,7 +32,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -42,7 +42,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-  run_nominal_test(void)
+  run_nominal_test()
   {
       printf("Testing writing to console\n");
 
@@ -51,14 +51,14 @@ namespace Svc {
 
       FwEventIdType id = 1;
       Fw::Time timeTag(TB_NONE,3,6);
-      Fw::TextLogSeverity severity = Fw::TEXT_LOG_ACTIVITY_HI;
+      Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
       Fw::TextLogString text("This component is the greatest!");
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
 
       id = 2;
       timeTag.set(TB_PROC_TIME,4,7);
-      severity = Fw::TEXT_LOG_ACTIVITY_LO;
+      severity = Fw::LogSeverity::ACTIVITY_LO;
       text = "This component is the probably the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
@@ -66,7 +66,7 @@ namespace Svc {
       // This will output in a different format b/c WORKSTATION_TIME
       id = 3;
       timeTag.set(TB_WORKSTATION_TIME,5,876);
-      severity = Fw::TEXT_LOG_WARNING_LO;
+      severity = Fw::LogSeverity::WARNING_LO;
       text = "This component is maybe the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
@@ -87,7 +87,7 @@ namespace Svc {
 
       id = 4;
       timeTag.set(TB_NONE,5,8);
-      severity = Fw::TEXT_LOG_WARNING_LO;
+      severity = Fw::LogSeverity::WARNING_LO;
       const char* severityString = "WARNING_LO";
       text = "This component may be the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
@@ -118,7 +118,7 @@ namespace Svc {
 
       id = 5;
       timeTag.set(TB_PROC_TIME,6,9);
-      severity = Fw::TEXT_LOG_WARNING_HI;
+      severity = Fw::LogSeverity::WARNING_HI;
       severityString = "WARNING_HI";
       text = "This component is probably not the greatest!";
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
@@ -164,7 +164,7 @@ namespace Svc {
   }
 
   void Tester ::
-  run_off_nominal_test(void)
+  run_off_nominal_test()
   {
       // TODO file errors- use the Os/Stubs?
 
@@ -190,7 +190,7 @@ namespace Svc {
       // Write once to the file:
       FwEventIdType id = 1;
       Fw::Time timeTag(TB_NONE,3,6);
-      Fw::TextLogSeverity severity = Fw::TEXT_LOG_ACTIVITY_HI;
+      Fw::LogSeverity severity = Fw::LogSeverity::ACTIVITY_HI;
       const char* severityString = "ACTIVITY_HI";
       Fw::TextLogString text("abcd");
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
@@ -255,14 +255,14 @@ namespace Svc {
       ASSERT_EQ(Os::FileSystem::OP_OK,
               Os::FileSystem::getFileSize("test_file_max0",tmp));
 
-      printf("Testing file name larger than 80 char\n");
+      printf("Testing file name larger than string size\n");
 
       // Setup filename larger than 80 char:
-      char longFileName[81];
-      for (U32 i = 0; i < 80; ++i) {
+      char longFileName[Fw::String::STRING_SIZE + 1];
+      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
           longFileName[i] = 'a';
       }
-      longFileName[80] = 0;
+      longFileName[Fw::String::STRING_SIZE] = 0;
 
       stat = this->component.set_log_file(longFileName,50);
 
@@ -272,12 +272,12 @@ namespace Svc {
       ASSERT_NE(Os::FileSystem::OP_OK,
                Os::FileSystem::getFileSize(longFileName,tmp));
 
-      printf("Testing file name larger than 79 char and file already exists\n");
-      char longFileNameDup[80];
-      for (U32 i = 0; i < 79; ++i) {
+      printf("Testing file name of max size and file already exists\n");
+      char longFileNameDup[Fw::String::STRING_SIZE];
+      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
           longFileNameDup[i] = 'a';
       }
-      longFileNameDup[79] = 0;
+      longFileNameDup[Fw::String::STRING_SIZE-1] = 0;
 
       stat = this->component.set_log_file(longFileNameDup,50);
 
@@ -357,7 +357,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // TextLogger
@@ -372,7 +372,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

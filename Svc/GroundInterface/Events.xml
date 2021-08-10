@@ -1,7 +1,0 @@
-<events>
-    <event id="0" name="GroundInterfaceError" severity="WARNING_HI" format_string = "Ground interface encountered an error" >
-        <comment>
-        An error in the ground interface, here to make the UTs happy.
-        </comment>
-    </event>
-</events>

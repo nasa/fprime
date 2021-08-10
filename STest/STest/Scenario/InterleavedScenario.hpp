@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  InterleavedScenario.hpp
 // \author bocchino
 // \brief  Randomly interleave several scenarios
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_InterleavedScenario_HPP
 #define STest_InterleavedScenario_HPP
@@ -28,7 +28,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct an InterleavedScenario object
@@ -44,7 +44,7 @@ namespace STest {
       }
 
       //! Destroy an InterleavedScenario object
-      ~InterleavedScenario(void) {
+      ~InterleavedScenario() {
         assert(this->scenarioArray != NULL);
         delete this->scenarioArray;
       }
@@ -56,7 +56,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
+      void reset_Scenario() {
         assert(this->scenarioArray != NULL);
         this->scenarioArray->reset();
       }
@@ -71,7 +71,7 @@ namespace STest {
         bool seen[this->scenarioArray->size];
         memset(seen, 0, this->scenarioArray->size * sizeof(bool));
         U32 numSeen = 0;
-        Scenario<State>* *const scenarios = 
+        Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
         U32 numIterations = 0;
         const U32 maxIterations = 0xFFFFFFFFU;
@@ -94,9 +94,9 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
+      bool isDone_Scenario() const {
         bool result = true;
-        Scenario<State>* *const scenarios = 
+        Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
         assert(scenarios != NULL);
         for (U32 i = 0; i < scenarioArray->size; ++i) {
@@ -112,7 +112,7 @@ namespace STest {
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected member variables 
+      // Protected member variables
       // ----------------------------------------------------------------------
 
       //! The scenarios to interleave

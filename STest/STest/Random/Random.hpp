@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Random.hpp
 // \author bocchino
 // \brief  Random number generation
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_Random_HPP
 #define STest_Random_HPP
@@ -29,7 +29,7 @@ namespace STest {
     namespace SeedValue {
 
       //! Get a seed value from the system time
-      U32 getFromTime(void);
+      U32 getFromTime();
 
       //! Get a seed value from file
       //! \return true on success, false on failure
@@ -56,7 +56,7 @@ namespace STest {
     //!    from the current time.
     //! 2. Set the seed value.
     //! 3. Append the seed value to the file "seed-history"
-    void seed(void);
+    void seed();
 
     //! Return a random number in the range given by [start, start + length - 1].
     //! For example, Random::startLength(5, 3) returns a number
@@ -77,7 +77,7 @@ namespace STest {
     );
 
     //! Return a random number in the interval [0, 1]
-    double inUnitInterval(void);
+    double inUnitInterval();
 
   }
 

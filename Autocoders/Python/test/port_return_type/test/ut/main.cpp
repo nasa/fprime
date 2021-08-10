@@ -9,9 +9,9 @@
 class ATester : public Tlm::TestEventGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Tlm::TestEventGTestBase("comp",10) {
+        ATester() : Tlm::TestEventGTestBase("comp",10) {
 #else
-        ATester(void) : Tlm::TestEventGTestBase(10)  {
+        ATester() : Tlm::TestEventGTestBase(10)  {
 #endif
     }
 };

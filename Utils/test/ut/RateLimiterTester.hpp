@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Util/test/ut/RateLimiterTester.hpp
 // \author vwong
 // \brief  hpp file for RateLimiter test harness implementation class
@@ -9,7 +9,7 @@
 //
 // ALL RIGHTS RESERVED. United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef RATELIMITERTESTER_HPP
 #define RATELIMITERTESTER_HPP
@@ -31,21 +31,21 @@ namespace Utils {
 
       //! Construct object RateLimiterTester
       //!
-      RateLimiterTester(void);
+      RateLimiterTester();
 
       //! Destroy object RateLimiterTester
       //!
-      ~RateLimiterTester(void);
+      ~RateLimiterTester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
-      void testCounterTriggering(void);
-      void testTimeTriggering(void);
-      void testCounterAndTimeTriggering(void);
+      void testCounterTriggering();
+      void testTimeTriggering();
+      void testCounterAndTimeTriggering();
 
     private:
 
@@ -55,7 +55,7 @@ namespace Utils {
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

@@ -9,9 +9,9 @@
 class ATester : public ExampleComponents::ExampleComponentGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : ExampleComponents::ExampleComponentGTestBase("comp",10) {
+        ATester() : ExampleComponents::ExampleComponentGTestBase("comp",10) {
 #else
-        ATester(void) : ExampleComponents::ExampleComponentGTestBase(10)  {
+        ATester() : ExampleComponents::ExampleComponentGTestBase(10)  {
 #endif
     }
 
