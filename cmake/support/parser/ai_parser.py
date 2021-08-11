@@ -185,7 +185,7 @@ def read_xml_file(root, import_base):
         "include_header",
         "import_enum_type",
         "import_array_type",
-        "import_topology"
+        "import_topology",
     ]:
         dependencies.update(read_fprime_import(import_type, root))
     # Other items based on what tags are declared here specifically
