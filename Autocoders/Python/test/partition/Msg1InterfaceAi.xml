@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface name="Msg1" namespace="Ports">
-    <include_header>Fw/Types/FwStringType</include_header>
-    <include_header>Fw/Types/FwEightyCharString</include_header>
+    <include_header>Fw/Types/String.hpp</include_header>
     <comment>
     Msg 1 Interface to send cmd and stat arguments.
     </comment>
@@ -9,9 +8,8 @@
         <arg name="cmd" type="U32">
             <comment>The U32 cmd argument</comment>
         </arg>
-        <arg name="str" type="Fw::EightyCharString">
+        <arg name="str" type="Fw::String">
             <comment>The 80 character string str argument</comment>
         </arg>
 	</args>
 </interface>
-
