@@ -295,6 +295,7 @@ void exitTasks(void) {
     (void) cmdDisp.ActiveComponentBase::join(NULL);
     (void) eventLogger.ActiveComponentBase::join(NULL);
     (void) chanTlm.ActiveComponentBase::join(NULL);
+    (void) pktTlm.ActiveComponentBase::join(NULL);
     (void) prmDb.ActiveComponentBase::join(NULL);
     (void) fileUplink.ActiveComponentBase::join(NULL);
     (void) fileDownlink.ActiveComponentBase::join(NULL);
