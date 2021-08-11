@@ -1,6 +1,6 @@
 module Fw {
 
-  @ A standard string stored in a fixed-size buffer
+  @ A string stored in a fixed-size buffer
   type String
 
   @ A value of polymorphic type
