@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <new>
 
 namespace Os {
 
@@ -63,7 +64,7 @@ namespace Os {
     }
 
     // Create queue handle:
-    queueHandle = new QueueHandle;
+    queueHandle = new(std::nothrow) QueueHandle;
     if (NULL == queueHandle) {
       return QUEUE_UNINITIALIZED;
     }

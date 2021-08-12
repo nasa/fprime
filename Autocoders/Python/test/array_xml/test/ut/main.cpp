@@ -22,17 +22,9 @@
 
 using namespace std;
 
-// Registry
-static Fw::SimpleObjRegistry* simpleReg_ptr = 0;
-
 // Component instance pointers
 Example::ExampleArrayImpl* inst1 = 0;
 Example::ExampleArrayImpl* inst2 = 0;
-
-extern "C" {
-    void dumparch();
-    void dumpobj(const char* objName);
-}
 
 #ifdef TGT_OS_TYPE_LINUX
 extern "C" {
@@ -40,25 +32,11 @@ extern "C" {
 };
 #endif
 
-void dumparch() {
-    simpleReg_ptr->dump();
-}
-
-void dumpobj(const char* objName) {
-    simpleReg_ptr->dump(objName);
-}
-
-void constructArchitecture() {
-    Fw::PortBase::setTrace(true);
-
-    simpleReg_ptr = new Fw::SimpleObjRegistry();
-
-    dumparch();
-}
-
 int main(int argc, char* argv[]) {
     // Construct the topology here.
-    constructArchitecture();
+    Fw::PortBase::setTrace(true);
+    Fw::SimpleObjRegistry simpleReg_ptr;
+    simpleReg_ptr.dump();
 
     setbuf(stdout, NULL);
 
@@ -156,7 +134,6 @@ int main(int argc, char* argv[]) {
     delete inst1;
     delete inst2;
     cout << "Delete registration objects..." << endl;
-    delete simpleReg_ptr;
     cout << "Completed..." << endl;
 
     return 0;

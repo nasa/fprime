@@ -46,7 +46,8 @@ namespace Fw {
             typedef enum {
               LT = -1,
               EQ = 0,
-              GT = 1
+              GT = 1,
+              INCOMPARABLE = 2
             } Comparison;
 
             //! \return time zero

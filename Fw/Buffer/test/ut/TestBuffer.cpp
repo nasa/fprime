@@ -31,6 +31,11 @@ void test_basic() {
     ASSERT_EQ(buffer_new.getContext(), 1234);
     ASSERT_EQ(buffer, buffer_new);
 
+    // Creating empty buffer
+    Fw::Buffer testBuffer(nullptr,0);
+    ASSERT_EQ(testBuffer.getData(), nullptr);
+    ASSERT_EQ(testBuffer.getSize(), 0);
+
     // Assignment operator with transitivity
     Fw::Buffer buffer_assignment1, buffer_assignment2;
     ASSERT_NE(buffer_assignment1.getData(), data);

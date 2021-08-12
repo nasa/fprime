@@ -25,6 +25,7 @@
  */
 class DeframingProtocolInterface {
   public:
+    virtual ~DeframingProtocolInterface(){};
     /**
      * \brief called to allocate memory, typically delegating to an allocate port call
      * \param size: size of the allocation request

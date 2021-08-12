@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Os/TaskString.hpp>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__)
 #define DEBUG_PRINT(x,...)
@@ -98,7 +98,7 @@ namespace Svc {
           NATIVE_UINT_TYPE stackSize, /*!< stack size */
           NATIVE_UINT_TYPE affinity /*!< cpu affinity */
           ) {
-      Fw::EightyCharString name(this->getObjName());
+      Os::TaskString name(this->getObjName());
       Os::Task::TaskStatus stat = this->m_socketTask.start(
               name,
               0,

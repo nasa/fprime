@@ -80,6 +80,7 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
         endif()
     endforeach()
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
 endif()
 register_fprime_module()
 

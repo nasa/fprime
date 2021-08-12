@@ -1,11 +1,14 @@
 #include <Os/Mutex.hpp>
 #include <pthread.h>
 #include <Fw/Types/Assert.hpp>
+#include <new>
 
 namespace Os {
 
     Mutex::Mutex() {
-        pthread_mutex_t* handle = new pthread_mutex_t;
+        pthread_mutex_t* handle = new(std::nothrow) pthread_mutex_t;
+        FW_ASSERT(handle != NULL);
+
         // set attributes
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
@@ -46,5 +49,3 @@ namespace Os {
     }
 
 }
-
-

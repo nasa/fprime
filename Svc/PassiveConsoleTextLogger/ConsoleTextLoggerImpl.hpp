@@ -11,7 +11,7 @@ namespace Svc {
 
 		// Only called by derived class
 		ConsoleTextLoggerImpl(const char* compName);
-		void init();
+		void init(NATIVE_INT_TYPE instanceId = 0);
 		~ConsoleTextLoggerImpl();
 
 	private:
