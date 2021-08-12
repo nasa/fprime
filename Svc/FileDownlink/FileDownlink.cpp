@@ -140,7 +140,7 @@ namespace Svc {
           this->curTimer = 0;
           this->log_WARNING_HI_DownlinkTimeout(this->file.sourceName, this->file.destName);
           this->enterCooldown();
-          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         } else { //Otherwise update the current counter
           this->curTimer += cycleTime;
         }
@@ -179,9 +179,9 @@ namespace Svc {
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::ERROR, __UINT32_MAX__);
+      return SendFileResponse(SendFileStatus::STATUS_ERROR, __UINT32_MAX__);
     }
-    return SendFileResponse(SendFileStatus::OK, entry.context);
+    return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
   }
 
   void FileDownlink ::
@@ -310,13 +310,13 @@ namespace Svc {
     statusToCmdResp(SendFileStatus status)
   {
     switch(status.e) {
-    case SendFileStatus::OK:
+    case SendFileStatus::STATUS_OK:
       return Fw::COMMAND_OK;
-    case SendFileStatus::ERROR:
+    case SendFileStatus::STATUS_ERROR:
       return Fw::COMMAND_EXECUTION_ERROR;
-    case SendFileStatus::INVALID:
+    case SendFileStatus::STATUS_INVALID:
       return Fw::COMMAND_VALIDATION_ERROR;
-    case SendFileStatus::BUSY:
+    case SendFileStatus::STATUS_BUSY:
         return Fw::COMMAND_BUSY;
     default:
         // Trigger assertion if given unknown status
@@ -359,7 +359,7 @@ namespace Svc {
     if (status != Os::File::OP_OK) {
       this->mode.set(Mode::IDLE);
       this->warnings.fileOpenError();
-      sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+      sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
       return;
     }
 
@@ -367,7 +367,7 @@ namespace Svc {
     if (startOffset >= this->file.size) {
         this->enterCooldown();
         this->log_WARNING_HI_DownlinkPartialFail(this->file.sourceName, this->file.destName, startOffset, this->file.size);
-        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::INVALID);
+        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_INVALID);
         return;
     } else if (startOffset + length > this->file.size) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
@@ -526,7 +526,7 @@ namespace Svc {
           if (status != Os::File::OP_OK) {
               this->log_WARNING_HI_SendDataFail(this->file.sourceName, this->byteOffset);
               this->enterCooldown();
-              this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+              this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
               //Don't go to wait state
               return;
           }
@@ -551,7 +551,7 @@ namespace Svc {
           this->log_ACTIVITY_HI_DownlinkCanceled(this->file.sourceName, this->file.destName);
       }
       this->enterCooldown();
-      sendResponse(SendFileStatus::OK);
+      sendResponse(SendFileStatus::STATUS_OK);
   }
 
   void FileDownlink ::
