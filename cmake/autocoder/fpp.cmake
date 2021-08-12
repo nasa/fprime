@@ -41,7 +41,7 @@ function(get_dependencies AC_INPUT_FILE)
         OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
     # Report failure.  If we are generating files, this must work.
     if (ERR_RETURN)
-        message(FATAL_ERRO "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE}'")
+        message(FATAL_ERROR "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE}'")
         return()
     endif()
 
@@ -63,6 +63,12 @@ function(get_dependencies AC_INPUT_FILE)
     fpp_to_modules("${IMPORTED}" MODULE_DEPENDENCIES)
     set(FILE_DEPENDENCIES)
     list(APPEND FILE_DEPENDENCIES ${INCLUDED} ${IMPORTED})
+    # TODO: fix-me
+    if (NOT "${MODULE_NAME}" STREQUAL "Os" AND NOT "${MODULE_NAME}" MATCHES "^Fw_")
+        foreach(KNOWN IN ITEMS "Fw_Cfg" "Fw_Types" "Fw_Time" "Fw_Com" "Os" "Fw_Tlm" "Fw_Cmd" "Fw_Log" "Fw_Prm" "Fw_Comp" "Fw_CompQueued")
+            list(APPEND MODULE_DEPENDENCIES "${KNOWN}")
+        endforeach()
+    endif()
     # Should have been inherited from previous call to `get_generated_files`
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)

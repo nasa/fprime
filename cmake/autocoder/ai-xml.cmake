@@ -132,24 +132,24 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     endif()
 
     # If the AI isn't in the final place, copy it over so that we have a clean run
-    get_filename_component(AI_NAME "${AC_INPUT_FILE}" NAME)
-    set(FINAL_AI_XML "${CMAKE_CURRENT_BINARY_DIR}/${AI_NAME}")
-    if (NOT AC_INPUT_FILE STREQUAL FINAL_AI_XML)
-        add_custom_command(OUTPUT ${FINAL_AI_XML}
-                           COMMAND ${CMAKE_COMMAND} -E copy ${AC_INPUT_FILE} ${FINAL_AI_XML}
-                           DEPENDS ${AC_INPUT_FILE}
-        )
-    endif()
+    #get_filename_component(AI_NAME "${AC_INPUT_FILE}" NAME)
+    #set(FINAL_AI_XML "${CMAKE_CURRENT_BINARY_DIR}/${AI_NAME}")
+    #if (NOT AC_INPUT_FILE STREQUAL FINAL_AI_XML)
+    #    add_custom_command(OUTPUT ${FINAL_AI_XML}
+    #                       COMMAND ${CMAKE_COMMAND} -E copy ${AC_INPUT_FILE} ${FINAL_AI_XML}
+    #                       DEPENDS ${AC_INPUT_FILE}
+    #    )
+    #endif()
     # Run Ai Autocoder
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(
             OUTPUT  ${GENERATED_FILES}
             COMMAND ${CMAKE_COMMAND} -E env
               PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
-              BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
+              BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime"
               FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
               PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-            ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${FINAL_AI_XML}
-            DEPENDS ${FINAL_AI_XML} ${FILE_DEPENDENCIES} ${FPRIME_AC_CONSTANTS_FILE} ${MODULE_DEPENDENCIES}
+            ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} ${GEN_ARGS} ${AC_INPUT_FILE}
+            DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${FPRIME_AC_CONSTANTS_FILE} ${MODULE_DEPENDENCIES}
     )
 endfunction(setup_autocode)
