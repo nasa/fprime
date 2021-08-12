@@ -130,6 +130,7 @@ bodychars
 bodytext
 bools
 boolt
+bootlin
 bootup
 brc
 bre
@@ -1102,6 +1103,7 @@ overridable
 packetization
 packetize
 packetized
+packetizer
 Packetizing
 Paetz
 Pandian
@@ -1596,6 +1598,9 @@ TLMCHANIMPLCFG
 TLMCHANIMPLTESTER
 tlmname
 TLMPACKET
+TLMPACKETIZER
+TLMPACKETIZERCOMPONENTIMPLCFG
+TLMPACKETIZERTYPES
 tlmval
 TLOG
 TML
