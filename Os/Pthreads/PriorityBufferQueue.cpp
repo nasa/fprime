@@ -73,14 +73,18 @@ namespace Os {
       return false;
     }
     if( !heap->create(depth) ) {
+      delete heap;
       return false;
     }
     U8* data = new(std::nothrow) U8[depth*(sizeof(msgSize) + msgSize)];
     if (NULL == data) {
+      delete heap;
       return false;
     }
     NATIVE_UINT_TYPE* indexes = new(std::nothrow) NATIVE_UINT_TYPE[depth];
     if (NULL == indexes) {
+      delete heap;
+      delete[] data;
       return false;
     }
     for(NATIVE_UINT_TYPE ii = 0; ii < depth; ++ii) {
@@ -88,6 +92,9 @@ namespace Os {
     }
     PriorityQueue* priorityQueue = new(std::nothrow) PriorityQueue;
     if (NULL == priorityQueue) {
+      delete heap;
+      delete[] data;
+      delete[] indexes;
       return false;
     }
     priorityQueue->heap = heap;

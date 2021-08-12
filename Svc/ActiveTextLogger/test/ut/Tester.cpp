@@ -4,6 +4,7 @@
 // acknowledged.
 
 #include "Tester.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include <fstream>
 
 
@@ -111,7 +112,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              strcpy(oldLine,buf);
+              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
@@ -214,7 +215,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              strcpy(oldLine,buf);
+              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
@@ -293,8 +294,7 @@ namespace Svc {
       // Verify file not made:
       ASSERT_FALSE(stat);
       ASSERT_FALSE(this->component.m_log_file.m_openFile);
-      char longFileNameDupS[81];
-      strcat(longFileNameDupS,"0");
+      char longFileNameDupS[81] = "0";
       ASSERT_NE(Os::FileSystem::OP_OK,
               Os::FileSystem::getFileSize(longFileNameDupS,tmp));
 

@@ -787,16 +787,16 @@ void AssertTest() {
 
         private:
 
-            FILE_NAME_ARG m_file;
-            NATIVE_UINT_TYPE m_lineNo;
-            NATIVE_UINT_TYPE m_numArgs;
-            AssertArg m_arg1;
-            AssertArg m_arg2;
-            AssertArg m_arg3;
-            AssertArg m_arg4;
-            AssertArg m_arg5;
-            AssertArg m_arg6;
-            bool m_asserted;
+            FILE_NAME_ARG m_file = nullptr;
+            NATIVE_UINT_TYPE m_lineNo = 0;
+            NATIVE_UINT_TYPE m_numArgs = 0;
+            AssertArg m_arg1 = 0;
+            AssertArg m_arg2 = 0;
+            AssertArg m_arg3 = 0;
+            AssertArg m_arg4 = 0;
+            AssertArg m_arg5 = 0;
+            AssertArg m_arg6 = 0;
+            bool m_asserted = false;
 
     };
 
