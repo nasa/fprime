@@ -16,7 +16,7 @@ jobs:
   Framework:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: nasafprime/fprime-base:latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -38,7 +38,7 @@ jobs:
   Ref:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: nasafprime/fprime-base:latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -60,7 +60,7 @@ jobs:
   RPI:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: nasafprime/fprime-base:latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -82,7 +82,7 @@ jobs:
   Integration:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: 
+    container:
       image: nasafprime/fprime-base:latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -100,3 +100,16 @@ jobs:
         name: ci-int-logs
         path: ci-logs.tar.gz
         retention-days: 5
+
+  CMake:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container:
+      image: nasafprime/fprime-base:latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    # Runs CMake test cases
+    - name: CMake Tests
+      working-directory: ./cmake/test
+      run: pytest
