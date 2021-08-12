@@ -3,19 +3,9 @@
 // \author Bocchino/Canham
 // \brief  cpp file for CmdDispatcherComponentBase component implementation class
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-//
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ======================================================================
+// acknowledged.
 
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
@@ -33,13 +23,8 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     CmdSequencerComponentImpl::
-#if FW_OBJECT_NAMES == 1
       CmdSequencerComponentImpl(const char* name) :
         CmdSequencerComponentBase(name),
-#else
-      CmdSequencerComponentImpl(void) :
-        CmdSequencerComponentBase(),
-#endif
         m_FPrimeSequence(*this),
         m_sequence(&this->m_FPrimeSequence),
         m_loadCmdCount(0),
@@ -63,7 +48,7 @@ namespace Svc {
         CmdSequencerComponentBase::init(queueDepth, instance);
     }
 
-    void CmdSequencerComponentImpl::setTimeout(NATIVE_UINT_TYPE timeout) {
+    void CmdSequencerComponentImpl::setTimeout(const NATIVE_UINT_TYPE timeout) {
         this->m_timeout = timeout;
     }
 
@@ -75,9 +60,9 @@ namespace Svc {
 
     void CmdSequencerComponentImpl ::
       allocateBuffer(
-          NATIVE_INT_TYPE identifier,
+          const NATIVE_INT_TYPE identifier,
           Fw::MemAllocator& allocator,
-          NATIVE_UINT_TYPE bytes
+          const NATIVE_UINT_TYPE bytes
       )
     {
         this->m_sequence->allocateBuffer(identifier, allocator, bytes);

@@ -3,19 +3,9 @@
 // \author Bocchino/Canham
 // \brief  hpp file for CmdSequencer component implementation class
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged. Any commercial use must be negotiated with the Office
-// of Technology Transfer at the California Institute of Technology.
-// 
-// This software may be subject to U.S. export control laws and
-// regulations.  By accepting this document, the user agrees to comply
-// with all U.S. export laws and regulations.  User has the
-// responsibility to obtain export licenses, or other export authority
-// as may be required before exporting such information to foreign
-// countries or providing access to foreign persons.
-// ====================================================================== 
+// acknowledged.
 
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
@@ -546,11 +536,7 @@ namespace Svc {
 
       //! Construct a CmdSequencer
       CmdSequencerComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char* compName //!< The component name
-#else
-          void
-#endif
       );
 
       //! Initialize a CmdSequencer
@@ -563,7 +549,7 @@ namespace Svc {
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
       void setTimeout(
-          NATIVE_UINT_TYPE seconds //!< The number of seconds
+          const NATIVE_UINT_TYPE seconds //!< The number of seconds
       );
 
       //! (Optional) Set the sequence format.
@@ -578,9 +564,9 @@ namespace Svc {
       //! Call this after constructor and init, and after setting
       //! the sequence format, but before task is spawned.
       void allocateBuffer(
-          NATIVE_INT_TYPE identifier, //!< The identifier
+          const NATIVE_INT_TYPE identifier, //!< The identifier
           Fw::MemAllocator& allocator, //!< The allocator
-          NATIVE_UINT_TYPE bytes //!< The number of bytes
+          const NATIVE_UINT_TYPE bytes //!< The number of bytes
       );
 
       //! (Optional) Load a sequence to run later.
