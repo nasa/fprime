@@ -1,9 +1,8 @@
-/*
- * ImuMgrTester.cpp
- *
- *  Created on: Jan 18, 2017
- *      Author: Gorang Gandhi
- */
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+
 
 #include "Tester.hpp"
 #include <gtest/gtest.h>

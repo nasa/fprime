@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
+<!--
+\copyright
+Copyright 2009-2015, by the California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
+
 <component name="TlmPacketizer" kind="active" namespace="Svc">
     <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
