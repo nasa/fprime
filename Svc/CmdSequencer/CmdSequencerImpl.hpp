@@ -3,12 +3,9 @@
 // \author Bocchino/Canham
 // \brief  hpp file for CmdSequencer component implementation class
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
 
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
@@ -128,14 +125,14 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const FwTimeBaseStoreType currTimeBase, //!< The current time base
-                  const FwTimeBaseStoreType seqTimeBase //!< The sequence file time base
+                  const U32 currTimeBase, //!< The current time base
+                  const U32 seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch
               void timeContextMismatch(
-                  const FwTimeContextStoreType currTimeContext, //!< The current time context
-                  const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
+                  const U32 currTimeContext, //!< The current time context
+                  const U32 seqTimeContext //!< The sequence file time context
               );
 
             PRIVATE:
@@ -241,9 +238,9 @@ namespace Svc {
 
           //! Give the sequence representation a memory buffer
           void allocateBuffer(
-              const NATIVE_INT_TYPE identifier, //!< The identifier
+              NATIVE_INT_TYPE identifier, //!< The identifier
               Fw::MemAllocator& allocator, //!< The allocator
-              const NATIVE_UINT_TYPE bytes //!< The number of bytes
+              NATIVE_UINT_TYPE bytes //!< The number of bytes
           );
 
           //! Deallocate the buffer
@@ -552,7 +549,7 @@ namespace Svc {
       //! Sequence will quit if a command takes longer than the number of
       //! seconds in the timeout value.
       void setTimeout(
-          NATIVE_UINT_TYPE seconds //!< The number of seconds
+          const NATIVE_UINT_TYPE seconds //!< The number of seconds
       );
 
       //! (Optional) Set the sequence format.
@@ -618,6 +615,12 @@ namespace Svc {
           U32 key //!< Value to return to pinger
       );
 
+      //! Handler implementation for seqCancelIn
+      //!
+      void seqCancelIn_handler(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -649,7 +652,8 @@ namespace Svc {
       void CS_RUN_cmdHandler(
           FwOpcodeType opCode, //!< The opcode
           U32 cmdSeq, //!< The command sequence number
-          const Fw::CmdStringArg& fileName //!< The file name
+          const Fw::CmdStringArg& fileName, //!< The file name
+          SeqBlkState block /*!< Return command status when complete or not*/
       );
 
       //! Handler for command CS_START
@@ -779,6 +783,11 @@ namespace Svc {
 
       //! timeout timer
       Timer m_cmdTimeoutTimer;
+
+      //! Block mode for command status
+      SeqBlkState m_blockState;
+      FwOpcodeType m_opCode;
+      U32 m_cmdSeq;
 
   };
 

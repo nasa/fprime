@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<!--
+Copyright (C) 2009-2018 California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
 
 <component name="CmdSequencer" kind="active" namespace="Svc" modeler="true">
 
@@ -7,6 +14,7 @@
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdResponsePortAi.xml</import_port_type>
+    <import_port_type>Svc/Seq/CmdSeqCancelPortAi.xml</import_port_type>
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
     <import_port_type>Fw/Cmd/CmdPortAi.xml</import_port_type>
@@ -32,6 +40,9 @@
         </port>
 
         <port name="cmdResponseOut" data_type="Fw::CmdResponse"  kind="output" role="CmdResponse"    max_number="1">
+        </port>
+
+        <port name="seqCancelIn" data_type="Svc::CmdSeqCancel"  kind="async_input"    max_number="1">
         </port>
 
         <port name="timeCaller" data_type="Fw::Time"  kind="output" role="TimeGet"    max_number="1">
