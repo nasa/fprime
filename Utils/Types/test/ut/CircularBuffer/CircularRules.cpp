@@ -15,7 +15,7 @@
 namespace Types {
 
 
-    RandomizeRule::RandomizeRule(const Fw::EightyCharString& name)
+    RandomizeRule::RandomizeRule(const Fw::String& name)
         : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -30,7 +30,7 @@ namespace Types {
 
 
 
-    SerializeOkRule::SerializeOkRule(const Fw::EightyCharString& name)
+    SerializeOkRule::SerializeOkRule(const Fw::String& name)
         : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -48,7 +48,7 @@ namespace Types {
 
 
 
-    SerializeOverflowRule::SerializeOverflowRule(const Fw::EightyCharString& name)
+    SerializeOverflowRule::SerializeOverflowRule(const Fw::String& name)
             : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -63,7 +63,7 @@ namespace Types {
     }
 
 
-    PeekOkRule::PeekOkRule(const Fw::EightyCharString& name)
+    PeekOkRule::PeekOkRule(const Fw::String& name)
             : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -128,7 +128,7 @@ namespace Types {
     }
 
 
-    PeekBadRule::PeekBadRule(const Fw::EightyCharString& name)
+    PeekBadRule::PeekBadRule(const Fw::String& name)
             : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -174,7 +174,7 @@ namespace Types {
     }
 
 
-    RotateOkRule::RotateOkRule(const Fw::EightyCharString& name)
+    RotateOkRule::RotateOkRule(const Fw::String& name)
             : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 
@@ -189,7 +189,7 @@ namespace Types {
     }
 
 
-    RotateBadRule::RotateBadRule(const Fw::EightyCharString& name)
+    RotateBadRule::RotateBadRule(const Fw::String& name)
             : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
 
 

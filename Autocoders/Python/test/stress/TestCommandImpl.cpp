@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <stdio.h>
 
 #if FW_OBJECT_NAMES == 1
@@ -29,7 +29,7 @@ void TestCommand1Impl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5
 }
 
 void TestCommand1Impl::aport2_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, Ref::Gnc::Quaternion arg6) {
-    Fw::EightyCharString str;
+    Fw::String str;
     arg6.toString(str);
     printf("Received aport2_Test2_handler call with %i %f %s\n",arg4,arg5,str.toChar());
 }
