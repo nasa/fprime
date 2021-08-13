@@ -160,16 +160,15 @@ namespace Svc {
         U32 length
     )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = offset,
-      .length = length,
-      .source = FileDownlink::PORT,
-      .opCode = 0,
-      .cmdSeq = 0,
-      .context = cntxId++
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = offset;
+    entry.length = length;
+    entry.source = FileDownlink::PORT;
+    entry.opCode = 0;
+    entry.cmdSeq = 0;
+    entry.context = cntxId++;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
@@ -233,16 +232,15 @@ namespace Svc {
         const Fw::CmdStringArg& destFilename
     )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = 0,
-      .length = 0,
-      .source = FileDownlink::COMMAND,
-      .opCode = opCode,
-      .cmdSeq = cmdSeq,
-      .context =__UINT32_MAX__
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = 0;
+    entry.length = 0;
+    entry.source = FileDownlink::COMMAND;
+    entry.opCode = opCode;
+    entry.cmdSeq = cmdSeq;
+    entry.context = __UINT32_MAX__;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
@@ -266,16 +264,15 @@ namespace Svc {
       U32 length
    )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = startOffset,
-      .length = length,
-      .source = FileDownlink::COMMAND,
-      .opCode = opCode,
-      .cmdSeq = cmdSeq,
-      .context = __UINT32_MAX__
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = startOffset;
+    entry.length = length;
+    entry.source = FileDownlink::COMMAND;
+    entry.opCode = opCode;
+    entry.cmdSeq = cmdSeq;
+    entry.context = __UINT32_MAX__;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
