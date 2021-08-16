@@ -40,7 +40,7 @@ namespace Fw {
         this->m_seconds = seconds;
     }
 
-    const Time& Time::operator=(const Time& other) {
+    Time& Time::operator=(const Time& other) {
         this->m_timeBase = other.m_timeBase;
         this->m_timeContext = other.m_timeContext;
         this->m_useconds = other.m_useconds;

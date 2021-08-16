@@ -21,9 +21,9 @@ UserSerializer::UserSerializer(SomeUserStruct val) : Serializable() {
     this->setVal(val);
 }
 
-const SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
+SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
     this->setVal(src);
-    return src;
+    return this->m_struct;
 }
 
 void UserSerializer::getVal(SomeUserStruct& arg) {

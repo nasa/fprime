@@ -31,7 +31,7 @@ namespace Fw {
             CmdArgBuffer();  //!< default constructor
             CmdArgBuffer(const CmdArgBuffer& other);  //!< other arg buffer constructor
             virtual ~CmdArgBuffer();  //!< destructor
-            const CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
+            CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
             NATIVE_UINT_TYPE getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
             U8* getBuffAddr();  //!< return address of buffer (non const version)

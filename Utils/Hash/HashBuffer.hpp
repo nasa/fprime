@@ -45,7 +45,7 @@ namespace Utils {
 
             //! Assign a hash buffer from another hash buffer
             //!
-            const HashBuffer& operator=(const HashBuffer& other);
+            HashBuffer& operator=(const HashBuffer& other);
 
             //! Compare two hash buffers for equality
             //!

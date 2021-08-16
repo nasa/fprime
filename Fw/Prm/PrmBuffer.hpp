@@ -31,7 +31,7 @@ namespace Fw {
             ParamBuffer();
             ParamBuffer(const ParamBuffer& other);
             virtual ~ParamBuffer();
-            const ParamBuffer& operator=(const ParamBuffer& other);
+            ParamBuffer& operator=(const ParamBuffer& other);
 
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
