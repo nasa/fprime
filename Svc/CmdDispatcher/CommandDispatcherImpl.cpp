@@ -61,31 +61,8 @@ namespace Svc {
         } else {
             this->m_numCmdErrors++;
             this->tlmWrite_CommandErrors(this->m_numCmdErrors);
-            ErrorResponse evrResp = ERR_UNEXP;
-            switch (response.e) {
-                case Fw::CmdResponse::INVALID_OPCODE:
-                    evrResp = ERR_INVALID_OPCODE;
-                    break;
-                case Fw::CmdResponse::VALIDATION_ERROR:
-                    evrResp = ERR_VALIDATION_ERROR;
-                    break;
-                case Fw::CmdResponse::FORMAT_ERROR:
-                    evrResp = ERR_FORMAT_ERROR;
-                    break;
-                case Fw::CmdResponse::EXECUTION_ERROR:
-                    evrResp = ERR_EXECUTION_ERROR;
-                    break;
-                case Fw::CmdResponse::BUSY:
-                    evrResp = ERR_BUSY;
-                    break;
-                case Fw::CmdResponse::OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    evrResp = ERR_UNEXP;
-                    break;
-            }
-            this->log_WARNING_HI_OpCodeError(opCode,evrResp);
+            FW_ASSERT(response.e != Fw::CmdResponse::OK);
+            this->log_WARNING_HI_OpCodeError(opCode,response);
         }
         // look for command source
         NATIVE_INT_TYPE portToCall = -1;
@@ -118,27 +95,7 @@ namespace Svc {
         Fw::SerializeStatus stat = cmdPkt.deserialize(data);
 
         if (stat != Fw::FW_SERIALIZE_OK) {
-            CmdSerError serErr = ERR_UNEXP_STAT;
-            switch (stat) {
-                case Fw::FW_DESERIALIZE_BUFFER_EMPTY:
-                    serErr = ERR_BUFFER_TOO_SMALL;
-                    break;
-                case Fw::FW_DESERIALIZE_FORMAT_ERROR:
-                    serErr = ERR_BUFFER_FORMAT;
-                    break;
-                case Fw::FW_DESERIALIZE_SIZE_MISMATCH:
-                    serErr = ERR_SIZE_MISMATCH;
-                    break;
-                case Fw::FW_DESERIALIZE_TYPE_MISMATCH:
-                    serErr = ERR_TYPE_MISMATCH;
-                    break;
-                case Fw::FW_SERIALIZE_OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    serErr = ERR_UNEXP_STAT;
-                    break;
-            }
+            Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
             this->log_WARNING_HI_MalformedCommand(serErr);
             if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
                 this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::VALIDATION_ERROR);

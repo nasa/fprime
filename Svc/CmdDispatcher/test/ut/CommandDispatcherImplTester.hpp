@@ -20,13 +20,13 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominalDispatch(void);
-            void runInvalidOpcodeDispatch(void);
-            void runCommandReregister(void);
-            void runFailedCommand(void);
-            void runInvalidCommand(void);
-            void runOverflowCommands(void);
-            void runNopCommands(void);
+            void runNominalDispatch();
+            void runInvalidOpcodeDispatch();
+            void runCommandReregister();
+            void runFailedCommand();
+            void runInvalidCommand();
+            void runOverflowCommands();
+            void runNopCommands();
             void runClearCommandTracking();
 
         private:

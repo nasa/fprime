@@ -54,12 +54,12 @@ namespace Os {
             QueueStatus send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block); //!<  send a message
             QueueStatus receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block); //!<  receive a message
 
-            NATIVE_INT_TYPE getNumMsgs(void) const; //!< get the number of messages in the queue
-            NATIVE_INT_TYPE getMaxMsgs(void) const; //!< get the maximum number of messages (high watermark)
-            NATIVE_INT_TYPE getQueueSize(void) const; //!< get the queue depth (maximum number of messages queue can hold)
-            NATIVE_INT_TYPE getMsgSize(void) const; //!< get the message size (maximum message size queue can hold)
-            const QueueString& getName(void); //!< get the queue name
-            static NATIVE_INT_TYPE getNumQueues(void); //!< get the number of queues in the system
+            NATIVE_INT_TYPE getNumMsgs() const; //!< get the number of messages in the queue
+            NATIVE_INT_TYPE getMaxMsgs() const; //!< get the maximum number of messages (high watermark)
+            NATIVE_INT_TYPE getQueueSize() const; //!< get the queue depth (maximum number of messages queue can hold)
+            NATIVE_INT_TYPE getMsgSize() const; //!< get the message size (maximum message size queue can hold)
+            const QueueString& getName(); //!< get the queue name
+            static NATIVE_INT_TYPE getNumQueues(); //!< get the number of queues in the system
 #if FW_QUEUE_REGISTRATION
             static void setQueueRegistry(QueueRegistry* reg); // !< set the queue registry
 #endif

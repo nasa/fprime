@@ -29,6 +29,7 @@ then
 fi
 export FRAMEWORK_FPP_LOCS="
 $FPRIME_ROOT/Drv/locs.fpp
+$FPRIME_ROOT/Fpp/locs.fpp
 $FPRIME_ROOT/Fw/locs.fpp
 $FPRIME_ROOT/Ref/locs.fpp
 $FPRIME_ROOT/Svc/locs.fpp
@@ -80,13 +81,12 @@ depend_do()
   redo-ifchange $FPP_LOCS $FPP_FILES
   rm -rf $3
   mkdir $3
-  fpp-depend -m $3/missing.txt $FPP_LOCS $FPP_FILES > $3/noinclude.txt
-  fpp-depend -i $FPP_LOCS $FPP_FILES > $3/include.txt
+  fpp-depend -i $3/included.txt -m $3/missing.txt $FPP_LOCS $FPP_FILES > $3/import.txt
   missing=`cat $3/missing.txt`
   if test -n "$missing"
   then
     echo "WARNING: missing dependency files" 1>&2
-    echo $missing 1>&2
+    echo $missing | tr ' ' '\n' 1>&2
   fi
   # If the generated dependencies have not changed, then we don't
   # need to report a change upwards in the build
@@ -99,12 +99,11 @@ get_comma_deps()
   # Recompute all dependencies
   redo-ifchange depend
   # Compute the files this build depends on
-  # Count included dependencies
-  build_deps=`cat depend/include.txt`
-  redo-ifchange $FPP_FILES $build_deps
-  # Compute the files to import
-  # Don't count included dependencies
-  import_deps=`cat depend/noinclude.txt`
+  included_deps=`cat depend/included.txt`
+  import_deps=`cat depend/import.txt`
+  # Redo if included or imported files change
+  redo-ifchange $FPP_FILES $included_deps $import_deps
+  # Send imported files to fpp
   if test -n "$import_deps"
   then
     echo $import_deps | sed 's/ /,/g'
@@ -138,7 +137,7 @@ cpp_do()
   fi
   rm -rf $3
   mkdir $3
-  fpp-to-cpp -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
+  fpp-to-cpp $FPP_TO_CPP_OPTS -d $3 -p $FPRIME_ROOT$FPP_PATH_PREFIXES $import_deps $FPP_FILES
 }
 
 # Locate uses
@@ -152,6 +151,15 @@ locate_uses_do()
     import_deps="-i $FPP_LOCS"
   fi
   fpp-locate-uses $import_deps $FPP_FILES
+}
+
+# Unconnected ports
+unconnected_do()
+{
+  redo-ifchange depend
+  import_deps=`cat depend/import.txt`
+  fpp-check -u $3 $import_deps $FPP_FILES
+  cat $3 1>&2
 }
 
 # Update generated files

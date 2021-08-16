@@ -30,7 +30,7 @@ void TestParamSourceImpl::paramSetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdT
 
 }
 
-void TestParamSourceImpl::init(void) {
+void TestParamSourceImpl::init() {
     Prm::ParamTesterComponentBase::init();
 }
 

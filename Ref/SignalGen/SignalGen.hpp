@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SignalGen.hpp
 // \author bocchino
 // \brief  hpp file for SequenceFileLoader component implementation class
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2016 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_SignalGen_HPP
 #define Svc_SignalGen_HPP
@@ -27,7 +27,7 @@ namespace Ref {
   {
 
     private:
-    
+
         void schedIn_handler(
             NATIVE_INT_TYPE portNum, /*!< The port number*/
             NATIVE_UINT_TYPE context /*!< The call order*/
@@ -39,7 +39,7 @@ namespace Ref {
         U32 Frequency,
         F32 Amplitude,
         F32 Phase,
-        Ref::SignalType SigType 
+        Ref::SignalType SigType
         );
 
         void SignalGen_Toggle_cmdHandler(
@@ -68,9 +68,9 @@ namespace Ref {
             const NATIVE_INT_TYPE queueDepth, //!< The queue depth
             const NATIVE_INT_TYPE instance //!< The instance number
         );
-    
+
         //! Destroy a SignalGen
-        ~SignalGen(void);
+        ~SignalGen();
 
     private:
         // Generate the next sample internal helper

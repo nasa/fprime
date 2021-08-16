@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Mixed.cpp
 // \author Canham/Bocchino
 // \brief  Test mixed immediate, relative, and absolute commands
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
@@ -19,7 +19,7 @@ namespace Svc {
   namespace Mixed {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -30,11 +30,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      AutoByCommand(void)
+      AutoByCommand()
     {
       SequenceFiles::MixedFile file(this->format);
       const U32 numCommands = 4;
@@ -43,19 +43,19 @@ namespace Svc {
     }
 
     void Tester ::
-      Validate(void)
+      Validate()
     {
       SequenceFiles::MixedFile file(this->format);
       this->parameterizedValidate(file);
     }
 
     // ----------------------------------------------------------------------
-    // Private helper methods 
+    // Private helper methods
     // ----------------------------------------------------------------------
 
     void Tester ::
       executeCommandsAuto(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands,
           const U32 bound,
           const CmdExecMode::t mode

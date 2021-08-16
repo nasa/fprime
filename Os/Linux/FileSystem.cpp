@@ -100,7 +100,7 @@ namespace Os {
 		} // end removeDirectory
 
 		Status readDirectory(const char* path, const U32 maxNum,
-							 Fw::EightyCharString fileArray[],
+							 Fw::String fileArray[],
 							 U32& numFiles)
 		{
 			Status dirStat = OP_OK;
@@ -149,7 +149,7 @@ namespace Os {
 								  static_cast<NATIVE_INT_TYPE>(arrayIdx),
 								  static_cast<NATIVE_INT_TYPE>(maxNum));
 
-						Fw::EightyCharString str(direntData->d_name);
+						Fw::String str(direntData->d_name);
 						fileArray[arrayIdx++] = str;
 					}
 				}
@@ -278,7 +278,7 @@ namespace Os {
 		/**
 		 * A helper function that returns an "OP_OK" status if the given file
 		 * exists and can be read from, otherwise returns an error status.
-		 * 
+		 *
 		 * If provided, will also initialize the given stat struct with file
 		 * information.
 		 */
@@ -323,10 +323,10 @@ namespace Os {
 		 * A helper function that writes all the file information in the source
 		 * file to the destination file (replaces/appends to end/etc. depending
 		 * on destination file mode).
-		 * 
+		 *
 		 * Files must already be open and will remain open after this function
 		 * completes.
-		 * 
+		 *
 		 * @param source File to copy data from
 		 * @param destination File to copy data to
 		 * @param size The number of bytes to copy

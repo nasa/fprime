@@ -1,20 +1,28 @@
 module Svc {
 
+
   @ A rate group active component with input and output scheduler ports
   active component ActiveRateGroup {
 
+    # ----------------------------------------------------------------------
+    # General Ports
+    # ----------------------------------------------------------------------
+
     @ The rate group cycle input
-    async input port CycleIn: [1] Cycle \
-      drop
+    async input port CycleIn: Cycle drop
 
     @ Scheduler output port to rate group members
-    output port RateGroupMemberOut: [$ActiveRateGroupOutputPorts] Sched
+    output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
 
     @ Ping input port for health
-    async input port PingIn: [1] Ping
+    async input port PingIn: Ping
 
     @ Ping output port for health
-    output port PingOut: [1] Ping
+    output port PingOut: Ping
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
 
     @ Informational event that rate group has started
     event RateGroupStarted \
@@ -30,6 +38,10 @@ module Svc {
       id 1 \
       format "Rate group cycle slipped on cycle {}"
 
+    # ----------------------------------------------------------------------
+    # Telemetry channels
+    # ----------------------------------------------------------------------
+
     @ Max execution time rate group
     telemetry RgMaxTime: U32 id 0 update on change \
       format "{} us"
@@ -37,7 +49,10 @@ module Svc {
     @ Cycle slips for rate group
     telemetry RgCycleSlips: U32 id 1 update on change
 
-    # added necessary ports not in the original xml in order to compile
+    # ----------------------------------------------------------------------
+    # Special ports
+    # ----------------------------------------------------------------------
+
     @ Event port for emitting events
     event port Log
 
@@ -48,7 +63,7 @@ module Svc {
     time get port Time
 
     @ A port for emitting telemetry
-    telemetry port Tlm 
+    telemetry port Tlm
 
   }
 

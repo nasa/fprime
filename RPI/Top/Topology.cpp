@@ -4,6 +4,7 @@
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Os/File.hpp>
+#include <Os/TaskString.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <RPI/Top/RpiSchedContexts.hpp>
 #include <Svc/FramingProtocol/FprimeProtocol.hpp>
@@ -94,7 +95,7 @@ void constructApp(U32 port_number, char* hostname) {
     // Initialize the rate groups
     rateGroup10HzComp.init(10,0);
     rateGroup1HzComp.init(10,1);
-    
+
 #if FW_ENABLE_TEXT_LOGGING
     textLogger.init();
 #endif
@@ -243,14 +244,14 @@ void constructApp(U32 port_number, char* hostname) {
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
-        Fw::EightyCharString name("ReceiveTask");
+        Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(hostname, port_number);
         comm.startSocketTask(name, 100, 10 * 1024);
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     uartDrv.quitReadThread();
     linuxTimer.quit();
     rateGroup1HzComp.exit();

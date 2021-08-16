@@ -26,16 +26,16 @@ namespace Svc
     // the call.
     //
     // The rules for specifying bins:
-    // 1. For each bin (BufferBins.bins[n]), specify the size of the buffers (bufferSize) in the 
+    // 1. For each bin (BufferBins.bins[n]), specify the size of the buffers (bufferSize) in the
     //    bin and how many buffers for that bin (numBuffers).
-    // 2. The bins should be ordered based on an increasing bufferSize to allow BufferManager to 
-    //    search for available buffers. When receiving a request for a buffer, the component will 
+    // 2. The bins should be ordered based on an increasing bufferSize to allow BufferManager to
+    //    search for available buffers. When receiving a request for a buffer, the component will
     //    search for the first buffer from the bins that is equal to or greater
     //    than the requested size, starting at the beginning of the table.
     // 3. Any unused bins should have numBuffers set to 0.
     // 4. A single bin can be specified if a single size is needed.
-    // 
-    // If a buffer is requested that can't be found among available buffers, the call will 
+    //
+    // If a buffer is requested that can't be found among available buffers, the call will
     //    return an Fw::Buffer with a size of zero. It is expected that the user will notice
     //    and have the appropriate response for the design. If an empty buffer is returned to
     //    the BufferManager instance, a warning event will be issued but no other action will
@@ -49,8 +49,8 @@ namespace Svc
     // 5. A returned buffer has a pointer different than the one originally allocated.
     //
     // Note that a pointer to the Fw::MemAllocator used in setup() is stored for later memory cleanup.
-    // The instance of the allocator must persist beyond calling the cleanup() function or the 
-    // destructor of BufferManager if cleanup() is not called. If a project-specific manual memory 
+    // The instance of the allocator must persist beyond calling the cleanup() function or the
+    // destructor of BufferManager if cleanup() is not called. If a project-specific manual memory
     // allocator is not needed, Fw::MallocAllocator can be used.
 
     class BufferManagerComponentImpl : public BufferManagerComponentBase
@@ -97,12 +97,12 @@ namespace Svc
             const BufferBins &bins       //!< Set of user bins
         );
 
-        void cleanup(void);              // Free memory prior to end of program if desired. Otherwise,
+        void cleanup();              // Free memory prior to end of program if desired. Otherwise,
                                          // will be deleted in destructor
 
         //! Destroy object BufferManager
         //!
-        ~BufferManagerComponentImpl(void);
+        ~BufferManagerComponentImpl();
 
     PRIVATE :
 

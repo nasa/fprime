@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Tester.hpp
 // \author Bocchino/Canham
 // \brief  CmdSequencer test interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_Tester_HPP
 #define Svc_Tester_HPP
@@ -37,7 +37,7 @@ namespace Svc {
     private:
 
       // ----------------------------------------------------------------------
-      // Constants 
+      // Constants
       // ----------------------------------------------------------------------
 
       static const NATIVE_UINT_TYPE TEST_SEQ_BUFFER_SIZE = 255;
@@ -45,7 +45,7 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Types 
+      // Types
       // ----------------------------------------------------------------------
 
       //! Mode for executing commands
@@ -71,7 +71,7 @@ namespace Svc {
         {
 
         }
-            
+
         //! The AMPCS sequence
         AMPCSSequence ampcsSequence;
 
@@ -85,27 +85,27 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Constructors 
+            // Constructors
             // ----------------------------------------------------------------------
 
-            Open(void);
+            Open();
 
           public:
 
             // ----------------------------------------------------------------------
-            // Public instance methods 
+            // Public instance methods
             // ----------------------------------------------------------------------
 
             //! Enable the interceptor
-            void enable(void);
+            void enable();
 
             //! Disable the interceptor
-            void disable(void);
+            void disable();
 
           private:
 
             // ----------------------------------------------------------------------
-            // Private instance methods 
+            // Private instance methods
             // ----------------------------------------------------------------------
 
             //! Intercept an open request
@@ -117,7 +117,7 @@ namespace Svc {
           private:
 
             // ----------------------------------------------------------------------
-            // Private static methods 
+            // Private static methods
             // ----------------------------------------------------------------------
 
             //! Register function
@@ -131,9 +131,9 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Public member variables 
+            // Public member variables
             // ----------------------------------------------------------------------
-           
+
             //! File status
             Os::File::Status fileStatus;
 
@@ -145,7 +145,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Types 
+            // Types
             // ----------------------------------------------------------------------
 
             //! Type of injected errors
@@ -163,27 +163,27 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Constructors 
+            // Constructors
             // ----------------------------------------------------------------------
 
-            Read(void);
+            Read();
 
           public:
 
             // ----------------------------------------------------------------------
-            // Public instance methods 
+            // Public instance methods
             // ----------------------------------------------------------------------
 
             //! Enable the interceptor
-            void enable(void);
+            void enable();
 
             //! Disable the interceptor
-            void disable(void);
+            void disable();
 
           private:
 
             // ----------------------------------------------------------------------
-            // Private instance methods 
+            // Private instance methods
             // ----------------------------------------------------------------------
 
             //! Intercept an open request
@@ -197,7 +197,7 @@ namespace Svc {
           private:
 
             // ----------------------------------------------------------------------
-            // Private static methods 
+            // Private static methods
             // ----------------------------------------------------------------------
 
             //! Register function
@@ -212,7 +212,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Public member variables 
+            // Public member variables
             // ----------------------------------------------------------------------
 
             //! Error type
@@ -242,12 +242,12 @@ namespace Svc {
 
       //! Construct object Tester
       Tester(
-          const SequenceFiles::File::Format::t format = 
+          const SequenceFiles::File::Format::t format =
           SequenceFiles::File::Format::F_PRIME //!< The file format to use
       );
 
       //! Destroy object Tester
-      ~Tester(void);
+      ~Tester();
 
     private:
 
@@ -283,7 +283,7 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // TesterBase interface 
+      // TesterBase interface
       // ----------------------------------------------------------------------
 
       //! Handle a text event
@@ -298,7 +298,7 @@ namespace Svc {
     protected:
 
       // ----------------------------------------------------------------------
-      // Virtual function interface 
+      // Virtual function interface
       // ----------------------------------------------------------------------
 
       //! Execute sequence commands for an automatic sequence
@@ -361,7 +361,7 @@ namespace Svc {
       );
 
       //! Don't load any sequence, then try to run a sequence
-      void parameterizedNeverLoaded(void);
+      void parameterizedNeverLoaded();
 
       //! Sequence timeout
       void parameterizedSequenceTimeout(
@@ -400,10 +400,10 @@ namespace Svc {
       );
 
       //! Clear history and dispatch messages
-      void clearAndDispatch(void);
+      void clearAndDispatch();
 
       //! Connect ports
-      void connectPorts(void);
+      void connectPorts();
 
       //! Go to auto mode
       void goToAutoMode(
@@ -416,7 +416,7 @@ namespace Svc {
       );
 
       //! Initialize components
-      void initComponents(void);
+      void initComponents();
 
       //! Load a sequence
       void loadSequence(
@@ -424,7 +424,7 @@ namespace Svc {
       );
 
       //! Run a loaded sequence
-      void runLoadedSequence(void);
+      void runLoadedSequence();
 
       //! Run a sequence by command
       void runSequence(
@@ -443,7 +443,7 @@ namespace Svc {
       );
 
       //! Set the component sequence format
-      void setComponentSequenceFormat(void);
+      void setComponentSequenceFormat();
 
       //! Start a new sequence while checking command buffers
       void startNewSequence(

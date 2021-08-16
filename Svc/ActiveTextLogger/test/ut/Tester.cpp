@@ -4,6 +4,7 @@
 // acknowledged.
 
 #include "Tester.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include <fstream>
 
 
@@ -18,7 +19,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       ActiveTextLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ActiveTextLogger")
@@ -32,7 +33,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -42,7 +43,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-  run_nominal_test(void)
+  run_nominal_test()
   {
       printf("Testing writing to console\n");
 
@@ -111,7 +112,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              strcpy(oldLine,buf);
+              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
@@ -164,7 +165,7 @@ namespace Svc {
   }
 
   void Tester ::
-  run_off_nominal_test(void)
+  run_off_nominal_test()
   {
       // TODO file errors- use the Os/Stubs?
 
@@ -214,7 +215,7 @@ namespace Svc {
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
-              strcpy(oldLine,buf);
+              Fw::StringUtils::string_copy(oldLine, buf, sizeof(oldLine));
           }
       }
       stream1.close();
@@ -255,14 +256,14 @@ namespace Svc {
       ASSERT_EQ(Os::FileSystem::OP_OK,
               Os::FileSystem::getFileSize("test_file_max0",tmp));
 
-      printf("Testing file name larger than 80 char\n");
+      printf("Testing file name larger than string size\n");
 
       // Setup filename larger than 80 char:
-      char longFileName[81];
-      for (U32 i = 0; i < 80; ++i) {
+      char longFileName[Fw::String::STRING_SIZE + 1];
+      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
           longFileName[i] = 'a';
       }
-      longFileName[80] = 0;
+      longFileName[Fw::String::STRING_SIZE] = 0;
 
       stat = this->component.set_log_file(longFileName,50);
 
@@ -272,12 +273,12 @@ namespace Svc {
       ASSERT_NE(Os::FileSystem::OP_OK,
                Os::FileSystem::getFileSize(longFileName,tmp));
 
-      printf("Testing file name larger than 79 char and file already exists\n");
-      char longFileNameDup[80];
-      for (U32 i = 0; i < 79; ++i) {
+      printf("Testing file name of max size and file already exists\n");
+      char longFileNameDup[Fw::String::STRING_SIZE];
+      for (U32 i = 0; i < Fw::String::STRING_SIZE; ++i) {
           longFileNameDup[i] = 'a';
       }
-      longFileNameDup[79] = 0;
+      longFileNameDup[Fw::String::STRING_SIZE-1] = 0;
 
       stat = this->component.set_log_file(longFileNameDup,50);
 
@@ -293,8 +294,7 @@ namespace Svc {
       // Verify file not made:
       ASSERT_FALSE(stat);
       ASSERT_FALSE(this->component.m_log_file.m_openFile);
-      char longFileNameDupS[81];
-      strcat(longFileNameDupS,"0");
+      char longFileNameDupS[81] = "0";
       ASSERT_NE(Os::FileSystem::OP_OK,
               Os::FileSystem::getFileSize(longFileNameDupS,tmp));
 
@@ -357,7 +357,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // TextLogger
@@ -372,7 +372,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

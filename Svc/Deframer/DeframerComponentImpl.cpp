@@ -29,7 +29,7 @@ void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
 }
 
-DeframerComponentImpl ::~DeframerComponentImpl(void) {}
+DeframerComponentImpl ::~DeframerComponentImpl() {}
 
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
     FW_ASSERT(m_protocol == NULL);
@@ -42,10 +42,17 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+                                                   FwOpcodeType opcode,
+                                                   U32 cmdSeq,
+                                                   Fw::CmdResponse response) {
+  // Nothing to do
+}
+
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
                                               Drv::RecvStatus recvStatus) {
-    if (Drv::RECV_OK == recvStatus) {
+    if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
         processBuffer(recvBuffer);
     }
     framedDeallocate_out(0, recvBuffer);
@@ -56,7 +63,7 @@ void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATI
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
         Drv::PollStatus status = framedPoll_out(0, buffer);
-        if (status == Drv::POLL_OK) {
+        if (status == Drv::PollStatus::POLL_OK) {
             processBuffer(buffer);
         }
     }

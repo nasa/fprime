@@ -69,7 +69,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      loadSequence(const Fw::EightyCharString& fileName)
+      loadSequence(const Fw::String& fileName)
     {
       FW_ASSERT(this->m_runMode == STOPPED, this->m_runMode);
       if (not this->loadFile(fileName)) {
@@ -83,7 +83,7 @@ namespace Svc {
         this->m_sequence->deallocateBuffer(allocator);
     }
 
-    CmdSequencerComponentImpl::~CmdSequencerComponentImpl(void) {
+    CmdSequencerComponentImpl::~CmdSequencerComponentImpl() {
 
     }
 
@@ -147,7 +147,7 @@ namespace Svc {
     //! Handler for input port seqRunIn
     void CmdSequencerComponentImpl::seqRunIn_handler(
            NATIVE_INT_TYPE portNum,
-           Fw::EightyCharString &filename
+           Fw::String &filename
        ) {
 
         if (!this->requireRunMode(STOPPED)) {
@@ -202,7 +202,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     bool CmdSequencerComponentImpl ::
-      loadFile(const Fw::CmdStringArg& fileName) 
+      loadFile(const Fw::CmdStringArg& fileName)
     {
       const bool status = this->m_sequence->loadFile(fileName);
       if (status) {
@@ -214,12 +214,12 @@ namespace Svc {
       return status;
     }
 
-    void CmdSequencerComponentImpl::error(void) {
+    void CmdSequencerComponentImpl::error() {
         ++this->m_errorCount;
         this->tlmWrite_CS_Errors(m_errorCount);
     }
 
-    void CmdSequencerComponentImpl::performCmd_Cancel(void) {
+    void CmdSequencerComponentImpl::performCmd_Cancel() {
         this->m_sequence->reset();
         this->m_runMode = STOPPED;
         this->m_cmdTimer.clear();
@@ -259,7 +259,7 @@ namespace Svc {
                 } else {
                     this->performCmd_Step();
                 }
-            } else { 
+            } else {
                 // Manual step mode
                 this->commandComplete(opcode);
                 if (not this->m_sequence->hasMoreRecords()) {
@@ -292,7 +292,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      CS_START_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) 
+      CS_START_cmdHandler(FwOpcodeType opcode, U32 cmdSeq)
     {
         if (not this->m_sequence->hasMoreRecords()) {
             // No sequence loaded
@@ -333,7 +333,7 @@ namespace Svc {
     {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = AUTO;
-            this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_AUTO_MODE);
+            this->log_ACTIVITY_HI_CS_ModeSwitched(CmdSequencer_SeqMode::AUTO);
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -341,11 +341,11 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      CS_MANUAL_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) 
+      CS_MANUAL_cmdHandler(FwOpcodeType opcode, U32 cmdSeq)
     {
         if (this->requireRunMode(STOPPED)) {
             this->m_stepMode = MANUAL;
-            this->log_ACTIVITY_HI_CS_ModeSwitched(SEQ_STEP_MODE);
+            this->log_ACTIVITY_HI_CS_ModeSwitched(CmdSequencer_SeqMode::STEP);
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
         } else {
             this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -381,7 +381,7 @@ namespace Svc {
         this->error();
     }
 
-    void CmdSequencerComponentImpl::performCmd_Step(void) {
+    void CmdSequencerComponentImpl::performCmd_Step() {
 
         this->m_sequence->nextRecord(m_record);
         // set clock time base and context from value set when sequence was loaded
@@ -406,7 +406,7 @@ namespace Svc {
         }
     }
 
-    void CmdSequencerComponentImpl::sequenceComplete(void) {
+    void CmdSequencerComponentImpl::sequenceComplete() {
         ++this->m_sequencesCompletedCount;
         // reset buffer
         this->m_sequence->clear();

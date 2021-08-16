@@ -1,5 +1,6 @@
 module Svc {
 
+  @ An enumeration for measurement status
   enum MeasurementStatus {
     OK = 0 @< Measurement was good
     FAILURE = 1 @< Failure to retrieve measurement

@@ -20,7 +20,7 @@ StressTest::TestPortComponentBase()
 TestPtSourceImpl::~TestPtSourceImpl() {
 }
 
-void TestPtSourceImpl::init(void) {
+void TestPtSourceImpl::init() {
     StressTest::TestPortComponentBase::init();
 }
 

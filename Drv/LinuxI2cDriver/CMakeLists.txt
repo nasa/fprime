@@ -5,7 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if(NOT DEFINED FPRIME_USE_STUBBED_DRIVERS OR FPRIME_USE_STUBBED_DRIVERS)
+if(FPRIME_USE_STUBBED_DRIVERS)
     add_definitions(-DSTUBBED_LINUX_I2C_DRIVER)
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LinuxI2cDriverComponentAi.xml"

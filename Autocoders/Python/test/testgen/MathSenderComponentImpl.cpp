@@ -38,7 +38,7 @@ namespace Ref {
   }
 
   MathSenderComponentImpl ::
-    ~MathSenderComponentImpl(void)
+    ~MathSenderComponentImpl()
   {
 
   }

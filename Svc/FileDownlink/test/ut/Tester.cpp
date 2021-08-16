@@ -29,7 +29,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
       FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileDownlink"),
       buffers_index(0)
@@ -40,7 +40,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
       for (U32 i = 0; i < buffers_index; i++) {
           delete [] buffers[i];
@@ -52,7 +52,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    downlink(void)
+    downlink()
   {
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
@@ -109,7 +109,7 @@ namespace Svc {
   }
 
   void Tester ::
-    fileOpenError(void)
+    fileOpenError()
   {
 
     const char *const sourceFileName = "missing_directory/source.bin";
@@ -134,7 +134,7 @@ namespace Svc {
   }
 
   void Tester ::
-    cancelDownlink(void)
+    cancelDownlink()
   {
     // Create a file
     const char *const sourceFileName = "source.bin";
@@ -183,7 +183,7 @@ namespace Svc {
   }
 
   void Tester ::
-    cancelInIdleMode(void)
+    cancelInIdleMode()
   {
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
@@ -198,7 +198,7 @@ namespace Svc {
   }
 
   void Tester ::
-    downlinkPartial(void)
+    downlinkPartial()
   {
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
@@ -271,7 +271,7 @@ namespace Svc {
   }
 
     void Tester ::
-      timeout(void)
+      timeout()
     {
         // Assert idle mode
         ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.mode.get());
@@ -325,7 +325,7 @@ namespace Svc {
     }
 
     void Tester ::
-    sendFilePort(void)
+    sendFilePort()
   {
     // Create a file
     const char *const sourceFileName = "source.bin";
@@ -399,9 +399,9 @@ namespace Svc {
         Fw::Buffer& buffer
     )
   {
+    ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
     // Copy buffer before recycling
     U8* data = new U8[buffer.getSize()];
-    ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
     this->buffers[buffers_index] = data;
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
@@ -434,7 +434,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
     // cmdIn
     this->connect_to_cmdIn(
@@ -510,7 +510,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

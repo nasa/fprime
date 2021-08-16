@@ -73,11 +73,11 @@ namespace Drv {
       void startReadThread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity = -1);
 
       //! Quit thread
-      void quitReadThread(void);
+      void quitReadThread();
 
       //! Destroy object LinuxSerialDriver
       //!
-      ~LinuxSerialDriverComponentImpl(void);
+      ~LinuxSerialDriverComponentImpl();
 
     PRIVATE:
 

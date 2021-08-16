@@ -11,7 +11,6 @@
 namespace Os {
 
     class TaskRegistry; //!< forward declaration
-
     class Task {
         public:
 
@@ -27,22 +26,27 @@ namespace Os {
 
             typedef void (*taskRoutine)(void* ptr); //!< prototype for task routine started in task context
 
+            struct TaskRoutineWrapper {
+                taskRoutine routine; //!< contains the task entrypoint
+                void* arg; //!< contains the task entrypoint pointer
+            };
+
             Task(); //!< constructor
             virtual ~Task(); //!< destructor
             // Priority is based on Posix priorities - 0 lowest, 255 highest
             TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = -1); //!< start the task
-            I32 getIdentifier(void); //!< get the identifier for the task
-            static TaskId getOsIdentifier(void); //Gets the Os Task ID. Useful for passive components.
+            I32 getIdentifier(); //!< get the identifier for the task
+            static TaskId getOsIdentifier(); //Gets the Os Task ID. Useful for passive components.
 
             static TaskStatus delay(NATIVE_UINT_TYPE msecs); //!< delay the task
-            static NATIVE_INT_TYPE getNumTasks(void);
+            static NATIVE_INT_TYPE getNumTasks();
 
             TaskStatus join(void **value_ptr); //!< Wait for task to finish
             void suspend(bool onPurpose = false); //!< suspend task
-            void resume(void); //!< resume execution of task
-            bool wasSuspended(void); //!< returns whether or not task was suspended on purpose
-            bool isSuspended(void); //!< check with OS to see if it is suspended already
-            bool isStarted(void); //!< check to see if task is started
+            void resume(); //!< resume execution of task
+            bool wasSuspended(); //!< returns whether or not task was suspended on purpose
+            bool isSuspended(); //!< check with OS to see if it is suspended already
+            bool isStarted(); //!< check to see if task is started
             void setStarted(bool started); //!< set task to started when thread is fully up. Avoids a VxWorks race condition.
             /**
              * Returns the task-handle owned by this task
@@ -61,6 +65,7 @@ namespace Os {
             void toString(char* buf, NATIVE_INT_TYPE buffSize); //!< print a string of the state of the task
             bool m_started; //!< set when task has reached entry point
             bool m_suspendedOnPurpose; //!< set when task was suspended in purpose (i.e. simulation)
+            TaskRoutineWrapper m_routineWrapper; //! Contains task entrypoint and argument for task wrapper
 
             static TaskRegistry* s_taskRegistry; //!< pointer to registered task
             static NATIVE_INT_TYPE s_numTasks; //!< stores the number of tasks created.

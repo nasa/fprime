@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SelectedScenario.hpp
 // \author bocchino
 // \brief  Randomly select a scenario and run it
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_SelectedScenario_HPP
 #define STest_SelectedScenario_HPP
@@ -29,7 +29,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a SelectedScenario object
@@ -46,7 +46,7 @@ namespace STest {
       }
 
       //! Destroy a SelectedScenario object
-      virtual ~SelectedScenario(void) {
+      virtual ~SelectedScenario() {
         assert(this->scenarioArray != NULL);
         delete this->scenarioArray;
       }
@@ -58,7 +58,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
+      void reset_Scenario() {
         this->selectedScenario = NULL;
         assert(this->scenarioArray != NULL);
         this->scenarioArray->reset();
@@ -81,13 +81,13 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
+      bool isDone_Scenario() const {
         bool result = true;
         if (this->selectedScenario != NULL) {
           result = this->selectedScenario->isDone();
         }
         else {
-          Scenario<State>* *const scenarios = 
+          Scenario<State>* *const scenarios =
             this->scenarioArray->getScenarios();
           assert(scenarios != NULL);
           for (U32 i = 0; i < scenarioArray->size; ++i) {
@@ -118,7 +118,7 @@ namespace STest {
         memset(seen, 0, sizeof(seen));
         U32 numSeen = 0;
         assert(this->scenarioArray != NULL);
-        Scenario<State> **const scenarios = 
+        Scenario<State> **const scenarios =
           this->scenarioArray->getScenarios();
         assert(scenarios != NULL);
         while (numSeen < size) {
@@ -142,7 +142,7 @@ namespace STest {
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! ScenarioArray containing the scenarios to select

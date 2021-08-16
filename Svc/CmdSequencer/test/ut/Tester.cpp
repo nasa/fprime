@@ -11,7 +11,6 @@
 // ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Fw/Types/EightyCharString.hpp"
 #include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
@@ -45,11 +44,11 @@ namespace Svc {
     );
     this->component.preamble();
     this->component.setTimeout(TIMEOUT);
-    this->component.regCommands();  
+    this->component.regCommands();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
     this->component.deallocateBuffer(this->mallocator);
   }
@@ -89,12 +88,12 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Virtual function interface 
+  // Virtual function interface
   // ----------------------------------------------------------------------
 
   void Tester ::
     executeCommandsAuto(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands,
         const U32 bound,
         const CmdExecMode::t mode
@@ -105,7 +104,7 @@ namespace Svc {
 
   void Tester ::
     executeCommandsError(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands
     )
   {
@@ -114,7 +113,7 @@ namespace Svc {
 
   void Tester ::
     executeCommandsManual(
-        const char *const fileName, 
+        const char *const fileName,
         const U32 numCommands
     )
   {
@@ -130,7 +129,7 @@ namespace Svc {
         SequenceFiles::File& file,
         const U32 numCommands,
         const U32 bound
-    ) 
+    )
   {
     ASSERT_TRUE(false) << "parameterizedAutoByCommand is not implemented\n";
   }
@@ -140,7 +139,7 @@ namespace Svc {
         SequenceFiles::File& file,
         const U32 numCommands,
         const U32 bound
-    ) 
+    )
   {
 
     REQUIREMENT("ISF-CMDS-005");
@@ -242,7 +241,7 @@ namespace Svc {
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(
-          0, 
+          0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           validateCmdSeq,
           Fw::CmdResponse::EXECUTION_ERROR
@@ -295,7 +294,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_HEADER,
+          CmdSequencer_FileReadStage::READ_HEADER,
           Os::File::NO_SPACE
       );
     }
@@ -343,7 +342,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA,
           Os::File::NO_SPACE
       );
     }
@@ -372,7 +371,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           errorFileName,
-          CmdSequencerComponentImpl::SEQ_READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           2
       );
     }
@@ -381,10 +380,10 @@ namespace Svc {
   }
 
   void Tester ::
-    parameterizedNeverLoaded(void)
+    parameterizedNeverLoaded()
   {
     // Try to run a sequence
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert seqDone response
@@ -494,7 +493,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // LogText
@@ -577,14 +576,14 @@ namespace Svc {
 #endif
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
   }
 
   void Tester ::
-    setComponentSequenceFormat(void)
+    setComponentSequenceFormat()
   {
     switch (this->format) {
       case SequenceFiles::File::Format::F_PRIME:
@@ -600,7 +599,7 @@ namespace Svc {
   }
 
   void Tester ::
-    clearAndDispatch(void)
+    clearAndDispatch()
   {
     this->clearHistory();
     ASSERT_EQ(
@@ -633,7 +632,7 @@ namespace Svc {
     loadSequence(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->clearHistory();
     this->component.loadSequence(fileName);
     // Assert events
@@ -664,7 +663,7 @@ namespace Svc {
     runSequenceByPortCall(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -676,17 +675,17 @@ namespace Svc {
   }
 
   void Tester ::
-    runLoadedSequence(void)
+    runLoadedSequence()
   {
     // Invoke the port
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
     ASSERT_CMD_RESPONSE_SIZE(0);
     // Assert events
     ASSERT_EVENTS_SIZE(1);
-    const Fw::LogStringArg& fileName = 
+    const Fw::LogStringArg& fileName =
       this->component.m_sequence->getLogFileName();
     ASSERT_EVENTS_CS_PortSequenceStarted(0, fileName.toChar());
   }
@@ -722,7 +721,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Invoke sequence port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert response on seqDone
@@ -790,7 +789,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_ModeSwitched(
         0,
-        CmdSequencerComponentBase::SEQ_STEP_MODE
+        CmdSequencer_SeqMode::STEP
     );
   }
 

@@ -32,4 +32,18 @@ module Drv {
                        ref pollBuffer: Fw.Buffer
                      ) -> PollStatus
 
+  passive component ByteStreamDriverModel {
+
+    output port $recv: Drv.ByteStreamRecv
+
+    guarded input port send: Drv.ByteStreamSend
+
+    guarded input port poll: Drv.ByteStreamPoll
+
+    output port allocate: Fw.BufferGet
+
+    output port deallocate: Fw.BufferSend
+
+  }
+
 }

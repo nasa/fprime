@@ -40,7 +40,7 @@ namespace Test {
         Fw::AssertHook::deregisterHook();
     }
 
-    void UnitTestAssert::doAssert(void) {
+    void UnitTestAssert::doAssert() {
         this->m_assertFailed = true;
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
         (void)fprintf(stderr,"Assert File: 0x%x, Line: %u\n", this->m_file, this->m_lineNo);

@@ -1,22 +1,34 @@
 module Svc {
 
+  @ A component for deframing framed input
   passive component Deframer {
 
-    output port comOut: [1] Fw.Com
+    @ Com out port
+    output port comOut: Fw.Com
 
-    output port bufferOut: [1] Fw.BufferSend
+    @ Buffer send port
+    output port bufferOut: Fw.BufferSend
 
-    output port bufferAllocate: [1] Fw.BufferGet
+    @ Buffer allocate port
+    output port bufferAllocate: Fw.BufferGet
 
-    output port bufferDeallocate: [1] Fw.BufferSend
+    @ Buffer deallocate port
+    output port bufferDeallocate: Fw.BufferSend
 
-    guarded input port framedIn: [1] Drv.ByteStreamRecv
+    @ Mutex framed input port
+    guarded input port framedIn: Drv.ByteStreamRecv
 
-    output port framedDeallocate: [1] Fw.BufferSend
+    @ Framed deallocate port
+    output port framedDeallocate: Fw.BufferSend
 
-    output port framedPoll: [1] Drv.ByteStreamPoll
+    @ Framed poll port
+    output port framedPoll: Drv.ByteStreamPoll
 
-    guarded input port schedIn: [1] Svc.Sched
+    @ Mutexed Schedule in port
+    guarded input port schedIn: Svc.Sched
+
+    @ Port for receiving command responses
+    sync input port cmdResponseIn: Fw.CmdResponse
 
   }
 

@@ -3,10 +3,10 @@
 
 namespace Fw {
 
-    Time::Time(void) : m_seconds(0), m_useconds(0), m_timeBase(TB_NONE), m_timeContext(0)  {
+    Time::Time() : m_seconds(0), m_useconds(0), m_timeBase(TB_NONE), m_timeContext(0)  {
     }
 
-    Time::~Time(void) {
+    Time::~Time() {
     }
 
     Time::Time(const Time& other) : Serializable() {
@@ -131,19 +131,19 @@ namespace Fw {
         return buffer.deserialize(this->m_useconds);
     }
 
-    U32 Time::getSeconds(void) const {
+    U32 Time::getSeconds() const {
         return this->m_seconds;
     }
 
-    U32 Time::getUSeconds(void) const {
+    U32 Time::getUSeconds() const {
         return this->m_useconds;
     }
 
-    TimeBase Time::getTimeBase(void) const {
+    TimeBase Time::getTimeBase() const {
         return this->m_timeBase;
     }
 
-    U8 Time::getContext(void) const {
+    U8 Time::getContext() const {
         return this->m_timeContext;
     }
 
@@ -161,10 +161,14 @@ namespace Fw {
       )
     {
 #if FW_USE_TIME_BASE
-      FW_ASSERT(time1.getTimeBase() == time2.getTimeBase(), time1.getTimeBase(), time2.getTimeBase() );
+      if (time1.getTimeBase() != time2.getTimeBase()) {
+          return INCOMPARABLE;
+      }
 #endif
 #if FW_USE_TIME_CONTEXT
-      FW_ASSERT(time1.getContext() == time2.getContext(), time1.getContext(), time2.getContext() );
+      if (time1.getContext() != time2.getContext()) {
+          return INCOMPARABLE;
+      }
 #endif
       const U32 s1 = time1.getSeconds();
       const U32 s2 = time2.getSeconds();

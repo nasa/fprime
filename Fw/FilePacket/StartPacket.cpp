@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  StartPacket.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket::StartPacket
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -30,7 +30,7 @@ namespace Fw {
   }
 
   U32 FilePacket::StartPacket ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return this->header.bufferSize() +
       sizeof(this->fileSize) +
@@ -49,27 +49,27 @@ namespace Fw {
   }
 
   SerializeStatus FilePacket::StartPacket ::
-    fromSerialBuffer(SerialBuffer& serialBuffer) 
+    fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
     FW_ASSERT(this->header.type == T_START);
 
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         serialBuffer.deserialize(this->fileSize);
       if (status != FW_SERIALIZE_OK)
         return status;
     }
-      
+
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         this->sourcePath.fromSerialBuffer(serialBuffer);
       if (status != FW_SERIALIZE_OK)
         return status;
     }
 
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         this->destinationPath.fromSerialBuffer(serialBuffer);
       if (status != FW_SERIALIZE_OK)
         return status;
@@ -86,14 +86,14 @@ namespace Fw {
     FW_ASSERT(this->header.type == T_START);
 
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         this->header.toSerialBuffer(serialBuffer);
       if (status != FW_SERIALIZE_OK)
         return status;
     }
 
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         serialBuffer.serialize(this->fileSize);
       if (status != FW_SERIALIZE_OK)
         return status;

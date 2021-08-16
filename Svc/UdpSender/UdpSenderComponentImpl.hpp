@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpSenderImpl.hpp
 // \author tcanham
 // \brief  hpp file for UdpSender component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef UdpSender_HPP
 #define UdpSender_HPP
@@ -48,7 +48,7 @@ namespace Svc {
 
       //! Destroy object UdpSender
       //!
-      ~UdpSenderComponentImpl(void);
+      ~UdpSenderComponentImpl();
 
       //! Open the connection
       //!
@@ -103,12 +103,12 @@ namespace Svc {
           UdpSerialBuffer();
 #endif
 
-          NATIVE_UINT_TYPE getBuffCapacity(void) const {
+          NATIVE_UINT_TYPE getBuffCapacity() const {
             return sizeof(m_buff);
           }
 
           // Get the max number of bytes that can be serialized
-          NATIVE_UINT_TYPE getBuffSerLeft(void) const {
+          NATIVE_UINT_TYPE getBuffSerLeft() const {
 
             const NATIVE_UINT_TYPE size  = getBuffCapacity();
             const NATIVE_UINT_TYPE loc = getBuffLength();
@@ -121,11 +121,11 @@ namespace Svc {
             }
           }
 
-          U8* getBuffAddr(void) {
+          U8* getBuffAddr() {
             return m_buff;
           }
 
-          const U8* getBuffAddr(void) const {
+          const U8* getBuffAddr() const {
             return m_buff;
           }
 

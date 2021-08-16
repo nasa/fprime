@@ -5,6 +5,7 @@
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <time.h>
 
 namespace Svc {
@@ -79,7 +80,6 @@ namespace Svc {
 
         // TODO: Add calling task id to format string
         char textStr[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE];
-        NATIVE_INT_TYPE stat;
 
         if (timeTag.getTimeBase() == TB_WORKSTATION_TIME) {
 
@@ -92,7 +92,7 @@ namespace Svc {
                 return;
             }
 
-            stat = snprintf(textStr,
+            (void) snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
                             "EVENT: (%d) (%04d-%02d-%02dT%02d:%02d:%02d.%03u) %s: %s\n",
                             id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
@@ -101,19 +101,10 @@ namespace Svc {
         }
         else {
 
-            stat = snprintf(textStr,
+            (void) snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
                             "EVENT: (%d) (%d:%d,%d) %s: %s\n",
                             id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
-        }
-
-        // If there was a error then just return:
-        if (stat <= 0) {
-            return;
-        }
-        // If there was string text truncation:
-        else if (stat >= FW_INTERNAL_INTERFACE_STRING_MAX_SIZE) {
-            // Do nothing
         }
 
         // Call internal interface so that everything else is done on component thread,
@@ -130,7 +121,7 @@ namespace Svc {
     {
 
         // Print to console:
-        (void) printf("%s",text.toChar());
+        Fw::Logger::logMsg(text.toChar(),0,0,0,0,0,0,0,0,0);
 
         // Print to file if there is one:
         (void) this->m_log_file.write_to_log(text.toChar(), text.length());  // Ignoring return status

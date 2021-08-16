@@ -22,7 +22,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
     LinuxSpiDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxSpiDriver")
@@ -36,7 +36,7 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -46,7 +46,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // SpiReadWrite
@@ -82,7 +82,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

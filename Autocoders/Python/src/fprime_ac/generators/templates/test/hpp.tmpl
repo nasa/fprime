@@ -110,7 +110,7 @@ $emit_hpp_params([ $param_maxHistorySize ])
 
       //! Destroy object $tester_base
       //!
-      virtual ~${tester_base}(void);
+      virtual ~${tester_base}();
 
 #if $has_output_ports:
       // ----------------------------------------------------------------------
@@ -171,7 +171,7 @@ $emit_hpp_params([ $param_maxHistorySize ])
           //!
           //! \return The number of entries in the history
           //!
-          U32 size(void) const { return this->numEntries; }
+          U32 size() const { return this->numEntries; }
 
         private:
 
@@ -191,7 +191,7 @@ $emit_hpp_params([ $param_maxHistorySize ])
 
       //! Clear all history
       //!
-      void clearHistory(void);
+      void clearHistory();
 
 #end if
 #if len($typed_user_output_ports) > 0:
@@ -227,7 +227,7 @@ $emit_hpp_port_params([ $param_portNum ] + $params)
 
       //! Clear from port history
       //!
-      void clearFromPortHistory(void);
+      void clearFromPortHistory();
 
       //! The total number of from port entries
       //!
@@ -333,7 +333,7 @@ $emit_hpp_port_params([ $param_portNum ] + $port_params[$instance])
       //!
       //! \return The number of to_${instance} ports
       //!
-      NATIVE_INT_TYPE getNum_to_${instance}(void) const;
+      NATIVE_INT_TYPE getNum_to_${instance}() const;
 
     #end if
     #if $direction == "Output":
@@ -344,7 +344,7 @@ $emit_hpp_port_params([ $param_portNum ] + $port_params[$instance])
       //!
       //! \return The number of from_${instance} ports
       //!
-      NATIVE_INT_TYPE getNum_from_${instance}(void) const;
+      NATIVE_INT_TYPE getNum_from_${instance}() const;
       #if $role == 'LogTextEvent':
 \#endif
       #end if
@@ -430,7 +430,7 @@ $emit_hpp_params([ $param_event_id, $param_timeTag, $param_log_severity, $param_
 
       //! Clear event history
       //!
-      void clearEvents(void);
+      void clearEvents();
 
       //! The total number of events seen
       //!
@@ -531,7 +531,7 @@ $emit_hpp_params([ $param_tlm_id, $param_const_timeTag, $param_val ])
 
       //! Clear telemetry history
       //!
-      void clearTlm(void);
+      void clearTlm();
 
       //! The total number of telemetry inputs seen
       //!

@@ -9,7 +9,7 @@
 
 namespace Fw {
 
-    SimpleObjRegistry::SimpleObjRegistry(void) {
+    SimpleObjRegistry::SimpleObjRegistry() {
         ObjBase::setObjRegistry(this);
         this->m_numEntries = 0;
         // Initialize pointer array
@@ -18,14 +18,14 @@ namespace Fw {
         }
     }
 
-    SimpleObjRegistry::~SimpleObjRegistry(void) {
+    SimpleObjRegistry::~SimpleObjRegistry() {
         ObjBase::setObjRegistry(0);
     }
 
-    void SimpleObjRegistry::dump(void) {
+    void SimpleObjRegistry::dump() {
         for (NATIVE_INT_TYPE obj = 0; obj < this->m_numEntries; obj++) {
 #if FW_OBJECT_NAMES == 1
-#if FW_OBJECT_TO_STRING == 1            
+#if FW_OBJECT_TO_STRING == 1
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
             this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
             Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
@@ -37,7 +37,7 @@ namespace Fw {
 #endif // FW_OBJECT_TO_STRING
 #else
             Fw::Logger::logMsg("Entry: %d Ptr: %p Str:\n", obj, reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]));
-#endif			
+#endif
         }
     }
 
@@ -46,7 +46,7 @@ namespace Fw {
         for (NATIVE_INT_TYPE obj = 0; obj < this->m_numEntries; obj++) {
             char objDump[FW_OBJ_SIMPLE_REG_BUFF_SIZE];
             if (strncmp(objName,this->m_objPtrArray[obj]->getObjName(),sizeof(objDump)) == 0) {
-#if FW_OBJECT_TO_STRING == 1            
+#if FW_OBJECT_TO_STRING == 1
                 this->m_objPtrArray[obj]->toString(objDump,sizeof(objDump));
                 Fw::Logger::logMsg("Entry: %d Ptr: %p Str: %s\n", obj,
                         reinterpret_cast<POINTER_CAST>(this->m_objPtrArray[obj]), reinterpret_cast<POINTER_CAST>(objDump));
@@ -58,14 +58,14 @@ namespace Fw {
             }
         }
     }
-#endif	
+#endif
     void SimpleObjRegistry::regObject(ObjBase* obj) {
         FW_ASSERT(this->m_numEntries < FW_OBJ_SIMPLE_REG_ENTRIES);
         this->m_objPtrArray[this->m_numEntries++] = obj;
 
     }
 
-    void SimpleObjRegistry::clear(void) {
+    void SimpleObjRegistry::clear() {
         this->m_numEntries = 0;
     }
 

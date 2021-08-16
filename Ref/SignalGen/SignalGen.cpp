@@ -50,7 +50,7 @@ namespace Ref {
       SignalGenComponentBase::init(queueDepth, instance);
   }
 
-  SignalGen :: ~SignalGen(void) { }
+  SignalGen :: ~SignalGen() { }
 
   // ----------------------------------------------------------------------
   // Handler implementations

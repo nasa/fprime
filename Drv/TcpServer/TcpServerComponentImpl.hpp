@@ -43,7 +43,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
     /**
      * \brief Destroy the component
      */
-    ~TcpServerComponentImpl(void);
+    ~TcpServerComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket
@@ -122,6 +122,12 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * \return Fw::Buffer filled with data to send out
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
+
+    /**
+     * \brief called when the IPv4 system has been connected
+    */
+    void connected();
+
 
   PRIVATE:
 

@@ -61,7 +61,7 @@ namespace Drv {
 	 * necessary filesystem changes after exporting
 	 */
 	usleep(100 * 1000);
-	
+
         return 0;
     }
 
@@ -92,7 +92,7 @@ namespace Drv {
 	 * necessary filesystem changes after unexporting
 	 */
 	usleep(100 * 1000);
-	
+
         return 0;
     }
 
@@ -411,14 +411,14 @@ namespace Drv {
   }
 
   void LinuxGpioDriverComponentImpl ::
-    exitThread(void) {
+    exitThread() {
       this->m_quitThread = true;
   }
 
 
 
   LinuxGpioDriverComponentImpl ::
-    ~LinuxGpioDriverComponentImpl(void)
+    ~LinuxGpioDriverComponentImpl()
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing GPIO %d fd %d\n",this->m_gpio, this->m_fd);

@@ -1,14 +1,10 @@
 #!/bin/sh
 
-subdirs="
-Drv
-Fw
-Ref
-config
-Svc
-"
+files=`find . -mindepth 2 -maxdepth 2 -name update-locs | sed 's;^\./;;'`
 
-for dir in $subdirs
+for file in $files
 do
+  dir=`dirname $file`
+  echo "updating locs in $dir"
   (cd $dir; ./update-locs)
 done

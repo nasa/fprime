@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CancelPacket.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket::CancelPacket
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -22,7 +22,7 @@ namespace Fw {
   }
 
   U32 FilePacket::CancelPacket ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return this->header.bufferSize();
   }

@@ -1,12 +1,12 @@
 module Svc {
 
-  @ A component for dispatching commands
+  @ A polymorphic database component
   passive component PolyDb {
 
-    @ Port to get values
+    @ Mutexed Port to get values
     guarded input port getValue: Svc.Poly
 
-    @ Port to set values
+    @ Mutexed Port to set values
     guarded input port setValue: Svc.Poly
 
   }

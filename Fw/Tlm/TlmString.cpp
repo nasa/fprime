@@ -1,37 +1,33 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Tlm/TlmString.hpp>
-#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 namespace Fw {
 
     TlmString::TlmString(const char* src) :  StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     TlmString::TlmString(const StringBase& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     TlmString::TlmString(const TlmString& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    TlmString::TlmString(void) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
+    TlmString::TlmString() : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
         this->m_buf[0] = 0;
     }
 
-    TlmString::~TlmString(void) {
+    TlmString::~TlmString() {
     }
 
-    NATIVE_UINT_TYPE TlmString::length(void) const {
+    NATIVE_UINT_TYPE TlmString::length() const {
         return strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
-    const char* TlmString::toChar(void) const {
+    const char* TlmString::toChar() const {
         return this->m_buf;
     }
 
@@ -86,7 +82,7 @@ namespace Fw {
         this->m_maxSer = FW_MIN(size,FW_TLM_STRING_MAX_SIZE);
     }
 
-    NATIVE_UINT_TYPE TlmString::getCapacity(void) const {
+    NATIVE_UINT_TYPE TlmString::getCapacity() const {
         return FW_TLM_STRING_MAX_SIZE;
     }
 
@@ -96,7 +92,7 @@ namespace Fw {
     }
 
     const TlmString& TlmString::operator=(const TlmString& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 

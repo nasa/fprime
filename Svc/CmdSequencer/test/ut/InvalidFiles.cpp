@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  InvalidFiles.cpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with EOS record
@@ -7,8 +7,8 @@
 // Copyright (C) 2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Os/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
@@ -19,7 +19,7 @@ namespace Svc {
   namespace InvalidFiles {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -30,11 +30,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      BadCRC(void)
+      BadCRC()
     {
 
       REQUIREMENT("ISF-CMDS-002");
@@ -73,7 +73,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadRecordDescriptor(void)
+      BadRecordDescriptor()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -124,7 +124,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadTimeBase(void)
+      BadTimeBase()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -157,7 +157,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadTimeContext(void)
+      BadTimeContext()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 1, 1);
@@ -185,7 +185,7 @@ namespace Svc {
     }
 
     void Tester ::
-      EmptyFile(void)
+      EmptyFile()
     {
       // Write the file
       SequenceFiles::EmptyFile file(this->format);
@@ -207,7 +207,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           Os::FileSystem::OP_OK
       );
       // Assert telemetry
@@ -216,7 +216,7 @@ namespace Svc {
     }
 
     void Tester ::
-      DataAfterRecords(void)
+      DataAfterRecords()
     {
 
       REQUIREMENT("ISF-CMDS-001");
@@ -248,7 +248,7 @@ namespace Svc {
     }
 
     void Tester ::
-      FileTooLarge(void)
+      FileTooLarge()
     {
       // Write the file
       SequenceFiles::TooLargeFile file(BUFFER_SIZE, this->format);
@@ -278,7 +278,7 @@ namespace Svc {
     }
 
     void Tester ::
-      MissingCRC(void)
+      MissingCRC()
     {
       // Write the file
       SequenceFiles::MissingCRCFile file(this->format);
@@ -302,7 +302,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -326,14 +326,14 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 2);
       // Run the sequence by port call
-      Fw::EightyCharString fArg(fileName);
+      Fw::String fArg(fileName);
       this->invoke_to_seqRunIn(0, fArg);
       this->clearAndDispatch();
       // Assert seqDone response
@@ -344,7 +344,7 @@ namespace Svc {
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -353,7 +353,7 @@ namespace Svc {
     }
 
     void Tester ::
-      MissingFile(void)
+      MissingFile()
     {
       // Remove the file
       SequenceFiles::MissingFile file(this->format);
@@ -379,7 +379,7 @@ namespace Svc {
     }
 
     void Tester ::
-      SizeFieldTooLarge(void)
+      SizeFieldTooLarge()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -429,7 +429,7 @@ namespace Svc {
     }
 
     void Tester ::
-      SizeFieldTooSmall(void)
+      SizeFieldTooSmall()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -481,7 +481,7 @@ namespace Svc {
     }
 
     void Tester ::
-      USecFieldTooShort(void)
+      USecFieldTooShort()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);

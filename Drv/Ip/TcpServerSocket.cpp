@@ -78,7 +78,7 @@ SocketIpStatus TcpServerSocket::startup() {
     return SOCK_SUCCESS;
 }
 
-void TcpServerSocket::shutdown(void) {
+void TcpServerSocket::shutdown() {
     (void)::shutdown(this->m_base_fd, SHUT_RDWR);
     (void)::close(this->m_base_fd);
     m_base_fd = -1;

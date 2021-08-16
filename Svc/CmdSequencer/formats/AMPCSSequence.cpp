@@ -6,8 +6,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -27,7 +27,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    loadFile(const Fw::CmdStringArg& fileName) 
+    loadFile(const Fw::CmdStringArg& fileName)
   {
     // Make sure there is a buffer allocated
     FW_ASSERT(this->m_buffer.getBuffAddr());
@@ -51,7 +51,7 @@ namespace Svc {
   bool AMPCSSequence ::
     readCRCFile(Fw::CmdStringArg& crcFileName)
   {
-    
+
     bool result;
 
     this->setFileName(crcFileName);
@@ -77,7 +77,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    getFileSize(const Fw::CmdStringArg& seqFileName) 
+    getFileSize(const Fw::CmdStringArg& seqFileName)
   {
     bool status = true;
     U64 fileSize;
@@ -85,14 +85,14 @@ namespace Svc {
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);
     if (
-        fileStatus == Os::FileSystem::OP_OK and 
+        fileStatus == Os::FileSystem::OP_OK and
         fileSize >= sizeof(this->m_sequenceHeader)
     ) {
       this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
     }
     else {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           fileStatus
       );
       status = false;
@@ -101,7 +101,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    readSequenceFile(const Fw::CmdStringArg& seqFileName) 
+    readSequenceFile(const Fw::CmdStringArg& seqFileName)
   {
 
     bool result;
@@ -128,7 +128,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    validateCRC(void)
+    validateCRC()
   {
     bool result = true;
     if (this->m_crc.m_stored != this->m_crc.m_computed) {
@@ -142,7 +142,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    validateRecords(void)
+    validateRecords()
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     Sequence::Record record;
@@ -169,7 +169,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    hasMoreRecords(void) const
+    hasMoreRecords() const
   {
     return this->m_buffer.getBuffLeft() > 0;
   }
@@ -182,21 +182,21 @@ namespace Svc {
   }
 
   void AMPCSSequence ::
-    reset(void)
+    reset()
   {
     this->m_buffer.resetDeser();
   }
 
   void AMPCSSequence ::
-    clear(void)
+    clear()
   {
     this->m_buffer.resetSer();
   }
 
   bool AMPCSSequence ::
-    readCRC(void) 
+    readCRC()
   {
-    
+
     Os::File& file = this->m_crcFile;
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     bool status = true;
@@ -213,7 +213,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           file.getLastError()
       );
       status = false;
@@ -224,14 +224,14 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    deserializeCRC(void) 
+    deserializeCRC()
   {
     bool status = true;
-    Fw::SerializeStatus serializeStatus = 
+    Fw::SerializeStatus serializeStatus =
       this->m_buffer.deserialize(this->m_crc.m_stored);
     if (serializeStatus != Fw::FW_SERIALIZE_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           serializeStatus
       );
       status = false;
@@ -240,7 +240,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    readOpenSequenceFile(void) 
+    readOpenSequenceFile()
   {
     this->m_buffer.resetSer();
     this->m_crc.init();
@@ -267,7 +267,7 @@ namespace Svc {
   }
 
   bool AMPCSSequence ::
-    readSequenceHeader(void)
+    readSequenceHeader()
   {
 
     Os::File& file = this->m_sequenceFile;
@@ -282,7 +282,7 @@ namespace Svc {
 
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER,
+          CmdSequencer_FileReadStage::READ_HEADER,
           file.getLastError()
       );
       status = false;
@@ -290,7 +290,7 @@ namespace Svc {
 
     if (status and readLen != sizeof this->m_sequenceHeader) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_HEADER_SIZE, 
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           readLen
       );
       status = false;
@@ -299,10 +299,10 @@ namespace Svc {
     return status;
 
   }
-  
+
 
   bool AMPCSSequence ::
-    readRecords(void)
+    readRecords()
   {
     Os::File& file = this->m_sequenceFile;
     const NATIVE_UINT_TYPE size = this->m_header.m_fileSize;
@@ -320,7 +320,7 @@ namespace Svc {
     // Check read status
     if (fileStatus != Os::File::OP_OK) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA,
           file.getLastError()
       );
       return false;
@@ -329,7 +329,7 @@ namespace Svc {
     const NATIVE_UINT_TYPE readLenUint = readLen;
     if (readLenUint != size) {
       this->m_events.fileInvalid(
-          Events::FileReadStage::READ_SEQ_DATA_SIZE,
+          CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           readLen
       );
       return false;
@@ -346,7 +346,7 @@ namespace Svc {
 
     Record::CmdLength::t cmdLength;
 
-    Fw::SerializeStatus status = 
+    Fw::SerializeStatus status =
      this->deserializeTimeFlag(record.m_descriptor);
 
     if (status == Fw::FW_SERIALIZE_OK) {

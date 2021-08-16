@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AMPCSSequence.hpp
 // \author Bocchino
 // \brief  AMPCSSequence interface
@@ -7,8 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Svc_AMPCSSequence_HPP
 #define Svc_AMPCSSequence_HPP
@@ -19,7 +19,7 @@ namespace Svc {
 
   //! \class AMPCSSequence
   //! \brief A sequence in AMPCS format
-  class AMPCSSequence : 
+  class AMPCSSequence :
     public CmdSequencerComponentImpl::Sequence
   {
 
@@ -105,7 +105,7 @@ namespace Svc {
 
       //! Query whether the sequence has any more records
       //! \return Yes or no
-      bool hasMoreRecords(void) const;
+      bool hasMoreRecords() const;
 
       //! Get the next record in the sequence.
       //! Asserts on failure
@@ -116,11 +116,11 @@ namespace Svc {
       //! Reset the sequence to the beginning.
       //! After calling this, hasMoreRecords should return true, unless
       //! the sequence has no records.
-      void reset(void);
+      void reset();
 
       //! Clear the sequence records.
       //! After calling this, hasMoreRecords should return false.
-      void clear(void);
+      void clear();
 
     PRIVATE:
 
@@ -132,11 +132,11 @@ namespace Svc {
 
       //! Read the CRC out of an open CRC file
       //! \return Success or failure
-      bool readCRC(void);
+      bool readCRC();
 
       //! Deserialize the CRC
       //! \return Success or failure
-      bool deserializeCRC(void);
+      bool deserializeCRC();
 
       //! Get the aggregate size of the command records
       //! \return Success or failure
@@ -152,20 +152,20 @@ namespace Svc {
 
       //! Read an open sequence file
       //! \return Success or failure
-      bool readOpenSequenceFile(void);
+      bool readOpenSequenceFile();
 
       //! Read the sequence header from the sequence file
       //! into the buffer
       //! \return Success or failure
-      bool readSequenceHeader(void);
+      bool readSequenceHeader();
 
       //! Read records into buffer
       //! \return Success or failure
-      bool readRecords(void);
+      bool readRecords();
 
       //! Validate the CRC
       //! \return Success or failure
-      bool validateCRC(void);
+      bool validateCRC();
 
       //! Deserialize a record from a buffer
       //! \return Serialize status
@@ -200,7 +200,7 @@ namespace Svc {
 
       //! Validate the sequence records in the buffer
       //! \return Success or failure
-      bool validateRecords(void);
+      bool validateRecords();
 
     PRIVATE:
 

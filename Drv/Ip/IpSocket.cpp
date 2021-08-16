@@ -72,8 +72,8 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
     if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout, sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
-    return SOCK_SUCCESS;
 #endif
+    return SOCK_SUCCESS;
 }
 
 SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
@@ -81,11 +81,13 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     FW_ASSERT(ip4 != NULL);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
-    U32 ip = inet_addr(address);
+    NATIVE_INT_TYPE ip = inet_addr(address);
     if (ip == ERROR) {
         return SOCK_INVALID_IP_ADDRESS;
     }
-    *ip4 = ip;
+    // from sin_addr, which has one struct
+    // member s_addr, which is unsigned int
+    *reinterpret_cast<unsigned long*>(ip4) = ip;
 #else
     // First IP address to socket sin_addr
     if (not ::inet_pton(AF_INET, address, ip4)) {
@@ -95,7 +97,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isOpened(void) {
+bool IpSocket::isOpened() {
     bool is_open = false;
     m_lock.lock();
     is_open = m_open;
@@ -103,7 +105,7 @@ bool IpSocket::isOpened(void) {
     return is_open;
 }
 
-void IpSocket::close(void) {
+void IpSocket::close() {
     m_lock.lock();
     if (this->m_fd != -1) {
         (void)::shutdown(this->m_fd, SHUT_RDWR);
@@ -114,7 +116,7 @@ void IpSocket::close(void) {
     m_lock.unLock();
 }
 
-SocketIpStatus IpSocket::open(void) {
+SocketIpStatus IpSocket::open() {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket

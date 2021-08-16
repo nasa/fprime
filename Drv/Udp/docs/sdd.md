@@ -54,7 +54,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     comm.init(0);
     ...
     if (hostname != NULL && port_number != 0) {
-        Fw::EightyCharString name("ReceiveTask");
+        Os::TaskString name("ReceiveTask");
         comm.configureSend(hostname, port_number);
         comm.configureRecv(hostname, port_number);
         // Needed for receiving only, remove if not configuring to receive
@@ -62,7 +62,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.stopSocketTask();
     (void) comm.joinSocketTask(NULL);

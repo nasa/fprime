@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SequenceScenario.hpp
 // \author bocchino
 // \brief  A sequence of scenarios
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_SequenceScenario_HPP
 #define STest_SequenceScenario_HPP
@@ -28,7 +28,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a SequenceScenario from an array of scenarios
@@ -41,12 +41,12 @@ namespace STest {
         scenarioArray(new ScenarioArray<State>(scenarios, size)),
         done(false)
       {
-        
+
       }
 
 
       //! Destroy object SequenceScenario
-      virtual ~SequenceScenario(void) {
+      virtual ~SequenceScenario() {
         delete this->scenarioArray;
       }
 
@@ -57,7 +57,7 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by IteratedScenario
-      void reset_IteratedScenario(void) {
+      void reset_IteratedScenario() {
         this->scenarioArray->reset();
         this->done = false;
       }
@@ -80,14 +80,14 @@ namespace STest {
 
       //! The virtual implementation of isDone required by IteratedScenario
       //! \return Whether the scenario is done
-      bool isDone_IteratedScenario(void) const {
+      bool isDone_IteratedScenario() const {
         return this->done;
       }
 
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected member variables 
+      // Protected member variables
       // ----------------------------------------------------------------------
 
       //! The scenario array

@@ -30,7 +30,7 @@ void FramerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     FramerComponentBase::init(instance);
 }
 
-FramerComponentImpl ::~FramerComponentImpl(void) {}
+FramerComponentImpl ::~FramerComponentImpl() {}
 
 void FramerComponentImpl ::setup(FramingProtocol& protocol) {
     FW_ASSERT(m_protocol == NULL);
@@ -55,10 +55,10 @@ void FramerComponentImpl ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
     Drv::SendStatus sendStatus = framedOut_out(0, outgoing);
-    if (sendStatus != Drv::SEND_OK) {
+    if (sendStatus.e != Drv::SendStatus::SEND_OK) {
         // Note: if there is a data sending problem, an EVR likely wouldn't make it down. Log the issue in hopes that
         // someone will see it.
-        Fw::Logger::logMsg("[ERROR] Failed to send framed data: %d\n", sendStatus);
+        Fw::Logger::logMsg("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
     }
 }
 

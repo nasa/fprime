@@ -1,11 +1,14 @@
 #include <Os/Mutex.hpp>
 #include <pthread.h>
 #include <Fw/Types/Assert.hpp>
+#include <new>
 
 namespace Os {
-    
-    Mutex::Mutex(void) {
-        pthread_mutex_t* handle = new pthread_mutex_t;
+
+    Mutex::Mutex() {
+        pthread_mutex_t* handle = new(std::nothrow) pthread_mutex_t;
+        FW_ASSERT(handle != NULL);
+
         // set attributes
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
@@ -28,23 +31,21 @@ namespace Os {
 
         this->m_handle = (POINTER_CAST) handle;
     }
-    
-    Mutex::~Mutex(void) {
+
+    Mutex::~Mutex() {
         NATIVE_INT_TYPE stat = pthread_mutex_destroy((pthread_mutex_t*)this->m_handle);
         FW_ASSERT(stat == 0,stat);
         delete (pthread_mutex_t*)this->m_handle;
     }
-    
-    void Mutex::lock(void) {
+
+    void Mutex::lock() {
         NATIVE_INT_TYPE stat = pthread_mutex_lock((pthread_mutex_t*)this->m_handle);
         FW_ASSERT(stat == 0,stat);
     }
 
-    void Mutex::unLock(void) {
+    void Mutex::unLock() {
         NATIVE_INT_TYPE stat = pthread_mutex_unlock((pthread_mutex_t*)this->m_handle);
         FW_ASSERT(stat == 0,stat);
     }
-            
+
 }
-
-

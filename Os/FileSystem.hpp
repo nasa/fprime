@@ -3,7 +3,7 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256)
 
@@ -28,7 +28,7 @@ namespace Os {
 
 		Status createDirectory(const char* path); //!<  create a new directory at location path
 		Status removeDirectory(const char* path); //!<  remove a directory at location path
-		Status readDirectory(const char* path,  const U32 maxNum, Fw::EightyCharString fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
+		Status readDirectory(const char* path,  const U32 maxNum, Fw::String fileArray[], U32& numFiles);	//!< read the contents of a directory.  Size of fileArray should be maxNum. Cleaner implementation found in Directory.hpp
 		Status removeFile(const char* path); //!< removes a file at location path
 		Status moveFile(const char* originPath, const char* destPath); //! moves a file from origin to destination
 		Status copyFile(const char* originPath, const char* destPath); //! copies a file from origin to destination

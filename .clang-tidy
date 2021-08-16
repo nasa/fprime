@@ -1,0 +1,2 @@
+Checks: "-clang-analyzer-security.insecureAPI.rand"
+WarningsAsErrors: '*'

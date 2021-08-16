@@ -10,6 +10,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>
 
+#include <new>
 #include <stdio.h>
 
 namespace Os {
@@ -46,7 +47,7 @@ Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_
         handle = NULL;
     }
     //New queue handle, check for success or return error
-    handle = new BareQueueHandle;
+    handle = new(std::nothrow) BareQueueHandle;
     if (NULL == handle || !handle->create(depth, msgSize)) {
         return QUEUE_UNINITIALIZED;
     }
@@ -207,7 +208,7 @@ Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_I
     return bareReceiveBlock(handle, buffer, capacity, actualSize, priority);
 }
 
-NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
+NATIVE_INT_TYPE Queue::getNumMsgs() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -218,7 +219,7 @@ NATIVE_INT_TYPE Queue::getNumMsgs(void) const {
     return queue.getCount();
 }
 
-NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
+NATIVE_INT_TYPE Queue::getMaxMsgs() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -229,7 +230,7 @@ NATIVE_INT_TYPE Queue::getMaxMsgs(void) const {
     return queue.getMaxCount();
 }
 
-NATIVE_INT_TYPE Queue::getQueueSize(void) const {
+NATIVE_INT_TYPE Queue::getQueueSize() const {
       //Check if the handle is null or check the underlying queue is null
       if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
           (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
@@ -240,7 +241,7 @@ NATIVE_INT_TYPE Queue::getQueueSize(void) const {
       return queue.getDepth();
   }
 
-NATIVE_INT_TYPE Queue::getMsgSize(void) const {
+NATIVE_INT_TYPE Queue::getMsgSize() const {
     //Check if the handle is null or check the underlying queue is null
     if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {

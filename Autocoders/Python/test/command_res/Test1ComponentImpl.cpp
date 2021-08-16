@@ -27,7 +27,7 @@ namespace Cmd {
     ) :
       Test1ComponentBase(compName)
 #else
-    Test1Impl(void)
+    Test1Impl()
 #endif
   {
 
@@ -43,7 +43,7 @@ namespace Cmd {
   }
 
   Test1ComponentImpl ::
-    ~Test1ComponentImpl(void)
+    ~Test1ComponentImpl()
   {
 
   }

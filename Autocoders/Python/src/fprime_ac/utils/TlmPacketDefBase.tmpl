@@ -157,11 +157,11 @@ namespace TlmPacker
 
 }
 
-U32 tlmPacketDefBase::getMaxPacketBytes(void) {
+U32 tlmPacketDefBase::getMaxPacketBytes() {
     return MAX_PACKET_BYTES;
 }
 
-U32 tlmPacketDefBase::getMaxNumCycles(void) {
+U32 tlmPacketDefBase::getMaxNumCycles() {
     return NUM_CYCLES;
 }
 
@@ -198,12 +198,12 @@ U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id)
     return missing_channel;
 }
 
-F32 tlmPacketDefBase::getDuration(void) {
+F32 tlmPacketDefBase::getDuration() {
     return $tlm_duration;
 }
 
 
-F32 tlmPacketDefBase::getPeriod(void) {
+F32 tlmPacketDefBase::getPeriod() {
     return $tlm_period;
 }
 

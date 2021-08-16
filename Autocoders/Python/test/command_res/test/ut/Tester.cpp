@@ -23,7 +23,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
@@ -37,7 +37,7 @@ namespace Cmd {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -47,7 +47,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-      residualTest(void)
+      residualTest()
   {
       // This test will do different things based on the configuration macro FW_CMD_CHECK_RESIDUAL
       // If it is on, a command failure will be checked. If not, command success will be checked.
@@ -115,7 +115,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // aport
@@ -145,7 +145,7 @@ namespace Cmd {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(QUEUE_DEPTH,

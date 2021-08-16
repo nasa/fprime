@@ -9,11 +9,11 @@ namespace Svc {
         PassiveTextLoggerComponentBase(compName) {
     }
 
-    void ConsoleTextLoggerImpl::init(void) {
-        PassiveTextLoggerComponentBase::init();
+    void ConsoleTextLoggerImpl::init(NATIVE_INT_TYPE instanceId) {
+        PassiveTextLoggerComponentBase::init(instanceId);
     }
 
-    ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl(void) {}
+    ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
     void ConsoleTextLoggerImpl::TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::TextLogString &text) {
         const char *severityString = "UNKNOWN";

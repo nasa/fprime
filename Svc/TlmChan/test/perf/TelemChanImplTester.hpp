@@ -17,7 +17,7 @@ namespace Svc {
     class TelemStoreComponentBaseFriend {
         public:
             TelemStoreComponentBaseFriend(Svc::TelemStoreComponentBase& inst);
-            Fw::QueuedComponentBase::MsgDispatchStatus doDispatch(void);
+            Fw::QueuedComponentBase::MsgDispatchStatus doDispatch();
         private:
             Svc::TelemStoreComponentBase& m_baseInst;
     };

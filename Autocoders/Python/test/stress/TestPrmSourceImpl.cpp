@@ -20,7 +20,7 @@ TestParamSourceImpl::TestParamSourceImpl() :
 TestParamSourceImpl::~TestParamSourceImpl() {
 }
 
-void TestParamSourceImpl::init(void) {
+void TestParamSourceImpl::init() {
     Prm::ParamTesterComponentBase::init();
 }
 

@@ -9,9 +9,9 @@
 class ATester : public StressTest::TestPortGTestBase {
 public:
 #if FW_OBJECT_NAMES == 1
-    ATester(void) : StressTest::TestPortGTestBase("comp",10) {
+    ATester() : StressTest::TestPortGTestBase("comp",10) {
 #else
-        ATester(void) : StressTest::TestPortGTestBase(10)  {
+        ATester() : StressTest::TestPortGTestBase(10)  {
 #endif
         }
 

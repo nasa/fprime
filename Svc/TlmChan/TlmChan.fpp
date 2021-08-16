@@ -3,11 +3,11 @@ module Svc {
   @ A component for storing telemetry
   active component TlmChan {
 
-    @ Telemetry input port
+    @ Guarded port for receiving telemetry values
     guarded input port TlmRecv: Fw.Tlm
 
-    @ Telemetry input port
-    guarded input port TlmGet: Fw.Tlm
+    @ Guarded port for returning telemetry values by reference
+    guarded input port TlmGet: Fw.TlmGet
 
     @ Run port for starting packet send cycle
     async input port Run: Svc.Sched
@@ -16,10 +16,10 @@ module Svc {
     output port PktSend: Fw.Com
 
     @ Ping input port
-    async input port pingIn: [1] Svc.Ping
+    async input port pingIn: Svc.Ping
 
     @ Ping output port
-    output port pingOut: [1] Svc.Ping
+    output port pingOut: Svc.Ping
 
   }
 

@@ -10,7 +10,7 @@ namespace Example {
 
 		// Only called by derived class
 		ExampleEnumImpl(const char* compName);
-		~ExampleEnumImpl(void);
+		~ExampleEnumImpl();
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:

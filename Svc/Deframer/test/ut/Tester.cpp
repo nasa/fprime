@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Deframer.hpp
 // \author janamian
 // \brief  cpp file for Deframer test harness implementation class
@@ -7,7 +7,7 @@
 // Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
+//
 // ======================================================================
 
 #include "Tester.hpp"
@@ -18,7 +18,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
   Tester::MockDeframer::MockDeframer(Tester& parent) : m_parent(parent) {}
 
@@ -47,7 +47,7 @@ namespace Svc {
   }
 
   Tester ::
-    Tester(void) : 
+    Tester() :
       DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
       m_mock(*this),
@@ -60,15 +60,15 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
-    void Tester ::test_incoming_frame(U32 buffer_size, 
+    void Tester ::test_incoming_frame(U32 buffer_size,
                                       U32 expected_size) {
         U8 data[buffer_size];
         ::memset(data, 0, buffer_size);
@@ -156,15 +156,15 @@ namespace Svc {
   {
     this->pushFromPortEntry_framedPoll(pollBuffer);
     // TODO: Return a value
-    return Drv::POLL_OK;
+    return Drv::PollStatus::POLL_OK;
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // framedIn
@@ -181,37 +181,37 @@ namespace Svc {
 
     // comOut
     this->component.set_comOut_OutputPort(
-        0, 
+        0,
         this->get_from_comOut(0)
     );
 
     // bufferOut
     this->component.set_bufferOut_OutputPort(
-        0, 
+        0,
         this->get_from_bufferOut(0)
     );
 
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(
-        0, 
+        0,
         this->get_from_bufferAllocate(0)
     );
 
     // bufferDeallocate
     this->component.set_bufferDeallocate_OutputPort(
-        0, 
+        0,
         this->get_from_bufferDeallocate(0)
     );
 
     // framedDeallocate
     this->component.set_framedDeallocate_OutputPort(
-        0, 
+        0,
         this->get_from_framedDeallocate(0)
     );
 
     // framedPoll
     this->component.set_framedPoll_OutputPort(
-        0, 
+        0,
         this->get_from_framedPoll(0)
     );
 
@@ -221,7 +221,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(
