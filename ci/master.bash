@@ -9,7 +9,7 @@
  SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 . "${SCRIPT_DIR}/helpers.bash"
 
- TEST="${@}"
+ TEST="${}"
 TEST_RUN="${SCRIPT_DIR}/tests/${TEST}.bash"
  TEST_TYPE="${TEST}"
 
