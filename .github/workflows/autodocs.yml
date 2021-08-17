@@ -7,11 +7,13 @@ on:
 jobs:
   build:
     name: Autodocumentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container:
+      image: nasafprime/fprime-base:latest
     steps:
     - name: checkout
       uses: actions/checkout@v2.0.0
       with:
         fetch-depth: 5
-    - uses: ./.github/actions/
-      id: github-autodocs
+    - name: Autodocs
+      run: .github/actions/autodoc.bash

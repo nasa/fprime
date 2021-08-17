@@ -106,31 +106,42 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
     }
 }
 
-
 void DeframerComponentImpl ::processRing() {
     FW_ASSERT(m_protocol != NULL);
+    // Maximum limit to to the loop as at least one byte is process per iteration unless needed > remaining size
+    const U32 loop_limit = m_in_ring.get_capacity() + 1;
+
     // Inner-loop, process ring buffer looking for at least the header
     U32 i = 0;
-    U32 needed = 0;
-    for (i = 0; (i < (m_in_ring.get_capacity() + 1)) and (m_in_ring.get_remaining_size() >= needed); i++) {
+    for (i = 0; (m_in_ring.get_remaining_size() > 0) and (i < loop_limit); i++) {
+        const U32 remaining = m_in_ring.get_remaining_size();
+        U32 needed = 0; // Needed is an out-only variable, and should be reset each loop
         DeframingProtocol::DeframingStatus status = m_protocol->deframe(m_in_ring, needed);
+        FW_ASSERT(needed != 0); //Deframing protocol must always set needed to a non-zero value
+        FW_ASSERT(remaining == m_in_ring.get_remaining_size()); // Deframing protocol must not consume data only view it
         // Successful deframing consumes messages
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
             m_in_ring.rotate(needed);
         }
+        // Break on the condition that more is needed
+        else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
+            // Deframing protocol reported inconsistent "more is needed" and needed size
+            FW_ASSERT(needed > m_in_ring.get_remaining_size(), needed, m_in_ring.get_remaining_size());
+            break;
+        }
         // Error statuses  reset needed and rotate away 1 byte
-        else if (status != DeframingProtocol::DEFRAMING_MORE_NEEDED) {
+        else {
             m_in_ring.rotate(1);
-            needed = 0;
             // Checksum errors get logged as it is unlikely to get to a checksum check on random data
             if (status == DeframingProtocol::DEFRAMING_INVALID_CHECKSUM) {
                 Fw::Logger::logMsg("[ERROR] Deframing checksum validation failed\n");
             }
         }
     }
-    // Note: this assert can trip when "more is needed" from the circular buffer and the circular buffer
-    // reports that it has enough for what is needed. This would constitute a hard failure
-    FW_ASSERT(i <= m_in_ring.get_capacity(), m_in_ring.get_capacity());
+    // In every iteration of the loop above data is removed from the buffer, or we break from the loop due. Thus at
+    // worst case the loop should be called m_in_ring.get_capacity() times before exiting due an empty buffer. If it hits
+    // the limit, something went horribly wrong.
+    FW_ASSERT(i < loop_limit);
 }
 
 void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {

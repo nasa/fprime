@@ -1,5 +1,5 @@
 
-@startuml ComponentTree.png
+@startuml
 title Component Class Hierarchy
 note right of Fw::ObjBase : Framework Class
 note right of Fw::PassiveComponentBase : Framework Class
@@ -10,14 +10,14 @@ Fw::QueuedComponentBase -up--|> Fw::PassiveComponentBase
 Fw::ActiveComponentBase -up--|> Fw::QueuedComponentBase
 note top of SomeComponentBase : Autocoded Class
 SomeComponentBase -right-|> Fw::PassiveComponentBase
-SomeComponentBase -up-* "many" SomePorts
+SomeComponentBase *-down- "many" SomePorts
 note top of SomeComponentImpl : Developer Written Class
 SomeComponentImpl -right-|> SomeComponentBase
 AnotherComponentBase -right-|> Fw::QueuedComponentBase
-AnotherComponentBase -up-* "many" MorePorts
+AnotherComponentBase *-down- "many" MorePorts
 AnotherComponentImpl -right-|> AnotherComponentBase
 ThirdComponentBase -right-|> Fw::ActiveComponentBase
-ThirdComponentBase -up-* "many" OtherPorts
+ThirdComponentBase *-down- "many" OtherPorts
 ThirdComponentImpl -right-|> ThirdComponentBase
 
 @enduml
