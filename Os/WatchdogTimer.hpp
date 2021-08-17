@@ -20,12 +20,12 @@ namespace Os {
             virtual ~WatchdogTimer();
             WatchdogStatus startTicks( I32 delayInTicks, //!< number of ticks to delay. OS/timing dependent
                                         WatchdogCb p_callback,  //!< routine to call on time-out
-                                        void* parameter);  //!< parameter with which to call routine);
-            
+                                        void* parameter  //!< parameter with which to call routine
+            );
             WatchdogStatus startMs( I32 delayInMs, //!< number of ms to delay.
                                         WatchdogCb p_callback,  //!< routine to call on time-out
-                                        void* parameter);  //!< parameter with which to call routine);
-
+                                        void* parameter  //!< parameter with which to call routine
+            );
             WatchdogStatus restart(void);  //!< restart timer with previous value
             
             
@@ -39,7 +39,7 @@ namespace Os {
             void* m_parameter; //!< parameter for timer call
             I32 m_timerTicks; //!< number of ticks for timer.
             I32 m_timerMs; //!< number of milliseconds for timer.
-            WatchdogTimer(WatchdogTimer&); //!< disable copy contructor
+            WatchdogTimer(WatchdogTimer&); //!< disable copy constructor
 
     };
 }

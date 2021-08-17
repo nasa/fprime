@@ -240,7 +240,7 @@ namespace Os {
           status = Queue::QUEUE_NO_MORE_MSGS;
         }
         else {
-          // If this happens, a programming error or bit flip occured:
+          // If this happens, a programming error or bit flip occurred:
           FW_ASSERT(0);
         }
       }
@@ -299,7 +299,7 @@ namespace Os {
           status = Queue::QUEUE_SIZE_MISMATCH;
         }
         else {
-          // If this happens, a programming error or bit flip occured:
+          // If this happens, a programming error or bit flip occurred:
           // The only reason a pop should fail is if the user's buffer
           // was too small.
           FW_ASSERT(0);

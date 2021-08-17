@@ -1,3 +1,4 @@
+\page SvcActiveLoggerComponent Svc::ActiveLogger Component
 # Svc::ActiveLogger Component
 
 ## 1. Introduction
@@ -89,7 +90,7 @@ The `Svc::ActiveLogger` component accepts events from other components.
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](ActiveLogger.html) [MD](ActiveLogger.md)
+TBD
 
 ## 5. Module Checklists
 
@@ -101,13 +102,7 @@ Unit Test Checklist | [Link](Checklist_Unit_test.xlsx)
 
 ## 6. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Output - `ActiveLoggerImpl.cpp`](../test/ut/output/ActiveLoggerImpl.cpp.gcov)
-
-[Coverage Output - `ActiveLoggerComponentAc.cpp`](../test/ut/output/ActiveLoggerComponentAc.cpp.gcov)
-
-[Report](../test/ut/output/SvcActiveLogger_gcov.txt)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

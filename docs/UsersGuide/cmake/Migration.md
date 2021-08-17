@@ -4,9 +4,9 @@ This document give key pointers to users who wish to move away from the old make
 using the new CMake system. Notably, it provides links for each step in the process for moving from
 the key features of the old make system to the features of the new CMake system.
 
-## `make impl` and `make testcomp` 
+## `make impl` and `make testcomp`
 
-The commands `make impl` and `make testcomp` should be runnable outside of tany make system setup.
+The commands `make impl` and `make testcomp` should be runnable outside of any make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
 requiring the user to navigate to the directory, generate the make system, and then run these
 commands is less productive then running just the code generator directly.
@@ -33,7 +33,7 @@ everything imported in the Ai.xml files. Thus, only manual and link dependencies
 maintained. This is done on a per-module basis. These dependencies are then rolled-up into the top
 level binary and used for build-ordering and linking.
 
-1. `add_fprime_subdriectory`: make directory available to the build. Done for **all** directories.
+1. `add_fprime_subdirectory`: make directory available to the build. Done for **all** directories.
 2. `register_fprime_module`: add library to the build. Done for **all** components and ports.
 3. `register_fprime_executable`: add an executable output to the build. Done for **all** Topologies.
 
@@ -43,7 +43,7 @@ A guide to the API function calls is found here: [API](API.md)
 
 ## Creating Deployments
 
-Deployments in the new F prime system must now specifiy a `CMakeLists.txt` following a specific
+Deployments in the new F prime system must now specify a `CMakeLists.txt` following a specific
 format in order to act as a build entry point. This file includes the F prime make system, acts as
 a target for the CMake command, and sets up basic project information. This file may also add other
 subdirectories to pull in deployment specific modules, and is placed at top-level in the deployment
@@ -53,7 +53,7 @@ directory.
 name, not the key from the Topology Ai.xml. This makes naming cleaner and easier to maintain. It is
 done in the deployment `CMakeLists.txt` with the CMake `project` command.
 
-In one of the modules added in the Deployment with `add_fprime_subdriectory`, one or more executable
+In one of the modules added in the Deployment with `add_fprime_subdirectory`, one or more executable
 should be added with `register_fprime_executable`.
 
 A guide to `CMakeLists.txt` for Deployments is found here: [deployment](deployment.md)
@@ -98,7 +98,7 @@ If needed, specific platforms may also be specified, but this is only needed if 
 F prime cross-compile configurations for a given toolchain.
 
 **Difference from Old Make System:** Each build is setup using a call to CMake, and then built with
-the standard build call like `make`. Unlink the old system, if something changes in the build 
+the standard build call like `make`. Unlink the old system, if something changes in the build
 configuration, CMake will automatically be rerun. There should be no need to call `make gen_make`.
 
 A guide to full usage documentation is found here: [README](cmake-intro.md)
@@ -142,4 +142,3 @@ make check
 ## Global Build Options:
  - Options: [Options](Options.md) describes the CMake system options.
  - Targets: [Targets](targets/Targets.md) describes built in support targets like `dict`
-

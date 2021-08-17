@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: GTestCppWriter.py
 #
-# DESCRIPTION: A writer for generating component gtest base implemetation files.
+# DESCRIPTION: A writer for generating component gtest base implementation files.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
@@ -23,7 +23,7 @@ except ImportError:
 
 class GTestCppWriter(GTestWriterBase.GTestWriterBase):
     """
-    A writer for generating component gtest base implemetation files.
+    A writer for generating component gtest base implementation files.
     """
 
     FILE_NAME = "GTestBase.cpp"

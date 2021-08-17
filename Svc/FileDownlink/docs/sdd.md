@@ -16,7 +16,7 @@ downlink and starting on the next file in the queue.
 
 Requirement | Description | Rationale | Verification Method
 ---- | ---- | ---- | ----
-FD-001 | `FileDownlink` shall queue up a list of files to downlink | The requirement provides the ability to simultaniously queue up multiple files for downlink from different sources | Test
+FD-001 | `FileDownlink` shall queue up a list of files to downlink | The requirement provides the ability to simultaneously queue up multiple files for downlink from different sources | Test
 FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
 FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
 

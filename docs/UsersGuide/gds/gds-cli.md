@@ -156,7 +156,7 @@ The `fprime-cli` commands can roughly be grouped into 2 categories:
 #### Receiving Events and Channels
 
 The first category contains `channels` and `events`. There are two very similar commands to respectively listen for any
-telemetry channels or logged events coming from the embedded sysstem through the GDS. These commands print out all the
+telemetry channels or logged events coming from the embedded system through the GDS. These commands print out all the
 data they receive to the console until the user stops them with `CTRL+C`. Since this can be quite a lot of data,
 the user will often want to limit the data to items the user specifically cares about. There are several options to
 filter which items are displayed:
@@ -183,8 +183,8 @@ show you all the information available and allow interaction with other tools.
 #### Sending Commands
 
 In the second category is the `command-send` command, which can used to send commands through the GDS to the embedded
-system. You can send commands by giving the *full name* of the command. These are typically formed by joining the 
-component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments, 
+system. You can send commands by giving the *full name* of the command. These are typically formed by joining the
+component instance name and command name with a '.' (e.g. `health.HLTH_CHNG_PING`). When the command needs arguments,
 these can be passed in as a space-separated list using the `-args`/`--arguments` option. To send a command that does not
 need arguments like `cmdDisp.CMD_NO_OP`, you would just run the following:
 
@@ -208,7 +208,7 @@ completion enabled, you can also double-tap tab to view a list of potential comm
 
 ## Command Details
 
-Each command's available interface is shown below for referece.  When in doubt use the `--help`  flag with the command
+Each command's available interface is shown below for reference.  When in doubt use the `--help`  flag with the command
 directly.
 
 ### `channels`
@@ -353,4 +353,4 @@ optional arguments:
 ## Conclusion
 
 The user should now be able to successfully use the GDS cli to connect to a running GDS, send commands, receive events
-and telemetry, and filter the results to be managable.  All this is done through the command line using this tool.
+and telemetry, and filter the results to be manageable.  All this is done through the command line using this tool.

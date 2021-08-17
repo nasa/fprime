@@ -27,7 +27,7 @@ from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.models import Command, Parameter
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -89,7 +89,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the command model to visit.
+        @param obj: the instance of the command model to visit.
         """
 
         # Build filename here...
@@ -173,7 +173,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
     def DictHeaderVisit(self, obj):
         """
         Defined to generate header for  command python class.
-        @parms obj: the instance of the command model to visit.
+        @param obj: the instance of the command model to visit.
         """
         if type(obj) is Command.Command:
             inst = 0
@@ -212,7 +212,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python command class
-        @parms obj: the instance of the command model to operation on.
+        @param obj: the instance of the command model to operation on.
         """
         if type(obj) is Command.Command:
             inst = 0

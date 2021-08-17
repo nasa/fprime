@@ -390,7 +390,7 @@ output port.
 
 ### LinuxTime
 
-This component is an adaption of the time source component specified in
+This component is an adaptation of the time source component specified in
 the Time directory. In this case, it is a time source that makes a Linux
 system call for the Linux demo.
 

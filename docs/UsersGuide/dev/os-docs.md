@@ -211,7 +211,7 @@ remove  directories etc.
 This class definition can be found in **Os/Log.hpp**. It is an interface to
 a system logging facility. It is meant to abstract the VxWorks logging
 facility.  It is a subclass of `Fw::Logger` and thus must be registered after construction.  Compiling in
-**Os/LogDefault.cpp** into your deployment will automatically creat an **Os::Log** and register it.
+**Os/LogDefault.cpp** into your deployment will automatically create an **Os::Log** and register it.
 Table 30 provides the methods and their descriptions.
 
 **Table 30.** Log method descriptions.
@@ -222,4 +222,3 @@ Table 30 provides the methods and their descriptions.
 |        | **Argument**                           | **Description**                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 |        | fmt                                    | Format string to fill and print.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |        | a1 to a6                               | Values to be printed. They will be inserted into the format string based on the format string specifiers. The type of the argument is POINTER\_CAST (normally an integer), but a typical usage is to cast the values to display to POINTER\_CAST and allow the format string extraction to get the correct value. This can include strings (char\*), but the location in memory that holds the string must persist since the format string may be printed on another task in the system. |
-

@@ -72,7 +72,7 @@ namespace Svc {
             //!
             //!  \param portNum the number of the incoming port.
             //!  \param data the buffer containing the command.
-            //!  \param context a user value returned with the statuss
+            //!  \param context a user value returned with the status
             void seqCmdBuff_handler(NATIVE_INT_TYPE portNum, Fw::ComBuffer &data, U32 context);
             //!  \brief component command registration handler
             //!
@@ -86,7 +86,7 @@ namespace Svc {
             //!  \brief component ping handler
             //!
             //!  The ping handler responds to messages to verify that the task
-            //!  is still executing. Will call output poing port
+            //!  is still executing. Will call output ping port
             //!
             //!  \param portNum the number of the incoming port.
             //!  \param opCode the opcode being registered.
@@ -123,7 +123,7 @@ namespace Svc {
             //!  This command will clear the table tracking the completion of commands.
             //!  It is meant to be used if the tracking table has gotten full because of
             //!  a software failure. It is dangerous in that it can clear a command
-            //!  that a sequencer is watiting for.
+            //!  that a sequencer is waiting for.
             //!
             //!  \param opCode the CLEAR_TRACKING opcode.
             //!  \param cmdSeq the assigned sequence number for the command

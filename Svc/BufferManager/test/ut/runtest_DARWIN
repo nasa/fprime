@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# ---------------------------------------------------------------------- 
-# runtest_DARWIN
-# ---------------------------------------------------------------------- 
-
-cd ${BUILD_ROOT}/Svc/BufferManager/test/ut
-echo "Running ${BUILD_ROOT}/Svc/BufferManager/test/ut/$1/test_ut"
-${BUILD_ROOT}/Svc/BufferManager/test/ut/$1/test_ut

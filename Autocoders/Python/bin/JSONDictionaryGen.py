@@ -1,5 +1,5 @@
 """
-NAME: JSONDictonaryGen.py
+NAME: JSONDictionaryGen.py
 
 DESCRIPTION: Reads topology XML to produce command, EVR, and channel JSON
              dictionaries

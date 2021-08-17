@@ -574,7 +574,7 @@ namespace Svc {
     void ActiveLoggerImplTester::readEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value, Os::File& file) {
         static const BYTE delimiter = 0xA5;
 
-        // first read should be delimeter
+        // first read should be delimiter
         BYTE de;
         NATIVE_INT_TYPE readSize = sizeof(de);
 

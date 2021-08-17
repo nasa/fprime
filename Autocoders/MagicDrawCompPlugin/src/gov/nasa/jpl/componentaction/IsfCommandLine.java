@@ -20,7 +20,7 @@ import com.nomagic.magicdraw.core.project.ProjectDescriptorsFactory;
  * <code>/usr/bin/Xvfb :1 -screen 0 1024x768x24
  * export DISPLAY=:1 </code>
  * 
- * To run the utility, use the script isfpluginexec.sh in the MagicDrawComdPlugin directory
+ * To run the utility, use the script isfpluginexec.sh in the MagicDrawCompPlugin directory
  */
 public class IsfCommandLine extends CommandLine
 {

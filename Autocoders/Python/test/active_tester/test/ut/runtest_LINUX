@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Running ${BUILD_ROOT}/Autocoders/Python/test/active_tester/test/ut/$1/test_ut"
-${BUILD_ROOT}/Autocoders/Python/test/active_tester/test/ut/$1/test_ut
-

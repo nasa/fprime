@@ -25,7 +25,7 @@ from fprime_ac.generators.visitors import AbstractVisitor
 
 # from fprime_ac.utils import DiffAndRename
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -86,7 +86,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the channel model to visit.
+        @param obj: the instance of the channel model to visit.
         """
 
         # Build filename here...
@@ -132,7 +132,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the Python channel class
-        @parms obj: the instance of the channel model to operation on.
+        @param obj: the instance of the channel model to operation on.
         """
         inst = 0
         for id in obj.get_ids():

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 <interface name="Test">
     <import_serializable_type>Autocoders/Python/test/comp_no_namespace/QuaternionSerializableAi.xml</import_serializable_type>
     <comment>

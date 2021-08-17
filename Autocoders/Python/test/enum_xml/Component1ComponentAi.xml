@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="Component1" kind="active" namespace="Example">
     <import_enum_type>Autocoders/Python/test/enum_xml/Enum2EnumAi.xml</import_enum_type>
+    <import_enum_type>Autocoders/Python/test/enum_xml/Enum3EnumAi.xml</import_enum_type>
     <import_port_type>Autocoders/Python/test/enum_xml/Port1PortAi.xml</import_port_type>
     <import_serializable_type>Autocoders/Python/test/enum_xml/Serial1SerializableAi.xml</import_serializable_type>
     <import_dictionary>Autocoders/Python/test/enum_xml/Telemetry.xml</import_dictionary>

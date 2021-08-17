@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <events event_base="0x10">
     <event name="EventOne" id="0" severity="INFO" format_string="Event Status: s%" throttle="-10">
         <comment>Informs event status.</comment>

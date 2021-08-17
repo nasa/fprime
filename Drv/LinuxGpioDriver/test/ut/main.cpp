@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
         tester.testOutput(gpio,10);
     } else if (2 == output) {
         printf("Testing GPIO %d interrupts\n",gpio);
-        tester.testInterrrupt(gpio,10);
+        tester.testInterrupt(gpio,10);
     } else {
         usage(argv[0]);
     }

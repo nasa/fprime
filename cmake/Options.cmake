@@ -18,6 +18,34 @@
 ####
 
 ####
+# `FPRIME_USE_STUBBED_DRIVERS:`
+#
+# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
+# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to used full driver implementations.
+###
+if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
+endif()
+
+####
+# `FPRIME_USE_BAREMETAL_SCHEDULER:`
+#
+# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
+# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
+# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the scheduler or OFF to use the OS thread scheduler.
+###
+if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
+endif()
+
+
+####
 # `CMAKE_DEBUG_OUTPUT:`
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
@@ -31,6 +59,39 @@
 ####
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
+####
+# `FPRIME_ENABLE_FRAMEWORK_UTS:`
+#
+# Allow a project to to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
+# does not affect project specified UTs.
+#
+# **Values:**
+# - ON: (default) adds framework UT targets to the total list of targets
+# - OFF: do not add framework UTs to the target list
+#
+# e.g. `-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF`
+####
+option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
+if (NOT FPRIME_ENABLE_FRAMEWORK_UTS)
+    message(WARNING "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF will be deprecated in a future release")
+endif()
+
+####
+# `FPRIME_ENABLE_AUTOCODER_UTS:`
+#
+# When FPRIME_ENABLE_FRAMEWORK_UTS is set, this allows a projects to also enable running the autocoder UTs which do not
+# represent the correctness of the C++/product software, but rather the operation of the autocoder tools.
+#
+# **Values:**
+# - ON: (default) retains the autocoder UTs in the target list
+# - OFF: removes autocoder UTs from the target list
+#
+# e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
+####
+option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
+if (NOT FPRIME_ENABLE_AUTOCODER_UTS)
+    message(WARNING "-DFPRIME_ENABLE_AUTOCODER_UTS=OFF will be deprecated in a future release")
+endif()
 
 ####
 # `SKIP_TOOLS_CHECK:`
@@ -47,7 +108,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
 
 # Set build type, when it hasn't been set
-if(NOT CMAKE_BUILD_TYPE) 
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)
 else()
     string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
@@ -62,17 +123,22 @@ endif()
 # **Values:**
 # - Release: (default) standard flight build
 # - Testing: allow for unit tests and debug enabled build
-# - Debug: supplied by CMake and typlically unused for F prime
+# - Debug: supplied by CMake and typically unused for F prime
 #
 # e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 ####
-SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++03" CACHE STRING "C++ flags." FORCE)
+SET(CMAKE_C_FLAGS_RELEASE "-std=c99" CACHE STRING "C flags." FORCE)
+# Raise C++ standard to C++11 while unit testing to support googletest
+SET(CMAKE_CXX_FLAGS_TESTING "${CMAKE_CXX_FLAGS_TESTING} -std=c++11 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_C_FLAGS_TESTING "${CMAKE_C_FLAGS_TESTING} -std=c99 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C flags." FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_RELEASE
+    CMAKE_C_FLAGS_RELEASE
     CMAKE_CXX_FLAGS_TESTING
     CMAKE_C_FLAGS_TESTING
     CMAKE_EXE_LINKER_FLAGS_TESTING
@@ -94,16 +160,6 @@ endif()
 ####
 
 ####
-# `PLATFORM:`
-#
-# Specifies the platform used when building the F prime using the CMake system. See:
-# [platform.md](platform.md) for more information. Default: automatically detect platform file.
-#
-# e.g. `-DPLATFORM=/path/to/platform/cmake`
-####
-
-
-####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
 # `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 #
@@ -111,7 +167,7 @@ endif()
 # any way bypassing that utility (e.g. inside your beloved IDE).
 #
 # These locations specify the locations of the needed F prime paths. These are described below. Defaults are set to
-# support the historical in-source deployments where F prime is merged with deployment code. Specifiy these settings if
+# support the historical in-source deployments where F prime is merged with deployment code. Specify these settings if
 # using the newer deployment structure. `fprime-util` does this for you.
 #
 # FPRIME_FRAMEWORK_PATH: location of F prime framework installation, always the directory above this file, however;
@@ -183,13 +239,15 @@ endif()
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
     set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
 endif()
+
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/" CACHE PATH "F prime configuration header directory" FORCE)
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
+set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
 # Settings for F artifacts installation destination
 if (NOT DEFINED FPRIME_INSTALL_DEST)
-    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/" CACHE PATH "F prime artifacts installation directory" FORCE)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/")
 endif()
-set(IGNORE_ME ${FPRIME_INSTALL_DEST}) # Prevent warning that FPRIME_INSTALL_DEST is unused
+set(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)

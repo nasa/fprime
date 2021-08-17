@@ -44,7 +44,7 @@ namespace Drv {
 
       //! Interrupt testing
       //!
-      void testInterrrupt(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles);
+      void testInterrupt(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles);
 
       //! Test output
       void testOutput(NATIVE_INT_TYPE gpio, NATIVE_INT_TYPE cycles);

@@ -32,7 +32,7 @@ function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS 
     if ("${AI_XML}" STREQUAL "")
         return()
     endif()
-    string(REPLACE "CompnentAi.xml" "${AI_XML}" "ComponentImpl" BASE_TEMPLATE)
+    string(REPLACE "ComponentAi.xml" "${AI_XML}" "ComponentImpl" BASE_TEMPLATE)
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     # Try to generate dictionaries for every AC input file
     add_custom_target("${TARGET_NAME}" 

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <serializable name="SendFileResponse" namespace="Svc">
     <import_enum_type>Svc/FileDownlink/SendFileStatusEnumAi.xml</import_enum_type>

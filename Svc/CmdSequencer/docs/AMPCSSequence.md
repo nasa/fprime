@@ -18,7 +18,7 @@ Record Field | Size in Bytes | Description
 Time Flag    | 1             | Either 0x0 denoting absolute time or 0xFF denoting relative time
 Time         | 4             | The time in seconds
 CMD Length   | 2             | The size in bytes of the Command field
-Command      | &leq; 1017    | A serialized command in F Prime format, with a 16-bit opcode
+Command      | < 1017    | A serialized command in F Prime format, with a 16-bit opcode
 
 ## 2 Implementation
 

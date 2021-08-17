@@ -62,7 +62,7 @@ where
 
 > \<PortType\> = The full port type specified in the data\_type
 > attribute in the definition of the port in the component XML.
-> 
+>
 > \<port name\> = The name of the port in the name attribute of the port
 > definition.
 
@@ -81,7 +81,7 @@ where
 
 > \<PortType\> = The full port type specified in the data\_type
 > attribute in the definition of the port in the component XML.
-> 
+>
 > \<port name\> = The name of the port in the name attribute of the port
 > definition.
 
@@ -137,7 +137,7 @@ The standard port accessor functions for logging events are as follows:
 Set logging output ports:
 
 > void set\_Log\_OutputPort(Fw::InputLogPort\* port);
-> 
+>
 > void set\_TextLog\_OutputPort(Fw::InputFwLogTextPort\* port);
 
 Set time output ports:
@@ -152,7 +152,7 @@ ports. It can be called once for both.
 The standard port accessor functions for parameters is as follows:
 
 > void set\_ParamGet\_OutputPort(Fw::InputFwPrmGetPort\* port);
-> 
+>
 > void set\_ParamSet\_OutputPort(Fw::InputFwPrmSetPort\* port);
 
 ## Registering Commands

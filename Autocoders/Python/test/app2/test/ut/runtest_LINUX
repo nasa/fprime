@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "Running ${BUILD_ROOT}/Autocoders/Python/test/app2/test/ut/$1/test_ut"
-${BUILD_ROOT}/Autocoders/Python/test/app2/test/ut/$1/test_ut

@@ -2,7 +2,7 @@
 
 F´ is naturally organized into projects and deployments. Projects use F´ to solve some embedded system problem, and may
 consist of one or more deployments.  Deployments are tied to individual builds of code and are typically used to drive
-a single device. 
+a single device.
 
 A topology is a specific set of interconnected components, which represents the design of a deployment. Further
 explanation of projects and deployments and how they differ is explained in this guide.
@@ -57,10 +57,10 @@ each system would have a separate unique executable to control it.
 A topology is a specific set of interconnected components that represent a system. Topologies contain instantiations of
 each component, and list connections between the ports of the components.
 
-Projects contain one or more deployments that are closely related, as discussed above, while deployments contain a 
+Projects contain one or more deployments that are closely related, as discussed above, while deployments contain a
 that represents the design of the system including, ports, and components needed for the specific use of F´.
 
 ## Conclusion
 
 Projects are containers of related deployments to solve some problem. Deployments are a container for a topology and
-build configuration to create an executable for a specific device used on the project. 
+build configuration to create an executable for a specific device used on the project.

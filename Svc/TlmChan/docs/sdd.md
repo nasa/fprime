@@ -14,8 +14,8 @@ The requirements for `Svc::TlmChan` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-TLC-001 | The `Svc::TlmChan` component shall provide an interface to submit telmetry | Unit Test
-TLC-002 | The `Svc::TlmChan` component shall provide an interface to read telmetry | Unit Test
+TLC-001 | The `Svc::TlmChan` component shall provide an interface to submit telemetry | Unit Test
+TLC-002 | The `Svc::TlmChan` component shall provide an interface to read telemetry | Unit Test
 TLC-003 | The `Svc::TlmChan` component shall provide an interface to run periodically to write telemetry | Unit Test
 TLC-004 | The `Svc::TlmChan` component shall write changed telemetry channels when invoked by the run port | Unit Test
 
@@ -73,7 +73,7 @@ A configuration value in `TlmChanImplCfg.h` defines a set of hash buckets to sto
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](TlmChan.html) [MD](TlmChan.md)
+TBD
 
 ## 5. Module Checklists
 
@@ -85,14 +85,7 @@ Unit Test Checklist  | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-File | Contents
----- | --------
-Unit Test Output | [Link](../test/ut/output/test.txt)
-Coverage - TlmChanImpl.cpp | [Link](../test/ut/output/TlmChanImpl.cpp.gcov)
-Coverage - TlmChanImplGet.cpp | [Link](../test/ut/output/TlmChanImplGet.cpp.gcov)
-Coverage - TlmChanImplRecv.cpp | [Link](../test/ut/output/TlmChanImplRecv.cpp.gcov)
-Coverage - TlmChanImplTask.cpp | [Link](../test/ut/output/TlmChanImplTask.cpp.gcov)
-Coverage - TlmChanComponentAc.cpp | [Link](../test/ut/output/TlmChanComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

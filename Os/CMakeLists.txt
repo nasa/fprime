@@ -28,7 +28,7 @@ set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/FileCommon.cpp"
 )
-# Check for default loger
+# Check for default logger
 if (NOT FPRIME_DISABLE_DEFAULT_LOGGER)
     list(APPEND SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LogDefault.cpp"
@@ -59,7 +59,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
   )
 # Linux IPC queues implementation
-elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
@@ -71,11 +71,16 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "
 endif()
 
 
-# If baremetal scheduler is set, remove the previouse task files and add in the Baremetal variant
-if (BAREMETAL_SCHEDULER)
+# If baremetal scheduler is set, remove the previous task files and add in the Baremetal variant
+if (FPRIME_USE_BAREMETAL_SCHEDULER)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Baremetal/TaskRunner/")
-    list(FILTER SOURCE_FILES EXCLUDE REGEX "Task\.cpp")
+    foreach (ITER_ITEM IN LISTS SOURCE_FILES)
+        if (ITER_ITEM MATCHES "Task\.cpp$")
+            list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
+        endif()
+    endforeach()
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
 endif()
 register_fprime_module()
 
@@ -93,8 +98,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
 )
-## TODO: **BROKEN UT**, validation of File fails
-#register_fprime_ut()
+register_fprime_ut()
 
 # Second UT Pthreads
 set(UT_SOURCE_FILES
@@ -102,7 +106,7 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut("Os_pthreads")
 
-# Third  UT Pthrads MAX Heap
+# Third  UT Pthreads MAX Heap
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Pthreads/MaxHeap/test/ut/MaxHeapTest.cpp"
 )

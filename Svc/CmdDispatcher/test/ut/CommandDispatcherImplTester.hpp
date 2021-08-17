@@ -22,6 +22,7 @@ namespace Svc {
 
             void runNominalDispatch(void);
             void runInvalidOpcodeDispatch(void);
+            void runCommandReregister(void);
             void runFailedCommand(void);
             void runInvalidCommand(void);
             void runOverflowCommands(void);

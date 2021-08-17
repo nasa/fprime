@@ -49,12 +49,12 @@ BUILD_18 | Deployments shall configure dependencies independently. | Current F´
 BUILD_19 | The build system shall not be difficult to set up and configure. | Porting existing F´ deployments to the new make system should not require massive efforts | Inspection | Done |
 BUILD_20 | The build system shall support treating F´ as a library, sub-repo, and sub-directory even if F is read-only | Future F´ usage should treat core as an input | Inspection | Done |
 BUILD_21 | The build system shall support Windows hosts. | Windows build are desired to be supported in the future. | Inspection | **Needed** |
-BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | **Deffered** Note: AC support needed |
+BUILD_22 | The build system shall support building sub topologies. | Sub topologies are desired in the future. | Inspection | **Deferred** Note: AC support needed |
 BUILD_23 | The build system shall support building F´ core as a set of shared libraries. | Some future missions may benefit from shared F´ core. | Inspection | Done |
 BUILD_24 | The build system shall support UT and validation stage hooks. | Validation and additions to Unit Testing support better project development. | Inspection | **Needed** |
 BUILD_26 | The build system shall support execution of individual, sets, or all gtest based unit tests. | | | Done |
 BUILD_27 | The build system shall support explicit and implicit execution of the F´ Autocoder. | | | Done |
-BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | |  **Needed** Note: pytrhon check needed |
+BUILD_28 | The build system shall verify that required compilers, linkers, libraries, etc. are installed on host where build is being executed. | | |  **Needed** Note: python check needed |
 BUILD_29 | The build system shall implement all user targets of the legacy F´ build system. | | | **Deferred** separate build commands needed. |
 BUILD_30 | The build system shall support execution of individual, sets, or all GSE based integration tests. | | | **Needed** |
 BUILD_31 | The build system shall support execution of individual, sets, or all F´ Autocoder and associated tooling tests. | | | Done |
@@ -159,7 +159,7 @@ In order to build individual components inside F´ when using out-of-source buil
 into the parallel build structure to find the components build directory. F´ core components live in
 `<build>/F-Prime/<path-to-component>` and adaptations typically live in
 `<build>/<adaptation>/<path-to-component>`.  The user can then issue make in this directory to build
-the component.  A referend app example can be seen in the commands below.
+the component.  A reference app example can be seen in the commands below.
 
 **Build F´ Svc Component Individually**
 
@@ -245,7 +245,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 ```
 
 Topology `CMakeLists.txt` follow the same format as the Module files with two deviations. First,
-`MOD_DEPS` is usually defined as some dependencies cannot be auto-detectesd must be chosen and
+`MOD_DEPS` is usually defined as some dependencies cannot be auto-detected must be chosen and
 `register_fprime_executable` is called as an executable will be generated.
 
 **Topology CMakeList.txt**
@@ -282,7 +282,7 @@ blue/orange in the diagram below.
 ### 4.1 Deployment and Executable CMake Files
 
 These files are supplied by the the deployment or executable being built. This is typically supplied
-by the adaption project of F´. These files supply two critical functions. Primarily, this must
+by the adaptation project of F´. These files supply two critical functions. Primarily, this must
 supply an entry-point of the build system. It contains the standard CMake headers and an inclusion
 of the F´ CMake support file `FPrime.cmake` it should also include `FPrime-Code.cmake` to include
 the F´ core code. This ensures CMake is ready to run, and all the F´ setup is included.
@@ -362,7 +362,7 @@ generation and the other which wraps it. `register_*` functions are the API wrap
 `generate_*` functions perform the work. The functions are:
 
 1. register_fprime_module; generate_module: generates library/module build files and dependencies.
-2. register_fprime_executable; generate_executable: generates executable build and dependecies.
+2. register_fprime_executable; generate_executable: generates executable build and dependencies.
 
 ![F´ CMake Architecture](img/CMake%20-%20Architecture.png "F´ CMake Architecture")
 
@@ -396,14 +396,14 @@ autocoding, and otherwise acts similar to the above module with the exception th
 output is the result of the build.
 
 **Note:** deployments specify one or more executables, and these executables become the root of the
-dependency tree. Thus, only the needed exetuables, libraries, and outputs are generated and the
-complete F´ system is not explicity built. This  makes the build more efficient.
+dependency tree. Thus, only the needed executables, libraries, and outputs are generated and the
+complete F´ system is not explicitly built. This  makes the build more efficient.
 
 ### 5.3 Unit Test Functions: register_fprime_ut
 
 Registering unit tests uses the same process as above with the exception that the variables
 `UT_SOURCE_FILES` and `UT_MOD_DEPS`. This allows the same file to define both a module or
-executable and unit test without overriding perviously used variables.
+executable and unit test without overriding previously used variables.
 
 Unit tests must be built with a cmake build type of "TESTING". This allows for the building of the
 unit-tests and setting up the `make check` target. This prevents the

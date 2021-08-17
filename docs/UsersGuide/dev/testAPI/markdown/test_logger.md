@@ -35,7 +35,7 @@ Constructs a TestLogger
 
 Args:
 
-    output_path: a path where log files will 
+    output_path: a path where log files will
     time_format: an optional string to specify the timestamp format. See datetime.strftime
     font_name: an optional string to specify the font
 

@@ -14,7 +14,7 @@
 * Y = Test Category (Nominal, Error, etc)
 * Z = Specific Test case
 *
-* The unit test implementor uses X, but creates their own set of Y and Z.
+* The unit test implementer uses X, but creates their own set of Y and Z.
 *
 *   Copyright 2014-2015, by the California Institute of Technology.
 *   ALL RIGHTS RESERVED. United States Government Sponsorship

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!--======================================================================
 
@@ -13,20 +12,49 @@
 
   <channel
     id="0x00"
-    name="BufferManager_NumAllocatedBuffers"
+    name="TotalBuffs"
     data_type="U32"
-    abbrev="BufM-0000"
+    update="on_change"
   >
-    <comment>The number of buffers currently allocated</comment>
+    <comment>The total buffers allocated</comment>
   </channel>
 
   <channel
     id="0x01"
-    name="BufferManager_AllocatedSize"
+    name="CurrBuffs"
     data_type="U32"
-    abbrev="BufM-0001"
+    update="on_change"
   >
-    <comment>The total size of all allocated buffers</comment>
+    <comment>The current number of allocated buffers</comment>
+  </channel>
+
+  <channel
+    id="0x02"
+    name="HiBuffs"
+    data_type="U32"
+    update="on_change"
+  >
+    <comment>The high water mark of allocated buffers</comment>
+  </channel>
+
+  <channel
+    id="0x03"
+    name="NoBuffs"
+    data_type="U32"
+    update="on_change"
+    high_red="1"
+  >
+    <comment>The number of requests that couldn't return a buffer</comment>
+  </channel>
+
+  <channel
+    id="0x04"
+    name="EmptyBuffs"
+    data_type="U32"
+    update="on_change"
+    high_red="1"
+  >
+    <comment>The number of empty buffers returned</comment>
   </channel>
 
 </telemetry>

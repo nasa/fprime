@@ -47,8 +47,8 @@
                 <arg name="stage" type="ENUM">
                     <enum name="PrmWriteError">
                         <item name="PRM_WRITE_OPEN"/>
-                        <item name="PRM_WRITE_DELIMETER"/>
-                        <item name="PRM_WRITE_DELIMETER_SIZE"/>
+                        <item name="PRM_WRITE_DELIMITER"/>
+                        <item name="PRM_WRITE_DELIMITER_SIZE"/>
                         <item name="PRM_WRITE_RECORD_SIZE"/>
                         <item name="PRM_WRITE_RECORD_SIZE_SIZE"/>
                         <item name="PRM_WRITE_PARAMETER_ID"/>
@@ -84,9 +84,9 @@
                 <arg name="stage" type="ENUM">
                     <enum name="PrmReadError">
                         <item name="PRM_READ_OPEN"/>
-                        <item name="PRM_READ_DELIMETER"/>
-                        <item name="PRM_READ_DELIMETER_SIZE"/>
-                        <item name="PRM_READ_DELIMETER_VALUE"/>
+                        <item name="PRM_READ_DELIMITER"/>
+                        <item name="PRM_READ_DELIMITER_SIZE"/>
+                        <item name="PRM_READ_DELIMITER_VALUE"/>
                         <item name="PRM_READ_RECORD_SIZE"/>
                         <item name="PRM_READ_RECORD_SIZE_SIZE"/>
                         <item name="PRM_READ_RECORD_SIZE_VALUE"/>

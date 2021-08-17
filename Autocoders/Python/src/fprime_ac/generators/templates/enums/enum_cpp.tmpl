@@ -35,7 +35,11 @@ namespace ${namespace} {
 
   ${name} :: ${name}(void):Serializable()
   {
-    this->e = (t)0;
+#if $default
+    this->e = (t) ${default};
+#else
+    this->e = (t) 0;
+#end if
   }
   
   ${name} :: ${name}(const t e):Serializable()
@@ -148,14 +152,22 @@ a == $item_value#slurp
   Fw::SerializeStatus ${name} :: serialize(Fw::SerializeBufferBase& buffer) const
   {
     Fw::SerializeStatus status;
+#if $serialize_type
+    status = buffer.serialize(static_cast<${serialize_type}>(this->e));
+#else
     status = buffer.serialize(static_cast<FwEnumStoreType>(this->e));
+#end if
     return status;
   }
   
   Fw::SerializeStatus ${name} :: deserialize(Fw::SerializeBufferBase& buffer)
   {
     Fw::SerializeStatus status;
+#if $serialize_type
+    ${serialize_type} es;
+#else
     FwEnumStoreType es;
+#end if
     status = buffer.deserialize(es);
     if (status == Fw::FW_SERIALIZE_OK)
       this->e = static_cast<t>(es);

@@ -19,7 +19,7 @@ namespace ${n} {
 
 class ${name} : public Fw::Serializable {
 
-#for ($memname,$type,$size,$format,$comment) in $mem_list:
+#for ($memname,$type,$size,$format,$comment,$default) in $mem_list:
 #if $type == "string":
 
   public:
@@ -34,23 +34,17 @@ class ${name} : public Fw::Serializable {
             ${memname}String(const Fw::StringBase& src); //!< string base constructor
             ${memname}String(const ${memname}String& src); //!< string base constructor
             ${memname}String(void); //!< default constructor
-            virtual ~${memname}String(void); //!< destructor
+            ${memname}String& operator=(const ${memname}String& other); //!< assignment operator
+            ${memname}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
+            ${memname}String& operator=(const char* other); //!< char* assignment operator
+            ~${memname}String(void); //!< destructor
+
             const char* toChar(void) const; //!< retrieves char buffer of string
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of string
-            bool operator==(const ${memname}String& src) const; //!< equality operator
-
-            const ${memname}String& operator=(const ${memname}String& other); //!< equal operator for other strings
-
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
+            NATIVE_UINT_TYPE getCapacity(void) const ;
 
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy a buffer, overwriting current contents
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[${size}]; //!< buffer for string storage
-
     };
 
 #end if

@@ -1,3 +1,0 @@
-#!/bin/sh
-
-$(dirname "$0")/runtest_all $1

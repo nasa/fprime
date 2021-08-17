@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/parameters_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <parameters opcode_base="$testBase" parameter_base="0x10">
     <parameter id="0" set_opcode="0x1" save_opcode="0x2" name="ParamA" data_type="F32" default="32.1">
         <comment>Float Parameter</comment>

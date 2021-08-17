@@ -77,7 +77,7 @@ def _ustr(obj):
     then < returns the unicode object | encodes it with the default encoding | ... >.
     """
     try:
-        # If this works, then _ustr(obj) has the same behaviour as str(obj), so
+        # If this works, then _ustr(obj) has the same behavior as str(obj), so
         # it won't break any existing code.
         return str(obj)
 
@@ -716,7 +716,7 @@ class ParserElement:
 
     def setFailAction(self, fn):
         """Define action to perform if parsing fails at this expression.
-        Fail acton fn is a callable function that takes the arguments
+        Fail action fn is a callable function that takes the arguments
         fn(s,loc,expr,err) where:
          - s = string being parsed
          - loc = location where expression match was attempted and failed
@@ -956,7 +956,7 @@ class ParserElement:
         out = []
         lastE = 0
         # force preservation of <TAB>s, to minimize unwanted transformation of string, and to
-        # keep string locs straight between transformString and scanString
+        # keep string locations straight between transformString and scanString
         self.keepTabs = True
         for t, s, e in self.scanString(instring):
             out.append(instring[lastE:s])
@@ -1941,7 +1941,7 @@ class StringStart(PositionToken):
 
     def parseImpl(self, instring, loc, doActions=True):
         if loc != 0:
-            # see if entire string up to here is just whitespace and ignoreables
+            # see if entire string up to here is just whitespace and ignorables
             if loc != self.preParse(instring, 0):
                 # ~ raise ParseException( instring, loc, "Expected start of text" )
                 exc = self.myException

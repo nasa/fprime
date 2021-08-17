@@ -80,7 +80,7 @@ import com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port;
  * 					This map is cross checked with all the instances of the modules. If something in the map does not exist within an instance, the user gets notified by a warning.
  * 				</li>
  * 				<li>
- * 					An ISFSubsystem topologyModel object is created using the pysicalConnectionType list and the  map of all the components.
+ * 					An ISFSubsystem topologyModel object is created using the physicalConnectionType list and the  map of all the components.
  * 				</li>
  * 				<li>
  * 					This object is passed to the IsfSubXmlWriter and is used to generate the flattened XML topology file. 
@@ -214,8 +214,8 @@ public class ProcessISFTopology {
 	 * 
 	 * <p>
 	 * 
-	 * The index checking/correction is done so multiplicites do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
-	 * The latter pair has the additinal port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
+	 * The index checking/correction is done so multiplicities do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
+	 * The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
 	 * This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match.
 	 * 
 	 * <p> 
@@ -422,9 +422,9 @@ public class ProcessISFTopology {
 	 */
 	private static List<Element> processModel(Element root) throws ConnectorException{
 		List<Element> subsystemElementList = new ArrayList<Element>();
-		Collection<Element> coll = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
+		Collection<Element> collection = (Collection<Element>)ModelHelper.getElementsOfType(root, null, true, true);
 
-		for(Element el : coll) {
+		for(Element el : collection) {
 			if(el instanceof NamedElement) {
 				if (el.getHumanType().equals("Subsystem")) {
 					subsystemElementList.add(el);
@@ -559,7 +559,7 @@ public class ProcessISFTopology {
 		
 		subsystemInstances.put(subsystemName, subsystemInstanceNameList.size());
 		
-		//Iterate through all owned objects of the inputed subsystem
+		//Iterate through all owned objects of the inputted subsystem
 		for(Element e: subsystem.getOwnedElement()){
 			//Add connections to a map where the connector end is a key associated with lists of input/output connections
 			if(e.getHumanType().equals("Part Property") || e.getHumanType().equals("Reference Property")){
@@ -692,7 +692,7 @@ public class ProcessISFTopology {
 		System.out.println("Connector Creation start");
 		for(ConnectorEnd currentConnectorEnd : sourcePorts){
 			if(subsystemMap.containsKey(ISFSubsystem.getQualifiedPort(currentConnectorEnd) )){
-				String qualfiedName = ISFSubsystem.getQualifiedPort(currentConnectorEnd); //Key for subsystemMap
+				String qualifiedName = ISFSubsystem.getQualifiedPort(currentConnectorEnd); //Key for subsystemMap
 				int originalMultiplicity = currentConnectorEnd.getLower();
 				int startIndex = 0;
 				int endIndex = originalMultiplicity;
@@ -714,7 +714,7 @@ public class ProcessISFTopology {
 					String currentSourceName = "";
 					String currentTargetName = "";
 					String prevSourceName = "";
-					qualfiedName = ISFSubsystem.getQualifiedPort(currentConnectorEnd);
+					qualifiedName = ISFSubsystem.getQualifiedPort(currentConnectorEnd);
 					
 					boolean hasMultipleBackwardsSourceConnections = false; //Tracks if when checking the out connections at a certain node if there is more than one (To detect common service like branches) 
 					boolean oneConnectionFound = false; //Checks if at least one connection was created, used to avoid the single branch connector exception
@@ -724,7 +724,7 @@ public class ProcessISFTopology {
 					Property targetPart = currentConnectorEnd.getPartWithPort();
 					
 					ArrayList<Connector> connList = new ArrayList<Connector>(); //connectors in order of path
-					ArrayList<Integer> multList = new ArrayList<Integer>(); //Indexes of multiplicites are associated with the conn list
+					ArrayList<Integer> multList = new ArrayList<Integer>(); //Indexes of multiplicities are associated with the conn list
 					ArrayList<String> sourceNameList = new ArrayList<String>();
 					ArrayList<String> targetNameList = new ArrayList<String>();
 					
@@ -736,12 +736,12 @@ public class ProcessISFTopology {
 						HashSet<Integer>  portMultSet = new HashSet<Integer>();
 						
 						//Adds connectors (from subsystem map) to be analyzed in the above while loop
-						for( Connector e : subsystemMap.get(qualfiedName).get(0)){
+						for( Connector e : subsystemMap.get(qualifiedName).get(0)){
 							
 							ConnectorEnd tempSourceConnector = ISFSubsystem.getSourceConnEnd(e);
 							ConnectorEnd tempTargetConnector = ISFSubsystem.getTargetConnEnd(e);
 							
-							//Utils.printToAll(qualfiedName+ " : (Lower:" + tempSourceConnector.getLower()+ " , Upper:"+tempSourceConnector.getUpper()+")");
+							//Utils.printToAll(qualifiedName+ " : (Lower:" + tempSourceConnector.getLower()+ " , Upper:"+tempSourceConnector.getUpper()+")");
 							
 							if(tempSourceConnector.getLowerValue() != null && portMultSet.contains(tempSourceConnector.getLower())){ //Find connector with source that has the same multiplicity that we are looking for
 								Utils.throwConnectorException("Connector " + e.getName() + " in " + e.getObjectParent().getHumanName() + " with ends "+
@@ -768,7 +768,7 @@ public class ProcessISFTopology {
 							if(((tempSourceConnector.getLower() <= currentMultiplicity && tempSourceConnector.getUpper() >=  currentMultiplicity) && tempSourceConnector.getLowerValue() != null) 
 									|| (tempSourceConnector.getLowerValue() == null && tempTargetConnector.getLowerValue() == null)
 									|| (tempSourceConnector.getLowerValue() == null && previousConnectorTargetMult == currentMultiplicity) 
-									|| (subsystemMap.get(qualfiedName).get(0).toArray().length == 1 && tempSourceConnector.getLowerValue() == null)){
+									|| (subsystemMap.get(qualifiedName).get(0).toArray().length == 1 && tempSourceConnector.getLowerValue() == null)){
 								
 								connList.add(i , e);
 								multList.add(i , generateNewMultiplicity(e , currentMultiplicity , previousConnectorTargetMult));
@@ -804,7 +804,7 @@ public class ProcessISFTopology {
 							
 						}
 						//Check if a source port has multiple backwards connections
-						if(subsystemMap.get(qualfiedName).get(1).size() > 1){
+						if(subsystemMap.get(qualifiedName).get(1).size() > 1){
 							hasMultipleBackwardsSourceConnections = true;
 						}
 						
@@ -825,7 +825,7 @@ public class ProcessISFTopology {
 						targetConnEnd = ISFSubsystem.getTargetConnEnd(connList.get(i));
 						targetRole = targetConnEnd.getRole();
 						targetPart = targetConnEnd.getPartWithPort();
-						qualfiedName = ISFSubsystem.getQualifiedTargetPort(connList.get(i));
+						qualifiedName = ISFSubsystem.getQualifiedTargetPort(connList.get(i));
 						currentMultiplicity = multList.get(i);
 						prevSourceName = currentSourceName;
 						currentSourceName = sourceNameList.get(i);
@@ -892,7 +892,7 @@ public class ProcessISFTopology {
 	 * <p>
 	 * 
 	 * The function takes in three arguments: the current Connector, the multiplicity of the source of the connector (calculated from this function in the previous iteration of the loop) and 
-	 * a 'prevousConnectorTargetMult', which is an integer which indicates the 'inorder' position of the target of the Connector by keeping a track of how many connectors have accessed the same end. 
+	 * a 'previousConnectorTargetMult', which is an integer which indicates the 'inorder' position of the target of the Connector by keeping a track of how many connectors have accessed the same end. 
 	 * 
 	 * <p>
 	 * 

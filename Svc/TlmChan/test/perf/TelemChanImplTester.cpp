@@ -58,7 +58,7 @@ namespace Svc {
         timer.start();
 
         for (U32 iter = 0; iter < iterations; iter++) {
-            // create telemtry item
+            // create telemetry item
             buff.resetSer();
             stat = buff.serialize(testVal);
             this->tlmRecv_out(0,TelemChanImpl::NUM_TLM_ENTRIES - 1,timeTag,buff);

@@ -14,11 +14,11 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester(void) :
 #if FW_OBJECT_NAMES == 1
       ActiveTextLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ActiveTextLogger")
@@ -32,13 +32,13 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester(void)
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -181,7 +181,7 @@ namespace Svc {
 
       ASSERT_TRUE(stat);
       ASSERT_TRUE(this->component.m_log_file.m_openFile);
-      ASSERT_EQ(0,strcmp("test_file_max",this->component.m_log_file.m_fileName.toChar()));
+      ASSERT_STREQ("test_file_max",this->component.m_log_file.m_fileName.toChar());
       ASSERT_EQ(0U, this->component.m_log_file.m_currentFileSize);
       ASSERT_EQ(45U, this->component.m_log_file.m_maxFileSize);
       ASSERT_EQ(Os::FileSystem::OP_OK,
@@ -224,12 +224,12 @@ namespace Svc {
       this->invoke_to_TextLogger(0,id,timeTag,severity,text);
       this->component.doDispatch();
 
-      // Verify file was closed and size didnt increase:
+      // Verify file was closed and size didn't increase:
       ASSERT_FALSE(this->component.m_log_file.m_openFile);
       ASSERT_EQ(past_size, this->component.m_log_file.m_currentFileSize);
       ASSERT_EQ(45U, this->component.m_log_file.m_maxFileSize);
 
-      // Read file to verify contents didnt change:
+      // Read file to verify contents didn't change:
       std::ifstream stream2("test_file_max");
       while(stream2) {
           char buf[256];
@@ -249,7 +249,7 @@ namespace Svc {
       // Verify made file with 0 suffix:
       ASSERT_TRUE(stat);
       ASSERT_TRUE(this->component.m_log_file.m_openFile);
-      ASSERT_EQ(0,strcmp("test_file_max0",this->component.m_log_file.m_fileName.toChar()));
+      ASSERT_STREQ("test_file_max0",this->component.m_log_file.m_fileName.toChar());
       ASSERT_EQ(0U, this->component.m_log_file.m_currentFileSize);
       ASSERT_EQ(50U, this->component.m_log_file.m_maxFileSize);
       ASSERT_EQ(Os::FileSystem::OP_OK,
@@ -353,11 +353,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts(void)
   {
 
     // TextLogger
@@ -372,7 +372,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents(void)
   {
     this->init();
     this->component.init(

@@ -8,7 +8,7 @@ modular system is constructed to complete the objective of the embedded system. 
 - [Topology: F´ Application](#topology-f-application)
 - [Conclusion](#conclusion)
 
-## Ports: F´ Communication 
+## Ports: F´ Communication
 
 Although F´ is primarily decomposed into a set of **Components**, it is often the port that a user of F´ must
 understand first.  This is because the set of ports a **Component** defines is the external (or public) interface of
@@ -34,7 +34,7 @@ pertains to the direction of invocation from one originating **Component** to an
 of data flow i.e. output ports (invoking out to another **Component**) can in some cases retrieve data. Multiple output
 ports can be connected to a single input port implying that at **Component** responding to a port invocation could be
 responding to one of a set of invoking **Components**. **Caution:** a single output port can be connected to only one
-input port at a time. 
+input port at a time.
 
 Another aspect of port usage is the synchronous/asynchronous nature of the port.  A synchronous port operates like a
 function call running in the execution context of the invoking **Component** (i.e. on the invoker's Thread). The
@@ -63,7 +63,7 @@ design and is known as the "kind" of port's instantiation.
 | output | out | | | | `func4()` | The input side of a connection defines all port properties.|
 | sync_input | in | synchronous | no | yes | `func2()` | |
 | async_input | in | asynchronous | no | no | `func1()` | |
-| guarded_input | in | synchronous | yes | yes | `func3()` | Guarded ports by definition must be synchronous | 
+| guarded_input | in | synchronous | yes | yes | `func3()` | Guarded ports by definition must be synchronous |
 
 **Note:** a ports' type (aka data_type) is dependent on the design and usage in the deployment.
 
@@ -121,7 +121,7 @@ See note about usage for [Commands, Events and Telemetry](./cmd-evt-chn-prm.md).
 
 The F′ architecture is based on decomposing the system into modules called components. Each component contains a
 discrete portion of the system's logic (Figure 10); The component architecture implies usage patterns, as well as
-usage constraints. 
+usage constraints.
 
 ![Component Architecture](../media/core10.png)
 
@@ -179,7 +179,7 @@ These are shown in Figure 12.
 
 ![Component Class Hierarchy](../media/core12.png)
 
-**Figure 12. Example of component class hierarchy.** 
+**Figure 12. Example of component class hierarchy.**
 
 
 ### Port Kinds Available to Each Component Type
@@ -192,7 +192,7 @@ thread.
 Queued components also support all three port types; however, the queued component needs at least one synchronous or
 guarded port as the code and one asynchronous port. A synchronous or guarded port must be defined to unload the internal
 queue as a queued component does not have a thread to automatically unload the queue. A queued component must define one
-asynchronous port otherwise it too would effectively be passive components with an unused queue attached. 
+asynchronous port otherwise it too would effectively be passive components with an unused queue attached.
 
 Output ports are invoked by calling generated base class functions from the implementation class. The behavior invoked
 is defined input port side of the connection and thus there are no special restrictions to use output ports.
@@ -212,7 +212,7 @@ ports may deadlock.
 
 Components are instantiated at runtime and then connected through the ports to other components in the system. This
 graph of interconnected components is known as a topology, as shown in Figure 13. The topology graph is still designed
-before runtime, but the actual connections of ports happens during the construction and setup phase of runtime F´ 
+before runtime, but the actual connections of ports happens during the construction and setup phase of runtime F´
 software. There should be no code dependencies between the components, only dependencies on port interface types. A
 components ability to communicate with other components is enabled through the interconnections specified in the
 topology. Alternate implementations can therefore easily be swapped, for example with simulation versions.

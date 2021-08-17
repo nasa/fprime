@@ -36,7 +36,7 @@ from utils.pathmaker import setup_fprime_autocoder_path
 setup_fprime_autocoder_path()
 
 
-# Generators to produce the code must exist. Check her by importing and assserting
+# Generators to produce the code must exist. Check her by importing and asserting
 try:
     from fprime_ac.generators import GenFactory
 

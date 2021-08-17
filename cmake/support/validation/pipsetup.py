@@ -10,11 +10,7 @@ from __future__ import print_function
 import sys
 
 # Migrated from setup.py in Fw/Python
-REQUIRED_PACKS = ["six", "lxml", "Markdown", "pexpect", "pytest"]
-if sys.version_info[0] >= 3:
-    REQUIRED_PACKS.append("Cheetah3")
-else:
-    REQUIRED_PACKS.extend(["Cheetah", "enum34"])
+REQUIRED_PACKS = ["lxml", "Markdown", "pexpect", "pytest", "Cheetah3"]
 
 
 def validate_python_setup():

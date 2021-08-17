@@ -44,12 +44,12 @@ where
 
 > \<port name\> = The name given to the port in the name= tag in the
 > port section of the XML.
-> 
+>
 > portNum = If the XML writer has defined multiple ports, this allows
 > the developer to know which port was invoked. The value is the port
 > instance indexed to zero. In the event the “max\_number” attribute is
 > not specified (i.e., a single input port), this value will be zero.
-> 
+>
 > \<argument\_list\> = The list of arguments specified in the args
 > section of the port definition XML.
 
@@ -66,13 +66,13 @@ where
 
 > \<port name\> = The name given to the port in the name= tag in the
 > port section of the XML.
-> 
+>
 > portNum = If XML writer has defined multiple ports, this allows the
 > developer to specify which port to invoke. The value is the port
 > instance indexed to zero. In the event the “max\_number” attribute is
 > not specified (i.e., a single output port), this value should be set
 > to zero.
-> 
+>
 > \<argument\_list\> = The list of arguments specified in the args
 > section of the port definition XML.
 
@@ -98,7 +98,7 @@ where
 
 > \<port name\> = The name given to the port in the name= tag in the
 > port section of the XML.
-> 
+>
 > \<direction\> = The direction of the port, Input or Output.
 
 The developer can use this to automatically scale the code to the number
@@ -120,7 +120,7 @@ where
 
 > \<mnemonic\> = The mnemonic string of the command given in the
 > mnemonic= tag in the command section of the XML.
-> 
+>
 > \<argument\_list\> = The list of arguments specified in the args
 > section of the command definition XML.
 
@@ -158,7 +158,7 @@ where
 
 > \<channel name\> = The name given to the port in the name= tag in the
 > channel section of the XML.
-> 
+>
 > \<type\> = The non-namespace qualified type of the channel as
 > specified in the data\_type= tag in the XML.
 
@@ -181,10 +181,10 @@ where
 
 > \<severity\> = The value of the severity attribute in the XML for the
 > event.
-> 
+>
 > \<event name\> = The name of the event given in the name attribute in
 > the XML.
-> 
+>
 > \<event arguments\> = The argument list of the event.
 
 The call internally adds a timestamp to the event. There is a method
@@ -209,7 +209,7 @@ where
 
 > \<parameter type\> = The type of the parameter specified by the
 > data\_type tag in the XML.
-> 
+>
 > \<parameter name\> = The name of the parameter given in the name
 > attribute in the XML.
 

@@ -55,7 +55,7 @@ class TopoFactory:
         """
         self.__instance = None
         self.__config = ConfigManager.ConfigManager.getInstance()
-        self.__generate_new_IDS = True  # Work around to disable ID generation/table output in the case ACCOnstants.ini is used to build
+        self.__generate_new_IDS = True  # Work around to disable ID generation/table output in the case AcConstants.ini is used to build
 
         self.__table_info = (
             []
@@ -174,7 +174,7 @@ class TopoFactory:
         # Iterate over all the model.Component classes and then...
         # Iterate over all the connection sources and assigned output ports to each Component..
         # For each output port you want to assign the connect comment, target component name, target port and type...
-        #    (Requires adding to the model.Port class ether members or a memeber called of type TargetConnection)
+        #    (Requires adding to the model.Port class ether members or a member called of type TargetConnection)
         for component in components:
             port_obj_list = []
             for connection in x.get_connections():
@@ -598,11 +598,11 @@ class TopoFactory:
 
             while True:
                 # Check if the items in the data_row  have a length of zero
-                all_items_lenth_zero = True
+                all_items_length_zero = True
                 for data_item in data_row:
                     if len(data_item) != 0:
-                        all_items_lenth_zero = False
-                if all_items_lenth_zero:
+                        all_items_length_zero = False
+                if all_items_length_zero:
                     break
 
                 row_string = ""
@@ -646,7 +646,7 @@ class TopoFactory:
                 )
             else:
                 b = abs(int(inst.get_base_id()))
-            PRINT.info("WARNING: %s instance reseting base id to %d" % (n, b))
+            PRINT.info("WARNING: %s instance resetting base id to %d" % (n, b))
         #
         # set window size or override it on instance basis
 
@@ -664,7 +664,7 @@ class TopoFactory:
         if inst.get_base_id_window() is not None:
             w = abs(int(inst.get_base_id_window()))
             PRINT.info(
-                "{} instance reseting base id window range to instance specified size ({})".format(
+                "{} instance resetting base id window range to instance specified size ({})".format(
                     n, w
                 )
             )
@@ -672,14 +672,14 @@ class TopoFactory:
             if size > component_calculated_window_range:
                 w = size
                 PRINT.info(
-                    "{} instance reseting base id window range to default topology size ({})".format(
+                    "{} instance resetting base id window range to default topology size ({})".format(
                         n, w
                     )
                 )
             else:
                 w = component_calculated_window_range
                 PRINT.info(
-                    "{} instance reseting base id window range to size calculated from the component XML file ({})".format(
+                    "{} instance resetting base id window range to size calculated from the component XML file ({})".format(
                         n, w
                     )
                 )

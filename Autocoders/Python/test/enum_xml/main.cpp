@@ -174,10 +174,26 @@ TEST(EnumXML, InvalidConstant) {
 
 TEST(EnumXML, OK) {
 
-    Example::Enum1 enum1;
+    // Explicitly set enum1 to the default value
+    Example::Enum1 enum1(Example::Enum1::Item4);
     Example::Enum1 enum2;
     Example::Enum1 enum3;
+    Example::Enum2 enum4;
+    Example::Enum3 enum5;
+
     Example::Serial1 serial1;
+
+    // Check that other enums are set to default value
+    ASSERT_EQ(enum1, enum2);
+    ASSERT_EQ(enum1, enum3);
+
+    // Check that enum are set to uninitialized value
+    ASSERT_EQ(enum4.e, 0);
+
+    // Check that the enum serializable types are set correctly
+    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
+    ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
+    ASSERT_EQ(Example::Enum3::SERIALIZED_SIZE, sizeof(U8));
 
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;
@@ -199,15 +215,37 @@ TEST(EnumXML, OK) {
     // Serialize enums
     U8 buffer1[1024];
     U8 buffer2[1024];
+    U8 buffer3[1024];
+    U8 buffer4[1024];
+    U8 buffer5[1024];
     Fw::SerialBuffer enumSerial1 = Fw::SerialBuffer(buffer1, sizeof(buffer1));
     Fw::SerialBuffer enumSerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
+    Fw::SerialBuffer enumSerial3 = Fw::SerialBuffer(buffer3, sizeof(buffer3));
+    Fw::SerialBuffer enumSerial4 = Fw::SerialBuffer(buffer4, sizeof(buffer4));
+    Fw::SerialBuffer enumSerial5 = Fw::SerialBuffer(buffer5, sizeof(buffer5));
     ASSERT_EQ(enumSerial1.serialize(enum1), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum1" << endl;
 
     ASSERT_EQ(enumSerial2.serialize(enum2), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum2" << endl;
 
+    ASSERT_EQ(enumSerial3.serialize(enum3), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum3" << endl;
+
+    ASSERT_EQ(enumSerial4.serialize(enum4), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum4" << endl;
+
+    ASSERT_EQ(enumSerial5.serialize(enum5), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum5" << endl;
+
     cout << "Serialized enums" << endl;
+
+    // Check that the serialized types are correctly set
+    ASSERT_EQ(enumSerial1.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial2.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial3.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial4.getBuffLength(), sizeof(U64));
+    ASSERT_EQ(enumSerial5.getBuffLength(), sizeof(U8));
 
     // Deserialize enums
     ASSERT_EQ(enumSerial1.deserialize(enum1Save), Fw::FW_SERIALIZE_OK);

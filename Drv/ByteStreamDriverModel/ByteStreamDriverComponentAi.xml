@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <component name="ByteStreamDriverModel" kind="passive" namespace="Drv" modeler="true">
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
@@ -7,6 +6,7 @@
     <import_port_type>Drv/ByteStreamDriverModel/ByteStreamSendPortAi.xml</import_port_type>
     <import_port_type>Drv/ByteStreamDriverModel/ByteStreamRecvPortAi.xml</import_port_type>
     <import_port_type>Drv/ByteStreamDriverModel/ByteStreamPollPortAi.xml</import_port_type>
+    <import_port_type>Drv/ByteStreamDriverModel/ByteStreamReadyPortAi.xml</import_port_type>
     <import_port_type>Fw/Log/LogPortAi.xml</import_port_type>
     <import_port_type>Fw/Log/LogTextPortAi.xml</import_port_type>
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
@@ -20,6 +20,9 @@
         </port>
 
         <port name="poll" data_type="Drv::ByteStreamPoll" kind="guarded_input" max_number="1">
+        </port>
+
+        <port name="ready" data_type="Drv::ByteStreamReady" kind="output" max_number="1">
         </port>
 
         <!-- Buffer request port used for incoming data -->

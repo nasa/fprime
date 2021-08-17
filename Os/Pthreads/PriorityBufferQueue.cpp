@@ -148,7 +148,7 @@ namespace Os {
     U8* data = pQueue->data;
 
     // Get the highest priority data from the heap:
-    NATIVE_UINT_TYPE index;
+    NATIVE_UINT_TYPE index = 0;
     bool ret = heap->pop(priority, index);
     FW_ASSERT(ret, ret);
 

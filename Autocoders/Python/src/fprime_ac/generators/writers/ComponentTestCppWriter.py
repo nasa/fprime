@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: ComponentTestCppWriter.py
 #
-# DESCRIPTION: A writer for generating component test implemetation files.
+# DESCRIPTION: A writer for generating component test implementation files.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
@@ -23,7 +23,7 @@ except ImportError:
 
 class ComponentTestCppWriter(TestWriterBase.TestWriterBase):
     """
-    A writer for generating component implemetation files.
+    A writer for generating component implementation files.
     """
 
     FILE_NAME = "TesterBase.cpp"

@@ -294,6 +294,39 @@ namespace Svc {
         ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
     }
 
+    void CommandDispatcherImplTester::runCommandReregister(void) {
+        // register built-in commands
+        this->m_impl.regCommands();
+        // clear reg events
+        this->clearEvents();
+        
+        // register our own command
+        FwOpcodeType testOpCode = 0x50;
+        this->invoke_to_compCmdReg(0,0x50);
+        ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
+        ASSERT_EQ(this->m_impl.m_entryTable[4].opcode,testOpCode);
+        ASSERT_EQ(this->m_impl.m_entryTable[4].port,0);
+
+        // verify registration event
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
+        ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
+
+        // clear reg events
+        this->clearEvents();
+
+        // verify we can call cmdReg port again with the same opcode
+        this->invoke_to_compCmdReg(0,0x50);
+        ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
+        ASSERT_EQ(this->m_impl.m_entryTable[4].opcode,testOpCode);
+        ASSERT_EQ(this->m_impl.m_entryTable[4].port,0);
+        
+        // verify re-registration event
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_OpCodeReregistered_SIZE(1);
+        ASSERT_EVENTS_OpCodeReregistered(0,testOpCode,0);
+    }
+
     void CommandDispatcherImplTester::runInvalidOpcodeDispatch(void) {
 
         // verify dispatch table is empty

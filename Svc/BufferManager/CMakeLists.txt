@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/BufferManager.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImpl.cpp"
 )
 
 register_fprime_module()
@@ -17,6 +17,6 @@ register_fprime_module()
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/BufferManager/BufferManagerComponentAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()

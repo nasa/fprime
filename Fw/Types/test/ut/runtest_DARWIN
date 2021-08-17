@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Running ${BUILD_ROOT}/Fw/Types/test/ut/$1/test_ut"
-${BUILD_ROOT}/Fw/Types/test/ut/$1/test_ut
-

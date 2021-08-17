@@ -3,78 +3,49 @@
 namespace ${n} {
  #end for
 #end if
-#for ($memname,$type,$size,$format,$comment) in $mem_list:
+#for ($memname,$type,$size,$format,$comment,$default) in $mem_list:
 #if $type == "string":
 
     ${name}::${memname}String::${memname}String(const char* src): StringBase() {
-        this->copyBuff(src,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     ${name}::${memname}String::${memname}String(const Fw::StringBase& src): StringBase() {
-        this->copyBuff(src.toChar(),this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     ${name}::${memname}String::${memname}String(const ${memname}String& src): StringBase() {
-        this->copyBuff(src.toChar(),this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     ${name}::${memname}String::${memname}String(void): StringBase() {
         this->m_buf[0] = 0;
     }
 
+    ${name}::${memname}String& ${name}::${memname}String::operator=(const ${memname}String& other) {
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
+    }
+
+    ${name}::${memname}String& ${name}::${memname}String::operator=(const StringBase& other) {
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
+    }
+
+    ${name}::${memname}String& ${name}::${memname}String::operator=(const char* other) {
+        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        return *this;
+    }
+
     ${name}::${memname}String::~${memname}String(void) {
-    }
-
-    bool ${name}::${memname}String::operator==(const ${memname}String& src) const {
-        return (0 == strncmp(this->m_buf,src.m_buf,sizeof(this->m_buf)));
-    }
-
-    NATIVE_UINT_TYPE ${name}::${memname}String::length(void) const {
-        return (NATIVE_UINT_TYPE)strnlen(this->m_buf,sizeof(this->m_buf));
     }
 
     const char* ${name}::${memname}String::toChar(void) const {
         return this->m_buf;
     }
 
-    void ${name}::${memname}String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-
-    Fw::SerializeStatus ${name}::${memname}String::serialize(Fw::SerializeBufferBase& buffer) const {
-        NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
-        // serialize string
-        return buffer.serialize((U8*)this->m_buf,strSize);
-    }
-
-    Fw::SerializeStatus ${name}::${memname}String::deserialize(Fw::SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
-        // deserialize string
-        Fw::SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
-        // make sure it is null-terminated
-        this->terminate(maxSize);
-
-        return stat;
-    }
-
     NATIVE_UINT_TYPE ${name}::${memname}String::getCapacity(void) const {
         return sizeof(this->m_buf);
-    }
-
-    void ${name}::${memname}String::terminate(NATIVE_UINT_TYPE size) {
-        // null terminate the string
-        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
-    }
-
-    const ${name}::${memname}String& ${name}::${memname}String::operator=(const ${name}::${memname}String& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
-        return *this;
     }
 
 #end if

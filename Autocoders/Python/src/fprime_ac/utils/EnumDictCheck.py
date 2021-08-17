@@ -69,7 +69,7 @@ class EnumCheckResults:
         print("===========================")
         print("    missing key: %d" % (self.key_errors))
         for i in self.overrun_details:
-            print("    enumeration overrrun: type=%s" % (i[0]))
+            print("    enumeration overrun: type=%s" % (i[0]))
             print("       bits=%d, max_value=%d, signed=%d" % (i[1], i[2], i[3]))
 
 

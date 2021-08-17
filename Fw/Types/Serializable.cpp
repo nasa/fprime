@@ -52,7 +52,7 @@ namespace Fw {
         FW_ASSERT(this->getBuffAddr());
         // destination has to be same or bigger
         FW_ASSERT(src.getBuffLength() <= this->getBuffCapacity(),src.getBuffLength(),this->getBuffLength());
-        (void) memcpy(this->getBuffAddr(),src.getBuffAddr(),this->m_serLoc+1);
+        (void) memcpy(this->getBuffAddr(),src.getBuffAddr(),this->m_serLoc);
     }
 
     // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
@@ -622,7 +622,7 @@ namespace Fw {
         }
         // otherwise, set destination buffer to data from deserialization pointer plus size
         SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc],size);
-        if (FW_SERIALIZE_OK) {
+        if (stat == FW_SERIALIZE_OK) {
             this->m_deserLoc += size;
         }
         return stat;

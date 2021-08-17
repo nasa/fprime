@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="PingReceiver" kind="active" namespace="Ref">
     <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
     <comment>A rate group active component with input and output ping ports</comment>
@@ -32,7 +31,7 @@
         </channel>
     </telemetry>
     <events>
-        <event id="0" name="PR_PingsDisabled" severity="ACTIVITY_HI" format_string = "PingReceiver ping responsed disabled" >
+        <event id="0" name="PR_PingsDisabled" severity="ACTIVITY_HI" format_string = "PingReceiver ping responses disabled" >
             <comment>
             Disabled ping responses
             </comment>

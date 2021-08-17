@@ -22,7 +22,7 @@ BASIC_DEPENDENCIES = {
     "commands": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Cmd"],
     "events": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Log"],
     "telemetry": ["Fw_Cfg", "Fw_Types", "Fw_Time", "Fw_Com", "Fw_Tlm"],
-    "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm"],
+    "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm", "Fw_Cmd"],
     "internal_interfaces": [],
     "enum": [],
     "array": [],
@@ -176,7 +176,7 @@ def read_xml_file(root, import_base):
     kind = root.attrib.get("kind", None)
     if kind in KIND_DEPENDENCIES:
         dependencies.update(KIND_DEPENDENCIES[kind])
-    # Import component/serialzable/port types
+    # Import component/serializable/port types
     for import_type in [
         "import_port_type",
         "import_component_type",

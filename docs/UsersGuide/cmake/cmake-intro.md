@@ -30,7 +30,7 @@ fprime sets up CMake in such a way that adding a module (component, port, deploy
 advantage of the autocoding capabilities of fprime. To add new modules to the CMake system, users need to perform the
 following steps:
 
-1. Define a `CMakeLists.txt` file to define the module's source files and dependcies
+1. Define a `CMakeLists.txt` file to define the module's source files and dependencies
 2. Ensure that `register_fprime_module` or `register_fprime_executable` is called in that `CMakeLists.txt`
 3. Make sure this new directory defining the `CMakeLists.txt` is added to the deployment `CMakeLists.txt` using
    `add_fprime_subdirectory`.
@@ -68,7 +68,7 @@ Remember it should be renamed to `CMakeLists.txt` in your deployments folder.
 When building a module, ensure it at least calls `register_fprime_module`. Deployments may call
 `register_fprime_executable` in the deployment `CMakeLists.txt` or in any child (usually Top/CMakeLists.txt).
 
-When building a module, remember to add it to the deployment by adding a line `add_fprime_subdirecory(path/module/dir)`
+When building a module, remember to add it to the deployment by adding a line `add_fprime_subdirectory(path/module/dir)`
 to the deployment `CMakeLists.txt`.
 
 ## API Information

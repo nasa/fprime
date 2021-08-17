@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <enum namespace="EnumTyp" name="ExampleEnum"
     <item name="HSM_NOT_USED"   value="0" comment="Not used"/>
     <item name="HSM_NOMINAL"    value="1" comment="Nominal ops"/>

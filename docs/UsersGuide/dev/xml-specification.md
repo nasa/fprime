@@ -62,6 +62,7 @@ specification.
 | member                     | name      | Defines the member name.                                                                                                                             |
 | member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
+| default                    |           | Specifies the default value of the member (optional).                                                                              |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |
 | enum                       | name      | Enumeration type name.                                                                                                                               |
 | item                       |           | Specifies a member of the enumeration.                                                                                                               |
@@ -95,11 +96,12 @@ this specification:
 ```xml
 <serializable name="Switch">
   <members>
-    <member name="state">
-      <enum name="SwitchState" type="ENUM">
-        <item name="OFF" value="0">
-        <item name="ON" value="1">
+    <member name="state" type="ENUM">
+      <enum name="SwitchState">
+        <item name="OFF" value="0"/>
+        <item name="ON" value="1"/>
       </enum>
+      <default>OFF</default>
     </member>
   </members>
 </serializable>
@@ -108,7 +110,8 @@ this specification:
 This file defines a Serializable type `Switch`
 with one member `state`.
 Its type is `SwitchState`, which is an enumeration with
-enumerated constants `OFF` and `ON`.
+enumerated constants `OFF` and `ON`. Using the default child element,
+the default value will be OFF.
 
 Alternatively, you can specify an enumeration *E* as a separate XML type.
 Then you can do the following:
@@ -116,15 +119,15 @@ Then you can do the following:
 1. Generate a C++ representation of *E* that you can include in C++
 files and use on its own.
 
-2. Use the XML representation of *E* in Serializable XML types, in Array XML 
+2. Use the XML representation of *E* in Serializable XML types, in Array XML
 types, in port arguments, in telemetry channels, and in event arguments.
 
-As an example, you can create a file `SwitchStateEnumAi.xml` that specifies an 
+As an example, you can create a file `SwitchStateEnumAi.xml` that specifies an
 XML enumeration type `SwitchState`
-with enumerated constants `OFF` and `ON`, like this:
+with enumerated constants `OFF` and `ON` and set to `OFF` by default, like this:
 
 ```xml
-<enum name="SwitchState">
+<enum name="SwitchState" default="OFF">
   <item name="OFF" value="0"/>
   <item name="ON" value="1"/>
 </enum>
@@ -133,7 +136,7 @@ with enumerated constants `OFF` and `ON`, like this:
 By running the code generator on this file, you can generate C++
 files `SwitchStateEnumAc.hpp` and `SwitchStateEnumAc.cpp`
 that define the C++ representation of the type.
-Anywhere that you include `SwitchStateEnumAc.hpp` in your C++ code, you can 
+Anywhere that you include `SwitchStateEnumAc.hpp` in your C++ code, you can
 use the enumerated constants `SwitchState::OFF` and `SwitchState::ON`.
 If you import `SwitchStateEnumAi.xml` into another XML definition,
 then you can use the type `SwitchState` there.
@@ -142,7 +145,7 @@ To use an XML enumeration type *E* in another XML definition *D*,
 enclose the name of the file that defines *E* in an XML tag `import_enum_type`.
 As an example, you can revise the `Switch` Serializable
 definition shown above.
-Instead of defining `SwitchState` as an inline enumeration, you can use the 
+Instead of defining `SwitchState` as an inline enumeration, you can use the
 `SwitchState` XML enumeration type as follows:
 
 ```xml
@@ -158,8 +161,8 @@ Notice that the revised version (1) imports the enum type definition
 from the file `SwitchStateEnumAi.xml` and (2) uses the named
 type `SwitchState` as the type of member `state`.
 
-As another example, if you import the file `SwitchStateEnumAi.xml` into the 
-definition of a component *C*, then you can use the type `SwitchState` in the 
+As another example, if you import the file `SwitchStateEnumAi.xml` into the
+definition of a component *C*, then you can use the type `SwitchState` in the
 telemetry dictionary for *C*.
 When a value of type `SwitchState` is emitted as telemetry, the GDS
 will display it symbolically as `OFF` or `ON`.
@@ -184,8 +187,21 @@ with attributes *enum_attributes* and children *enum_children*.
 of the enumeration type.
 The namespace consists of one or more identifiers separated by `::`.
 
+* An optional attribute `default` giving the default value
+of the enumeration. This value must match the name attribute of 
+one of the item definitions within the enumeration (see below). 
+
+* An optional attribute `serialize_type` giving the numeric type
+of the enumeration when serializing.
+
 If the attribute `namespace` is missing, then the type is
 placed in the global namespace.
+
+If the attribute `default` is missing, then the value of the
+enumeration is set to 0.
+
+If the attribute `serialize_type` is missing, then the serialization type is
+set to FwEnumStoreType.
 
 _Examples:_ Here is an XML enumeration `E` in the global namespace:
 
@@ -195,7 +211,18 @@ Here is an XML enumeration `E` in the namespace `A::B`:
 
 `<enum name="E" namespace="A::B">` ... `</enum>`
 
-**Enum children:** 
+Here is an XML enumeration `E` in the global namespace with default value Item2 
+(Item2 is assumed to be the name attribute of one of the item definitions in the enum):
+
+`<enum name="E" default="Item2">` ... `</enum>`
+
+
+Here is an XML enumeration `E` in the global namespace with serialization type
+U64:
+
+`<enum name="E" serialize_type="U64">` ... `</enum>`
+
+**Enum children:**
 *enum_children* consists of the following, in any order:
 
 * An optional node `comment` containing comment text.
@@ -223,7 +250,7 @@ the previous constant).
 
 * An optional attribute `comment` giving comment text.
 The text becomes a comment in the generated C++ code.
-It is attached to the enumerated constant definition. 
+It is attached to the enumerated constant definition.
 
 _Examples:_ Here is an enumerated constant with a name only:
 
@@ -237,7 +264,7 @@ Here is an enumerated constant with a name, value, and comment:
 
 #### Motivation
 
-As discussed above, a member of a Serializable type can be an array of elements 
+As discussed above, a member of a Serializable type can be an array of elements
 of some other type.
 For example, you can create a file `ACSTelemetrySerializable.xml` containing
 this specification:
@@ -257,7 +284,7 @@ with the following members:
 
 * A member `attitudeError` of type `F32`.
 
-* A member `wheelSpeeds` whose type is an array of three values, each of type 
+* A member `wheelSpeeds` whose type is an array of three values, each of type
   `U32`.
 
 Alternatively, you can specify a named array type *A* in a separate
@@ -267,10 +294,10 @@ Then you can do the following:
 1. Generate a C++ representation of *A* that you can include in C++
 files and use on its own.
 
-2. Use the XML representation of *A* in Serializable XML types, in other Array 
+2. Use the XML representation of *A* in Serializable XML types, in other Array
 XML types, in port arguments, in telemetry channels, and in event arguments.
 
-As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an 
+As an example, you can create a file `WheelSpeedsArrayAi.xml` that specifies an
 array of three `U32` values, like this:
 
 ```xml
@@ -289,15 +316,15 @@ array of three `U32` values, like this:
 By running the code generator on this file, you can generate C++
 files `WheelSpeedsAc.hpp` and `WheelSpeedsAc.cpp`
 that define a C++ class `WheelSpeeds` representing this type.
-Anywhere that you include `WheelSpeedsEnumAc.hpp` in your C++ code, you can 
+Anywhere that you include `WheelSpeedsEnumAc.hpp` in your C++ code, you can
 use the class `WheelSpeeds`.
 If you import `WheelSpeedsArrayAi.xml` into another XML definition,
 then you can use the type `WheelSpeeds` there.
 
 To use an XML array type *A* in another XML definition *D*,
-enclose the name of the file that defines *A* in an XML tag 
+enclose the name of the file that defines *A* in an XML tag
 `import_array_type`.
-As an example, you can revise the definition of the Serializable type 
+As an example, you can revise the definition of the Serializable type
 `ACSTelemetry` as follows:
 
 ```xml
@@ -321,8 +348,8 @@ an array of three `U32` values, here it is given type `WheelSpeeds`,
 which is defined in a separate XML specification as an array
 of three `U32` values.
 
-As another example, if you import file `WheelSpeedsArrayAi.xml` into the 
-definition of a component *C*, then you can use the type `WheelSpeeds` in the 
+As another example, if you import file `WheelSpeedsArrayAi.xml` into the
+definition of a component *C*, then you can use the type `WheelSpeeds` in the
 telemetry dictionary for *C*.
 When a value of type `WheelSpeeds` is emitted as telemetry, the GDS
 will display it as an array of three values.
@@ -376,10 +403,10 @@ Here is an XML array `A` in the namespace `B::C`:
    * `<import_serializable_type>` *serializable_xml_file* `</import_serializable_type>`
       for importing XML-specified serializable types.
 
-   * `<import_enum_type>` *enum_xml_file* `</import_enum_type>` for importing 
+   * `<import_enum_type>` *enum_xml_file* `</import_enum_type>` for importing
      XML-specified enum types.
 
-   * `<import_array_type>` *array_xml_file* `</import_array_type>` for 
+   * `<import_array_type>` *array_xml_file* `</import_array_type>` for
      importing XML-specified array types.
 
 * A node `format` providing a single format string to be applied to each array element.
@@ -387,12 +414,12 @@ Here is an XML array `A` in the namespace `B::C`:
   `<format>` *format_string* `</format>`
 
   *format_string* must contain a single conversion specifier starting with `%`.
-  The conversion specifier must be legal both for C and C++ `printf` and for 
+  The conversion specifier must be legal both for C and C++ `printf` and for
   Python, considering the array element type.
-  For example, if the array element type is `U32`, then `<format>%u</format>` 
+  For example, if the array element type is `U32`, then `<format>%u</format>`
   is a valid
   format specifier. So is `<format>%u seconds</time>`.
-  `<format>%s</format>` is not a legal format specifier in this case, because 
+  `<format>%s</format>` is not a legal format specifier in this case, because
   the string format `%s`
   is not valid for type `U32`.
 
@@ -400,7 +427,7 @@ Here is an XML array `A` in the namespace `B::C`:
 
   `<type` *size_attribute_opt* `>` *type* `</type>`
 
-  *size_attribute_opt* is an optional attribute `size` specifying a decimal 
+  *size_attribute_opt* is an optional attribute `size` specifying a decimal
   integer size.
   The `size` attribute is valid only if the element type is `string`,
   and it is required in this case.
@@ -675,13 +702,14 @@ specification.
 | event                      | severity        | Specifies the severity of the event. The values can be:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                        |
 |                            |                 | **Value**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | **Meaning**                                                                                                                                                            |
 |                            |                 | DIAGNOSTIC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Software debugging information. Meant for development.                                                                                                                 |
-|                            |                 | ACTVITY\_LO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Low-priority events related to software execution.                                                                                                                     |
-|                            |                 | ACTVITY\_HI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Higher priority events related to software execution.                                                                                                                  |
+|                            |                 | ACTIVITY\_LO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Low-priority events related to software execution.                                                                                                                     |
+|                            |                 | ACTIVITY\_HI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Higher priority events related to software execution.                                                                                                                  |
 |                            |                 | COMMAND                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Events related to command execution. Should be reserved for command dispatcher and sequencer.                                                                          |
 |                            |                 | WARNING\_LO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Error conditions that are of low importance.                                                                                                                           |
 |                            |                 | WARNING\_LO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Error conditions that are of critical importance.                                                                                                                      |
 |                            |                 | FATAL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | An error condition was encountered that the software cannot recover from.                                                                                              |
 | event                      | format\_string  | A C-style format string to print a message corresponding to the event. Used for displaying the event in the command/data handling software as well as the optional text logging in the software. (See Section 9.12.)                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                        |
+| event                      | throttle        | Maximum number of events that will be issued before more are prevented. Once the limit has been reached, the throttle must be cleared before more can be issued. Non-negative integer.                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                        |
 | comment                    |                 | A comment describing the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                                                                                                        |
 | args                       |                 | Starts the region of the declaration where event arguments are specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                        |
 | arg                        |                 | Defines an argument in the event.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                        |

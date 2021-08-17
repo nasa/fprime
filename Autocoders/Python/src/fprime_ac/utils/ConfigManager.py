@@ -9,7 +9,7 @@
 #       included with Python 2.4 to extend configuration out to
 #       reading windows like .ini files.  If none exist then this
 #       uses hardwired values set in a dictionary called prop to
-#       default initiallization.
+#       default initialization.
 #
 # AUTHOR: Leonard J. Reder
 #
@@ -21,16 +21,7 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 import os
-
-# For Python determination
-import six
-
-# 2/3 support
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
+import configparser
 
 parent = configparser.ConfigParser
 
@@ -48,10 +39,7 @@ class ConfigManager(parent):
         """
         Constructor.
         """
-        if six.PY2:
-            configparser.SafeConfigParser.__init__(self)
         configparser.ConfigParser.__init__(self)
-        configparser.RawConfigParser.__init__(self)
         self.__prop = dict()
         self._setProps()
         # Now look for an ac.ini file within
@@ -183,7 +171,7 @@ class ConfigManager(parent):
         #
         self.__prop["component"]["XMLDefaultFileName"] = "False"
         #
-        # Define default file suffex here...
+        # Define default file suffix here...
         #
         self.__prop["component"]["ComponentXML"] = "ComponentAi.xml"
         self.__prop["component"]["ComponentCpp"] = "ComponentAc.cpp"
@@ -213,7 +201,7 @@ class ConfigManager(parent):
         #
         self.__prop["port"]["XMLDefaultFileName"] = "False"
         #
-        # Define default file suffex here...
+        # Define default file suffix here...
         #
         self.__prop["port"]["PortXML"] = "PortAi.xml"
         self.__prop["port"]["PortCpp"] = "PortAc.cpp"
@@ -267,7 +255,7 @@ class ConfigManager(parent):
         #
         self.__prop["serialize"]["XMLDefaultFileName"] = "False"
         #
-        # Define default file suffex here...
+        # Define default file suffix here...
         #
         self.__prop["serialize"]["SerializableXML"] = "SerializableAi.xml"
         self.__prop["serialize"]["SerializableCpp"] = "SerializableAc.cpp"

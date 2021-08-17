@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <assembly name="TestTopology">
   <import_component_type>Autocoders/Python/test/schematron/xml/BrokenComponentAi.xml</import_component_type>
     <comment>Instantiate the Inst1 and Inst2 components</comment>

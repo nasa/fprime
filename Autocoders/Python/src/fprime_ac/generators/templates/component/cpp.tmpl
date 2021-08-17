@@ -323,7 +323,7 @@ namespace ${namespace} {
 
     if (this->m_param_${prmname}_valid == Fw::PARAM_VALID) {
     #if $typeinfo == "enum":
-      FwEnumStoreType ${prmname}Val;
+      FwEnumStoreType ${prmname}Val = 0;
       stat = buff.deserialize(${prmname}Val);
       this->m_${prmname} = static_cast<$type>(${prmname}Val);
     #else
@@ -741,7 +741,7 @@ namespace ${namespace} {
         #for $arg_name, $arg_type, $comment, $is_enum in $args:
     $arg_type $arg_name;
           #if $is_enum == "enum":
-    FwEnumStoreType ${arg_name}Int;
+    FwEnumStoreType ${arg_name}Int = 0;
     _status = args.deserialize(${arg_name}Int);
     $arg_name = (${arg_type})${arg_name}Int;
           #else
@@ -890,22 +890,17 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
-  void ${class_name} ::
+    #set $tlm_type = $type
     #if $type == "string":
-    tlmWrite_${tlmname}(Fw::TlmString& arg)
+      #set $tlm_type = "Fw::TlmString&"
+    #else if $typeinfo == "user"
+      #set $tlm_type = "const " + $type + "&"
     #else
-      #if $typeinfo == "enum":
-    tlmWrite_${tlmname}(${type} arg)
-      #else
-        #if $typeinfo == "user":
-    tlmWrite_${tlmname}(${type}& arg)
-        #else
-    tlmWrite_${tlmname}(${type} arg)
-        #end if
-      #end if
+      #set $tlm_type = $type
     #end if
+  void ${class_name} ::
+    tlmWrite_${tlmname}(${tlm_type} arg, Fw::Time _tlmTime)
   {
-
     #if $update == "on_change"
     // Check to see if it is the first time
     if (not this->m_first_update_$tlmname) {
@@ -923,8 +918,7 @@ namespace ${namespace} {
 
     #end if
     if (this->m_${Tlm_Name}_OutputPort[0].isConnected()) {
-      Fw::Time _tlmTime;
-      if (this->m_${Time_Name}_OutputPort[0].isConnected()) {
+      if (this->m_${Time_Name}_OutputPort[0].isConnected() && _tlmTime ==  Fw::ZERO_TIME) {
          this->m_${Time_Name}_OutputPort[0].invoke( _tlmTime);
       }
       Fw::TlmBuffer _tlmBuff;
@@ -973,7 +967,7 @@ namespace ${namespace} {
 
   #end for
 #end if
-#if $has_telemetry or $has_events
+#if $has_telemetry or $has_events or $has_time_get
   // ----------------------------------------------------------------------
   // Time
   // ----------------------------------------------------------------------
@@ -1069,7 +1063,7 @@ namespace ${namespace} {
   {
 
     #if $typeinfo == "enum"
-    FwEnumStoreType _local_val;
+    FwEnumStoreType _local_val = 0;
     Fw::SerializeStatus _stat = val.deserialize(_local_val);
     if (_stat != Fw::FW_SERIALIZE_OK) {
       return Fw::COMMAND_VALIDATION_ERROR;
@@ -1743,7 +1737,7 @@ namespace ${namespace} {
 #else
     ComponentIpcSerializableBuffer msg;
 #end if
-    NATIVE_INT_TYPE priority;
+    NATIVE_INT_TYPE priority = 0;
 
   #if ($kind == "active")
     Os::Queue::QueueStatus msgStatus = this->m_queue.receive(msg,priority,Os::Queue::QUEUE_BLOCKING);
@@ -1766,7 +1760,7 @@ namespace ${namespace} {
     // Reset to beginning of buffer
     msg.resetDeser();
 
-    NATIVE_INT_TYPE desMsg;
+    NATIVE_INT_TYPE desMsg = 0;
     Fw::SerializeStatus deserStatus = msg.deserialize(desMsg);
     FW_ASSERT(
         deserStatus == Fw::FW_SERIALIZE_OK,
@@ -1779,7 +1773,7 @@ namespace ${namespace} {
       return MSG_DISPATCH_EXIT;
     }
 
-    NATIVE_INT_TYPE portNum;
+    NATIVE_INT_TYPE portNum = 0;
     deserStatus = msg.deserialize(portNum);
     FW_ASSERT(
         deserStatus == Fw::FW_SERIALIZE_OK,
@@ -1803,7 +1797,7 @@ namespace ${namespace} {
         $arg_name = static_cast<$arg_type*>(${arg_name}PtrTemp);
         #else if $arg_enum == "ENUM"
         $arg_type $arg_name;
-        FwEnumStoreType ${arg_name}Int;
+        FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = msg.deserialize(${arg_name}Int);
         $arg_name = ($arg_type) ${arg_name}Int;
         #else
@@ -1859,7 +1853,7 @@ namespace ${namespace} {
       {
       #end if
         // Deserialize opcode
-        FwOpcodeType opCode;
+        FwOpcodeType opCode = 0;
         deserStatus = msg.deserialize(opCode);
         FW_ASSERT (
             deserStatus == Fw::FW_SERIALIZE_OK,
@@ -1867,7 +1861,7 @@ namespace ${namespace} {
         );
 
         // Deserialize command sequence
-        U32 cmdSeq;
+        U32 cmdSeq = 0;
         deserStatus = msg.deserialize(cmdSeq);
         FW_ASSERT (
             deserStatus == Fw::FW_SERIALIZE_OK,
@@ -1890,7 +1884,7 @@ namespace ${namespace} {
         // Deserialize argument $arg_name
         $arg_type $arg_name;
         #if $arg_enum == "enum"
-        FwEnumStoreType ${arg_name}Int;
+        FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = args.deserialize(${arg_name}Int);
         $arg_name = (${arg_type})${arg_name}Int;
         #else
@@ -1946,7 +1940,7 @@ namespace ${namespace} {
     #for $arg_name, $arg_type, $comment, $typeinfo in $args:
         $arg_type $arg_name;
       #if $typeinfo == "enum"
-        FwEnumStoreType ${arg_name}Int;
+        FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = msg.deserialize(${arg_name}Int);
         $arg_name = static_cast<${arg_type}>(${arg_name}Int);
       #else

@@ -1,0 +1,19 @@
+name: Autodocs
+on:
+  push:
+    branches:
+      - "devel"
+
+jobs:
+  build:
+    name: Autodocumentation
+    runs-on: ubuntu-latest
+    container:
+      image: nasafprime/fprime-base:latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2.0.0
+      with:
+        fetch-depth: 5
+    - name: Autodocs
+      run: .github/actions/autodoc.bash

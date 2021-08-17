@@ -23,7 +23,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -81,11 +81,11 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_proto_string(self, obj):
         """
-        Return a string of (type, name) args, comma seperated
+        Return a string of (type, name) args, comma separated
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
@@ -104,7 +104,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
 
     def _get_args_string(self, obj, prefix=""):
         """
-        Return a string of name args, comma seperated
+        Return a string of name args, comma separated
         for use in templates that generate method or function calls.
         """
         args = obj.get_members()
@@ -128,7 +128,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = list()
 
-        for (name, mtype, size, format, comment) in obj.get_members():
+        for (name, mtype, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -139,9 +139,35 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             elif mtype not in typelist:
                 typeinfo = "extern"
 
-            arg_list.append((name, mtype, size, format, comment, typeinfo))
-
+            arg_list.append((name, mtype, size, format, comment, default, typeinfo))
         return arg_list
+
+    def _get_args_proto_string_scalar_init(self, obj):
+        """
+        Return a string of (type, name) args, comma separated
+        for use in templates that generate prototypes where the array
+        arguments are represented by single element values. If no arguments
+        are arrays, function returns None.
+        """
+        arg_str = ""
+        contains_array = False
+        for (name, mtype, size, format, comment, default) in obj.get_members():
+            if isinstance(mtype, tuple):
+                arg_str += "{} {}, ".format(mtype[0][1], name)
+            elif mtype == "string":
+                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype not in typelist:
+                arg_str += "const {}& {}, ".format(mtype, name)
+            elif size is not None:
+                arg_str += "const {} {}, ".format(mtype, name)
+                contains_array = True
+            else:
+                arg_str += "{} {}".format(mtype, name)
+                arg_str += ", "
+        if not contains_array:
+            return None
+        arg_str = arg_str.strip(", ")
+        return arg_str
 
     def _writeTmpl(self, c, visit_str):
         """
@@ -156,7 +182,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
     def initFilesVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         # Build filename here...
         if self.__config.get("serialize", "XMLDefaultFileName") == "True":
@@ -192,7 +218,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 PRINT.info(msg)
                 sys.exit(-1)
 
-        # Open file for writting here...
+        # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
         if self.__fp is None:
@@ -208,7 +234,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Serial types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         relative_path = self.relativePath()
         #
@@ -237,14 +263,14 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def namespaceVisit(self, obj):
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialCpp.namespaceSerialCpp()
         if obj.get_namespace() is None:
@@ -259,7 +285,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
     def publicVisit(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         c = publicSerialCpp.publicSerialCpp()
         c.name = obj.get_name()
@@ -267,19 +293,20 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args_string = self._get_args_string(obj)
         c.args_mstring = self._get_args_string(obj, "src.m_")
         c.args_mstring_ptr = self._get_args_string(obj, "src->m_")
+        c.args_scalar_array_string = self._get_args_proto_string_scalar_init(obj)
         c.members = self._get_conv_mem_list(obj)
         self._writeTmpl(c, "publicVisit")
 
     def protectedVisit(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def privateVisit(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
 
     def finishSourceFilesVisit(self, obj):

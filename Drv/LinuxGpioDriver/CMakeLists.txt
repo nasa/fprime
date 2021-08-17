@@ -5,37 +5,22 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-
-
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplStub.cpp"
-	)
+if(FPRIME_USE_STUBBED_DRIVERS)
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplStub.cpp"
+    )
+    register_fprime_module()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImpl.cpp"
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "CygWin")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImpl.cpp"
-	)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "arm-linux-gnueabihf")
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImpl.cpp"
-	)
+    set(SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImpl.cpp"
+    )
+    register_fprime_module()
 else()
-	set(SOURCE_FILES
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentAi.xml"
-		"${CMAKE_CURRENT_LIST_DIR}/LinuxGpioDriverComponentImplCommon.cpp"
-	)
+    message(STATUS "Cannot use ${CMAKE_CURRENT_LIST_DIR} with platform ${CMAKE_SYSTEM_NAME}. Skipping.")
 endif()
 
-register_fprime_module()
+

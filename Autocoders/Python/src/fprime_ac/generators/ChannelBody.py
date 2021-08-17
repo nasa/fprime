@@ -25,7 +25,7 @@ import logging
 # import sys
 # import time
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 from fprime_ac.generators.visitors import AbstractVisitor
 
@@ -85,7 +85,7 @@ class ChannelBody:
 
     def addVisitor(self, visitor):
         """
-        Add a visitor to the list of vistors.
+        Add a visitor to the list of visitors.
         @param visitor: the visitor to add, must be derived from AbstractVisitor.
         """
         if issubclass(visitor.__class__, AbstractVisitor.AbstractVisitor):

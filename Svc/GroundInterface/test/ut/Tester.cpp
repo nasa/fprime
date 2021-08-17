@@ -149,7 +149,7 @@ namespace Svc {
     ASSERT_EQ(buffer_wrapper.deserialize(size), Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(start, GroundInterfaceComponentImpl::START_WORD);
     ASSERT_EQ(size, m_size);
-    // Deserialize the packet type, if know. This handles the different paths for FilePackets and homoginized packets
+    // Deserialize the packet type, if know. This handles the different paths for FilePackets and homogenized packets
     if (m_packet != Fw::ComPacket::FW_PACKET_UNKNOWN) {
         ASSERT_EQ(buffer_wrapper.deserialize(packet), Fw::FW_SERIALIZE_OK);
         // For now, only FilePackets take this path

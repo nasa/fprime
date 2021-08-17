@@ -1,5 +1,0 @@
-#!/bin/sh
-cd ${BUILD_ROOT}/Autocoders/Python/test/event_throttle/test/ut
-echo "Running ${BUILD_ROOT}/Autocoders/Python/test/event_throttle/test/ut/$1/test_ut"
-${BUILD_ROOT}/Autocoders/Python/test/event_throttle/test/ut/$1/test_ut
-

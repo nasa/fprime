@@ -1,26 +1,22 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Log/LogString.hpp>
-#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 namespace Fw {
 
     LogStringArg::LogStringArg(const char* src)
             :  StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const StringBase& src)
             : StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const LogStringArg& src)
             : StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(void)
@@ -39,16 +35,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void LogStringArg::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     SerializeStatus LogStringArg::serialize(SerializeBufferBase& buffer) const {
         // serialize string
         NATIVE_UINT_TYPE strSize = FW_MIN(this->m_maxSer,static_cast<NATIVE_UINT_TYPE>(strnlen(this->m_buf,sizeof(this->m_buf))));
@@ -74,7 +60,7 @@ namespace Fw {
         return buffer.serialize((U8*)this->m_buf,strSize);
 #endif
     }
-    
+
     SerializeStatus LogStringArg::deserialize(SerializeBufferBase& buffer) {
         SerializeStatus stat;
 #if FW_AMPCS_COMPATIBLE
@@ -117,7 +103,7 @@ namespace Fw {
     }
 
     const LogStringArg& LogStringArg::operator=(const LogStringArg& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 

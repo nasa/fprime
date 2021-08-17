@@ -5,6 +5,7 @@
 
 #include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <time.h>
 
 namespace Svc {
@@ -48,7 +49,7 @@ namespace Svc {
         }
 
         // Format the string here, so that it is done in the task context
-        // of the caller.  Format doce borrowed from PassiveTextLogger.
+        // of the caller.  Format doc borrowed from PassiveTextLogger.
         const char *severityString = "UNKNOWN";
         switch (severity) {
             case Fw::TEXT_LOG_FATAL:
@@ -130,7 +131,7 @@ namespace Svc {
     {
 
         // Print to console:
-        (void) printf("%s",text.toChar());
+        Fw::Logger::logMsg(text.toChar(),0,0,0,0,0,0,0,0,0);
 
         // Print to file if there is one:
         (void) this->m_log_file.write_to_log(text.toChar(), text.length());  // Ignoring return status

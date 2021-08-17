@@ -1,5 +1,0 @@
-#!/bin/sh
-cd ${BUILD_ROOT}/Utils/test/ut
-echo "Running ${BUILD_ROOT}/Utils/test/ut/$1/test_ut"
-${BUILD_ROOT}/Utils/test/ut/$1/test_ut
-

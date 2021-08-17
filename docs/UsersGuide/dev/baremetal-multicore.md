@@ -1,4 +1,4 @@
-# F´ On Baremetal and Muti-Core Systems
+# F´ On Baremetal and Multi-Core Systems
 
 F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user though some
 of the caveats and delicacies of such systems. It includes
@@ -21,8 +21,8 @@ platforms.
 ### The Joy of Passive Components
 
 First and foremost, baremetal F´ systems should avoid using **Active Components**  at all costs because these components
-require quasi-asynchronous execution contexts in which to run. i.e. they need thread such that they can execute in 
-"parallel" with each other. **Note:** if you **must** use **Active Components** you should thoroughly review the 
+require quasi-asynchronous execution contexts in which to run. i.e. they need thread such that they can execute in
+"parallel" with each other. **Note:** if you **must** use **Active Components** you should thoroughly review the
 [thread virtualization](#thread-virtualization) section of this document an associated technology.
 
 If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
@@ -31,7 +31,7 @@ of that delegated execution context comes next.
 
 ### Choosing an Execution Context
 
-Since the OS is not around to execute F´, the implementor of the F´ project must choose an execution context for F´ to
+Since the OS is not around to execute F´, the implementer of the F´ project must choose an execution context for F´ to
 run on. That is, ensuring that some call invokes all of the **Components** that compose the F´ system.  Otherwise some
 components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
 driven by [rate groups](../best/rate-group.md). Designing the system this way ensures that all execution is derived from
@@ -58,15 +58,15 @@ while (true) {
 Now all that is required is to determine when this interval has elapsed. This can be done spinning on a hardware clock
 signal, calculating elapsed time by reading of clock registers, using timing library functions, the `sleep()` call, or
 by an timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
-before going this route.  Notibly, the ISR should not execute the rate group directly, but rather should set a flag or
-queu a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
+before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or
+queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
 groups.
 
 ## Multi-Core and Multi-Device Systems
 
 We have yet to see any issues running F´ on multi-core systems. Some users have been successful scheduling high-priority
 components to designated cores.  In general these systems behave just fine. **Note:** some portions of F´ use `U32`
-types so synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed 
+types so synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed
 on all systems. A project should use care to ensure that their system will behave as expected.  These usages are under
 review and will be corrected over time.
 
@@ -110,7 +110,7 @@ enabled for an F´ project is to unroll these threads such that they can share a
 parallel behavior of the threads is "virtualized". The technique is known as protothreading. We'll explore this concept
 with relation to F´ below.
 
-Each F´ thread supporting an Active component can be roughly modeled by the code below.  The thread loops until the 
+Each F´ thread supporting an Active component can be roughly modeled by the code below.  The thread loops until the
 system shuts down. For each iteration through the loop it blocks (pauses execution) until a message arrives. It then
 dispatches the message and returns to a blocked state waiting for the next message.
 
@@ -160,7 +160,7 @@ while (!shutdown) {
 }
 ```
 Here, as seen above, `run_once` does not block and so each component gets a slice of execution time before yielding to
-the next. Parallelism has been virtualized and the processor is sharable without writing a full-blown thread scheduler
+the next. Parallelism has been virtualized and the processor is shareable without writing a full-blown thread scheduler
 nor requiring processor instruction set support to switch threading contexts.
 
 Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks

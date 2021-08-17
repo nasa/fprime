@@ -8,7 +8,7 @@
 # 1. `gcov` must be available on the path
 # 2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
 # 
-# Once the CMake build directory has been created the user can run the CMake targers
+# Once the CMake build directory has been created the user can run the CMake targets
 # `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
 # _coverage targets perform the following steps:
 #
@@ -22,10 +22,10 @@
 # ```
 # make Svc_CmdDispatcher_Cmd
 # ```
-# **Note:** although a globale `coverage` target is created, it typically should not be used as
+# **Note:** although a global `coverage` target is created, it typically should not be used as
 # CTest provides better global coverage with the `Coverage` target.
 #
-# ## Detailed Function Desceiptions
+# ## Detailed Function Descriptions
 # 
 # The following functions are used to register the _coverage targets into the target system. They
 # are required for the system to register custom targets.
@@ -47,7 +47,7 @@ endfunction(add_global_target)
 ####
 # Dict function `add_module_target`:
 #
-# Creats each module's coverage targets.
+# Creates each module's coverage targets.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce

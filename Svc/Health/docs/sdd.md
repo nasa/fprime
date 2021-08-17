@@ -75,7 +75,7 @@ The `Svc::Health` component pings other components and checks for their response
 
 ## 4. Dictionaries
 
-Dictionaries: [HTML](Health.html) [MD](Health.md)
+TBD
 
 ## 5. Module Checklists
 
@@ -147,11 +147,9 @@ This test is similar to `6.1.8`, but it includes a nominal running of the SchedI
 
 This set of test cases verifies the remaining off-nominal error cases. Each test case is simulated and validated individually.
 
-## 6.2 Unit Test Output
-[Unit Test Output](../test/ut/ut_output.txt)
+## 6.2 Unit Test Coverage
 
-## 6.3 Unit Test Coverage
-[Coverage Output](../test/ut/SvcHealth_gcov.txt)
+To see unit test coverage run fprime-util check --coverage
 
 
 ## 7. Change Log

@@ -219,7 +219,7 @@ namespace Svc {
         Fw::Time timeTag;
         U32 val = 10;
 
-        // create Tlmtry item and put dummy data in to make sure it gets erased
+        // create Telemetry item and put dummy data in to make sure it gets erased
         buff.resetSer();
         stat = buff.serialize(val);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);

@@ -19,7 +19,7 @@ namespace Fw {
 
     /*!
      *
-     * This class is an implementation of the MemAllocatr base class.
+     * This class is an implementation of the MemAllocator base class.
      * It uses the heap as the memory source.
      *
      * Since it is heap space, the identifier is unused, and memory is never recoverable.
@@ -44,7 +44,7 @@ namespace Fw {
             //! Deallocate memory
             /*!
              * \param identifier the memory segment identifier (not used)
-             * \ptr the pointer to memory returned by allocate()
+             * \param ptr the pointer to memory returned by allocate()
              */
             void deallocate(
                     const NATIVE_UINT_TYPE identifier,

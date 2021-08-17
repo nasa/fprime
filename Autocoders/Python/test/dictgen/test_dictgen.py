@@ -175,7 +175,7 @@ def get_enums_from_comp_xml(comp_xml):
     # Find enum within component xml
     comp_cmds = comp_xml.get_commands()
     comp_evrs = comp_xml.get_events()
-    comp_chans = comp_xml.get_channels()
+    comp_channels = comp_xml.get_channels()
     comp_params = comp_xml.get_parameters()
 
     for cmd in comp_cmds:
@@ -188,7 +188,7 @@ def get_enums_from_comp_xml(comp_xml):
             if isinstance(arg.get_type(), tuple):
                 enum_list["compxml"].append(arg.get_type())
 
-    for chan in comp_chans:
+    for chan in comp_channels:
         if isinstance(chan.get_type(), tuple):
             enum_list["compxml"].append(chan.get_type())
 

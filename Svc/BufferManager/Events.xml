@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 
 <!--======================================================================
 
@@ -13,28 +12,27 @@
 
   <event
     id="0x00"
-    name="ClearedErrorState"
-    severity="ACTIVITY_HI"
-    format_string="Cleared activity state"
+    name="NoBuffsAvailable"
+    severity="WARNING_HI"
+    format_string="No available buffers of size %d"
+    throttle="10"
   >
-    <comment>The Buffer Manager has cleared its error state</comment>
+    <args>
+        <arg name="size" type="U32">
+            <comment>The requested size</comment>
+        </arg>          
+    </args>
+
+    <comment>The BufferManager was unable to allocate a requested buffer</comment>
   </event>
 
   <event
     id="0x01"
-    name="StoreSizeExceeded"
+    name="ZeroSizeBuffer"
     severity="WARNING_HI"
-    format_string="Exceeded storage size"
+    format_string="Received zero size buffer"
+    throttle="10"
   >
-    <comment>The Buffer Manager received an allocation request that, if granted, would cause the storage buffer to overflow</comment>
-  </event>
-
-  <event
-    id="0x02"
-    name="TooManyBuffers"
-    severity="WARNING_HI"
-    format_string="Too many active buffers"
-  >
-    <comment>The Buffer Manager received an allocation request that, if granted, would result in too many buffers</comment>
+    <comment>The buffer manager received a zero-sized buffer as a return. Probably undetected empty buffer allocation</comment>
   </event>
 </events>

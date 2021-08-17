@@ -76,7 +76,7 @@
     *   static unsigned ... crc_tab...[]                                *
     *                                                                   *
     *   The algorithms use tables with precalculated  values.  This     *
-    *   speeds  up  the calculation dramaticaly. The first time the     *
+    *   speeds  up  the calculation dramatically. The first time the    *
     *   CRC function is called, the table for that specific  calcu-     *
     *   lation  is set up. The ...init variables are used to deter-     *
     *   mine if the initialization has taken place. The  calculated     *

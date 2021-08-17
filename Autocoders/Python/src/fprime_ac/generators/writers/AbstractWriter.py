@@ -16,7 +16,7 @@
 import logging
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 
 #
@@ -67,7 +67,7 @@ class AbstractWriter:
     def initFilesWrite(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.initFilesWrite() - Implementation Error: you must supply your own concrete implementation."
@@ -85,7 +85,7 @@ class AbstractWriter:
         """
         Defined to generate includes within a file.
         Usually used for the base classes but also for Port types
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.includesWrite1() - Implementation Error: you must supply your own concrete implementation."
@@ -95,7 +95,7 @@ class AbstractWriter:
         """
         Defined to generate internal includes within a file.
         Usually used for data type includes and system includes.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.includesWrite2() - Implementation Error: you must supply your own concrete implementation."
@@ -105,7 +105,7 @@ class AbstractWriter:
         """
         Defined to generate namespace code within a file.
         Also any pre-condition code is generated.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.namespaceWrite() - Implementation Error: you must supply your own concrete implementation."
@@ -114,7 +114,7 @@ class AbstractWriter:
     def publicWrite(self, obj):
         """
         Defined to generate public stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.publicWrite() - Implementation Error: you must supply your own concrete implementation."
@@ -123,7 +123,7 @@ class AbstractWriter:
     def protectedWrite(self, obj):
         """
         Defined to generate protected stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.protectedWrite() - Implementation Error: you must supply your own concrete implementation."
@@ -132,7 +132,7 @@ class AbstractWriter:
     def privateWrite(self, obj):
         """
         Defined to generate private stuff within a class.
-        @parms args: the instance of the concrete element to operation on.
+        @param args: the instance of the concrete element to operation on.
         """
         raise Exception(
             "# AbstractWriter.privateWrite() - Implementation Error: you must supply your own concrete implementation."

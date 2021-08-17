@@ -58,12 +58,17 @@ $emit_non_port_params($params_init_cpp)
   // ----------------------------------------------------------------------
 
   #for $instance, $type, $sync, $priority, $full, $role, $max_num in $typed_user_input_ports:
-  void ${name}ComponentImpl ::
+  #set $return_type = $port_return_type_strs[$instance]
+  ${return_type}${name}ComponentImpl ::
     ${instance}_handler(
 $emit_port_params([ $param_portNum ] + $port_params[instance])
     )
   {
+    #if $return_type[:-1] == "void":    
     // TODO
+    #else:
+    // TODO return
+    #end if
   }
 
   #end for

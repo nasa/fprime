@@ -26,7 +26,7 @@ from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
 
 #
-# Python extention modules and custom interfaces
+# Python extension modules and custom interfaces
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
@@ -88,7 +88,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
     def DictStartVisit(self, obj):
         """
         Defined to generate files for generated code products.
-        @parms obj: the instance of the event model to visit.
+        @param obj: the instance of the event model to visit.
         """
 
         # Build filename here...
@@ -120,7 +120,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
     def DictHeaderVisit(self, obj):
         """
         Defined to generate header for  event python class.
-        @parms obj: the instance of the event model to operation on.
+        @param obj: the instance of the event model to operation on.
         """
         inst = 0
         for id in obj.get_ids():
@@ -135,7 +135,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python event class
-        @parms obj: the instance of the event model to operation on.
+        @param obj: the instance of the event model to operation on.
         """
         inst = 0
         for id in obj.get_ids():

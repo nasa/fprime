@@ -6,7 +6,7 @@
  *
  * GroundInterface rules:
  *
- * 1. On read-callback of sufficent parts, an uplink-out is produced
+ * 1. On read-callback of sufficient parts, an uplink-out is produced
  * 2. On schedIn a sufficient number of times, an uplink-out is produced
  * 3. On a call to Log, TextLog, downlink, a framed call to write is produced.
  *

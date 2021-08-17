@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Type_Schema.rnc" type="compact"?>
 <interface name="Void" namespace="Ports">
     <comment>
         Void Interface to send an async call without any arguments.

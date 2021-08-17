@@ -65,6 +65,12 @@ namespace Os {
 #endif
 
         protected:
+            //! Internal method used for creating allowing alternate implementations to implement different creation
+            //! behavior without needing to duplicate the majority of the creation functionality.
+            //! \param name: name of queue
+            //! \param depth: depth of queue
+            //! \param msgSize: size of a message stored on queue
+            //! \return queue creation status
             QueueStatus createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize); //!<  create a message queue
             POINTER_CAST m_handle; //!<  handle for implementation specific queue
             QueueString m_name; //!< queue name

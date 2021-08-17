@@ -51,7 +51,7 @@ namespace STest {
       // ConditionalScenario implementation
       // ----------------------------------------------------------------------
 
-      //! The virtual condition required by CondtiionalScenario
+      //! The virtual condition required by ConditionalScenario
       //! \return Whether the condition holds
       bool condition_ConditionalScenario(
           const State& state //!< The system state

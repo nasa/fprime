@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../Autocoders/Python/schema/ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../../Autocoders/schema/ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<!--
+Copyright (C) 2009-2018 California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
 
 <!--===== Svc CmdSequencer Events =========== -->
 
@@ -81,7 +87,7 @@
                 <comment>The name of the sequence file</comment>
             </arg>
             <arg name="size" type="U32">
-                <comment>Inavalid size</comment>
+                <comment>Invalid size</comment>
             </arg>
         </args>
     </event>
@@ -260,7 +266,7 @@
     </event>
     <event id="21" name="CS_CmdStepped" severity="ACTIVITY_HI"
         format_string="Sequence %s command %d stepped">
-        <comment>A commmand in a sequence was stepped through</comment>
+        <comment>A command in a sequence was stepped through</comment>
         <args>
             <arg name="filename" type="string" size="60">
                 <comment>The sequence file</comment>

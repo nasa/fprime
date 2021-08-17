@@ -81,7 +81,7 @@ namespace Svc {
       void frame_send(
           U8* data, /*!< Data to be framed and sent out */
           TOKEN_TYPE size, /*!< Size of data in typed format */
-          TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN /*!< Packet type override for anoymous data i.e. file downlink */
+          TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN /*!< Packet type override for anonymous data i.e. file downlink */
       );
 
       //! Processes the out-going data into coms order

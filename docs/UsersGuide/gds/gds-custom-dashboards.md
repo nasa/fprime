@@ -77,7 +77,7 @@ the above table.
 | fields       | List of fields (columns) shown      | list    | any column field names |
 | filter-text  | Text to filter displayed items      | string  | any |
 | items-shown  | Names of items to restrict display  | list    | any |
-| compact      | Use minimalist display of component | keyword | | 
+| compact      | Use minimalist display of component | keyword | |
 
 Two of the most basic properties are described below. These were chosen because they show an example of using a string
 property and a space-separated list property.  Keyword properties are specified without the `=...` portion and thus are
@@ -116,7 +116,7 @@ will be rendered into the following display.
 ![Example ](../media/example_dashboard.png)
 
 This view was rendered from the following XML.  It is designed to be somewhat self-descriptive and should act as a good
-starting point for building your own dashboards. 
+starting point for building your own dashboards.
 
 ```xml
 <dashboard-box title="The Big Green Example Box" color="green">
@@ -177,4 +177,3 @@ starting point for building your own dashboards.
 This guide has introduced and walked through an example of the XML dashboards available to help customize the F´ GDS
 GUI. Users may use the technology to build their own views into the system. A more complete reference for the components
 used to build the GUI is available here: [GDS Dashboard Reference](../dev/gds-dashboard-reference.md).
-

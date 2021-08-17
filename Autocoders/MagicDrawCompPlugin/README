@@ -43,13 +43,13 @@ To regenerate the Documentation to conform with any future changes:
 - In the 'File' tab at the top of the Doxygen GUI, choose open and select the file titled "Doxyfile"
 - This will load all the configurations necessary to regenerate the documentation 
 - Go to the 'Run' tab in the GUI and click the 'Run Doxygen' button to regenerate the documentation
-- To regenerate the refman.pdf file froun in the doc folder, open doc/rtf/refman.rtf, save as a Word Document, convert the document to PDF, then drag the PDF to the doc folder
+- To regenerate the refman.pdf file found in the doc folder, open doc/rtf/refman.rtf, save as a Word Document, convert the document to PDF, then drag the PDF to the doc folder
 - To edit the comments found in the top of the documentation files, edit the comment block found at the top of src/gov/nasa/jpl/componentaction/MainMenuConfigurator.java
 
 
 Version 2.7:
 -------------
-- Add the subsystem name as a field in the <assmbly> tag.  This allows the Autocoder to generate a unique name for each topology model.
+- Add the subsystem name as a field in the <assembly> tag.  This allows the Autocoder to generate a unique name for each topology model.
 
 Version 2.8:
 --------------
@@ -84,11 +84,11 @@ version 4.1:
 
 version 4.2:
 ---------------
-- Added functionality for Cmd and CmdReg port types not needing indexes or multiplicites to be specified. This allows automatically finds each pair of cmd and cmd reg and generates the same source index. 
+- Added functionality for Cmd and CmdReg port types not needing indexes or multiplicities to be specified. This allows automatically finds each pair of cmd and cmd reg and generates the same source index. 
 
 version 4.3:
 ---------------
-- Added functionally for CmdSequenceCommands and CmdSequenceResponseto have their multiplicities be auto generated. 
+- Added functionally for CmdSequenceCommands and CmdSequenceResponse to have their multiplicities be auto generated. 
 - Added button that allows user to import a base id / window range config file which will add those ids to the model.
 - Added simple tags to warning messages for easier human identification.
 

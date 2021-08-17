@@ -41,6 +41,12 @@ namespace Svc {
                 this->m_entryTable[slot].used = true;
                 this->log_DIAGNOSTIC_OpCodeRegistered(opCode,portNum,slot);
                 slotFound = true;
+            } else if ((this->m_entryTable[slot].used) &&
+                (this->m_entryTable[slot].opcode == opCode) &&
+                (this->m_entryTable[slot].port == portNum) &&
+                (not slotFound)) {
+                    slotFound = true;
+                    this->log_DIAGNOSTIC_OpCodeReregistered(opCode,portNum);
             } else if (this->m_entryTable[slot].used) { // make sure no duplicates
                 FW_ASSERT(this->m_entryTable[slot].opcode != opCode, opCode);
             }

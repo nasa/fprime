@@ -63,7 +63,7 @@ namespace Drv {
         Fw::Buffer &serBuffer
     )
   {
-    return I2C_OK;
+    return I2cStatus::I2C_OK;
   }
 
   Drv::I2cStatus LinuxI2cDriverComponentImpl ::
@@ -73,7 +73,17 @@ namespace Drv {
         Fw::Buffer &serBuffer
     )
   {
-    return I2C_OK;
+    return I2cStatus::I2C_OK;
+  }
+
+  Drv::I2cStatus LinuxI2cDriverComponentImpl ::
+    writeRead_handler(
+      const NATIVE_INT_TYPE portNum, /*!< The port number*/
+      U32 addr,
+      Fw::Buffer &writeBuffer,
+      Fw::Buffer &readBuffer
+  ){
+    return I2cStatus::I2C_OK;
   }
 
 } // end namespace Drv

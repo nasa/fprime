@@ -1,67 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar
-    xmlns="http://relaxng.org/ns/structure/1.0"
-    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-    
+        xmlns="http://relaxng.org/ns/structure/1.0"
+        xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+        datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
     <include href="common_elements.rng"/>
     <include href="common_types.rng"/>
-    
+
     <start>
-        <ref name = "enum_root_define"></ref>
+        <ref name="enum_root_define"/>
     </start>
-    
+
     <define name="enum_root_define">
-        <element name = "enum">
+        <element name="enum">
             <a:documentation>Component root tag.</a:documentation>
-            
+
             <!-- Required Attributes -->
-            <attribute name = "name">
+            <attribute name="name">
                 <a:documentation>Name of the enum.</a:documentation>
                 <text/>
             </attribute>
-            
+
             <!-- Optional attributes -->
             <optional>
-                <attribute name = "namespace">
+                <attribute name="namespace">
                     <a:documentation>Namespace of the serializable object.</a:documentation>
                     <text/>
                 </attribute>
             </optional>
-            
+
+            <optional>
+                <attribute name = "default">
+                    <a:documentation>Default value of the enum.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
+            <optional>
+                <attribute name = "serialize_type">
+                    <a:documentation>Serialization type of the enum.</a:documentation>
+                    <text/>
+                </attribute>
+
+            </optional>
+
             <!-- Elements -->
             <interleave>
                 <optional>
                     <!-- Optional Comments -->
-                    <ref name = "comment_define"></ref>
+                    <ref name="comment_define"/>
                 </optional>
 
                 <oneOrMore>
-                    <ref name = "item_definition"></ref>
+                    <ref name="item_definition"/>
                 </oneOrMore>
             </interleave>
         </element>
     </define>
-    
-    <define name = "item_definition">
-        <element name = "item">
+
+    <define name="item_definition">
+        <element name="item">
             <a:documentation>Definition for a telemetry channel.</a:documentation>
-            
+
             <!-- Required Attributes -->
-            <attribute name = "name">
+            <attribute name="name">
                 <a:documentation>Name of the item.</a:documentation>
                 <text/>
             </attribute>
-            
+
             <!-- Optional Attributes -->
             <optional>
-                <attribute name = "value">
-                    <data type = "integer"></data>
+                <attribute name="value">
+                    <data type="integer"/>
                 </attribute>
             </optional>
-                
+
             <optional>
-                <attribute name = "comment">
+                <attribute name="comment">
                     <text/>
                 </attribute>
             </optional>

@@ -1,7 +1,7 @@
 Date: 20 July 2015
 
 This is the C1/C2 two active component
-test case witgh void arg.  Currently builds with
+test case with void arg.  Currently builds with
 make and make ut...executes via the Top executable
 located in test/ut.
 

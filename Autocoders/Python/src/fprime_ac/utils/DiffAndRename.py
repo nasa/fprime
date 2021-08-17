@@ -78,7 +78,7 @@ def fileTimeTag(filename):
 
 def compareAndRename(filename, dated_files_enable=False, except_lines_list=[]):
     """
-    Compare filename with filename.new and if different overwright filename
+    Compare filename with filename.new and if different overwrite filename
     with filename.new. Do file diff on all lines if except_lines_list is []
     otherwise ignore lines in list when doing compare.
 

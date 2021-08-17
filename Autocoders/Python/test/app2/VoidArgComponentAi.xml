@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
 <component name="VoidArg" kind="active" namespace="App2">
     <import_port_type>Autocoders/Python/test/app2/VoidPortAi.xml</import_port_type>
     <import_port_type>Autocoders/Python/test/app2/MsgPortAi.xml</import_port_type>

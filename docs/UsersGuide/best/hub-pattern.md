@@ -13,4 +13,4 @@ typed ports are connected to typed ports using the Hub as an intermediary to get
 
 **Figure 9. Hub pattern.** Each hub instance is responsible for connecting to a remote node. Input port calls are
 repeated to corresponding output ports on a remote hub. These hubs have been demonstrated on Sockets,
-ARINC 653 Channels, High-speed hardware buess between nodes, and UARTs between nodes in an embedded system.
+ARINC 653 Channels, High-speed hardware buses between nodes, and UARTs between nodes in an embedded system.

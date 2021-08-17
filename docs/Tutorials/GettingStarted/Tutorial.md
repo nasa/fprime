@@ -6,7 +6,7 @@ This tutorial will walk the user through the basic usage of the F´ development 
 through the above installation guide, and has a working F´ installation.
 
 The goal of this Tutorial is to build familiarity with the F´environment and tools. It does not walk the user through
-creation of new F´ items, but rather users the existing F´ `Ref` example as a place to operate the tools, learn the
+creation of new F´ items, but rather use the existing F´ `Ref` example as a place to operate the tools, learn the
 environment, and learn F´.
 
 The full development process is covered in the [Math Component Tutorial](../MathComponent/Tutorial.md), which will build
@@ -20,13 +20,13 @@ walk the F´ development process steps against existing reference goals.
 
 ## F´ Terminology
 
-This section will cover basic terminology used in this and other tutorial with respect to F´.  It may be used as a
+This section will cover basic terminology used in this and other tutorials with respect to F´.  It may be used as a
 reference for keywords that have specific meaning in an F´ project.
 
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
-*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*. 
+*Components* to interact with each other. A set of *Ports* acts as a defined interface to a *Component*.
 
-**Component:** the location of program behavior. Components execute the software logic of the system and typically 
+**Component:** the location of program behavior. Components execute the software logic of the system and typically
 define an interface of *Ports* that act allow them to interact with other *Components*. Components additionally
 may define *Commands*, *Events*, *Channels*, and *Parameters*, which define standard data patterns in F´.
 
@@ -74,7 +74,7 @@ new components from design through test is demonstrated in the [Math Component T
 The next step for developing a Component is to implement the code. To do this, one can generate template stubs to fill
 with the developer's stubs. To do this, a user runs the F´ tool suite to generate these stubs.  Then implements, builds,
 and tests from there.  Unit tests template stubs are generated in the same way, and should test-driven development be
-preferred, these tests stubs could be generated and implemented before the Component's code. 
+preferred, these tests stubs could be generated and implemented before the Component's code.
 
 Finally, the Component is integrated into the deployment and the entire deployment may be built and installed.
 
@@ -93,9 +93,9 @@ In order to run CMake, a build cache needs to be generated.  This is typically d
 to compile against. It is usually done right after F´ is checked-out and repeated for each platform as they are added. It
 is a setup step and isn't formally part of the F´ development process.
 
-To run this tool, the developer will use the `generate` subcommand.  It take one optional argument: the toolchain file
+To run this tool, the developer will use the `generate` subcommand.  It takes one optional argument: the toolchain file
 used in CMake to compile for a specific platform.  If not supplied, the `native` toolchain will be used and F´ will be
-setup to run on the current platform (typically Mac OS, or Linux depending on the developer's choosen OS).
+setup to run on the current platform (typically Mac OS, or Linux depending on the developer's chosen OS).
 
 **Generate the Ref Application for Native Compilation**
 
@@ -112,7 +112,7 @@ the user to take advantage of all parts of F´ without generating their own CMak
 be developing or improving F´ provided infrastructure components, then the `generate` command should be run in the F´
 root directory. However, most developers do not need this functionality.
 
-**Generate Cross-Compile of the Ref Application for Raspberry PI Platformn**
+**Generate Cross-Compile of the Ref Application for Raspberry PI Platform**
 
 Most developers wish to run F´ on embedded hardware. This is done by generating a cross-compile using a different CMake
 toolchain by providing the toolchain argument. The above invocations assume the default "native" toolchain.
@@ -137,7 +137,7 @@ fprime-util impl
 ```
 
 This creates two files for the component. These are `<Component>Impl.cpp-template` and `<Component>Impl.hpp-template`.
-The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating 
+The user can then rename these files to remove `-template`. The file is then ready for C++ development. By generating
 `-template` files, we won't accidentally overwrite any existing implementation should the developer need to repeat this
 step.
 
@@ -154,7 +154,7 @@ cd fprime/Ref/SignalGen
 fprime-util impl --ut
 ```
 
-This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are 
+This creates the following files, that are typically moved to a sub folder called `test/ut`.  The files created are
 placed in the current directory and named:
 ```
 Tester.cpp
@@ -204,18 +204,11 @@ cd fprime/Ref
 fprime-util build raspberrypi
 ```
 
-## Installing the F´ Executable and Dictionaries
-
-Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
-quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
-of build for deployments.
-
-**Installing the Ref Deployment and Running the Binary Assuming Linux**
+**Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
 fprime-util build
-./bin/Linux/Ref # Run the deployment
+./build-artifacts/Linux/bin/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.
@@ -262,7 +255,7 @@ fprime-util build raspberrypi --ut
 ## Conclusion
 
 The user should now be familiar with F´ terminology and with the `fprime-util` tool used to build and develop F´
-applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and 
+applications. The next step is to follow the full `MathComponent` tutorial to create new *Ports*, *Components*, and
 *Topologies*. This will walk the user through the entire development process, using the tool commands we learned here.
 
 **Next:** [Math Component Tutorial](../MathComponent/Tutorial.md)

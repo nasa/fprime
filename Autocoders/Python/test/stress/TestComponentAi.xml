@@ -5,7 +5,6 @@
          Only valid for active components input.
    Note  kind attribute of component can be ether active or passive.
          -->
-<?xml-model href="../../schema/ISF/component_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <component name="TestCommand" kind="active" namespace="StressTest">
     <import_port_type>Autocoders/Python/test/stress/TestPortAi.xml</import_port_type>
     <import_port_type>Autocoders/Python/test/stress/Test2PortAi.xml</import_port_type>

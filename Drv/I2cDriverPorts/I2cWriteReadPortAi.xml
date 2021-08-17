@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface name="I2cWriteRead" namespace="Drv">
+  <import_enum_type>Drv/I2cDriverPorts/I2cStatusEnumAi.xml</import_enum_type>
+  <include_header>Fw/Buffer/Buffer.hpp</include_header>
+    <comment>Write a set of bytes then read a set of bytes using the repeated start option</comment>
+    <args>
+        <arg name="addr" type="U32">
+            <comment>I2C slave device address</comment>
+        </arg>
+        <arg name="writeBuffer" type="Fw::Buffer" pass_by="reference">
+            <comment>Buffer to write data to the i2c device</comment>
+        </arg>
+        <arg name="readBuffer" type="Fw::Buffer" pass_by="reference">
+            <comment>Buffer to read back data from the i2c device, must set size when passing in read buffer</comment>
+        </arg>
+    </args>
+    <return type="Drv::I2cStatus" pass_by="value"> </return>
+</interface>

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  PathName.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket::PathName
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <string.h>
 
@@ -32,11 +32,11 @@ namespace Fw {
   }
 
   SerializeStatus FilePacket::PathName ::
-    fromSerialBuffer(SerialBuffer& serialBuffer) 
+    fromSerialBuffer(SerialBuffer& serialBuffer)
   {
 
     {
-      const SerializeStatus status = 
+      const SerializeStatus status =
         serialBuffer.deserialize(this->length);
       if (status != FW_SERIALIZE_OK)
         return status;
@@ -44,7 +44,7 @@ namespace Fw {
 
     {
       const U8* addrLeft = serialBuffer.getBuffAddrLeft();
-      U8 bytes[this->length];
+      U8 bytes[MAX_LENGTH];
       const SerializeStatus status =
         serialBuffer.popBytes(bytes, this->length);
       if (status != FW_SERIALIZE_OK)
@@ -69,7 +69,7 @@ namespace Fw {
 
     {
       const SerializeStatus status = serialBuffer.pushBytes(
-          reinterpret_cast<const U8 *const>(this->value), 
+          reinterpret_cast<const U8 *>(this->value),
           this->length
       );
       if (status != FW_SERIALIZE_OK)

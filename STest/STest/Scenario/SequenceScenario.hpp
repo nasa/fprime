@@ -53,7 +53,7 @@ namespace STest {
     protected:
 
       // ----------------------------------------------------------------------
-      // IteratedScenario implemntation
+      // IteratedScenario implementation
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by IteratedScenario

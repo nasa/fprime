@@ -20,20 +20,13 @@ TaskRunner::TaskRunner() :
     Task::registerTaskRegistry(this);
 }
 TaskRunner::~TaskRunner() {}
-/**
- * Add a task to the registry. These tasks will be run on a bare-metal
- * loop. The function used in this task may be overridden.
- * \param Task* task: task to be added
- */
+
 void TaskRunner::addTask(Task* task) {
     FW_ASSERT(m_index < TASK_REGISTRY_CAP);
     this->m_task_table[m_index] = task;
     m_index++;
 }
-/**
- * Remove a task to the registry. These tasks will no-longer be run.
- * \param Task* task: task to be removed
- */
+
 void TaskRunner::removeTask(Task* task) {
     bool found = false;
     //Squash that existing task
@@ -53,15 +46,11 @@ void TaskRunner::removeTask(Task* task) {
         }
     }
 }
-/**
- * Stop the task runner
- */
+
 void TaskRunner::stop() {
     m_cont = false;
 }
-/**
- * Run once through list of tasks
- */
+
 void TaskRunner::run() {
     U32 i = 0;
     if (!m_cont) {

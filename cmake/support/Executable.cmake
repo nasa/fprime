@@ -10,7 +10,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 # Function `generate_executable:`
 #
-# Top-level executable generation. Core allows for generarion of UT specifics without affecting API.
+# Top-level executable generation. Core allows for generation of UT specifics without affecting API.
 #
 # - **EXECUTABLE_NAME:** name of executable to be generated.
 # - **SOURCE_FILES_INPUT:** source files for this executable, split into AC and normal sources
@@ -18,7 +18,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/Module.cmake")
 ####
 function(generate_executable EXECUTABLE_NAME SOURCE_FILES_INPUT DEPS_INPUT)
   # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
-  # their separate peices. 
+  # their separate pieces. 
   #
   # AUTOCODER_INPUT_FILES = *.xml and *.txt in SOURCE_FILES_INPUT, fed to auto-coder
   # SOURCE_FILES = all other items in SOURCE_FILES_INPUT, set as compile-time sources

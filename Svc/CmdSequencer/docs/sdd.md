@@ -304,7 +304,7 @@ The `CmdSequencer` does not have any significant state machines.
 
 ### 3.5 Component Dictionary
 
-Dictionaries: [HTML](CmdSequencer.html) [MD](CmdSequencer.md)
+TBD
 
 ### 3.6 Component Sequences
 
@@ -320,9 +320,7 @@ Dictionaries: [HTML](CmdSequencer.html) [MD](CmdSequencer.md)
 
 ## 5 Unit Testing
 
-[CmdSequencerImpl.cpp](../test/ut/output/CmdSequencerImpl.cpp.gcov)
-
-[CmdSequencerComponentAc.cpp](../test/ut/output/CmdSequencerComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 6 Change log
 Date | Change Description

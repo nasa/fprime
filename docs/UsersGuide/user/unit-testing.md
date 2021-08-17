@@ -17,7 +17,7 @@ early and system-level issues only appear during integration.
 F′ provides the support for unit testing at the component level. The
 overall framework for unit testing is shown in Figure 1.
 
-![Tesst](../media/test1.png)
+![Test](../media/test1.png)
 
 **Figure 1.** Unit testing framework overview.
 
@@ -187,37 +187,44 @@ The F′ Prime build system provides targets for building and running
 component unit tests.
 
 To build unit tests, go to the component directory (not the *test/ut*
-directory) and run *make ut* to build with code coverage enabled, or run
-*make ut\_nocov* to build with code coverage disabled.
+directory) and run `fprime-util generate --ut`.
 
 To run unit tests, go to the component directory (not the *test/ut*
-directory) and run *make run\_ut* to run with coverage enabled, or *make
-run\_ut\_nocov* to run with coverage disabled.
+directory) and run `fprime-util check [parameter flags]`.
 
-Components that call into libraries have two ways to write tests: i)
-link against the library in the test, or ii) link against a mock or stub
-library. Selecting from either of these two options depend on the
-circumstances. If selecting the link against the library in the test,
-avoid writing the mock or stub library. This approach proves that the
-component code works with the actual library. If selecting the link
-against a mock or stub library, it will make it easier to induce the
-behaviors for testing, such as injecting faults. This approach may be
+Unit test check parameter | Description
+---|---
+`--all` | Run all unit tests, combinable with `leak` or `coverage`
+`--coverage` | Check for code coverage in unit tests
+`--leak` | Check for memory leaks in unit tests
+
+For example, to run all unit tests and check for code coverage, run `fprime-util check --all --coverage`.
+
+### Choosing a test library
+
+Components that call into libraries have two ways to write tests:
+
+- Link against the library in the test
+- Link against a mock or stub library
+
+If you link against the library in the test, avoid linking against the
+mock or stub library. Linking against only the test library proves that the component code works with the actual library.
+
+Linking against a mock or stub library makes it easier to induce
+behaviors for testing, like injecting faults. This approach may be
 the only option on some platforms.
 
-Checking code coverage checks which lines were run at least once during
-a test. There are standard tools, such as *gcov*, that can perform this
-analysis by compiling and running the tests, and then produce a report.
+### Code coverage
+
+Code coverage checks which lines were run at least once during
+a test. Tools like *gcov* perform code coverage analysis by compiling and running the tests, then producing a report.
+
 Generally, code coverage checks close to 80% of lines. The remaining
 lines are usually off-nominal behaviors that may require additional
 effort to check by reverse reasoning from the desired behavior to
 synthesize the inputs, or by injecting faults into the library
-behaviors. However, 100% code coverage is not a complete solution to
-checking which system states were tested, or which paths through the
-code were tested, as this is not possible.
+behaviors.
 
-To generate the analysis, go to the component directory (not the
-*test/ut* directory). After building and running the tests as outlined
-above, run *make cov*. The review the analysis, go to the *test/ut*
-directory (not the component director) and review the summary output
-*\_gcov.txt* files. Next, go to the component directory to review the
-coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
+Note that 100% code coverage does not check which system states were tested, nor which paths through the code were tested.
+
+To review code coverage analysis, go to the component directory and review the summary output *\_gcov.txt* files. Next, go to the component directory to review the coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.

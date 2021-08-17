@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../ISF/channel_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <telemetry telemetry_base="x1">
     <channel id="0x0" name="ChanOne" update="always" high_orange="30">
         <comment>Channel One</comment>

@@ -23,7 +23,7 @@ except ImportError:
 
 class TestMainWriter(TestWriterBase.TestWriterBase):
     """
-    A writer for generating component implemetation files.
+    A writer for generating component implementation files.
     """
 
     FILE_NAME = "TestMain.cpp"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<enum namespace = "Drv" name="I2cStatus">
+    <comment>Enum of the status returns from the I2C Driver</comment>
+    <item name="I2C_OK" value="0" comment="Transaction okay"/>
+    <item name="I2C_ADDRESS_ERR" value="1" comment="I2C address invalid"/>
+    <item name="I2C_WRITE_ERR" value="2" comment="I2C write failed"/>
+    <item name="I2C_READ_ERR" value="3" comment="I2C read failed"/>
+    <item name="I2C_OTHER_ERR" value="4" comment="Other errors that don't fit"/>
+</enum>
+
