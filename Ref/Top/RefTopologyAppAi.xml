@@ -7,6 +7,7 @@
     <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
     <import_component_type>Ref/PingReceiver/PingReceiverComponentAi.xml</import_component_type>
     <import_component_type>Svc/TlmChan/TlmChanComponentAi.xml</import_component_type>
+    <import_component_type>Svc/TlmPacketizer/TlmPacketizerComponentAi.xml</import_component_type>
     <import_component_type>Ref/SendBuffApp/SendBuffComponentAi.xml</import_component_type>
     <import_component_type>Ref/RecvBuffApp/RecvBuffComponentAi.xml</import_component_type>
     <import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
@@ -42,6 +43,7 @@
     <!-- Core C&DH Components -->
     <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
     <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
+    <instance namespace="Svc" name="pktTlm" type="TlmPacketizer" base_id="800"  base_id_window="20" />
     <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
     <instance namespace="Svc" name="cmdSeq" type="CmdSequencer" base_id="541"  base_id_window="23" />
     <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
@@ -140,6 +142,10 @@
         <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
         <target component = "downlink" port = "comIn" type = "Com" num = "0"/>
     </connection>
+    <connection name = "pktTlmPkts">
+        <source component = "pktTlm" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "downlink" port = "comIn" type = "Com" num = "0"/>
+    </connection>
     <connection name = "fileDownlinkBufferSend">
         <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
         <target component = "downlink" port = "bufferIn" type = "BufferSend" num = "0"/>
@@ -217,6 +223,10 @@
          <source component = "fileManager" port = "cmdRegOut" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "14"/>
     </connection>
+    <connection name = "PktTlmReg">
+         <source component = "pktTlm" port = "CmdReg" type = "CmdReg" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "15"/>
+    </connection>
 
     <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
 
@@ -284,6 +294,10 @@
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "14"/>
          <target component = "fileManager" port = "cmdIn" type = "Cmd" num = "0"/>
     </connection>
+    <connection name = "PktTlmDisp">
+         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "15"/>
+         <target component = "pktTlm" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
     
    
     <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
@@ -346,6 +360,10 @@
     </connection>
     <connection name = "SG5Stat">
          <source component = "SG5" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
+         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "pktTlmStat">
+         <source component = "pktTlm" port = "CmdStatus" type = "CmdResponse" num = "0"/>
          <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
     </connection>
 
@@ -446,6 +464,10 @@
          <source component = "pingRcvr" port = "Log" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    <connection name = "TlmPktEvt">
+         <source component = "pktTlm" port = "Log" type = "Log" num = "0"/>
+         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
    
     <!-- Event Logger Text Connections -->
    
@@ -519,6 +541,10 @@
     </connection>
     <connection name = "fileDownlinkText">
          <source component = "fileDownlink" port = "textEventOut" type = "LogText" num = "0"/>
+         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "pktTlmText">
+         <source component = "pktTlm" port = "LogText" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
     
@@ -599,6 +625,10 @@
     </connection>
     <connection name = "blockDrvTlm">
          <source component = "blockDrv" port = "Tlm" type = "Tlm" num = "0"/>
+         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "pktTlmTlm">
+         <source component = "pktTlm" port = "Tlm" type = "Tlm" num = "0"/>
          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     
@@ -711,6 +741,10 @@
          <source component = "blockDrv" port = "Time" type = "Time" num = "0"/>
          <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
     </connection>    
+    <connection name = "pktTime">
+         <source component = "pktTlm" port = "Time" type = "Time" num = "0"/>
+         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>    
 
     <!-- Rate Group Connections -->
    
@@ -741,6 +775,12 @@
          <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
          <target component = "fileDownlink" port = "Run" type = "Sched" num = "0"/>
     </connection>
+    <!-- Add back in when packets are configured - will assert if not configured
+    <connection name = "Rg1PktTlm">
+         <source component = "rateGroup1Comp" port = "RateGroupMemberOut" type = "Sched" num = "4"/>
+         <target component = "pktTlm" port = "Run" type = "Sched" num = "0"/>
+    </connection>
+    -->
 
     <!-- Rate Group 2 -->
     <connection name = "Rg2Drv">
@@ -899,6 +939,15 @@
          <source component = "fileManager" port = "pingOut" type = "Ping" num = "0"/>
          <target component = "health" port = "PingReturn" type = "Ping" num = "12"/>
     </connection>
+    <connection name = "pktTlmPingSend">
+        <source component = "health" port = "PingSend" type = "Ping" num = "13"/>
+        <target component = "pktTlm" port = "pingIn" type = "Ping" num = "0"/>
+    </connection>
+    <connection name = "pktTlmPingRecv">
+        <source component = "pktTlm" port = "pingOut" type = "Ping" num = "0"/>
+        <target component = "health" port = "PingReturn" type = "Ping" num = "13"/>
+    </connection>
+
 
     <!-- Socket Ground System Connections -->
 
