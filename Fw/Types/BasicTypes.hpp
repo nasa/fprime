@@ -90,11 +90,13 @@ typedef U8              BYTE; //!< byte type
  typedef int64_t        I64; //!< 64-bit signed integer
  typedef uint64_t       U64; //!< 64-bit unsigned integer
 #endif
- 
+
 typedef float   F32; //!< 32-bit floating point
 #if FW_HAS_F64
  typedef double  F64; //!< 64-bit floating point
 #endif
+
+typedef char CHAR;
 
 #ifndef NULL
 #define NULL  (0)  //!< NULL
