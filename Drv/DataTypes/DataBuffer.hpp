@@ -19,7 +19,7 @@ namespace Drv {
             DataBuffer();
             DataBuffer(const DataBuffer& other);
             virtual ~DataBuffer();
-            const DataBuffer& operator=(const DataBuffer& other);
+            DataBuffer& operator=(const DataBuffer& other);
 
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();

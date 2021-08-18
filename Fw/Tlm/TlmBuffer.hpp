@@ -30,7 +30,7 @@ namespace Fw {
             TlmBuffer();
             TlmBuffer(const TlmBuffer& other);
             virtual ~TlmBuffer();
-            const TlmBuffer& operator=(const TlmBuffer& other);
+            TlmBuffer& operator=(const TlmBuffer& other);
 
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();

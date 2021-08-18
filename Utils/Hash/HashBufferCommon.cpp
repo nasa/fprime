@@ -19,7 +19,7 @@ namespace Utils {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
+    HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;

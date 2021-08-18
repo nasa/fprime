@@ -102,7 +102,7 @@ namespace Fw {
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
     }
 
-    const LogStringArg& LogStringArg::operator=(const LogStringArg& other) {
+    LogStringArg& LogStringArg::operator=(const LogStringArg& other) {
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }

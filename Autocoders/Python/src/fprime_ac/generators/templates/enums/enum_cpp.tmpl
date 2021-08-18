@@ -56,13 +56,13 @@ namespace ${namespace} {
   // Instance methods
   // ----------------------------------------------------------------------
 
-  const ${name}& ${name} :: operator=(const ${name}& other)
+  ${name}& ${name} :: operator=(const ${name}& other)
   {
     this->e = other.e;
     return *this;
   }
 
-  const ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
+  ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""
@@ -90,7 +90,7 @@ a == $item_value#slurp
     return *this;
   }
 
-  const ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
+  ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""

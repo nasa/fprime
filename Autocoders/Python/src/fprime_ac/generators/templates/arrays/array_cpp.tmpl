@@ -171,7 +171,7 @@ namespace ${namespace} {
   }
 
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ${name}& other)
   {
     for(U32 index = 0; index < SIZE; index++) {
@@ -180,7 +180,7 @@ namespace ${namespace} {
     return *this;
   }
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ElementType (&a)[SIZE])
   {
     for(U32 index = 0; index < SIZE; index++) {
@@ -189,7 +189,7 @@ namespace ${namespace} {
     return *this;
   }
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ElementType& e)
   {
     for(U32 index = 0; index < SIZE; index++) {

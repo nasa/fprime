@@ -19,7 +19,7 @@ namespace Fw {
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
+    LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;

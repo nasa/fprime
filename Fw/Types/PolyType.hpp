@@ -98,7 +98,7 @@ namespace Fw {
             void toString(StringBase& dest) const; //!< get string representation
 #endif
 
-            const PolyType& operator=(const PolyType &src); //!< PolyType operator=
+            PolyType& operator=(const PolyType &src); //!< PolyType operator=
             bool operator<(const PolyType &other) const; //!< PolyType operator<
             bool operator>(const PolyType &other) const; //!< PolyType operator>
             bool operator>=(const PolyType &other) const; //!< PolyType operator>=

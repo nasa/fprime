@@ -348,7 +348,7 @@ namespace Fw {
     PolyType::~PolyType() {
     }
 
-    const PolyType& PolyType::operator=(const PolyType &src) {
+    PolyType& PolyType::operator=(const PolyType &src) {
         this->m_dataType = src.m_dataType;
         this->m_val = src.m_val;
         return *this;

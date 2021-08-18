@@ -20,9 +20,9 @@ mytype::mytype(U32 val) : Serializable() {
     this->setVal(val);
 }
 
-const mytype& mytype::operator=(const mytype& src) {
+mytype& mytype::operator=(const mytype& src) {
     this->setVal(src.m_val);
-    return src;
+    return *this;
 }
 
 bool mytype::operator==(const mytype& src) const {

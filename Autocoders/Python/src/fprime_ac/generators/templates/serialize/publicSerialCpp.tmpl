@@ -40,9 +40,9 @@ ${name}::${name}(${args_scalar_array_string}) : Serializable() {
 
 #end if
 
-const ${name}& ${name}::operator=(const ${name}& src) {
+${name}& ${name}::operator=(const ${name}& src) {
     this->set(${args_mstring});
-    return src;
+    return *this;
 }
 
 bool ${name}::operator==(const ${name}& src) const {

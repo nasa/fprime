@@ -19,7 +19,7 @@ namespace Drv {
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
+    DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
