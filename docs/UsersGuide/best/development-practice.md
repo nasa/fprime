@@ -139,14 +139,14 @@ will be done automatically:
    the user choses through the prompts
 4. Ports neccesary for commands, telemetry, events, and parameters will be automatically
    added to the `*Ai.xml` file depending which elements the user chooses to include
-6. A component `CMakeLists.txt` file will be generated and the component xml will be added
+5. A component `CMakeLists.txt` file will be generated and the component xml will be added
    to the source files.
-7. The component directory will be added to the deployments cmake file with
+6. The component directory will be added to the deployments cmake file with
    `add_fprime-subdirectory`
-8. The user is given the option to generate implementation `*.cpp` and `*.hpp` files
-9. The user is given the option to generate a unit test directory with neccesary
+7. The user is given the option to generate implementation `*.cpp` and `*.hpp` files
+8. The user is given the option to generate a unit test directory with neccesary
    unit test files within it.
-10. A `*.sdd` file is generated with documentation about ports, commands, events,  
+9. A `*.sdd` file is generated with documentation about ports, commands, events,  
    telemetry, parameters, and time of creation already filled out
 
 The `fprime-util new --component` uses the builtin cookiecutter template, but you may specify
