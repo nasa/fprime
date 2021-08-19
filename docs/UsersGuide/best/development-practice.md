@@ -100,7 +100,7 @@ To create a new port:
 3. Add the new port xml file to `SOURCE_FILES` in the `CMakeLists.txt` file in the directory
 4. If necessary, add port directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
-Alternativly, you may use `fprime-util new --port` from the fprime-tools package. This will 
+Alternatively, you may use `fprime-util new --port` from the fprime-tools package. This will 
 walk the user through a few prompts about the port they want to create. Then the following
 will be done automatically:
 
@@ -128,23 +128,23 @@ To create a new component definition by hand:
    variable in the file.
 7. Add component directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
-Alternativly, you may use `fprime-util new --component` from the fprime-tools package. This will 
+Alternatively, you may use `fprime-util new --component` from the fprime-tools package. This will 
 walk the user through a few prompts about the component they are creating. Then the following
 will be done automatically:
 
 1. A new component directory will be created
 2. The `*Ai.xml` file will be generated, filled out with all of the information provided by 
    the user
-3. Commands, telemtry, events, and parameters will be added to the xml file based on what 
+3. Commands, telemetry, events, and parameters will be added to the xml file based on what 
    the user choses through the prompts
-4. Ports neccesary for commands, telemetry, events, and parameters will be automatically
+4. Ports necessary for commands, telemetry, events, and parameters will be automatically
    added to the `*Ai.xml` file depending which elements the user chooses to include
 5. A component `CMakeLists.txt` file will be generated and the component xml will be added
    to the source files.
 6. The component directory will be added to the deployments cmake file with
    `add_fprime-subdirectory`
 7. The user is given the option to generate implementation `*.cpp` and `*.hpp` files
-8. The user is given the option to generate a unit test directory with neccesary
+8. The user is given the option to generate a unit test directory with necessary
    unit test files within it.
 9. A `*.sdd` file is generated with documentation about ports, commands, events,  
    telemetry, parameters, and time of creation already filled out
