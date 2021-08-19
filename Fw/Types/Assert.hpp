@@ -21,10 +21,10 @@
     ((void) ((cond) ? (0) : \
     (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
 #else
-#define FILE_NAME_ARG const U8*
+#define FILE_NAME_ARG const CHAR*
 #define FW_ASSERT(cond, ...) \
     ((void) ((cond) ? (0) : \
-    (Fw::SwAssert((U8*)__FILE__, __LINE__, ##__VA_ARGS__))))
+    (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
 #endif
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
@@ -75,7 +75,7 @@ namespace Fw {
                     );
             // default reportAssert() will call this when the message is built
             // override it to do another kind of print. printf by default
-            virtual void printAssert(const I8* msg);
+            virtual void printAssert(const CHAR* msg);
             // do assert action. By default, calls assert.
             // Called after reportAssert()
             virtual void doAssert();
