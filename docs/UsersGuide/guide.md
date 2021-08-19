@@ -123,7 +123,7 @@ implementation works in Windows using WSL. Some other OS are provided in extensi
 See: [F´ GDS](./gds/gds-introduction.md)
 
 The F′ user experience is intended to be an out-of-box ready to use ground data system (GDS) solution than can easily
-run on Linux, MaC OSX, or Windows platforms without any mission specific tailoring. The GDS provides an end-user
+run on Linux, Mac OSX, or Windows platforms without any mission specific tailoring. The GDS provides an end-user
 graphical user interface (GUI) tool and an integration test application programming interface (API) to enable
 integration testing and quick-look telemetry monitoring.
 
