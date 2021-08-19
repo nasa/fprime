@@ -26,7 +26,7 @@ techniques.
 **The Developer Documentation** is intended for developers who want to use some of the advanced features of F´, understand
 how the framework is organized internally, and otherwise dig deep into F´ concepts and implementation. Anyone who wishes
 to extend or change F´ should consult this section.
-This section is devided into three sub-sections:
+This section is divided into three sub-sections:
 - Ground Data System Tools (GDS)
 - Full Development Guides: technical details for full F´ implementations
 - Advanced F´ Topics
