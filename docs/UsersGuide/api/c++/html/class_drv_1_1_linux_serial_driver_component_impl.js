@@ -1,8 +1,8 @@
 var class_drv_1_1_linux_serial_driver_component_impl =
 [
-    [ "UartBaudRate", "class_drv_1_1_linux_serial_driver_component_impl.html#ac4b92838fde454b55450b5255c604a2b", null ],
-    [ "UartFlowControl", "class_drv_1_1_linux_serial_driver_component_impl.html#a28712e90bfa7cdbd1e2bd333a85bfc1c", null ],
-    [ "UartParity", "class_drv_1_1_linux_serial_driver_component_impl.html#a4a611194c1733877bf516853f2ead9c5", null ],
+    [ "UartBaudRate", "class_drv_1_1_linux_serial_driver_component_impl.html#a9dad2b92cd0d996fa55f89aac44cb791", null ],
+    [ "UartFlowControl", "class_drv_1_1_linux_serial_driver_component_impl.html#aad14e14819d2e63364bf648587444389", null ],
+    [ "UartParity", "class_drv_1_1_linux_serial_driver_component_impl.html#ae50cdaf949dec24d4f44d2dfb416cafe", null ],
     [ "BAUD_RATE", "class_drv_1_1_linux_serial_driver_component_impl.html#a84c9b7f8a8e41db9575734e965a3a99e", [
       [ "BAUD_9600", "class_drv_1_1_linux_serial_driver_component_impl.html#a84c9b7f8a8e41db9575734e965a3a99ea84ff1fc2f68ed8b9e02a7392c5d38561", null ],
       [ "BAUD_19200", "class_drv_1_1_linux_serial_driver_component_impl.html#a84c9b7f8a8e41db9575734e965a3a99eaca9c236f722c9ae71b7019271af2fe79", null ],

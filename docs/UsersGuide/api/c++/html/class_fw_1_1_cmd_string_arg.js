@@ -7,9 +7,9 @@ var class_fw_1_1_cmd_string_arg =
     [ "CmdStringArg", "class_fw_1_1_cmd_string_arg.html#ad4db24f055270b36d250ab7b31c16909", null ],
     [ "CmdStringArg", "class_fw_1_1_cmd_string_arg.html#aeffb3c6f638690224f90a438f361322d", null ],
     [ "~CmdStringArg", "class_fw_1_1_cmd_string_arg.html#a0101d9a3dcd1c69ef715ff0a849143da", null ],
-    [ "deserialize", "class_fw_1_1_cmd_string_arg.html#ad8bf1996bb8ecce5270bd2229280445b", null ],
-    [ "length", "class_fw_1_1_cmd_string_arg.html#ac721017819d4d4ee97f292e6e5ca7c6b", null ],
-    [ "operator=", "class_fw_1_1_cmd_string_arg.html#acdc6bd7fdc3e20e0b49dd4f8d0735af8", null ],
-    [ "serialize", "class_fw_1_1_cmd_string_arg.html#a4cc10cb0f230b8253868aa8071bd4c15", null ],
+    [ "getCapacity", "class_fw_1_1_cmd_string_arg.html#ac40c7cfd9589031b073af2538b61b9be", null ],
+    [ "operator=", "class_fw_1_1_cmd_string_arg.html#a3536df1439ec36eaec9852b4ac391f0c", null ],
+    [ "operator=", "class_fw_1_1_cmd_string_arg.html#a31342e9750ed74a2370fa8f4b545d9c5", null ],
+    [ "operator=", "class_fw_1_1_cmd_string_arg.html#a6e506b6f349e6fef259224dba5b4e145", null ],
     [ "toChar", "class_fw_1_1_cmd_string_arg.html#a242128f5131ae91e7a745a0fed99db03", null ]
 ];

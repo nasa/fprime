@@ -9,6 +9,6 @@ var class_utils_1_1_rate_limiter =
     [ "setCounterCycle", "class_utils_1_1_rate_limiter.html#af4535420d87eab7f95f9cf99f80bc6bc", null ],
     [ "setTime", "class_utils_1_1_rate_limiter.html#a6d9293e6278409ad74c31b894034be6d", null ],
     [ "setTimeCycle", "class_utils_1_1_rate_limiter.html#ac6250d361fb5e2b6e5c6bb690c3a633e", null ],
-    [ "trigger", "class_utils_1_1_rate_limiter.html#ab725e8b93afdd2c54d1c9a3de1de8075", null ],
-    [ "trigger", "class_utils_1_1_rate_limiter.html#a69039127a541298e48245c33ba575fa4", null ]
+    [ "trigger", "class_utils_1_1_rate_limiter.html#a69039127a541298e48245c33ba575fa4", null ],
+    [ "trigger", "class_utils_1_1_rate_limiter.html#ab725e8b93afdd2c54d1c9a3de1de8075", null ]
 ];

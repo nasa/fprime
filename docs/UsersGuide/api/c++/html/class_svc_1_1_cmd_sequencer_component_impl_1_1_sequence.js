@@ -5,7 +5,7 @@ var class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence =
     [ "Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record" ],
     [ "Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#add4132ed11fafc5472f488bdb469dd58", null ],
     [ "~Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a6546613c3bcc46d0479ac612f7d75a85", null ],
-    [ "allocateBuffer", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a0c6e432d7f33fec31ef16b80a9400bad", null ],
+    [ "allocateBuffer", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a10d4e81b075e6348da9ef63598e241b5", null ],
     [ "clear", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#ac7881a2faaace1ed062f9696e38dfa40", null ],
     [ "deallocateBuffer", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a97b6e2b1ff6ec4db7cdfd7b2d1c6db66", null ],
     [ "getFileName", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html#a640b09264ae8ac1d04cdd74da674df18", null ],

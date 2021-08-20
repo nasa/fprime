@@ -6,7 +6,6 @@ var annotated_dup =
     [ "Os", "namespace_os.html", "namespace_os" ],
     [ "Ref", "namespace_ref.html", "namespace_ref" ],
     [ "Svc", "namespace_svc.html", "namespace_svc" ],
-    [ "Test", "namespace_test.html", "namespace_test" ],
     [ "Types", "namespace_types.html", "namespace_types" ],
     [ "Utils", "namespace_utils.html", "namespace_utils" ],
     [ "DeframingProtocolInterface", "class_deframing_protocol_interface.html", "class_deframing_protocol_interface" ],

@@ -1,6 +1,7 @@
 var dir_d2b6462c6d5a51a32c660fca9dd2a1a2 =
 [
     [ "BlockDriver", "dir_b7fa50bf5461f15dbbcd9e697b6a146a.html", "dir_b7fa50bf5461f15dbbcd9e697b6a146a" ],
+    [ "ByteStreamDriverModel", "dir_72057f972220621f844212fa7884a35e.html", "dir_72057f972220621f844212fa7884a35e" ],
     [ "DataTypes", "dir_f7899873501add4619712b66b1cc8508.html", "dir_f7899873501add4619712b66b1cc8508" ],
     [ "Ip", "dir_de94936287469fda57c523adf8bd8f0e.html", "dir_de94936287469fda57c523adf8bd8f0e" ],
     [ "LinuxGpioDriver", "dir_26bcbc5c7a6b477836c1cfb2ac7a0928.html", "dir_26bcbc5c7a6b477836c1cfb2ac7a0928" ],

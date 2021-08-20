@@ -1,19 +1,11 @@
 var searchData=
 [
-  ['test_20logger',['Test Logger',['../autotoc_md1136.html',1,'']]],
-  ['timetype_20serializable',['TimeType Serializable',['../autotoc_md1143.html',1,'']]],
-  ['the_20discerning_20user_27s_20guide_20to_20the_20f´_20gds_20cli',['The Discerning User&apos;s Guide to the F´ GDS CLI',['../autotoc_md1247.html',1,'']]],
-  ['the_20gds_20dashboard',['The GDS Dashboard',['../autotoc_md1263.html',1,'']]],
-  ['the_20discerning_20user_27s_20guide_20to_20f´',['The Discerning User&apos;s Guide to F´',['../autotoc_md1295.html',1,'']]],
-  ['todo_3a_20document_20the_20settings_20in_20cmake',['TODO: document the settings in CMake',['../autotoc_md198.html',1,'']]],
-  ['test_20logger',['Test Logger',['../autotoc_md464.html',1,'']]],
-  ['timetype_20serializable',['TimeType Serializable',['../autotoc_md471.html',1,'']]],
-  ['the_20discerning_20user_27s_20guide_20to_20the_20f´_20gds_20cli',['The Discerning User&apos;s Guide to the F´ GDS CLI',['../autotoc_md575.html',1,'']]],
-  ['the_20gds_20dashboard',['The GDS Dashboard',['../autotoc_md588.html',1,'']]],
-  ['the_20discerning_20user_27s_20guide_20to_20f´',['The Discerning User&apos;s Guide to F´',['../autotoc_md615.html',1,'']]],
-  ['todo_3a_20document_20the_20settings_20in_20cmake',['TODO: document the settings in CMake',['../autotoc_md868.html',1,'']]],
-  ['tcp_20client_20component',['Tcp Client Component',['../_drv_tcp_client.html',1,'']]],
-  ['tcp_20server_20component',['Tcp Server Component',['../_drv_tcp_server.html',1,'']]],
-  ['tutorial',['Tutorial',['../md_docs_v1_85__tutorials__full_system_tutorial__tutorial.html',1,'']]],
-  ['tutorial',['Tutorial',['../md_docs_v2_80_80__tutorials__full_system_tutorial__tutorial.html',1,'']]]
+  ['udp_20_20component_3747',['Udp  Component',['../drv_udp.html',1,'']]],
+  ['unit_20testing_20in_20f´_3748',['Unit Testing in F´',['../md_docs_v1_85__users_guide_user_unit-testing.html',1,'']]],
+  ['unit_20testing_20in_20f´_3749',['Unit Testing in F´',['../md_docs_v2_80_80__users_guide_user_unit-testing.html',1,'']]],
+  ['utils_20classes_3750',['Utils Classes',['../utils.html',1,'']]],
+  ['utils_3a_3ahash_20class_3751',['Utils::Hash Class',['../utils_hash_class.html',1,'Utils']]],
+  ['utils_3a_3alockguard_20class_3752',['Utils::LockGuard Class',['../utils_lock_guard_class.html',1,'Utils']]],
+  ['utils_3a_3aratelimiter_20class_3753',['Utils::RateLimiter Class',['../utils_rate_limiter_class.html',1,'Utils']]],
+  ['utils_3a_3atokenbucket_20class_3754',['Utils::TokenBucket Class',['../utils_token_bucket_class.html',1,'Utils']]]
 ];

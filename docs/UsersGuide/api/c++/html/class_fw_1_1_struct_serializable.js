@@ -1,6 +1,6 @@
 var class_fw_1_1_struct_serializable =
 [
-    [ "SERIALIZED_SIZE", "class_fw_1_1_struct_serializable.html#a3ee0e2cfb582a60db298d5cd7c21d8aea3d5d07062f4bbb8cefcf992796ab3106", null ],
+    [ "SERIALIZED_SIZE", "class_fw_1_1_struct_serializable.html#ae44646d6aa92c6079beaae9d579d877ca3d5d07062f4bbb8cefcf992796ab3106", null ],
     [ "StructSerializable", "class_fw_1_1_struct_serializable.html#a83e98870825baaf6d8b4bfb34363eff0", null ],
     [ "StructSerializable", "class_fw_1_1_struct_serializable.html#a2a174d9d82a053c5bb8eab0e9db0d505", null ],
     [ "StructSerializable", "class_fw_1_1_struct_serializable.html#a5149d9ccf0514b88a0420b5dd8e405c4", null ],

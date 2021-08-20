@@ -23,7 +23,7 @@ function registers the autocoding steps specific to `codegen.py`.
 
 Note: as the autocoder is rewritten, this will likely need to change.
 
-- **AC_TYPE:** serializable, port, component, or topology
+- **AC_TYPE:** serializable, port, component, packet, or topology
 - **AC_FINAL_SOURCE:** final position of the CPP file
 - **AC_FINAL_HEADER:** final position of the HPP file
 - **AI_XML:** AI xml input to autocoder
