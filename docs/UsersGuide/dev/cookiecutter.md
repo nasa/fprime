@@ -1,9 +1,11 @@
 # Creating a cookiecutter template
 
-Create a directory to make your cookiecutter template in. This is where you will create your template 
-files. For the full documentation, see [Cookiecutter Documentation](https://cookiecutter.readthedocs.io/en/1.7.2/index.html)
+For the full documentation, see [Cookiecutter Documentation](https://cookiecutter.readthedocs.io/en/1.7.2/index.html).
 
-Note: fprime-util new only supports outside cookiecutters for components, not ports
+Initially, you will need to create a directory to make your cookiecutter template in. This is where you will
+create your template files.
+
+Note: fprime-util new only supports outside cookiecutters for components, not ports.
 
 ## JSON file
 Create a cookiecutter.json file in your cookiecutter directory. This is where you will specify the 
@@ -27,11 +29,24 @@ Here is an example from the builtin cookiecutter:
 
 The values in the brackets are the values that the user can choose from.
 
+## Nested Component Directory
+
+Inside of your cookiecutter directory, you will most likely want to create a nested directory
+to contain your genereted files. You may want to name this directory something like
+`{{cookiecutter.component_name}} so it will take on the name of your component.
+
 ## Template files
 
 To create the rest of the files in your template (*Ai.xml, CMakeLists.txt, etc.), just write these
 files as your normally would, replacing the variables with `{{ cookiecutter.<value> }}` where you would
-replace `<value>` with the value from the JSON file that you are using.
+replace `<value>` with the value from the JSON file that you are using. You can name the files in the
+same way, and the filenames will take on the values from the user input when generated.
+
+Example of using values from user input:
+
+```
+<component name="{{cookiecutter.component_name}}" kind="{{cookiecutter.component_kind}}" namespace="{{cookiecutter.component_namespace}}">
+```
 
 ### Conditionals
 
@@ -79,7 +94,7 @@ There are many other features that cookiecutter provides, available in the docum
 
 ## Using your own template
 
-Once you have created your template, two ways to use it are locally or through github.
+Once you have created your template, two ways to use it are: through github or locally.
 
 ### Using a GitHub repository
 
