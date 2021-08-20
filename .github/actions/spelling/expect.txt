@@ -243,6 +243,7 @@ configparser
 configurability
 configurator
 Connectedoutput
+cookiecutter
 cooldown
 coor
 coravy
@@ -439,6 +440,7 @@ EMSGSIZE
 ENAMETOOLONG
 endcode
 endcond
+endfor
 endforeach
 endfunction
 endian
