@@ -9,7 +9,6 @@
 // acknowledged.
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Fw/Types/EightyCharString.hpp"
 #include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
@@ -382,7 +381,7 @@ namespace Svc {
     parameterizedNeverLoaded(void)
   {
     // Try to run a sequence
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert seqDone response
@@ -631,7 +630,7 @@ namespace Svc {
     loadSequence(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->clearHistory();
     this->component.loadSequence(fileName);
     // Assert events
@@ -662,7 +661,7 @@ namespace Svc {
     runSequenceByPortCall(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -677,7 +676,7 @@ namespace Svc {
     runLoadedSequence(void)
   {
     // Invoke the port
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -720,7 +719,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Invoke sequence port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert response on seqDone

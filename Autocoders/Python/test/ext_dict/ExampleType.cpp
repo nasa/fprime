@@ -1,8 +1,6 @@
 #include <Autocoders/Python/test/ext_dict/ExampleType.hpp>
 #include <Fw/Types/Assert.hpp>
-#if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
-#endif
+
 namespace ANameSpace {
 
 mytype::mytype(void): Serializable() {

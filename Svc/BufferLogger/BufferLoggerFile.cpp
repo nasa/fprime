@@ -68,7 +68,7 @@ namespace Svc {
 
   void BufferLogger::File ::
     setBaseName(
-        const Fw::EightyCharString& baseName
+        const Fw::StringBase& baseName
     )
   {
       if (this->mode == File::Mode::OPEN) {
@@ -225,7 +225,7 @@ namespace Svc {
     const Os::ValidateFile::Status status =
       validatedFile.createHashFile();
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
-      const Fw::EightyCharString &hashFileName = validatedFile.getHashFileName();
+      const Fw::String &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
       this->bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,

@@ -42,7 +42,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Start up a receive thread
     if (recv_thread) {
-        Fw::EightyCharString name("receiver thread");
+        Os::TaskString name("receiver thread");
         this->component.startSocketTask(name, 50, 1024, true);
     }
 

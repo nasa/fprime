@@ -331,7 +331,7 @@ namespace Svc {
       ASSERT_TLM_SIZE(1);
       ASSERT_TLM_CS_Errors(0, 2);
       // Run the sequence by port call
-      Fw::EightyCharString fArg(fileName);
+      Fw::String fArg(fileName);
       this->invoke_to_seqRunIn(0, fArg);
       this->clearAndDispatch();
       // Assert seqDone response
