@@ -29,7 +29,7 @@ The values in the brackets are the values that the user can choose from.
 
 ## Template files
 
-To create the rest of the files in your template(*Ai.xml, CMakeLists.txt, etc.), just write these
+To create the rest of the files in your template (*Ai.xml, CMakeLists.txt, etc.), just write these
 files as your normally would, replacing the variables with `{{ cookiecutter.<value> }}` where you would
 replace `<value>` with the value from the JSON file that you are using.
 
@@ -47,7 +47,7 @@ Below is an example of how these could be used:
 ```
 
 Here, he file template will only include the telemetry port import if the user had selected yes
-to the telemetry prompt
+to the telemetry prompt.
 
 ### Loops
 
@@ -68,7 +68,7 @@ the other.
 
 If you have code that you would like to run immediately before or after the template files
 are stamped out, you can create post_gen_project.py and pre_gen_project.py files inside of a directory
-titled `hooks` within your cookiecutter directory. The pre_gen_project.py will run right before 
+titled `hooks` within your cookiecutter template directory. The pre_gen_project.py will run right before 
 your files are generated and the post_gen_project.py will run immediatly after the files are generated.
 
 ### Other Cookiecutter features
@@ -79,7 +79,7 @@ There are many other features that cookiecutter provides, available in the docum
 
 ## Using your own template
 
-Once you have created your template, two ways to use it are locally, or through github.
+Once you have created your template, two ways to use it are locally or through github.
 
 ### Using a GitHub repository
 
