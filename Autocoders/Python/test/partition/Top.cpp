@@ -85,7 +85,7 @@ int main(int argc, char* argv[])  {
 	// Ask for input to huey or duey here.
 	char in[80];
 	U32 cmd;
-	Fw::EightyCharString *str;
+	Fw::String *str;
 	char str2[80];
 	//
 	while ( strcmp(in,"quit") != 0) {
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])  {
 			cout << "Enter short string: ";
 			cin >> str2;
 			cout << "The string 2 is: " << str2 << endl;
-			str = new Fw::EightyCharString(str2);
+			str = new Fw::String(str2);
 			cout << "hueyComp_ptr->getexternInputPort1InputPort()->msg_in(" << cmd << "," << str2 << ")" << endl;
 			hueyComp_ptr->getexternInputPort1Msg1InputPort()->msg_in(cmd,*str);
 		} else if (in[0] == '3') {

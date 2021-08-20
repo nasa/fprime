@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/stress/TestTelemRecvImpl.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Autocoders/Python/test/stress/QuaternionSerializableAc.hpp>
 #include <stdio.h>
 
@@ -25,7 +25,7 @@ TestTelemRecvImpl::~TestTelemRecvImpl() {
 void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
     Ref::Gnc::Quaternion tlmVal;
     val.deserialize(tlmVal);
-    Fw::EightyCharString str;
+    Fw::String str;
 #if FW_SERIALIZABLE_TO_STRING
     tlmVal.toString(str);
 #endif

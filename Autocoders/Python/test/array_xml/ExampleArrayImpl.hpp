@@ -1,7 +1,6 @@
 #ifndef EXAMPLE_ARRAY_IMPL_HPP
 #define EXAMPLE_ARRAY_IMPL_HPP
 
-#include <Fw/Types/EightyCharString.hpp>
 #include <Autocoders/Python/test/array_xml/Component1ComponentAc.hpp>
 
 namespace Example {

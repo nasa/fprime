@@ -3,7 +3,7 @@
 #include <Os/IntervalTimer.hpp>
 #include <Os/InterruptLock.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
@@ -559,8 +559,8 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(boolt1,boolt2);
 
     // serialize string
-    Fw::EightyCharString str1;
-    Fw::EightyCharString str2;
+    Fw::String str1;
+    Fw::String str2;
 
     str1 = "Foo";
     str2 = "BarBlat";
@@ -874,7 +874,7 @@ TEST(TypesTest, CheckAssertTest) {
 }
 
 TEST(TypesTest,PolyTest) {
-    Fw::EightyCharString str;
+    Fw::String str;
 
     // U8 Type  ===============================================================
     U8 in8 = 13;
@@ -1064,16 +1064,16 @@ TEST(TypesTest,PolyTest) {
 
 TEST(TypesTest,EightyCharTest) {
 
-    Fw::EightyCharString str;
+    Fw::String str;
     str = "foo";
-    Fw::EightyCharString str2;
+    Fw::String str2;
     str2 = "foo";
     ASSERT_EQ(str,str2);
     ASSERT_EQ(str,"foo");
     str2 = "doodie";
     ASSERT_NE(str,str2);
 
-    Fw::EightyCharString str3 = str;
+    Fw::String str3 = str;
     str3 += str2;
     ASSERT_EQ(str3,"foodoodie");
 
@@ -1081,15 +1081,15 @@ TEST(TypesTest,EightyCharTest) {
     ASSERT_EQ(str3,"foodoodiehoo");
 
 
-    Fw::EightyCharString copyStr("ASTRING");
+    Fw::String copyStr("ASTRING");
     ASSERT_EQ(copyStr,"ASTRING");
-    Fw::EightyCharString copyStr2 = "ASTRING";
+    Fw::String copyStr2 = "ASTRING";
     ASSERT_EQ(copyStr2,"ASTRING");
-    Fw::EightyCharString copyStr3(copyStr2);
+    Fw::String copyStr3(copyStr2);
     ASSERT_EQ(copyStr3,"ASTRING");
 
     Fw::InternalInterfaceString ifstr("IfString");
-    Fw::EightyCharString if2(ifstr);
+    Fw::String if2(ifstr);
 
     ASSERT_EQ(ifstr,if2);
     ASSERT_EQ(if2,"IfString");
@@ -1103,7 +1103,7 @@ TEST(TypesTest,EightyCharTest) {
 }
 
 TEST(TypesTest,StringFormatTest) {
-    Fw::EightyCharString str;
+    Fw::String str;
     str.format("Int %d String %s",10,"foo");
     ASSERT_STREQ(str.toChar(), "Int 10 String foo");
 }

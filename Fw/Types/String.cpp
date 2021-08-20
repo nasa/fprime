@@ -1,47 +1,47 @@
-#include <Fw/Types/FixedLengthString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Types/StringUtils.hpp>
 
 namespace Fw {
 
-    FixedLengthString::FixedLengthString(const char* src) : StringBase() {
+    String::String(const char* src) : StringBase() {
         Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
-    FixedLengthString::FixedLengthString(const StringBase& src) : StringBase() {
+    String::String(const StringBase& src) : StringBase() {
         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    FixedLengthString::FixedLengthString(const FixedLengthString& src) : StringBase() {
+    String::String(const String& src) : StringBase() {
         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    FixedLengthString::FixedLengthString(void) : StringBase() {
+    String::String() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    FixedLengthString& FixedLengthString::operator=(const FixedLengthString& other) {
+    String& String::operator=(const String& other) {
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
-    FixedLengthString& FixedLengthString::operator=(const StringBase& other) {
+    String& String::operator=(const StringBase& other) {
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
-    FixedLengthString& FixedLengthString::operator=(const char* other) {
+    String& String::operator=(const char* other) {
         Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
         return *this;
     }
 
-    FixedLengthString::~FixedLengthString(void) {
+    String::~String() {
     }
 
-    const char* FixedLengthString::toChar(void) const {
+    const char* String::toChar() const {
         return this->m_buf;
     }
 
-    NATIVE_UINT_TYPE FixedLengthString::getCapacity(void) const {
+    NATIVE_UINT_TYPE String::getCapacity() const {
         return STRING_SIZE;
     }
 }
