@@ -79,11 +79,11 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
         NATIVE_INT_TYPE portNum, //!< The port number
         FwOpcodeType opcode, //!< The command opcode
         U32 cmdSeq, //!< The command sequence number
-        Fw::CmdResponse response //!< The command response
+        const Fw::CmdResponse& response //!< The command response
     );
     void framedIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                           Fw::Buffer& recvBuffer,  /*!< The raw bytes */
-                          Drv::RecvStatus recvStatus /*!< Status of the bytes */
+                          const Drv::RecvStatus& recvStatus /*!< Status of the bytes */
                           );
 
     //! Handler implementation for schedIn

@@ -20,7 +20,7 @@ class TestPtSourceImpl: public StressTest::TestPortComponentBase {
         virtual ~TestPtSourceImpl();
         void init();
         void aport_Test(I32 arg4, F32 arg5, U8 arg6);
-        void aport2_Test2(I32 arg4, F32 arg5, Ref::Gnc::Quaternion arg6);
+        void aport2_Test2(I32 arg4, F32 arg5, const Ref::Gnc::Quaternion& arg6);
     protected:
     private:
 };

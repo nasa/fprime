@@ -15,5 +15,5 @@
             <comment>Buffer to read back data from the i2c device, must set size when passing in read buffer</comment>
         </arg>
     </args>
-    <return type="Drv::I2cStatus" pass_by="value"> </return>
+    <return type="Drv::I2cStatus"> </return>
 </interface>

@@ -196,15 +196,23 @@ class ModelParser:
                 n = a.get_name()
                 t = a.get_type()
                 m = a.get_modifier()
+                non_const_arg_type = a.get_type()
                 e = None
                 #
-                # Store modifier as language symbol
+                # Pass port scalar and specified arguments as specified
+                # and port non-specified non-scalar arguments by const reference
+                isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
+                isConstReference = False
+
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":
                     m = "&"
-                else:
+                elif TypesList.isPrimitiveType(t) or isEnum:
                     m = ""
+                else:
+                    isConstReference = True
+                    m = "&"
 
                 if t == "string":
                     t = n + "String"
@@ -230,7 +238,10 @@ class ModelParser:
                 #    c = ""
                 #    m = "&"
                 # print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n, t, c, m, e))
+                non_const_arg_type = t
+                if isConstReference:
+                    t = "const " + t
+                args_dict[name].append((n, t, c, m, e, non_const_arg_type))
         return args_dict
 
     def getPortArgsPrototypeStringDict(self, obj):

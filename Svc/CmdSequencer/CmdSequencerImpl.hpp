@@ -572,7 +572,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum, //!< The port number
           FwOpcodeType opcode, //!< The command opcode
           U32 cmdSeq, //!< The command sequence number
-          Fw::CmdResponse response //!< The command response
+          const Fw::CmdResponse& response //!< The command response
       );
 
       //! Handler for input port schedIn
