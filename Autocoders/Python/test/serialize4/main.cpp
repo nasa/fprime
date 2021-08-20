@@ -24,7 +24,7 @@ TEST(DefaultValues, OK) {
 
 TEST(Serialize4, ArrayScalarInit) {
 
-    Example::Serial1 serial1 (0,"hello world",Example::SomeEnum::MEM2,2);
+    Example::Serial1 serial1 (0,"hello",Example::SomeEnum::MEM2,2, "world");
 
     // Check serializable array member values are correctly set
     NATIVE_INT_TYPE size;

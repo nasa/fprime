@@ -156,14 +156,14 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         contains_array = False
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size is not None:
+            elif array_length is not None:
                 arg_str += "const {} {}, ".format(mtype, name)
                 contains_array = True
             else:
