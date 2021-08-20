@@ -276,7 +276,7 @@
         <!-- This is a common choice within many elements. -->
 
         <choice>
-            <!-- Choice one: Type = string and size is also an attribute -->
+            <!-- Choice one: Type = string or buffer and size is also an attribute -->
             <group>
                 <choice>
                     <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
@@ -304,7 +304,7 @@
 
                 <optional>
                     <attribute name="array_length">
-                        <a:documentation>The size of the argument.</a:documentation>
+                        <a:documentation>The length of the array.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>
                 </optional>
@@ -361,7 +361,7 @@
 
                 <optional>
                     <attribute name="array_length">
-                        <a:documentation>The size of the argument.</a:documentation>
+                        <a:documentation>The length of the array.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>
                 </optional>
