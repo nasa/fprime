@@ -32,15 +32,21 @@ The values in the brackets are the values that the user can choose from.
 ## Nested Component Directory
 
 Inside of your cookiecutter directory, you will most likely want to create a nested directory
-to contain your genereted files. You may want to name this directory something like
-`{{cookiecutter.component_name}} so it will take on the name of your component.
+to contain your generated files. You may want to name this directory something like
+`{{cookiecutter.component_name}}' so it will take on the name of your component.
 
 ## Template files
 
 To create the rest of the files in your template (*Ai.xml, CMakeLists.txt, etc.), just write these
 files as your normally would, replacing the variables with `{{ cookiecutter.<value> }}` where you would
 replace `<value>` with the value from the JSON file that you are using. You can name the files in the
-same way, and the filenames will take on the values from the user input when generated.
+same way, and the filenames will take on the values from the user input when generated
+
+Example of filename:
+
+```
+{{cookiecutter.component_name}}ComponentAi.xml
+```
 
 Example of using values from user input:
 
