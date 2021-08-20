@@ -59,7 +59,6 @@ EXPECTED = [
     os.path.join("lib", platform.system(), "libSvc_AssertFatalAdapter." + ext),
     os.path.join("lib", platform.system(), "libSvc_PolyIf." + ext),
     os.path.join("lib", platform.system(), "libSvc_FileDownlink." + ext),
-    os.path.join("lib", platform.system(), "libFw_ComFile." + ext),
     os.path.join("lib", platform.system(), "libRef_RecvBuffApp." + ext),
     os.path.join("lib", platform.system(), "libSvc_Time." + ext),
     os.path.join("lib", platform.system(), "libFw_Cfg." + ext),

@@ -48,7 +48,6 @@ EXPECTED = [
     os.path.join("awesome", "Svc_AssertFatalAdapter_is_awesome"),
     os.path.join("awesome", "Svc_PolyIf_is_awesome"),
     os.path.join("awesome", "Svc_FileDownlink_is_awesome"),
-    os.path.join("awesome", "Fw_ComFile_is_awesome"),
     os.path.join("awesome", "Svc_Time_is_awesome"),
     os.path.join("awesome", "Fw_Cfg_is_awesome"),
     os.path.join("awesome", "Svc_Fatal_is_awesome"),

@@ -9,6 +9,7 @@
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Svc/LinuxTime/LinuxTimeImpl.hpp>
 #include <Svc/TlmChan/TlmChanImpl.hpp>
+#include <Svc/TlmPacketizer/TlmPacketizer.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Svc/FileUplink/FileUplink.hpp>
@@ -42,6 +43,7 @@ extern Svc::ConsoleTextLoggerImpl textLogger;
 extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::LinuxTimeImpl linuxTime;
 extern Svc::TlmChanImpl chanTlm;
+extern Svc::TlmPacketizer pktTlm;
 extern Svc::CommandDispatcherImpl cmdDisp;
 extern Svc::PrmDbImpl prmDb;
 extern Svc::FileUplink fileUplink;

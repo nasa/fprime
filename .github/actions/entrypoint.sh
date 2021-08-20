@@ -4,9 +4,9 @@
 set -e
 set -x
 cd "$GITHUB_WORKSPACE"
-if [ "$GITHUB_WORKFLOW" != "Autodocs" ]
+if [ "$GITHUB_WORKFLOW" == "Autodocs" ]
 then
-    "$GITHUB_WORKSPACE/ci/master.bash" QUICK
-else
     /autodoc.bash
+else
+    "$GITHUB_WORKSPACE/ci/tests/$INPUT_TEST.bash"
 fi

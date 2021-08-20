@@ -10,6 +10,11 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/BufferSendPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/Buffer.cpp"
 )
+
+set(MOD_DEPS
+    Fw/Types
+)
+
 register_fprime_module()
 
 set(UT_SOURCE_FILES
