@@ -249,6 +249,7 @@ coravy
 cosmosgen
 cout
 cov
+Coverity
 CPHA
 Cpkt
 cplusplus
@@ -523,6 +524,7 @@ findall
 fio
 Firefox
 FIXME
+Fixme
 flist
 FNDELAY
 fnmatch
@@ -1100,7 +1102,10 @@ outdir
 outout
 overridable
 packetization
+packetize
 packetized
+packetizer
+Packetizing
 Paetz
 Pandian
 PARAMDOC
@@ -1194,6 +1199,7 @@ ptbool
 ptestrun
 ptf
 pthread
+PTLM
 ptmcg
 pton
 ptr
@@ -1593,6 +1599,9 @@ TLMCHANIMPLCFG
 TLMCHANIMPLTESTER
 tlmname
 TLMPACKET
+TLMPACKETIZER
+TLMPACKETIZERCOMPONENTIMPLCFG
+TLMPACKETIZERTYPES
 tlmval
 TLOG
 TML
@@ -1704,6 +1713,7 @@ ve
 venv
 VERSIONED
 versioning
+vfd
 VFILE
 vhd
 vhdl
