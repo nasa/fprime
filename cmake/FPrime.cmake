@@ -5,6 +5,7 @@
 # rather allows the users to build against fprime, fprime libraries while taking advantage of fprime's autocoding
 # support. This file includes the cmake build system setup for building like fprime.
 ####
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all

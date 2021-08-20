@@ -1,4 +1,4 @@
-
+include(Utilities)
 
 function(is_supported AC_INPUT_FILE)
     if (AC_INPUT_FILE MATCHES ".*Ai\\.xml")
@@ -83,12 +83,8 @@ function(__ai_info XML_PATH MODULE_NAME)
         message(FATAL_ERROR "Failed to parse ${XML_PATH}. ${ERR_RETURN}")
     endif()
 
-    # Next parse the output matching one line at a time, then consuming it and matching the next
-    string(REGEX MATCH   "([^\r\n]+)" XML_TYPE "${AI_OUTPUT}")
-    string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
-    string(REGEX MATCH   "^([^\r\n]+)" MODULE_DEPENDENCIES "${AI_OUTPUT}")
-    string(REGEX REPLACE "([^\r\n]+)\r?\n(.*)" "\\2" AI_OUTPUT "${AI_OUTPUT}")
-    string(REGEX MATCH   "^([^\r\n]+)" FILE_DEPENDENCIES "${AI_OUTPUT}")
+    # Next parse the output matching one line at a time
+    read_from_lines("${AI_OUTPUT}" XML_TYPE MODULE_DEPENDENCIES FILE_DEPENDENCIES)
 
     # Next compute the needed variants of the items needed. This
     string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)

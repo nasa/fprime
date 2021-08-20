@@ -1,5 +1,8 @@
+include(Utilities)
 
 set(AUTOCODER_LIST CACHE INTERNAL "List of known autocoders")
+
+
 
 function(register_fprime_autocoder AUTOCODER_CMAKE)
     # Check existence of autocoder file
@@ -43,8 +46,38 @@ function (ac_process_sources SOURCES)
     set(AC_SOURCES "${CONSUMED_SOURCES_LIST}" PARENT_SCOPE)
 endfunction()
 
+####
+# __memoize:
+#
+# This take two "long" processing steps of the autocoder that run during the configuration step of CMake and notes the
+# output such that the results are cached and repeated unless the input file has changed since the last pass through
+# this function. This is done for efficiency when the generate dependencies or generate files step takes a large
+# execution costs.
+#
+# Note: cached variables are the following: GENERATED_FILES, MODULE_DEPENDENCIES, FILE_DEPENDENCIES
+#
+# SOURCE: source file that is being parsed and must have changed for a recalculation
+####
+function (__memoize SOURCE)
+    get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
+    set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_NAME}.dep")
 
-
+    # Run the expensive action only if the input has changed
+    on_changed("${SOURCE}" CHANGED)
+    if (CHANGED OR NOT EXISTS "${MEMO_FILE}")
+        get_generated_files("${SOURCE}")
+        get_dependencies("${SOURCE}")
+        file(WRITE "${MEMO_FILE}" "${GENERATED_FILES}\n${MODULE_DEPENDENCIES}\n${FILE_DEPENDENCIES}\n${EXTERNAL_FILE_DEPENDENCIES}\n")
+    # Otherwise read from file
+    else()
+        file(READ "${MEMO_FILE}" CONTENTS)
+        read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTERNAL_FILE_DEPENDENCIES)
+    endif()
+    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
+    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
+    set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(EXTERNAL_FILE_DEPENDENCIES "${EXTERNAL_FILE_DEPENDENCIES}" PARENT_SCOPE)
+endfunction()
 
 function(__ac_process_sources AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
     set(MODULE_DEPENDENCIES_LIST)
@@ -85,12 +118,8 @@ function(__ac_process_source SOURCE)
     if (NOT IS_SUPPORTED)
         return()
     endif()
-    # Run the autocode setup process
-    get_generated_files("${SOURCE}")
-    if (NOT GENERATED_FILES)
-        return()
-    endif()
-    get_dependencies("${SOURCE}")
+    # Run the autocode setup process now with memoization
+    __memoize("${SOURCE}")
 
     # Explain everything
     if (CMAKE_DEBUG_OUTPUT)
