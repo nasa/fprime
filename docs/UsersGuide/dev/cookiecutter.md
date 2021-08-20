@@ -112,5 +112,5 @@ features that are present within the fprime-util new --component command that
 will happen regardless of which template you use:
 
 1. The component directory will be added to the deployment build system
-2. The CMake chache will be refreshed to include the new component
+2. The CMake cache will be refreshed to include the new component
 3. The user will be given the option to automatically generate implementation and/or unit test files
