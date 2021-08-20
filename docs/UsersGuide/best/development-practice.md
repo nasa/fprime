@@ -151,8 +151,7 @@ will be done automatically:
 
 The `fprime-util new --component` uuses the builtin cookiecutter template by default, 
 but users can substitute their own component template by using the component_cookiecutter 
-field of the settings.ini file.
-
+field of the settings.ini file. To learn more, see [Creating and Using a Cookiecutter Template](../dev/cookiecutter.md)
 ### Component Implementation
 
 Next, the developer typically runs `fprime-util impl` to produce `-template` files of the hand-coded
