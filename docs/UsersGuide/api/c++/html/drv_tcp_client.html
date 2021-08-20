@@ -128,7 +128,7 @@ Usage</h2>
 <div class="line">    comm.init(0);</div>
 <div class="line">    ...</div>
 <div class="line">    if (hostname != NULL &amp;&amp; port_number != 0) {</div>
-<div class="line">        Fw::EightyCharString name(&quot;ReceiveTask&quot;);</div>
+<div class="line">        Os::TaskString name(&quot;ReceiveTask&quot;);</div>
 <div class="line">        comm.configure(hostname, port_number);</div>
 <div class="line">        comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);</div>
 <div class="line">    }</div>

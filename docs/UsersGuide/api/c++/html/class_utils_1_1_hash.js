@@ -2,7 +2,7 @@ var class_utils_1_1_hash =
 [
     [ "Hash", "class_utils_1_1_hash.html#a45bea007d27f6225fb30efbc2680360c", null ],
     [ "~Hash", "class_utils_1_1_hash.html#a54bc74ac40167a3b11090c955a4464e5", null ],
-    [ "addFileExtension", "class_utils_1_1_hash.html#a12acc9e3174d1647c616fb0a499064cd", null ],
+    [ "addFileExtension", "class_utils_1_1_hash.html#a74da2d07352420d7032a33dc4c1c1d6e", null ],
     [ "final", "class_utils_1_1_hash.html#af7f7e625c551632ce121efc7a1f7a57e", null ],
     [ "final", "class_utils_1_1_hash.html#aa96b3776cd9657b5324bc0bcb720b8cc", null ],
     [ "getFileExtensionLength", "class_utils_1_1_hash.html#a4d6dbde7bef1089a78962b4bf5e1e527", null ],

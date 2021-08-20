@@ -11,7 +11,7 @@ var _linux_2_file_system_8cpp =
     [ "handleFileError", "linux_2_file_system_8cpp.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2", null ],
     [ "initAndCheckFileStats", "linux_2_file_system_8cpp.html#ad5df534b36274232fa392df65cfb0606", null ],
     [ "moveFile", "linux_2_file_system_8cpp.html#a4d57326006eacb1c947c884e8f2c3574", null ],
-    [ "readDirectory", "linux_2_file_system_8cpp.html#a98bd5e7ce73b337b8c7dd4bcf961630c", null ],
+    [ "readDirectory", "linux_2_file_system_8cpp.html#aef0e542bc6a12590a0ac50784739bd91", null ],
     [ "removeDirectory", "linux_2_file_system_8cpp.html#a8ebc004827e449953db79b509e260d6c", null ],
     [ "removeFile", "linux_2_file_system_8cpp.html#aa9cc00d2e1f1ebf4fb489c55569b59b1", null ]
 ];

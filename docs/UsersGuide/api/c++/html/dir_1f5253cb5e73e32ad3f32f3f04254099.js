@@ -18,10 +18,6 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     [ "EightyCharString.hpp", "eighty_char_string_8hpp.html", [
       [ "EightyCharString", "class_fw_1_1_eighty_char_string.html", "class_fw_1_1_eighty_char_string" ]
     ] ],
-    [ "FixedLengthString.cpp", "fixed_length_string_8cpp.html", null ],
-    [ "FixedLengthString.hpp", "fixed_length_string_8hpp.html", [
-      [ "FixedLengthString", "class_fw_1_1_fixed_length_string.html", "class_fw_1_1_fixed_length_string" ]
-    ] ],
     [ "InternalInterfaceString.cpp", "internal_interface_string_8cpp.html", null ],
     [ "InternalInterfaceString.hpp", "internal_interface_string_8hpp.html", [
       [ "InternalInterfaceString", "class_fw_1_1_internal_interface_string.html", "class_fw_1_1_internal_interface_string" ]
@@ -48,6 +44,10 @@ var dir_1f5253cb5e73e32ad3f32f3f04254099 =
     ] ],
     [ "Serializable.cpp", "serializable_8cpp.html", null ],
     [ "Serializable.hpp", "serializable_8hpp.html", "_serializable_8hpp" ],
+    [ "String.cpp", "string_8cpp.html", null ],
+    [ "String.hpp", "string_8hpp.html", [
+      [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ]
+    ] ],
     [ "StringType.cpp", "string_type_8cpp.html", null ],
     [ "StringType.hpp", "string_type_8hpp.html", [
       [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ]

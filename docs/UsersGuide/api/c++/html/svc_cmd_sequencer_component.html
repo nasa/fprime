@@ -171,7 +171,7 @@ Svc::CmdSequencer Component</h1>
 <p><a class="anchor" id="autotoc_md1655"></a></p><h5>3.2.3.2 cmdResponseIn</h5>
 <p>The <code>cmdResponseIn</code> port is called when a command in a sequence is completed. If the command status is successful, the next command in the sequence is executed.</p>
 <p><a class="anchor" id="seqRunIn"></a> <a class="anchor" id="autotoc_md1656"></a></p><h5>3.2.3.3 seqRunIn</h5>
-<p>This port takes a single argument <code>filename</code> of type <code><a class="el" href="class_fw_1_1_eighty_char_string.html">Fw::EightyCharString</a></code>. In general, sending <code>filename</code> on this port has the same effect as issuing a <code>CS_Run</code> command with <code>filename</code> as the file name argument.</p>
+<p>This port takes a single argument <code>filename</code> of type <code><a class="el" href="class_fw_1_1_string.html">Fw::String</a></code>. In general, sending <code>filename</code> on this port has the same effect as issuing a <code>CS_Run</code> command with <code>filename</code> as the file name argument.</p>
 <p>If <code>filename</code> is empty, then <code>CmdSequencer</code> runs the sequence stored in the sequence buffer, without loading a sequence first. In order for this to work:</p>
 <ul>
 <li>You must already have called <a href="#loadSequence"><code>loadSequence</code></a>.</li>
@@ -212,7 +212,7 @@ Svc::CmdSequencer Component</h1>
 <p><a class="anchor" id="autotoc_md1663"></a></p><h5>3.3.2.3 allocateBuffer</h5>
 <p>The <code>allocateBuffer()</code> public method passes a memory allocator to provide memory for the sequence buffer needed by <code>cmdSequencer</code>. The user will provide an instance of a sub-class of <code><a class="el" href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a></code> that implements memory allocation. An example of this using the heap can be found in <code><a class="el" href="malloc_allocator_8hpp.html" title="A MemAllocator implementation class that uses malloc.">Fw/Types/MallocAllocator.hpp</a></code>.</p>
 <p><a class="anchor" id="loadSequence"></a> <a class="anchor" id="autotoc_md1664"></a></p><h5>3.3.2.4 loadSequence (Optional)</h5>
-<p>This function takes a single argument <code>fileName</code> of type <code><a class="el" href="class_fw_1_1_eighty_char_string.html">Fw::EightyCharString</a></code>. When you call this function, <code>CmdSequencer</code> loads the sequence file <code>fileName</code> into its buffer so that you can execute it later by calling <a href="#seqRunIn"><code>seqRunIn</code></a>.</p>
+<p>This function takes a single argument <code>fileName</code> of type <code><a class="el" href="class_fw_1_1_string.html">Fw::String</a></code>. When you call this function, <code>CmdSequencer</code> loads the sequence file <code>fileName</code> into its buffer so that you can execute it later by calling <a href="#seqRunIn"><code>seqRunIn</code></a>.</p>
 <p>This function issues events, so you must connect the event topology before calling this function.</p>
 <p><a class="anchor" id="autotoc_md1665"></a></p><h5>3.3.2.5 deallocateBuffer</h5>
 <p>The <code>deallocateBuffer()</code> method is used to deallocate the buffer supplied in <code>allocateBuffer()</code> method. It should be called before the destructor.</p>
