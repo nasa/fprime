@@ -33,18 +33,15 @@ namespace ${namespace} {
             ${argname}String(const Fw::StringBase& src); //!< other string constructor
             ${argname}String(const ${argname}String& src); //!< same type string constructor
             ${argname}String(); //!< default constructor
-            virtual ~${argname}String(); //!< destructor
+            ${argname}String& operator=(const ${argname}String& other); //!< assignment operator
+            ${argname}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
+            ${argname}String& operator=(const char* other); //!< char* assignment operator
+            ~${argname}String(); //!< destructor
+
             const char* toChar() const; //!< return internal buffer
-            NATIVE_UINT_TYPE length() const; //!< length of string
-
-            const ${argname}String& operator=(const ${argname}String& other); //!< equal operator for other strings
-
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< deserialization method
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< serialization method
+            NATIVE_UINT_TYPE getCapacity() const;
 
         private:
-            NATIVE_UINT_TYPE getCapacity() const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[${size}]; //!< buffer for string
     };

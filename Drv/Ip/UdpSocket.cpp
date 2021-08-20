@@ -36,6 +36,7 @@
 #endif
 
 #include <string.h>
+#include <new>
 
 namespace Drv {
 
@@ -49,7 +50,9 @@ struct SocketState {
     }
 };
 
-UdpSocket::UdpSocket() : IpSocket(), m_state(new SocketState), m_recv_port(0) {}
+UdpSocket::UdpSocket() : IpSocket(), m_state(new(std::nothrow) SocketState), m_recv_port(0) {
+    FW_ASSERT(m_state != NULL);
+}
 
 UdpSocket::~UdpSocket() {
     FW_ASSERT(m_state);

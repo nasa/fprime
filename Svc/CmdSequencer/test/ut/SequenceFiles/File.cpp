@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/String.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/File.hpp"
@@ -62,7 +62,7 @@ namespace Svc {
       this->name += ".bin";
     }
 
-    const Fw::EightyCharString& File ::
+    const Fw::StringBase& File ::
       getName() const
     {
       return this->name;
@@ -112,7 +112,7 @@ namespace Svc {
     void File ::
       remove()
     {
-      Fw::EightyCharString s("rm -f ");
+      Fw::String s("rm -f ");
       s += this->getName();
       int status = system(s.toChar());
       ASSERT_EQ(0, status);

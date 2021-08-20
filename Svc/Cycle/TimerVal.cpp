@@ -25,9 +25,10 @@ namespace Svc {
         this->m_timerVal.lower = other.m_timerVal.lower;
     }
 
-    void TimerVal::operator=(const TimerVal& other) {
+    TimerVal& TimerVal::operator=(const TimerVal& other) {
         this->m_timerVal.upper = other.m_timerVal.upper;
         this->m_timerVal.lower = other.m_timerVal.lower;
+        return *this;
     }
 
     Os::IntervalTimer::RawTime TimerVal::getTimerVal() const {

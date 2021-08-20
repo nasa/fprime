@@ -15,7 +15,7 @@ namespace Os {
 		} // end removeDirectory
 
 		Status readDirectory(const char* path, const U32 maxNum,
-							 Fw::EightyCharString fileArray[])
+							 Fw::String fileArray[])
 		{
 			return OTHER_ERROR;
 		}
@@ -48,5 +48,5 @@ namespace Os {
 		Status getFileCount (const char* directory, U32& fileCount) {
 			return OTHER_ERROR;
 		} //end getFileCount
-	} // end FileSystem namespace 
+	} // end FileSystem namespace
 } // end Os namespace

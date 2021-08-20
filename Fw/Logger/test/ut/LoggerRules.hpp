@@ -16,7 +16,7 @@
 #define FPRIME_LOGGERRULES_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Logger/test/ut/FakeLogger.hpp>
 #include <STest/STest/Rule/Rule.hpp>
 #include <STest/STest/Pick/Pick.hpp>
@@ -32,7 +32,7 @@ namespace LoggerRules {
      */
     struct Register : public STest::Rule<MockLogging::FakeLogger> {
         // Constructor
-        Register(const Fw::EightyCharString& name);
+        Register(const Fw::String& name);
 
         // Check for registration, always allowed
         bool precondition(const MockLogging::FakeLogger& truth);
@@ -47,7 +47,7 @@ namespace LoggerRules {
      */
     struct LogGood : public STest::Rule<MockLogging::FakeLogger> {
         // Constructor
-        LogGood(const Fw::EightyCharString& name);
+        LogGood(const Fw::String& name);
 
         // Check for logging, only when not NULL
         bool precondition(const MockLogging::FakeLogger& truth);
@@ -63,7 +63,7 @@ namespace LoggerRules {
      */
     struct LogBad : public STest::Rule<MockLogging::FakeLogger> {
         // Constructor
-        LogBad(const Fw::EightyCharString& name);
+        LogBad(const Fw::String& name);
 
         // Check for logging, only when not NULL
         bool precondition(const MockLogging::FakeLogger& truth);

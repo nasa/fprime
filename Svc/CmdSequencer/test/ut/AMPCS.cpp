@@ -53,7 +53,7 @@ namespace Svc {
           Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
-      Fw::EightyCharString crcFileName(fileName);
+      Fw::String crcFileName(fileName);
       crcFileName += ".CRC32";
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileNotFound(0, crcFileName.toChar());

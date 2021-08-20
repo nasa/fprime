@@ -25,7 +25,7 @@ namespace Fw {
             NATIVE_UINT_TYPE length() const;
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
 
-            const TlmString& operator=(const TlmString& other); //!< equal operator for other strings
+            TlmString& operator=(const TlmString& other); //!< equal operator for other strings
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const;
             SerializeStatus deserialize(SerializeBufferBase& buffer);

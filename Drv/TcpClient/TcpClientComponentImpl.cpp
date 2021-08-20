@@ -54,6 +54,13 @@ void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status
     this->recv_out(0, buffer, recvStatus);
 }
 
+void TcpClientComponentImpl::connected() {
+    if (isConnected_ready_OutputPort(0)) {
+        this->ready_out(0);
+    }
+
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------

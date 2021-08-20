@@ -37,8 +37,8 @@ namespace Svc {
 
     }
 
-    void RateGroupDriverImpl::init() {
-        RateGroupDriverComponentBase::init();
+    void RateGroupDriverImpl::init(NATIVE_INT_TYPE instanceId) {
+        RateGroupDriverComponentBase::init(instanceId);
     }
 
     void RateGroupDriverImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {

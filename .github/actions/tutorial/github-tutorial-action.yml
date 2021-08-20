@@ -1,0 +1,5 @@
+name: 'F prime tutorial check'
+description: 'Runs community tutorial support on F prime'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

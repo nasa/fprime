@@ -1,15 +1,15 @@
 #ifndef RefTopologyDefs_HPP
 #define RefTopologyDefs_HPP
 
-#include "Drv/BlockDriver/BlockDriverImpl.hpp"
+#include "Drv/BlockDriver/BlockDriver.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Ref {
 
-  // Declare the block driver here so that main can see it
-  extern Drv::BlockDriverImpl blockDrv;
+  // Declare the block driver here so it is visible in main
+  extern Drv::BlockDriver blockDrv;
 
   namespace Allocation {
 

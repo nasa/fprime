@@ -15,12 +15,12 @@ namespace Utils {
     }
 
     HashBuffer::HashBuffer(const HashBuffer& other) : Fw::SerializeBufferBase() {
-        Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
+        Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
-        Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
+    HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
+        Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
     }
@@ -38,14 +38,14 @@ namespace Utils {
     }
 
     const U8* HashBuffer::getBuffAddr() const {
-        return this->m_data;
+        return this->m_bufferData;
     }
 
     U8* HashBuffer::getBuffAddr() {
-        return this->m_data;
+        return this->m_bufferData;
     }
 
     NATIVE_UINT_TYPE HashBuffer::getBuffCapacity() const {
-        return sizeof(this->m_data);
+        return sizeof(this->m_bufferData);
     }
 }

@@ -20,18 +20,15 @@ namespace Fw {
             ParamString(const StringBase& src);
             ParamString(const ParamString& src);
             ParamString();
+            ParamString& operator=(const ParamString& other);
+            ParamString& operator=(const StringBase& other);
+            ParamString& operator=(const char* other);
             ~ParamString();
+
             const char* toChar() const;
-            NATIVE_UINT_TYPE length() const;
-
-            const ParamString& operator=(const ParamString& other); //!< equal operator for other strings
-
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
+            NATIVE_UINT_TYPE getCapacity() const;
 
         private:
-            NATIVE_UINT_TYPE getCapacity() const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_PARAM_STRING_MAX_SIZE];
     };

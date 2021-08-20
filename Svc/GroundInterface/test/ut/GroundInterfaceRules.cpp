@@ -12,7 +12,7 @@
 
 namespace Svc {
     // Constructor
-    RandomizeRule :: RandomizeRule(const Fw::EightyCharString& name) : STest::Rule<Tester>(name.m_buf) {}
+    RandomizeRule :: RandomizeRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
 
     // Can always randomize
     bool RandomizeRule :: precondition(const Svc::Tester &state) {
@@ -39,7 +39,7 @@ namespace Svc {
 
 
     // Constructor
-    DownlinkRule :: DownlinkRule(const Fw::EightyCharString& name) : STest::Rule<Tester>(name.m_buf) {}
+    DownlinkRule :: DownlinkRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
 
     // Can always downlink
     bool DownlinkRule :: precondition(const Svc::Tester &state) {
@@ -57,7 +57,7 @@ namespace Svc {
     }
 
     // Constructor
-    FileDownlinkRule :: FileDownlinkRule(const Fw::EightyCharString& name) : STest::Rule<Tester>(name.m_buf) {}
+    FileDownlinkRule :: FileDownlinkRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
 
     // Can always downlink
     bool FileDownlinkRule :: precondition(const Svc::Tester &state) {
@@ -80,7 +80,7 @@ namespace Svc {
     }
 
     // Constructor
-    SendAvailableRule :: SendAvailableRule(const Fw::EightyCharString& name) : STest::Rule<Tester>(name.m_buf) {}
+    SendAvailableRule :: SendAvailableRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
 
     // Can always downlink
     bool SendAvailableRule :: precondition(const Svc::Tester &state) {

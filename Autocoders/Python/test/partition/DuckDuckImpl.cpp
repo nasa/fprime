@@ -17,7 +17,7 @@ namespace Duck {
 
         // Internal call - implemented by hand.
         // downcall for input port externInputPort1
-        I32 DuckImpl::externInputPort1_Msg1_handler(U32 cmd, Fw::EightyCharString str) {
+        I32 DuckImpl::externInputPort1_Msg1_handler(U32 cmd, Fw::String str) {
             // User code is written here.
 			printf("\n\t*** %s: externInputPort1_Msg1_handler down-call\n", this->m_objName);
 			this->outputPort1_Msg1_out(cmd, str);
@@ -33,13 +33,13 @@ namespace Duck {
         }
 
         // downcall for input port inputPort1
-        I32 DuckImpl::inputPort1_Msg1_handler(U32 cmd, Fw::EightyCharString str) {
+        I32 DuckImpl::inputPort1_Msg1_handler(U32 cmd, Fw::String str) {
             // User code is written here.
             return 0;
         }
 
         // downcall for input port inputPort2
-        I32 DuckImpl::inputPort2_Msg1_handler(U32 cmd, Fw::EightyCharString str) {
+        I32 DuckImpl::inputPort2_Msg1_handler(U32 cmd, Fw::String str) {
             // User code is written here.
 			printf("\n\t*** %s: inputPort2_Msg1_handler(%d, %s) down-call\n", this->m_objName, cmd, str.toChar());
             return 0;
