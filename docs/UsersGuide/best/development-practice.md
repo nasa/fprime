@@ -149,7 +149,7 @@ will be done automatically:
 9. An SDD file is generated with documentation about ports, commands, events,  
    telemetry, parameters, and time of creation already filled out
 
-The `fprime-util new --component` uuses the builtin cookiecutter template by default, 
+The `fprime-util new --component` uses the builtin cookiecutter template by default, 
 but users can substitute their own component template by using the component_cookiecutter 
 field of the settings.ini file. To learn more, see [Creating and Using a Cookiecutter Template](../dev/cookiecutter.md)
 ### Component Implementation

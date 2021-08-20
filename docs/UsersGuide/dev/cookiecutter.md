@@ -83,7 +83,7 @@ Once you have created your template, two ways to use it are locally, or through 
 
 ### Using a GitHub repository
 
-If you are using a GitHub repository, simply inlcude the line:
+If you are using a GitHub repository, simply include the line:
 
 ```
 component_cookiecutter: gh:repository_name
@@ -91,7 +91,7 @@ component_cookiecutter: gh:repository_name
 
 to the settings.ini file in your F' deployment.
 
-For example, to import Sterling Pete's template from Gerogia Tech, use the following line:
+For example, to import Sterling Pete's template from Georgia Tech, use the following line:
 
 ```
 component_cookiecutter: gh:SterlingPeet/cookiecutter-fprime-component
@@ -112,5 +112,5 @@ features that are present within the fprime-util new --component command that
 will happen regardless of which template you use:
 
 1. The component directory will be added to the deployment build system
-2. The CMake chache will be refreshed to inlcude the new component
+2. The CMake chache will be refreshed to include the new component
 3. The user will be given the option to automatically generate implementation and/or unit test files

@@ -439,6 +439,7 @@ EMSGSIZE
 ENAMETOOLONG
 endcode
 endcond
+endfor
 endforeach
 endfunction
 endian
