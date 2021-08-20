@@ -159,7 +159,7 @@ namespace Svc {
       //!
       void from_FileComplete_handler(
           const NATIVE_INT_TYPE portNum,
-          Svc::SendFileResponse resp
+          const Svc::SendFileResponse& resp
       );
 
     private:

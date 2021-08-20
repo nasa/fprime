@@ -22,7 +22,7 @@ TestCommandSourceImpl::~TestCommandSourceImpl() {
 
 void TestCommandSourceImpl::cmdStatusPort_handler(
         NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq,
-        Fw::CmdResponse response) {
+        const Fw::CmdResponse& response) {
     this->printStatus(response);
 }
 
@@ -34,7 +34,7 @@ void TestCommandSourceImpl::init() {
     Cmd::CommandTesterComponentBase::init();
 }
 
-void TestCommandSourceImpl::printStatus(Fw::CmdResponse response) {
+void TestCommandSourceImpl::printStatus(const Fw::CmdResponse& response) {
     switch (response.e) {
         case Fw::CmdResponse::OK:
             printf("COMMAND OK\n");

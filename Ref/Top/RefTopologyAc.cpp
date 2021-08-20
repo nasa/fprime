@@ -108,7 +108,7 @@ namespace Ref {
       }
 
       namespace rateGroupDriverComp {
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriverImpl::DIVIDER_SIZE] = { 1, 2, 4 };
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
       }
 
       namespace uplink {
@@ -140,28 +140,28 @@ namespace Ref {
     // Declared in RefTopologyDefs.cpp
 
     // chanTlm
-    Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("chanTlm"));
+    Svc::TlmChan chanTlm(FW_OPTIONAL_NAME("chanTlm"));
 
     // cmdDisp
-    Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
+    Svc::CommandDispatcher cmdDisp(FW_OPTIONAL_NAME("cmdDisp"));
 
     // cmdSeq
-    Svc::CmdSequencerComponentImpl cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
+    Svc::CmdSequencer cmdSeq(FW_OPTIONAL_NAME("cmdSeq"));
 
     // comm
-    Drv::TcpClientComponentImpl comm(FW_OPTIONAL_NAME("comm"));
+    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
 
     // downlink
-    Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
+    Svc::Framer downlink(FW_OPTIONAL_NAME("downlink"));
 
     // eventLogger
-    Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("eventLogger"));
+    Svc::ActiveLogger eventLogger(FW_OPTIONAL_NAME("eventLogger"));
 
     // fatalAdapter
-    Svc::AssertFatalAdapterComponentImpl fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
+    Svc::AssertFatalAdapter fatalAdapter(FW_OPTIONAL_NAME("fatalAdapter"));
 
     // fatalHandler
-    Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
+    Svc::FatalHandler fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
     // fileDownlink
     Svc::FileDownlink fileDownlink(FW_OPTIONAL_NAME("fileDownlink"));
@@ -173,62 +173,62 @@ namespace Ref {
     Svc::FileUplink fileUplink(FW_OPTIONAL_NAME("fileUplink"));
 
     // fileUplinkBufferManager
-    Svc::BufferManagerComponentImpl fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
+    Svc::BufferManager fileUplinkBufferManager(FW_OPTIONAL_NAME("fileUplinkBufferManager"));
 
     // health
-    Svc::HealthImpl health(FW_OPTIONAL_NAME("health"));
+    Svc::Health health(FW_OPTIONAL_NAME("health"));
 
     // linuxTime
-    Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("linuxTime"));
+    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
     // pingRcvr
-    PingReceiverComponentImpl pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
+    PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
 
     // prmDb
-    Svc::PrmDbImpl prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
+    Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
 
     // rateGroup1Comp
-    Svc::ActiveRateGroupImpl rateGroup1Comp(
+    Svc::ActiveRateGroup rateGroup1Comp(
         FW_OPTIONAL_NAME("rateGroup1Comp"),
         ConfigObjects::rateGroup1Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
 
     // rateGroup2Comp
-    Svc::ActiveRateGroupImpl rateGroup2Comp(
+    Svc::ActiveRateGroup rateGroup2Comp(
         FW_OPTIONAL_NAME("rateGroup2Comp"),
         ConfigObjects::rateGroup2Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
 
     // rateGroup3Comp
-    Svc::ActiveRateGroupImpl rateGroup3Comp(
+    Svc::ActiveRateGroup rateGroup3Comp(
         FW_OPTIONAL_NAME("rateGroup3Comp"),
         ConfigObjects::rateGroup3Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
 
     // rateGroupDriverComp
-    Svc::RateGroupDriverImpl rateGroupDriverComp(
+    Svc::RateGroupDriver rateGroupDriverComp(
         FW_OPTIONAL_NAME("rateGroupDriverComp"),
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
 
     // recvBuffComp
-    RecvBuffImpl recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
+    RecvBuff recvBuffComp(FW_OPTIONAL_NAME("recvBuffComp"));
 
     // sendBuffComp
-    SendBuffImpl sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
+    SendBuff sendBuffComp(FW_OPTIONAL_NAME("sendBuffComp"));
 
     // staticMemory
-    Svc::StaticMemoryComponentImpl staticMemory(FW_OPTIONAL_NAME("staticMemory"));
+    Svc::StaticMemory staticMemory(FW_OPTIONAL_NAME("staticMemory"));
 
     // textLogger
-    Svc::ConsoleTextLoggerImpl textLogger(FW_OPTIONAL_NAME("textLogger"));
+    Svc::PassiveTextLogger textLogger(FW_OPTIONAL_NAME("textLogger"));
 
     // uplink
-    Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
+    Svc::Deframer uplink(FW_OPTIONAL_NAME("uplink"));
 
     // ----------------------------------------------------------------------
     // Private functions
@@ -241,7 +241,7 @@ namespace Ref {
       SG3.init(QueueSizes::SG3, InstanceIds::SG3);
       SG4.init(QueueSizes::SG4, InstanceIds::SG4);
       SG5.init(QueueSizes::SG5, InstanceIds::SG5);
-      blockDrv.init(QueueSizes::blockDrv);
+      blockDrv.init(QueueSizes::blockDrv, InstanceIds::blockDrv);
       chanTlm.init(QueueSizes::chanTlm, InstanceIds::chanTlm);
       cmdDisp.init(QueueSizes::cmdDisp, InstanceIds::cmdDisp);
       cmdSeq.init(QueueSizes::cmdSeq, InstanceIds::cmdSeq);
@@ -261,11 +261,11 @@ namespace Ref {
       rateGroup1Comp.init(QueueSizes::rateGroup1Comp, InstanceIds::rateGroup1Comp);
       rateGroup2Comp.init(QueueSizes::rateGroup2Comp, InstanceIds::rateGroup2Comp);
       rateGroup3Comp.init(QueueSizes::rateGroup3Comp, InstanceIds::rateGroup3Comp);
-      rateGroupDriverComp.init();
-      recvBuffComp.init();
+      rateGroupDriverComp.init(InstanceIds::rateGroupDriverComp);
+      recvBuffComp.init(InstanceIds::recvBuffComp);
       sendBuffComp.init(QueueSizes::sendBuffComp, InstanceIds::sendBuffComp);
       staticMemory.init(InstanceIds::staticMemory);
-      textLogger.init();
+      textLogger.init(InstanceIds::textLogger);
       uplink.init(InstanceIds::uplink);
     }
 
@@ -283,7 +283,7 @@ namespace Ref {
           ConfigConstants::fileDownlink::CYCLE_TIME,
           ConfigConstants::fileDownlink::FILE_QUEUE_DEPTH
       );
-      Svc::BufferManagerComponentImpl::BufferBins upBuffMgrBins;
+      Svc::BufferManager::BufferBins upBuffMgrBins;
       memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
       {
         using namespace ConfigConstants::fileUplinkBufferManager;
@@ -1212,7 +1212,7 @@ namespace Ref {
       );
       // Initialize socket server if and only if there is a valid specification
       if (state.hostName != NULL && state.portNumber != 0) {
-          Fw::EightyCharString name("ReceiveTask");
+          Os::TaskString name("ReceiveTask");
           // Uplink is configured for receive so a socket task is started
           comm.configure(state.hostName, state.portNumber);
           comm.startSocketTask(

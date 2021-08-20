@@ -66,7 +66,13 @@ namespace Drv {
       void from_recv_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &recvBuffer,
-          RecvStatus recvStatus
+          const RecvStatus &recvStatus
+      );
+
+      //! Handler for from_ready
+      //!
+      void from_ready_handler(
+          const NATIVE_INT_TYPE portNum /*!< The port number*/
       );
 
       //! Handler for from_allocate

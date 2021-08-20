@@ -47,7 +47,7 @@ namespace Svc {
         ActiveLoggerComponentBase::init(queueDepth,instance);
     }
 
-    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
@@ -100,8 +100,10 @@ namespace Svc {
             }
         }
 
+        Fw::LogSeverity severity_copy = severity;
+
         // send event to the logger thread
-        this->loqQueue_internalInterfaceInvoke(id,timeTag,severity,args);
+        this->loqQueue_internalInterfaceInvoke(id,timeTag,severity_copy,args);
 
         // if connected, announce the FATAL
         if (Fw::LogSeverity::FATAL == severity.e) {

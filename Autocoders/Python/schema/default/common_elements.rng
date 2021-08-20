@@ -16,7 +16,6 @@
         <a:documentation>Defines how the variable is being passed.</a:documentation>
         <choice>
             <value>reference</value>
-            <value>value</value>
             <value>pointer</value>
         </choice>
     </define>

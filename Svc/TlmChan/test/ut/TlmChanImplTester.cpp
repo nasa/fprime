@@ -244,7 +244,7 @@ namespace Svc {
                 " id: 0x%08X"
                 " bucket: %d"
                 " next: %p\n",
-                entry,entry->id,entry->bucketNo,entry->next
+                static_cast<void *>(entry),entry->id,entry->bucketNo,static_cast<void *>(entry->next)
                 );
     }
 

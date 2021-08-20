@@ -399,9 +399,9 @@ namespace Svc {
         Fw::Buffer& buffer
     )
   {
+    ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
     // Copy buffer before recycling
     U8* data = new U8[buffer.getSize()];
-    ASSERT_LT(buffers_index, FW_NUM_ARRAY_ELEMENTS(this->buffers));
     this->buffers[buffers_index] = data;
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
@@ -423,7 +423,7 @@ namespace Svc {
     void Tester ::
       from_FileComplete_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Svc::SendFileResponse response
+          const Svc::SendFileResponse& response
       )
     {
       pushFromPortEntry_FileComplete(response);

@@ -550,7 +550,7 @@ namespace Svc {
       //! (Optional) Load a sequence to run later.
       //! When you call this function, the event ports must be connected.
       void loadSequence(
-          const Fw::EightyCharString& fileName //!< The file name
+          const Fw::String& fileName //!< The file name
       );
 
       //! Return allocated buffer. Call during shutdown.
@@ -572,7 +572,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum, //!< The port number
           FwOpcodeType opcode, //!< The command opcode
           U32 cmdSeq, //!< The command sequence number
-          Fw::CmdResponse response //!< The command response
+          const Fw::CmdResponse& response //!< The command response
       );
 
       //! Handler for input port schedIn
@@ -584,7 +584,7 @@ namespace Svc {
       //! Handler for input port seqRunIn
       void seqRunIn_handler(
           NATIVE_INT_TYPE portNum, //!< The port number
-          Fw::EightyCharString &filename //!< The sequence file
+          Fw::String &filename //!< The sequence file
       );
 
       //! Handler for ping port

@@ -1,8 +1,6 @@
 #include <Autocoders/Python/templates/ExampleType.hpp>
 #include <Fw/Types/Assert.hpp>
-#if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
-#endif
+
 namespace ANameSpace {
 
 mytype::mytype(): Serializable() {
@@ -22,9 +20,9 @@ mytype::mytype(U32 val) : Serializable() {
     this->setVal(val);
 }
 
-const mytype& mytype::operator=(const mytype& src) {
+mytype& mytype::operator=(const mytype& src) {
     this->setVal(src.m_val);
-    return src;
+    return *this;
 }
 
 bool mytype::operator==(const mytype& src) const {

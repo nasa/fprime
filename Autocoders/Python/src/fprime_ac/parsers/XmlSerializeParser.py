@@ -231,6 +231,8 @@ class XmlSerializeParser:
                     else:
                         c = None
 
+                    d = None
+
                     for member_tag in member:
                         if member_tag.tag == "enum" and t == "ENUM":
                             en = member_tag.attrib["name"]
@@ -247,6 +249,8 @@ class XmlSerializeParser:
                                     mc = None
                                 enum_members.append((mn, v, mc))
                             t = ((t, en), enum_members)
+                        elif member_tag.tag == "default":
+                            d = member_tag.text
                         else:
                             PRINT.info(
                                 "%s: Invalid member tag %s in serializable member %s"
@@ -254,7 +258,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, array_length, size, f, c))
+                    self.__members.append((n, t, array_length, size, f, c, d))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

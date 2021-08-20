@@ -69,7 +69,7 @@ namespace Svc {
     }
 
     void CmdSequencerComponentImpl ::
-      loadSequence(const Fw::EightyCharString& fileName)
+      loadSequence(const Fw::String& fileName)
     {
       FW_ASSERT(this->m_runMode == STOPPED, this->m_runMode);
       if (not this->loadFile(fileName)) {
@@ -147,7 +147,7 @@ namespace Svc {
     //! Handler for input port seqRunIn
     void CmdSequencerComponentImpl::seqRunIn_handler(
            NATIVE_INT_TYPE portNum,
-           Fw::EightyCharString &filename
+           Fw::String &filename
        ) {
 
         if (!this->requireRunMode(STOPPED)) {
@@ -237,7 +237,7 @@ namespace Svc {
           NATIVE_INT_TYPE portNum,
           FwOpcodeType opcode,
           U32 cmdSeq,
-          Fw::CmdResponse response
+          const Fw::CmdResponse& response
       )
     {
         if (this->m_runMode == STOPPED) {

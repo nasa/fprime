@@ -10,8 +10,8 @@ namespace Drv {
 
     }
 
-    void BlockDriverImpl::init(NATIVE_INT_TYPE queueDepth) {
-        BlockDriverComponentBase::init(queueDepth);
+    void BlockDriverImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instanceId) {
+        BlockDriverComponentBase::init(queueDepth, instanceId);
     }
 
     BlockDriverImpl::~BlockDriverImpl() {

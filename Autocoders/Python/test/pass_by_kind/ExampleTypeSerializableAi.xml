@@ -1,0 +1,5 @@
+<serializable name="ExampleType">
+  <members>
+    <member name="state" type="U32"/>
+  </members>
+</serializable>

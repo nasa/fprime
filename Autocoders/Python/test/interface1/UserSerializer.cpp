@@ -2,10 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
-#if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
-#endif
-
 namespace ANameSpace {
 
 UserSerializer::UserSerializer(): Serializable() {
@@ -25,9 +21,9 @@ UserSerializer::UserSerializer(SomeUserStruct val) : Serializable() {
     this->setVal(val);
 }
 
-const SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
+SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
     this->setVal(src);
-    return src;
+    return this->m_struct;
 }
 
 void UserSerializer::getVal(SomeUserStruct& arg) {
@@ -44,8 +40,9 @@ Fw::SerializeStatus UserSerializer::serialize(Fw::SerializeBufferBase& buffer) c
 
 Fw::SerializeStatus UserSerializer::deserialize(Fw::SerializeBufferBase& buffer) {
     NATIVE_UINT_TYPE serSize = sizeof(m_struct);
-    return buffer.deserialize((U8*)&m_struct,serSize);
+    Fw::SerializeStatus stat =  buffer.deserialize((U8*)&m_struct,serSize);
     FW_ASSERT(serSize == sizeof(m_struct));
+    return stat;
 }
 
 

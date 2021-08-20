@@ -56,13 +56,13 @@ namespace ${namespace} {
   // Instance methods
   // ----------------------------------------------------------------------
 
-  const ${name}& ${name} :: operator=(const ${name}& other)
+  ${name}& ${name} :: operator=(const ${name}& other)
   {
     this->e = other.e;
     return *this;
   }
 
-  const ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
+  ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""
@@ -90,7 +90,7 @@ a == $item_value#slurp
     return *this;
   }
 
-  const ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
+  ${name}& ${name} :: operator=(const NATIVE_UINT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:
 #if not $item_value == ""
@@ -152,14 +152,22 @@ a == $item_value#slurp
   Fw::SerializeStatus ${name} :: serialize(Fw::SerializeBufferBase& buffer) const
   {
     Fw::SerializeStatus status;
+#if $serialize_type
+    status = buffer.serialize(static_cast<${serialize_type}>(this->e));
+#else
     status = buffer.serialize(static_cast<FwEnumStoreType>(this->e));
+#end if
     return status;
   }
 
   Fw::SerializeStatus ${name} :: deserialize(Fw::SerializeBufferBase& buffer)
   {
     Fw::SerializeStatus status;
+#if $serialize_type
+    ${serialize_type} es;
+#else
     FwEnumStoreType es;
+#end if
     status = buffer.deserialize(es);
     if (status == Fw::FW_SERIALIZE_OK)
       this->e = static_cast<t>(es);

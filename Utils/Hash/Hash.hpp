@@ -13,7 +13,7 @@
 #ifndef UTILS_HASH_HPP
 #define UTILS_HASH_HPP
 
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/StringType.hpp"
 #include <Utils/Hash/HashBuffer.hpp>
 
 namespace Utils {
@@ -95,8 +95,8 @@ namespace Utils {
       //! Add the extension for the supported hash type
       //!
       static void addFileExtension(
-          const Fw::EightyCharString& baseName, //!< The base name
-          Fw::EightyCharString& extendedName //!< The extended name
+          const Fw::StringBase& baseName, //!< The base name
+          Fw::StringBase& extendedName //!< The extended name
       );
 
       //! Get the length of the file extension string

@@ -43,7 +43,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
 
     // Start up a receive thread
     if (recv_thread) {
-        Fw::EightyCharString name("receiver thread");
+        Os::TaskString name("receiver thread");
         this->component.startSocketTask(name, 50, 1024, true);
     }
 
@@ -85,14 +85,17 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
                 while (not m_spinner) {}
             }
         }
-        this->component.close();
+        // Properly stop the client on the last iteration
+        if ((1 + i) == iterations && recv_thread) {
+            this->component.stopSocketTask();
+            this->component.joinSocketTask(NULL);
+        } else {
+            this->component.close();
+        }
         server.close();
     }
-    // Wait for the receiver to shutdown
-    if (recv_thread) {
-        this->component.stopSocketTask();
-        this->component.joinSocketTask(NULL);
-    }
+    server.shutdown();
+    ASSERT_from_ready_SIZE(iterations);
 }
 
 Tester ::Tester()
@@ -135,7 +138,7 @@ void Tester ::test_advanced_reconnect() {
     from_recv_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &recvBuffer,
-        RecvStatus recvStatus
+        const RecvStatus &recvStatus
     )
   {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
@@ -144,6 +147,10 @@ void Tester ::test_advanced_reconnect() {
     Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
     m_spinner = true;
     delete[] recvBuffer.getData();
+}
+
+void Tester ::from_ready_handler(const NATIVE_INT_TYPE portNum) {
+    this->pushFromPortEntry_ready();
 }
 
 Fw::Buffer Tester ::
@@ -191,6 +198,12 @@ Fw::Buffer Tester ::
     this->component.set_recv_OutputPort(
         0,
         this->get_from_recv(0)
+    );
+
+    // recv
+    this->component.set_ready_OutputPort(
+      0,
+      this->get_from_ready(0)
     );
 
     // allocate

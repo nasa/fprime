@@ -42,7 +42,7 @@ namespace Svc {
             //!
             //!  \param other source timer value
 
-            void operator=(const TimerVal& other); //!< equal operator
+            TimerVal& operator=(const TimerVal& other); //!< equal operator
 
             //!  \brief Destructor
             //!

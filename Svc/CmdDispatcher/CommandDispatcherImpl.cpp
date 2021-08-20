@@ -54,7 +54,7 @@ namespace Svc {
         FW_ASSERT(slotFound,opCode);
     }
 
-    void CommandDispatcherImpl::compCmdStat_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response) {
+    void CommandDispatcherImpl::compCmdStat_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         // check response and log
         if (Fw::CmdResponse::OK == response.e) {
             this->log_COMMAND_OpCodeCompleted(opCode);

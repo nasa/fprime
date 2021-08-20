@@ -30,7 +30,7 @@ namespace Fw {
             AssertArg arg4,
             AssertArg arg5,
             AssertArg arg6,
-            I8* destBuffer,
+            CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
 
@@ -121,12 +121,12 @@ namespace Svc {
       Fw::LogStringArg fileArg;
       fileArg.format("0x%08X",file);
 #else
-      Fw::LogStringArg fileArg((const char*)file);
+      Fw::LogStringArg fileArg(file);
 #endif
 
-      I8 msg[FW_ASSERT_TEXT_SIZE] = {0};
+      CHAR msg[FW_ASSERT_TEXT_SIZE] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      fprintf(stderr, "%s\n",(const char*)msg);
+      fprintf(stderr, "%s\n", msg);
 
       switch (numArgs) {
           case 0:

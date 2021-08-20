@@ -4,13 +4,14 @@
 #
 # Integration tests for CI
 ####
+# Directory to be used for Integration CI test
+export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
+
 export SCRIPT_DIR="$(dirname ${BASH_SOURCE})/.."
 . "${SCRIPT_DIR}/helpers.bash"
 
 . ${SCRIPT_DIR}/tests/fputil.bash
-# Loop over deployments and targets
-for deployment in ${INT_DEPLOYS}
-do
-    echo -e "${BLUE}Testing ${deployment} against integration tests${NOCOLOR}"
-    integration_test "${deployment}"
-done
+
+# Run integration tests
+echo -e "${BLUE}Testing ${INT_DEPLOYS} against integration tests${NOCOLOR}"
+integration_test "${FPUTIL_DEPLOYS}"

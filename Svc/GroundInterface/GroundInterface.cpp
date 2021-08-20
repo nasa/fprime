@@ -129,7 +129,7 @@ namespace Svc {
 
       //read packet descriptor in size agnostic way
       U8 packet_descriptor_size = sizeof(FwPacketDescriptorType);
-      U8 packet_type_bytes[packet_descriptor_size];
+      U8 packet_type_bytes[sizeof(FwPacketDescriptorType)];
       Fw::SerializeStatus stat = m_in_ring.peek(packet_type_bytes, packet_descriptor_size, HEADER_SIZE);
       //m_in_ring.peek(packet_type, HEADER_SIZE); // this way is only valid for 4byte packet descriptors
       if(stat == Fw::FW_SERIALIZE_OK)

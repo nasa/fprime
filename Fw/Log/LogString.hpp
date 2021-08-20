@@ -26,7 +26,7 @@ namespace Fw {
             // This method is set by the autocode to the max length specified in the XML declaration for a particular event.
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
 
-            const LogStringArg& operator=(const LogStringArg& other); //!< equal operator for other strings
+            LogStringArg& operator=(const LogStringArg& other); //!< equal operator for other strings
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const;
             SerializeStatus deserialize(SerializeBufferBase& buffer);

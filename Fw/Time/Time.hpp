@@ -39,14 +39,15 @@ namespace Fw {
             bool operator<(const Time& other) const;
             bool operator>=(const Time& other) const;
             bool operator<=(const Time& other) const;
-            const Time& operator=(const Time& other);
+            Time& operator=(const Time& other);
 
             // Static methods:
             //! The type of a comparison result
             typedef enum {
               LT = -1,
               EQ = 0,
-              GT = 1
+              GT = 1,
+              INCOMPARABLE = 2
             } Comparison;
 
             //! \return time zero

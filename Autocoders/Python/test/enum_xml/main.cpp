@@ -17,25 +17,20 @@
 
 using namespace std;
 
-// Component instance pointers
-Example::ExampleEnumImpl* inst1 = 0;
-Example::ExampleEnumImpl* inst2 = 0;
+// Instantiate the inst1 and inst2 components
+Example::ExampleEnumImpl inst1("inst1");
+Example::ExampleEnumImpl inst2("inst2");
 
-void constructArchitecture() {
-
-    // Instantiate the inst1 and inst2
-    inst1   = new Example::ExampleEnumImpl("inst1");
-    inst2   = new Example::ExampleEnumImpl("inst2");
-
+void constructArchitecture(void) {
     // Connect inst1 to inst2
-    inst1->set_EnumOut_OutputPort(0, inst2->get_EnumIn_InputPort(0));
+    inst1.set_EnumOut_OutputPort(0, inst2.get_EnumIn_InputPort(0));
 
     // Connect inst2 to inst1
-    inst2->set_EnumOut_OutputPort(0, inst1->get_EnumIn_InputPort(0));
+    inst2.set_EnumOut_OutputPort(0, inst1.get_EnumIn_InputPort(0));
 
     // Instantiate components
-    inst1->init(100);
-    inst2->init(100);
+    inst1.init(100);
+    inst2.init(100);
 
 }
 
@@ -179,6 +174,7 @@ TEST(EnumXML, OK) {
     Example::Enum1 enum2;
     Example::Enum1 enum3;
     Example::Enum2 enum4;
+    Example::Enum3 enum5;
 
     Example::Serial1 serial1;
 
@@ -188,6 +184,11 @@ TEST(EnumXML, OK) {
 
     // Check that enum are set to uninitialized value
     ASSERT_EQ(enum4.e, 0);
+
+    // Check that the enum serializable types are set correctly
+    ASSERT_EQ(Example::Enum1::SERIALIZED_SIZE, sizeof(FwEnumStoreType));
+    ASSERT_EQ(Example::Enum2::SERIALIZED_SIZE, sizeof(U64));
+    ASSERT_EQ(Example::Enum3::SERIALIZED_SIZE, sizeof(U8));
 
     enum1 = getEnumFromI32();
     cout << "Created first enum: " << enum1 << endl;
@@ -209,15 +210,37 @@ TEST(EnumXML, OK) {
     // Serialize enums
     U8 buffer1[1024];
     U8 buffer2[1024];
+    U8 buffer3[1024];
+    U8 buffer4[1024];
+    U8 buffer5[1024];
     Fw::SerialBuffer enumSerial1 = Fw::SerialBuffer(buffer1, sizeof(buffer1));
     Fw::SerialBuffer enumSerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
+    Fw::SerialBuffer enumSerial3 = Fw::SerialBuffer(buffer3, sizeof(buffer3));
+    Fw::SerialBuffer enumSerial4 = Fw::SerialBuffer(buffer4, sizeof(buffer4));
+    Fw::SerialBuffer enumSerial5 = Fw::SerialBuffer(buffer5, sizeof(buffer5));
     ASSERT_EQ(enumSerial1.serialize(enum1), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum1" << endl;
 
     ASSERT_EQ(enumSerial2.serialize(enum2), Fw::FW_SERIALIZE_OK);
     cout << "Serialized enum2" << endl;
 
+    ASSERT_EQ(enumSerial3.serialize(enum3), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum3" << endl;
+
+    ASSERT_EQ(enumSerial4.serialize(enum4), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum4" << endl;
+
+    ASSERT_EQ(enumSerial5.serialize(enum5), Fw::FW_SERIALIZE_OK);
+    cout << "Serialized enum5" << endl;
+
     cout << "Serialized enums" << endl;
+
+    // Check that the serialized types are correctly set
+    ASSERT_EQ(enumSerial1.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial2.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial3.getBuffLength(), sizeof(FwEnumStoreType));
+    ASSERT_EQ(enumSerial4.getBuffLength(), sizeof(U64));
+    ASSERT_EQ(enumSerial5.getBuffLength(), sizeof(U8));
 
     // Deserialize enums
     ASSERT_EQ(enumSerial1.deserialize(enum1Save), Fw::FW_SERIALIZE_OK);
@@ -245,16 +268,16 @@ TEST(EnumXML, OK) {
 
     // Invoke ports to test enum usage
     cout << "Invoking inst1..." << endl;
-    inst1->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
-    inst1->doDispatch();
-    inst1->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
-    inst1->doDispatch();
+    inst1.get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
+    inst1.doDispatch();
+    inst1.get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
+    inst1.doDispatch();
 
     cout << "Invoking inst2..." << endl;
-    inst2->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
-    inst2->doDispatch();
-    inst2->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
-    inst2->doDispatch();
+    inst2.get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
+    inst2.doDispatch();
+    inst2.get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
+    inst2.doDispatch();
 
     cout << "Invoked ports" << endl;
 }
@@ -266,12 +289,6 @@ int main(int argc, char* argv[]) {
     constructArchitecture();
 
     int status = RUN_ALL_TESTS();
-
-    cout << "Deleting components..." << endl;
-    delete inst1;
-    delete inst2;
-
-    cout << "Completed..." << endl;
 
     return status;
 }

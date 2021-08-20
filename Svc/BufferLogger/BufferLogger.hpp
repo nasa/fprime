@@ -15,7 +15,7 @@
 
 #include "Svc/BufferLogger/BufferLoggerComponentAc.hpp"
 #include "Os/File.hpp"
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/String.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/Mutex.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -67,7 +67,7 @@ namespace Svc {
 
           //! Set base file name
           void setBaseName(
-              const Fw::EightyCharString& baseName //!< The base file name; used with prefix, unique counter value, and suffix
+              const Fw::StringBase& baseName //!< The base file name; used with prefix, unique counter value, and suffix
           );
 
           //! Log a buffer
@@ -119,13 +119,13 @@ namespace Svc {
           BufferLogger& bufferLogger;
 
           //! The prefix to use for file names
-          Fw::EightyCharString prefix;
+          Fw::String prefix;
 
           //! The suffix to use for file names
-          Fw::EightyCharString suffix;
+          Fw::String suffix;
 
           //! The file name base
-          Fw::EightyCharString baseName;
+          Fw::String baseName;
 
           //! The counter to use for the same file name
           NATIVE_UINT_TYPE fileCounter;
@@ -137,7 +137,7 @@ namespace Svc {
           U8 sizeOfSize;
 
           //! The name of the currently open file
-          Fw::EightyCharString name;
+          Fw::String name;
 
           // The current mode
           Mode::t mode;

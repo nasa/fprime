@@ -24,7 +24,7 @@ namespace ANameSpace {
         mytype(const mytype* src); // copy constructor
         mytype(const mytype& src); // copy constructor
         mytype(U32 arg); // constructor with arguments
-        const mytype& operator=(const mytype& src); // Equal operator
+        mytype& operator=(const mytype& src); // Equal operator
         bool operator==(const mytype& src) const;
 
         void setVal(U32 arg); // set values

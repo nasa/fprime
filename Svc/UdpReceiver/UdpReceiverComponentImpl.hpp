@@ -83,7 +83,7 @@ namespace Svc {
         public:
 
 #ifdef BUILD_UT
-          void operator=(const UdpSerialBuffer& other);
+          UdpSerialBuffer& operator=(const UdpSerialBuffer& other);
           UdpSerialBuffer(const Fw::SerializeBufferBase& other);
           UdpSerialBuffer(const UdpSerialBuffer& other);
           UdpSerialBuffer();
