@@ -25,7 +25,7 @@ namespace Example {
     void AllTypes::checkAsserts(void) {
         // Check output from port invocations worked
         // Declare enum with possible port pass by logic
-        enum output_options {value = 0, pointer = 1, const_ref = 2, reference = 3};
+        enum output_options {VALUE = 0, POINTER = 1, CONST_REF = 2, REFERENCE = 3};
         // Declare array with expected output for above pass by logic
         // Value arguments result in current state being 0
         // Pointer arguments result in current state being 1
@@ -35,12 +35,12 @@ namespace Example {
         int expected_output[] = {0, 1, 0, (this->is_async) ? 0 : 1};
 
         // Check output values
-        ASSERT_EQ(this->arg1, expected_output[pointer]);
-        ASSERT_EQ(this->arg2, expected_output[reference]);
-        ASSERT_EQ(this->arg3, expected_output[value]);
-        ASSERT_EQ((this->arg4).getstate(), expected_output[pointer]);
-        ASSERT_EQ((this->arg5).getstate(), expected_output[reference]);
-        ASSERT_EQ((this->arg6).getstate(), expected_output[const_ref]);
+        ASSERT_EQ(this->arg1, expected_output[POINTER]);
+        ASSERT_EQ(this->arg2, expected_output[REFERENCE]);
+        ASSERT_EQ(this->arg3, expected_output[VALUE]);
+        ASSERT_EQ((this->arg4).getstate(), expected_output[POINTER]);
+        ASSERT_EQ((this->arg5).getstate(), expected_output[REFERENCE]);
+        ASSERT_EQ((this->arg6).getstate(), expected_output[CONST_REF]);
     }
 
 }
