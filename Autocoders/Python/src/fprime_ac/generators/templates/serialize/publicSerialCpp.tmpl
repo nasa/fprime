@@ -47,51 +47,52 @@ ${name}& ${name}::operator=(const ${name}& src) {
 
 bool ${name}::operator==(const ${name}& src) const {
     return (
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
         (src.m_$member == this->m_$member) &&
 #end for
         true);
 }
 
 void ${name}::set(${args_proto_string}) {
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length == None:
     this->m_${member} = ${member};
 #else
-    for (NATIVE_INT_TYPE _mem = 0; _mem < FW_MIN(${member}Size,${size}); _mem++) {
+    for (NATIVE_INT_TYPE _mem = 0; _mem < FW_MIN(${member}Size,${array_length}); _mem++) {
         this->m_${member}[_mem] = ${member}[_mem];
     }
 #end if
 #end for
 }
 
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size == None:
-${type} ${name}::get${member}() const {
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
+${type} ${name}::get${member}(void) const {
     return this->m_${member};
-#else if $typeinfo == 'string' or $typeinfo == 'extern':
-const ${type}& ${name}::get${member}() const {
+#else if $array_length == None and ($typeinfo == 'string' or $typeinfo == 'extern'):
+const ${type}& ${name}::get${member}(void) const {
     return this->m_${member};
 #else
 const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {
-    size = ${size};
+    size = ${array_length};
     return this->m_${member};
 #end if
 }
 
 #end for
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size == None:
+
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
 void ${name}::set${member}(${type} val) {
     this->m_${member} = val;
 }
-#else if $typeinfo == 'string' or $typeinfo == 'extern':
+#else if $array_length == None and ($typeinfo == 'string' or $typeinfo == 'extern'):
 void ${name}::set${member}(const ${type}& val) {
     this->m_${member} = val;
 }
 #else
 void ${name}::set${member}(const ${type}* val, NATIVE_INT_TYPE size) {
-    for (NATIVE_INT_TYPE _mem = 0; _mem < FW_MIN(size,${size}); _mem++) {
+    for (NATIVE_INT_TYPE _mem = 0; _mem < FW_MIN(size,${array_length}); _mem++) {
         this->m_${member}[_mem] = val[_mem];
     }
 }
@@ -105,8 +106,8 @@ Fw::SerializeStatus ${name}::serialize(Fw::SerializeBufferBase& buffer) const {
     stat = buffer.serialize((U32)${name}::TYPE_ID);
 \#endif
 
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length == None:
 #if $typeinfo == "enum":
     stat = buffer.serialize((FwEnumStoreType)this->m_${member});
 #else
@@ -116,7 +117,7 @@ Fw::SerializeStatus ${name}::serialize(Fw::SerializeBufferBase& buffer) const {
         return stat;
     }
 #else
-    for (NATIVE_INT_TYPE _mem = 0; _mem < ${size}; _mem++) {
+    for (NATIVE_INT_TYPE _mem = 0; _mem < ${array_length}; _mem++) {
         stat = buffer.serialize(this->m_${member}[_mem]);
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
@@ -143,8 +144,8 @@ Fw::SerializeStatus ${name}::deserialize(Fw::SerializeBufferBase& buffer) {
     }
 \#endif
 
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size == None or $typeinfo == "string":
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length == None:
 #if $typeinfo == "enum"
     FwEnumStoreType int${member} = 0;
     stat = buffer.deserialize(int${member});
@@ -156,7 +157,7 @@ Fw::SerializeStatus ${name}::deserialize(Fw::SerializeBufferBase& buffer) {
         return stat;
     }
 #else
-    for (NATIVE_INT_TYPE _mem = 0; _mem < ${size}; _mem++) {
+    for (NATIVE_INT_TYPE _mem = 0; _mem < ${array_length}; _mem++) {
         stat = buffer.deserialize(this->m_${member}[_mem]);
         if (stat != Fw::FW_SERIALIZE_OK) {
             return stat;
@@ -173,10 +174,10 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     static const char * formatString =
        "("
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members[0:-1]:
-#if $size != None and typeinfo != "string":
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members[0:-1]:
+#if array_length != None:
        "$member = "
-#for $elem in range(0,int($size)-1):
+#for $elem in range(0,int($array_length)-1):
        "[$format]"
 #end for
        "[$format] "
@@ -197,7 +198,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     // declare strings to hold any serializable toString() arguments
 
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $typeinfo == "extern":
 
     Fw::String ${member}Str;
@@ -207,13 +208,15 @@ void ${name}::toString(Fw::StringBase& text) const {
 
     char outputString[FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE];
     (void)snprintf(outputString,FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE,formatString
-#for ($member,$type,$size,$format,$comment,$default,$typeinfo) in $members:
-#if $size != None and $typeinfo != "string":
-#for $elem in range(0,int($size)):
+#for ($member,$type,$array_length,$size,$format,$comment,$default,$typeinfo) in $members:
+#if $array_length != None:
+#for $elem in range(0,int($array_length)):
 #if $type == "bool":
        ,this->m_${member}[$elem]?"T":"F"
 #else if $type == "enum":
        ,(NATIVE_INT_TYPE)this->m_${member}[$elem]
+#else if $typeinfo == "string":
+       ,this->m_${member}[$elem].toChar()
 #else:
        ,this->m_${member}[$elem]
 #end if

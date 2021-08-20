@@ -88,14 +88,17 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
-            elif mtype == "string":
+            elif mtype == "string" and array_length is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_length is not None:
+                arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
+                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size is not None:
+            elif array_length is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -138,7 +141,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = list()
 
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -149,8 +152,9 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             elif mtype not in typelist:
                 typeinfo = "extern"
 
-            arg_list.append((name, mtype, size, format, comment, typeinfo))
-
+            arg_list.append(
+                (name, mtype, array_length, size, format, comment, typeinfo)
+            )
         return arg_list
 
     def _get_enum_string_list(self, enum_list):

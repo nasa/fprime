@@ -34,6 +34,11 @@ TEST(Serialize4, ArrayScalarInit) {
     }
 }
 
+TEST(StringArray, OK) {
+
+    Example::Serial1 serial1;
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
 

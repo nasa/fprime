@@ -6,7 +6,7 @@
     <members>
         <member name="T1" type="I32"/>
         <member name="T2" type="string" size="23"/>
-        <member name="T3" type="U8" size="9" comment="U8 Array"/>
+        <member name="T3" type="U8" array_length="9" comment="U8 Array"/>
     </members>
 </serializable>
 
