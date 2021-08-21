@@ -16,41 +16,47 @@ function(is_supported AC_INPUT_FILE)
 endfunction(is_supported)
 
 function(get_generated_files AC_INPUT_FILE)
-    execute_process(COMMAND fpp-filenames "${AC_INPUT_FILE}" RESULT_VARIABLE ERR_RETURN OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if (ERR_RETURN)
-        return()
-    endif()
-    STRING(REGEX REPLACE "\n" ";" STDOUT "${STDOUT}")
-
-    set(GENERATED_FILES)
-    foreach(LINE IN LISTS STDOUT)
-        list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${LINE}")
-    endforeach()
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-
-endfunction(get_generated_files)
-
-function(get_dependencies AC_INPUT_FILE)
+    set(DIRECT_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
+    set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
 
     execute_process(COMMAND fpp-depend ${LOCATOR_FILES} "${AC_INPUT_FILE}"
+        -d "${DIRECT_FILE}"
         -i "${INCLUDED_FILE}"
         -m "${MISSING_FILE}"
+        -g "${GENERATED_FILE}"
         RESULT_VARIABLE ERR_RETURN
         OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
     # Report failure.  If we are generating files, this must work.
     if (ERR_RETURN)
-        message(FATAL_ERROR "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE}'")
+        message(FATAL_ERROR "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}'")
         return()
     endif()
 
     # Read file and convert to lists of dependencies
     file(READ "${INCLUDED_FILE}" INCLUDED)
     file(READ "${MISSING_FILE}" MISSING)
+    file(READ "${GENERATED_FILE}" GENERATED)
+    file(READ "${DIRECT_FILE}" DIRECT_DEPENDENCIES)
+
+    string(STRIP "${INCLUDED}" INCLUDED)
+    string(STRIP "${MISSING}" MISSING)
+    string(STRIP "${DIRECT_DEPENDENCIES}" DIRECT_DEPENDENCIES)
+    string(STRIP "${GENERATED}" GENERATED)
+
+    string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
     string(REGEX REPLACE "\n" ";" INCLUDED "${INCLUDED}")
     string(REGEX REPLACE "\n" ";" MISSING "${MISSING}")
-    string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
+    string(REGEX REPLACE "\n" ";" DIRECT_DEPENDENCIES "${DIRECT_DEPENDENCIES}")
+    string(REGEX REPLACE "\n" ";" GENERATED "${GENERATED}")
+
+    # First assemble the generated files list
+    set(GENERATED_FILES)
+    foreach(LINE IN LISTS GENERATED)
+        list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${LINE}")
+    endforeach()
+    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 
     # If we have missing dependencies, print and fail
     if (MISSING)
@@ -60,9 +66,9 @@ function(get_dependencies AC_INPUT_FILE)
         endforeach()
         message(FATAL_ERROR)
     endif()
-    fpp_to_modules("${IMPORTED}" MODULE_DEPENDENCIES)
+    fpp_to_modules("${DIRECT_DEPENDENCIES}" "${AC_INPUT_FILE}" MODULE_DEPENDENCIES)
     set(FILE_DEPENDENCIES)
-    list(APPEND FILE_DEPENDENCIES ${INCLUDED} ${IMPORTED})
+    list(APPEND FILE_DEPENDENCIES ${AC_INPUT_FILE} ${INCLUDED})
     # TODO: fix-me
     if (NOT "${MODULE_NAME}" STREQUAL "Os" AND NOT "${MODULE_NAME}" MATCHES "^Fw_")
         foreach(KNOWN IN ITEMS "Fw_Cfg" "Fw_Types" "Fw_Time" "Fw_Com" "Os" "Fw_Tlm" "Fw_Cmd" "Fw_Log" "Fw_Prm" "Fw_Comp" "Fw_CompQueued")
@@ -72,13 +78,19 @@ function(get_dependencies AC_INPUT_FILE)
     # Should have been inherited from previous call to `get_generated_files`
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(EXTERNAL_FILE_DEPENDENCIES "${IMPORTED}" PARENT_SCOPE)
+    set(EXTRAS "${IMPORTED}" PARENT_SCOPE)
+endfunction(get_generated_files)
+
+function(get_dependencies AC_INPUT_FILE)
+    # Should have been inherited from previous call to `get_generated_files`
+    if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
+        message(FATAL "The CMake system is inconsistent. Please contact a developer.")
+    endif()
 endfunction(get_dependencies)
 
-
-function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES)
+function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_SEP_FPP "${FPRIME_BUILD_LOCATIONS}")
-    string(REGEX REPLACE ";" ","  FPP_IMPORTED_SEP "${EXTERNAL_FILE_DEPENDENCIES}")
+    string(REGEX REPLACE ";" ","  FPP_IMPORTED_SEP "${EXTRAS}")
     set(INCLUDES)
     if (FPP_IMPORTED_SEP)
         set(INCLUDES "-i" "${FPP_IMPORTED_SEP}")
@@ -93,11 +105,13 @@ endfunction(setup_autocode)
 
 
 
-function(fpp_to_modules FILE_LIST OUTPUT_VAR)
+function(fpp_to_modules FILE_LIST AC_INPUT_FILE OUTPUT_VAR)
+    get_filename_component(AI_DIR "${AC_INPUT_FILE}" DIRECTORY)
     set(OUTPUT)
     foreach(INCLUDE IN LISTS FILE_LIST)
         get_filename_component(MODULE_DIR "${INCLUDE}" DIRECTORY)
-        if (NOT "${MODULE_DIR}" IN_LIST OUTPUT)
+        message("Mod dir: ${MODULE_DIR} Ai dir: ${AI_DIR}" )
+        if (NOT "${MODULE_DIR}" IN_LIST OUTPUT AND NOT AI_DIR STREQUAL MODULE_DIR)
             list(APPEND OUTPUT "${MODULE_DIR}")
         endif()
     endforeach()

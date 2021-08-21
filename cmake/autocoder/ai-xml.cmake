@@ -35,11 +35,8 @@ function(get_generated_files AC_INPUT_FILE)
     endif()
 
     # Share with other functions without polluting cache
-    set(AI_XML_TYPE "${XML_TYPE}" PARENT_SCOPE)
-    set(AI_XML_LOWER_TYPE "${XML_LOWER_TYPE}" PARENT_SCOPE)
-    set(AI_AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
-    set(AI_MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(AI_FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
+    set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
 
     set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.hpp"
                         "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.cpp")
@@ -54,8 +51,9 @@ endfunction(get_generated_files)
 
 function(get_dependencies AC_INPUT_FILE)
     # Should have been inherited from previous call to `get_generated_files`
-    set(MODULE_DEPENDENCIES "${AI_MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(FILE_DEPENDENCIES "${AI_FILE_DEPENDENCIES}" PARENT_SCOPE)
+    if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
+        message(FATAL "The CMake system is inconsistent. Please contact a developer.")
+    endif()
 endfunction(get_dependencies)
 
 
@@ -97,6 +95,7 @@ function(__ai_info XML_PATH MODULE_NAME)
     set(AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
+    set(EXTRAS "${XML_LOWER_TYPE}" PARENT_SCOPE)
 endfunction(__ai_info)
 
 
@@ -115,11 +114,12 @@ endfunction(__ai_info)
 # - **GENERATED_FILES**: files output by this process
 # - **MODULE_DEPENDENCIES:** xml and hand specified module dependencies
 # - **FILE_DEPENDENCIES:** xml file dependencies
+# - **EXTRAS:** used to carry over the XML type
 #
 # Implicit from scope: XML_LOWER_TYPE, FPRIME_BUILD_LOCATIONS_SEP, PYTHON_AUTOCODER_DIR, FPRIME_AC_CONSTANTS_FILE,
 #     FPRIME_FRAMEWORK_PATH,
 ####
-function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES)
+function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     add_dependencies(${OBJ_NAME} ${CODEGEN_TARGET})
     if(XML_LOWER_TYPE STREQUAL "topologyapp")
         set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
@@ -127,15 +127,6 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
         set(GEN_ARGS "--build_root")
     endif()
 
-    # If the AI isn't in the final place, copy it over so that we have a clean run
-    #get_filename_component(AI_NAME "${AC_INPUT_FILE}" NAME)
-    #set(FINAL_AI_XML "${CMAKE_CURRENT_BINARY_DIR}/${AI_NAME}")
-    #if (NOT AC_INPUT_FILE STREQUAL FINAL_AI_XML)
-    #    add_custom_command(OUTPUT ${FINAL_AI_XML}
-    #                       COMMAND ${CMAKE_COMMAND} -E copy ${AC_INPUT_FILE} ${FINAL_AI_XML}
-    #                       DEPENDS ${AC_INPUT_FILE}
-    #    )
-    #endif()
     # Run Ai Autocoder
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(

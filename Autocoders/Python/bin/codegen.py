@@ -43,7 +43,7 @@ try:
 except ImportError as ime:
     print("[ERROR] Cheetah templates need to be generated.\n\t", ime, file=sys.stderr)
     sys.exit(1)
-print("CODEGEN BAD")
+
 # Flag to indicate verbose mode.
 VERBOSE = False
 

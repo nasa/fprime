@@ -136,25 +136,12 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions" CACHE STRING "General C++ flags" FORCE)
-SET(CMAKE_CXX_FLAGS_TESTING "${CMAKE_CXX_FLAGS_TESTING} -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "${CMAKE_C_FLAGS_TESTING} -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Testing C flags." FORCE)
-SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
-SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
-MARK_AS_ADVANCED(
-    CMAKE_CXX_FLAGS
-    CMAKE_CXX_FLAGS_TESTING
-    CMAKE_C_FLAGS_TESTING
-    CMAKE_EXE_LINKER_FLAGS_TESTING
-    CMAKE_SHARED_LINKER_FLAGS_TESTING )
 
-# Testing setup for UT and coverage builds
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING" )
-    # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+# Flight sofware options
+add_compile_options("-fno-exceptions")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Testing")
+    add_compile_options("-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
 endif()
 
 ####
