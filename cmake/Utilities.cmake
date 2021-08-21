@@ -14,9 +14,6 @@ function (on_changed INPUT_FILE VARIABLE)
 
     execute_process(COMMAND "${CMAKE_COMMAND}" -E compare_files "${INPUT_FILE}" "${PREVIOUS_FILE}"
                     RESULT_VARIABLE difference OUTPUT_QUIET ERROR_QUIET)
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "Difference between '${INPUT_FILE}' and '${PREVIOUS_FILE}' produced result ${difference}")
-    endif()
     # Files are the same, leave this function
     if (difference EQUAL 0)
         set(${VARIABLE} FALSE PARENT_SCOPE)

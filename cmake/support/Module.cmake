@@ -77,9 +77,6 @@ function(resolve_dependencies DEPENDENCIES AC_DEPENDENCIES OUTPUT_VAR)
 endfunction(resolve_dependencies)
 
 function(update_module MODULE_NAME SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
-    get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
-    message(STATUS "11111> ${OUT}")
-
     # For every detected dependency, add them to the supplied module. This enforces build order.
     # Also set the link dependencies on this module. CMake rolls-up link dependencies, and thus
     # this prevents the need for manually specifying link orders.
@@ -105,9 +102,6 @@ function(update_module MODULE_NAME SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
     endforeach()
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-    get_target_property(OUT "${MODULE_NAME}" LINK_LIBRARIES)
-    message(STATUS "22222> ${OUT}")
 endfunction()
 
 

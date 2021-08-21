@@ -65,11 +65,17 @@ function (__memoize SOURCE)
     # Run the expensive action only if the input has changed
     on_changed("${SOURCE}" CHANGED)
     if (CHANGED OR NOT EXISTS "${MEMO_FILE}")
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo file for '${SOURCE}'")
+        endif()
         get_generated_files("${SOURCE}")
         get_dependencies("${SOURCE}")
         file(WRITE "${MEMO_FILE}" "${GENERATED_FILES}\n${MODULE_DEPENDENCIES}\n${FILE_DEPENDENCIES}\n${EXTRAS}\n")
     # Otherwise read from file
     else()
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[Autocode/${AUTOCODER_NAME}] Using memo file for '${SOURCE}'")
+        endif()
         file(READ "${MEMO_FILE}" CONTENTS)
         read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     endif()
@@ -143,11 +149,13 @@ function(__ac_process_source SOURCE)
             endforeach()
         endif()
     endif()
+    # Configure depends on this source file if it causes a change to module dependencies
+    if (MODULE_DEPENDENCIES)
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${SOURCE}")
+    endif()
     setup_autocode("${SOURCE}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
 
     # Return values
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-
-    # TODO: set dependent with-in cmake
 endfunction()
