@@ -220,9 +220,10 @@ namespace Svc {
   }
 
 #ifdef BUILD_UT
-  void UdpReceiverComponentImpl::UdpSerialBuffer::operator=(const UdpReceiverComponentImpl::UdpSerialBuffer& other) {
+  UdpReceiverComponentImpl::UdpSerialBuffer& UdpReceiverComponentImpl::UdpSerialBuffer::operator=(const UdpReceiverComponentImpl::UdpSerialBuffer& other) {
       this->resetSer();
       this->serialize(other.getBuffAddr(),other.getBuffLength(),true);
+      return *this;
   }
 
   UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(

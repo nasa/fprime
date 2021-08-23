@@ -328,6 +328,7 @@ deserializing
 dest
 DEVNULL
 dfdc
+DFL
 DFPRIME
 DGRAM
 DHTML

@@ -43,7 +43,7 @@ namespace CFDP {
 
   }
 
-  const Checksum& Checksum ::
+  Checksum& Checksum ::
     operator=(const Checksum& checksum)
   {
     this->value = checksum.value;

@@ -19,11 +19,11 @@ namespace Fw {
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 	}
 
-	const ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
-	    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
+    ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
+        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
-	}
+    }
 
     NATIVE_UINT_TYPE ParamBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);

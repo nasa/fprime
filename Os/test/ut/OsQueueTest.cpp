@@ -2,7 +2,6 @@
 #include <Os/Queue.hpp>
 #include <stdio.h>
 #include <string.h>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <unistd.h>
 #include <signal.h>
@@ -37,7 +36,7 @@ class MyTestSerializedBuffer : public Fw::SerializeBufferBase {
 
 Os::Queue* createTestQueue(char *name, U32 size, I32 depth) {
     Os::Queue* testQueue = new Os::Queue();
-    Os::Queue::QueueStatus stat = testQueue->create(Fw::EightyCharString(name), depth, size);
+    Os::Queue::QueueStatus stat = testQueue->create(Os::QueueString(name), depth, size);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
 
     // Make sure the queue is of the correct size:

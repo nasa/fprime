@@ -31,7 +31,7 @@ namespace Fw {
             LogBuffer();
             LogBuffer(const LogBuffer& other);
             virtual ~LogBuffer();
-            const LogBuffer& operator=(const LogBuffer& other);
+            LogBuffer& operator=(const LogBuffer& other);
 
             NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
             U8* getBuffAddr();
