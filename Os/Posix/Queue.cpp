@@ -74,7 +74,7 @@ namespace Os {
         handle = mq_open(this->m_name.toChar(), O_RDWR | O_CREAT | O_EXCL | O_NONBLOCK, 0666, &att);
 
         // If queue already exists, then unlink it and try again.
-        if (-1 == (NATIVE_INT_TYPE) handle) {
+        if (-1 == handle) {
         	switch (errno) {
         	case EEXIST:
         		(void)mq_unlink(this->m_name.toChar());
@@ -85,7 +85,7 @@ namespace Os {
 
         	handle = mq_open(this->m_name.toChar(), O_RDWR | O_CREAT | O_EXCL, 0666, &att);
 
-            if (-1 == (NATIVE_INT_TYPE) handle) {
+            if (-1 == handle) {
                 return QUEUE_UNINITIALIZED;
             }
         }
@@ -95,7 +95,7 @@ namespace Os {
         if (NULL == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }
-        this->m_handle = (POINTER_CAST) queueHandle;
+        this->m_handle = reinterpret_cast<POINTER_CAST>(queueHandle);
 
         Queue::s_numQueues++;
 
@@ -103,14 +103,14 @@ namespace Os {
     }
 
     Queue::~Queue() {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         delete queueHandle;
         (void) mq_unlink(this->m_name.toChar());
     }
 
     Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block) {
 
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
         pthread_cond_t* queueNotEmpty = &queueHandle->queueNotEmpty;
         pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
@@ -127,7 +127,7 @@ namespace Os {
         bool keepTrying = true;
         int ret;
         while (keepTrying) {
-            NATIVE_INT_TYPE stat = mq_send(handle, (const char*) buffer, size, priority);
+            NATIVE_INT_TYPE stat = mq_send(handle, reinterpret_cast<const char*>(buffer), size, priority);
             if (-1 == stat) {
                 switch (errno) {
                     case EINTR:
@@ -169,7 +169,7 @@ namespace Os {
 
     Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
 
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
         pthread_cond_t* queueNotEmpty = &queueHandle->queueNotEmpty;
         pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
@@ -183,11 +183,11 @@ namespace Os {
         int ret;
         bool notFinished = true;
         while (notFinished) {
-            size = mq_receive(handle, (char*) buffer, (size_t) capacity,
+            size = mq_receive(handle, static_cast<char*>(buffer), static_cast<size_t>(capacity),
 #ifdef TGT_OS_TYPE_VXWORKS
-                        (int*)&priority);
+                        reinterpret_cast<int*>(&priority));
 #else
-                        (unsigned int*) &priority);
+                        reinterpret_cast<unsigned int*>(&priority));
 #endif
 
             if (-1 == size) { // error
@@ -226,18 +226,18 @@ namespace Os {
             }
         }
 
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         return QUEUE_OK;
     }
 
     NATIVE_INT_TYPE Queue::getNumMsgs() const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_curmsgs;
+        return static_cast<U32>(attr.mq_curmsgs);
     }
 
     NATIVE_INT_TYPE Queue::getMaxMsgs() const {
@@ -246,23 +246,23 @@ namespace Os {
     }
 
     NATIVE_INT_TYPE Queue::getQueueSize() const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_maxmsg;
+        return static_cast<U32>(attr.mq_curmsgs);
     }
 
     NATIVE_INT_TYPE Queue::getMsgSize() const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_msgsize;
+        return static_cast<U32>(attr.mq_msgsize);
     }
 
 }

@@ -21,7 +21,7 @@ void force_recv_timeout(Drv::IpSocket& socket) {
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 50; // 50ms max before test failure
-    setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
+    setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 }
 
 void validate_random_data(U8 *data, U8 *truth, U32 size) {
@@ -33,7 +33,7 @@ void validate_random_data(U8 *data, U8 *truth, U32 size) {
 void fill_random_data(U8 *data, U32 size) {
     ASSERT_NE(size, 0u) << "Trying to fill random data of size 0";
     for (U32 i = 0; i < size; i++) {
-        data[i] = (U8) STest::Pick::any();
+        data[i] = static_cast<U8>(STest::Pick::any());
     }
 }
 

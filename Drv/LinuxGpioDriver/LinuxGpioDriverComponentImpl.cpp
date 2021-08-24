@@ -325,7 +325,7 @@ namespace Drv {
     intTaskEntry(void * ptr) {
 
     FW_ASSERT(ptr);
-    LinuxGpioDriverComponentImpl* compPtr = (LinuxGpioDriverComponentImpl*) ptr;
+    LinuxGpioDriverComponentImpl* compPtr = static_cast<LinuxGpioDriverComponentImpl*>(ptr);
     FW_ASSERT(compPtr->m_fd != -1);
 
     // start GPIO interrupt
@@ -342,7 +342,7 @@ namespace Drv {
         NATIVE_INT_TYPE nfds = 1;
         NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
 
-        memset((void*)fdset, 0, sizeof(fdset));
+        memset(fdset, 0, sizeof(fdset));
 
         fdset[0].fd = compPtr->m_fd;
         fdset[0].events = POLLPRI;

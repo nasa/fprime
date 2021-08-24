@@ -336,7 +336,7 @@ namespace Os {
 			File::Status file_status;
 
 			// Set loop limit
-			const U64 copyLoopLimit = (((U64)size/FILE_SYSTEM_CHUNK_SIZE)) + 2;
+			const U64 copyLoopLimit = (size/FILE_SYSTEM_CHUNK_SIZE) + 2;
 
 			U64 loopCounter = 0;
 			NATIVE_INT_TYPE chunkSize;
@@ -515,8 +515,8 @@ namespace Os {
 				return stat;
 			}
 
-			totalBytes = (U64) fsStat.f_blocks * (U64) fsStat.f_frsize;
-			freeBytes = (U64) fsStat.f_bfree * (U64) fsStat.f_frsize;
+			totalBytes = static_cast<U64>(fsStat.f_blocks) * static_cast<U64>(fsStat.f_frsize);
+			freeBytes = static_cast<U64>(fsStat.f_bfree) * static_cast<U64>(fsStat.f_frsize);
 			return stat;
 		}
 
@@ -526,7 +526,7 @@ namespace Os {
 			DIR * dirPtr = NULL;
 			struct dirent *direntData = NULL;
 			U32 limitCount;
-			const U64 loopLimit = ((((U64) 1) << 32)-1); // Max value of U32
+			const U64 loopLimit = std::numeric_limits<U32>::max();
 
 			fileCount = 0;
 			if((dirPtr = ::opendir(directory)) == NULL) {

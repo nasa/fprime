@@ -104,56 +104,56 @@ typedef char CHAR;
 
 
 #ifndef I8_MAX
-#define I8_MAX (I8)(127)
+#define I8_MAX I8(127)
 #endif
 
 #ifndef I8_MIN
-#define I8_MIN (I8)(-128)
+#define I8_MIN I8(-128)
 #endif
 
 #ifndef U8_MAX
-#define U8_MAX (U8)(255)
+#define U8_MAX U8(255)
 #endif
 
 #if FW_HAS_16_BIT
 #ifndef I16_MAX
-#define I16_MAX (I16)(32767)
+#define I16_MAX I16(32767)
 #endif
 
 #ifndef I16_MIN
-#define I16_MIN (I16)(-32768)
+#define I16_MIN I16(-32768)
 #endif
 
 #ifndef U16_MAX
-#define U16_MAX (U16)(65535)
+#define U16_MAX U16(65535)
 #endif
 #endif
 
 #if FW_HAS_32_BIT
 #ifndef I32_MAX
-#define I32_MAX (I32)(2147483647)
+#define I32_MAX I32(2147483647)
 #endif
 
 #ifndef I32_MIN
-#define I32_MIN (I32)(-2147483648)
+#define I32_MIN I32(-2147483648)
 #endif
 
 #ifndef U32_MAX
-#define U32_MAX (U32)(4294967295)
+#define U32_MAX U32(4294967295)
 #endif
 #endif
 
 #if FW_HAS_64_BIT
 #ifndef I64_MAX
-#define I64_MAX (I64)(9223372036854775807)
+#define I64_MAX I64(9223372036854775807)
 #endif
 
 #ifndef I64_MIN
-#define I64_MIN (I64)(-9223372036854775808)
+#define I64_MIN I64(-9223372036854775808)
 #endif
 
 #ifndef U64_MAX
-#define U64_MAX (U64)(18446744073709551615)
+#define U64_MAX U64(18446744073709551615)
 #endif
 #endif
 

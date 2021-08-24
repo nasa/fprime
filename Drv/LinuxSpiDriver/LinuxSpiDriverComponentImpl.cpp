@@ -46,8 +46,8 @@ namespace Drv {
         spi_ioc_transfer tr;
         // Zero for unused fields:
         memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = (U64)writeBuffer.getData();
-        tr.rx_buf = (U64)readBuffer.getData();
+        tr.tx_buf = reinterpret_cast<U64>(writeBuffer.getData());
+        tr.rx_buf = reinterpret_cast<U64>(readBuffer.getData());
         tr.len = writeBuffer.getSize();
 /*
             .speed_hz = 0,

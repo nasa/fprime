@@ -20,7 +20,7 @@ namespace Svc {
 Tester::MockFramer::MockFramer(Tester& parent) : m_parent(parent) {}
 
 void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
-    Fw::Buffer buffer((U8*)data, size);
+    Fw::Buffer buffer(const_cast<U8*>(data), size);
     m_parent.check_last_buffer(buffer);
     Fw::Buffer allocated = m_interface->allocate(size);
     m_interface->send(allocated);

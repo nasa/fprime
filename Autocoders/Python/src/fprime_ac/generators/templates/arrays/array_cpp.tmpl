@@ -244,7 +244,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 #if $type == "bool":
       ,this->elements[$index]?"T":"F"
 #else if $type == "ENUM":
-      ,(NATIVE_INT_TYPE)this->elements[$index]
+      ,static_cast<NATIVE_INT_TYPE>(this->elements[$index])
 #else if $typeinfo == "extern":
       ,str${index}.toChar()
 #else if $type == "string":

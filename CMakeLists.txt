@@ -16,7 +16,7 @@ set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F p
 # parameters are common in the F prime code base. Eventually all intentionally unused parameters
 # should be annotated to avoid this error.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter -Wold-style-cast")
 
 # For this testing cmake project, enable AddressSanitizer, a runtime memory sanitizer, on all unit tests
 set (CMAKE_C_FLAGS_TESTING "${CMAKE_C_FLAGS_TESTING} -fno-omit-frame-pointer -fsanitize=address")

@@ -100,7 +100,7 @@ namespace Os {
 
         switch (stat) {
             case 0:
-                this->m_handle = (POINTER_CAST)tid;
+                this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
                 Task::s_numTasks++;
                 break;
             case EINVAL:
@@ -116,7 +116,7 @@ namespace Os {
 
         if (tStat == TASK_OK) {
 
-            stat = pthread_setname_np(*tid,(char*)this->m_name.toChar());
+            stat = pthread_setname_np(*tid,this->m_name.toChar());
             if (stat != 0) {
                 Fw::Logger::logMsg("pthread_setname_np: %s %s\n",this->m_name.toChar(),strerror(stat));
                 delete tid;

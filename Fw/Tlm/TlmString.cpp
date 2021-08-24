@@ -46,9 +46,9 @@ namespace Fw {
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
-        return buffer.serialize((U8*)this->m_buf,strSize,true);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->m_buf),strSize,true);
 #else
-        return buffer.serialize((U8*)this->m_buf,strSize);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->m_buf),strSize);
 #endif
     }
 
@@ -66,11 +66,11 @@ namespace Fw {
         // To make sure there is space when we add the null terminator
         // which was omitted in the serialization of this buffer
         strSize++;
-        stat = buffer.deserialize((U8*)this->m_buf,buffSize,true);
+        stat = buffer.deserialize(reinterpret_cast<U8*>(this->m_buf),buffSize,true);
         this->m_buf[strSize-1] = 0;
 #else
         // deserialize string
-        SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
+        SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(this->m_buf),maxSize);
 #endif
         // make sure it is null-terminated
         this->terminate(maxSize);
