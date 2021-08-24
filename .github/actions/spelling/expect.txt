@@ -172,6 +172,7 @@ cdn
 cerrno
 cface
 CFDP
+cff
 cfg
 cflag
 cfsetispeed
@@ -342,7 +343,6 @@ diafile
 dictgen
 dicts
 dictvalue
-differend
 diffs
 diles
 dinkel
@@ -525,14 +525,12 @@ finalizer
 findall
 fio
 Firefox
-FIXME
 Fixme
 flist
 FNDELAY
 fnmatch
 fno
 fns
-followd
 FONTNAME
 FONTPATH
 FONTSIZE
@@ -893,7 +891,6 @@ LTIMER
 LTLT
 LVL
 lxml
-lxr
 MACROFILE
 magicdraw
 mailto
@@ -1646,8 +1643,8 @@ tt
 ttype
 Tuszynski
 TXD
-typedef
 typedef'ed
+typedef
 typeid
 typeinfo
 typelist
