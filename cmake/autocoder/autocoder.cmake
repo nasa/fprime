@@ -1,6 +1,6 @@
 include(Utilities)
 
-set(AUTOCODER_LIST CACHE INTERNAL "List of known autocoders")
+set(AUTOCODER_LIST CACHE INTERNAL "List of global autocoders" FORCE)
 
 
 
@@ -25,16 +25,16 @@ endfunction(register_fprime_autocoder AUTOCODER_CMAKE)
 
 
 function (ac_process_sources SOURCES)
-
     set(MODULE_DEPENDENCIES_LIST)
     set(GENERATED_FILE_LIST)
     set(CONSUMED_SOURCES_LIST)
+
     foreach(AC_CMAKE IN LISTS AUTOCODER_LIST)
         # Clear return variables
         set(MODULE_DEPENDENCIES)
         set(GENERATED_FILES)
         set(CONSUMED_SOURCES)
-        __ac_process_sources("${AC_CMAKE}" "${SOURCES}" "${GENERATED_FILE_LIST}")
+        ac_run("${AC_CMAKE}" "${SOURCES}" "${GENERATED_FILE_LIST}")
         list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
         list(APPEND GENERATED_FILE_LIST ${GENERATED_FILES})
         list(APPEND CONSUMED_SOURCES_LIST ${CONSUMED_SOURCES})
@@ -45,6 +45,7 @@ function (ac_process_sources SOURCES)
     set(AC_GENERATED "${GENERATED_FILE_LIST}" PARENT_SCOPE)
     set(AC_SOURCES "${CONSUMED_SOURCES_LIST}" PARENT_SCOPE)
 endfunction()
+
 
 ####
 # __memoize:
@@ -60,7 +61,7 @@ endfunction()
 ####
 function (__memoize SOURCE)
     get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
-    set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_NAME}.dep")
+    set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_NAME}.${AUTOCODER_NAME}.dep")
 
     # Run the expensive action only if the input has changed
     on_changed("${SOURCE}" CHANGED)
@@ -85,7 +86,7 @@ function (__memoize SOURCE)
     set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
 endfunction()
 
-function(__ac_process_sources AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
+function(ac_run AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
     set(MODULE_DEPENDENCIES_LIST)
     set(GENERATED_FILE_LIST)
     set(CONSUMED_SOURCES_LIST)

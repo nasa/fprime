@@ -65,10 +65,10 @@ function(resolve_dependencies DEPENDENCIES AC_DEPENDENCIES OUTPUT_VAR)
         # TODO:
         # TODO:
         # FIXME: EVIL
-        if (MODULE_NAME STREQUAL "config" OR MODULE_NAME IN_LIST RESOLVED)
+        if (MODULE_NAME STREQUAL "config" OR MODULE_NAME STREQUAL "Fpp" OR MODULE_NAME IN_LIST RESOLVED)
             continue()
         endif()
-        # TODO
+        # TODO:
         # TODO:
         list(APPEND RESOLVED "${MODULE_NAME}")
     endforeach()
@@ -120,28 +120,10 @@ endfunction()
 # - **MOD_DEPS:** CMake module dependencies
 ####
 function(generate_module OBJ_NAME SOURCES DEPENDENCIES)
-  # If there are  build flags, set them now 
-  if (DEFINED BUILD_FLAGS)
-      target_compile_definitions(${OBJ_NAME} PUBLIC ${BUILD_FLAGS})
-  endif()
   # Add dependencies on autocoder
-
   ac_process_sources("${SOURCES}")
   resolve_dependencies("${DEPENDENCIES}" "${AC_DEPENDENCIES}" RESOLVED)
   update_module("${OBJ_NAME}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
-
-  # Run autocoders for the set of identified Ai inputs
-  #generic_autocoder(${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${RESOLVED_DEPS}")
-
-
-  # Add in all non-module link (-l) dependencies
-  #target_link_libraries(${OBJ_NAME} ${LINK_DEPS})
-
-  # Add in specified (non-detected) mod dependencies, and Dict dependencies therein.
-  #foreach(MOD_DEP ${RESOLVED_DEPS})
-  #    add_dependencies(${OBJ_NAME} ${MOD_DEP})
-  #    target_link_libraries(${OBJ_NAME} ${MOD_DEP})
-  #endforeach()
 
   # Remove empty source from target
   get_target_property(FINAL_SOURCE_FILES ${OBJ_NAME} SOURCES)
@@ -157,13 +139,10 @@ function(generate_module OBJ_NAME SOURCES DEPENDENCIES)
 
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
-  setup_all_module_targets(FPRIME_TARGET_LIST ${OBJ_NAME} "${AUTOCODER_INPUT_FILES}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${RESOLVED_DEPS}")
-
+  setup_all_module_targets(FPRIME_TARGET_LIST "${OBJ_NAME}" "${AC_SOURCES}" "${SOURCE_FILES}" "${AC_GENERATED}" "${RESOLVED_DEPS}")
   if (CMAKE_DEBUG_OUTPUT)
       introspect("${OBJ_NAME}")
   endif()
-
-  #set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
 endfunction(generate_module)
 
 ####

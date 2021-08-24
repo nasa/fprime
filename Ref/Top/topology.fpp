@@ -4,20 +4,16 @@ module Ref {
   # Symbolic constants for port numbers
   # ----------------------------------------------------------------------
 
-  module Ports {
-
-    enum RateGroups {
+    enum Ports_RateGroups {
       rateGroup1
       rateGroup2
       rateGroup3
     }
 
-    enum StaticMemory {
+    enum Ports_StaticMemory {
       downlink
       uplink
     }
-
-  }
 
   topology Ref {
 
@@ -85,11 +81,11 @@ module Ref {
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
 
-      downlink.framedAllocate -> staticMemory.bufferAllocate[Ports.StaticMemory.downlink]
+      downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
       downlink.framedOut -> comm.send
       downlink.bufferDeallocate -> fileDownlink.bufferReturn
 
-      comm.deallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.downlink]
+      comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
     }
 
@@ -103,21 +99,21 @@ module Ref {
       blockDrv.CycleOut -> rateGroupDriverComp.CycleIn
 
       # Rate group 1
-      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
+      rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
 
       # Rate group 2
-      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
+      rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
       rateGroup2Comp.RateGroupMemberOut[0] -> cmdSeq.schedIn
       rateGroup2Comp.RateGroupMemberOut[1] -> sendBuffComp.SchedIn
       rateGroup2Comp.RateGroupMemberOut[2] -> SG3.schedIn
       rateGroup2Comp.RateGroupMemberOut[3] -> SG4.schedIn
 
       # Rate group 3
-      rateGroupDriverComp.CycleOut[Ports.RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
+      rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
       rateGroup3Comp.RateGroupMemberOut[0] -> $health.Run
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
@@ -137,9 +133,9 @@ module Ref {
 
     connections Uplink {
 
-      comm.allocate -> staticMemory.bufferAllocate[Ports.StaticMemory.uplink]
+      comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
       comm.$recv -> uplink.framedIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports.StaticMemory.uplink]
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
 
       uplink.comOut -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
@@ -154,3 +150,4 @@ module Ref {
   }
 
 }
+include "init.fpp"

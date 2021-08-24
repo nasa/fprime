@@ -14,7 +14,7 @@ function(get_generated_files AC_INPUT_FILE)
     # other as a source file input.  Generated files will follow a convention and would not generate dependencies.
     if (AC_INPUT_FILE MATCHES "^${CMAKE_CURRENT_BINARY_DIR}.*")
         get_filename_component(AC_INPUT_NAME "${AC_INPUT_FILE}" NAME)
-        foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable" "Array")
+        foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable" "Array" "TopologyApp")
             if (AC_INPUT_NAME MATCHES ".*${AI_TYPE}Ai.xml$")
                 set(XML_TYPE "${AI_TYPE}")
                 break()
@@ -42,11 +42,12 @@ function(get_generated_files AC_INPUT_FILE)
                         "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.cpp")
 
     # Topology also builds dictionary
-    if (XML_TYPE STREQUAL "topologyapp")
-        list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}Dictionary.xml")
+    if (XML_LOWER_TYPE STREQUAL "topologyapp")
+        list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")
     endif()
 
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
+    set(EXTRAS "${XML_LOWER_TYPE}" PARENT_SCOPE)
 endfunction(get_generated_files)
 
 function(get_dependencies AC_INPUT_FILE)
@@ -95,7 +96,6 @@ function(__ai_info XML_PATH MODULE_NAME)
     set(AC_OBJ_NAME "${AC_OBJ_NAME}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(EXTRAS "${XML_LOWER_TYPE}" PARENT_SCOPE)
 endfunction(__ai_info)
 
 
@@ -121,7 +121,7 @@ endfunction(__ai_info)
 ####
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     add_dependencies(${OBJ_NAME} ${CODEGEN_TARGET})
-    if(XML_LOWER_TYPE STREQUAL "topologyapp")
+    if(EXTRAS STREQUAL "topologyapp")
         set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
     else()
         set(GEN_ARGS "--build_root")
@@ -131,6 +131,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(
             OUTPUT  ${GENERATED_FILES}
+            BYPRODUCTS ${GENERATED_FILES}
             COMMAND ${CMAKE_COMMAND} -E env
               PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
               BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime"

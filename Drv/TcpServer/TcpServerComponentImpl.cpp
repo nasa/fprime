@@ -12,6 +12,7 @@
 
 #include <Drv/TcpServer/TcpServerComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/Assert.hpp"
 
 namespace Drv {
 

@@ -1,4 +1,5 @@
 set(LOCATOR_FILES
+    "${FPRIME_FRAMEWORK_PATH}/Fpp/locs.fpp"
     "${FPRIME_FRAMEWORK_PATH}/config/locs.fpp"
     "${FPRIME_FRAMEWORK_PATH}/Drv/locs.fpp"
     "${FPRIME_FRAMEWORK_PATH}/Fw/locs.fpp"
@@ -20,7 +21,6 @@ function(get_generated_files AC_INPUT_FILE)
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
-
     execute_process(COMMAND fpp-depend ${LOCATOR_FILES} "${AC_INPUT_FILE}"
         -d "${DIRECT_FILE}"
         -i "${INCLUDED_FILE}"
@@ -30,7 +30,7 @@ function(get_generated_files AC_INPUT_FILE)
         OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
     # Report failure.  If we are generating files, this must work.
     if (ERR_RETURN)
-        message(FATAL_ERROR "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}'")
+        message(FATAL_ERROR "Failed to run 'fpp-depend ${LOCATOR_FILES} ${AC_INPUT_FILE} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}' and RC ${ERR_RETURN}")
         return()
     endif()
 
@@ -95,12 +95,35 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     if (FPP_IMPORTED_SEP)
         set(INCLUDES "-i" "${FPP_IMPORTED_SEP}")
     endif()
-    add_custom_command(
-            OUTPUT  ${GENERATED_FILES}
-            COMMAND fpp-to-xml "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
-                "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
-            DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
-    )
+    # Separate the source files into the CPP and XML steps
+    set(GENERATED_AI)
+    set(GENERATED_CPP)
+    foreach(GENERATED IN LISTS GENERATED_FILES)
+        if (GENERATED MATCHES ".*\\.xml")
+            list(APPEND GENERATED_AI "${GENERATED}")
+        else()
+            list(APPEND GENERATED_CPP "${GENERATED}")
+        endif()
+    endforeach()
+
+    # Add in steps for Ai.xml generation
+    if (GENERATED_AI)
+        add_custom_command(
+                OUTPUT  ${GENERATED_AI}
+                COMMAND fpp-to-xml "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                    "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
+                DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+        )
+    endif()
+    # Add in steps for CPP generation
+    if (GENERATED_CPP)
+        add_custom_command(
+                OUTPUT  ${GENERATED_CPP}
+                COMMAND fpp-to-cpp "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
+                DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+        )
+    endif()
 endfunction(setup_autocode)
 
 

@@ -26,5 +26,6 @@ set(UT_SOURCE_FILES
 set(UT_MOD_DEPS
 	STest
 	PortSelector
+	Drv/ByteStreamDriverModel
 )
 register_fprime_ut()
