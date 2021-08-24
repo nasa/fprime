@@ -131,7 +131,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++03" CACHE STRING "C++ flags." FORCE)
 SET(CMAKE_C_FLAGS_RELEASE "-std=c99" CACHE STRING "C flags." FORCE)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Testing" OR CMAKE_BUILD_TYPE STREQUAL "TESTING")
-    add_compile_options("-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
+    add_compile_options("-std=c++11" "-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
     # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
     set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
     set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
