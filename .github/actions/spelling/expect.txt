@@ -841,6 +841,7 @@ len
 lestarch
 levelname
 lflag
+lgcov
 lgtm
 lhash
 libc
