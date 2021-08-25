@@ -14,7 +14,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 #if FW_SERIALIZABLE_TO_STRING
-    #include <Fw/Types/EightyCharString.hpp>
+    #include <Fw/Types/String.hpp>
 #endif
 #include <cstring>
 
@@ -35,11 +35,15 @@ Buffer::Buffer(const Buffer& src) : Serializable(),
 {}
 
 Buffer::Buffer(U8* data, U32 size, U32 context) : Serializable(),
-    m_serialize_repr(data, size),
+    m_serialize_repr(),
     m_bufferData(data),
     m_size(size),
     m_context(context)
-{}
+{
+    if(m_bufferData != NULL){
+        this->m_serialize_repr.setExtBuffer(m_bufferData, m_size);
+    }
+}
 
 Buffer& Buffer::operator=(const Buffer& src) {
     // Ward against self-assignment
@@ -167,7 +171,7 @@ void Buffer::toString(Fw::StringBase& text) const {
 
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Buffer& obj) {
-        Fw::EightyCharString str;
+        Fw::String str;
         obj.toString(str);
         os << str.toChar();
         return os;

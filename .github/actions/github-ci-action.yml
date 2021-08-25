@@ -1,5 +1,0 @@
-name: 'F prime CI'
-description: 'Runs continuous integration testing on F prime'
-runs:
-  using: 'docker'
-  image: 'Dockerfile'

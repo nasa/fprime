@@ -204,18 +204,11 @@ cd fprime/Ref
 fprime-util build raspberrypi
 ```
 
-## Installing the F´ Executable and Dictionaries
-
-Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
-quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
-of build for deployments.
-
-**Installing the Ref Deployment and Running the Binary Assuming Linux**
+**Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
 fprime-util build
-./bin/Linux/Ref # Run the deployment
+./build-artifacts/Linux/bin/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/event_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<!--
+Copyright (C) 2009-2018 California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
 
 <!--===== Svc CmdSequencer Events =========== -->
 

@@ -4,10 +4,8 @@
 #
 # Helpers to test via FP util
 ####
+set -e
 export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check --all")
-export FPUTIL_DEPLOYS="${FPRIME_DIR} ${FPRIME_DIR}/Ref ${FPRIME_DIR}/RPI"
-
-export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 ####
 # fputil_action:
 #
@@ -17,29 +15,20 @@ export INT_DEPLOYS="${FPRIME_DIR}/Ref"
 # :param deploy($2): deployment to run on
 ####
 function fputil_action {
-    export DEPLOYMENT="${1}"
+    export WORKDIR="${1}"
     export TARGET="${2}"
-    export WORKDIR="${DEPLOYMENT}/${3}"
     let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
     (
-        cd "${DEPLOYMENT}"
         PLATFORM=""
 
-        # Generate is only needed when it isn't being tested
-        if [[ "${TARGET}" != "generate" ]] && [[ "${TEST_TYPE}" != "QUICK" ]]
-        then
-            echo "[INFO] Generating build cache before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-            fprime-util "generate" ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.out.log" 2> "${LOG_DIR}/${DEPLOYMENT//\//_}_pregen.err.log" \
-                || fail_and_stop "Failed to generate before ${DEPLOYMENT//\//_} '${TARGET}' execution"
-        fi
         cd "${WORKDIR}"
         if [[ "${TARGET}" != "generate" ]] && [[ "${TARGET}" != "generate --ut" ]]
         then
-	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
+	        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET} with ${JOBS} jobs"
             fprime-util ${TARGET} --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         else
-	    echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
+	        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
             fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         fi
@@ -56,10 +45,18 @@ function integration_test {
     export SLEEP_TIME="10"
     export WORKDIR="${1}"
     export ROOTDIR="${WORKDIR}/build-artifacts"
-    if [[ "${TEST_TYPE}" != "QUICK" ]]
-    then
-        fputil_action "${WORKDIR}" "build" || fail_and_stop "Failed to build before integration test"
-    fi
+    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
+
+    CMAKE_EXTRA_SETTINGS=""
+    PLATFORM=""
+
+    cd "${WORKDIR}"
+    fprime-util "generate" > "${LOG_DIR}/${WORKDIR//\//_}_pregen.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_pregen.err.log" \
+        || fail_and_stop "Failed to generate before ${WORKDIR//\//_} building integration test"
+    cd "${WORKDIR}/"
+    fprime-util "build" --jobs "${JOBS}" ${PLATFORM} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+        || fail_and_stop "Failed to build before integration test"
+
     (
         mkdir -p "${LOG_DIR}/gds-logs"
         # Start the GDS layer and give it time to run
