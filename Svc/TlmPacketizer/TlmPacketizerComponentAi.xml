@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--
+\copyright
+Copyright 2009-2015, by the California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
+
+<component name="TlmPacketizer" kind="active" namespace="Svc">
+    <import_port_type>Fw/Tlm/TlmPortAi.xml</import_port_type>
+    <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
+    <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <import_port_type>Svc/Ping/PingPortAi.xml</import_port_type>
+    <comment>A component for storing telemetry</comment>
+    <ports>
+        <port name="TlmRecv" data_type="Fw::Tlm" kind="sync_input" >
+            <comment>
+            Telemetry input port
+            </comment>
+        </port>
+        <port name="Run" data_type="Svc::Sched" kind="async_input" >
+            <comment>
+            Run port for starting packet send cycle
+            </comment>
+        </port>
+        <port name="PktSend" data_type="Fw::Com" kind="output" >
+            <comment>
+            Packet send port
+            </comment>
+        </port>
+        <port name="pingIn" data_type="Svc::Ping" kind="async_input"  max_number = "1">
+            <comment>
+            Ping input port
+            </comment>
+        </port>
+        <port name="pingOut" data_type="Svc::Ping" kind="output"  max_number = "1">
+            <comment>
+            Ping output port
+            </comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="async" opcode="0" mnemonic="SET_LEVEL" >
+            <comment>
+            Set telemetry send level
+            </comment>
+            <args>
+                <arg name="level" type="U32">
+                    <comment>The I32 command argument</comment>
+                </arg>
+            </args>
+        </command>
+        <command kind="async" opcode="1" mnemonic="SEND_PKT" >
+            <comment>
+            Force a packet to be sent
+            </comment>
+            <args>
+                <arg name="id" type="U32">
+                    <comment>The packet ID</comment>
+                </arg>
+            </args>
+        </command>
+    </commands>
+    <events>
+        <event id="0" name="NoChan" severity="WARNING_LO" format_string = "Telemetry ID 0x%08X not packetized">
+            <comment>
+            Telemetry channel is not part of a telemetry packet.
+            </comment>
+            <args>
+                <arg name="Id" type="U32" >
+                    <comment>The telemetry ID</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="1" name="LevelSet" severity="ACTIVITY_HI" format_string = "Telemetry send level to %d">
+            <comment>
+            Telemetry send level set
+            </comment>
+            <args>
+                <arg name="id" type="U32" >
+                    <comment>The level</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="2" name="MaxLevelExceed" severity="WARNING_LO" format_string = "Requested send level %d higher than max packet level of %d">
+            <comment>
+            Telemetry send level set
+            </comment>
+            <args>
+                <arg name="level" type="U32" >
+                    <comment>The level</comment>
+                </arg>          
+                <arg name="max" type="U32" >
+                    <comment>The max packet level</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="3" name="PacketSent" severity="ACTIVITY_LO" format_string = "Sent packet ID %d">
+            <comment>
+            Packet manually sent
+            </comment>
+            <args>
+                <arg name="id" type="U32" >
+                    <comment>The packet ID</comment>
+                </arg>          
+            </args>
+        </event>
+        <event id="4" name="PacketNotFound" severity="WARNING_LO" format_string = "Could not find packet ID %d">
+            <comment>
+            Couldn't find the packet to send
+            </comment>
+            <args>
+                <arg name="id" type="U32" >
+                    <comment>The packet ID</comment>
+                </arg>          
+            </args>
+        </event>
+    </events>    
+    <telemetry>
+        <channel id="0" name="SendLevel" data_type="U32">
+            <comment>
+            Telemetry send level
+            </comment>
+        </channel>
+    </telemetry>
+</component>
+

@@ -4,10 +4,9 @@
 // \brief  CmdSequencer test interface
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #ifndef Svc_Tester_HPP

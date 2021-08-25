@@ -5,25 +5,34 @@ goal is simple: make development of flight-quality embedded software simple, eas
 and overhead to develop such systems.
 
 This guide is intended to expose the features of F´ and seek to allow users and developers to take advantage of all F´
-has to offer. It is broken down into a getting started, users manual, best practices, developer documentation, and API
-documentation sections.
+has to offer. It is broken down into five documentation sections:
+- Getting Started
+- User's Manual 
+- Best Practices
+- Developer Documentation
+- API
 
-The Getting Started section points initiates to all the items needed to get up and running with F´. Since these are
+**The Getting Started** section points initiates to all the items needed to get up and running with F´. Since these are
 often needed before a user searches for a user's guide, this section merely links to the stand-alone version of those
 items.
 
-The User's Manual section helps users of this framework understand the concepts of F´ and build more complex projects
+**The User's Manual** section helps users of this framework understand the concepts of F´ and build more complex projects
 using the Framework. It is where users should go to understand more about what is possible in F´.
 
-The Best Practices section collects best practices and patterns many projects use while developing F´. Users who consult
+**The Best Practices** section collects best practices and patterns many projects use while developing F´. Users who consult
 this section will learn how to organize F´ projects and implementations to solve problems using standard and recommended
 techniques.
 
-The Developer Documentation is intended for developers who want to use some of the advanced features of F´, understand
+**The Developer Documentation** is intended for developers who want to use some of the advanced features of F´, understand
 how the framework is organized internally, and otherwise dig deep into F´ concepts and implementation. Anyone who wishes
 to extend or change F´ should consult this section.
+This section is divided into three sub-sections:
+- Ground Data System Tools (GDS)
+- Full Development Guides: technical details for full F´ implementations
+- Advanced F´ Topics
 
-The API documentation section contains the automatically generated documentation on F´.
+
+**The API documentation** section contains the automatically generated documentation on F´.
 
 **Note:** currently this documentation is being assembled. Please feel free to contribute!
 
@@ -107,14 +116,14 @@ The F′ framework OSAL includes C++  classes that provide abstractions of commo
 features include threads, mutual exclusion locks, message queues, files, timers, and clocks.
 
 The open-source framework provides implementations of the operating systems layer for Linux and Mac OS. The Linux
-implementation works in Windows using WSL. Some other Os are provided in extension libraries.
+implementation works in Windows using WSL. Some other OS are provided in extension libraries.
 
 ## Ground Data System (GDS)
 
 See: [F´ GDS](./gds/gds-introduction.md)
 
 The F′ user experience is intended to be an out-of-box ready to use ground data system (GDS) solution than can easily
-run on Linux, Mas OSX, or Windows platforms without any mission specific tailoring. The GDS provides an end-user
+run on Linux, Mac OSX, or Windows platforms without any mission specific tailoring. The GDS provides an end-user
 graphical user interface (GUI) tool and an integration test application programming interface (API) to enable
 integration testing and quick-look telemetry monitoring.
 
