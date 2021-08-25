@@ -12,14 +12,8 @@
     <import_component_type>Ref/RecvBuffApp/RecvBuffComponentAi.xml</import_component_type>
     <import_component_type>Svc/CmdDispatcher/CommandDispatcherComponentAi.xml</import_component_type>
     <import_component_type>Svc/PrmDb/PrmDbComponentAi.xml</import_component_type>
-    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
     <import_component_type>Svc/CmdSequencer/CmdSequencerComponentAi.xml</import_component_type>
-    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
-    <import_component_type>Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml</import_component_type>
     <import_component_type>Svc/FileUplink/FileUplinkComponentAi.xml</import_component_type>
-    <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
     <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
     <import_component_type>Ref/SignalGen/SignalGenComponentAi.xml</import_component_type>
     <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
