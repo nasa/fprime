@@ -15,7 +15,7 @@
 
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
 #include <PrmDbImplCfg.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Svc {
@@ -110,7 +110,7 @@ namespace Svc {
 
             void clearDb(void); //!< clear the parameter database
 
-            Fw::EightyCharString m_fileName; //!< filename for parameter storage
+            Fw::String m_fileName; //!< filename for parameter storage
 
             struct t_dbStruct {
                 bool used; //!< whether slot is being used

@@ -1,6 +1,6 @@
+#include "gtest/gtest.h"
 #include <Os/Task.hpp>
 #include <stdio.h>
-#include <Fw/Types/EightyCharString.hpp>
 
 extern "C" {
     void startTestTask(int iters);
@@ -9,9 +9,9 @@ extern "C" {
 Os::Task* testTask = 0;
 
 void someTask(void* ptr) {
-    
+
     long iters = (long) ptr;
-    
+
     while (iters--) {
         Os::Task::delay(1000);
         printf("Tick %ld!\n",iters);
@@ -21,9 +21,7 @@ void someTask(void* ptr) {
 void startTestTask(int iters) {
     long localIter = iters;
     testTask = new Os::Task();
-    Fw::EightyCharString name("ATestTask");
+    Os::TaskString name("ATestTask");
     Os::Task::TaskStatus stat = testTask->start(name,12,100,10*1024,someTask,(void*) localIter);
-    if (stat != Os::Task::TASK_OK) {
-    	printf("Couldn't start task: %d\n",stat);
-    }
+    ASSERT_EQ(stat, Os::Task::TASK_OK);
 }

@@ -8,11 +8,11 @@ Exceptions defined for the Autocoder. This is active refactoring work, and may b
 
 
 class FprimeException(Exception):
-    """ Base Exception for FprimeException """
+    """Base Exception for FprimeException"""
 
 
 class FprimeRngXmlValidationException(FprimeException):
-    """ XML Exception from within the validation phase """
+    """XML Exception from within the validation phase"""
 
     def __init__(self, error_list):
         """
@@ -26,4 +26,4 @@ class FprimeRngXmlValidationException(FprimeException):
 
 
 class FprimeXmlException(FprimeException):
-    """ Generic XML error """
+    """Generic XML error"""

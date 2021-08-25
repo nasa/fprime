@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm2/TestTelemRecvImpl.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Autocoders/Python/test/tlm2/QuaternionSerializableAc.hpp>
 #include <stdio.h>
 
@@ -25,7 +25,7 @@ TestTelemRecvImpl::~TestTelemRecvImpl() {
 void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdType id, Fw::Time &timeTag, Fw::TlmBuffer &val) {
     Ref::Gnc::Quaternion tlmVal;
     val.deserialize(tlmVal);
-    Fw::EightyCharString str;
+    Fw::String str;
     tlmVal.toString(str);
     printf("ID: %d TLM value is %s. Time is %d:%d base: %d\n",id,str.toChar(),timeTag.getSeconds(),timeTag.getUSeconds(),timeTag.getTimeBase());
 }

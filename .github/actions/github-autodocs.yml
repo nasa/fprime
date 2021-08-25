@@ -1,9 +1,0 @@
-name: 'fprime Automatic Documentation'
-description: 'Runs continuous documentation updates on fprime'
-runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  entrypoint: '/autodoc.bash'
-with:
-  github_token: ${{ secrets.GITHUB_TOKEN }}
-

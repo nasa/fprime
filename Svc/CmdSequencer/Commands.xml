@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../Autocoders/schema/ISF/command_schema.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<!--
+Copyright (C) 2009-2018 California Institute of Technology.
+ALL RIGHTS RESERVED.  United States Government Sponsorship
+acknowledged.
+-->
 
 <!--============ CmdSequencer Commands =================================== -->
 
 <commands>
-    <command kind="async" opcode="0" mnemonic="CS_RUN">
-        <comment>Run a command sequence file</comment>
-        <args>
-            <arg type="string" name="fileName" size="240">
-                <comment>The name of the sequence file</comment>
-            </arg>
-        </args>
-    </command>
+	<command kind="async" opcode="0" mnemonic="CS_RUN">
+		<comment>Run a command sequence file</comment>
+		<args>
+			<arg type="string" name="fileName" size="100">
+				<comment>The name of the sequence file</comment>
+			</arg>
+			<arg type="ENUM" name="block">
+				<comment>Return command status when complete or not</comment>
+				<enum name="SeqBlkState">
+					<item name="SEQ_BLOCK"/>
+					<item name="SEQ_NO_BLOCK"/>
+				</enum>
+			</arg>
+		</args>
+	</command>
     <command kind="async" opcode="1" mnemonic="CS_VALIDATE">
         <comment>Validate a command sequence file</comment>
         <args>
-            <arg type="string" name="fileName" size="240">
+            <arg type="string" name="fileName" size="100">
                 <comment>The name of the sequence file</comment>
             </arg>
         </args>
     </command>
-    <command kind="async" opcode="2" mnemonic="CS_CANCEL">
-        <comment>Cancel a command sequence</comment>
-    </command>
-    <command kind="async" opcode="3" mnemonic="CS_START">
-        <comment>Start running a command sequence</comment>
-    </command>
-    <command kind="async" opcode="4" mnemonic="CS_STEP">
-        <comment>Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</comment>
-    </command>
-    <command kind="async" opcode="5" mnemonic="CS_AUTO">
-        <comment>Set the run mode to AUTO.</comment>
-    </command>
-    <command kind="async" opcode="6" mnemonic="CS_MANUAL">
-        <comment>Set the run mode to MANUAL.</comment>
-    </command>
+	<command kind="async" opcode="2" mnemonic="CS_CANCEL">
+		<comment>Cancel a command sequence</comment>
+	</command>
+	<command kind="async" opcode="3" mnemonic="CS_START">
+		<comment>Start running a command sequence</comment>
+	</command>
+	<command kind="async" opcode="4" mnemonic="CS_STEP">
+		<comment>Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.</comment>
+	</command>
+	<command kind="async" opcode="5" mnemonic="CS_AUTO">
+		<comment>Set the run mode to AUTO.</comment>
+	</command>
+	<command kind="async" opcode="6" mnemonic="CS_MANUAL">
+		<comment>Set the run mode to MANUAL.</comment>
+	</command>
 </commands>

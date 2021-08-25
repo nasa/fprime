@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../../Autocoders/schema/ISF_Type_Schema.rnc" type="compact"?>
+<interface name="CmdSeqCancel" namespace="Svc">
+    <comment>
+    Port to cancel a sequence
+    </comment>
+</interface>
+

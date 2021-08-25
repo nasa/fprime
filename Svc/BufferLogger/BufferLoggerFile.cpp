@@ -68,7 +68,7 @@ namespace Svc {
 
   void BufferLogger::File ::
     setBaseName(
-        const Fw::EightyCharString& baseName
+        const Fw::StringBase& baseName
     )
   {
       if (this->mode == File::Mode::OPEN) {
@@ -181,15 +181,16 @@ namespace Svc {
   bool BufferLogger::File ::
     writeSize(const U32 size)
   {
+    FW_ASSERT(this->sizeOfSize <= sizeof(U32));
+    U8 sizeBuffer[sizeof(U32)];
     U32 sizeRegister = size;
-    U8 sizeBuffer[this->sizeOfSize];
     for (U8 i = 0; i < this->sizeOfSize; ++i) {
       sizeBuffer[this->sizeOfSize - i - 1] = sizeRegister & 0xFF;
       sizeRegister >>= 8;
     }
     const bool status = this->writeBytes(
         sizeBuffer,
-        sizeof(sizeBuffer)
+        this->sizeOfSize
     );
     return status;
   }
@@ -224,7 +225,7 @@ namespace Svc {
     const Os::ValidateFile::Status status =
       validatedFile.createHashFile();
     if (status !=  Os::ValidateFile::VALIDATION_OK) {
-      const Fw::EightyCharString &hashFileName = validatedFile.getHashFileName();
+      const Fw::String &hashFileName = validatedFile.getHashFileName();
       Fw::LogStringArg logStringArg(hashFileName.toChar());
       this->bufferLogger.log_WARNING_HI_BL_LogFileValidationError(
           logStringArg,

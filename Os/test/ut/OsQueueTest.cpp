@@ -1,7 +1,7 @@
+#include "gtest/gtest.h"
 #include <Os/Queue.hpp>
 #include <stdio.h>
 #include <string.h>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <unistd.h>
 #include <signal.h>
@@ -36,19 +36,19 @@ class MyTestSerializedBuffer : public Fw::SerializeBufferBase {
 
 Os::Queue* createTestQueue(char *name, U32 size, I32 depth) {
     Os::Queue* testQueue = new Os::Queue();
-    Os::Queue::QueueStatus stat = testQueue->create(Fw::EightyCharString(name), depth, size);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    Os::Queue::QueueStatus stat = testQueue->create(Os::QueueString(name), depth, size);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
 
     // Make sure the queue is of the correct size:
     NATIVE_INT_TYPE num;
     num = testQueue->getNumMsgs(); //!< get the number of messages in the queue
-    FW_ASSERT(num == 0, num);
+    EXPECT_EQ(num, 0);
     num = testQueue->getMaxMsgs(); //!< get the maximum number of messages (high watermark)
-    FW_ASSERT(num == 0, num);
+    EXPECT_EQ(num, 0);
     num = testQueue->getQueueSize(); //!< get the queue depth (maximum number of messages queue can hold)
-    FW_ASSERT(num == depth, num);
+    EXPECT_EQ(num, depth);
     num = testQueue->getMsgSize(); //!< get the message size (maximum message size queue can hold)
-    FW_ASSERT(num == (I32) size, num);
+    EXPECT_EQ(num, (I32) size);
 
     return testQueue;
 }
@@ -66,7 +66,7 @@ MyTestSerializedBuffer getSendBuffer(I32 startByte) {
         count++;
     }
     serStat = sendBuff.serialize(sendDataBuff, size);
-    FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
+    EXPECT_EQ(serStat,Fw::FW_SERIALIZE_OK);
     return sendBuff;
 }
 
@@ -75,15 +75,15 @@ void compareBuffers(MyTestSerializedBuffer& a, MyTestSerializedBuffer& b) {
     Fw::SerializeStatus serStat;
     U8 aBuff[SER_BUFFER_SIZE];
     serStat = a.deserialize(aBuff, size);
-    FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
+    EXPECT_EQ(serStat,Fw::FW_SERIALIZE_OK);
     U8 bBuff[SER_BUFFER_SIZE];
     serStat = b.deserialize(bBuff, size);
-    FW_ASSERT(serStat == Fw::FW_SERIALIZE_OK, serStat);
+    EXPECT_EQ(serStat,Fw::FW_SERIALIZE_OK);
 
     for (I32 ii = 0; ii < (I32)size; ii++) {
         if (aBuff[ii] != bBuff[ii]) {
             printf("Byte %d mismatch. A: %d B: %d\n", ii, aBuff[ii], bBuff[ii]);
-            FW_ASSERT(0);
+            EXPECT_TRUE(0);
         }
     }
 }
@@ -99,7 +99,7 @@ void fillQueue(Os::Queue* queue) {
         stat = queue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
         if(stat == Os::Queue::QUEUE_FULL)
           break;
-        FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+        EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
     }
 }
 
@@ -113,7 +113,7 @@ void drainQueue(Os::Queue* queue) {
     Os::Queue::QueueStatus stat;
     while (queue->getNumMsgs() > 0) {
         stat = queue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-        FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+        EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
     }
 }
 
@@ -133,7 +133,7 @@ void alarm_send_block(int sig)
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
     Os::Queue::QueueStatus stat;
     stat = globalQueue->send(sendBuff, 0, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
 }
 
 void alarm_send_nonblock(int sig)
@@ -141,7 +141,7 @@ void alarm_send_nonblock(int sig)
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
     Os::Queue::QueueStatus stat;
     stat = globalQueue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
 }
 
 void alarm_receive_block(int sig)
@@ -150,7 +150,7 @@ void alarm_receive_block(int sig)
     Os::Queue::QueueStatus stat;
     I32 prio;
     stat = globalQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
 }
 
 void alarm_receive_nonblock(int sig)
@@ -159,14 +159,14 @@ void alarm_receive_nonblock(int sig)
     Os::Queue::QueueStatus stat;
     I32 prio;
     stat = globalQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
 }
 
 void alarm_error(int sig)
 {
     // A failure here means that something blocked that was
     // not supposed to block!
-    FW_ASSERT(0, sig);
+    EXPECT_TRUE(0);
 }
 
 // This test verifies queue behavior for active components
@@ -188,7 +188,7 @@ void qtest_nonblock_send(void) {
     fillQueue(testQueue);
     // Make sure we get a queue full response:
     stat = testQueue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_FULL, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_FULL);
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
@@ -218,7 +218,7 @@ void qtest_block_send(void) {
     fillQueue(testQueue);
     // Make sure we get a queue full response:
     stat = testQueue->send(sendBuff, 0, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
@@ -234,7 +234,7 @@ void qtest_block_send(void) {
     fillQueue(testQueue);
     // Make sure we get a queue full response:
     stat = testQueue->send(sendBuff, 0, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat, Os::Queue::QUEUE_OK);
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
@@ -262,9 +262,9 @@ void qtest_block_receive(void) {
     // TEST 1
     printf("Testing successful receive after send...\n");
     stat = testQueue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    ASSERT_EQ(stat, Os::Queue::QUEUE_OK);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    ASSERT_EQ(stat, Os::Queue::QUEUE_OK);
     compareBuffers(sendBuff, recvBuff);
     printf("Passed.\n");
 
@@ -275,7 +275,7 @@ void qtest_block_receive(void) {
     signal(SIGALRM, alarm_send_block);
     alarm(2);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     globalQueue = NULL;
     printf("Passed.\n");
 
@@ -286,7 +286,7 @@ void qtest_block_receive(void) {
     signal(SIGALRM, alarm_send_nonblock);
     alarm(2);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     globalQueue = NULL;
     printf("Passed.\n");
 
@@ -301,7 +301,7 @@ void qtest_block_receive(void) {
       // Generate a new send buffer for each enqueue:
       MyTestSerializedBuffer sendBuff2 = getSendBuffer(sendBuffStart[ii]);
       stat = testQueue->send(sendBuff2, priorities[ii], Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
 
 #if PRIORITY_QUEUE
@@ -315,9 +315,9 @@ void qtest_block_receive(void) {
       // Generate a new send buffer for each enqueue:
       MyTestSerializedBuffer expectedSendBuff2 = getSendBuffer(expectedSendBuffStart[ii]);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
-      FW_ASSERT(prio == expectedPriorities[ii], prio, expectedPriorities[ii]);
-      FW_ASSERT(memcmp(recvBuff.getBuffAddr(), expectedSendBuff2.getBuffAddr(), recvBuff.getBuffLength()) == 0);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
+      EXPECT_EQ(prio,expectedPriorities[ii]);
+      EXPECT_TRUE(memcmp(recvBuff.getBuffAddr(), expectedSendBuff2.getBuffAddr(), recvBuff.getBuffLength()) == 0);
     }
     printf("Passed.\n");
 
@@ -342,16 +342,16 @@ void qtest_nonblock_receive(void) {
     // TEST 1
     printf("Testing successful receive after send...\n");
     stat = testQueue->send(sendBuff, 0, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     compareBuffers(sendBuff, recvBuff);
     printf("Passed.\n");
 
     // TEST 2
     printf("Testing non-blocking receive on queue empty...\n");
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_NO_MORE_MSGS, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_NO_MORE_MSGS);
     printf("Passed.\n");
 
     // TEST 3
@@ -365,7 +365,7 @@ void qtest_nonblock_receive(void) {
       // Generate a new send buffer for each enqueue:
       MyTestSerializedBuffer sendBuff2 = getSendBuffer(sendBuffStart[ii]);
       stat = testQueue->send(sendBuff2, priorities[ii], Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
 
 #if PRIORITY_QUEUE
@@ -379,9 +379,9 @@ void qtest_nonblock_receive(void) {
       // Generate a new send buffer for each enqueue:
       MyTestSerializedBuffer expectedSendBuff2 = getSendBuffer(expectedSendBuffStart[ii]);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
-      FW_ASSERT(prio == expectedPriorities[ii], prio, expectedPriorities[ii]);
-      FW_ASSERT(memcmp(recvBuff.getBuffAddr(), expectedSendBuff2.getBuffAddr(), recvBuff.getBuffLength()) == 0);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
+      EXPECT_EQ(prio,expectedPriorities[ii]);
+      EXPECT_TRUE(memcmp(recvBuff.getBuffAddr(), expectedSendBuff2.getBuffAddr(), recvBuff.getBuffLength()) == 0);
     }
     printf("Passed.\n");
 
@@ -424,17 +424,17 @@ void qtest_performance(void) {
     numIterations = 1000000;
     for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
 #if defined TGT_OS_TYPE_LINUX         
     (void)clock_gettime(CLOCK_REALTIME,&etime);
@@ -466,17 +466,17 @@ void qtest_performance(void) {
     numIterations = 1000000;
     for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
       stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-      FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+      EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     }
 #if defined TGT_OS_TYPE_LINUX         
     (void)clock_gettime(CLOCK_REALTIME,&etime);
@@ -511,17 +511,17 @@ void *run_task(void *ptr)
   MyTestSerializedBuffer sendBuff = getSendBuffer(0);
   for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
     stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
-    FW_ASSERT(stat == Os::Queue::QUEUE_OK, stat);
+    EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
   }
   return NULL;
 }
@@ -568,13 +568,13 @@ void qtest_concurrent(void) {
 
     for(U32 ii = 0; ii < NUM_THREADS; ++ii) {
       if(pthread_create(&thread[ii], NULL, run_task, testQueue)) {
-        FW_ASSERT(0);
+        EXPECT_TRUE(0);
       }
     }
     
     for(U32 ii = 0; ii < NUM_THREADS; ++ii) {
       if(pthread_join(thread[ii], NULL)) {
-        FW_ASSERT(0);      
+        EXPECT_TRUE(0);      
       }
     }
 #endif
