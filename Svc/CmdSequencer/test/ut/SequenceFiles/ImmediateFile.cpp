@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateFile.cpp
 // \author Rob Bocchino
 // \brief  ImmediateFile implementation
@@ -7,6 +7,8 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
@@ -23,7 +25,7 @@ namespace Svc {
         File(format),
         n(n)
     {
-      Fw::EightyCharString s;
+      Fw::String s;
       s.format("immediate_%u", n);
       this->setName(s.toChar());
     }
@@ -32,7 +34,7 @@ namespace Svc {
       serializeFPrime(Fw::SerializeBufferBase& buffer)
     {
       // Header
-      const U32 recordDataSize = 
+      const U32 recordDataSize =
         this->n * FPrime::Records::STANDARD_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
       const TimeBase timeBase = TB_WORKSTATION_TIME;

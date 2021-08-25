@@ -231,7 +231,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 #if $typeinfo == "extern":
     // Need to instantiate toString for arrays and serializable types
 #for $index in $range(0, $size):
-    Fw::EightyCharString str${index};
+    Fw::String str${index};
     this->elements[$index].toString(str${index});
 #end for
 #end if
@@ -263,7 +263,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 
 \#ifdef BUILD_UT
   std::ostream& operator<<(std::ostream& os, const ${name}& obj) {
-    Fw::EightyCharString temp;
+    Fw::String temp;
     obj.toString(temp);
 
     os << temp;

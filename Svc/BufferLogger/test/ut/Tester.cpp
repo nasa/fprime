@@ -69,7 +69,7 @@ namespace Svc {
   void Tester ::
     LogNoInit(void)
   {
-    this->component.m_file.baseName = Fw::EightyCharString("LogNoInit");
+    this->component.m_file.baseName = Fw::String("LogNoInit");
     // NOTE (mereweth) - make something sensible happen when no-one calls initLog()
     // Send data
     this->sendComBuffers(3);
@@ -244,19 +244,19 @@ namespace Svc {
   }
 
   void Tester ::
-    checkFileExists(const Fw::EightyCharString& fileName)
+    checkFileExists(const Fw::StringBase& fileName)
   {
-    Fw::EightyCharString command;
+    Fw::String command;
     command.format("test -f %s", fileName.toChar());
     const int status = system(command.toChar());
     ASSERT_EQ(0, status);
   }
 
   void Tester ::
-    checkHashFileExists(const Fw::EightyCharString& fileName)
+    checkHashFileExists(const Fw::StringBase& fileName)
   {
     Os::ValidatedFile validatedFile(fileName.toChar());
-    const Fw::EightyCharString& hashFileName = validatedFile.getHashFileName();
+    const Fw::String& hashFileName = validatedFile.getHashFileName();
     this->checkFileExists(hashFileName);
   }
 

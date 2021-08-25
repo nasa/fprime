@@ -243,12 +243,14 @@ configparser
 configurability
 configurator
 Connectedoutput
+cookiecutter
 cooldown
 coor
 coravy
 cosmosgen
 cout
 cov
+Coverity
 CPHA
 Cpkt
 cplusplus
@@ -438,6 +440,7 @@ EMSGSIZE
 ENAMETOOLONG
 endcode
 endcond
+endfor
 endforeach
 endfunction
 endian
@@ -523,6 +526,7 @@ findall
 fio
 Firefox
 FIXME
+Fixme
 flist
 FNDELAY
 fnmatch
@@ -541,6 +545,7 @@ foundin
 fpconfighpp
 FPGA
 FPL
+fpp
 FPport
 fprim
 fprime
@@ -1099,7 +1104,10 @@ outdir
 outout
 overridable
 packetization
+packetize
 packetized
+packetizer
+Packetizing
 Paetz
 Pandian
 PARAMDOC
@@ -1193,6 +1201,7 @@ ptbool
 ptestrun
 ptf
 pthread
+PTLM
 ptmcg
 pton
 ptr
@@ -1592,6 +1601,9 @@ TLMCHANIMPLCFG
 TLMCHANIMPLTESTER
 tlmname
 TLMPACKET
+TLMPACKETIZER
+TLMPACKETIZERCOMPONENTIMPLCFG
+TLMPACKETIZERTYPES
 tlmval
 TLOG
 TML
@@ -1703,6 +1715,7 @@ ve
 venv
 VERSIONED
 versioning
+vfd
 VFILE
 vhd
 vhdl

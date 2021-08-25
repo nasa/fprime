@@ -2,10 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
-#if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
-#endif
-
 namespace ANameSpace {
 
 UserSerializer::UserSerializer(void): Serializable() {
