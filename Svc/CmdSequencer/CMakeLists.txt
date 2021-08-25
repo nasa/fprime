@@ -14,6 +14,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Sequence.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/formats/AMPCSSequence.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer_FileReadStageEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer_BlockStateEnumAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer_SeqModeEnumAi.xml"
 )
 

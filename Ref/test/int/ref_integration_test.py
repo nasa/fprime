@@ -279,5 +279,5 @@ class TestRefAppClass(object):
             == 0
         ), "Failed to run fprime-seqgen"
         self.assert_command(
-            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin"], max_delay=5
+            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "SEQ_BLOCK"], max_delay=5
         )

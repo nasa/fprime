@@ -7,11 +7,14 @@ on:
 jobs:
   build:
     name: Autodocumentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v2.0.0
+    - uses: actions/checkout@v2
       with:
-        fetch-depth: 5
-    - uses: ./.github/actions/
-      id: github-autodocs
+        fetch-depth: 0
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
+    - name: Setup Dependencies
+      run: sudo apt-get install doxygen
+    - name: Autodocs
+      run: .github/actions/autodoc.bash
