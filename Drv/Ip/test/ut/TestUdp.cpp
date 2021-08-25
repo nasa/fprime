@@ -4,7 +4,6 @@
 #include <gtest/gtest.h>
 #include <Drv/Ip/UdpSocket.hpp>
 #include <Drv/Ip/IpSocket.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Drv/Ip/test/ut/PortSelector.hpp>

@@ -4,14 +4,11 @@
 // \brief  CmdSequencer test implementation
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
-// ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
-#include "Fw/Types/EightyCharString.hpp"
 #include "Os/Stubs/FileStubs.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
@@ -384,7 +381,7 @@ namespace Svc {
     parameterizedNeverLoaded(void)
   {
     // Try to run a sequence
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert seqDone response
@@ -633,7 +630,7 @@ namespace Svc {
     loadSequence(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->clearHistory();
     this->component.loadSequence(fileName);
     // Assert events
@@ -645,7 +642,7 @@ namespace Svc {
     runSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send run command
-    this->sendCmd_CS_RUN(0, cmdSeq, fileName);
+    this->sendCmd_CS_RUN(0, cmdSeq, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -664,7 +661,7 @@ namespace Svc {
     runSequenceByPortCall(const char* const fileName)
   {
     // Invoke the port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -679,7 +676,7 @@ namespace Svc {
     runLoadedSequence(void)
   {
     // Invoke the port
-    Fw::EightyCharString fArg("");
+    Fw::String fArg("");
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert no command response
@@ -695,7 +692,7 @@ namespace Svc {
     startNewSequence(const char *const fileName)
   {
     // Start the sequence
-    this->sendCmd_CS_RUN(0, 0, fileName);
+    this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -722,7 +719,7 @@ namespace Svc {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Invoke sequence port
-    Fw::EightyCharString fArg(fileName);
+    Fw::String fArg(fileName);
     this->invoke_to_seqRunIn(0, fArg);
     this->clearAndDispatch();
     // Assert response on seqDone

@@ -65,7 +65,7 @@ endfunction(serialns)
 #
 # Note: as the autocoder is rewritten, this will likely need to change.
 #
-# - **AC_TYPE:** serializable, port, component, or topology
+# - **AC_TYPE:** serializable, port, component, packet, or topology
 # - **AC_FINAL_SOURCE:** final position of the CPP file
 # - **AC_FINAL_HEADER:** final position of the HPP file
 # - **AI_XML:** AI xml input to autocoder
@@ -77,8 +77,11 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD
   # Setup the list such that new outputs can be appended to them
   set(OUTPUT_PRODUCTS "${AC_FINAL_SOURCE}" "${AC_FINAL_HEADER}")
 
+  set (AUTOCODER_EXEC "${PYTHON_AUTOCODER_DIR}/bin/codegen.py")
   if(${AC_TYPE} STREQUAL "topologyapp")
     set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
+  elseif(${AC_TYPE} STREQUAL "packets")
+    set (AUTOCODER_EXEC "${PYTHON_AUTOCODER_DIR}/bin/tlm_packet_gen.py")
   else()
     set(GEN_ARGS "--build_root")
   endif()
@@ -99,7 +102,7 @@ function(acwrap AC_TYPE AC_FINAL_SOURCE AC_FINAL_HEADER AI_XML XML_FILE_DEPS MOD
       ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
       FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
       PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-      ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py ${GEN_ARGS} ${AI_XML}
+      ${AUTOCODER_EXEC} ${GEN_ARGS} ${AI_XML}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${CPP_NAME} ${HPP_NAME} ${CMAKE_CURRENT_BINARY_DIR}
       COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${CPP_NAME} ${HPP_NAME}
       DEPENDS ${AI_XML} ${XML_FILE_DEPS} ${FPRIME_AC_CONSTANTS_FILE} ${MOD_DEPS}

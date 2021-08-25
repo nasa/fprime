@@ -4,11 +4,9 @@
 // \brief  AMPCS sequence file headers
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
 
 #include "gtest/gtest.h"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/Headers.hpp"

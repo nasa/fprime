@@ -23,7 +23,7 @@ namespace Svc {
 
       public:
 
-        CloseFileTester(void) {
+        CloseFileTester() {
           Fw::Time testTime = this->generateTestTime(0);
           this->setTestTime(testTime);
         }
@@ -51,16 +51,16 @@ namespace Svc {
         }
 
         //! Check that files exist
-        void checkFilesExist(void) {
-          const Fw::EightyCharString& fileName = this->component.m_file.name;
+        void checkFilesExist() {
+          const Fw::String& fileName = this->component.m_file.name;
           this->checkFileExists(fileName);
           this->checkHashFileExists(fileName);
         }
 
       public:
 
-        void test(void) {
-          this->component.m_file.baseName = Fw::EightyCharString("CloseFileTester");
+        void test() {
+          this->component.m_file.baseName = Fw::String("CloseFileTester");
           ASSERT_EVENTS_SIZE(0);
           this->sendCloseFileCommands(3);
           this->sendComBuffers(3);
@@ -74,7 +74,7 @@ namespace Svc {
     };
 
     void Tester ::
-      CloseFile(void)
+      CloseFile()
     {
       CloseFileTester tester;
       tester.test();
@@ -101,7 +101,7 @@ namespace Svc {
           this->sendCmd_BL_OpenFile(0, 0, baseName);
           this->dispatchOne();
           // Create file name
-          Fw::EightyCharString currentFileName;
+          Fw::String currentFileName;
           currentFileName.format(
               "%s%s%s",
               this->component.m_file.prefix.toChar(),
@@ -142,7 +142,7 @@ namespace Svc {
           // Check files
           for (U32 i = 0; i < numFiles; ++i) {
             // Create file name
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
             if (i == 0) {
                 fileName.format(
                     "%s%s%s",
@@ -187,7 +187,7 @@ namespace Svc {
     };
 
     void Tester ::
-      ComIn(void)
+      ComIn()
     {
       ComInTester tester;
       tester.test(3, "ComIn");
@@ -204,7 +204,7 @@ namespace Svc {
     };
 
     void Tester ::
-      BufferSendIn(void)
+      BufferSendIn()
     {
       BufferSendInTester tester;
       tester.test(3, "BufferSendIn");
@@ -239,8 +239,8 @@ namespace Svc {
         }
 
         //! Test logging on
-        void testLoggingOn(void) {
-          this->component.m_file.baseName = Fw::EightyCharString("OnOffTester");
+        void testLoggingOn() {
+          this->component.m_file.baseName = Fw::String("OnOffTester");
           this->sendData();
           this->setState(BufferLogger::LOGGING_OFF);
           this->checkLogFileIntegrity(
@@ -251,7 +251,7 @@ namespace Svc {
         }
 
         //! Test logging off
-        void testLoggingOff(void) {
+        void testLoggingOff() {
           this->setState(BufferLogger::LOGGING_OFF);
           this->sendData();
           ASSERT_EVENTS_SIZE(0);
@@ -261,7 +261,7 @@ namespace Svc {
     };
 
     void Tester ::
-      OnOff(void)
+      OnOff()
     {
       {
           OnOffTester tester;
