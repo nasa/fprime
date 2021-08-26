@@ -139,7 +139,7 @@ set(CMAKE_C_EXTENSIONS OFF)
 if (CMAKE_BUILD_TYPE STREQUAL "Testing" OR CMAKE_BUILD_TYPE STREQUAL "TESTING")
     set(CMAKE_CXX_STANDARD 11)
     add_compile_options("-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
-    link_libraries("-lgcov" "--coverage")
+    link_libraries("--coverage")
     # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
     set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
     set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
