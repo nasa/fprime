@@ -25,12 +25,14 @@ extraction:
                 - "python3"
                 - "python3-pip"
                 - "python3-venv"
-                - "sbt"
         after_prepare:
             # setup the venv and install packages
             - "python3 -m venv ./fprime-venv"
             - ". ./fprime-venv/bin/activate"
             - "pip install fprime-tools fprime-gds"
+            - "wget https://github.com/sbt/sbt/releases/download/v1.5.5/sbt-1.5.5.tgz"
+            - "tar -xf sbt-1.5.5.tgz"
+            - 'export PATH="$PATH:${CWD}/sbt-1.5.5/bin"'
         configure:
             command:
         before_index:
