@@ -26,9 +26,9 @@
 # If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
 # the stubbed drivers or OFF to used full driver implementations.
 ###
-if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
+ (FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
     message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
-endif()
+()
 
 ####
 # `FPRIME_USE_BAREMETAL_SCHEDULER:`
@@ -241,7 +241,7 @@ endif()
 set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
 # Settings for F artifacts installation destination
-if (NOT DEFINED FPRIME_INSTALL_DEST)
+ ( FPRIME_INSTALL_DEST)
     set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/")
-endif()
-set(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)
+()
+(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)
