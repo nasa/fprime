@@ -20,6 +20,7 @@ message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
+include("${CMAKE_CURRENT_LIST_DIR}/fpp-download/fpp.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 # Include validation file next, as it checks that everything is in-order
 include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")

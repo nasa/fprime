@@ -17,11 +17,15 @@ function(is_supported AC_INPUT_FILE)
 endfunction(is_supported)
 
 function(get_generated_files AC_INPUT_FILE)
+    find_program(FPP_DEPEND fpp-depend)
+    if (DEFINED FPP_TO_DEPEND-NOTFOUND)
+        message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
+    endif()
     set(DIRECT_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
-    execute_process(COMMAND fpp-depend ${LOCATOR_FILES} "${AC_INPUT_FILE}"
+    execute_process(COMMAND ${FPP_DEPEND} ${LOCATOR_FILES} "${AC_INPUT_FILE}"
         -d "${DIRECT_FILE}"
         -i "${INCLUDED_FILE}"
         -m "${MISSING_FILE}"
@@ -89,6 +93,11 @@ function(get_dependencies AC_INPUT_FILE)
 endfunction(get_dependencies)
 
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
+    find_program(FPP_TO_XML fpp-to-xml)
+    find_program(FPP_TO_CPP fpp-to-cpp)
+    if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
+        message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
+    endif()
     string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_SEP_FPP "${FPRIME_BUILD_LOCATIONS}")
     string(REGEX REPLACE ";" ","  FPP_IMPORTED_SEP "${EXTRAS}")
     set(INCLUDES)
@@ -110,7 +119,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     if (GENERATED_AI)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
-                COMMAND fpp-to-xml "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${FPP_TO_XML} "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
                 DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
@@ -119,7 +128,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT  ${GENERATED_CPP}
-                COMMAND fpp-to-cpp "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${FPP_TO_CPP} "${AC_INPUT_FILE}" "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
                 "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
                 DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
