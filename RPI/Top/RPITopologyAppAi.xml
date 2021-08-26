@@ -22,7 +22,7 @@
    <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
    <import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
-   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
+   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAi.xml</import_component_type>
    <import_component_type>Svc/StaticMemory/StaticMemoryComponentAi.xml</import_component_type>
    <import_component_type>Svc/Framer/FramerComponentAi.xml</import_component_type>
    <import_component_type>Svc/Deframer/DeframerComponentAi.xml</import_component_type>
@@ -31,7 +31,6 @@
    <import_component_type>Drv/LinuxSpiDriver/LinuxSpiDriverComponentAi.xml</import_component_type>
 
    <import_component_type>RPI/RpiDemo/RpiDemoComponentAi.xml</import_component_type>
-   <import_component_type>Drv/ByteStreamDriverModel/ByteStreamDriverComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
