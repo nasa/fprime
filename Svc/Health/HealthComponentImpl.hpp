@@ -14,7 +14,7 @@
 #define Health_HPP
 
 #include <Svc/Health/HealthComponentAc.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 
 namespace Svc {
 
@@ -45,7 +45,7 @@ namespace Svc {
             struct PingEntry {
                 NATIVE_UINT_TYPE warnCycles; //!< number of cycles before WARNING
                 NATIVE_UINT_TYPE fatalCycles; //!< number of cycles before FATAL
-                Fw::EightyCharString entryName; //!< the name of the entry
+                Fw::String entryName; //!< the name of the entry
             };
 
             //!  \brief HealthImpl constructor

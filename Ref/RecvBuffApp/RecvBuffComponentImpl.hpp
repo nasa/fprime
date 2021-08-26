@@ -11,7 +11,7 @@ namespace Ref {
             // Only called by derived class
             RecvBuffImpl(const char* compName);
 
-            void init();
+            void init(NATIVE_INT_TYPE instanceId = 0);
             ~RecvBuffImpl();
 
         private:

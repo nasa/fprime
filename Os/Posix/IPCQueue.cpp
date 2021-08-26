@@ -19,6 +19,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <pthread.h>
+#include <new>
 
 #define IPC_QUEUE_TIMEOUT_SEC (1)
 
@@ -84,7 +85,7 @@ namespace Os {
         }
 
         // Set up queue handle:
-        QueueHandle* queueHandle = new QueueHandle(handle);
+        QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
         if (NULL == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }

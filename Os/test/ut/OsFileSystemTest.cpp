@@ -2,7 +2,7 @@
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -152,7 +152,7 @@ void testTestFileSystem() {
 	printf("Reading the files in (%s)\n", cur_dir);
 	const int num_str = 5;
         U32 num_2 = num_str;
-	Fw::EightyCharString str_array[num_str];
+	Fw::String str_array[num_str];
 	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array, num_2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to read files in (%s)\n", cur_dir);
 		printf("\tReturn status: %d\n", file_sys_status);

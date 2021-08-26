@@ -123,6 +123,11 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status);
 
+    /**
+     * \brief called when the IPv4 system has been connected
+    */
+    void connected();
+
   PRIVATE:
 
     // ----------------------------------------------------------------------

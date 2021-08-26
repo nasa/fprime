@@ -43,7 +43,7 @@ namespace Fw {
     class SerializeBufferBase {
         public:
 
-            const SerializeBufferBase& operator=(const SerializeBufferBase &src); //!< equal operator
+            SerializeBufferBase& operator=(const SerializeBufferBase &src); //!< equal operator
 
             virtual ~SerializeBufferBase(); //!< destructor
 

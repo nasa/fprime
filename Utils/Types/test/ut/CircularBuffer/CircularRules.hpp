@@ -20,7 +20,7 @@
 #define FPRIME_GROUNDINTERFACERULES_HPP
 
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Utils/Types/test/ut/CircularBuffer/CircularState.hpp>
 #include <STest/STest/Rule/Rule.hpp>
 #include <STest/STest/Pick/Pick.hpp>
@@ -35,7 +35,7 @@ namespace Types {
      */
     struct RandomizeRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        RandomizeRule(const Fw::EightyCharString& name);
+        RandomizeRule(const Fw::String& name);
 
         // Always valid
         bool precondition(const MockTypes::CircularState& state);
@@ -51,7 +51,7 @@ namespace Types {
      */
     struct SerializeOkRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        SerializeOkRule(const Fw::EightyCharString& name);
+        SerializeOkRule(const Fw::String& name);
 
         // Valid precondition for when the buffer should accept data
         bool precondition(const MockTypes::CircularState& state);
@@ -67,7 +67,7 @@ namespace Types {
      */
     struct SerializeOverflowRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        SerializeOverflowRule(const Fw::EightyCharString& name);
+        SerializeOverflowRule(const Fw::String& name);
 
         // Valid precondition for when the buffer should reject data
         bool precondition(const MockTypes::CircularState& state);
@@ -83,7 +83,7 @@ namespace Types {
      */
     struct PeekOkRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        PeekOkRule(const Fw::EightyCharString& name);
+        PeekOkRule(const Fw::String& name);
 
         // Peek ok available for when buffer size - remaining size  - 1 <= peek size
         bool precondition(const MockTypes::CircularState& state);
@@ -99,7 +99,7 @@ namespace Types {
      */
     struct PeekBadRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        PeekBadRule(const Fw::EightyCharString& name);
+        PeekBadRule(const Fw::String& name);
 
         // Peek bad available for when buffer size - remaining size  - 1 > peek size
         bool precondition(const MockTypes::CircularState& state);
@@ -115,7 +115,7 @@ namespace Types {
      */
     struct RotateOkRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        RotateOkRule(const Fw::EightyCharString& name);
+        RotateOkRule(const Fw::String& name);
 
         // Rotate is ok when there is more data then rotational size
         bool precondition(const MockTypes::CircularState& state);
@@ -131,7 +131,7 @@ namespace Types {
      */
     struct RotateBadRule : public STest::Rule<MockTypes::CircularState> {
         // Constructor
-        RotateBadRule(const Fw::EightyCharString& name);
+        RotateBadRule(const Fw::String& name);
 
         // Rotate is bad when there is less data then rotational size
         bool precondition(const MockTypes::CircularState& state);

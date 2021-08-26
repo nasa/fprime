@@ -45,7 +45,7 @@ namespace Utils {
 
             //! Assign a hash buffer from another hash buffer
             //!
-            const HashBuffer& operator=(const HashBuffer& other);
+            HashBuffer& operator=(const HashBuffer& other);
 
             //! Compare two hash buffers for equality
             //!
@@ -71,7 +71,7 @@ namespace Utils {
 
             //! The buffer which stores the hash digest
             //!
-            U8 m_data[HASH_DIGEST_LENGTH]; // packet data buffer
+            U8 m_bufferData[HASH_DIGEST_LENGTH]; // packet data buffer
     };
 }
 

@@ -10,7 +10,7 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Types/Assert.hpp>
 
 #include <bitset>
@@ -22,17 +22,9 @@
 
 using namespace std;
 
-// Registry
-static Fw::SimpleObjRegistry* simpleReg_ptr = 0;
-
 // Component instance pointers
 Example::ExampleArrayImpl* inst1 = 0;
 Example::ExampleArrayImpl* inst2 = 0;
-
-extern "C" {
-    void dumparch();
-    void dumpobj(const char* objName);
-}
 
 #ifdef TGT_OS_TYPE_LINUX
 extern "C" {
@@ -40,25 +32,11 @@ extern "C" {
 };
 #endif
 
-void dumparch() {
-    simpleReg_ptr->dump();
-}
-
-void dumpobj(const char* objName) {
-    simpleReg_ptr->dump(objName);
-}
-
-void constructArchitecture() {
-    Fw::PortBase::setTrace(true);
-
-    simpleReg_ptr = new Fw::SimpleObjRegistry();
-
-    dumparch();
-}
-
 int main(int argc, char* argv[]) {
     // Construct the topology here.
-    constructArchitecture();
+    Fw::PortBase::setTrace(true);
+    Fw::SimpleObjRegistry simpleReg_ptr;
+    simpleReg_ptr.dump();
 
     setbuf(stdout, NULL);
 
@@ -67,18 +45,18 @@ int main(int argc, char* argv[]) {
     InternalType array1 = InternalType(6,7,120,444);
     Example::ArrayType array2 = Example::ArrayType(array1);
     // Create string array for serializable
-    Fw::EightyCharString mem1 = "Member 1";
-    Fw::EightyCharString mem2 = "Member 2";
-    Fw::EightyCharString mem3 = "Member 3";
+    Fw::String mem1 = "Member 1";
+    Fw::String mem2 = "Member 2";
+    Fw::String mem3 = "Member 3";
     StringArray array3 = StringArray(mem1, mem2, mem3);
     Example::ArrSerial serial1;
 
     // Print toString outputs for each array
     cout << "Print toString for arrays" << endl;
 
-    Fw::EightyCharString tostring1;
-    Fw::EightyCharString tostring2;
-    Fw::EightyCharString tostring3;
+    Fw::String tostring1;
+    Fw::String tostring2;
+    Fw::String tostring3;
     array1.toString(tostring1);
     array2.toString(tostring2);
     array3.toString(tostring3);
@@ -156,7 +134,6 @@ int main(int argc, char* argv[]) {
     delete inst1;
     delete inst2;
     cout << "Delete registration objects..." << endl;
-    delete simpleReg_ptr;
     cout << "Completed..." << endl;
 
     return 0;

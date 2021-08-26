@@ -1,14 +1,14 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BadDescriptorFile.cpp
 // \author Rob Bocchino
 // \brief  BadDescriptorFile implementation
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
@@ -25,7 +25,7 @@ namespace Svc {
         File(format),
         n(n)
     {
-      Fw::EightyCharString baseName;
+      Fw::String baseName;
       baseName.format("bad_descriptor_%u", n);
       this->setName(baseName.toChar());
     }
@@ -36,7 +36,7 @@ namespace Svc {
       // Header
       const TimeBase timeBase = TB_WORKSTATION_TIME;
       const U32 timeContext = 0;
-      const U32 recordDataSize = 
+      const U32 recordDataSize =
         this->n * SequenceFiles::FPrime::Records::STANDARD_SIZE;
       const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;
       FPrime::Headers::serialize(

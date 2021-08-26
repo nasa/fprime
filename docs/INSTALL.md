@@ -3,6 +3,7 @@ layout: default
 title: "F´ Installation Guide"
 ---
 
+## Overview
 This installation guide is specifically designed to enable individuals and researchers to get up and
 running with F´ quickly. This guide is not intended for large teams with specific content
 management (CM) requirements.
@@ -14,15 +15,15 @@ management (CM) requirements.
 F´ depends on several items before the user should attempt to install it. These requirements are
 listed below and should be on any system the user wishes to use. Should these items not be
 available on the user's Operating System, then a Virtual Machine should be used. One option is
-VirtualBox [https://www.virtualbox.org/](https://www.virtualbox.org/).
+[VirtualBox](https://www.virtualbox.org/).
 
 Requirements:
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. CMake 3.5 or newer [https://cmake.org/download/](https://cmake.org/download/). CLI tool must be available on the system path.
+2. [CMake 3.5](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
 3. Bash or Bash compatible shell
 4. CLang or GCC compiler
-5. Python 3.6+ and PIP [https://www.python.org/downloads/](https://www.python.org/downloads/)
+5. [Python 3.6+](https://www.python.org/downloads/) and PIP
 6. Python Virtual Environment \* (pip install venv or pip install virtualenv)
 
 You can install them using this one-liner command :
@@ -135,7 +136,7 @@ If the user chooses to install CMake directly from the CMake site (not using hom
 sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
 ```
 
-More information can be found here: https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac
+More information can be found [here](https://stackoverflow.com/questions/30668601/installing-cmake-command-line-tools-on-a-mac)
 
 ### System Python, Packages, and Python3
 

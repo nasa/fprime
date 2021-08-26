@@ -20,8 +20,8 @@ import logging
 import sys
 
 from fprime_ac.models import Component, Port, Topology
-from fprime_ac.parsers import XmlComponentParser, XmlTopologyParser
-from fprime_ac.utils import ConfigManager, Logger
+from fprime_ac.parsers import XmlComponentParser
+from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
     BuildRootCollisionException,
     BuildRootMissingException,
@@ -702,50 +702,3 @@ class TopoFactory:
             component_calculated_window_range,
             self.__compute_component_ID_amount(comp),
         ]
-
-
-def main():
-    # Configures output only to stdout.
-    Logger.connectOutputLogger(None)
-
-    xmlfile = "../../test/app1a/DuckAppAi.xml"
-
-    print("Topology XML parse test (%s)" % xmlfile)
-    #
-    # Basic usage of this factory to create the component meta-model
-    #
-    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xmlfile)
-    top = TopoFactory().create(the_parsed_topology_xml)
-    #
-    # End of usage and comp is the instance of model to be used.
-    #
-    print("Topology: %s" % top)
-    print("Namespace: %s" % top.get_namespace())
-    print("Comment: %s" % top.get_comment())
-    print()
-    for component in top.get_comp_list():
-        print("Component")
-        print("    Namespace: " + component.get_namespace())
-        print("    Name: " + component.get_name())
-        print("    Type: " + component.get_kind())
-        if component.get_comment() is not None:
-            print("    Comment: " + component.get_comment())
-        print("    Output Ports:")
-        for port in component.get_ports():
-            print("        Name: " + port.get_name())
-            print("        Port Type: " + port.get_type())
-            print("        Direction: " + port.get_direction())
-            if port.get_sync() is not None:
-                print("        Sync: " + port.get_sync())
-            if port.get_comment() is not None:
-                print("        Comment: " + port.get_comment())
-            print("        Target Component: " + port.get_target_comp())
-            print("        Target Port: " + port.get_target_port())
-            print("        Target Type: " + port.get_target_type())
-            print("        Target Direction:" + port.get_target_direction())
-            print()
-        print()
-
-
-if __name__ == "__main__":
-    main()

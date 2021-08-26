@@ -48,13 +48,13 @@ namespace Os {
     return status;
   }
 
-  const Fw::EightyCharString& ValidatedFile ::
+  const Fw::StringBase& ValidatedFile ::
     getFileName() const
   {
     return this->fileName;
   }
 
-  const Fw::EightyCharString& ValidatedFile ::
+  const Fw::StringBase& ValidatedFile ::
     getHashFileName() const
   {
     return this->hashFileName;

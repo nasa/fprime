@@ -3,11 +3,9 @@
 // \author Bocchino/Canham
 // \brief  CmdSequencerComponentImpl::FPrimeSequence implementation
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
@@ -358,19 +356,18 @@ namespace Svc {
   {
     Fw::SerializeBufferBase& buffer = this->m_buffer;
     U8 descEntry;
+
     Fw::SerializeStatus status = buffer.deserialize(descEntry);
-    if (status == Fw::FW_SERIALIZE_OK) {
-      switch (descEntry) {
-        case Sequence::Record::ABSOLUTE...Sequence::Record::END_OF_SEQUENCE:
-          break;
-        default:
-          status = Fw::FW_DESERIALIZE_FORMAT_ERROR;
-      }
+    if (status != Fw::FW_SERIALIZE_OK) {
+      return status;
     }
-    if (status == Fw::FW_SERIALIZE_OK) {
-      descriptor = static_cast<Record::Descriptor>(descEntry);
+
+    if (descEntry > Sequence::Record::END_OF_SEQUENCE) {
+      return Fw::FW_DESERIALIZE_FORMAT_ERROR;
     }
-    return status;
+
+    descriptor = static_cast<Record::Descriptor>(descEntry);
+    return Fw::FW_SERIALIZE_OK;
   }
 
   Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::

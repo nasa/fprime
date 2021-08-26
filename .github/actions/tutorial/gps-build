@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Exit when any command fails
+set -e
+set -x
+
+# Change to GitHub workspace
+cd "$GITHUB_WORKSPACE"
+
+# Move to GpsApp directory
+cd gps-tutorial/GpsApp
+
+# Build GpsApp
+fprime-util generate
+fprime-util build

@@ -92,7 +92,7 @@ namespace Svc {
         ASSERT_EVENTS_AF_ASSERT_6(0,file,lineNo,1,2,3,4,5,6);
 
         // Test unexpected assert
-        this->component.reportAssert((U8*)"foo",1000,10,1,2,3,4,5,6);
+        this->component.reportAssert("foo",1000,10,1,2,3,4,5,6);
         ASSERT_EVENTS_AF_UNEXPECTED_ASSERT_SIZE(1);
         ASSERT_EVENTS_AF_UNEXPECTED_ASSERT(0,"foo",1000,10);
 

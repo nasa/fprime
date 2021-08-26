@@ -1,26 +1,22 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Log/LogString.hpp>
-#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 namespace Fw {
 
     LogStringArg::LogStringArg(const char* src)
             :  StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const StringBase& src)
             : StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg(const LogStringArg& src)
             : StringBase(), m_maxSer(FW_LOG_STRING_MAX_SIZE) {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     LogStringArg::LogStringArg()
@@ -106,8 +102,8 @@ namespace Fw {
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
     }
 
-    const LogStringArg& LogStringArg::operator=(const LogStringArg& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+    LogStringArg& LogStringArg::operator=(const LogStringArg& other) {
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 

@@ -177,7 +177,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     #
     # Configure a parser to pickoff a typedef enumeration. This only works
     # for named typedefs of enumerations. We are looking for 'typedef enum'
-    # followd by the typename.
+    # followed by the typename.
 
     _ = Forward()
 

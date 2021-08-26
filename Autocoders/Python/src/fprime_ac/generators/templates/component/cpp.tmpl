@@ -15,7 +15,7 @@
 \#include <${comp_include_path}/${include_name}ComponentAc.hpp>
 \#include <Fw/Types/Assert.hpp>
 \#if FW_ENABLE_TEXT_LOGGING
-\#include <Fw/Types/EightyCharString.hpp>
+\#include <Fw/Types/String.hpp>
 \#endif
 
 #set $class_name = $name + "ComponentBase"
@@ -1310,7 +1310,7 @@ namespace ${namespace} {
 
     #for $arg_name, $arg_type, $comment, $size, $typeinfo in $args:
       #if not ($is_primitive_type($arg_type) or ($typeinfo == "enum") or ($typeinfo == "string")) :
-      Fw::EightyCharString ${arg_name}Str;
+      Fw::String ${arg_name}Str;
       ${arg_name}.toString(${arg_name}Str);
       #end if
     #end for

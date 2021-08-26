@@ -4,10 +4,9 @@
 // \brief  File interface
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #ifndef Svc_SequenceFiles_File_HPP
@@ -47,7 +46,7 @@ namespace Svc {
           struct Open {
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -58,7 +57,7 @@ namespace Svc {
             U32 waitCount;
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -69,7 +68,7 @@ namespace Svc {
             U32 waitCount;
 
             //! The name of the file for error reporting
-            Fw::EightyCharString fileName;
+            Fw::String fileName;
 
           };
 
@@ -122,7 +121,7 @@ namespace Svc {
         void remove();
 
         //! Get the file name
-        const Fw::EightyCharString& getName() const;
+        const Fw::StringBase& getName() const;
 
         //! Get error info for the file
         void getErrorInfo(
@@ -152,7 +151,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! The file name
-        Fw::EightyCharString name;
+        Fw::String name;
 
       public:
 

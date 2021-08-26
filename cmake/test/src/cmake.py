@@ -19,7 +19,7 @@ import platform
 # Constants to supplied to the calls to subprocess
 CMAKE = "cmake"
 MAKE_CALL = "make"
-MAKE_ARGS = ["-j128"]
+MAKE_ARGS = ["-j2"]
 
 
 def register_test(
