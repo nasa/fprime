@@ -339,7 +339,7 @@ namespace Svc {
       }
       this->tlmWrite_SendLevel(level);
       this->log_ACTIVITY_HI_LevelSet(level);
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   void TlmPacketizer ::
@@ -367,11 +367,11 @@ namespace Svc {
       // couldn't find it
       if (pkt == this->m_numPackets) {
           log_WARNING_LO_PacketNotFound(id);
-          this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_VALIDATION_ERROR);
+          this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
           return;
       }
 
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
 

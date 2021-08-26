@@ -711,7 +711,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_PacketSent(0,4);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::CmdResponse::OK);
       // dispatch run call to send packet
       this->invoke_to_Run(0,0);
       this->component.doDispatch();
@@ -733,7 +733,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_PacketSent(0,8);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::CmdResponse::OK);
       // dispatch run call to send packet
       this->invoke_to_Run(0,0);
       this->component.doDispatch();
@@ -748,7 +748,7 @@ namespace Svc {
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_PacketNotFound(0,20);
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::COMMAND_VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,TlmPacketizerComponentBase::OPCODE_SEND_PKT,12,Fw::CmdResponse::VALIDATION_ERROR);
 
   }
 
@@ -1052,7 +1052,7 @@ return;
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

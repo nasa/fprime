@@ -19,10 +19,6 @@ import logging
 
 from optparse import OptionParser
 
-from fprime_ac.models import ModelParser
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
-
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
 from fprime_ac.parsers import XmlSerializeParser
@@ -30,7 +26,6 @@ from fprime_ac.parsers import XmlEnumParser
 from fprime_ac.parsers import XmlArrayParser
 
 # Parsers to read the XML
-from fprime_ac.parsers import XmlParser
 from fprime_ac.parsers import XmlTopologyParser
 
 from lxml import etree
@@ -567,8 +562,6 @@ def pinit():
     """
     Initialize the option parser and return it.
     """
-
-    current_dir = os.getcwd()
 
     usage = "usage: %prog [options] [xml_topology_filename]"
 
