@@ -44,13 +44,4 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 
 # ac.ini needs to be copied into Autocode directory
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING" AND NOT __FPRIME_NO_UT_GEN__)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ac.ini
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_BINARY_DIR}/ac.ini
-     DEPENDS ${CMAKE_CURRENT_LIST_DIR}/ac.ini
-  )
-  add_custom_target("${MODULE_NAME}_ut_exe_acii" DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ac.ini)
-  add_dependencies(${MODULE_NAME}_ut_exe "${MODULE_NAME}_ut_exe_acii")
-endif()
-
-
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_BINARY_DIR}/ac.ini)

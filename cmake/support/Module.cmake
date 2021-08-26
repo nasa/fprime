@@ -102,6 +102,15 @@ function(update_module MODULE_NAME SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
     endforeach()
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE_NAME}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    # Remove empty.c now that sources should be calculated
+    get_target_property(FINAL_SOURCE_FILES ${MODULE_NAME} SOURCES)
+    list(REMOVE_ITEM FINAL_SOURCE_FILES ${EMPTY_C_SRC})
+    set_target_properties(${MODULE_NAME} PROPERTIES SOURCES "${FINAL_SOURCE_FILES}")
+    # Setup the hash file for our sources
+    foreach(SRC_FILE ${FINAL_SOURCE_FILES})
+        set_hash_flag("${SRC_FILE}")
+    endforeach()
 endfunction()
 
 
@@ -124,19 +133,6 @@ function(generate_module OBJ_NAME SOURCES DEPENDENCIES)
   ac_process_sources("${SOURCES}")
   resolve_dependencies("${DEPENDENCIES}" "${AC_DEPENDENCIES}" RESOLVED)
   update_module("${OBJ_NAME}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
-
-  # Remove empty source from target
-  get_target_property(FINAL_SOURCE_FILES ${OBJ_NAME} SOURCES)
-  list(REMOVE_ITEM FINAL_SOURCE_FILES ${EMPTY_C_SRC})
-  set_target_properties(
-     ${OBJ_NAME}
-     PROPERTIES
-     SOURCES "${FINAL_SOURCE_FILES}"
-  )
-  foreach(SRC_FILE ${FINAL_SOURCE_FILES})
-      set_hash_flag("${SRC_FILE}")
-  endforeach()
-
 
   # Register extra targets at the very end, once all of the core functions are properly setup.
   setup_all_module_targets(FPRIME_TARGET_LIST "${OBJ_NAME}" "${AC_SOURCES}" "${SOURCE_FILES}" "${AC_GENERATED}" "${RESOLVED_DEPS}")
