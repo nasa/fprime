@@ -46,7 +46,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -102,7 +102,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_FORMAT_ERROR
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -191,7 +191,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -257,7 +257,7 @@ namespace Svc {
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -284,7 +284,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -359,7 +359,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -407,7 +407,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -458,7 +458,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -509,7 +509,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);

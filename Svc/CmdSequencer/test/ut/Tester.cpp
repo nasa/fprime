@@ -642,7 +642,7 @@ namespace Svc {
     runSequence(const U32 cmdSeq, const char* const fileName)
   {
     // Send run command
-    this->sendCmd_CS_RUN(0, cmdSeq, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+    this->sendCmd_CS_RUN(0, cmdSeq, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -692,7 +692,7 @@ namespace Svc {
     startNewSequence(const char *const fileName)
   {
     // Start the sequence
-    this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
