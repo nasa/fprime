@@ -315,6 +315,7 @@ function(register_fprime_executable)
     # Only install into artifacts directory in release builds when SKIP_INSTALL is not set.
     if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE")
         add_dependencies("${EX_NAME}" "package_gen")
+        add_dependencies("${EX_NAME}" "dict")
     endif()
 endfunction(register_fprime_executable)
 
