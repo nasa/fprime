@@ -11,7 +11,7 @@
 . ${SCRIPT_DIR}/fputil.bash
 
 #### NEEDED ENVIRONMENT ####
- FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
+ FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..  pwd)"
  LOG_DIR="${FPRIME_DIR}/ci-Framework-logs-$(date +"%Y-%m-%dT%H%M%S")"
 mkdir -p "${LOG_DIR}"
 
