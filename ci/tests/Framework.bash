@@ -23,10 +23,10 @@ echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
 
  CMAKE_EXTRA_SETTINGS=""
 echo -e "${BLUE}Testing ${FPUTIL_DEPLOYS} against fprime-util targets: ${FPUTIL_TARGETS[@]}${NOCOLOR}"
-export CHECK_TARGET_PLATFORM="native"
+ CHECK_TARGET_PLATFORM="native"
  target  "${FPUTIL_TARGETS[@]}"
 
-     [[ "${target}" == "generate" ]]
+     [[ "${target}"   "generate" ]]
     
         rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
    
