@@ -28,7 +28,7 @@ echo -e "${BLUE}Testing ${FPUTIL_DEPLOYS} against fprime-util targets: ${FPUTIL_
 
      [[ "${target}" ]]
     
-        rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-code
+        rm -rf "${FPUTIL_DEPLOYS}
    
     fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 
