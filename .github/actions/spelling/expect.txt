@@ -932,6 +932,8 @@ memcheck
 memcmp
 memcpy
 memname
+memoization
+memoize
 memoizing
 memset
 MEMTEST
@@ -1324,6 +1326,7 @@ saveop
 saxutils
 sbb
 SBF
+sbt
 sbin
 sched
 schem
@@ -1568,6 +1571,7 @@ textui
 tfile
 tflat
 tfn
+tgz
 thepihut
 Thhmmss
 thiscol
@@ -1741,6 +1745,7 @@ weakref
 website
 Werror
 Wextra
+wget
 whitebox
 whitelist
 wiki
