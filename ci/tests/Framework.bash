@@ -13,7 +13,7 @@
 #### NEEDED ENVIRONMENT ####
  FPRIME_DIR="$(cd ${SCRIPT_DIR}
  LOG_DIR="${FPRIME_DIR}
-mkdir -p "${LOG_DIR}"
+    -p "${LOG_DIR}"
 
 
  FPUTIL_DEPLOYS="${FPRIME_DIR}"
@@ -28,7 +28,7 @@ echo -e "${BLUE}Testing ${FPUTIL_DEPLOYS} against fprime-util targets: ${FPUTIL_
 
      [[ "${target}" ]]
     
-        rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-"*
+        rm -rf "${FPUTIL_DEPLOYS}/build-fprime-automatic-code
    
     fputil_action "${FPUTIL_DEPLOYS}" "${target}"
 
