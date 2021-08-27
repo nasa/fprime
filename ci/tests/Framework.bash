@@ -11,14 +11,14 @@
 . ${SCRIPT_DIR}/fputil.bash
 
 #### NEEDED ENVIRONMENT ####
- FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..  pwd)"
- LOG_DIR="${FPRIME_DIR}/ci-Framework-logs-$(date +"%Y-%m-%dT%H%M%S")"
+ FPRIME_DIR="$(cd ${SCRIPT_DIR}
+ LOG_DIR="${FPRIME_DIR}
 mkdir -p "${LOG_DIR}"
 
-# Directory to be used for Framework CI test
+
  FPUTIL_DEPLOYS="${FPRIME_DIR}"
 
-echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} Ref${NOCOLOR}"
+echo -e "
 
 
  CMAKE_EXTRA_SETTINGS=""
