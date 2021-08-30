@@ -74,7 +74,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
 if (NOT FPRIME_ENABLE_FRAMEWORK_UTS)
     message(WARNING "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF will be deprecated in a future release")
-endif() 
+endif()
 
 ####
 # `FPRIME_ENABLE_AUTOCODER_UTS:`
@@ -91,7 +91,7 @@ endif()
 option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
 if (NOT FPRIME_ENABLE_AUTOCODER_UTS)
     message(WARNING "-DFPRIME_ENABLE_AUTOCODER_UTS=OFF will be deprecated in a future release")
-endif() 
+endif()
 
 ####
 # `SKIP_TOOLS_CHECK:`
@@ -127,13 +127,18 @@ endif()
 #
 # e.g. `-DCMAKE_BUILD_TYPE=TESTING`
 ####
-SET(CMAKE_CXX_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++03" CACHE STRING "C++ flags." FORCE)
+SET(CMAKE_C_FLAGS_RELEASE "-std=c99" CACHE STRING "C flags." FORCE)
+# Raise C++ standard to C++11 while unit testing to support googletest
+SET(CMAKE_CXX_FLAGS_TESTING "-std=c++11 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C++ flags." FORCE)
-SET(CMAKE_C_FLAGS_TESTING "-g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
+SET(CMAKE_C_FLAGS_TESTING "-std=c99 -g -DBUILD_UT -DPROTECTED=public -DPRIVATE=public -DSTATIC= -fprofile-arcs -ftest-coverage"
     CACHE STRING "Testing C flags." FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 SET(CMAKE_SHARED_LINKER_FLAGS_TESTING "" CACHE STRING "Testing linker flags." FORCE)
 MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_RELEASE
+    CMAKE_C_FLAGS_RELEASE
     CMAKE_CXX_FLAGS_TESTING
     CMAKE_C_FLAGS_TESTING
     CMAKE_EXE_LINKER_FLAGS_TESTING

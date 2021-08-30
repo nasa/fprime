@@ -35,22 +35,12 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void TextLogString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     SerializeStatus TextLogString::serialize(SerializeBufferBase& buffer) const {
         NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
         // serialize string
         return buffer.serialize((U8*)this->m_buf,strSize);
     }
-    
+
     SerializeStatus TextLogString::deserialize(SerializeBufferBase& buffer) {
         NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
         // deserialize string
@@ -64,7 +54,7 @@ namespace Fw {
     NATIVE_UINT_TYPE TextLogString::getCapacity(void) const {
         return FW_LOG_TEXT_BUFFER_SIZE;
     }
-    
+
     void TextLogString::terminate(NATIVE_UINT_TYPE size) {
         // null terminate the string
         this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;

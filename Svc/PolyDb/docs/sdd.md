@@ -71,13 +71,7 @@ Unit Test Checklist | [Link](Checklist_Unit_Test.xlsx)
 
 ## 5. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Summary](../test/ut/output/SvcPolyDb_gcov.txt)
-
-[PolyDbImpl.cpp Coverage](../test/ut/output/PolyDbImpl.cpp.gcov)
-
-[PolyDbComponentAc.cpp Coverage](../test/ut/output/PolyDbComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 6. Change Log
 

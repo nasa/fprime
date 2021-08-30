@@ -11,6 +11,7 @@
 // ====================================================================== 
 
 #include "Tester.hpp"
+#include "Fw/Types/StringUtils.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -45,7 +46,8 @@ namespace Svc {
     void Tester::testAsserts(void) {
 
         U32 lineNo;
-        const char * file = __FILE__;
+        char file[80 + 1]; // Limit to 80  characters in the port call
+        (void) Fw::StringUtils::string_copy(file, __FILE__, sizeof(file));
 
         // FW_ASSERT_0
 

@@ -45,7 +45,6 @@ class ${name} : public Fw::Serializable {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
 
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy a buffer, overwriting current contents
             NATIVE_UINT_TYPE getCapacity(void) const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

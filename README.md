@@ -57,7 +57,9 @@ F´ provides several tutorials in order to help understand and develop within th
 
 As F´ becomes a community centered product line, there are more items available from the community at large.
 
-You can join the mailing list at [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/g/fprime-community).
+To ask questions, discuss improvements, ask for help, please use the project's GitHub Discussions at: [https://github.com/nasa/fprime/discussions](https://github.com/nasa/fprime/discussions).
+
+A former source of information, now depreciated, is available on the F´ Community Group [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/g/fprime-community).
 
 The F´ community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 

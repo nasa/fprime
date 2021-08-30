@@ -9,7 +9,7 @@ namespace Os {
 
     class TaskString : public Fw::StringBase {
         public:
-        
+
             TaskString(const char* src); //!< char buffer constructor
             TaskString(const StringBase& src); //!< Copy constructor
             TaskString(const TaskString& src); //!< Copy constructor
@@ -22,9 +22,8 @@ namespace Os {
             Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer);
 
             const TaskString& operator=(const TaskString& other); //!< equal operator
-            
+
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy a char buffer into string
             NATIVE_UINT_TYPE getCapacity(void) const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

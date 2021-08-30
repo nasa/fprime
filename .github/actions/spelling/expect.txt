@@ -1238,6 +1238,8 @@ preparse
 Prepends
 prepeneding
 pri
+PRId
+PRIu
 printables
 printf
 println
@@ -1557,6 +1559,7 @@ startword
 staticmethod
 statvfs
 stdarg
+STDC
 stddef
 stderr
 stdin

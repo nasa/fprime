@@ -10,12 +10,12 @@ namespace Fw {
 
     class TlmString : public Fw::StringBase {
         public:
-        
+
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_TLM_STR,
                 SERIALIZED_SIZE = FW_TLM_STRING_MAX_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of size word
             };
-        
+
             TlmString(const char* src);
             TlmString(const StringBase& src);
             TlmString(const TlmString& src);
@@ -24,17 +24,16 @@ namespace Fw {
             const char* toChar(void) const;
             NATIVE_UINT_TYPE length(void) const;
             void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
-            
+
             const TlmString& operator=(const TlmString& other); //!< equal operator for other strings
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const;
             SerializeStatus deserialize(SerializeBufferBase& buffer);
-            
+
 #if FW_SERIALIZABLE_TO_STRING
             void toString(StringBase& text) const;
 #endif
         PRIVATE:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size);
             NATIVE_UINT_TYPE getCapacity(void) const ;
             void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 

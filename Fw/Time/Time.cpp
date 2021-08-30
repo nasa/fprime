@@ -186,9 +186,9 @@ namespace Fw {
 
     Time Time ::
       add(
-        Time& a,
-        Time& b
-      ) 
+        const Time& a,
+        const Time& b
+      )
     {
 #if FW_USE_TIME_BASE
       FW_ASSERT(a.getTimeBase() == b.getTimeBase(), a.getTimeBase(), b.getTimeBase() );
@@ -209,8 +209,8 @@ namespace Fw {
 
     Time Time ::
       sub(
-        Time& minuend, //!< Time minuend
-        Time& subtrahend //!< Time subtrahend
+        const Time& minuend, //!< Time minuend
+        const Time& subtrahend //!< Time subtrahend
     )
     {
 #if FW_USE_TIME_BASE

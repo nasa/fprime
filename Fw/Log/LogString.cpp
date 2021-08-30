@@ -39,16 +39,6 @@ namespace Fw {
         return this->m_buf;
     }
 
-    void LogStringArg::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
     SerializeStatus LogStringArg::serialize(SerializeBufferBase& buffer) const {
         // serialize string
         NATIVE_UINT_TYPE strSize = FW_MIN(this->m_maxSer,static_cast<NATIVE_UINT_TYPE>(strnlen(this->m_buf,sizeof(this->m_buf))));
@@ -74,7 +64,7 @@ namespace Fw {
         return buffer.serialize((U8*)this->m_buf,strSize);
 #endif
     }
-    
+
     SerializeStatus LogStringArg::deserialize(SerializeBufferBase& buffer) {
         SerializeStatus stat;
 #if FW_AMPCS_COMPATIBLE
