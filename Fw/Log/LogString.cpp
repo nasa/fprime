@@ -28,7 +28,7 @@ namespace Fw {
     }
 
     NATIVE_UINT_TYPE LogStringArg::length() const {
-        return (NATIVE_UINT_TYPE) strnlen(this->m_buf,sizeof(m_buf));
+        return static_cast<NATIVE_UINT_TYPE>(strnlen(this->m_buf,sizeof(m_buf)));
     }
 
     const char* LogStringArg::toChar() const {
@@ -55,9 +55,9 @@ namespace Fw {
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
-        return buffer.serialize((U8*)this->m_buf,strSize,true);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->m_buf),strSize,true);
 #else
-        return buffer.serialize((U8*)this->m_buf,strSize);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->m_buf),strSize);
 #endif
     }
 
@@ -75,13 +75,13 @@ namespace Fw {
         }
 
         NATIVE_UINT_TYPE deserSize_native = static_cast<NATIVE_UINT_TYPE>(deserSize);
-        buffer.deserialize((U8*)this->m_buf,deserSize_native,true);
+        buffer.deserialize(reinterpret_cast<U8*>(this->m_buf),deserSize_native,true);
         this->m_buf[deserSize_native] = 0;
         return stat;
 #else
         NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
         // deserialize string
-        stat = buffer.deserialize((U8*)this->m_buf,maxSize);
+        stat = buffer.deserialize(reinterpret_cast<U8*>(this->m_buf),maxSize);
         // make sure it is null-terminated
         this->terminate(maxSize);
 

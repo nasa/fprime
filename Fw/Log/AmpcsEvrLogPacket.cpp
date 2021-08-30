@@ -55,7 +55,7 @@ namespace Fw {
         SerializeStatus stat;
 
         len = AMPCS_EVR_TASK_NAME_LEN;
-        stat = buffer.deserialize((U8*)this->m_taskName, len, true);
+        stat = buffer.deserialize(this->m_taskName, len, true);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
