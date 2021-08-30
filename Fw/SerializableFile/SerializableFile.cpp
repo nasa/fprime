@@ -20,7 +20,7 @@ namespace Fw {
     allocator(allocator),
     recoverable(false), // for compiler; not used
     actualSize(maxSerializedSize),
-    buffer( (U8 *) this->allocator->allocate(0, actualSize, recoverable), actualSize)
+    buffer(static_cast<U8*>(this->allocator->allocate(0, actualSize, recoverable)), actualSize)
   {
     // assert if allocator returns smaller size
     FW_ASSERT(maxSerializedSize == actualSize,maxSerializedSize,actualSize);
