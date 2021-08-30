@@ -231,7 +231,23 @@ namespace Drv {
 
       // Set baud rate:
       stat = cfsetispeed(&newtio, relayRate);
+      if (stat) {
+          DEBUG_PRINT("cfsetispeed failed\n");
+          close(fd);
+          Fw::LogStringArg _arg = device;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
+      }
       stat = cfsetospeed(&newtio, relayRate);
+      if (stat) {
+          DEBUG_PRINT("cfsetospeed failed\n");
+          close(fd);
+          Fw::LogStringArg _arg = device;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
+      }
 
       // Raw output:
       newtio.c_oflag = 0;
