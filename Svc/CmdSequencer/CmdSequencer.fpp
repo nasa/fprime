@@ -19,7 +19,6 @@ module Svc {
         NO_BLOCK = 1
     }
 
-
     @ The stage of the file read operation
     enum FileReadStage {
       READ_HEADER
