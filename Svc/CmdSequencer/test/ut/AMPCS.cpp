@@ -4,10 +4,9 @@
 // \brief  AMPCS-specific tests
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #include "Os/FileSystem.hpp"
@@ -40,7 +39,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -71,7 +70,7 @@ namespace Svc {
       file.write();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);

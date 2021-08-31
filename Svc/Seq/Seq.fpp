@@ -5,4 +5,8 @@ module Svc {
                  ref filename: Fw.String @< The sequence file
                )
 
+  @ Port to cancel a sequence
+  port CmdSeqCancel
+
 }
+

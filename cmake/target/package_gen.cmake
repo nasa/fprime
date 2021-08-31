@@ -55,6 +55,7 @@ function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS 
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MODULE_NAME}> "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/lib/static/"
             DEPENDS ${PKG_DEPS}
         )
+        add_dependencies("${GLOBAL_TARGET_NAME}" "${TARGET_NAME}")
     elseif("${FPRIME_OBJECT_TYPE}" STREQUAL "Executable")
         add_custom_target(
             ${TARGET_NAME}

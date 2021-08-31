@@ -12,7 +12,11 @@ set(SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/UdpSocket.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/SocketReadTask.cpp"
 )
-set(MOD_DEPS Os)
+
+set(MOD_DEPS
+	Os
+	Fw/Buffer
+)
 
 register_fprime_module()
 
