@@ -13,7 +13,7 @@
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <errno.h>
+#include <cerrno>
 
 #define MAXIMUM_SIZE 0x7FFFFFFF
 

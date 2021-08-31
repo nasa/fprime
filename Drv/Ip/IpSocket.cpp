@@ -9,7 +9,7 @@
 // acknowledged.
 //
 // ======================================================================
-#include <string.h>
+#include <cstring>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
@@ -36,7 +36,7 @@
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <sys/socket.h>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 #include <arpa/inet.h>
 #else
 #error OS not supported for IP Socket Communications

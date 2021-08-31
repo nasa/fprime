@@ -8,8 +8,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <stdio.h> // Needed for rename
-#include <string.h>
+#include <cstdio> // Needed for rename
+#include <cstring>
 #include <limits>
 #include <sys/statvfs.h>
 

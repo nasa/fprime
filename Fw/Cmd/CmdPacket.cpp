@@ -7,7 +7,7 @@
 
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 

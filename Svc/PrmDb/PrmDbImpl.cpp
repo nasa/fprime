@@ -11,7 +11,7 @@
 #include <Os/File.hpp>
 
 #include <cstring>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 

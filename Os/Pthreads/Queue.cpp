@@ -16,9 +16,9 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>
 
-#include <errno.h>
+#include <cerrno>
 #include <pthread.h>
-#include <stdio.h>
+#include <cstdio>
 #include <new>
 
 namespace Os {

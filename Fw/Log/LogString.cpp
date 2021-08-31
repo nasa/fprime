@@ -1,6 +1,6 @@
 #include <Fw/Log/LogString.hpp>
 #include <Fw/Types/StringUtils.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Fw {
 

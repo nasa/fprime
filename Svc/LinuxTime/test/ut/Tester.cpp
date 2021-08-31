@@ -2,7 +2,7 @@
 // LinuxTime/test/ut/Tester.cpp
 // ----------------------------------------------------------------------
 
-#include <stdio.h>
+#include <cstdio>
 #include <strings.h>
 
 #include "Tester.hpp"

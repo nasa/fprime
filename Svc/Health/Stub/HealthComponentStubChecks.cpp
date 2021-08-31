@@ -12,7 +12,7 @@
 
 #include <Svc/Health/HealthComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <stdio.h>
+#include <cstdio>
 #include <Fw/Types/Assert.hpp>
 
 namespace Svc {

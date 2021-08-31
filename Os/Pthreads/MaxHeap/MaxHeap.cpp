@@ -20,7 +20,7 @@
 #include <Fw/Logger/Logger.hpp>
 
 #include <new>
-#include <stdio.h>
+#include <cstdio>
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)

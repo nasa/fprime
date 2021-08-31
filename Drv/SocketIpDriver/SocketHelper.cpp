@@ -33,14 +33,14 @@
     #include <sys/socket.h>
     #include <netdb.h>
     #include <unistd.h>
-    #include <errno.h>
+    #include <cerrno>
     #include <arpa/inet.h>
 #else
     #error OS not supported for IP Socket Communications
 #endif
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 
 namespace Drv {

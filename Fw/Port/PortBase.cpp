@@ -1,7 +1,7 @@
 #include <Fw/Port/PortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {

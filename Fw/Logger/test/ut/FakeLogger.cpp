@@ -10,7 +10,7 @@
 #include <Fw/Logger/test/ut/FakeLogger.hpp>
 
 extern "C" {
-    #include <string.h>
+    #include <cstring>
 }
 namespace MockLogging {
     Fw::Logger* FakeLogger::s_current = NULL;
