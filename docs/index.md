@@ -17,7 +17,7 @@ F´ has the following features:
 - Testing tools for unit and system-level testing
 
 ## F´ Information and External Resources
-### Active:
+
 - [Features](./features.md)
 - [Projects](./projects.md)
 - [GitHub Repository](https://github.com/nasa/fprime)
@@ -25,7 +25,8 @@ F´ has the following features:
 - [Issues](https://github.com/nasa/fprime/issues)
 - [Community GitHub Organization](https://github.com/fprime-community)
 - [Architecture Overview](./Architecture/FPrimeArchitectureShort.pdf)
-### Obsolete:
+
+### Discontinued:
 - [Community Forum and Mailing List](https://groups.google.com/d/forum/fprime-community) 
     - **Note**: Community forum has been replaced by [Discussions](https://github.com/nasa/fprime/discussions) since mid june 2021.
 
@@ -50,9 +51,9 @@ To develop applications with F´, the following requirements of the user's syste
 ## Quick Installation Guide
 
 F´ can be quickly installed and ready to use by:
-1.  cloning the GitHub repository
-2. installing Python code (typically in a virtual environment)
-3. building one of our reference applications. 
+1. Cloning the GitHub repository
+2. Installing Python code (typically in a virtual environment)
+3. Building one of our reference applications. 
 
 For full installation instructions please see:
 [INSTALL.md](./INSTALL.md).
