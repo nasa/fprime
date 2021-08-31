@@ -267,12 +267,7 @@ namespace Svc {
       //! Start FileDownlink component
       //! The component must be configured with configure() before starting.
       //!
-      void start(
-        NATIVE_INT_TYPE identifier,
-        NATIVE_INT_TYPE priority,
-        NATIVE_INT_TYPE stackSize,
-        NATIVE_INT_TYPE cpuAffinity=-1
-      );
+      void preamble();
 
       //! Destroy object FileDownlink
       //!

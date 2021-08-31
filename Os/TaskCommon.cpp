@@ -1,5 +1,6 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <string.h>
 
 namespace Os {
@@ -39,6 +40,12 @@ namespace Os {
     
     TaskRegistry::TaskRegistry() {
         
+    }
+
+    Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+        Fw::Logger::logMsg("[WARNING] Os::Task.start(name, identifier, priority, stackSize, routine, arg, cpuAffinity) is deprecated.\n");
+        Fw::Logger::logMsg("[WARNING] Please migrate to the form: Os::Task.start(name, routine, arg, priority, stackSize,  cpuAffinity, identifier).\n");
+        return this->start(name, routine, arg, priority, stackSize, cpuAffinity, identifier);
     }
 
     TaskRegistry::~TaskRegistry() {

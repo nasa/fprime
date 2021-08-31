@@ -65,7 +65,7 @@ namespace Fw {
 #if FW_BAREMETAL_SCHEDULER == 1
 	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
 #else
-        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask, this, cpuAffinity);
+        Os::Task::TaskStatus status = this->m_task.start(taskName, this->s_baseTask, this, priority, stackSize, cpuAffinity, identifier);
 #endif
         FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
     }

@@ -21,7 +21,9 @@ namespace Os {
                 TASK_UNKNOWN_ERROR, //!< unexpected error return value
                 TASK_INVALID_AFFINITY, //!< unable to set the task affinity
                 TASK_DELAY_ERROR, //!< error trying to delay the task
-                TASK_JOIN_ERROR //!< error trying to join the task
+                TASK_JOIN_ERROR, //!< error trying to join the task
+                TASK_ERROR_RESOURCES, //!< unable to allocate more tasks
+                TASK_ERROR_PERMISSION, //!< permissions error setting-up tasks
             } TaskStatus ;
 
             typedef void (*taskRoutine)(void* ptr); //!< prototype for task routine started in task context
@@ -34,6 +36,7 @@ namespace Os {
             Task(); //!< constructor
             virtual ~Task(); //!< destructor
             // Priority is based on Posix priorities - 0 lowest, 255 highest
+            TaskStatus start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_INT_TYPE priority = -1, NATIVE_INT_TYPE stackSize = -1,  NATIVE_INT_TYPE cpuAffinity = -1, NATIVE_INT_TYPE identifier = -1); //!< start the task
             TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = -1); //!< start the task
             I32 getIdentifier(void); //!< get the identifier for the task
             static TaskId getOsIdentifier(void); //Gets the Os Task ID. Useful for passive components.
