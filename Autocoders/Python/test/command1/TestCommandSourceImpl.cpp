@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/command1/TestCommandSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestCommandSourceImpl::TestCommandSourceImpl(const char* name) : Cmd::CommandTesterComponentBase(name)

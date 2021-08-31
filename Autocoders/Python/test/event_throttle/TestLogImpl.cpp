@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/event_throttle/TestLogImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestLogImpl::TestLogImpl(const char* name) : Somewhere::TestLogComponentBase(name)

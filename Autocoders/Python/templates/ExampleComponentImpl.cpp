@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/templates/ExampleComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace ExampleComponents {
 

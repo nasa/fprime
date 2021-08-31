@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/ext_dict/ExampleComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace ExampleComponents {
 

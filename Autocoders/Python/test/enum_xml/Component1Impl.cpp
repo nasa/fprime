@@ -1,7 +1,7 @@
 #include <Autocoders/Python/test/enum_xml/Component1Impl.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 
