@@ -240,12 +240,7 @@ namespace Svc {
     entry.source = FileDownlink::COMMAND;
     entry.opCode = opCode;
     entry.cmdSeq = cmdSeq;
-    entry.context = 
-    
-    
-    
-    
-    ;
+    entry.context = __UINT32_MAX__;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
