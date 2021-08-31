@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
 #include <Os/Queue.hpp>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <Fw/Types/Assert.hpp>
 #include <unistd.h>
-#include <signal.h>
+#include <csignal>
 #include <pthread.h>
 
 #if defined TGT_OS_TYPE_LINUX

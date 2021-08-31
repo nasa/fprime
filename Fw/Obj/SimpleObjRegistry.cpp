@@ -2,8 +2,8 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #if FW_OBJECT_REGISTRATION == 1
 

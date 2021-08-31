@@ -1,7 +1,7 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <taskLib.h>

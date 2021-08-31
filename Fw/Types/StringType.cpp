@@ -13,9 +13,9 @@
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
-#include <string.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include <cstring>
+#include <cstdio>
+#include <cstdarg>
 
 namespace Fw {
 

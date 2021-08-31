@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 
 extern "C" {
   void startTestTask();

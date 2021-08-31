@@ -1,8 +1,8 @@
 #include <Fw/Types/Serializable.hpp>
-#include <string.h> // memcpy
+#include <cstring> // memcpy
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringType.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #ifdef BUILD_UT
 #include <iomanip>

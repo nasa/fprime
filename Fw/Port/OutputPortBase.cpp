@@ -3,7 +3,7 @@
 #include <Fw/Port/OutputPortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Os/Log.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <Fw/Types/Assert.hpp>
 
 

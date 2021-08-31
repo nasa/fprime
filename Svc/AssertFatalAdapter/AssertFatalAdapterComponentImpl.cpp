@@ -15,8 +15,8 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
 namespace Fw {
     void defaultReportAssert

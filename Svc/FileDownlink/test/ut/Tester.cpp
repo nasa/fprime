@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 
-#include <errno.h>
+#include <cerrno>
 #include <unistd.h>
 
 #include "Tester.hpp"

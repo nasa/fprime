@@ -34,7 +34,7 @@
     #error OS not supported for IP Socket Communications
 #endif
 
-#include <string.h>
+#include <cstring>
 
 namespace Drv {
 

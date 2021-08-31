@@ -12,7 +12,7 @@
 // ======================================================================
 
 #include "LockGuardTester.hpp"
-#include <time.h>
+#include <ctime>
 #include <Os/Task.hpp>
 
 namespace Utils {

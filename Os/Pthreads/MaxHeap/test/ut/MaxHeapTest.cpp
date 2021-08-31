@@ -1,7 +1,7 @@
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace Os;
 

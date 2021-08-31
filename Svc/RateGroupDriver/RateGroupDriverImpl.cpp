@@ -2,7 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <cstring>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 

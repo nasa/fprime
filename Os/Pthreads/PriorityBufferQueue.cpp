@@ -16,8 +16,8 @@
 #include "Os/Pthreads/BufferQueue.hpp"
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 #include <new>
 
 // This is a priority queue implementation implemented using a stable max heap.

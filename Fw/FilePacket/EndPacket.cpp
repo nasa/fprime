@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <string.h>
+#include <cstring>
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>

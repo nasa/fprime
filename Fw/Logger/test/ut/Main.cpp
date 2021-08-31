@@ -14,7 +14,7 @@
 #include <Fw/Logger/test/ut/LoggerRules.hpp>
 #include <gtest/gtest.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define STEP_COUNT 10000
 

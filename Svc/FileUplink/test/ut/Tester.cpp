@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
 #include "Tester.hpp"
 
