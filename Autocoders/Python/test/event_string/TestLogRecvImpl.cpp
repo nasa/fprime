@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/event_string/TestLogRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <Fw/Log/LogString.hpp>
 
 #if FW_OBJECT_NAMES == 1
