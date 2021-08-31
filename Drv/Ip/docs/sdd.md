@@ -161,7 +161,7 @@ section.
 
 In order to start the receiving thread a call to the `Drv::SocketReadTask::startSocketTask` method is performed passing
 in a name, and all arguments to `Os::Task::start` to start the task. An optional parameter, reconnect, will determine if
-this read task will reconnect to sockets should a disconnect or error occur. Once started the read task will continue 
+this read task will reconnect to sockets should a disconnect or error occur. Once started the read task will continue
 until a `Drv::SocketReadTask::stopSocketTask` has been called or an error occurred when started without reconnect set to
 `true`.  Once the socket stop call has been made, the user should call `Drv::SocketReadTask::joinSocketTask` in order to
 wait until the full task has finished.  `Drv::SocketReadTask::stopSocketTask` will call `Drv::IpSocket::close` on the
@@ -169,7 +169,7 @@ provided Drv::IpSocket to ensure that the any blocking reads exit freeing the th
 a Drv::SocketReadTask derived class is shown below.
 
 ```c++
-Fw::EightyCharString name("ReceiveTask");
+Os::TaskString name("ReceiveTask");
 uplinkComm.startSocketTask(name, 100, 10 * 1024); // Default reconnect=true
 ...
 

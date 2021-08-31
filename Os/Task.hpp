@@ -11,7 +11,6 @@
 namespace Os {
 
     class TaskRegistry; //!< forward declaration
-
     class Task {
         public:
 
@@ -26,6 +25,11 @@ namespace Os {
             } TaskStatus ;
 
             typedef void (*taskRoutine)(void* ptr); //!< prototype for task routine started in task context
+
+            struct TaskRoutineWrapper {
+                taskRoutine routine; //!< contains the task entrypoint
+                void* arg; //!< contains the task entrypoint pointer
+            };
 
             Task(); //!< constructor
             virtual ~Task(); //!< destructor
@@ -61,6 +65,7 @@ namespace Os {
             void toString(char* buf, NATIVE_INT_TYPE buffSize); //!< print a string of the state of the task
             bool m_started; //!< set when task has reached entry point
             bool m_suspendedOnPurpose; //!< set when task was suspended in purpose (i.e. simulation)
+            TaskRoutineWrapper m_routineWrapper; //! Contains task entrypoint and argument for task wrapper
 
             static TaskRegistry* s_taskRegistry; //!< pointer to registered task
             static NATIVE_INT_TYPE s_numTasks; //!< stores the number of tasks created.

@@ -17,7 +17,7 @@
 namespace LoggerRules {
 
     // Constructor
-    Register::Register(const Fw::EightyCharString& name) : STest::Rule<MockLogging::FakeLogger>(name.m_buf) {}
+    Register::Register(const Fw::String& name) : STest::Rule<MockLogging::FakeLogger>(name.toChar()) {}
 
     // Check for registration, always allowed
     bool Register::precondition(const MockLogging::FakeLogger& truth) {
@@ -40,7 +40,7 @@ namespace LoggerRules {
     }
 
     // Constructor
-    LogGood::LogGood(const Fw::EightyCharString& name) : STest::Rule<MockLogging::FakeLogger>(name.m_buf) {}
+    LogGood::LogGood(const Fw::String& name) : STest::Rule<MockLogging::FakeLogger>(name.toChar()) {}
 
     // Check for logging, only when not NULL
     bool LogGood::precondition(const MockLogging::FakeLogger& truth) {
@@ -113,7 +113,7 @@ namespace LoggerRules {
     }
 
     // Constructor
-    LogBad::LogBad(const Fw::EightyCharString& name) : STest::Rule<MockLogging::FakeLogger>(name.m_buf) {}
+    LogBad::LogBad(const Fw::String& name) : STest::Rule<MockLogging::FakeLogger>(name.toChar()) {}
 
     // Check for logging, only when not NULL
     bool LogBad::precondition(const MockLogging::FakeLogger& truth) {

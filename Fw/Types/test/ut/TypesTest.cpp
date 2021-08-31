@@ -3,7 +3,7 @@
 #include <Os/IntervalTimer.hpp>
 #include <Os/InterruptLock.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
@@ -559,8 +559,8 @@ TEST(SerializationTest,Serialization1) {
     ASSERT_EQ(boolt1,boolt2);
 
     // serialize string
-    Fw::EightyCharString str1;
-    Fw::EightyCharString str2;
+    Fw::String str1;
+    Fw::String str2;
 
     str1 = "Foo";
     str2 = "BarBlat";
@@ -874,6 +874,7 @@ TEST(TypesTest, CheckAssertTest) {
 }
 
 TEST(TypesTest,PolyTest) {
+    Fw::String str;
 
     // U8 Type  ===============================================================
     U8 in8 = 13;
@@ -885,12 +886,15 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(in8, out8);
 
     // Test assigning to polytype and return type of assignment
-    in8 = 21;
+    in8 = 218;
     // Can assign Polytype to U8 via overridden cast operator
     out8 = (pt = in8);
-    ASSERT_EQ((U8) pt, (U8) 21);
+    ASSERT_EQ((U8) pt, (U8) 218);
     ASSERT_EQ((U8) pt, in8);
     ASSERT_EQ(out8, in8);
+
+    pt.toString(str);
+    ASSERT_STREQ(str.toChar(), "218 ");
 
     // U16 Type  ==============================================================
     U16 inU16 = 34;
@@ -900,10 +904,13 @@ TEST(TypesTest,PolyTest) {
     outU16 = (U16) ptU16;
     ASSERT_EQ(inU16, outU16);
 
-    inU16 = 55;
+    inU16 = 45000;
     outU16 = (ptU16 = inU16);
     ASSERT_EQ((U16) ptU16, inU16);
     ASSERT_EQ(outU16, inU16);
+
+    ptU16.toString(str);
+    ASSERT_STREQ(str.toChar(), "45000 ");
 
     // U32 Type  ==============================================================
     U32 inU32 = 89;
@@ -913,10 +920,13 @@ TEST(TypesTest,PolyTest) {
     outU32 = (U32) ptU32;
     ASSERT_EQ(inU32, outU32);
 
-    inU32 = 144;
+    inU32 = 3222111000;
     outU32 = (ptU32 = inU32);
     ASSERT_EQ((U32) ptU32, inU32);
     ASSERT_EQ(outU32, inU32);
+
+    ptU32.toString(str);
+    ASSERT_STREQ(str.toChar(), "3222111000 ");
 
     // U64 Type  ==============================================================
     U64 inU64 = 233;
@@ -926,10 +936,13 @@ TEST(TypesTest,PolyTest) {
     outU64 = (U64) ptU64;
     ASSERT_EQ(inU64, outU64);
 
-    inU64 = 377;
+    inU64 = 555444333222111;
     outU64 = (ptU64 = inU64);
     ASSERT_EQ((U64) ptU64, inU64);
     ASSERT_EQ(outU64, inU64);
+
+    ptU64.toString(str);
+    ASSERT_STREQ(str.toChar(), "555444333222111 ");
 
     // I8 Type  ===============================================================
     I8 inI8 = 2;
@@ -939,10 +952,13 @@ TEST(TypesTest,PolyTest) {
     outI8 = (I8) ptI8;
     ASSERT_EQ(inI8, outI8);
 
-    inI8 = 3;
+    inI8 = -3;
     outI8 = (ptI8 = inI8);
     ASSERT_EQ((I8) ptI8, inI8);
     ASSERT_EQ(outI8, inI8);
+
+    ptI8.toString(str);
+    ASSERT_STREQ(str.toChar(), "-3 ");
 
     // I16 Type  ==============================================================
     I16 inI16 = 5;
@@ -952,10 +968,13 @@ TEST(TypesTest,PolyTest) {
     outI16 = (I16) ptI16;
     ASSERT_EQ(inI16, outI16);
 
-    inI16 = 7;
+    inI16 = -7;
     outI16 = (ptI16 = inI16);
     ASSERT_EQ((I16) ptI16, inI16);
     ASSERT_EQ(outI16, inI16);
+
+    ptI16.toString(str);
+    ASSERT_STREQ(str.toChar(), "-7 ");
 
     // I32 Type  ==============================================================
     I32 inI32 = 11;
@@ -965,10 +984,13 @@ TEST(TypesTest,PolyTest) {
     outI32 = (I32) ptI32;
     ASSERT_EQ(inI32, outI32);
 
-    inI32 = 13;
+    inI32 = -13;
     outI32 = (ptI32 = inI32);
     ASSERT_EQ((I32) ptI32, inI32);
     ASSERT_EQ(outI32, inI32);
+
+    ptI32.toString(str);
+    ASSERT_STREQ(str.toChar(), "-13 ");
 
     // I64 Type  ==============================================================
     I64 inI64 = 17;
@@ -978,10 +1000,13 @@ TEST(TypesTest,PolyTest) {
     outI64 = (I64) ptI64;
     ASSERT_EQ(inI64, outI64);
 
-    inI64 = 19;
+    inI64 = -19;
     outI64 = (ptI64 = inI64);
     ASSERT_EQ((I64) ptI64, inI64);
     ASSERT_EQ(outI64, inI64);
+
+    ptI64.toString(str);
+    ASSERT_STREQ(str.toChar(), "-19 ");
 
     // F32 Type  ==============================================================
     F32 inF32 = 23.32;
@@ -1039,16 +1064,16 @@ TEST(TypesTest,PolyTest) {
 
 TEST(TypesTest,EightyCharTest) {
 
-    Fw::EightyCharString str;
+    Fw::String str;
     str = "foo";
-    Fw::EightyCharString str2;
+    Fw::String str2;
     str2 = "foo";
     ASSERT_EQ(str,str2);
     ASSERT_EQ(str,"foo");
     str2 = "doodie";
     ASSERT_NE(str,str2);
 
-    Fw::EightyCharString str3 = str;
+    Fw::String str3 = str;
     str3 += str2;
     ASSERT_EQ(str3,"foodoodie");
 
@@ -1056,15 +1081,15 @@ TEST(TypesTest,EightyCharTest) {
     ASSERT_EQ(str3,"foodoodiehoo");
 
 
-    Fw::EightyCharString copyStr("ASTRING");
+    Fw::String copyStr("ASTRING");
     ASSERT_EQ(copyStr,"ASTRING");
-    Fw::EightyCharString copyStr2 = "ASTRING";
+    Fw::String copyStr2 = "ASTRING";
     ASSERT_EQ(copyStr2,"ASTRING");
-    Fw::EightyCharString copyStr3(copyStr2);
+    Fw::String copyStr3(copyStr2);
     ASSERT_EQ(copyStr3,"ASTRING");
 
     Fw::InternalInterfaceString ifstr("IfString");
-    Fw::EightyCharString if2(ifstr);
+    Fw::String if2(ifstr);
 
     ASSERT_EQ(ifstr,if2);
     ASSERT_EQ(if2,"IfString");
@@ -1078,7 +1103,7 @@ TEST(TypesTest,EightyCharTest) {
 }
 
 TEST(TypesTest,StringFormatTest) {
-    Fw::EightyCharString str;
+    Fw::String str;
     str.format("Int %d String %s",10,"foo");
     ASSERT_STREQ(str.toChar(), "Int 10 String foo");
 }

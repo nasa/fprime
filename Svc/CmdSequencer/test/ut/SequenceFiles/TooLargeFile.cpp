@@ -4,11 +4,9 @@
 // \brief  TooLargeFile implementation
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
 
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
@@ -61,7 +59,6 @@ namespace Svc {
         - sizeof(AMPCSSequence::Record::Time::t)
         - sizeof(AMPCSSequence::Record::CmdLength::t);
       U8 cmdFieldBuffer[cmdFieldSize];
-      memset(cmdFieldBuffer, 0, sizeof(cmdFieldBuffer));
       Fw::SerialBuffer cmdField(cmdFieldBuffer, sizeof(cmdFieldBuffer));
       cmdField.setBuffLen(cmdFieldSize);
       AMPCS::Records::serialize(timeFlag, time, cmdField, buffer);

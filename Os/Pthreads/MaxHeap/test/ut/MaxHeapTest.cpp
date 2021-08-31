@@ -153,7 +153,7 @@ int main() {
   printf("Testing mixed priority...\n");
   // For this test we expect things to come in fifo order
   // for things of the same priority and in priority
-  // order for things of differend priorities.
+  // order for things of different priorities.
   NATIVE_INT_TYPE pries[DEPTH] = {1, 7, 100, 1, 7};
   NATIVE_INT_TYPE data2[DEPTH] = {4, 22, 99, 12344, 33};
   NATIVE_INT_TYPE orderedPries[DEPTH] = {100, 7, 7, 1, 1};

@@ -6,7 +6,7 @@
 
 #ifdef BUILD_UT
 #include <iomanip>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #endif
 
 // Some macros/functions to optimize for architectures
@@ -29,7 +29,7 @@ namespace Fw {
 
 #ifdef BUILD_UT
     std::ostream& operator<<(std::ostream& os, const Serializable& val) {
-        Fw::EightyCharString out;
+        Fw::String out;
         val.toString(out);
 
         os << out;
@@ -622,7 +622,7 @@ namespace Fw {
         }
         // otherwise, set destination buffer to data from deserialization pointer plus size
         SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc],size);
-        if (FW_SERIALIZE_OK) {
+        if (stat == FW_SERIALIZE_OK) {
             this->m_deserLoc += size;
         }
         return stat;

@@ -1,16 +1,16 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CRCs.hpp
 // \author Rob Bocchino
 // \brief  AMPCS CRC files
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
-#include "Fw/Types/EightyCharString.hpp"
+#include "Fw/Types/String.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
@@ -35,7 +35,7 @@ namespace Svc {
               const char *const fileName, //!< The file name
               const Os::File::Mode mode //!< The mode
           ) {
-            const Os::File::Status fileStatus = 
+            const Os::File::Status fileStatus =
               file.open(fileName, mode);
             ASSERT_EQ(Os::File::OP_OK, fileStatus);
           }
@@ -48,8 +48,8 @@ namespace Svc {
           ) {
             NATIVE_INT_TYPE sizeThenActualSize = size;
             const Os::File::Status status = file.write(
-                buffer, 
-                sizeThenActualSize, 
+                buffer,
+                sizeThenActualSize,
                 false
             );
             ASSERT_EQ(Os::File::OP_OK, status);
@@ -82,7 +82,7 @@ namespace Svc {
         void removeFile(
             const char *const fileName
         ) {
-          Fw::EightyCharString s("rm -f ");
+          Fw::String s("rm -f ");
           s += fileName;
           s += ".CRC32";
           int status = system(s.toChar());
@@ -98,7 +98,7 @@ namespace Svc {
           Fw::SerialBuffer serialBuffer(buffer, sizeof(buffer));
           serialBuffer.serialize(crc);
           const U8 *const addr = serialBuffer.getBuffAddr();
-          Fw::EightyCharString hashFileName(fileName);
+          Fw::String hashFileName(fileName);
           hashFileName += ".CRC32";
           openFile(file, hashFileName.toChar(), Os::File::OPEN_WRITE);
           writeFile(file, addr, sizeof(crc));

@@ -14,7 +14,6 @@
 #include "LockGuardTester.hpp"
 #include <time.h>
 #include <Os/Task.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 
 namespace Utils {
 
@@ -55,7 +54,7 @@ namespace Utils {
     data.i = 0;
     Os::Task testTask;
     Os::Task::TaskStatus stat;
-    Fw::EightyCharString name("TestTask");
+    Os::TaskString name("TestTask");
 
     {
       LockGuard guard(data.mutex);

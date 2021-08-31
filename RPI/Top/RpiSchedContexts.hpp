@@ -11,8 +11,8 @@
 namespace Rpi {
     // A list of contexts for the rate groups
     enum {
-        CONTEXT_RPI_DEMO_1Hz = 10, // 10Hz cycle
-        CONTEXT_RPI_DEMO_10Hz = 11 // 1 Hz cycle
+        CONTEXT_RPI_DEMO_1Hz = 10, // 1 Hz cycle
+        CONTEXT_RPI_DEMO_10Hz = 11 // 10 Hz cycle
     };
 }
 

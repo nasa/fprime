@@ -12,8 +12,8 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/QueueString.hpp>
 
 namespace Svc {
 
@@ -65,7 +65,7 @@ namespace Svc {
     this->configured = true;
 
     Os::Queue::QueueStatus stat = fileQueue.create(
-      Fw::EightyCharString("fileDownlinkQueue"),
+      Os::QueueString("fileDownlinkQueue"),
       fileQueueDepth,
       sizeof(struct FileEntry)
     );
@@ -178,7 +178,7 @@ namespace Svc {
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::STATUS_ERROR, __UINT32_MAX__);
+      return SendFileResponse(SendFileStatus::STATUS_ERROR, U32_MAX);
     }
     return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
   }
@@ -240,7 +240,8 @@ namespace Svc {
     entry.source = FileDownlink::COMMAND;
     entry.opCode = opCode;
     entry.cmdSeq = cmdSeq;
-    entry.context = __UINT32_MAX__;
+    entry.context = U32_MAX;
+
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
@@ -272,7 +273,8 @@ namespace Svc {
     entry.source = FileDownlink::COMMAND;
     entry.opCode = opCode;
     entry.cmdSeq = cmdSeq;
-    entry.context = __UINT32_MAX__;
+    entry.context = U32_MAX;
+
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
@@ -399,7 +401,7 @@ namespace Svc {
     FW_ASSERT(byteOffset < this->endOffset);
     const U32 maxDataSize = FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE;
     const U32 dataSize = (byteOffset + maxDataSize > this->endOffset) ? (this->endOffset - byteOffset) : maxDataSize;
-    U8 buffer[dataSize];
+    U8 buffer[FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE];
     //This will be last data packet sent
     if (dataSize + byteOffset == this->endOffset) {
         this->lastCompletedType = Fw::FilePacket::T_DATA;

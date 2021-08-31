@@ -2,7 +2,7 @@
 ## Template to stamp out serializable arrays .hpp file
 ##
 #import re
-// ====================================================================== 
+// ======================================================================
 // \title  ${name}.hpp
 // \author Auto-generated
 // \brief  hpp file for ${name}
@@ -12,7 +12,7 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged. Any commercial use must be negotiated with the Office
 // of Technology Transfer at the California Institute of Technology.
-// 
+//
 // This software may be subject to U.S. export control laws and
 // regulations.  By accepting this document, the user agrees to comply
 // with all U.S. export laws and regulations.  User has the
@@ -24,7 +24,7 @@
 \#ifndef ${namespace}_${name}_HPP
 \#define ${namespace}_${name}_HPP
 
-\#include "Fw/Types/EightyCharString.hpp"
+\#include "Fw/Types/String.hpp"
 \#include "Fw/Types/BasicTypes.hpp"
 \#include "Fw/Types/Serializable.hpp"
 #for $t in $include_headers:
@@ -62,23 +62,17 @@ namespace ${namespace} {
             ${name}String(const Fw::StringBase& src); //!< string base constructor
             ${name}String(const ${name}String& src); //!< string base constructor
             ${name}String(void); //!< default constructor
-            virtual ~${name}String(void); //!< destructor
+            ${name}String& operator=(const ${name}String& other); //!< assignment operator
+            ${name}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
+            ${name}String& operator=(const char* other); //!< char* assignment operator
+            ~${name}String(void); //!< destructor
+
             const char* toChar(void) const; //!< retrieves char buffer of string
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of string
-            bool operator==(const ${name}String& src) const; //!< equality operator
-
-            const ${name}String& operator=(const ${name}String& other); //!< equal operator for other strings
-
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
+            NATIVE_UINT_TYPE getCapacity(void) const ;
 
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy a buffer, overwriting current contents
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[${string_size}]; //!< buffer for string storage
-
     };
 
 #end if
@@ -92,7 +86,7 @@ namespace ${namespace} {
 #else:
     typedef ${type} ElementType;
 #end if
-    
+
     enum {
         SIZE=${size},
         SERIALIZED_SIZE = SIZE *
@@ -106,28 +100,28 @@ namespace ${namespace} {
         sizeof($type)
 #end if
     }; //!< serializable size of ${name}
-  
+
     public:
-  
+
     // ----------------------------------------------------------------------
     // Constructors
     // ----------------------------------------------------------------------
-  
+
       //! Construct a ${name} with default initialization
       ${name}(void);
-  
+
       //! Construct a ${name} and initialize its elements from an array
       ${name}(
           const ElementType (&a)[SIZE] //!< The array
       );
 
- #if $size != 1: 
+ #if $size != 1:
       //! Construct a ${name} and initialize its elements from a single element
       ${name}(
           const ElementType& e //!< The element
       );
 #end if
-  
+
       //! Construct a ${name} and initialize its elements from elements
    ${name}(
 #for $i in $range(1, $size + 1):
@@ -138,53 +132,53 @@ namespace ${namespace} {
 #end if
 #end for
       );
-  
+
       //! Copy constructor
       ${name}(
           const ${name}& other //!< The other object
       );
-  
+
     public:
-  
+
       // ----------------------------------------------------------------------
       // Public operators
       // ----------------------------------------------------------------------
-  
+
       //! Subscript operator
       ElementType& operator[](
           const U32 i //!< The subscript index
       );
-  
+
       //! Const subscript operator
       const ElementType& operator[](
           const U32 i //!< The subscript index
       ) const;
-  
+
       //! Assignment operator
       const ${name}& operator=(
           const ${name}& other //!< The other object
       );
-  
+
       //! Assignment operator from array
       const ${name}& operator=(
           const ElementType (&a)[SIZE] //!< The array
       );
-  
+
       //! Assignment operator from element
       const ${name}& operator=(
           const ElementType& e //!< The element
       );
-  
+
       //! Equality operator
       bool operator==(
           const ${name}& other //!< The other object
       ) const;
-  
+
       //! Inequality operator
       bool operator!=(
           const ${name}& other //!< The other object
       ) const;
-  
+
 \#ifdef BUILD_UT
       //! Ostream operator
       friend std::ostream& operator<<(
@@ -192,18 +186,18 @@ namespace ${namespace} {
           const ${name}& obj //!< The object
       );
 \#endif
-  
+
     public:
-  
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
-  
+
     //! Serialization
     Fw::SerializeStatus serialize(
         Fw::SerializeBufferBase& buffer //!< The serial buffer
     ) const;
-  
+
     //! Deserialization
     Fw::SerializeStatus deserialize(
         Fw::SerializeBufferBase& buffer //!< The serial buffer
@@ -218,16 +212,16 @@ namespace ${namespace} {
     enum {
         TYPE_ID = ${uuid} //!< type id
     };
-  
+
     private:
-  
+
     // ----------------------------------------------------------------------
     // Private member variables
     // ----------------------------------------------------------------------
-  
+
     //! The array elements
     ElementType elements[SIZE];
-  
+
   };
 
 #if $namespace

@@ -23,6 +23,7 @@ subcommands:
     impl                Generate implementation template files in the specified directory
     check               Run unit tests in the specified directory
     coverage            Generate unit test coverage reports in the specified directory
+    new                 Create new component or port
 ```
 
 The `fprime-util` helper is driven by a series of subcommands listed above. Each perform one aspect
@@ -50,6 +51,9 @@ each command's usage in more detail.
    unit tests known to a deployment. The `--leak` flag will check for memory leaks while running the
    unit tests.
 8. `coverage`: Similar to check, but calculates and generates unit test code coverage reports.
+9. `new`: Creates either a new component or port. Use `--component` or `--port` to specify whether
+    you want to create a component or port. If you would like to use a custom component
+    cookiecutter, specify the template with `component-cookeicutter:` in the settings.ini.
 
 Most `fprime-util` commands support a common set of flags that can be used to modify command
 behavior:

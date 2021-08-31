@@ -10,29 +10,25 @@ namespace Test {
     //! A longer string for testing
     class String : public Fw::StringBase {
         public:
-        
+
             enum {
                 STRING_SIZE = 256, //!< Storage for string
                 SERIALIZED_SIZE = STRING_SIZE + sizeof(FwBuffSizeType) //!< Serialized size is size of buffer + size field
             };
-        
+
             String(const char* src); //!< char* source constructor
             String(const StringBase& src); //!< other string constructor
             String(const String& src); //!< String string constructor
             String(void); //!< default constructor
+            String& operator=(const String& other); //!< assignment operator
+            String& operator=(const StringBase& other); //!< other string assignment operator
+            String& operator=(const char* other); //!< char* assignment operator
             ~String(void); //!< destructor
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE length(void) const; //!< returns length of stored string
 
-            const String& operator=(const String& other); //!< equal operator
-            
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< serialization function
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< deserialization function
-            
-        PRIVATE:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy source buffer, overwriting
+            const char* toChar(void) const; //!< gets char buffer
             NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+
+        private:
 
             char m_buf[STRING_SIZE]; //!< storage for string data
     };

@@ -15,7 +15,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Os/TaskString.hpp>
 #include <Os/Log.hpp>
 
 namespace Drv {
@@ -101,7 +101,7 @@ namespace Drv {
         NATIVE_INT_TYPE cpuAffinity
   )
   {
-      Fw::EightyCharString name("IpSocketRead");
+      Os::TaskString name("IpSocketRead");
       // Do not restart task
       if (not m_recvTask.isStarted()) {
           this->configure(host,port);

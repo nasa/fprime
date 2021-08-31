@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/serialize_user/ExampleComponentImpl.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
@@ -26,7 +26,7 @@ ExampleComponentImpl::~ExampleComponentImpl() {
 
 void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::UserSerializer arg2) {
 
-    Fw::EightyCharString str;
+    Fw::String str;
     arg2.toString(str);
     printf("ARG: %s\n",str.toChar());
 }

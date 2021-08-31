@@ -1,14 +1,14 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateEOSFile.cpp
 // \author Rob Bocchino
 // \brief  ImmediateEOSFile implementation
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
@@ -24,7 +24,7 @@ namespace Svc {
         File(format),
         n(n)
     {
-      Fw::EightyCharString s;
+      Fw::String s;
       s.format("immediate_%u_eos", n);
       this->setName(s.toChar());
     }
@@ -34,7 +34,7 @@ namespace Svc {
     {
       ASSERT_GE(this->n, 2U);
       // Header
-      const U32 recordDataSize = 
+      const U32 recordDataSize =
         // n - 1 standard records
         (this->n-1) * FPrime::Records::STANDARD_SIZE +
         // 1 end-of-sequence record
