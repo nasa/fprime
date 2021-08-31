@@ -116,7 +116,7 @@ namespace Fw {
         (void) strncat(const_cast<CHAR*>(this->toChar()), buff, remaining);
     }
 
-    NATIVE_UINT_TYPE StringBase::length(void) const {
+    NATIVE_UINT_TYPE StringBase::length() const {
         return static_cast<NATIVE_UINT_TYPE>(strnlen(this->toChar(),this->getCapacity()));
     }
 
