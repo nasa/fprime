@@ -75,7 +75,7 @@ namespace Svc {
 
       sockaddr_in saddr;
       // zero out the structure
-      memset((char *) &saddr, 0, sizeof(saddr));
+      memset(&saddr, 0, sizeof(saddr));
 
       saddr.sin_family = AF_INET;
       saddr.sin_port = htons(atoi(port));

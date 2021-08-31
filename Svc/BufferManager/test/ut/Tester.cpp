@@ -241,7 +241,7 @@ namespace Svc {
 
       // randomly return buffers
       time_t t;
-      srand((unsigned) time(&t));
+      srand(static_cast<unsigned>(time(&t)));
 
       bool returned[BIN1_NUM_BUFFERS] = {false};
 

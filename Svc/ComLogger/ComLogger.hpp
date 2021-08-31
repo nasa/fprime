@@ -86,7 +86,7 @@ namespace Svc {
       };
 
       // The filename data:
-      U8 filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U32 maxFileSize;
 
       // ----------------------------------------------------------------------
@@ -99,8 +99,8 @@ namespace Svc {
 
       FileMode fileMode;
       Os::File file;
-      U8 fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U8 hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U32 byteCount;
       bool writeErrorOccurred;
       bool openErrorOccurred;

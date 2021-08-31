@@ -370,7 +370,7 @@ namespace Svc {
           this->invoke_to_Run(0,0);
           // cycle count should stay the same
 
-          ASSERT_EQ((U32)Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2,
+          ASSERT_EQ(static_cast<U32>(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS)*2,
                   this->component.m_pingTrackerEntries[0].cycleCount);
       }
 
@@ -455,10 +455,10 @@ namespace Svc {
               for (NATIVE_INT_TYPE e3 = 0; e3 < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS; e3++) {
                   if (e3 == entry) {
                       // shouldn't be counting up
-                      ASSERT_EQ((U32)0,this->component.m_pingTrackerEntries[e3].cycleCount);
+                      ASSERT_EQ(0u,this->component.m_pingTrackerEntries[e3].cycleCount);
                   } else {
                       // others should be counting up
-                      ASSERT_EQ((U32)cycle+1,this->component.m_pingTrackerEntries[e3].cycleCount);
+                      ASSERT_EQ(static_cast<U32>(cycle+1),this->component.m_pingTrackerEntries[e3].cycleCount);
                   }
               }
           }
