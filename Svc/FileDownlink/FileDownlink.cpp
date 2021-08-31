@@ -14,6 +14,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
+#include <limits>
 
 namespace Svc {
 
@@ -179,7 +180,7 @@ namespace Svc {
     Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::ERROR, U32_MAX);
+      return SendFileResponse(SendFileStatus::ERROR, std::numeric_limits<U32>::max());
     }
     return SendFileResponse(SendFileStatus::OK, entry.context);
   }
@@ -241,7 +242,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context = U32_MAX
+      .context = std::numeric_limits<U32>::max()
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -274,7 +275,7 @@ namespace Svc {
       .source = FileDownlink::COMMAND,
       .opCode = opCode,
       .cmdSeq = cmdSeq,
-      .context = U32_MAX
+      .context = std::numeric_limits<U32>::max()
     };
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
