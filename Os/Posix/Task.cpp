@@ -6,10 +6,14 @@
 #include <errno.h>
 
 #include <pthread.h>
+#include <sched.h>
 #include <limits.h>
 #include <string.h>
 #include <time.h>
 #include <Fw/Logger/Logger.hpp>
+#include <unistd.h>
+
+static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
 
 typedef void* (*pthread_func_ptr)(void*);
 
@@ -24,27 +28,33 @@ void* pthread_entry_wrapper(void* arg) {
 namespace Os {
 
     void validate_arguments(NATIVE_INT_TYPE& priority, NATIVE_INT_TYPE& stack, NATIVE_INT_TYPE& affinity, bool expect_perm) {
+        const NATIVE_INT_TYPE min_priority = sched_get_priority_min(SCHED_POLICY);
+        const NATIVE_INT_TYPE max_priority = sched_get_priority_max(SCHED_POLICY);
+        // Check to ensure that these calls worked
+        if (min_priority == -1 or max_priority == -1) {
+            Fw::Logger::logMsg("[WARNING] Unable to determine min/max priority with error %s. Discarding priority. ", reinterpret_cast<POINTER_CAST>(strerror(errno)));
+        }
         // Check priority attributes
         if (!expect_perm and priority != -1) {
-            Fw::Logger::logMsg("[WARNING] task priority set and permissions unavailable. Discarding priority.\n");
+            Fw::Logger::logMsg("[WARNING] Task priority set and permissions unavailable. Discarding priority.\n");
             priority = -1;
         }
-        if (priority != -1 and priority < 1) {
-            Fw::Logger::logMsg("[WARNING] low task priority of %d being clamped to 1\n", priority);
-            priority = 1;
+        if (priority != -1 and priority < min_priority) {
+            Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, min_priority);
+            priority = min_priority;
         }
-        if (priority != -1 and priority > 99) {
-            Fw::Logger::logMsg("[WARNING] high task priority of %d being clamped to 99\n", priority);
-            priority = 99;
+        if (priority != -1 and priority > max_priority) {
+            Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, max_priority);
+            priority = max_priority;
         }
         // Check the stack
         if (stack != -1 and stack < PTHREAD_STACK_MIN) {
-            Fw::Logger::logMsg("[WARNING] stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
+            Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
             stack = PTHREAD_STACK_MIN;
         }
         // Check CPU affinity
         if (!expect_perm and affinity != -1) {
-            Fw::Logger::logMsg("[WARNING] cpu affinity set and permissions unavailable. Discarding affinity.\n");
+            Fw::Logger::logMsg("[WARNING] Cpu affinity set and permissions unavailable. Discarding affinity.\n");
             affinity = -1;
         }
     }
@@ -63,7 +73,7 @@ namespace Os {
 
     Task::TaskStatus set_priority_params(pthread_attr_t& att, NATIVE_INT_TYPE priority) {
         if (priority != -1) {
-            I32 stat = pthread_attr_setschedpolicy(&att, SCHED_FIFO);
+            I32 stat = pthread_attr_setschedpolicy(&att, SCHED_POLICY);
             if (stat != 0) {
                 Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
                 return Task::TASK_INVALID_PARAMS;
@@ -90,6 +100,7 @@ namespace Os {
 
     Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_INT_TYPE cpuAffinity) {
         if (cpuAffinity != -1) {
+#ifdef TGT_OS_TYPE_LINUX
             cpu_set_t cpuset;
             CPU_ZERO(&cpuset);
             CPU_SET(cpuAffinity, &cpuset);
@@ -100,6 +111,9 @@ namespace Os {
                                    reinterpret_cast<POINTER_CAST>(strerror(stat)));
                 return Task::TASK_INVALID_PARAMS;
             }
+#else
+            Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux\n");
+#endif
         }
         return Task::TASK_OK;
     }
@@ -174,7 +188,7 @@ namespace Os {
     Task::Task() : m_handle(0), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
     }
 
-    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize,  NATIVE_INT_TYPE cpuAffinity, NATIVE_INT_TYPE identifier) {
+    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
         FW_ASSERT(routine);
 
         this->m_name = "TP_";
@@ -186,13 +200,13 @@ namespace Os {
         pthread_t* tid;
 
         // Try to create a permissioned thread
-        TaskStatus status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, true);
+        TaskStatus status = create_pthread(static_cast<NATIVE_INT_TYPE>(priority), static_cast<NATIVE_INT_TYPE>(stackSize), static_cast<NATIVE_INT_TYPE>(cpuAffinity), tid, &this->m_routineWrapper, true);
         // Failure dur to permission automatically retried
         if (status == TASK_ERROR_PERMISSION) {
             Fw::Logger::logMsg("[WARNING] Insufficient permissions to create a prioritized tasks or specify CPU affinities. Attempting to fallback to tasks without priority.\n");
             Fw::Logger::logMsg("[WARNING] Please use no-argument <component>.start() calls or ensure executing user has correct permissions for your operating system.\n");
             Fw::Logger::logMsg("[WARNING]     Note: this fallback to tasks without priority will be removed and will fail in future fprime releases.\n");
-            status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, false); // Fallback with no permission
+            status = create_pthread(static_cast<NATIVE_INT_TYPE>(priority), static_cast<NATIVE_INT_TYPE>(stackSize), static_cast<NATIVE_INT_TYPE>(cpuAffinity), tid, &this->m_routineWrapper, false); // Fallback with no permission
         }
         // Check for non-zero error code
         if (status != TASK_OK) {

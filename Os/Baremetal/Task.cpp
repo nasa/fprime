@@ -13,7 +13,7 @@ Task::Task() :
     m_suspendedOnPurpose(false)
 {}
     
-Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
     //Get a task handle, and set it up
     BareTaskHandle* handle = new BareTaskHandle();
     if (handle == NULL) {

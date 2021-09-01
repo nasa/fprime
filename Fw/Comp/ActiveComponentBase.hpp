@@ -14,12 +14,15 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Os/Task.hpp>
 #include <FpConfig.hpp>
-
+#include <Fw/Deprecate.hpp>
 
 namespace Fw {
     class ActiveComponentBase : public QueuedComponentBase {
         public:
-            void start(NATIVE_INT_TYPE identifier = 0, NATIVE_INT_TYPE priority = -1, NATIVE_INT_TYPE stackSize = -1, NATIVE_INT_TYPE cpuAffinity = -1); //!< called by instantiator when task is to be started
+            void start(NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE stackSize = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE identifier = Os::Task::TASK_DEFAULT); //!< called by instantiator when task is to be started
+
+            DEPRECATED(void start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity = -1),
+                       "Please switch to start(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier)"); //!< called by instantiator when task is to be started
             void exit(void); //!< exit task in active component
             Os::Task::TaskStatus join(void **value_ptr); //!< provide return value of thread if value_ptr is not NULL
 

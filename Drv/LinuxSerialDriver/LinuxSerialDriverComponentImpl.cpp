@@ -401,8 +401,7 @@ namespace Drv {
     startReadThread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
 
       Os::TaskString task("SerReader");
-      Os::Task::TaskStatus stat = this->m_readTask.start(task, 0, priority, stackSize,
-                                                         serialReadTaskEntry, this, cpuAffinity);
+      Os::Task::TaskStatus stat = this->m_readTask.start(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
       FW_ASSERT(stat == Os::Task::TASK_OK, stat);
   }
 
