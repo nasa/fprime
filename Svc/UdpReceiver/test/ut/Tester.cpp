@@ -74,7 +74,7 @@ namespace Svc {
 
       // verify the port call
 
-      EXPECT_EQ((U32)20,this->m_sentVal);
+      EXPECT_EQ(20u,this->m_sentVal);
       EXPECT_EQ(3,this->m_sentPort);
 
   }
@@ -169,7 +169,7 @@ namespace Svc {
 
       /* fill in the server's address and data */
       struct sockaddr_in sockAddr;
-      memset((char*)&sockAddr, 0, sizeof(sockAddr));
+      memset(&sockAddr, 0, sizeof(sockAddr));
       sockAddr.sin_family = AF_INET;
       sockAddr.sin_port = htons(atoi(port));
       inet_aton(addr , &sockAddr.sin_addr);
@@ -191,7 +191,7 @@ namespace Svc {
               buff.getBuffAddr(),
               buff.getBuffLength(),
               0,
-              (struct sockaddr *) &sockAddr,
+              reinterpret_cast<struct sockaddr *>(&sockAddr),
               sizeof(sockAddr));
       EXPECT_NE(-1,sendStat);
       EXPECT_EQ(buff.getBuffLength(),sendStat);

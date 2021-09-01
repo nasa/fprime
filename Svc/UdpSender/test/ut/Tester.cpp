@@ -72,7 +72,7 @@ namespace Svc {
     this->clearEvents();
     // send a buffer
     Svc::UdpSenderComponentImpl::UdpSerialBuffer buff;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buff.serialize((U32)(10)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buff.serialize(static_cast<U32>(10)));
 
     this->invoke_to_PortsIn(1,buff);
     this->component.doDispatch();
@@ -188,7 +188,7 @@ namespace Svc {
       EXPECT_NE(-1,this->m_recvFd);
 
       // zero out the structure
-      memset((char *) &saddr, 0, sizeof(saddr));
+      memset(&saddr, 0, sizeof(saddr));
 
       saddr.sin_family = AF_INET;
       saddr.sin_port = htons(atoi(port));

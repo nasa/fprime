@@ -162,7 +162,7 @@ namespace Svc {
         // deserialize it
         Fw::SerializeStatus stat = pBuff.deserialize(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        EXPECT_EQ(testVal,(U32)0x15);
+        EXPECT_EQ(testVal,0x15u);
 
         // second
         pBuff.resetSer();
@@ -170,7 +170,7 @@ namespace Svc {
         // deserialize it
         stat = pBuff.deserialize(testVal);
         EXPECT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        EXPECT_EQ(testVal,(U32)0x30);
+        EXPECT_EQ(testVal,0x30u);
 
     }
 
@@ -191,10 +191,10 @@ namespace Svc {
 
         this->clearEvents();
         // write too many entries
-        for (NATIVE_INT_TYPE entry = 0; entry <= PRMDB_NUM_DB_ENTRIES; entry++) {
+        for (FwPrmIdType entry = 0; entry <= PRMDB_NUM_DB_ENTRIES; entry++) {
             Fw::ParamBuffer pBuff;
-            EXPECT_EQ(Fw::FW_SERIALIZE_OK,pBuff.serialize((U32)10));
-            this->invoke_to_setPrm(0,(FwPrmIdType)entry,pBuff);
+            EXPECT_EQ(Fw::FW_SERIALIZE_OK,pBuff.serialize(static_cast<U32>(10)));
+            this->invoke_to_setPrm(0,entry,pBuff);
             // dispatch message
             this->m_impl.doDispatch();
         }
@@ -473,7 +473,7 @@ void PrmDbImplTester::runFileReadError() {
         // set test type to read error
         this->m_readTestType = FILE_READ_DATA_ERROR;
         Fw::ParamBuffer pBuff;
-        pBuff.serialize((U32) (FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32) + 1));
+        pBuff.serialize(static_cast<U32>(FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32) + 1));
         memcpy(this->m_readData,pBuff.getBuffAddr(),pBuff.getBuffLength());
         // call function to read file
         this->m_impl.readParamFile();

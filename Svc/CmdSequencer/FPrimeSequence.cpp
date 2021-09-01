@@ -277,7 +277,7 @@ namespace Svc {
       return false;
     }
     // check read size
-    if ((NATIVE_INT_TYPE) size != readLen) {
+    if (static_cast<NATIVE_INT_TYPE>(size) != readLen) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           readLen

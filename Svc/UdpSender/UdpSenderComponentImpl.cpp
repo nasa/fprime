@@ -74,7 +74,7 @@ namespace Svc {
       }
 
       /* fill in the server's address and data */
-      memset((char*)&m_servAddr, 0, sizeof(m_servAddr));
+      memset(&m_servAddr, 0, sizeof(m_servAddr));
       m_servAddr.sin_family = AF_INET;
       m_servAddr.sin_port = htons(atoi(port));
       inet_aton(addr , &m_servAddr.sin_addr);
@@ -134,7 +134,7 @@ namespace Svc {
               m_sendBuff.getBuffAddr(),
               m_sendBuff.getBuffLength(),
               0,
-              (struct sockaddr *) &m_servAddr,
+              reinterpret_cast<struct sockaddr *>(&m_servAddr),
               sizeof(m_servAddr));
       if (-1 == sendStat) {
           Fw::LogStringArg arg(strerror(errno));

@@ -70,7 +70,7 @@ namespace Svc {
             FwPacketDescriptorType desc;
             stat = this->m_rcvdBuffer[packet].deserialize(desc);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-            ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_TELEM);
+            ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
             // next piece should be event ID
             FwEventIdType sentId;
             stat = this->m_rcvdBuffer[packet].deserialize(sentId);
@@ -93,7 +93,7 @@ namespace Svc {
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
             ASSERT_EQ(readVal, val);
             // packet should be empty
-            ASSERT_EQ(this->m_rcvdBuffer[packet].getBuffLeft(),(NATIVE_UINT_TYPE)0);
+            ASSERT_EQ(this->m_rcvdBuffer[packet].getBuffLeft(),0u);
         }
 
         ASSERT_TRUE(packetFound);
@@ -226,7 +226,7 @@ namespace Svc {
 
         // Read back value
         this->invoke_to_TlmGet(0,10,timeTag,buff);
-        ASSERT_EQ((NATIVE_UINT_TYPE)0,buff.getBuffLength());
+        ASSERT_EQ(0u,buff.getBuffLength());
 
     }
 
