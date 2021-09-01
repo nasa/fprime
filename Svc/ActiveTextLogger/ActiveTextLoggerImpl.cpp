@@ -6,7 +6,7 @@
 #include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <time.h>
+#include <ctime>
 
 namespace Svc {
 

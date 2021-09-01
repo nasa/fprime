@@ -188,6 +188,7 @@ chr
 chrono
 ci
 cin
+cinttypes
 CIRCULARSTATE
 classdiagram
 classdoc
@@ -269,6 +270,7 @@ crt
 CRTSCTS
 cryptsoft
 Csharp
+csignal
 CSIZE
 css
 cstat
@@ -521,8 +523,8 @@ finalizer
 findall
 fio
 Firefox
-FIXME
 Fixme
+FIXME
 flist
 FNDELAY
 fnmatch
@@ -542,6 +544,7 @@ fpconfighpp
 FPGA
 FPL
 fpl
+FPL
 fpp
 fppi
 FPport

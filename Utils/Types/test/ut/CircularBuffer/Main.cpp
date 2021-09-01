@@ -14,8 +14,8 @@
 #include <Utils/Types/test/ut/CircularBuffer/CircularRules.hpp>
 #include <gtest/gtest.h>
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 #define STEP_COUNT 1000
 

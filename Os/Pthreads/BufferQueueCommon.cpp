@@ -14,7 +14,7 @@
 
 #include "Os/Pthreads/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Os {
 

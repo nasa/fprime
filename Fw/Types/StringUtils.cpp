@@ -1,6 +1,6 @@
 #include "StringUtils.hpp"
 #include <Fw/Types/Assert.hpp>
-#include "string.h"
+#include <cstring>
 
 char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 num) {
     // Handle self-copy

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <FpConfig.hpp>
 // The following header will need to be modified when test code is moved
 // If the component tester is regenerated, this will need to be modified again.
@@ -27,7 +27,7 @@ namespace Svc {
     }
 #endif
 
-    PolyDbTesterComponentBase::~PolyDbTesterComponentBase(void) {
+    PolyDbTesterComponentBase::~PolyDbTesterComponentBase() {
     }
 
     void PolyDbTesterComponentBase::init(NATIVE_INT_TYPE instance) {
@@ -71,10 +71,10 @@ namespace Svc {
         this->m_setValue_OutputPort[portNum].invoke(entry, status, time, val);
     }
 
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts(void) {
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_getValue_OutputPort);
     }
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts(void) {
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts() {
         return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_setValue_OutputPort);
     }
     bool PolyDbTesterComponentBase::isConnected_getValue_OutputPort(NATIVE_INT_TYPE portNum) {

@@ -1,6 +1,6 @@
 #include <Fw/Port/OutputSerializePort.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_SERIALIZATION
 

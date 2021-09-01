@@ -12,7 +12,7 @@
 
 #include <Os/IntervalTimer.hpp>
 
-#include <string.h>
+#include <cstring>
 
 namespace Os {
 

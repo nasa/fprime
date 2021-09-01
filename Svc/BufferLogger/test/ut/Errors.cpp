@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "Errors.hpp"
 #include "Os/ValidatedFile.hpp"

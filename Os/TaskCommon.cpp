@@ -1,6 +1,6 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Os {
 

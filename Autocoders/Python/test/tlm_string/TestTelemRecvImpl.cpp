@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm_string/TestTelemRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <Fw/Tlm/TlmString.hpp>
 
 #if FW_OBJECT_NAMES == 1

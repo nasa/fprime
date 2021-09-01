@@ -22,20 +22,20 @@
 namespace Fw {
     class StringBase : public Serializable {
         public:
-            virtual const char* toChar() const = 0; //<! Convert to a C-style char*
+            virtual const CHAR* toChar() const = 0; //<! Convert to a C-style char*
             virtual NATIVE_UINT_TYPE getCapacity() const = 0; //!< return size of buffer
             NATIVE_UINT_TYPE length() const;  //!< Get length of string
 
-            const char* operator+=(const char* src); //!< Concatenate a char*
+            const CHAR* operator+=(const CHAR* src); //!< Concatenate a CHAR*
             const StringBase& operator+=(const StringBase& src); //!< Concatenate a StringBase
             bool operator==(const StringBase& other) const; //!< Check for equality with StringBase
-            bool operator==(const char* other) const; //!< Check for equality with char*
+            bool operator==(const CHAR* other) const; //!< Check for equality with CHAR*
             bool operator!=(const StringBase& other) const; //!< Inequality with StringBase
-            bool operator!=(const char* other) const; //!< Inequality with char*
-            StringBase& operator=(const char* src); //!< Assign char*
+            bool operator!=(const CHAR* other) const; //!< Inequality with CHAR*
+            StringBase& operator=(const CHAR* src); //!< Assign CHAR*
             StringBase& operator=(const StringBase& src); //!< Assign another StringBase
 
-            void format(const char* formatString, ...); //!< write formatted string to buffer
+            void format(const CHAR* formatString, ...); //!< write formatted string to buffer
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
             SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
@@ -52,7 +52,7 @@ namespace Fw {
             StringBase();
             virtual ~StringBase();
 
-            void appendBuff(const char* buff, NATIVE_UINT_TYPE size);
+            void appendBuff(const CHAR* buff, NATIVE_UINT_TYPE size);
 
         private:
             // A no-implementation copy constructor here will prevent the default copy constructor from being called

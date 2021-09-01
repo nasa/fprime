@@ -25,7 +25,6 @@ namespace Svc {
       TlmPacketizerComponentBase(compName)
     ,m_numPackets(0)
     ,m_configured(false)
-    ,m_runCount(0)
     ,m_startLevel(0)
     ,m_maxLevel(0)
   {
@@ -66,7 +65,7 @@ namespace Svc {
   }
 
   TlmPacketizer ::
-    ~TlmPacketizer(void)
+    ~TlmPacketizer()
   {
 
   }

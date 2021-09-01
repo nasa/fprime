@@ -17,7 +17,7 @@
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
