@@ -37,7 +37,7 @@ add_custom_target(check_leak
 # - **EXE_NAME:** name of exe (unit test exe)
 # - **SOURCE_FILES:** source files to provide for autocoding
 ####
-function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
+function(unit_test_component_autocoder EXE_NAME SOURCE_FILES INCLUDE_GTEST)
   # Search for component xml files
   foreach(TEST_SOURCE ${SOURCE_FILES})
     string(REGEX MATCH "([./a-zA-Z0-9\-_]+)ComponentAi.xml" COMPONENT_XML ${TEST_SOURCE})
@@ -93,9 +93,15 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES)
       target_sources(
         ${EXE_NAME}
         PRIVATE
-        ${GTEST_SOURCE}
         ${BASE_SOURCE}
       )
+      if (INCLUDE_GTEST)
+          target_sources(
+              ${EXE_NAME}
+              PRIVATE
+              ${GTEST_SOURCE}
+        )
+      endif()
     endif()
   endforeach()
 endfunction(unit_test_component_autocoder)
@@ -110,7 +116,7 @@ endfunction(unit_test_component_autocoder)
 # - **UT_SOURCES_INPUT:** sources to split into source and autocoder file
 # - **MOD_DEPS_INPUT:** dependencies split into thread and module dependencies
 ####
-function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
+function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT INCLUDE_GTEST)
     # Set the following variables from the existing SOURCE_FILES and LINK_DEPS by splitting them into
     # their separate pieces.
     #
@@ -125,13 +131,15 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     endif()
     generate_executable(${UT_EXE_NAME} "${SOURCE_FILES}" "${MOD_DEPS_INPUT}")
     # Generate the UTs w/ autocoding and add the other sources
-    unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}")
+    unit_test_component_autocoder(${UT_EXE_NAME} "${AUTOCODER_INPUT_FILES}" ${INCLUDE_GTEST})
     # Link modules
-    target_link_libraries(
-        "${UT_EXE_NAME}"
-        "gtest_main"
-        "-lpthread" #TODO: fix this
-    )
+    if (INCLUDE_GTEST)
+        target_link_libraries(
+            "${UT_EXE_NAME}"
+            "gtest_main"
+            "-lpthread" #TODO: fix this
+        )
+    endif()
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
