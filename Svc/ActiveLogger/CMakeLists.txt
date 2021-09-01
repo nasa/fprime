@@ -7,10 +7,8 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveLoggerImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger_EnabledEnumAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveLogger_FilterSeverityEnumAi.xml"
 )
 
 register_fprime_module()
@@ -19,7 +17,7 @@ set(UT_MOD_DEPS
     Os_Stubs
 )
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveLogger/ActiveLoggerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveLogger/ActiveLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveLoggerImplTester.cpp"
 )

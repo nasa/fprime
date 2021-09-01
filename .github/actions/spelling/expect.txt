@@ -542,6 +542,7 @@ formatline
 foundin
 fpconfighpp
 FPGA
+FPL
 fpl
 FPL
 fpp
@@ -934,6 +935,8 @@ memcheck
 memcmp
 memcpy
 memname
+memoization
+memoize
 memoizing
 memset
 MEMTEST
@@ -1007,8 +1010,8 @@ ncsl
 NDELAY
 ndiffs
 netdb
-Netscape
 Netscape's
+Netscape
 newloc
 newroot
 newself
@@ -1066,8 +1069,8 @@ odo
 oflag
 okidocki
 oldeol
-OMG
 OMG's
+OMG
 onchange
 onlinepubs
 OParg
@@ -1326,6 +1329,7 @@ saveop
 saxutils
 sbb
 SBF
+sbt
 sbin
 sched
 schem
@@ -1570,6 +1574,7 @@ textui
 tfile
 tflat
 tfn
+tgz
 thepihut
 Thhmmss
 thiscol
@@ -1644,8 +1649,8 @@ tt
 ttype
 Tuszynski
 TXD
-typedef
 typedef'ed
+typedef
 typeid
 typeinfo
 typelist
@@ -1743,6 +1748,7 @@ weakref
 website
 Werror
 Wextra
+wget
 whitebox
 whitelist
 wiki

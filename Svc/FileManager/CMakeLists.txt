@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FileManagerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/FileManager.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FileManager.cpp"
 )
 set(MOD_DEPS
@@ -20,7 +20,7 @@ register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/FileManager/FileManagerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/FileManager/FileManager.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
 )

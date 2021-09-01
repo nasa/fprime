@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryComponentImpl.cpp"
 )
 
@@ -15,7 +15,7 @@ register_fprime_module()
 
 #### UTS ###
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/StaticMemoryComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/StaticMemory.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
 )

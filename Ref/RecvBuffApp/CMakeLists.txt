@@ -6,10 +6,8 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/PacketStatSerializableAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/RecvBuffComponentImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PacketRecvStatusEnumAi.xml"
 
 )
 set(MOD_DEPS "Os" "Fw/Cmd")
