@@ -150,4 +150,3 @@ module Ref {
   }
 
 }
-include "init.fpp"
