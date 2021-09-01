@@ -11,10 +11,10 @@
 #endif
 
 #include <pthread.h>
-#include <errno.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
+#include <cerrno>
+#include <cstring>
+#include <ctime>
+#include <cstdio>
 #include <new>
 #include <Fw/Logger/Logger.hpp>
 

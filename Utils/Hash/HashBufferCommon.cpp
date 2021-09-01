@@ -1,5 +1,5 @@
 #include <Utils/Hash/HashBuffer.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Utils {
 

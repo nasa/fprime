@@ -1,6 +1,6 @@
 #include <Os/Mem.hpp>
 
-#include <string.h>
+#include <cstring>
 
 namespace Os {
     

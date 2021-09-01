@@ -13,7 +13,7 @@
 #include "Tester.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Test/UnitTest.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100

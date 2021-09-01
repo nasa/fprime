@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <FpConfig.hpp>
 // The following header will need to be modified when test code is moved
 // If the component tester is regenerated, this will need to be modified again.
@@ -27,7 +27,7 @@ namespace Svc {
     }
 #endif
 
-    PolyDbTesterComponentBase::~PolyDbTesterComponentBase(void) {
+    PolyDbTesterComponentBase::~PolyDbTesterComponentBase() {
     }
 
     void PolyDbTesterComponentBase::init(NATIVE_INT_TYPE instance) {

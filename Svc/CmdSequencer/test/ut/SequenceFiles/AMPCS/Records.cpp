@@ -4,11 +4,9 @@
 // \brief  AMPCS sequence file records
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
 
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/Records.hpp"

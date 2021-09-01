@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm_onchange/TestTelemRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestTelemRecvImpl::TestTelemRecvImpl(const char* name) : Tlm::TelemTesterComponentBase(name)

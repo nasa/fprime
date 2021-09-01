@@ -13,6 +13,12 @@ module Svc {
       AUTO = 1
     }
 
+    @ Sequencer blocking state
+    enum BlockState {
+        BLOCK = 0
+        NO_BLOCK = 1
+    }
+
     @ The stage of the file read operation
     enum FileReadStage {
       READ_HEADER
@@ -54,6 +60,9 @@ module Svc {
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
+
+    @ Sequence cancel port
+    async input port seqCancelIn: Svc.CmdSeqCancel
 
     @ Command response in port
     async input port cmdResponseIn: Fw.CmdResponse

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include <Os/Task.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 extern "C" {
     void startTestTask();

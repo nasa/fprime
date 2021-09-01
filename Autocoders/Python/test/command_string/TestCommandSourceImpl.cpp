@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/command_string/TestCommandSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 
 #if FW_OBJECT_NAMES == 1

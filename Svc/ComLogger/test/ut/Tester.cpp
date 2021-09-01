@@ -2,7 +2,7 @@
 // CommandSequencer/test/ut/Tester.cpp
 // ----------------------------------------------------------------------
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "Tester.hpp"
 #include "Fw/Cmd/CmdPacket.hpp"

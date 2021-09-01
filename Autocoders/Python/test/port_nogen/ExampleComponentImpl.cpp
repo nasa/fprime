@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/port_nogen/ExampleComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace ExampleComponents {
 

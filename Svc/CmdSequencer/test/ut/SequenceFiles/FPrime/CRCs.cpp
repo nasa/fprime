@@ -4,11 +4,9 @@
 // \brief  F Prime sequence file CRCs
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
 
 #include "gtest/gtest.h"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/CRCs.hpp"

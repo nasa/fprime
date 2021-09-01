@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm_onchange/TestTelemImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestTlmImpl::TestTlmImpl(const char* name) : Tlm::TestTlmComponentBase(name)

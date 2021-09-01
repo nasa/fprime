@@ -9,7 +9,7 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/ValidateFile.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
