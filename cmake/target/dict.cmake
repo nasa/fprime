@@ -44,7 +44,7 @@ function(add_module_target MODULE TARGET GLOBAL_TARGET AC_INPUTS SOURCE_FILES AC
                 ${TARGET}
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
                 COMMAND ${CMAKE_COMMAND} -E copy ${DICTIONARY} "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
-                DEPENDS ${DICTIONARY}
+                DEPENDS ${DICTIONARY} ${MODULE}
             )
             add_dependencies("${GLOBAL_TARGET}" "${TARGET}")
             break()
