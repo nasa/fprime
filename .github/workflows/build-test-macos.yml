@@ -55,8 +55,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
-    - name: Setup Dependencies
-      run: sudo apt-get install valgrind
     - name: F prime CI step
       run: ./ci/tests/30-ints.bash
     # Archive the outputs
