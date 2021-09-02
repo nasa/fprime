@@ -240,7 +240,7 @@ void constructApp(U32 port_number, char* hostname) {
         return;
     }
 
-    uartDrv.startReadThread(100,10*1024,-1);
+    uartDrv.startReadThread();
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
