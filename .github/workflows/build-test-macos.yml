@@ -55,8 +55,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
-    - name: Install valgrind
-      run: brew install valgrind
     - name: Install coreutils
       run: brew install coreutils
     - name: F prime CI step

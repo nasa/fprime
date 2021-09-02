@@ -90,7 +90,7 @@ function integration_test {
             cd "${WORKDIR}/test"
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
             TIMEOUT="timeout"
-            if command -v ${TIMEOUT} &> /dev/null
+            if ! command -v ${TIMEOUT} &> /dev/null
             then
                 TIMEOUT="gtimeout" # macOS homebrew "coreutils"
             fi
