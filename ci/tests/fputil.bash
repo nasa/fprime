@@ -89,7 +89,12 @@ function integration_test {
         (
             cd "${WORKDIR}/test"
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
-            timeout --kill-after=10s 180s pytest
+            TIMEOUT="timeout"
+            if command -v ${TIMEOUT} &> /dev/null
+            then
+                TIMEOUT="gtimeout" # macOS homebrew "coreutils"
+            fi
+            ${TIMEOUT} --kill-after=10s 180s pytest
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID
