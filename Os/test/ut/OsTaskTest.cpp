@@ -22,6 +22,6 @@ void startTestTask(int iters) {
     long localIter = iters;
     testTask = new Os::Task();
     Os::TaskString name("ATestTask");
-    Os::Task::TaskStatus stat = testTask->start(name,12,100,10*1024,someTask,(void*) localIter);
+    Os::Task::TaskStatus stat = testTask->start(name, someTask, (void*)localIter);
     ASSERT_EQ(stat, Os::Task::TASK_OK);
 }

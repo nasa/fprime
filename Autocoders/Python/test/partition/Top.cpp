@@ -66,8 +66,8 @@ void constructArchitecture(void) {
 	partitionComp_ptr->getoutputPort2SerializeOutputPort()->registerSerialPort(hueyComp_ptr->getinputPort3Msg3InputPort());
 
 	// Active component startup
-	// start(identifier, stack size, priority)
-	hueyComp_ptr->start(0, 10 * 1024, 100);
+	// start()
+	hueyComp_ptr->start();
 
 	dumparch();
 

@@ -37,8 +37,8 @@ int main(int argc, char* argv[])  {
 	constructDuckArchitecture();
 
         //Start Components
-        Huey.start(0, 10 * 1024, 100);
-        Duey.start(0, 10 * 1024, 100);
+        Huey.start();
+        Duey.start();
 
 	// Ask for input to huey or duey here.
 	char in[80];

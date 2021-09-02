@@ -55,8 +55,7 @@ namespace Fw {
                     static_cast<NATIVE_UINT_TYPE>(identifier));
     }
 
-    void ActiveComponentBase::start(NATIVE_UINT_TYPE priority_in, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
-        NATIVE_INT_TYPE priority = static_cast<NATIVE_INT_TYPE>(priority_in);
+    void ActiveComponentBase::start(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
         Os::TaskString taskName;
 
 #if FW_OBJECT_NAMES == 1
