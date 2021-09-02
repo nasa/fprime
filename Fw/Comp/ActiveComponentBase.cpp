@@ -73,7 +73,7 @@ namespace Fw {
 #else
         Os::Task::taskRoutine routine = this->s_baseTask;
 #endif
-        Os::Task::TaskStatus status = this->m_task.start(taskName, routine, this, priority, stackSize, cpuAffinity, identifier);
+        Os::Task::TaskStatus status = this->m_task.start(taskName, routine,this, priority, stackSize, cpuAffinity, identifier);
         FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
     }
 

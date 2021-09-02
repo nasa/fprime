@@ -16,6 +16,7 @@
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentAc.hpp>
 #include <LinuxSerialDriverComponentImplCfg.hpp>
 #include <Os/Mutex.hpp>
+#include <Os/Task.hpp>
 
 namespace Drv {
 
@@ -70,7 +71,7 @@ namespace Drv {
       //! start the serial poll thread.
       //! buffSize is the max receive buffer size
       //!
-      void startReadThread(NATIVE_INT_TYPE priority = -1, NATIVE_INT_TYPE stackSize = -1, NATIVE_INT_TYPE cpuAffinity = -1);
+      void startReadThread(NATIVE_INT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_INT_TYPE stackSize = Os::Task::TASK_DEFAULT, NATIVE_INT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
 
       //! Quit thread
       void quitReadThread(void);

@@ -1,8 +1,5 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
-
-
-#include <sys/types.h>
 #include <errno.h>
 
 #include <pthread.h>
@@ -11,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <Fw/Logger/Logger.hpp>
-#include <unistd.h>
+
 
 static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
 
@@ -27,41 +24,42 @@ void* pthread_entry_wrapper(void* arg) {
 
 namespace Os {
 
-    void validate_arguments(NATIVE_INT_TYPE& priority, NATIVE_INT_TYPE& stack, NATIVE_INT_TYPE& affinity, bool expect_perm) {
+    void validate_arguments(NATIVE_UINT_TYPE& priority, NATIVE_UINT_TYPE& stack, NATIVE_UINT_TYPE& affinity, bool expect_perm) {
         const NATIVE_INT_TYPE min_priority = sched_get_priority_min(SCHED_POLICY);
         const NATIVE_INT_TYPE max_priority = sched_get_priority_max(SCHED_POLICY);
-        // Check to ensure that these calls worked
-        if (min_priority == -1 or max_priority == -1) {
-            Fw::Logger::logMsg("[WARNING] Unable to determine min/max priority with error %s. Discarding priority. ", reinterpret_cast<POINTER_CAST>(strerror(errno)));
+        // Check to ensure that these calls worked.  -1 is an error
+        if (min_priority < 0 or max_priority < 0) {
+            Fw::Logger::logMsg("[WARNING] Unable to determine min/max priority with error %s. Discarding priority.\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
+            priority = Os::Task::TASK_DEFAULT;
         }
         // Check priority attributes
-        if (!expect_perm and priority != -1) {
+        if (!expect_perm and priority != Task::TASK_DEFAULT) {
             Fw::Logger::logMsg("[WARNING] Task priority set and permissions unavailable. Discarding priority.\n");
-            priority = -1;
+            priority = Task::TASK_DEFAULT; //Action: use constant
         }
-        if (priority != -1 and priority < min_priority) {
+        if (priority != Task::TASK_DEFAULT and priority < static_cast<NATIVE_UINT_TYPE>(min_priority)) {
             Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, min_priority);
             priority = min_priority;
         }
-        if (priority != -1 and priority > max_priority) {
+        if (priority != Task::TASK_DEFAULT and priority > static_cast<NATIVE_UINT_TYPE>(max_priority)) {
             Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, max_priority);
             priority = max_priority;
         }
         // Check the stack
-        if (stack != -1 and stack < PTHREAD_STACK_MIN) {
+        if (stack != Task::TASK_DEFAULT and stack < PTHREAD_STACK_MIN) {
             Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
             stack = PTHREAD_STACK_MIN;
         }
         // Check CPU affinity
-        if (!expect_perm and affinity != -1) {
+        if (!expect_perm and affinity != Task::TASK_DEFAULT) {
             Fw::Logger::logMsg("[WARNING] Cpu affinity set and permissions unavailable. Discarding affinity.\n");
-            affinity = -1;
+            affinity = Task::TASK_DEFAULT;
         }
     }
 
-    Task::TaskStatus set_stack_size(pthread_attr_t& att, NATIVE_INT_TYPE stack) {
+    Task::TaskStatus set_stack_size(pthread_attr_t& att, NATIVE_UINT_TYPE stack) {
         // Set the stack size, if it has been supplied
-        if (stack != -1) {
+        if (stack != Task::TASK_DEFAULT) {
             I32 stat = pthread_attr_setstacksize(&att, stack);
             if (stat != 0) {
                 Fw::Logger::logMsg("pthread_attr_setstacksize: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
@@ -71,8 +69,8 @@ namespace Os {
         return Task::TASK_OK;
     }
 
-    Task::TaskStatus set_priority_params(pthread_attr_t& att, NATIVE_INT_TYPE priority) {
-        if (priority != -1) {
+    Task::TaskStatus set_priority_params(pthread_attr_t& att, NATIVE_UINT_TYPE priority) {
+        if (priority != Task::TASK_DEFAULT) {
             I32 stat = pthread_attr_setschedpolicy(&att, SCHED_POLICY);
             if (stat != 0) {
                 Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
@@ -98,8 +96,8 @@ namespace Os {
         return Task::TASK_OK;
     }
 
-    Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_INT_TYPE cpuAffinity) {
-        if (cpuAffinity != -1) {
+    Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_UINT_TYPE cpuAffinity) {
+        if (cpuAffinity != Task::TASK_DEFAULT) {
 #ifdef TGT_OS_TYPE_LINUX
             cpu_set_t cpuset;
             CPU_ZERO(&cpuset);
@@ -118,7 +116,7 @@ namespace Os {
         return Task::TASK_OK;
     }
 
-    Task::TaskStatus create_pthread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity, pthread_t*& tid, void* arg, bool expect_perm) {
+    Task::TaskStatus create_pthread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, pthread_t*& tid, void* arg, bool expect_perm) {
         Task::TaskStatus tStat = Task::TASK_OK;
         validate_arguments(priority, stackSize, cpuAffinity, expect_perm);
         pthread_attr_t att;
@@ -127,7 +125,7 @@ namespace Os {
 
         I32 stat = pthread_attr_init(&att);
         if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n", stat, errno, reinterpret_cast<POINTER_CAST>(strerror(stat)));
+            Fw::Logger::logMsg("pthread_attr_init: (%d): %s\n", stat, reinterpret_cast<POINTER_CAST>(strerror(stat)));
             return Task::TASK_INVALID_PARAMS;
         }
 
@@ -199,14 +197,16 @@ namespace Os {
         this->m_routineWrapper.arg = arg;
         pthread_t* tid;
 
-        // Try to create a permissioned thread
-        TaskStatus status = create_pthread(static_cast<NATIVE_INT_TYPE>(priority), static_cast<NATIVE_INT_TYPE>(stackSize), static_cast<NATIVE_INT_TYPE>(cpuAffinity), tid, &this->m_routineWrapper, true);
-        // Failure dur to permission automatically retried
+        // Try to create thread with assuming permissions
+        TaskStatus status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, true);
+        // Failure due to permission automatically retried
         if (status == TASK_ERROR_PERMISSION) {
-            Fw::Logger::logMsg("[WARNING] Insufficient permissions to create a prioritized tasks or specify CPU affinities. Attempting to fallback to tasks without priority.\n");
-            Fw::Logger::logMsg("[WARNING] Please use no-argument <component>.start() calls or ensure executing user has correct permissions for your operating system.\n");
-            Fw::Logger::logMsg("[WARNING]     Note: this fallback to tasks without priority will be removed and will fail in future fprime releases.\n");
-            status = create_pthread(static_cast<NATIVE_INT_TYPE>(priority), static_cast<NATIVE_INT_TYPE>(stackSize), static_cast<NATIVE_INT_TYPE>(cpuAffinity), tid, &this->m_routineWrapper, false); // Fallback with no permission
+            Fw::Logger::logMsg("[WARNING] Insufficient Permissions:\n");
+            Fw::Logger::logMsg("[WARNING] Insufficient permissions to set task priority or set task CPU affinity on task %s. Creating task without priority nor affinity.\n", reinterpret_cast<POINTER_CAST>(m_name.toChar()));
+            Fw::Logger::logMsg("[WARNING] Please use no-argument <component>.start() calls, set priority/affinity to TASK_DEFAULT or ensure user has correct permissions for operating system.\n");
+            Fw::Logger::logMsg("[WARNING]      Note: future releases of fprime will fail when setting priority/affinity without sufficient permissions \n");
+            Fw::Logger::logMsg("\n");
+            status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, false); // Fallback with no permission
         }
         // Check for non-zero error code
         if (status != TASK_OK) {
@@ -253,9 +253,7 @@ namespace Os {
                 }
             }
         }
-
         return TASK_OK; // for coverage analysis
-
     }
 
 

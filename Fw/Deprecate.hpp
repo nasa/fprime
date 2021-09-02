@@ -12,4 +12,4 @@
   #define DEPRECATED(func) func
 #endif
 
-#endif // REF_DEPRECATE_HPP
+#endif // FW_DEPRECATE_HPP
