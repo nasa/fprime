@@ -24,4 +24,13 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
-register_fprime_ut()
+#register_fprime_ut()
+
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/DeframerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/DeframerRules.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/TestMain.cpp"
+)
+set(UT_MOD_DEPS STest)
+register_fprime_ut() #(Svc_Deframer_unified)
