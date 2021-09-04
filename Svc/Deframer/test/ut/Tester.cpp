@@ -20,7 +20,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 // Construction and destruction
 // ----------------------------------------------------------------------
-Tester::MockDeframer::MockDeframer(Tester& parent) : m_parent(parent), m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
+Tester::MockDeframer::MockDeframer(Tester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
 
 Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
     needed = ring_buffer.get_remaining_size();

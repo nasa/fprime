@@ -27,9 +27,7 @@ class Tester : public DeframerGTestBase {
         MockDeframer(Tester& parent);
         DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
         void test_interface(Fw::ComPacket::ComPacketType  com_type);
-
         DeframingStatus m_status;
-        Tester& m_parent;
     };
 
   public:
