@@ -18,117 +18,102 @@
 
 namespace Svc {
 
-  class Tester :
-    public DeframerGTestBase
-  {
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
-      class MockDeframer : public DeframingProtocol {
-        public:
-          MockDeframer(Tester& parent);
-          DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
-          Tester& m_parent;
-      };
+class Tester : public DeframerGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+    class MockDeframer : public DeframingProtocol {
+      public:
+        MockDeframer(Tester& parent);
+        DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
+        void test_iterface(Fw::ComPacket::ComPacketType  com_type);
 
-    public:
+        DeframingStatus m_status;
+        Tester& m_parent;
+    };
 
-      //! Construct object Tester
-      //!
-      Tester(void);
+  public:
+    //! Construct object Tester
+    //!
+    Tester(void);
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+    //! Destroy object Tester
+    //!
+    ~Tester(void);
 
-    public:
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    void test_incoming_frame(DeframingProtocol::DeframingStatus status);
+    void test_com_interface();
+    void test_buffer_interface();
+    void test_unnknown_interface();
 
-      void test_incoming_frame(U32 buffer_size, U32 expected_size);
-      void test_route(Fw::ComPacket::ComPacketType packet_type);
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Handler for from_comOut
+    //!
+    void from_comOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
+                             U32 context                    /*!< Call context value; meaning chosen by user*/
+    );
 
-      //! Handler for from_comOut
-      //!
-      void from_comOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
-          U32 context /*!< Call context value; meaning chosen by user*/
-      );
+    //! Handler for from_bufferOut
+    //!
+    void from_bufferOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                Fw::Buffer& fwBuffer);
 
-      //! Handler for from_bufferOut
-      //!
-      void from_bufferOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Handler for from_bufferAllocate
+    //!
+    Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                           U32 size);
 
-      //! Handler for from_bufferAllocate
-      //!
-      Fw::Buffer from_bufferAllocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 size 
-      );
+    //! Handler for from_bufferDeallocate
+    //!
+    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                       Fw::Buffer& fwBuffer);
 
-      //! Handler for from_bufferDeallocate
-      //!
-      void from_bufferDeallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Handler for from_framedDeallocate
+    //!
+    void from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                       Fw::Buffer& fwBuffer);
 
-      //! Handler for from_framedDeallocate
-      //!
-      void from_framedDeallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Handler for from_framedPoll
+    //!
+    Drv::PollStatus from_framedPoll_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                            Fw::Buffer& pollBuffer);
 
-      //! Handler for from_framedPoll
-      //!
-      Drv::PollStatus from_framedPoll_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &pollBuffer 
-      );
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts(void);
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents(void);
 
-      //! Connect ports
-      //!
-      void connectPorts(void);
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Initialize components
-      //!
-      void initComponents(void);
+    //! The component under test
+    //!
+    DeframerComponentImpl component;
 
-    private:
+    Fw::Buffer m_buffer;
+    MockDeframer m_mock;
+};
 
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      DeframerComponentImpl component;
-
-      Fw::Buffer m_buffer;
-      MockDeframer m_mock;
-      DeframingProtocol::DeframingStatus m_status;
-      U32 m_remaining_size;
-      bool m_has_port_out;
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif
