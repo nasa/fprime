@@ -30,7 +30,7 @@ Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::Circu
     return m_status;
 }
 
-void Tester::MockDeframer::test_iterface(Fw::ComPacket::ComPacketType com_packet_type) {
+void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packet_type) {
     U8 chars[4];
     m_interface->allocate(3042);
     Fw::Buffer buffer(chars, sizeof(chars));
@@ -73,7 +73,7 @@ void Tester ::test_incoming_frame(Tester::MockDeframer::DeframingStatus status) 
 }
 
 void Tester ::test_com_interface() {
-    m_mock.test_iterface(Fw::ComPacket::FW_PACKET_COMMAND);
+    m_mock.test_interface(Fw::ComPacket::FW_PACKET_COMMAND);
     ASSERT_from_comOut_SIZE(1);
     ASSERT_from_bufferAllocate(0, 3042);
     ASSERT_from_bufferOut_SIZE(0);
@@ -81,15 +81,15 @@ void Tester ::test_com_interface() {
 }
 
 void Tester ::test_buffer_interface() {
-    m_mock.test_iterface(Fw::ComPacket::FW_PACKET_FILE);
+    m_mock.test_interface(Fw::ComPacket::FW_PACKET_FILE);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
     ASSERT_from_bufferOut_SIZE(1);
     ASSERT_from_bufferDeallocate_SIZE(0);
 }
 
-void Tester ::test_unnknown_interface() {
-    m_mock.test_iterface(Fw::ComPacket::FW_PACKET_UNKNOWN);
+void Tester ::test_unknown_interface() {
+    m_mock.test_interface(Fw::ComPacket::FW_PACKET_UNKNOWN);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
     ASSERT_from_bufferOut_SIZE(0);

@@ -31,7 +31,7 @@ TEST(Deframer, TestBufferInterface) {
 }
 TEST(Deframer, TestUnknownInterface) {
     Svc::Tester tester;
-    tester.test_unnknown_interface();
+    tester.test_unknown_interface();
 }
 
 int main(int argc, char **argv) {
