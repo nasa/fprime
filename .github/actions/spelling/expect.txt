@@ -326,6 +326,7 @@ delitem
 deployables
 DEPRECATEDLIST
 deps
+deque
 deregistration
 deser
 deserialization
