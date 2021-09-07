@@ -19,7 +19,7 @@ TEST(Nominal, RandomizedDeframer) {
 
     // Create rules, and assign them into the array
     Svc::RandomizeRule randomize("Randomize");
-    Svc::SendAvailableRule sendup("");
+    Svc::SendAvailableRule sendup("Send");
 
     // Setup a list of rules to choose from
     STest::Rule<Svc::Tester>* rules[] = {
@@ -36,11 +36,44 @@ TEST(Nominal, RandomizedDeframer) {
     printf("Ran %u steps.\n", numSteps);
 }
 
+TEST(Nominal, RandomizedPollingDeframer) {
+    Svc::Tester tester(true);
+
+    // Create rules, and assign them into the array
+    Svc::RandomizeRule randomize("Randomize");
+    Svc::SendAvailableRule sendup("Send");
+
+    // Setup a list of rules to choose from
+    STest::Rule<Svc::Tester>* rules[] = {
+            &randomize,
+            &sendup
+    };
+    // Construct the random scenario and run it with the defined bounds
+    STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+
+    // Setup a bounded scenario to run rules a set number of times
+    STest::BoundedScenario<Svc::Tester> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
+    // Run!
+    const U32 numSteps = bounded.run(tester);
+    printf("Ran %u steps.\n", numSteps);
+}
 
 TEST(Nominal, BasicUplink) {
-    Svc::Tester tester;
-    Svc::SendAvailableRule rule("Uplink Rule");
-    rule.apply(tester);
+    Svc::Tester tester(false);
+    Svc::RandomizeRule setup("Randomize");
+    Svc::SendAvailableRule send("Uplink Rule");
+
+    setup.apply(tester);
+    send.apply(tester);
+}
+
+TEST(Nominal, BasicPollUplink) {
+    Svc::Tester tester(false);
+    Svc::RandomizeRule setup("Randomize");
+    Svc::SendAvailableRule send("Uplink Rule");
+
+    setup.apply(tester);
+    send.apply(tester);
 }
 
 int main(int argc, char **argv) {

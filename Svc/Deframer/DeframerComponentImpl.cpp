@@ -108,7 +108,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
 
 void DeframerComponentImpl ::processRing() {
     FW_ASSERT(m_protocol != NULL);
-    // Maximum limit to to the loop as at least one byte is process per iteration unless needed > remaining size
+    // Maximum limit to the loop as at least one byte is process per iteration unless needed > remaining size
     const U32 loop_limit = m_in_ring.get_capacity() + 1;
 
     // Inner-loop, process ring buffer looking for at least the header

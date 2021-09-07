@@ -22,90 +22,75 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void)
+Tester ::Tester(bool polling)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
-      m_buffer(NULL),
-      m_uplink_type(1),
-      m_uplink_used(30),
-      m_uplink_size(sizeof(FP_FRAME_TOKEN_TYPE) * 2 + sizeof(U32) + m_uplink_used),
-      m_uplink_point(0),
-      m_garbage(false),
-      m_uplink_com_type(Fw::ComPacket::FW_PACKET_COMMAND) {
+      m_polling(polling)
+  {
     this->initComponents();
     this->connectPorts();
     component.setup(protocol);
-    update_header_info(0, 0);
 }
 
 Tester ::~Tester(void) {}
-
-// ----------------------------------------------------------------------
-// Tests State Adjustments
-// ----------------------------------------------------------------------
-
-void Tester ::update_header_info(U32 garbage_index, U8 garbage_byte) {
-    // Write token types
-    for (U32 i = 0; i < sizeof(FP_FRAME_TOKEN_TYPE); i++) {
-        m_uplink_data[i] = (FprimeFraming::START_WORD >> ((sizeof(FP_FRAME_TOKEN_TYPE) - 1 - i) * 8)) & 0xFF;
-        m_uplink_data[i + sizeof(FP_FRAME_TOKEN_TYPE)] =
-            (m_uplink_used >> ((sizeof(FP_FRAME_TOKEN_TYPE) - 1 - i) * 8)) & 0xFF;
-    }
-    // Packet type
-    m_uplink_data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 0] = (static_cast<U32>(m_uplink_com_type) >> 24) & 0xFF;
-    m_uplink_data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 1] = (static_cast<U32>(m_uplink_com_type) >> 16) & 0xFF;
-    m_uplink_data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 2] = (static_cast<U32>(m_uplink_com_type) >> 8) & 0xFF;
-    m_uplink_data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 3] = (static_cast<U32>(m_uplink_com_type) >> 0) & 0xFF;
-
-    Utils::Hash hash;
-    Utils::HashBuffer hashBuffer;
-    hash.update(m_uplink_data,  2 * sizeof(FP_FRAME_TOKEN_TYPE) + m_uplink_used);
-    hash.final(hashBuffer);
-
-    for (U32 i = 0; i < sizeof(U32); i++) {
-        m_uplink_data[i + 2 * sizeof(FP_FRAME_TOKEN_TYPE) + m_uplink_used] = hashBuffer.getBuffAddr()[i] & 0xFF;
-    }
-    if (m_garbage) {
-        m_uplink_data[garbage_index] += garbage_byte;
-    }
-}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
 void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
-    this->pushFromPortEntry_comOut(data, context);
-    for (U32 i = 0; i < data.getBuffLength(); i++) {
-        ASSERT_EQ(data.getBuffAddr()[i], m_uplink_data[i + FP_FRAME_HEADER_SIZE]);
+    // Seek to any packet of uplink type
+    while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
+           (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
+        m_receiving.pop_front();
     }
+    // Grab the front item
+    UplinkData check = m_receiving.front();
+    m_receiving.pop_front();
+
+    // Check for file
+    EXPECT_NE(check.type, Fw::ComPacket::FW_PACKET_FILE);
+    if (check.type == Fw::ComPacket::FW_PACKET_FILE) {
+        return;
+    }
+    for (U32 i = 0; i < data.getBuffLength(); i++) {
+        EXPECT_EQ(data.getBuffAddr()[i], check.data[i + FP_FRAME_HEADER_SIZE]);
+    }
+    this->pushFromPortEntry_comOut(data, context);
 }
 
 void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    // this->m_has_port_out = true;
-    this->pushFromPortEntry_bufferOut(fwBuffer);
+    // Seek to any packet of uplink type
+    while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
+           (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
+        m_receiving.pop_front();
+    }
+    // Grab the front item
+    UplinkData check = m_receiving.front();
+    m_receiving.pop_front();
+
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
-        ASSERT_EQ(fwBuffer.getData()[i], m_uplink_data[i + FP_FRAME_HEADER_SIZE + sizeof(FP_FRAME_TOKEN_TYPE)]);
+        ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FP_FRAME_HEADER_SIZE + sizeof(I32)]);
     }
     // Have to clean up memory as in a normal mode, file downlink doesn't require deallocation
     delete[](fwBuffer.getData() - sizeof(I32));
+    this->pushFromPortEntry_bufferOut(fwBuffer);
 }
 
 Fw::Buffer Tester ::from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
     this->pushFromPortEntry_bufferAllocate(size);
     Fw::Buffer buffer(new U8[size], size);
-    m_buffer = buffer.getData();
     return buffer;
 }
 
 void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    // this->m_has_port_out = true;
     delete[] fwBuffer.getData();
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
 }
 
 void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+    delete[] fwBuffer.getData(); // Allocated in rules
     this->pushFromPortEntry_framedDeallocate(fwBuffer);
 }
 
@@ -117,6 +102,7 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
         outgoing[i] = incoming[i];
     }
     pollBuffer.setSize(m_incoming_buffer.getSize());
+    delete[] incoming;
     return Drv::POLL_OK;
 }
 
