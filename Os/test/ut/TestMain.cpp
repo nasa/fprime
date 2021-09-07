@@ -38,10 +38,6 @@ TEST(Nominal, QTestPerformance) {
 TEST(Nominal, QTestConcurrentTest) { 
    qtest_concurrent();
 }
-// Disabled for macOS known issue
-//TEST(Nominal, IntervalTimerTest) { 
-//   intervalTimerTest();
-//}
 TEST(Nominal, FileSystemTest) { 
    fileSystemTest();
 }
