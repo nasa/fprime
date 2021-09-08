@@ -44,15 +44,15 @@ class SocketReadTask {
      * to the Os::Task::start call. cpuAffinity defaults to -1.
      *
      * \param name: name of the task
+     * \param reconnect: automatically reconnect socket when closed. Default: true.
      * \param priority: priority of the started task. See: Os::Task::start. Default: -1, not prioritized
      * \param stack: stack size provided to the task. See: Os::Task::start. Default: -1, posix threads default
-     * \param reconnect: automatically reconnect socket when closed. Default: true.
      * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: -1, don't care
      */
     void startSocketTask(const Fw::StringBase &name,
+                         const bool reconnect = true,
                          const NATIVE_INT_TYPE priority = -1,
                          const NATIVE_INT_TYPE stack = -1,
-                         const bool reconnect = true,
                          const NATIVE_INT_TYPE cpuAffinity = -1);
 
     /**
