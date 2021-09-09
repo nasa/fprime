@@ -71,10 +71,11 @@ endfunction(get_dependencies)
 # - **MODULE_NAME:** name of the module soliciting new dependencies
 ####
 function(__ai_info XML_PATH MODULE_NAME)
+    find_program(PYTHON NAMES python3 python)
     # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
     set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
     execute_process(
-            COMMAND "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
+            COMMAND "${PYTHON}" "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
             RESULT_VARIABLE ERR_RETURN
             OUTPUT_VARIABLE AI_OUTPUT
     )
@@ -126,7 +127,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     else()
         set(GEN_ARGS "--build_root")
     endif()
-
+    find_program(PYTHON NAMES python3 python)
     # Run Ai Autocoder
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(
@@ -137,7 +138,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
               BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime"
               FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
               PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-            ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} ${GEN_ARGS} ${AC_INPUT_FILE}
+            ${PYHTON} ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} ${GEN_ARGS} ${AC_INPUT_FILE}
             DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${FPRIME_AC_CONSTANTS_FILE} ${MODULE_DEPENDENCIES}
     )
 endfunction(setup_autocode)

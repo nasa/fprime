@@ -130,7 +130,7 @@ endfunction()
 ####
 function(generate_module OBJ_NAME SOURCES DEPENDENCIES)
   # Add dependencies on autocoder
-  ac_process_sources("${SOURCES}")
+  run_ac_set("${SOURCES}")
   resolve_dependencies("${DEPENDENCIES}" "${AC_DEPENDENCIES}" RESOLVED)
   update_module("${OBJ_NAME}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 

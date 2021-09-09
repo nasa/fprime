@@ -36,6 +36,7 @@ function(get_dependencies AC_INPUT_FILE)
 endfunction(get_dependencies)
 
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
+    find_program(PYTHON NAMES python3 python)
     add_dependencies(${UT_EXE_NAME} ${CODEGEN_TARGET})
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(
@@ -45,7 +46,7 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
             BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime"
             FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
             PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-            ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} -u ${AC_INPUT_FILE} --build_root
+            "${PYTHON}" ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} -u ${AC_INPUT_FILE} --build_root
             COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp
             COMMAND ${CMAKE_COMMAND} -E echo "All done Yo!"
             DEPENDS ${AC_INPUT_FILE} ${FPRIME_AC_CONSTANTS_FILE}

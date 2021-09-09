@@ -40,19 +40,10 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     endif()
 
     # Run the autocoder
-    set(MODULE_DEPENDENCIES)
-    set(GENERATED_FILES)
-    set(CONSUMED_SOURCES)
-    ac_run("autocoder/fpp" "${UT_SOURCES_INPUT}" "")
-    list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
-    list(APPEND GENERATED_FILE_LIST ${GENERATED_FILES})
-    list(APPEND CONSUMED_SOURCES_LIST ${CONSUMED_SOURCES})
-    ac_run("autocoder/ai-ut" "${UT_SOURCES_INPUT}" "${GENERATED_FILE_LIST}")
-    list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
-    list(APPEND GENERATED_FILE_LIST ${GENERATED_FILES})
-    list(APPEND CONSUMED_SOURCES_LIST ${CONSUMED_SOURCES})
-    resolve_dependencies("${MOD_DEPS_INPUT}" "${MODULE_DEPENDENCIES_LIST}" RESOLVED)
-    update_module("${UT_EXE_NAME}" "${UT_SOURCES_INPUT}" "${GENERATED_FILE_LIST}" "${CONSUMED_SOURCES}" "${RESOLVED}")
+    run_ac_set("${UT_SOURCES_INPUT}" "autocoder/fpp" "autocoder/ai-ut")
+
+    resolve_dependencies("${MOD_DEPS_INPUT}" "${AC_DEPENDENCIES}" RESOLVED)
+    update_module("${UT_EXE_NAME}" "${UT_SOURCES_INPUT}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 
     # Add test and dependencies to the "check" target
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})

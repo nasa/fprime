@@ -22,8 +22,6 @@ message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/required.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
-# Include validation file next, as it checks that everything is in-order
-include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
 # of these files, as they are a library that automates FPrime builds.
