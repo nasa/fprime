@@ -107,7 +107,7 @@ namespace Drv {
 #if FW_PORT_SERIALIZATION
         } else if (this->m_serPort) {
             TimingSignalPortBuffer buffer;
-            Fw::SerializeStatus status = buffer.serialize((I32)signal);
+            Fw::SerializeStatus status = buffer.serialize(static_cast<I32>(signal));
             FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
             this->m_serPort->invokeSerial(buffer);
 #endif
