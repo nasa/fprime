@@ -542,8 +542,8 @@ formatline
 foundin
 fpconfighpp
 FPGA
-FPL
 fpl
+FPL
 FPL
 fpp
 fppi
@@ -1010,8 +1010,8 @@ ncsl
 NDELAY
 ndiffs
 netdb
-Netscape's
 Netscape
+Netscape's
 newloc
 newroot
 newself
@@ -1069,8 +1069,8 @@ odo
 oflag
 okidocki
 oldeol
-OMG's
 OMG
+OMG's
 onchange
 onlinepubs
 OParg
@@ -1329,8 +1329,8 @@ saveop
 saxutils
 sbb
 SBF
-sbt
 sbin
+sbt
 sched
 schem
 schematron
@@ -1649,8 +1649,8 @@ tt
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
@@ -1798,3 +1798,4 @@ yacgen
 yml
 yyyymmdd
 zsh
+zu
