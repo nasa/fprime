@@ -120,7 +120,7 @@ namespace Os {
                 }
                 break;
             default:
-                FW_ASSERT(0,(NATIVE_INT_TYPE)mode);
+                FW_ASSERT(0,mode);
                 break;
         }
 
@@ -274,9 +274,9 @@ namespace Os {
                         break; // break out of while loop
                     } else {
                         // in order to move the pointer ahead, we need to cast it
-                        U8* charPtr = (U8*)buffer;
+                        U8* charPtr = static_cast<U8*>(buffer);
                         charPtr = &charPtr[readSize];
-                        buffer = (void*)charPtr;
+                        buffer = static_cast<void*>(charPtr);
                     }
                     maxIters--; // decrement loop count
                 }

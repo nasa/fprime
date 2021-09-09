@@ -74,7 +74,7 @@ namespace Os {
                 flags = O_WRONLY | O_CREAT | O_APPEND;
                 break;
             default:
-                FW_ASSERT(0,(NATIVE_INT_TYPE)mode);
+                FW_ASSERT(0, mode);
                 break;
         }
 
@@ -226,9 +226,9 @@ namespace Os {
                         break; // break out of while loop
                     } else {
                         // in order to move the pointer ahead, we need to cast it
-                        U8* charPtr = (U8*)buffer;
+                        U8* charPtr = static_cast<U8*>(buffer);
                         charPtr = &charPtr[readSize];
-                        buffer = (void*)charPtr;
+                        buffer = static_cast<void*>(charPtr);
                     }
                     maxIters--; // decrement loop count
                 }
@@ -285,8 +285,8 @@ namespace Os {
                         stat = NO_SPACE;
                         break;
                     default:
-                        DEBUG_PRINT("Error %d during write of 0x0%llx, addrMod %d, size %d, sizeMod %d\n",
-                                    errno, (U64) buffer, ((U64) buffer) % 512, size, size % 512);
+                        DEBUG_PRINT("Error %d during write of 0x%p, addrMod %d, size %d, sizeMod %d\n",
+                                    errno, buffer, static_cast<POINTER_CAST>(buffer) % 512, size, size % 512);
                         stat = OTHER_ERROR;
                         break;
                 }
@@ -346,7 +346,7 @@ namespace Os {
             }
             const NATIVE_INT_TYPE toWrite = size;
             FW_ASSERT(idx + size <= totalSize, idx + size);
-            const Os::File::Status fileStatus = this->write((U8*) buffer + idx, size, false);
+            const Os::File::Status fileStatus = this->write(static_cast<const U8*>(buffer) + idx, size, false);
             if (!(fileStatus == Os::File::OP_OK
                   && size == static_cast<NATIVE_INT_TYPE>(toWrite))) {
                 totalSize = newBytesWritten;
