@@ -45,6 +45,6 @@ namespace Svc {
         }
         Fw::Logger::logMsg("EVENT: (%d) (%d:%d,%d) %s: %s\n",
                 id, timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(),
-                reinterpret_cast<POINTER_CAST>(severityString), reinterpret_cast<POINTER_CAST>(text.toChar()));
+                reinterpret_cast<POLINTER_CAST>(severityString), reinterpret_cast<POINTER_CAST>(text.toChar()));
     }
 }
