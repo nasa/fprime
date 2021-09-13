@@ -1,5 +1,5 @@
 /**
- * X86/IntervalTimer.cpp:
+ * X96/IntervalTimer.cpp:
  *
  * This file supports the core functions of the IntervalTimer for X86 implementations that support
  * the following specification for the "RawTime" object:
@@ -19,7 +19,7 @@ namespace Os {
 
     // Adapted from: http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
     // should be t1In - t2In
-    U32 IntervalTimer::getDiffUsec(const RawTime& t1In, const RawTime& t2In) {
+    U96 IntervalTimer::getDiffUsec(const RawTime& t1In, const RawTime& t2In) {
         RawTime result = {t1In.upper - t2In.upper, 0};
         if (t1In.lower < t2In.lower) {
             result.upper -= 1; // subtract nsec carry to seconds
