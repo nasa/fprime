@@ -5,6 +5,7 @@
 # rather allows the users to build against fprime, fprime libraries while taking advantage of fprime's autocoding
 # support. This file includes the cmake build system setup for building like fprime.
 ####
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
 # Include the Options, and platform files. These are files that change the build
 # setup. Users may need to add items to these files in order to ensure that all
@@ -19,6 +20,7 @@ message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
+include("${CMAKE_CURRENT_LIST_DIR}/fpp-download/fpp.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/platform/CMakeLists.txt")
 # Include validation file next, as it checks that everything is in-order
 include("${CMAKE_CURRENT_LIST_DIR}/support/validation/Validation.cmake")
@@ -34,6 +36,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/support/Utils.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Unit_Test.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/support/Target.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/API.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/autocoder/autocoder.cmake")
 
 # Set the install directory for the package
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
@@ -55,6 +58,11 @@ register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
 
 register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+
+register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/fpp.cmake")
+register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-xml.cmake")
+
+
 
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.

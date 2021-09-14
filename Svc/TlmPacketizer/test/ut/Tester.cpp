@@ -23,7 +23,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() : 
 #if FW_OBJECT_NAMES == 1
       TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TlmPacketizer")
@@ -38,7 +38,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester() 
   {
     
   }
@@ -79,14 +79,14 @@ namespace Svc {
   TlmPacketizerPacket ignore = {ignoreList, 0, 0, FW_NUM_ARRAY_ELEMENTS(ignoreList)};
 
   void Tester ::
-    initTest(void)
+    initTest()
   {
       this->component.setPacketList(packetList,ignore,2);
 
   }
 
   void Tester ::
-    pushTlmTest(void)
+    pushTlmTest()
   {
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -124,7 +124,7 @@ namespace Svc {
 
 
   void Tester ::
-    sendPacketsTest(void)
+    sendPacketsTest()
   {
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -193,7 +193,7 @@ namespace Svc {
   }
 
   void Tester ::
-    sendPacketLevelsTest(void)
+    sendPacketLevelsTest()
   {
       this->component.setPacketList(packetList,ignore,1);
       Fw::Time ts;
@@ -262,7 +262,7 @@ namespace Svc {
   }
 
   void Tester ::
-    updatePacketsTest(void)
+    updatePacketsTest()
   {
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -564,7 +564,7 @@ namespace Svc {
   }
 
   void Tester ::
-     ignoreTest(void)
+     ignoreTest()
   {
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -631,7 +631,7 @@ namespace Svc {
   }
 
   void Tester ::
-     sendManualPacketTest(void)
+     sendManualPacketTest()
   {
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -753,7 +753,7 @@ namespace Svc {
   }
 
   void Tester ::
-     setPacketLevelTest(void)
+     setPacketLevelTest()
   {
       this->component.setPacketList(packetList,ignore,0);
       Fw::Time ts;
@@ -890,7 +890,7 @@ return;
   }
 
   void Tester ::
-    nonPacketizedChannelTest(void) {
+    nonPacketizedChannelTest() {
 
       this->component.setPacketList(packetList,ignore,2);
       Fw::Time ts;
@@ -923,7 +923,7 @@ return;
   }
 
   void Tester ::
-    pingTest(void) {
+    pingTest() {
 
       this->component.setPacketList(packetList,ignore,2);
       // ping component
@@ -973,7 +973,7 @@ return;
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts() 
   {
 
     // TlmRecv
@@ -1062,7 +1062,7 @@ return;
 
 
   void Tester ::
-    initComponents(void) 
+    initComponents() 
   {
     this->init();
     this->component.init(

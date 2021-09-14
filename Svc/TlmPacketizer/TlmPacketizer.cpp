@@ -65,7 +65,7 @@ namespace Svc {
   }
 
   TlmPacketizer ::
-    ~TlmPacketizer(void)
+    ~TlmPacketizer()
   {
 
   }

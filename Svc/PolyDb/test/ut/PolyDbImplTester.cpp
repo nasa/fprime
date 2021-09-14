@@ -32,18 +32,18 @@ namespace Svc {
         Fw::PolyType vals[NUM_TEST_VALS];
 
         // set test values
-        vals[0] = (U8)1;
-        vals[1] = (I8)2;
-        vals[2] = (U16)3;
-        vals[3] = (I16)4;
-        vals[4] = (U32)5;
-        vals[5] = (I32)6;
-        vals[6] = (U64)7;
-        vals[7] = (I64)8;
-        vals[8] = (F32)9.0;
-        vals[9] = (F64)10.0;
+        vals[0] = static_cast<U8>(1);
+        vals[1] = static_cast<I8>(2);
+        vals[2] = static_cast<U16>(3);
+        vals[3] = static_cast<I16>(4);
+        vals[4] = static_cast<U32>(5);
+        vals[5] = static_cast<I32>(6);
+        vals[6] = static_cast<U64>(7);
+        vals[7] = static_cast<I64>(8);
+        vals[8] = static_cast<F32>(9.0);
+        vals[9] = static_cast<F64>(10.0);
         vals[10] = true;
-        vals[11] = (void*)0x100;
+        vals[11] = reinterpret_cast<void*>(0x100);
 
         Fw::Time ts(TB_NONE,6,7);
 
@@ -85,7 +85,7 @@ namespace Svc {
                 }
                 ASSERT_EQ(mstatValue,checkStat.e);
             }
-            mstatValue = (MeasurementStatus::t)((NATIVE_INT_TYPE)mstatValue + 1);
+            mstatValue = static_cast<MeasurementStatus::t>(mstatValue + 1);
         }
 
     }

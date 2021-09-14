@@ -102,61 +102,6 @@ typedef char CHAR;
 #define NULL  (0)  //!< NULL
 #endif
 
-
-#ifndef I8_MAX
-#define I8_MAX static_cast<I8>(127)
-#endif
-
-#ifndef I8_MIN
-#define I8_MIN static_cast<I8>(-128)
-#endif
-
-#ifndef U8_MAX
-#define U8_MAX static_cast<U8>(255u)
-#endif
-
-#if FW_HAS_16_BIT
-#ifndef I16_MAX
-#define I16_MAX static_cast<I16>(32767)
-#endif
-
-#ifndef I16_MIN
-#define I16_MIN static_cast<I16>(-32768)
-#endif
-
-#ifndef U16_MAX
-#define U16_MAX static_cast<U16>(65535u)
-#endif
-#endif
-
-#if FW_HAS_32_BIT
-#ifndef I32_MAX
-#define I32_MAX static_cast<I32>(2147483647)
-#endif
-
-#ifndef I32_MIN
-#define I32_MIN static_cast<I32>(-2147483648)
-#endif
-
-#ifndef U32_MAX
-#define U32_MAX static_cast<U32>(4294967295u)
-#endif
-#endif
-
-#if FW_HAS_64_BIT
-#ifndef I64_MAX
-#define I64_MAX static_cast<I64>(9223372036854775807)
-#endif
-
-#ifndef I64_MIN
-#define I64_MIN static_cast<I64>(-9223372036854775808)
-#endif
-
-#ifndef U64_MAX
-#define U64_MAX static_cast<U64>(18446744073709551615u)
-#endif
-#endif
-
 #define FW_NUM_ARRAY_ELEMENTS(a)  (sizeof(a)/sizeof((a)[0])) //!< number of elements in an array
 
 #define FW_MAX(a,b) (((a) > (b))?(a):(b)) //!< MAX macro
