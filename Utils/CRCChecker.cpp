@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CRCChecker.cpp
 // \author ortega
 // \brief  cpp file for a crc32 checker
@@ -7,7 +7,7 @@
 // Copyright 2009-2020, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include <FpConfig.hpp>
 #include <cstdio> // For snprintf
@@ -105,7 +105,7 @@ namespace Utils {
 
     // Write  checksum  file
     bytes_to_write = sizeof(checksum);
-    stat = f.write((U8*)(&checksum), bytes_to_write);
+    stat = f.write(reinterpret_cast<U8*>(&checksum), bytes_to_write);
     if(stat != Os::File::OP_OK || sizeof(checksum) != bytes_to_write)
     {
       f.close();
@@ -135,7 +135,7 @@ namespace Utils {
 
       // Read  checksum  file
       NATIVE_INT_TYPE checksum_from_file_size = sizeof(checksum_from_file);
-      stat = f.read((U8*)(&checksum_from_file), checksum_from_file_size);
+      stat = f.read(reinterpret_cast<U8*>(&checksum_from_file), checksum_from_file_size);
       if(stat != Os::File::OP_OK || checksum_from_file_size != sizeof(checksum_from_file))
       {
         f.close();
