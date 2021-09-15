@@ -156,7 +156,7 @@ namespace Drv {
         timeout.tv_sec = this->m_timeoutSeconds;
         timeout.tv_usec = this->m_timeoutMicroseconds;
         // set socket write to timeout after 1 sec
-        if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
+        if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
             (void) ::close(socketFd);
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
