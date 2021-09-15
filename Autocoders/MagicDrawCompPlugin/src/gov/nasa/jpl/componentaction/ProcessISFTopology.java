@@ -318,7 +318,7 @@ public class ProcessISFTopology {
 				}
 				
 				if(noCompanionConn){
-					Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have an connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
+					Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have a connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
 				}
 				else{
 					pctList.add(searchPCT);
