@@ -87,7 +87,7 @@ class XmlPortsParser:
 
         interface = element_tree.getroot()
         if interface.tag != "interface":
-            PRINT.info("%s is not a interface file" % xml_file)
+            PRINT.info("%s is not an interface file" % xml_file)
             sys.exit(-1)
 
         print("Parsing Interface %s" % interface.attrib["name"])
@@ -238,7 +238,7 @@ class XmlPortsParser:
 
     def get_interface(self):
         """
-        Returns a interface object.
+        Returns an interface object.
         """
         return self.__port
 
@@ -253,7 +253,7 @@ class Interface:
     """
     Data container for an interface.
     Note in the context of this architecture
-    a port has just on interface and this is
+    a port has just one interface and this is
     it.
     """
 
