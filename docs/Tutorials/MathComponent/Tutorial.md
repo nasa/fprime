@@ -1085,19 +1085,17 @@ The files that are generated are:
 ```
 Tester.hpp
 Tester.cpp
-TesterBase.hpp
-TesterBase.cpp
-GTestBase.hpp
-GTestBase.cpp
 TestMain.cpp
 ```
+
+**Note:** TesterBase.* and GTestBase.* files can be removed. these will be regenerated when the unit test builds.
 
 The functions of the files are:
 
 |File|Function|
 |---|---|
-|TesterBase.*|Base class for test class. Defines necessary handlers as well as helper functions
-|GTestBase.*|Helper class derived from TesterBase that has macros that use Google Test to test interfaces|
+|TesterBase.*| Base class for test class. Defines necessary handlers as well as helper functions.  **Autocoded** |
+|GTestBase.*|Helper class derived from TesterBase that has macros that use Google Test to test interfaces.   **Autocoded** |
 |Tester.*|Derived tester class that inherits from GTestBase. Includes instance of the component and helpers to connect ports|
 |TestMain.cpp|Main unit test implementation file|
 
@@ -1125,8 +1123,6 @@ register_fprime_module()
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TesterBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/GTestBase.cpp"
 )
 register_fprime_ut()
 ```
