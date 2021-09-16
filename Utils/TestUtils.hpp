@@ -46,8 +46,8 @@
 //
 // Example:
 //
-//   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::COMMAND_OK, channel);
-//   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::COMMAND_OK, channel, dutyCycle);
+//   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::CmdResponse::OK, channel);
+//   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::CmdResponse::OK, channel, dutyCycle);
 //   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::COMMAND_EXECUTION_ERROR, illegalChannel);
 //
 #define SEND_CMD(cmd, status, ...) \
@@ -84,7 +84,7 @@
 //
 //   SEND_CMD_NO_EXPECT(FILE_DWN_SEND_APID, 100, 0, 0, 0);
 //   // ...
-//   ASSERT_LAST_CMD(FILE_DWN_SEND_APID, Fw::COMMAND_OK);
+//   ASSERT_LAST_CMD(FILE_DWN_SEND_APID, Fw::CmdResponse::OK);
 //
 #define ASSERT_LAST_CMD(cmd, status) \
   ASSERT_LAST_CMD_COMP(TEST_COMP, cmd, status)

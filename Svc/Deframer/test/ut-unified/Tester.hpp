@@ -1,10 +1,10 @@
 // ======================================================================
-// \title  Deframer/test/ut/Tester.hpp
-// \author janamian
-// \brief  hpp file for Deframer test harness implementation class
+// \title  GroundInterface/test/ut/Tester.hpp
+// \author mstarch
+// \brief  hpp file for GroundInterface test harness implementation class
 //
 // \copyright
-// Copyright 2009-2021, by the California Institute of Technology.
+// Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -13,27 +13,37 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include <deque>
+#include <ComPacket.hpp>
 #include "GTestBase.hpp"
 #include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Svc {
 
 class Tester : public DeframerGTestBase {
+  private:
+    friend struct RandomizeRule;
+    friend struct DownlinkRule;
+    friend struct FileDownlinkRule;
+    friend struct SendAvailableRule;
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
-    class MockDeframer : public DeframingProtocol {
-      public:
-        MockDeframer(Tester& parent);
-        DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
-        void test_interface(Fw::ComPacket::ComPacketType  com_type);
-        DeframingStatus m_status;
-    };
 
   public:
+    struct UplinkData {
+        Fw::ComPacket::ComPacketType type;
+        U32 size;
+        U32 partial;
+        U32 full_size;
+        bool corrupted;
+        U8 data[FW_COM_BUFFER_MAX_SIZE];
+    };
+
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester(bool polling=false);
 
     //! Destroy object Tester
     //!
@@ -44,10 +54,11 @@ class Tester : public DeframerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    void test_incoming_frame(DeframingProtocol::DeframingStatus status);
-    void test_com_interface();
-    void test_buffer_interface();
-    void test_unknown_interface();
+    void update_header_info(U32 garbage_index, U8 garbage_byte);
+
+    void setInputParams(FP_FRAME_TOKEN_TYPE size,
+                        U8* buffer,
+                        FP_FRAME_TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
 
   private:
     // ----------------------------------------------------------------------
@@ -107,9 +118,29 @@ class Tester : public DeframerGTestBase {
     //! The component under test
     //!
     DeframerComponentImpl component;
+    Svc::FprimeDeframing protocol;
 
-    Fw::Buffer m_buffer;
-    MockDeframer m_mock;
+    std::deque<UplinkData> m_sending;
+    std::deque<UplinkData> m_receiving;
+    Fw::Buffer m_incoming_buffer;
+    bool m_polling;
+
+    //! Expected buffer, for checking of the interface
+    //FP_FRAME_TOKEN_TYPE m_size;
+    //FP_FRAME_TOKEN_TYPE m_packet;
+    //
+    //Fw::Buffer m_incoming_file_buffer;
+
+
+    /*U8* m_buffer;
+    U32 m_uplink_type;
+    U32 m_uplink_used;
+    U32 m_uplink_size;
+    U32 m_uplink_point;
+    bool m_garbage;
+    Fw::ComPacket::ComPacketType m_uplink_com_type;
+    // Initialize to empty list to appease valgrind
+    U8 m_uplink_data[(sizeof(FP_FRAME_TOKEN_TYPE) * 2) + sizeof(U32) + FW_COM_BUFFER_MAX_SIZE] = {};*/
 };
 
 }  // end namespace Svc

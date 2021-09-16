@@ -412,7 +412,7 @@ what has been generated. The critical sections for our implementation are in `Gp
  73     )
  74   {
  75     // TODO
- 76     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+ 76     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
  77   }
 ```
 
@@ -643,7 +643,7 @@ namespace GpsApp {
         log_WARNING_HI_Gps_LockLost();
     }
     //Step 9: complete command
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 } // end namespace GpsApp
 
