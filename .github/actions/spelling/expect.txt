@@ -323,6 +323,7 @@ delitem
 deployables
 DEPRECATEDLIST
 deps
+deque
 deregistration
 deser
 Deserial
@@ -525,6 +526,7 @@ fio
 Firefox
 Fixme
 FIXME
+Fixme
 flist
 FNDELAY
 fnmatch
@@ -543,7 +545,6 @@ foundin
 fpconfighpp
 FPGA
 fpl
-FPL
 FPL
 fpp
 fppi

@@ -102,7 +102,7 @@ namespace Ref {
       ASSERT_TLM_MR_FACTOR1S(0,1);
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
       // Repeat the operation with the new factor
 
@@ -221,7 +221,7 @@ namespace Ref {
       ASSERT_TLM_MR_FACTOR1S(0,1);
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
       // clear the history
       this->clearHistory();
@@ -284,7 +284,7 @@ namespace Ref {
       ASSERT_TLM_MR_FACTOR1(0,2.0);
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
       // clear the history
       this->clearHistory();
@@ -347,7 +347,7 @@ namespace Ref {
       ASSERT_TLM_MR_FACTOR1(0,2.0);
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
       // clear the history
       this->clearHistory();
@@ -410,7 +410,7 @@ namespace Ref {
 
           // verify the command response was sent
           ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+          ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
           // clear the history
           this->clearHistory();
@@ -431,7 +431,7 @@ namespace Ref {
       ASSERT_TLM_MR_FACTOR1(0,2.0);
       // verify the command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::CmdResponse::OK);
 
       // clear the history
       this->clearHistory();

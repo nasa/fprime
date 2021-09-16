@@ -122,7 +122,7 @@ namespace Ref {
       this->tlmWrite_MR_FACTOR1(val);
       this->tlmWrite_MR_FACTOR1S(++this->m_factor1s);
       // reply with completion status
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   void MathReceiverComponentImpl ::
@@ -136,7 +136,7 @@ namespace Ref {
       // send event that throttle is cleared
       this->log_ACTIVITY_HI_MR_THROTTLE_CLEARED();
       // reply with completion status
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   void MathReceiverComponentImpl ::

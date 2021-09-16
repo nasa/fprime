@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TlmPacketizer.hpp
 // \author tcanham
 // \brief  cpp file for TlmPacketizer test harness implementation class
@@ -19,11 +19,11 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester() : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TlmPacketizer")
@@ -38,13 +38,13 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester() 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   // Some Test tables
@@ -969,11 +969,11 @@ return;
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts() 
+    connectPorts()
   {
 
     // TlmRecv
@@ -1002,13 +1002,13 @@ return;
 
     // PktSend
     this->component.set_PktSend_OutputPort(
-        0, 
+        0,
         this->get_from_PktSend(0)
     );
 
     // pingOut
     this->component.set_pingOut_OutputPort(
-        0, 
+        0,
         this->get_from_pingOut(0)
     );
 
@@ -1062,7 +1062,7 @@ return;
 
 
   void Tester ::
-    initComponents() 
+    initComponents()
   {
     this->init();
     this->component.init(
