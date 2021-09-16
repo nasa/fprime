@@ -1874,19 +1874,12 @@ The thread for the active `MathSender` component needs to be started:
 `Ref/Top/Topology.cpp`, line 357:
 
 ```c++
-    pingRcvr.start(0, 100, 10*1024);
+    pingRcvr.start();
 
-    mathSender.start(0,100,10*1024);
+    mathSender.start();
 ```
 
-The arguments to the `start()` function is as follows:
-
-|Argument|Usage|
-|---|---|
-|1|Thread ID, unique value for each thread. Not used for Linux|
-|2|Thread priority. Passed to underlying OS|
-|3|Thread stack size. Passed to underlying OS|
-
+The start call without arguments uses the Os defaults for priority, stack size, etc.
 
 The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later.
 It does not need to to have a thread started, since queued components do not have threads.

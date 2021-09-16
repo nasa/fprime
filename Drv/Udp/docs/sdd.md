@@ -58,7 +58,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         comm.configureSend(hostname, port_number);
         comm.configureRecv(hostname, port_number);
         // Needed for receiving only, remove if not configuring to receive
-        comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);
+        comm.startSocketTask(name);
     }
 }
 

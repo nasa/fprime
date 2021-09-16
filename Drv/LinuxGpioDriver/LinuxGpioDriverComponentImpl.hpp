@@ -45,7 +45,7 @@ namespace Drv {
       ~LinuxGpioDriverComponentImpl(void);
 
       //! Start interrupt task
-      Os::Task::TaskStatus startIntTask(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE cpuAffinity = -1);
+      Os::Task::TaskStatus startIntTask(NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
 
       //! configure GPIO
       enum GpioDirection {

@@ -170,7 +170,7 @@ a Drv::SocketReadTask derived class is shown below.
 
 ```c++
 Os::TaskString name("ReceiveTask");
-uplinkComm.startSocketTask(name, 100, 10 * 1024); // Default reconnect=true
+uplinkComm.startSocketTask(name); // Default reconnect=true
 ...
 
 uplinkComm.stopSocketTask();

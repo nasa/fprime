@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
     serImpl.init(10,100);
     ExampleComponents::ExampleComponentImpl exImpl("ExImpl");
     exImpl.init();
-    serImpl.start(100,100,10*1024);
+    serImpl.start();
 
     // connect ports
     exImpl.set_exampleOutput_OutputPort(0,serImpl.get_SerialInSync_InputPort(0));
