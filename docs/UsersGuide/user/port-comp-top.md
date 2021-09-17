@@ -165,7 +165,7 @@ component type is only rarely used.  Ensure it is the correct choice for your de
 
 ### Division of Component Implementation
 
-Each component is divided into three classes that each represent a piece of the component's implemention. These three
+Each component is divided into three classes that each represent a piece of the component's implementation. These three
 classes are as follows:
 
 1. Core Framework Class: the base-class of components defined as part of the framework.  A component may inherit from:
