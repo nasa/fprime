@@ -11,7 +11,7 @@
 #include <Os/Queue.hpp>
 
 #include <new>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Os {
 /**

@@ -12,9 +12,9 @@
 
 #include "Tester.hpp"
 #include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>

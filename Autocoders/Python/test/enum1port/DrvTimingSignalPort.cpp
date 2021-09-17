@@ -1,6 +1,6 @@
 #include <Fw/Types/FwAssert.hpp>
 #include <Drv/BlockDriver/DrvTimingSignalPort.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 extern I32 debug_flag;
 

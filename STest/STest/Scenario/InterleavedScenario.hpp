@@ -12,8 +12,8 @@
 #ifndef STest_InterleavedScenario_HPP
 #define STest_InterleavedScenario_HPP
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 #include "STest/Scenario/Scenario.hpp"
 #include "STest/Scenario/ScenarioArray.hpp"

@@ -13,10 +13,10 @@
 
 #include <mqueue.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#include <time.h>
+#include <cerrno>
+#include <cstring>
+#include <cstdio>
+#include <ctime>
 #include <sys/time.h>
 #include <pthread.h>
 #include <new>
