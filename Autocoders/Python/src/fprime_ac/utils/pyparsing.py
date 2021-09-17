@@ -1580,7 +1580,7 @@ class QuotedString(Token):
         """
         super().__init__()
 
-        # remove white space from quote chars - wont work anyway
+        # remove white space from quote chars - won't work anyway
         quoteChar = quoteChar.strip()
         if len(quoteChar) == 0:
             warnings.warn(
@@ -2767,7 +2767,7 @@ class Group(TokenConverter):
 class Dict(TokenConverter):
     """Converter to return a repetitive expression as a list, but also as a dictionary.
     Each element can also be referenced using the first token in the expression as its key.
-    Useful for tabular report scraping when the first column can be used as a item key.
+    Useful for tabular report scraping when the first column can be used as an item key.
     """
 
     def __init__(self, exprs):

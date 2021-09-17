@@ -4,9 +4,9 @@
  * \brief Class declaration for a simple queue registry
  *
  * The simple object registry is meant to give a default implementation
- * and an example of an queue registry. When the registry is instantiated,
+ * and an example of a queue registry. When the registry is instantiated,
  * it registers itself with the setQueueRegistry() static method. When
- * queues in the system are instantiated, the will register themselves.
+ * queues in the system are instantiated, they will register themselves.
  * The registry can then query the instances about their names, sizes,
  * and high watermarks.
  *

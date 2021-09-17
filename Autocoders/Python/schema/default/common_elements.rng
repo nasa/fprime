@@ -118,7 +118,7 @@
     </define>
 
     <define name="id_define">
-        <a:documentation>Defines a ID data type. Acceptable values formats include "10" , "0xA" , "xA".
+        <a:documentation>Defines an ID data type. Acceptable values formats include "10" , "0xA" , "xA".
         </a:documentation>
         <data type="string">
             <param name="pattern">((0?x[0-9A-Fa-f]+)|\d+)</param>

@@ -180,7 +180,7 @@ namespace Svc {
 
         public:
 
-          //! Construct an Warnings object
+          //! Construct a Warnings object
           Warnings(FileDownlink *const fileDownlink) :
             n(0), fileDownlink(fileDownlink)
           { }

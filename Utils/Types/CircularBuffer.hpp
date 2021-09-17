@@ -42,7 +42,7 @@ class CircularBuffer {
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
-         * Serialize a given buffer into this this circular buffer. Will not accept more data then
+         * Serialize a given buffer into this circular buffer. Will not accept more data then
          * space available. This means it will not overwrite existing data.
          * \param buffer: supplied buffer to be serialized.
          * \param size: size of the supplied buffer.

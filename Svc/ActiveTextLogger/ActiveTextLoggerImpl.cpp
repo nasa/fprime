@@ -108,7 +108,7 @@ namespace Svc {
                             id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
         }
 
-        // If there was a error then just return:
+        // If there was an error then just return:
         if (stat <= 0) {
             return;
         }
