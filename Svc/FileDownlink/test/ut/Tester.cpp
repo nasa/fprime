@@ -215,7 +215,7 @@ namespace Svc {
     fileBufferOut.write(sourceFileName);
     FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
 
-    // Test send partial past end of file, should return COMMAND_OK but raise an warning event.
+    // Test send partial past end of file, should return COMMAND_OK but raise a warning event.
     Fw::CommandResponse expResp = FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::COMMAND_OK : Fw::COMMAND_VALIDATION_ERROR;
     this->sendFilePartial(sourceFileName, destFileName, expResp, sizeof(data), length);
     ASSERT_EVENTS_SIZE(1);

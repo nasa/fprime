@@ -1,6 +1,6 @@
 // deprecate.hpp:
 //
-// An minor implementation of compile-time deprecation for the fprime framework.
+// A minor implementation of compile-time deprecation for the fprime framework.
 
 #ifndef FW_DEPRECATE_HPP
 #define FW_DEPRECATE_HPP

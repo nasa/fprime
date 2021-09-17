@@ -1,7 +1,7 @@
 # ===============================================================================
 # NAME: Serialize.py.py
 #
-# DESCRIPTION: This is an Serialize meta-model class. It is
+# DESCRIPTION: This is a Serialize meta-model class. It is
 #              instanced for the generation of Serializable classes.
 #
 # USAGE:

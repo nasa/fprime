@@ -133,7 +133,7 @@ namespace Svc {
 
         public:
 
-          //! Construct an Warnings object
+          //! Construct a Warnings object
           Warnings(FileUplink *const fileUplink) : 
             n(0), fileUplink(fileUplink)
           { }
