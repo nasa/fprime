@@ -37,7 +37,7 @@ may define *Commands*, *Events*, *Channels*, and *Parameters*, which define stan
 An event is composed of a name, format string, and set of arguments that described what happened. Events represent a
 history of the system. Events are defined per-*component*.
 
-**Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels are consist of
+**Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels consist of
 a type, a format specifier, and a value. Channels represent current system state. Channels are defined per-*component*.
 
 **Command:** a command is uplinked data items that instructs the system to perform an action. *Commands* consist of an
@@ -221,7 +221,7 @@ fprime-util build raspberrypi
 
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
+Unit tests can be built using the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
 in preparation to run them.  The user can also just run `check` to build and run the unit tests.
 
 Before building unit tests, the unit test build cache must be generated:

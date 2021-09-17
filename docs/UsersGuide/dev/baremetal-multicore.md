@@ -1,6 +1,6 @@
 # F´ On Baremetal and Multi-Core Systems
 
-F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user though some
+F´ supports use on baremetal, multi-core, and even multi-device systems. This guide seeks to walk the user through some
 of the caveats and delicacies of such systems. It includes
 
 - [Baremetal Systems](#baremetal-systems)
@@ -23,10 +23,10 @@ platforms.
 First and foremost, baremetal F´ systems should avoid using **Active Components**  at all costs because these components
 require quasi-asynchronous execution contexts in which to run. i.e. they need thread such that they can execute in
 "parallel" with each other. **Note:** if you **must** use **Active Components** you should thoroughly review the
-[thread virtualization](#thread-virtualization) section of this document an associated technology.
+[thread virtualization](#thread-virtualization) section of this document and associated technology.
 
 If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
-synchronous and the the execution context would be entirely delegated to every component.  A discussion of the source
+synchronous and the execution context would be entirely delegated to every component.  A discussion of the source
 of that delegated execution context comes next.
 
 ### Choosing an Execution Context
@@ -36,12 +36,12 @@ run on. That is, ensuring that some call invokes all of the **Components** that 
 components will not run. Typically, this is handled by composing an F´ baremetal system into components that are all
 driven by [rate groups](../best/rate-group.md). Designing the system this way ensures that all execution is derived from
 one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group
-driver at a set rate.  All calls needed will execute a during a sweep through the rate groups a their derived rates.
+driver at a set rate.  All calls needed will execute during a sweep through the rate groups and their derived rates.
 
 **Note:** other options exist (see [Thread Virtualization](#thread-virtualization) below).
 
 Although a full discussion of supplying execution context to the rate group driver is outside the scope of this
-documentation, this author wanted to provide a few tip. First, F´ execution should be primarily derived from the main
+documentation, this author wanted to provide a few tips. First, F´ execution should be primarily derived from the main
 program loop. i.e. embedded software typically looks like the following and the loop-forever `execute();` action should
 trigger the rate group driver at a set interval.
 
@@ -57,7 +57,7 @@ while (true) {
 
 Now all that is required is to determine when this interval has elapsed. This can be done spinning on a hardware clock
 signal, calculating elapsed time by reading of clock registers, using timing library functions, the `sleep()` call, or
-by an timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
+by a timer driven interrupt service routine (ISR). **Note:** ISRs are complex items and should be studied in detail
 before going this route.  Notably, the ISR should not execute the rate group directly, but rather should set a flag or
 queue a start message and allow the `while (true) {}` spin in the main loop to detect this signal and start the rate
 groups.

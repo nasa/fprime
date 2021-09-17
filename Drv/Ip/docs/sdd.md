@@ -38,7 +38,7 @@ In order to use a Drv::IpSocket it must first be configured with a call to the `
 Once configured, it can be opened using `Drv::IpSocket::open`. Opening the socket will verify arguments, allocate
 system resources and form a connection.  In server implementations (Drv::TcpServerSocket) the open call will block until
 a client connection has been made.  It is safe to assume that a successfully opened socket is ready to send or receive,
-however; those calls may detect and error and close the socket in response.
+however; those calls may detect an error and close the socket in response.
 
 `Drv::TcpServerSocket::send` will attempt to send data across the socket. It will retry to transmit data a configured
 number of times on correctable errors before finally succeeding once all data has been transmitted or failing should the
@@ -56,7 +56,7 @@ called, the Drv::IpSocket should be ready for another call to `Drv::IpSocket::op
 
 ### Example Usage of Drv::IpSocket
 
-This sections will show some example usages of the Drv::IpSocket. In this section it is assumed the initialization is
+This section will show some example usages of the Drv::IpSocket. In this section it is assumed the initialization is
 done using a concrete derived class as shown in subsequent sections.
 
 ```c++
@@ -90,7 +90,7 @@ Drv::IpSocket& socket = Drv::TcpClientSocket;
 The Drv::TcpServerSocket class represents an IPv4 TCP server. It inherently provides bidirectional communication with
 a remote tcp client server. The TCP server must be started up such that it may listen for incoming client requests.
 Since this class is intended to communicate with exactly one client, no listen queue is provided and subsequent connects
-from clients will be ignored until the primary client has be closed. Like the TCP client packet drops will result in an
+from clients will be ignored until the primary client has been closed. Like the TCP client packet drops will result in an
 error.
 
 **Note:** the `Drv::TcpServerSocket::open` call will block until a client connects to the server.
@@ -101,7 +101,7 @@ socket that will listen for incoming connections.  `Drv::TcpServerSocket::startu
 will only close the client connection and does not affect the server from listening for clients, however; it does free
 up the server to accept a new client.
 
-`Drv::TcpServerSocket::shutdown` will close the TCP server from receiving any new clients and effective releases all
+`Drv::TcpServerSocket::shutdown` will close the TCP server from receiving any new clients and effectively releases all
 resources allocated to the server. `Drv::TcpServerSocket::shutdown` implies `Drv::TcpServerSocket::close` and client
 connections will be stopped.
 
@@ -165,7 +165,7 @@ this read task will reconnect to sockets should a disconnect or error occur. Onc
 until a `Drv::SocketReadTask::stopSocketTask` has been called or an error occurred when started without reconnect set to
 `true`.  Once the socket stop call has been made, the user should call `Drv::SocketReadTask::joinSocketTask` in order to
 wait until the full task has finished.  `Drv::SocketReadTask::stopSocketTask` will call `Drv::IpSocket::close` on the
-provided Drv::IpSocket to ensure that the any blocking reads exit freeing the thread to completely stop. Normal usage of
+provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
 a Drv::SocketReadTask derived class is shown below.
 
 ```c++

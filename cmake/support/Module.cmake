@@ -14,7 +14,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
 ####
 # Function `generic_autocoder`:
 #
-# This function controls the the generation of the auto-coded files, generically, for serializables, ports,
+# This function controls the generation of the auto-coded files, generically, for serializables, ports,
 # and components. It then mines the XML file for type and  dependencies and then adds them as dependencies to
 # the module being built.
 #
