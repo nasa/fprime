@@ -71,10 +71,10 @@ namespace Svc {
         this->m_setValue_OutputPort[portNum].invoke(entry, status, time, val);
     }
 
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts(void) {
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts() {
         return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_getValue_OutputPort));
     }
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts(void) {
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts() {
         return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_setValue_OutputPort));
     }
     bool PolyDbTesterComponentBase::isConnected_getValue_OutputPort(NATIVE_INT_TYPE portNum) {

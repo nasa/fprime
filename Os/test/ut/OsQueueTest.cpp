@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #if defined TGT_OS_TYPE_LINUX
-#include <time.h>
+#include <ctime>
 #endif
 #if defined TGT_OS_TYPE_DARWIN
 #include <sys/time.h>

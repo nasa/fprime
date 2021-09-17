@@ -4,7 +4,7 @@
 // \brief  cpp file for FatalHandler component implementation class
 // ======================================================================
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <Os/Log.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"

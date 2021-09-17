@@ -1,6 +1,6 @@
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 #include <Autocoders/Python/test/serialize2/GncMeasurementSerializableAc.hpp>
 
 #include <unistd.h>

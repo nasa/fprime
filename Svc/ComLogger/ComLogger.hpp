@@ -14,7 +14,7 @@
 #include <Utils/Hash/Hash.hpp>
 
 #include <limits.h>
-#include <stdio.h>
+#include <cstdio>
 #include <cstdarg>
 
 // some limits.h don't have PATH_MAX

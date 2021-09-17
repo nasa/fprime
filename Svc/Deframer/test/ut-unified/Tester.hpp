@@ -104,11 +104,11 @@ class Tester : public DeframerGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts();
 
     //! Initialize components
     //!
-    void initComponents(void);
+    void initComponents();
 
   private:
     // ----------------------------------------------------------------------

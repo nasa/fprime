@@ -10,7 +10,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
