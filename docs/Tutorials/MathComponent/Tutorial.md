@@ -69,7 +69,7 @@ MathSender will have no parameters.
 
 `MathReceiver` should have the following events:
 
-1) MR_SET_FACTOR1 command event. When the command is received, `MathReceiver` should emit an event with the updated factor. The event should be throttled (i.e. stop emitting) after three invocations. Normally, throttling is used to prevent event floods if there a endlessly repeating condition.
+1) MR_SET_FACTOR1 command event. When the command is received, `MathReceiver` should emit an event with the updated factor. The event should be throttled (i.e. stop emitting) after three invocations. Normally, throttling is used to prevent event floods if there is an endlessly repeating condition.
 2) MR_UPDATED_FACTOR2 event. When the factor2 parameter (see below) is updated, `MathReceiver` should emit an event with the updated value.
 3) MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an event with the arguments and operation.
 4) MR_THROTTLE_CLEARED in response to the MR_CLEAR_EVENT_THROTTLE command above.
@@ -178,12 +178,12 @@ The port arguments are passed from component to component when they are connecte
     </args>
 ```
 
-The `<args>` tag begins the section of the XML defining the arguments, while the `<arg>` tag defines a particular argument. The port argument attributes are define as follows:
+The `<args>` tag begins the section of the XML defining the arguments, while the `<arg>` tag defines a particular argument. The port argument attributes are defined as follows:
 
 |Attribute|Description|
 |---|---|
 |name|The name of the argument. Becomes the argument name in the C++ call|
-|type|The type of the arguments. Can be one of the built-in types, a user define type, or an enumeration|
+|type|The type of the arguments. Can be one of the built-in types, a user-defined type, or an enumeration|
 
 The enumerations are a special type of argument. When `type="ENUM"` is an attribute of the arguments, a further listing of the elements of the enumeration are needed. For each element of the array, a name is specified. These end up being C++ enumerated types.
 
@@ -295,7 +295,7 @@ own to port definitions.
 
 ## 2.2 Serializable Definition
 
-A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of a object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the necessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground system needs an XML definition to decode them.
+A structure needs to be defined that represents the channel value needed by `MathReceiver`. All port calls, telemetry channels, events and parameters need to be comprised of `Serializable` values, or values that can be turned into a byte stream. This is needed to pass port arguments through message queues and to pass commands and telemetry to and from the ground system. Built-in basic types like integers, floating point numbers and boolean values are supported by the framework, but there are times when a developer wishes to use a custom-defined type, perhaps to keep members of an object consistent with each other. These structures can be defined in XML and the code generator will generate the C++ classes with all the necessary serialization functions. Developers can hand-code their own, but they are not usable for telemetry since the ground system needs an XML definition to decode them.
 
 ### 2.2.1 MathOp
 
@@ -1088,7 +1088,7 @@ Tester.cpp
 TestMain.cpp
 ```
 
-**Note:** TesterBase.* and GTestBase.* files can be removed. these will be regenerated when the unit test builds.
+**Note:** TesterBase.* and GTestBase.* files can be removed. These will be regenerated when the unit test builds.
 
 The functions of the files are:
 
@@ -1187,7 +1187,7 @@ TEST(Name1, Name2) {
 }
 ```
 
-The code in each of the macros defined this way will automatically be run be the framework.
+The code in each of the macros defined this way will automatically be run by the framework.
 
 In this case, the tests are defined as follows:
 
@@ -1801,7 +1801,7 @@ extern Ref::MathReceiverComponentImpl mathReceiver;
 
 ### 3.1.2 Topology.cpp
 
-This C++ file is where the instances of the all the components are declared and initialized. The generated topology connection function is called from this file.
+This C++ file is where the instances of all the components are declared and initialized. The generated topology connection function is called from this file.
 
 #### 3.1.2.1 Component Instantiation
 
@@ -1882,7 +1882,7 @@ The thread for the active `MathSender` component needs to be started:
 The start call without arguments uses the Os defaults for priority, stack size, etc.
 
 The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later.
-It does not need to to have a thread started, since queued components do not have threads.
+It does not need to have a thread started, since queued components do not have threads.
 
 The `exitTasks()` function is called when the process is shut down.
 It contains `exit()` calls to all the active components.
@@ -2145,7 +2145,7 @@ Clicking on the `Send` button will send the command to the software. When the co
 
 The `Events` tab shows events that are generated by the software. For the tutorial, the events tab shows the events that were sent by the `MS_DO_MATH` command:
 
-It shows the F' `CmdDispatcher` event indicating a command was dispatched and completed. It also has the events defined by the tutorial example that are sent as a results of requesting a math operation. The result is zero, since the `factor1` value is zero, as shown in the unit testing in section `2.4.2.2`.
+It shows the F' `CmdDispatcher` event indicating a command was dispatched and completed. It also has the events defined by the tutorial example that are sent as a result of requesting a math operation. The result is zero, since the `factor1` value is zero, as shown in the unit testing in section `2.4.2.2`.
 
 The events are also echoed to `stdout` of the application, which can be found in the `Logs` tab, selecting "Ref.log" in the
 dropdown.

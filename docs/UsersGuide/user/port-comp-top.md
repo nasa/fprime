@@ -103,7 +103,7 @@ in Figure 3. For input ports, the calling port detects a connection and serializ
 the serialized port calls an interface on the typed port that deserializes arguments. Serialization ports do not support
 ports with return types. These ports allow serialized data to be passed around by generic components that do not know
 the type contained. The [Hub pattern](../best/hub-pattern.md) often uses serialized ports such that data can be routed
-across a address-space gap in a generic fashion.
+across an address-space gap in a generic fashion.
 
 ![Serialization Ports](../media/core3.png)
 
@@ -139,7 +139,7 @@ then produces the telemetry. It does not directly interact with other components
 
 ### Component Types
 
-There are three types of components: passive, queued, and active. Theses components allow for different functionality in
+There are three types of components: passive, queued, and active. These components allow for different functionality in
 the system and may use different port input types [see below](#port-kinds-available-to-each-component-type). Each type
 of component is defined below:
 
@@ -165,7 +165,7 @@ component type is only rarely used.  Ensure it is the correct choice for your de
 
 ### Division of Component Implementation
 
-Each component is divided into three classes that each represent a piece of the component's implement. These three
+Each component is divided into three classes that each represent a piece of the component's implemention. These three
 classes are as follows:
 
 1. Core Framework Class: the base-class of components defined as part of the framework.  A component may inherit from:

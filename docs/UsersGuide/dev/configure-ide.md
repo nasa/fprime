@@ -1,7 +1,7 @@
 # Configuring an IDE for Use With F´
 
 Many projects like to use IDEs for development.  This makes development, testing, and tracing easier.  This document
-contains some basic instructions on how to setup and IDE.  Hopefully, the instructions will work for the IDE of your
+contains some basic instructions on how to setup an IDE.  Hopefully, the instructions will work for the IDE of your
 choice, however; some specific examples are shown below.
 
 - [Basic IDE Setup: CMake and Generation Variables](#basic-ide-setup-cmake-and-variables)
@@ -27,7 +27,7 @@ attempt this here as it may result in many errors.
 
 ### Step 1: CMake Support for Our Beloved IDE
 
-F´ is built using CMake and thus to integrate with your IDE, you project must be able to support CMake builds. Some IDEs
+F´ is built using CMake and thus to integrate with your IDE, your project must be able to support CMake builds. Some IDEs
 support this natively, and some require plugins. Apart from the examples below, you should understand in general how
 your beloved IDE integrates with CMake builds and how to configure CMake cache variables like setting a toolchain file.
 
@@ -39,7 +39,7 @@ The CMake requires that several build settings are set.  The `fprime-util` sets 
 Typically a user wants to build a `Testing` build for the default toolchain using an internal-to-F´ branch. If you are
 just learning F´, use these settings to run and test on your personal computer hardware and skip to Step 3.
 
-First the user should determine whither they would like a `Testing`, `Release`, or `Debug` build.  The user should
+First the user should determine whether they would like a `Testing`, `Release`, or `Debug` build.  The user should
 typically choose `Testing`, which allows for running unittests, enables debug flags, and links in all of the test code.
 `Release` and `Debug` builds are provided by default by CMake but are used by F´ only to create the executable and not
 the test setup.
@@ -50,7 +50,7 @@ file you would use to build for that platform.
 
 Third, the user should determine if they are using an internal-to-F´ build, or an external-to-F´ build.  If your code is
 placed within the F´ framework checkout (code supplied by F´ team), you are using the former.  If your code specifies
-where to find F´ code and lives outside the F´ framework directory you are suing the latter.
+where to find F´ code and lives outside the F´ framework directory you are using the latter.
 
 Finally, identify any other build options or cache variables you need. These are anything you supply to the build int
 the form of -D options. This can include custom configuration setups.
