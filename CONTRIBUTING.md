@@ -6,10 +6,10 @@ If you want to contribute to this repository you can do it by many ways:
 - submitting PR with code improvements
 - testing software and reporting bugs
 - reporting mistakes in documentation
-- maintaining project documenatation
+- maintaining project documentation
 - reporting any issues you find in project
 - conducting code reviews to open PR
-- suggesing solutions to open issues
+- suggesting solutions to open issues
 
 Feel free to contribute anyway that suits your skills and you enjoy.
 
@@ -37,7 +37,7 @@ xxx-yyy-zzzz
 ```
 ### PR template
 When submitting a PR you will have to provide information accordingly to the template.
-By providing information on change description, rationale, testing/review recommendations and future work you help your collegues understand and review your PR better and faster.
+By providing information on change description, rationale, testing/review recommendations and future work you help your colleagues understand and review your PR better and faster.
 
 
 
