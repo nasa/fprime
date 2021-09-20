@@ -20,7 +20,7 @@ namespace Svc {
             FwEventIdType Id) {
         // for **nix, delay then exit with error code
         Os::Log::logMsg("FATAL %d handled.\n",Id,0,0,0,0,0);
-        while (1) {} // Returning might be bad
+        while (true) {} // Returning might be bad
     }
 
 } // end namespace Svc

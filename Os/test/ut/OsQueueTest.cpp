@@ -451,7 +451,7 @@ void qtest_performance() {
     printf("Testing deep queue...\n");
     // Fill the queue up first:
     U32 count = 0;
-    while(1) {
+    while(true) {
       stat = testQueue->send(sendBuff, count%4, Os::Queue::QUEUE_NONBLOCKING);
       count++;
       if(stat == Os::Queue::QUEUE_FULL)
@@ -488,7 +488,7 @@ void qtest_performance() {
     elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_usec - stime.tv_usec)/1000000;
     printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
-    while(1) {
+    while(true) {
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
       if(stat == Os::Queue::QUEUE_NO_MORE_MSGS)
         break;
@@ -550,7 +550,7 @@ void qtest_concurrent() {
     printf("Testing deep queue...\n");
     // Fill the queue up first:
     U32 count = 0;
-    while(1) {
+    while(true) {
       stat = testQueue->send(sendBuff,count%4, Os::Queue::QUEUE_NONBLOCKING);
       count++;
       if(stat == Os::Queue::QUEUE_FULL)

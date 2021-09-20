@@ -34,7 +34,7 @@ namespace Svc {
 
       timerfd_settime (fd, 0, &itval, NULL);
 
-      while (1) {
+      while (true) {
           unsigned long long missed;
           int ret = read (fd, &missed, sizeof (missed));
           if (-1 == ret) {

@@ -128,7 +128,7 @@ namespace Svc {
 
   void UdpReceiverComponentImpl::workerTask(void* ptr) {
       UdpReceiverComponentImpl *compPtr = static_cast<UdpReceiverComponentImpl*>(ptr);
-      while (1) {
+      while (true) {
           compPtr->doRecv();
       }
   }
