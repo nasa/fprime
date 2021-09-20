@@ -18,7 +18,7 @@ Task::Task() :
 Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
     //Get a task handle, and set it up
     BareTaskHandle* handle = new(std::nothrow) BareTaskHandle();
-    if (handle == NULL) {
+    if (handle == nullptr) {
        return Task::TASK_UNKNOWN_ERROR;
     }
     //Set handle member variables
@@ -57,17 +57,17 @@ Task::~Task() {
 }
 
 void Task::suspend(bool onPurpose) {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled = false;
 }
 
 void Task::resume() {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled = true;
 }
 
 bool Task::isSuspended() {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     return !reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled;
 }
 

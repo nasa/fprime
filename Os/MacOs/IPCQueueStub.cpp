@@ -30,11 +30,11 @@ namespace Os {
     public:
     QueueHandle() {
       int ret;
-      ret = pthread_cond_init(&this->queueNotEmpty, NULL);
+      ret = pthread_cond_init(&this->queueNotEmpty, nullptr);
       FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
-      ret = pthread_cond_init(&this->queueNotFull, NULL);
+      ret = pthread_cond_init(&this->queueNotFull, nullptr);
       FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
-      ret = pthread_mutex_init(&this->queueLock, NULL);
+      ret = pthread_mutex_init(&this->queueLock, nullptr);
       FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
     }
     ~QueueHandle() {
@@ -58,14 +58,14 @@ namespace Os {
     QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
 
     // Queue has already been created... remove it and try again:
-    if (NULL != queueHandle) {
+    if (nullptr != queueHandle) {
         delete queueHandle;
-        queueHandle = NULL;
+        queueHandle = nullptr;
     }
 
     // Create queue handle:
     queueHandle = new(std::nothrow) QueueHandle;
-    if (NULL == queueHandle) {
+    if (nullptr == queueHandle) {
       return QUEUE_UNINITIALIZED;
     }
     if( !queueHandle->create(depth, msgSize) ) {
@@ -85,10 +85,10 @@ namespace Os {
   IPCQueue::~IPCQueue() {
     // Clean up the queue handle:
     QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-    if (NULL != queueHandle) {
+    if (nullptr != queueHandle) {
       delete queueHandle;
     }
-    this->m_handle = static_cast<POINTER_CAST>(NULL);
+    this->m_handle = 0;
   }
 
   Queue::QueueStatus sendNonBlockIPCStub(QueueHandle* queueHandle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
@@ -179,11 +179,11 @@ namespace Os {
     QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
     BufferQueue* queue = &queueHandle->queue;
 
-    if (NULL == queueHandle) {
+    if (nullptr == queueHandle) {
         return QUEUE_UNINITIALIZED;
     }
 
-    if (NULL == buffer) {
+    if (nullptr == buffer) {
         return QUEUE_EMPTY_BUFFER;
     }
 
@@ -317,13 +317,13 @@ namespace Os {
 
   Queue::QueueStatus IPCQueue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
 
-      if( static_cast<POINTER_CAST>(NULL) == this->m_handle ) {
+      if( 0 == this->m_handle ) {
         return QUEUE_UNINITIALIZED;
       }
 
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
 
-      if (NULL == queueHandle) {
+      if (nullptr == queueHandle) {
         return QUEUE_UNINITIALIZED;
       }
 
@@ -342,7 +342,7 @@ namespace Os {
 
   NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-      if (NULL == queueHandle) {
+      if (nullptr == queueHandle) {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
@@ -351,7 +351,7 @@ namespace Os {
 
   NATIVE_INT_TYPE IPCQueue::getMaxMsgs() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-      if (NULL == queueHandle) {
+      if (nullptr == queueHandle) {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
@@ -360,7 +360,7 @@ namespace Os {
 
   NATIVE_INT_TYPE IPCQueue::getQueueSize() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-      if (NULL == queueHandle) {
+      if (nullptr == queueHandle) {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;
@@ -369,7 +369,7 @@ namespace Os {
 
   NATIVE_INT_TYPE IPCQueue::getMsgSize() const {
       QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-      if (NULL == queueHandle) {
+      if (nullptr == queueHandle) {
           return 0;
       }
       BufferQueue* queue = &queueHandle->queue;

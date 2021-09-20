@@ -88,7 +88,7 @@ namespace Svc {
             // interfering with our time object before we use it. However, the null pointer check is still needed
             // to ensure a successful call
             tm tm;
-            if (localtime_r(&t, &tm) == NULL) {
+            if (localtime_r(&t, &tm) == nullptr) {
                 return;
             }
 
@@ -134,7 +134,7 @@ namespace Svc {
 
     bool ActiveTextLoggerComponentImpl::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
-        FW_ASSERT(fileName != NULL);
+        FW_ASSERT(fileName != nullptr);
 
         return this->m_log_file.set_log_file(fileName, maxSize, maxBackups);
     }

@@ -23,7 +23,7 @@ namespace Svc {
       BufferAccumulator(const char *const compName) :
         BufferAccumulatorComponentBase(compName),
         mode(DRAIN),
-        bufferMemory(NULL),
+        bufferMemory(nullptr),
         bufferQueue(),
         send(true),
         numWarnings(0),

@@ -162,7 +162,7 @@ namespace Drv {
         }
         // Get possible IP addresses
         struct hostent *host_entry;
-        if ((host_entry = gethostbyname(this->m_hostname)) == NULL || host_entry->h_addr_list[0] == NULL) {
+        if ((host_entry = gethostbyname(this->m_hostname)) == nullptr || host_entry->h_addr_list[0] == nullptr) {
             ::close(socketFd);
             return SOCK_FAILED_TO_GET_HOST_IP;
         }

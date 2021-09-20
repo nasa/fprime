@@ -85,7 +85,7 @@ namespace Types {
     }
 
     void PeekOkRule::action(MockTypes::CircularState& state) {
-        U8* buffer = NULL;
+        U8* buffer = nullptr;
         char peek_char = 0;
         U8 peek_u8 = 0;
         U32 peek_u32 = 0;

@@ -24,7 +24,7 @@ namespace Fw {
   {
     // assert if allocator returns smaller size
     FW_ASSERT(maxSerializedSize == actualSize,maxSerializedSize,actualSize);
-    FW_ASSERT(NULL != buffer.getBuffAddr());
+    FW_ASSERT(nullptr != buffer.getBuffAddr());
   }
 
   SerializableFile::~SerializableFile() {

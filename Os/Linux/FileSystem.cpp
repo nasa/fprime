@@ -104,14 +104,14 @@ namespace Os {
 							 U32& numFiles)
 		{
 			Status dirStat = OP_OK;
-			DIR * dirPtr = NULL;
-			struct dirent *direntData = NULL;
+			DIR * dirPtr = nullptr;
+			struct dirent *direntData = nullptr;
 
-			FW_ASSERT(fileArray != NULL);
-			FW_ASSERT(path != NULL);
+			FW_ASSERT(fileArray != nullptr);
+			FW_ASSERT(path != nullptr);
 
 			// Open directory failed:
-			if((dirPtr = ::opendir(path)) == NULL) {
+			if((dirPtr = ::opendir(path)) == nullptr) {
 
 				switch (errno) {
 					case EACCES:
@@ -141,7 +141,7 @@ namespace Os {
 
 				++limitCount;
 
-				if((direntData = ::readdir(dirPtr)) != NULL) {
+				if((direntData = ::readdir(dirPtr)) != nullptr) {
 					// We are only care about regular files
 					if(direntData->d_type == DT_REG) {
 
@@ -283,7 +283,7 @@ namespace Os {
 		 * information.
 		 */
 		Status initAndCheckFileStats(const char* filePath,
-									struct stat* fileInfo=NULL) {
+									struct stat* fileInfo=nullptr) {
 			FileSystem::Status fs_status;
 			struct stat local_info;
 			if(!fileInfo) {
@@ -523,13 +523,13 @@ namespace Os {
 		// Public function to get the file count for a given directory.
 		Status getFileCount (const char* directory, U32& fileCount) {
 			Status dirStat = OP_OK;
-			DIR * dirPtr = NULL;
-			struct dirent *direntData = NULL;
+			DIR * dirPtr = nullptr;
+			struct dirent *direntData = nullptr;
 			U32 limitCount;
 			const U64 loopLimit = std::numeric_limits<U32>::max();
 
 			fileCount = 0;
-			if((dirPtr = ::opendir(directory)) == NULL) {
+			if((dirPtr = ::opendir(directory)) == nullptr) {
 				switch (errno) {
 					case EACCES:
 						dirStat = NO_PERMISSION;
@@ -550,7 +550,7 @@ namespace Os {
 			// Set errno to 0 so we know why we exited readdir
 			errno = 0;
 			for(limitCount = 0; limitCount < loopLimit; limitCount++) {
-				if((direntData = ::readdir(dirPtr)) != NULL) {
+				if((direntData = ::readdir(dirPtr)) != nullptr) {
 					// We are only counting regular files
 					if(direntData->d_type == DT_REG) {
 						fileCount++;

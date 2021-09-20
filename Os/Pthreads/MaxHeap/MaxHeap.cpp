@@ -32,27 +32,27 @@ namespace Os {
     MaxHeap::MaxHeap() {
       // Initialize the heap:
       this->capacity = 0;
-      this->heap = NULL;
+      this->heap = nullptr;
       this->size = 0;
       this->order = 0;
     }
 
     MaxHeap::~MaxHeap() {
       delete [] this->heap;
-      this->heap = NULL;
+      this->heap = nullptr;
     }
 
     bool MaxHeap::create(NATIVE_UINT_TYPE capacity)
     {
       // The heap has already been created.. so delete
       // it and try again.
-      if( NULL != this->heap ) {
+      if( nullptr != this->heap ) {
         delete [] this->heap;
-        this->heap = NULL;
+        this->heap = nullptr;
       }
 
       this->heap = new(std::nothrow) Node[capacity];
-      if( NULL == this->heap ) {
+      if( nullptr == this->heap ) {
         return false;
       }
       this->capacity = capacity;

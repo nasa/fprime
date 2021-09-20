@@ -24,7 +24,7 @@ namespace Os {
 
   BufferQueue::BufferQueue() {
     // Set member variables:
-    this->queue = NULL;
+    this->queue = nullptr;
     this->msgSize = 0;
     this->depth = 0;
     this->count = 0;
@@ -37,10 +37,10 @@ namespace Os {
 
   bool BufferQueue::create(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
     // Queue is already set up. destroy it and try again:
-    if (NULL != this->queue) {
+    if (nullptr != this->queue) {
       this->finalize();
     }
-    FW_ASSERT(NULL == this->queue, reinterpret_cast<POINTER_CAST>(this->queue));
+    FW_ASSERT(nullptr == this->queue, reinterpret_cast<POINTER_CAST>(this->queue));
 
     // Set member variables:
     this->msgSize = msgSize;

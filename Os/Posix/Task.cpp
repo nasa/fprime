@@ -25,7 +25,7 @@ void* pthread_entry_wrapper(void* arg) {
     Os::Task::TaskRoutineWrapper *task = reinterpret_cast<Os::Task::TaskRoutineWrapper*>(arg);
     FW_ASSERT(task->routine);
     task->routine(task->arg);
-    return NULL;
+    return nullptr;
 }
 
 namespace Os {
@@ -122,7 +122,7 @@ namespace Os {
         }
 
         pthread_t* tid = new(std::nothrow) pthread_t;
-        if (tid == NULL) {
+        if (tid == nullptr) {
             Fw::Logger::logMsg("failed to allocate pthread_t\n");
             return TASK_UNKNOWN_ERROR;
         }

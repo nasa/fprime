@@ -3,7 +3,7 @@
 namespace Os {
 
     WatchdogTimer::WatchdogTimer()
-    : m_handle(0),m_cb(0),m_parameter(0),m_timerTicks(0),m_timerMs(0)
+    : m_handle(0),m_cb(nullptr),m_parameter(nullptr),m_timerTicks(0),m_timerMs(0)
     {
     }
 

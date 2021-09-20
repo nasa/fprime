@@ -77,8 +77,8 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
 }
 
 SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
-    FW_ASSERT(address != NULL);
-    FW_ASSERT(ip4 != NULL);
+    FW_ASSERT(address != nullptr);
+    FW_ASSERT(ip4 != nullptr);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
     NATIVE_INT_TYPE ip = inet_addr(address);

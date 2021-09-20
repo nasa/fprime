@@ -86,7 +86,7 @@ namespace Os {
 
         // Set up queue handle:
         QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
-        if (NULL == queueHandle) {
+        if (nullptr == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }
         this->m_handle = reinterpret_cast<POINTER_CAST>(queueHandle);
@@ -99,10 +99,10 @@ namespace Os {
     IPCQueue::~IPCQueue() {
         // Clean up the queue handle:
         QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
-        if (NULL != queueHandle) {
+        if (nullptr != queueHandle) {
           delete queueHandle;
         }
-        this->m_handle = static_cast<POINTER_CAST>(NULL); // important so base Queue class doesn't free it
+        this->m_handle = 0; // important so base Queue class doesn't free it
         (void) mq_unlink(this->m_name.toChar());
     }
 
@@ -115,14 +115,14 @@ namespace Os {
             return QUEUE_UNINITIALIZED;
         }
 
-        if (NULL == buffer) {
+        if (nullptr == buffer) {
             return QUEUE_EMPTY_BUFFER;
         }
 
         bool keepTrying = true;
         while (keepTrying) {
             struct timeval now;
-            gettimeofday(&now,NULL);
+            gettimeofday(&now,nullptr);
             struct timespec wait;
             wait.tv_sec = now.tv_sec;
             wait.tv_nsec = now.tv_usec * 1000;
@@ -175,7 +175,7 @@ namespace Os {
         bool notFinished = true;
         while (notFinished) {
             struct timeval now;
-            gettimeofday(&now,NULL);
+            gettimeofday(&now,nullptr);
             struct timespec wait;
             wait.tv_sec = now.tv_sec;
             wait.tv_nsec = now.tv_usec * 1000;

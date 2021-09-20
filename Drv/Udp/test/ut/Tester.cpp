@@ -93,7 +93,7 @@ void Tester::test_with_loop(U32 iterations, bool recv_thread) {
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
             this->component.stopSocketTask();
-            this->component.joinSocketTask(NULL);
+            this->component.joinSocketTask(nullptr);
         } else {
             this->component.close();
         }

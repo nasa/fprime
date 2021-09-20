@@ -444,7 +444,7 @@ namespace Svc {
     // Copy the opcode and argument bytes
     NATIVE_UINT_TYPE size = cmdLength;
     U8 *const addr = comBuffer.getBuffAddr();
-    FW_ASSERT(addr != NULL);
+    FW_ASSERT(addr != nullptr);
     // true means "don't serialize the length"
     status = buffer.deserialize(&addr[fixedBuffLen], size, true);
     return status;

@@ -22,8 +22,8 @@ namespace Os {
 
         m_index = new(std::nothrow) QueueNode[maxmsg]; // Allocate an index entry for each msg
         m_data = new(std::nothrow) U8[maxmsg * msgsize];  // Allocate data for each msg
-        FW_ASSERT(m_index != NULL);
-        FW_ASSERT(m_data != NULL);
+        FW_ASSERT(m_index != nullptr);
+        FW_ASSERT(m_data != nullptr);
 
         for (int i = 0, j = 1; i < maxmsg; i++, j++) {
             m_index[i].data = &m_data[i * msgsize]; // Assign the data pointer of index to top that msg's buffer
@@ -31,7 +31,7 @@ namespace Os {
             if (j < maxmsg) {           // If we aren't processing the last item
                 m_index[i].next = &m_index[j]; // Chain this item to the next one
             } else {
-                m_index[i].next = NULL;         // Initialize to NULL otherwise
+                m_index[i].next = nullptr;         // Initialize to NULL otherwise
             }
         }
 
@@ -40,7 +40,7 @@ namespace Os {
         // It will be cleaned up by the producer
         m_first = &m_index[0];
         m_last = &m_index[0];
-        m_last->next = NULL;
+        m_last->next = nullptr;
 
         // Assign the head of the free list to the second element
         m_free_head = &m_index[1];
@@ -60,7 +60,7 @@ namespace Os {
     void LocklessQueue::PushFree(QueueNode * my_node) {
         QueueNode * old_free_head;
 
-        FW_ASSERT(my_node != NULL);
+        FW_ASSERT(my_node != nullptr);
 
         // CAS the node into the free list
         do {
@@ -76,7 +76,7 @@ namespace Os {
         do {
             my_node = m_free_head;
 
-            if (NULL == my_node) {
+            if (nullptr == my_node) {
                 return false;
             }
 
@@ -107,7 +107,7 @@ namespace Os {
         // Copy the data into the buffer
         memcpy(my_node->data, buffer, size);
         my_node->size = size;
-        my_node->next = NULL;
+        my_node->next = nullptr;
 
         // Publish the node
         // The m_last pointer is moved before the item is published
@@ -141,7 +141,7 @@ namespace Os {
         old_node = m_first;
         my_node = m_first->next;
 
-        if (my_node == NULL) {
+        if (my_node == nullptr) {
             // We may not be fully linked yet, even though "last" has moved
             return Queue::QUEUE_NO_MORE_MSGS;
         }

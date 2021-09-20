@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     I32 option;
     char *hostname;
     option = 0;
-    hostname = NULL;
+    hostname = nullptr;
     bool dump = false;
 
     while ((option = getopt(argc, argv, "hdp:a:")) != -1){
