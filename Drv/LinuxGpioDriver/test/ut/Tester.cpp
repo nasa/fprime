@@ -69,7 +69,7 @@ namespace Drv {
 
       // delay waiting for cycles to complete
       NATIVE_INT_TYPE maxCycles = 10;
-      while (1) {
+      while (true) {
           Os::Task::delay(500);
           bool state;
           //this->invoke_to_gpioRead(0,state);
