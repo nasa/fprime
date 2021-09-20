@@ -219,4 +219,4 @@ Further information can be read by referencing the following components.
 
 `Drv::TcpClientComponent`: a F´ component wrapper of the tcp client
 `Drv::TcpServerComponent`: a F´ component wrapper of the tcp server
-`Drv::UdpComponent`: a F´ component wrapper of the udp
+`Drv::UdpComponent`: a F´ component wrapper of the udp.
