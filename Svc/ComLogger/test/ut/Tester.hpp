@@ -8,7 +8,7 @@
 #include "GTestBase.hpp"
 #include "../../ComLogger.hpp"
 #include <Fw/Comp/ActiveComponentBase.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #define QUEUE_DEPTH 10
 #define FILE_STR "test"

@@ -14,9 +14,9 @@
 #include <Svc/UdpReceiver/UdpReceiverComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -128,7 +128,7 @@ namespace Svc {
 
   void UdpReceiverComponentImpl::workerTask(void* ptr) {
       UdpReceiverComponentImpl *compPtr = static_cast<UdpReceiverComponentImpl*>(ptr);
-      while (1) {
+      while (true) {
           compPtr->doRecv();
       }
   }

@@ -52,7 +52,7 @@ namespace Os {
   };
 
   Queue::Queue() :
-    m_handle(0) {
+    m_handle(reinterpret_cast<POINTER_CAST>(nullptr)) {
   }
 
   Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
@@ -89,7 +89,7 @@ namespace Os {
     if (nullptr != queueHandle) {
       delete queueHandle;
     }
-    this->m_handle = 0;
+    this->m_handle = reinterpret_cast<POINTER_CAST>(nullptr);
   }
 
   Queue::QueueStatus sendNonBlock(QueueHandle* queueHandle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
@@ -318,7 +318,7 @@ namespace Os {
 
   Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
 
-      if( 0 == this->m_handle ) {
+      if( reinterpret_cast<POINTER_CAST>(nullptr) == this->m_handle ) {
         return QUEUE_UNINITIALIZED;
       }
 

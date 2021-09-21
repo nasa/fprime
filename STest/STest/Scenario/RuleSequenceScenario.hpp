@@ -12,7 +12,7 @@
 #ifndef STest_RuleSequenceScenario_HPP
 #define STest_RuleSequenceScenario_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Scenario/SequenceScenario.hpp"
 #include "STest/Scenario/RuleScenario.hpp"

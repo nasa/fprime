@@ -12,7 +12,7 @@
 #ifndef STest_IteratedScenario_HPP
 #define STest_IteratedScenario_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Scenario/Scenario.hpp"
 

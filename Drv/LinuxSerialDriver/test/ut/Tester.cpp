@@ -11,8 +11,8 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 
 #define INSTANCE 0

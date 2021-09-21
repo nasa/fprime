@@ -11,7 +11,7 @@
 #include <Os/Queue.hpp>
 
 #include <new>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Os {
 /**
@@ -36,7 +36,7 @@ class BareQueueHandle {
 };
 
 Queue::Queue() :
-    m_handle(0)
+    m_handle(reinterpret_cast<POINTER_CAST>(nullptr))
 { }
 
 Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
@@ -68,7 +68,7 @@ Queue::~Queue() {
     if (nullptr != handle) {
         delete handle;
     }
-    this->m_handle = 0;
+    this->m_handle = reinterpret_cast<POINTER_CAST>(nullptr);
 }
 
 Queue::QueueStatus bareSendNonBlock(BareQueueHandle& handle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {

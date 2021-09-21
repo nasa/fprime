@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/event_throttle/TestLogRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestLogRecvImpl::TestLogRecvImpl(const char* name) : LogTextImpl(name)

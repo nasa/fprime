@@ -11,7 +11,7 @@
  */
 
 #include <Fw/Types/MmapAllocator.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/mman.h>
 #include <Fw/Types/Assert.hpp>
 

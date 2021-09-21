@@ -12,9 +12,9 @@
 #ifndef STest_Scenario_HPP
 #define STest_Scenario_HPP
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
 
 #include "STest/Random/Random.hpp"
 #include "STest/Rule/Rule.hpp"

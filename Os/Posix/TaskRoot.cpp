@@ -13,10 +13,10 @@
 #include <Fw/Logger/Logger.hpp>
 
 #include <pthread.h>
-#include <errno.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
+#include <cerrno>
+#include <cstring>
+#include <ctime>
+#include <cstdio>
 #include <new>
 
 //#define DEBUG_PRINT(x,...) Fw::Logger::logMsg(x,##__VA_ARGS__);

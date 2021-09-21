@@ -19,10 +19,10 @@
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define MAX_BUF 64
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>

@@ -12,7 +12,7 @@
 #ifndef STest_ScenarioArray_HPP
 #define STest_ScenarioArray_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Random/Random.hpp"
 

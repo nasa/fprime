@@ -276,6 +276,7 @@ css
 cstat
 cstdarg
 cstddef
+cstdint
 cstdio
 cstdlib
 CSTOPB
@@ -525,8 +526,8 @@ findall
 fio
 Firefox
 Fixme
-FIXME
 Fixme
+FIXME
 flist
 FNDELAY
 fnmatch

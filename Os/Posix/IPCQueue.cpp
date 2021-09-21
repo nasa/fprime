@@ -13,10 +13,10 @@
 
 #include <mqueue.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#include <time.h>
+#include <cerrno>
+#include <cstring>
+#include <cstdio>
+#include <ctime>
 #include <sys/time.h>
 #include <pthread.h>
 #include <new>
@@ -102,7 +102,7 @@ namespace Os {
         if (nullptr != queueHandle) {
           delete queueHandle;
         }
-        this->m_handle = 0; // important so base Queue class doesn't free it
+        this->m_handle = reinterpret_cast<POINTER_CAST>(nullptr); // important so base Queue class doesn't free it
         (void) mq_unlink(this->m_name.toChar());
     }
 

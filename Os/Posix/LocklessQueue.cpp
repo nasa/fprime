@@ -2,7 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 
 #include <fcntl.h>
-#include <string.h>
+#include <cstring>
 #include <new>
 
 #define CAS(a_ptr, a_oldVal, a_newVal) __sync_bool_compare_and_swap(a_ptr, a_oldVal, a_newVal)
