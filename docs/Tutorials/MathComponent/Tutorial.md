@@ -188,7 +188,7 @@ The `<args>` tag begins the section of the XML defining the arguments, while the
 The enumerations are a special type of argument. When `type="ENUM"` is an attribute of the arguments, a further listing of the elements of the enumeration are needed. For each element of the array, a name is specified. These end up being C++ enumerated types.
 
 ```xml
-           <enum name="MathOperation">
+            <enum name="MathOperation">
                 <item name="MATH_ADD"/>
                 <item name="MATH_SUB"/>
                 <item name="MATH_MULTIPLY"/>
@@ -642,7 +642,7 @@ The XML for the defined events is as follows:
 
 ```xml
     <events>
-        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string = "Math Cmd Recvd: %f %f %d"  >
+        <event id="0" name="MS_COMMAND_RECV" severity="ACTIVITY_LO" format_string="Math Cmd Recvd: %f %f %d"  >
             <comment>
             Math command received
             </comment>
@@ -651,7 +651,7 @@ The XML for the defined events is as follows:
                     <comment>The val1 argument</comment>
                 </arg>
                 <arg name="val2" type="F32">
-                    <comment>The val1 argument</comment>
+                    <comment>The val2 argument</comment>
                 </arg>
                 <arg name="op" type="ENUM">
                     <comment>The requested operation</comment>
@@ -1807,7 +1807,7 @@ This C++ file is where the instances of all the components are declared and init
 
 Put these declarations after the declarations for the other `Ref` components:
 
-`Ref/Top/Topology.cpp`, line 187:
+`Ref/Top/Topology.cpp`, line 106:
 
 ```c++
 Ref::MathSenderComponentImpl mathSender(FW_OPTIONAL_NAME("mathSender"));
@@ -1819,7 +1819,7 @@ Where the other components are initialized, add `MathSender` and `MathReceiver`:
 `Ref/Top/Topology.cpp`, line 172:
 
 ```c++
-	pingRcvr.init(10);
+    pingRcvr.init(10);
 
     mathSender.init(10,0);
     mathReceiver.init(10,0);
@@ -1925,8 +1925,8 @@ The Component instances must be declared.
 ```xml
     <instance namespace="Svc" name="uplink" type="Deframer" base_id="701"  base_id_window="20" />
 
-   <instance namespace="Ref" name="mathSender" type="MathSender" base_id="1000"  base_id_window="20" />
-   <instance namespace="Ref" name="mathReceiver" type="MathReceiver" base_id="1100"  base_id_window="20" />
+    <instance namespace="Ref" name="mathSender" type="MathSender" base_id="1000"  base_id_window="20" />
+    <instance namespace="Ref" name="mathReceiver" type="MathReceiver" base_id="1100"  base_id_window="20" />
 ```
 
 The name in the `name=` attribute must match the one declared previously in `Ref/Top/Components.hpp`. For example:
@@ -2093,7 +2093,7 @@ Components that have telemetry or events need to be able to time stamp the event
 
 The `MathReceiver` component does not have a thread of its own, but relies on the thread of another component to drive it via the `SchedIn` port. The `SchedIn` port is connected to the 1Hz rate group component that is part of the `Ref` example. This means that every second the component gets a call and can unload messages from its message queue and dispatch them to handlers.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 894:
+`Ref/Top/RefTopologyAppAi.xml`, can be added near the end of the file after the previous connection's closing brace (`</connection>`):
 
 ```xml
    <!-- Scheduler Connection -->
@@ -2107,7 +2107,7 @@ The `MathReceiver` component does not have a thread of its own, but relies on th
 
 The final connection is the connection that performs the math operation. It goes from `MathSender` to `MathReceiver`.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 911:
+`Ref/Top/RefTopologyAppAi.xml`, can be added after the Scheduler Connection added above:
 
 ```xml
 
