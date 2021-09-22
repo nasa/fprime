@@ -1845,6 +1845,7 @@ Next, the components commands are registered.
 ```c++
     health.regCommands();
     pingRcvr.regCommands();
+    pktTlm.regCommands();
 
     mathSender.regCommands();
     mathReceiver.regCommands();
@@ -1861,7 +1862,7 @@ Component parameters are retrieved from disk by `prmDb` prior to the components 
 
 Once the parameters are read by `prmDb`, the components can request them:
 
-`Ref/Top/Topology.cpp`, line 208:
+`Ref/Top/Topology.cpp`, line 209:
 
 ```c++
     sendBuffComp.loadParameters();
@@ -1888,10 +1889,10 @@ The `exitTasks()` function is called when the process is shut down.
 It contains `exit()` calls to all the active components.
 These functions internally send a message to the component's thread to shut down.
 
-`Ref/Top/Topology.cpp`, line 288:
+`Ref/Top/Topology.cpp`, line 289:
 
 ```c++
-    cmdSeq.exit();
+    pingRcvr.exit();
 
     mathSender.exit();
 ```
