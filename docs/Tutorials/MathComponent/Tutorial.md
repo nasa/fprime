@@ -2107,7 +2107,7 @@ The `MathReceiver` component does not have a thread of its own, but relies on th
 
 The final connection is the connection that performs the math operation. It goes from `MathSender` to `MathReceiver`.
 
-`Ref/Top/RefTopologyAppAi.xml`, can be added after the Scheduler Connection added above:
+`Ref/Top/RefTopologyAppAi.xml`, can be added after the Scheduler Connection which was inserted in the previous step:
 
 ```xml
 
