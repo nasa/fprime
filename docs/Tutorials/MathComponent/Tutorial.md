@@ -97,7 +97,7 @@ result = (value1 operation value2)*factor1/factor2
 This section will cover the implementation of the components for this tutorial. The implementation of these components
 will have the following steps:
 
-1) Define the `MathOpPort` and 'MathResultPort' ports that are used between the components.
+1) Define the `MathOpPort` and `MathResultPort` ports that are used between the components.
 2) Define the `MathSender` component in XML and compile it.
 3) Implement the `MathSender` derived implementation class.
 4) Unit test the `MathSender` implementation component.
@@ -154,7 +154,7 @@ The `interface` tag specifies that a port is being defined. The attributes are a
 |Attribute|Description|
 |---|---|
 |name|The name of the component type. Becomes the C++ class name|
-|namespace|The namespace of the component. The C++ namespace the where the component class will appear|
+|namespace|The namespace of the component. The C++ namespace where the component class will appear|
 
 #### 2.1.1.2 Port Argument Specification
 
@@ -1717,7 +1717,7 @@ It is a way to test default settings for parameters.
 
 ```
 
-In this test case, the parameter value was set prior to the `loadParameters()` call. A `Fw::PARAM_VALID` status is also set, which allows the component consider the value valid and use it.
+In this test case, the parameter value was set prior to the `loadParameters()` call. A `Fw::PARAM_VALID` status is also set, which allows the component to consider the value valid and use it.
 
 ##### 2.4.2.2.3 Serializable Usage
 
@@ -1879,7 +1879,7 @@ The thread for the active `MathSender` component needs to be started:
     mathSender.start();
 ```
 
-The start call without arguments uses the Os defaults for priority, stack size, etc.
+The start call without arguments uses the OS defaults for priority, stack size, etc.
 
 The `MathReceiver` queued component will execute on the thread of the 1Hz rate group, which will be shown later.
 It does not need to have a thread started, since queued components do not have threads.
