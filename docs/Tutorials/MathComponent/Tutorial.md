@@ -1790,7 +1790,7 @@ There is a C++ header file that declares all the component instances as external
 
 `extern` declarations need to be made in this header file for use by the topology connection file that is discussed later as well as initialization code.
 
-`Ref/Top/Components.hpp`, line 61:
+`Ref/Top/Components.hpp`, line 62:
 
 ```c++
 extern Ref::PingReceiverComponentImpl pingRcvr;
@@ -1816,7 +1816,7 @@ Ref::MathReceiverComponentImpl mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
 
 Where the other components are initialized, add `MathSender` and `MathReceiver`:
 
-`Ref/Top/Topology.cpp`, line 286:
+`Ref/Top/Topology.cpp`, line 172:
 
 ```c++
 	pingRcvr.init(10);
@@ -1830,7 +1830,7 @@ This is the number of messages that can be pending while other messages are bein
 
 After all the components are initialized, the generated function `constructRefArchitecture()` (see `RefTopologyAppAc.cpp`) can be called to connect the components together. How this function is generated will be seen later in the tutorial.
 
-`Ref/Top/Topology.cpp`, line 291:
+`Ref/Top/Topology.cpp`, line 177:
 
 ```c++
     // Connect rate groups to rate group driver
@@ -1840,7 +1840,7 @@ After all the components are initialized, the generated function `constructRefAr
 
 Next, the components commands are registered.
 
-`Ref/Top/Topology.cpp`, line 308:
+`Ref/Top/Topology.cpp`, line 202:
 
 ```c++
     health.regCommands();
@@ -1852,7 +1852,7 @@ Next, the components commands are registered.
 
 Component parameters are retrieved from disk by `prmDb` prior to the components requesting them:
 
-`Ref/Top/Topology.cpp`, line 314:
+`Ref/Top/Topology.cpp`, line 206:
 
 ```c++
     // read parameters
@@ -1861,7 +1861,7 @@ Component parameters are retrieved from disk by `prmDb` prior to the components 
 
 Once the parameters are read by `prmDb`, the components can request them:
 
-`Ref/Top/Topology.cpp`, line 300:
+`Ref/Top/Topology.cpp`, line 208:
 
 ```c++
     sendBuffComp.loadParameters();
@@ -1871,7 +1871,7 @@ Once the parameters are read by `prmDb`, the components can request them:
 
 The thread for the active `MathSender` component needs to be started:
 
-`Ref/Top/Topology.cpp`, line 357:
+`Ref/Top/Topology.cpp`, line 261:
 
 ```c++
     pingRcvr.start();
@@ -1888,7 +1888,7 @@ The `exitTasks()` function is called when the process is shut down.
 It contains `exit()` calls to all the active components.
 These functions internally send a message to the component's thread to shut down.
 
-`Ref/Top/Topology.cpp`, line 396:
+`Ref/Top/Topology.cpp`, line 288:
 
 ```c++
     cmdSeq.exit();
@@ -1906,7 +1906,7 @@ The connections for the new components will be added to the existing connections
 
 The component XML definitions must be imported into the topology file:
 
-`Ref/Top/RefTopologyAppAi.xml`, line 32:
+`Ref/Top/RefTopologyAppAi.xml`, line 33:
 
 ```xml
     <import_component_type>Svc/Deframer/DeframerComponentAi.xml</import_component_type>
@@ -1919,7 +1919,7 @@ The component XML definitions must be imported into the topology file:
 
 The Component instances must be declared.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 92:
+`Ref/Top/RefTopologyAppAi.xml`, line 55:
 
 ```xml
     <instance namespace="Svc" name="uplink" type="Deframer" base_id="701"  base_id_window="20" />
@@ -1961,7 +1961,7 @@ The following XML shows the command connection for the tutorial components.
 The port number used for the registration and dispatch ports is selected as 20,
 a unique number that hasn't been used yet in the `Ref` example.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 817:
+`Ref/Top/RefTopologyAppAi.xml`, line 154:
 
 ```xml
    <!-- Command Registration Ports - Registration port number must match dispatch port for each component -->
@@ -2002,7 +2002,7 @@ a unique number that hasn't been used yet in the `Ref` example.
 
 The output connections for log ports are connected to the `eventLogger` component.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 845:
+`Ref/Top/RefTopologyAppAi.xml`, line 376:
 
 ```xml
    <!-- Event Logger Binary Connections -->
@@ -2034,7 +2034,7 @@ There are two kinds of connections for logging: One for a binary form that will 
 
 The telemetry output ports are connected to the `chanTlm` component.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 872:
+`Ref/Top/RefTopologyAppAi.xml`, line 546:
 
 ```xml
    <!-- Telemetry Connections -->
@@ -2054,7 +2054,7 @@ The telemetry output ports are connected to the `chanTlm` component.
 
 There are two parameter connections, a `PrmGet` connection for reading parameters during software initialization and a `PrmSet` for updating parameters in the component that manages parameter values. F' has a basic parameter storage component `prmDb` that stores parameters in files. Upon bootup, they are read from a file specified in the constructor and stored in memory. Subsequent to this, components request their parameters via the `PrmGet` connection. If they are updated by command, they can be saved to storage by issuing a command to call the `PrmSet` with the new value and issuing the `PRM_SAVE_FILE` command.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 883:
+`Ref/Top/RefTopologyAppAi.xml`, line 629:
 
 ```xml
    <!-- Parameter Connections -->
@@ -2073,7 +2073,7 @@ There are two parameter connections, a `PrmGet` connection for reading parameter
 
 Components that have telemetry or events need to be able to time stamp the events. The time connections connect the components to a time source to provide the time stamps.
 
-`Ref/Top/RefTopologyAppAi.xml`, line 894:
+`Ref/Top/RefTopologyAppAi.xml`, line 648:
 
 ```xml
    <!-- Time Connections -->
