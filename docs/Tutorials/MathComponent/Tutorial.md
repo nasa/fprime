@@ -1425,7 +1425,7 @@ Next, the test checks for the expected telemetry and events:
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
       ASSERT_EVENTS_MS_RESULT_SIZE(1);
-      // verify the expected value of the event
+      // verify the expected value of the event arguments
       ASSERT_EVENTS_MS_RESULT(0,10.0);
 ```
 
@@ -1782,7 +1782,7 @@ There is a C++ header file that declares all the component instances as external
 `Ref/Top/Components.hpp`, line 30:
 
 ```c++
-#include <Drv/BlockDriver/BlockDriverImpl.hpp>
+#include <Svc/Deframer/DeframerComponentImpl.hpp>
 
 #include <Ref/MathSender/MathSenderComponentImpl.hpp>
 #include <Ref/MathReceiver/MathReceiverComponentImpl.hpp>
@@ -1833,7 +1833,7 @@ After all the components are initialized, the generated function `constructRefAr
 `Ref/Top/Topology.cpp`, line 291:
 
 ```c++
-    // call generated function to connect components
+    // Connect rate groups to rate group driver
     constructRefArchitecture();
 
 ```
@@ -1909,8 +1909,7 @@ The component XML definitions must be imported into the topology file:
 `Ref/Top/RefTopologyAppAi.xml`, line 32:
 
 ```xml
-	<import_component_type>Svc/PassiveConsoleTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
-
+    <import_component_type>Svc/Deframer/DeframerComponentAi.xml</import_component_type>
 
     <import_component_type>Ref/MathSender/MathSenderComponentAi.xml</import_component_type>
     <import_component_type>Ref/MathReceiver/MathReceiverComponentAi.xml</import_component_type>
@@ -1923,7 +1922,7 @@ The Component instances must be declared.
 `Ref/Top/RefTopologyAppAi.xml`, line 92:
 
 ```xml
-   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="521"  base_id_window="20" />
+    <instance namespace="Svc" name="uplink" type="Deframer" base_id="701"  base_id_window="20" />
 
    <instance namespace="Ref" name="mathSender" type="MathSender" base_id="1000"  base_id_window="20" />
    <instance namespace="Ref" name="mathReceiver" type="MathReceiver" base_id="1100"  base_id_window="20" />
