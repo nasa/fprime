@@ -1,2 +1,6 @@
-Checks: "modernize-use-bool-literals,modernize-redundant-void-arg,modernize-deprecated-headers,-clang-analyzer-security.insecureAPI.rand"
+Checks: >
+    modernize-use-bool-literals,
+    modernize-redundant-void-arg,
+    modernize-deprecated-headers,
+    -clang-analyzer-security.insecureAPI.rand
 WarningsAsErrors: '*'
