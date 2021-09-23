@@ -14,10 +14,10 @@
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
-#include <cstring>
+#include <type_traits>
 
 // Required port serialization or the hub cannot work
-FW_STATIC_ASSERT(FW_PORT_SERIALIZATION);
+static_assert(FW_PORT_SERIALIZATION, "FW_PORT_SERIALIZATION must be enabled to use GenericHub");
 
 namespace Svc {
 

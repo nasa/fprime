@@ -12,10 +12,6 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 
-// A helper macro to declare errors in definitions of the constants
-#define FW_CONFIG_ERROR( condition, name )\
-    typedef char assert_failed_ ## name [ (condition) ? 1 : -1 ];
-
 // To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
 // these defaults will be overridden
 
