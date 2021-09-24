@@ -1,4 +1,5 @@
 Checks: >
+    bugprone-unhandled-self-assignment,
     modernize-use-bool-literals,
     modernize-redundant-void-arg,
     modernize-deprecated-headers,

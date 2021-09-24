@@ -41,6 +41,10 @@ ${name}::${name}(${args_scalar_array_string}) : Serializable() {
 #end if
 
 ${name}& ${name}::operator=(const ${name}& src) {
+    if(this == &src) {
+            return *this;
+    }
+
     this->set(${args_mstring});
     return *this;
 }

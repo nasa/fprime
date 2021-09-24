@@ -92,6 +92,10 @@ namespace Fw {
 #endif
 
     StringBase& StringBase::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(const_cast<char *>(this->toChar()), other.toChar(), this->getCapacity());
         return *this;
     }
