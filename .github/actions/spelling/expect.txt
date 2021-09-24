@@ -140,6 +140,7 @@ BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
 buffsize
 BUGLIST
+bugprone
 builddir
 buildroot
 builtins

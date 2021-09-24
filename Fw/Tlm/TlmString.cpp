@@ -92,6 +92,10 @@ namespace Fw {
     }
 
     TlmString& TlmString::operator=(const TlmString& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }

@@ -20,6 +20,10 @@ namespace Fw {
     }
 
     CmdArgBuffer& CmdArgBuffer::operator=(const CmdArgBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         SerializeStatus stat = this->setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
