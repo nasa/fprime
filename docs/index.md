@@ -30,7 +30,7 @@ F´ has the following features:
 - [Community Forum and Mailing List](https://groups.google.com/d/forum/fprime-community) 
     - **Note**: Community forum has been replaced by [Discussions](https://github.com/nasa/fprime/discussions) since mid june 2021.
 
-## F´ Documentation
+## F´ Documentation on .md
 
 ### F´ Release
 - [Latest Documentation](./latest.md)
