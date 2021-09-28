@@ -1,5 +1,5 @@
 #include <getopt.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <ctype.h>
 
 #include <Ref/Top/RefTopologyAc.hpp>
@@ -9,7 +9,7 @@ void print_usage(const char* app) {
 }
 
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
 
 Ref::TopologyState state;
 

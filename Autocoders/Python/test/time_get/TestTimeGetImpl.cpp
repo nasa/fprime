@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include "TestTimeGetImpl.hpp"
 
 TimeGetTesterImpl::TimeGetTesterImpl(const char* name) : TimeGet::TimeGetTesterComponentBase(name)

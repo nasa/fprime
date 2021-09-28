@@ -12,7 +12,7 @@
 // ======================================================================
 
 #include "TokenBucketTester.hpp"
-#include <time.h>
+#include <ctime>
 
 namespace Utils {
 

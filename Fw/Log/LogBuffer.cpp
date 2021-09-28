@@ -20,6 +20,10 @@ namespace Fw {
     }
 
     LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;

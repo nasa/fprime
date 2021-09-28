@@ -2,9 +2,9 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
-#include <string.h>
+#include <cstring>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define DEBUG_LEVEL 1
 

@@ -7,49 +7,6 @@
 # - `add_global_target`: adds a global target 'dict'
 # - `add_module_target`: adds sub-targets for '<MODULE_NAME>_dict'
 ####
-
-####
-# Function `dict`:
-#
-# Generate a dictionary from any *AppAi.xml file that we see
-####
-function(dictgen MODULE_NAME AI_XML DEPS)
-  string(REGEX REPLACE "Ai.xml" "Dictionary.xml" DICT_XML "${AI_XML}")
-  string(REGEX REPLACE "Ai.xml" "ID.csv" ID_CSV_XML "${AI_XML}")
-  string(REGEX REPLACE "Ai.xml" "Ai_IDTableLog.txt" ID_LOG_XML "${AI_XML}")
-  string(REGEX REPLACE "Ai.xml" "Ac" AC_BASE "${AI_XML}")
-  string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
-  get_filename_component(DICT_XML_NAME ${DICT_XML} NAME)
-  get_filename_component(ID_CSV_XML_NAME ${ID_CSV_XML} NAME)
-  get_filename_component(ID_LOG_XML_NAME ${ID_LOG_XML} NAME)
-  set(DICT_ROOT "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict")
-  set(DICTIONARY_OUTPUT_FILE "${DICT_ROOT}/${DICT_XML_NAME}")
-
-  add_custom_command(
-      OUTPUT "${DICT_ROOT}/${DICT_XML_NAME}"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_COMMAND} -E env PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}"
-      FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
-      PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-      ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py --build_root --xml_topology_dict ${AI_XML}
-      COMMAND ${CMAKE_COMMAND} -E make_directory "${DICT_ROOT}"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy ${DICT_XML_NAME} ${ID_LOG_XML_NAME} ${ID_CSV_XML_NAME} ${DICT_ROOT}
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory commands "${DICT_ROOT}/commands"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory channels "${DICT_ROOT}/channels"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E copy_directory events "${DICT_ROOT}/events"
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove ${DICT_XML_NAME} ${ID_CSV_XML_NAME} ${ID_LOG_XML_NAME} ${AC_BASE}.cpp ${AC_BASE}.hpp
-      # Workaround for older versions of cmake (~v3.10) that can only delete a single directory with "remove_directory" command.
-      # When bumping cmake versions combine all deletions into a single "cmake -E rm -rf" command.
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory commands
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory channels
-      COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_COMMAND} -E remove_directory events
-      DEPENDS ${DEPS}
-  )
-
-  # Return file for output
-  set(DICTIONARY_OUTPUT_FILE "${DICTIONARY_OUTPUT_FILE}" PARENT_SCOPE) 
-endfunction(dictgen)
-
 ####
 # Dict function `add_global_target`:
 #
@@ -61,15 +18,15 @@ endfunction(dictgen)
 ####
 function(add_global_target TARGET_NAME)
     add_custom_target(${TARGET_NAME} ALL)
+    
 endfunction(add_global_target)
 
 ####
 # Dict function `add_module_target`:
 #
-# Adds a module-by-module target for producing dictionaries. These dictionaries take the outputs
-# from the autocoder and copies them into the correct directory. These outputs are then handled as
-# part of the global `dict` target above.
-#
+# Process the dictionary target on each module that is defined. Since the topology module is going to do the dictionary
+# generation work for us, we just need to add a dependency on the module that contains the dictionary in its list of
+# autocoder output files.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
@@ -77,18 +34,20 @@ endfunction(add_global_target)
 # - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
 # - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** module dependencies of the target
+# - **DEPENDENCIES:** module dependencies of the target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
-    # Try to generate dictionaries for every AC input file
-    foreach (AC_IN ${AC_INPUTS})
-        # Only generate dictionaries on serializables or topologies
-        if (AC_IN MATCHES ".*Topology.*\.xml$")
-            fprime_ai_info("${AC_IN}" "${MODULE_NAME}")
-            dictgen("${MODULE_NAME}" "${AC_IN}" "${AC_INPUTS};${MODULE_DEPENDENCIES};${MOD_DEPS};${FILE_DEPENDENCIES}")
-            add_custom_target("${TARGET_NAME}" DEPENDS "${AC_IN}" "${DICTIONARY_OUTPUT_FILE}")
-            add_dependencies("${MODULE_NAME}" "${TARGET_NAME}")
-            add_dependencies("${GLOBAL_TARGET_NAME}" "${TARGET_NAME}")
+function(add_module_target MODULE TARGET GLOBAL_TARGET AC_INPUTS SOURCE_FILES AC_OUTPUTS DEPENDENCIES)
+    set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TopologyAppDictionary.xml")
+    foreach(FILE IN LISTS AC_OUTPUTS)
+        if (FILE STREQUAL DICTIONARY)
+            add_custom_target(
+                ${TARGET}
+                COMMAND ${CMAKE_COMMAND} -E make_directory "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
+                COMMAND ${CMAKE_COMMAND} -E copy ${DICTIONARY} "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
+                DEPENDS ${DICTIONARY} ${MODULE}
+            )
+            add_dependencies("${GLOBAL_TARGET}" "${TARGET}")
+            break()
         endif()
     endforeach()
 endfunction(add_module_target)

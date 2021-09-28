@@ -3,11 +3,9 @@
 // \author Bocchino
 // \brief  Implementation for CmdSequencerComponentImpl::Sequence::Events
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
@@ -105,7 +103,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::Sequence::Events ::
-    timeBaseMismatch(const FwTimeBaseStoreType currTimeBase, const FwTimeBaseStoreType seqTimeBase)
+    timeBaseMismatch(const U32 currTimeBase, const U32 seqTimeBase)
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
     CmdSequencerComponentImpl& component = this->m_sequence.m_component;
@@ -119,8 +117,8 @@ namespace Svc {
 
   void CmdSequencerComponentImpl::Sequence::Events ::
     timeContextMismatch(
-        const FwTimeContextStoreType currTimeContext,
-        const FwTimeContextStoreType seqTimeContext
+        const U32 currTimeContext,
+        const U32 seqTimeContext
     )
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();

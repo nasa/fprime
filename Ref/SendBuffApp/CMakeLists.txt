@@ -6,8 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SendBuffApp.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/SendBuffComponentImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/SendBuff_ActiveStateEnumAi.xml"
 )
 register_fprime_module()

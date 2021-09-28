@@ -9,8 +9,8 @@
 // acknowledged.
 // ======================================================================
 
-#include <assert.h>
-#include <time.h>
+#include <cassert>
+#include <ctime>
 
 #include "STest/Random/Random.hpp"
 

@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 #include "Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp"
 #include <unistd.h>
 

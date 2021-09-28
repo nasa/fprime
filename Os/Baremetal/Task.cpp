@@ -2,7 +2,7 @@
 #include <Os/Task.hpp>
 #include <Os/Baremetal/TaskRunner/BareTaskHandle.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <new>
 
 namespace Os {

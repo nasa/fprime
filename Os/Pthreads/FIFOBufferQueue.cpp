@@ -14,7 +14,7 @@
 #include "Os/Pthreads/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
 
-#include <string.h>
+#include <cstring>
 #include <new>
 
 // This is a simple FIFO queue implementation which ignores priority

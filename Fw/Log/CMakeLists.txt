@@ -11,10 +11,8 @@ set(MOD_DEPS
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/LogBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LogPortAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/LogSeverityEnumAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Log.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/LogString.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LogTextPortAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/TextLogString.cpp"
 
 )

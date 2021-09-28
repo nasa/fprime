@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 
 //TEST(Test, NominalTlm) {
 //  Svc::Tester tester;

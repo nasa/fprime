@@ -2,7 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 

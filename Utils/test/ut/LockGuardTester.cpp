@@ -12,7 +12,7 @@
 // ======================================================================
 
 #include "LockGuardTester.hpp"
-#include <time.h>
+#include <ctime>
 #include <Os/Task.hpp>
 
 namespace Utils {
@@ -42,7 +42,7 @@ namespace Utils {
   };
   void taskMethod(void* ptr)
   {
-    TaskData* data = (TaskData*)ptr;
+    TaskData* data = static_cast<TaskData*>(ptr);
     LockGuard guard(data->mutex);
     data->i++;
   }
@@ -58,7 +58,7 @@ namespace Utils {
 
     {
       LockGuard guard(data.mutex);
-      stat = testTask.start(name,12,100,10*1024,taskMethod,(void*) &data);
+      stat = testTask.start(name,12,100,10*1024,taskMethod,&data);
       ASSERT_EQ(stat, Os::Task::TASK_OK);
       Os::Task::delay(100);
       ASSERT_EQ(data.i, 0);

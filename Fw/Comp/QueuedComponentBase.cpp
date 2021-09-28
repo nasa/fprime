@@ -3,7 +3,7 @@
 #include <FpConfig.hpp>
 #include <Os/QueueString.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 

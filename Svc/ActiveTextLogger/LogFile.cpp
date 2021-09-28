@@ -8,8 +8,8 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <limits>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 
 namespace Svc {

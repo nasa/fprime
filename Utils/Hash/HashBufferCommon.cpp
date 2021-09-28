@@ -1,5 +1,5 @@
 #include <Utils/Hash/HashBuffer.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Utils {
 
@@ -20,6 +20,10 @@ namespace Utils {
     }
 
     HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;

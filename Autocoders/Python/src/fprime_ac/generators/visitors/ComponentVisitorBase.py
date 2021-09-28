@@ -182,7 +182,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         length = len(params)
         if length == 0:
-            return self.emitIndent(indent) + "void"
+            return ""
         else:
             str = ""
             for i in range(0, length - 1):

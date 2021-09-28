@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"

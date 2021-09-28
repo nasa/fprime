@@ -1,8 +1,8 @@
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 #define __STDC_FORMAT_MACROS
-#include <inttypes.h>
+#include <cinttypes>
 
 namespace Fw {
 

@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/ext_dict/ExampleComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace ExampleComponents {
 
@@ -42,7 +42,7 @@ namespace ExampleComponents {
     void ExampleComponentImpl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, ExampleComponentBase::CmdEnum arg2, const Fw::CmdStringArg& arg3) {
         // issue the test event with the opcode
         Fw::LogStringArg str = "TEST_CMD_1";
-        this->log_ACTIVITY_HI_SomeEvent(opCode,(F32)arg1, 0, str,ExampleComponentBase::EVENT_MEMB2);
+        this->log_ACTIVITY_HI_SomeEvent(opCode,static_cast<F32>(arg1), 0, str,ExampleComponentBase::EVENT_MEMB2);
         // write a value to a telemetry channel
         U32 chan = 12;
         this->tlmWrite_somechan(chan);

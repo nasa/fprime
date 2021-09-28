@@ -12,7 +12,7 @@
 #ifndef STest_SequenceScenario_HPP
 #define STest_SequenceScenario_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Scenario/IteratedScenario.hpp"
 #include "STest/Scenario/ScenarioArray.hpp"

@@ -33,7 +33,7 @@ namespace Utils {
         FW_ASSERT(data);
         char c;
         for(int index = 0; index < len; index++) {
-            c = ((char*)data)[index];
+            c = static_cast<const char*>(data)[index];
             local_hash_handle = update_crc_32(local_hash_handle, c);
         }
         HashBuffer bufferOut;
@@ -55,7 +55,7 @@ namespace Utils {
         FW_ASSERT(data);
         char c;
         for(int index = 0; index < len; index++) {
-            c = ((char*)data)[index];
+            c = static_cast<const char*>(data)[index];
             this->hash_handle = update_crc_32(this->hash_handle, c);
         }
     }

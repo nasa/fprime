@@ -15,7 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 

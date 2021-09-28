@@ -5,8 +5,8 @@
 #include <Fw/Types/String.hpp>
 
 #include <unistd.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 

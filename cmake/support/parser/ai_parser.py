@@ -25,6 +25,7 @@ BASIC_DEPENDENCIES = {
     "parameters": ["Fw_Cfg", "Fw_Types", "Fw_Prm", "Fw_Cmd"],
     "internal_interfaces": [],
     "enum": [],
+    "packets": ["Fw_Types", "Svc_TlmPacketizer"],
     "array": [],
 }
 # Component type importations
@@ -150,7 +151,7 @@ def read_fprime_import(import_type, root):
     """
     Read an FPrime dependency port/type. These are typically ports, serializables, and components.
 
-    :param import_type: "import_port_type", "import_component_type", "import_serializable_type", "import_enum_type"
+    :param import_type: "import_port_type", "import_component_type", "import_serializable_type", "import_enum_type", "import_topology"
     :param root: root XML to parse
     :return: dependency mined from this item
     """
@@ -184,6 +185,7 @@ def read_xml_file(root, import_base):
         "include_header",
         "import_enum_type",
         "import_array_type",
+        "import_topology",
     ]:
         dependencies.update(read_fprime_import(import_type, root))
     # Other items based on what tags are declared here specifically

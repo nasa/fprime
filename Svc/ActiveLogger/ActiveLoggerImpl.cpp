@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <Svc/ActiveLogger/ActiveLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>

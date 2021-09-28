@@ -11,7 +11,7 @@
  */
 
 #include <Fw/Types/MallocAllocator.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace Fw {
 

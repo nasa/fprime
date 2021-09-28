@@ -8,7 +8,7 @@
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :

@@ -3,7 +3,7 @@
 #include <Os/Log.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define DEBUG_LVL 1
 

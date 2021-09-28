@@ -14,16 +14,16 @@
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Os/TaskString.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x,...)
@@ -231,7 +231,23 @@ namespace Drv {
 
       // Set baud rate:
       stat = cfsetispeed(&newtio, relayRate);
+      if (stat) {
+          DEBUG_PRINT("cfsetispeed failed\n");
+          close(fd);
+          Fw::LogStringArg _arg = device;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
+      }
       stat = cfsetospeed(&newtio, relayRate);
+      if (stat) {
+          DEBUG_PRINT("cfsetospeed failed\n");
+          close(fd);
+          Fw::LogStringArg _arg = device;
+          Fw::LogStringArg _err = strerror(errno);
+          this->log_WARNING_HI_DR_OpenError(_arg,fd,_err);
+          return false;
+      }
 
       // Raw output:
       newtio.c_oflag = 0;
@@ -310,7 +326,7 @@ namespace Drv {
 
       Fw::Buffer buff;
 
-      while (1) {
+      while (true) {
           // wait for data
           int sizeRead = 0;
 

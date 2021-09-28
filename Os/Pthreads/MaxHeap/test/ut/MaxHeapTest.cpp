@@ -1,7 +1,7 @@
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace Os;
 
@@ -58,9 +58,9 @@ int main() {
   for(NATIVE_INT_TYPE ii = DEPTH-1; ii >= 0; --ii) {
     ret = heap.pop(value, id);
     FW_ASSERT(ret, ret);
-    FW_ASSERT(id == (NATIVE_UINT_TYPE) ii, id, ii);
+    FW_ASSERT(id == static_cast<NATIVE_UINT_TYPE>(ii), id, ii);
     size = heap.getSize();
-    FW_ASSERT((NATIVE_INT_TYPE) size == ii, size, ii);
+    FW_ASSERT(size == static_cast<NATIVE_UINT_TYPE>(ii), size, ii);
     //printf("Heap state after pop:\n");
     //heap.print();
     //printf("Got value %d\n", value);
@@ -97,7 +97,7 @@ int main() {
   }
   ret = heap.push(values[0], id);
   FW_ASSERT(!ret, ret);
-  
+
   // Get values out from largest to smallest:
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
     // Pop the top value:
@@ -137,7 +137,7 @@ int main() {
     size = heap.getSize();
     FW_ASSERT(size == ii+1, size, ii+1);
   }
-  
+
   // Get values out in FIFO order:
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
     // Pop the top value:
@@ -153,7 +153,7 @@ int main() {
   printf("Testing mixed priority...\n");
   // For this test we expect things to come in fifo order
   // for things of the same priority and in priority
-  // order for things of differend priorities.
+  // order for things of different priorities.
   NATIVE_INT_TYPE pries[DEPTH] = {1, 7, 100, 1, 7};
   NATIVE_INT_TYPE data2[DEPTH] = {4, 22, 99, 12344, 33};
   NATIVE_INT_TYPE orderedPries[DEPTH] = {100, 7, 7, 1, 1};

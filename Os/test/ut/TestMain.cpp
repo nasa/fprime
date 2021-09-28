@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 
 extern "C" {
   void startTestTask();
@@ -43,11 +43,7 @@ TEST(Nominal, QTestConcurrentTest) {
 // (~0.99 s) or longer (~10 sec) than requested, causing the test to fail. The interval timer should
 // be rewritten to not directly utilize the OS clock, but in the mean time disabling this test on
 // Mac OS prevents intermittent unit test failures.
-#ifdef TGT_OS_TYPE_DARWIN
 TEST(Nominal, DISABLED_IntervalTimerTest) {
-#else
-TEST(Nominal, IntervalTimerTest) {
-#endif
    intervalTimerTest();
 }
 TEST(Nominal, FileSystemTest) {

@@ -20,8 +20,8 @@
 // countries or providing access to foreign persons.
 // ======================================================================
 
-\#include <string.h>
-\#include <limits.h>
+\#include <cstring>
+\#include <limits>
 \#include "Fw/Types/Assert.hpp"
 \#include "${name}EnumAc.hpp"
 
@@ -36,9 +36,9 @@ namespace ${namespace} {
   ${name} :: ${name}():Serializable()
   {
 #if $default
-    this->e = (t) ${default};
+    this->e = static_cast<t>(${default});
 #else
-    this->e = (t) 0;
+    this->e = static_cast<t>(0);
 #end if
   }
 

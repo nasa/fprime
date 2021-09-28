@@ -123,7 +123,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_LOG);
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);
@@ -140,7 +140,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, val);
         // packet should be empty
-        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),(NATIVE_UINT_TYPE)0);
+        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),0u);
 
         // Disable severity filter
         this->clearHistory();
@@ -216,7 +216,7 @@ namespace Svc {
 
     void ActiveLoggerImplTester::runFilterEventNominal() {
 
-        for (Fw::LogSeverity::t sev = Fw::LogSeverity::WARNING_HI; sev <= Fw::LogSeverity::DIAGNOSTIC; sev = (Fw::LogSeverity::t)((NATIVE_INT_TYPE)sev + 1)) {
+        for (Fw::LogSeverity::t sev = Fw::LogSeverity::WARNING_HI; sev <= Fw::LogSeverity::DIAGNOSTIC; sev = static_cast<Fw::LogSeverity::t>(sev + 1)) {
             this->runWithFilters(sev);
         }
 
@@ -456,7 +456,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_LOG);
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);
@@ -473,7 +473,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, val);
         // packet should be empty
-        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),(NATIVE_UINT_TYPE)0);
+        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),0u);
         // Turn on all filters and make sure FATAL still gets through
 
         this->clearHistory();
@@ -508,7 +508,7 @@ namespace Svc {
         // first piece should be log packet descriptor
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_LOG);
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
         // next piece should be event ID
         stat = this->m_sentPacket.deserialize(sentId);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
@@ -522,7 +522,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, val);
         // packet should be empty
-        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),(NATIVE_UINT_TYPE)0);
+        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),0u);
 
         // turn off filters
 
@@ -557,7 +557,7 @@ namespace Svc {
         FwPacketDescriptorType desc;
         stat = this->m_sentPacket.deserialize(desc);
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-        ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_LOG);
+        ASSERT_EQ(desc,static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_LOG));
         // next piece should be event ID
         FwEventIdType sentId;
         stat = this->m_sentPacket.deserialize(sentId);
@@ -574,7 +574,7 @@ namespace Svc {
         ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
         ASSERT_EQ(readVal, value);
         // packet should be empty
-        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),(NATIVE_UINT_TYPE)0);
+        ASSERT_EQ(this->m_sentPacket.getBuffLeft(),0u);
 
     }
 
@@ -585,7 +585,7 @@ namespace Svc {
         BYTE de;
         NATIVE_INT_TYPE readSize = sizeof(de);
 
-        ASSERT_EQ(file.read((void*)&de,readSize,true),Os::File::OP_OK);
+        ASSERT_EQ(file.read(&de,readSize,true),Os::File::OP_OK);
         ASSERT_EQ(delimiter,de);
         // next is LogPacket
         Fw::ComBuffer comBuff;
