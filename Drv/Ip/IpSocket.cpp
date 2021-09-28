@@ -32,7 +32,7 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-    #include <string.h>
+    #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <sys/socket.h>
 #include <unistd.h>
@@ -69,7 +69,7 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
     timeout.tv_sec = this->m_timeoutSeconds;
     timeout.tv_usec = this->m_timeoutMicroseconds;
     // set socket write to timeout after 1 sec
-    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout, sizeof(timeout)) < 0) {
+    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 #endif

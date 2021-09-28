@@ -202,7 +202,7 @@ $emit_cpp_params([ $param_instance ])
   NATIVE_INT_TYPE ${tester_base} ::
     getNum_to_${instance}() const
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_${instance});
+    return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_to_${instance}));
   }
 
     #else if $direction == "Output":
@@ -212,7 +212,7 @@ $emit_cpp_params([ $param_instance ])
   NATIVE_INT_TYPE ${tester_base} ::
     getNum_from_${instance}() const
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_${instance});
+    return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_from_${instance}));
   }
       #if $role == "LogTextEvent":
 \#endif
@@ -732,7 +732,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
     #end if
     #for $arg_name, $arg_type, $comment, $is_enum in $args:
       #if $is_enum == "enum":
-    _status = buff.serialize((FwEnumStoreType) ${arg_name});
+    _status = buff.serialize(static_cast<FwEnumStoreType>(${arg_name}));
       #else
     _status = buff.serialize($arg_name);
       #end if

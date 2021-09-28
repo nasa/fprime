@@ -25,7 +25,7 @@ void TestTlmImpl::init() {
 
 void TestTlmImpl::genTlm(I32 val) {
     printf("Writing value %d to telemetry.\n",val);
-    SomeEnum argVal = (SomeEnum) val;
+    SomeEnum argVal = static_cast<SomeEnum>(val);
     this->tlmWrite_somechan(argVal);
 }
 

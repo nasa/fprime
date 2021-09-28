@@ -129,7 +129,7 @@ namespace Rpi {
   {
       // convert incoming data to string. If it is not printable, set character to '*'
       char uMsg[serBuffer.getSize()+1];
-      char* bPtr = (char*)serBuffer.getData();
+      char* bPtr = reinterpret_cast<char*>(serBuffer.getData());
 
       for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
           uMsg[byte] = isalpha(bPtr[byte])?bPtr[byte]:'*';
@@ -160,7 +160,7 @@ namespace Rpi {
   {
       Fw::Buffer txt;
       txt.setSize(text.length());
-      txt.setData((U8*)text.toChar());
+      txt.setData(reinterpret_cast<U8*>(const_cast<char*>(text.toChar())));
       this->UartWrite_out(0,txt);
       this->m_uartWriteBytes += text.length();
 
@@ -236,11 +236,11 @@ namespace Rpi {
       // copy data from string to output buffer
       char inBuf[data.length()+1];
       Fw::Buffer in;
-      in.setData((U8*)inBuf);
+      in.setData(reinterpret_cast<U8*>(inBuf));
       in.setSize(sizeof(inBuf));
 
       Fw::Buffer out;
-      out.setData((U8*)data.toChar());
+      out.setData(reinterpret_cast<U8*>(const_cast<char*>(data.toChar())));
       out.setSize(data.length());
       this->SpiReadWrite_out(0,out,in);
       for (NATIVE_UINT_TYPE byte = 0; byte < sizeof(inBuf); byte++) {

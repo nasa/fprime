@@ -3,25 +3,35 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
+#include <Svc/FramingProtocol/DeframingProtocol.hpp>
 
-TEST(Deframer, test_incoming_frame_with_valid_size) {
+TEST(Deframer, TestMoreNeeded) {
     Svc::Tester tester;
-    tester.test_incoming_frame(4, 4);
+    tester.test_incoming_frame(Svc::DeframingProtocol::DEFRAMING_MORE_NEEDED);
 }
-
-TEST(Deframer, test_incoming_frame_with_invalid_size) {
+TEST(Deframer, TestSuccess) {
     Svc::Tester tester;
-    tester.test_incoming_frame(1024, 1023);
+    tester.test_incoming_frame(Svc::DeframingProtocol::DEFRAMING_STATUS_SUCCESS);
 }
-
-TEST(Deframer, test_route_packet_command) {
+TEST(Deframer, TestBadChecksum) {
     Svc::Tester tester;
-    tester.test_route(Fw::ComPacket::FW_PACKET_COMMAND);
+    tester.test_incoming_frame(Svc::DeframingProtocol::DEFRAMING_INVALID_CHECKSUM);
 }
-
-TEST(Deframer, test_route_packet_file) {
+TEST(Deframer, TestBadSize) {
     Svc::Tester tester;
-    tester.test_route(Fw::ComPacket::FW_PACKET_FILE);
+    tester.test_incoming_frame(Svc::DeframingProtocol::DEFRAMING_INVALID_CHECKSUM);
+}
+TEST(Deframer, TestComInterface) {
+    Svc::Tester tester;
+    tester.test_com_interface();
+}
+TEST(Deframer, TestBufferInterface) {
+    Svc::Tester tester;
+    tester.test_buffer_interface();
+}
+TEST(Deframer, TestUnknownInterface) {
+    Svc::Tester tester;
+    tester.test_unknown_interface();
 }
 
 int main(int argc, char **argv) {

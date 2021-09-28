@@ -21,7 +21,7 @@
 #include <sys/ioctl.h> // required for I2C device usage
 #include <linux/i2c.h> // required for struct / constant definitions
 #include <linux/i2c-dev.h> // required for constant definitions
-#include <errno.h>
+#include <cerrno>
 
 #define DEBUG_PRINT 0
 

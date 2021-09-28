@@ -11,7 +11,7 @@
 #include <Os/Queue.hpp>
 
 #include <new>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Os {
 /**
@@ -114,7 +114,7 @@ Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_IN
         return QUEUE_EMPTY_BUFFER;
     }
     //Fail if there is a size miss-match
-    if (size < 0 || (NATIVE_UINT_TYPE) size > queue.getMsgSize()) {
+    if (size < 0 || static_cast<NATIVE_UINT_TYPE>(size) > queue.getMsgSize()) {
         return QUEUE_SIZE_MISMATCH;
     }
     //Send to the queue
@@ -128,19 +128,19 @@ Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_IN
 Queue::QueueStatus bareReceiveNonBlock(BareQueueHandle& handle, U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority) {
     FW_ASSERT(handle.m_init);
     BufferQueue& queue = handle.m_queue;
-    NATIVE_UINT_TYPE size = capacity;
+    NATIVE_UINT_TYPE size = static_cast<NATIVE_UINT_TYPE>(capacity);
     NATIVE_INT_TYPE pri = 0;
     Queue::QueueStatus status = Queue::QUEUE_OK;
     // Get an item off of the queue:
     bool success = queue.pop(buffer, size, pri);
     if(success) {
         // Pop worked - set the return size and priority:
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         priority = pri;
     }
     else {
         actualSize = 0;
-        if( size > (NATIVE_UINT_TYPE) capacity ) {
+        if( size > static_cast<NATIVE_UINT_TYPE>(capacity) ) {
             // The buffer capacity was too small!
             status = Queue::QUEUE_SIZE_MISMATCH;
         }
@@ -159,7 +159,7 @@ Queue::QueueStatus bareReceiveNonBlock(BareQueueHandle& handle, U8* buffer, NATI
 Queue::QueueStatus bareReceiveBlock(BareQueueHandle& handle, U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority) {
     FW_ASSERT(handle.m_init);
     BufferQueue& queue = handle.m_queue;
-    NATIVE_UINT_TYPE size = capacity;
+    NATIVE_UINT_TYPE size = static_cast<NATIVE_UINT_TYPE>(capacity);
     NATIVE_INT_TYPE pri = 0;
     Queue::QueueStatus status = Queue::QUEUE_OK;
     // If the queue is full, wait until a message is taken off the queue.
@@ -171,12 +171,12 @@ Queue::QueueStatus bareReceiveBlock(BareQueueHandle& handle, U8* buffer, NATIVE_
     bool success = queue.pop(buffer, size, pri);
     if(success) {
         // Pop worked - set the return size and priority:
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         priority = pri;
     }
     else {
         actualSize = 0;
-        if( size > (NATIVE_UINT_TYPE) capacity ) {
+        if( size > (static_cast<NATIVE_UINT_TYPE>(capacity) ) {
             // The buffer capacity was too small!
             status = Queue::QUEUE_SIZE_MISMATCH;
         }

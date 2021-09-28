@@ -1,7 +1,7 @@
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
 #include <Fw/Types/FwBasicTypes.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 

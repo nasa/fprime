@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TlmPacketizerImpl.cpp
 // \author tcanham
 // \brief  cpp file for TlmPacketizer component implementation class
@@ -15,7 +15,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   TlmPacketizer ::
@@ -59,7 +59,7 @@ namespace Svc {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     TlmPacketizerComponentBase::init(queueDepth, instance);
   }

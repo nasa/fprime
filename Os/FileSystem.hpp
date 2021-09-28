@@ -5,7 +5,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 
-#define FILE_SYSTEM_CHUNK_SIZE (256)
+#define FILE_SYSTEM_CHUNK_SIZE (256u)
 
 namespace Os {
 

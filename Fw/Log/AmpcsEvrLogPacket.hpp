@@ -12,7 +12,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Log/LogBuffer.hpp>
 #include <Fw/Time/Time.hpp>
-#include <string.h>
+#include <cstring>
 
 #define AMPCS_EVR_TASK_NAME_LEN 6
 
