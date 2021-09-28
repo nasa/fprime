@@ -22,7 +22,7 @@ function(add_global_target TARGET_NAME)
         return()
     endif()
 
-    add_custom_target(${TARGET_NAME} ALL)
+    add_custom_target(${TARGET_NAME} )
 endfunction(add_global_target)
 
 ####
@@ -38,11 +38,11 @@ endfunction(add_global_target)
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** module dependencies of the target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES)
     if (NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE")
         return()
     endif()
-
+    return()
     set(PKG_DEPS "")
     foreach (DEP ${MODULE_DEPENDENCIES};${MOD_DEPS})
         list(APPEND PKG_DEPS "${DEP}_${GLOBAL_TARGET_NAME}")

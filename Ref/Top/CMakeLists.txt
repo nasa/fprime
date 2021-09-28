@@ -4,8 +4,8 @@
 # SOURCE_FILES: combined list of source and autocoding diles
 # MOD_DEPS: (optional) module dependencies
 ####
+
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
 #  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAc.cpp"
@@ -19,12 +19,17 @@ set(MOD_DEPS
   Drv/Udp
   Drv/TcpClient
 )
-register_fprime_executable()
+
+register_fprime_module()
+get_module_name("${CMAKE_CURRENT_LIST_DIR}")
 # Remove old autocoded C++ file from target
-get_target_property(FINAL_SOURCE_FILES Ref_exe SOURCES)
+get_target_property(FINAL_SOURCE_FILES "${MODULE_NAME}" SOURCES)
 list(REMOVE_ITEM FINAL_SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/RefTopologyAppAc.cpp")
-set_target_properties(
-   Ref_exe
-   PROPERTIES
-   SOURCES "${FINAL_SOURCE_FILES}"
+set_target_properties("${MODULE_NAME}" PROPERTIES SOURCES "${FINAL_SOURCE_FILES}")
+
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
 )
+set(MOD_DEPS ${MODULE_NAME})
+
+register_fprime_executable()

@@ -1,5 +1,7 @@
 include(Utilities)
+include(autocoder/ai-shared)
 
+set(HANDLES_INDIVIDUAL_SOURCES TRUE)
 function(is_supported AC_INPUT_FILE)
     if (AC_INPUT_FILE MATCHES ".*Ai\\.xml")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
@@ -121,24 +123,10 @@ endfunction(__ai_info)
 #     FPRIME_FRAMEWORK_PATH,
 ####
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    add_dependencies(${OBJ_NAME} ${CODEGEN_TARGET})
+    set(GEN_ARGS)
     if(EXTRAS STREQUAL "topologyapp")
-        set(GEN_ARGS "--build_root" "--connect_only" "--xml_topology_dict")
-    else()
-        set(GEN_ARGS "--build_root")
+        set(GEN_ARGS "--connect_only" "--xml_topology_dict")
     endif()
-    find_program(PYTHON NAMES python3 python)
-    # Run Ai Autocoder
-    string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
-    add_custom_command(
-            OUTPUT  ${GENERATED_FILES}
-            BYPRODUCTS ${GENERATED_FILES}
-            COMMAND ${CMAKE_COMMAND} -E env
-              PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
-              BUILD_ROOT="${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime"
-              FPRIME_AC_CONSTANTS_FILE="${FPRIME_AC_CONSTANTS_FILE}"
-              PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-            ${PYTHON} ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p ${CMAKE_CURRENT_BINARY_DIR} ${GEN_ARGS} ${AC_INPUT_FILE}
-            DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${FPRIME_AC_CONSTANTS_FILE} ${MODULE_DEPENDENCIES}
-    )
+    setup_ai_autocode_variant("${GEN_ARGS}" "${CMAKE_CURRENT_BINARY_DIR}" "" "${AC_INPUT_FILE}" "${GENERATED_FILES}"
+                              "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
 endfunction(setup_autocode)

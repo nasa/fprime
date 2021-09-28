@@ -50,15 +50,30 @@ endif()
 include_directories("${CMAKE_BINARY_DIR}")
 include_directories("${CMAKE_BINARY_DIR}/F-Prime")
 
-register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
-register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
-register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
-register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
+# Registration block for autocoders
+#register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/fpp.cmake")
+#register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-xml.cmake")
+#register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-impl.cmake")
+if (CMAKE_BUILD_TYPE STREQUAL TESTING)
+#    register_fprime_ut_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-ut.cmake")
+    #register_fprime_ut_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-ut-impl.cmake")
+endif()
 
-register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+if (FPRIME_FPP_LOCS_BUILD)
+    register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/fpp-locs.cmake")
+else()
+    # Generate FPP locs here and now
+    message(STATUS "[autocode/fpp] Generating fpp locator file")
+    include(target/fpp-locs)
+    generate_fpp_locs()
 
-register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/fpp.cmake")
-register_fprime_autocoder("${CMAKE_CURRENT_LIST_DIR}/autocoder/ai-xml.cmake")
+    register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
+    register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
+    register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/package_gen.cmake")
+
+    register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")
+    register_fprime_ut_target("${CMAKE_CURRENT_LIST_DIR}/target/coverage.cmake")
+endif()
 
 
 

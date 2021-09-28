@@ -28,6 +28,9 @@ add_custom_target(check_leak
                   -T MemCheck)
 
 function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
+    if (FPRIME_FPP_LOCS_BUILD)
+        return()
+    endif()
     message(STATUS "Adding Unit-Test: ${UT_EXE_NAME}")
     # Basic Unit-Test setup
     add_executable("${UT_EXE_NAME}" "${EMPTY_C_SRC}")
@@ -40,9 +43,8 @@ function(generate_ut UT_EXE_NAME UT_SOURCES_INPUT MOD_DEPS_INPUT)
     endif()
 
     # Run the autocoder
-    run_ac_set("${UT_SOURCES_INPUT}" "autocoder/fpp" "autocoder/ai-ut")
-
-    resolve_dependencies("${MOD_DEPS_INPUT}" "${AC_DEPENDENCIES}" RESOLVED)
+    run_ac_set("${UT_SOURCES_INPUT}" INFO_ONLY autocoder/fpp autocoder/ai-ut)
+    resolve_dependencies(RESOLVED ${MOD_DEPS_INPUT} ${AC_DEPENDENCIES})
     update_module("${UT_EXE_NAME}" "${UT_SOURCES_INPUT}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 
     # Add test and dependencies to the "check" target

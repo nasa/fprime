@@ -93,19 +93,8 @@ if (NOT FPRIME_ENABLE_AUTOCODER_UTS)
     message(WARNING "-DFPRIME_ENABLE_AUTOCODER_UTS=OFF will be deprecated in a future release")
 endif()
 
-####
-# `SKIP_TOOLS_CHECK:`
-#
-# For older clients, some IDEs, and other unique builds, the check that ensures tools are available can fail causing
-# build instability. This option overrides the tools check enabling the system to run.
-#
-# **Values:**
-# - ON: skip tools check
-# - OFF: (default) run tools check
-#
-# e.g. `-DSKIP_TOOLS_CHECK=ON`
-####
-option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
+
+option(FPRIME_FPP_LOCS_BUILD "Skip the tools check for older clients." OFF)
 
 # Set build type, when it hasn't been set
 if(NOT CMAKE_BUILD_TYPE)

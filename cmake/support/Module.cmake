@@ -57,24 +57,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/AC_Utils.cmake")
 #endfunction(generic_autocoder)
 
 
-function(resolve_dependencies DEPENDENCIES AC_DEPENDENCIES OUTPUT_VAR)
-    # Resolve all dependencies
-    set(RESOLVED)
-    foreach(DEPENDENCY IN LISTS DEPENDENCIES AC_DEPENDENCIES)
-        get_module_name(${DEPENDENCY})
-        # TODO:
-        # TODO:
-        # FIXME: EVIL
-        if (MODULE_NAME STREQUAL "config" OR MODULE_NAME STREQUAL "Fpp" OR MODULE_NAME IN_LIST RESOLVED)
-            continue()
-        endif()
-        # TODO:
-        # TODO:
-        list(APPEND RESOLVED "${MODULE_NAME}")
-    endforeach()
-    set(${OUTPUT_VAR} "${RESOLVED}" PARENT_SCOPE)
-
-endfunction(resolve_dependencies)
 
 function(update_module MODULE_NAME SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
     # For every detected dependency, add them to the supplied module. This enforces build order.
@@ -130,12 +112,13 @@ endfunction()
 ####
 function(generate_module OBJ_NAME SOURCES DEPENDENCIES)
   # Add dependencies on autocoder
-  run_ac_set("${SOURCES}")
-  resolve_dependencies("${DEPENDENCIES}" "${AC_DEPENDENCIES}" RESOLVED)
-  update_module("${OBJ_NAME}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
-
+  if (NOT FPRIME_FPP_LOCS_BUILD)
+      run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai-xml)
+      resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
+      update_module("${OBJ_NAME}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
+  endif()
   # Register extra targets at the very end, once all of the core functions are properly setup.
-  setup_all_module_targets(FPRIME_TARGET_LIST "${OBJ_NAME}" "${AC_SOURCES}" "${SOURCE_FILES}" "${AC_GENERATED}" "${RESOLVED_DEPS}")
+  setup_all_module_targets(FPRIME_TARGET_LIST "${OBJ_NAME}" "${SOURCE_FILES}")
   if (CMAKE_DEBUG_OUTPUT)
       introspect("${OBJ_NAME}")
   endif()

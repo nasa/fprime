@@ -57,14 +57,9 @@ endfunction(add_global_target)
 # - **AC_OUTPUTS:** list of autocoder outputs
 # - **MOD_DEPS:** hand specified dependencies of target
 ####
-function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES)
     # Protects against multiple calls to fprime_register_ut()
-    if (TARGET ${TARGET_NAME})
-        return()
-    endif()
-
-
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
+    if (TARGET ${TARGET_NAME} OR NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
         return()
     endif()
 

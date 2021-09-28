@@ -27,11 +27,7 @@
 # for each executable/module/library defined in the system.  The subgraph should also be a DAG.
 #
 # This directory is computed based off the closest path in `FPRIME_BUILD_LOCATIONS`. It must be set to
-# be used. Otherwise, an error will occur.
-#
-# A user can specify an optional argument to set the build-space, creating a sub-directory under
-# the `CMAKE_BINARY_DIR` to place the outputs of the builds of this directory. This is typically
-# **not needed**. `EXCLUDE_FROM_ALL` can also be supplied.
+# be used. Otherwise, an error will occur. `EXCLUDE_FROM_ALL` can also be supplied.
 # See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 #
 # **Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
@@ -49,7 +45,7 @@ function(add_fprime_subdirectory FP_SOURCE_DIR)
     get_filename_component(CBD_NAME "${CMAKE_CURRENT_BINARY_DIR}" NAME)
     get_filename_component(CSD_NAME "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
     if ("${CBD_NAME}" STREQUAL "${CSD_NAME}")
-        add_subdirectory(${ARGV})
+        add_subdirectory(${ARGV}) # List of all args, not just extras
         return()
     endif()
     if (${ARGC} GREATER 2)
@@ -70,7 +66,7 @@ endfunction(add_fprime_subdirectory)
 #
 # Required variables (defined in calling scope):
 #
-# - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
+# - **SOURCE_FILES:** cmake list of input source files. Place any "*.fpp", "*Ai.xml", "*.c", "*.cpp"
 #   etc files here. This list will be split into autocoder inputs, and hand-coded sources based on the name/type.
 #
 # **i.e.:**
@@ -82,8 +78,8 @@ endfunction(add_fprime_subdirectory)
 # ```
 # - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
 #   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
-#   the autocoder inputs to the module. If not set or supplied, only fprime
-#   inferable dependencies will be available. Link flags like "-lpthread" can be here.
+#   the autocoder inputs to the module. If not set or supplied, only fprime inferable dependencies will be available.
+#   Link flags like "-lpthread" can be added here as well.
 #
 # **i.e.:**
 # ```
@@ -93,10 +89,6 @@ endfunction(add_fprime_subdirectory)
 #     Module2
 #     -lpthread)
 # ```
-#
-# **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-#           these as positional arguments overrides any specified in the parent scope.  This is typically not done.
-#
 #
 # ### Standard `add_fprime_module` Example ###
 #
@@ -116,7 +108,7 @@ endfunction(add_fprime_subdirectory)
 # ### Non-Autocoded and Autocode-Only Modules Example ###
 #
 # Modules that do not require autocoding need not specify *.xml files as source. Thus, code-only modules just define
-# *.cpp. **Note:** no dependency inference is done without autocoder inputs.
+# *.cpp. **Note:** dependency inference is only done when autocoder inputs (.fpp, .xml) are supplied.
 #
 # ```
 # set(SOURCE_FILE
@@ -125,7 +117,7 @@ endfunction(add_fprime_subdirectory)
 #
 # register_fprime_module()
 # ```
-# Modules requiring only autocoding can just specify *.xml files.
+# Modules requiring only autocoding may just specify *.xml files.
 #
 # ```
 # set(SOURCE_FILE
@@ -155,35 +147,21 @@ endfunction(add_fprime_subdirectory)
 #
 ####
 function(register_fprime_module)
-    # SOURCE_FILES is supplied as the first positional -OR- as the list 'SOURCE_FILES'
-    if (${ARGC} GREATER 0)
-        set(SC_IFS "${ARGV0}")
-    elseif(DEFINED SOURCE_FILES)
-    	set(SC_IFS "${SOURCE_FILES}")
-    else()
+    if(NOT DEFINED SOURCE_FILES)
         message(FATAL_ERROR "'SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
     endif()
-    # MOD_DEPS is supplied as an optional second positional -OR- or as  the list 'MOD_DEPS'
-    if (${ARGC} GREATER 1)
-        set(MD_IFS "${ARGV1}")
-    elseif(DEFINED MOD_DEPS)
-    	set(MD_IFS "${MOD_DEPS}")
-    elseif(${CMAKE_DEBUG_OUTPUT})
-        message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    if (${ARGC} GREATER 2)
-        set(MODULE_NAME "${ARGV2}")
-    else()
-        # Sets MODULE_NAME to unique name based on path, and then adds the library of
-        get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
+    if (${ARGC} GREATER 0)
+        set(MODULE_NAME ${ARGV0})
+    else()
+        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    endif()
     # Explicit call to module register
-    generate_library("${MODULE_NAME}" "${SC_IFS}" "${MD_IFS}")
+    generate_library("${MODULE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
 
     # Globally expose source and ac files to be used as necessary within unit test logic.
-    set(SOURCE_FILE "${SC_IFS}" PARENT_SCOPE)
-    set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
+    ##set(SOURCE_FILE "${SC_IFS}" PARENT_SCOPE)
+    ##set(AC_OUTPUTS "${AC_OUTPUTS}" PARENT_SCOPE)
 endfunction(register_fprime_module)
 
 ####
@@ -225,9 +203,6 @@ endfunction(register_fprime_module)
 #     Module2
 #     -lpthread)
 # ```
-#
-# **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-#           these as positional arguments overrides any specified in the parent scope.
 #
 # **Note:** this operates almost identically to `register_fprime_module` with respect to the variable definitions. The
 #           difference is this call will yield an optionally named linked binary file.
@@ -277,45 +252,26 @@ endfunction(register_fprime_module)
 #
 ####
 function(register_fprime_executable)
+    if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
+        message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
+    endif()
     # PROJECT_NAME is used for the executable name, unless otherwise specified.
-    if (${ARGC} GREATER 0)
-        set(EX_NAME "${ARGV0}")
-    elseif(DEFINED EXECUTABLE_NAME)
-        set(EX_NAME ${EXECUTABLE_NAME})
-    elseif(DEFINED PROJECT_NAME)
-    	set(EX_NAME "${PROJECT_NAME}")
-    else()
-        message(FATAL_ERROR "'EXECUTABLE_NAME' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    # SOURCE_FILES is supplied as the first positional -OR- as the list 'SOURCE_FILES'
-    if (${ARGC} GREATER 1)
-        set(SC_IFS "${ARGV1}")
-    elseif(DEFINED SOURCE_FILES)
-    	set(SC_IFS "${SOURCE_FILES}")
-    else()
-        message(FATAL_ERROR "'SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    # MOD_DEPS is supplied as an optional second positional -OR- or as  the list 'MOD_DEPS'
-    if (${ARGC} GREATER 2)
-        set(MD_IFS "${ARGV2}")
-    elseif(DEFINED MOD_DEPS)
-    	set(MD_IFS "${MOD_DEPS}")
-    elseif(${CMAKE_DEBUG_OUTPUT})
-        message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
+    if(NOT DEFINED EXECUTABLE_NAME)
+        set(EXECUTABLE_NAME ${PROJECT_NAME})
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Register executable and module with name '<exe name>_exe', then create an empty target with
     # name '<exe name>' that depends on the executable. This enables additional post-processing
     # targets that depend on the built executable.
-    generate_executable("${EX_NAME}_exe" "${SC_IFS}" "${MD_IFS}")
-    set_target_properties("${EX_NAME}_exe" PROPERTIES OUTPUT_NAME "${EX_NAME}")
-    add_custom_target(${EX_NAME} ALL)
-    add_dependencies("${EX_NAME}" "${EX_NAME}_exe")
+    generate_executable("${EXECUTABLE_NAME}_exe" "${SOURCE_FILES}" "${MOD_DEPS}")
+    set_target_properties("${EXECUTABLE_NAME}_exe" PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}")
+    add_custom_target(${EXECUTABLE_NAME} ALL)
+    add_dependencies("${EXECUTABLE_NAME}" "${EXECUTABLE_NAME}_exe")
 
     # Only install into artifacts directory in release builds when SKIP_INSTALL is not set.
-    if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE")
-        add_dependencies("${EX_NAME}" "package_gen")
-        add_dependencies("${EX_NAME}" "dict")
+    if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE" AND NOT FPRIME_FPP_LOCS_BUILD)
+        add_dependencies("${EXECUTABLE_NAME}" "package_gen")
+        add_dependencies("${EXECUTABLE_NAME}" "dict")
     endif()
 endfunction(register_fprime_executable)
 
@@ -360,15 +316,6 @@ endfunction(register_fprime_executable)
 #     Module2
 #     -lpthread)
 # ```
-#
-#   **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-#             these as positional arguments overrides any specified in the parent scope.
-#
-#   **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
-#             to this module, excluding the module.
-#
-#         e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
-#
 #  **Note:** this is typically called after any other register calls in the module.
 #
 # ### Unit-Test Example ###
@@ -385,64 +332,28 @@ endfunction(register_fprime_executable)
 # )
 # register_fprime_ut()
 # ```
-#
-# ### Unit-Test Without GTest/TesterBase Example ###
-#
-# Some unit tests run without the need for the autocoding the GTest and TesterBase files. This can be
-# done without specifying the Ai.xml file. Most of the time, this style requires specifying some module
-# dependencies.
-#
-# ```
-# set(UT_SOURCE_FILES
-#   "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
-#   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
-# )
-# set(UT_MOD_DEPS
-#   Os
-# )
-# register_fprime_ut()
-# ```
-#
 ####
 function(register_fprime_ut)
     #### CHECK UT BUILD ####
     if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" OR __FPRIME_NO_UT_GEN__)
         return()
+    elseif(NOT DEFINED UT_SOURCE_FILES)
+        message(FATAL_ERROR "UT_SOURCE_FILES not defined. Cannot register unittest without sources")
+    elseif(${ARGC} GREATER 1)
+        message(FATAL_ERROR "register_fprime_ut accepts only one optional argument: test name")
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    # PROJECT_NAME is used for the executable name, unless otherwise specified.
+    # UT name is passed in or is the the module name with _ut_exe added
     if (${ARGC} GREATER 0)
         set(UT_NAME "${ARGV0}")
-    elseif(DEFINED UT_NAME)
-        set(UT_NAME ${UT_NAME})
-    else()
+    elseif (NOT DEFINED UT_NAME)
         set(UT_NAME "${MODULE_NAME}_ut_exe")
     endif()
-    # SOURCE_FILES is supplied as the first positional -OR- as the list 'SOURCE_FILES'
-    if (${ARGC} GREATER 1)
-        set(SC_IFS "${ARGV1}")
-    elseif(DEFINED UT_SOURCE_FILES)
-    	set(SC_IFS "${UT_SOURCE_FILES}")
-    else()
-        message(FATAL_ERROR "'UT_SOURCE_FILES' not defined in '${CMAKE_CURRENT_LIST_FILE}'.")
-    endif()
-    # MOD_DEPS is supplied as an optional second positional -OR- or as  the list 'MOD_DEPS'
-    set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
-    if (${ARGC} GREATER 2)
-        set(MD_IFS "${ARGV2}")
-    elseif(DEFINED UT_MOD_DEPS)
-    	set(MD_IFS "${MODULE_NAME_NO_SUFFIX};${UT_MOD_DEPS}")
-    else()
-        set(MD_IFS "${MODULE_NAME_NO_SUFFIX}")
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
-        endif()
-    endif()
+    set(MD_IFS ${MODULE_NAME} ${UT_MOD_DEPS})
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
-    generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}")
-    setup_all_module_targets(FPRIME_UT_TARGET_LIST ${MODULE_NAME} "" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MD_IFS}")
+    generate_ut("${UT_NAME}" "${UT_SOURCE_FILES}" "${MD_IFS}")
+    setup_all_module_targets(FPRIME_UT_TARGET_LIST ${MODULE_NAME} "${UT_SOURCE_FILES}")
 endfunction(register_fprime_ut)
 
 ####
