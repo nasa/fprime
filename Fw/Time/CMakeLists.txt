@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/TimePortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Time.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Time.cpp"
 )

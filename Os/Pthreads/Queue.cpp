@@ -16,9 +16,9 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>
 
-#include <errno.h>
+#include <cerrno>
 #include <pthread.h>
-#include <stdio.h>
+#include <cstdio>
 #include <new>
 
 namespace Os {
@@ -52,11 +52,11 @@ namespace Os {
   };
 
   Queue::Queue() :
-    m_handle((POINTER_CAST) NULL) {
+    m_handle(static_cast<POINTER_CAST>(NULL)) {
   }
 
   Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-    QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
 
     // Queue has already been created... remove it and try again:
     if (NULL != queueHandle) {
@@ -72,7 +72,7 @@ namespace Os {
     if( !queueHandle->create(depth, msgSize) ) {
       return QUEUE_UNINITIALIZED;
     }
-    this->m_handle = (POINTER_CAST) queueHandle;
+    this->m_handle = reinterpret_cast<POINTER_CAST>(queueHandle);
 
 #if FW_QUEUE_REGISTRATION
     if (this->s_queueRegistry) {
@@ -85,11 +85,11 @@ namespace Os {
 
   Queue::~Queue() {
     // Clean up the queue handle:
-    QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
     if (NULL != queueHandle) {
       delete queueHandle;
     }
-    this->m_handle = (POINTER_CAST) NULL;
+    this->m_handle = static_cast<POINTER_CAST>(NULL);
   }
 
   Queue::QueueStatus sendNonBlock(QueueHandle* queueHandle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
@@ -177,7 +177,7 @@ namespace Os {
 
   Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block) {
     (void) block; // Always non-blocking for now
-    QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
     BufferQueue* queue = &queueHandle->queue;
 
     if (NULL == queueHandle) {
@@ -188,7 +188,7 @@ namespace Os {
         return QUEUE_EMPTY_BUFFER;
     }
 
-    if (size < 0 || (NATIVE_UINT_TYPE) size > queue->getMsgSize()) {
+    if (size < 0 || static_cast<NATIVE_UINT_TYPE>(size) > queue->getMsgSize()) {
         return QUEUE_SIZE_MISMATCH;
     }
 
@@ -206,7 +206,7 @@ namespace Os {
       pthread_cond_t* queueNotFull = &queueHandle->queueNotFull;
       NATIVE_INT_TYPE ret;
 
-      NATIVE_UINT_TYPE size = capacity;
+      NATIVE_UINT_TYPE size = static_cast<NATIVE_UINT_TYPE>(capacity);
       NATIVE_INT_TYPE pri = 0;
       Queue::QueueStatus status = Queue::QUEUE_OK;
 
@@ -222,7 +222,7 @@ namespace Os {
 
       if(popSucceeded) {
         // Pop worked - set the return size and priority:
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         priority = pri;
 
         // Pop worked - wake up a thread that might be waiting on
@@ -232,7 +232,7 @@ namespace Os {
       }
       else {
         actualSize = 0;
-        if( size > (NATIVE_UINT_TYPE) capacity ) {
+        if( size > static_cast<NATIVE_UINT_TYPE>(capacity) ) {
           // The buffer capacity was too small!
           status = Queue::QUEUE_SIZE_MISMATCH;
         }
@@ -263,7 +263,7 @@ namespace Os {
       pthread_mutex_t* queueLock = &queueHandle->queueLock;
       NATIVE_INT_TYPE ret;
 
-      NATIVE_UINT_TYPE size = capacity;
+      NATIVE_UINT_TYPE size = static_cast<NATIVE_UINT_TYPE>(capacity);
       NATIVE_INT_TYPE pri = 0;
       Queue::QueueStatus status = Queue::QUEUE_OK;
 
@@ -285,7 +285,7 @@ namespace Os {
 
       if(popSucceeded) {
         // Pop worked - set the return size and priority:
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         priority = pri;
 
         // Pop worked - wake up a thread that might be waiting on
@@ -295,7 +295,7 @@ namespace Os {
       }
       else {
         actualSize = 0;
-        if( size > (NATIVE_UINT_TYPE) capacity ) {
+        if( size > static_cast<NATIVE_UINT_TYPE>(capacity) ) {
           // The buffer capacity was too small!
           status = Queue::QUEUE_SIZE_MISMATCH;
         }
@@ -318,11 +318,11 @@ namespace Os {
 
   Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
 
-      if( (POINTER_CAST) NULL == this->m_handle ) {
+      if( static_cast<POINTER_CAST>(NULL) == this->m_handle ) {
         return QUEUE_UNINITIALIZED;
       }
 
-      QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+      QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
 
       if (NULL == queueHandle) {
         return QUEUE_UNINITIALIZED;
@@ -342,7 +342,7 @@ namespace Os {
   }
 
   NATIVE_INT_TYPE Queue::getNumMsgs() const {
-      QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+      QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (NULL == queueHandle) {
           return 0;
       }
@@ -351,7 +351,7 @@ namespace Os {
   }
 
   NATIVE_INT_TYPE Queue::getMaxMsgs() const {
-      QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+      QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (NULL == queueHandle) {
           return 0;
       }
@@ -360,7 +360,7 @@ namespace Os {
   }
 
   NATIVE_INT_TYPE Queue::getQueueSize() const {
-      QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+      QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (NULL == queueHandle) {
           return 0;
       }
@@ -369,7 +369,7 @@ namespace Os {
   }
 
   NATIVE_INT_TYPE Queue::getMsgSize() const {
-      QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+      QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
       if (NULL == queueHandle) {
           return 0;
       }

@@ -12,21 +12,15 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains 4 jobs. One for every CI test."
   Framework:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    # Runs the CI action internal to the repository
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
     - name: F prime CI step
-      uses: ./.github/actions/
-      id: github-ci-action
-      with:
-        test: Framework
+      run: ./ci/tests/Framework.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -37,19 +31,14 @@ jobs:
         retention-days: 5
 
   Ref:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    # Runs the CI action internal to the repository
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
     - name: F prime CI step
-      uses: ./.github/actions/
-      id: github-ci-action
-      with:
-        test: 'Ref'
+      run: ./ci/tests/Ref.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -60,19 +49,16 @@ jobs:
         retention-days: 5
 
   RPI:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    # Runs the CI action internal to the repository
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
+    - name: Install RPI Toolchain
+      run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
     - name: F prime CI step
-      uses: ./.github/actions/
-      id: github-ci-action
-      with:
-        test: 'RPI'
+      run: ./ci/tests/RPI.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -83,19 +69,16 @@ jobs:
         retention-days: 5
 
   Integration:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    # Runs the CI action internal to the repository
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
+    - name: Setup Dependencies
+      run: sudo apt-get install valgrind
     - name: F prime CI step
-      uses: ./.github/actions/
-      id: github-ci-action
-      with:
-        test: '30-ints'
+      run: ./ci/tests/30-ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
       uses: actions/upload-artifact@v2
@@ -104,3 +87,36 @@ jobs:
         name: ci-int-logs
         path: ci-logs.tar.gz
         retention-days: 5
+
+  Quality:
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
+    - name: Setup Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install clang-tidy-12
+    # TODO: Switch to using fprime-util build --all --ut after next fprime-tools release
+    - name: General Static Analysis
+      run: |
+        fprime-util generate --ut -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY=clang-tidy-12
+        cd build-fprime-automatic-native-ut && make -j4
+    - name: Flight Code Static Analysis
+      run: |
+        fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+        fprime-util build --all -j4
+
+
+#  CMake:
+#    runs-on: ubuntu-latest
+#    steps:
+#    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#    - uses: actions/checkout@v2
+#    - name: Install fprime tools
+#      run: pip3 install fprime-tools fprime-gds
+#    - name: CMake Tests
+#      working-directory: ./cmake/test
+#      run: pytest

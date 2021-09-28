@@ -13,7 +13,7 @@
 #include "Tester.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Test/UnitTest.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -241,13 +241,13 @@ namespace Svc {
 
       // randomly return buffers
       time_t t;
-      srand((unsigned) time(&t));
+      srand(static_cast<unsigned>(time(&t)));
 
       bool returned[BIN1_NUM_BUFFERS] = {false};
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           NATIVE_UINT_TYPE entry;
-          while (1) {
+          while (true) {
               entry = rand() % BIN1_NUM_BUFFERS;
               if (not returned[entry]) {
                   returned[entry] = true;

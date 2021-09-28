@@ -12,7 +12,7 @@
 #ifndef STEST_PICK_SPIN_HPP
 #define STEST_PICK_SPIN_HPP
 
-#include <assert.h>
+#include <cassert>
 #include <cstddef>
 #include <limits.h>
 

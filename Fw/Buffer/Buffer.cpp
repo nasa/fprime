@@ -103,7 +103,7 @@ Fw::SerializeBufferBase& Buffer::getSerializeRepr() {
 Fw::SerializeStatus Buffer::serialize(Fw::SerializeBufferBase& buffer) const {
     Fw::SerializeStatus stat;
 #if FW_SERIALIZATION_TYPE_ID
-    stat = buffer.serialize((U32)Buffer::TYPE_ID);
+    stat = buffer.serialize(static_cast<U32>(Buffer::TYPE_ID));
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
     }

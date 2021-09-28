@@ -8,12 +8,12 @@
 #include "GTestBase.hpp"
 #include "../../ComLogger.hpp"
 #include <Fw/Comp/ActiveComponentBase.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #define QUEUE_DEPTH 10
 #define FILE_STR "test"
 #define MAX_ENTRIES_PER_FILE 5
-#define COM_BUFFER_LENGTH 4
+#define COM_BUFFER_LENGTH 4u
 #define MAX_BYTES_PER_FILE (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH + MAX_ENTRIES_PER_FILE*sizeof(U16))
 #define MAX_BYTES_PER_FILE_NO_LENGTH (MAX_ENTRIES_PER_FILE*COM_BUFFER_LENGTH)
 

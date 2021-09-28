@@ -20,8 +20,8 @@
 // countries or providing access to foreign persons.
 // ======================================================================
 
-\#include <string.h>
-\#include <stdio.h>
+\#include <cstring>
+\#include <cstdio>
 
 \#include "Fw/Types/Assert.hpp"
 \#include <Fw/Types/StringUtils.hpp>
@@ -51,11 +51,19 @@ namespace ${namespace} {
     }
 
     ${name}::${name}String& ${name}::${name}String::operator=(const ${name}String& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     ${name}::${name}String& ${name}::${name}String::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
@@ -174,6 +182,10 @@ namespace ${namespace} {
   ${name}& ${name} ::
     operator=(const ${name}& other)
   {
+    if(this == &other) {
+      return *this;
+    }
+
     for(U32 index = 0; index < SIZE; index++) {
       this->elements[index] = other.elements[index];
     }
@@ -244,7 +256,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 #if $type == "bool":
       ,this->elements[$index]?"T":"F"
 #else if $type == "ENUM":
-      ,(NATIVE_INT_TYPE)this->elements[$index]
+      ,static_cast<NATIVE_INT_TYPE>(this->elements[$index])
 #else if $typeinfo == "extern":
       ,str${index}.toChar()
 #else if $type == "string":

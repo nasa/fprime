@@ -1,5 +1,5 @@
 #include <Os/IPCQueue.hpp>
-#include <string.h>
+#include <cstring>
 
 namespace Os {
 

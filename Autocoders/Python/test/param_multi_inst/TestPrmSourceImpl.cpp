@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/param_multi_inst/TestPrmSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestParamSourceImpl::TestParamSourceImpl(const char* name) : Prm::ParamTesterComponentBase(name)

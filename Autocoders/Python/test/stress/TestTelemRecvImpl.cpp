@@ -8,7 +8,7 @@
 #include <Autocoders/Python/test/stress/TestTelemRecvImpl.hpp>
 #include <Fw/Types/String.hpp>
 #include <Autocoders/Python/test/stress/QuaternionSerializableAc.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestTelemRecvImpl::TestTelemRecvImpl(const char* name) : Tlm::TelemTesterComponentBase(name)

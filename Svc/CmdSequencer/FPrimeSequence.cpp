@@ -3,11 +3,9 @@
 // \author Bocchino/Canham
 // \brief  CmdSequencerComponentImpl::FPrimeSequence implementation
 //
-// \copyright
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
@@ -279,7 +277,7 @@ namespace Svc {
       return false;
     }
     // check read size
-    if ((NATIVE_INT_TYPE) size != readLen) {
+    if (static_cast<NATIVE_INT_TYPE>(size) != readLen) {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_SEQ_DATA_SIZE,
           readLen

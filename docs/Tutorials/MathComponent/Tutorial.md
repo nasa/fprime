@@ -1024,7 +1024,7 @@ Then, fill in the function with the code to perform the functions described at t
     this->log_ACTIVITY_LO_MS_COMMAND_RECV(val1,val2,opEv);
     this->mathOut_out(0,val1,val2,opPort);
     // reply with completion status
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 ```
@@ -1300,7 +1300,7 @@ Add a member function to the implementation class in `Tester.cpp` to implement t
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -1386,7 +1386,7 @@ Next, verify that the correct response to the command was sent:
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 ```
 
 Next, prepare for calling `MathSender`'s result port by clearing the port and telemetry history:
@@ -1594,7 +1594,7 @@ The command handler to update the value of `factor1` is as follows:
       this->tlmWrite_MR_FACTOR1(val);
       this->tlmWrite_MR_FACTOR1S(++this->m_factor1s);
       // reply with completion status
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 ```
@@ -1617,7 +1617,7 @@ The handler to clear the throttle is as follows:
       // send event that throttle is cleared
       this->log_ACTIVITY_HI_MR_THROTTLE_CLEARED();
       // reply with completion status
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 ```
 ##### 2.4.2.1.3 Scheduler Call

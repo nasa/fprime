@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/param_enum/TestPrmImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestPrmImpl::TestPrmImpl(const char* name) : Prm::TestPrmComponentBase(name)

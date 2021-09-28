@@ -625,7 +625,8 @@ class ModelParser:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
-                d2[l] = "void"
+                # If event has no arguments parameter string should be empty
+                d2[l] = ""
         return d2
 
     def getInternalInterfacesList(self, obj):

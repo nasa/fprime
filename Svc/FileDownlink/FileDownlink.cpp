@@ -14,6 +14,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
+#include <limits>
 
 namespace Svc {
 
@@ -106,7 +107,7 @@ namespace Svc {
         NATIVE_INT_TYPE real_size = 0;
         NATIVE_INT_TYPE prio = 0;
         Os::Queue::QueueStatus stat = fileQueue.receive(
-          (U8 *) &this->curEntry,
+          reinterpret_cast<U8*>(&this->curEntry),
           sizeof(this->curEntry),
           real_size,
           prio,
@@ -140,7 +141,7 @@ namespace Svc {
           this->curTimer = 0;
           this->log_WARNING_HI_DownlinkTimeout(this->file.sourceName, this->file.destName);
           this->enterCooldown();
-          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         } else { //Otherwise update the current counter
           this->curTimer += cycleTime;
         }
@@ -160,28 +161,27 @@ namespace Svc {
         U32 length
     )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = offset,
-      .length = length,
-      .source = FileDownlink::PORT,
-      .opCode = 0,
-      .cmdSeq = 0,
-      .context = cntxId++
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = offset;
+    entry.length = length;
+    entry.source = FileDownlink::PORT;
+    entry.opCode = 0;
+    entry.cmdSeq = 0;
+    entry.context = cntxId++;
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::ERROR, U32_MAX);
+      return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
     }
-    return SendFileResponse(SendFileStatus::OK, entry.context);
+    return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
   }
 
   void FileDownlink ::
@@ -233,23 +233,23 @@ namespace Svc {
         const Fw::CmdStringArg& destFilename
     )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = 0,
-      .length = 0,
-      .source = FileDownlink::COMMAND,
-      .opCode = opCode,
-      .cmdSeq = cmdSeq,
-      .context = U32_MAX
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = 0;
+    entry.length = 0;
+    entry.source = FileDownlink::COMMAND;
+    entry.opCode = opCode;
+    entry.cmdSeq = cmdSeq;
+    entry.context = std::numeric_limits<U32>::max();
+
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -266,23 +266,23 @@ namespace Svc {
       U32 length
    )
   {
-    struct FileEntry entry = {
-      .srcFilename = {0},
-      .destFilename = {0},
-      .offset = startOffset,
-      .length = length,
-      .source = FileDownlink::COMMAND,
-      .opCode = opCode,
-      .cmdSeq = cmdSeq,
-      .context = U32_MAX
-    };
+    struct FileEntry entry;
+    entry.srcFilename[0] = 0;
+    entry.destFilename[0] = 0;
+    entry.offset = startOffset;
+    entry.length = length;
+    entry.source = FileDownlink::COMMAND;
+    entry.opCode = opCode;
+    entry.cmdSeq = cmdSeq;
+    entry.context = std::numeric_limits<U32>::max();
+
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
     FW_ASSERT(destFilename.length() < sizeof(entry.destFilename));
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -310,13 +310,13 @@ namespace Svc {
     statusToCmdResp(SendFileStatus status)
   {
     switch(status.e) {
-    case SendFileStatus::OK:
+    case SendFileStatus::STATUS_OK:
       return Fw::CmdResponse::OK;
-    case SendFileStatus::ERROR:
+    case SendFileStatus::STATUS_ERROR:
       return Fw::CmdResponse::EXECUTION_ERROR;
-    case SendFileStatus::INVALID:
+    case SendFileStatus::STATUS_INVALID:
       return Fw::CmdResponse::VALIDATION_ERROR;
-    case SendFileStatus::BUSY:
+    case SendFileStatus::STATUS_BUSY:
         return Fw::CmdResponse::BUSY;
     default:
         // Trigger assertion if given unknown status
@@ -359,7 +359,7 @@ namespace Svc {
     if (status != Os::File::OP_OK) {
       this->mode.set(Mode::IDLE);
       this->warnings.fileOpenError();
-      sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+      sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
       return;
     }
 
@@ -367,7 +367,7 @@ namespace Svc {
     if (startOffset >= this->file.size) {
         this->enterCooldown();
         this->log_WARNING_HI_DownlinkPartialFail(this->file.sourceName, this->file.destName, startOffset, this->file.size);
-        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::INVALID);
+        sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_INVALID);
         return;
     } else if (startOffset + length > this->file.size) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
@@ -418,7 +418,7 @@ namespace Svc {
     const Fw::FilePacket::DataPacket dataPacket = {
       { Fw::FilePacket::T_DATA, this->sequenceIndex },
       byteOffset,
-      (U16)dataSize,
+      static_cast<U16>(dataSize),
       buffer
     };
     ++this->sequenceIndex;
@@ -526,7 +526,7 @@ namespace Svc {
           if (status != Os::File::OP_OK) {
               this->log_WARNING_HI_SendDataFail(this->file.sourceName, this->byteOffset);
               this->enterCooldown();
-              this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::OK : SendFileStatus::ERROR);
+              this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
               //Don't go to wait state
               return;
           }
@@ -551,7 +551,7 @@ namespace Svc {
           this->log_ACTIVITY_HI_DownlinkCanceled(this->file.sourceName, this->file.destName);
       }
       this->enterCooldown();
-      sendResponse(SendFileStatus::OK);
+      sendResponse(SendFileStatus::STATUS_OK);
   }
 
   void FileDownlink ::

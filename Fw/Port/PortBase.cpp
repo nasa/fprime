@@ -1,7 +1,7 @@
 #include <Fw/Port/PortBase.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {
@@ -56,9 +56,9 @@ namespace Fw {
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
-            Fw::Logger::logMsg("Trace: %s\n", (POINTER_CAST)this->m_objName, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %s\n", reinterpret_cast<POINTER_CAST>(this->m_objName), 0, 0, 0, 0, 0);
 #else
-            Fw::Logger::logMsg("Trace: %p\n", (POINTER_CAST)this, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %p\n", reinterpret_cast<POINTER_CAST>(this), 0, 0, 0, 0, 0);
 #endif
         }
     }

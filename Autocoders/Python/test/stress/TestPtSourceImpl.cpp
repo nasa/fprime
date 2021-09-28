@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/stress/TestPtSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestPtSourceImpl::TestPtSourceImpl(const char* name) : StressTest::TestPortComponentBase(name)

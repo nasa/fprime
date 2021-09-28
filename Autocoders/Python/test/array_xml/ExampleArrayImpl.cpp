@@ -2,7 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 

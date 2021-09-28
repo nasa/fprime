@@ -12,7 +12,7 @@
 #ifndef STEST_PICK_HPP
 #define STEST_PICK_HPP
 
-#include <assert.h>
+#include <cassert>
 #include <cstddef>
 #include <limits.h>
 

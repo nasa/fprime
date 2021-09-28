@@ -12,8 +12,8 @@
 #ifndef STest_SelectedScenario_HPP
 #define STest_SelectedScenario_HPP
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 #include "STest/Random/Random.hpp"
 #include "STest/Scenario/Scenario.hpp"

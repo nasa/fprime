@@ -1,7 +1,7 @@
 #include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 namespace Fw {
 

@@ -11,10 +11,10 @@
 #endif
 
 #include <pthread.h>
-#include <errno.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
+#include <cerrno>
+#include <cstring>
+#include <ctime>
+#include <cstdio>
 #include <new>
 #include <Fw/Logger/Logger.hpp>
 
@@ -64,7 +64,7 @@ namespace Os {
         if (stat != 0) {
         	return TASK_INVALID_PARAMS;
         }
-        stat = pthread_attr_setname(&att,(char*)this->m_name.toChar());
+        stat = pthread_attr_setname(&att,this->m_name.toChar());
         if (stat != 0) {
         	return TASK_INVALID_PARAMS;
         }
@@ -134,7 +134,7 @@ namespace Os {
 
         switch (stat) {
             case 0:
-                this->m_handle = (POINTER_CAST)tid;
+                this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
                 Task::s_numTasks++;
                 break;
             case EINVAL:
@@ -190,7 +190,7 @@ namespace Os {
 
     Task::~Task() {
     	if (this->m_handle) {
-    		delete (pthread_t*)this->m_handle;
+    		delete reinterpret_cast<pthread_t*>(this->m_handle);
     	}
         // If a registry has been registered, remove task
         if (Task::s_taskRegistry) {
@@ -225,7 +225,7 @@ namespace Os {
         if (!(this->m_handle)) {
             return TASK_JOIN_ERROR;
         }
-        stat = pthread_join(*((pthread_t*) this->m_handle), value_ptr);
+        stat = pthread_join(*reinterpret_cast<pthread_t*>(this->m_handle), value_ptr);
 
         if (stat != 0) {
             return TASK_JOIN_ERROR;

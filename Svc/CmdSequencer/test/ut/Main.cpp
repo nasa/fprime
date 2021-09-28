@@ -1,10 +1,13 @@
+// \copyright
+// Copyright (C) 2009-2018 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+
 // ----------------------------------------------------------------------
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#define ALL_TESTS 1
-
-#include "Os/FileSystem.hpp"
+#include <Os/FileSystem.hpp>
 #include "Svc/CmdSequencer/test/ut/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/Health.hpp"
 #include "Svc/CmdSequencer/test/ut/Immediate.hpp"
@@ -17,7 +20,6 @@
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
 #include "Svc/CmdSequencer/test/ut/UnitTest.hpp"
 
-#if ALL_TESTS
 TEST(AMPCS, MissingCRC) {
   Svc::AMPCS::Tester tester;
   tester.MissingCRC();
@@ -329,11 +331,11 @@ TEST(Mixed, Validate) {
   tester.Validate();
 }
 
+
 TEST(Mixed, ValidateAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.Validate();
 }
-
 TEST(NoFiles, Init) {
   TEST_CASE(103.1.1,"Nominal Initialization");
   Svc::NoFiles::Tester tester;
@@ -376,11 +378,10 @@ TEST(Relative, ValidateAMPCS) {
   Svc::Relative::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.Validate();
 }
-#endif
 
 int main(int argc, char **argv) {
-  ///Must create the directory at initialization
-  Os::FileSystem::createDirectory("bin");
+  // Create ./bin directory for test files
+  Os::FileSystem::createDirectory("./bin");
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
