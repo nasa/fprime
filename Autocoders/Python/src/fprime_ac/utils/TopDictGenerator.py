@@ -69,6 +69,7 @@ class TopDictGenerator:
                 for (
                     member_name,
                     member_type,
+                    member_array_length,
                     member_size,
                     member_format_specifier,
                     member_comment,
