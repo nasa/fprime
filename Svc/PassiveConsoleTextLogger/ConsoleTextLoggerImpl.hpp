@@ -17,7 +17,7 @@ namespace Svc {
 	private:
 
 		// downcalls for input ports
-		void TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::TextLogString &text);
+		void TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text);
 	};
 
 }
