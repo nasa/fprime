@@ -21,7 +21,7 @@ namespace Utils {
 
   crc_stat_t create_checksum_file(const char* const fname)
   {
-    FW_ASSERT(fname != NULL);
+    FW_ASSERT(fname != nullptr);
 
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
@@ -122,7 +122,7 @@ namespace Utils {
       Os::File f;
       Os::File::Status stat;
       char hashFilename[CRC_MAX_FILENAME_SIZE];
-      FW_ASSERT(fname != NULL);
+      FW_ASSERT(fname != nullptr);
       // open checksum file
       I32 s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
       FW_ASSERT(s_stat > 0);
@@ -149,7 +149,7 @@ namespace Utils {
 
   crc_stat_t verify_checksum(const char* const fname, U32 &expected, U32 &actual)
   {
-    FW_ASSERT(fname != NULL);
+    FW_ASSERT(fname != nullptr);
 
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;

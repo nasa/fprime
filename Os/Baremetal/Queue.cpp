@@ -36,19 +36,19 @@ class BareQueueHandle {
 };
 
 Queue::Queue() :
-    m_handle(static_cast<POINTER_CAST>(NULL))
+    m_handle(reinterpret_cast<POINTER_CAST>(nullptr))
 { }
 
 Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
     BareQueueHandle* handle = reinterpret_cast<BareQueueHandle*>(this->m_handle);
     // Queue has already been created... remove it and try again:
-    if (NULL != handle) {
+    if (nullptr != handle) {
         delete handle;
-        handle = NULL;
+        handle = nullptr;
     }
     //New queue handle, check for success or return error
     handle = new(std::nothrow) BareQueueHandle;
-    if (NULL == handle || !handle->create(depth, msgSize)) {
+    if (nullptr == handle || !handle->create(depth, msgSize)) {
         return QUEUE_UNINITIALIZED;
     }
     //Set handle member variable
@@ -65,10 +65,10 @@ Queue::QueueStatus Queue::createInternal(const Fw::StringBase &name, NATIVE_INT_
 Queue::~Queue() {
     // Clean up the queue handle:
     BareQueueHandle* handle = reinterpret_cast<BareQueueHandle*>(this->m_handle);
-    if (NULL != handle) {
+    if (nullptr != handle) {
         delete handle;
     }
-    this->m_handle = static_cast<POINTER_CAST>(NULL);
+    this->m_handle = reinterpret_cast<POINTER_CAST>(nullptr);
 }
 
 Queue::QueueStatus bareSendNonBlock(BareQueueHandle& handle, const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority) {
@@ -103,14 +103,14 @@ Queue::QueueStatus bareSendBlock(BareQueueHandle& handle, const U8* buffer, NATI
 
 Queue::QueueStatus Queue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block) {
     //Check if the handle is null or check the underlying queue is null
-    if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+    if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
         return QUEUE_UNINITIALIZED;
     }
     BareQueueHandle& handle = *reinterpret_cast<BareQueueHandle*>(this->m_handle);
     BufferQueue& queue = handle.m_queue;
     //Check that the buffer is non-null
-    if (NULL == buffer) {
+    if (nullptr == buffer) {
         return QUEUE_EMPTY_BUFFER;
     }
     //Fail if there is a size miss-match
@@ -192,7 +192,7 @@ Queue::QueueStatus bareReceiveBlock(BareQueueHandle& handle, U8* buffer, NATIVE_
 
 Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
     //Check if the handle is null or check the underlying queue is null
-    if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+    if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
         return QUEUE_UNINITIALIZED;
     }
@@ -210,7 +210,7 @@ Queue::QueueStatus Queue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_I
 
 NATIVE_INT_TYPE Queue::getNumMsgs() const {
     //Check if the handle is null or check the underlying queue is null
-    if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+    if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
         return 0;
     }
@@ -221,7 +221,7 @@ NATIVE_INT_TYPE Queue::getNumMsgs() const {
 
 NATIVE_INT_TYPE Queue::getMaxMsgs() const {
     //Check if the handle is null or check the underlying queue is null
-    if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+    if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
         return 0;
     }
@@ -232,7 +232,7 @@ NATIVE_INT_TYPE Queue::getMaxMsgs() const {
 
 NATIVE_INT_TYPE Queue::getQueueSize() const {
       //Check if the handle is null or check the underlying queue is null
-      if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+      if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
           (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
           return 0;
       }
@@ -243,7 +243,7 @@ NATIVE_INT_TYPE Queue::getQueueSize() const {
 
 NATIVE_INT_TYPE Queue::getMsgSize() const {
     //Check if the handle is null or check the underlying queue is null
-    if ((NULL == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
+    if ((nullptr == reinterpret_cast<BareQueueHandle*>(this->m_handle)) ||
         (!reinterpret_cast<BareQueueHandle*>(this->m_handle)->m_init)) {
         return 0;
     }

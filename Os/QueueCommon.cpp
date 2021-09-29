@@ -5,7 +5,7 @@
 namespace Os {
 
 #if FW_QUEUE_REGISTRATION
-    QueueRegistry* Queue::s_queueRegistry = 0;
+    QueueRegistry* Queue::s_queueRegistry = nullptr;
 #endif
 
     NATIVE_INT_TYPE Queue::s_numQueues = 0;

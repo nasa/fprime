@@ -32,7 +32,7 @@ namespace Svc {
       itval.it_value.tv_sec = interval/1000;
       itval.it_value.tv_nsec = (interval*1000000)%1000000000;
 
-      timerfd_settime (fd, 0, &itval, NULL);
+      timerfd_settime (fd, 0, &itval, nullptr);
 
       while (true) {
           unsigned long long missed;
@@ -46,7 +46,7 @@ namespace Svc {
               itval.it_value.tv_sec = 0;
               itval.it_value.tv_nsec = 0;
 
-              timerfd_settime (fd, 0, &itval, NULL);
+              timerfd_settime (fd, 0, &itval, nullptr);
               return;
           }
           this->m_timer.take();

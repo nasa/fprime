@@ -20,7 +20,7 @@ namespace MockTypes {
         m_random_size(MAX_BUFFER_SIZE),
         m_peek_offset(0),
         m_peek_type(0),
-        m_infinite_store(NULL),
+        m_infinite_store(nullptr),
         m_infinite_read(0),
         m_infinite_write(0),
         m_infinite_size(0),
@@ -63,7 +63,7 @@ namespace MockTypes {
         // If we are out of "infinite space" add another MB, and check allocation
         if ((m_infinite_write + size) > m_infinite_size) {
             void* new_pointer = std::realloc(m_infinite_store, m_infinite_size + 1048576);
-            if (new_pointer == NULL) {
+            if (new_pointer == nullptr) {
                 return false;
             }
             m_infinite_store = static_cast<U8*>(new_pointer);

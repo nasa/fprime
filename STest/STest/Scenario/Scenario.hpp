@@ -71,7 +71,7 @@ namespace STest {
       Rule<State>* nextRule(
           State& state //!< The system state
       ) {
-        Rule<State> *rule = NULL;
+        Rule<State> *rule = nullptr;
         if (!this->isDone()) {
           rule = this->nextRule_Scenario(state);
         }
@@ -116,7 +116,7 @@ namespace STest {
       ) {
         this->reset();
         Rule<State>* rule = this->nextRule(state);
-        while (rule != NULL) {
+        while (rule != nullptr) {
           this->applyNextRule(*rule, state);
           ++numSteps;
           if (this->isDone()) {

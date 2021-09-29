@@ -39,14 +39,14 @@ namespace STest {
         scenario(scenario),
         start(start),
         length(length),
-        boundedScenario(NULL)
+        boundedScenario(nullptr)
       {
 
       }
 
       //! Destroy object RandomlyBoundedScenario
       virtual ~RandomlyBoundedScenario() {
-        if (this->boundedScenario != NULL) {
+        if (this->boundedScenario != nullptr) {
           delete this->boundedScenario;
         }
       }
@@ -59,7 +59,7 @@ namespace STest {
 
       //! The virtual implementation of reset required by Scenario
       void reset_Scenario() {
-        if (this->boundedScenario != NULL) {
+        if (this->boundedScenario != nullptr) {
           delete this->boundedScenario;
         }
         const U32 bound = Random::startLength(this->start, this->length);
@@ -68,7 +68,7 @@ namespace STest {
             this->scenario,
             bound
         );
-        assert(this->boundedScenario != NULL);
+        assert(this->boundedScenario != nullptr);
         this->boundedScenario->reset();
       }
 
@@ -77,14 +77,14 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        assert(this->boundedScenario != NULL);
+        assert(this->boundedScenario != nullptr);
         return this->boundedScenario->nextRule(state);
       }
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
       bool isDone_Scenario() const {
-        assert(this->boundedScenario != NULL);
+        assert(this->boundedScenario != nullptr);
         return this->boundedScenario->isDone();
       }
 

@@ -18,8 +18,8 @@
 using namespace std;
 
 // Component instance pointers
-Example::ExampleEnumImpl* inst1 = 0;
-Example::ExampleEnumImpl* inst2 = 0;
+Example::ExampleEnumImpl* inst1 = nullptr;
+Example::ExampleEnumImpl* inst2 = nullptr;
 
 void constructArchitecture() {
 

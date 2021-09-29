@@ -24,7 +24,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FramerComponentImpl ::FramerComponentImpl(const char* const compName) : FramerComponentBase(compName), FramingProtocolInterface(),
-m_protocol(NULL) {}
+m_protocol(nullptr) {}
 
 void FramerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     FramerComponentBase::init(instance);
@@ -33,7 +33,7 @@ void FramerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
 FramerComponentImpl ::~FramerComponentImpl() {}
 
 void FramerComponentImpl ::setup(FramingProtocol& protocol) {
-    FW_ASSERT(m_protocol == NULL);
+    FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     protocol.setup(*this);
 }
@@ -43,12 +43,12 @@ void FramerComponentImpl ::setup(FramingProtocol& protocol) {
 // ----------------------------------------------------------------------
 
 void FramerComponentImpl ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
-    FW_ASSERT(m_protocol != NULL);
+    FW_ASSERT(m_protocol != nullptr);
     m_protocol->frame(data.getBuffAddr(), data.getBuffLength(), Fw::ComPacket::FW_PACKET_UNKNOWN);
 }
 
 void FramerComponentImpl ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(m_protocol != NULL);
+    FW_ASSERT(m_protocol != nullptr);
     m_protocol->frame(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
     bufferDeallocate_out(0, fwBuffer);
 }

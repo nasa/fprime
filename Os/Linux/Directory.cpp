@@ -27,7 +27,7 @@ namespace Os {
 
         DIR* dir = ::opendir(dirName);
 
-        if (dir == NULL) {
+        if (dir == nullptr) {
             this->m_lastError = errno;
             switch (errno) {
                 case ENOENT:
@@ -88,8 +88,8 @@ namespace Os {
         // Set errno to 0 so we know why we exited readdir
         errno = 0;
 
-        struct dirent *direntData = NULL;
-        while ((direntData = ::readdir(dir)) != NULL) {
+        struct dirent *direntData = nullptr;
+        while ((direntData = ::readdir(dir)) != nullptr) {
             // Skip hidden files
             if (direntData->d_name[0] != '.') {
                 strncpy(fileNameBuffer, direntData->d_name, bufSize);
@@ -98,7 +98,7 @@ namespace Os {
             }
         }
 
-        if (direntData == NULL) {
+        if (direntData == nullptr) {
             // loop ended because readdir failed, did it error or did we run out of files?
             if(errno != 0) {
                 // Only error from readdir is EBADF

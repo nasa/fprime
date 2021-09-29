@@ -47,7 +47,7 @@ namespace Fw {
     bool StringBase::operator==(const CHAR* other) const {
 
         const CHAR *const us = this->toChar();
-        if ((us == NULL) or (other == NULL)) {
+        if ((us == nullptr) or (other == nullptr)) {
             return false;
         }
 

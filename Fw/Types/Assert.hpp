@@ -52,7 +52,7 @@ namespace Fw {
     // Base class for declaring an assert hook
     class AssertHook {
         public:
-            AssertHook() : previousHook(NULL) {}; //!< constructor
+            AssertHook() : previousHook(nullptr) {}; //!< constructor
             virtual ~AssertHook() {}; //!< destructor
             // override this function to intercept asserts
             virtual void reportAssert(

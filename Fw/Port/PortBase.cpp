@@ -18,8 +18,8 @@ namespace Fw {
 
     PortBase::PortBase()
                 :
-                Fw::ObjBase(0),
-                m_connObj(0)
+                Fw::ObjBase(nullptr),
+                m_connObj(nullptr)
 #if FW_PORT_TRACING == 1
                 ,m_trace(false),
                 m_override_trace(false)
@@ -38,7 +38,7 @@ namespace Fw {
     }
 
     bool PortBase::isConnected() {
-        return m_connObj == 0?false:true;
+        return m_connObj == nullptr?false:true;
     }
 
 #if FW_PORT_TRACING == 1
