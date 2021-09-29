@@ -187,7 +187,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        FW_ASSERT(edge != NULL);
+        FW_ASSERT(edge != nullptr);
         // TODO check that edge has correct values of "none", "rising", or "falling"
 
         len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);

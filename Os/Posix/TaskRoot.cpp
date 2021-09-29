@@ -91,7 +91,7 @@ namespace Os {
         }
 
         pthread_t* tid = new(std::nothrow) pthread_t;
-        if (tid == NULL) {
+        if (tid == nullptr) {
             Fw::Logger::logMsg("failed to allocate pthread_t\n");
             return TASK_UNKNOWN_ERROR;
         }

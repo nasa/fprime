@@ -51,7 +51,7 @@ struct SocketState {
 };
 
 UdpSocket::UdpSocket() : IpSocket(), m_state(new(std::nothrow) SocketState), m_recv_port(0) {
-    FW_ASSERT(m_state != NULL);
+    FW_ASSERT(m_state != nullptr);
 }
 
 UdpSocket::~UdpSocket() {
@@ -161,7 +161,7 @@ I32 UdpSocket::sendProtocol(const U8* const data, const U32 size) {
 
 I32 UdpSocket::recvProtocol(U8* const data, const U32 size) {
     FW_ASSERT(this->m_state->m_addr_recv.sin_family != 0); // Make sure the address was previously setup
-    return ::recvfrom(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS, NULL, NULL);
+    return ::recvfrom(this->m_fd, data, size, SOCKET_IP_RECV_FLAGS, nullptr, nullptr);
 }
 
 }  // namespace Drv

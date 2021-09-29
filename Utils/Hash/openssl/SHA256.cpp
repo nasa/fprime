@@ -30,7 +30,7 @@ namespace Utils {
     {
         U8 out[SHA256_DIGEST_LENGTH];
         U8* ret = SHA256(static_cast<const U8*>(data), len, out);
-        FW_ASSERT(ret != NULL);
+        FW_ASSERT(ret != nullptr);
         HashBuffer bufferOut(out, sizeof(out));
         buffer = bufferOut;
     }

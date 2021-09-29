@@ -26,7 +26,7 @@ namespace STest {
 
       U32 getFromTime() {
         struct timeval tv;
-        (void) gettimeofday(&tv, NULL);
+        (void) gettimeofday(&tv, nullptr);
         return tv.tv_usec;
       }
 
@@ -36,7 +36,7 @@ namespace STest {
       ) {
         bool result = true;
         FILE *fp = fopen(fileName, "r");
-        if (fp != NULL) {
+        if (fp != nullptr) {
           result = (fscanf(fp, "%u", &value) == 1);
           (void) fclose(fp);
         }
@@ -56,7 +56,7 @@ namespace STest {
       ) {
         bool result = true;
         FILE *fp = fopen(fileName, "a");
-        if (fp != NULL) {
+        if (fp != nullptr) {
           int status = fprintf(
               fp,
               "%u\n",

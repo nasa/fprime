@@ -256,7 +256,7 @@ namespace Svc {
                 TlmChanImpl::TlmEntry* entry = m_impl.m_tlmEntries[0].slots[slot];
                 for (NATIVE_INT_TYPE bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
                     dumpTlmEntry(entry);
-                    if (entry->next == 0) {
+                    if (entry->next == nullptr) {
                         break;
                     } else {
                         entry = entry->next;

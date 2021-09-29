@@ -26,11 +26,11 @@ namespace Os {
         QueueHandle(mqd_t m_handle) {
             // Initialize the handle:
             int ret;
-            ret = pthread_cond_init(&this->queueNotEmpty, NULL);
+            ret = pthread_cond_init(&this->queueNotEmpty, nullptr);
             FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
-            ret = pthread_cond_init(&this->queueNotFull, NULL);
+            ret = pthread_cond_init(&this->queueNotFull, nullptr);
             FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
-            ret = pthread_mutex_init(&this->mp, NULL);
+            ret = pthread_mutex_init(&this->mp, nullptr);
             FW_ASSERT(ret == 0, ret); // If this fails, something horrible happened.
             this->handle = m_handle;
         }
@@ -92,7 +92,7 @@ namespace Os {
 
         // Set up queue handle:
         QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
-        if (NULL == queueHandle) {
+        if (nullptr == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }
         this->m_handle = reinterpret_cast<POINTER_CAST>(queueHandle);
@@ -120,7 +120,7 @@ namespace Os {
             return QUEUE_UNINITIALIZED;
         }
 
-        if (NULL == buffer) {
+        if (nullptr == buffer) {
             return QUEUE_EMPTY_BUFFER;
         }
 

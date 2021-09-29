@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     char *hostname;
     port_number = 0;
     option = 0;
-    hostname = NULL;
+    hostname = nullptr;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {

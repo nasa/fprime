@@ -243,7 +243,7 @@ void constructApp(U32 port_number, char* hostname) {
     uartDrv.startReadThread(100,10*1024,-1);
 
     // Initialize socket server if and only if there is a valid specification
-    if (hostname != NULL && port_number != 0) {
+    if (hostname != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(hostname, port_number);
@@ -265,7 +265,7 @@ void exitTasks() {
     cmdSeq.exit();
     rpiDemo.exit();
     comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
+    (void) comm.joinSocketTask(nullptr);
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }

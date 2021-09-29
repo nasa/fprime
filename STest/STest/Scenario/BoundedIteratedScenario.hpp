@@ -63,7 +63,7 @@ namespace STest {
       void nextScenario_ConditionalIteratedScenario(
           const Scenario<State> *const nextScenario //!< The next scenario
       ) {
-        if (nextScenario != NULL) {
+        if (nextScenario != nullptr) {
           ++this->numIterations;
         }
       }

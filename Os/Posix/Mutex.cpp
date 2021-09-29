@@ -7,7 +7,7 @@ namespace Os {
 
     Mutex::Mutex() {
         pthread_mutex_t* handle = new(std::nothrow) pthread_mutex_t;
-        FW_ASSERT(handle != NULL);
+        FW_ASSERT(handle != nullptr);
 
         // set attributes
         pthread_mutexattr_t attr;

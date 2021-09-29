@@ -16,10 +16,10 @@
 
 namespace Svc {
 
-DeframingProtocol::DeframingProtocol() : m_interface(NULL) {}
+DeframingProtocol::DeframingProtocol() : m_interface(nullptr) {}
 
 void DeframingProtocol::setup(DeframingProtocolInterface& interface) {
-    FW_ASSERT(m_interface == NULL);
+    FW_ASSERT(m_interface == nullptr);
     m_interface = &interface;
 }
 };

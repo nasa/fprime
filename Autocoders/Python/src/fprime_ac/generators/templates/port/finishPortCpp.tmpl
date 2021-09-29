@@ -1,7 +1,7 @@
 
 Output${name}Port::Output${name}Port() :
             Fw::OutputPortBase(),
-    m_port(0) {
+    m_port(nullptr) {
 }
 
 void Output${name}Port::init() {
@@ -14,7 +14,7 @@ void Output${name}Port::addCallPort(Input${name}Port* callPort) {
     this->m_port = callPort;
     this->m_connObj = callPort;
 \#if FW_PORT_SERIALIZATION == 1
-    this->m_serPort = 0;
+    this->m_serPort = nullptr;
 \#endif
 }
 

@@ -18,7 +18,7 @@
 #define QUEUE_DEPTH (Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS*2)
 #define FLAG_KEY_VALUE 0xcafecafe
 
-FW_STATIC_ASSERT(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS < 0xcafecafe);
+static_assert(Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS < 0xcafecafe, "");
 
 namespace Svc {
 
