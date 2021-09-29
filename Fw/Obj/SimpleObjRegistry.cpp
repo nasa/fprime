@@ -14,12 +14,12 @@ namespace Fw {
         this->m_numEntries = 0;
         // Initialize pointer array
         for (NATIVE_INT_TYPE entry = 0; entry < FW_OBJ_SIMPLE_REG_ENTRIES; entry++) {
-            this->m_objPtrArray[entry] = 0;
+            this->m_objPtrArray[entry] = nullptr;
         }
     }
 
     SimpleObjRegistry::~SimpleObjRegistry() {
-        ObjBase::setObjRegistry(0);
+        ObjBase::setObjRegistry(nullptr);
     }
 
     void SimpleObjRegistry::dump() {

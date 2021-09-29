@@ -22,7 +22,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : DeframerComponentBase(compName), DeframingProtocolInterface(),
-    m_protocol(NULL), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
+    m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {}
 
 void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
@@ -32,7 +32,7 @@ void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
 DeframerComponentImpl ::~DeframerComponentImpl() {}
 
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
-    FW_ASSERT(m_protocol == NULL);
+    FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     protocol.setup(*this);
 }
@@ -114,7 +114,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
 }
 
 void DeframerComponentImpl ::processRing() {
-    FW_ASSERT(m_protocol != NULL);
+    FW_ASSERT(m_protocol != nullptr);
     // Maximum limit to the loop as at least one byte is process per iteration unless needed > remaining size
     const U32 loop_limit = m_in_ring.get_capacity() + 1;
 

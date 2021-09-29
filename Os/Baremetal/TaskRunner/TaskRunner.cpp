@@ -42,7 +42,7 @@ void TaskRunner::removeTask(Task* task) {
         }
         //If the last element, mark NULL
         else {
-            this->m_task_table[i] = NULL;
+            this->m_task_table[i] = nullptr;
         }
     }
 }
@@ -59,12 +59,12 @@ void TaskRunner::run() {
     //Loop through full table
     for (i = 0; i < TASK_REGISTRY_CAP; i++) {
         //Break at end of table
-        if (m_task_table[i] == NULL) {
+        if (m_task_table[i] == nullptr) {
             break;
         }
         //Get bare task or break
         BareTaskHandle* handle = reinterpret_cast<BareTaskHandle*>(m_task_table[i]->getRawHandle());
-        if (handle == NULL || handle->m_routine == NULL || !handle->m_enabled) {
+        if (handle == nullptr || handle->m_routine == nullptr || !handle->m_enabled) {
             continue;
         }
         //Run-it!

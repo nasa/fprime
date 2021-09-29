@@ -53,7 +53,7 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        Rule<State> *rule = NULL;
+        Rule<State> *rule = nullptr;
         if (this->rule.precondition(state)) {
           rule = &this->rule;
         }

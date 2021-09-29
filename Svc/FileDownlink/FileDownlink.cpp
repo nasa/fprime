@@ -488,7 +488,7 @@ namespace Svc {
     sendFilePacket(const Fw::FilePacket& filePacket)
   {
     const U32 bufferSize = filePacket.bufferSize();
-    FW_ASSERT(this->buffer.getData() != 0);
+    FW_ASSERT(this->buffer.getData() != nullptr);
     FW_ASSERT(this->buffer.getSize() >= bufferSize, bufferSize, this->buffer.getSize());
     const Fw::SerializeStatus status = filePacket.toBuffer(this->buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);

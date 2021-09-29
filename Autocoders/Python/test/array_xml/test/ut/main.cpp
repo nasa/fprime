@@ -23,8 +23,8 @@
 using namespace std;
 
 // Component instance pointers
-Example::ExampleArrayImpl* inst1 = 0;
-Example::ExampleArrayImpl* inst2 = 0;
+Example::ExampleArrayImpl* inst1 = nullptr;
+Example::ExampleArrayImpl* inst2 = nullptr;
 
 #ifdef TGT_OS_TYPE_LINUX
 extern "C" {
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     Fw::SimpleObjRegistry simpleReg_ptr;
     simpleReg_ptr.dump();
 
-    setbuf(stdout, NULL);
+    setbuf(stdout, nullptr);
 
     cout << "Initialize Arrays" << endl;
 

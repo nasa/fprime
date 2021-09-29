@@ -21,7 +21,8 @@ using namespace std;
 Example::ExampleEnumImpl inst1("inst1");
 Example::ExampleEnumImpl inst2("inst2");
 
-void constructArchitecture(void) {
+void constructArchitecture() {
+
     // Connect inst1 to inst2
     inst1.set_EnumOut_OutputPort(0, inst2.get_EnumIn_InputPort(0));
 

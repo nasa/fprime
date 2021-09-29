@@ -86,7 +86,7 @@ namespace Fw {
     }
 
     void AmpcsEvrLogPacket::setTaskName(U8 *taskName, U8 len) {
-        FW_ASSERT(taskName != NULL);
+        FW_ASSERT(taskName != nullptr);
         FW_ASSERT(len == AMPCS_EVR_TASK_NAME_LEN);
 
         memcpy(this->m_taskName, (const void*)taskName, len);

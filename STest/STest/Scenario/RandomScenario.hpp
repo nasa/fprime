@@ -36,9 +36,9 @@ namespace STest {
       ) :
         InterleavedScenario<State>(name, new Scenario<State>*[size], size)
       {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < size; ++i) {
           scenarios[i] = new RepeatedRuleScenario<State>(*rules[i]);
         }
@@ -46,11 +46,11 @@ namespace STest {
 
       //! Destroy a RandomScenario
       ~RandomScenario() {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < this->scenarioArray->size; ++i) {
-          assert(scenarios[i] != NULL);
+          assert(scenarios[i] != nullptr);
           delete scenarios[i];
         }
         delete[] scenarios;

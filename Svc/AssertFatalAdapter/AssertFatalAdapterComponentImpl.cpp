@@ -94,7 +94,7 @@ namespace Svc {
       this->m_compPtr = compPtr;
   }
 
-  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(0) {
+  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(nullptr) {
   }
 
   AssertFatalAdapterComponentImpl::AssertFatalAdapter::~AssertFatalAdapter() {

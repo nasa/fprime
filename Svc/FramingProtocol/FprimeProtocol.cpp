@@ -22,8 +22,8 @@ FprimeFraming::FprimeFraming(): FramingProtocol() {}
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
 
 void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
-    FW_ASSERT(data != NULL);
-    FW_ASSERT(m_interface != NULL);
+    FW_ASSERT(data != nullptr);
+    FW_ASSERT(m_interface != nullptr);
     // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
     FP_FRAME_TOKEN_TYPE real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
     FP_FRAME_TOKEN_TYPE total = real_data_size + FP_FRAME_HEADER_SIZE + HASH_DIGEST_LENGTH;
@@ -84,7 +84,7 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
 DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffer& ring, U32& needed) {
     FP_FRAME_TOKEN_TYPE start = 0;
     FP_FRAME_TOKEN_TYPE size = 0;
-    FW_ASSERT(m_interface != NULL);
+    FW_ASSERT(m_interface != nullptr);
     // Check for header or ask for more data
     if (ring.get_remaining_size() < FP_FRAME_HEADER_SIZE) {
         needed = FP_FRAME_HEADER_SIZE;

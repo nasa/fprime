@@ -16,10 +16,10 @@
 
 namespace Svc {
 
-FramingProtocol::FramingProtocol() : m_interface(NULL) {}
+FramingProtocol::FramingProtocol() : m_interface(nullptr) {}
 
 void FramingProtocol::setup(FramingProtocolInterface& interface) {
-    FW_ASSERT(m_interface == NULL);
+    FW_ASSERT(m_interface == nullptr);
     m_interface = &interface;
 }
 };

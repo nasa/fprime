@@ -98,10 +98,6 @@ typedef float   F32; //!< 32-bit floating point
 
 typedef char CHAR;
 
-#ifndef NULL
-#define NULL  (0)  //!< NULL
-#endif
-
 #define FW_NUM_ARRAY_ELEMENTS(a)  (sizeof(a)/sizeof((a)[0])) //!< number of elements in an array
 
 #define FW_MAX(a,b) (((a) > (b))?(a):(b)) //!< MAX macro
