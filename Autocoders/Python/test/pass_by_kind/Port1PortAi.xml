@@ -21,7 +21,7 @@
             <comment>Example object arg, pass by reference</comment>
         </arg>
         <arg name="Arg6" type="ExampleType">
-            <comment>Example object arg, pass by const reference if async (default)</comment>
+            <comment>Example object arg, pass by const reference (default)</comment>
         </arg>
         <arg name="Arg7" type="string" size="5" pass_by="pointer">
             <comment>Example string arg, pass by pointer</comment>
@@ -30,7 +30,7 @@
             <comment>Example string arg, pass by reference</comment>
         </arg>
         <arg name="Arg9" type="string" size="5">
-            <comment>Example string arg, pass by const reference if async (default)</comment>
+            <comment>Example string arg, pass by const reference (default)</comment>
         </arg>
     </args>
 </interface>

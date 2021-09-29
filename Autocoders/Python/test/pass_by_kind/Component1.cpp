@@ -28,6 +28,10 @@ namespace Example {
         arg3 = 1;
         arg4->set(1);
         arg5.set(1);
+        // arg6 is a const ref -- compiler won't let us modify through it
+        *arg7 = "one";
+        arg8 = "one";
+        // arg9 is a const ref -- compiler won't let us modify through it
     }
 
     void Component1::SyncPort_handler(NATIVE_INT_TYPE portNum,U32 *arg1, U32 &arg2, U32 arg3,
@@ -38,5 +42,9 @@ namespace Example {
         arg3 = 1;
         arg4->set(1);
         arg5.set(1);
+        // arg6 is a const ref -- compiler won't let us modify through it
+        *arg7 = "one";
+        arg8 = "one";
+        // arg9 is a const ref -- compiler won't let us modify through it
     }
 };
