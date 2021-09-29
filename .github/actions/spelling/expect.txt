@@ -339,6 +339,7 @@ dfdc
 DFL
 DFPRIME
 DGRAM
+dhesikan
 DHTML
 diafile
 dictgen
