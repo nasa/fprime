@@ -11,7 +11,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveLogger/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferManager/")
@@ -31,7 +30,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GroundInterface/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Framer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FramingProtocol/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Health/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyDb/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PrmDb/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver/")
@@ -39,6 +37,13 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Time/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
+
+# Allow and check for disabling of text loggers
+# Building these fails if FW_ENABLE_TEXT_LOGGING == 0
+if (NOT FPRIME_DISABLE_TEXT_LOGGERS)
+	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger/")
+	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxTime/")
