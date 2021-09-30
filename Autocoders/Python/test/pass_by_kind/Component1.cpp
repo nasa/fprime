@@ -2,8 +2,8 @@
 #include <Autocoders/Python/test/pass_by_kind/ExampleTypeSerializableAc.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
+#include <cstdio>
 #include <iostream>
-#include <stdio.h>
 
 using namespace std;
 
@@ -12,7 +12,7 @@ namespace Example {
     Component1::Component1(const char* compName) : Component1ComponentBase(compName) {
     }
 
-    Component1::~Component1(void) {
+    Component1::~Component1() {
 
     }
 
@@ -25,7 +25,7 @@ namespace Example {
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9) {
         *arg1 = 1;
         arg2 = 1;
-        arg3 = 1;
+        // arg3 is a stack variable -- assigning to it has no effect
         arg4->set(1);
         arg5.set(1);
         // arg6 is a const ref -- compiler won't let us modify through it
@@ -39,7 +39,7 @@ namespace Example {
         Arg7String *arg7, Arg8String &arg8, const Arg9String &arg9) {
         *arg1 = 1;
         arg2 = 1;
-        arg3 = 1;
+        // arg3 is a stack variable -- assigning to it has no effect
         arg4->set(1);
         arg5.set(1);
         // arg6 is a const ref -- compiler won't let us modify through it
