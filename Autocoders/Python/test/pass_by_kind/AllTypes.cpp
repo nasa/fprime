@@ -21,11 +21,11 @@ namespace Example {
         this->is_async = is_async;
     }
 
-    AllTypes::~AllTypes(void) {
+    AllTypes::~AllTypes() {
 
     }
 
-    void AllTypes::checkAsserts(void) {
+    void AllTypes::checkAsserts() {
         // Check output from port invocations worked
         // Declare enum with possible port pass by logic
         enum output_options {VALUE = 0, POINTER = 1, CONST_REF = 2, REFERENCE = 3};
