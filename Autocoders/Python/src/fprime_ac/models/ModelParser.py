@@ -196,7 +196,6 @@ class ModelParser:
                 n = a.get_name()
                 t = a.get_type()
                 m = a.get_modifier()
-                non_const_arg_type = a.get_type()
                 e = None
                 #
                 # Pass port scalar and specified arguments as specified
