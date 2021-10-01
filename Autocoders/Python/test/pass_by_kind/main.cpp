@@ -13,7 +13,7 @@ using namespace std;
 // Create the inst1 object
 Example::Component1 inst1("inst1");
 
-void constructArchitecture(void) {
+void constructArchitecture() {
     // Instantiate components
     inst1.init(100);
 }

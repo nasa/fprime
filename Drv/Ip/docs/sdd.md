@@ -174,7 +174,7 @@ uplinkComm.startSocketTask(name, 100, 10 * 1024); // Default reconnect=true
 ...
 
 uplinkComm.stopSocketTask();
-(void) uplinkComm.joinSocketTask(NULL);
+(void) uplinkComm.joinSocketTask(nullptr);
 ```
 
 `Drv::SocketReadTask::open` and `Drv::SocketReadTask::close` convenience methods are also provided to open and close the

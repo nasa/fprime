@@ -11,7 +11,7 @@ namespace Fw {
 
     OutputPortBase::OutputPortBase() : PortBase()
 #if FW_PORT_SERIALIZATION == 1
-        ,m_serPort(0)
+        ,m_serPort(nullptr)
 #endif
     {
 

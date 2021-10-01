@@ -26,7 +26,7 @@ namespace Example {
         printf("%s Invoked ExArrayIn_handler();\n%s", this->getObjName(), s.toChar());
         this->ArrayOut_out(0, array1, serial1);
     }
-    
+
     void ExampleArrayImpl::ArrayIn_handler(NATIVE_INT_TYPE portNum, const Example::ArrayType& array1, const Example::ArrSerial& serial1) {
         Fw::String s;
         array1.toString(s);

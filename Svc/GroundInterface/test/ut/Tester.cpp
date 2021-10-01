@@ -32,7 +32,7 @@ namespace Svc {
       component()
 #endif
       ,
-      m_buffer(NULL),
+      m_buffer(nullptr),
       m_uplink_type(1),
       m_uplink_used(30),
       m_uplink_size(sizeof(TOKEN_TYPE) * 3 + m_uplink_used),

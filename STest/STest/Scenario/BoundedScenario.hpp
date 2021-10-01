@@ -63,7 +63,7 @@ namespace STest {
       void nextRule_ConditionalScenario(
           const Rule<State> *const nextRule //!< The next rule
       ) {
-        if (nextRule != NULL) {
+        if (nextRule != nullptr) {
           ++this->numSteps;
         }
       }

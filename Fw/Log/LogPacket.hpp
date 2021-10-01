@@ -24,8 +24,8 @@ namespace Fw {
             SerializeStatus deserialize(SerializeBufferBase& buffer);
 
             void setId(FwEventIdType id);
-            void setLogBuffer(LogBuffer& buffer);
-            void setTimeTag(Fw::Time& timeTag);
+            void setLogBuffer(const LogBuffer& buffer);
+            void setTimeTag(const Fw::Time& timeTag);
 
             FwEventIdType getId();
             Fw::Time& getTimeTag();

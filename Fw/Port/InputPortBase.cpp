@@ -9,7 +9,7 @@ namespace Fw {
 
     InputPortBase::InputPortBase() :
                     PortBase(),
-                    m_comp(0),
+                    m_comp(nullptr),
                     m_portNum(-1) {
     }
 

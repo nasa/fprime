@@ -11,8 +11,8 @@ namespace Example {
     class AllTypes {
         public:
             AllTypes(bool is_async); //!< constructor with argument async/sync boolean flag
-            virtual ~AllTypes(void); //!< destructor
-            void checkAsserts(void); //!< function checks output of arguments is expected
+            virtual ~AllTypes(); //!< destructor
+            void checkAsserts(); //!< function checks output of arguments is expected
 
             // Declaration of arguments
             U32 arg1;

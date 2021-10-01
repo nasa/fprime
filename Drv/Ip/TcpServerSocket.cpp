@@ -88,7 +88,7 @@ void TcpServerSocket::shutdown() {
 SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     NATIVE_INT_TYPE clientFd = -1;
     // TCP requires accepting on a the socket to get the client socket file descriptor.
-    if ((clientFd = ::accept(m_base_fd, NULL, NULL)) < 0) {
+    if ((clientFd = ::accept(m_base_fd, nullptr, nullptr)) < 0) {
         return SOCK_FAILED_TO_ACCEPT; // What we have here is a failure to communicate
     }
     // Setup client send timeouts

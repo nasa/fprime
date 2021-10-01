@@ -339,6 +339,7 @@ dfdc
 DFL
 DFPRIME
 DGRAM
+dhesikan
 DHTML
 diafile
 dictgen
@@ -1732,6 +1733,7 @@ virtualbox
 virtualenv
 virtualization
 virtualized
+vla
 vlist
 vm
 VMIN

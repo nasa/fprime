@@ -100,10 +100,8 @@ namespace Svc {
             }
         }
 
-        Fw::LogSeverity severity_copy = severity;
-
         // send event to the logger thread
-        this->loqQueue_internalInterfaceInvoke(id,timeTag,severity_copy,args);
+        this->loqQueue_internalInterfaceInvoke(id,timeTag,severity,args);
 
         // if connected, announce the FATAL
         if (Fw::LogSeverity::FATAL == severity.e) {
@@ -113,7 +111,7 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity& severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args) {
 
         // Serialize event
         this->m_logPacket.setId(id);

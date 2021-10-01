@@ -70,7 +70,7 @@ namespace ExampleComponents {
 
     }
 
-    void ExampleComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, Example4::Example2& arg4) {
+    void ExampleComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, const Example4::Example2& arg4) {
 
     }
 

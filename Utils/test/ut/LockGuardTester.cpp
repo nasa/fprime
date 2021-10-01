@@ -68,7 +68,7 @@ namespace Utils {
       LockGuard guard(data.mutex);
       ASSERT_EQ(data.i, 1);
     }
-    stat = testTask.join(NULL);
+    stat = testTask.join(nullptr);
     ASSERT_EQ(stat, Os::Task::TASK_OK);
   }
 

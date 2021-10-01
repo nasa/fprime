@@ -10,7 +10,7 @@ namespace Example {
 
         // Only called by derived class
         Component1(const char* compName);
-        ~Component1(void);
+        ~Component1();
         void init(NATIVE_INT_TYPE queueDepth);
 
     private:

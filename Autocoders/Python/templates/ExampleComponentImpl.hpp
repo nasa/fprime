@@ -31,7 +31,7 @@ namespace ExampleComponents {
             // interfaces
 
             void test_internalInterfaceHandler(I32 arg1, F32 arg2, U8 arg3);
-            void test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, Example4::Example2& arg4);
+            void test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, const Example4::Example2& arg4);
 
             void parameterUpdated(FwPrmIdType id);
 

@@ -117,7 +117,7 @@ namespace Fw {
         assert(0);
     }
 
-    STATIC AssertHook* s_assertHook = NULL;
+    STATIC AssertHook* s_assertHook = nullptr;
 
     void AssertHook::registerHook() {
         this->previousHook = s_assertHook;
@@ -129,7 +129,7 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -154,7 +154,7 @@ namespace Fw {
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
             AssertArg arg1) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -180,7 +180,7 @@ namespace Fw {
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
             AssertArg arg1,
             AssertArg arg2) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -206,7 +206,7 @@ namespace Fw {
             AssertArg arg1,
             AssertArg arg2,
             AssertArg arg3) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -233,7 +233,7 @@ namespace Fw {
             AssertArg arg2,
             AssertArg arg3,
             AssertArg arg4) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -261,7 +261,7 @@ namespace Fw {
             AssertArg arg3,
             AssertArg arg4,
             AssertArg arg5) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -290,7 +290,7 @@ namespace Fw {
             AssertArg arg4,
             AssertArg arg5,
             AssertArg arg6) {
-        if (NULL == s_assertHook) {
+        if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
@@ -319,7 +319,7 @@ extern "C" {
 }
 
 NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
-    if (NULL == Fw::s_assertHook) {
+    if (nullptr == Fw::s_assertHook) {
         CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
         Fw::defaultReportAssert(
             file,
