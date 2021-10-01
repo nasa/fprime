@@ -38,9 +38,9 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Time/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 
-# Allow and check for disabling of text loggers
-# Building these fails if FW_ENABLE_TEXT_LOGGING == 0
-if (NOT FPRIME_DISABLE_TEXT_LOGGERS)
+# Text logger components included by default, 
+# but can be disabled if FW_ENABLE_TEXT_LOGGING=0 is desired.
+if (FPRIME_ENABLE_TEXT_LOGGERS)
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger/")
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
 endif()

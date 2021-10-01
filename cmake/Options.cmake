@@ -115,6 +115,22 @@ else()
 endif()
 
 ####
+# `FPRIME_ENABLE_TEXT_LOGGERS:`
+#
+# When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
+# svc components are included in the build. When unset, those components are excluded, 
+# allowing FpConfig.hpp:FW_ENABLE_TEXT_LOGGING to be unset as well, to save space.
+# TextLoggers will fail to build if FW_ENABLE_TEXT_LOGGING=0.
+#
+# **Values:**
+# - ON: (default) retains the text logger components in the target list
+# - OFF: removes text logger components from the target list
+#
+# e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
+####
+option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
+
+####
 # `CMAKE_BUILD_TYPE:`
 #
 # Allows for setting the CMake build type. Release is a normal build, Testing is used for unit testing and debug
