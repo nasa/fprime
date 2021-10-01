@@ -9,11 +9,11 @@ find_program(PYTHON NAMES python3 python REQUIRED)
 find_program(JAVA java PATHS ENV JAVA_HOME ENV PATH REQUIRED)
 
 # Check python was found
-if (FPUTIL STREQUAL FPUTIL-NOTFOUND)
+if (NOT FPUTIL)
     message(FATAL_ERROR "fprime-util was not found. Please install with 'pip install fprime-tools'")
-elseif (PYTHON STREQUAL PYTHON-NOTFOUND)
+elseif (NOT PYTHON)
     message(FATAL_ERROR "python3 was not found. Please ensure python3 is on the path.")
-elseif(JAVA STREQUAL JAVA-NOTFOUND)
+elseif(NOT JAVA)
     message(FATAL_ERROR "java was not found. Please ensure java is on the path.")
 endif()
 

@@ -1,4 +1,4 @@
-include(Utilities)
+include(utilities)
 include(autocoder/ai-shared)
 
 set(HANDLES_INDIVIDUAL_SOURCES TRUE)
@@ -76,8 +76,10 @@ function(__ai_info XML_PATH MODULE_NAME)
     find_program(PYTHON NAMES python3 python)
     # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
     set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
+    set(PARSER_PATH "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/ai-parser/ai_parser.py")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PARSER_PATH}")
     execute_process(
-            COMMAND "${PYTHON}" "${FPRIME_FRAMEWORK_PATH}/cmake/support/parser/ai_parser.py" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
+            COMMAND "${PYTHON}" "${PARSER_PATH}" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
             RESULT_VARIABLE ERR_RETURN
             OUTPUT_VARIABLE AI_OUTPUT
     )

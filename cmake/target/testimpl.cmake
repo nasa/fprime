@@ -10,6 +10,22 @@
 ####
 
 ####
+# testimpl `add_global_target`:
+#
+# Does nothing. Prevents default target.
+####
+function(add_global_target TARGET)
+endfunction()
+
+####
+# testimpl `add_deployment_target`:
+#
+# Does nothing. Prevents default "roll-up" target.
+####
+function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+endfunction()
+
+####
 # testimpl function `add_module_target`:
 #
 # Adds a module-by-module target for producing ut implementations. Take in the Ai.xml file and produces a set of test
@@ -18,8 +34,9 @@
 # - **MODULE:** name of the module
 # - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCE_FILES)
+function(add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
     # Try to generate dictionaries for every AC input file
     if (NOT TARGET "${TARGET_MOD_NAME}")

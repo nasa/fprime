@@ -142,3 +142,107 @@ function (read_from_lines CONTENT)
         set(${NAME} "${VALUE}" PARENT_SCOPE)
     endforeach()
 endfunction()
+
+
+####
+# Function `get_nearest_build_root`:
+#
+# Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.
+#
+# - **DIRECTORY_PATH:** path to detect nearest build root
+# Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
+####
+function(get_nearest_build_root DIRECTORY_PATH)
+    set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
+    set(LAST_REL "${DIRECTORY_PATH}")
+    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS})
+        file(RELATIVE_PATH TEMP_MODULE ${FPRIME_BUILD_LOC} ${DIRECTORY_PATH})
+        string(LENGTH "${LAST_REL}" LEN1)
+        string(LENGTH "${TEMP_MODULE}" LEN2)
+        if (LEN2 LESS LEN1 AND TEMP_MODULE MATCHES "^[^./].*")
+            set(FOUND_BUILD_ROOT "${FPRIME_BUILD_LOC}")
+            set(LAST_REL "${TEMP_MODULE}")
+        endif()
+    endforeach()
+    if ("${FOUND_BUILD_ROOT}" STREQUAL "${DIRECTORY_PATH}")
+        message(FATAL_ERROR "No build root found for: ${DIRECTORY_PATH}")
+    endif()
+    set(FPRIME_CLOSEST_BUILD_ROOT "${FOUND_BUILD_ROOT}" PARENT_SCOPE)
+endfunction()
+####
+# Function `get_module_name`:
+#
+# Takes a path, or something path-like and returns the module's name. This breaks down as the
+# following:
+#
+#  1. If passed a path, the module name is the '_'ed variant of the relative path from BUILD_ROOT
+#  2. If passes something which does not exist on the file system, it is just '_'ed
+#
+# i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
+#      Svc/ActiveLogger also becomes Svc_ActiveLogger
+#
+# - **DIRECTORY_PATH:** path to infer MODULE_NAME from
+# - **Return: MODULE_NAME** (set in parent scope)
+####
+function(get_module_name DIRECTORY_PATH)
+    # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
+    # name. If it does not exist, then it is assumed to be an offset already and is carried
+    # forward in the calculation.
+    if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
+        # Get path name relative to the root directory
+        get_nearest_build_root(${DIRECTORY_PATH})
+        File(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CLOSEST_BUILD_ROOT} ${DIRECTORY_PATH})
+    else()
+        set(TEMP_MODULE_NAME ${DIRECTORY_PATH})
+    endif()
+    # Replace slash with underscore to have valid name
+    string(REPLACE "/" "_" TEMP_MODULE_NAME ${TEMP_MODULE_NAME})
+    set(MODULE_NAME ${TEMP_MODULE_NAME} PARENT_SCOPE)
+endfunction(get_module_name)
+
+
+####
+# Function `set_hash_flag`:
+#
+# Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
+# hashes.txt. This allows for asserts on file ID not string.
+####
+function(set_hash_flag SRC)
+    get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
+    string(REPLACE "${FPRIME_CLOSEST_BUILD_ROOT_ABS}/" "" SHORT_SRC "${SRC}")
+    string(MD5 HASH_VAL "${SHORT_SRC}")
+    string(SUBSTRING "${HASH_VAL}" 0 8 HASH_32)
+    file(APPEND "${CMAKE_BINARY_DIR}/hashes.txt" "${SHORT_SRC}: 0x${HASH_32}\n")
+    SET_SOURCE_FILES_PROPERTIES(${SRC} PROPERTIES COMPILE_FLAGS -DASSERT_FILE_ID="0x${HASH_32}")
+endfunction(set_hash_flag)
+
+
+####
+# Function `print_property`:
+#
+# Prints a given property for the module.
+# - **TARGET**: target to print properties
+# - **PROPERTY**: name of property to print
+####
+function (print_property TARGET PROPERTY)
+    get_target_property(OUT "${TARGET}" "${PROPERTY}")
+    if (NOT OUT MATCHES ".*-NOTFOUND")
+        message(STATUS "[F´ Module] ${TARGET} ${PROPERTY}:")
+        foreach (PROPERTY IN LISTS OUT)
+            message(STATUS "[F´ Module]    ${PROPERTY}")
+        endforeach()
+    endif()
+endfunction(print_property)
+
+####
+# Function `introspect`:
+#
+# Prints the dependency list of the module supplied as well as the include directories.
+#
+# - **MODULE_NAME**: module name to print dependencies
+####
+function(introspect MODULE_NAME)
+    print_property("${MODULE_NAME}" SOURCES)
+    print_property("${MODULE_NAME}" INCLUDE_DIRECTORIES)
+    print_property("${MODULE_NAME}" LINK_LIBRARIES)
+endfunction(introspect)

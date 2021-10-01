@@ -7,6 +7,10 @@
 # - `add_module_target`: adds sub-targets for '<MODULE_NAME>_dict'
 ####
 
+# Dictionaries are per-deployment, a global variant does not make sense
+function(add_global_target)
+endfunction()
+
 ####
 # Dict function `add_module_target`:
 #
@@ -17,8 +21,9 @@
 # - **MODULE:** name of the module
 # - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCES)
+function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
     run_ac_set("${SOURCES}" INFO_ONLY autocoder/fpp INFO_ONLY autocoder/ai-xml)
     set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TopologyAppDictionary.xml")
@@ -29,7 +34,6 @@ function(add_module_target MODULE TARGET SOURCES)
                 COMMAND ${CMAKE_COMMAND} -E copy ${DICTIONARY} "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
                 DEPENDS ${DICTIONARY} ${MODULE}
             )
-            add_dependencies("${TARGET}" "${TARGET_MOD_NAME}")
             break()
         endif()
     endforeach()

@@ -1,4 +1,4 @@
-include(Utilities)
+include(utilities)
 
 set(HANDLES_INDIVIDUAL_SOURCES TRUE)
 function(is_supported AC_INPUT_FILE)

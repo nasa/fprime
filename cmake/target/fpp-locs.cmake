@@ -5,6 +5,7 @@
 # specifically focused on generating the locator file for fpp.  It registers normal targets for building these items,
 # but also comes with a function to run the separate build of fprime.
 ####
+
 # Properties needed to be forwarded to the internal cmake call
 set(NEEDED_PROPERTIES
         FPRIME_CONFIG_DIR
@@ -58,9 +59,17 @@ function(generate_fpp_locs)
 endfunction()
 
 ####
+# fpp-locs function `add_deployment_target`:
+#
+# Does nothing.  Fpp locations are truly global.
+####
+function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+endfunction()
+
+####
 # fpp-locs function `add_global_target`:
 #
-# This function takes the INPUTS property added to our glovbal
+# This function takes the INPUTS property added to our global
 ####
 function(add_global_target TARGET_NAME)
     find_program(FPP_LOCATE_DEFS fpp-locate-defs)
@@ -80,9 +89,11 @@ endfunction(add_global_target)
 # - **MODULE:** name of the module
 # - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCES)
-    include("autocoder/fpp")
+function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    include(autocoder/default)
+    include(autocoder/fpp)
     foreach(SOURCE IN LISTS SOURCES)
         is_supported("${SOURCE}")
         if (IS_SUPPORTED)
@@ -91,4 +102,10 @@ function(add_module_target MODULE TARGET SOURCES)
             set_target_properties("${TARGET}" PROPERTIES INPUTS "${TARGET_INPUTS}")
         endif()
     endforeach()
+    # Since fpp-locs runs as an independent build, we must force a target to exist
+    if (NOT TARGET MODULE)
+        set(EMPTY_C_SRC "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
+        file(WRITE "${EMPTY_C_SRC}" "#define CMAKE_EMPTY_SOURCE\n")
+        add_library(${MODULE} "${EMPTY_C_SRC}") # Fake target to appease those who hand-edit targets outside of fprime
+    endif()
 endfunction(add_module_target)

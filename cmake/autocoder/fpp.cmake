@@ -1,4 +1,4 @@
-include(Utilities)
+include(utilities)
 
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)
 
@@ -10,9 +10,11 @@ function(is_supported AC_INPUT_FILE)
     endif()
 endfunction(is_supported)
 
+#TODO: add a correction function w.r.t. removing items from topologies
+
 function(regenerate_memo OUTPUT MEMO_FILE)
-    on_any_changed("${FPP_LOCS_FILE}" CHANGED)
-    set(${OUTPUT} "${CHANGED}")
+    on_any_changed("${FPP_LOCS_FILE}" CHANGED) #TODO: fix this function
+    set(${OUTPUT} "${CHANGED}" PARENT_SCOPE)
 endfunction(regenerate_memo)
 
 function(get_generated_files AC_INPUT_FILES)

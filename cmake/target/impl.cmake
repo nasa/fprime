@@ -8,6 +8,21 @@
 ####
 
 ####
+# impl `add_global_target`:
+#
+# Does nothing. Prevents default target.
+####
+function(add_global_target TARGET)
+endfunction()
+####
+# impl `add_deployment_target`:
+#
+# Does nothing. Prevents default "roll-up" target.
+####
+function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+endfunction()
+
+####
 # Impl function `add_module_target`:
 #
 # Adds a module-by-module target for producing implementations. Take in the Ai.xml file and produces a set template
@@ -16,8 +31,9 @@
 # - **MODULE:** name of the module
 # - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCE_FILES)
+function(add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
     run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai-impl)
     add_custom_target("${TARGET_MOD_NAME}" DEPENDS ${AC_GENERATED})

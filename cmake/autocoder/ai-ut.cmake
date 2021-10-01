@@ -1,6 +1,6 @@
 
 # Bail if not testing
-if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING" )
+if (NOT BUILD_TESTING)
     return()
 endif()
 set(HANDLES_INDIVIDUAL_SOURCES TRUE)

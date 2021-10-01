@@ -1,42 +1,8 @@
-include(Utilities)
-
-set(AUTOCODER_LIST CACHE INTERNAL "List of module autocoders" FORCE)
-if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
-    set(AUTOCODER_LIST_UT CACHE INTERNAL "List of unittest autocoders" FORCE)
-endif()
-
-function(validate_ac AUTOCODER_CMAKE)
-    include("${AUTOCODER_CMAKE}" RESULT_VARIABLE INCLUDE_RESULT)
-    # Check existence of autocoder file
-    if (INCLUDE_RESULT STREQUAL "NOTFOUND")
-        message(FATAL_ERROR "[Autocode] ${AUTOCODER_CMAKE} does not exist. Make sure to update CMAKE_MODULE_PATH.")
-    endif()
-    # Validation steps for the included autocoder
-    foreach(EXPECTED_COMMAND "is_supported" "get_generated_files" "get_dependencies" "setup_autocode")
-        if (NOT COMMAND "${EXPECTED_COMMAND}")
-            message(FATAL_ERROR "[Autocode] '${AUTOCODER_NAME}' autocoder must define '${EXPECTED_COMMAND}'")
-        endif()
-    endforeach()
-endfunction(validate_ac)
-
-
-#function(register_fprime_autocoder AUTOCODER_CMAKE)
-#    validate_ac("${AUTOCODER_CMAKE}")
-#    list(APPEND AUTOCODER_LIST "${AUTOCODER_CMAKE}")
-#    set(AUTOCODER_LIST "${AUTOCODER_LIST}" CACHE INTERNAL "List of known autocoders")
-#    message(STATUS "[Autocode] Registered '${AUTOCODER_NAME}' autocoder")
-#endfunction(register_fprime_autocoder AUTOCODER_CMAKE)
-
-#function(register_fprime_ut_autocoder AUTOCODER_CMAKE)
-#    validate_ac("${AUTOCODER_CMAKE}")
-#    list(APPEND AUTOCODER_LIST_UT "${AUTOCODER_CMAKE}")
-#    set(AUTOCODER_LIST_UT "${AUTOCODER_LIST_UT}" CACHE INTERNAL "List of known unittest autocoders")
-#    message(STATUS "[Autocode] Registered '${AUTOCODER_NAME}' unittest autocoder")
-#endfunction(register_fprime_ut_autocoder AUTOCODER_CMAKE)
+include(utilities)
 
 function (run_ac_set SOURCES)
     # Get the source list, if passed in
-    set(AC_LIST "${AUTOCODER_LIST}")
+    set(AC_LIST)
     if (ARGN)
         set(AC_LIST "${ARGN}")
     endif()
@@ -86,7 +52,7 @@ function (__memoize SOURCES)
     endif()
     if (CHANGED OR FORCE_REGENERATE OR NOT EXISTS "${MEMO_FILE}")
         if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo '${MEMO_FILE}'")
+            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo '${MEMO_FILE}' because: (changed: ${CHANGED}, forced: ${FORCE_REGENERATE})")
         endif()
         get_generated_files("${SOURCES}")
         get_dependencies("${SOURCES}")
@@ -107,18 +73,21 @@ function (__memoize SOURCES)
 endfunction()
 
 function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
-    validate_ac("${AUTOCODER_CMAKE}")
-    include("${AUTOCODER_CMAKE}")
+    include(autocoder/default) # Default function definitions perform validation
+    include(${AUTOCODER_CMAKE})
     set(AUTOCODER_NAME "${AUTOCODER_CMAKE}")
 
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
     if (NOT AC_INPUT_SOURCES)
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[Autocode/${AUTOCODER_NAME}] No sources detected")
+        endif()
         return()
     endif()
 
     # Start by displaying inputs to autocoders
-    if (CMAKE_DEBUG_OUTPUT)
+    if (CMAKE_DEBUG_OUTPUT AND NOT INFO_ONLY)
         message(STATUS "[Autocode/${AUTOCODER_NAME}] Autocoding Input Sources:")
         foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
             message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${SOURCE}")

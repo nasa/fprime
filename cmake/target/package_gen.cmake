@@ -22,7 +22,7 @@ function(add_global_target TARGET_NAME)
         return()
     endif()
 
-    add_custom_target(${TARGET_NAME} )
+    add_custom_target(${TARGET_NAME})
 endfunction(add_global_target)
 
 ####
@@ -32,13 +32,10 @@ endfunction(add_global_target)
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
-# - **GLOBAL_TARGET_NAME:** name of produced global target
-# - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
-# - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** module dependencies of the target
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES)
+function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     if (NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE")
         return()
     endif()
