@@ -691,7 +691,7 @@ class ModelParser:
                     pass
                 else:
                     if from_proto:
-                        t = "%s&" % t
+                        t = "const %s&" % t
                     typeinfo = "user"
                 c = a.get_comment()
                 args_dict[name].append((n, t, c, typeinfo))
