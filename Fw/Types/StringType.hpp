@@ -37,8 +37,9 @@ namespace Fw {
 
             void format(const CHAR* formatString, ...); //!< write formatted string to buffer
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
-            SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
+            virtual SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialization function
+            virtual SerializeStatus serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLen) const; //!< serialization function
+            virtual SerializeStatus deserialize(SerializeBufferBase& buffer); //!< deserialization function
 
 #ifdef BUILD_UT
             // to support GoogleTest framework in unit tests

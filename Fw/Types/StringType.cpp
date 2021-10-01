@@ -128,6 +128,11 @@ namespace Fw {
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),this->length());
     }
 
+    SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLength) const {
+        NATIVE_INT_TYPE len = FW_MIN(maxLength,this->length());
+        return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
+    }
+
     SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {
         NATIVE_UINT_TYPE maxSize = this->getCapacity() - 1;
         CHAR* raw = const_cast<CHAR*>(this->toChar());

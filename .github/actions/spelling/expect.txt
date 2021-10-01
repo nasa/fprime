@@ -34,7 +34,7 @@ ALLEXTERNALS
 alloc
 Alltypes
 alphanums
-ampc
+ampcs
 amsmath
 aname
 ANamespace

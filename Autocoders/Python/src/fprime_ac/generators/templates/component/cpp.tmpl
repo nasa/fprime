@@ -889,7 +889,7 @@ namespace ${namespace} {
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
     #set $tlm_type = $type
     #if $type == "string":
-      #set $tlm_type = "Fw::TlmString&"
+      #set $tlm_type = "const Fw::TlmString&"
     #else if $typeinfo == "user"
       #set $tlm_type = "const " + $type + "&"
     #else
@@ -920,9 +920,8 @@ namespace ${namespace} {
       }
       Fw::TlmBuffer _tlmBuff;
     #if $type == "string":
-      arg.setMaxSerialize($size);
-    #end if
-    #if $typeinfo == "enum":
+      Fw::SerializeStatus _stat = arg.serialize(_tlmBuff, $size);
+    #else if $typeinfo == "enum":
       Fw::SerializeStatus _stat = _tlmBuff.serialize(static_cast<FwEnumStoreType>(arg));
     #else
       Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
@@ -1258,22 +1257,19 @@ namespace ${namespace} {
       _status = _logBuff.serialize(
           static_cast<FwEnumStoreType>(${arg_name})
       );
+      #else if $typeinfo == "string":
+      _status = ${arg_name}.serialize(_logBuff, ${size});
       #else
-        #if $typeinfo == "string":
-      ${arg_name}.setMaxSerialize(${size});
-        #else
 \#if FW_AMPCS_COMPATIBLE
       // Serialize the argument size
       _status = _logBuff.serialize(
-          static_cast<U8>(sizeof($arg_name))
+          static_cast<U8>(sizeof($size))
       );
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
           static_cast<AssertArg>(_status)
       );
 \#endif
-
-        #end if
       _status = _logBuff.serialize($arg_name);
       #end if
       FW_ASSERT(
