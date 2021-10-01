@@ -28,7 +28,7 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-    #include <string.h>
+    #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <sys/socket.h>
     #include <netdb.h>
@@ -156,13 +156,13 @@ namespace Drv {
         timeout.tv_sec = this->m_timeoutSeconds;
         timeout.tv_usec = this->m_timeoutMicroseconds;
         // set socket write to timeout after 1 sec
-        if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
+        if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
             (void) ::close(socketFd);
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
         // Get possible IP addresses
         struct hostent *host_entry;
-        if ((host_entry = gethostbyname(this->m_hostname)) == NULL || host_entry->h_addr_list[0] == NULL) {
+        if ((host_entry = gethostbyname(this->m_hostname)) == nullptr || host_entry->h_addr_list[0] == nullptr) {
             ::close(socketFd);
             return SOCK_FAILED_TO_GET_HOST_IP;
         }

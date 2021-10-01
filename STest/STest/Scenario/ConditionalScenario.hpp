@@ -60,7 +60,7 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        Rule<State>* rule = NULL;
+        Rule<State>* rule = nullptr;
         if (this->condition_ConditionalScenario(state)) {
           rule = this->scenario.nextRule(state);
         }

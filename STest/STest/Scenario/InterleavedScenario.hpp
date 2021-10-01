@@ -12,8 +12,8 @@
 #ifndef STest_InterleavedScenario_HPP
 #define STest_InterleavedScenario_HPP
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 #include "STest/Scenario/Scenario.hpp"
 #include "STest/Scenario/ScenarioArray.hpp"
@@ -45,7 +45,7 @@ namespace STest {
 
       //! Destroy an InterleavedScenario object
       ~InterleavedScenario() {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         delete this->scenarioArray;
       }
 
@@ -57,7 +57,7 @@ namespace STest {
 
       //! The virtual implementation of reset required by Scenario
       void reset_Scenario() {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         this->scenarioArray->reset();
       }
 
@@ -66,8 +66,8 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        assert(this->scenarioArray != NULL);
-        Rule<State>* rule = NULL;
+        assert(this->scenarioArray != nullptr);
+        Rule<State>* rule = nullptr;
         bool seen[this->scenarioArray->size];
         memset(seen, 0, this->scenarioArray->size * sizeof(bool));
         U32 numSeen = 0;
@@ -83,7 +83,7 @@ namespace STest {
             continue;
           }
           rule = scenarios[i]->nextRule(state);
-          if (rule != NULL) {
+          if (rule != nullptr) {
             break;
           }
           seen[i] = true;
@@ -98,9 +98,9 @@ namespace STest {
         bool result = true;
         Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < scenarioArray->size; ++i) {
-          assert(scenarios[i] != NULL);
+          assert(scenarios[i] != nullptr);
           if (!scenarios[i]->isDone()) {
             result = false;
             break;

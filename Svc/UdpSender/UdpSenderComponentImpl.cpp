@@ -14,9 +14,9 @@
 #include <Svc/UdpSender/UdpSenderComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
 #include <unistd.h>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__)

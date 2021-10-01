@@ -93,7 +93,7 @@ void Tester::test_with_loop(U32 iterations, bool recv_thread) {
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
             this->component.stopSocketTask();
-            this->component.joinSocketTask(NULL);
+            this->component.joinSocketTask(nullptr);
         } else {
             this->component.close();
         }
@@ -137,7 +137,7 @@ void Tester ::test_advanced_reconnect() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, RecvStatus recvStatus) {
+void Tester ::from_recv_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& recvBuffer, const RecvStatus& recvStatus) {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
     EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";

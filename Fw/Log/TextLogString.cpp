@@ -19,11 +19,19 @@ namespace Fw {
     }
 
     TextLogString& TextLogString::operator=(const TextLogString& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     TextLogString& TextLogString::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }

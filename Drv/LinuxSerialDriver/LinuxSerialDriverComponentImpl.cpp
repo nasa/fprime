@@ -326,7 +326,7 @@ namespace Drv {
 
       Fw::Buffer buff;
 
-      while (1) {
+      while (true) {
           // wait for data
           int sizeRead = 0;
 

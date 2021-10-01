@@ -20,13 +20,15 @@ function(add_global_target TARGET_NAME)
                 --overwrite MemoryCheckCommand=${VALGRIND}
                 --overwrite MemoryCheckCommandOptions=${MEM_TEST_CLI_OPTIONS}
                 -T MemCheck)
+    else()
+        add_custom_target(${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'valgrind' not found. Will not check for leaks.")
     endif()
 endfunction(add_global_target)
 
 ####
 # Function `add_deployment_target`:
 #
-# Creates a target for "check-leak" per-deployment, to run all UTs within that deployment.
+# Creates a target for "check_leak" per-deployment, to run all UTs within that deployment.
 #
 # - **MODULE:** name of the module
 # - **TARGET:** name of target to produce
@@ -57,6 +59,8 @@ function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENC
                 add_dependencies("${MODULE}_${TARGET}" ${DEPENDENCY_UTS})
             endif()
         endforeach()
+    else()
+        add_custom_target(${MODULE}_${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'valgrind' not found. WIll not check for leaks.")
     endif()
 endfunction()
 
@@ -74,6 +78,9 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     find_program(VALGRIND valgrind)
     # Protects against multiple calls to fprime_register_ut()
     if (NOT VALGRIND)
+        if (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
+            add_custom_target(${MODULE_NAME}_${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'valgrind' not found. Will not check for leaks.")
+        endif()
         return()
     endif()
     if (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
@@ -86,6 +93,6 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
                 --verbose -T MemCheck
         )
     endif()
-    add_dependencies("${MODULE_NAME}_check-leak" ${UT_EXE_NAME})
-    add_dependencies(check-leak ${UT_EXE_NAME})
+    add_dependencies("${MODULE_NAME}_${TARGET}" ${UT_EXE_NAME})
+    add_dependencies("${TARGET}" ${UT_EXE_NAME})
 endfunction(add_module_target)

@@ -24,8 +24,8 @@ namespace Svc {
                     ); //!< initialization function
         PROTECTED:
         PRIVATE:
-            void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
-            void loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity& severity, Fw::LogBuffer &args);
+            void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
+            void loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args);
 
             void SET_EVENT_FILTER_cmdHandler(
                     FwOpcodeType opCode,

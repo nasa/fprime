@@ -5,6 +5,7 @@
 # rather allows the users to build against fprime, fprime libraries while taking advantage of fprime's autocoding
 # support. This file includes the cmake build system setup for building like fprime.
 ####
+cmake_minimum_required(VERSION 3.16)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 set_property(GLOBAL PROPERTY FPRIME_MODULES)
 # Include the Options, and platform files. These are files that change the build
@@ -71,7 +72,7 @@ else()
     if (FPRIME_ENABLE_UTIL_TARGETS)
         register_fprime_target(target/impl)
         register_fprime_ut_target(target/check)
-        register_fprime_ut_target(target/check-leak)
+        register_fprime_ut_target(target/check_leak)
         register_fprime_ut_target(target/coverage)
         register_fprime_ut_target(target/testimpl)
     endif()

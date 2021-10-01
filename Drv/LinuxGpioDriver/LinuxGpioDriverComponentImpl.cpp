@@ -19,10 +19,10 @@
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define MAX_BUF 64
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -187,7 +187,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        FW_ASSERT(edge != NULL);
+        FW_ASSERT(edge != nullptr);
         // TODO check that edge has correct values of "none", "rising", or "falling"
 
         len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
@@ -325,7 +325,7 @@ namespace Drv {
     intTaskEntry(void * ptr) {
 
     FW_ASSERT(ptr);
-    LinuxGpioDriverComponentImpl* compPtr = (LinuxGpioDriverComponentImpl*) ptr;
+    LinuxGpioDriverComponentImpl* compPtr = static_cast<LinuxGpioDriverComponentImpl*>(ptr);
     FW_ASSERT(compPtr->m_fd != -1);
 
     // start GPIO interrupt
@@ -342,7 +342,7 @@ namespace Drv {
         NATIVE_INT_TYPE nfds = 1;
         NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
 
-        memset((void*)fdset, 0, sizeof(fdset));
+        memset(fdset, 0, sizeof(fdset));
 
         fdset[0].fd = compPtr->m_fd;
         fdset[0].events = POLLPRI;

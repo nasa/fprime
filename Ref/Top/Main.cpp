@@ -1,5 +1,5 @@
 #include <getopt.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <ctype.h>
 
 #include <Ref/Top/RefTopologyAc.hpp>
@@ -9,7 +9,7 @@ void print_usage(const char* app) {
 }
 
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
 
 Ref::TopologyState state;
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     I32 option;
     char *hostname;
     option = 0;
-    hostname = NULL;
+    hostname = nullptr;
     bool dump = false;
 
     while ((option = getopt(argc, argv, "hdp:a:")) != -1){

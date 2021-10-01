@@ -2,10 +2,10 @@ module Svc {
 
   @ Send file status enum
   enum SendFileStatus {
-    OK
-    ERROR
-    INVALID
-    BUSY
+    STATUS_OK
+    STATUS_ERROR
+    STATUS_INVALID
+    STATUS_BUSY
   }
 
   @ Send file response struct

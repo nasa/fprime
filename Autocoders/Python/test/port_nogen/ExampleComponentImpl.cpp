@@ -25,7 +25,7 @@ namespace ExampleComponents {
         ExampleComponentBase::init(queueDepth,instance);
     }
 
-    void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::mytype arg2, U8 arg3, Example3::ExampleSerializable arg4, AnotherExample::SomeEnum arg5) {
+    void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5) {
         Fw::TlmString arg = "A string arg";
         // write some telemetry
         U32 tlmval = 0;
@@ -41,7 +41,7 @@ namespace ExampleComponents {
     void ExampleComponentImpl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, ExampleComponentBase::CmdEnum arg2, const Fw::CmdStringArg& arg3) {
         // issue the test event with the opcode
         Fw::LogStringArg str = "TEST_CMD_1";
-        this->log_FATAL_SomeEvent(opCode,(F32)arg1, 0, str,ExampleComponentBase::EVENT_MEMB2);
+        this->log_FATAL_SomeEvent(opCode, static_cast<F32>(arg1), 0, str,ExampleComponentBase::EVENT_MEMB2);
         // write a value to a telemetry channel
         U32 chan = 12;
         this->tlmWrite_somechan(chan);

@@ -1,5 +1,17 @@
 ## TODO: header comment
 
+####
+# `add_global_target`:
+#
+# Implementation defines the target using `add_custom_target` and nothing more.
+####
+function(add_global_target TARGET)
+    if (FPRIME_ENABLE_UTIL_TARGETS)
+        add_custom_target(${TARGET})
+    endif()
+endfunction(add_global_target)
+
+
 # Function `add_deployment_target`:
 #
 # Creates a target for UTs per-deployment.
@@ -11,6 +23,9 @@
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+    if (NOT FPRIME_ENABLE_UTIL_TARGETS)
+        return()
+    endif()
     add_custom_target("${MODULE}_${TARGET}")
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
@@ -44,13 +59,14 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     target_include_directories("${UT_EXE_NAME}" PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
 
-    if (NOT TARGET "${MODULE_NAME}_${TARGET_NAME}")
+    if (NOT TARGET "${MODULE_NAME}_${TARGET_NAME}" AND FPRIME_ENABLE_UTIL_TARGETS)
         add_custom_target("${MODULE_NAME}_${TARGET_NAME}")
     endif()
-    add_dependencies("${MODULE_NAME}_${TARGET_NAME}" "${UT_EXE_NAME}")
-    add_dependencies("${TARGET_NAME}" "${UT_EXE_NAME}")
-    set_property(TARGET "${MODULE_NAME}" APPEND PROPERTY FPRIME_UTS "${UT_EXE_NAME}")
-
+    if (FPRIME_ENABLE_UTIL_TARGETS)
+        add_dependencies("${MODULE_NAME}_${TARGET_NAME}" "${UT_EXE_NAME}")
+        add_dependencies("${TARGET_NAME}" "${UT_EXE_NAME}")
+        set_property(TARGET "${MODULE_NAME}" APPEND PROPERTY FPRIME_UTS "${UT_EXE_NAME}")
+    endif()
     # Link library list output on per-module basis
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${UT_EXE_NAME}")

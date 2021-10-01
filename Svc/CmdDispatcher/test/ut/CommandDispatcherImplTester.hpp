@@ -43,7 +43,7 @@ namespace Svc {
             U32 m_cmdSendCmdSeq;
             Fw::CmdArgBuffer m_cmdSendArgs;
 
-            void from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CmdResponse response);
+            void from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response);
 
             bool m_seqStatusRcvd;
             FwOpcodeType m_seqStatusOpCode;

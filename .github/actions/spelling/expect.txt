@@ -34,7 +34,7 @@ ALLEXTERNALS
 alloc
 Alltypes
 alphanums
-ampc
+ampcs
 amsmath
 aname
 ANamespace
@@ -140,6 +140,7 @@ BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
 buffsize
 BUGLIST
+bugprone
 builddir
 buildroot
 builtins
@@ -276,6 +277,7 @@ css
 cstat
 cstdarg
 cstddef
+cstdint
 cstdio
 cstdlib
 CSTOPB
@@ -323,6 +325,7 @@ delitem
 deployables
 DEPRECATEDLIST
 deps
+deque
 deregistration
 deser
 Deserial
@@ -336,6 +339,7 @@ dfdc
 DFL
 DFPRIME
 DGRAM
+dhesikan
 DHTML
 diafile
 dictgen
@@ -524,6 +528,7 @@ findall
 fio
 Firefox
 Fixme
+Fixme
 FIXME
 flist
 FNDELAY
@@ -542,7 +547,6 @@ formatline
 foundin
 fpconfighpp
 FPGA
-FPL
 fpl
 FPL
 fpp
@@ -1010,8 +1014,8 @@ ncsl
 NDELAY
 ndiffs
 netdb
-Netscape's
 Netscape
+Netscape's
 newloc
 newroot
 newself
@@ -1069,8 +1073,8 @@ odo
 oflag
 okidocki
 oldeol
-OMG's
 OMG
+OMG's
 onchange
 onlinepubs
 OParg
@@ -1330,8 +1334,8 @@ saveop
 saxutils
 sbb
 SBF
-sbt
 sbin
+sbt
 sched
 schem
 schematron
@@ -1650,8 +1654,8 @@ tt
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
@@ -1730,6 +1734,7 @@ virtualbox
 virtualenv
 virtualization
 virtualized
+vla
 vlist
 vm
 VMIN
@@ -1799,3 +1804,4 @@ yacgen
 yml
 yyyymmdd
 zsh
+zu

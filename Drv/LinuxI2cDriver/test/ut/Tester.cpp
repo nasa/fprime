@@ -49,7 +49,7 @@ namespace Drv {
     sendData(U32 addr, U8* data, NATIVE_INT_TYPE size)
   {
       Fw::Buffer dataBuff;
-      dataBuff.setdata((U64)data);
+      dataBuff.setdata(static_cast<POINTER_CAST>(data));
       dataBuff.setsize(size);
       this->invoke_to_write(0,addr,dataBuff);
   }

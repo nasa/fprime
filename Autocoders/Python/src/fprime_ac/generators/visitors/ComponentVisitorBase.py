@@ -313,7 +313,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.param_log_severity = ("severity", "const Fw::LogSeverity", "The severity")
         c.param_text_log_severity = (
             "severity",
-            "const Fw::TextLogSeverity",
+            "const Fw::TextLogSeverity&",
             "The severity",
         )
         c.param_args = ("args", "Fw::LogBuffer&", "The serialized arguments")

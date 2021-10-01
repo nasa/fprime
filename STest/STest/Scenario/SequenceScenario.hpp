@@ -12,7 +12,7 @@
 #ifndef STest_SequenceScenario_HPP
 #define STest_SequenceScenario_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Scenario/IteratedScenario.hpp"
 #include "STest/Scenario/ScenarioArray.hpp"
@@ -67,12 +67,12 @@ namespace STest {
       Scenario<State>* nextScenario_IteratedScenario(
           State& state //!< The system state
       ) {
-        Scenario<State> *scenario = NULL;
+        Scenario<State> *scenario = nullptr;
         if (!this->done) {
-          assert(this->scenarioArray != NULL);
+          assert(this->scenarioArray != nullptr);
           scenario = this->scenarioArray->nextScenario();
         }
-        if (!this->done and scenario == NULL) {
+        if (!this->done and scenario == nullptr) {
           this->done = true;
         }
         return scenario;

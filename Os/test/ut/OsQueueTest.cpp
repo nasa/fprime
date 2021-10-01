@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #if defined TGT_OS_TYPE_LINUX
-#include <time.h>
+#include <ctime>
 #endif
 #if defined TGT_OS_TYPE_DARWIN
 #include <sys/time.h>
@@ -34,7 +34,7 @@ class MyTestSerializedBuffer : public Fw::SerializeBufferBase {
         U8 m_someBuffer[SER_BUFFER_SIZE];
 };
 
-Os::Queue* createTestQueue(char *name, U32 size, I32 depth) {
+Os::Queue* createTestQueue(const char *name, U32 size, I32 depth) {
     Os::Queue* testQueue = new Os::Queue();
     Os::Queue::QueueStatus stat = testQueue->create(Os::QueueString(name), depth, size);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
@@ -48,7 +48,7 @@ Os::Queue* createTestQueue(char *name, U32 size, I32 depth) {
     num = testQueue->getQueueSize(); //!< get the queue depth (maximum number of messages queue can hold)
     EXPECT_EQ(num, depth);
     num = testQueue->getMsgSize(); //!< get the message size (maximum message size queue can hold)
-    EXPECT_EQ(num, (I32) size);
+    EXPECT_EQ(num, static_cast<I32>(size));
 
     return testQueue;
 }
@@ -61,7 +61,7 @@ MyTestSerializedBuffer getSendBuffer(I32 startByte) {
     // Fill serialized buffer with data:
     U8 sendDataBuff[SER_BUFFER_SIZE];
     I32 count = startByte;
-    for (I32 byte = 0; byte < (I32)size; byte++) {
+    for (U32 byte = 0; byte < size; byte++) {
         sendDataBuff[byte] = count;
         count++;
     }
@@ -80,9 +80,9 @@ void compareBuffers(MyTestSerializedBuffer& a, MyTestSerializedBuffer& b) {
     serStat = b.deserialize(bBuff, size);
     EXPECT_EQ(serStat,Fw::FW_SERIALIZE_OK);
 
-    for (I32 ii = 0; ii < (I32)size; ii++) {
+    for (U32 ii = 0; ii < size; ii++) {
         if (aBuff[ii] != bBuff[ii]) {
-            printf("Byte %d mismatch. A: %d B: %d\n", ii, aBuff[ii], bBuff[ii]);
+            printf("Byte %u mismatch. A: %d B: %d\n", ii, aBuff[ii], bBuff[ii]);
             EXPECT_TRUE(0);
         }
     }
@@ -127,7 +127,7 @@ extern "C" {
 }
 
 // Alarm signal handler for waking up a blocked queue:
-Os::Queue* globalQueue = NULL;
+Os::Queue* globalQueue = nullptr;
 void alarm_send_block(int sig)
 {
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
@@ -175,7 +175,7 @@ void qtest_nonblock_send() {
     printf("-----------------------------\n");
     printf("-- nonblocking send test ----\n");
     printf("-----------------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
+    Os::Queue* testQueue = createTestQueue("TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
 
@@ -192,7 +192,7 @@ void qtest_nonblock_send() {
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
-    globalQueue = NULL;
+    globalQueue = nullptr;
     printf("Passed.\n");
 
     delete testQueue;
@@ -205,7 +205,7 @@ void qtest_block_send() {
     printf("-----------------------------\n");
     printf("---- blocking send test -----\n");
     printf("-----------------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
+    Os::Queue* testQueue = createTestQueue("TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
 
@@ -222,7 +222,7 @@ void qtest_block_send() {
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
-    globalQueue = NULL;
+    globalQueue = nullptr;
     printf("Passed.\n");
 
     // TEST 2
@@ -238,7 +238,7 @@ void qtest_block_send() {
     // Reset the alarm:
     alarm(0);
     drainQueue(testQueue);
-    globalQueue = NULL;
+    globalQueue = nullptr;
     printf("Passed.\n");
 
     delete testQueue;
@@ -253,7 +253,7 @@ void qtest_block_receive() {
     printf("-----------------------------\n");
     printf("-- blocking receive test ----\n");
     printf("-----------------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
+    Os::Queue* testQueue = createTestQueue("TestQ",SER_BUFFER_SIZE,QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
@@ -276,7 +276,7 @@ void qtest_block_receive() {
     alarm(2);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
-    globalQueue = NULL;
+    globalQueue = nullptr;
     printf("Passed.\n");
 
     // TEST 3
@@ -287,7 +287,7 @@ void qtest_block_receive() {
     alarm(2);
     stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_BLOCKING);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
-    globalQueue = NULL;
+    globalQueue = nullptr;
     printf("Passed.\n");
 
     // TEST 5
@@ -333,7 +333,7 @@ void qtest_nonblock_receive() {
     printf("-----------------------------\n");
     printf("- nonblocking receive test --\n");
     printf("-----------------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, QUEUE_SIZE);
+    Os::Queue* testQueue = createTestQueue("TestQ", SER_BUFFER_SIZE, QUEUE_SIZE);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
@@ -396,7 +396,7 @@ void qtest_performance() {
     printf("-----------------------------\n");
     printf("---- performance test -------\n");
     printf("-----------------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, 10);
+    Os::Queue* testQueue = createTestQueue("TestQ", SER_BUFFER_SIZE, 10);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
@@ -419,7 +419,7 @@ void qtest_performance() {
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&stime,0);
+    (void)gettimeofday(&stime,nullptr);
 #endif
     numIterations = 1000000;
     for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
@@ -438,20 +438,20 @@ void qtest_performance() {
     }
 #if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_nsec - stime.tv_nsec)/1000000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&etime,0);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    (void)gettimeofday(&etime,nullptr);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_usec - stime.tv_usec)/1000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
 
     // TEST 2
     printf("Testing deep queue...\n");
     // Fill the queue up first:
     U32 count = 0;
-    while(1) {
+    while(true) {
       stat = testQueue->send(sendBuff, count%4, Os::Queue::QUEUE_NONBLOCKING);
       count++;
       if(stat == Os::Queue::QUEUE_FULL)
@@ -461,7 +461,7 @@ void qtest_performance() {
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&stime,0);
+    (void)gettimeofday(&stime,nullptr);
 #endif
     numIterations = 1000000;
     for( NATIVE_INT_TYPE ii = 0; ii < numIterations; ii++ ) {
@@ -480,15 +480,15 @@ void qtest_performance() {
     }
 #if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_nsec - stime.tv_nsec)/1000000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&etime,0);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    (void)gettimeofday(&etime,nullptr);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_usec - stime.tv_usec)/1000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
-    while(1) {
+    while(true) {
       stat = testQueue->receive(recvBuff, prio, Os::Queue::QUEUE_NONBLOCKING);
       if(stat == Os::Queue::QUEUE_NO_MORE_MSGS)
         break;
@@ -504,7 +504,7 @@ void qtest_performance() {
 I32 numIterations = 50000;
 void *run_task(void *ptr)
 {
-  Os::Queue* testQueue = (Os::Queue*) ptr;
+  Os::Queue* testQueue = static_cast<Os::Queue*>(ptr);
   Os::Queue::QueueStatus stat;
   I32 prio; // not used
   MyTestSerializedBuffer recvBuff;
@@ -523,7 +523,7 @@ void *run_task(void *ptr)
     stat = testQueue->send(sendBuff, ii%4, Os::Queue::QUEUE_NONBLOCKING);
     EXPECT_EQ(stat,Os::Queue::QUEUE_OK);
   }
-  return NULL;
+  return nullptr;
 }
 
 // This test shows the concurrent performance of the queue:
@@ -532,7 +532,7 @@ void qtest_concurrent() {
     printf("---------------------\n");
     printf("-- concurrent test --\n");
     printf("---------------------\n");
-    Os::Queue* testQueue = createTestQueue((char*)"TestQ", SER_BUFFER_SIZE, 10);
+    Os::Queue* testQueue = createTestQueue("TestQ", SER_BUFFER_SIZE, 10);
     Os::Queue::QueueStatus stat;
     MyTestSerializedBuffer recvBuff;
     MyTestSerializedBuffer sendBuff = getSendBuffer(0);
@@ -550,7 +550,7 @@ void qtest_concurrent() {
     printf("Testing deep queue...\n");
     // Fill the queue up first:
     U32 count = 0;
-    while(1) {
+    while(true) {
       stat = testQueue->send(sendBuff,count%4, Os::Queue::QUEUE_NONBLOCKING);
       count++;
       if(stat == Os::Queue::QUEUE_FULL)
@@ -560,20 +560,20 @@ void qtest_concurrent() {
     (void)clock_gettime(CLOCK_REALTIME,&stime);
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&stime,0);
+    (void)gettimeofday(&stime,nullptr);
 #endif
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     pthread_t thread[NUM_THREADS];
 
     for(U32 ii = 0; ii < NUM_THREADS; ++ii) {
-      if(pthread_create(&thread[ii], NULL, run_task, testQueue)) {
+      if(pthread_create(&thread[ii], nullptr, run_task, testQueue)) {
         EXPECT_TRUE(0);
       }
     }
 
     for(U32 ii = 0; ii < NUM_THREADS; ++ii) {
-      if(pthread_join(thread[ii], NULL)) {
+      if(pthread_join(thread[ii], nullptr)) {
         EXPECT_TRUE(0);
       }
     }
@@ -581,13 +581,13 @@ void qtest_concurrent() {
 
 #if defined TGT_OS_TYPE_LINUX
     (void)clock_gettime(CLOCK_REALTIME,&etime);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_nsec - stime.tv_nsec))/1000000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_nsec - stime.tv_nsec)/1000000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
 #if defined TGT_OS_TYPE_DARWIN
-    (void)gettimeofday(&etime,0);
-    elapsedTime = ((F64)(etime.tv_sec - stime.tv_sec)) + ((F64)(etime.tv_usec - stime.tv_usec))/1000000;
-    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/(F64) numIterations);
+    (void)gettimeofday(&etime,nullptr);
+    elapsedTime = static_cast<F64>(etime.tv_sec - stime.tv_sec) + static_cast<F64>(etime.tv_usec - stime.tv_usec)/1000000;
+    printf("Time: %0.3fs (%0.3fus per)\n", elapsedTime, 1000000*elapsedTime/static_cast<F64>(numIterations));
 #endif
 
     delete testQueue;

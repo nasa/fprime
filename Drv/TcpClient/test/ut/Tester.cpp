@@ -88,7 +88,7 @@ void Tester ::test_with_loop(U32 iterations, bool recv_thread) {
         // Properly stop the client on the last iteration
         if ((1 + i) == iterations && recv_thread) {
             this->component.stopSocketTask();
-            this->component.joinSocketTask(NULL);
+            this->component.joinSocketTask(nullptr);
         } else {
             this->component.close();
         }
@@ -138,7 +138,7 @@ void Tester ::test_advanced_reconnect() {
     from_recv_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &recvBuffer,
-        RecvStatus recvStatus
+        const RecvStatus &recvStatus
     )
   {
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);

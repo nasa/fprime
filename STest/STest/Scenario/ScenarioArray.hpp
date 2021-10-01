@@ -12,7 +12,7 @@
 #ifndef STest_ScenarioArray_HPP
 #define STest_ScenarioArray_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Random/Random.hpp"
 
@@ -63,12 +63,12 @@ namespace STest {
 
       //! Return the next scenario in the sequence
       Scenario<State>* nextScenario() {
-        Scenario<State>* scenario = NULL;
+        Scenario<State>* scenario = nullptr;
         if (this->sequenceIndex < this->size) {
           scenario = this->scenarios[this->sequenceIndex];
           ++this->sequenceIndex;
         }
-        if (scenario != NULL) {
+        if (scenario != nullptr) {
           scenario->reset();
         }
         return scenario;
@@ -76,7 +76,7 @@ namespace STest {
 
       //! Get the scenarios
       Scenario<State>** getScenarios() const {
-        assert(this->scenarios != NULL);
+        assert(this->scenarios != nullptr);
         return this->scenarios;
       }
 

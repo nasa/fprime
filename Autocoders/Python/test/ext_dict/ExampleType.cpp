@@ -42,7 +42,7 @@ Fw::SerializeStatus mytype::serialize(Fw::SerializeBufferBase& buffer) const {
     if (Fw::FW_SERIALIZE_OK != stat) {
         return stat;
     }
-    return buffer.serialize((NATIVE_INT_TYPE)mytype::TYPE_ID);
+    return buffer.serialize(static_cast<NATIVE_INT_TYPE>(mytype::TYPE_ID));
 }
 
 Fw::SerializeStatus mytype::deserialize(Fw::SerializeBufferBase& buffer) {
@@ -53,7 +53,7 @@ Fw::SerializeStatus mytype::deserialize(Fw::SerializeBufferBase& buffer) {
         return stat;
     }
 
-    if (id != (NATIVE_INT_TYPE)mytype::TYPE_ID) {
+    if (id != static_cast<NATIVE_INT_TYPE>(mytype::TYPE_ID)) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 

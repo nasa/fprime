@@ -47,7 +47,7 @@ namespace Fw {
     bool StringBase::operator==(const CHAR* other) const {
 
         const CHAR *const us = this->toChar();
-        if ((us == NULL) or (other == NULL)) {
+        if ((us == nullptr) or (other == nullptr)) {
             return false;
         }
 
@@ -92,6 +92,10 @@ namespace Fw {
 #endif
 
     StringBase& StringBase::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(const_cast<char *>(this->toChar()), other.toChar(), this->getCapacity());
         return *this;
     }
@@ -122,6 +126,11 @@ namespace Fw {
 
     SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {
         return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),this->length());
+    }
+
+    SerializeStatus StringBase::serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLength) const {
+        NATIVE_INT_TYPE len = FW_MIN(maxLength,this->length());
+        return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()), len);
     }
 
     SerializeStatus StringBase::deserialize(SerializeBufferBase& buffer) {

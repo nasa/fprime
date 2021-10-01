@@ -306,7 +306,7 @@ namespace ${namespace} {
        #end for
           default:
              // Silence compiler warning
-             _id = (FwPrmIdType) 0;
+             _id = static_cast<FwPrmIdType>(0);
              FW_ASSERT(0,this->getInstance());
              break;
        }
@@ -577,9 +577,7 @@ namespace ${namespace} {
   NATIVE_INT_TYPE ${class_name} ::
     getNum_${instance}_${direction}Ports()
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(
-        this->m_${instance}_${direction}Port
-    );
+    return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_${instance}_${direction}Port));
   }
     #if $role == "LogTextEvent":
 \#endif
@@ -628,8 +626,7 @@ namespace ${namespace} {
 
     // Select base class function based on opcode
     FW_ASSERT(callComp);
-    ${class_name}* compPtr =
-      (${class_name}*) callComp;
+    ${class_name}* compPtr = static_cast<${class_name}*>(callComp);
 
     const U32 idBase = callComp->getIdBase();
     FW_ASSERT(opCode >= idBase, opCode, idBase);
@@ -743,7 +740,7 @@ namespace ${namespace} {
           #if $is_enum == "enum":
     FwEnumStoreType ${arg_name}Int = 0;
     _status = args.deserialize(${arg_name}Int);
-    $arg_name = (${arg_type})${arg_name}Int;
+    $arg_name = static_cast<${arg_type}>(${arg_name}Int);
           #else
     _status = args.deserialize($arg_name);
           #end if
@@ -800,19 +797,19 @@ namespace ${namespace} {
 
     // Serialize for IPC
     #if len($opcodes) == 1
-    _status = msg.serialize((NATIVE_INT_TYPE)CMD_${mnemonic.upper()});
+    _status = msg.serialize(static_cast<NATIVE_INT_TYPE>(CMD_${mnemonic.upper()}));
     #else
     switch (this->getInstance()) {
        #set $inst = 0
        #for $opcode in $opcodes
         case $inst:
-            _status = msg.serialize((NATIVE_INT_TYPE)CMD_${mnemonic.upper()}_${inst});
+            _status = msg.serialize(static_cast<NATIVE_INT_TYPE>(CMD_${mnemonic.upper()}_${inst}));
             break;
          #set $inst = $inst + 1
        #end for
         default:
            // Silence compiler warning
-           _status = (Fw::SerializeStatus) 0;
+           _status = static_cast<Fw::SerializeStatus>(0);
            FW_ASSERT(0,this->getInstance());
            break;
     };
@@ -892,7 +889,7 @@ namespace ${namespace} {
   #for $ids, $tlmname, $type, $size, $update, $comment, $typeinfo in $channels:
     #set $tlm_type = $type
     #if $type == "string":
-      #set $tlm_type = "Fw::TlmString&"
+      #set $tlm_type = "const Fw::TlmString&"
     #else if $typeinfo == "user"
       #set $tlm_type = "const " + $type + "&"
     #else
@@ -923,10 +920,9 @@ namespace ${namespace} {
       }
       Fw::TlmBuffer _tlmBuff;
     #if $type == "string":
-      arg.setMaxSerialize($size);
-    #end if
-    #if $typeinfo == "enum":
-      Fw::SerializeStatus _stat = _tlmBuff.serialize((FwEnumStoreType)arg);
+      Fw::SerializeStatus _stat = arg.serialize(_tlmBuff, $size);
+    #else if $typeinfo == "enum":
+      Fw::SerializeStatus _stat = _tlmBuff.serialize(static_cast<FwEnumStoreType>(arg));
     #else
       Fw::SerializeStatus _stat = _tlmBuff.serialize(arg);
     #end if
@@ -950,7 +946,7 @@ namespace ${namespace} {
       #end for
           default:
             // Silence compiler warning
-            _id = (FwChanIdType) 0;
+            _id = static_cast<FwChanIdType>(0);
             FW_ASSERT(0,this->getInstance());
             break;
       }
@@ -1261,22 +1257,19 @@ namespace ${namespace} {
       _status = _logBuff.serialize(
           static_cast<FwEnumStoreType>(${arg_name})
       );
+      #else if $typeinfo == "string":
+      _status = ${arg_name}.serialize(_logBuff, ${size});
       #else
-        #if $typeinfo == "string":
-      ${arg_name}.setMaxSerialize(${size});
-        #else
 \#if FW_AMPCS_COMPATIBLE
       // Serialize the argument size
       _status = _logBuff.serialize(
-          static_cast<U8>(sizeof($arg_name))
+          static_cast<U8>(sizeof($size))
       );
       FW_ASSERT(
           _status == Fw::FW_SERIALIZE_OK,
           static_cast<AssertArg>(_status)
       );
 \#endif
-
-        #end if
       _status = _logBuff.serialize($arg_name);
       #end if
       FW_ASSERT(
@@ -1456,7 +1449,7 @@ namespace ${namespace} {
         Fw::SerializeBufferBase& buffer) {
 
     FW_ASSERT(callComp);
-    ${class_name}* compPtr = (${class_name}*) callComp;
+    ${class_name}* compPtr = static_cast<${class_name}*>(callComp);
     compPtr->${instance}_handlerBase(portNum,buffer);
   }
     #end if
@@ -1558,8 +1551,7 @@ namespace ${namespace} {
     )
   {
     FW_ASSERT(callComp);
-    ${class_name}* compPtr =
-      (${class_name}*) callComp;
+    ${class_name}* compPtr = static_cast<${class_name}*>(callComp);
     #if $void_params and $void_return_type:
     compPtr->${instance}_handlerBase(portNum);
     #else if $void_params
@@ -1628,7 +1620,7 @@ namespace ${namespace} {
     );
 
       #set $args = $port_args[$instance]
-      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum in $args:
+      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum, $non_const_arg_type in $args:
     // Serialize argument $arg_name
         #if $arg_modifier == '*':
     _status = msg.serialize(static_cast<void *>($arg_name));
@@ -1788,20 +1780,20 @@ namespace ${namespace} {
       case ${instance.upper()}_${type.upper()}: {
 
       #set $args = $port_args[$instance]
-      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum in $args
+      #for $arg_name, $arg_type, $arg_comment, $arg_modifier, $arg_enum, $non_const_arg_type in $args
         // Deserialize argument $arg_name
         #if $arg_modifier == '*':
-        $arg_type *$arg_name;
+        $non_const_arg_type *$arg_name;
         void* ${arg_name}PtrTemp;
         deserStatus = msg.deserialize(${arg_name}PtrTemp);
         $arg_name = static_cast<$arg_type*>(${arg_name}PtrTemp);
         #else if $arg_enum == "ENUM"
-        $arg_type $arg_name;
+        $non_const_arg_type $arg_name;
         FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = msg.deserialize(${arg_name}Int);
-        $arg_name = ($arg_type) ${arg_name}Int;
+        $arg_name = static_cast<$arg_type>(${arg_name}Int);
         #else
-        $arg_type $arg_name;
+        $non_const_arg_type $arg_name;
         deserStatus = msg.deserialize($arg_name);
         #end if
         FW_ASSERT(
@@ -1886,7 +1878,7 @@ namespace ${namespace} {
         #if $arg_enum == "enum"
         FwEnumStoreType ${arg_name}Int = 0;
         deserStatus = args.deserialize(${arg_name}Int);
-        $arg_name = (${arg_type})${arg_name}Int;
+        $arg_name = static_cast<${arg_type}>(${arg_name}Int);
         #else
         deserStatus = args.deserialize($arg_name);
         #end if

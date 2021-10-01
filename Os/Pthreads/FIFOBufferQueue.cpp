@@ -14,7 +14,7 @@
 #include "Os/Pthreads/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
 
-#include <string.h>
+#include <cstring>
 #include <new>
 
 // This is a simple FIFO queue implementation which ignores priority
@@ -36,11 +36,11 @@ namespace Os {
 
   bool BufferQueue::initialize(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
     U8* data = new(std::nothrow) U8[depth*(sizeof(msgSize) + msgSize)];
-    if (NULL == data) {
+    if (nullptr == data) {
       return false;
     }
     FIFOQueue* fifoQueue = new(std::nothrow) FIFOQueue;
-    if (NULL == fifoQueue) {
+    if (nullptr == fifoQueue) {
       return false;
     }
     fifoQueue->data = data;
@@ -52,15 +52,15 @@ namespace Os {
 
   void BufferQueue::finalize() {
     FIFOQueue* fQueue = static_cast<FIFOQueue*>(this->queue);
-    if (NULL != fQueue)
+    if (nullptr != fQueue)
     {
       U8* data = fQueue->data;
-      if (NULL != data) {
+      if (nullptr != data) {
         delete [] data;
       }
       delete fQueue;
     }
-    this->queue = NULL;
+    this->queue = nullptr;
   }
 
   bool BufferQueue::enqueue(const U8* buffer, NATIVE_UINT_TYPE size, NATIVE_INT_TYPE priority) {

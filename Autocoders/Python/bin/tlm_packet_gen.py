@@ -79,10 +79,10 @@ namespace ${packet_list_namespace} {
   #for $channel_id,$channel_size,$channel_name in $channel_list:
       {$channel_id, $channel_size}, // $channel_name
   #end for
-  };    
+  };
 
   static const Svc::TlmPacketizerPacket ${packet} = { ${packet}List, $id, $level, FW_NUM_ARRAY_ELEMENTS(${packet}List) };
-  
+
 #end for
 
 
@@ -95,13 +95,13 @@ namespace ${packet_list_namespace} {
       $len($packet_list)
   };
 
-  
+
   static const Svc::TlmPacketizerChannelEntry ignoreList[] = {
 #for $channel_id,$channel_name in $ignore_list:
       {$channel_id, 0}, // $channel_name
 #end for
-  };    
-  
+  };
+
   const Svc::TlmPacketizerPacket ${packet_list_name}Ignore = { ignoreList, 0, 0, FW_NUM_ARRAY_ELEMENTS(ignoreList) };
 
 } // end namespace ${packet_list_namespace}

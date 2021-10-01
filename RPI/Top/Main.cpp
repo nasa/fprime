@@ -1,11 +1,11 @@
 #include <getopt.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <ctype.h>
 
 #include <RPI/Top/Components.hpp>
 
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
 
 void print_usage() {
     (void) printf("Usage: ./RPI [options]\n-p\tport_number\n-a\thostname/IP address\n");
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     char *hostname;
     port_number = 0;
     option = 0;
-    hostname = NULL;
+    hostname = nullptr;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {

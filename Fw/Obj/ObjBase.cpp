@@ -6,12 +6,12 @@
 namespace Fw {
 
 #if FW_OBJECT_REGISTRATION == 1
-    ObjRegistry* ObjBase::s_objRegistry = 0;
+    ObjRegistry* ObjBase::s_objRegistry = nullptr;
 #endif
 
 #if FW_OBJECT_NAMES == 1
     ObjBase::ObjBase(const char* objName) {
-        if (0 == objName) {
+        if (nullptr == objName) {
             this->setObjName("NoName");
         } else {
             this->setObjName(objName);

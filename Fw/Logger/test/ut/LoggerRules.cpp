@@ -33,8 +33,8 @@ namespace LoggerRules {
             truth.s_current = &truth;
         }
         else {
-            Fw::Logger::registerLogger(NULL);
-            truth.s_current = NULL;
+            Fw::Logger::registerLogger(nullptr);
+            truth.s_current = nullptr;
         }
         ASSERT_EQ(truth.s_current, Fw::Logger::s_current_logger);
     }
@@ -44,7 +44,7 @@ namespace LoggerRules {
 
     // Check for logging, only when not NULL
     bool LogGood::precondition(const MockLogging::FakeLogger& truth) {
-        return truth.s_current != NULL;
+        return truth.s_current != nullptr;
     }
 
     // Log valid messages
@@ -117,7 +117,7 @@ namespace LoggerRules {
 
     // Check for logging, only when not NULL
     bool LogBad::precondition(const MockLogging::FakeLogger& truth) {
-        return truth.s_current == NULL;
+        return truth.s_current == nullptr;
     }
 
     // Log valid messages
@@ -137,47 +137,47 @@ namespace LoggerRules {
         switch (random) {
             case 0:
                 Fw::Logger::logMsg("No args");
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 1:
                 Fw::Logger::logMsg("One arg: %lu", ra1);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 2:
                 Fw::Logger::logMsg("Two arg: %lu", ra1, ra2);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 3:
                 Fw::Logger::logMsg("Three arg: %lu", ra1, ra2, ra3);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 4:
                 Fw::Logger::logMsg("Four arg: %lu", ra1, ra2, ra3, ra4);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 5:
                 Fw::Logger::logMsg("Five arg: %lu", ra1, ra2, ra3, ra4, ra5);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 6:
                 Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 7:
                 Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 8:
                 Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 9:
                 Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             case 10:
                 Fw::Logger::logMsg("Six arg: %lu", ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9, ra10);
-                truth.check(NULL);
+                truth.check(nullptr);
                 break;
             default:
                 ASSERT_EQ(0, 1);

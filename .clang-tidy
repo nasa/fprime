@@ -1,2 +1,8 @@
-Checks: "modernize-redundant-void-arg,modernize-deprecated-headers,-clang-analyzer-security.insecureAPI.rand"
+Checks: >
+    bugprone-unhandled-self-assignment,
+    modernize-deprecated-headers,
+    modernize-redundant-void-arg,
+    modernize-use-bool-literals,
+    modernize-use-nullptr,
+    -clang-analyzer-security.insecureAPI.rand
 WarningsAsErrors: '*'

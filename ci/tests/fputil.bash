@@ -64,15 +64,20 @@ function integration_test {
         fprime-gds -n -r "${ROOTDIR}" -g none -l "${LOG_DIR}/gds-logs" 1>${LOG_DIR}/gds-logs/fprime-gds.stdout.log 2>${LOG_DIR}/gds-logs/fprime-gds.stderr.log &
         GDS_PID=$!
         # run the app with valgrind in the background
-        valgrind  \
-            --tool=memcheck \
-            --error-exitcode=1 \
-            --verbose \
-            --leak-check=full \
-            --show-leak-kinds=all \
-            --track-origins=yes \
-            --log-file=${LOG_DIR}/gds-logs/valgrind.log \
+        if command -v valgrind &> /dev/null
+        then
+            valgrind  \
+                --tool=memcheck \
+                --error-exitcode=1 \
+                --verbose \
+                --leak-check=full \
+                --show-leak-kinds=all \
+                --track-origins=yes \
+                --log-file=${LOG_DIR}/gds-logs/valgrind.log \
             ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
+        else
+            ${ROOTDIR}/*/bin/Ref -a 127.0.0.1 -p 50000 1>${LOG_DIR}/gds-logs/Ref.stdout.log 2>${LOG_DIR}/gds-logs/Ref.stderr.log &
+        fi
         VALGRIND_PID=$!
 
         echo "[INFO] Allowing GDS ${SLEEP_TIME} seconds to start"
@@ -84,7 +89,12 @@ function integration_test {
         (
             cd "${WORKDIR}/test"
             echo "[INFO] Running ${WORKDIR}/test's pytest integration tests"
-            timeout --kill-after=10s 180s pytest
+            TIMEOUT="timeout"
+            if ! command -v ${TIMEOUT} &> /dev/null
+            then
+                TIMEOUT="gtimeout" # macOS homebrew "coreutils"
+            fi
+            ${TIMEOUT} --kill-after=10s 180s pytest
         )
         RET_PYTEST=$?
         pkill -P $GDS_PID

@@ -140,7 +140,6 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
 ####
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
-
 ####
 # `FPRIME_FPP_LOCS_BUILD`:
 #

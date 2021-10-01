@@ -30,6 +30,7 @@ from fprime_ac.generators.visitors import AbstractVisitor
 # from Cheetah import Template
 # from fprime_ac.utils import version
 from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import TypesList
 
 #
 # Import precompiled templates here
@@ -89,11 +90,13 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = ""
         for arg in args:
             t = arg.get_type()
+            isEnum = False
             #
             # Grab enum type here...
             if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     t = t[0][1]
+                    isEnum = True
                 else:
                     PRINT.info(
                         "ERROR: Ill formed enumeration type...(name: %s, type: %s"
@@ -113,8 +116,12 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 t = t + " *"
             elif arg.get_modifier() == "reference":
                 t = t + " &"
-            else:
+            elif arg.get_modifier() == "value":
                 t = t + " "
+            elif TypesList.isPrimitiveType(t) or isEnum:
+                t = t + " "
+            else:
+                t = "const " + t + " &"
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
@@ -178,7 +185,10 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             ]:
                 t = "sizeof(" + t + cl
             else:
-                t = t + "::SERIALIZED_SIZE"
+                if arg.get_modifier() == "pointer":
+                    t = "sizeof(" + t + "*)"
+                else:
+                    t = t + "::SERIALIZED_SIZE"
             arg_str += t
             arg_str += " + "
         arg_str = arg_str.strip(" + ")

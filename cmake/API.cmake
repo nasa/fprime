@@ -11,7 +11,8 @@
 # - Register an fprime build target/build stage to allow custom build steps. (Experimental)
 #
 ####
-
+set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
+set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 ####
 # Function `add_fprime_subdirectory`:
 #
@@ -263,12 +264,6 @@ function(register_fprime_executable)
     set_target_properties("${EXECUTABLE_NAME}_exe" PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}")
     add_custom_target(${EXECUTABLE_NAME} ALL)
     add_dependencies("${EXECUTABLE_NAME}" "${EXECUTABLE_NAME}_exe")
-
-    # Only install into artifacts directory in release builds when SKIP_INSTALL is not set.
-    if (NOT DEFINED SKIP_INSTALL AND CMAKE_BUILD_TYPE STREQUAL "RELEASE" AND NOT FPRIME_FPP_LOCS_BUILD)
-        add_dependencies("${EXECUTABLE_NAME}" "package_gen")
-        add_dependencies("${EXECUTABLE_NAME}" "dict")
-    endif()
 endfunction(register_fprime_executable)
 
 
@@ -423,6 +418,11 @@ function(register_fprime_ut)
     endif()
     set(MD_IFS ${MODULE_NAME} ${UT_MOD_DEPS})
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
+    # Turn allow turning GTest on/off
+    set(INCLUDE_GTEST ON)
+    if (DEFINED UT_INCLUDE_GTEST)
+        set(INCLUDE_GTEST ${UT_INCLUDE_GTEST})
+    endif()
     # Explicit call to module register
     generate_ut("${UT_NAME}" "${UT_SOURCE_FILES}" "${MD_IFS}")
 endfunction(register_fprime_ut)

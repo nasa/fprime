@@ -47,7 +47,12 @@ endif()
 ####
 function(add_global_target TARGET_NAME)
     if (FPRIME_ENABLE_UT_COVERAGE)
-        add_custom_target(${TARGET_NAME})
+        find_program(GCOV_EXE "gcov")
+        if (GCOV_EXE)
+            add_custom_target(${TARGET_NAME})
+        elseif()
+            add_custom_target(${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'gcov' not found. Will not calculate coverage.")
+        endif()
     endif()
 endfunction(add_global_target)
 
@@ -71,16 +76,16 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
 
     # Test for the 'gcov' program or bail with WARNING
     find_program(GCOV_EXE "gcov")
-    if (DEFINED GCOV_EXE-NOTFOUND)
-        message(WARNING "Failed to find 'gcov' program for calculating coverage")
-        return()
+    if (NOT GCOV_EXE)
+        add_custom_target(${MODULE}_${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'gcov' not found. Will not calculate coverage.")
+    else()
+        add_custom_target(
+            ${MODULE_NAME}_${TARGET_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
+            COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${FINAL_SOURCES}
+            COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
+        )
+        add_dependencies(${MODULE_NAME}_${TARGET_NAME} ${MODULE_NAME}_check)
+        add_dependencies(${TARGET_NAME} ${TARGET_NAME})
     endif()
-    add_custom_target(
-        ${MODULE_NAME}_${TARGET_NAME}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
-        COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${FINAL_SOURCES}
-        COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
-    )
-    add_dependencies(${MODULE_NAME}_${TARGET_NAME} ${MODULE_NAME}_check)
-    add_dependencies(${TARGET_NAME} ${TARGET_NAME})
 endfunction(add_module_target)

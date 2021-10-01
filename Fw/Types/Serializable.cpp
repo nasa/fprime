@@ -709,7 +709,7 @@ namespace Fw {
     }
 
     void ExternalSerializeBuffer::clear() {
-        this->m_buff = 0;
+        this->m_buff = nullptr;
         this->m_buffSize = 0;
     }
 
