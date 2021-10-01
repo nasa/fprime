@@ -29,11 +29,7 @@ function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TopologyAppDictionary.xml")
     foreach(FILE IN LISTS AC_GENERATED)
         if (FILE STREQUAL DICTIONARY)
-            add_custom_target(${TARGET_MOD_NAME}
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
-                COMMAND ${CMAKE_COMMAND} -E copy ${DICTIONARY} "${FPRIME_INSTALL_DEST}/${TOOLCHAIN_NAME}/dict/"
-                DEPENDS ${DICTIONARY} ${MODULE}
-            )
+            set_property(GLOBAL PROPERTY DICTIONARY_FILE "${DICTIONARY}")
             break()
         endif()
     endforeach()
