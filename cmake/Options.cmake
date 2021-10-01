@@ -129,7 +129,7 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
 ####
 # `FPRIME_ENABLE_UT_COVERAGE`:
 #
-# Enables coverage calculation within the unt test code of fprime. Disabling this may improve unit test performance when
+# Enables coverage calculation within the unit test code of fprime. Disabling this may improve unit test performance when
 # unit test coverage is not wanted. Note: this will also remove the coverage targets.
 #
 # **Values:**

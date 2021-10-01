@@ -63,7 +63,7 @@ function(generate_library MODULE_NAME SOURCE_FILES DEPENDENCIES)
   if (NOT DEFINED FPRIME_OBJECT_TYPE)
       set(FPRIME_OBJECT_TYPE "Library")
   endif()
-  # Register all targets on this moduel, then introspect
+  # Register all targets on this module, then introspect
   setup_all_module_targets(FPRIME_TARGET_LIST "${MODULE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(generate_library)
 

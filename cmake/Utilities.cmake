@@ -60,7 +60,7 @@ endfunction(resolve_dependencies)
 # OUTPUT_VAR: output variable to fill
 ####
 function(build_relative_path INPUT_PATH OUTPUT_VAR)
-    # Implementation assetion
+    # Implementation assertion
     if (NOT DEFINED FPRIME_BUILD_LOCATIONS)
         message(FATAL_ERROR "FPRIME_BUILD_LOCATIONS not set before build_relative_path was called")
     endif()

@@ -1,7 +1,7 @@
 ####
 # autocoder/default.cmake:
 #
-# Default definitions to autocoder functions ensuring that no cross-autocoder seutp occurs.
+# Default definitions to autocoder functions ensuring that no cross-autocoder setup occurs.
 ####
 
 set(HANDLES_INDIVIDUAL_SOURCES TRUE)

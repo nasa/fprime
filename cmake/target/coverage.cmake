@@ -33,7 +33,7 @@
 
 # Global settings for coverage
 if (FPRIME_ENABLE_UT_COVERAGE)
-    # Note: this is to prevent filenames of the form file.cpp.gnca and instead use file.gnca instead to appeas gcov
+    # Note: this is to prevent filenames of the form file.cpp.<extension> and instead use file.<extension> instead to appease gcov
     set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
     set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 endif()
