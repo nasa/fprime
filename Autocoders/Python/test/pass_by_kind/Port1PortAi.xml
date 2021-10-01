@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface name="Port1" namespace="Example">
+    <import_serializable_type>Autocoders/Python/test/pass_by_kind/ExampleTypeSerializableAi.xml</import_serializable_type>
+    <comment>
+    Port with example args
+    </comment>
+    <args>
+        <arg name="Arg1" type="U32" pass_by="pointer">
+            <comment>Example scalar arg, pass_by pointer</comment>
+        </arg>
+        <arg name="Arg2" type="U32" pass_by="reference">
+            <comment>Example scalar arg, pass by reference</comment>
+        </arg>
+        <arg name="Arg3" type="U32">
+            <comment>Example scalar arg, pass by default</comment>
+        </arg>
+        <arg name="Arg4" type="ExampleType" pass_by="pointer">
+            <comment>Example object arg, pass by pointer</comment>
+        </arg>
+        <arg name="Arg5" type="ExampleType" pass_by="reference">
+            <comment>Example object arg, pass by reference</comment>
+        </arg>
+        <arg name="Arg6" type="ExampleType">
+            <comment>Example object arg, pass by default</comment>
+        </arg>
+        <arg name="Arg7" type="string" size="5" pass_by="pointer">
+            <comment>Example string arg, pass by pointer</comment>
+        </arg>
+        <arg name="Arg8" type="string" size="5" pass_by="reference">
+            <comment>Example string arg, pass by reference</comment>
+        </arg>
+        <arg name="Arg9" type="string" size="5">
+            <comment>Example string arg, pass by default</comment>
+        </arg>
+    </args>
+</interface>
+

@@ -8,7 +8,7 @@ module Svc {
 
     @ Internal interface to send log text messages to component thread
     internal port TextQueue(
-                            ref $text: string size 256 @< The text string
+                             $text: string size 256 @< The text string
                            ) \
       priority 1 \
       drop

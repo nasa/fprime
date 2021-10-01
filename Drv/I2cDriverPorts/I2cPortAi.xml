@@ -11,5 +11,5 @@
             <comment>Buffer with data to read/write to/from</comment>
         </arg>
     </args>
-    <return type="Drv::I2cStatus" pass_by="value"> </return>
+    <return type="Drv::I2cStatus"> </return>
 </interface>

@@ -404,7 +404,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CmdResponse response
+        const Fw::CmdResponse &response
     )
   {
     ${tester_base}* _testerBase =
@@ -446,7 +446,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::LogSeverity severity,
+        const Fw::LogSeverity &severity,
         Fw::LogBuffer &args
     )
   {
@@ -464,7 +464,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::LogSeverity severity,
+        const Fw::LogSeverity &severity,
         Fw::TextLogString &text
     )
   {

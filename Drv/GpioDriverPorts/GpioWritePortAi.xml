@@ -2,7 +2,7 @@
 
 <interface name="GpioWrite" namespace="Drv">
     <args>
-        <arg name="state" type="bool" pass_by="value">
+        <arg name="state" type="bool">
         </arg>
     </args>
 </interface>

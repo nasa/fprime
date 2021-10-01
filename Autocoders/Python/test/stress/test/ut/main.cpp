@@ -26,7 +26,7 @@ public:
                 const NATIVE_INT_TYPE portNum, //!< The port number
                 I32 arg4, //!< The first argument
                 F32 arg5, //!< The second argument
-                Ref::Gnc::Quaternion arg6 //!< The third argument
+                const Ref::Gnc::Quaternion& arg6 //!< The third argument
         );
     };
 
@@ -44,7 +44,7 @@ public:
             const NATIVE_INT_TYPE portNum, //!< The port number
             I32 arg4, //!< The first argument
             F32 arg5, //!< The second argument
-            Ref::Gnc::Quaternion arg6 //!< The third argument
+            const Ref::Gnc::Quaternion& arg6 //!< The third argument
     ) {
 
     }

@@ -45,13 +45,13 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
                                                    FwOpcodeType opcode,
                                                    U32 cmdSeq,
-                                                   Fw::CmdResponse response) {
+                                                   const Fw::CmdResponse& response) {
   // Nothing to do
 }
 
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
-                                              Drv::RecvStatus recvStatus) {
+                                              const Drv::RecvStatus& recvStatus) {
     if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
         processBuffer(recvBuffer);
     }

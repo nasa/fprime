@@ -47,7 +47,7 @@ namespace Svc {
         ActiveLoggerComponentBase::init(queueDepth,instance);
     }
 
-    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args) {
 
         // make sure ID is not zero. Zero is reserved for ID filter.
         FW_ASSERT(id != 0);
@@ -111,7 +111,7 @@ namespace Svc {
         }
     }
 
-    void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity& severity, Fw::LogBuffer &args) {
+    void ActiveLoggerImpl::loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args) {
 
         // Serialize event
         this->m_logPacket.setId(id);

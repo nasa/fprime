@@ -423,7 +423,7 @@ namespace Svc {
     void Tester ::
       from_FileComplete_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Svc::SendFileResponse response
+          const Svc::SendFileResponse& response
       )
     {
       pushFromPortEntry_FileComplete(response);
