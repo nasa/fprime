@@ -25,11 +25,11 @@ function(get_dependencies AC_INPUT_FILE)
 endfunction(get_dependencies)
 
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
+    set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp") # ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
     if (NOT INCLUDE_GTEST)
         set(REMOVAL_LIST "${REMOVAL_LIST} ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
     endif()
-    set(EXTRA_COMMANDS "${CMAKE_COMMAND} -E remove ${REMOVAL_LIST}")
+    set(EXTRA_COMMANDS "${CMAKE_COMMAND} -E rm -f ${REMOVAL_LIST}")
     setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_BINARY_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
                               "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
 endfunction()
