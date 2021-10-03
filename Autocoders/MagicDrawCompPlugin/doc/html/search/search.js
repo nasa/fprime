@@ -251,7 +251,7 @@ function SearchBox(name, resultsPath, inFrame, label)
     }
   }
 
-  // Called when an search filter selection is made.
+  // Called when a search filter selection is made.
   // set item with index id as the active item
   this.OnSelectItem = function(id)
   {

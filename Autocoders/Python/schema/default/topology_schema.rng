@@ -228,7 +228,7 @@
         <optional>
             <attribute name="num">
                 <a:documentation>Specifies the multiplicity or index of a port that is being connected to. Generally,
-                    this value will be zero unless multiple indexes on the port exists.
+                    this value will be zero unless multiple indexes of the port exist.
                 </a:documentation>
                 <data type="nonNegativeInteger"/>
             </attribute>

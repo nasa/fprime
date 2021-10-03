@@ -841,7 +841,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Both getSourceConnEnd and getTargetConnEnd use this function. Incorporates error handling/checking. </para><para>The function checks the direction property of the first stereotype found in each port of the connector. Depending on what the connector can see within and around the system, the funcion will return what it sees as the source and what is sees as the target.</para><para><parameterlist kind="param"><parameteritem>
+<para>Both getSourceConnEnd and getTargetConnEnd use this function. Incorporates error handling/checking. </para><para>The function checks the direction property of the first stereotype found in each port of the connector. Depending on what the connector can see within and around the system, the function will return what it sees as the source and what is sees as the target.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>c</parametername>
 </parameternamelist>

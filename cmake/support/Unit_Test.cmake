@@ -53,7 +53,7 @@ function(unit_test_component_autocoder EXE_NAME SOURCE_FILES INCLUDE_GTEST)
       set(AC_TMP_MOD "${MODULE_NAME}_clean")
 
       # This creates the temporary Autocoder directory. Since this is used by multiple generations
-      # it must be created on the fly, and cleaned up afterword. The clean-up step here "generates"
+      # it must be created on the fly, and cleaned up afterward. The clean-up step here "generates"
       # a fake source
       # Add a custom command to make the directory
       add_custom_command(

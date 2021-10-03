@@ -235,7 +235,7 @@ public class LoadIDConfig {
 		for(Element el : componentList){
 			NamedElement elNamed  = (NamedElement) el;
 			
-			//Check if current component had previous values assigned to the base ID and window id stereotype values. If so, a override warning message is printed to the console
+			//Check if current component had previous values assigned to the base ID and window id stereotype values. If so, an override warning message is printed to the console
 			Object baseIdObject = StereotypesHelper.getStereotypePropertyFirst(el, componentInstanceStereotype, "BaseID");
 			Object windowRangeObject = StereotypesHelper.getStereotypePropertyFirst(el, componentInstanceStereotype, "Window");
 			if(baseIdObject != null){

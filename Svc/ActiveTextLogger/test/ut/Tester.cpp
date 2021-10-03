@@ -171,7 +171,7 @@ namespace Svc {
       U64 tmp;
 
       printf("Testing writing text that is larger than FW_INTERNAL_INTERFACE_STRING_MAX_SIZE\n");
-      // Cant test this b/c max size of TextLogString is 256 and
+      // Can't test this b/c max size of TextLogString is 256 and
       // FW_INTERNAL_INTERFACE_STRING_MAX_SIZE is 512
 
       printf("Testing writing more than the max file size\n");

@@ -112,7 +112,7 @@ class SocketReadTask {
     /**
      * \brief returns a buffer to fill with data
      *
-     * Gets a reference to the a buffer to fill with data. This allows the component to determine how to provide a
+     * Gets a reference to a buffer to fill with data. This allows the component to determine how to provide a
      * buffer and the socket read task just fills said buffer.
      *
      * Note: this must be implemented by the inheritor
@@ -122,7 +122,7 @@ class SocketReadTask {
     virtual Fw::Buffer getBuffer() = 0;
 
     /**
-     * \brief sends a buffer to filled with data
+     * \brief sends a buffer to be filled with data
      *
      * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
      * component how to send back the buffer.

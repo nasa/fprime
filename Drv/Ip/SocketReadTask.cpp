@@ -31,7 +31,7 @@ void SocketReadTask::startSocketTask(const Fw::StringBase &name,
     FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
-    // Note: the first step is for the IP socket to open the the port
+    // Note: the first step is for the IP socket to open the port
     Os::Task::TaskStatus stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
     FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }

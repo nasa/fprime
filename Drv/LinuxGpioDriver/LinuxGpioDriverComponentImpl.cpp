@@ -134,7 +134,7 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        // TODO make value a enum or check its value
+        // TODO make value an enum or check its value
 
         const char *val = value ? "1" : "0";
         const int len = 1;
@@ -350,7 +350,7 @@ namespace Drv {
 
         /*
         * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
-        * so cant check for it to look for error:
+        * so can't check for it to look for error:
         * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
         */
         if (stat < 0) {

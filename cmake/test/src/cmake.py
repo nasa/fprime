@@ -84,7 +84,7 @@ def run_cmake(build_path, options={}, capout=False):
 def run_make(target):
     """
     Runs the make command to ensure that the CMake system can follow through and finish the build.
-    Note: this assumes that the provided application build properly. Thus, those unit tests should
+    Note: this assumes that the provided application built properly. Thus, those unit tests should
     run first.
 
     :param target: target to the make command

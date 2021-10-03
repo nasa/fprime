@@ -304,7 +304,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c = privatePortCpp.privatePortCpp()
         c.name = obj.get_type()
         tmp = [(a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()]
-        # Make a enum marker list here for template to use...
+        # Make an enum marker list here for template to use...
         c.enum_marker = []
         for i in tmp:
             if isinstance(i[1], tuple):
@@ -352,7 +352,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args = [
             (a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()
         ]
-        # Make a enum marker list here for template to use...
+        # Make an enum marker list here for template to use...
         c.enum_marker = []
         for i in c.args:
             if isinstance(i[1], tuple):

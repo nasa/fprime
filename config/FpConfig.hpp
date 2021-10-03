@@ -67,7 +67,7 @@
 #endif
 
 #ifndef FwEventIdType
-#define FwEventIdType U32                   //!< Type representation for a event id
+#define FwEventIdType U32                   //!< Type representation for an event id
 #endif
 
 #ifndef FwPrmIdType
@@ -235,7 +235,7 @@
 #define FW_CMD_STRING_MAX_SIZE           40   //!< Max character size of command string arguments
 #endif
 
-// Normally when a command is deserialized, the handler checks to see if there any any leftover
+// Normally when a command is deserialized, the handler checks to see if there are any leftover
 // bytes in the buffer. If there are, it assumes that the command was corrupted somehow since
 // the serialized size should match the serialized size of the argument list. In some cases,
 // command buffers are padded so the data can be larger than the serialized size of the command.
@@ -341,7 +341,7 @@ enum TimeBase {
 #define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 #endif
 
-// These setting configure whether or not the timebase and context values for the Fw::Time
+// These settings configure whether or not the timebase and context values for the Fw::Time
 // class are used. Some systems may not use or need those fields
 
 #ifndef FW_USE_TIME_BASE
