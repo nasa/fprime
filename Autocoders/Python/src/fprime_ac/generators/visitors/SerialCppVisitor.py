@@ -130,7 +130,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         Return a list of struct member tuples
         """
         arg_list = list()
-        
+
         for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
