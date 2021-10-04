@@ -169,23 +169,23 @@ class XmlSerializeParser:
                         sys.exit(-1)
                     n = member.attrib["name"]
                     t = member.attrib["type"]
-                    if "array_length" in list(member.attrib.keys()):
+                    if "array_size" in list(member.attrib.keys()):
                         if t == "ENUM":
                             PRINT.info(
                                 "%s: Member %s: arrays of enums not supported yet!"
                                 % (xml_file, n)
                             )
                             sys.exit(-1)
-                        array_length = member.attrib["array_length"]
-                        if not array_length.isdigit():
+                        array_size = member.attrib["array_size"]
+                        if not array_size.isdigit():
                             PRINT.info(
-                                "{}: Member {}: array_length must be a number".format(
+                                "{}: Member {}: array_size must be a number".format(
                                     xml_file, n
                                 )
                             )
                             sys.exit(-1)
                     else:
-                        array_length = None
+                        array_size = None
 
                     if "size" in list(member.attrib.keys()):
                         if t == "ENUM":
@@ -197,7 +197,7 @@ class XmlSerializeParser:
                         size = member.attrib["size"]
                         if not size.isdigit():
                             PRINT.info(
-                                "{}: Member {}: array_length must be a number".format(
+                                "{}: Member {}: array_size must be a number".format(
                                     xml_file, n
                                 )
                             )
@@ -258,7 +258,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, array_length, size, f, c, d))
+                    self.__members.append((n, t, array_size, size, f, c, d))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

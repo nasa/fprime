@@ -88,17 +88,17 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_size, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
-            elif mtype == "string" and array_length is None:
+            elif mtype == "string" and array_size is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
-            elif mtype == "string" and array_length is not None:
+            elif mtype == "string" and array_size is not None:
                 arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif array_length is not None:
+            elif array_size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -117,14 +117,14 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         contains_array = False
-        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_size, size, format, comment, default) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif array_length is not None:
+            elif array_size is not None:
                 arg_str += "const {} {}, ".format(mtype, name)
                 contains_array = True
             else:
@@ -141,7 +141,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_list = list()
 
-        for (name, mtype, array_length, size, format, comment, default) in obj.get_members():
+        for (name, mtype, array_size, size, format, comment, default) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -153,7 +153,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 typeinfo = "extern"
 
             arg_list.append(
-                (name, mtype, array_length, size, format, comment, typeinfo)
+                (name, mtype, array_size, size, format, comment, typeinfo)
             )
         return arg_list
 

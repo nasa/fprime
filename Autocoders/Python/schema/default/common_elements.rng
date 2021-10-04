@@ -302,7 +302,7 @@
                 </attribute>
 
                 <optional>
-                    <attribute name="array_length">
+                    <attribute name="array_size">
                         <a:documentation>The length of the array.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>
@@ -359,7 +359,7 @@
                 </choice>
 
                 <optional>
-                    <attribute name="array_length">
+                    <attribute name="array_size">
                         <a:documentation>The length of the array.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>
