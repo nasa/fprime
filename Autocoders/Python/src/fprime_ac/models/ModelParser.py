@@ -596,7 +596,7 @@ class ModelParser:
                         sys.exit(-1)
                     typeinfo = "enum"
                 elif t == "string":
-                    t = "Fw::LogStringArg&"
+                    t = "const Fw::LogStringArg&"
                     typeinfo = "string"
                 elif t not in TypesList.types_list:
                     typeinfo = "user"
