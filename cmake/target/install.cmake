@@ -25,7 +25,7 @@ function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENC
             LIBRARY DESTINATION ${TOOLCHAIN_NAME}/lib
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/lib/static)
     get_property(DICTIONARY GLOBAL PROPERTY DICTIONARY_FILE)
-    install(FILES ${DICTIONARY} DESTINATION dict)
+    install(FILES ${DICTIONARY} DESTINATION ${TOOLCHAIN_NAME}/dict)
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target install)
 endfunction()
 
