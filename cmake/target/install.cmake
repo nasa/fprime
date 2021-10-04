@@ -26,6 +26,7 @@ function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENC
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/lib/static)
     get_property(DICTIONARY GLOBAL PROPERTY DICTIONARY_FILE)
     install(FILES ${DICTIONARY} DESTINATION dict)
+    add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target install)
 endfunction()
 
 # Install is per-deployment, a module-by-module variant does not make sense
