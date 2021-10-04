@@ -34,7 +34,9 @@ set(FPP_CONFIGS
 function(generate_fpp_locs)
     set(CALL_PROPS)
     foreach (PROPERTY IN LISTS NEEDED_PROPERTIES)
-        list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
+        if (NOT "${${PROPERTY}}" STREQUAL "")
+            list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
+        endif()
     endforeach()
     # Execute the generate step
     set(LOCS_DIR "${CMAKE_BINARY_DIR}/fpp-locs")
