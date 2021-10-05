@@ -71,10 +71,10 @@ void ${name}::set(${args_proto_string}) {
 
 #for ($member,$type,$array_size,$size,$format,$comment,$default,$typeinfo) in $members:
 #if $array_size == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
-${type} ${name}::get${member}(void) const {
+${type} ${name}::get${member}() const {
     return this->m_${member};
 #else if $array_size == None and ($typeinfo == 'string' or $typeinfo == 'extern'):
-const ${type}& ${name}::get${member}(void) const {
+const ${type}& ${name}::get${member}() const {
     return this->m_${member};
 #else
 const ${type}* ${name}::get${member}(NATIVE_INT_TYPE& size) const {

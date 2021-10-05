@@ -43,9 +43,9 @@ public:
 
 #for name,type,array_size,size,format,comment,typeinfo in $members:
 #if $array_size == None and not ($typeinfo == 'string' or $typeinfo == 'extern'):
-    ${type} get${name}(void) const; //!< get member $name
+    ${type} get${name}() const; //!< get member $name
 #else if ($typeinfo == 'string' or $typeinfo == 'extern') and array_size == None:
-    const ${type}& get${name}(void) const; //!< get member $name
+    const ${type}& get${name}() const; //!< get member $name
 #else
     const ${type}* get${name}(NATIVE_INT_TYPE& size) const; //!< get member $name
 #end if
