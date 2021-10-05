@@ -388,13 +388,9 @@ class InstanceTopologyHVisitor(AbstractVisitor.AbstractVisitor):
             startup_template = ""
             if component["kind"] == "active":
                 if obj.is_ptr:
-                    startup_template = (
-                        """{name}_ptr->start(0, 100, 10 * 1024);""".format(**component)
-                    )
+                    startup_template = """{name}_ptr->start();""".format(**component)
                 else:
-                    startup_template = """{name}.start(0, 100, 10 * 1024);""".format(
-                        **component
-                    )
+                    startup_template = """{name}.start();""".format(**component)
                 c.component_startups.append(startup_template)
         #
 

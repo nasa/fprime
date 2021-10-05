@@ -1,6 +1,6 @@
 # Documentation of F´ Projects
 
-Most projects need to generate documentation om the software. F´ uses [Doxygen](https://www.doxygen.nl/index.html) to
+Most projects need to generate documentation on the software. F´ uses [Doxygen](https://www.doxygen.nl/index.html) to
 generate project documentation and projects using F´ may use Doxygen to generate their project documents. Doxygen was
 chosen because it can run automatically on F´ markdown and C++ documents to generate a web-compatible (HTML) version of
 the documentation.

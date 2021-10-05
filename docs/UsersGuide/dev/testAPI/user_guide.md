@@ -200,7 +200,7 @@ results = self.api.assert_telemetry_sequence(ch_seq)
 
 ### Asserting on Events
 
-The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using a event_predicate will enable the user to better specify the fields of the EventData object to be searched for.
+The integration Test API provides several different [types of searches](#-types-of-searches) that can be followed by an assert on whether the search succeeded. Using an event_predicate will enable the user to better specify the fields of the EventData object to be searched for.
 
 **NOTE**: all successful search-then-assert calls in the API will return the results of the search. This is so the user may perform additional checks on the results. Because an assertion is raised on search failure, the user can be sure the results reflect a successful test.
 
@@ -258,7 +258,7 @@ result = self.api.send_and_assert_event("TEST_CMD_1", events="CommandReceived")
 ### Using predicates
 
 The API uses predicates to identify valid values in searches and filter data objects into histories.
-The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. When using predicates, it is important to understand that a predicate is used to determine if a value belongs to a set of values that satisfies a rule. Not satisfying a rule [**DOES NOT** imply](#-Interpreting-predicates-correctly) that a value satisfies a second complimentary rule.
+The provided [predicates](#-predicates) can be combined to make specifying an event message or channel update incredibly flexible. When using predicates, it is important to understand that a predicate is used to determine if a value belongs to a set of values that satisfies a rule. Not satisfying a rule [**DOES NOT** imply](#-Interpreting-predicates-correctly) that a value satisfies a second complementary rule.
 
 #### Combining Predicates
 
@@ -338,7 +338,7 @@ ch_pred2 = self.api.get_telemetry_pred(1)
 
 ### Using sub-histories
 
-One patterns that the API supports is creating a sub-history of telemetry or event objects. There are several [behaviors](#-Substituting-a-history-(history-argument)) to understand with sub-histories that are outlined in the API features section. Below is an example of how to create sub-histories, search on sub-histories, and remove sub-histories. Sub-histories can be created for both telemetry and event data objects.
+One pattern that the API supports is creating a sub-history of telemetry or event objects. There are several [behaviors](#-Substituting-a-history-(history-argument)) to understand with sub-histories that are outlined in the API features section. Below is an example of how to create sub-histories, search on sub-histories, and remove sub-histories. Sub-histories can be created for both telemetry and event data objects.
 
 ~~~~{.python}
 from fprime_gds.common.testing_fw import predicates
@@ -366,7 +366,7 @@ self.api.remove_event_subhistory(ert_subhist)
 
 ### Search returns
 
-API calls that perform a search and do not end by raising and Assertion Error will return the results of the search. This is so that the user can find some event or channel updates then perform additional checks on the results or use the results to specify a future search.
+API calls that perform a search and do not end by raising an Assertion Error will return the results of the search. This is so that the user can find some event or channel updates then perform additional checks on the results or use the results to specify a future search.
 
 Here is an example of awaiting a counter sequence and verifying that the sequence always ascends.
 
@@ -437,7 +437,7 @@ t6 == 6  # evaluates True
 t3 >= t2 # evaluates True
 ~~~~
 
-Accessing TimeStamps from from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
+Accessing TimeStamps from event and channel data types can be done with the `get_time()` getter. These comparisons can be very useful in testing whether FSW meets timing requirements.
 
 ~~~~{.python}
 seq = ["Counter"] * 5
@@ -511,7 +511,7 @@ self.api.assert_telemetry_count(0)
 
 ### Specifying sequence searches with timestamps
 
-The doc-strings in the API recommend not specifying FSW timestamps when searching for sequences. This is simply because the timestamps can change depending on when tests are run. the easiest way to verify timing is to process timestamps after a search is completed.
+The doc-strings in the API recommend not specifying FSW timestamps when searching for sequences. This is simply because the timestamps can change depending on when tests are run. The easiest way to verify timing is to process timestamps after a search is completed.
 
 ### No-scope search
 
@@ -654,7 +654,7 @@ Another useful feature in the integration test API is the ability to create filt
 - A new subhistory WILL be registered with the GDS to automatically receive data objects from its respective decoder (event/telemetry).
 - A new subhistory will NOT be managed by the Test API. It will not be cleared nor de-registered when a test case ends.
 
-Removing a sub-history is currently permanent as th API doesn't provide for sub-histories to be re-registered. Removing a sub-history will unsubscribe it from the GDS and it will no longer receive new data objects.
+Removing a sub-history is currently permanent as the API doesn't provide for sub-histories to be re-registered. Removing a sub-history will unsubscribe it from the GDS and it will no longer receive new data objects.
 
 ### Data object specifiers (event and channel arguments)
 

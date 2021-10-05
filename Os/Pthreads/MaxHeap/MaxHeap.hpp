@@ -66,7 +66,7 @@ namespace Os {
     bool pop(NATIVE_INT_TYPE& value, NATIVE_UINT_TYPE& id);
     //! \brief Is the heap full?
     //!
-    //! Has the heap reach max size. No new items can be put on the
+    //! Has the heap reached max size. No new items can be put on the
     //! heap if this function returns true.
     //!
     bool isFull();

@@ -43,7 +43,7 @@ void $(name)Init() {
 
 void $(name)Start() {
     // Active component startup
-    // start(identifier, priority, stack_size)
+    // start()
 #for $startup_template  in $component_startups:
     ${startup_template}
 #end for

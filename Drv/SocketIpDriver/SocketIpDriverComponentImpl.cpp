@@ -112,8 +112,7 @@ namespace Drv {
                   Fw::Logger::logMsg("Unable to open socket: %d\n",stat);
               }
           }
-          Os::Task::TaskStatus stat = m_recvTask.start(name, 0, priority, stack,
-                                                       SocketIpDriverComponentImpl::readTask, this, cpuAffinity);
+          Os::Task::TaskStatus stat = m_recvTask.start(name, SocketIpDriverComponentImpl::readTask, this, priority, stack, cpuAffinity);
           FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
       }
   }

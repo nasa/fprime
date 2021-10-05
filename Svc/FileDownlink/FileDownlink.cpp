@@ -74,15 +74,9 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    start(
-      NATIVE_INT_TYPE identifier,
-      NATIVE_INT_TYPE priority,
-      NATIVE_INT_TYPE stackSize,
-      NATIVE_INT_TYPE cpuAffinity
-    )
+    preamble()
   {
     FW_ASSERT(this->configured == true);
-    FileDownlinkComponentBase::start(identifier, priority, stackSize, cpuAffinity);
   }
 
   FileDownlink ::

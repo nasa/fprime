@@ -103,6 +103,6 @@ pylama -o path/to/fprime/pylama/setup.cfg path/to/directory/you/want/to/analyze/
 
 Pylama can be configured within the setup.cfg file. This file can also go in the directory you are analyzing if you wan
 a different configuration for the python files in that directory. Inside the configuration file you can configure both
-pylama as a whole and each of tools individually.
+pylama as a whole and each of the tools individually.
 
 The recommended F´ pylama config is at: Fw/Python/pylama.cfg

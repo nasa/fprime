@@ -582,7 +582,7 @@ class Formatters:
 
     def msgTypedefName(self, id, name, name_sep="AcMsg"):
         """
-        Return the name of msg typedef from a import function name.
+        Return the name of msg typedef from an import function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         @param name_sep: A string placed between the id and interface name
@@ -636,7 +636,7 @@ class Formatters:
     def msgTokenName(self, id, name):
         """
         Return the name of msg typedef
-        from a input function name.
+        from an input function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         """
@@ -657,7 +657,7 @@ class Formatters:
     def opcodeName(self, id, name):
         """
         Return the name of command opcode
-        from a input function name.
+        from an input function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         """
@@ -759,7 +759,7 @@ class Formatters:
     def commentInArgsPresent(self, args):
         """
         Given a list of argument tuples
-        return True if an comment for
+        return True if a comment for
         an arg is found, else return False.
         """
         for arg in args:
@@ -876,13 +876,13 @@ class Formatters:
 
     def simpleFuncDraw(self, name, args, proto=True, indent=0):
         """
-        This is a simply C function formatter. The arguments are a function
+        This is a simple C function formatter. The arguments are a function
         name, and its arguments. A string is returned that is a C code
         function declaration. The proto flag is used to properly terminate
         the function.
         """
 
-        # Get the simply case out of the way.
+        # Get the simple case out of the way.
         if len(args) == 0:
 
             if proto == True:

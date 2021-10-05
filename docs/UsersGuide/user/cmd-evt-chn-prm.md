@@ -157,7 +157,7 @@ generation to manage parameters defined by a component. Parameters are defined b
 
 The code generator automatically adds ports for retrieving parameters. During initialization, a public method in the
 class is called which retrieves the parameters and stores copies locally. Calls can reoccur if the parameter is updated.
-he code generated base class provides a function to call for each parameter to retrieve the stored copy; and an
+The code generated base class provides a function to call for each parameter to retrieve the stored copy; and an
 implementation class can retrieve the value whenever the parameter value is needed.
 
 ### Parameter Database

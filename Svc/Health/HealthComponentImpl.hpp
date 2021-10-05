@@ -22,7 +22,7 @@ namespace Svc {
     //!  \brief Health component implementation class
     //!
     //!  The health component iterates through each entry
-    //!  in its table and checks its status. If an ping entry
+    //!  in its table and checks its status. If a ping entry
     //!  tracker is enabled, it will ping its corresponding port
     //!  with a provided key. If a ping return is outstanding,
     //!  a counter is decremented, and its value is checked
