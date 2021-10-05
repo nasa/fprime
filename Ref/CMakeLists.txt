@@ -18,8 +18,10 @@
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-project(Ref C CXX)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
+cmake_policy(SET CMP0048 NEW)
+project(Ref VERSION 1.0.0 LANGUAGES C CXX)
+
 ##
 # Section 2: F prime Core
 #
@@ -44,3 +46,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 
 # Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
+
+set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Top/Main.cpp")
+set(MOD_DEPS ${PROJECT_NAME}/Top)
+
+register_fprime_deployment()

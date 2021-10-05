@@ -5,7 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+if (BUILD_TESTING)
     set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
     )
