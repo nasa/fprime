@@ -6,7 +6,7 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-if(CMAKE_BUILD_TYPE STREQUAL "TESTING")
+if(BUILD_TESTING)
     set(SOURCE_FILES
       "${CMAKE_CURRENT_LIST_DIR}/Bytes.cpp"
     )

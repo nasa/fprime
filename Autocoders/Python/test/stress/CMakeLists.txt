@@ -43,5 +43,5 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 
-# ac.ini needs to be copied into Autocode directory
+# ac.ini needs to be copied into binary directory
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/ac.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

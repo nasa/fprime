@@ -1229,6 +1229,7 @@ Pymodule
 pyparsing
 PYPI
 pytest
+PYTHON
 PYTHONPATH
 pyw
 qch

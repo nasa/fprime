@@ -6,6 +6,7 @@
 #
 ####
 set(SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/../ByteStreamDriverModel/ByteStreamDriverModel.fpp"
 	"${CMAKE_CURRENT_LIST_DIR}/TcpServerComponentImpl.cpp"
 )
 
@@ -28,4 +29,4 @@ set(UT_MOD_DEPS
 	STest
 	PortSelector
 )
-#register_fprime_ut()
+register_fprime_ut()

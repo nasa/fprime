@@ -60,20 +60,50 @@ endfunction(get_target_name)
 ####
 function(setup_global_target TARGET_FILE_PATH)
 	# Include the file and look for definitions
+    include(target/default)
     include("${TARGET_FILE_PATH}")
-    if (NOT COMMAND add_module_target)
-        message(FATAL_ERROR "${TARGET_FILE_PATH} must define 'add_module_target'")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Setting up '${TARGET_FILE_PATH}' global target")
     endif()
     get_target_name("${TARGET_FILE_PATH}")
-    # User did not define a global target function, add a blank one
-    if (NOT COMMAND add_global_target)
-        message(STATUS "Adding blank target: ${TARGET_NAME}")
-    	add_custom_target(${TARGET_NAME})
-    # Otherwise use user's specification
-    else()
-        add_global_target(${TARGET_NAME})
-    endif()
+    add_global_target(${TARGET_NAME})
 endfunction(setup_global_target)
+
+####
+# Function `setup_deployment_target`:
+#
+# Sets up an individual deployment target.
+####
+function(setup_deployment_target MODULE_NAME TARGET_FILE_PATH SOURCE_FILES DEPENDENCIES FULL_DEPENDENCIES)
+    # Include the file and look for definitions
+    include(target/default)
+    include("${TARGET_FILE_PATH}")
+    get_target_name("${TARGET_FILE_PATH}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Setting up '${TARGET_NAME}' on ${MODULE_NAME}")
+    endif()
+    add_deployment_target(${MODULE_NAME} "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}" "${FULL_DEPENDENCIES}")
+endfunction(setup_deployment_target)
+
+####
+# Function `setup_all_deployment_targets`:
+#
+# Takes all registered targets and sets up the module specific target from them. The list of targets
+# is read from the CACHE variable FPRIME_TARGET_LIST.
+#
+# - **TARGET_LIST:** list of targets to setup
+# - **MODULE_NAME:** name of the module
+# - **SOURCE_FILES:** list of source file inputs
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
+####
+function(setup_all_deployment_targets TARGET_LIST MODULE_NAME SOURCE_FILES DEPENDENCIES)
+    resolve_dependencies(RESOLVED ${DEPENDENCIES})
+    recurse_targets("${MODULE_NAME}" RESULTS "" ${RESOLVED})
+    foreach(ITEM ${${TARGET_LIST}})
+        setup_deployment_target(${MODULE_NAME} ${ITEM} "${SOURCE_FILES}" "${DEPENDENCIES}" "${RESULTS}")
+    endforeach(ITEM ${${TARGET_LIST}})
+endfunction(setup_all_deployment_targets)
+
 
 ####
 # Function `setup_module_target`:
@@ -83,16 +113,18 @@ endfunction(setup_global_target)
 #
 # - **MODULE_NAME:** name of module
 # - **TARGET_FILE_PATH:** path to target file
-# - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
-# - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** module dependencies of the target
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(setup_module_target MODULE_NAME TARGET_FILE_PATH AC_INPUTS SOURCE_FILES AC_OUTPUTS)
+function(setup_module_target MODULE_NAME TARGET_FILE_PATH SOURCE_FILES DEPENDENCIES)
 	# Include the file and look for definitions
+    include(target/default)
     include("${TARGET_FILE_PATH}")
     get_target_name("${TARGET_FILE_PATH}")
-    add_module_target(${MODULE_NAME} "${MODULE_NAME}_${TARGET_NAME}" "${TARGET_NAME}" "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Setting up '${TARGET_NAME}' on ${MODULE_NAME}")
+    endif()
+    add_module_target(${MODULE_NAME} "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(setup_module_target)
 
 ####
@@ -101,17 +133,48 @@ endfunction(setup_module_target)
 # Takes all registered targets and sets up the module specific target from them. The list of targets
 # is read from the CACHE variable FPRIME_TARGET_LIST.
 #
+# - **TARGET_LIST:** list of targets to setup
 # - **MODULE_NAME:** name of the module
-# - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
-# - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** module dependencies of the target
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(setup_all_module_targets TARGET_LIST MODULE_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(setup_all_module_targets TARGET_LIST MODULE_NAME SOURCE_FILES DEPENDENCIES)
     foreach(ITEM ${${TARGET_LIST}})
-        setup_module_target(${MODULE_NAME} ${ITEM} "${AC_INPUTS}" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MOD_DEPS}")
+        setup_module_target(${MODULE_NAME} ${ITEM} "${SOURCE_FILES}" "${DEPENDENCIES}")
     endforeach(ITEM ${${TARGET_LIST}})
+    set_property(GLOBAL APPEND PROPERTY FPRIME_MODULES ${MODULE_NAME})
 endfunction(setup_all_module_targets)
+
+####
+# Function `recurse_targets`:
+#
+# A helper that pulls out module dependencies that are also fprime modules.
+####
+function(recurse_targets TARGET OUTPUT BOUND)
+    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    set(TARGET_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
+    endif()
+    # Extra dependencies
+    list(APPEND TARGET_DEPENDENCIES ${ARGN})
+    if (TARGET_DEPENDENCIES)
+        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
+    endif()
+
+    set(RESULTS_LOCAL)
+    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
+        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
+            list(APPEND BOUND "${NEW_TARGET}")
+            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
+            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
+        endif()
+    endforeach()
+    if (RESULTS_LOCAL)
+        list(REMOVE_DUPLICATES RESULTS_LOCAL)
+    endif()
+    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
+endfunction()
 
 #### Documentation links
 # See Also:

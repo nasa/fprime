@@ -18,38 +18,20 @@
 ####
 
 ####
-# `FPRIME_USE_STUBBED_DRIVERS:`
+# `CMAKE_TOOLCHAIN_FILE:`
 #
-# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
-# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+# CMake option to specify toolchain file. For F prime, toolchains are kept in the framework and library cmake/toolchain
+# folder, although theoretically any CMake toolchain can be used. Default: none, which will use the native system build.
 #
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
-# the stubbed drivers or OFF to used full driver implementations.
-###
-if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
-    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
-endif()
+# e.g. `-DCMAKE_TOOLCHAIN_FILE=/path/to/cmake/toolchain`
+####
 
 ####
-# `FPRIME_USE_BAREMETAL_SCHEDULER:`
-#
-# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
-# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
-# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
-#
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
-# the scheduler or OFF to use the OS thread scheduler.
-###
-if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
-    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
-endif()
-
-
-####
-# `CMAKE_DEBUG_OUTPUT:`
+# `CMAKE_DEBUG_OUTPUT`:
 #
 # Turns on the reporting of debug output of the CMake build. Can help refine the CMake system, and repair errors. For
-# normal usage, this is not necessary.
+# normal usage, this is not necessary. This only changes the verbosity of fprime CMake integration and does not effect
+# CMake itself.
 #
 # **Values:**
 # - ON: generate debugging output
@@ -60,9 +42,66 @@ endif()
 option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" OFF)
 
 ####
-# `FPRIME_ENABLE_FRAMEWORK_UTS:`
+# `FPRIME_USE_STUBBED_DRIVERS`:
 #
-# Allow a project to to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
+# Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
+# the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to used full driver implementations.
+#
+# **Values:**
+# - ON: use stubbed forms of drivers
+# - OFF: use full implementation of drivers, driver and OS support needed
+#   Note: the chosen platform file will set the default value for this switch
+#
+# e.g. `-DFPRIME_USE_STUBBED_DRIVERS=ON`
+###
+if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT FPRIME_USE_STUBBED_DRIVERS STREQUAL "ON" AND NOT FPRIME_USE_STUBBED_DRIVERS STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all.")
+endif()
+
+####
+# `FPRIME_USE_BAREMETAL_SCHEDULER`:
+#
+# Tells fprime to use the baremetal scheduler. This scheduler replaces any OS scheduler with one that loops through
+# active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
+# however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
+#
+# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# the scheduler or OFF to use the OS thread scheduler.
+#
+# **Values:**
+# - ON: use baremetal (single context) scheduling
+# - OFF: use default (system thread library) scheduling
+#   Note: the chosen platform file will set the default value for this switch
+#
+# e.g. `-DFPRIME_USE_BAREMETAL_SCHEDULER=ON`
+###
+if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
+    message(FATAL_ERROR "FPRIME_USE_BAREMETAL_SCHEDULER must be set to ON, OFF, or not supplied at all")
+endif()
+
+####
+# `FPRIME_ENABLE_UTIL_TARGETS`:
+#
+# Enables the targets required to run using `fprime-util`.  These include: check, check-leak, coverage, impl, and
+# testimpl targets. This switch defaults to "ON" providing those targets, but may be set to off when running within an
+# IDE where limiting the number of targets is desirable. Note: unit test targets are still only generated when running
+# with -DBUILD_TESTING=ON.
+#
+# **Values:**
+# - ON: (default) generate all targets
+# - OFF: only generate executable, and library targets
+#
+# e.g. `-DFPRIME_ENABLE_UTIL_TARGETS=ON`
+####
+option(FPRIME_ENABLE_UTIL_TARGETS "Enable fprime-util targets" ON)
+
+####
+# `FPRIME_ENABLE_FRAMEWORK_UTS`:
+#
+# Allow a project to to run fprime UTs from the core framework. Default: on,  run fprime framework UTs. This
 # does not affect project specified UTs.
 #
 # **Values:**
@@ -72,9 +111,6 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 # e.g. `-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF`
 ####
 option(FPRIME_ENABLE_FRAMEWORK_UTS "Enable framework UT generation" ON)
-if (NOT FPRIME_ENABLE_FRAMEWORK_UTS)
-    message(WARNING "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF will be deprecated in a future release")
-endif()
 
 ####
 # `FPRIME_ENABLE_AUTOCODER_UTS:`
@@ -89,69 +125,35 @@ endif()
 # e.g. `-DFPRIME_ENABLE_AUTOCODER_UTS=OFF`
 ####
 option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
-if (NOT FPRIME_ENABLE_AUTOCODER_UTS)
-    message(WARNING "-DFPRIME_ENABLE_AUTOCODER_UTS=OFF will be deprecated in a future release")
-endif()
 
 ####
-# `SKIP_TOOLS_CHECK:`
+# `FPRIME_ENABLE_UT_COVERAGE`:
 #
-# For older clients, some IDEs, and other unique builds, the check that ensures tools are available can fail causing
-# build instability. This option overrides the tools check enabling the system to run.
+# Enables coverage calculation within the unit test code of fprime. Disabling this may improve unit test performance when
+# unit test coverage is not wanted. Note: this will also remove the coverage targets.
 #
 # **Values:**
-# - ON: skip tools check
-# - OFF: (default) run tools check
+# - ON: (default) calculate unit test coverage
+# - OFF: do not calculate unit test coverage, remove coverage targets
 #
-# e.g. `-DSKIP_TOOLS_CHECK=ON`
+# e.g. `-DFPRIME_ENABLE_UT_COVERAGE=OFF`
 ####
-option(SKIP_TOOLS_CHECK "Skip the tools check for older clients." OFF)
+option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 
-# Set build type, when it hasn't been set
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE RELEASE)
+####
+# `FPRIME_FPP_LOCS_BUILD`:
+#
+# For internal use only.  Used to setup build to generate FPP location file.  Run as a sub-build within fprime.
+####
+option(FPRIME_FPP_LOCS_BUILD "Skip the tools check for older clients." OFF)
+
+# Backwards compatibility, when build type=TESTING BUILD_TESTING is on
+string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)
+if (FPRIME_BUILD_TYPE STREQUAL "TESTING")
 else()
-    string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+    option(BUILD_TESTING OFF)
 endif()
-
-####
-# `CMAKE_BUILD_TYPE:`
-#
-# Allows for setting the CMake build type. Release is a normal build, Testing is used for unit testing and debug
-# options.
-#
-# **Values:**
-# - Release: (default) standard flight build
-# - Testing: allow for unit tests and debug enabled build
-# - Debug: supplied by CMake and typically unused for F prime
-#
-# e.g. `-DCMAKE_BUILD_TYPE=TESTING`
-####
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
-
-
-if (CMAKE_BUILD_TYPE STREQUAL "Testing" OR CMAKE_BUILD_TYPE STREQUAL "TESTING")
-    add_compile_options("-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
-    link_libraries("--coverage")
-    # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-endif()
-
-####
-# `CMAKE_TOOLCHAIN_FILE:`
-#
-# CMake option to specify toolchain file. For F prime, toolchains are kept in the framework and library cmake/toolchain
-# folder, although theoretically any CMake toolchain can be used. Default: none, which will use the native system build.
-#
-# e.g. `-DCMAKE_TOOLCHAIN_FILE=/path/to/cmake/toolchain`
-####
+include(CTest)
 
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
@@ -239,9 +241,3 @@ if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
 set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
-
-# Settings for F artifacts installation destination
-if (NOT DEFINED FPRIME_INSTALL_DEST)
-    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts/")
-endif()
-set(FPRIME_INSTALL_DEST "${FPRIME_INSTALL_DEST}" CACHE PATH "F prime artifacts installation directory" FORCE)
