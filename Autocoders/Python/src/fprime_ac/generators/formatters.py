@@ -269,7 +269,7 @@ class CommentFormatters:
     def commentHeaderFormat(self, comment_stuff, type="iface"):
         """
         Method to format header comments and add interface type label. No limit
-        on line length is imposed so it is assumed the XML is reasonable length
+        on line length is imposed so it is assumed the XML is of reasonable length
         text lines. Recognizes @code directives for doxygen.
         """
 
