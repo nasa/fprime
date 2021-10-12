@@ -1,0 +1,138 @@
+= Math Component Tutorial
+
+== Introduction
+
+This tutorial shows how to develop and test a simple topology
+consisting of two components:
+
+. `MathSender`: A component that receives commands and forwards work to `MathReceiver`.
+. `MathReceiver`: A component that carries out arithmetic operations and returns the results
+to `MathSender`.
+
+See the diagram below.
+
+.A simple topology for arithmetic computation
+image::img/Comp.jpg[Math Sender and Math Receiver]
+
+*What is covered:* The tutorial covers the following concepts:
+
+. Using the https://fprime-community.github.io/fpp[FPP modeling language] 
+and the F Prime CMake build system to specify the types and ports used by the components.
+. Using FPP and CMake to specify the components.
+. Completing the C++ component implementations.
+. Writing component unit tests.
+. Adding the new components and connections to the topology for the F Prime 
+`Ref` application.
+. Using the F Prime Ground Data System (GDS) to run the updated `Ref` 
+application.
+
+*Prerequisites:* This tutorial assumes the following:
+
+. Basic knowledge of Unix: how to navigate in a shell and execute programs.
+. Basic knowledge of git: How to create a branch.
+. Basic knowledge of {cpp}, including class declarations and inheritance.
+
+If you have not yet installed F Prime on your system, do so now.
+Follow the installation guide at `INSTALL.md`
+in the https://github.com/nasa/fprime[F Prime repository].
+You may also wish to work through the Getting Started tutorial at
+`docs/GettingStarted/Tutorial.md`.
+
+*Git branch:* Working on this tutorial will modify some files in the
+F Prime repository.
+Therefore it is a good idea to do this work on a new branch.
+For example:
+
+[source,bash]
+----
+% git checkout release/v3.0.0
+% git checkout -b math-tutorial
+----
+
+If you wish, you can save your work by committing to this branch.
+
+== The MathOp Type
+
+In F Prime, a *type* defines a kind of data that you can pass 
+between components or use in commands and telemetry.
+
+For this tutorial, we need one type.
+It is an enumeration type called `MathOp`.
+It represents a mathematical operation.
+
+We will add the specification for the `MathOp` type to the
+`Ref` topology.
+We will do this in three stages:
+
+. Construct the FPP model.
+. Add the model to the project.
+. Build the model.
+
+These steps are typical when adding a new type to
+a project.
+We discuss each of these steps in a subsection below.
+
+=== Construct the FPP Model
+
+Go to the directory `Ref` and run `mkdir MathTypes`.
+This directory will contain our new type.
+
+In the directory `Ref` at the top level of the F Prime repository,
+create a file `MathTypes.fpp` with the following contents:
+
+[source,fpp]
+----
+include::MathTypes/MathTypes.fpp[]
+----
+
+You can do this by typing, or by copy-paste.
+
+This file defines an enumeration type with enumerated constants
+`ADD`, `SUB`, `MULT`, and `DIVIDE` representing the operations
+of addition, subtraction, multiplication, and division.
+We usually refer to an enumeration type by the shorter name *enum*.
+For more information on enums, see 
+https://fprime-community.github.io/fpp/fpp-users-guide.html[_The FPP User's Guide_].
+
+The enum `MathTypes` resides in an FPP module `Ref`.
+An FPP module is like a {cpp} namespace: it encloses
+several definitions, each of which is qualified with the
+name of the module.
+For more information on FPP modules, see 
+https://fprime-community.github.io/fpp/fpp-users-guide.html[_The FPP User's Guide_].
+
+=== Add the Model to the Project
+
+Create a file `MathTypes/CMakeLists.txt`
+with the following contents:
+
+[source,cmake]
+----
+include::MathTypes/CMakeLists.txt[]
+----
+
+This file will tell the build system how to build the FPP model.
+
+Now we need to add the new directory to the project.
+To do that, open the file `Ref/CMakeLists.txt`.
+You should see several lines starting with `add_fprime_subdirectory`.
+Immediately after the last of those lines, add the following new line:
+
+[source,cmake]
+----
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
+----
+
+=== Build the Model
+
+Do the following:
+
+. Go to the directory `Ref/MathTypes`.
+. If you have not already run `fprime-util generate`, then do so now.
+. Run the command `fprime-util build`.
+
+You should see some build system output.
+The build system should build the new module without any errors.
+If there are any errors, see if you can identify and correct what is wrong,
+either by deciphering the error output, or by going over the steps again.
+
