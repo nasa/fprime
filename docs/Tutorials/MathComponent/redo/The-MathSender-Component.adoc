@@ -74,7 +74,29 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[
 
 === Add the Model to the Project
 
-TODO
+*In directory Ref/MathSender:*
+Create a file `Ref/MathSender/CMakeLists.txt` with the following contents:
+
+[source,cmake]
+----
+include::../MathSender/CMakeLists.txt[]
+----
+
+This file will tell the build system how to build the FPP model.
+
+*In directory Ref:*
+Add `Ref/MathTypes` to `Ref/CMakeLists.txt`, as we did
+for the <<types-add,`MathOp` type>>.
+
+*In directory Ref/MathTypes:*
+Now go back to the directory `MathTypes`.
+Run the command `fprime-util impl`.
+If everything is set up correctly, the build system should
+run for a bit. At the end there should be two new files
+in the directory: 
+`MathSenderComponentImpl.cpp-template` and
+`MathSenderComponentImpl.hpp-template`.
+Run the following commands:
 
 === Build the Model
 

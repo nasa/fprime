@@ -1,1 +1,1 @@
-rm -f Tutorial.expanded.adoc Tutorial.html top.eps top.json *~
+rm -f Tutorial.adoc Tutorial.expanded.adoc Tutorial.html top.eps top.json *~
