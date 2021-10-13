@@ -1,38 +1,32 @@
 # Math Component Tutorial
 
-This tutorial shows how to construct a simple topology consisting of two components:
-
-1. `MathSender`: A component that receives commands and forwards work to `MathReceiver`.
-2. `MathReceiver`: A component that performs mathematical operations and returns the results
-to `MathSender`.
-
-See the diagram below.
+The following example shows the steps to implement a simple pair of components connected by a pair of ports. The first,
+`MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the
+result via a `MathResult` port.
 
 ![`Component` Diagram](img/Comp.jpg "Component Pair")
 
-The tutorial covers the following elements:
-
-1) Using the FPP modeling language to specify the types and ports used by the components.
-2) Using FPP to specify the components.
-3) Completing the C++ component implementations.
-4) Writing component unit tests.
-5) Adding the new components and connections to the topology for the F Prime `Ref` application.
-6) Using the F Prime Ground Data System (GDS) to interact with the updated `Ref` application.
+All the code in this tutorial can be found in this directory. This code will work if it is copied or reimplemented
+within the `Ref` directory of F´. This tutorial will walk the user through modifying the Reference app, Ref, to
+implement the math components.
 
 ## Prerequisites
 
-To work through this tutorial, you must first install F Prime.
-You can do that by following the installation guide [here](../../INSTALL.md).
-You may also wish to work through the [Getting Started tutorial](../GettingStarted/Tutorial.md).
+This tutorial requires the user to have some basic skills and have installed F´. The prerequisite skills to understand
+this tutorial are as follows:
 
-This tutorial assumes the following:
+1) Working knowledge of Unix; how to navigate in a shell and execute programs
+2) An understanding of C++, including class declarations and inheritance
+3) An understanding of how XML is structured
 
-1) Basic knowledge of Unix: how to navigate in a shell and execute programs
-2) Basic knowledge of C++, including class declarations and inheritance
+Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
+will walk the user through the installation process and verifying the installation.  In addition, users may wish to
+follow the [Getting Started Tutorial](../GettingStarted/Tutorial.md) in order to get a feel for the F´ environment and
+tools.
 
 # 1 Component Descriptions
 
-This section covers the components that will be built in this tutorial. Each component may define the commands,
+This section will cover the components that will be built in this tutorial. Each component may define the commands,
 events, telemetry channels, and parameters. This section will list commands, events, telemetry channels, and parameters
 for each component that will be created.
 
