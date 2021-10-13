@@ -94,9 +94,8 @@ Run the command `fprime-util impl`.
 If everything is set up correctly, the build system should
 run for a bit. At the end there should be two new files
 in the directory: 
-`MathSenderComponentImpl.cpp-template` and
-`MathSenderComponentImpl.hpp-template`.
-Run the following commands:
+`MathSender.cpp-template` and
+`MathSender.hpp-template`.
 
 === Build the Model
 
