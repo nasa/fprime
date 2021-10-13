@@ -71,10 +71,6 @@ We will do this in three stages:
 . Add the model to the project.
 . Build the model.
 
-These steps are typical when adding a new type to
-a project.
-We discuss each of these steps in a subsection below.
-
 === Construct the FPP Model
 
 *In directory Ref:*
