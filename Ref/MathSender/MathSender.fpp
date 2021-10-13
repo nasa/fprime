@@ -17,12 +17,6 @@ module Ref {
     # Special ports 
     # ----------------------------------------------------------------------
 
-    @ Time get port
-    time get port timeGetOut
-
-    @ Telemetry port
-    telemetry port tlmOut
-
     @ Command receive port
     command recv port cmdIn
 
@@ -35,8 +29,14 @@ module Ref {
     @ Event port
     event port eventOut
 
+    @ Telemetry port
+    telemetry port tlmOut
+
     @ Text event port
     text event port textEventOut
+
+    @ Time get port
+    time get port timeGetOut
 
     # ----------------------------------------------------------------------
     # Commands 
@@ -44,11 +44,10 @@ module Ref {
 
     @ Do a math operation
     async command DO_MATH(
-                           val1: F32 @< The first value
-                           op: MathOp @< The operation to perform
-                           val2: F32 @< The second value
-                         ) \
-      opcode 0
+                           val1: F32 @< The first operand
+                           op: MathOp @< The operation
+                           val2: F32 @< The second operand
+                         )
 
     # ----------------------------------------------------------------------
     # Events 
@@ -56,20 +55,18 @@ module Ref {
 
     @ Math command received
     event COMMAND_RECV(
-                        val1: F32 @< The val1 argument
-                        op: MathOp @< The requested operation
-                        val2: F32 @< The val2 argument
+                        val1: F32 @< The first operand
+                        op: MathOp @< The operation
+                        val2: F32 @< The second operand
                       ) \
       severity activity low \
-      id 0 \
-      format "Math Cmd Recvd: {f} {} {f}"
+      format "Math command received: {f} {} {f}"
 
     @ Received math result
     event RESULT(
                   result: F32 @< The math result
                 ) \
       severity activity high \
-      id 1 \
       format "Math result is {f}"
 
     # ----------------------------------------------------------------------
@@ -77,16 +74,16 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ The first value
-    telemetry VAL1: F32 id 0
+    telemetry VAL1: F32
 
     @ The second value
-    telemetry VAL2: F32 id 1
+    telemetry VAL2: F32
 
     @ The operation
-    telemetry OP: MathOp id 2
+    telemetry OP: MathOp
 
     @ The result
-    telemetry RESULT: F32 id 3
+    telemetry RESULT: F32
 
   }
 
