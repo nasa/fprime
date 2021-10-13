@@ -10,7 +10,9 @@ Running-the-Ref-Deployment.adoc
 
 redo-ifchange $files
 
-echo '= Math Component Tutorial'
+echo '= Math Component Tutorial
+:toc: left
+:toclevels: 3'
 for file in $files
 do
   echo

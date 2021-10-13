@@ -1,4 +1,6 @@
 = Math Component Tutorial
+:toc: left
+:toclevels: 3
 
 == Introduction
 
@@ -266,8 +268,8 @@ There are five steps:
 
 *In directory Ref:*
 Go to the directory `Ref` at the top-level of the
-F Prime repository and run `mkdir MathSender`
-to create a directory for the new component.
+F Prime repository.
+Run `mkdir MathSender` to create a directory for the new component.
 
 *In directory Ref/MathSender:*
 Now go into the directory `Ref/MathSender`.
@@ -278,6 +280,52 @@ Create a file `MathSender.fpp` with the following contents:
 include::../../../../Ref/MathSender/MathSender.fpp[]
 ----
 
+This code defines a component `Ref.MathSender`.
+The component is *active*, which means it has its
+own thread.
+
+Inside the definition of the `MathSender` component are
+several specifiers.
+We have divided the specifiers into five groups:
+
+. *General ports:* These are user-defined ports for
+application-specific functions.
+There are two general ports: an output port `mathOpOut`
+of type `MathOp` and an input port `mathResultIn` of
+type `MathResult`.
+Notice that these port specifiers use the ports that
+we defined above.
+The input port is *asynchronous*.
+This means that when the port is invoked (i.e., when
+data is sent on the port) a message is placed on a queue,
+and its handler is later run on the thread of this component.
+
+. *Special ports:* These are ports that have a special
+meaning in F Prime.
+There are ports for registering commands with the dispatcher,
+receiving commands, sending command responses, emitting
+event reports, emitting telemetry, and getting the time.
+
+. *Commands:* These are commands sent from the ground
+or from a sequencer and dispatched to this component.
+There is one command `DO_MATH` for doing a math operation.
+The command is asynchronous.
+This means that when the command arrives, it goes on a queue
+and its handler is later run on the thread of this component.
+
+. *Events:* These are event reports that this component
+can emit.
+There are two event reports, one for receiving a command
+and one for receiving a result.
+
+. *Telemetry:* These are *channels* that define telemetry
+points that the this component can emit.
+There are four telemetry channels: three for the arguments
+to the last command received and one for the last
+result received.
+
+For more information on defining components, see
+https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[_The FPP User's Guide_].
 
 === Add the Model to the Project
 
