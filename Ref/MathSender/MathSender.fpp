@@ -76,11 +76,11 @@ module Ref {
     @ The first value
     telemetry VAL1: F32
 
-    @ The second value
-    telemetry VAL2: F32
-
     @ The operation
     telemetry OP: MathOp
+
+    @ The second value
+    telemetry VAL2: F32
 
     @ The result
     telemetry RESULT: F32

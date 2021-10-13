@@ -264,7 +264,20 @@ There are five steps:
 
 === Construct the FPP Model
 
-TODO
+*In directory Ref:*
+Go to the directory `Ref` at the top-level of the
+F Prime repository and run `mkdir MathSender`
+to create a directory for the new component.
+
+*In directory Ref/MathSender:*
+Now go into the directory `Ref/MathSender`.
+Create a file `MathSender.fpp` with the following contents:
+
+[source,fpp]
+----
+include::../../../../Ref/MathSender/MathSender.fpp[]
+----
+
 
 === Add the Model to the Project
 

@@ -1,3 +1,5 @@
+redo-ifchange Tutorial.adoc
+
 files=`awk '
 /^include::/ {
   file = $0
@@ -5,7 +7,7 @@ files=`awk '
   sub(/\[\]/, "", file)
   print file
 }' Tutorial.adoc`
-redo-ifchange $files Tutorial.adoc
+redo-ifchange $files
 
 awk '
 /^include::/ {
