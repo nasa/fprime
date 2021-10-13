@@ -237,13 +237,13 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Ports[_The 
 
 Add add the model
 `Ref/MathPorts/MathPorts.fpp` to the `Ref` project.
-Carry out the analogous steps as in the
-<<types-add,previous section>>, substituting `MathPorts` for `MathTypes`.
+Carry out the steps in the
+<<types-add,previous section>>, after
+substituting `MathPorts` for `MathTypes`.
 
 === Build the Model
 
-Build the model.
-Carry out the analogous steps as in the
+Carry out the steps in the
 <<types-build,previous section>>,
 in directory `MathPorts` instead of `MathTypes`.
 The generated code will go in
@@ -254,3 +254,59 @@ You can look at this code if you wish.
 However, the auto-generated {cpp} port files are used
 by the autocoded component implementations (described below);
 you won't ever program directly against their interfaces.
+
+== The MathSender Component
+
+TODO
+
+=== Construct the FPP Model
+
+TODO
+
+=== Add the Model to the Project
+
+TODO
+
+=== Build the Model
+
+TODO
+
+=== Complete the Implementation
+
+TODO
+
+=== Write and Run Unit Tests
+
+TODO
+
+== The MathReceiver Component
+
+TODO
+
+=== Construct the FPP Model
+
+TODO
+
+=== Add the Model to the Project
+
+TODO
+
+=== Build the Model
+
+TODO
+
+=== Complete the Implementation
+
+TODO
+
+=== Write and Run Unit Tests
+
+TODO
+
+== Updating the Ref Topology
+
+TODO
+
+== Running the Ref Deployment
+
+TODO
