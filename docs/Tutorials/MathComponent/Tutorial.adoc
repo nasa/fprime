@@ -141,7 +141,7 @@ set(SOURCE_FILES
 register_fprime_module()
 ----
 
-This file will tell the build system how to build the FPP model.
+This code will tell the build system how to build the FPP model.
 
 *In directory Ref:*
 Now we need to add the new directory to the `Ref` project.
@@ -457,36 +457,92 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
 )
 register_fprime_module()
-
-## Register the unit test build
-#set(UT_SOURCE_FILES
-#  "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
-#)
-#register_fprime_ut()
 ----
 
-This file will tell the build system how to build the FPP model.
+This code will tell the build system how to build the FPP model
+and component implementation.
 
 *In directory Ref:*
 Add `Ref/MathTypes` to `Ref/CMakeLists.txt`, as we did
 for the <<types-add,`MathOp` type>>.
 
-*In directory Ref/MathTypes:*
-Now go back to the directory `MathTypes`.
-Run the command `fprime-util impl`.
-If everything is set up correctly, the build system should
-run for a bit. At the end there should be two new files
-in the directory: 
-`MathSender.cpp-template` and
-`MathSender.hpp-template`.
-
 === Build the Model
 
-TODO
+*In directory Ref/MathTypes:*
+Go into the directory `Ref/MathTypes`.
+Run the command `fprime-util impl`.
+The build system should
+run for a bit. At the end there should be two new files
+in the directory: 
+`MathSenderComponentImpl.cpp-template` and
+`MathSenderComponentImpl.hpp-template`.
+Run the following commands:
+
+[source,bash]
+----
+mv MathSenderComponentImpl.cpp-template MathSender.cpp
+mv MathSenderComponentImpl.hpp-template MathSender.hpp
+----
+
+These commands produce a template, or stub implementation,
+of the `MathSender` implementation class.
+You will fill in this implementation class below.
+
+Now run the command `fprime-util build`.
+The model and the stub implementation should build.
+
+*In directory Ref/build-fprime-automatic-native/Ref/MathSender:*
+The generated code resides in this directory.
+You may wish to look over the file `MathSenderComponentAc.hpp`
+to get an idea of the interface to the auto-generated
+base class `MathSenderComponentBase`.
+The `MathSender` implementation class is a derived class
+of this base class.
 
 === Complete the Implementation
+
+Now we can complete the stub implementation.
+In an editor, open the file `MathSender.cpp`.
+
+*Fill in the mathResultIn handler:*
+You should see a stub handler for the `mathResultIn`
+port that looks like this:
+
+[source,c++]
+----
+void MathSender ::
+  mathResultIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      F32 result
+  )
+{
+  // TODO
+}
+----
+
+This handler overrides the corresponding pure virtual
+function in the auto-generated base class.
+Fill in the handler so that it looks like this:
+
+[source,c++]
+----
+void MathSender ::
+  mathResultIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      F32 result
+  )
+{
+    this->tlmWrite_RESULT(result);
+    this->log_ACTIVITY_HI_RESULT(result);
+}
+----
+
+This port handler is called when the `MathReceiver` component
+code returns a result.
+The implementation code emits the result on the `RESULT`
+telemetry channel and as a `RESULT` event report.
+
+*Fill in the DO_MATH command handler:*
 
 TODO
 

@@ -66,10 +66,14 @@ Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
 ----
-include::../MathTypes/CMakeLists.txt[]
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathTypes.fpp"
+)
+
+register_fprime_module()
 ----
 
-This file will tell the build system how to build the FPP model.
+This code will tell the build system how to build the FPP model.
 
 *In directory Ref:*
 Now we need to add the new directory to the `Ref` project.
