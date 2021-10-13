@@ -78,6 +78,20 @@ namespace Ref {
       //!
       void initComponents();
 
+      //! Simulate the math receiver
+      static F32 mathReceiver(
+          F32 val1,
+          MathOp op,
+          F32 val2
+      );
+
+      //! Test an operation
+      void testDoMath(
+          F32 val1,
+          MathOp op,
+          F32 val2
+      );
+
     private:
 
       // ----------------------------------------------------------------------
