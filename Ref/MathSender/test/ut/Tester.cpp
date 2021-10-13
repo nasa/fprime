@@ -44,7 +44,7 @@ namespace Ref {
   void Tester ::
     testAddCommand()
   {
-      MathOp add = MathOp::ADD;
+      const MathOp add = MathOp::ADD;
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, 10, 1.0, add, 2.0);
       // retrieve the message from the message queue and dispatch the command to the handler
@@ -99,7 +99,7 @@ namespace Ref {
   void Tester ::
     testSubCommand()
   {
-      MathOp sub = MathOp::SUB;
+      const MathOp sub = MathOp::SUB;
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, 10, 1.0, sub, 2.0);
       // retrieve the message from the message queue and dispatch the command to the handler
@@ -154,7 +154,7 @@ namespace Ref {
   void Tester ::
     testMultCommand()
   {
-      MathOp mul = MathOp::MUL;
+      const MathOp mul = MathOp::MUL;
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, 10, 1.0, mul, 2.0);
       // retrieve the message from the message queue and dispatch the command to the handler
@@ -209,7 +209,7 @@ namespace Ref {
   void Tester ::
     testDivCommand()
   {
-      MathOp div = MathOp::DIV;
+      const MathOp div = MathOp::DIV;
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, 10, 1.0, div, 2.0);
       // retrieve the message from the message queue and dispatch the command to the handler
@@ -260,6 +260,7 @@ namespace Ref {
       // verify the expect value of the event
       ASSERT_EVENTS_RESULT(0, 10.0);
   }
+
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
