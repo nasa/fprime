@@ -65,6 +65,31 @@ namespace Ref {
       this->testDoMath(1.0, MathOp::DIV, 2.0);
   }
 
+  void Tester ::
+    testResult()
+  {
+      // Generate an expected result
+      const F32 result = 10;
+      // reset all telemetry and port history
+      this->clearHistory();
+      // call result port with result
+      this->invoke_to_mathResultIn(0, result);
+      // retrieve the message from the message queue and dispatch the command to the handler
+      this->component.doDispatch();
+      // verify only one telemetry value was written
+      ASSERT_TLM_SIZE(1);
+      // verify the desired telemetry channel was sent only once
+      ASSERT_TLM_RESULT_SIZE(1);
+      // verify the values of the telemetry channel
+      ASSERT_TLM_RESULT(0, result);
+      // verify only one event was sent
+      ASSERT_EVENTS_SIZE(1);
+      // verify the expected event was only sent once
+      ASSERT_EVENTS_RESULT_SIZE(1);
+      // verify the expect value of the event
+      ASSERT_EVENTS_RESULT(0, result);
+  }
+
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
@@ -91,9 +116,6 @@ namespace Ref {
         F32 val2
     )
   {
-      // Generate an expected result
-      // It doesn't have to be correct, since we are just testing the data handling.
-      const F32 result = 10;
       // synthesize a command sequence number
       const U32 cmdSeq = 10;
       // send MS_DO_MATH command
@@ -126,26 +148,7 @@ namespace Ref {
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
       ASSERT_CMD_RESPONSE(0, MathSenderComponentBase::OPCODE_DO_MATH, cmdSeq, Fw::CmdResponse::OK);
-
-      // reset all telemetry and port history
-      this->clearHistory();
-      // call result port with result
-      this->invoke_to_mathResultIn(0, result);
-      // retrieve the message from the message queue and dispatch the command to the handler
-      this->component.doDispatch();
-      // verify only one telemetry value was written
-      ASSERT_TLM_SIZE(1);
-      // verify the desired telemetry channel was sent only once
-      ASSERT_TLM_RESULT_SIZE(1);
-      // verify the values of the telemetry channel
-      ASSERT_TLM_RESULT(0, result);
-      // verify only one event was sent
-      ASSERT_EVENTS_SIZE(1);
-      // verify the expected event was only sent once
-      ASSERT_EVENTS_RESULT_SIZE(1);
-      // verify the expect value of the event
-      ASSERT_EVENTS_RESULT(0, result);
-  }
+ }
 
   void Tester ::
     connectPorts()

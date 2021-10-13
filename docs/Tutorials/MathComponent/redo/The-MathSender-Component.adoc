@@ -5,7 +5,7 @@ There are five steps:
 
 . Construct the FPP model.
 . Add the model to the project.
-. Build the model.
+. Build the stub implementation.
 . Complete the implementation.
 . Write and run unit tests.
 
@@ -39,7 +39,7 @@ There are two general ports: an output port `mathOpOut`
 of type `MathOp` and an input port `mathResultIn` of
 type `MathResult`.
 Notice that these port specifiers use the ports that
-we defined above.
+we defined <<ports,above>>.
 The input port is *asynchronous*.
 This means that when the port is invoked (i.e., when
 data is sent on the port) a message is placed on a queue,
@@ -94,7 +94,7 @@ and component implementation.
 Add `Ref/MathTypes` to `Ref/CMakeLists.txt`, as we did
 for the <<types-add,`MathOp` type>>.
 
-=== Build the Model
+=== Build the Stub Implementation
 
 *In directory Ref/MathTypes:*
 Go into the directory `Ref/MathTypes`.
@@ -237,5 +237,11 @@ telemetry channel and as a `RESULT` event report.
 Run `fprime-util build`.
 
 === Write and Run Unit Tests
+
+*Unit tests* are an important part of FSW development.
+At the component level, unit tests at the component level exercise a component's
+functions by invoking input ports, sending commands, and
+checking for expected values on output ports (including telemetry and event
+ports).
 
 TODO

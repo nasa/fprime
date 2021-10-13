@@ -4,24 +4,29 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, AddOperationTest) {
+TEST(Nominal, AddCommand) {
     Ref::Tester tester;
     tester.testAddCommand();
 }
 
-TEST(Nominal, SubOperationTest) {
+TEST(Nominal, SubCommand) {
     Ref::Tester tester;
     tester.testSubCommand();
 }
 
-TEST(Nominal, MultOperationTest) {
+TEST(Nominal, MultCommand) {
     Ref::Tester tester;
     tester.testMultCommand();
 }
 
-TEST(Nominal, DivideOperationTest) {
+TEST(Nominal, DivideCommand) {
     Ref::Tester tester;
     tester.testDivCommand();
+}
+
+TEST(Nominal, Result) {
+    Ref::Tester tester;
+    tester.testResult();
 }
 
 int main(int argc, char **argv) {

@@ -48,6 +48,7 @@ namespace Ref {
       void testSubCommand();
       void testMultCommand();
       void testDivCommand();
+      void testResult();
 
     private:
 
