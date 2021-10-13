@@ -88,17 +88,7 @@ Create a file `MathTypes.fpp` with the following contents:
 
 [source,fpp]
 ----
-module Ref {
-
-  @ A math operation
-  enum MathOp {
-    ADD
-    SUB
-    MULT
-    DIVIDE
-  }
-
-}
+include::../../../../Ref/MathTypes/MathTypes.fpp[]
 ----
 
 You can do this by typing, or by copy-paste.
@@ -124,11 +114,7 @@ Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
 ----
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/MathTypes.fpp"
-)
-
-register_fprime_module()
+include::../MathTypes/CMakeLists.txt[]
 ----
 
 This file will tell the build system how to build the FPP model.

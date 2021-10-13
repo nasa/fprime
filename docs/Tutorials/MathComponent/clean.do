@@ -1,1 +1,2 @@
-rm -f Tutorial.html
+redo redo/clean
+rm -f Tutorial.html *~
