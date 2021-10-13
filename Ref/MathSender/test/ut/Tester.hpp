@@ -42,12 +42,19 @@ namespace Ref {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! Test operation command
-      //!
+      //! Test an ADD command
       void testAddCommand();
+
+      //! Test a SUB command
       void testSubCommand();
-      void testMultCommand();
+
+      //! Test a MUL command
+      void testMulCommand();
+
+      //! Test a DIV command
       void testDivCommand();
+
+      //! Test receipt of a result
       void testResult();
 
     private:

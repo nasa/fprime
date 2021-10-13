@@ -14,12 +14,12 @@ TEST(Nominal, SubCommand) {
     tester.testSubCommand();
 }
 
-TEST(Nominal, MultCommand) {
+TEST(Nominal, MulCommand) {
     Ref::Tester tester;
-    tester.testMultCommand();
+    tester.testMulCommand();
 }
 
-TEST(Nominal, DivideCommand) {
+TEST(Nominal, DivCommand) {
     Ref::Tester tester;
     tester.testDivCommand();
 }

@@ -54,7 +54,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testMultCommand()
+    testMulCommand()
   {
       this->testDoMath(1.0, MathOp::MUL, 2.0);
   }
@@ -116,19 +116,35 @@ namespace Ref {
         F32 val2
     )
   {
+
+      // Send the command
+
       // synthesize a command sequence number
       const U32 cmdSeq = 10;
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, cmdSeq, val1, op, val2);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+
+      // Verify command receipt and response
+
+      // verify command response was sent
+      ASSERT_CMD_RESPONSE_SIZE(1);
+      // verify the command response was correct as expected
+      ASSERT_CMD_RESPONSE(0, MathSenderComponentBase::OPCODE_DO_MATH, cmdSeq, Fw::CmdResponse::OK);
+
+      // Verify operation request on mathOpOut
+
+      // verify that that one output port was invoked overall
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // verify that the math operation port was only called once
+      // verify that the math operation port was invoked once
       ASSERT_from_mathOpOut_SIZE(1);
       // verify the arguments of the operation port
       ASSERT_from_mathOpOut(0, val1, op, val2);
-      // verify telemetry - 3 channels were written
+
+      // Verify telemetry
+
+      // verify that 3 channels were written
       ASSERT_TLM_SIZE(3);
       // verify that the desired telemetry values were only sent once
       ASSERT_TLM_VAL1_SIZE(1);
@@ -138,16 +154,16 @@ namespace Ref {
       ASSERT_TLM_VAL1(0, val1);
       ASSERT_TLM_VAL2(0, val2);
       ASSERT_TLM_OP(0, op);
-      // verify only one event was sent
+
+      // Verify event reports
+
+      // verify that one event was sent
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
       ASSERT_EVENTS_COMMAND_RECV_SIZE(1);
       // verify the correct event arguments were sent
       ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);
-      // verify command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0, MathSenderComponentBase::OPCODE_DO_MATH, cmdSeq, Fw::CmdResponse::OK);
+
  }
 
   void Tester ::
