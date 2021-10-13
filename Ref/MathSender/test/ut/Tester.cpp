@@ -84,31 +84,6 @@ namespace Ref {
   // Helper methods
   // ----------------------------------------------------------------------
 
-  F32 Tester ::
-    mathReceiver(
-        F32 val1,
-        MathOp op,
-        F32 val2
-    )
-  {
-      F32 result = 0;
-      switch (op.e) {
-        case MathOp::ADD:
-          result = val1 + val2;
-          break;
-        case MathOp::SUB:
-          result = val1 - val2;
-          break;
-        case MathOp::MUL:
-          result = val1 * val2;
-          break;
-        case MathOp::DIV:
-          result = val1 / val2;
-          break;
-      }
-      return result;
-  }
-
   void Tester ::
     testDoMath(
         F32 val1,
@@ -116,8 +91,9 @@ namespace Ref {
         F32 val2
     )
   {
-      // compute the expected result
-      const F32 result = mathReceiver(val1, op, val2);
+      // Generate an expected result
+      // It doesn't have to be correct, since we are just testing the data handling.
+      const F32 result = 10;
       // synthesize a command sequence number
       const U32 cmdSeq = 10;
       // send MS_DO_MATH command
