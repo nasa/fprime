@@ -8,10 +8,10 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ Port for sending the operation request
-    output port mathOut: Ref.MathOp
+    output port mathOpOut: MathOp
 
     @ Port for receiving the result
-    async input port mathIn: Ref.MathResult
+    async input port mathResultIn: MathResult
 
     # ----------------------------------------------------------------------
     # Special ports 

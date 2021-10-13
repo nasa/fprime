@@ -48,7 +48,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void MathSender ::
-    mathIn_handler(
+    mathResultIn_handler(
         const NATIVE_INT_TYPE portNum,
         F32 result
     )
@@ -74,7 +74,7 @@ namespace Ref {
     this->tlmWrite_VAL1(val1);
     this->tlmWrite_VAL2(val2);
     this->log_ACTIVITY_LO_COMMAND_RECV(val1,op,val2);
-    this->mathOut_out(0,val1,op,val2);
+    this->mathOpOut_out(0,val1,op,val2);
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
