@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#ifndef MathSender_HPP
-#define MathSender_HPP
+#ifndef Ref_MathSender_HPP
+#define Ref_MathSender_HPP
 
 #include "Ref/MathSender/MathSenderComponentAc.hpp"
 
