@@ -63,9 +63,9 @@ namespace Ref {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for MS_DO_MATH command handler
+      //! Implementation for DO_MATH command handler
       //! Do a math operation
-      void MS_DO_MATH_cmdHandler(
+      void DO_MATH_cmdHandler(
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq, //!< The command sequence number
           F32 val1, //!< The first value

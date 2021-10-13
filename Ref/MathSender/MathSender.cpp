@@ -53,8 +53,8 @@ namespace Ref {
         F32 result
     )
   {
-      this->tlmWrite_MS_RES(result);
-      this->log_ACTIVITY_HI_MS_RESULT(result);
+      this->tlmWrite_RES(result);
+      this->log_ACTIVITY_HI_RESULT(result);
   }
 
   // ----------------------------------------------------------------------
@@ -62,7 +62,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void MathSender ::
-    MS_DO_MATH_cmdHandler(
+    DO_MATH_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         F32 val1,
@@ -70,10 +70,10 @@ namespace Ref {
         F32 val2
     )
   {
-    this->tlmWrite_MS_OP(op);
-    this->tlmWrite_MS_VAL1(val1);
-    this->tlmWrite_MS_VAL2(val2);
-    this->log_ACTIVITY_LO_MS_COMMAND_RECV(val1,op,val2);
+    this->tlmWrite_OP(op);
+    this->tlmWrite_VAL1(val1);
+    this->tlmWrite_VAL2(val2);
+    this->log_ACTIVITY_LO_COMMAND_RECV(val1,op,val2);
     this->mathOut_out(0,val1,op,val2);
     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
