@@ -17,15 +17,15 @@ We will do this in three stages:
 
 === Construct the FPP Model
 
-*In directory Ref:*
+*Create the MathTypes directory:*
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathTypes`.
 This step creates a new directory `Ref/MathTypes`.
 This directory will contain our new type.
 
-*In directory Ref/MathTypes:*
+*Create the FPP model file:*
 Now go into the directory `Ref/MathTypes`.
-Create a file `MathTypes.fpp` with the following contents:
+In that directory, create a file `MathTypes.fpp` with the following contents:
 
 [source,fpp]
 ----
@@ -61,7 +61,7 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and
 [[types-add]]
 === Add the Model to the Project
 
-*In directory Ref/MathTypes:*
+*Create Ref/MathTypes/CMakeLists.txt:*
 Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
@@ -75,7 +75,7 @@ register_fprime_module()
 
 This code will tell the build system how to build the FPP model.
 
-*In directory Ref:*
+*Update Ref/CMakeLists.txt:*
 Now we need to add the new directory to the `Ref` project.
 To do that, open the file `Ref/CMakeLists.txt`.
 This file should already exist; it was put there by the developers
@@ -91,7 +91,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 [[types-build]]
 === Build the Model
 
-*In directory Ref/MathTypes:*
+*Run the build:*
 Do the following:
 
 . Go to the directory `Ref/MathTypes`.
@@ -102,7 +102,7 @@ The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
 
-*In directory Ref/build-fprime-automatic-native/Ref/MathTypes:*
+*Inspect the generated code:*
 Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
 (you may want to use `pushd`, or do this in a separate shell).
 The directory `build-fprime-automatic-native` is where all the

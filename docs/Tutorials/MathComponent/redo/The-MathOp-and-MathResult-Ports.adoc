@@ -18,12 +18,12 @@ We follow the same three steps as in the previous section.
 
 === Construct the FPP Model
 
-*In directory Ref:*
+*Create the MathPorts directory:*
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathPorts`.
 This directory will contain our new ports.
 
-*In directory Ref/MathPorts:*
+*Create the FPP model file:*
 Now go into the directory `Ref/MathPorts`.
 Create a file `MathPorts.fpp` with the following contents:
 

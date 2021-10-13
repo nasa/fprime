@@ -4,7 +4,7 @@
 
 == Introduction
 
-This tutorial shows how to develop and test a simple topology
+This tutorial shows how to develop, test, and deploy a simple topology
 consisting of two components:
 
 . `MathSender`: A component that receives commands and forwards work to `MathReceiver`.
@@ -20,10 +20,10 @@ image::img/top.png[Math Sender and Math Receiver]
 
 . Using the https://fprime-community.github.io/fpp[FPP modeling language]
 and the F Prime CMake build system to specify the types and ports used by the components.
-. Developing the MathSender component: Using FPP and CMake to specify the component,
+. Developing the `MathSender` component: Using FPP and CMake to specify the component,
 completing the {cpp} component implementation, and writing
 component unit tests.
-. Developing the MathReceiver component.
+. Developing the `MathReceiver` component.
 . Adding the new components and connections to the topology for the F Prime
 `Ref` application.
 . Using the F Prime Ground Data System (GDS) to run the updated `Ref`
@@ -75,15 +75,15 @@ We will do this in three stages:
 
 === Construct the FPP Model
 
-*In directory Ref:*
+*Create the MathTypes directory:*
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathTypes`.
 This step creates a new directory `Ref/MathTypes`.
 This directory will contain our new type.
 
-*In directory Ref/MathTypes:*
+*Create the FPP model file:*
 Now go into the directory `Ref/MathTypes`.
-Create a file `MathTypes.fpp` with the following contents:
+In that directory, create a file `MathTypes.fpp` with the following contents:
 
 [source,fpp]
 ----
@@ -129,7 +129,7 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and
 [[types-add]]
 === Add the Model to the Project
 
-*In directory Ref/MathTypes:*
+*Create Ref/MathTypes/CMakeLists.txt:*
 Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
@@ -143,7 +143,7 @@ register_fprime_module()
 
 This code will tell the build system how to build the FPP model.
 
-*In directory Ref:*
+*Update Ref/CMakeLists.txt:*
 Now we need to add the new directory to the `Ref` project.
 To do that, open the file `Ref/CMakeLists.txt`.
 This file should already exist; it was put there by the developers
@@ -159,7 +159,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 [[types-build]]
 === Build the Model
 
-*In directory Ref/MathTypes:*
+*Run the build:*
 Do the following:
 
 . Go to the directory `Ref/MathTypes`.
@@ -170,7 +170,7 @@ The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
 
-*In directory Ref/build-fprime-automatic-native/Ref/MathTypes:*
+*Inspect the generated code:*
 Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
 (you may want to use `pushd`, or do this in a separate shell).
 The directory `build-fprime-automatic-native` is where all the
@@ -218,12 +218,12 @@ We follow the same three steps as in the previous section.
 
 === Construct the FPP Model
 
-*In directory Ref:*
+*Create the MathPorts directory:*
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathPorts`.
 This directory will contain our new ports.
 
-*In directory Ref/MathPorts:*
+*Create the FPP model file:*
 Now go into the directory `Ref/MathPorts`.
 Create a file `MathPorts.fpp` with the following contents:
 
@@ -294,12 +294,12 @@ There are five steps:
 
 === Construct the FPP Model
 
-*In directory Ref:*
+*Create the MathSender directory:*
 Go to the directory `Ref` at the top-level of the
 F Prime repository.
 Run `mkdir MathSender` to create a directory for the new component.
 
-*In directory Ref/MathSender:*
+*Create the FPP model file:*
 Now go into the directory `Ref/MathSender`.
 Create a file `MathSender.fpp` with the following contents:
 
@@ -446,7 +446,7 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[
 
 === Add the Model to the Project
 
-*In directory Ref/MathSender:*
+*Create Ref/MathSender/CMakeLists.txt:*
 Create a file `Ref/MathSender/CMakeLists.txt` with the following contents:
 
 [source,cmake]
@@ -462,13 +462,13 @@ register_fprime_module()
 This code will tell the build system how to build the FPP model
 and component implementation.
 
-*In directory Ref:*
-Add `Ref/MathTypes` to `Ref/CMakeLists.txt`, as we did
-for the <<types-add,`MathOp` type>>.
+*Update Ref/CMakeLists.txt:*
+Add `Ref/MathSender` to `Ref/CMakeLists.txt`, as we did
+for <<types-add,`Ref/MathTypes`>>.
 
 === Build the Stub Implementation
 
-*In directory Ref/MathTypes:*
+*Run the build:*
 Go into the directory `Ref/MathTypes`.
 Run the command `fprime-util impl`.
 The build system should
@@ -491,7 +491,7 @@ You will fill in this implementation class below.
 Now run the command `fprime-util build`.
 The model and the stub implementation should build.
 
-*In directory Ref/build-fprime-automatic-native/Ref/MathSender:*
+*Inspect the generated code:*
 The generated code resides in this directory.
 You may wish to look over the file `MathSenderComponentAc.hpp`
 to get an idea of the interface to the auto-generated
@@ -624,8 +624,8 @@ in three steps:
 
 ==== Set Up the Unit Test Environment
 
-*In directory Ref/MathSender*:
-Do the following:
+*Create the stub Tester class:*
+Do the following in directory `Ref/MathSender`:
 
 . Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
@@ -641,7 +641,7 @@ It should generate files `Tester.cpp` and `Tester.hpp`.
 mv Tester.* test/ut
 ----
 
-*In directory Ref/MathSender/test/ut:*
+*Create a stub main.cpp file:*
 Now go to the directory `Ref/MathSender/test/ut`.
 In that directory, create a file `main.cpp` with the
 following contents:
@@ -661,7 +661,7 @@ https://github.com/google/googletest[Google Test framework].
 Right now there aren't any tests to run; we will add one
 in the next section.
 
-*In directory Ref/MathSender:*
+*Update Ref/MathSender/CMakeLists.txt:*
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -679,6 +679,7 @@ register_fprime_ut()
 This code tells the build system how to build
 and run the unit tests.
 
+*Run the build:*
 Now we can check that the unit test build is working.
 
 . If you have not yet run `fprime-util generate --ut`,
@@ -689,6 +690,7 @@ tests.
 . Run `fprime-util build --ut`.
 Everything should build without errors.
 
+*Inspect the generated code:*
 The generated code is located at
 `Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
 This directory contains two auto-generated classes:
@@ -908,7 +910,82 @@ value before emitting it.
 
 ==== Write and Run Additional Unit Tests
 
-TODO
+*Add more command tests:*
+Try to follow the pattern given in the previous
+section to add three more tests, one test each
+for operations `SUB`, `MUL`, and `DIV`.
+Most of the work should be done in the helper
+that we already wrote.
+Each new test requires just a short test function
+and a short test macro.
+
+Run the tests to make sure everything compiles and
+the tests pass.
+
+*Add a result test:*
+Add a test for exercising the scenario in which the `MathReceiver`
+component sends a result back to `MathSender`.
+
+. Add the following function signature in the "Tests"
+section of to `Tester.hpp`:
+
++
+[source,c++]
+----
+//! Test receipt of a result
+void testResult();
+----
+
+. Add the corresponding function body in `Tester.cpp`:
+
++
+[source,cpp]
+----
+void Tester ::
+  testResult()
+{
+    // Generate an expected result
+    const F32 result = 10;
+    // reset all telemetry and port history
+    this->clearHistory();
+    // call result port with result
+    this->invoke_to_mathResultIn(0, result);
+    // retrieve the message from the message queue and dispatch the command to the handler
+    this->component.doDispatch();
+    // verify only one telemetry value was written
+    ASSERT_TLM_SIZE(1);
+    // verify the desired telemetry channel was sent only once
+    ASSERT_TLM_RESULT_SIZE(1);
+    // verify the values of the telemetry channel
+    ASSERT_TLM_RESULT(0, result);
+    // verify only one event was sent
+    ASSERT_EVENTS_SIZE(1);
+    // verify the expected event was only sent once
+    ASSERT_EVENTS_RESULT_SIZE(1);
+    // verify the expect value of the event
+    ASSERT_EVENTS_RESULT(0, result);
+}
+----
+
++
+This code is similar to the helper function in the previous section.
+The main difference is that it invokes a port directly
+(the `mathResultIn` port) instead of sending a command.
+
+. Add the following test macro to `main.cpp`:
+
++
+[source,cpp]
+----
+TEST(Nominal, Result) {
+    Ref::Tester tester;
+    tester.testResult();
+}
+----
+
+. Run the tests.
+Again you can try altering something in the component code
+to see what effect it has on the test output.
 
 == The MathReceiver Component
 
