@@ -30,7 +30,7 @@ module Ref {
     command reg port cmdRegOut
 
     @ Command response port
-    command resp port cmdResponseIn
+    command resp port cmdResponseOut
 
     @ Event port
     event port eventOut
