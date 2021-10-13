@@ -86,7 +86,7 @@ module Ref {
     telemetry OP: MathOp id 2
 
     @ The result
-    telemetry RES: F32 id 3
+    telemetry RESULT: F32 id 3
 
   }
 

@@ -53,7 +53,7 @@ namespace Ref {
         F32 result
     )
   {
-      this->tlmWrite_RES(result);
+      this->tlmWrite_RESULT(result);
       this->log_ACTIVITY_HI_RESULT(result);
   }
 

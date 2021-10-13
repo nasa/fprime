@@ -85,9 +85,9 @@ namespace Ref {
       // verify only one telemetry value was written
       ASSERT_TLM_SIZE(1);
       // verify the desired telemetry channel was sent only once
-      ASSERT_TLM_RES_SIZE(1);
+      ASSERT_TLM_RESULT_SIZE(1);
       // verify the values of the telemetry channel
-      ASSERT_TLM_RES(0, 10.0);
+      ASSERT_TLM_RESULT(0, 10.0);
       // verify only one event was sent
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
@@ -140,9 +140,9 @@ namespace Ref {
       // verify only one telemetry value was written
       ASSERT_TLM_SIZE(1);
       // verify the desired telemetry channel was sent only once
-      ASSERT_TLM_RES_SIZE(1);
+      ASSERT_TLM_RESULT_SIZE(1);
       // verify the values of the telemetry channel
-      ASSERT_TLM_RES(0, 10.0);
+      ASSERT_TLM_RESULT(0, 10.0);
       // verify only one event was sent
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
@@ -195,9 +195,9 @@ namespace Ref {
       // verify only one telemetry value was written
       ASSERT_TLM_SIZE(1);
       // verify the desired telemetry channel was sent only once
-      ASSERT_TLM_RES_SIZE(1);
+      ASSERT_TLM_RESULT_SIZE(1);
       // verify the values of the telemetry channel
-      ASSERT_TLM_RES(0, 10.0);
+      ASSERT_TLM_RESULT(0, 10.0);
       // verify only one event was sent
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once
@@ -250,9 +250,9 @@ namespace Ref {
       // verify only one telemetry value was written
       ASSERT_TLM_SIZE(1);
       // verify the desired telemetry channel was sent only once
-      ASSERT_TLM_RES_SIZE(1);
+      ASSERT_TLM_RESULT_SIZE(1);
       // verify the values of the telemetry channel
-      ASSERT_TLM_RES(0, 10.0);
+      ASSERT_TLM_RESULT(0, 10.0);
       // verify only one event was sent
       ASSERT_EVENTS_SIZE(1);
       // verify the expected event was only sent once

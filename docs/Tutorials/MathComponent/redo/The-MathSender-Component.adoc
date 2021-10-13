@@ -1,6 +1,13 @@
 == The MathSender Component
 
-TODO
+Now we can build and test the `MathSender` component.
+There are five steps:
+
+. Construct the FPP model.
+. Add the model to the project.
+. Build the model.
+. Complete the implementation.
+. Write and run unit tests.
 
 === Construct the FPP Model
 
