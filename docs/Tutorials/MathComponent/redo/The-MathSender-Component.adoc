@@ -446,13 +446,28 @@ section entitled "Tests":
 
 [source,c++]
 ----
-//! Test an add command
+//! Test an ADD command
 void testAddCommand();
 ----
 
-TODO
+In `Tester.cpp`, add the corresponding function
+body:
 
-*Write a test macro:*
+[source,c++]
+----
+void Tester ::
+  testAddCommand()
+{
+    this->testDoMath(1.0, MathOp::ADD, 2.0);
+}
+----
+
+This function calls `testDoMath` to test an `ADD`
+command with hard-coded operand values 1.0 and 2.0.
+A more sophisticated implementation might use different
+values, e.g., random ones.
+
+*Write a test macro:"*
 TODO
 
 *Run the test:*

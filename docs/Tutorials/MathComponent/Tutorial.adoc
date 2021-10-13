@@ -811,9 +811,35 @@ For further information about the F Prime unit test
 interface, see the F Prime User's Guide.
 
 *Write a test function:*
-TODO
+Next we will write a test function that calls
+`testDoMath` to test an `ADD` operation.
+In `Tester.hpp`, add the following line in the
+section entitled "Tests":
 
-*Write a test macro:*
+[source,c++]
+----
+//! Test an ADD command
+void testAddCommand();
+----
+
+In `Tester.cpp`, add the corresponding function
+body:
+
+[source,c++]
+----
+void Tester ::
+  testAddCommand()
+{
+    this->testDoMath(1.0, MathOp::ADD, 2.0);
+}
+----
+
+This function calls `testDoMath` to test an `ADD`
+command with hard-coded operand values 1.0 and 2.0.
+A more sophisticated implementation might use different
+values, e.g., random ones.
+
+*Write a test macro:"*
 TODO
 
 *Run the test:*
