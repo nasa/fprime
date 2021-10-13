@@ -34,12 +34,14 @@ application.
 
 If you have not yet installed F Prime on your system, do so now.
 Follow the installation guide at `INSTALL.md`
-in the https://github.com/nasa/fprime[F Prime repository].
+in the https://github.com/nasa/fprime[F Prime git repository].
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-*Git branch:* Working on this tutorial will modify some files in the
-F Prime repository.
+*Git branch:* This tutorial is designed to work on the branch `release/v3.0.0`.
+
+Working on this tutorial will modify some files under version control in the
+F Prime git repository.
 Therefore it is a good idea to do this work on a new branch.
 For example:
 
@@ -74,13 +76,13 @@ We discuss each of these steps in a subsection below.
 
 === Construct the FPP Model
 
-*In the Ref directory:* 
+*In directory Ref:* 
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathTypes`.
-This step creates a new directory `Reft/MathTypes`.
+This step creates a new directory `Ref/MathTypes`.
 This directory will contain our new type.
 
-*In the Ref/MathTypes directory:*
+*In directory Ref/MathTypes:*
 Now go into the directory `Ref/MathTypes`.
 Create a file `MathTypes.fpp` with the following contents:
 
@@ -91,10 +93,10 @@ include::../../../Ref/MathTypes/MathTypes.fpp[]
 
 You can do this by typing, or by copy-paste.
 
-This file defines an enumeration type with enumerated constants
-`ADD`, `SUB`, `MULT`, and `DIVIDE` representing the operations
+This file defines an enumeration type or *enum*
+with enumerated constants `ADD`, `SUB`, `MULT`, and `DIVIDE`.
+These four constants represent the operations
 of addition, subtraction, multiplication, and division.
-We usually refer to an enumeration type by the shorter name *enum*.
 For more information on enums, see 
 https://fprime-community.github.io/fpp/fpp-users-guide.html[_The FPP User's Guide_].
 
@@ -107,21 +109,22 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html[_The FPP User's Guid
 
 === Add the Model to the Project
 
-*In the Ref/MathTypes directory:*
+*In directory Ref/MathTypes:*
 Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
 ----
-include::../../../Ref/MathTypes/CMakeLists-fpp.txt[]
+include::MathTypes/CMakeLists.txt[]
 ----
 
 This file will tell the build system how to build the FPP model.
 
-*In the Ref directory:*
+*In directory Ref:*
 Now we need to add the new directory to the `Ref` project.
-To do that, open the file `Ref/CMakeLists.txt`
-(which should already exist).
-You should see several lines starting with `add_fprime_subdirectory`.
+To do that, open the file `Ref/CMakeLists.txt`.
+This file should already exist; it was put there by the developers
+of the `Ref` topology.
+In this file, you should see several lines starting with `add_fprime_subdirectory`.
 Immediately after the last of those lines, add the following new line:
 
 [source,cmake]
@@ -131,14 +134,40 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 
 === Build the Model
 
+*In directory Ref/MathTypes:*
 Do the following:
 
 . Go to the directory `Ref/MathTypes`.
 . If you have not already run `fprime-util generate`, then do so now.
 . Run the command `fprime-util build`.
 
-You should see some build system output.
-The build system should build the new module without any errors.
-If there are any errors, see if you can identify and correct what is wrong,
+You should see some build system output indicating
+that the model built without any errors.
+If something else happened, see if you can identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
 
+*In directory Ref/build-fprime-automatic-native/Ref/MathTypes:*
+Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
+(you may want to use `pushd`, or do this in a separate shell).
+The directory `build-fprime-automatic-native` is where all the
+generated code lives for the "automatic native" build of the `Ref`
+project.
+Within that directory is a directory tree that mirrors the project
+structure.
+In particular, `Ref/build-fprime-automatic-native/Ref/MathTypes`
+contains the generated code for `Ref/MathTypes`.
+
+Run `ls`.
+You should see something like this:
+
+[source,bash]
+----
+CMakeFiles            MathOpEnumAc.cpp      MathOpEnumAi.xml.prev cmake_install.cmake
+Makefile              MathOpEnumAc.hpp      autocoder
+----
+
+The files `MathOpEnumAc.hpp` and
+`MathOpEnumAc.cpp` are the auto-generated {cpp} files
+corresponding to the `MathOp` enum.
+You may wish to spend some time studying the file `MathOpEnumAc.hpp`.
+All enum types have a similar auto-generated {cpp} interface.
