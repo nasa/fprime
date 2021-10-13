@@ -74,15 +74,19 @@ We discuss each of these steps in a subsection below.
 
 === Construct the FPP Model
 
-Go to the directory `Ref` and run `mkdir MathTypes`.
+*In the Ref directory:* 
+Go to the directory `Ref` at the top-level of the
+F Prime repository and run `mkdir MathTypes`.
+This step creates a new directory `Reft/MathTypes`.
 This directory will contain our new type.
 
-In the directory `Ref` at the top level of the F Prime repository,
-create a file `MathTypes.fpp` with the following contents:
+*In the Ref/MathTypes directory:*
+Now go into the directory `Ref/MathTypes`.
+Create a file `MathTypes.fpp` with the following contents:
 
 [source,fpp]
 ----
-include::MathTypes/MathTypes.fpp[]
+include::../../../Ref/MathTypes/MathTypes.fpp[]
 ----
 
 You can do this by typing, or by copy-paste.
@@ -103,18 +107,20 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html[_The FPP User's Guid
 
 === Add the Model to the Project
 
-Create a file `MathTypes/CMakeLists.txt`
-with the following contents:
+*In the Ref/MathTypes directory:*
+Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
 [source,cmake]
 ----
-include::MathTypes/CMakeLists.txt[]
+include::../../../Ref/MathTypes/CMakeLists-fpp.txt[]
 ----
 
 This file will tell the build system how to build the FPP model.
 
-Now we need to add the new directory to the project.
-To do that, open the file `Ref/CMakeLists.txt`.
+*In the Ref directory:*
+Now we need to add the new directory to the `Ref` project.
+To do that, open the file `Ref/CMakeLists.txt`
+(which should already exist).
 You should see several lines starting with `add_fprime_subdirectory`.
 Immediately after the last of those lines, add the following new line:
 
