@@ -55,12 +55,12 @@ If you wish, you can save your work by committing to this branch.
 
 == The MathOp Type
 
-In F Prime, a *type* defines a kind of data that you can pass
+In F Prime, a *type definition* defines a kind of data that you can pass
 between components or use in commands and telemetry.
 
-For this tutorial, we need one type.
-It is an enumeration type called `MathOp`.
-It represents a mathematical operation.
+For this tutorial, we need one type definition.
+It defines an enumeration called `MathOp`, which
+represents a mathematical operation.
 
 We will add the specification for the `MathOp` type to the
 `Ref` topology.
@@ -93,10 +93,12 @@ include::../../../../Ref/MathTypes/MathTypes.fpp[]
 
 You can do this by typing, or by copy-paste.
 
-This file defines an enumeration type or *enum*
+This file defines an enumeration or *enum*
 with enumerated constants `ADD`, `SUB`, `MULT`, and `DIVIDE`.
 These four constants represent the operations
 of addition, subtraction, multiplication, and division.
+The enum also defines a type `MathOp`; the enumerated
+constants are the values of this type.
 For more information on enums, see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Enums[_The FPP User's Guide_].
 
@@ -188,7 +190,7 @@ For this tutorial, we need two port definitions:
 `MathSender` to `MathReceiver`.
 
 * `MathResult` for sending the result of an arithmetic
-opeation from `MathReceiver` to `MathSender`.
+operation from `MathReceiver` to `MathSender`.
 
 We follow the same three steps as in the previous section.
 
