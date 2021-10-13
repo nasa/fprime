@@ -92,10 +92,10 @@ module Ref {
 
   @ A math operation
   enum MathOp {
-    ADD
-    SUB
-    MULT
-    DIVIDE
+    ADD @< Addition
+    SUB @< Subtraction
+    MUL @< Mutliplication
+    DIV @< Division
   }
 
 }
@@ -104,7 +104,7 @@ module Ref {
 You can do this by typing, or by copy-paste.
 
 This file defines an enumeration or *enum*
-with enumerated constants `ADD`, `SUB`, `MULT`, and `DIVIDE`.
+with enumerated constants `ADD`, `SUB`, `MUL`, and `DIV`.
 These four constants represent the operations
 of addition, subtraction, multiplication, and division.
 The enum also defines a type `MathOp`; the enumerated
@@ -118,6 +118,14 @@ several definitions, each of which is qualified with the
 name of the module.
 For more information on FPP modules, see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Modules[_The FPP User's Guide_].
+
+The text following a symbol `@` or `@<` is called an
+*annotation*.
+These annotations are carried through the parsing and
+become comments in the generated code.
+For more information, see
+https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and-Annotations[_The FPP User's Guide_].
+
 
 [[types-add]]
 === Add the Model to the Project
