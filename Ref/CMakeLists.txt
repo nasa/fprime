@@ -40,6 +40,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 ##
 # Add component subdirectories
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathSender/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")

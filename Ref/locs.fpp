@@ -1,3 +1,4 @@
+locate component Ref.MathSender at "MathSender/MathSender.fpp"
 locate component Ref.PingReceiver at "PingReceiver/PingReceiver.fpp"
 locate component Ref.RecvBuff at "RecvBuffApp/RecvBuffApp.fpp"
 locate component Ref.SendBuff at "SendBuffApp/SendBuffApp.fpp"
