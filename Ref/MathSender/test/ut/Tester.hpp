@@ -71,6 +71,13 @@ namespace Ref {
       // Helper methods
       // ----------------------------------------------------------------------
 
+      //! Test a DO_MATH command
+      void testDoMath(
+          F32 val1,
+          MathOp op,
+          F32 val2
+      );
+
       //! Connect ports
       //!
       void connectPorts();
@@ -78,13 +85,6 @@ namespace Ref {
       //! Initialize components
       //!
       void initComponents();
-
-      //! Test an operation
-      void testDoMath(
-          F32 val1,
-          MathOp op,
-          F32 val2
-      );
 
     private:
 
