@@ -1,3 +1,8 @@
+. ./defs.sh
+
 exec 1>&2
 
-ispell Tutorial.adoc
+for file in $FILES
+do
+  ispell $file
+done

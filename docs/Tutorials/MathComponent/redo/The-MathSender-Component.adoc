@@ -323,7 +323,7 @@ This directory contains two auto-generated classes:
 
 . `MathSenderGTestBase`: This is the direct base
 class of `Tester`.
-It provides a test interface implemented with GoogleTest
+It provides a test interface implemented with Google Test
 macros.
 
 . `MathSenderTesterBase`: This is the direct base
