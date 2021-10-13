@@ -12,7 +12,7 @@ to `MathSender`.
 See the diagram below.
 
 .A simple topology for arithmetic computation
-image::img/Comp.jpg[Math Sender and Math Receiver]
+image::img/top.png[Math Sender and Math Receiver]
 
 *What is covered:* The tutorial covers the following concepts:
 
