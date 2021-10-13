@@ -24,13 +24,8 @@ namespace Ref {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       MathSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathSender")
-#else
-      MathSenderGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
