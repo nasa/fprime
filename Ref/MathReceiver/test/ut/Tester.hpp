@@ -46,7 +46,7 @@ namespace Ref {
       //!
       void testAddCommand();
       void testSubCommand();
-      void testMultCommand();
+      void testMulCommand();
       void testDivCommand();
       void testThrottle();
 
@@ -59,8 +59,8 @@ namespace Ref {
       //! Handler for from_mathResultOut
       //!
       void from_mathResultOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 result /*!< the result of the operation*/
+          const NATIVE_INT_TYPE portNum, //!< The port number
+          F32 result //!< the result of the operation
       );
 
     private:
@@ -68,6 +68,28 @@ namespace Ref {
       // ----------------------------------------------------------------------
       // Helper methods
       // ----------------------------------------------------------------------
+
+      //! Set the factor parameter
+      void setFactor(
+          F32 factor //!< The parameter value
+      );
+
+      //! Compute a result
+      F32 computeResult(
+          F32 val1,
+          MathOp op,
+          F32 val2,
+          F32 factor
+      );
+
+      //! Do a math operation
+      //! Factor parameter must be set
+      void doMathOp(
+          F32 val1,
+          MathOp op,
+          F32 val2,
+          F32 factor
+      );
 
       //! Connect ports
       //!

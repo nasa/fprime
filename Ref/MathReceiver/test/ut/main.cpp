@@ -4,27 +4,27 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, AddOperationTest) {
+TEST(Nominal, Add) {
     Ref::Tester tester;
     tester.testAddCommand();
 }
 
-TEST(Nominal, SubOperationTest) {
+TEST(Nominal, Sub) {
     Ref::Tester tester;
     tester.testSubCommand();
 }
 
-TEST(Nominal, MultOperationTest) {
+TEST(Nominal, Mul) {
     Ref::Tester tester;
-    tester.testMultCommand();
+    tester.testMulCommand();
 }
 
-TEST(Nominal, DivideOperationTest) {
+TEST(Nominal, Div) {
     Ref::Tester tester;
     tester.testDivCommand();
 }
 
-TEST(Nominal, ThrottleTest) {
+TEST(Nominal, Throttle) {
     Ref::Tester tester;
     tester.testThrottle();
 }
