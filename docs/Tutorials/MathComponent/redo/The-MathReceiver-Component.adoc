@@ -49,9 +49,9 @@ Its default value is 1.0.
 When doing math, this component performs the requested
 operation and then multiplies by this factor.
 For example, if the arguments of the `mathOpIn` port
-are stem:[v_1], `ADD`, and stem:[v_2], and the factor is stem:[f],
+are _v1_, `ADD`, and _v2_, and the factor is _f_,
 then the result sent on `mathResultOut` is
-stem:[(v_1 + v_2) f].
+_(v1 + v2) f_.
 
 . *Events:* There are three event reports:
 
