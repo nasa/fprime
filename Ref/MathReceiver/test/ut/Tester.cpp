@@ -13,6 +13,7 @@
 #include "Tester.hpp"
 
 #define INSTANCE 0
+#define CMD_SEQ 10
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
 
@@ -86,74 +87,31 @@ namespace Ref {
   void Tester ::
     testThrottle()
   {
-#if 0
       // send the number of commands required to throttle the event
       // Use the autocoded value so the unit test passes if the
       // throttle value is changed
-      for (NATIVE_UINT_TYPE cycle = 0; cycle < MathReceiverComponentBase::EVENTID_SET_FACTOR1_THROTTLE; cycle++) {
-          // send the command to set factor1 to 2.0
-          this->sendCmd_SET_FACTOR1(0, 10, 2.0);
-          // invoke scheduler port to dispatch message
-          this->invoke_to_schedIn(0, 0);
-          // verify the changed value events
-          ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_SET_FACTOR1_SIZE(1);
-          ASSERT_EVENTS_SET_FACTOR1(0, 2.0);
-          // verify the changed value channel
-          ASSERT_TLM_SIZE(2);
-          ASSERT_TLM_FACTOR1_SIZE(1);
-          ASSERT_TLM_FACTOR1(0, 2.0);
-          ASSERT_TLM_FACTOR1S_SIZE(1);
-          ASSERT_TLM_FACTOR1S(0, cycle+1);
-
-          // verify the command response was sent
-          ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0, MathReceiverComponentBase::OPCODE_SET_FACTOR1, 10, Fw::CmdResponse::OK);
-
-          // clear the history
-          this->clearHistory();
+      for (
+          U16 cycle = 0;
+          cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
+          cycle++
+      ) {
+          this->setFactor(1.0);
       }
 
-      // sending the command now will not result in an event since
-      // the throttle value has been reached
-
-      // send the command to set factor1 to 2.0
-      this->sendCmd_SET_FACTOR1(0, 10, 2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_schedIn(0, 0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(0);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_FACTOR1_SIZE(1);
-      ASSERT_TLM_FACTOR1(0, 2.0);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0, MathReceiverComponentBase::OPCODE_SET_FACTOR1, 10, Fw::CmdResponse::OK);
-
-      // clear the history
-      this->clearHistory();
+      // Event should now be throttled
+      this->setFactor(1.0, ThrottleState::THROTTLED);
 
       // send the command to clear the throttle
-      this->sendCmd_CLEAR_EVENT_THROTTLE(0, 10);
+      this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
       // invoke scheduler port to dispatch message
       this->invoke_to_schedIn(0, 0);
       // verify clear event was sent
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
 
-      // clear the history
-      this->clearHistory();
-      // sending the command will now produce the event again
-      this->sendCmd_SET_FACTOR1(0, 10, 2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_schedIn(0, 0);
-      // verify the changed value event
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_SET_FACTOR1(0, 2.0);
+      // Throttling should be cleared
+      this->setFactor(1.0);
 
-#endif
   }
 
   // ----------------------------------------------------------------------
@@ -174,19 +132,25 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    setFactor(F32 factor)
+    setFactor(
+        F32 factor,
+        ThrottleState throttleState
+    )
   {
       // clear history
       this->clearHistory();
       // set the parameter
       this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
-      const U32 cmdSeq = 0;
-      const U32 instance = 0;
-      this->paramSend_FACTOR(instance, cmdSeq);
-      // verify the parameter update notification event was sent
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_FACTOR_UPDATED_SIZE(1);
-      ASSERT_EVENTS_FACTOR_UPDATED(0, factor);
+      this->paramSend_FACTOR(INSTANCE, CMD_SEQ);
+      if (throttleState == ThrottleState::NOT_THROTTLED) {
+          // verify the parameter update notification event was sent
+          ASSERT_EVENTS_SIZE(1);
+          ASSERT_EVENTS_FACTOR_UPDATED_SIZE(1);
+          ASSERT_EVENTS_FACTOR_UPDATED(0, factor);
+      }
+      else {
+          ASSERT_EVENTS_SIZE(0);
+      }
   }
 
   F32 Tester ::

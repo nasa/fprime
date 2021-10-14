@@ -22,11 +22,22 @@ namespace Ref {
     public MathReceiverGTestBase
   {
 
+    private:
+    
+      // ----------------------------------------------------------------------
+      // Types 
+      // ----------------------------------------------------------------------
+      
+      enum class ThrottleState {
+        THROTTLED,
+        NOT_THROTTLED
+      };
+
+    public:
+
       // ----------------------------------------------------------------------
       // Construction and destruction
       // ----------------------------------------------------------------------
-
-    public:
 
       //! Construct object Tester
       //!
@@ -71,7 +82,8 @@ namespace Ref {
 
       //! Set the factor parameter
       void setFactor(
-          F32 factor //!< The parameter value
+          F32 factor, //!< The parameter value
+          ThrottleState throttleState = ThrottleState::NOT_THROTTLED //!< The throttle state
       );
 
       //! Compute a result
