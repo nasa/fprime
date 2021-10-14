@@ -76,15 +76,15 @@ namespace Ref {
       this->invoke_to_mathResultIn(0, result);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify only one telemetry value was written
+      // verify one telemetry value was written
       ASSERT_TLM_SIZE(1);
-      // verify the desired telemetry channel was sent only once
+      // verify the desired telemetry channel was sent once
       ASSERT_TLM_RESULT_SIZE(1);
       // verify the values of the telemetry channel
       ASSERT_TLM_RESULT(0, result);
-      // verify only one event was sent
+      // verify one event was sent
       ASSERT_EVENTS_SIZE(1);
-      // verify the expected event was only sent once
+      // verify the expected event was sent once
       ASSERT_EVENTS_RESULT_SIZE(1);
       // verify the expect value of the event
       ASSERT_EVENTS_RESULT(0, result);
@@ -146,7 +146,7 @@ namespace Ref {
 
       // verify that 3 channels were written
       ASSERT_TLM_SIZE(3);
-      // verify that the desired telemetry values were only sent once
+      // verify that the desired telemetry values were sent once
       ASSERT_TLM_VAL1_SIZE(1);
       ASSERT_TLM_VAL2_SIZE(1);
       ASSERT_TLM_OP_SIZE(1);
@@ -159,7 +159,7 @@ namespace Ref {
 
       // verify that one event was sent
       ASSERT_EVENTS_SIZE(1);
-      // verify the expected event was only sent once
+      // verify the expected event was sent once
       ASSERT_EVENTS_COMMAND_RECV_SIZE(1);
       // verify the correct event arguments were sent
       ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);

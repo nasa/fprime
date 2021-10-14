@@ -45,8 +45,8 @@ We will explain the function of these ports below.
 . *Parameters:* There is one *parameter*.
 A parameter is a constant that is configurable by command.
 In this case there is one parameter `FACTOR`.
-Its default value is 1.0.
-When doing math, this component performs the requested
+It has the default value 1.0 until its value is changed by command.
+When doing math, the `MathReceiver` component performs the requested
 operation and then multiplies by this factor.
 For example, if the arguments of the `mathOpIn` port
 are _v1_, `ADD`, and _v2_, and the factor is _f_,

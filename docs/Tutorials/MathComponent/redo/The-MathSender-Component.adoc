@@ -196,6 +196,11 @@ perform the operation.
 The command response goes out on the special port
 `cmdResponseOut`.
 
+In F Prime, every execution of a command handler must end by
+sending a command response.
+The proper behavior of other framework components (e.g., command
+dispatcher, command sequencer) depends upon adherence to this rule.
+
 *Check the build:*
 Run `fprime-util build` again to make sure that everything still builds.
 
@@ -419,7 +424,7 @@ void Tester ::
 
     // verify that 3 channels were written
     ASSERT_TLM_SIZE(3);
-    // verify that the desired telemetry values were only sent once
+    // verify that the desired telemetry values were sent once
     ASSERT_TLM_VAL1_SIZE(1);
     ASSERT_TLM_VAL2_SIZE(1);
     ASSERT_TLM_OP_SIZE(1);
@@ -432,7 +437,7 @@ void Tester ::
 
     // verify that one event was sent
     ASSERT_EVENTS_SIZE(1);
-    // verify the expected event was only sent once
+    // verify the expected event was sent once
     ASSERT_EVENTS_COMMAND_RECV_SIZE(1);
     // verify the correct event arguments were sent
     ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);
@@ -586,13 +591,13 @@ void Tester ::
     this->component.doDispatch();
     // verify only one telemetry value was written
     ASSERT_TLM_SIZE(1);
-    // verify the desired telemetry channel was sent only once
+    // verify the desired telemetry channel was sent once
     ASSERT_TLM_RESULT_SIZE(1);
     // verify the values of the telemetry channel
     ASSERT_TLM_RESULT(0, result);
-    // verify only one event was sent
+    // verify one event was sent
     ASSERT_EVENTS_SIZE(1);
-    // verify the expected event was only sent once
+    // verify the expected event was sent once
     ASSERT_EVENTS_RESULT_SIZE(1);
     // verify the expect value of the event
     ASSERT_EVENTS_RESULT(0, result);
