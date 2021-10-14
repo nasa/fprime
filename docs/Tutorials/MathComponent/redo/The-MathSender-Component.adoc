@@ -73,6 +73,7 @@ result received.
 For more information on defining components, see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[_The FPP User's Guide_].
 
+[[math-sender_add-model]]
 === Add the Model to the Project
 
 *Create Ref/MathSender/CMakeLists.txt:*
@@ -95,6 +96,7 @@ and component implementation.
 Add `Ref/MathSender` to `Ref/CMakeLists.txt`, as we did
 for <<types-add,`Ref/MathTypes`>>.
 
+[[math-sender_build-stub]]
 === Build the Stub Implementation
 
 *Run the build:*

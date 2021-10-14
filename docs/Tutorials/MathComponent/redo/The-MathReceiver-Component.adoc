@@ -53,10 +53,20 @@ are stem:[v_1], `ADD`, and stem:[v_2], and the factor is stem:[f],
 then the result sent on `mathResultOut` is
 stem:[(v_1 + v_2) f].
 
-. *Events:* These are event reports that this component
-can emit.
-There are two event reports, one for receiving a command
-and one for receiving a result.
+. *Events:* There are three event reports:
+
+.. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+is updated by command.
+This event is *throttled* to a limit of three.
+That means that after the event is emitted three times
+it will not be emitted any more, until the throttling
+is cleared by command (see below).
+
+.. `OPERATION_PERFORMED`: Emitted when this component
+performs a math operation.
+
+.. `THROTTLE_CLEARED`: Emitted when the event throttling
+is cleared.
 
 . *Commands:* There is one command for clearing
 the event throttle.
@@ -66,13 +76,22 @@ There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
 
+For the parameters, events, commands, and telemetry, we chose
+to put in all the opcodes and identifiers explicitly.
+These can also be left implicit, as in the `MathSender`
+component example.
+For more information, see
+https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[_The FPP User's Guide_].
+
 === Add the Model to the Project
 
-TODO
+Follow the same steps as for the
+<<math-sender_add-model,`MathSender` component>>.
 
-=== Build the Model
+=== Build the Stub Implementation
 
-TODO
+Follow the same steps as for the
+<<math-sender_build-stub,`MathSender` component>>.
 
 === Complete the Implementation
 
