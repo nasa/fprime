@@ -49,7 +49,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void MathReceiver ::
-    mathIn_handler(
+    mathOpIn_handler(
         const NATIVE_INT_TYPE portNum,
         F32 val1,
         MathOp op,
@@ -90,11 +90,11 @@ namespace Ref {
 
       this->log_ACTIVITY_HI_OPERATION_PERFORMED(op);
       this->tlmWrite_OPERATION(op);
-      this->mathOut_out(0, res);
+      this->mathResultOut_out(0, res);
   }
 
   void MathReceiver ::
-    SchedIn_handler(
+    schedIn_handler(
         const NATIVE_INT_TYPE portNum,
         NATIVE_UINT_TYPE context
     )

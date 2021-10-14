@@ -50,9 +50,9 @@ namespace Ref {
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
 
-      //! Handler implementation for mathIn
+      //! Handler implementation for mathOpIn
       //!
-      void mathIn_handler(
+      void mathOpIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
           F32 val1,
           MathOp op, //!< operation argument
@@ -61,7 +61,7 @@ namespace Ref {
 
       //! Handler implementation for SchedIn
       //!
-      void SchedIn_handler(
+      void schedIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
           NATIVE_UINT_TYPE context //!< The call order
       );

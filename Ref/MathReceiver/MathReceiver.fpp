@@ -8,13 +8,13 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ Port for receiving the math operation
-    async input port mathIn: MathOp
+    async input port mathOpIn: MathOp
 
     @ Port for returning the math result
-    output port mathOut: MathResult
+    output port mathResultOut: MathResult
 
     @ The rate group scheduler input
-    sync input port SchedIn: Svc.Sched
+    sync input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
     # Special ports 
@@ -99,7 +99,7 @@ module Ref {
     telemetry OPERATION: MathOp id 0
 
     @ Multiplication factor
-    telemetry FACTOR: F32 id 3
+    telemetry FACTOR: F32 id 1
 
   }
 
