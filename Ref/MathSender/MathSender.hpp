@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  MathSenderImpl.hpp
-// \author tcanham
+// \author tcanham, bocchino
 // \brief  hpp file for MathSender component implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //

@@ -1,6 +1,6 @@
 module Ref {
 
-  @ Component sending a math operation
+  @ Component for receiving and performing a math operation
   queued component MathReceiver {
 
     # ----------------------------------------------------------------------
@@ -48,12 +48,13 @@ module Ref {
     time get port timeGetOut
 
     # ----------------------------------------------------------------------
-    # Commands 
+    # Parameters 
     # ----------------------------------------------------------------------
 
-    @ Clear the event throttle
-    async command CLEAR_EVENT_THROTTLE \
-      opcode 1
+    @ The multiplier in the math operation
+    param FACTOR: F32 default 1.0 id 0 \
+      set opcode 10 \
+      save opcode 11
 
     # ----------------------------------------------------------------------
     # Events 
@@ -61,8 +62,8 @@ module Ref {
 
     @ Factor updated
     event FACTOR_UPDATED(
-                           val: F32 @< The factor value
-                         ) \
+                          val: F32 @< The factor value
+                        ) \
       severity activity high \
       id 0 \
       format "Factor updated to {f}" \
@@ -83,13 +84,12 @@ module Ref {
       format "Event throttle cleared"
 
     # ----------------------------------------------------------------------
-    # Parameters 
+    # Commands 
     # ----------------------------------------------------------------------
 
-    @ A test parameter
-    param FACTOR: F32 default 1.0 id 0 \
-      set opcode 10 \
-      save opcode 11
+    @ Clear the event throttle
+    async command CLEAR_EVENT_THROTTLE \
+      opcode 1
 
     # ----------------------------------------------------------------------
     # Telemetry 

@@ -1,4 +1,5 @@
 = Math Component Tutorial
+:stem:
 :toc: left
 :toclevels: 3
 
@@ -281,6 +282,7 @@ However, the auto-generated {cpp} port files are used
 by the autocoded component implementations (described below);
 you won't ever program directly against their interfaces.
 
+[[math-sender]]
 == The MathSender Component
 
 Now we can build and test the `MathSender` component.
@@ -857,7 +859,7 @@ body:
 [source,c++]
 ----
 void Tester ::
-  testAddCommand()
+    testAddCommand()
 {
     this->testDoMath(1.0, MathOp::ADD, 2.0);
 }
@@ -990,11 +992,176 @@ to see what effect it has on the test output.
 
 == The MathReceiver Component
 
-TODO
+Now we build and test the `MathReceiver` component.
+We use the same five steps as for the
+<<math-sender,`MathSender` component>>.
 
 === Construct the FPP Model
 
-TODO
+*Create the MathReceiver directory:*
+Create the directory `Ref/MathReceiver`.
+
+*Create the FPP model file:*
+In directory `Ref/MathReceiver`, create a file
+`MathReceiver.fpp` with the following contents:
+
+[source,fpp]
+----
+module Ref {
+
+  @ Component for receiving and performing a math operation
+  queued component MathReceiver {
+
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
+
+    @ Port for receiving the math operation
+    async input port mathOpIn: MathOp
+
+    @ Port for returning the math result
+    output port mathResultOut: MathResult
+
+    @ The rate group scheduler input
+    sync input port schedIn: Svc.Sched
+
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
+
+    @ Command receive
+    command recv port cmdIn
+
+    @ Command registration
+    command reg port cmdRegOut
+
+    @ Command response
+    command resp port cmdResponseOut
+
+    @ Event
+    event port eventOut
+
+    @ Parameter get
+    param get port prmGetOut
+
+    @ Parameter set
+    param set port prmSetOut
+
+    @ Telemetry
+    telemetry port tlmOut
+
+    @ Text event
+    text event port textEventOut
+
+    @ Time get
+    time get port timeGetOut
+
+    # ----------------------------------------------------------------------
+    # Parameters 
+    # ----------------------------------------------------------------------
+
+    @ The multiplier in the math operation
+    param FACTOR: F32 default 1.0 id 0 \
+      set opcode 10 \
+      save opcode 11
+
+    # ----------------------------------------------------------------------
+    # Events 
+    # ----------------------------------------------------------------------
+
+    @ Factor updated
+    event FACTOR_UPDATED(
+                          val: F32 @< The factor value
+                        ) \
+      severity activity high \
+      id 0 \
+      format "Factor updated to {f}" \
+      throttle 3
+
+    @ Math operation performed
+    event OPERATION_PERFORMED(
+                               val: MathOp @< The operation
+                             ) \
+      severity activity high \
+      id 1 \
+      format "{} operation performed"
+
+    @ Event throttle cleared
+    event THROTTLE_CLEARED \
+      severity activity high \
+      id 2 \
+      format "Event throttle cleared"
+
+    # ----------------------------------------------------------------------
+    # Commands 
+    # ----------------------------------------------------------------------
+
+    @ Clear the event throttle
+    async command CLEAR_EVENT_THROTTLE \
+      opcode 1
+
+    # ----------------------------------------------------------------------
+    # Telemetry 
+    # ----------------------------------------------------------------------
+
+    @ The operation
+    telemetry OPERATION: MathOp id 0
+
+    @ Multiplication factor
+    telemetry FACTOR: F32 id 1
+
+  }
+
+}
+----
+
+This code defines a component `Ref.MathReceiver`.
+The component is *queued*, which means it has a queue
+but no thread.
+Work occurs when the thread of another component invokes
+the `schedIn` port of this component.
+
+We have divided the specifiers of this component into six groups:
+
+. *General ports:* There are three ports:
+an input port `mathOpIn` for receiving a math operation,
+an output port `mathResultOut` for sending a math result, and
+an input port `schedIn` for receiving invocations from the scheduler.
+`mathOpIn` is asynchronous.
+That means invocations of `mathOpIn` put messages on a queue.
+`schedIn` is synchronous.
+That means invocations of `schedIn` immediately call the
+handler function to do work.
+
+. *Special ports:* 
+As before, there are special ports for commands, events, telemetry,
+and time.
+There are also special ports for getting and setting parameters.
+We will explain the function of these ports below.
+
+. *Parameters:* There is one *parameter*.
+A parameter is a constant that is configurable by command.
+In this case there is one parameter `FACTOR`.
+Its default value is 1.0.
+When doing math, this component performs the requested
+operation and then multiplies by this factor.
+For example, if the arguments of the `mathOpIn` port
+are stem:[v_1], `ADD`, and stem:[v_2], and the factor is stem:[f],
+then the result sent on `mathResultOut` is
+stem:[(v_1 + v_2) f].
+
+. *Events:* These are event reports that this component
+can emit.
+There are two event reports, one for receiving a command
+and one for receiving a result.
+
+. *Commands:* There is one command for clearing
+the event throttle.
+
+. *Telemetry:* 
+There two telemetry channels: one for reporting
+the last operation received and one for reporting
+the factor parameter.
 
 === Add the Model to the Project
 

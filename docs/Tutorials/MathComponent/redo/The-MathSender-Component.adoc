@@ -1,3 +1,4 @@
+[[math-sender]]
 == The MathSender Component
 
 Now we can build and test the `MathSender` component.
@@ -485,7 +486,7 @@ body:
 [source,c++]
 ----
 void Tester ::
-  testAddCommand()
+    testAddCommand()
 {
     this->testDoMath(1.0, MathOp::ADD, 2.0);
 }

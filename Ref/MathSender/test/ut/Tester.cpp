@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  MathSender.hpp
-// \author tcanham
+// \author tcanham, bocchino
 // \brief  cpp file for MathSender test harness implementation class
 //
 // \copyright
