@@ -53,8 +53,8 @@ module Ref {
 
     @ Set operation multiplication factor1
     async command SET_FACTOR1(
-                                  val: F32 @< The first factor
-                                ) \
+                               val: F32 @< The first factor
+                             ) \
       opcode 0
 
     @ Clear the event throttle
@@ -67,8 +67,8 @@ module Ref {
 
     @ Operation factor 1
     event SET_FACTOR1(
-                          val: F32 @< The factor value
-                        ) \
+                       val: F32 @< The factor value
+                     ) \
       severity activity high \
       id 0 \
       format "Factor 1: {f}" \
@@ -76,16 +76,16 @@ module Ref {
 
     @ Updated factor 2
     event UPDATED_FACTOR2(
-                              val: F32 @< The factor value
-                            ) \
+                           val: F32 @< The factor value
+                         ) \
       severity activity high \
       id 1 \
       format "Factor 2 updated to: {f}"
 
     @ Math operation performed
     event OPERATION_PERFORMED(
-                                  val: MathOp @< The operation
-                                ) \
+                               val: MathOp @< The operation
+                             ) \
       severity activity high \
       id 2 \
       format "Operation performed: {}"
