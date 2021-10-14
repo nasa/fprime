@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-
+#include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Ref/MathReceiver/MathReceiver.hpp"
 
@@ -23,9 +23,8 @@ namespace Ref {
   MathReceiver ::
     MathReceiver(
         const char *const compName
-    ) : MathReceiverComponentBase(compName),
-        m_factor1(0.0),
-        m_factor1s(0)
+    ) : 
+      MathReceiverComponentBase(compName)
   {
 
   }
@@ -57,27 +56,37 @@ namespace Ref {
         F32 val2
     )
   {
-      // declare result serializable
+
+      // Get the initial result
       F32 res = 0.0;
       switch (op.e) {
           case MathOp::ADD:
-              res = (val1 + val2)*this->m_factor1;
+              res = val1 + val2;
               break;
           case MathOp::SUB:
-              res = (val1 - val2)*this->m_factor1;
+              res = val1 - val2;
               break;
           case MathOp::MUL:
-              res = (val1 * val2)*this->m_factor1;
+              res = val1 * val2;
               break;
           case MathOp::DIV:
-              res = (val1 / val2)*this->m_factor1;
+              res = val1 / val2;
               break;
           default:
               FW_ASSERT(0, op.e);
               break;
       }
+
+      // Get the factor value
       Fw::ParamValid valid;
-      res = res/this->paramGet_factor2(valid);
+      F32 factor = paramGet_FACTOR(valid);
+      FW_ASSERT(
+          valid.e == Fw::ParamValid::VALID || valid.e == Fw::ParamValid::DEFAULT,
+          valid.e
+      );
+
+      // Multiply result by factor
+      res *= factor;
 
       this->log_ACTIVITY_HI_OPERATION_PERFORMED(op);
       this->tlmWrite_OPERATION(op);
@@ -91,7 +100,6 @@ namespace Ref {
     )
   {
       QueuedComponentBase::MsgDispatchStatus stat = QueuedComponentBase::MSG_DISPATCH_OK;
-      // empty message queue
       while (stat != MSG_DISPATCH_EMPTY) {
           stat = this->doDispatch();
       }
@@ -103,28 +111,13 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void MathReceiver ::
-    SET_FACTOR1_cmdHandler(
-        const FwOpcodeType opCode,
-        const U32 cmdSeq,
-        F32 val
-    )
-  {
-      this->m_factor1 = val;
-      this->log_ACTIVITY_HI_SET_FACTOR1(val);
-      this->tlmWrite_FACTOR1(val);
-      this->tlmWrite_FACTOR1S(++this->m_factor1s);
-      // reply with completion status
-      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-  }
-
-  void MathReceiver ::
     CLEAR_EVENT_THROTTLE_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq
     )
   {
       // clear throttle
-      this->log_ACTIVITY_HI_SET_FACTOR1_ThrottleClear();
+      this->log_ACTIVITY_HI_FACTOR_UPDATED_ThrottleClear();
       // send event that throttle is cleared
       this->log_ACTIVITY_HI_THROTTLE_CLEARED();
       // reply with completion status
@@ -132,15 +125,23 @@ namespace Ref {
   }
 
   void MathReceiver ::
-     parameterUpdated(
-      FwPrmIdType id /*!< The parameter ID*/
-  ) {
-      if (id == PARAMID_FACTOR2) {
-        Fw::ParamValid valid;
-        F32 val = this->paramGet_factor2(valid);
-        this->log_ACTIVITY_HI_UPDATED_FACTOR2(val);
+     parameterUpdated(FwPrmIdType id)
+  {
+      switch (id) {
+          case PARAMID_FACTOR: {
+              Fw::ParamValid valid;
+              F32 val = this->paramGet_FACTOR(valid);
+              FW_ASSERT(
+                  valid.e == Fw::ParamValid::VALID || valid.e == Fw::ParamValid::DEFAULT,
+                  valid.e
+              );
+              this->log_ACTIVITY_HI_FACTOR_UPDATED(val);
+              break;
+          }
+          default:
+              FW_ASSERT(0, id);
+              break;
       }
   }
-
 
 } // end namespace Ref

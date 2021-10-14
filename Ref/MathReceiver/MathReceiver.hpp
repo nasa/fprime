@@ -72,25 +72,12 @@ namespace Ref {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for SET_FACTOR1 command handler
-      //! Set operation multiplication factor1
-      void SET_FACTOR1_cmdHandler(
-          const FwOpcodeType opCode, //!< The opcode
-          const U32 cmdSeq, //!< The command sequence number
-          F32 val //!< The first factor
-      );
-
       //! Implementation for CLEAR_EVENT_THROTTLE command handler
       //! Clear the event throttle
       void CLEAR_EVENT_THROTTLE_cmdHandler(
           const FwOpcodeType opCode, //!< The opcode
           const U32 cmdSeq //!< The command sequence number
       );
-
-      // stored factor1
-      F32 m_factor1;
-      // number of times factor1 has been written
-      U32 m_factor1s;
 
       void parameterUpdated(
           FwPrmIdType id //!< The parameter ID

@@ -51,12 +51,6 @@ module Ref {
     # Commands 
     # ----------------------------------------------------------------------
 
-    @ Set operation multiplication factor1
-    async command SET_FACTOR1(
-                               val: F32 @< The first factor
-                             ) \
-      opcode 0
-
     @ Clear the event throttle
     async command CLEAR_EVENT_THROTTLE \
       opcode 1
@@ -65,35 +59,27 @@ module Ref {
     # Events 
     # ----------------------------------------------------------------------
 
-    @ Operation factor 1
-    event SET_FACTOR1(
-                       val: F32 @< The factor value
-                     ) \
-      severity activity high \
-      id 0 \
-      format "Factor 1: {f}" \
-      throttle 3
-
-    @ Updated factor 2
-    event UPDATED_FACTOR2(
+    @ Factor updated
+    event FACTOR_UPDATED(
                            val: F32 @< The factor value
                          ) \
       severity activity high \
-      id 1 \
-      format "Factor 2 updated to: {f}"
+      id 0 \
+      format "Factor updated to {f}" \
+      throttle 3
 
     @ Math operation performed
     event OPERATION_PERFORMED(
                                val: MathOp @< The operation
                              ) \
       severity activity high \
-      id 2 \
-      format "Operation performed: {}"
+      id 1 \
+      format "{} operation performed"
 
     @ Event throttle cleared
     event THROTTLE_CLEARED \
       severity activity high \
-      id 3 \
+      id 2 \
       format "Event throttle cleared"
 
     # ----------------------------------------------------------------------
@@ -101,7 +87,7 @@ module Ref {
     # ----------------------------------------------------------------------
 
     @ A test parameter
-    param factor2: F32 default 1.0 id 0 \
+    param FACTOR: F32 default 1.0 id 0 \
       set opcode 10 \
       save opcode 11
 
@@ -112,14 +98,8 @@ module Ref {
     @ The operation
     telemetry OPERATION: MathOp id 0
 
-    @ The number of SET_FACTOR1 commands
-    telemetry FACTOR1S: U32 id 1
-
-    @ Factor 1 value
-    telemetry FACTOR1: F32 id 2
-
-    @ Factor 2 value
-    telemetry FACTOR2: F32 id 3
+    @ Multiplication factor
+    telemetry FACTOR: F32 id 3
 
   }
 
