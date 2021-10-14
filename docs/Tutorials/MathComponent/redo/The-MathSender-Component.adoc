@@ -120,7 +120,8 @@ Now run the command `fprime-util build`.
 The model and the stub implementation should build.
 
 *Inspect the generated code:*
-The generated code resides in this directory.
+The generated code resides in the directory
+`Ref/fprime-build-automatic-native-ut/Ref/MathSender`.
 You may wish to look over the file `MathSenderComponentAc.hpp`
 to get an idea of the interface to the auto-generated
 base class `MathSenderComponentBase`.
