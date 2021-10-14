@@ -55,7 +55,7 @@ namespace Ref {
       void mathOpIn_handler(
           const NATIVE_INT_TYPE portNum, //!< The port number
           F32 val1,
-          MathOp op, //!< operation argument
+          const MathOp& op, //!< operation argument
           F32 val2
       );
 

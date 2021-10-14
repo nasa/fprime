@@ -52,7 +52,7 @@ namespace Ref {
     mathOpIn_handler(
         const NATIVE_INT_TYPE portNum,
         F32 val1,
-        MathOp op,
+        const MathOp& op,
         F32 val2
     )
   {
