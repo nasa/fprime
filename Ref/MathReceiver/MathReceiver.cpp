@@ -99,9 +99,9 @@ namespace Ref {
         NATIVE_UINT_TYPE context
     )
   {
-      QueuedComponentBase::MsgDispatchStatus stat = QueuedComponentBase::MSG_DISPATCH_OK;
-      while (stat != MSG_DISPATCH_EMPTY) {
-          stat = this->doDispatch();
+      U32 numMsgs = this->m_queue.getNumMsgs();
+      for (U32 i = 0; i < numMsgs; ++i) {
+          (void) this->doDispatch();
       }
 
   }
