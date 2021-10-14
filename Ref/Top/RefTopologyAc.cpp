@@ -1211,7 +1211,7 @@ namespace Ref {
         StackSizes::cmdSeq
       );
       // Initialize socket server if and only if there is a valid specification
-      if (state.hostName != NULL && state.portNumber != 0) {
+      if (state.hostName != nullptr && state.portNumber != 0) {
           Os::TaskString name("ReceiveTask");
           // Uplink is configured for receive so a socket task is started
           comm.configure(state.hostName, state.portNumber);
@@ -1287,21 +1287,21 @@ namespace Ref {
 
     // Free threads
     void freeThreads(const TopologyState& state) {
-      (void) blockDrv.ActiveComponentBase::join(NULL);
-      (void) chanTlm.ActiveComponentBase::join(NULL);
-      (void) cmdDisp.ActiveComponentBase::join(NULL);
-      (void) cmdSeq.ActiveComponentBase::join(NULL);
+      (void) blockDrv.ActiveComponentBase::join(nullptr);
+      (void) chanTlm.ActiveComponentBase::join(nullptr);
+      (void) cmdDisp.ActiveComponentBase::join(nullptr);
+      (void) cmdSeq.ActiveComponentBase::join(nullptr);
       comm.stopSocketTask();
-      (void) comm.joinSocketTask(NULL);
-      (void) eventLogger.ActiveComponentBase::join(NULL);
-      (void) fileDownlink.ActiveComponentBase::join(NULL);
-      (void) fileManager.ActiveComponentBase::join(NULL);
-      (void) fileUplink.ActiveComponentBase::join(NULL);
-      (void) pingRcvr.ActiveComponentBase::join(NULL);
-      (void) prmDb.ActiveComponentBase::join(NULL);
-      (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
-      (void) rateGroup3Comp.ActiveComponentBase::join(NULL);
+      (void) comm.joinSocketTask(nullptr);
+      (void) eventLogger.ActiveComponentBase::join(nullptr);
+      (void) fileDownlink.ActiveComponentBase::join(nullptr);
+      (void) fileManager.ActiveComponentBase::join(nullptr);
+      (void) fileUplink.ActiveComponentBase::join(nullptr);
+      (void) pingRcvr.ActiveComponentBase::join(nullptr);
+      (void) prmDb.ActiveComponentBase::join(nullptr);
+      (void) rateGroup1Comp.ActiveComponentBase::join(nullptr);
+      (void) rateGroup2Comp.ActiveComponentBase::join(nullptr);
+      (void) rateGroup3Comp.ActiveComponentBase::join(nullptr);
     }
 
     // Tear down components
