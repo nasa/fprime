@@ -206,13 +206,13 @@ interface.
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathTypes`.
-To build this implementation from a clean repostiory,
+`docs/Tutorials/MathComponent/MathTypes`.
+To build this implementation from a clean repository,
 do the following:
 
 . Go to the `Ref` directory.
 
-. Run `cp -R docs/Tutorials/MathTutorial/MathTypes .`
+. Run `cp -R docs/Tutorials/MathComponent/MathTypes .`
 
 . Update `Ref/CMakeLists.txt` as stated
 <<types_add,above>>.
@@ -310,7 +310,7 @@ you won't ever program directly against their interfaces.
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathPorts`.
+`docs/Tutorials/MathComponent/MathPorts`.
 To build this implementation, follow the steps
 described for <<types_ref,`MathTypes`>>.
 
@@ -1028,7 +1028,8 @@ to see what effect it has on the test output.
 [[math-sender_exercise]]
 ==== Exercise: Random Testing
 
-The `STest` module contains helper functions for writing
+F Prime provides a module called `STest`
+that provides helper classes and functions for writing
 unit tests.
 As an exercise, use the interface provided by
 `STest/STest/Pick.hpp` to pick random values to use in the
@@ -1095,7 +1096,7 @@ You should see that the value _S_ was used in the runs you just did
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathSender`.
+`docs/Tutorials/MathComponent/MathSender`.
 
 == The MathReceiver Component
 
@@ -1844,6 +1845,11 @@ reports an error instead of a valid result?
 Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/MathReceiver`.
 
 == Updating the Ref Topology
 

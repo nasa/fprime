@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+dirs="
+MathPorts
+MathReceiver
+MathSender
+MathTypes
+"
+
+for dir in $dirs
+do
+  rm -rf $dir
+  cp -R ../docs/Tutorials/MathComponent/$dir .
+done

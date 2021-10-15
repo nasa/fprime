@@ -70,6 +70,6 @@ you won't ever program directly against their interfaces.
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathPorts`.
+`docs/Tutorials/MathComponent/MathPorts`.
 To build this implementation, follow the steps
 described for <<types_ref,`MathTypes`>>.

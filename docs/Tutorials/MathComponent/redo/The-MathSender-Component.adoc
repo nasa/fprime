@@ -623,7 +623,8 @@ to see what effect it has on the test output.
 [[math-sender_exercise]]
 ==== Exercise: Random Testing
 
-The `STest` module contains helper functions for writing
+F Prime provides a module called `STest`
+that provides helper classes and functions for writing
 unit tests.
 As an exercise, use the interface provided by
 `STest/STest/Pick.hpp` to pick random values to use in the
@@ -690,4 +691,4 @@ You should see that the value _S_ was used in the runs you just did
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathSender`.
+`docs/Tutorials/MathComponent/MathSender`.

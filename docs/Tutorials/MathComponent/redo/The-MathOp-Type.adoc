@@ -135,13 +135,13 @@ interface.
 === Reference Implementation
 
 A reference implementation for this section is available at
-`docs/Tutorials/MathTutorial/MathTypes`.
-To build this implementation from a clean repostiory,
+`docs/Tutorials/MathComponent/MathTypes`.
+To build this implementation from a clean repository,
 do the following:
 
 . Go to the `Ref` directory.
 
-. Run `cp -R docs/Tutorials/MathTutorial/MathTypes .`
+. Run `cp -R docs/Tutorials/MathComponent/MathTypes .`
 
 . Update `Ref/CMakeLists.txt` as stated
 <<types_add,above>>.

@@ -640,3 +640,8 @@ reports an error instead of a valid result?
 Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/MathReceiver`.
