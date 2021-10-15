@@ -1804,6 +1804,11 @@ Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/MathReceiver`.
+
 === Exercises
 
 ==== Adding Telemetry
@@ -1824,7 +1829,7 @@ Initialize the variable to zero in the class constructor.
 
 ==== Error Handling
 
-As an exercise, think about what will happen if the floating-point
+Think about what will happen if the floating-point
 math operation performed by `MathReceiver` causes an error.
 For example, suppose that `mathOpIn` is invoked with `op = DIV`
 and `val2 = 0.0`.
@@ -1865,11 +1870,6 @@ reports an error instead of a valid result?
 Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
-
-=== Reference Implementation
-
-A reference implementation for this section is available at
-`docs/Tutorials/MathComponent/MathReceiver`.
 
 == Updating the Ref Topology
 
