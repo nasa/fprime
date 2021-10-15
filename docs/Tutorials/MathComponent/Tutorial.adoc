@@ -1804,7 +1804,25 @@ Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
-=== Exercise: Error Handling
+=== Exercises
+
+==== Adding Telemetry
+
+Add a telemetry channel that records the number of math
+operations performed.
+
+. Add the channel to the FPP model.
+
+. In the component implementation class, add a member
+variable `num_math_ops` of type `U32`.
+Initialize the variable to zero in the class constructor.
+
+. Revise the `mathOpIn` handler so that it increments
+`num_math_ops` and emits the updated value as telemetry.
+
+. Revise the unit tests to cover the new behavior.
+
+==== Error Handling
 
 As an exercise, think about what will happen if the floating-point
 math operation performed by `MathReceiver` causes an error.
