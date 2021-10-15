@@ -55,10 +55,10 @@ namespace Ref {
 
       //! To do
       //!
-      void testAddCommand();
-      void testSubCommand();
-      void testMulCommand();
-      void testDivCommand();
+      void testAdd();
+      void testSub();
+      void testMul();
+      void testDiv();
       void testThrottle();
 
     private:

@@ -245,6 +245,7 @@ telemetry channel and as a `RESULT` event report.
 *Check the build:*
 Run `fprime-util build`.
 
+[[math-sender_unit]]
 === Write and Run Unit Tests
 
 *Unit tests* are an important part of FSW development.
@@ -259,6 +260,7 @@ in three steps:
 . Write and run one unit test
 . Write and run additional unit tests
 
+[[math-sender_unit_setup]]
 ==== Set Up the Unit Test Environment
 
 *Create the stub Tester class:*
@@ -349,7 +351,7 @@ to see what operations they provide.
 In the next sections we will provide some example uses
 of these operations.
 
-==== Write and Run One Unit Test
+==== Write and Run One Test
 
 Now we will write a unit test that exercises the
 `DO_MATH` command.
@@ -545,7 +547,7 @@ value before emitting it.
 
 . Rerun the test and observe what happens.
 
-==== Write and Run Additional Unit Tests
+==== Write and Run Additional Tests
 
 *Add more command tests:*
 Try to follow the pattern given in the previous

@@ -43,7 +43,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testAddCommand()
+    testAdd()
   {
       // Set the factor parameter by command
       const F32 factor = 3.0;
@@ -53,7 +53,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testSubCommand()
+    testSub()
   {
       // Set the factor parameter by loading parameters
       const F32 factor = 3.0;
@@ -64,7 +64,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testMulCommand()
+    testMul()
   {
       // Set the factor parameter by command
       const F32 factor = 3.0;
@@ -74,7 +74,7 @@ namespace Ref {
   }
 
   void Tester ::
-    testDivCommand()
+    testDiv()
   {
       // Set the factor parameter by loading parameters
       const F32 factor = 3.0;

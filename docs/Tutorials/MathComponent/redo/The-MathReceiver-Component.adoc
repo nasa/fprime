@@ -165,9 +165,9 @@ the final result.
 
 . Emit telemetry and events.
 
-. Emit the result
+. Emit the result.
 
-Note that in step 1, `op` is an enum (a {cpp} class type) and `op.e`
+Note that in step 1, `op` is an enum (a {cpp} class type), and `op.e`
 is the corresponding numeric value (an integer type).
 Note also that in the `default` case we deliberately fail
 an assertion.
@@ -271,4 +271,237 @@ parameters.
 
 === Write and Run Unit Tests
 
-TODO
+==== Set up the Unit Test Environment
+
+Follow the same steps as for the
+<<math-sender_unit_setup,`MathSender` component>>.
+
+==== Add Helper Code
+
+*Add a ThrottleState enum class:*
+Add the following code to the beginning of the
+`Tester` class in `Tester.hpp`:
+
+[source,cpp]
+----
+private:
+
+  // ----------------------------------------------------------------------
+  // Types 
+  // ----------------------------------------------------------------------
+  
+  enum class ThrottleState {
+    THROTTLED,
+    NOT_THROTTLED
+  };
+----
+
+This code defines a {cpp} enum class for recording whether an
+event is throttled.
+
+*Add helper functions:*
+For each of the functions described below, you must add 
+the corresponding function prototype to `Tester.hpp`.
+
+Add a `setFactor` function in the "Helper methods"
+section of  `Tester.cpp`.
+
+[source,cpp]
+----
+void Tester ::
+  setFactor(
+      F32 factor,
+      ThrottleState throttleState
+  )
+{
+    // clear history
+    this->clearHistory();
+    // set the parameter
+    this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+    this->paramSend_FACTOR(INSTANCE, CMD_SEQ);
+    if (throttleState == ThrottleState::NOT_THROTTLED) {
+        // verify the parameter update notification event was sent
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_FACTOR_UPDATED_SIZE(1);
+        ASSERT_EVENTS_FACTOR_UPDATED(0, factor);
+    }
+    else {
+        ASSERT_EVENTS_SIZE(0);
+    }
+}
+----
+
+This function does the following:
+
+. Clear the test history.
+
+. Send a command to the component to set the `FACTOR` parameter
+to the value `factor`.
+
+. If `throttleState` is `NOT_THROTTLED`, then check 
+that the event was emitted.
+Otherwise check that the event was throttled (not emitted).
+
+Add a function `computeResult` to `Tester.cpp`.
+
+[source,cpp]
+----
+F32 Tester ::
+  computeResult(
+      F32 val1,
+      MathOp op,
+      F32 val2,
+      F32 factor
+  )
+{
+    F32 result = 0;
+    switch (op.e) {
+        case MathOp::ADD:
+            result = val1 + val2;
+            break;
+        case MathOp::SUB:
+            result = val1 - val2;
+            break;
+        case MathOp::MUL:
+            result = val1 * val2;
+            break;
+        case MathOp::DIV:
+            result = val1 / val2;
+            break;
+        default:
+            FW_ASSERT(0, op.e);
+            break;
+    }
+    result *= factor;
+    return result;
+}
+----
+
+This function carries out the math computation of the
+math component.
+By running this function and comparing, we can
+check the output of the component.
+
+Add a `doMathOp` function to `Tester.cpp`
+
+[source,cpp]
+----
+void Tester ::
+  doMathOp(
+      F32 val1,
+      MathOp op,
+      F32 val2,
+      F32 factor
+  )
+{
+
+    // clear history
+    this->clearHistory();
+
+    // invoke operation port with add operation
+    this->invoke_to_mathOpIn(0, val1, op, val2);
+    // invoke scheduler port to dispatch message
+    this->invoke_to_schedIn(0, 0);
+
+    // verify the result of the operation was returned
+
+    // check that there was one port invocation
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    // check that the port we expected was invoked
+    ASSERT_from_mathResultOut_SIZE(1);
+    // check that the component performed the operation correctly
+    const F32 result = computeResult(val1, op, val2, factor);
+    ASSERT_from_mathResultOut(0, result);
+
+    // verify events
+
+    // check that there was one event
+    ASSERT_EVENTS_SIZE(1);
+    // check that it was the op event
+    ASSERT_EVENTS_OPERATION_PERFORMED_SIZE(1);
+    // check that the event has the correct argument
+    ASSERT_EVENTS_OPERATION_PERFORMED(0, op);
+
+    // verify telemetry
+
+    // check that one channel was written
+    ASSERT_TLM_SIZE(1);
+    // check that it was the op channel
+    ASSERT_TLM_OPERATION_SIZE(1);
+    // check for the correct value of the channel
+    ASSERT_TLM_OPERATION(0, op);
+
+}
+----
+
+This function is similar to the `doMath` helper function that
+we wrote for the `MathSender` component.
+Notice that the method for invoking a port is different.
+Since the component is queued, we don't call `doDispatch`
+directly.
+Instead we invoke `schedIn`.
+
+==== Write and Run Tests
+
+For each of the tests described below, you must add the 
+corresponding function prototype to `Tester.hpp`
+and the corresponding test macro to `main.cpp`.
+If you can't remember how to do it, look back at the
+`MathSender` examples.
+
+*Write an ADD test:*
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+[source,cpp]
+----
+void Tester ::
+  testAdd()
+{
+    // Set the factor parameter by command
+    const F32 factor = 3.0;
+    this->setFactor(factor);
+    // Do the add operation
+    this->doMathOp(2.0, MathOp::ADD, 3.0, factor);
+}
+----
+
+This function calls the `setFactor` helper function
+to set the factor parameter.
+Then it calls the `doMathOp` function to
+do a math operation.
+
+*Write a SUB command test:*
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+[source,cpp]
+----
+void Tester ::
+  testSub()
+{
+    // Set the factor parameter by loading parameters
+    const F32 factor = 3.0;
+    this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+    // Do the operation
+    this->doMathOp(2.0, MathOp::SUB, 3.0, factor);
+}
+----
+
+This test is similar to the ADD command test, but it shows
+another way to set a parameter.
+The `paramSet` function sets the parameter value in 
+the unit test harness.
+This part of the harness mimics the behavior of the parameter
+database component in flight.
+In flight, the function `loadParameters` is typically called at the
+start of FSW to load the parameters from the database;
+here it loads the parameters from the test harness.
+Again we call `doMathOp` to do the operation.
+
+*Write a MUL test:*
+This test is the same as the ADD test, except that it
+uses MUL instead of add.
+
+*Write a DIV test:*
+This test is the same as the SUB test, except that it =
+uses DIV instead of SUB.

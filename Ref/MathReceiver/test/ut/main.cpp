@@ -6,22 +6,22 @@
 
 TEST(Nominal, Add) {
     Ref::Tester tester;
-    tester.testAddCommand();
+    tester.testAdd();
 }
 
 TEST(Nominal, Sub) {
     Ref::Tester tester;
-    tester.testSubCommand();
+    tester.testSub();
 }
 
 TEST(Nominal, Mul) {
     Ref::Tester tester;
-    tester.testMulCommand();
+    tester.testMul();
 }
 
 TEST(Nominal, Div) {
     Ref::Tester tester;
-    tester.testDivCommand();
+    tester.testDiv();
 }
 
 TEST(Nominal, Throttle) {
