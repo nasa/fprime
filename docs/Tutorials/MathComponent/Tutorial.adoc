@@ -1022,7 +1022,8 @@ This line tells the build system to make the unit test build
 depend on the `STest` build module.
 
 . Add `#include STest/Random/Random.hpp` to `main.cpp`.
-Add the following line to the `main` function of `main.cpp`,
+
+.  Add the following line to the `main` function of `main.cpp`,
 just before the return statement:
 
 +
