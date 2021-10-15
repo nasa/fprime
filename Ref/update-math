@@ -1,5 +1,9 @@
 #!/bin/sh -e
 
+math_component=../docs/Tutorials/MathComponent
+
+cp $math_component/CMakeLists.txt .
+
 dirs="
 MathPorts
 MathReceiver
@@ -10,5 +14,5 @@ MathTypes
 for dir in $dirs
 do
   rm -rf $dir
-  cp -R ../docs/Tutorials/MathComponent/$dir .
+  cp -R $math_component/$dir .
 done
