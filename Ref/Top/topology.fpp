@@ -41,6 +41,8 @@ module Ref {
     instance fileUplink
     instance fileUplinkBufferManager
     instance linuxTime
+    instance mathReceiver
+    instance mathSender
     instance pingRcvr
     instance prmDb
     instance rateGroup1Comp
@@ -104,6 +106,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
+      rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -145,6 +148,11 @@ module Ref {
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
+    }
+
+    connections Math {
+      mathSender.mathOpOut -> mathReceiver.mathOpIn
+      mathReceiver.mathResultOut -> mathSender.mathResultIn
     }
 
   }
