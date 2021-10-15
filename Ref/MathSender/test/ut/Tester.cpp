@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include "Tester.hpp"
+#include "STest/Pick/Pick.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -41,35 +42,42 @@ namespace Ref {
   // Tests
   // ----------------------------------------------------------------------
 
+  F32 Tester ::
+    pickValue()
+  {
+      const F32 m = 10e6;
+      return STest::Pick::inUnitInterval();
+  }
+
   void Tester ::
     testAddCommand()
   {
-      this->testDoMath(1.0, MathOp::ADD, 2.0);
+      this->testDoMath(MathOp::ADD);
   }
 
   void Tester ::
     testSubCommand()
   {
-      this->testDoMath(1.0, MathOp::SUB, 2.0);
+      this->testDoMath(MathOp::SUB);
   }
 
   void Tester ::
     testMulCommand()
   {
-      this->testDoMath(1.0, MathOp::MUL, 2.0);
+      this->testDoMath(MathOp::MUL);
   }
 
   void Tester ::
     testDivCommand()
   {
-      this->testDoMath(1.0, MathOp::DIV, 2.0);
+      this->testDoMath(MathOp::DIV);
   }
 
   void Tester ::
     testResult()
   {
       // Generate an expected result
-      const F32 result = 10;
+      const F32 result = pickValue();
       // reset all telemetry and port history
       this->clearHistory();
       // call result port with result
@@ -110,17 +118,17 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testDoMath(
-        F32 val1,
-        MathOp op,
-        F32 val2
-    )
+    testDoMath(MathOp op)
   {
+
+      // Synthesize values
+      const F32 val1 = pickValue();
+      const F32 val2 = pickValue();
 
       // Send the command
 
       // synthesize a command sequence number
-      const U32 cmdSeq = 10;
+      const U32 cmdSeq = STest::Pick::any();
       // send MS_DO_MATH command
       this->sendCmd_DO_MATH(0, cmdSeq, val1, op, val2);
       // retrieve the message from the message queue and dispatch the command to the handler

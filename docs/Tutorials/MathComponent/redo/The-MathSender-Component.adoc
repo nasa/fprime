@@ -547,7 +547,7 @@ value before emitting it.
 
 . Rerun the test and observe what happens.
 
-==== Write and Run Additional Tests
+==== Write and Run More Tests
 
 *Add more command tests:*
 Try to follow the pattern given in the previous
@@ -625,3 +625,66 @@ TEST(Nominal, Result) {
 . Run the tests.
 Again you can try altering something in the component code
 to see what effect it has on the test output.
+
+==== Exercise: Random Testing
+
+The `STest` module contains helper functions for writing
+unit tests.
+As an exercise, use the interface provided by
+`STest/STest/Pick.hpp` to pick random values to use in the
+tests instead of using hard-coded values such as 1.0, 2.0,
+and 10.
+
+To pick random values, you will need to do the following:
+
+. Add `#include "STest/Pick/Pick.hpp"` to `Tester.cpp`.
+
+. Add the following
+line to `Ref/MathSender/CMakeLists.txt`, before `register_fprime_ut`:
+
++
+[source,cmake]
+----
+set(UT_MOD_DEPS STest)
+----
+
++
+This line tells the build system to make the unit test build
+depend on the `STest` build module.
+
+. Add `#include STest/Random/Random.hpp` to `main.cpp`.
+Add the following line to the `main` function of `main.cpp`,
+just before the return statement:
+
++
+[source,cpp]
+----
+STest::Random::seed();
+----
+
++
+This line seeds the random number generator used by STest.
+
+Recompile and rerun the tests.
+Now go to 
+`Ref/build-fprime-automatic-native-ut/Ref/MathSender` and inspect the
+file `seed-history`.
+This file is a log of random seed values.
+Each line represents the seed used in the corresponding run.
+
+Sometimes you may want to re-run a test with a previously-used seed,
+e.g., for replay debugging.
+To do this, put the seed value into a file `seed` in the same
+directory as `seed-history`.
+If the file `seed` exists, then STest will use the seed it contains instead
+of generating a new seed.
+
+Try the following:
+
+. Copy the last value _S_ of `seed-history` into `seed`.
+
+. In `Ref/MathSender`, re-run the unit tests a few times.
+
+. Inspect `Ref/build-fprime-automatic-native-ut/Ref/MathSender/seed-history`.
+You should see that the value _S_ was used in the runs you just did
+(corresponding to the last few entries in `seed-history`).

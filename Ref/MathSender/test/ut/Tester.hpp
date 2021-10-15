@@ -78,12 +78,11 @@ namespace Ref {
       // Helper methods
       // ----------------------------------------------------------------------
 
+      //! Pick a random value
+      static F32 pickValue();
+
       //! Test a DO_MATH command
-      void testDoMath(
-          F32 val1,
-          MathOp op,
-          F32 val2
-      );
+      void testDoMath(MathOp op);
 
       //! Connect ports
       //!

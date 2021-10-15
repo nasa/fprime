@@ -2,6 +2,7 @@
 // Main.cpp
 // ----------------------------------------------------------------------
 
+#include "STest/Random/Random.hpp"
 #include "Tester.hpp"
 
 TEST(Nominal, AddCommand) {
@@ -31,5 +32,6 @@ TEST(Nominal, Result) {
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  STest::Random::seed();
   return RUN_ALL_TESTS();
 }
