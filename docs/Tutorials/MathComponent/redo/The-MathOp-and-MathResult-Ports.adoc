@@ -29,7 +29,7 @@ Create a file `MathPorts.fpp` with the following contents:
 
 [source,fpp]
 ----
-include::../../../../Ref/MathPorts/MathPorts.fpp[]
+include::../MathPorts/MathPorts.fpp[]
 ----
 
 This file defines the ports `MathOp` and `MathResult`.
@@ -66,3 +66,10 @@ You can look at this code if you wish.
 However, the auto-generated {cpp} port files are used
 by the autocoded component implementations (described below);
 you won't ever program directly against their interfaces.
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathTutorial/MathPorts`.
+To build this implementation, follow the steps
+described for <<types_ref,`MathTypes`>>.
