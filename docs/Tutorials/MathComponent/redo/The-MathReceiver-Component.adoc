@@ -489,16 +489,25 @@ void Tester ::
 }
 ----
 
-This test is similar to the ADD command test, but it shows
+This test is similar to `testAdd`, but it shows
 another way to set a parameter.
-The `paramSet` function sets the parameter value in 
-the unit test harness.
-This part of the harness mimics the behavior of the parameter
-database component in flight.
+`testAdd` function showed how to set a parameter by command.
+You can also set a parameter by initialization, as follows:
+
+. Call the `paramSet` function as shown.
+This function sets the parameter value in 
+the part of the test harness that mimics the behavior of the
+parameter database component.
+
+. Call the `loadParameters` function as shown.
 In flight, the function `loadParameters` is typically called at the
 start of FSW to load the parameters from the database;
 here it loads the parameters from the test harness.
-Again we call `doMathOp` to do the operation.
+There is no command to update a parameter, so `parameterUpdated`
+is not called, and no event is emitted.
+
+As before, after setting the parameter we call `doMathOp`
+to do the operation.
 
 *Write a MUL test:*
 This test is the same as the ADD test, except that it
