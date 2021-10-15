@@ -88,9 +88,13 @@ namespace Ref {
       // Multiply result by factor
       res *= factor;
 
+      // Emit telemetry and events
       this->log_ACTIVITY_HI_OPERATION_PERFORMED(op);
       this->tlmWrite_OPERATION(op);
+
+      // Emit result
       this->mathResultOut_out(0, res);
+
   }
 
   void MathReceiver ::

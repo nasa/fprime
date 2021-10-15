@@ -549,7 +549,7 @@ value before emitting it.
 
 *Add more command tests:*
 Try to follow the pattern given in the previous
-section to add three more tests, one test each
+section to add three more tests, one each
 for operations `SUB`, `MUL`, and `DIV`.
 Most of the work should be done in the helper
 that we already wrote.
