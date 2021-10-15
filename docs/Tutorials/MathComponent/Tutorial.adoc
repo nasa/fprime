@@ -1553,6 +1553,8 @@ corresponding function prototype to `Tester.hpp`
 and the corresponding test macro to `main.cpp`.
 If you can't remember how to do it, look back at the
 `MathSender` examples.
+After writing each test, run all the tests and make sure
+that they pass.
 
 *Write an ADD test:*
 Add the following function to the "Tests" section of `Tester.cpp`:
@@ -1564,7 +1566,7 @@ void Tester ::
 {
     // Set the factor parameter by command
     const F32 factor = 3.0;
-    this->setFactor(factor);
+    this->setFactor(factor, ThrottleState::NOT_THROTTLED);
     // Do the add operation
     this->doMathOp(2.0, MathOp::ADD, 3.0, factor);
 }
@@ -1575,7 +1577,7 @@ to set the factor parameter.
 Then it calls the `doMathOp` function to
 do a math operation.
 
-*Write a SUB command test:*
+*Write a SUB test:*
 Add the following function to the "Tests" section of `Tester.cpp`:
 
 [source,cpp]
@@ -1608,8 +1610,60 @@ This test is the same as the ADD test, except that it
 uses MUL instead of add.
 
 *Write a DIV test:*
-This test is the same as the SUB test, except that it =
+This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
+
+*Write a throttle test:*
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+[source,cpp]
+----
+void Tester ::
+  testThrottle()
+{
+
+    // send the number of commands required to throttle the event
+    // Use the autocoded value so the unit test passes if the
+    // throttle value is changed
+    for (
+        U16 cycle = 0;
+        cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
+        cycle++
+    ) {
+        this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+    }
+
+    // Event should now be throttled
+    this->setFactor(1.0, ThrottleState::THROTTLED);
+
+    // send the command to clear the throttle
+    this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
+    // invoke scheduler port to dispatch message
+    this->invoke_to_schedIn(0, 0);
+    // verify clear event was sent
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
+
+    // Throttling should be cleared
+    this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+
+}
+----
+
+This test first loops over the throttle count, which is stored
+for us in the constant `EVENTID_FACTOR_UPDATED_THROTTLE`
+of the `MathReceiver` component base class.
+On each iteration, it calls `setFactor`.
+At the end of this loop, the `FACTOR_UPDATED` event should be
+throttled.
+
+Next the test calls `setFactor` with a second argument of
+`ThrottleState::THROTTLED`.
+This code checks that the event is throttled.
+
+Next the test sends the command `CLEAR_EVENT_THROTTLE`,
+checks for the corresponding notification event,
+and checks that the throttling is cleared.
 
 == Updating the Ref Topology
 

@@ -47,7 +47,7 @@ namespace Ref {
   {
       // Set the factor parameter by command
       const F32 factor = 3.0;
-      this->setFactor(factor);
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       // Do the add operation
       this->doMathOp(2.0, MathOp::ADD, 3.0, factor);
   }
@@ -68,7 +68,7 @@ namespace Ref {
   {
       // Set the factor parameter by command
       const F32 factor = 3.0;
-      this->setFactor(factor);
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       // Do the add operation
       this->doMathOp(2.0, MathOp::MUL, 3.0, factor);
   }
@@ -87,6 +87,7 @@ namespace Ref {
   void Tester ::
     testThrottle()
   {
+
       // send the number of commands required to throttle the event
       // Use the autocoded value so the unit test passes if the
       // throttle value is changed
@@ -95,7 +96,7 @@ namespace Ref {
           cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
           cycle++
       ) {
-          this->setFactor(1.0);
+          this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
       }
 
       // Event should now be throttled
@@ -110,7 +111,7 @@ namespace Ref {
       ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
 
       // Throttling should be cleared
-      this->setFactor(1.0);
+      this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
 
   }
 
