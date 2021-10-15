@@ -80,6 +80,9 @@ namespace Ref {
       // Helper methods
       // ----------------------------------------------------------------------
 
+      //! Pick an F32 value
+      static F32 pickF32Value();
+
       //! Set the factor parameter
       void setFactor(
           F32 factor, //!< The parameter value
@@ -97,9 +100,7 @@ namespace Ref {
       //! Do a math operation
       //! Factor parameter must be set
       void doMathOp(
-          F32 val1,
           MathOp op,
-          F32 val2,
           F32 factor
       );
 

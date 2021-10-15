@@ -10,10 +10,10 @@
 //
 // ======================================================================
 
+#include "STest/Pick/Pick.hpp"
 #include "Tester.hpp"
 
 #define INSTANCE 0
-#define CMD_SEQ 10
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
 
@@ -46,21 +46,21 @@ namespace Ref {
     testAdd()
   {
       // Set the factor parameter by command
-      const F32 factor = 3.0;
+      const F32 factor = pickF32Value();
       this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       // Do the add operation
-      this->doMathOp(2.0, MathOp::ADD, 3.0, factor);
+      this->doMathOp(MathOp::ADD, factor);
   }
 
   void Tester ::
     testSub()
   {
       // Set the factor parameter by loading parameters
-      const F32 factor = 3.0;
+      const F32 factor = pickF32Value();
       this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
       this->component.loadParameters();
       // Do the operation
-      this->doMathOp(2.0, MathOp::SUB, 3.0, factor);
+      this->doMathOp(MathOp::SUB, factor);
   }
 
   void Tester ::
@@ -70,7 +70,7 @@ namespace Ref {
       const F32 factor = 3.0;
       this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       // Do the add operation
-      this->doMathOp(2.0, MathOp::MUL, 3.0, factor);
+      this->doMathOp(MathOp::MUL, factor);
   }
 
   void Tester ::
@@ -81,7 +81,7 @@ namespace Ref {
       this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
       this->component.loadParameters();
       // Do the operation
-      this->doMathOp(2.0, MathOp::DIV, 3.0, factor);
+      this->doMathOp(MathOp::DIV, factor);
   }
 
   void Tester ::
@@ -91,27 +91,31 @@ namespace Ref {
       // send the number of commands required to throttle the event
       // Use the autocoded value so the unit test passes if the
       // throttle value is changed
+      const F32 factor = pickF32Value();
       for (
           U16 cycle = 0;
           cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
           cycle++
       ) {
-          this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+          this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       }
 
       // Event should now be throttled
-      this->setFactor(1.0, ThrottleState::THROTTLED);
+      this->setFactor(factor, ThrottleState::THROTTLED);
 
       // send the command to clear the throttle
-      this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
+      const U32 instance = STest::Pick::any();
+      const U32 cmdSeq = STest::Pick::any();
+      this->sendCmd_CLEAR_EVENT_THROTTLE(instance, cmdSeq);
       // invoke scheduler port to dispatch message
-      this->invoke_to_schedIn(0, 0);
+      const U32 context = STest::Pick::any();
+      this->invoke_to_schedIn(0, context);
       // verify clear event was sent
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
 
       // Throttling should be cleared
-      this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
 
   }
 
@@ -132,6 +136,13 @@ namespace Ref {
   // Helper methods
   // ----------------------------------------------------------------------
 
+  F32 Tester ::
+    pickF32Value()
+  {
+    const F32 m = 10e6;
+    return m * (1.0 - 2 * STest::Pick::inUnitInterval());
+  }
+
   void Tester ::
     setFactor(
         F32 factor,
@@ -142,7 +153,9 @@ namespace Ref {
       this->clearHistory();
       // set the parameter
       this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
-      this->paramSend_FACTOR(INSTANCE, CMD_SEQ);
+      const U32 instance = STest::Pick::any();
+      const U32 cmdSeq = STest::Pick::any();
+      this->paramSend_FACTOR(instance, cmdSeq);
       if (throttleState == ThrottleState::NOT_THROTTLED) {
           // verify the parameter update notification event was sent
           ASSERT_EVENTS_SIZE(1);
@@ -185,13 +198,12 @@ namespace Ref {
   }
 
   void Tester ::
-    doMathOp(
-        F32 val1,
-        MathOp op,
-        F32 val2,
-        F32 factor
-    )
+    doMathOp(MathOp op, F32 factor)
   {
+
+      // pick values
+      const F32 val1 = pickF32Value();
+      const F32 val2 = pickF32Value();
 
       // clear history
       this->clearHistory();
@@ -199,7 +211,8 @@ namespace Ref {
       // invoke operation port with add operation
       this->invoke_to_mathOpIn(0, val1, op, val2);
       // invoke scheduler port to dispatch message
-      this->invoke_to_schedIn(0, 0);
+      const U32 context = STest::Pick::any();
+      this->invoke_to_schedIn(0, context);
 
       // verify the result of the operation was returned
 

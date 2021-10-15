@@ -994,6 +994,7 @@ TEST(Nominal, Result) {
 Again you can try altering something in the component code
 to see what effect it has on the test output.
 
+[[math-sender_exercise]]
 ==== Exercise: Random Testing
 
 The `STest` module contains helper functions for writing
@@ -1251,7 +1252,7 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[
 
 === Add the Model to the Project
 
-Follow the same steps as for the
+Follow the steps given for the
 <<math-sender_add-model,`MathSender` component>>.
 
 === Build the Stub Implementation
@@ -1439,8 +1440,12 @@ parameters.
 
 ==== Set up the Unit Test Environment
 
-Follow the same steps as for the
+. Follow the steps given for the
 <<math-sender_unit_setup,`MathSender` component>>.
+
+. Follow the steps given for the
+<<math-sender_exercise,random testing exercise>>,
+so that you can use STest to pick random values.
 
 ==== Add Helper Code
 
@@ -1466,11 +1471,27 @@ This code defines a {cpp} enum class for recording whether an
 event is throttled.
 
 *Add helper functions:*
-For each of the functions described below, you must add 
+Add each of the functions described below to the
+"Helper methods" section of `Tester.cpp`.
+For each function, you must add
 the corresponding function prototype to `Tester.hpp`.
 
-Add a `setFactor` function in the "Helper methods"
-section of  `Tester.cpp`.
+Add a `pickF32Value` function.
+
+[source,cpp]
+----
+F32 Tester ::
+  pickF32Value()
+{
+  const F32 m = 10e6;
+  return m * (1.0 - 2 * STest::Pick::inUnitInterval());
+}
+----
+
+This function picks a random `F32` value in the range
+_[ -10^6, 10^6 ]_.
+
+Add a `setFactor` function.cpp`.
 
 [source,cpp]
 ----
@@ -1484,7 +1505,9 @@ void Tester ::
     this->clearHistory();
     // set the parameter
     this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
-    this->paramSend_FACTOR(INSTANCE, CMD_SEQ);
+    const U32 instance = STest::Pick::any();
+    const U32 cmdSeq = STest::Pick::any();
+    this->paramSend_FACTOR(instance, cmdSeq);
     if (throttleState == ThrottleState::NOT_THROTTLED) {
         // verify the parameter update notification event was sent
         ASSERT_EVENTS_SIZE(1);
@@ -1554,12 +1577,14 @@ Add a `doMathOp` function to `Tester.cpp`
 ----
 void Tester ::
   doMathOp(
-      F32 val1,
       MathOp op,
-      F32 val2,
       F32 factor
   )
 {
+
+    // pick values
+    const F32 val1 = pickF32Value();
+    const F32 val2 = pickF32Value();
 
     // clear history
     this->clearHistory();
@@ -1567,7 +1592,8 @@ void Tester ::
     // invoke operation port with add operation
     this->invoke_to_mathOpIn(0, val1, op, val2);
     // invoke scheduler port to dispatch message
-    this->invoke_to_schedIn(0, 0);
+    const U32 context = STest::Pick::any();
+    this->invoke_to_schedIn(0, context);
 
     // verify the result of the operation was returned
 
@@ -1626,10 +1652,10 @@ void Tester ::
   testAdd()
 {
     // Set the factor parameter by command
-    const F32 factor = 3.0;
+    const F32 factor = pickF32Value();
     this->setFactor(factor, ThrottleState::NOT_THROTTLED);
     // Do the add operation
-    this->doMathOp(2.0, MathOp::ADD, 3.0, factor);
+    this->doMathOp(MathOp::ADD, factor);
 }
 ----
 
@@ -1647,17 +1673,17 @@ void Tester ::
   testSub()
 {
     // Set the factor parameter by loading parameters
-    const F32 factor = 3.0;
+    const F32 factor = pickF32Value();
     this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
     this->component.loadParameters();
     // Do the operation
-    this->doMathOp(2.0, MathOp::SUB, 3.0, factor);
+    this->doMathOp(MathOp::SUB, factor);
 }
 ----
 
 This test is similar to `testAdd`, but it shows
 another way to set a parameter.
-`testAdd` function showed how to set a parameter by command.
+`testAdd` showed how to set a parameter by command.
 You can also set a parameter by initialization, as follows:
 
 . Call the `paramSet` function as shown.
@@ -1695,27 +1721,29 @@ void Tester ::
     // send the number of commands required to throttle the event
     // Use the autocoded value so the unit test passes if the
     // throttle value is changed
+    const F32 factor = pickF32Value();
     for (
         U16 cycle = 0;
         cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
         cycle++
     ) {
-        this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+        this->setFactor(factor, ThrottleState::NOT_THROTTLED);
     }
 
     // Event should now be throttled
-    this->setFactor(1.0, ThrottleState::THROTTLED);
+    this->setFactor(factor, ThrottleState::THROTTLED);
 
     // send the command to clear the throttle
     this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
     // invoke scheduler port to dispatch message
-    this->invoke_to_schedIn(0, 0);
+    const U32 context = STest::Pick::any();
+    this->invoke_to_schedIn(0, context);
     // verify clear event was sent
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
 
     // Throttling should be cleared
-    this->setFactor(1.0, ThrottleState::NOT_THROTTLED);
+    this->setFactor(factor, ThrottleState::NOT_THROTTLED);
 
 }
 ----
@@ -1734,6 +1762,48 @@ This code checks that the event is throttled.
 Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
+
+=== Exercise: Error Handling
+
+As an exercise, think about what will happen if the floating-point
+math operation performed by `MathReceiver` causes an error.
+For example, suppose that `mathOpIn` is invoked with `op = DIV`
+and `val2 = 0.0`.
+What will happen?
+As currently designed and implemented, the `MathReceiver`
+component will perform the requested operation.
+On most systems the result will be `INF` (floating-point infinity).
+In this case, the result will be sent back to `MathSender`
+and reported in the usual way.
+On some systems, the hardware could issue a floating-point exception.
+
+Suppose you wanted to handle the case of division by zero
+explicitly.
+How would you change the design?
+Here are some questions to think about:
+
+. How would you check for division by zero?
+Note that `val2 = 0.0` is not the only case in which a division
+by zero error can occur.
+It can also occur for very small values of `val2`.
+
+. Should the error be caught in `MathSender` or `MathReceiver`?
+
+. Suppose the design says that `MathSender` catches the error,
+and so never sends requests to `MathReceiver` to divide by zero.
+what if anything should `MathReceiver` do if it receives
+a divide by zero request?
+Do nothing? Emit a warning? Fail a FSW assertion?
+
+. If the error is caught by `MathReceiver`, does the
+interface between the components have to change?
+If so, how?
+What should `MathSender` do if `MathReceiver`
+reports an error instead of a valid result?
+
+Revise the MathSender and MathReceiver components to implement your
+ideas.
+Add unit tests covering the new behavior.
 
 == Updating the Ref Topology
 

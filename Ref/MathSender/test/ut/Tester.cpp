@@ -43,10 +43,10 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   F32 Tester ::
-    pickValue()
+    pickF32Value()
   {
       const F32 m = 10e6;
-      return STest::Pick::inUnitInterval();
+      return m * (1.0 - 2 * STest::Pick::inUnitInterval());
   }
 
   void Tester ::
@@ -77,7 +77,7 @@ namespace Ref {
     testResult()
   {
       // Generate an expected result
-      const F32 result = pickValue();
+      const F32 result = pickF32Value();
       // reset all telemetry and port history
       this->clearHistory();
       // call result port with result
@@ -122,8 +122,8 @@ namespace Ref {
   {
 
       // Synthesize values
-      const F32 val1 = pickValue();
-      const F32 val2 = pickValue();
+      const F32 val1 = pickF32Value();
+      const F32 val2 = pickF32Value();
 
       // Send the command
 

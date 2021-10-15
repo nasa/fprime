@@ -619,6 +619,7 @@ TEST(Nominal, Result) {
 Again you can try altering something in the component code
 to see what effect it has on the test output.
 
+[[math-sender_exercise]]
 ==== Exercise: Random Testing
 
 The `STest` module contains helper functions for writing

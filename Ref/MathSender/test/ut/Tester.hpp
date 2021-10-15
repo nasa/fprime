@@ -79,7 +79,7 @@ namespace Ref {
       // ----------------------------------------------------------------------
 
       //! Pick a random value
-      static F32 pickValue();
+      static F32 pickF32Value();
 
       //! Test a DO_MATH command
       void testDoMath(MathOp op);
