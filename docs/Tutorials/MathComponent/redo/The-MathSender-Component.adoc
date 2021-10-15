@@ -42,9 +42,9 @@ type `MathResult`.
 Notice that these port specifiers use the ports that
 we defined <<ports,above>>.
 The input port is *asynchronous*.
-This means that when the port is invoked (i.e., when
-data is sent on the port) a message is placed on a queue,
-and its handler is later run on the thread of this component.
+This means that invoking the port (i.e., sending
+data on the port) puts a message on a queue.
+The handler runs later, on the thread of this component.
 
 . *Special ports:* These are ports that have a special
 meaning in F Prime.
