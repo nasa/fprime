@@ -129,7 +129,7 @@ namespace Ref {
 
       // synthesize a command sequence number
       const U32 cmdSeq = STest::Pick::any();
-      // send MS_DO_MATH command
+      // send DO_MATH command
       this->sendCmd_DO_MATH(0, cmdSeq, val1, op, val2);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
