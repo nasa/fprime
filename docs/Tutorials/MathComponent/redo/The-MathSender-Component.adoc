@@ -584,7 +584,7 @@ void Tester ::
     this->invoke_to_mathResultIn(0, result);
     // retrieve the message from the message queue and dispatch the command to the handler
     this->component.doDispatch();
-    // verify only one telemetry value was written
+    // verify one telemetry value was written
     ASSERT_TLM_SIZE(1);
     // verify the desired telemetry channel was sent once
     ASSERT_TLM_RESULT_SIZE(1);
