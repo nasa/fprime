@@ -23,7 +23,7 @@ Create a file `MathSender.fpp` with the following contents:
 
 [source,fpp]
 ----
-include::../../../../Ref/MathSender/MathSender.fpp[]
+include::../MathSender/MathSender.fpp[]
 ----
 
 This code defines a component `Ref.MathSender`.
@@ -686,3 +686,8 @@ Try the following:
 . Inspect `Ref/build-fprime-automatic-native-ut/Ref/MathSender/seed-history`.
 You should see that the value _S_ was used in the runs you just did
 (corresponding to the last few entries in `seed-history`).
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathTutorial/MathSender`.
