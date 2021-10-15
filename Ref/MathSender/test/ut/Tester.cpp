@@ -121,13 +121,14 @@ namespace Ref {
     testDoMath(MathOp op)
   {
 
-      // Synthesize values
+      // Pick values
+
       const F32 val1 = pickF32Value();
       const F32 val2 = pickF32Value();
 
       // Send the command
 
-      // synthesize a command sequence number
+      // pick a command sequence number
       const U32 cmdSeq = STest::Pick::any();
       // send DO_MATH command
       this->sendCmd_DO_MATH(0, cmdSeq, val1, op, val2);

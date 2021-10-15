@@ -764,13 +764,14 @@ void Tester ::
   testDoMath(MathOp op)
 {
 
-    // Synthesize values
+    // Pick values
+
     const F32 val1 = 2.0;
     const F32 val2 = 3.0;
 
     // Send the command
 
-    // synthesize a command sequence number
+    // pick a command sequence number
     const U32 cmdSeq = 10;
     // send DO_MATH command
     this->sendCmd_DO_MATH(0, cmdSeq, val1, op, val2);
