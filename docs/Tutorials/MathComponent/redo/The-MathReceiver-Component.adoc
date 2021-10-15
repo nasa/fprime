@@ -1,7 +1,7 @@
 == The MathReceiver Component
 
-Now we build and test the `MathReceiver` component.
-We use the same five steps as for the
+Now we will build and test the `MathReceiver` component.
+We will use the same five steps as for the
 <<math-sender,`MathSender` component>>.
 
 === Construct the FPP Model
@@ -191,7 +191,6 @@ void MathReceiver ::
     for (U32 i = 0; i < numMsgs; ++i) {
         (void) this->doDispatch();
     }
-
 }
 ----
 
@@ -276,7 +275,8 @@ parameters.
 . Follow the steps given for the
 <<math-sender_unit_setup,`MathSender` component>>.
 
-. Follow the steps given for the
+. Follow the steps given under *Modifying the code*
+for the
 <<math-sender_exercise,random testing exercise>>,
 so that you can use STest to pick random values.
 
@@ -308,6 +308,9 @@ Add each of the functions described below to the
 "Helper methods" section of `Tester.cpp`.
 For each function, you must add
 the corresponding function prototype to `Tester.hpp`.
+After adding each function, compile the unit tests
+to make sure that everything still compiles.
+Fix any errors that occur.
 
 Add a `pickF32Value` function.
 
@@ -324,7 +327,7 @@ F32 Tester ::
 This function picks a random `F32` value in the range
 _[ -10^6, 10^6 ]_.
 
-Add a `setFactor` function.cpp`.
+Add a `setFactor` function.
 
 [source,cpp]
 ----
@@ -404,7 +407,7 @@ math component.
 By running this function and comparing, we can
 check the output of the component.
 
-Add a `doMathOp` function to `Tester.cpp`
+Add a `doMathOp` function to `Tester.cpp`.
 
 [source,cpp]
 ----
