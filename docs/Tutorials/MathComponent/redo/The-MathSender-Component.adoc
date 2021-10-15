@@ -578,7 +578,7 @@ void Tester ::
   testResult()
 {
     // Generate an expected result
-    const F32 result = 10;
+    const F32 result = 10.0;
     // reset all telemetry and port history
     this->clearHistory();
     // call result port with result
@@ -628,7 +628,7 @@ that provides helper classes and functions for writing
 unit tests.
 As an exercise, use the interface provided by
 `STest/STest/Pick.hpp` to pick random values to use in the
-tests instead of using hard-coded values such as 1.0, 2.0,
+tests instead of using hard-coded values such as 2.0, 3.0,
 and 10.
 
 *Modifying the code:* You will need to do the following:
