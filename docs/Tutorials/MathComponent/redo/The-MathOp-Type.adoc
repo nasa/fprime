@@ -29,7 +29,7 @@ In that directory, create a file `MathTypes.fpp` with the following contents:
 
 [source,fpp]
 ----
-include::../../../../Ref/MathTypes/MathTypes.fpp[]
+include::../MathTypes/MathTypes.fpp[]
 ----
 
 You can do this by typing, or by copy-paste.
@@ -58,7 +58,7 @@ For more information, see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and-Annotations[_The FPP User's Guide_].
 
 
-[[types-add]]
+[[types_add]]
 === Add the Model to the Project
 
 *Create Ref/MathTypes/CMakeLists.txt:*
@@ -88,7 +88,7 @@ Immediately after the last of those lines, add the following new line:
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 ----
 
-[[types-build]]
+[[types_build]]
 === Build the Model
 
 *Run the build:*
@@ -101,6 +101,7 @@ Do the following:
 The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
+If you get stuck, you can look at the <<types_ref,reference implementation>>.
 
 *Inspect the generated code:*
 Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
@@ -129,3 +130,25 @@ You may wish to study the file `MathOpEnumAc.hpp`.
 This file gives the interface to the {cpp} class `Ref::MathOp`.
 All enum types have a similar auto-generated class
 interface.
+
+[[types_ref]]
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathTutorial/MathTypes`.
+To build this implementation from a clean repostiory,
+do the following:
+
+. Go to the `Ref` directory.
+
+. Run `cp -R docs/Tutorials/MathTutorial/MathTypes .`
+
+. Update `Ref/CMakeLists.txt` as stated
+<<types_add,above>>.
+
+. Follow the steps for <<types_build,building the model>>.
+
+If you have modified the repo, revise the steps accordingly.
+For example, switch git branches, use `git stash` to stash
+your changes, or move `MathTypes` to another directory such
+as `MathTypes-saved`.

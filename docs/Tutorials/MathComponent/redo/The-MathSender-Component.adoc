@@ -94,7 +94,7 @@ and component implementation.
 
 *Update Ref/CMakeLists.txt:*
 Add `Ref/MathSender` to `Ref/CMakeLists.txt`, as we did
-for <<types-add,`Ref/MathTypes`>>.
+for <<types_add,`Ref/MathTypes`>>.
 
 [[math-sender_build-stub]]
 === Build the Stub Implementation

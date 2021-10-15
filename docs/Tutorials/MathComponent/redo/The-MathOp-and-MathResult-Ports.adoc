@@ -50,13 +50,13 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Ports[_The 
 Add add the model
 `Ref/MathPorts/MathPorts.fpp` to the `Ref` project.
 Carry out the steps in the
-<<types-add,previous section>>, after
+<<types_add,previous section>>, after
 substituting `MathPorts` for `MathTypes`.
 
 === Build the Model
 
 Carry out the steps in the
-<<types-build,previous section>>,
+<<types_build,previous section>>,
 in directory `MathPorts` instead of `MathTypes`.
 The generated code will go in
 `Ref/build-fprime-automatic-native/Ref/MathPorts`.
