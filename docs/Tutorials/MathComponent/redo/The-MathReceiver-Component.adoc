@@ -629,7 +629,9 @@ It can also occur for very small values of `val2`.
 and so never sends requests to `MathReceiver` to divide by zero.
 what if anything should `MathReceiver` do if it receives
 a divide by zero request?
-Do nothing? Emit a warning? Fail a FSW assertion?
+Carry out the operation normally?
+Emit a warning?
+Fail a FSW assertion?
 
 . If the error is caught by `MathReceiver`, does the
 interface between the components have to change?
