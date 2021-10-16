@@ -16,3 +16,8 @@ do
   rm -rf $dir
   cp -R $math_component/$dir .
 done
+
+for file in instances topology
+do
+  cp $math_component/Top/$file.fpp Top
+done
