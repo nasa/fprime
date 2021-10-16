@@ -233,7 +233,7 @@ module Ref {
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
     queue size Default.queueSize
 
-  instance mathReceiver: Ref.MathReceiver base id 2700 \
+  instance mathReceiver: Ref.MathReceiver base id 0x2700 \
     queue size Default.queueSize
 
   # ----------------------------------------------------------------------

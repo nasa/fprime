@@ -22,7 +22,7 @@ building the component,
 completing the {cpp} component implementation, and writing
 component unit tests.
 . Developing the `MathReceiver` component.
-. Adding the new components and connections to the topology for the F Prime
+. Adding the new components and connections to the F Prime
 `Ref` application.
 . Using the F Prime Ground Data System (GDS) to run the updated `Ref`
 application.

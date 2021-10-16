@@ -324,7 +324,6 @@ namespace Ref {
       fileManager.setIdBase(BaseIds::fileManager);
       fileUplink.setIdBase(BaseIds::fileUplink);
       pingRcvr.setIdBase(BaseIds::pingRcvr);
-      mathReceiver.setIdBase(BaseIds::mathReceiver);
       eventLogger.setIdBase(BaseIds::eventLogger);
       chanTlm.setIdBase(BaseIds::chanTlm);
       prmDb.setIdBase(BaseIds::prmDb);
@@ -336,6 +335,7 @@ namespace Ref {
       SG4.setIdBase(BaseIds::SG4);
       SG5.setIdBase(BaseIds::SG5);
       sendBuffComp.setIdBase(BaseIds::sendBuffComp);
+      mathReceiver.setIdBase(BaseIds::mathReceiver);
       comm.setIdBase(BaseIds::comm);
       downlink.setIdBase(BaseIds::downlink);
       fatalAdapter.setIdBase(BaseIds::fatalAdapter);

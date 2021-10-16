@@ -26,7 +26,7 @@ building the component,
 completing the {cpp} component implementation, and writing
 component unit tests.
 . Developing the `MathReceiver` component.
-. Adding the new components and connections to the topology for the F Prime
+. Adding the new components and connections to the F Prime
 `Ref` application.
 . Using the F Prime Ground Data System (GDS) to run the updated `Ref`
 application.
@@ -1871,7 +1871,7 @@ Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
 
-== Updating the Ref Topology
+== Updating the Ref Deployment
 
 The next step in the tutorial is to define instances of the
 `MathSender` and `MathReceiver` components and add them
@@ -1916,6 +1916,18 @@ TODO
 For more information on defining component instances,
 see 
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
+
+=== Updating the Topology
+
+TODO
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/Top`.
+To build this implementation, copy the files
+`instances.fpp` and `topology.fpp` from
+that directory to `Ref/Top`.
 
 == Running the Ref Deployment
 

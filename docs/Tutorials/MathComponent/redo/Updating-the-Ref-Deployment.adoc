@@ -1,4 +1,4 @@
-== Updating the Ref Topology
+== Updating the Ref Deployment
 
 The next step in the tutorial is to define instances of the
 `MathSender` and `MathReceiver` components and add them
@@ -10,7 +10,7 @@ to the `Ref` topology.
 Go to the directory `Ref/Top` and open the file `instances.fpp`.
 This file defines the instances used in the topology for the
 `Ref` application.
-At the end of the section entitled "Active components,"
+At the end of the section entitled "Active component instances,"
 add the following lines:
 
 [source,fpp]
@@ -37,9 +37,32 @@ Here we give `mathSender` the default queue size
 and stack size and a priority of 100.
 
 *Define the mathReceiver instance:*
-TODO
+At the end of the section "Queued component instances,"
+add the following lines:
+
+[source,fpp]
+----
+instance mathReceiver: Ref.MathReceiver base id 2700 \
+  queue size Default.queueSize
+----
+
+This code defines an instance `mathReceiver` of
+component `MathReceiver`.
+It has base identifier 2700
 
 *More information:*
 For more information on defining component instances,
 see 
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
+
+=== Updating the Topology
+
+TODO
+
+=== Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/Top`.
+To build this implementation, copy the files
+`instances.fpp` and `topology.fpp` from
+that directory to `Ref/Top`.
