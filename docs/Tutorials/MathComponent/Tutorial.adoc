@@ -1883,7 +1883,7 @@ to the `Ref` topology.
 Go to the directory `Ref/Top` and open the file `instances.fpp`.
 This file defines the instances used in the topology for the
 `Ref` application.
-At the end of the section entitled "Active components,"
+At the end of the section entitled "Active component instances,"
 add the following lines:
 
 [source,fpp]
@@ -1910,7 +1910,18 @@ Here we give `mathSender` the default queue size
 and stack size and a priority of 100.
 
 *Define the mathReceiver instance:*
-TODO
+At the end of the section "Queued component instances,"
+add the following lines:
+
+[source,fpp]
+----
+instance mathReceiver: Ref.MathReceiver base id 0x2700 \
+  queue size Default.queueSize
+----
+
+This code defines an instance `mathReceiver` of
+component `MathReceiver`.
+It has base identifier 0x2700 and the default queue size.
 
 *More information:*
 For more information on defining component instances,

@@ -42,13 +42,13 @@ add the following lines:
 
 [source,fpp]
 ----
-instance mathReceiver: Ref.MathReceiver base id 2700 \
+instance mathReceiver: Ref.MathReceiver base id 0x2700 \
   queue size Default.queueSize
 ----
 
 This code defines an instance `mathReceiver` of
 component `MathReceiver`.
-It has base identifier 2700
+It has base identifier 0x2700 and the default queue size.
 
 *More information:*
 For more information on defining component instances,
