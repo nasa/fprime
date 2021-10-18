@@ -2207,4 +2207,3 @@ You should see the following logs, among others:
 * `command.log`: Commands sent.
 * `event.log`: Events received
 * `channel.log`: Telemetry channels received
-TODO
