@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctype.h>
 
+#include "Fw/Logger/Logger.hpp"
 #include <Ref/Top/RefTopologyAc.hpp>
 
 void print_usage(const char* app) {
@@ -11,7 +12,32 @@ void print_usage(const char* app) {
 #include <signal.h>
 #include <cstdio>
 
+class Logger :
+  public Fw::Logger
+{
+
+    public:
+
+        void log(
+            const char* fmt,
+            POINTER_CAST a0 = 0,
+            POINTER_CAST a1 = 0,
+            POINTER_CAST a2 = 0,
+            POINTER_CAST a3 = 0,
+            POINTER_CAST a4 = 0,
+            POINTER_CAST a5 = 0,
+            POINTER_CAST a6 = 0,
+            POINTER_CAST a7 = 0,
+            POINTER_CAST a8 = 0,
+            POINTER_CAST a9 = 0
+        ) {
+          printf(fmt, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        }
+
+};
+
 Ref::TopologyState state;
+Logger logger;
 
 volatile sig_atomic_t terminate = 0;
 
@@ -68,6 +94,8 @@ int main(int argc, char* argv[]) {
                 return 1;
         }
     }
+
+    Fw::Logger::registerLogger(&logger);
 
     (void) printf("Hit Ctrl-C to quit\n");
 
