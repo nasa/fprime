@@ -9,8 +9,9 @@ After several seconds, a browser window should appear.
 
 === Sending a Command
 
-At the top of the window are several buttons, each of which corresponds to a tab.
-Select the Commanding button (this is also the button that is selected
+At the top of the window are several buttons, each of which corresponds to 
+a GDS view.
+Select the Commanding button (this is the view that is selected
 when you first start the GDS).
 In the Mnemonic menu, start typing `mathSender.DO_MATH` in the text box.
 As you type, the GDS will filter the menu selections.
