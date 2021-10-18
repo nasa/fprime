@@ -188,6 +188,8 @@ repository] and follow the instructions.
 
 In directory `Ref/Top`, run the following commands in an sh-compatible
 shell.
+Replace `[path to fpv root]` with the path to the
+root of the FPV repo on your system.
 
 [source,bash]
 ----
