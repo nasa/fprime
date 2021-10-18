@@ -197,7 +197,7 @@ echo DATA_FOLDER=Ref/ > .fpv-env
 nodemon [path to fpv root]/server/index.js ./.fpv-env
 ----
 
-You should see the FPV local server application start up on the
+You should see the FPV server application start up on the
 console.
 
 Now open a browser and navigate to `http://localhost:3000`.

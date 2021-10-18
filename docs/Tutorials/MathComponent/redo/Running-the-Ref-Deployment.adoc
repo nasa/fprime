@@ -89,7 +89,7 @@ This command saves the parameter values in the parameter database
 to non-volatile storage.
 
 Note that saving parameters is a two-step process.
-The first step copies one parameter from a component
+The first step copies a single parameter from a component
 to the database.
 The second step saves all parameters in the database
 to the disk.
@@ -107,5 +107,10 @@ You should see the following logs, among others:
 
 * `Ref.log`: FSW console output.
 * `command.log`: Commands sent.
-* `event.log`: Events received
-* `channel.log`: Telemetry channels received
+* `event.log`: Event reports received.
+* `channel.log`: Telemetry points received.
+
+You can also view these logs via the GDS browser interface.
+Click the Logs tab to go the Logs view.
+Select the log you wish to inspect from the drop-down menu.
+By default, there is no log selected.
