@@ -1819,11 +1819,11 @@ operations performed.
 . Add the channel to the FPP model.
 
 . In the component implementation class, add a member
-variable `num_math_ops` of type `U32`.
+variable `numMathOps` of type `U32`.
 Initialize the variable to zero in the class constructor.
 
 . Revise the `mathOpIn` handler so that it increments
-`num_math_ops` and emits the updated value as telemetry.
+`numMathOps` and emits the updated value as telemetry.
 
 . Revise the unit tests to cover the new behavior.
 
@@ -1836,10 +1836,10 @@ and `val2 = 0.0`.
 What will happen?
 As currently designed and implemented, the `MathReceiver`
 component will perform the requested operation.
-On most systems the result will be `INF` (floating-point infinity).
+On some systems the result will be `INF` (floating-point infinity).
 In this case, the result will be sent back to `MathSender`
 and reported in the usual way.
-On some systems, the hardware could issue a floating-point exception.
+On other systems, the hardware could issue a floating-point exception.
 
 Suppose you wanted to handle the case of division by zero
 explicitly.
@@ -1855,7 +1855,7 @@ It can also occur for very small values of `val2`.
 
 . Suppose the design says that `MathSender` catches the error,
 and so never sends requests to `MathReceiver` to divide by zero.
-what if anything should `MathReceiver` do if it receives
+What if anything should `MathReceiver` do if it receives
 a divide by zero request?
 Carry out the operation normally?
 Emit a warning?
