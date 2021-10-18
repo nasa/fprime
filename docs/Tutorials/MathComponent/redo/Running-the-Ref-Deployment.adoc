@@ -66,7 +66,7 @@ value of 6.0.
 === Saving Parameters
 
 When you set a parameter by command, the new parameter
-value resides in the component that receives the command
+value resides in the component that receives the command.
 At this point, if you stop and restart FSW, the parameter
 will return to its original value (the value before you
 sent the command).
@@ -88,8 +88,12 @@ This command saves the parameter values in the parameter database
 to non-volatile storage.
 
 Note that saving parameters is a two-step process.
-If you do only the first step, the parameter get saved to
-the database but not to the disk.
+The first step copies one parameter from a component
+to the database.
+The second step saves all parameters in the database
+to the disk.
+If you do only the first step, the parameter will not be
+saved to the disk.
 
 === GDS Logs
 
