@@ -1989,6 +1989,11 @@ connections Math {
 These lines add the connections between the `mathSender`
 and `mathReceiver` instances.
 
+*More information:*
+For more information on defining topologies,
+see 
+https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies[_The FPP User's Guide_].
+
 === Building the Ref Deployment
 
 Go to the `Ref` directory.
