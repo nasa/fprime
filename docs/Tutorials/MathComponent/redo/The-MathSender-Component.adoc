@@ -119,8 +119,12 @@ These commands produce a template, or stub implementation,
 of the `MathSender` implementation class.
 You will fill in this implementation class below.
 
-Now run the command `fprime-util build`.
+Now run the command `fprime-util build --jobs 4`.
 The model and the stub implementation should build.
+The option `--jobs 4` says to use four cores for the build.
+This should make the build go faster.
+You can use any number after `--jobs`, up to the number
+of cores available on your system.
 
 *Inspect the generated code:*
 The generated code resides in the directory

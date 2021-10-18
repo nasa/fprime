@@ -524,8 +524,12 @@ These commands produce a template, or stub implementation,
 of the `MathSender` implementation class.
 You will fill in this implementation class below.
 
-Now run the command `fprime-util build`.
+Now run the command `fprime-util build --jobs 4`.
 The model and the stub implementation should build.
+The option `--jobs 4` says to use four cores for the build.
+This should make the build go faster.
+You can use any number after `--jobs`, up to the number
+of cores available on your system.
 
 *Inspect the generated code:*
 The generated code resides in the directory
@@ -1879,10 +1883,12 @@ to the `Ref` topology.
 
 === Defining the Component Instances
 
-*Define the mathSender instance:*
 Go to the directory `Ref/Top` and open the file `instances.fpp`.
 This file defines the instances used in the topology for the
 `Ref` application.
+Update this file as described below.
+
+*Define the mathSender instance:*
 At the end of the section entitled "Active component instances,"
 add the following lines:
 
@@ -1929,6 +1935,67 @@ see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
 
 === Updating the Topology
+
+Go to the directory `Ref/Top` and open the file `topology.fpp`.
+This file defines the topology for the `Ref` application.
+Update this file as described below.
+
+*Add the new instances:*
+You should see a list of instances, each of which begins
+with the keyword `instance`.
+After the line `instance linuxTime`, add the following
+lines:
+
+[source,fpp]
+----
+instance mathSender
+instance mathReceiver
+----
+
+These lines add the `mathSender` and `mathReceiver`
+instances to the topology.
+
+*Connect mathReceiver to rate group 1:*
+Find the line that starts `connections RateGroups`.
+This is the beginning of the definition of the `RateGroups`
+connection graph.
+Inside the block of that definition,
+find the line
+`rateGroup1Comp.RateGroupMemberOut[3] pass:[->] fileDownlink.Run`.
+After that line, add the line
+
+[source,fpp]
+----
+rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
+----
+
+This line adds the connection that drives the `schedIn`
+port of the `mathReceiver` component instance.
+
+*Add the Math connections:*
+Find the Uplink connections that begin with the line
+`connections Uplink`.
+After the block of that definition, add the following
+lines:
+
+[source,fpp]
+----
+connections Math {
+  mathSender.mathOpOut -> mathReceiver.mathOpIn
+  mathReceiver.mathResultOut -> mathSender.mathResultIn
+}
+----
+
+These lines add the connections between the `mathSender`
+and `mathReceiver` instances.
+
+=== Building the Ref Deployment
+
+Go to the `Ref` directory.
+Run `fprime-util build --jobs 4`.
+The updated deployment should build without errors.
+
+=== Visualizing the Ref Deployment
 
 TODO
 
