@@ -13,6 +13,7 @@ to `MathSender`.
 
 See the diagram below.
 
+[#math-top]
 .A simple topology for arithmetic computation
 image::img/top.png[Math Sender and Math Receiver]
 
@@ -1955,6 +1956,13 @@ instance mathReceiver
 These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
+*Check for unconnected ports:*
+This capability does not yet exist in the F Prime build system.
+When it does, you will be able to see a list of ports
+that are unconnected in the `Ref` topology.
+Those ports will include the ports for the new instances
+`mathSender` and `mathReceiver`.
+
 *Connect mathReceiver to rate group 1:*
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
@@ -1971,6 +1979,11 @@ rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
+
+*Re-run the check for unconnected ports:*
+When this capability exists, you will be able to see
+that `mathReceiver.schedIn` is now connected
+(it no longer appears in the list).
 
 *Add the Math connections:*
 Find the Uplink connections that begin with the line
@@ -1989,6 +2002,10 @@ connections Math {
 These lines add the connections between the `mathSender`
 and `mathReceiver` instances.
 
+*Re-run the check for unconnected ports:*
+When this capability exists, you will be able to see
+that the `mathSender` and `mathReceiver` ports are connected.
+
 *More information:*
 For more information on defining topologies,
 see 
@@ -1999,10 +2016,76 @@ https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies[
 Go to the `Ref` directory.
 Run `fprime-util build --jobs 4`.
 The updated deployment should build without errors.
+The generated files are located at
+`Ref/build-fprime-automatic-native/Ref/Top`.
 
-=== Visualizing the Ref Deployment
+=== Visualizing the Ref Topology
 
-TODO
+Now we will see how to create a visualization (graphical rendering)
+of the Ref topology.
+
+*Generate the layout:*
+For this step, we will use the F Prime Layout (FPL) tool.
+If FPL is not installed on your system, then install it how:
+clone
+https://github.com/fprime-community/fprime-layout[this
+repository] and follow the instructions.
+
+In directory `Ref/Top`, run the following commands in an sh-compatible
+shell such as bash.
+If you are using a different shell, you can run `sh`
+to enter the `sh` shell, run these commands, and enter
+`exit` when done.
+Or you can stay in your preferred shell and adjust these commands
+appropriately.
+
+[source,bash]
+----
+cp ../build-fprime-automatic-native/Ref/Top/RefTopologyAppAi.xml .
+mkdir visual
+cd visual
+fpl-extract-xml < ../RefTopologyAppAi.xml
+mkdir Ref
+for file in `ls *.xml`
+do
+echo "laying out $file"
+base=`basename $file .xml`
+fpl-convert-xml $file | fpl-layout > Ref/$base.json
+done
+----
+
+This step extracts the connection graphs from the topology XML and
+converts each one to a JSON layout file.
+
+*Render the layout:*
+For this step, we will use the F Prime Visualizer (FPV) tool.
+If FPV is not installed on your system, then install it now:
+clone
+https://github.com/fprime-community/fprime-visual[this
+repository] and follow the instructions.
+
+In directory `Ref/Top`, run the following commands in an sh-compatible
+shell.
+
+[source,bash]
+----
+echo DATA_FOLDER=Ref/ > .fpv-env
+nodemon [path to fpv root]/server/index.js ./.fpv-env
+----
+
+You should see the FPV local server application start up on the
+console.
+
+Now open a browser and navigate to `http://localhost:3000`.
+You should see a Topology menu at the top of the window
+and a rendering of the Command topology below.
+Select Math from the topology menu.
+You should see a rendering of the Math topology.
+It should look similar to <<math-top,Figure 1>>.
+
+You can use the menu to view other topology graphs.
+When you are done, close the browser window and
+type control-C in the console to shut down the FPV server.
 
 === Reference Implementation
 

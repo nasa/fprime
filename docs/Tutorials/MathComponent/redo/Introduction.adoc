@@ -9,6 +9,7 @@ to `MathSender`.
 
 See the diagram below.
 
+[#math-top]
 .A simple topology for arithmetic computation
 image::img/top.png[Math Sender and Math Receiver]
 
