@@ -285,4 +285,26 @@ acknowledged.
             </arg>
         </args>
     </event>
+    <event id="23" name="CS_JoinWaiting" severity="ACTIVITY_HI"
+        format_string="Start waiting for sequence file %s: Command %d (opcode %d) to complete">
+        <comment>Wait for the current running sequence file complete
+        </comment>
+        <args>
+            <arg name="fileName" type="string" size="60">
+                <comment>The name of the sequence file</comment>
+            </arg>
+            <arg name="recordNumber" type="U32">
+                <comment>The record number</comment>
+            </arg>
+            <arg name="opCode" type="U32">
+                <comment>The opcode</comment>
+            </arg>
+        </args>
+    </event>
+    <event id="24" name="CS_JoinWaitingNotComplete" severity="WARNING_HI"
+        format_string="Still waiting for sequence file to complete">
+        <comment>
+            Cannot run new sequence when current sequence file is still running.
+        </comment>
+    </event>
 </events>

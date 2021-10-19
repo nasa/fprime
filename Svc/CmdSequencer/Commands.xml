@@ -48,4 +48,7 @@ acknowledged.
 	<command kind="async" opcode="6" mnemonic="CS_MANUAL">
 		<comment>Set the run mode to MANUAL.</comment>
 	</command>
+	<command kind="async" opcode="7" mnemonic="CS_JOIN_WAIT">
+		<comment> Wait for sequences that are running to finish. Allow user to run multiple seq files in SEQ_NO_BLOCK mode then wait for them to finish before allowing more seq run request.</comment>
+	</command>
 </commands>
