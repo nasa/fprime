@@ -7,7 +7,7 @@
 namespace Os {
     const NATIVE_UINT_TYPE Task::TASK_DEFAULT = std::numeric_limits<NATIVE_UINT_TYPE>::max();
     
-    TaskRegistry* Task::s_taskRegistry = 0;
+    TaskRegistry* Task::s_taskRegistry = nullptr;
     NATIVE_INT_TYPE Task::s_numTasks = 0;
 
     NATIVE_INT_TYPE Task::getNumTasks() {

@@ -174,7 +174,7 @@ PHASE TWO FUNCTION
 .PP
 Iterates through the list of source ports and tries to find the final destination, while checking for errors\&.
 .PP
-For each source port, the program traces down it's path by accessing the subsystemMap with the port's ID\&. All connections associated with the port are put onto a list, the multiplicity is reevaluated, and the program moves onto processing the next port on the list\&. Every time a new connector is accessed, the target is checked to see if is a leaf target with the same type as the source\&. If it is, an \fBISFSubsystem\fP physicallyConnectionType object is put onto a list\&.
+For each source port, the program traces down its path by accessing the subsystemMap with the port's ID\&. All connections associated with the port are put onto a list, the multiplicity is reevaluated, and the program moves onto processing the next port on the list\&. Every time a new connector is accessed, the target is checked to see if is a leaf target with the same type as the source\&. If it is, an \fBISFSubsystem\fP physicallyConnectionType object is put onto a list\&.
 .PP
 Additionally, to support multiple instances of ibds, is a source instance and target instance name is created along side every connection\&. This name is the root modules name followed by each subsystem which the connection's path goes through\&. This name is used if the program detects that target or source subsystem is used more than once\&.
 .PP

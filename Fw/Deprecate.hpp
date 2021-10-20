@@ -8,7 +8,7 @@
 #ifdef __GNUC__
     #define DEPRECATED(func, message) func __attribute__ ((deprecated(message)))
 #else
-  #warning "No implementation of DEPRECATED for given compiler. Pleas check for use of DEPRECATED() functions"
+  #warning "No implementation of DEPRECATED for given compiler. Please check for use of DEPRECATED() functions"
   #define DEPRECATED(func) func
 #endif
 
