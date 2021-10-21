@@ -198,6 +198,7 @@ classmethod
 classname
 classpath
 classtype
+climits
 clion
 CLOCAL
 closedir
