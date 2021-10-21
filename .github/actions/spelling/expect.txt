@@ -848,6 +848,7 @@ lflag
 lgcov
 lgtm
 lhash
+libasan
 libc
 libclang
 libcrc
