@@ -59,7 +59,8 @@ namespace Svc {
         - sizeof(AMPCSSequence::Record::TimeFlag::Serial::t)
         - sizeof(AMPCSSequence::Record::Time::t)
         - sizeof(AMPCSSequence::Record::CmdLength::t);
-      U8 cmdFieldBuffer[cmdFieldSize] = {0};
+      U8 cmdFieldBuffer[cmdFieldSize];
+      ::memset(cmdFieldBuffer, 0, cmdFieldSize);
       Fw::SerialBuffer cmdField(cmdFieldBuffer, sizeof(cmdFieldBuffer));
       cmdField.setBuffLen(cmdFieldSize);
       AMPCS::Records::serialize(timeFlag, time, cmdField, buffer);
