@@ -854,6 +854,7 @@ libclang
 libcrc
 libgtest
 libiconv
+libsan
 LIBLOC
 lic
 lifecycle
