@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <new>
 #include <sched.h>
-#include <limits.h>
+#include <climits>
 #include <Fw/Logger/Logger.hpp>
 
 
@@ -151,7 +151,7 @@ namespace Os {
         }
 
         tid = new pthread_t;
-        const char* message = NULL;
+        const char* message = nullptr;
 
         stat = pthread_create(tid, &att, pthread_entry_wrapper, arg);
         switch (stat) {
@@ -215,7 +215,7 @@ namespace Os {
         if (status != TASK_OK) {
             return status;
         }
-        FW_ASSERT(tid != NULL);
+        FW_ASSERT(tid != nullptr);
 
         // Handle a successfully created task
         this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
