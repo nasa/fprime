@@ -48,17 +48,12 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         $<$<COMPILE_LANGUAGE:CXX>:-Wno-zero-length-array>
     )
 endif()
-set(SAN_STATIC_FLAG -static-libasan)
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
-    set(SAN_STATIC_FLAG -static-libsan)
-endif()
-
 
 find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
 # For this testing cmake project, enable AddressSanitizer, a runtime memory sanitizer, on all unit tests
 if (BUILD_TESTING AND NOT VALGRIND)
-    add_compile_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak -fsanitize=undefined ${SAN_STATIC_FLAG})
-    add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak -fsanitize=undefined ${SAN_STATIC_FLAG})
+    add_compile_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak -fsanitize=undefined)
+    add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak -fsanitize=undefined)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")
