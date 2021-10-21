@@ -50,7 +50,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 set(SAN_STATIC_FLAG -static-libasan)
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
-    set(SAN_STATIC_FLAG -static-libasan)
+    set(SAN_STATIC_FLAG -static-libsan)
 endif()
 
 
