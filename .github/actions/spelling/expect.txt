@@ -198,6 +198,7 @@ classmethod
 classname
 classpath
 classtype
+climits
 clion
 CLOCAL
 closedir
@@ -848,11 +849,13 @@ lflag
 lgcov
 lgtm
 lhash
+libasan
 libc
 libclang
 libcrc
 libgtest
 libiconv
+libsan
 LIBLOC
 lic
 lifecycle

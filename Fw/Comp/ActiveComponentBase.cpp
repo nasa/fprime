@@ -50,7 +50,12 @@ namespace Fw {
 #endif
 
     void ActiveComponentBase::start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
+        this->start(static_cast<NATIVE_UINT_TYPE>(priority), static_cast<NATIVE_UINT_TYPE>(stackSize),
+                    ((cpuAffinity == -1) ? Os::Task::TASK_DEFAULT : static_cast<NATIVE_UINT_TYPE>(cpuAffinity)),
+                    static_cast<NATIVE_UINT_TYPE>(identifier));
+    }
 
+    void ActiveComponentBase::start(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
         Os::TaskString taskName;
 
 #if FW_OBJECT_NAMES == 1
@@ -63,10 +68,11 @@ namespace Fw {
 // If running with the baremetal scheduler, use a variant of the task-loop that
 // does not loop internal, but waits for an external iteration call.
 #if FW_BAREMETAL_SCHEDULER == 1
-	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
+        Os::Task::taskRoutine routine = this->s_baseBareTask;
 #else
-        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask, this, cpuAffinity);
+        Os::Task::taskRoutine routine = this->s_baseTask;
 #endif
+        Os::Task::TaskStatus status = this->m_task.start(taskName, routine, this, priority, stackSize, cpuAffinity, identifier);
         FW_ASSERT(status == Os::Task::TASK_OK,static_cast<NATIVE_INT_TYPE>(status));
     }
 

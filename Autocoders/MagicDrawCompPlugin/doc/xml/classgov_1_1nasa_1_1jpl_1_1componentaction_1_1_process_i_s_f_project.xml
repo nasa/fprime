@@ -248,7 +248,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Creates <ref refid="classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component" kindref="compound">ISFComponent</ref> objects for all components with associated ports and adds them toe the componentList. <parameterlist kind="param"><parameteritem>
+<para>Creates <ref refid="classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component" kindref="compound">ISFComponent</ref> objects for all components with associated ports and adds them to the componentList. <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>compElementList</parametername>
 </parameternamelist>

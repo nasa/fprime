@@ -18,7 +18,7 @@
 #---------------------------------------------------------------------------
 
 # This tag specifies the encoding used for all characters in the config file
-# that follow. The default is UTF-8 which is also the encoding used for all text
+# that follows. The default is UTF-8 which is also the encoding used for all text
 # before the first occurrence of this tag. Doxygen uses libiconv (or the iconv
 # built into libc) for the transcoding. See http://www.gnu.org/software/libiconv
 # for the list of possible encodings.
@@ -174,7 +174,7 @@ STRIP_FROM_PATH        =
 STRIP_FROM_INC_PATH    = 
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
-# less readable) file names. This can be useful is your file systems doesn't
+# less readable) file names. This can be useful if your file systems doesn't
 # support long names like on DOS, Mac, or CD-ROM.
 # The default value is: NO.
 
@@ -2216,7 +2216,7 @@ HAVE_DOT               = YES
 
 DOT_NUM_THREADS        = 0
 
-# When you want a differently looking font in the dot files that doxygen
+# When you want a different looking font in the dot files that doxygen
 # generates you can specify the font name using DOT_FONTNAME. You need to make
 # sure dot is able to find the font, which can be done by putting it in a
 # standard location or by setting the DOTFONTPATH environment variable or by

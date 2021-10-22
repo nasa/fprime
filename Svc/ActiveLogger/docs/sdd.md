@@ -56,7 +56,7 @@ event is seen.
 
 The `Svc::ActiveLogger` `LogRecv` input port handler filters events to lessen the load on the downstream components. The
 filters can be set by severity and ID. By default, the DIAGNOSTIC events are filtered out since the number of DIAGNOSTIC
-evens can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
+events can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
 modified at runtime by the `SET_EVENT_FILTER` command.
 
 The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs

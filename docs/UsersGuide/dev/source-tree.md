@@ -181,7 +181,7 @@ command dispatcher. Table 6 lists the files and their descriptions.
 
 This Tlm directory contains XML and class declarations used to generate
 code for channelized telemetry interfaces for components. Channelized
-telemetry has historical been a snapshot in time of a set of data. Every
+telemetry has historically been a snapshot in time of a set of data. Every
 value of that data is not necessarily stored permanently, but is
 sampled. The XML generates port classes in the normal way via the code
 generator. The code generator then uses those generated classes as

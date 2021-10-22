@@ -1,22 +1,18 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
 
-
-#ifdef TGT_OS_TYPE_VXWORKS
-    #include <vxWorks.h>
-    #include <taskLib.h> // need it for VX_FP_TASK
-#else
-    #include <sys/types.h>
-    #include <unistd.h>
-#endif
-
 #include <pthread.h>
 #include <cerrno>
 #include <cstring>
 #include <ctime>
 #include <cstdio>
 #include <new>
+#include <sched.h>
+#include <climits>
 #include <Fw/Logger/Logger.hpp>
+
+
+static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
 
 typedef void* (*pthread_func_ptr)(void*);
 
@@ -29,128 +25,206 @@ void* pthread_entry_wrapper(void* arg) {
 }
 
 namespace Os {
+
+    void validate_arguments(NATIVE_UINT_TYPE& priority, NATIVE_UINT_TYPE& stack, NATIVE_UINT_TYPE& affinity, bool expect_perm) {
+        const NATIVE_INT_TYPE min_priority = sched_get_priority_min(SCHED_POLICY);
+        const NATIVE_INT_TYPE max_priority = sched_get_priority_max(SCHED_POLICY);
+        // Check to ensure that these calls worked.  -1 is an error
+        if (min_priority < 0 or max_priority < 0) {
+            Fw::Logger::logMsg("[WARNING] Unable to determine min/max priority with error %s. Discarding priority.\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
+            priority = Os::Task::TASK_DEFAULT;
+        }
+        // Check priority attributes
+        if (!expect_perm and priority != Task::TASK_DEFAULT) {
+            Fw::Logger::logMsg("[WARNING] Task priority set and permissions unavailable. Discarding priority.\n");
+            priority = Task::TASK_DEFAULT; //Action: use constant
+        }
+        if (priority != Task::TASK_DEFAULT and priority < static_cast<NATIVE_UINT_TYPE>(min_priority)) {
+            Fw::Logger::logMsg("[WARNING] Low task priority of %d being clamped to %d\n", priority, min_priority);
+            priority = min_priority;
+        }
+        if (priority != Task::TASK_DEFAULT and priority > static_cast<NATIVE_UINT_TYPE>(max_priority)) {
+            Fw::Logger::logMsg("[WARNING] High task priority of %d being clamped to %d\n", priority, max_priority);
+            priority = max_priority;
+        }
+        // Check the stack
+        if (stack != Task::TASK_DEFAULT and stack < PTHREAD_STACK_MIN) {
+            Fw::Logger::logMsg("[WARNING] Stack size %d too small, setting to minimum of %d\n", stack, PTHREAD_STACK_MIN);
+            stack = PTHREAD_STACK_MIN;
+        }
+        // Check CPU affinity
+        if (!expect_perm and affinity != Task::TASK_DEFAULT) {
+            Fw::Logger::logMsg("[WARNING] Cpu affinity set and permissions unavailable. Discarding affinity.\n");
+            affinity = Task::TASK_DEFAULT;
+        }
+    }
+
+    Task::TaskStatus set_stack_size(pthread_attr_t& att, NATIVE_UINT_TYPE stack) {
+        // Set the stack size, if it has been supplied
+        if (stack != Task::TASK_DEFAULT) {
+            I32 stat = pthread_attr_setstacksize(&att, stack);
+            if (stat != 0) {
+                Fw::Logger::logMsg("pthread_attr_setstacksize: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
+                return Task::TASK_INVALID_STACK;
+            }
+        }
+        return Task::TASK_OK;
+    }
+
+    Task::TaskStatus set_priority_params(pthread_attr_t& att, NATIVE_UINT_TYPE priority) {
+        if (priority != Task::TASK_DEFAULT) {
+            I32 stat = pthread_attr_setschedpolicy(&att, SCHED_POLICY);
+            if (stat != 0) {
+                Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
+                return Task::TASK_INVALID_PARAMS;
+            }
+
+            stat = pthread_attr_setinheritsched(&att, PTHREAD_EXPLICIT_SCHED);
+            if (stat != 0) {
+                Fw::Logger::logMsg("pthread_attr_setinheritsched: %s\n",
+                                   reinterpret_cast<POINTER_CAST>(strerror(stat)));
+                return Task::TASK_INVALID_PARAMS;
+            }
+
+            sched_param schedParam;
+            memset(&schedParam, 0, sizeof(sched_param));
+            schedParam.sched_priority = priority;
+            stat = pthread_attr_setschedparam(&att, &schedParam);
+            if (stat != 0) {
+                Fw::Logger::logMsg("pthread_attr_setschedparam: %s\n", reinterpret_cast<POINTER_CAST>(strerror(stat)));
+                return Task::TASK_INVALID_PARAMS;
+            }
+        }
+        return Task::TASK_OK;
+    }
+
+    Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_UINT_TYPE cpuAffinity) {
+        if (cpuAffinity != Task::TASK_DEFAULT) {
+#ifdef TGT_OS_TYPE_LINUX
+            cpu_set_t cpuset;
+            CPU_ZERO(&cpuset);
+            CPU_SET(cpuAffinity, &cpuset);
+
+            I32 stat = pthread_attr_setaffinity_np(&att, sizeof(cpu_set_t), &cpuset);
+            if (stat != 0) {
+                Fw::Logger::logMsg("pthread_setaffinity_np: %i %s\n", cpuAffinity,
+                                   reinterpret_cast<POINTER_CAST>(strerror(stat)));
+                return Task::TASK_INVALID_PARAMS;
+            }
+#else
+            Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux\n");
+#endif
+        }
+        return Task::TASK_OK;
+    }
+
+    Task::TaskStatus create_pthread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, pthread_t*& tid, void* arg, bool expect_perm) {
+        Task::TaskStatus tStat = Task::TASK_OK;
+        validate_arguments(priority, stackSize, cpuAffinity, expect_perm);
+        pthread_attr_t att;
+        memset(&att,0, sizeof(att));
+
+
+        I32 stat = pthread_attr_init(&att);
+        if (stat != 0) {
+            Fw::Logger::logMsg("pthread_attr_init: (%d): %s\n", stat, reinterpret_cast<POINTER_CAST>(strerror(stat)));
+            return Task::TASK_INVALID_PARAMS;
+        }
+
+        // Handle setting stack size
+        tStat = set_stack_size(att, stackSize);
+        if (tStat != Task::TASK_OK) {
+            return tStat;
+        }
+
+
+        // Handle non-zero priorities
+        tStat = set_priority_params(att, priority);
+        if (tStat != Task::TASK_OK) {
+            return tStat;
+        }
+
+        // Set affinity before creating thread:
+        tStat = set_cpu_affinity(att, cpuAffinity);
+        if (tStat != Task::TASK_OK) {
+            return tStat;
+        }
+
+        tid = new pthread_t;
+        const char* message = nullptr;
+
+        stat = pthread_create(tid, &att, pthread_entry_wrapper, arg);
+        switch (stat) {
+            // Success, do nothing
+            case 0:
+                break;
+            case EINVAL:
+                message = "Invalid thread attributes specified";
+                tStat = Task::TASK_INVALID_PARAMS;
+                break;
+            case EPERM:
+                message = "Insufficient permissions to create thread. May not set thread priority without permission";
+                tStat = Task::TASK_ERROR_PERMISSION;
+                break;
+            case EAGAIN:
+                message = "Unable to allocate thread. Increase thread ulimit.";
+                tStat = Task::TASK_ERROR_RESOURCES;
+                break;
+            default:
+                message = "Unknown error";
+                tStat = Task::TASK_UNKNOWN_ERROR;
+                break;
+        }
+        (void)pthread_attr_destroy(&att);
+        if (stat != 0) {
+            (void)pthread_join(*tid, nullptr);
+            delete tid;
+            tid = nullptr;
+            Fw::Logger::logMsg("pthread_create: %s. %s\n", reinterpret_cast<POINTER_CAST>(message), reinterpret_cast<POINTER_CAST>(strerror(stat)));
+            return tStat;
+        }
+        return Task::TASK_OK;
+    }
+
     Task::Task() : m_handle(reinterpret_cast<POINTER_CAST>(nullptr)), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
     }
 
-    Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+    Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
         FW_ASSERT(routine);
 
         this->m_name = "TP_";
         this->m_name += name;
-#ifndef TGT_OS_TYPE_VXWORKS
-        char pid[40];
-        (void)snprintf(pid,sizeof(pid),".%d",getpid());
-        pid[sizeof(pid)-1] = 0;
-        this->m_name += pid;
-#endif
         this->m_identifier = identifier;
-        Task::TaskStatus tStat = TASK_OK;
+        // Setup functor wrapper parameters
+        this->m_routineWrapper.routine = routine;
+        this->m_routineWrapper.arg = arg;
+        pthread_t* tid;
 
-        pthread_attr_t att;
-        // clear att; can cause issues
-        memset(&att,0,sizeof(att));
+        // Try to create thread with assuming permissions
+        TaskStatus status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, true);
+        // Failure due to permission automatically retried
+        if (status == TASK_ERROR_PERMISSION) {
+            Fw::Logger::logMsg("[WARNING] Insufficient Permissions:\n");
+            Fw::Logger::logMsg("[WARNING] Insufficient permissions to set task priority or set task CPU affinity on task %s. Creating task without priority nor affinity.\n", reinterpret_cast<POINTER_CAST>(m_name.toChar()));
+            Fw::Logger::logMsg("[WARNING] Please use no-argument <component>.start() calls, set priority/affinity to TASK_DEFAULT or ensure user has correct permissions for operating system.\n");
+            Fw::Logger::logMsg("[WARNING]      Note: future releases of fprime will fail when setting priority/affinity without sufficient permissions \n");
+            Fw::Logger::logMsg("\n");
+            status = create_pthread(priority, stackSize, cpuAffinity, tid, &this->m_routineWrapper, false); // Fallback with no permission
+        }
+        // Check for non-zero error code
+        if (status != TASK_OK) {
+            return status;
+        }
+        FW_ASSERT(tid != nullptr);
 
-        I32 stat = pthread_attr_init(&att);
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_init: (%d)(%d): %s\n",stat,errno, reinterpret_cast<POINTER_CAST>(strerror(stat)));
-        	return TASK_INVALID_PARAMS;
-        }
-#ifdef TGT_OS_TYPE_VXWORKS
-        stat = pthread_attr_setstacksize(&att,stackSize);
-        if (stat != 0) {
-            return TASK_INVALID_STACK;
-        }
-        stat = pthread_attr_setschedpolicy(&att,SCHED_FIFO);
-        if (stat != 0) {
-        	return TASK_INVALID_PARAMS;
-        }
-        stat = pthread_attr_setname(&att,this->m_name.toChar());
-        if (stat != 0) {
-        	return TASK_INVALID_PARAMS;
-        }
-        stat = pthread_attr_setinheritsched(&att,PTHREAD_EXPLICIT_SCHED); // needed to set inheritance according to WR docs
-        if (stat != 0) {
-        	return TASK_INVALID_PARAMS;
-        }
-        sched_param schedParam;
-        memset(&schedParam,0,sizeof(sched_param));
-        schedParam.sched_priority = priority;
-        stat = pthread_attr_setschedparam(&att,&schedParam);
-        if (stat != 0) {
-        	return TASK_INVALID_PARAMS;
-        }
-        stat = pthread_attr_setopt(&att,VX_FP_TASK);
-        if (stat != 0) {
-        	return TASK_INVALID_PARAMS;
-        }
-#elif defined TGT_OS_TYPE_LINUX
-#if !defined BUILD_CYGWIN // cygwin doesn't support this call
-        stat = pthread_attr_setschedpolicy(&att,SCHED_RR);
-        if (stat != 0) {
-            Fw::Logger::logMsg("pthread_attr_setschedpolicy: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
-            return TASK_INVALID_PARAMS;
-        }
-#endif
-#elif defined TGT_OS_TYPE_RTEMS
-        stat = pthread_attr_setstacksize(&att,stackSize);
-        if (stat != 0) {
-            return TASK_INVALID_STACK;
-        }
-        stat = pthread_attr_setschedpolicy(&att,SCHED_FIFO);
-        if (stat != 0) {
-            return TASK_INVALID_PARAMS;
-        }
-        stat = pthread_attr_setinheritsched(&att,PTHREAD_EXPLICIT_SCHED); // needed to set inheritance according to WR docs
-        if (stat != 0) {
-            return TASK_INVALID_PARAMS;
-        }
-        sched_param schedParam;
-        memset(&schedParam,0,sizeof(sched_param));
-        schedParam.sched_priority = priority;
-        stat = pthread_attr_setschedparam(&att,&schedParam);
-        if (stat != 0) {
-            return TASK_INVALID_PARAMS;
-        }
-#elif defined TGT_OS_TYPE_DARWIN
-#else
-        #error Unsupported OS!
-#endif
-
+        // Handle a successfully created task
+        this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
+        Task::s_numTasks++;
         // If a registry has been registered, register task
         if (Task::s_taskRegistry) {
             Task::s_taskRegistry->addTask(this);
         }
-
-        pthread_t* tid = new(std::nothrow) pthread_t;
-        if (tid == nullptr) {
-            Fw::Logger::logMsg("failed to allocate pthread_t\n");
-            return TASK_UNKNOWN_ERROR;
-        }
-
-        this->m_routineWrapper.routine = routine;
-        this->m_routineWrapper.arg = arg;
-
-        stat = pthread_create(tid,&att,pthread_entry_wrapper,&this->m_routineWrapper);
-
-        switch (stat) {
-            case 0:
-                this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
-                Task::s_numTasks++;
-                break;
-            case EINVAL:
-                delete tid;
-                Fw::Logger::logMsg("pthread_create: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
-                tStat = TASK_INVALID_PARAMS;
-                break;
-            default:
-                delete tid;
-                tStat = TASK_UNKNOWN_ERROR;
-                break;
-        }
-
-        (void)pthread_attr_destroy(&att);
-
-        return tStat;
+        return status;
     }
 
     Task::TaskStatus Task::delay(NATIVE_UINT_TYPE milliseconds)
@@ -182,9 +256,7 @@ namespace Os {
                 }
             }
         }
-
         return TASK_OK; // for coverage analysis
-
     }
 
 

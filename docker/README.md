@@ -53,7 +53,7 @@ The result is a containerized F´ builder for use with CI.
 ### Dockerfile Explained
 
 Dependencies are installed in one step. This includes an update and install of Ubuntu
-packages, running the ubuntu-packages script, and install the pip dependencies. Finally, the the
+packages, running the ubuntu-packages script, and install the pip dependencies. Finally, the
 app-cache is cleaned. Doing all this in one step prevents excessive Docker image size bloat by
 reducing the number of temporary file system layers.
 

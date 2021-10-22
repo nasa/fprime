@@ -47,7 +47,7 @@ class UdpSocket : public IpSocket {
      * and port are configured using the `configureRecv` function call for UDP as it requires separate host/port pairs
      * for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must
      * be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not
-     * supported.  It is possible to configure the UDP port as an single-direction send port only.
+     * supported.  It is possible to configure the UDP port as a single-direction send port only.
      *
      * Note: delegates to `IpSocket::configure`
      *
@@ -67,7 +67,7 @@ class UdpSocket : public IpSocket {
      * and port are configured using the `configureSend` function call for UDP as it requires separate host/port pairs
      * for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must
      * be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not
-     * supported. It is possible to configure the UDP port as an single-direction receive port only.
+     * supported. It is possible to configure the UDP port as a single-direction receive port only.
      *
      * \param hostname: socket uses for incoming transmissions. Must be of form x.x.x.x
      * \param port: port socket uses for incoming transmissions. Must NOT be 0.
