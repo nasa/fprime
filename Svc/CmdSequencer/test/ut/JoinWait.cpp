@@ -1,5 +1,5 @@
 // ====================================================================== 
-// \title  CmdSequencer.hpp
+// \title  JoinWait.hpp
 // \author janamian
 // \brief  cpp file for CmdSequencer test harness implementation class
 //
