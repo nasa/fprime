@@ -46,6 +46,7 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
@@ -97,6 +98,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsTaskTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
 )
 register_fprime_ut()
 
