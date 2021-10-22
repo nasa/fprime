@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#ifndef JOINWAIT_HPP
-#define JOINWAIT_HPP
+#ifndef JOIN_WAIT_HPP
+#define JOIN_WAIT_HPP
 
 #include "Svc/CmdSequencer/test/ut/Tester.hpp"
 
