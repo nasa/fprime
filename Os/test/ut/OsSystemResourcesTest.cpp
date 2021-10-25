@@ -6,10 +6,11 @@
 void testTestSystemResources() {
 
     Os::SystemResources::SystemResourcesStatus sys_res_status;
-    Os::SystemResources::cpuUtil_t cpuUtil;
-    Os::SystemResources::memUtil_t memUtil;
-    Os::SystemResources::physMemUtil_t physMem;
+    Os::SystemResources::cpuUtil cpuUtil;
+    Os::SystemResources::memUtil memUtil;
+    Os::SystemResources::physMemUtil physMem;
     U32 cpuCount;
+    U32 cpuIndex;
 
     printf("Get CPU Count...\n");
     sys_res_status = Os::SystemResources::getCpuCount(cpuCount);
@@ -17,14 +18,20 @@ void testTestSystemResources() {
     printf("CPU Count:  %d\n", cpuCount);
 
     printf("Get CPU Utilization...\n");
-    sys_res_status = Os::SystemResources::getCpuUtil(cpuUtil, 0, true);
+    sys_res_status = Os::SystemResources::getCpuUtil(cpuUtil, true);
     printf("CPU Util:  %f, %f\n", cpuUtil.cpuTotal, cpuUtil.cpuUsed);
     ASSERT_EQ(sys_res_status, Os::SystemResources::SystemResourcesStatus::SYSTEM_RESOURCES_OK );
 
-    printf("Get CPU Utilization...\n");
-    sys_res_status = Os::SystemResources::getCpuUtil(cpuUtil, 1, false);
-    printf("CPU Util:  %f, %f\n", cpuUtil.cpuTotal, cpuUtil.cpuUsed);
+    cpuIndex = 1;
+    printf("Get CPU Utilization for CPU %d...\n", cpuIndex);
+    sys_res_status = Os::SystemResources::getCpuUtil(cpuUtil, false, cpuIndex);
+    printf("CPU %d Util:  %f, %f\n", cpuIndex, cpuUtil.cpuTotal, cpuUtil.cpuUsed);
     ASSERT_EQ(sys_res_status, Os::SystemResources::SystemResourcesStatus::SYSTEM_RESOURCES_OK );
+
+    cpuIndex = 1000;
+    printf("Get CPU Utilization for CPU %d...\n", cpuIndex);
+    sys_res_status = Os::SystemResources::getCpuUtil(cpuUtil, false, cpuIndex);
+    ASSERT_EQ(sys_res_status, Os::SystemResources::SystemResourcesStatus::SYSTEM_RESOURCES_ERROR );
 
     printf("Get RAM Memory Utilization...\n");
     sys_res_status = Os::SystemResources::getMemUtil(memUtil);

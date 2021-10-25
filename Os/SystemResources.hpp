@@ -11,26 +11,26 @@ namespace Os {
                 SYSTEM_RESOURCES_ERROR, //!< Call failed
             } SystemResourcesStatus;
 
-            typedef struct {
+            struct cpuUtil {
                 F32 cpuUsed;
                 F32 cpuTotal;
-            } cpuUtil_t;
+            };
 
-            typedef struct {
+            struct memUtil {
                 F32 memTotal;
                 F32 memUsed;
-            } memUtil_t;
+            };
 
-            typedef struct {
+            struct physMemUtil{
                 F32 physMemTotal;
                 F32 physMemUsed;
-            } physMemUtil_t;
+            };
 
 
             SystemResourcesStatus getCpuCount(U32 &cpuCount);
-            SystemResourcesStatus getCpuUtil(cpuUtil_t &cpuUtil, U32 cpu_index, bool average);
-            SystemResourcesStatus getMemUtil(memUtil_t &memUtil);
-            SystemResourcesStatus getPhysMemUtil(physMemUtil_t &physMem);
+            SystemResourcesStatus getCpuUtil(struct cpuUtil &cpuUtil, bool average, U32 cpu_index = 0);
+            SystemResourcesStatus getMemUtil(struct memUtil &memUtil);
+            SystemResourcesStatus getPhysMemUtil(struct physMemUtil &physMem);
             
 
     }

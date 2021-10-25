@@ -45,7 +45,7 @@ namespace Os {
         return SYSTEM_RESOURCES_OK;
     }
 
-    SystemResources::SystemResourcesStatus SystemResources::getCpuUtil(cpuUtil_t &cpuUtil, U32 cpu_index, bool average)
+    SystemResources::SystemResourcesStatus SystemResources::getCpuUtil(struct cpuUtil &cpuUtil, bool average, U32 cpu_index)
     {
         char line[512];
         FILE *fp;
@@ -120,7 +120,7 @@ namespace Os {
         return SYSTEM_RESOURCES_OK;
     }
 
-    SystemResources::SystemResourcesStatus SystemResources::getMemUtil(memUtil_t &memUtil)
+    SystemResources::SystemResourcesStatus SystemResources::getMemUtil(struct memUtil &memUtil)
     {
 
         F32 memFree = 0;
@@ -146,7 +146,7 @@ namespace Os {
         return SYSTEM_RESOURCES_OK;
     }
 
-    SystemResources::SystemResourcesStatus SystemResources::getPhysMemUtil(physMemUtil_t &physMem)
+    SystemResources::SystemResourcesStatus SystemResources::getPhysMemUtil(struct physMemUtil &physMem)
     {
         struct statfs buffer;
         I32 status;
