@@ -109,6 +109,7 @@ basestring
 bashcompinit
 Bassic
 batchmode
+bavail
 bbd
 bc
 bcm
@@ -936,6 +937,7 @@ membername
 memcheck
 memcmp
 memcpy
+meminfo
 memname
 memoizing
 memset
@@ -1330,6 +1332,7 @@ saxutils
 sbb
 SBF
 sbin
+scanf
 sched
 schem
 schematron
@@ -1453,6 +1456,7 @@ startswith
 startuml
 startword
 staticmethod
+statfs
 statvfs
 stdarg
 STDC
@@ -1719,6 +1723,7 @@ VERSIONED
 versioning
 vfd
 VFILE
+vfs
 vhd
 vhdl
 viewforum
