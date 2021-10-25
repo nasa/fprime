@@ -20,7 +20,11 @@ namespace Os {
     	
     	}
 
-    	fgets(line, sizeof(line), fp); //1st line.  Aggregate cpu line. Skip
+    	if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line. Skip
+
+            fclose(fp);
+            return SYSTEM_RESOURCES_ERROR;
+	}
     
     	while(true) {
            
@@ -70,7 +74,11 @@ namespace Os {
     	
     	}
 
-    	fgets(line, sizeof(line), fp); //1st line.  Aggregate cpu line.
+    	if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line.
+
+            fclose(fp);
+            return SYSTEM_RESOURCES_ERROR;
+	}
 
 	if (average) {
 
@@ -88,7 +96,11 @@ namespace Os {
 
 	    for (U32 i = 0; i < cpu_index + 1; i++) {
 
-    	        fgets(line, sizeof(line), fp); //cpu# line
+    	        if(fgets(line, sizeof(line), fp) == NULL) { //cpu# line
+
+                    fclose(fp);
+		    return SYSTEM_RESOURCES_ERROR;
+                }
 
 		if(i != cpu_index) continue;
 
@@ -135,8 +147,13 @@ namespace Os {
             return SYSTEM_RESOURCES_ERROR;
 	}
 
-        fscanf(fp,"%*s %f %*s", &memTotal);   /* 1st line is MemTotal */
-        fscanf(fp,"%*s %f",     &memFree);   /* 2nd line is MemFree */
+        if ( fscanf(fp,"%*s %f %*s", &memTotal) != 1 ||  /* 1st line is MemTotal */
+             fscanf(fp,"%*s %f",     &memFree) != 1 ) {   /* 2nd line is MemFree */
+
+            fclose(fp);
+	    return SYSTEM_RESOURCES_ERROR;
+        }
+
         fclose(fp);
 
         memUtil.memTotal = (memTotal != 0) ? (F32) memTotal: -1.0;
