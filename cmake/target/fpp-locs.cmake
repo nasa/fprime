@@ -42,13 +42,16 @@ function(generate_fpp_locs)
     set(LOCS_DIR "${CMAKE_BINARY_DIR}/fpp-locs")
     set(LOCS_FILE "${LOCS_DIR}/locs.fpp")
 
-    file(MAKE_DIRECTORY "${LOCS_DIR}")
-    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" "${CMAKE_CURRENT_SOURCE_DIR}" -DFPRIME_FPP_LOCS_BUILD=ON ${CALL_PROPS}
-            RESULT_VARIABLE result
-            OUTPUT_FILE "${LOCS_DIR}/generate-output.log"
-            WORKING_DIRECTORY "${LOCS_DIR}")
-    if(result)
-        message(FATAL_ERROR "CMake step for generating fpp-locs build failed: ${result}")
+    # Only generate the FPP locs cache when it doesn't exist.  Otherwise just build.
+    if (NOT IS_DIRECTORY LOCS_DIR)
+        file(MAKE_DIRECTORY "${LOCS_DIR}")
+        execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" "${CMAKE_CURRENT_SOURCE_DIR}" -DFPRIME_FPP_LOCS_BUILD=ON ${CALL_PROPS}
+                RESULT_VARIABLE result
+                OUTPUT_FILE "${LOCS_DIR}/generate-output.log"
+                WORKING_DIRECTORY "${LOCS_DIR}")
+        if(result)
+            message(FATAL_ERROR "CMake step for generating fpp-locs build failed: ${result}")
+        endif()
     endif()
     execute_process(COMMAND ${CMAKE_COMMAND} --build . --target fpp-locs
             RESULT_VARIABLE result
