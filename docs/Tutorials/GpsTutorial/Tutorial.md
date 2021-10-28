@@ -29,10 +29,10 @@ and [MathComponent Tutorial](../MathComponent/Tutorial.md)
 This tutorial requires the user to have some basic software skills and have installed F´. The prerequisite skills to
 understand this tutorial are as follows:
 
-1) Working knowledge of Unix; how to navigate in a shell and execute programs
-2) An understanding of C++, including class declarations and inheritance
-3) An understanding of how XML is structured
-4) An understanding of the raspberry pi, specifically SSHing into the pi and running applications
+1. Working knowledge of Unix; how to navigate in a shell and execute programs
+2. An understanding of C++, including class declarations and inheritance
+3. An understanding of how XML is structured
+4. An understanding of the raspberry pi, specifically SSHing into the pi and running applications
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verifying the installation.  In addition, users may wish to
