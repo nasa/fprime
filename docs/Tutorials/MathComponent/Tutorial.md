@@ -1431,7 +1431,7 @@ Next, the test checks for the expected telemetry and events:
       ASSERT_EVENTS_MS_RESULT(0,10.0);
 ```
 
-The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
+The other test cases are similarly implemented for the other operations. See the tutorial code in `/docs/Tutorials/MathComponent` for their implementation.
 
 You must first generate the unit test before you can build it. Enter:
 
