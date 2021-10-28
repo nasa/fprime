@@ -4,7 +4,7 @@ The following example shows the steps to implement a simple pair of components c
 `MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the
 result via a `MathResult` port.
 
-![`Component` Diagram](img/Comp.jpg "Component Pair")
+![`Component` Diagram](img/Comp.png "Component Pair")
 
 All the code in this tutorial can be found in this directory. This code will work if it is copied or reimplemented
 within the `Ref` directory of F´. This tutorial will walk the user through modifying the Reference app, Ref, to
