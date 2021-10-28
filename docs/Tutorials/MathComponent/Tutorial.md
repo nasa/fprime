@@ -2131,6 +2131,8 @@ The overall `Ref` deployment can be built by changing to the `Ref` directory and
 
 If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
 
+# 4 Ground System
+
 ## 4.1 Running the Ground System
 
 Once the `Ref` example has built successfully, you can run the ground system and executable by entering `fprime-gds -r fprime/Ref/build-artifacts`. The ground system GUI should appear.
@@ -2209,6 +2211,19 @@ The parameter can be written to storage by sending the `PRM_SAVE_FILE` command:
 ### 4.1.9 Ground System Logs
 
 The ground system keeps logs of all received events and telemetry. They can be found in the directories `<deployment>/logs/`, where `<Run Directory>` is the location of the deployment. e.g. `Ref`.
+
+### 4.2 Setup the Ground System in Docker
+
+### 4.2.1 Windows
+
+The ground system is accessible outside of a Docker container in a Web browser on Windows. The steps are the following: 
+
+1. Create the Docker container so that it redirects the 5000 port to the host machine: `docker run -p 5000:5000/tcp -d -it image:version`
+2. Follow this tutorial normally until `4.1`
+3. Start fprime-gds with the GUI server IP address being `0.0.0.0`: `fprime-gds -g html -r fprime/Ref/build-artifacts --gui-addr=0.0.0.0`
+4. Access the GUI in your Web browser on Windows using the following URL: `127.0.0.1:5000`
+
+Note: the parameter `--net="host"` for Docker on Windows does not work properly, and does not allow you to access the ports outside WSL. 
 
 # Conclusion
 
