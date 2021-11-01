@@ -23,8 +23,8 @@
 # Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
 # the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
 #
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
-# the stubbed drivers or OFF to used full driver implementations.
+# If unspecified, it will be set in the platform file for the given architecture. If specified, may be set to ON to use
+# the stubbed drivers or OFF to use full driver implementations.
 ###
 if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
     message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
@@ -37,7 +37,7 @@ endif()
 # active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
 # however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
 #
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# If unspecified, it will be set in the platform file for the given architecture. If specified, may be set to ON to use
 # the scheduler or OFF to use the OS thread scheduler.
 ###
 if (DEFINED FPRIME_USE_BAREMETAL_SCHEDULER AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "ON" AND NOT "${FPRIME_USE_BAREMETAL_SCHEDULER}" STREQUAL "OFF")
@@ -62,7 +62,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 ####
 # `FPRIME_ENABLE_FRAMEWORK_UTS:`
 #
-# Allow a project to to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
+# Allow a project to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
 # does not affect project specified UTs.
 #
 # **Values:**
@@ -115,6 +115,22 @@ else()
 endif()
 
 ####
+# `FPRIME_ENABLE_TEXT_LOGGERS:`
+#
+# When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
+# svc components are included in the build. When unset, those components are excluded, 
+# allowing FpConfig.hpp:FW_ENABLE_TEXT_LOGGING to be unset as well, to save space.
+# TextLoggers will fail to build if FW_ENABLE_TEXT_LOGGING=0.
+#
+# **Values:**
+# - ON: (default) retains the text logger components in the target list
+# - OFF: removes text logger components from the target list
+#
+# e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
+####
+option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
+
+####
 # `CMAKE_BUILD_TYPE:`
 #
 # Allows for setting the CMake build type. Release is a normal build, Testing is used for unit testing and debug
@@ -138,7 +154,7 @@ set(CMAKE_C_EXTENSIONS OFF)
 if (CMAKE_BUILD_TYPE STREQUAL "Testing" OR CMAKE_BUILD_TYPE STREQUAL "TESTING")
     set(CMAKE_CXX_STANDARD 11)
     add_compile_options("-g" "-DBUILD_UT" "-DPROTECTED=public" "-DPRIVATE=public" "-DSTATIC=" "-fprofile-arcs" "-ftest-coverage")
-    link_libraries("-lgcov" "--coverage")
+    link_libraries("--coverage")
     # These two lines allow for F prime style coverage. They are "unsupported" CMake features, so beware....
     set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
     set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)

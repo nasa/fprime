@@ -212,7 +212,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Creates a new port object using the port Element inputed. This processes the port and can throw an exception if something in the port is illegal. It also adds the port into fillList.</para><para><parameterlist kind="param"><parameteritem>
+<para>Creates a new port object using the port Element inputted. This processes the port and can throw an exception if something in the port is illegal. It also adds the port into fillList.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>portElement</parametername>
 </parameternamelist>
@@ -259,7 +259,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Creates a new port object using the port Element inputed. This processes the port and can throw an exception if something in the port is illegal. It also adds the port into fillList.</para><para><parameterlist kind="param"><parameteritem>
+<para>Creates a new port object using the port Element inputted. This processes the port and can throw an exception if something in the port is illegal. It also adds the port into fillList.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>portElement</parametername>
 </parameternamelist>

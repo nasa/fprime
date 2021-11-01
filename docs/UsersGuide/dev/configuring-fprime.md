@@ -151,7 +151,7 @@ correctly and thus changing these values should be done carefully.
 The F′ time tags have a field that specifies the time base of the time tag. A time base is defined as a clock in the
 system correlated with a known epoch. It is often the case that when a system is being initialized, it does not always
 have access to a clock correlated to external operations. It can transition through several time bases (processor,
-radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system tha
+radio, Earth) on the way to becoming fully operational. The TimeBase type defines the set of clocks in the system that
 can produce a time tag. It lets users of the system see which clock was used when time tagging telemetry.
 
 Time contexts are another value associated with the time.
@@ -287,7 +287,7 @@ increased as most file name paths are longer than 120.
 When components are interconnected, it is often useful to trace the set of invocations through components and ports. The
 port base class has a `trace()` call that is invoked by the derived port classes whenever the port is invoked. The
 `trace()` calls `Os::Log::log()` with the name of the port once the port base class method `setTrace()` has been called.
-Individual ports can be have tracing turned on and off by calling the `overrideTrace()` method on the port instance.
+Individual ports can have tracing turned on and off by calling the `overrideTrace()` method on the port instance.
 Table 39 provides the macro to configure this feature.
 
 **Table 39.** Macro for port tracing.
@@ -343,7 +343,7 @@ FW_COM_BUFFER_MAX_SIZE must be large enough to hold each buffer size **and** the
 settings are typically derived and this is done by default. **WARNING:** only modify the comm buffer size to ensure that
 there will be no faults in the system.
 
-In all cases, these definitions are global for each types in the system. Thus the buffer **must** be large enough to
+In all cases, these definitions are global for each type in the system. Thus the buffer **must** be large enough to
 hold the data for the largest of a given type in the system.  An assert will result if the buffer is set too-small. i.e.
 the FW_CMD_ARG_BUFFER_MAX_SIZE cannot be smaller than the serialized size of the command with the largest arguments.
 

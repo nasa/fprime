@@ -36,8 +36,8 @@ int main(int argc, char* argv[])  {
 	constructArchitecture();
 
         //Start Components
-        Huey_ptr->start(0, 10 * 1024, 100);
-        Duey_ptr->start(0, 10 * 1024, 100);
+        Huey_ptr->start();
+        Duey_ptr->start();
 
 	// Ask for input to huey or duey here.
 	char in[80];

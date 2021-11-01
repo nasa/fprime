@@ -26,12 +26,12 @@
         <comment>The output port of type Void has no args</comment>
         </port>
 
-        <!-- Forth port defined is input with three args of type Msg -->
+        <!-- Fourth port defined is input with three args of type Msg -->
         <port name="ExtMsgIn" data_type="Msg" kind="async_input">
         <comment>The input port of type Msg has three args and is external interface</comment>
         </port>
 
-        <!-- Fith port defined is input with three args of type Msg -->
+        <!-- Fifth port defined is input with three args of type Msg -->
         <port name="MsgIn" data_type="Msg" kind="async_input">
         <comment>The input port of type Msg has three args</comment>
         </port>

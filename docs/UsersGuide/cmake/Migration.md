@@ -1,6 +1,6 @@
 # CMake Migration Guide
 
-This document give key pointers to users who wish to move away from the old make system and start
+This document gives key pointers to users who wish to move away from the old make system and start
 using the new CMake system. Notably, it provides links for each step in the process for moving from
 the key features of the old make system to the features of the new CMake system.
 
@@ -9,7 +9,7 @@ the key features of the old make system to the features of the new CMake system.
 The commands `make impl` and `make testcomp` should be runnable outside of any make system setup.
 These commands require an Ai.xml (or a list of them) and run the code generator directly. Thus,
 requiring the user to navigate to the directory, generate the make system, and then run these
-commands is less productive then running just the code generator directly.
+commands is less productive than running just the code generator directly.
 
 This is now supported with the `ac_util.sh` wrapper. This can be run with the following commands:
 

@@ -52,8 +52,8 @@ void constructArchitecture(void) {
     hueyComp_ptr->setoutputPort2Msg1OutputPort(0, hub1Comp_ptr->getinputPort2SerializeInputPort(0));
 
     // Active component startup
-    // start(identifier, stack size, priority)
-    hueyComp_ptr->start(0, 10 * 1024, 100);
+    // start()
+    hueyComp_ptr->start();
     dumparch();
 }
 

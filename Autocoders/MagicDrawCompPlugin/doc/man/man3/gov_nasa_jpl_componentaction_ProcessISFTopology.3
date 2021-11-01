@@ -120,7 +120,7 @@ Further connections are found using the map of port ends with their associated c
 .IP "  \(bu" 4
 Some connectors are ignored depending on the multiplicity of the previous source port\&. This multiplicity is recalculated for every connector\&.  
 .IP "  \(bu" 4
-When reached a port that is not owned by a subsystem, the type is checked\&. If the source port and the target port type do not matched, that target port is ignored\&.  
+When reached a port that is not owned by a subsystem, the type is checked\&. If the source port and the target port type do not match, that target port is ignored\&.  
 .IP "  \(bu" 4
 This process goes on for each source port until either the target port is found, all the associated connectors have been done being searched, or a time out variable is reached\&.  
 .IP "  \(bu" 4
@@ -176,7 +176,7 @@ Iterates through the list of source ports and tries to find the final destinatio
 .PP
 For each source port, the program traces down it's path by accessing the subsystemMap with the port's ID\&. All connections associated with the port are put onto a list, the multiplicity is reevaluated, and the program moves onto processing the next port on the list\&. Every time a new connector is accessed, the target is checked to see if is a leaf target with the same type as the source\&. If it is, an \fBISFSubsystem\fP physicallyConnectionType object is put onto a list\&.
 .PP
-Additionally, to support multiple instances of ibds, is a a source instance and target instance name is created along side every connection\&. This name is the the root modules name followed by each subsystem which the connection's path goes through\&. This name is used if the program detect that target or source subsystem is used more than once\&.
+Additionally, to support multiple instances of ibds, is a source instance and target instance name is created along side every connection\&. This name is the root modules name followed by each subsystem which the connection's path goes through\&. This name is used if the program detects that target or source subsystem is used more than once\&.
 .PP
 Exceptions are thrown in the instances where 
 .PD 0
@@ -225,9 +225,9 @@ PHASE THREE FUNCTION
 .PP
 This function serves two purposes\&. The first is to convert the physicalConnectionSet to a physicalConnectionList\&. The second is to perform index checking and correction on ports of the cmdReg/cmd or com/cmdResponse type\&.
 .PP
-The index checking/correction is done so multiplicities do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks\&. The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type\&. Some of these port are not to be auto-indexed\&. This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match\&.
+The index checking/correction is done so multiplicities do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks\&. The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type\&. Some of these ports are not to be auto-indexed\&. This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match\&.
 .PP
-The program redefines the indexes in numerical order\&. Even if initial indexes are given, for the origin of Cmd and the target of CmdReg, they are overwritten\&. They target index of Cmd is preserved and also is written to the source of CmdReg\&.
+The program redefines the indexes in numerical order\&. Even if initial indexes are given, for the origin of Cmd and the target of CmdReg, they are overwritten\&. The target index of Cmd is preserved and also is written to the source of CmdReg\&.
 .PP
 METHODOLOGY 
 .PD 0
@@ -301,7 +301,7 @@ All the elements in the module are iterated through using the Element root\&.
 .PP
 If the element type is Subsystem, the element is added to a list to be returned\&.
 .PP
-If the element is an instance of a subsystem, the subsystemOwners map is updated, where each key (name of subsystem) is associated with an list of two string arrays\&. The first String corresponds to the instance name and the second corresponds to the name of the owner of the subsystem\&.
+If the element is an instance of a subsystem, the subsystemOwners map is updated, where each key (name of subsystem) is associated with a list of two string arrays\&. The first String corresponds to the instance name and the second corresponds to the name of the owner of the subsystem\&.
 .PP
 \fBParameters:\fP
 .RS 4
