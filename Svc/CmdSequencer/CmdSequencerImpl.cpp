@@ -268,13 +268,14 @@ namespace Svc {
         this->m_cmdTimer.clear();
         this->m_cmdTimeoutTimer.clear();
         this->m_executedCount = 0;
-        this->m_join_waiting = false;
         // write sequence done port with error, if connected
         if (this->isConnected_seqDone_OutputPort(0)) {
             this->seqDone_out(0,0,0,Fw::COMMAND_EXECUTION_ERROR);
         }
 
         if (SEQ_BLOCK == this->m_blockState || m_join_waiting) {
+            // Do not wait if sequence was canceled or a cmd failed
+            this->m_join_waiting = false;
             this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
         }
 
