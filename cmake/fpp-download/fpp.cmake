@@ -4,7 +4,7 @@ find_program(FPP_TO_XML fpp-to-xml)
 find_program(FPP_TO_CPP fpp-to-cpp)
 find_program(FPP_LOCATE_DEFS fpp-locate-defs)
 # Download and unpack googletest at configure time if it doesn't exit already
-if (FPP_DEPEND STREQUAL "FPP_DEPEND-NOTFOUND" OR FPP_TO_XML STREQUAL "FPP_TO_XML-NOTFOUND" OR FPP_TO_CPP STREQUAL "FPP_TO_CPP-NOTFOUND" OR FPP_LOCATE_DEFS STREQUAL "FPP_LOCATE_DEFS-NOTFOUND")
+if (NOT FPP_DEPEND OR NOT FPP_TO_XML OR NOT FPP_TO_CPP OR NOT FPP_LOCATE_DEFS)
     include("${CMAKE_CURRENT_LIST_DIR}/sbt.cmake")
     configure_file("${CMAKE_CURRENT_LIST_DIR}/CMakeLists.fpp.txt.in" fpp-download/CMakeLists.txt)
     execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
