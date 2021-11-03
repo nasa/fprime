@@ -35,13 +35,14 @@ def main():
         new_lines = new_locs_fh.readlines()
 
     diff_output = list(difflib.unified_diff(prev_lines, new_lines, n=0, lineterm="\n"))
-    subtracted_lines = [diff for diff in diff_output if diff.startswith("-") and not diff.startswith("---")]
+    subtracted_lines = [
+        diff
+        for diff in diff_output
+        if diff.startswith("-") and not diff.startswith("---")
+    ]
     relative_mod_paths = [line.split()[-1].strip('"') for line in subtracted_lines]
     subtractions = [
-        os.path.abspath(
-            os.path.join(
-                os.path.dirname(args_ns.new_locs), rel_path)
-            )
+        os.path.abspath(os.path.join(os.path.dirname(args_ns.new_locs), rel_path))
         for rel_path in relative_mod_paths
     ]
     changed = []
