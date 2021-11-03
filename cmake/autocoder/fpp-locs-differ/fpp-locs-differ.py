@@ -3,7 +3,6 @@ import sys
 import argparse
 import difflib
 from fprime_ac.utils.buildroot import (
-    search_for_file,
     build_root_relative_path,
     set_build_roots,
 )
