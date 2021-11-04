@@ -347,6 +347,7 @@ dictgen
 dicts
 dictvalue
 differend
+difflib
 diffs
 diles
 dinkel
@@ -864,6 +865,7 @@ lightyellow
 lindent
 lineno
 lineroo
+lineterm
 linting
 linux
 LINUXSERIALDRIVER

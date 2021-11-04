@@ -5,11 +5,11 @@ project(fpp-download NONE)
 include(ExternalProject)
 ExternalProject_Add(fpp-tools
   GIT_REPOSITORY    https://github.com/fprime-community/fpp
-  GIT_TAG           6b1b39634c40f76641287c5c2221b937bc97e058
+  GIT_TAG           ${FPP_VERSION}
   SOURCE_DIR        "${CMAKE_BINARY_DIR}/fpp-tools/src"
   BINARY_DIR        "${CMAKE_BINARY_DIR}/fpp-tools/bin"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
-  INSTALL_COMMAND   "${CMAKE_BINARY_DIR}/fpp-tools/src/compiler/install"
+  INSTALL_COMMAND   "${CMAKE_BINARY_DIR}/fpp-tools/src/compiler/install" "${FPP_TOOLS_PATH}"
   TEST_COMMAND      ""
 )
