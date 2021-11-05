@@ -198,6 +198,7 @@ classmethod
 classname
 classpath
 classtype
+climits
 clion
 CLOCAL
 closedir
@@ -346,6 +347,7 @@ dictgen
 dicts
 dictvalue
 differend
+difflib
 diffs
 diles
 dinkel
@@ -848,11 +850,13 @@ lflag
 lgcov
 lgtm
 lhash
+libasan
 libc
 libclang
 libcrc
 libgtest
 libiconv
+libsan
 LIBLOC
 lic
 lifecycle
@@ -861,6 +865,7 @@ lightyellow
 lindent
 lineno
 lineroo
+lineterm
 linting
 linux
 LINUXSERIALDRIVER

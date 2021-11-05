@@ -353,8 +353,8 @@ Ram history is used by the Standard Pipeline making it the default history for s
 
 [ram.py](../../../../../src/fprime_gds/common/history/ram.py)
 
-A simple implementation of of a history that maintains items in RAM. This is used for simplicity, but isn’t exactly
-robust nor persistent. Given that it is in the RAM, it is driven from the the decoders object, which should run off the
+A simple implementation of a history that maintains items in RAM. This is used for simplicity, but isn’t exactly
+robust nor persistent. Given that it is in the RAM, it is driven from the decoders object, which should run off the
 middle-ware layer.
 
 

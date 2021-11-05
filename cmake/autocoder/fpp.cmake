@@ -1,4 +1,8 @@
 include(utilities)
+include(autocoder/default)
+
+
+set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
 
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)
 
@@ -10,11 +14,44 @@ function(is_supported AC_INPUT_FILE)
     endif()
 endfunction(is_supported)
 
-#TODO: add a correction function w.r.t. removing items from topologies
+function(regenerate_memo OUTPUT MEMO_FILE SOURCES_INPUT)
+    # Initialize variables
+    set(${OUTPUT} FALSE PARENT_SCOPE)
+    set(LOCS_MOVED FALSE)
+    set(OUTPUT_TEXT "n/a")
+    set(ALL_FPP_INPUTS)
+    set(PREV_LOCS_FILE "${MEMO_FILE}.locs.prev")
+    default_regenerate_helper(MEMO_MISSING CHANGED "${MEMO_FILE}" "${SOURCES_INPUT}")
 
-function(regenerate_memo OUTPUT MEMO_FILE)
-    on_any_changed("${FPP_LOCS_FILE}" CHANGED) #TODO: fix this function
-    set(${OUTPUT} "${CHANGED}" PARENT_SCOPE)
+    # Read the memo file for dependencies, should it exist
+    if (NOT MEMO_MISSING)
+        file(READ "${MEMO_FILE}" CONTENTS)
+        read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES ALL_FPP_INPUTS)
+    endif()
+    set_property(GLOBAL PROPERTY "FPP_LOCATIONS_CACHE_${MODULE_NAME}" "${PREV_LOCS_FILE}")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PREV_LOCS_FILE}")
+    # Look at changed inter-module dependencies
+    if (ALL_FPP_INPUTS)
+        # Subset module deps by what changed
+        string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
+        find_program(PYTHON NAMES python3 python REQUIRED)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E env 
+            PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
+            BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime
+            ${PYTHON} "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-locs-differ/fpp-locs-differ.py" ${FPP_LOCS_FILE} ${PREV_LOCS_FILE}
+            ${ALL_FPP_INPUTS} OUTPUT_VARIABLE OUTPUT_TEXT OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE RESULT_OUT)
+        if (NOT RESULT_OUT EQUAL "0")
+            set(LOCS_MOVED TRUE)
+        endif()
+    endif()
+    # Regenerating on any of the above
+    if (MEMO_MISSING OR CHANGED OR LOCS_MOVED)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FPP_LOCS_FILE} ${PREV_LOCS_FILE}) 
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo '${MEMO_FILE}' because: (memo missing: ${MEMO_MISSING}, sources changed: ${CHANGED}, dependencies moved: ${LOCS_MOVED} (${OUTPUT_TEXT}))")
+        endif()
+	    set(${OUTPUT} TRUE PARENT_SCOPE)
+    endif()
 endfunction(regenerate_memo)
 
 function(get_generated_files AC_INPUT_FILES)
@@ -26,7 +63,8 @@ function(get_generated_files AC_INPUT_FILES)
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
-    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}" CACHE INTERNAL "Last command to annotate memo file" FORCE)
+    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}"
+        CACHE INTERNAL "Last command to annotate memo file" FORCE)
     execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
         -d "${DIRECT_FILE}"
         -i "${INCLUDED_FILE}"
@@ -118,10 +156,11 @@ function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_
     endforeach()
 
     # Add in steps for Ai.xml generation
+    get_property(REMOVAL_FILE GLOBAL PROPERTY "FPP_LOCATIONS_CACHE_${MODULE_NAME}")
     if (GENERATED_AI)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
-                COMMAND ${FPP_TO_XML} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${FPP_RUN_OR_REMOVE} ${REMOVAL_FILE} ${FPP_TO_XML} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
                 DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
@@ -130,7 +169,7 @@ function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT  ${GENERATED_CPP}
-                COMMAND ${FPP_TO_CPP} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${FPP_RUN_OR_REMOVE} ${REMOVAL_FILE} ${FPP_TO_CPP} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
                 "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
                 DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )

@@ -87,7 +87,7 @@ namespace Os {
     class QueueRegistry {
         public:
             virtual void regQueue(Queue* obj)=0; //!< method called by queue init() methods to register a new queue
-            virtual ~QueueRegistry(); //!< virtual destructor for registry object
+            virtual ~QueueRegistry() {}; //!< virtual destructor for registry object
     };
 }
 

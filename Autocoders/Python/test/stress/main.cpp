@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     ;
 #endif
     testImpl.init(10);
-    testImpl.start(10, 10 * 1024, 100);
+    testImpl.start();
 
     TestCommandSourceImpl cmdSrc
 #if FW_OBJECT_NAMES

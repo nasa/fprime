@@ -8,7 +8,7 @@ on:
   push:
     branches: [ master, devel ]
   pull_request:
-    branches: [ master, devel ] # Can dd back release/v3.0.0 once SBT is install in the build system
+    branches: [ master, devel, release/v3.0.0 ] 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

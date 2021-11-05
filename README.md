@@ -197,7 +197,7 @@ Migration considerations:
   * Usage of framework can be out-of-source
   * `settings.ini` Introduced
   * Example: [https://github.com/fprime-community/fprime-arduino](https://github.com/fprime-community/fprime-arduino)
-* Refactored `fprim-util`
+* Refactored `fprime-util`
   * Replaced redundant targets with flags e.g. build-ut is now build --ut
   * Added `info` command
   * Bug and usability fixes

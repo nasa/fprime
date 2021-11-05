@@ -238,7 +238,7 @@ public class ProcessISFProject {
 	}
 
 	/**
-	 * Creates ISFComponent objects for all components with associated ports and adds them toe the componentList.
+	 * Creates ISFComponent objects for all components with associated ports and adds them to the componentList.
 	 * @param compElementList
 	 * @param stereotype
 	 * @throws PortException

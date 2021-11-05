@@ -58,7 +58,7 @@ namespace Utils {
 
     {
       LockGuard guard(data.mutex);
-      stat = testTask.start(name,12,100,10*1024,taskMethod,&data);
+      stat = testTask.start(name, taskMethod, &data);
       ASSERT_EQ(stat, Os::Task::TASK_OK);
       Os::Task::delay(100);
       ASSERT_EQ(data.i, 0);
