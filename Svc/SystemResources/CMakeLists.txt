@@ -19,8 +19,9 @@ set(MOD_DEPS
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-	#"${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-	#"${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
 )
 register_fprime_ut()

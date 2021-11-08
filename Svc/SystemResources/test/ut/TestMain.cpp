@@ -4,9 +4,19 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, ToDo) {
+TEST(Nominal, TestMem) {
     Svc::Tester tester;
-    tester.toDo();
+    tester.testMemRead();
+}
+
+TEST(Nominal, TestPhysMem) {
+    Svc::Tester tester;
+    tester.testPhysMemRead();
+}
+
+TEST(Nominal, TestCpuUtilRead) {
+    Svc::Tester tester;
+    tester.testCpuUtilRead();
 }
 
 int main(int argc, char **argv) {

@@ -46,8 +46,50 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void) 
+    testMemRead(void) 
   {
+    I32 ret;
+
+    ret = this->component.Mem();
+
+    ASSERT_EQ(ret, 0);
+    ASSERT_NE(this->component.m_mem.memUsed, 0);
+    ASSERT_NE(this->component.m_mem.memTotal, 0);
+
+    fprintf(stderr, "Mem.Used=[%f], Mem.Total=[%f]\n", this->component.m_mem.memUsed, this->component.m_mem.memTotal);
+    // TODO
+  }
+
+  void Tester ::
+    testPhysMemRead(void) 
+  {
+    I32 ret;
+
+    ret = this->component.PhysMem();
+
+    ASSERT_EQ(ret, 0);
+    ASSERT_NE(this->component.m_physMem.physMemUsed, 0);
+    ASSERT_NE(this->component.m_physMem.physMemTotal, 0);
+
+    fprintf(stderr, "PhysMem.Used=[%f], PhysMem.Total=[%f]\n", this->component.m_physMem.physMemUsed, this->component.m_physMem.physMemTotal);
+    // TODO
+  }
+
+  void Tester ::
+    testCpuUtilRead(void) 
+  {
+    I32 ret;
+
+    ret = this->component.Cpu();
+
+    ASSERT_EQ(ret, 0);
+
+    for(U32 i = 0; i < this->component.m_cpu_count; i++) {
+
+        fprintf(stderr, "CPU[%d]: Used=[%f], Total=[%f], Util=[%f], Avg=[%f]\n", i, this->component.m_cpu[i].cpuUsed, this->component.m_cpu[i].cpuTotal, this->component.m_cpu_util, this->component.m_cpu_avg);
+
+    }
+
     // TODO
   }
 

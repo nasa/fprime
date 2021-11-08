@@ -13,6 +13,7 @@
 
 #include <Svc/SystemResources/SystemResourcesComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include <math.h> //isnan()
 
 namespace Svc {
 
@@ -34,6 +35,12 @@ namespace Svc {
       }
 
       m_cpu_count = (m_cpu_count >= CPU_COUNT) ? CPU_COUNT - 1: m_cpu_count;
+
+      for(U32 i = 0; i < CPU_COUNT; i++) {
+
+          m_cpu_prev[i].cpuUsed = 0;
+          m_cpu_prev[i].cpuTotal = 0;
+      }
      
   }
 
@@ -118,37 +125,63 @@ namespace Svc {
   }
 
 
+  F32 SystemResourcesComponentImpl::compCpuUtil(F32 used, F32 usedPrev, F32 total, F32 totalPrev)
+  {
+      F32 util;
+
+      // Compute CPU % Utilization
+      util = ((used - usedPrev) / (total - totalPrev)) * 100;
+
+      // Validate.  If sampled too fast Total-TotalPrev will be set to 0
+      if((total - totalPrev) == 0 || isnan(util)) {
+
+          util = 0;
+      }
+
+      return util;
+
+  }
+
   I32 SystemResourcesComponentImpl::Cpu()
   {
       Os::SystemResources::SystemResourcesStatus status; 
-      Os::SystemResources::cpuUtil cpu; 
       U32 count = 0;
       F32 cpuAvg = 0;
       Fw::Time t = Fw::Time();
 
-      if((status = Os::SystemResources::getCpuUtil(cpu, true)) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
-
-          return -1;
-      }
-
 
       for(U32 i = 0; i < m_cpu_count && i < CPU_COUNT; i++) {
 
-            status = Os::SystemResources::getCpuUtil(cpu, false, i);
+            status = Os::SystemResources::getCpuUtil(m_cpu[i], false, i);
 
             if(status == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+                F32 cpuUtil;
 
-                cpuAvg += cpu.cpuUsed;
-        //FW_ASSERT(this->m_ise_tlm_fns[i]); // make sure fn pointer is set
-        //(this->*m_ise_tlm_fns[i])(ise_mv[i], t);
+
+                cpuUtil = compCpuUtil(m_cpu[i].cpuUsed, m_cpu_prev[i].cpuUsed, m_cpu[i].cpuTotal, m_cpu_prev[i].cpuTotal);
+
+                cpuAvg += cpuUtil;
+
+                // Send telemetry
                 FW_ASSERT(this->m_cpu_tlm_functions[i]); // make sure fn pointer is set
-                (this->*m_cpu_tlm_functions[i])(cpu.cpuUsed, t); 
+                (this->*m_cpu_tlm_functions[i])(cpuUtil, t); 
+
+                // Store cpu used and total 
+                m_cpu_util = cpuUtil;
+                m_cpu_prev[i] = m_cpu[i];
+                m_cpu_prev[i] = m_cpu[i];
+
                 count++;
+            }
+            else {
+       
+                return -1;
             }
       }
 
       cpuAvg /= count;
       this->tlmWrite_CPU(cpuAvg);;
+      m_cpu_avg = cpuAvg;
 
       return 0;
   }
@@ -156,15 +189,14 @@ namespace Svc {
   I32 SystemResourcesComponentImpl::Mem()
   {
       Os::SystemResources::SystemResourcesStatus status; 
-      Os::SystemResources::memUtil mem; 
 
-      if((status = Os::SystemResources::getMemUtil(mem)) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
+      if((status = Os::SystemResources::getMemUtil(m_mem)) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
 
           return -1;
       }
 
-      this->tlmWrite_MEM_TOTAL(mem.memTotal);
-      this->tlmWrite_MEM_UTIL(mem.memUsed);
+      this->tlmWrite_MEM_TOTAL(m_mem.memTotal);
+      this->tlmWrite_MEM_UTIL(m_mem.memUsed);
 
       return 0;
   }
@@ -172,15 +204,14 @@ namespace Svc {
   I32 SystemResourcesComponentImpl::PhysMem()
   {
       Os::SystemResources::SystemResourcesStatus status; 
-      Os::SystemResources::physMemUtil physMem; 
 
-      if((status = Os::SystemResources::getPhysMemUtil(physMem)) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
+      if((status = Os::SystemResources::getPhysMemUtil(m_physMem)) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
 
           return -1;
       }
 
-      this->tlmWrite_PHYS_MEM_TOTAL(physMem.physMemTotal);
-      this->tlmWrite_PHYS_MEM_UTIL(physMem.physMemUsed);
+      this->tlmWrite_PHYS_MEM_TOTAL(m_physMem.physMemTotal);
+      this->tlmWrite_PHYS_MEM_UTIL(m_physMem.physMemUsed);
 
       return 0;
   }

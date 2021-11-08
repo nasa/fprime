@@ -44,7 +44,9 @@ namespace Svc {
 
       //! To do
       //!
-      void toDo(void);
+      void testMemRead(void);
+      void testPhysMemRead(void);
+      void testCpuUtilRead(void);
 
     private:
 

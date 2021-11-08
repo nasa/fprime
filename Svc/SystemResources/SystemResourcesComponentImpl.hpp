@@ -85,6 +85,7 @@ namespace Svc {
       I32 Mem();
       I32 PhysMem();
       void tlmCpu(U32 index, F32 value);
+      F32 compCpuUtil(F32 used, F32 usedPrev, F32 total, F32 totalPrev);
 
  
     PRIVATE:
@@ -97,6 +98,12 @@ namespace Svc {
       U32 m_tick_count;
       U32 m_sample_rate;
       U32 m_cpu_count;
+      Os::SystemResources::memUtil m_mem; 
+      Os::SystemResources::physMemUtil m_physMem; 
+      Os::SystemResources::cpuUtil m_cpu[CPU_COUNT]; 
+      Os::SystemResources::cpuUtil m_cpu_prev[CPU_COUNT]; 
+      F32 m_cpu_util;
+      F32 m_cpu_avg;
 
     };
 
