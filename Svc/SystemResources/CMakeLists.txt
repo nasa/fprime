@@ -1,0 +1,26 @@
+####
+# F prime CMakeLists.txt:
+#
+# SOURCE_FILES: combined list of source and autocoding diles
+# MOD_DEPS: (optional) module dependencies
+#
+# Note: using PROJECT_NAME as EXECUTABLE_NAME
+####
+set(SOURCE_FILES
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentImpl.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CpuUtilPortAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/MemUtilPortAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/PhysMemUtilPortAi.xml"
+)
+set(MOD_DEPS
+  Os
+)
+register_fprime_module()
+### UTs ###
+set(UT_SOURCE_FILES
+	#"${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+	#"${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentImpl.cpp"
+)
+register_fprime_ut()

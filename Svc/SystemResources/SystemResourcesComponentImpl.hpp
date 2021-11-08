@@ -1,0 +1,105 @@
+// ======================================================================
+// \title  SystemResourcesComponentImpl.hpp
+// \author parallels
+// \brief  hpp file for SystemResources component implementation class
+//
+// \copyright
+// Copyright 2009-2015, by the California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
+#ifndef SystemResources_HPP
+#define SystemResources_HPP
+
+#include "Svc/SystemResources/SystemResourcesComponentAc.hpp"
+
+namespace Svc {
+
+  class SystemResourcesComponentImpl :
+    public SystemResourcesComponentBase
+  {
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Construction, initialization, and destruction
+      // ----------------------------------------------------------------------
+
+      //! Construct object SystemResources
+      //!
+      SystemResourcesComponentImpl(
+          const char *const compName /*!< The component name*/
+      );
+
+      //! Initialize object SystemResources
+      //!
+      void init(
+          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+      );
+
+      //! Destroy object SystemResources
+      //!
+      ~SystemResourcesComponentImpl(void);
+
+      typedef void (SystemResourcesComponentBase::*cpuTlmFunc)(F32, Fw::Time);
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Handler implementations for user-defined typed input ports
+      // ----------------------------------------------------------------------
+
+      //! Handler implementation for run
+      //!
+      void run_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          NATIVE_UINT_TYPE context /*!< The call order*/
+      );
+
+    PRIVATE:
+
+      // ----------------------------------------------------------------------
+      // Command handler implementations
+      // ----------------------------------------------------------------------
+
+      //! Implementation for SYS_RES_ENABLE command handler
+      //! A command to enable or disable syste resource telemetry
+      void SYS_RES_ENABLE_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          SystemResourceEnabled enable /*!< whether or not system resource telemetry is enabled*/
+      );
+
+      //! Implementation for VERSION command handler
+      //! Report version as EVR
+      void VERSION_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
+    PRIVATE:
+
+      I32 Cpu();
+      I32 Mem();
+      I32 PhysMem();
+      void tlmCpu(U32 index, F32 value);
+
+ 
+    PRIVATE:
+
+      static const U32 CPU_COUNT = 16; /*!< Maximum number of CPUs to report as telemetry */
+
+    PRIVATE:
+
+      cpuTlmFunc m_cpu_tlm_functions[CPU_COUNT];
+      U32 m_tick_count;
+      U32 m_sample_rate;
+      U32 m_cpu_count;
+
+    };
+
+} // end namespace Svc
+
+#endif
