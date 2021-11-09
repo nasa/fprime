@@ -15,8 +15,12 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Os
+  
 )
 register_fprime_module()
+get_module_name(${CMAKE_CURRENT_LIST_DIR})
+add_dependencies(${MODULE_NAME} version)
+
 ### UTs ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"

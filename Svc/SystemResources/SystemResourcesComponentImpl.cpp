@@ -13,7 +13,7 @@
 
 #include <Svc/SystemResources/SystemResourcesComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-//#include <version.hpp>
+#include <version.hpp>
 #include <math.h> //isnan()
 
 namespace Svc {
@@ -29,8 +29,7 @@ namespace Svc {
 	    m_tick_count(0),
 	    m_sample_rate(1),
         m_cpu_count(0),
-        m_enable(true),
-        m_version("UNKNOWN")
+        m_enable(true)
   {
 
       if(Os::SystemResources::getCpuCount(m_cpu_count) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
@@ -45,10 +44,6 @@ namespace Svc {
           m_cpu_prev[i].cpuTotal = 0;
       }
 
-#ifdef VERSION
-      strncpy(m_version, VERSION, strlen(VERSION));
-#endif
-     
   }
 
   void SystemResourcesComponentImpl ::
@@ -129,7 +124,7 @@ namespace Svc {
         const U32 cmdSeq
     )
   {
-    Fw::LogStringArg verstring(m_version);
+    Fw::LogStringArg verstring(VERSION);
 
     this->log_ACTIVITY_LO_SYS_RES_VERSION(verstring);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
@@ -229,7 +224,7 @@ namespace Svc {
 
   void SystemResourcesComponentImpl::Version()
   {
-      Fw::TlmString verstring(m_version);
+      Fw::TlmString verstring(VERSION);
 
       this->tlmWrite_VERSION(verstring);
   }

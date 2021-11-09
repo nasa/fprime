@@ -106,7 +106,6 @@ namespace Svc {
       F32 m_cpu_util;
       F32 m_cpu_avg;
       bool m_enable;
-      char m_version[40];
 
     };
 
