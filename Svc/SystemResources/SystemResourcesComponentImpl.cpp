@@ -13,6 +13,7 @@
 
 #include <Svc/SystemResources/SystemResourcesComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+//#include <version.hpp>
 #include <math.h> //isnan()
 
 namespace Svc {
@@ -27,20 +28,26 @@ namespace Svc {
     ) : SystemResourcesComponentBase(compName),
 	    m_tick_count(0),
 	    m_sample_rate(1),
-        m_cpu_count(0)
+        m_cpu_count(0),
+        m_enable(true),
+        m_version("UNKNOWN")
   {
 
       if(Os::SystemResources::getCpuCount(m_cpu_count) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
           m_cpu_count = 0;
       }
 
-      m_cpu_count = (m_cpu_count >= CPU_COUNT) ? CPU_COUNT - 1: m_cpu_count;
+      m_cpu_count = (m_cpu_count >= CPU_COUNT) ? CPU_COUNT: m_cpu_count;
 
       for(U32 i = 0; i < CPU_COUNT; i++) {
 
           m_cpu_prev[i].cpuUsed = 0;
           m_cpu_prev[i].cpuTotal = 0;
       }
+
+#ifdef VERSION
+      strncpy(m_version, VERSION, strlen(VERSION));
+#endif
      
   }
 
@@ -88,12 +95,13 @@ namespace Svc {
   {
     FW_ASSERT(tick_time_hz != 0);
 
-    if((m_tick_count % (tick_time_hz / m_sample_rate)) == 0)
+    if(m_enable && ((m_tick_count % (tick_time_hz / m_sample_rate)) == 0))
     {
 
         Cpu();
         Mem();
         PhysMem();
+        Version();
     }
 
     m_tick_count++;
@@ -110,7 +118,8 @@ namespace Svc {
         SystemResourceEnabled enable
     )
   {
-    // TODO
+
+    m_enable = (enable == SYS_RES_ENABLED);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -120,7 +129,9 @@ namespace Svc {
         const U32 cmdSeq
     )
   {
-    // TODO
+    Fw::LogStringArg verstring(m_version);
+
+    this->log_ACTIVITY_LO_SYS_RES_VERSION(verstring);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -216,4 +227,10 @@ namespace Svc {
       return 0;
   }
 
+  void SystemResourcesComponentImpl::Version()
+  {
+      Fw::TlmString verstring(m_version);
+
+      this->tlmWrite_VERSION(verstring);
+  }
 } // end namespace Svc

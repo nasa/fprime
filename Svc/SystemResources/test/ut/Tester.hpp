@@ -47,6 +47,7 @@ namespace Svc {
       void testMemRead(void);
       void testPhysMemRead(void);
       void testCpuUtilRead(void);
+      void testSysResEnableCmd(void);
 
     private:
 

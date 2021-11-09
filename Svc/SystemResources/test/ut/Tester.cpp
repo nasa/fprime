@@ -13,7 +13,7 @@
 #include "Tester.hpp"
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 100
 
 namespace Svc {
 
@@ -57,7 +57,6 @@ namespace Svc {
     ASSERT_NE(this->component.m_mem.memTotal, 0);
 
     fprintf(stderr, "Mem.Used=[%f], Mem.Total=[%f]\n", this->component.m_mem.memUsed, this->component.m_mem.memTotal);
-    // TODO
   }
 
   void Tester ::
@@ -72,7 +71,6 @@ namespace Svc {
     ASSERT_NE(this->component.m_physMem.physMemTotal, 0);
 
     fprintf(stderr, "PhysMem.Used=[%f], PhysMem.Total=[%f]\n", this->component.m_physMem.physMemUsed, this->component.m_physMem.physMemTotal);
-    // TODO
   }
 
   void Tester ::
@@ -80,17 +78,46 @@ namespace Svc {
   {
     I32 ret;
 
-    ret = this->component.Cpu();
-
-    ASSERT_EQ(ret, 0);
-
-    for(U32 i = 0; i < this->component.m_cpu_count; i++) {
-
-        fprintf(stderr, "CPU[%d]: Used=[%f], Total=[%f], Util=[%f], Avg=[%f]\n", i, this->component.m_cpu[i].cpuUsed, this->component.m_cpu[i].cpuTotal, this->component.m_cpu_util, this->component.m_cpu_avg);
-
+    for(U32 num = 0; num < 5; num++) {
+        ret = this->component.Cpu();
+    
+        ASSERT_EQ(ret, 0);
+    
+        for(U32 i = 0; i < this->component.m_cpu_count; i++) {
+    
+            fprintf(stderr, "CPU[%d]: Used=[%f], Total=[%f], Util=[%f], Avg=[%f]\n", i, this->component.m_cpu[i].cpuUsed, this->component.m_cpu[i].cpuTotal, this->component.m_cpu_util, this->component.m_cpu_avg);
+    
+        }
+    
+        usleep(2000000);
     }
 
-    // TODO
+  }
+
+  void Tester ::
+    testSysResEnableCmd(void) 
+  {
+      SystemResourcesComponentImpl::SystemResourceEnabled enable;
+
+      this->clearHistory();
+
+      // Disable telemetry generation
+      enable = SystemResourcesComponentImpl::SYS_RES_DISABLED;
+      component.SYS_RES_ENABLE_cmdHandler(0, 0, enable);
+
+      ASSERT_EQ(component.m_enable, false);
+
+      this->invoke_to_run(0, 100);
+
+      // Enable telemetry generation
+
+      enable = SystemResourcesComponentImpl::SYS_RES_ENABLED;
+      component.SYS_RES_ENABLE_cmdHandler(0, 0, enable);
+
+      ASSERT_EQ(component.m_enable, true);
+
+      this->invoke_to_run(0, 100);
+
   }
 
   // ----------------------------------------------------------------------

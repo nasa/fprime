@@ -12,21 +12,21 @@ namespace Os {
 
         char line[512];
         FILE *fp;
-    	U32 cpu_count = 0;
+        U32 cpu_count = 0;
     
-    	if((fp = fopen("/proc/stat", "r")) == NULL) {
+        if((fp = fopen("/proc/stat", "r")) == NULL) {
     
             return SYSTEM_RESOURCES_ERROR;
-    	
-    	}
+        
+        }
 
-    	if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line. Skip
+        if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line. Skip
 
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
-	}
+        }
     
-    	while(true) {
+        while(true) {
            
     
             if (fgets(line, sizeof(line), fp) == NULL) { //cpu# line
@@ -40,11 +40,11 @@ namespace Os {
 
             cpu_count++;
             
-    	}
+        }
 
-	fclose(fp);
+        fclose(fp);
     
-    	cpuCount = cpu_count;
+        cpuCount = cpu_count;
 
         return SYSTEM_RESOURCES_OK;
     }
@@ -53,80 +53,80 @@ namespace Os {
     {
         char line[512];
         FILE *fp;
-	F32 cpu_data[4] = {0};
+        F32 cpu_data[4] = {0};
         U32 cpuCount;
-	SystemResources::SystemResourcesStatus status;
+        SystemResources::SystemResourcesStatus status;
         F32 cpuUsed = 0;
-	F32 cpuTotal = 0;
+        F32 cpuTotal = 0;
 
         if((status = getCpuCount(cpuCount)) != SYSTEM_RESOURCES_OK) {
             return status;
-	}
+        }
 
-	if(cpu_index >= cpuCount) {
+        if(cpu_index >= cpuCount) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
         
-    	if((fp = fopen("/proc/stat", "r")) == NULL) {
+        if((fp = fopen("/proc/stat", "r")) == NULL) {
     
             return SYSTEM_RESOURCES_ERROR;
-    	
-    	}
+        
+        }
 
-    	if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line.
+        if(fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line.
 
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
-	}
+        }
 
-	if (average) {
-
-            sscanf(line, "%*s %f %f %f %f", &cpu_data[0],
-                                            &cpu_data[1],
-                                            &cpu_data[2],
-					    &cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
-
-            cpuUsed = cpu_data[0] + cpu_data[1] + cpu_data[2];
-            cpuTotal = cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
-
-	}
-	else {
-
-
-	    for (U32 i = 0; i < cpu_index + 1; i++) {
-
-    	        if(fgets(line, sizeof(line), fp) == NULL) { //cpu# line
-
+        if (average) {
+    
+                // Cpu aggregate line
+                sscanf(line, "%*s %f %f %f %f", &cpu_data[0],
+                                                &cpu_data[1],
+                                                &cpu_data[2],
+                            &cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
+    
+                cpuUsed = cpu_data[0] + cpu_data[1] + cpu_data[2];
+                cpuTotal = cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
+    
+        }
+        else {
+    
+            for (U32 i = 0; i < cpu_index + 1; i++) {
+    
+                if(fgets(line, sizeof(line), fp) == NULL) { //cpu# line
+    
                     fclose(fp);
-		    return SYSTEM_RESOURCES_ERROR;
+                    return SYSTEM_RESOURCES_ERROR;
                 }
-
-		if(i != cpu_index) continue;
-
-		if( !(line[0] == 'c' && line[1] == 'p' && line[2] == 'u') ) {
-
+    
+                if(i != cpu_index) continue;
+    
+                if( !(line[0] == 'c' && line[1] == 'p' && line[2] == 'u') ) {
+    
                     fclose(fp);
-		    return SYSTEM_RESOURCES_ERROR;
-		}
-
-		sscanf(line, "%*s %f %f %f %f", &cpu_data[0],
-				                &cpu_data[1],
-						&cpu_data[2],
-						&cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
-
-		cpuUsed = cpu_data[0] + cpu_data[1] + cpu_data[2];
-		cpuTotal = cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
-
-		break;
-	    }
-
-	}
-
-	fclose(fp);
-
-	cpuUtil.cpuUsed = cpuUsed;
-	cpuUtil.cpuTotal = cpuTotal;
+                    return SYSTEM_RESOURCES_ERROR;
+                }
+    
+                sscanf(line, "%*s %f %f %f %f", &cpu_data[0],
+                                                &cpu_data[1],
+                                                &cpu_data[2],
+                                                &cpu_data[3]); //cpu#: 4 numbers: usr, nice, sys, idle
+        
+                cpuUsed = cpu_data[0] + cpu_data[1] + cpu_data[2];
+                cpuTotal = cpu_data[0] + cpu_data[1] + cpu_data[2] + cpu_data[3];
+        
+                break;
+            }
+    
+        }
+    
+        fclose(fp);
+    
+        cpuUtil.cpuUsed = cpuUsed;
+        cpuUtil.cpuTotal = cpuTotal;
 
 
         return SYSTEM_RESOURCES_OK;
@@ -145,13 +145,13 @@ namespace Os {
             memUtil.memTotal = (F32) -1.0;
             memUtil.memUsed = (F32) -1.0;
             return SYSTEM_RESOURCES_ERROR;
-	}
+        }
 
         if ( fscanf(fp,"%*s %f %*s", &memTotal) != 1 ||  /* 1st line is MemTotal */
              fscanf(fp,"%*s %f",     &memFree) != 1 ) {   /* 2nd line is MemFree */
 
             fclose(fp);
-	    return SYSTEM_RESOURCES_ERROR;
+            return SYSTEM_RESOURCES_ERROR;
         }
 
         fclose(fp);

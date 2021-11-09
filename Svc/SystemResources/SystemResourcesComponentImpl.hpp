@@ -84,6 +84,7 @@ namespace Svc {
       I32 Cpu();
       I32 Mem();
       I32 PhysMem();
+      void Version();
       void tlmCpu(U32 index, F32 value);
       F32 compCpuUtil(F32 used, F32 usedPrev, F32 total, F32 totalPrev);
 
@@ -104,6 +105,8 @@ namespace Svc {
       Os::SystemResources::cpuUtil m_cpu_prev[CPU_COUNT]; 
       F32 m_cpu_util;
       F32 m_cpu_avg;
+      bool m_enable;
+      char m_version[40];
 
     };
 
