@@ -40,7 +40,7 @@
     <telemetry>
         <channel id="0" name="MEM_TOTAL" data_type="F32">
             <comment>
-            Total system mememory in KB
+            Total system memory in KB
             </comment>
         </channel>
         <channel id="1" name="MEM_UTIL" data_type="F32">

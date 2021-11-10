@@ -778,6 +778,7 @@ isfxmlwriter
 isgenerator
 ishii
 isinstance
+isnan
 isoschematron
 isr
 ISREG
@@ -1385,6 +1386,7 @@ setval
 setw
 sev
 sface
+sfregoso
 sgl
 SGN
 SHELLCOMMAND

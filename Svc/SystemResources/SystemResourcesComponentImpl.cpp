@@ -119,9 +119,9 @@ namespace Svc {
         const U32 cmdSeq
     )
   {
-    Fw::LogStringArg verstring(VERSION);
+    Fw::LogStringArg version_string(VERSION);
 
-    this->log_ACTIVITY_LO_SYS_RES_VERSION(verstring);
+    this->log_ACTIVITY_LO_SYS_RES_VERSION(version_string);
     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
   }
 
@@ -217,8 +217,8 @@ namespace Svc {
 
   void SystemResourcesComponentImpl::Version()
   {
-      Fw::TlmString verstring(VERSION);
+      Fw::TlmString version_string(VERSION);
 
-      this->tlmWrite_VERSION(verstring);
+      this->tlmWrite_VERSION(version_string);
   }
 } // end namespace Svc
