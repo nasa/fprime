@@ -28,9 +28,7 @@ def get_version_str():
 
     Return: String with git hash
     """
-    output = subprocess.check_output(
-        ["git", "describe", "--tags"]
-    )
+    output = subprocess.check_output(["git", "describe", "--tags"])
     return output.strip().decode("ascii")
 
 
