@@ -19,7 +19,7 @@
     <commands>
         <command kind="guarded" opcode="0" mnemonic="SYS_RES_ENABLE">
             <comment>
-            A command to enable or disable syste resource telemetry
+            A command to enable or disable system resource telemetry
             </comment>
             <args>
                 <arg name="enable" type="ENUM">

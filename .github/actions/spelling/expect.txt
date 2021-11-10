@@ -556,6 +556,7 @@ fprintf
 fprofile
 fptr
 fputil
+Fregoso
 frontend
 frox
 frsize

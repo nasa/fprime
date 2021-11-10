@@ -101,7 +101,7 @@ namespace Svc {
       Os::SystemResources::physMemUtil m_physMem; /*< Physical memory information */
       Os::SystemResources::cpuUtil m_cpu[CPU_COUNT]; /*< CPU information for each CPU on the system */
       Os::SystemResources::cpuUtil m_cpu_prev[CPU_COUNT]; /*< Previous iteration CPU information */
-      F32 m_cpu_avg; /*< Average of all CPU utiliztions */
+      F32 m_cpu_avg; /*< Average of all CPU utilizations */
       bool m_enable; /*< Send telemetry when TRUE.  Don't send when FALSE */
 
     };
