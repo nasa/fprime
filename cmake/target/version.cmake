@@ -1,5 +1,5 @@
 
-set (GEN_VERSION_FILE_CMD ${CMAKE_CURRENT_LIST_DIR}/version/generateVersionHeader.py "${CMAKE_BINARY_DIR}/version.hpp")
+set (GEN_VERSION_FILE_CMD ${CMAKE_CURRENT_LIST_DIR}/version/generate_version_header.py "${CMAKE_BINARY_DIR}/version.hpp")
 
 function(add_global_target TARGET_NAME)
 
