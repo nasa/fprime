@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SystemResourcesComponentImpl.hpp
-// \author parallels
+// \author Santos F. Fregoso
 // \brief  hpp file for SystemResources component implementation class
 //
 // \copyright
@@ -65,7 +65,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Implementation for SYS_RES_ENABLE command handler
-      //! A command to enable or disable syste resource telemetry
+      //! A command to enable or disable system resource telemetry
       void SYS_RES_ENABLE_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
@@ -95,17 +95,14 @@ namespace Svc {
 
     PRIVATE:
 
-      cpuTlmFunc m_cpu_tlm_functions[CPU_COUNT];
-      U32 m_tick_count;
-      U32 m_sample_rate;
-      U32 m_cpu_count;
-      Os::SystemResources::memUtil m_mem; 
-      Os::SystemResources::physMemUtil m_physMem; 
-      Os::SystemResources::cpuUtil m_cpu[CPU_COUNT]; 
-      Os::SystemResources::cpuUtil m_cpu_prev[CPU_COUNT]; 
-      F32 m_cpu_util;
-      F32 m_cpu_avg;
-      bool m_enable;
+      cpuTlmFunc m_cpu_tlm_functions[CPU_COUNT]; /*!< Function pointer to specific CPU telemetry */
+      U32 m_cpu_count; /*!< Number of CPUs used by the system */
+      Os::SystemResources::memUtil m_mem; /*< RAM memory information */
+      Os::SystemResources::physMemUtil m_physMem; /*< Physical memory information */
+      Os::SystemResources::cpuUtil m_cpu[CPU_COUNT]; /*< CPU information for each CPU on the system */
+      Os::SystemResources::cpuUtil m_cpu_prev[CPU_COUNT]; /*< Previous iteration CPU information */
+      F32 m_cpu_avg; /*< Average of all CPU utiliztions */
+      bool m_enable; /*< Send telemetry when TRUE.  Don't send when FALSE */
 
     };
 

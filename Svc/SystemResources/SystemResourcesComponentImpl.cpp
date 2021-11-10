@@ -26,8 +26,6 @@ namespace Svc {
     SystemResourcesComponentImpl(
         const char *const compName
     ) : SystemResourcesComponentBase(compName),
-	    m_tick_count(0),
-	    m_sample_rate(1),
         m_cpu_count(0),
         m_enable(true)
   {
@@ -88,19 +86,15 @@ namespace Svc {
         NATIVE_UINT_TYPE tick_time_hz
     )
   {
-    //FW_ASSERT(tick_time_hz != 0);
 
-    //if(m_enable && ((m_tick_count % (tick_time_hz / m_sample_rate)) == 0))
     if(m_enable)
     {
-
         Cpu();
         Mem();
         PhysMem();
         Version();
     }
 
-    m_tick_count++;
   }
 
   // ----------------------------------------------------------------------
@@ -174,8 +168,6 @@ namespace Svc {
                 (this->*m_cpu_tlm_functions[i])(cpuUtil, t); 
 
                 // Store cpu used and total 
-                m_cpu_util = cpuUtil;
-                m_cpu_prev[i] = m_cpu[i];
                 m_cpu_prev[i] = m_cpu[i];
 
                 count++;
