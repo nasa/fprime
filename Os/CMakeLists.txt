@@ -46,7 +46,6 @@ if (FPRIME_USE_POSIX)
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Task.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/InterruptLock.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/WatchdogTimer.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/IntervalTimer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Posix/Mutex.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Linux/FileSystem.cpp"
@@ -58,12 +57,14 @@ endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResources/SystemResources.cpp"
   )
 # Linux IPC queues implementation
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/Posix/IPCQueue.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/Posix/LocklessQueue.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/Linux/SystemResources.cpp"
   )
   # Shared libraries need an -rt dependency for mq libs
   if (BUILD_SHARED_LIBS)
@@ -82,6 +83,7 @@ if (FPRIME_USE_BAREMETAL_SCHEDULER)
     endforeach()
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Task.cpp")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/Mutex.cpp")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Baremetal/SystemResources.cpp")
 endif()
 register_fprime_module()
 

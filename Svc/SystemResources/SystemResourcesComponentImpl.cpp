@@ -88,9 +88,10 @@ namespace Svc {
         NATIVE_UINT_TYPE tick_time_hz
     )
   {
-    FW_ASSERT(tick_time_hz != 0);
+    //FW_ASSERT(tick_time_hz != 0);
 
-    if(m_enable && ((m_tick_count % (tick_time_hz / m_sample_rate)) == 0))
+    //if(m_enable && ((m_tick_count % (tick_time_hz / m_sample_rate)) == 0))
+    if(m_enable)
     {
 
         Cpu();
