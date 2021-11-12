@@ -54,8 +54,8 @@ For example:
 
 [source,bash]
 ----
-% git checkout release/v3.0.0
-% git checkout -b math-tutorial
+git checkout release/v3.0.0
+git checkout -b math-tutorial
 ----
 
 If you wish, you can save your work by committing to this branch.
@@ -395,12 +395,24 @@ for <<types_add,`Ref/MathTypes`>>.
 
 *Run the build:*
 Go into the directory `Ref/MathTypes`.
-Run the command `fprime-util impl`.
-The build system should
-run for a bit. At the end there should be two new files
+Run the following commands:
+
+[source,bash]
+----
+touch MathSender.cpp
+fprime-util impl
+----
+
+The first command creates an empty file `MathSender.cpp`.
+The build rules we wrote in the previous section expect
+this file to be there.
+After the second command, the build system should
+run for a bit.
+At the end there should be two new files
 in the directory:
 `MathSenderComponentImpl.cpp-template` and
 `MathSenderComponentImpl.hpp-template`.
+
 Run the following commands:
 
 [source,bash]
