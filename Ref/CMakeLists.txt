@@ -39,10 +39,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 # core components in the topology, which is also added here.
 ##
 # Add component subdirectories
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathPorts/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathReceiver/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathSender/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")

@@ -181,12 +181,6 @@ namespace Ref {
     // linuxTime
     Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
 
-    // mathReceiver
-    MathReceiver mathReceiver(FW_OPTIONAL_NAME("mathReceiver"));
-
-    // mathSender
-    MathSender mathSender(FW_OPTIONAL_NAME("mathSender"));
-
     // pingRcvr
     PingReceiver pingRcvr(FW_OPTIONAL_NAME("pingRcvr"));
 
@@ -262,8 +256,6 @@ namespace Ref {
       fileUplinkBufferManager.init(InstanceIds::fileUplinkBufferManager);
       health.init(QueueSizes::health, InstanceIds::health);
       linuxTime.init(InstanceIds::linuxTime);
-      mathReceiver.init(QueueSizes::mathReceiver, InstanceIds::mathReceiver);
-      mathSender.init(QueueSizes::mathSender, InstanceIds::mathSender);
       pingRcvr.init(QueueSizes::pingRcvr, InstanceIds::pingRcvr);
       prmDb.init(QueueSizes::prmDb, InstanceIds::prmDb);
       rateGroup1Comp.init(QueueSizes::rateGroup1Comp, InstanceIds::rateGroup1Comp);
@@ -327,7 +319,6 @@ namespace Ref {
       eventLogger.setIdBase(BaseIds::eventLogger);
       chanTlm.setIdBase(BaseIds::chanTlm);
       prmDb.setIdBase(BaseIds::prmDb);
-      mathSender.setIdBase(BaseIds::mathSender);
       health.setIdBase(BaseIds::health);
       SG1.setIdBase(BaseIds::SG1);
       SG2.setIdBase(BaseIds::SG2);
@@ -335,7 +326,6 @@ namespace Ref {
       SG4.setIdBase(BaseIds::SG4);
       SG5.setIdBase(BaseIds::SG5);
       sendBuffComp.setIdBase(BaseIds::sendBuffComp);
-      mathReceiver.setIdBase(BaseIds::mathReceiver);
       comm.setIdBase(BaseIds::comm);
       downlink.setIdBase(BaseIds::downlink);
       fatalAdapter.setIdBase(BaseIds::fatalAdapter);
@@ -399,26 +389,18 @@ namespace Ref {
       );
       cmdDisp.set_compCmdSend_OutputPort(
           11,
-          mathReceiver.get_cmdIn_InputPort(0)
-      );
-      cmdDisp.set_compCmdSend_OutputPort(
-          12,
-          mathSender.get_cmdIn_InputPort(0)
-      );
-      cmdDisp.set_compCmdSend_OutputPort(
-          13,
           pingRcvr.get_CmdDisp_InputPort(0)
       );
       cmdDisp.set_compCmdSend_OutputPort(
-          14,
+          12,
           prmDb.get_CmdDisp_InputPort(0)
       );
       cmdDisp.set_compCmdSend_OutputPort(
-          15,
+          13,
           recvBuffComp.get_CmdDisp_InputPort(0)
       );
       cmdDisp.set_compCmdSend_OutputPort(
-          16,
+          14,
           sendBuffComp.get_CmdDisp_InputPort(0)
       );
 
@@ -467,29 +449,21 @@ namespace Ref {
           0,
           cmdDisp.get_compCmdReg_InputPort(10)
       );
-      mathReceiver.set_cmdRegOut_OutputPort(
+      pingRcvr.set_CmdReg_OutputPort(
           0,
           cmdDisp.get_compCmdReg_InputPort(11)
       );
-      mathSender.set_cmdRegOut_OutputPort(
+      prmDb.set_CmdReg_OutputPort(
           0,
           cmdDisp.get_compCmdReg_InputPort(12)
       );
-      pingRcvr.set_CmdReg_OutputPort(
+      recvBuffComp.set_CmdReg_OutputPort(
           0,
           cmdDisp.get_compCmdReg_InputPort(13)
       );
-      prmDb.set_CmdReg_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(14)
-      );
-      recvBuffComp.set_CmdReg_OutputPort(
-          0,
-          cmdDisp.get_compCmdReg_InputPort(15)
-      );
       sendBuffComp.set_CmdReg_OutputPort(
           0,
-          cmdDisp.get_compCmdReg_InputPort(16)
+          cmdDisp.get_compCmdReg_InputPort(14)
       );
 
       // CommandResponse
@@ -534,14 +508,6 @@ namespace Ref {
           cmdDisp.get_compCmdStat_InputPort(0)
       );
       health.set_CmdStatus_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      mathReceiver.set_cmdResponseOut_OutputPort(
-          0,
-          cmdDisp.get_compCmdStat_InputPort(0)
-      );
-      mathSender.set_cmdResponseOut_OutputPort(
           0,
           cmdDisp.get_compCmdStat_InputPort(0)
       );
@@ -646,14 +612,6 @@ namespace Ref {
           eventLogger.get_LogRecv_InputPort(0)
       );
       health.set_Log_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      mathReceiver.set_eventOut_OutputPort(
-          0,
-          eventLogger.get_LogRecv_InputPort(0)
-      );
-      mathSender.set_eventOut_OutputPort(
           0,
           eventLogger.get_LogRecv_InputPort(0)
       );
@@ -798,25 +756,7 @@ namespace Ref {
           health.get_PingReturn_InputPort(12)
       );
 
-      // Math
-      mathReceiver.set_mathResultOut_OutputPort(
-          0,
-          mathSender.get_mathResultIn_InputPort(0)
-      );
-      mathSender.set_mathOpOut_OutputPort(
-          0,
-          mathReceiver.get_mathOpIn_InputPort(0)
-      );
-
       // Parameters
-      mathReceiver.set_prmGetOut_OutputPort(
-          0,
-          prmDb.get_getPrm_InputPort(0)
-      );
-      mathReceiver.set_prmSetOut_OutputPort(
-          0,
-          prmDb.get_setPrm_InputPort(0)
-      );
       recvBuffComp.set_ParamGet_OutputPort(
           0,
           prmDb.get_getPrm_InputPort(0)
@@ -854,10 +794,6 @@ namespace Ref {
       rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
           3,
           fileDownlink.get_Run_InputPort(0)
-      );
-      rateGroup1Comp.set_RateGroupMemberOut_OutputPort(
-          4,
-          mathReceiver.get_schedIn_InputPort(0)
       );
       rateGroup2Comp.set_RateGroupMemberOut_OutputPort(
           0,
@@ -977,14 +913,6 @@ namespace Ref {
           0,
           chanTlm.get_TlmRecv_InputPort(0)
       );
-      mathReceiver.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
-      mathSender.set_tlmOut_OutputPort(
-          0,
-          chanTlm.get_TlmRecv_InputPort(0)
-      );
       pingRcvr.set_Tlm_OutputPort(
           0,
           chanTlm.get_TlmRecv_InputPort(0)
@@ -1064,14 +992,6 @@ namespace Ref {
           textLogger.get_TextLogger_InputPort(0)
       );
       health.set_LogText_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      mathReceiver.set_textEventOut_OutputPort(
-          0,
-          textLogger.get_TextLogger_InputPort(0)
-      );
-      mathSender.set_textEventOut_OutputPort(
           0,
           textLogger.get_TextLogger_InputPort(0)
       );
@@ -1169,14 +1089,6 @@ namespace Ref {
           0,
           linuxTime.get_timeGetPort_InputPort(0)
       );
-      mathReceiver.set_timeGetOut_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
-      mathSender.set_timeGetOut_OutputPort(
-          0,
-          linuxTime.get_timeGetPort_InputPort(0)
-      );
       pingRcvr.set_Time_OutputPort(
           0,
           linuxTime.get_timeGetPort_InputPort(0)
@@ -1259,8 +1171,6 @@ namespace Ref {
       fileDownlink.regCommands();
       fileManager.regCommands();
       health.regCommands();
-      mathReceiver.regCommands();
-      mathSender.regCommands();
       pingRcvr.regCommands();
       prmDb.regCommands();
       recvBuffComp.regCommands();
@@ -1274,7 +1184,6 @@ namespace Ref {
 
     // Load parameters
     void loadParameters() {
-      mathReceiver.loadParameters();
       recvBuffComp.loadParameters();
       sendBuffComp.loadParameters();
     }
@@ -1332,11 +1241,6 @@ namespace Ref {
         Priorities::fileUplink,
         StackSizes::fileUplink
       );
-      mathSender.start(
-        TaskIds::mathSender,
-        Priorities::mathSender,
-        StackSizes::mathSender
-      );
       pingRcvr.start(
         TaskIds::pingRcvr,
         Priorities::pingRcvr,
@@ -1374,7 +1278,6 @@ namespace Ref {
       fileDownlink.exit();
       fileManager.exit();
       fileUplink.exit();
-      mathSender.exit();
       pingRcvr.exit();
       prmDb.exit();
       rateGroup1Comp.exit();
@@ -1394,7 +1297,6 @@ namespace Ref {
       (void) fileDownlink.ActiveComponentBase::join(nullptr);
       (void) fileManager.ActiveComponentBase::join(nullptr);
       (void) fileUplink.ActiveComponentBase::join(nullptr);
-      (void) mathSender.ActiveComponentBase::join(nullptr);
       (void) pingRcvr.ActiveComponentBase::join(nullptr);
       (void) prmDb.ActiveComponentBase::join(nullptr);
       (void) rateGroup1Comp.ActiveComponentBase::join(nullptr);
