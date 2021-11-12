@@ -12,13 +12,13 @@ Takes a topology XML file as input and generates all the configuration files nec
 Takes a topology XML file as input and produces a JSON dictionary with naming convention "Deployment" + Dictionary.json. The JSON dictionary is generated within the directory where JSONDictionaryGen was run, but this can be overridden by inputting a new output directory in -p/--path.
 
 ### testgen.py
-Testgen generates a test component in the same way that codegen does. It takes a component XML file as input and generates Tester.cpp/hpp, TesterBase.cpp/hpp, GTestBase.cpp/hpp, and a TestMain.cpp. TestMain.cpp and Tester.cpp/hpp won't be overwritten if they already exists. Rather, one should use command line option -m/--maincpp to overwrite TestMain.cpp and -f/--force_tester to overwrite Tester.cpp and Tester.hpp. Testgen supports absolute paths to inputted files, so you are able to call testgen on any file and the test component will be generated in the directory that testgen was called from.
+Testgen generates a test component in the same way that codegen does. It takes a component XML file as input and generates Tester.cpp/hpp, TesterBase.cpp/hpp, GTestBase.cpp/hpp, and a TestMain.cpp. TestMain.cpp and Tester.cpp/hpp won't be overwritten if they already exist. Rather, one should use command line option -m/--maincpp to overwrite TestMain.cpp and -f/--force_tester to overwrite Tester.cpp and Tester.hpp. Testgen supports absolute paths to inputted files, so you are able to call testgen on any file and the test component will be generated in the directory that testgen was called from.
 
 ### gds_dictgen.py
 GDS Dictgen is a tool for generating GDS XML Dictionaries that are named *TopologyAppDictionary.xml. The tool takes topology XML as input, and the generated dictionary contains all enums, serializables, commands, events, channels, and parameters present within the topology. GDS Dictgen supports absolute paths to inputted files, so you are able to call GDS dictgen on any file and the dictionary will be generated in the directory that GDS dictgen was called from.
 
 ### pymod_dictgen.py
-Pymod Dictgen is a tool for generation python modules for the GDS. The tool takes topology XML as input, and it generates command, event, channel, and parameter python modules within their own respective directories. The output path can be changed with command line option -o/--dict_dir. Pymod dictgen supports absolute paths to inputted files, so you are able to call testgen on any file and the directories will be generated in the directory that pymod dictgen was called from.
+Pymod Dictgen is a tool for generating python modules for the GDS. The tool takes topology XML as input, and it generates command, event, channel, and parameter python modules within their own respective directories. The output path can be changed with command line option -o/--dict_dir. Pymod dictgen supports absolute paths to inputted files, so you are able to call testgen on any file and the directories will be generated in the directory that pymod dictgen was called from.
 
 ### implgen.py
 Implgen is a tool that takes in component XML and generates ComponentImpl.cpp/hpp files. It is formatted in a very similar way to testgen.py. It generates the Impl files within whatever directory it was ran, and it has its own pytest in Autocoders/Python/test/implgen. Implgen also allows for absolute paths.
@@ -135,7 +135,7 @@ Cmake file that is present in all parts of directory tree to be built by cmake. 
 
 ### Requirements
 
-The Autocoder's requirements are covered by installing the F´ software package. This is is covered by the install document 
+The Autocoder's requirements are covered by installing the F´ software package. This is covered by the install document 
 found at: [INSTALL.md](../../INSTALL.md).
 
 ## Schematron

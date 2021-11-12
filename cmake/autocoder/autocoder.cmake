@@ -44,16 +44,8 @@ endfunction()
 function (__memoize SOURCES)
     string(MD5 SOURCES_HASH "${SOURCES}")
     set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${AUTOCODER_NAME}.${SOURCES_HASH}.dep")
-
-    # Run the expensive action only if the input has changed
-    on_any_changed("${SOURCES}" CHANGED)
-    if(COMMAND regenerate_memo)
-        regenerate_memo(FORCE_REGENERATE "${MEMO_FILE}")
-    endif()
-    if (CHANGED OR FORCE_REGENERATE OR NOT EXISTS "${MEMO_FILE}")
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo '${MEMO_FILE}' because: (changed: ${CHANGED}, forced: ${FORCE_REGENERATE})")
-        endif()
+    regenerate_memo(FORCE_REGENERATE "${MEMO_FILE}" "${SOURCES}")
+    if (FORCE_REGENERATE)
         get_generated_files("${SOURCES}")
         get_dependencies("${SOURCES}")
         resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
@@ -138,7 +130,7 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
     endif()
     # Configure depends on this source file if it causes a change to module dependencies
     if (MODULE_DEPENDENCIES)
-        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SOURCES})
+	    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CONSUMED_SOURCES})
     endif()
 
     # Return variables

@@ -47,7 +47,7 @@ option(CMAKE_DEBUG_OUTPUT "Generate F prime's debug output while running CMake" 
 # Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
 # the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
 #
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# If unspecified, it will be set in the platform file for the given architecture. If specified, may be set to ON to use
 # the stubbed drivers or OFF to used full driver implementations.
 #
 # **Values:**
@@ -68,7 +68,7 @@ endif()
 # active components calling each one dispatch at a time. This is designed for use with baremetal (no-OS) system,
 # however; it may be set to limit execution to a single thread and or test the baremetal scheduler on a PC.
 #
-# If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
+# If unspecified, it will be set in the platform file for the given architecture. If specified, may be set to ON to use
 # the scheduler or OFF to use the OS thread scheduler.
 #
 # **Values:**
@@ -101,7 +101,7 @@ option(FPRIME_ENABLE_UTIL_TARGETS "Enable fprime-util targets" ON)
 ####
 # `FPRIME_ENABLE_FRAMEWORK_UTS`:
 #
-# Allow a project to to run fprime UTs from the core framework. Default: on,  run fprime framework UTs. This
+# Allow a project to run fprime UTs from the core framework. Default: on,  run fprime framework UTs. This
 # does not affect project specified UTs.
 #
 # **Values:**
@@ -139,6 +139,22 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" ON)
 # e.g. `-DFPRIME_ENABLE_UT_COVERAGE=OFF`
 ####
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
+
+####
+# `FPRIME_ENABLE_TEXT_LOGGERS:`
+#
+# When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger 
+# svc components are included in the build. When unset, those components are excluded, 
+# allowing FpConfig.hpp:FW_ENABLE_TEXT_LOGGING to be unset as well, to save space.
+# TextLoggers will fail to build if FW_ENABLE_TEXT_LOGGING=0.
+#
+# **Values:**
+# - ON: (default) retains the text logger components in the target list
+# - OFF: removes text logger components from the target list
+#
+# e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
+####
+option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
 
 ####
 # `FPRIME_FPP_LOCS_BUILD`:

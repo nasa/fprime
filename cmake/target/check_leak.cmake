@@ -93,6 +93,6 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
                 --verbose -T MemCheck
         )
     endif()
-    add_dependencies("${MODULE_NAME}_${TARGET}" ${UT_EXE_NAME})
-    add_dependencies("${TARGET}" ${UT_EXE_NAME})
+    add_dependencies("${MODULE_NAME}_${TARGET_NAME}" ${UT_EXE_NAME})
+    add_dependencies("${TARGET_NAME}" ${UT_EXE_NAME})
 endfunction(add_module_target)

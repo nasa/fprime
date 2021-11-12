@@ -12,7 +12,7 @@ The requirements for `Svc::ActiveTextLogger` are as follows:
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 ISF-ATL-001 | The `Svc::ActiveTextLogger` component shall print received log texts to standard output. | Unit Test; Inspection
-ISF-ATL-002 | The `Svc::ActiveTextLogger` component shall write received log texts to a optionally supplied file. | Unit Test
+ISF-ATL-002 | The `Svc::ActiveTextLogger` component shall write received log texts to an optionally supplied file. | Unit Test
 ISF-ATL-003 | The `Svc::ActiveTextLogger` component shall format the passed log text on the calling thread context, and perform all other processing on the component's thread. | Inspection
 ISF-ATL-004 | The `Svc::ActiveTextLogger` component shall stop writing to the optional file if it would exceed its max size. | Unit Test
 ISF-ATL-005 | The `Svc::ActiveTextLogger` component shall provide a public method to supply the filename to write to and max size. | Unit Test
@@ -39,13 +39,13 @@ Port Data Type | Name | Direction | Kind | Usage
 
 ### 3.2 Functional Description
 
-The `Svc::ActiveTextLogger` component provides an text logging function for the software that maintains consistent ordering by writing the logs from a thread.
+The `Svc::ActiveTextLogger` component provides a text logging function for the software that maintains consistent ordering by writing the logs from a thread.
 
 #### 3.2.1 File Writing
 
 Once a valid file and max size is supplied via a public function call, the `Svc::ActiveTextLogger` component writes to that file as well as standard output.  The `Svc::ActiveTextLogger` component will stop writing to the file if it would exceed the maximum size.
 
-If the file supplied already exists, the `Svc::ActiveTextLogger` component will attempt to create a new file up to ten times by appending a integer suffix to end of the file name.
+If the file supplied already exists, the `Svc::ActiveTextLogger` component will attempt to create a new file up to ten times by appending an integer suffix to end of the file name.
 
 ### 3.3 Scenarios
 

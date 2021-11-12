@@ -15,7 +15,7 @@ void startTestTask() {
     volatile bool taskRan = false;
     Os::Task testTask;
     Os::TaskString name("ATestTask");
-    Os::Task::TaskStatus stat = testTask.start(name,12,100,10*1024,someTask,const_cast<bool*>(&taskRan));
+    Os::Task::TaskStatus stat = testTask.start(name,someTask,const_cast<bool*>(&taskRan));
     ASSERT_EQ(stat, Os::Task::TASK_OK);
     testTask.join(nullptr);
     ASSERT_EQ(taskRan, true);

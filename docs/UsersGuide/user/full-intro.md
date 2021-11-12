@@ -35,7 +35,7 @@ desperately needed a Flight-Quality framework to expedite development while redu
 
 ## A (Brief) Introduction to Space Systems
 
-Although, F´ can be used to model any embedded system, it has its origin in the stars. It was built at NASA's Jet
+Although F´ can be used to model any embedded system, it has its origin in the stars. It was built at NASA's Jet
 Propulsion Laboratory for use in small-scale space flight missions and thus to understand the basics of these systems
 is to more completely understand F´ itself.
 

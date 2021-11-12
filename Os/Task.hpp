@@ -7,13 +7,15 @@
 #include <Os/TaskString.hpp>
 
 #include <Os/TaskId.hpp>
+#include <Fw/Deprecate.hpp>
+#include <limits>
 
 namespace Os {
 
     class TaskRegistry; //!< forward declaration
     class Task {
         public:
-
+            static const NATIVE_UINT_TYPE TASK_DEFAULT;
             typedef enum {
                 TASK_OK, //!< message sent/received okay
                 TASK_INVALID_PARAMS, //!< started task with invalid parameters
@@ -21,7 +23,9 @@ namespace Os {
                 TASK_UNKNOWN_ERROR, //!< unexpected error return value
                 TASK_INVALID_AFFINITY, //!< unable to set the task affinity
                 TASK_DELAY_ERROR, //!< error trying to delay the task
-                TASK_JOIN_ERROR //!< error trying to join the task
+                TASK_JOIN_ERROR, //!< error trying to join the task
+                TASK_ERROR_RESOURCES, //!< unable to allocate more tasks
+                TASK_ERROR_PERMISSION, //!< permissions error setting-up tasks
             } TaskStatus ;
 
             typedef void (*taskRoutine)(void* ptr); //!< prototype for task routine started in task context
@@ -33,8 +37,12 @@ namespace Os {
 
             Task(); //!< constructor
             virtual ~Task(); //!< destructor
-            // Priority is based on Posix priorities - 0 lowest, 255 highest
-            TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = -1); //!< start the task
+
+            TaskStatus start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority = TASK_DEFAULT, NATIVE_UINT_TYPE stackSize = TASK_DEFAULT,  NATIVE_UINT_TYPE cpuAffinity = TASK_DEFAULT, NATIVE_UINT_TYPE identifier = TASK_DEFAULT); //!< start the task
+
+            // Deprecated: only the name, routine, and argument are **required** parameters.  This ordering of parameters is therefore inappropriate and will be removed in the future
+            DEPRECATED(TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = TASK_DEFAULT),
+                       "Please switch to start(Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier)"); //!< start the task
             I32 getIdentifier(); //!< get the identifier for the task
             static TaskId getOsIdentifier(); //Gets the Os Task ID. Useful for passive components.
 

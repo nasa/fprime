@@ -4,7 +4,7 @@
 ## 1. Introduction
 
 The `Svc::Sched` port is used to invoke components used in the scheduling of the application. 
-It has a argument that specifies the invocation order, so components can take different actions depending on the call order.
+It has an argument that specifies the invocation order, so components can take different actions depending on the call order.
 
 ## 2. Design
 

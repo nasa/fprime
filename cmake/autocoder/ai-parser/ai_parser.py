@@ -164,7 +164,7 @@ def read_fprime_import(import_type, root):
 
 def read_xml_file(root, import_base):
     """
-    Reads and Ai.xml file, detects the type, and then pulls in the dependencies. Recursively looks for dependencies in
+    Reads an Ai.xml file, detects the type, and then pulls in the dependencies. Recursively looks for dependencies in
     import_dictionaries by inferring dependencies for each type of dictionary.
 
     :param root: input XML file to parsed, root of tree

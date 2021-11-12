@@ -25,7 +25,7 @@ namespace Fw {
     //! \class ObjBase
     //! \brief Brief class description
     //!
-    //! This class is is the base class of the ISF object class hierarchy.
+    //! This class is the base class of the ISF object class hierarchy.
     //! Depending on which features of the architecture are enabled, this class:
     //! 1) Stores an object name
     //! 2) Provides for object registration

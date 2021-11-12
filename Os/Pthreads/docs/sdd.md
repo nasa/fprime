@@ -59,7 +59,7 @@ The queue maintains the following state:
 
 2. <a name="count">*Count*</a>: The current number of messages in the queue (starts at 0).
 
-3. <a name="maxCount">*Maximum Count*</a>: The maximum number of messages ever seen in the queue since instantiation. This the a "high water mark" of the queue.
+3. <a name="maxCount">*Maximum Count*</a>: The maximum number of messages ever seen in the queue since instantiation. This is the "high water mark" of the queue.
 
 4. <a name="queue">*Queue*</a>: The queue data structure itself. The queue memory is allocated in a `U8*` buffer of size: ([Message Size](#msgSize) + `sizeof(NATIVE_UINT_TYPE)`) * [Depth](#depth)
 
@@ -213,4 +213,4 @@ Test complete.
 ---------------------
 ```
 
-The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similar to the Posix queue implementation. Based on these results the the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a [lock-free concurrent max heap data structure](http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf).
+The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similar to the Posix queue implementation. Based on these results the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a [lock-free concurrent max heap data structure](http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf).

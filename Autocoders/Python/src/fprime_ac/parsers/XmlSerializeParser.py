@@ -207,6 +207,7 @@ class XmlSerializeParser:
                                 "%s: Member %s: size is only valid for string members"
                                 % (xml_file, n)
                             )
+                            sys.exit(-1)
 
                     else:
                         size = None
