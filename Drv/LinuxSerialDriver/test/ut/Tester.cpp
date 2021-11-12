@@ -57,7 +57,7 @@ namespace Drv {
     this->component.open(device,LinuxSerialDriverComponentImpl::BAUD_921K,flow,parity,true);
 
     // spawn driver thread
-    this->component.startReadThread(90,20*1024);
+    this->component.startReadThread();
 
   }
 

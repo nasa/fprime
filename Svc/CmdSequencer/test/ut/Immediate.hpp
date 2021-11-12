@@ -18,7 +18,7 @@ namespace Svc {
 
   namespace Immediate {
 
-    //! Test sequences with immediate commands followed by an  marker
+    //! Test sequences with immediate commands followed by a marker
     class Tester :
       public ImmediateBase::Tester
     {

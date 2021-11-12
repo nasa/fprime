@@ -92,7 +92,7 @@
  * <h3> Topology </h3>
  * \ref ProcessISFTopology.java - This object processes the model to create the topology XML diagrams. It can handle multiple subsystem within subsystems as well and multiple instantiations of subsystems and components.
  * <br>
- * \ref ISFSubsystem.java - Contains many helper functions and objects used when process the model for the topology diagram.
+ * \ref ISFSubsystem.java - Contains many helper functions and objects used when processing the model for the topology diagram.
  * <br>
  * \ref IsfSubXmlWriter.java - Writes the processed model to an XML document. 
  * 

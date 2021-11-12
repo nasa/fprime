@@ -8,6 +8,9 @@ project(FPrime C CXX)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F prime project" FORCE)
 
+# Include the build for F prime.
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
+
 # This cmake project is only intended to be used by CI and developers to test F-prime. We enable
 # -Wall and -Wextra on this particular project as a canary to warn about compilation
 # errors without impacting real projects, where a warning from an untested compiler could break the
@@ -46,12 +49,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     )
 endif()
 
+find_program(VALGRIND valgrind) # Find valgrind, and use it instead of leak check
 # For this testing cmake project, enable AddressSanitizer, a runtime memory sanitizer, on all unit tests
-if (CMAKE_BUILD_TYPE STREQUAL "Testing" OR CMAKE_BUILD_TYPE STREQUAL "TESTING")
-    add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
-    add_link_options(-fno-omit-frame-pointer -fsanitize=address)
+if (BUILD_TESTING AND NOT VALGRIND)
+    add_compile_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
+    add_link_options(-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined)
 endif()
 
-# Include the build for F prime.
-include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime-Code.cmake")

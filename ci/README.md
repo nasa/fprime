@@ -47,7 +47,7 @@ Here the user must supply the `<jenkins host>` and `<job name>` to create a job 
 
 ### Daily and Manual Builds
 
-Some users like to have an repeating build of Jenkins on a Daily or Weekly schedule to ensure that
+Some users like to have a repeating build of Jenkins on a Daily or Weekly schedule to ensure that
 the common branch (master, devel) are consistent and correct. This can be done by setting a
 scheduled build trigger and, if using the above `config.xml`, the `${ghprbActualCommit}` and
 `${ghprbTargetBranch}` environment variables should be set to the desired branch to build. This can be done

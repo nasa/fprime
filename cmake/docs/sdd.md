@@ -121,7 +121,7 @@ components".
 
 ### 3.2 Traditional F´Organization w/ Out-Of-Source Builds
 
-In this design, F´ core and adaptations are kept in of the F´ directory. This is the traditional
+In this design, F´ core and adaptations are kept in the F´ directory. This is the traditional
 way of using F´. It is less easy to use F´ as a library, and can be somewhat difficult to update
 F´, if needed, but is otherwise a stable approach. Here a user uses a named directory to build
 into, and then supplies cmake the configuration arguments to setup the build properly, just like
@@ -281,7 +281,7 @@ blue/orange in the diagram below.
 
 ### 4.1 Deployment and Executable CMake Files
 
-These files are supplied by the the deployment or executable being built. This is typically supplied
+These files are supplied by the deployment or executable being built. This is typically supplied
 by the adaptation project of F´. These files supply two critical functions. Primarily, this must
 supply an entry-point of the build system. It contains the standard CMake headers and an inclusion
 of the F´ CMake support file `FPrime.cmake` it should also include `FPrime-Code.cmake` to include
@@ -336,7 +336,7 @@ with the `Ref` prefix.
 
 ### 4.2 F´ Core CMake Support Files
 
-These files provide the the core CMake functions used to make components, deployments, and modules.
+These files provide the core CMake functions used to make components, deployments, and modules.
 In addition `FPrime-Code.cmake` includes the sub directories that compose F´ core components. In
 that way deployments need only include the one CMake file to import all of F´. Functions that
 automate the auto-code function, module dependencies, and various other utilities are included to.
@@ -355,7 +355,7 @@ functions. These functions assemble F´ from those constituents.
 
 ## 5 CMake Architecture
 
-As can be see thus far, most of the F´ build magic is encapsulated in CMake utility functions. This
+As can be seen thus far, most of the F´ build magic is encapsulated in CMake utility functions. This
 section will describe the primary functions and how they setup the F´ build. There are two primary
 functions sets in this architecture. Each function set has the raw function, which performs the
 generation and the other which wraps it. `register_*` functions are the API wrappers, and the

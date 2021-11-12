@@ -25,7 +25,7 @@ namespace Fw {
 
         // The normal input ports perform deserialize() on the passed buffer,
         // which is what this status is based on.  This is not the case for the
-        // InputSerializePort, so just return a okay status
+        // InputSerializePort, so just return an okay status
         return FW_SERIALIZE_OK;
     }
 

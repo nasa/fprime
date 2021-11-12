@@ -181,7 +181,7 @@
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>Used as a object to store the componentMap, physicalConnectionList, name, baseID, and instaneWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to the XML output file. </para>    </detaileddescription>
+<para>Used as an object to store the componentMap, physicalConnectionList, name, baseID, and instaneWindow. An object of this type is then sent to IsfSubXmlWriter and is used to write to the XML output file. </para>    </detaileddescription>
     <collaborationgraph>
       <node id="241">
         <label>ArrayList&lt; gov.nasa.jpl.componentaction.ISFSubsystem.gov.nasa.jpl.componentaction.ISFSubsystem.physicalConnectionType &gt;</label>

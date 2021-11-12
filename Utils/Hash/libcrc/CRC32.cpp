@@ -37,7 +37,7 @@ namespace Utils {
             local_hash_handle = update_crc_32(local_hash_handle, c);
         }
         HashBuffer bufferOut;
-        // For CRC32 we need to return the one's compliment of the result:
+        // For CRC32 we need to return the one's complement of the result:
         Fw::SerializeStatus status = bufferOut.serialize(~(local_hash_handle));
         FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
         buffer = bufferOut;
@@ -64,7 +64,7 @@ namespace Utils {
         final(HashBuffer& buffer)
     {
         HashBuffer bufferOut;
-        // For CRC32 we need to return the one's compliment of the result:
+        // For CRC32 we need to return the one's complement of the result:
         Fw::SerializeStatus status = bufferOut.serialize(~(this->hash_handle));
         FW_ASSERT( Fw::FW_SERIALIZE_OK == status );
         buffer = bufferOut;
@@ -74,7 +74,7 @@ namespace Utils {
       final(U32 &hashvalue)
     {
       FW_ASSERT(sizeof(this->hash_handle) == sizeof(U32));
-      // For CRC32 we need to return the one's compliment of the result:
+      // For CRC32 we need to return the one's complement of the result:
       hashvalue = ~(this->hash_handle);
     }
 

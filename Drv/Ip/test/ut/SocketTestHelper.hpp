@@ -14,7 +14,7 @@ namespace Test {
 
 
 /**
- * Force a receive timeout on a socket such that it will not hang our testing despite the the normal recv behavior of
+ * Force a receive timeout on a socket such that it will not hang our testing despite the normal recv behavior of
  * "block forever" until it gets data.
  * @param socket: socket to make timeout
  */

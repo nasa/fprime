@@ -67,7 +67,7 @@ Below is an example of how these could be used:
 {% endif %}
 ```
 
-Here, he file template will only include the telemetry port import if the user had selected yes
+Here, the file template will only include the telemetry port import if the user had selected yes
 to the telemetry prompt.
 
 ### Loops
@@ -90,7 +90,7 @@ the other.
 If you have code that you would like to run immediately before or after the template files
 are stamped out, you can create post_gen_project.py and pre_gen_project.py files inside of a directory
 titled `hooks` within your cookiecutter template directory. The pre_gen_project.py will run right before 
-your files are generated and the post_gen_project.py will run immediatly after the files are generated.
+your files are generated and the post_gen_project.py will run immediately after the files are generated.
 
 ### Other Cookiecutter features
 

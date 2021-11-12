@@ -1,9 +1,12 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <cstring>
+#include <limits>
 
 namespace Os {
-
+    const NATIVE_UINT_TYPE Task::TASK_DEFAULT = std::numeric_limits<NATIVE_UINT_TYPE>::max();
+    
     TaskRegistry* Task::s_taskRegistry = nullptr;
     NATIVE_INT_TYPE Task::s_numTasks = 0;
 
@@ -39,6 +42,10 @@ namespace Os {
 
     TaskRegistry::TaskRegistry() {
 
+    }
+
+    Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+        return this->start(name, routine, arg, priority, stackSize, cpuAffinity, identifier);
     }
 
     TaskRegistry::~TaskRegistry() {

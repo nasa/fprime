@@ -1438,7 +1438,7 @@ class Port:
 
 class CommandArg:
     """
-    Data container for an command argument
+    Data container for a command argument
     """
 
     def __init__(self, name, type, size=None, comment=None):
