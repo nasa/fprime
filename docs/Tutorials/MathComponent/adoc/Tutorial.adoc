@@ -167,7 +167,8 @@ If you get stuck, you can look at the <<types_ref,reference implementation>>.
 
 *Inspect the generated code:*
 Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
-(you may want to use `pushd`, or do this in a separate shell).
+(you may want to use `pushd`, or do this in a separate shell,
+so you don't lose your current working directory).
 The directory `build-fprime-automatic-native` is where all the
 generated code lives for the "automatic native" build of the `Ref`
 project.
@@ -203,7 +204,7 @@ do the following:
 
 . Go to the `Ref` directory.
 
-. Run `cp -R docs/Tutorials/MathComponent/MathTypes .`
+. Run `cp -R ../docs/Tutorials/MathComponent/MathTypes .`
 
 . Update `Ref/CMakeLists.txt` as stated
 <<types_add,above>>.
@@ -1007,7 +1008,7 @@ In directory `Ref/MathReceiver`, create a file
 
 [source,fpp]
 ----
-include::../../../../Ref/MathReceiver/MathReceiver.fpp[]
+include::../MathReceiver/MathReceiver.fpp[]
 ----
 
 This code defines a component `Ref.MathReceiver`.
