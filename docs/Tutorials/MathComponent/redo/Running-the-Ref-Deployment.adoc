@@ -9,7 +9,7 @@ After several seconds, a browser window should appear.
 
 === Sending a Command
 
-At the top of the window are several buttons, each of which corresponds to 
+At the top of the window are several buttons, each of which corresponds to
 a GDS view.
 Select the Commanding button (this is the view that is selected
 when you first start the GDS).
@@ -25,7 +25,7 @@ You should see three boxes appear:
 Fill in the arguments corresponding to the operation `1 + 2`.
 You can use the tab key to move between the boxes.
 When you have done this, click the Send Command button.
-You should see a table entry at the bottom of the window 
+You should see a table entry at the bottom of the window
 indicating that the command was sent.
 
 === Checking Events

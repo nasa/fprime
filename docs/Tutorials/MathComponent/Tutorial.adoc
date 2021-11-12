@@ -346,7 +346,7 @@ module Ref {
   active component MathSender {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Port for sending the operation request
@@ -356,7 +356,7 @@ module Ref {
     async input port mathResultIn: MathResult
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive port
@@ -381,7 +381,7 @@ module Ref {
     time get port timeGetOut
 
     # ----------------------------------------------------------------------
-    # Commands 
+    # Commands
     # ----------------------------------------------------------------------
 
     @ Do a math operation
@@ -392,7 +392,7 @@ module Ref {
                          )
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     @ Math command received
@@ -412,7 +412,7 @@ module Ref {
       format "Math result is {f}"
 
     # ----------------------------------------------------------------------
-    # Telemetry 
+    # Telemetry
     # ----------------------------------------------------------------------
 
     @ The first value
@@ -510,7 +510,7 @@ Go into the directory `Ref/MathTypes`.
 Run the command `fprime-util impl`.
 The build system should
 run for a bit. At the end there should be two new files
-in the directory: 
+in the directory:
 `MathSenderComponentImpl.cpp-template` and
 `MathSenderComponentImpl.hpp-template`.
 Run the following commands:
@@ -659,7 +659,7 @@ Run `fprime-util build`.
 === Write and Run Unit Tests
 
 *Unit tests* are an important part of FSW development.
-At the component level, unit tests typically invoke input ports, send commands, 
+At the component level, unit tests typically invoke input ports, send commands,
 and check for expected values on output ports (including telemetry and event
 ports).
 
@@ -706,7 +706,7 @@ int main(int argc, char **argv) {
 ----
 
 This file is a stub for running tests using the
-https://github.com/google/googletest[Google Test framework]. 
+https://github.com/google/googletest[Google Test framework].
 Right now there aren't any tests to run; we will add one
 in the next section.
 
@@ -854,7 +854,7 @@ void Tester ::
 }
 ----
 
-This function is parameterized over different 
+This function is parameterized over different
 operations.
 It is divided into five sections: sending the command,
 checking the command response, checking the output on
@@ -871,7 +871,7 @@ In a flight configuration, the component has its own thread,
 and the thread blocks on the `doDispatch` call until another
 thread puts a message on the queue.
 In a unit test context, there is only one thread, so the pattern
-is to place work on the queue and then call `doDispatch` on 
+is to place work on the queue and then call `doDispatch` on
 the same thread.
 
 There are a couple of pitfalls to watch out for with this pattern:
@@ -911,7 +911,7 @@ void Tester ::
 This function calls `testDoMath` to test an `ADD` command.
 
 *Write a test macro:*
-Add the following code to the file `main.cpp`, 
+Add the following code to the file `main.cpp`,
 before the definition of the `main` function:
 
 [source,c++]
@@ -1074,7 +1074,7 @@ This line seeds the random number generator used by STest.
 
 *Running the tests:*
 Recompile and rerun the tests.
-Now go to 
+Now go to
 `Ref/build-fprime-automatic-native-ut/Ref/MathSender` and inspect the
 file `seed-history`.
 This file is a log of random seed values.
@@ -1246,7 +1246,7 @@ That means invocations of `mathOpIn` put messages on a queue.
 That means invocations of `schedIn` immediately call the
 handler function to do work.
 
-. *Special ports:* 
+. *Special ports:*
 As before, there are special ports for commands, events, telemetry,
 and time.
 There are also special ports for getting and setting parameters.
@@ -1281,7 +1281,7 @@ is cleared.
 . *Commands:* There is one command for clearing
 the event throttle.
 
-. *Telemetry:* 
+. *Telemetry:*
 There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
@@ -1501,9 +1501,9 @@ Add the following code to the beginning of the
 private:
 
   // ----------------------------------------------------------------------
-  // Types 
+  // Types
   // ----------------------------------------------------------------------
-  
+
   enum class ThrottleState {
     THROTTLED,
     NOT_THROTTLED
@@ -1573,7 +1573,7 @@ This function does the following:
 . Send a command to the component to set the `FACTOR` parameter
 to the value `factor`.
 
-. If `throttleState` is `NOT_THROTTLED`, then check 
+. If `throttleState` is `NOT_THROTTLED`, then check
 that the event was emitted.
 Otherwise check that the event was throttled (not emitted).
 
@@ -1681,7 +1681,7 @@ Instead we invoke `schedIn`.
 
 ==== Write and Run Tests
 
-For each of the tests described below, you must add the 
+For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
 and the corresponding test macro to `main.cpp`.
 If you can't remember how to do it, look back at the
@@ -1733,7 +1733,7 @@ another way to set a parameter.
 You can also set a parameter by initialization, as follows:
 
 . Call the `paramSet` function as shown.
-This function sets the parameter value in 
+This function sets the parameter value in
 the part of the test harness that mimics the behavior of the
 parameter database component.
 
@@ -1932,7 +1932,7 @@ It has base identifier 0x2700 and the default queue size.
 
 *More information:*
 For more information on defining component instances,
-see 
+see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
 
 === Updating the Topology
@@ -2008,7 +2008,7 @@ that the `mathSender` and `mathReceiver` ports are connected.
 
 *More information:*
 For more information on defining topologies,
-see 
+see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies[_The FPP User's Guide_].
 
 === Building the Ref Deployment
@@ -2108,7 +2108,7 @@ After several seconds, a browser window should appear.
 
 === Sending a Command
 
-At the top of the window are several buttons, each of which corresponds to 
+At the top of the window are several buttons, each of which corresponds to
 a GDS view.
 Select the Commanding button (this is the view that is selected
 when you first start the GDS).
@@ -2124,7 +2124,7 @@ You should see three boxes appear:
 Fill in the arguments corresponding to the operation `1 + 2`.
 You can use the tab key to move between the boxes.
 When you have done this, click the Send Command button.
-You should see a table entry at the bottom of the window 
+You should see a table entry at the bottom of the window
 indicating that the command was sent.
 
 === Checking Events

@@ -54,7 +54,7 @@ It has base identifier 0x2700 and the default queue size.
 
 *More information:*
 For more information on defining component instances,
-see 
+see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
 
 === Updating the Topology
@@ -130,7 +130,7 @@ that the `mathSender` and `mathReceiver` ports are connected.
 
 *More information:*
 For more information on defining topologies,
-see 
+see
 https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies[_The FPP User's Guide_].
 
 === Building the Ref Deployment

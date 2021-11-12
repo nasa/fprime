@@ -23,7 +23,7 @@ namespace Ref {
   MathReceiver ::
     MathReceiver(
         const char *const compName
-    ) : 
+    ) :
       MathReceiverComponentBase(compName)
   {
 

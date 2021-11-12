@@ -104,7 +104,7 @@ Go into the directory `Ref/MathTypes`.
 Run the command `fprime-util impl`.
 The build system should
 run for a bit. At the end there should be two new files
-in the directory: 
+in the directory:
 `MathSenderComponentImpl.cpp-template` and
 `MathSenderComponentImpl.hpp-template`.
 Run the following commands:
@@ -253,7 +253,7 @@ Run `fprime-util build`.
 === Write and Run Unit Tests
 
 *Unit tests* are an important part of FSW development.
-At the component level, unit tests typically invoke input ports, send commands, 
+At the component level, unit tests typically invoke input ports, send commands,
 and check for expected values on output ports (including telemetry and event
 ports).
 
@@ -300,7 +300,7 @@ int main(int argc, char **argv) {
 ----
 
 This file is a stub for running tests using the
-https://github.com/google/googletest[Google Test framework]. 
+https://github.com/google/googletest[Google Test framework].
 Right now there aren't any tests to run; we will add one
 in the next section.
 
@@ -448,7 +448,7 @@ void Tester ::
 }
 ----
 
-This function is parameterized over different 
+This function is parameterized over different
 operations.
 It is divided into five sections: sending the command,
 checking the command response, checking the output on
@@ -465,7 +465,7 @@ In a flight configuration, the component has its own thread,
 and the thread blocks on the `doDispatch` call until another
 thread puts a message on the queue.
 In a unit test context, there is only one thread, so the pattern
-is to place work on the queue and then call `doDispatch` on 
+is to place work on the queue and then call `doDispatch` on
 the same thread.
 
 There are a couple of pitfalls to watch out for with this pattern:
@@ -505,7 +505,7 @@ void Tester ::
 This function calls `testDoMath` to test an `ADD` command.
 
 *Write a test macro:*
-Add the following code to the file `main.cpp`, 
+Add the following code to the file `main.cpp`,
 before the definition of the `main` function:
 
 [source,c++]
@@ -668,7 +668,7 @@ This line seeds the random number generator used by STest.
 
 *Running the tests:*
 Recompile and rerun the tests.
-Now go to 
+Now go to
 `Ref/build-fprime-automatic-native-ut/Ref/MathSender` and inspect the
 file `seed-history`.
 This file is a log of random seed values.

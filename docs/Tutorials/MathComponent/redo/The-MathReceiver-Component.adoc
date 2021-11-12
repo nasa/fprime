@@ -36,7 +36,7 @@ That means invocations of `mathOpIn` put messages on a queue.
 That means invocations of `schedIn` immediately call the
 handler function to do work.
 
-. *Special ports:* 
+. *Special ports:*
 As before, there are special ports for commands, events, telemetry,
 and time.
 There are also special ports for getting and setting parameters.
@@ -71,7 +71,7 @@ is cleared.
 . *Commands:* There is one command for clearing
 the event throttle.
 
-. *Telemetry:* 
+. *Telemetry:*
 There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
@@ -291,9 +291,9 @@ Add the following code to the beginning of the
 private:
 
   // ----------------------------------------------------------------------
-  // Types 
+  // Types
   // ----------------------------------------------------------------------
-  
+
   enum class ThrottleState {
     THROTTLED,
     NOT_THROTTLED
@@ -363,7 +363,7 @@ This function does the following:
 . Send a command to the component to set the `FACTOR` parameter
 to the value `factor`.
 
-. If `throttleState` is `NOT_THROTTLED`, then check 
+. If `throttleState` is `NOT_THROTTLED`, then check
 that the event was emitted.
 Otherwise check that the event was throttled (not emitted).
 
@@ -471,7 +471,7 @@ Instead we invoke `schedIn`.
 
 ==== Write and Run Tests
 
-For each of the tests described below, you must add the 
+For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
 and the corresponding test macro to `main.cpp`.
 If you can't remember how to do it, look back at the
@@ -523,7 +523,7 @@ another way to set a parameter.
 You can also set a parameter by initialization, as follows:
 
 . Call the `paramSet` function as shown.
-This function sets the parameter value in 
+This function sets the parameter value in
 the part of the test harness that mimics the behavior of the
 parameter database component.
 
