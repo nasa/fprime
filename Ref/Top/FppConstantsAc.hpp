@@ -23,7 +23,7 @@ namespace Ref {
     };
 
     enum FppConstant_stackSize {
-      stackSize = 10240
+      stackSize = 16384
     };
 
   }
