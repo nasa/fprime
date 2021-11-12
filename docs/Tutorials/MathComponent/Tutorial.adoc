@@ -236,7 +236,7 @@ it defines the type of the data carried on a port.
 
 For this tutorial, we need two port definitions:
 
-* `MathOp` for sending an arithmetic operation request from 
+* `MathOp` for sending an arithmetic operation request from
 `MathSender` to `MathReceiver`.
 
 * `MathResult` for sending the result of an arithmetic
