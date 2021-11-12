@@ -241,7 +241,6 @@ config
 configparser
 configurability
 configurator
-Connectedoutput
 cookiecutter
 cooldown
 coor
@@ -336,7 +335,6 @@ deserialized
 deserializing
 dest
 DEVNULL
-dfdc
 DFL
 DFPRIME
 DGRAM
@@ -510,6 +508,7 @@ fflush
 Ffs
 fgetc
 fgets
+fh
 filecmp
 filedown
 FILEDOWNLINK
@@ -525,6 +524,7 @@ finalizer
 findall
 fio
 Firefox
+fixme
 flist
 FNDELAY
 fnmatch
@@ -745,7 +745,6 @@ integertypename
 interoperability
 intlimits
 ints
-inttype
 invisi
 ioc
 ioctl
