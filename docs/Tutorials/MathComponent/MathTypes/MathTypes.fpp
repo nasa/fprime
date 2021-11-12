@@ -4,7 +4,7 @@ module Ref {
   enum MathOp {
     ADD @< Addition
     SUB @< Subtraction
-    MUL @< Mutliplication
+    MUL @< Multiplication
     DIV @< Division
   }
 
