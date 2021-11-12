@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  MathSenderImpl.cpp
+// \title  MathSender.cpp
 // \author tcanham, bocchino
 // \brief  cpp file for MathSender component implementation class
 //
