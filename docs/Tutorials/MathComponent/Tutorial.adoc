@@ -753,7 +753,7 @@ macros.
 class of `MathSenderGTestBase`.
 It provides basic features such as histories of port
 invocations.
-It is not specific to Google Test, so that one may
+It is not specific to Google Test, so you can
 use this class without Google Test if desired.
 
 You can look at the header files for these generated classes
@@ -1126,7 +1126,7 @@ module Ref {
   queued component MathReceiver {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Port for receiving the math operation
@@ -1139,7 +1139,7 @@ module Ref {
     sync input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive
@@ -1170,7 +1170,7 @@ module Ref {
     time get port timeGetOut
 
     # ----------------------------------------------------------------------
-    # Parameters 
+    # Parameters
     # ----------------------------------------------------------------------
 
     @ The multiplier in the math operation
@@ -1179,7 +1179,7 @@ module Ref {
       save opcode 11
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     @ Factor updated
@@ -1206,7 +1206,7 @@ module Ref {
       format "Event throttle cleared"
 
     # ----------------------------------------------------------------------
-    # Commands 
+    # Commands
     # ----------------------------------------------------------------------
 
     @ Clear the event throttle
@@ -1214,7 +1214,7 @@ module Ref {
       opcode 1
 
     # ----------------------------------------------------------------------
-    # Telemetry 
+    # Telemetry
     # ----------------------------------------------------------------------
 
     @ The operation

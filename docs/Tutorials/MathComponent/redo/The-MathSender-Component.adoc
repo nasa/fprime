@@ -347,7 +347,7 @@ macros.
 class of `MathSenderGTestBase`.
 It provides basic features such as histories of port
 invocations.
-It is not specific to Google Test, so that one may
+It is not specific to Google Test, so you can
 use this class without Google Test if desired.
 
 You can look at the header files for these generated classes
