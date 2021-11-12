@@ -8,8 +8,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-  #"${CMAKE_CURRENT_LIST_DIR}/RefTopologyAc.cpp"
-  #"${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
   "${CMAKE_CURRENT_LIST_DIR}/RefTopologyDefs.cpp"
 )
 set(MOD_DEPS

@@ -186,11 +186,6 @@ module Ref {
 
   }
 
-  instance mathSender: Ref.MathSender base id 0xE00 \
-    queue size Default.queueSize \
-    stack size Default.stackSize \
-    priority 100
-
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
@@ -231,9 +226,6 @@ module Ref {
     queue size Default.queueSize
 
   instance sendBuffComp: Ref.SendBuff base id 0x2600 \
-    queue size Default.queueSize
-
-  instance mathReceiver: Ref.MathReceiver base id 0x2700 \
     queue size Default.queueSize
 
   # ----------------------------------------------------------------------

@@ -14,8 +14,6 @@
 
 #include "Drv/BlockDriver/BlockDriver.hpp"
 #include "Drv/TcpClient/TcpClient.hpp"
-#include "Ref/MathReceiver/MathReceiver.hpp"
-#include "Ref/MathSender/MathSender.hpp"
 #include "Ref/PingReceiver/PingReceiver.hpp"
 #include "Ref/RecvBuffApp/RecvBuff.hpp"
 #include "Ref/SendBuffApp/SendBuff.hpp"
@@ -96,7 +94,6 @@ namespace Ref {
       eventLogger = 0xB00,
       chanTlm = 0xC00,
       prmDb = 0xD00,
-      mathSender = 0xE00,
       health = 0x2000,
       SG1 = 0x2100,
       SG2 = 0x2200,
@@ -104,7 +101,6 @@ namespace Ref {
       SG4 = 0x2400,
       SG5 = 0x2500,
       sendBuffComp = 0x2600,
-      mathReceiver = 0x2700,
       comm = 0x4000,
       downlink = 0x4100,
       fatalAdapter = 0x4200,
@@ -141,8 +137,6 @@ namespace Ref {
       fileUplinkBufferManager,
       health,
       linuxTime,
-      mathReceiver,
-      mathSender,
       pingRcvr,
       prmDb,
       rateGroup1Comp,
@@ -167,7 +161,6 @@ namespace Ref {
       fileDownlink = 100,
       fileManager = 100,
       fileUplink = 100,
-      mathSender = 100,
       pingRcvr = 100,
       prmDb = 96,
       rateGroup1Comp = 120,
@@ -192,8 +185,6 @@ namespace Ref {
       fileManager = 30,
       fileUplink = 30,
       health = 25,
-      mathReceiver = 10,
-      mathSender = 10,
       pingRcvr = 10,
       prmDb = 10,
       rateGroup1Comp = 10,
@@ -213,7 +204,6 @@ namespace Ref {
       fileDownlink = 10240,
       fileManager = 10240,
       fileUplink = 10240,
-      mathSender = 10240,
       pingRcvr = 10240,
       prmDb = 10240,
       rateGroup1Comp = 10240,
@@ -232,7 +222,6 @@ namespace Ref {
       fileDownlink,
       fileManager,
       fileUplink,
-      mathSender,
       pingRcvr,
       prmDb,
       rateGroup1Comp,
