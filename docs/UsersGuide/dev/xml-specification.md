@@ -58,9 +58,10 @@ specification.
 | comment                    |           | Used for a comment describing the type. Is placed as a Doxygen-compatible tag in the class declaration.                                              |
 | members                    |           | Starts the region of the declaration where type members are specified.                                                                               |
 | member                     |           | Defines a member of the type.                                                                                                                        |
-| member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
 | member                     | name      | Defines the member name.                                                                                                                             |
-| member                     | size      | Specifies that the member is an array of the type with the specified size.                                                                           |
+| member                     | type      | The type of the member. Should be a built-in type, ENUM, string, an XML-specified type, or a user-written serializable type. |
+| member                     | size      | Required when type is string; otherwise not allowed. Specifies the string size.|
+| member                     | array\_size | Specifies that the member is an array of the type with the specified size.|
 | member                     | format    | Specifies a format specifier when displaying the member.                                                                                             |
 | default                    |           | Specifies the default value of the member (optional).                                                                              |
 | enum                       |           | Specifies an enumeration when the member type=ENUM.                                                                                                  |

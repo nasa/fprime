@@ -4,7 +4,7 @@
 # A setup to install fpp tool suite automatically as part of the CMake run. If the user wants to avoid this, the user
 # should install FPP on the system path and that will be used.
 ####
-set(FPP_VERSION 0d7c587898ddb7a672775dbd2efe55d4e42051da)
+set(FPP_VERSION 7d1a68c64b4451b69a86503e93c6ea55c5b30d12)
 set(FPP_TOOLS_PATH "${CMAKE_BINARY_DIR}/fpp-tools-install" CACHE PATH "Installation path for fpp tools")
 
 ####
