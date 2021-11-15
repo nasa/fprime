@@ -190,20 +190,20 @@ void constructApp(U32 port_number, char* hostname) {
 
     // Active component startup
     // start rate groups
-    rateGroup10HzComp.start(0, 120,10 * 1024);
-    rateGroup1HzComp.start(0, 119,10 * 1024);
+    rateGroup10HzComp.start();
+    rateGroup1HzComp.start();
     // start dispatcher
-    cmdDisp.start(0,101,10*1024);
+    cmdDisp.start();
     // start sequencer
-    cmdSeq.start(0,100,10*1024);
+    cmdSeq.start();
     // start telemetry
-    eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
+    eventLogger.start();
+    chanTlm.start();
+    prmDb.start();
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    rpiDemo.start(0, 100, 10*1024);
+    fileDownlink.start();
+    fileUplink.start();
+    rpiDemo.start();
 
     // Use the mini-UART for our serial connection
     // https://www.raspberrypi.org/documentation/configuration/uart.md
@@ -240,14 +240,14 @@ void constructApp(U32 port_number, char* hostname) {
         return;
     }
 
-    uartDrv.startReadThread(100,10*1024,-1);
+    uartDrv.startReadThread();
 
     // Initialize socket server if and only if there is a valid specification
     if (hostname != NULL && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(hostname, port_number);
-        comm.startSocketTask(name, 100, 10 * 1024);
+        comm.startSocketTask(name);
     }
 }
 

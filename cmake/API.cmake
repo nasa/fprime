@@ -438,9 +438,16 @@ function(register_fprime_ut)
             message(STATUS "No extra 'MOD_DEPS' found in '${CMAKE_CURRENT_LIST_FILE}'.")
         endif()
     endif()
+
+    # Turn allow turning GTest on/off
+    set(INCLUDE_GTEST ON)
+    if (DEFINED UT_INCLUDE_GTEST)
+        set(INCLUDE_GTEST ${UT_INCLUDE_GTEST})
+    endif()
+
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
     # Explicit call to module register
-    generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}")
+    generate_ut("${UT_NAME}" "${SC_IFS}" "${MD_IFS}" "${INCLUDE_GTEST}")
     setup_all_module_targets(FPRIME_UT_TARGET_LIST ${MODULE_NAME} "" "${SOURCE_FILES}" "${AC_OUTPUTS}" "${MD_IFS}")
 endfunction(register_fprime_ut)
 

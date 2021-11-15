@@ -94,7 +94,7 @@ namespace Svc {
             //!  \brief Task preamble
             //!
             //!  This method is called prior to entering the message loop.
-            //!  It issues and event indicating that the task has started.
+            //!  It issues an event indicating that the task has started.
             //!
 
             void preamble(void);

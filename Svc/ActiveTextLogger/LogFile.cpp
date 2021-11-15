@@ -46,7 +46,7 @@ namespace Svc {
         // Print to file if there is one, and given a valid size:
         if (this->m_openFile && size > 0) {
 
-            // Make sure we wont exceed the maximum size:
+            // Make sure we won't exceed the maximum size:
             // Note: second condition in if statement is true if there is overflow
             // in the addition below
             U32 projectedSize = this->m_currentFileSize + size;
@@ -57,7 +57,7 @@ namespace Svc {
                 this->m_openFile = false;
                 this->m_file.close();
             }
-            // Wont exceed max size, so write to file:
+            // Won't exceed max size, so write to file:
             else {
 
                 NATIVE_INT_TYPE writeSize = static_cast<NATIVE_INT_TYPE>(size);

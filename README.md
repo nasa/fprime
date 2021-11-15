@@ -19,15 +19,15 @@ F´ comprises several elements:
 
 The following utilities are prerequisites to installing F´:
 
-- [cmake](https://cmake.org/)
-- [git](https://git-scm.com/)
-- [Python](https://www.python.org/) 3.6+ with pip
+* [cmake](https://cmake.org/)
+* [git](https://git-scm.com/)
+* [Python](https://www.python.org/) 3.6+ with pip
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required.
 
 To install F´ quickly, enter:
 
-```
+```shell
 git clone https://github.com/nasa/fprime.git
 pip install --upgrade fprime-tools fprime-gds
 ```
@@ -45,7 +45,6 @@ The next section links to more step-by-step tutorials, but it's a good idea to b
    The standard reference application demonstrates how most of the system components should be wired together. The reference application can build on Linux or macOS, allowing you to get started immediately without the need for embedded hardware.
 
 **Example two:** [RPI](./RPI/README.md)
-
 
 This Raspberry PI application shows how to run F´ in an embedded context by running on the Raspberry PI (a $35 embedded Linux computer). This application shows you how to get started on embedded projects with cross-compiling, drivers, and more. The Raspberry Pi was chosen because it is commercially available for a low price and runs Linux.
 
@@ -101,6 +100,7 @@ Version 2.0.0 of F´ represents major improvements across the F´ framework. As 
 functionality. This section will offer recommendations to migrate to version 2.0.0 of F´.
 
 Features and Functionality:
+
 * New ground interface change improves stability and flexibility
   * `Svc::Framer` and `Svc::Deframer` components may be used in place of `Svc::GroundInterface`
   * `Svc::Framer` and `Svc::Deframer` delegate to a user instantiated framing class allowing use of non-fprime framing protocols
@@ -116,6 +116,7 @@ Features and Functionality:
 * Bug fixes and stability improvements
 
 Migration considerations:
+
 * F´ tooling (fprime-util and fprime-gds) should be installed using `pip install fprime-tools fprime-gds`
 * `Os::File::open` with the mode CREATE will now properly respect O_EXCL and error if the file exists. Pass in `false` as the final argument to override.
 * Revise uses of `Fw::Buffer` to correct usage of member functions using camel case.  E.g. `Fw::Buffer::getsize` is now `Fw::Buffer::getSize`
@@ -123,27 +124,27 @@ Migration considerations:
 * `Svc::BufferManager` has been reworked to remove errors. When instantiating it please supply a memory allocator as shown in `Ref`.
 * Dictionaries, binaries, and other build outputs now are written to a deployments `build_artifacts` folder.
 
-
 **Deprecated Functionality:** The following features are or will be deprecated soon and may be removed in future releases.
+
 * `Svc::GroundInterface` and `Drv::SocketIpDriver` should be replaced by the new ground system components.
 * Inline enumerations (enumerations defined inside the definition of a command/event/channel) should be replaced by EnumAi.xml implementations
 * `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF` will be removed in favor of future `fprime-util check` variants
 * `Autocoders/MagicDrawCompPlugin` will be removed in a near-term release
 
-### Release 1.0:
+### Release 1.0
 
 * This is the initial release of the software to open source. See the license file for terms of use.
 
 ### Release 1.01
 
- * Updated contributor list. No code changes.
+* Updated contributor list. No code changes.
 
 ### Release 1.1
 
- * Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
- * Added a tutorial [here](docs/Tutorials/README.md)
- * Updated Svc/BufferManager with bug fix
- * Fixed a bunch of shell permissions
+* Created a Raspberry Pi demo. Read about it [here](RPI/README.md)
+* Added a tutorial [here](docs/Tutorials/README.md)
+* Updated Svc/BufferManager with bug fix
+* Fixed a bunch of shell permissions
 
 ### Release 1.2
 
@@ -196,7 +197,7 @@ Migration considerations:
   * Usage of framework can be out-of-source
   * `settings.ini` Introduced
   * Example: [https://github.com/fprime-community/fprime-arduino](https://github.com/fprime-community/fprime-arduino)
-* Refactored `fprim-util`
+* Refactored `fprime-util`
   * Replaced redundant targets with flags e.g. build-ut is now build --ut
   * Added `info` command
   * Bug and usability fixes
@@ -205,4 +206,3 @@ Migration considerations:
   * Project custom dashboard support
 * Array, Enum type support and examples
 * Code linting and bug fixes
-

@@ -6,7 +6,7 @@
 The `Svc::TlmChan` Component is used to store telemetry values written by other components. The values are stored in serialized form. 
 The data is stored as a set of telemetry channels in a table. 
 The data can be individually read back or periodically pushed to another component for transporting out of the system. 
-`Svc::TlmChan` is a implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
+`Svc::TlmChan` is an implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
 
 ## 2. Requirements
 
@@ -58,7 +58,7 @@ This diagram shows the scenario where telemetry packets are generated for an ext
 
 #### 3.3.2 Telemetry Database Option
 
-This diagram shows the scenario where telemetry packets are stored an retrieved as a database:
+This diagram shows the scenario where telemetry packets are stored and retrieved as a database:
 
 ![External User Scenario](img/DatabaseScenario.jpg) 
 

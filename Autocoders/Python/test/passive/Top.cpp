@@ -51,8 +51,8 @@ void constructArchitecture(void) {
 
 	// Active component startup
 
-	// start(identifier, stack size, priority)
-	C1_ptr->start(0, 10 * 1024, 100);
+	// start()
+	C1_ptr->start();
 
 	dumparch();
 }

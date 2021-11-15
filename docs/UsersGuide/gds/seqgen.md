@@ -18,7 +18,7 @@ A2015-075T22:32:40.123 cmdDisp.CMD_NO_OP
 ```
 **Note:** see [Time Details](#time-details) for more on time formats and time bases.
 
-Here an absolute command was chosen.  Times can be specified in in absolute or relative time format.  An absolute time
+Here an absolute command was chosen.  Times can be specified in an absolute or relative time format.  An absolute time
 starts with an `A` and specifies a calendar time. A relative command is specified starting with an `R`, which runs
 relative to the previous command or start of the sequence. A relative command with an argument is shown below.
 
