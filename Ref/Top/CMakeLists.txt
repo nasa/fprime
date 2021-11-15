@@ -19,8 +19,3 @@ set(MOD_DEPS
 )
 
 register_fprime_module()
-get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-# Remove old autocoded C++ file from target
-get_target_property(FINAL_SOURCE_FILES "${MODULE_NAME}" SOURCES) # TODO: fix this
-list(REMOVE_ITEM FINAL_SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/RefTopologyAppAc.cpp")
-set_target_properties("${MODULE_NAME}" PROPERTIES SOURCES "${FINAL_SOURCE_FILES}")

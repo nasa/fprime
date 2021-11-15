@@ -1,9 +1,13 @@
+import random
+
+MEMBER_SIZES=3
+
 with open("fp_profiling", "r") as fh:
     lines = [line.strip().split() for line in fh.readlines()]
 
 totals = {}
 lasts = {}
-for stage, token, module, stamp in lines:
+for stamp, stage, token, module in lines:
     stamp = float(stamp)
     if token not in totals:
         totals[token] = (0, 0, 9999999999, 0, [])
@@ -22,11 +26,12 @@ for token, pair in totals.items():
     hist = {index: (0, []) for index in range(0, 1000)}
     for item, module in lsts:
         index = int(int(item * 1000)/10) * 10
+        if index not in hist:
+            hist[index] = (0, [])
         hist[index] = (hist[index][0] + 1, hist[index][1] + [module])
     for index, pair in hist.items():
         count, members = pair
+        random.shuffle(members)
         if count != 0:
-            print("    {} ms: {}        -- {}".format(index, count, " ".join(members[:5])))
-
-
+            print("    {:3} ms: {:4}        -- {}".format(index, count, " ".join(members[:MEMBER_SIZES]) + ("" if len(members) <= MEMBER_SIZES else " ...")))
 
