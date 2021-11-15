@@ -43,7 +43,7 @@
             Total system memory in KB
             </comment>
         </channel>
-        <channel id="1" name="MEM_UTIL" data_type="F32">
+        <channel id="1" name="MEM_UTIL" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System memory used in percent
             </comment>
@@ -53,92 +53,92 @@
             System memory total
             </comment>
         </channel>
-        <channel id="3" name="PHYS_MEM_UTIL" data_type="F32">
+        <channel id="3" name="PHYS_MEM_UTIL" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's non-volatile memory percent used
             </comment>
         </channel>
-        <channel id="4" name="CPU" data_type="F32">
+        <channel id="4" name="CPU" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="5" name="CPU_00" data_type="F32">
+        <channel id="5" name="CPU_00" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="6" name="CPU_01" data_type="F32">
+        <channel id="6" name="CPU_01" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="7" name="CPU_02" data_type="F32">
+        <channel id="7" name="CPU_02" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="8" name="CPU_03" data_type="F32">
+        <channel id="8" name="CPU_03" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="9" name="CPU_04" data_type="F32">
+        <channel id="9" name="CPU_04" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="10" name="CPU_05" data_type="F32">
+        <channel id="10" name="CPU_05" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="11" name="CPU_06" data_type="F32">
+        <channel id="11" name="CPU_06" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="12" name="CPU_07" data_type="F32">
+        <channel id="12" name="CPU_07" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="13" name="CPU_08" data_type="F32">
+        <channel id="13" name="CPU_08" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="14" name="CPU_09" data_type="F32">
+        <channel id="14" name="CPU_09" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="15" name="CPU_10" data_type="F32">
+        <channel id="15" name="CPU_10" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="16" name="CPU_11" data_type="F32">
+        <channel id="16" name="CPU_11" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="17" name="CPU_12" data_type="F32">
+        <channel id="17" name="CPU_12" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="18" name="CPU_13" data_type="F32">
+        <channel id="18" name="CPU_13" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="19" name="CPU_14" data_type="F32">
+        <channel id="19" name="CPU_14" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
         </channel>
-        <channel id="20" name="CPU_15" data_type="F32">
+        <channel id="20" name="CPU_15" data_type="F32" format_string="%3.2fPCT">
             <comment>
             System's CPU Percentage
             </comment>
