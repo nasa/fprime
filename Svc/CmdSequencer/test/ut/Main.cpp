@@ -19,6 +19,7 @@
 #include "Svc/CmdSequencer/test/ut/Tester.hpp"
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
 #include "Svc/CmdSequencer/test/ut/UnitTest.hpp"
+#include "Svc/CmdSequencer/test/ut/JoinWait.hpp"
 
 TEST(AMPCS, MissingCRC) {
   Svc::AMPCS::Tester tester;
@@ -378,6 +379,17 @@ TEST(Relative, ValidateAMPCS) {
   Svc::Relative::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.Validate();
 }
+
+TEST(JoinWait, JoinWaitNoActiveSeq) {
+    Svc::JoinWait::Tester tester;
+    tester.test_join_wait_without_active_seq();
+}
+
+TEST(JoinWait, JoinWaitWithActiveSeq) {
+    Svc::JoinWait::Tester tester;
+    tester.test_join_wait_with_active_seq();
+}
+
 
 int main(int argc, char **argv) {
   // Create ./bin directory for test files
