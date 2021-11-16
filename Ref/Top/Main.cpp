@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
                 return 0;
                 break;
             case 'p':
-                port_number = atoi(optarg);
+                port_number = static_cast<U32>(atoi(optarg));
                 break;
             case 'a':
                 hostname = optarg;
