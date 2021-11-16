@@ -189,6 +189,10 @@ function(get_module_name DIRECTORY_PATH)
     # name. If it does not exist, then it is assumed to be an offset already and is carried
     # forward in the calculation.
     if (EXISTS ${DIRECTORY_PATH} AND IS_ABSOLUTE ${DIRECTORY_PATH})
+        # Module names a based on the current directory, not a file
+        if (NOT IS_DIRECTORY ${DIRECTORY_PATH})
+            get_filename_component(DIRECTORY_PATH "${DIRECTORY_PATH}" DIRECTORY)
+        endif()
         # Get path name relative to the root directory
         get_nearest_build_root(${DIRECTORY_PATH})
         File(RELATIVE_PATH TEMP_MODULE_NAME ${FPRIME_CLOSEST_BUILD_ROOT} ${DIRECTORY_PATH})

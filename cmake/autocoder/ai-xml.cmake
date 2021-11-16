@@ -134,7 +134,7 @@ function(__ai_info XML_PATH MODULE_NAME)
 
     # Next parse the output matching one line at a time
     read_from_lines("${AI_OUTPUT}" XML_TYPE MODULE_DEPENDENCIES FILE_DEPENDENCIES)
-
+    list(APPEND FILE_DEPENDENCIES "${FPRIME_AC_CONSTANTS_FILE}")
     # Next compute the needed variants of the items needed. This
     string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
     get_filename_component(XML_NAME "${XML_PATH}" NAME)

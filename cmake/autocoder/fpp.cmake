@@ -247,23 +247,25 @@ endfunction(setup_autocode)
 # OUTPUT_VAR: output variable to set with result
 ####
 function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
-    init_variables(OUTPUT AI_DIR)
-    foreach(AC_INPUT IN LISTS AC_INPUT_FILES)
-        get_filename_component(AC_INPUT_FILE "${AC_INPUT}" DIRECTORY)
-        build_relative_path("${AC_INPUT_FILE}" AI_DIR_TEMP)
-        # Check for set but not equal
-        if (AI_DIR AND NOT AI_DIR STREQUAL AI_DIR_TEMP)
-            message(FATAL_ERROR "Autocoder inputs span multiple directories: ${AI_DIR} and ${AI_DIR_TEMP}")
-        endif()
-        set(AI_DIR "${AI_DIR_TEMP}")
-    endforeach()
+    init_variables(OUTPUT_DATA)
+    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    set(CURRENT_MODULE "${MODULE_NAME}")
     foreach(INCLUDE IN LISTS AC_INPUT_FILES FILE_LIST)
-        get_filename_component(MODULE_DIR "${INCLUDE}" DIRECTORY)
-        build_relative_path("${MODULE_DIR}" MODULE_DIR)
-        string(REPLACE "/" "_" MODULE_NAME "${MODULE_DIR}")
-        if (NOT "${MODULE_NAME}" IN_LIST OUTPUT AND NOT AI_DIR STREQUAL MODULE_DIR)
-            list(APPEND OUTPUT "${MODULE_NAME}")
+        get_module_name(${INCLUDE})
+        # Here we are adding a module to the modules list if all three of the following are true:
+        #  1. Not present already (deduplication)
+        #  2. Not the current module directory as learned by the path to the autocoder inputs
+        #  3. Not a child of the fprime configuration directory
+        # NOTE: item 3 is build on the assumption that configuration .fpp files do not require autocode, but maintain
+        # only definitions useful to other modules. This assumption holds as of v3.0.0, but should this assumption break
+        # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
+        # CMakeLists.txt in that directory that sets up the aforementioned kwown module and associated target.
+        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
+            #message(STATUS "Excluding: ${MODULE_NAME} from ${CURRENT_MODULE} with ${INCLUDE}")
+            continue() # Skip adding to module list
         endif()
+        #message(STATUS "Adding: ${MODULE_NAME} with ${INCLUDE}")
+        list(APPEND OUTPUT_DATA "${MODULE_NAME}")
     endforeach()
-    set(${OUTPUT_VAR} "${OUTPUT}" PARENT_SCOPE)
+    set(${OUTPUT_VAR} "${OUTPUT_DATA}" PARENT_SCOPE)
 endfunction(fpp_to_modules)
