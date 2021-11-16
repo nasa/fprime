@@ -1775,6 +1775,12 @@ workspaces
 wp
 writelines
 WRONLY
+Wconversion
+Wformat
+Woverloaded
+Wshadow
+Wsign
+Wundef
 wrs
 WSL
 www
