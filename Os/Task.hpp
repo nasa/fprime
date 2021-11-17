@@ -41,7 +41,7 @@ namespace Os {
             TaskStatus start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority = TASK_DEFAULT, NATIVE_UINT_TYPE stackSize = TASK_DEFAULT,  NATIVE_UINT_TYPE cpuAffinity = TASK_DEFAULT, NATIVE_UINT_TYPE identifier = TASK_DEFAULT); //!< start the task
 
             // Deprecated: only the name, routine, and argument are **required** parameters.  This ordering of parameters is therefore inappropriate and will be removed in the future
-            DEPRECATED(TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = TASK_DEFAULT),
+            DEPRECATED(TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = static_cast<NATIVE_INT_TYPE>(TASK_DEFAULT)),
                        "Please switch to start(Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier)"); //!< start the task
             I32 getIdentifier(); //!< get the identifier for the task
             static TaskId getOsIdentifier(); //Gets the Os Task ID. Useful for passive components.
