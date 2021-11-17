@@ -44,7 +44,6 @@ int main(int argc, char* argv[]) {
     char *hostname;
     option = 0;
     hostname = nullptr;
-    bool dump = false;
 
     while ((option = getopt(argc, argv, "hdp:a:")) != -1){
         switch(option) {
@@ -60,9 +59,6 @@ int main(int argc, char* argv[]) {
                 break;
             case '?':
                 return 1;
-            case 'd':
-                dump = true;
-                break;
             default:
                 print_usage(argv[0]);
                 return 1;
