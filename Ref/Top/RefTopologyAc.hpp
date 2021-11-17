@@ -196,19 +196,19 @@ namespace Ref {
 
   namespace StackSizes {
     enum {
-      blockDrv = 10240,
-      chanTlm = 10240,
-      cmdDisp = 10240,
-      cmdSeq = 10240,
-      eventLogger = 10240,
-      fileDownlink = 10240,
-      fileManager = 10240,
-      fileUplink = 10240,
-      pingRcvr = 10240,
-      prmDb = 10240,
-      rateGroup1Comp = 10240,
-      rateGroup2Comp = 10240,
-      rateGroup3Comp = 10240,
+      blockDrv = 16384,
+      chanTlm = 16384,
+      cmdDisp = 16384,
+      cmdSeq = 16384,
+      eventLogger = 16384,
+      fileDownlink = 16384,
+      fileManager = 16384,
+      fileUplink = 16384,
+      pingRcvr = 16384,
+      prmDb = 16384,
+      rateGroup1Comp = 16384,
+      rateGroup2Comp = 16384,
+      rateGroup3Comp = 16384,
     };
   }
 

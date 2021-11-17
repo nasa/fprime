@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+(cd adoc; ./refresh)
+(cd json; ./refresh)
+asciidoctor -vn -o Tutorial.html Tutorial.adoc

@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctype.h>
 
+#include <Os/Log.hpp>
 #include <Ref/Top/RefTopologyAc.hpp>
 
 void print_usage(const char* app) {
@@ -12,6 +13,8 @@ void print_usage(const char* app) {
 #include <cstdio>
 
 Ref::TopologyState state;
+// Enable the console logging provided by Os::Log
+Os::Log logger;
 
 volatile sig_atomic_t terminate = 0;
 

@@ -9,8 +9,8 @@
 // All rights reserved.
 // ======================================================================
 
-#ifndef RefTop_FppConstantsAc_HPP
-#define RefTop_FppConstantsAc_HPP
+#ifndef Ref_Top_FppConstantsAc_HPP
+#define Ref_Top_FppConstantsAc_HPP
 
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -23,7 +23,7 @@ namespace Ref {
     };
 
     enum FppConstant_stackSize {
-      stackSize = 10240
+      stackSize = 16384
     };
 
   }

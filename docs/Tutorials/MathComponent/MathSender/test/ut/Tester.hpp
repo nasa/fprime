@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  MathSender/test/ut/Tester.hpp
-// \author tcanham
+// \author tcanham, bocchino
 // \brief  hpp file for MathSender test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Ref/MathSender/MathSenderComponentImpl.hpp"
+#include "Ref/MathSender/MathSender.hpp"
 
 namespace Ref {
 
@@ -42,12 +42,20 @@ namespace Ref {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! Test operation command
-      //!
+      //! Test an ADD command
       void testAddCommand();
+
+      //! Test a SUB command
       void testSubCommand();
-      void testMultCommand();
+
+      //! Test a MUL command
+      void testMulCommand();
+
+      //! Test a DIV command
       void testDivCommand();
+
+      //! Test receipt of a result
+      void testResult();
 
     private:
 
@@ -57,11 +65,11 @@ namespace Ref {
 
       //! Handler for from_mathOut
       //!
-      void from_mathOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 val1,
-          F32 val2,
-          MathOperation operation /*!< operation argument*/
+      void from_mathOpOut_handler(
+          const NATIVE_INT_TYPE portNum, //!< The port number
+          F32 val1, //!< First operand
+          const MathOp& op, //!< operation
+          F32 val2 //!< Second operand
       );
 
     private:
@@ -69,6 +77,12 @@ namespace Ref {
       // ----------------------------------------------------------------------
       // Helper methods
       // ----------------------------------------------------------------------
+
+      //! Pick a random value
+      static F32 pickF32Value();
+
+      //! Test a DO_MATH command
+      void testDoMath(MathOp op);
 
       //! Connect ports
       //!
@@ -86,7 +100,7 @@ namespace Ref {
 
       //! The component under test
       //!
-      MathSenderComponentImpl component;
+      MathSender component;
 
   };
 
