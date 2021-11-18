@@ -4,24 +4,19 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, TestMem) {
+TEST(Nominal, Telemetry) {
     Svc::Tester tester;
-    tester.testMemRead();
+    tester.test_tlm();
 }
 
-TEST(Nominal, TestPhysMem) {
+TEST(OffNomnial, Disabled) {
     Svc::Tester tester;
-    tester.testPhysMemRead();
+    tester.test_disable_enable();
 }
 
-TEST(Nominal, TestCpuUtilRead) {
+TEST(Nominal, Events) {
     Svc::Tester tester;
-    tester.testCpuUtilRead();
-}
-
-TEST(Nominal, TestSysResEnableCmd) {
-    Svc::Tester tester;
-    tester.testSysResEnableCmd();
+    tester.test_version_evr();
 }
 
 int main(int argc, char **argv) {

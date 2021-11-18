@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  SystemResources/test/ut/Tester.hpp
-// \author parallels
+// \author sfregoso
 // \brief  hpp file for SystemResources test harness implementation class
 //
 // \copyright
@@ -14,67 +14,64 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/SystemResources/SystemResourcesComponentImpl.hpp"
+#include "Svc/SystemResources/SystemResources.hpp"
 
 namespace Svc {
 
-  class Tester :
-    public SystemResourcesGTestBase
-  {
+class Tester : public SystemResourcesGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
+  public:
+    //! Construct object Tester
+    //!
+    Tester(void);
 
-    public:
+    //! Destroy object Tester
+    //!
+    ~Tester(void);
 
-      //! Construct object Tester
-      //!
-      Tester(void);
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+    //! Test the telemetry output
+    //!
+    void test_tlm(bool enabled = true);
 
-    public:
+    //! Test the telemetry enable/disable
+    //!
+    void test_disable_enable();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+    //! Test version EVR
+    //!
+    void test_version_evr();
 
-      //! To do
-      //!
-      void testMemRead(void);
-      void testPhysMemRead(void);
-      void testCpuUtilRead(void);
-      void testSysResEnableCmd(void);
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
+    //! Connect ports
+    //!
+    void connectPorts(void);
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Initialize components
+    //!
+    void initComponents(void);
 
-      //! Connect ports
-      //!
-      void connectPorts(void);
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
-      //! Initialize components
-      //!
-      void initComponents(void);
+    //! The component under test
+    //!
+    SystemResources component;
+};
 
-    private:
-
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
-
-      //! The component under test
-      //!
-      SystemResourcesComponentImpl component;
-
-  };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

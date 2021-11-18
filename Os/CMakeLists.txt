@@ -57,7 +57,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/MacOs/IPCQueueStub.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/SystemResources/SystemResources.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MacOs/SystemResources.cpp"
   )
 # Linux IPC queues implementation
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -77,7 +77,7 @@ endif()
 if (FPRIME_USE_BAREMETAL_SCHEDULER)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Baremetal/TaskRunner/")
     foreach (ITER_ITEM IN LISTS SOURCE_FILES)
-        if (ITER_ITEM MATCHES "Task\.cpp$")
+        if (ITER_ITEM MATCHES "Task\\.cpp$")
             list(REMOVE_ITEM SOURCE_FILES "${ITER_ITEM}")
         endif()
     endforeach()

@@ -31,6 +31,7 @@
     <import_component_type>Svc/StaticMemory/StaticMemoryComponentAi.xml</import_component_type>
     <import_component_type>Svc/Framer/FramerComponentAi.xml</import_component_type>
     <import_component_type>Svc/Deframer/DeframerComponentAi.xml</import_component_type>
+    <import_component_type>Svc/SystemResources/SystemResourcesComponentAi.xml</import_component_type>
 
     <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -76,6 +77,7 @@
     <instance namespace="Ref" name="SG5" type="SignalGen" base_id="281"  base_id_window="20" />
     <instance namespace="Ref" name="SG4" type="SignalGen" base_id="321"  base_id_window="20" />
     <instance namespace="Drv" name="blockDrv" type="BlockDriver" base_id="481"  base_id_window="20" />
+    <instance namespace="Sys" name="resources" type="SystemResources" base_id="1000"  base_id_window="100" />
 
     <!-- Connections -->
     <!-- Communications driver connections -->
@@ -187,7 +189,7 @@
          <source component = "recvBuffComp" port = "CmdReg" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "7"/>
     </connection>
-    
+
     
     <connection name = "SG1Reg">
          <source component = "SG1" port = "cmdRegOut" type = "CmdReg" num = "0"/>
@@ -220,6 +222,10 @@
     <connection name = "PktTlmReg">
          <source component = "pktTlm" port = "CmdReg" type = "CmdReg" num = "0"/>
          <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "15"/>
+    </connection>
+    <connection name = "ResourcesReg">
+        <source component = "resources" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "16"/>
     </connection>
 
     <!-- Command Dispatch Ports - Dispatch port number must match registration port for each component -->
@@ -292,6 +298,10 @@
          <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "15"/>
          <target component = "pktTlm" port = "CmdDisp" type = "Cmd" num = "0"/>
     </connection>
+    <connection name = "ResourcesDisp">
+        <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "16"/>
+        <target component = "resources" port = "CmdDisp" type = "Cmd" num = "0"/>
+    </connection>
     
    
     <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
@@ -359,6 +369,10 @@
     <connection name = "pktTlmStat">
          <source component = "pktTlm" port = "CmdStatus" type = "CmdResponse" num = "0"/>
          <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
+    </connection>
+    <connection name = "ResourcesStat">
+        <source component = "resources" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+        <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
     </connection>
 
     <!-- Sequencer Connections - should not conflict with uplink port -->
@@ -462,6 +476,10 @@
          <source component = "pktTlm" port = "Log" type = "Log" num = "0"/>
          <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
     </connection>
+    <connection name = "ResourcesEvt">
+        <source component = "resources" port = "Log" type = "Log" num = "0"/>
+        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
+    </connection>
    
     <!-- Event Logger Text Connections -->
    
@@ -540,6 +558,10 @@
     <connection name = "pktTlmText">
          <source component = "pktTlm" port = "LogText" type = "LogText" num = "0"/>
          <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
+    </connection>
+    <connection name = "ResourcesText">
+        <source component = "resources" port = "LogText" type = "LogText" num = "0"/>
+        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
     </connection>
     
 
@@ -624,6 +646,10 @@
     <connection name = "pktTlmTlm">
          <source component = "pktTlm" port = "Tlm" type = "Tlm" num = "0"/>
          <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
+    </connection>
+    <connection name = "ResourcesTlm">
+        <source component = "resources" port = "Tlm" type = "Tlm" num = "0"/>
+        <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
     </connection>
     
     <!-- Parameter Connections -->
@@ -738,7 +764,11 @@
     <connection name = "pktTime">
          <source component = "pktTlm" port = "Time" type = "Time" num = "0"/>
          <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-    </connection>    
+    </connection>
+    <connection name = "ResourcesTime">
+        <source component = "resources" port = "Time" type = "Time" num = "0"/>
+        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
+    </connection>
 
     <!-- Rate Group Connections -->
    
@@ -797,7 +827,7 @@
          <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
          <target component = "SG4" port = "schedIn" type = "Sched" num = "0"/>
     </connection>
-   
+
     <!-- Rate Group 3 -->
     <connection name = "rateGroup3DriverComp">
         <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "2"/>
@@ -820,6 +850,10 @@
     <connection name = "Rg3UpBuffMan">
          <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "3"/>
          <target component = "fileUplinkBufferManager" port = "schedIn" type = "Sched" num = "0"/>
+    </connection>
+    <connection name = "ResourcesRG">
+        <source component = "rateGroup3Comp" port = "RateGroupMemberOut" type = "Sched" num = "4"/>
+        <target component = "resources" port = "run" type = "Sched" num = "0"/>
     </connection>
     
     

@@ -1,193 +1,138 @@
-// ====================================================================== 
+// ======================================================================
 // \title  SystemResources.hpp
-// \author parallels
+// \author mstarch
 // \brief  cpp file for SystemResources test harness implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
-
+#include "version.hpp"
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
 
 namespace Svc {
 
-  // ----------------------------------------------------------------------
-  // Construction and destruction 
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
 
-  Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
-      SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("SystemResources")
-#else
-      SystemResourcesGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
-  {
+Tester ::Tester(void) : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
-  }
+}
 
-  Tester ::
-    ~Tester(void) 
-  {
-    
-  }
+Tester ::~Tester(void) {}
 
-  // ----------------------------------------------------------------------
-  // Tests 
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
 
-  void Tester ::
-    testMemRead(void) 
-  {
-    I32 ret;
+void Tester ::test_tlm(bool enabled) {
+    U32 count = 0;
+    if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+        this->invoke_to_run(0, 0);
+        // All cascades expected
+        switch (count) {
+            case 16:
+                ASSERT_TLM_CPU_15_SIZE((enabled) ? 1 : 0);
+            case 15:
+                ASSERT_TLM_CPU_14_SIZE((enabled) ? 1 : 0);
+            case 14:
+                ASSERT_TLM_CPU_13_SIZE((enabled) ? 1 : 0);
+            case 13:
+                ASSERT_TLM_CPU_12_SIZE((enabled) ? 1 : 0);
+            case 12:
+                ASSERT_TLM_CPU_11_SIZE((enabled) ? 1 : 0);
+            case 11:
+                ASSERT_TLM_CPU_10_SIZE((enabled) ? 1 : 0);
+            case 10:
+                ASSERT_TLM_CPU_09_SIZE((enabled) ? 1 : 0);
+            case 9:
+                ASSERT_TLM_CPU_08_SIZE((enabled) ? 1 : 0);
+            case 8:
+                ASSERT_TLM_CPU_07_SIZE((enabled) ? 1 : 0);
+            case 7:
+                ASSERT_TLM_CPU_06_SIZE((enabled) ? 1 : 0);
+            case 6:
+                ASSERT_TLM_CPU_05_SIZE((enabled) ? 1 : 0);
+            case 5:
+                ASSERT_TLM_CPU_04_SIZE((enabled) ? 1 : 0);
+            case 4:
+                ASSERT_TLM_CPU_03_SIZE((enabled) ? 1 : 0);
+            case 3:
+                ASSERT_TLM_CPU_02_SIZE((enabled) ? 1 : 0);
+            case 2:
+                ASSERT_TLM_CPU_01_SIZE((enabled) ? 1 : 0);
+            case 1:
+                ASSERT_TLM_CPU_00_SIZE((enabled) ? 1 : 0);
+            default:
+                ASSERT_TLM_CPU_SIZE((enabled) ? 1 : 0);
 
-    ret = this->component.Mem();
-
-    ASSERT_EQ(ret, 0);
-    ASSERT_NE(this->component.m_mem.memUsed, 0);
-    ASSERT_NE(this->component.m_mem.memTotal, 0);
-
-    fprintf(stderr, "Mem.Used=[%f], Mem.Total=[%f]\n", this->component.m_mem.memUsed, this->component.m_mem.memTotal);
-  }
-
-  void Tester ::
-    testPhysMemRead(void) 
-  {
-    I32 ret;
-
-    ret = this->component.PhysMem();
-
-    ASSERT_EQ(ret, 0);
-    ASSERT_NE(this->component.m_physMem.physMemUsed, 0);
-    ASSERT_NE(this->component.m_physMem.physMemTotal, 0);
-
-    fprintf(stderr, "PhysMem.Used=[%f], PhysMem.Total=[%f]\n", this->component.m_physMem.physMemUsed, this->component.m_physMem.physMemTotal);
-  }
-
-  void Tester ::
-    testCpuUtilRead(void) 
-  {
-    I32 ret;
-
-    for(U32 num = 0; num < 5; num++) {
-        ret = this->component.Cpu();
-    
-        ASSERT_EQ(ret, 0);
-    
-        for(U32 i = 0; i < this->component.m_cpu_count; i++) {
-    
-            fprintf(stderr, "CPU[%d]: Used=[%f], Total=[%f], Util=[%f], Avg=[%f]\n", i, this->component.m_cpu[i].cpuUsed, this->component.m_cpu[i].cpuTotal, this->component.m_cpu_util, this->component.m_cpu_avg);
-    
+                ASSERT_TLM_MEMORY_USED_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_MEMORY_TOTAL_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_NON_VOLATILE_FREE_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_VERSION_SIZE((enabled) ? 1 : 0);
+                if (enabled) {
+                    ASSERT_TLM_VERSION(0, VERSION);
+                }
+                ASSERT_TLM_SIZE((enabled) ? (count + 6) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + ver
+                break;
         }
-    
-        usleep(2000000);
     }
+}
 
-  }
+void Tester ::test_disable_enable() {
+    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_DISABLED);
+    this->test_tlm(false);
+    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_ENABLED);
+    this->test_tlm(true);
+}
 
-  void Tester ::
-    testSysResEnableCmd(void) 
-  {
-      SystemResourcesComponentImpl::SystemResourceEnabled enable;
+void Tester ::test_version_evr() {
+    this->sendCmd_VERSION(0, 0);
+    ASSERT_EVENTS_VERSION_SIZE(1);
+    ASSERT_EVENTS_VERSION(0, VERSION);
+}
 
-      this->clearHistory();
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
 
-      // Disable telemetry generation
-      enable = SystemResourcesComponentImpl::SYS_RES_DISABLED;
-      component.SYS_RES_ENABLE_cmdHandler(0, 0, enable);
-
-      ASSERT_EQ(component.m_enable, false);
-
-      this->invoke_to_run(0, 100);
-
-      // Enable telemetry generation
-
-      enable = SystemResourcesComponentImpl::SYS_RES_ENABLED;
-      component.SYS_RES_ENABLE_cmdHandler(0, 0, enable);
-
-      ASSERT_EQ(component.m_enable, true);
-
-      this->invoke_to_run(0, 100);
-
-  }
-
-  // ----------------------------------------------------------------------
-  // Helper methods 
-  // ----------------------------------------------------------------------
-
-  void Tester ::
-    connectPorts(void) 
-  {
-
+void Tester ::connectPorts(void) {
     // run
-    this->connect_to_run(
-        0,
-        this->component.get_run_InputPort(0)
-    );
+    this->connect_to_run(0, this->component.get_run_InputPort(0));
 
     // CmdDisp
-    this->connect_to_CmdDisp(
-        0,
-        this->component.get_CmdDisp_InputPort(0)
-    );
+    this->connect_to_CmdDisp(0, this->component.get_CmdDisp_InputPort(0));
 
     // CmdStatus
-    this->component.set_CmdStatus_OutputPort(
-        0, 
-        this->get_from_CmdStatus(0)
-    );
+    this->component.set_CmdStatus_OutputPort(0, this->get_from_CmdStatus(0));
 
     // CmdReg
-    this->component.set_CmdReg_OutputPort(
-        0, 
-        this->get_from_CmdReg(0)
-    );
+    this->component.set_CmdReg_OutputPort(0, this->get_from_CmdReg(0));
 
     // Tlm
-    this->component.set_Tlm_OutputPort(
-        0, 
-        this->get_from_Tlm(0)
-    );
+    this->component.set_Tlm_OutputPort(0, this->get_from_Tlm(0));
 
     // Time
-    this->component.set_Time_OutputPort(
-        0, 
-        this->get_from_Time(0)
-    );
+    this->component.set_Time_OutputPort(0, this->get_from_Time(0));
 
     // Log
-    this->component.set_Log_OutputPort(
-        0, 
-        this->get_from_Log(0)
-    );
+    this->component.set_Log_OutputPort(0, this->get_from_Log(0));
 
     // LogText
-    this->component.set_LogText_OutputPort(
-        0, 
-        this->get_from_LogText(0)
-    );
+    this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
+}
 
-
-
-
-  }
-
-  void Tester ::
-    initComponents(void) 
-  {
+void Tester ::initComponents(void) {
     this->init();
-    this->component.init(
-        INSTANCE
-    );
-  }
+    this->component.init(INSTANCE);
+}
 
-} // end namespace Svc
+}  // end namespace Svc
