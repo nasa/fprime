@@ -85,7 +85,7 @@ namespace Svc {
                     evrResp = ERR_UNEXP;
                     break;
             }
-            this->log_WARNING_HI_OpCodeError(opCode,evrResp);
+            this->log_COMMAND_OpCodeError(opCode,evrResp);
         }
         // look for command source
         NATIVE_INT_TYPE portToCall = -1;
