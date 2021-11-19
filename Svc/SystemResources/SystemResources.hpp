@@ -85,11 +85,10 @@ class SystemResources : public SystemResourcesComponentBase {
 
     cpuTlmFunc m_cpu_tlm_functions[CPU_COUNT];       /*!< Function pointer to specific CPU telemetry */
     U32 m_cpu_count;                                     /*!< Number of CPUs used by the system */
-    Os::SystemResources::MemUtil m_mem;                  /*< RAM memory information */
-    //Os::SystemResources::physMemUtil m_physMem;        /*< Physical memory information */
-    Os::SystemResources::CpuTicks m_cpu[CPU_COUNT];      /*< CPU information for each CPU on the system */
-    Os::SystemResources::CpuTicks m_cpu_prev[CPU_COUNT]; /*< Previous iteration CPU information */
-    bool m_enable;                                       /*< Send telemetry when TRUE.  Don't send when FALSE */
+    Os::SystemResources::MemUtil m_mem;                  /*!< RAM memory information */
+    Os::SystemResources::CpuTicks m_cpu[CPU_COUNT];      /*!< CPU information for each CPU on the system */
+    Os::SystemResources::CpuTicks m_cpu_prev[CPU_COUNT]; /*!< Previous iteration CPU information */
+    bool m_enable;                                       /*!< Send telemetry when TRUE.  Don't send when FALSE */
 };
 
 }  // end namespace Svc

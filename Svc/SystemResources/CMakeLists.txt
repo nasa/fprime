@@ -9,9 +9,6 @@
 set(SOURCE_FILES
     "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/CpuUtilPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/MemUtilPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/PhysMemUtilPortAi.xml"
 )
 set(MOD_DEPS
   Os

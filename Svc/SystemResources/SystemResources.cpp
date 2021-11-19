@@ -23,16 +23,22 @@ namespace Svc {
 
 SystemResources ::SystemResources(const char* const compName)
     : SystemResourcesComponentBase(compName), m_cpu_count(0), m_enable(true) {
+
+    // Structure initializations
+    m_mem.used = 0;
+    m_mem.total = 0;
+    for (U32 i = 0; i < CPU_COUNT; i++) {
+        m_cpu[i].used = 0;
+        m_cpu[i].total = 0;
+        m_cpu_prev[i].used = 0;
+        m_cpu_prev[i].total = 0;
+    }
+
     if (Os::SystemResources::getCpuCount(m_cpu_count) == Os::SystemResources::SYSTEM_RESOURCES_ERROR) {
         m_cpu_count = 0;
     }
 
     m_cpu_count = (m_cpu_count >= CPU_COUNT) ? CPU_COUNT : m_cpu_count;
-
-    for (U32 i = 0; i < CPU_COUNT; i++) {
-        m_cpu_prev[i].used = 0;
-        m_cpu_prev[i].total = 0;
-    }
 }
 
 void SystemResources ::init(const NATIVE_INT_TYPE instance) {
@@ -122,7 +128,7 @@ void SystemResources::Cpu() {
         }
     }
 
-    cpuAvg /= count;
+    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / count);
     this->tlmWrite_CPU(cpuAvg);
 }
 

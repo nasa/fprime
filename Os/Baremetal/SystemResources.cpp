@@ -29,12 +29,13 @@ SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks& cp
 SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {
     U8 stack_allocation = 0;
     U8* heap_allocation = new U8;
-
-    // Crude way to estimate memory usage: stack grows down, heap grows up. Stack - Heap = FREE bytes before collision
-    U64 free = static_cast<U64>(stack_allocation - heap_allocation);
-    memory_util.total = free;
-    memory_util.util = 0;
-    delete heap_allocation;
+    if (heap_allocation != nullptr) {
+        // Crude way to estimate memory usage: stack grows down, heap grows up. Stack - Heap = FREE bytes before collision
+        U64 free = static_cast<U64>(&stack_allocation - heap_allocation);
+        memory_util.total = free;
+        memory_util.util = 0;
+        delete heap_allocation;
+    }
     return SYSTEM_RESOURCES_OK;
 }
 }  // namespace Os

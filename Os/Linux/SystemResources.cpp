@@ -17,11 +17,11 @@
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    const U32 LINUX_CPU_LINE_LIMIT = 1024; // Maximum lines to read before bailing
+    static const U32 LINUX_CPU_LINE_LIMIT = 1024; // Maximum lines to read before bailing
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
-        char line[512];
-        FILE *fp;
+        char line[512] = {0};
+        FILE *fp = nullptr;
         U32 cpu_count = 0;
 
         if ((fp = fopen("/proc/stat", "r")) == NULL) {
@@ -50,11 +50,11 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
-        char line[512];
-        FILE *fp;
+        char line[512] = {0};
+        FILE *fp = nullptr;
         U32 cpu_data[4] = {0};
-        U32 cpuCount;
-        SystemResources::SystemResourcesStatus status;
+        U32 cpuCount = 0;
+        SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
         U64 cpuUsed = 0;
         U64 cpuTotal = 0;
 
@@ -107,7 +107,7 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
-        FILE *fp;
+        FILE *fp = nullptr;
         NATIVE_INT_TYPE total = 0;
         NATIVE_INT_TYPE free = 0;
         // Fallbacks
@@ -130,7 +130,7 @@ namespace Os {
         if (total < 0 or free < 0 or total < free) {
             return SYSTEM_RESOURCES_ERROR;
         }
-        memory_util.total = static_cast<U64>(total) * 1024; // Reported in KB
+        memory_util.total = static_cast<U64>(total) * 1024; // KB to Bytes
         memory_util.used = static_cast<U64>(total - free) * 1024;
         return SYSTEM_RESOURCES_OK;
     }
