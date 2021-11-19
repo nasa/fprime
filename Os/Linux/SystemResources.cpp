@@ -21,7 +21,7 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
         char line[512] = {0};
-        FILE *fp = nullptr;
+        FILE *fp = NULL;
         U32 cpu_count = 0;
 
         if ((fp = fopen("/proc/stat", "r")) == NULL) {
@@ -51,7 +51,7 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
         char line[512] = {0};
-        FILE *fp = nullptr;
+        FILE *fp = NULL;
         U32 cpu_data[4] = {0};
         U32 cpuCount = 0;
         SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
@@ -107,7 +107,7 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
-        FILE *fp = nullptr;
+        FILE *fp = NULL;
         NATIVE_INT_TYPE total = 0;
         NATIVE_INT_TYPE free = 0;
         // Fallbacks
