@@ -28,5 +28,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
 )
 register_fprime_ut()
-# Implementation requires fallthrough
-target_compile_options(${MODULE_NAME}_ut_exe PRIVATE -Wno-implicit-fallthrough)
+# Implementation requires switch cascade
+if (TARGET ${MODULE_NAME}_ut_exe)
+    target_compile_options(${MODULE_NAME}_ut_exe PRIVATE -Wno-implicit-fallthrough)
+endif()
+

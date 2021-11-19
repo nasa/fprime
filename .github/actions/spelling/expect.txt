@@ -498,6 +498,7 @@ FADV
 fadvise
 FAKELOGGER
 fallocate
+fallthrough
 fcheck
 fclose
 fcntl

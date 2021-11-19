@@ -40,36 +40,52 @@ void Tester ::test_tlm(bool enabled) {
         switch (count) {
             case 16:
                 ASSERT_TLM_CPU_15_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 15:
                 ASSERT_TLM_CPU_14_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 14:
                 ASSERT_TLM_CPU_13_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 13:
                 ASSERT_TLM_CPU_12_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 12:
                 ASSERT_TLM_CPU_11_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 11:
                 ASSERT_TLM_CPU_10_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 10:
                 ASSERT_TLM_CPU_09_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 9:
                 ASSERT_TLM_CPU_08_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 8:
                 ASSERT_TLM_CPU_07_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 7:
                 ASSERT_TLM_CPU_06_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 6:
                 ASSERT_TLM_CPU_05_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 5:
                 ASSERT_TLM_CPU_04_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 4:
                 ASSERT_TLM_CPU_03_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 3:
                 ASSERT_TLM_CPU_02_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 2:
                 ASSERT_TLM_CPU_01_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             case 1:
                 ASSERT_TLM_CPU_00_SIZE((enabled) ? 1 : 0);
+            // Cascade expected 
             default:
                 ASSERT_TLM_CPU_SIZE((enabled) ? 1 : 0);
 
