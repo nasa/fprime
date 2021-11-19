@@ -53,7 +53,7 @@ kern_return_t vm_stat_helper(U64& used, U64& total) {
 /**
  * \brief helper around raw CPU capture API
  *
- * Calls for the CPU information from the machine, improving readibility in cpu_by_index
+ * Calls for the CPU information from the machine, improving readability in cpu_by_index
  *
  * \param cpu_load_info: filled with CPU data
  * \param cpu_count: filled with CPU count
@@ -74,7 +74,7 @@ kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, U32& cpu
  * thus each call should update one CPU's sample or only the last cpu will have the benefit of the sampling window.
  *
  * \param cpu_index: index of current CPU being queried
- * \param update: update the current tixcs
+ * \param update: update the current ticks
  * \param idle: filled with CPU's idle ticks count
  * \param total: filled with CPU's total ticks
  *

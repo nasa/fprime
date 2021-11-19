@@ -9,7 +9,7 @@ TEST(Nominal, Telemetry) {
     tester.test_tlm();
 }
 
-TEST(OffNomnial, Disabled) {
+TEST(OffNominal, Disabled) {
     Svc::Tester tester;
     tester.test_disable_enable();
 }

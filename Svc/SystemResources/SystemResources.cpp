@@ -102,13 +102,12 @@ F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::Syst
 }
 
 void SystemResources::Cpu() {
-    Os::SystemResources::SystemResourcesStatus status;
     U32 count = 0;
     F32 cpuAvg = 0;
 
     for (U32 i = 0; i < m_cpu_count && i < CPU_COUNT; i++) {
         Os::SystemResources::SystemResourcesStatus status = Os::SystemResources::getCpuTicks(m_cpu[i], i);
-        // Best-efforr calculations and telemetering
+        // Best-effort calculations and telemetry
         if (status == Os::SystemResources::SYSTEM_RESOURCES_OK) {
             F32 cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);
             cpuAvg += cpuUtil;
