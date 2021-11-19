@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="SystemResources" kind="passive" namespace="Svc">
+
+    <include_header>Os/SystemResources.hpp</include_header>
+
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
+    <ports>
+        <port name="run" data_type="Svc::Sched"  kind="guarded_input" max_number="1">
+           <comment>Run port</comment>
+        </port>
+    </ports>
+    <commands>
+        <command kind="guarded" opcode="0" mnemonic="ENABLE">
+            <comment>
+            A command to enable or disable system resource telemetry
+            </comment>
+            <args>
+                <arg name="enable" type="ENUM">
+                    <enum name="SystemResourceEnabled">
+                        <item name="SYS_RES_DISABLED"/>
+                        <item name="SYS_RES_ENABLED"/>
+                    </enum>
+                    <comment>whether or not system resource telemetry is enabled</comment>
+                </arg>
+             </args>
+        </command>
+        <command kind="guarded" opcode="1" mnemonic="VERSION">
+            <comment>
+            Report version as EVR
+            </comment>
+        </command>
+    </commands>
+    <telemetry>
+        <channel id="0" name="MEMORY_TOTAL" data_type="U64" format_string="%d KB">
+            <comment>
+            Total system memory in KB
+            </comment>
+        </channel>
+        <channel id="1" name="MEMORY_USED" data_type="U64" format_string="%d KB">
+            <comment>
+            System memory used in KB
+            </comment>
+        </channel>
+        <channel id="2" name="NON_VOLATILE_TOTAL" data_type="U64" format_string="%d KB">
+            <comment>
+            System non-volatile available in KB
+            </comment>
+        </channel>
+        <channel id="3" name="NON_VOLATILE_FREE" data_type="U64" format_string="%d KB">
+            <comment>
+                System non-volatile available in KB
+            </comment>
+        </channel>
+        <channel id="4" name="CPU" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="5" name="CPU_00" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="6" name="CPU_01" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="7" name="CPU_02" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="8" name="CPU_03" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="9" name="CPU_04" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="10" name="CPU_05" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="11" name="CPU_06" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="12" name="CPU_07" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="13" name="CPU_08" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="14" name="CPU_09" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="15" name="CPU_10" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="16" name="CPU_11" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="17" name="CPU_12" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="18" name="CPU_13" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="19" name="CPU_14" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="20" name="CPU_15" data_type="F32" format_string="%3.2f percent">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+        <channel id="21" name="VERSION" data_type="string" size="40">
+            <comment>
+            System's CPU Percentage
+            </comment>
+        </channel>
+    </telemetry>
+    <events>
+        <event id="0" name="VERSION" severity="ACTIVITY_LO" format_string = "Version: [%s]" >
+            <comment>
+            Version of the git repository.
+            </comment>
+            <args>
+                <arg name="version" type="string" size="40">
+                    <comment>version string</comment>
+                </arg>          
+            </args>
+        </event>
+    </events>
+</component>
