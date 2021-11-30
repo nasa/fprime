@@ -10,6 +10,7 @@ include(autocoder/default)
 # Does not handle source files one-by-one, but as a complete set
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)
 set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
+set(FPP_FRAMEWORK_DEFAULT_DEPS Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Types Fw_Cfg)
 
 ####
 # `is_supported`:
@@ -101,6 +102,7 @@ function(get_generated_files AC_INPUT_FILES)
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
+    set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/framework.txt")
     set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}"
         CACHE INTERNAL "Last command to annotate memo file" FORCE)
     execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
@@ -108,6 +110,7 @@ function(get_generated_files AC_INPUT_FILES)
         -i "${INCLUDED_FILE}"
         -m "${MISSING_FILE}"
         -g "${GENERATED_FILE}"
+        -f "${FRAMEWORK_FILE}"
         RESULT_VARIABLE ERR_RETURN
         OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
     # Report failure.  If we are generating files, this must work.
@@ -116,22 +119,19 @@ function(get_generated_files AC_INPUT_FILES)
         return()
     endif()
 
-    # Read file and convert to lists of dependencies
-    file(READ "${INCLUDED_FILE}" INCLUDED)
-    file(READ "${MISSING_FILE}" MISSING)
-    file(READ "${GENERATED_FILE}" GENERATED)
-    file(READ "${DIRECT_FILE}" DIRECT_DEPENDENCIES)
-
-    string(STRIP "${INCLUDED}" INCLUDED)
-    string(STRIP "${MISSING}" MISSING)
-    string(STRIP "${DIRECT_DEPENDENCIES}" DIRECT_DEPENDENCIES)
-    string(STRIP "${GENERATED}" GENERATED)
-
+    # Read files and convert to lists of dependencies. e.g. read INCLUDED_FILE file into INCLUDED variable, then process
+    foreach(NAME INCLUDED MISSING GENERATED DIRECT FRAMEWORK)
+        file(READ "${${NAME}_FILE}" "${NAME}")
+        string(STRIP "${${NAME}}" "${NAME}")
+        string(REGEX REPLACE "\n" ";" "${${NAME}}" "${NAME}")
+    endforeach()
+    # Handle captured standard out
     string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
-    string(REGEX REPLACE "\n" ";" INCLUDED "${INCLUDED}")
-    string(REGEX REPLACE "\n" ";" MISSING "${MISSING}")
-    string(REGEX REPLACE "\n" ";" DIRECT_DEPENDENCIES "${DIRECT_DEPENDENCIES}")
-    string(REGEX REPLACE "\n" ";" GENERATED "${GENERATED}")
+    # List of framework dependencies: detected + builtin, subsetted from "this module" and further.
+    list(APPEND FRAMEWORK ${FPP_FRAMEWORK_DEFAULT_DEPS})
+    list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
+    math(EXPR START_INDEX "${START_INDEX} + 1")
+    list(SUBLIST FRAMEWORK ${START_INDEX} -1 FRAMEWORK)
 
     # First assemble the generated files list
     set(GENERATED_FILES)
@@ -148,15 +148,15 @@ function(get_generated_files AC_INPUT_FILES)
         endforeach()
         message(FATAL_ERROR)
     endif()
-    fpp_to_modules("${DIRECT_DEPENDENCIES}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
+    # Module dependencies are: detected "direct" + framework dependencies
+    fpp_to_modules("${DIRECT}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
+    list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
+    list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
+
+    # File dependencies are any files that this depends on
     set(FILE_DEPENDENCIES)
     list(APPEND FILE_DEPENDENCIES ${AC_INPUT_FILES} ${INCLUDED})
-    # TODO: fix-me
-    if (NOT "${MODULE_NAME}" STREQUAL "Os" AND NOT "${MODULE_NAME}" MATCHES "^Fw_")
-        foreach(KNOWN IN ITEMS "Fw_Cfg" "Fw_Types" "Fw_Time" "Fw_Com" "Os" "Fw_Tlm" "Fw_Cmd" "Fw_Log" "Fw_Prm" "Fw_Comp" "Fw_CompQueued")
-            list(APPEND MODULE_DEPENDENCIES "${KNOWN}")
-        endforeach()
-    endif()
+
     # Should have been inherited from previous call to `get_generated_files`
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
