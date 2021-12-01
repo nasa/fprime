@@ -1,7 +1,7 @@
 ####
 # autocoder/ai-xml.cmake
 #
-# Primary Ai XML autocoder that sets up the C++ file generation. This is a reimplementation of the singular autocoder
+# Primary Ai XML autocoder that sets up the C++ file generation. This is a implementation of the singular autocoder
 # setup of the the original CMake system.
 #####
 include(utilities)
@@ -77,7 +77,7 @@ function(get_generated_files AC_INPUT_FILE)
     set(EXTRAS "${XML_LOWER_TYPE}")
 
 
-    # Topology also builds dictionary.  If we are excluding topology acs, it is the only generated file
+    # Topology also builds dictionary.  If we are excluding topology autocode, it is the only generated file
     if (XML_LOWER_TYPE STREQUAL "topologyapp" AND EXCLUDE_TOP_ACS)
         list(APPEND EXTRAS ${GENERATED_FILES})
         set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")

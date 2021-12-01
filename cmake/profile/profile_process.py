@@ -14,17 +14,17 @@ for stamp, stage, token, module in lines:
     if stage == "START":
         lasts[token] = stamp
     elif stage == "STOP":
-        accum, count, mind, maxd, lsts = totals[token]
+        accum, count, min_delta, max_delta, hits = totals[token]
         delta = stamp - lasts[token]
-        totals[token] = (accum + delta, count + 1, min(delta, mind), max(delta, maxd), lsts + [(delta, module)])
+        totals[token] = (accum + delta, count + 1, min(delta, min_delta), max(delta, max_delta), hits + [(delta, module)])
 
 for token, pair in totals.items():
-    accum, count, mind, maxd, lsts = totals[token]
+    accum, count, min_delta, max_delta, hits = totals[token]
     if count == 0:
         continue
-    print("{} {:.6f} ({:.6f}, {:.6f}, {:.6f}) {}".format(token, accum, mind, accum/count, maxd, lsts[int(count/2)][0]))
+    print("{} {:.6f} ({:.6f}, {:.6f}, {:.6f}) {}".format(token, accum, min_delta, accum/count, max_delta, hits[int(count/2)][0]))
     hist = {index: (0, []) for index in range(0, 1000)}
-    for item, module in lsts:
+    for item, module in hits:
         index = int(int(item * 1000)/10) * 10
         if index not in hist:
             hist[index] = (0, [])

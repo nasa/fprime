@@ -36,7 +36,7 @@ endfunction(add_global_target)
 # - SOURCES: hand-specified source files
 # - GENERATED: generated sources
 # - EXCLUDED_SOURCES: sources already "consumed", that is, processed by an autocoder
-# - DEPENDENCIES: dependencies of this module. Also link flgas and libraries.
+# - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
 ####
 function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
     # Compilable sources

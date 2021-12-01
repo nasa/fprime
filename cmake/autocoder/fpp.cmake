@@ -35,7 +35,7 @@ endfunction(is_supported)
 
 # OUTPUT: name of variable to set in parent scope. Will be set to TRUE or FALSE.
 # MEMO_FILE: path to memo file in question
-# SOURCES_INPUT: list of sources used to generate the given memofile
+# SOURCES_INPUT: list of sources used to generate the given memo file
 ####
 function(regenerate_memo OUTPUT MEMO_FILE SOURCES_INPUT)
     # Initialize variables
@@ -261,7 +261,7 @@ function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
         # NOTE: item 3 is build on the assumption that configuration .fpp files do not require autocode, but maintain
         # only definitions useful to other modules. This assumption holds as of v3.0.0, but should this assumption break
         # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
-        # CMakeLists.txt in that directory that sets up the aforementioned kwown module and associated target.
+        # CMakeLists.txt in that directory that sets up the aforementioned known module and associated target.
         if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
             #message(STATUS "Excluding: ${MODULE_NAME} from ${CURRENT_MODULE} with ${INCLUDE}")
             continue() # Skip adding to module list
