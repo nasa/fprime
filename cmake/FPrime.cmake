@@ -63,6 +63,7 @@ else()
     generate_fpp_locs()
     message(STATUS "[autocode/fpp] Generating fpp locator file -- DONE")
 
+    register_fprime_target(target/noop)
     register_fprime_target(target/build)
     register_fprime_target(target/dict)
     register_fprime_target(target/install)
