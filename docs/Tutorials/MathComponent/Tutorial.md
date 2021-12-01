@@ -4,7 +4,7 @@ The following example shows the steps to implement a simple pair of components c
 `MathSender`, will invoke the second, `MathReceiver`, via  a `MathOp` port to perform a math operation and return the
 result via a `MathResult` port.
 
-![`Component` Diagram](img/Comp.jpg "Component Pair")
+![`Component` Diagram](img/Comp.png "Component Pair")
 
 All the code in this tutorial can be found in this directory. This code will work if it is copied or reimplemented
 within the `Ref` directory of F´. This tutorial will walk the user through modifying the Reference app, Ref, to
@@ -15,9 +15,9 @@ implement the math components.
 This tutorial requires the user to have some basic skills and have installed F´. The prerequisite skills to understand
 this tutorial are as follows:
 
-1) Working knowledge of Unix; how to navigate in a shell and execute programs
-2) An understanding of C++, including class declarations and inheritance
-3) An understanding of how XML is structured
+1. Working knowledge of Unix; how to navigate in a shell and execute programs
+2. An understanding of C++, including class declarations and inheritance
+3. An understanding of how XML is structured
 
 Installation can be done by following the installation guide found at: [INSTALL.md](../../INSTALL.md). This guide
 will walk the user through the installation process and verifying the installation.  In addition, users may wish to
@@ -36,19 +36,21 @@ for each component that will be created.
 ### 1.1.1 Commands
 
 `MathSender` should implement a `MS_DO_MATH` command. This command will have three arguments:
-1) A first value in the operation
-2) A second value in the operation
-3) An enumerated argument specifying the operation to perform
+
+1. A first value in the operation
+2. A second value in the operation
+3. An enumerated argument specifying the operation to perform
 
 ### 1.1.2 Events
 `MathSender` should emit an event telling that a command was received to perform the operation. It should also emit an event when the result is received back from `MathReceiver`.
 
 ### 1.1.3 Telemetry Channels
 MathSender should have four channels:
-1) The first value
-2) The second value
-3) The operation
-4) The result
+
+1. The first value
+2. The second value
+3. The operation
+4. The result
 
 ### 1.1.4 Parameters
 MathSender will have no parameters.
@@ -69,18 +71,18 @@ MathSender will have no parameters.
 
 `MathReceiver` should have the following events:
 
-1) MR_SET_FACTOR1 command event. When the command is received, `MathReceiver` should emit an event with the updated factor. The event should be throttled (i.e. stop emitting) after three invocations. Normally, throttling is used to prevent event floods if there is an endlessly repeating condition.
-2) MR_UPDATED_FACTOR2 event. When the factor2 parameter (see below) is updated, `MathReceiver` should emit an event with the updated value.
-3) MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an event with the arguments and operation.
-4) MR_THROTTLE_CLEARED in response to the MR_CLEAR_EVENT_THROTTLE command above.
+1. MR_SET_FACTOR1 command event. When the command is received, `MathReceiver` should emit an event with the updated factor. The event should be throttled (i.e. stop emitting) after three invocations. Normally, throttling is used to prevent event floods if there is an endlessly repeating condition.
+2. MR_UPDATED_FACTOR2 event. When the factor2 parameter (see below) is updated, `MathReceiver` should emit an event with the updated value.
+3. MR_OPERATION_PERFORMED event. When the component receives a request to perform the operation, it should emit an event with the arguments and operation.
+4. MR_THROTTLE_CLEARED in response to the MR_CLEAR_EVENT_THROTTLE command above.
 
 ### 1.2.3 Channels
 
 `MathReceiver` should have the following channels:
 
-1) A channel that has a serializable structure argument that contains the two terms in the operation as well as the operation and the result. This will be used to illustrate an XML defined serializable as a single telemetry channel.
-2) A channel that counts the number of MR_SET_FACTOR1 commands received, so that a count can be known past the throttled event.
-3) A channel for each of the factors used in the operation.
+1. A channel that has a serializable structure argument that contains the two terms in the operation as well as the operation and the result. This will be used to illustrate an XML defined serializable as a single telemetry channel.
+2. A channel that counts the number of MR_SET_FACTOR1 commands received, so that a count can be known past the throttled event.
+3. A channel for each of the factors used in the operation.
 
 ### 1.2.4 Parameters
 
@@ -97,15 +99,15 @@ result = (value1 operation value2)*factor1/factor2
 This section will cover the implementation of the components for this tutorial. The implementation of these components
 will have the following steps:
 
-1) Define the `MathOpPort` and `MathResultPort` ports that are used between the components.
-2) Define the `MathSender` component in XML and compile it.
-3) Implement the `MathSender` derived implementation class.
-4) Unit test the `MathSender` implementation component.
-5) Define the `MathReceiver` component in XML.
-6) Implement the `MathReceiver` implementation class.
-7) Unit test the `MathReceiver` implementation class.
-8) Connect the classes to the `Ref` topology.
-9) Run the ground system and exercise the commands and view the telemetry and events in the GUI.
+1. Define the `MathOpPort` and `MathResultPort` ports that are used between the components.
+2. Define the `MathSender` component in XML and compile it.
+3. Implement the `MathSender` derived implementation class.
+4. Unit test the `MathSender` implementation component.
+5. Define the `MathReceiver` component in XML.
+6. Implement the `MathReceiver` implementation class.
+7. Unit test the `MathReceiver` implementation class.
+8. Connect the classes to the `Ref` topology.
+9. Run the ground system and exercise the commands and view the telemetry and events in the GUI.
 
 ## 2.1 Port definition
 
@@ -1429,7 +1431,7 @@ Next, the test checks for the expected telemetry and events:
       ASSERT_EVENTS_MS_RESULT(0,10.0);
 ```
 
-The other test cases are similarly implemented for the other operations. See the tutorial code for their implementation.
+The other test cases are similarly implemented for the other operations. See the tutorial code in `/docs/Tutorials/MathComponent` for their implementation.
 
 You must first generate the unit test before you can build it. Enter:
 
@@ -2129,6 +2131,8 @@ The overall `Ref` deployment can be built by changing to the `Ref` directory and
 
 If running on a different platform, you can specify the build target by typing `fprime-util generate <target>`.
 
+# 4 Ground System
+
 ## 4.1 Running the Ground System
 
 Once the `Ref` example has built successfully, you can run the ground system and executable by entering `fprime-gds -r fprime/Ref/build-artifacts`. The ground system GUI should appear.
@@ -2207,6 +2211,19 @@ The parameter can be written to storage by sending the `PRM_SAVE_FILE` command:
 ### 4.1.9 Ground System Logs
 
 The ground system keeps logs of all received events and telemetry. They can be found in the directories `<deployment>/logs/`, where `<Run Directory>` is the location of the deployment. e.g. `Ref`.
+
+### 4.2 Setup the Ground System in Docker
+
+### 4.2.1 Windows
+
+The ground system is accessible outside of a Docker container in a Web browser on Windows. The steps are the following: 
+
+1. Create the Docker container so that it redirects the 5000 port to the host machine: `docker run -p 5000:5000/tcp -d -it image:version`
+2. Follow this tutorial normally until `4.1`
+3. Start fprime-gds with the GUI server IP address being `0.0.0.0`: `fprime-gds -g html -r fprime/Ref/build-artifacts --gui-addr=0.0.0.0`
+4. Access the GUI in your Web browser on Windows using the following URL: `127.0.0.1:5000`
+
+Note: the parameter `--net="host"` for Docker on Windows does not work properly, and does not allow you to access the ports outside WSL. 
 
 # Conclusion
 
