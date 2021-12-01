@@ -1,14 +1,36 @@
+####
+# autocoder/ai-impl:
+#
+# Implementation template autocoder file.
+####
 include(utilities)
+include(autocoder/ai-shared)
 
+# Handles singular source files.
 set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+
+####
+# `is_supported`:
+#
+# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
+# IS_SUPPORTED in parent scope to be TRUE if the source file is an AI XML component file or FALSE otherwise. This only
+# processes component ai xml files.
+#
+# AC_INPUT_FILE: filepath for consideration
+####
 function(is_supported AC_INPUT_FILE)
+    set(IS_SUPPORTED FALSE PARENT_SCOPE)
     if (AC_INPUT_FILE MATCHES ".*ComponentAi\\.xml")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    else()
-        set(IS_SUPPORTED FALSE PARENT_SCOPE)
     endif()
 endfunction (is_supported)
 
+####
+# get_generated_files:
+#
+# This autocoder always generates TesterBase.cpp, TesterBase.hpp, and GTestBase.{c|h}pp files when INCLUDE_GTEST is set.
+# Sets GENERATED_FILES in parent scope to hold this information.
+####
 function(get_generated_files AC_INPUT_FILE)
     get_filename_component(AC_INPUT_NAME "${AC_INPUT_FILE}" NAME)
     foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable" "Array" "TopologyApp")
@@ -27,31 +49,20 @@ function(get_generated_files AC_INPUT_FILE)
     set(GENERATED_FILES "${CMAKE_CURRENT_LIST_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.hpp-template"
                         "${CMAKE_CURRENT_LIST_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.cpp-template")
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-
 endfunction(get_generated_files)
 
+####
+# get_dependencies:
+#
+# No dependencies, this function is a no-op.
+####
 function(get_dependencies AC_INPUT_FILE)
 endfunction(get_dependencies)
 
-
 ####
-# Function `aiwrap`:
+# `setup_autocode`:
 #
-# This function wraps the actual call to the ai autocoder in order to ensure that the functions are
-# performed correctly. This replaces a wrapper shell in order to step toward Windows support. This
-# function registers the autocoding steps specific to `codegen.py`.
-#
-# Note: as the autocoder is rewritten, this will likely need to change.
-#
-# - **AC_INPUT_FILE:** AI xml input to autocoder
-# - **MODULE_NAME:** module name being auto-coded
-# - **GENERATED_FILES**: files output by this process
-# - **MODULE_DEPENDENCIES:** xml and hand specified module dependencies
-# - **FILE_DEPENDENCIES:** xml file dependencies
-# - **EXTRAS:** used to carry over the XML type
-#
-# Implicit from scope: XML_LOWER_TYPE, FPRIME_BUILD_LOCATIONS_SEP, PYTHON_AUTOCODER_DIR, FPRIME_AC_CONSTANTS_FILE,
-#     FPRIME_FRAMEWORK_PATH,
+# Sets up the AI XML autocoder to generate files.
 ####
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     setup_ai_autocode_variant("-t" "${CMAKE_CURRENT_LIST_DIR}" "" "${AC_INPUT_FILE}" "${GENERATED_FILES}"

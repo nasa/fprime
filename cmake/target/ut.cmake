@@ -1,4 +1,8 @@
-## TODO: header comment
+####
+# target/ut.cmake:
+#
+# UTs target implementation.
+####
 
 ####
 # `add_global_target`:

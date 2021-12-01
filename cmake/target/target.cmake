@@ -59,7 +59,7 @@ endfunction(get_target_name)
 # - **TARGET_FILE_NAME:** name of target file
 ####
 function(setup_global_target TARGET_FILE_PATH)
-	# Include the file and look for definitions
+    # Include the file and look for definitions
     include(target/default)
     include("${TARGET_FILE_PATH}")
     if (CMAKE_DEBUG_OUTPUT)
@@ -117,7 +117,7 @@ endfunction(setup_all_deployment_targets)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(setup_module_target MODULE_NAME TARGET_FILE_PATH SOURCE_FILES DEPENDENCIES)
-	# Include the file and look for definitions
+    # Include the file and look for definitions
     include(target/default)
     include("${TARGET_FILE_PATH}")
     get_target_name("${TARGET_FILE_PATH}")

@@ -50,5 +50,5 @@ endfunction(add_deployment_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    message(FATAL "${TARGET} does not implement 'add_module_target'")
+    message(FATAL_ERROR "${TARGET} does not implement 'add_module_target'")
 endfunction(add_module_target)

@@ -1,7 +1,8 @@
-
-
-
-## TODO: header comment
+####
+# target/install.cmake:
+#
+# Installs fprime into the build-artifacts folder. This is done using CMake's install command. Requires CMake 3.13+.
+####
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE CACHE BOOL "Install all dependency" FORCE)
 
 # Dictionaries are per-deployment, a global variant does not make sense
