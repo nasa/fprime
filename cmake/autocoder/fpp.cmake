@@ -98,15 +98,15 @@ function(get_generated_files AC_INPUT_FILES)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    set(DIRECT_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
+    set(DIRECT_DEPENDENCIES_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
     set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
     set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
     set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
     set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/framework.txt")
-    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE}"
+    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_DEPENDENCIES_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE} -f ${FRAMEWORK_FILE}"
         CACHE INTERNAL "Last command to annotate memo file" FORCE)
     execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
-        -d "${DIRECT_FILE}"
+        -d "${DIRECT_DEPENDENCIES_FILE}"
         -i "${INCLUDED_FILE}"
         -m "${MISSING_FILE}"
         -g "${GENERATED_FILE}"
@@ -120,14 +120,15 @@ function(get_generated_files AC_INPUT_FILES)
     endif()
 
     # Read files and convert to lists of dependencies. e.g. read INCLUDED_FILE file into INCLUDED variable, then process
-    foreach(NAME INCLUDED MISSING GENERATED DIRECT FRAMEWORK)
+    foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK)
         file(READ "${${NAME}_FILE}" "${NAME}")
         string(STRIP "${${NAME}}" "${NAME}")
-        string(REGEX REPLACE "\n" ";" "${${NAME}}" "${NAME}")
+        string(REGEX REPLACE "\n" ";" "${NAME}" "${${NAME}}")
     endforeach()
+
     # Handle captured standard out
     string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
-    # List of framework dependencies: detected + builtin, subsetted from "this module" and further.
+    # List of framework dependencies: detected + builtin, subset from "this module" and further.
     list(APPEND FRAMEWORK ${FPP_FRAMEWORK_DEFAULT_DEPS})
     list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
     math(EXPR START_INDEX "${START_INDEX} + 1")
@@ -148,8 +149,9 @@ function(get_generated_files AC_INPUT_FILES)
         endforeach()
         message(FATAL_ERROR)
     endif()
+
     # Module dependencies are: detected "direct" + framework dependencies
-    fpp_to_modules("${DIRECT}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
+    fpp_to_modules("${DIRECT_DEPENDENCIES}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
 
@@ -177,7 +179,7 @@ endfunction(get_generated_files)
 function(get_dependencies AC_INPUT_FILES)
     # Should have been inherited from previous call to `get_generated_files`
     if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
-        message(FATAL "The CMake system is inconsistent. Please contact a developer.")
+        message(FATAL_ERROR "The CMake system is inconsistent. Please contact a developer.")
     endif()
 endfunction(get_dependencies)
 

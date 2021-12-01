@@ -102,7 +102,7 @@ endfunction(get_generated_files)
 function(get_dependencies AC_INPUT_FILE)
     # Should have been inherited from previous call to `get_generated_files`
     if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
-        message(FATAL "The CMake system is inconsistent. Please contact a developer.")
+        message(FATAL_ERROR "The CMake system is inconsistent. Please contact a developer.")
     endif()
 endfunction(get_dependencies)
 
