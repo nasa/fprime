@@ -1191,24 +1191,28 @@ namespace Ref {
     // Start tasks
     void startTasks(const TopologyState& state) {
       blockDrv.start(
-        TaskIds::blockDrv,
-        Priorities::blockDrv,
-        StackSizes::blockDrv
+        static_cast<NATIVE_UINT_TYPE>(Priorities::blockDrv),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::blockDrv),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::blockDrv)
       );
       chanTlm.start(
-        TaskIds::chanTlm,
-        Priorities::chanTlm,
-        StackSizes::chanTlm
+        static_cast<NATIVE_UINT_TYPE>(Priorities::chanTlm),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::chanTlm),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::chanTlm)
       );
       cmdDisp.start(
-        TaskIds::cmdDisp,
-        Priorities::cmdDisp,
-        StackSizes::cmdDisp
+        static_cast<NATIVE_UINT_TYPE>(Priorities::cmdDisp),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::cmdDisp),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdDisp)
       );
       cmdSeq.start(
-        TaskIds::cmdSeq,
-        Priorities::cmdSeq,
-        StackSizes::cmdSeq
+        static_cast<NATIVE_UINT_TYPE>(Priorities::cmdSeq),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::cmdSeq),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::cmdSeq)
       );
       // Initialize socket server if and only if there is a valid specification
       if (state.hostName != nullptr && state.portNumber != 0) {
@@ -1222,49 +1226,58 @@ namespace Ref {
           );
       }
       eventLogger.start(
-        TaskIds::eventLogger,
-        Priorities::eventLogger,
-        StackSizes::eventLogger
+        static_cast<NATIVE_UINT_TYPE>(Priorities::eventLogger),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::eventLogger),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::eventLogger)
       );
       fileDownlink.start(
-        TaskIds::fileDownlink,
-        Priorities::fileDownlink,
-        StackSizes::fileDownlink
+        static_cast<NATIVE_UINT_TYPE>(Priorities::fileDownlink),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::fileDownlink),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::fileDownlink)
       );
       fileManager.start(
-        TaskIds::fileManager,
-        Priorities::fileManager,
-        StackSizes::fileManager
+        static_cast<NATIVE_UINT_TYPE>(Priorities::fileManager),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::fileManager),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::fileManager)
       );
       fileUplink.start(
-        TaskIds::fileUplink,
-        Priorities::fileUplink,
-        StackSizes::fileUplink
+        static_cast<NATIVE_UINT_TYPE>(Priorities::fileUplink),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::fileUplink),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::fileUplink)
       );
       pingRcvr.start(
-        TaskIds::pingRcvr,
-        Priorities::pingRcvr,
-        StackSizes::pingRcvr
+        static_cast<NATIVE_UINT_TYPE>(Priorities::pingRcvr),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::pingRcvr),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::pingRcvr)
       );
       prmDb.start(
-        TaskIds::prmDb,
-        Priorities::prmDb,
-        StackSizes::prmDb
+        static_cast<NATIVE_UINT_TYPE>(Priorities::prmDb),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::prmDb),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::prmDb)
       );
       rateGroup1Comp.start(
-        TaskIds::rateGroup1Comp,
-        Priorities::rateGroup1Comp,
-        StackSizes::rateGroup1Comp
+        static_cast<NATIVE_UINT_TYPE>(Priorities::rateGroup1Comp),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::rateGroup1Comp),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup1Comp)
       );
       rateGroup2Comp.start(
-        TaskIds::rateGroup2Comp,
-        Priorities::rateGroup2Comp,
-        StackSizes::rateGroup2Comp
+        static_cast<NATIVE_UINT_TYPE>(Priorities::rateGroup2Comp),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::rateGroup2Comp),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup2Comp)
       );
       rateGroup3Comp.start(
-        TaskIds::rateGroup3Comp,
-        Priorities::rateGroup3Comp,
-        StackSizes::rateGroup3Comp
+        static_cast<NATIVE_UINT_TYPE>(Priorities::rateGroup3Comp),
+        static_cast<NATIVE_UINT_TYPE>(StackSizes::rateGroup3Comp),
+        Os::Task::TASK_DEFAULT, // Default CPU
+        static_cast<NATIVE_UINT_TYPE>(TaskIds::rateGroup3Comp)
       );
     }
 

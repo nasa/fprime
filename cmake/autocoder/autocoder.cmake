@@ -60,8 +60,12 @@ endfunction()
 # SOURCES: source file that is being parsed and must have changed for a recalculation
 ####
 function (__memoize SOURCES)
-    string(MD5 SOURCES_HASH "${SOURCES}")
+    set(SOURCES_HASH "multiple")
+    if (HANDLES_INDIVIDUAL_SOURCES)
+        string(MD5 SOURCES_HASH "${SOURCES}")
+    endif()
     set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${AUTOCODER_NAME}.${SOURCES_HASH}.dep")
+
     regenerate_memo(FORCE_REGENERATE "${MEMO_FILE}" "${SOURCES}")
     if (FORCE_REGENERATE)
         get_generated_files("${SOURCES}")
