@@ -110,13 +110,13 @@ jobs:
         fprime-util build --all -j4
 
 
-#  CMake:
-#    runs-on: ubuntu-latest
-#    steps:
-#    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#    - uses: actions/checkout@v2
-#    - name: Install fprime tools
-#      run: pip3 install fprime-tools fprime-gds
-#    - name: CMake Tests
-#      working-directory: ./cmake/test
-#      run: pytest
+  CMake:
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
+    - name: CMake Tests
+      working-directory: ./cmake/test
+      run: pytest

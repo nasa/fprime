@@ -10,7 +10,7 @@ include(autocoder/default)
 # Does not handle source files one-by-one, but as a complete set
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)
 set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
-set(FPP_FRAMEWORK_DEFAULT_DEPS Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Types Fw_Cfg)
+set(FPP_FRAMEWORK_DEFAULT_DEPS Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg)
 
 ####
 # `is_supported`:
