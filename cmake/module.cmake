@@ -23,7 +23,7 @@ function(generate_deployment EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
         set(FPRIME_OBJECT_TYPE "Deployment")
     endif()
     setup_all_deployment_targets(FPRIME_TARGET_LIST "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-    if (TARGET "${EXECUTABLE_NAME}")
+    if (TARGET "${EXECUTABLE_NAME}" AND NOT FPRIME_FPP_LOCS_BUILD)
         add_dependencies("${EXECUTABLE_NAME}" "${EXECUTABLE_NAME}_dict")
     endif()
     # Add unit test targets to deployment
