@@ -15,7 +15,7 @@ topologies can include both components modeled in XML and FPP so that projects c
 without needing to convert everything.
 
 `fpp-from-xml` is a tool included with the FPP tool suit to help convert from XML to FPP.  Further information on the
-FPP tool suite and FPP in generat can be found at:
+FPP tool suite and FPP in general can be found at:
 [https://fprime-community.github.io/fpp/fpp-users-guide.html](https://fprime-community.github.io/fpp/fpp-users-guide.html)
 
 ## Topology Changes
@@ -41,11 +41,11 @@ topology module and call `register_fprime_deployment` to setup the executable.
 These modifications to Ref can be seen here: 
 [Ref/CMakeLists.txt](https://github.com/nasa/fprime/blob/034216bc73ac91e78ba03fda25362050a695a960/Ref/CMakeLists.txt#L50-L53)
 
-## Inlined Enumerations and Standard Enumerations
+## Inline Enumerations and Standard Enumerations
 
-Enumerations inlined within a Component are no longer supported. F´ supports enumeration models so projects should
+Inline enumerations within a Component are no longer supported. F´ supports enumeration models so projects should
 migrate to defining an enumeration model and using that type as arguments to commands, events, etc. As part of this work
-standard enumerations that were previously implemented as inlined enumerations have now been converted. This means
+standard enumerations that were previously implemented as inline enumerations have now been converted. This means
 projects must update usage of these enumerations. In some cases these enumeration names have been slightly changes.
 
 The best example of this is the command response enumeration.  This change can be seen in the SignalGen component as
@@ -63,12 +63,23 @@ this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 ```
 [source](https://github.com/nasa/fprime/blob/release/v3.0.0/Ref/SignalGen/SignalGen.cpp)
 
-The following user-facing enumeration types need to be updated.
+The following user-facing enumeration types must be updated.
 
-1. Command response enums: e.g. `Fw::COMMAND_OK` becomes `Fw::CmdResponse::OK`
-2. Parameter valid enums: e.g. `Fw::PARAM_INVALID` becomes `Fw::ParamValid::INVALID`
+| Old Symbol | Updated Symbol  |
+|---|---|
+| Fw::COMMAND_OK | Fw::CmdResponse::OK |
+| Fw::COMMAND_INVALID_OPCODE | Fw::CmdResponse::INVALID_OPCODE |
+| Fw::COMMAND_VALIDATION_ERROR | Fw::CmdResponse::VALIDATION_ERROR |
+| Fw::COMMAND_FORMAT_ERROR | Fw::CmdResponse::FORMAT_ERROR |
+| Fw::COMMAND_EXECUTION_ERROR | Fw::CmdResponse::EXECUTION_ERROR |
+| Fw::COMMAND_BUSY | Fw::CmdResponse::BUSY |
+| Fw::PARAM_UNINIT | Fw::ParamValid::UNINIT |
+| Fw::PARAM_VALID | Fw::ParamValid::VALID |
+| Fw::PARAM_INVALID | Fw::ParamValid::INVALID |
+| Fw::PARAM_DEFAULT | Fw::ParamValid::DEFAULT |
 
-Other enumerations have changed but these are typically wrapped in the autocoded layer. 
+Other enumerations have changed but these are typically wrapped in the autocoded layer. A complete list is found 
+[here](../dev/v3-renamed-symbols.md).
 
 ## CMake Options
 
