@@ -143,7 +143,7 @@ def get_build(
             "cmake": cmake_output,
             "targets": target_outputs,
         }
-        # shutil.rmtree(build_directory, ignore_errors=True)
-        # shutil.rmtree(install_directory, ignore_errors=True)
+        shutil.rmtree(build_directory, ignore_errors=True)
+        shutil.rmtree(install_directory, ignore_errors=True)
 
     return fixture_function
