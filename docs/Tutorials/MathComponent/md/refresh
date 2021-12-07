@@ -1,6 +1,13 @@
 #!/bin/sh -e
 
 cat Tutorial.md | \
+  awk -f tags.awk | \
+  awk -f sections.awk | \
+  awk -f toc.awk \
+  > toc.md
+
+cat Tutorial.md | \
+  awk -f tags.awk | \
   awk -f sections.awk | \
   awk -f include.awk \
   > ../Tutorial.md

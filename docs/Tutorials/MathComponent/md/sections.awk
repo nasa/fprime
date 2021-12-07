@@ -2,13 +2,17 @@
 
 BEGIN {
   MAX_LEVELS = 10
-  in_code = 0
+  in_code_block = 0
 }
 
-$1 ~ "^```" { in_code = !in_code }
+$1 ~ "^```" { in_code_block = !in_code_block }
 
-/^#+ / && !in_code {
+/^#+ / && !in_code_block {
   new_level = length($1)
+  if (new_level > MAX_LEVELS) {
+    print "sections.awk: too many levels (" new_level ")" > "/dev/stderr"
+    exit(1)
+  }
   ++levels[new_level]
   for (i = new_level + 1; i <= MAX_LEVELS; ++i) 
     levels[i] = 0
