@@ -56,6 +56,7 @@ consisting of two components:
 
 See the diagram below.
 
+<a name="math-top"></a>
 ![A simple topology for arithmetic computation](png/top.png)
 
 **What is covered:** The tutorial covers the following concepts:
@@ -2007,8 +2008,14 @@ These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
 **Check for unconnected ports:**
-This capability does not yet exist in the F Prime build system.
-When it does, you will be able to see a list of ports
+Run the following commands:
+
+```bash
+fprime-util fpp-check -u unconnected.txt
+cat unconnected.txt
+```
+
+You should see a list of ports
 that are unconnected in the `Ref` topology.
 Those ports will include the ports for the new instances
 `mathSender` and `mathReceiver`.
@@ -2019,7 +2026,7 @@ This is the beginning of the definition of the `RateGroups`
 connection graph.
 Inside the block of that definition,
 find the line
-`rateGroup1Comp.RateGroupMemberOut[3] pass:[->] fileDownlink.Run`.
+`rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run`.
 After that line, add the line
 
 ```fpp
@@ -2130,7 +2137,8 @@ You should see a Topology menu at the top of the window
 and a rendering of the Command topology below.
 Select Math from the topology menu.
 You should see a rendering of the Math topology.
-It should look similar to <<math-top,Figure 1>>.
+It should look similar to the
+<a href="#math-top">topology diagram shown above</a>.
 
 You can use the menu to view other topology graphs.
 When you are done, close the browser window and
