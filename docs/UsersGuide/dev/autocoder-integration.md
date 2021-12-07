@@ -1,7 +1,7 @@
 # Integrating a New Autocoder
 
 This guide will walk the user through integrating a new autocoder into the F´ build system. In the most basic form an
-autocoder consists of several elements: input models, output generated code, steps to genenerate output from the given
+autocoder consists of several elements: input models, output generated code, steps to generate output from the given
 input, and a trigger to start the process. As a byproduct, this process also produces "module dependencies" and
 "file dependencies" used to tie the autocoder into the make system itself.
 
