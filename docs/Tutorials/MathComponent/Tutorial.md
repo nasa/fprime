@@ -1528,11 +1528,11 @@ The parameter identifier is passed in as the `id` argument
 of the function.
 Here we do the following:
 
-. If the parameter identifier is `PARAMID_FACTOR` (the parameter
+1. If the parameter identifier is `PARAMID_FACTOR` (the parameter
 identifier corresponding to the `FACTOR` parameter,
 then get the parameter value and emit an event report.
 
-. Otherwise fail an assertion.
+1. Otherwise fail an assertion.
 This code should never run, because there are no other
 parameters.
 
@@ -1787,12 +1787,12 @@ another way to set a parameter.
 `testAdd` showed how to set a parameter by command.
 You can also set a parameter by initialization, as follows:
 
-. Call the `paramSet` function as shown.
+1. Call the `paramSet` function as shown.
 This function sets the parameter value in
 the part of the test harness that mimics the behavior of the
 parameter database component.
 
-. Call the `loadParameters` function as shown.
+1. Call the `loadParameters` function as shown.
 In flight, the function `loadParameters` is typically called at the
 start of FSW to load the parameters from the database;
 here it loads the parameters from the test harness.
