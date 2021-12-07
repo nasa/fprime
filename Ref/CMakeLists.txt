@@ -51,7 +51,6 @@ set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Top/Main.cpp")
 set(MOD_DEPS ${PROJECT_NAME}/Top)
 
 register_fprime_deployment()
-if (NOT FPRIME_FPP_LOCS_BUILD)
 # The following compile options will only apply to the deployment executable.
 # The extra warnings trigger in core F Prime so we don't apply them there.
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wall)
@@ -67,4 +66,3 @@ target_compile_options("${PROJECT_NAME}" PUBLIC -Woverloaded-virtual)
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wno-unused-parameter)
 target_compile_options("${PROJECT_NAME}" PUBLIC -Wundef)
 set_property(TARGET "${PROJECT_NAME}" PROPERTY CXX_STANDARD 11)
-endif()
