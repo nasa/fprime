@@ -20,7 +20,7 @@
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Set-Up-the-Unit-Test-Environment">4.5.1. Set Up the Unit Test Environment</a>
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-One-Test">4.5.2. Write and Run One Test</a>
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-More-Tests">4.5.3. Write and Run More Tests</a>
-    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise:-Random-Testing">4.5.4. Exercise: Random Testing</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing">4.5.4. Exercise: Random Testing</a>
   * <a href="#The-MathSender-Component_Reference-Implementation">4.6. Reference Implementation</a>
 
 <a name="Introduction"></a>
@@ -1066,7 +1066,7 @@ Again you can try altering something in the component code
 to see what effect it has on the test output.
 
 <a name="math-sender_exercise"></a>
-<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise:-Random-Testing"></a>
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing"></a>
 ### 4.5.4. Exercise: Random Testing
 
 F Prime provides a module called `STest`
