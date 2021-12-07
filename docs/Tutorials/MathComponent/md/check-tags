@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+if ! test $# -eq 1
+then
+  echo 'usgage: check-tags file' 1>&2
+  exit 1
+fi
+
+./defined-tags < $1 > defined-tags.txt
+./used-tags < $1 > used-tags.txt
+undefined_tags=`./undefined-tags defined-tags.txt used-tags.txt`
+if test -n "$undefined_tags"
+then
+  echo "WARNING: There were undefined tags" 1>&2
+  echo $undefined_tags | tr ' ' '\n'
+  exit 1
+fi

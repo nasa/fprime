@@ -11,3 +11,5 @@ cat Tutorial.md | \
   awk -f sections.awk | \
   awk -f include.awk \
   > ../Tutorial.md
+
+./check-tags ../Tutorial.md
