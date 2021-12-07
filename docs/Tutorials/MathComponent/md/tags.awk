@@ -13,7 +13,7 @@ BEGIN {
 $1 ~ /^```/ && in_code_block == 0 { in_code_block = 1; print; next }
 $1 ~ /^```/ && in_code_block == 1 { in_code_block = 0; print; next }
 
-$1 ~ /^##*$/ && !in_code_block {
+$1 ~ /^##+$/ && !in_code_block {
   level = length($1)
   level_tag = ""
   for (i = 2; i <= NF; ++i) {

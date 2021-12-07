@@ -12,8 +12,8 @@ BEGIN {
 
 $1 ~ "^```" { in_code_block = !in_code_block }
 
-/^#+ / && !in_code_block {
-  new_level = length($1)
+/^##+ / && !in_code_block {
+  new_level = length($1) - 1
   if (new_level > MAX_LEVELS) {
     print "sections.awk: too many levels (" new_level ")" > "/dev/stderr"
     exit(1)

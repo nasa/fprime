@@ -14,8 +14,8 @@ BEGIN {
 
 $1 ~ "^```" { in_code_block = !in_code_block }
 
-/^#+ / && !in_code_block {
-  indent_level = length($1) - 1
+/^##+ / && !in_code_block {
+  indent_level = length($1) - 2
   tag = prev_line
   sub(/^[^"]*"/, "", tag)
   sub(/"[^"]*$/, "", tag)
