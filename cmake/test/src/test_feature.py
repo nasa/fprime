@@ -10,7 +10,7 @@ import cmake
 import settings
 
 
-FEATURE_BUILD = cmake.get_build(
+_ = cmake.get_build(
     "FEATURE_BUILD",
     settings.DATA_DIR / "TestDeployment",
     {
