@@ -1032,17 +1032,17 @@ _(v1 + v2) f_.
 
 1. **Events:** There are three event reports:
 
-   a. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+   1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
       is updated by command.
       This event is *throttled* to a limit of three.
       That means that after the event is emitted three times
       it will not be emitted any more, until the throttling
       is cleared by command (see below).
 
-   a. `OPERATION_PERFORMED`: Emitted when this component
+   1. `OPERATION_PERFORMED`: Emitted when this component
       performs a math operation.
 
-   a. `THROTTLE_CLEARED`: Emitted when the event throttling
+   1. `THROTTLE_CLEARED`: Emitted when the event throttling
       is cleared.
 
 1. **Commands:** There is one command for clearing
