@@ -1,7 +1,6 @@
 /^include::/ {
   file = $0
-  sub(/^include::/, "", file)
-  sub(/\[\]/, "", file)
+  sub(/^!include +/, "", file)
   command = "cat " file
   print "" | command
   close(command)
