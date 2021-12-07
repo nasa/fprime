@@ -1631,3 +1631,216 @@ Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
 
+# Updating the Ref Deployment
+
+The next step in the tutorial is to define instances of the
+`MathSender` and `MathReceiver` components and add them
+to the `Ref` topology.
+
+## Defining the Component Instances
+
+Go to the directory `Ref/Top` and open the file `instances.fpp`.
+This file defines the instances used in the topology for the
+`Ref` application.
+Update this file as described below.
+
+**Define the mathSender instance:**
+At the end of the section entitled "Active component instances,"
+add the following lines:
+
+```fpp
+instance mathSender: Ref.MathSender base id 0xE00 \
+  queue size Default.queueSize \
+  stack size Default.stackSize \
+  priority 100
+```
+
+This code defines an instance `mathSender` of component
+`MathSender`.
+It has **base identifier** 0xE00.
+FPP adds the base identifier to each the relative identifier
+defined in the component to compute the corresponding
+identifier for the instance.
+For example, component `MathSender` has a telemetry channel
+`MathOp` with identifier 1, so instance `mathSender`
+has a command `MathOp` with identifier 0xE01.
+
+The following lines define the queue size, stack size,
+and thread priority for the active component.
+Here we give `mathSender` the default queue size
+and stack size and a priority of 100.
+
+**Define the mathReceiver instance:**
+At the end of the section "Queued component instances,"
+add the following lines:
+
+```fpp
+instance mathReceiver: Ref.MathReceiver base id 0x2700 \
+  queue size Default.queueSize
+```
+
+This code defines an instance `mathReceiver` of
+component `MathReceiver`.
+It has base identifier 0x2700 and the default queue size.
+
+**More information:**
+For more information on defining component instances,
+see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances).
+
+## Updating the Topology
+
+Go to the directory `Ref/Top` and open the file `topology.fpp`.
+This file defines the topology for the `Ref` application.
+Update this file as described below.
+
+**Add the new instances:**
+You should see a list of instances, each of which begins
+with the keyword `instance`.
+After the line `instance linuxTime`, add the following
+lines:
+
+```fpp
+instance mathSender
+instance mathReceiver
+```
+
+These lines add the `mathSender` and `mathReceiver`
+instances to the topology.
+
+**Check for unconnected ports:**
+This capability does not yet exist in the F Prime build system.
+When it does, you will be able to see a list of ports
+that are unconnected in the `Ref` topology.
+Those ports will include the ports for the new instances
+`mathSender` and `mathReceiver`.
+
+**Connect mathReceiver to rate group 1:**
+Find the line that starts `connections RateGroups`.
+This is the beginning of the definition of the `RateGroups`
+connection graph.
+Inside the block of that definition,
+find the line
+`rateGroup1Comp.RateGroupMemberOut[3] pass:[->] fileDownlink.Run`.
+After that line, add the line
+
+```fpp
+rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
+```
+
+This line adds the connection that drives the `schedIn`
+port of the `mathReceiver` component instance.
+
+**Re-run the check for unconnected ports:**
+When this capability exists, you will be able to see
+that `mathReceiver.schedIn` is now connected
+(it no longer appears in the list).
+
+**Add the Math connections:**
+Find the Uplink connections that begin with the line
+`connections Uplink`.
+After the block of that definition, add the following
+lines:
+
+```fpp
+connections Math {
+  mathSender.mathOpOut -> mathReceiver.mathOpIn
+  mathReceiver.mathResultOut -> mathSender.mathResultIn
+}
+```
+
+These lines add the connections between the `mathSender`
+and `mathReceiver` instances.
+
+**Re-run the check for unconnected ports:**
+When this capability exists, you will be able to see
+that the `mathSender` and `mathReceiver` ports are connected.
+
+**More information:**
+For more information on defining topologies,
+see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies).
+
+## Building the Ref Deployment
+
+Go to the `Ref` directory.
+Run `fprime-util build --jobs 4`.
+The updated deployment should build without errors.
+The generated files are located at
+`Ref/build-fprime-automatic-native/Ref/Top`.
+
+## Visualizing the Ref Topology
+
+Now we will see how to create a visualization (graphical rendering)
+of the Ref topology.
+
+**Generate the layout:**
+For this step, we will use the F Prime Layout (FPL) tool.
+If FPL is not installed on your system, then install it how:
+clone [this repository](https://github.com/fprime-community/fprime-layout)
+and follow the instructions.
+
+In directory `Ref/Top`, run the following commands in an sh-compatible
+shell such as bash.
+If you are using a different shell, you can run `sh`
+to enter the `sh` shell, run these commands, and enter
+`exit` when done.
+Or you can stay in your preferred shell and adjust these commands
+appropriately.
+
+```bash
+cp ../build-fprime-automatic-native/Ref/Top/RefTopologyAppAi.xml .
+mkdir visual
+cd visual
+fpl-extract-xml < ../RefTopologyAppAi.xml
+mkdir Ref
+for file in `ls *.xml`
+do
+echo "laying out $file"
+base=`basename $file .xml`
+fpl-convert-xml $file | fpl-layout > Ref/$base.json
+done
+```
+
+This step extracts the connection graphs from the topology XML and
+converts each one to a JSON layout file.
+
+**Render the layout:**
+For this step, we will use the F Prime Visualizer (FPV) tool.
+If FPV is not installed on your system, then install it now:
+clone
+https://github.com/fprime-community/fprime-visual[this
+repository] and follow the instructions.
+
+In directory `Ref/Top`, run the following commands in an sh-compatible
+shell.
+Replace `[path to fpv root]` with the path to the
+root of the FPV repo on your system.
+
+```bash
+echo DATA_FOLDER=Ref/ > .fpv-env
+nodemon [path to fpv root]/server/index.js ./.fpv-env
+```
+
+You should see the FPV server application start up on the
+console.
+
+Now open a browser and navigate to `http://localhost:3000`.
+You should see a Topology menu at the top of the window
+and a rendering of the Command topology below.
+Select Math from the topology menu.
+You should see a rendering of the Math topology.
+It should look similar to <<math-top,Figure 1>>.
+
+You can use the menu to view other topology graphs.
+When you are done, close the browser window and
+type control-C in the console to shut down the FPV server.
+
+## Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/Top`.
+To build this implementation, copy the files
+`instances.fpp` and `topology.fpp` from
+that directory to `Ref/Top`.
+
