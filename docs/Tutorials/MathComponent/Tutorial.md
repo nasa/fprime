@@ -1082,7 +1082,7 @@ Try the following:
 You should see that the value _S_ was used in the runs you just did
 (corresponding to the last few entries in `seed-history`).
 
-### 4.5.5. Reference Implementation
+## 4.6. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.
