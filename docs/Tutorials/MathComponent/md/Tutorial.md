@@ -504,15 +504,14 @@ sending a command response.
 The proper behavior of other framework components (e.g., command
 dispatcher, command sequencer) depends upon adherence to this rule.
 
-*Check the build:*
+**Check the build:**
 Run `fprime-util build` again to make sure that everything still builds.
 
-*Fill in the mathResultIn handler:*
+**Fill in the mathResultIn handler:**
 You should see a stub handler for the `mathResultIn`
 port that looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   mathResultIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -521,7 +520,7 @@ void MathSender ::
 {
   // TODO
 }
-----
+```
 
 The handler `mathResultIn_handler` is called when the `MathReceiver`
 component code returns a result by invoking the `mathResultIn` port.
@@ -529,8 +528,7 @@ Again the handler overrides the corresponding pure virtual
 function in the auto-generated base class.
 Fill in the handler so that it looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   mathResultIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -540,7 +538,7 @@ void MathSender ::
     this->tlmWrite_RESULT(result);
     this->log_ACTIVITY_HI_RESULT(result);
 }
-----
+```
 
 The implementation code emits the result on the `RESULT`
 telemetry channel and as a `RESULT` event report.
