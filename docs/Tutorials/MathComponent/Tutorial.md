@@ -41,6 +41,13 @@
   * <a href="#Updating-the-Ref-Deployment_Building-the-Ref-Deployment">6.3. Building the Ref Deployment</a>
   * <a href="#Updating-the-Ref-Deployment_Visualizing-the-Ref-Topology">6.4. Visualizing the Ref Topology</a>
   * <a href="#Updating-the-Ref-Deployment_Reference-Implementation">6.5. Reference Implementation</a>
+* <a href="#Running-the-Ref-Deployment">7. Running the Ref Deployment</a>
+  * <a href="#Running-the-Ref-Deployment_Sending-a-Command">7.1. Sending a Command</a>
+  * <a href="#Running-the-Ref-Deployment_Checking-Events">7.2. Checking Events</a>
+  * <a href="#Running-the-Ref-Deployment_Checking-Telemetry">7.3. Checking Telemetry</a>
+  * <a href="#Running-the-Ref-Deployment_Setting-Parameters">7.4. Setting Parameters</a>
+  * <a href="#Running-the-Ref-Deployment_Saving-Parameters">7.5. Saving Parameters</a>
+  * <a href="#Running-the-Ref-Deployment_GDS-Logs">7.6. GDS Logs</a>
 
 <a name="Introduction"></a>
 # 1. Introduction
@@ -2152,3 +2159,131 @@ To build this implementation, copy the files
 `instances.fpp` and `topology.fpp` from
 that directory to `Ref/Top`.
 
+<a name="Running-the-Ref-Deployment"></a>
+# 7. Running the Ref Deployment
+
+Now we will use the F Prime Ground Data System (GDS) to run the Ref deployment.
+Go to the `Ref` directory and run `fprime-gds`.
+You should see some activity on the console.
+The system is starting the Ref deployment executable, starting the GDS,
+and connecting them over the local network on your machine.
+After several seconds, a browser window should appear.
+
+<a name="Running-the-Ref-Deployment_Sending-a-Command"></a>
+## 7.1. Sending a Command
+
+At the top of the window are several buttons, each of which corresponds to
+a GDS view.
+Select the Commanding button (this is the view that is selected
+when you first start the GDS).
+In the Mnemonic menu, start typing `mathSender.DO_MATH` in the text box.
+As you type, the GDS will filter the menu selections.
+When only one choice remains, stop typing and press return.
+You should see three boxes appear:
+
+1. A text box for entering `val1`.
+
+1. A menu for entering `op`.
+
+1. A text box for entering `val2`.
+
+Fill in the arguments corresponding to the operation `1 + 2`.
+You can use the tab key to move between the boxes.
+When you have done this, click the Send Command button.
+You should see a table entry at the bottom of the window
+indicating that the command was sent.
+
+<a name="Running-the-Ref-Deployment_Checking-Events"></a>
+## 7.2. Checking Events
+
+Now click on the Events button at the top of the window.
+The view changes to the Events tab.
+You should see events indicating that the command you sent was
+dispatched, received, and completed.
+You should also see events indicating that `mathReceiver`
+performed an `ADD` operation and `mathSender`
+received a result of 3.0.
+
+<a name="Running-the-Ref-Deployment_Checking-Telemetry"></a>
+## 7.3. Checking Telemetry
+
+Click on the Channels button at the top of the window.
+You should see a table of telemetry channels.
+Each row corresponds to the latest value of a telemetry
+channel received by the GDS.
+You should see the channels corresponding to the input
+values, the operation, and the result.
+
+<a name="Running-the-Ref-Deployment_Setting-Parameters"></a>
+## 7.4. Setting Parameters
+
+Go back to the Commanding tab.
+Select the command `mathReceiver.FACTOR_PRM_SET`.
+This is an auto-generated command for setting the
+parameter `FACTOR`.
+Type the value 2.0 in the `val` box and click Send Command.
+Check the events to see that the command was dispatched
+and executed.
+You should also see the events sent by the code
+that you implemented.
+
+In the Commanding tab, issue the command `1 + 2` again.
+Check the Events tab.
+Because the factor is now 2.0, you should see a result
+value of 6.0.
+
+<a name="Running-the-Ref-Deployment_Saving-Parameters"></a>
+## 7.5. Saving Parameters
+
+When you set a parameter by command, the new parameter
+value resides in the component that receives the command.
+At this point, if you stop and restart FSW, the parameter
+will return to its original value (the value before you
+sent the command).
+
+At some point you may wish to update parameters more permanently.
+You can do this by saving them to non-volatile storage.
+For the Ref application, "non-volatile storage" means the
+file system on your machine.
+
+To save the parameter `mathReceiver.FACTOR` to non-volatile storage,
+do the following:
+
+1. Send the command `mathReceiver.FACTOR_PRM_SAVE`.
+This command saves the parameter value to the **parameter database**,
+which is a standard F Prime component for storing system parameters.
+
+1. Send the command `prmDb.PRM_SAVE_FILE`.
+This command saves the parameter values in the parameter database
+to non-volatile storage.
+
+Note that saving parameters is a two-step process.
+The first step copies a single parameter from a component
+to the database.
+The second step saves all parameters in the database
+to the disk.
+If you do only the first step, the parameter will not be
+saved to the disk.
+
+<a name="Running-the-Ref-Deployment_GDS-Logs"></a>
+## 7.6. GDS Logs
+
+As it runs, the GDS writes a log into a subdirectory of `Ref/logs`.
+The subdirectory is stamped with the current date.
+Go into the directory for the run you just performed.
+(If the GDS is still running, you will have to do this in a
+different shell.)
+You should see the following logs, among others:
+
+* `Ref.log`: FSW console output.
+
+* `command.log`: Commands sent.
+
+* `event.log`: Event reports received.
+
+* `channel.log`: Telemetry points received.
+
+You can also view these logs via the GDS browser interface.
+Click the Logs tab to go the Logs view.
+Select the log you wish to inspect from the drop-down menu.
+By default, there is no log selected.
