@@ -214,3 +214,78 @@ For example, switch git branches, use `git stash` to stash
 your changes, or move `MathTypes` to another directory such
 as `MathTypes-saved`.
 
+<a name="ports"></a>
+# The MathOp and MathResult Ports
+
+A **port** is the endpoint of a connection between
+two components.
+A **port definition** is like a function signature;
+it defines the type of the data carried on a port.
+
+For this tutorial, we need two port definitions:
+
+* `MathOp` for sending an arithmetic operation request from
+`MathSender` to `MathReceiver`.
+
+* `MathResult` for sending the result of an arithmetic
+operation from `MathReceiver` to `MathSender`.
+
+We follow the same three steps as in the previous section.
+
+## Construct the FPP Model
+
+**Create the MathPorts directory:**
+Go to the directory `Ref` at the top-level of the
+F Prime repository and run `mkdir MathPorts`.
+This directory will contain our new ports.
+
+**Create the FPP model file:**
+Now go into the directory `Ref/MathPorts`.
+Create a file `MathPorts.fpp` with the following contents:
+
+```fpp
+!include ../MathPorts/MathPorts.fpp
+```
+
+This file defines the ports `MathOp` and `MathResult`.
+`MathOp` has three formal parameters: a first operand, an
+operation, and a second operand.
+The operands have type `F32`, which represents a 32-bit
+floating-point number.
+The operation has type `MathOp`, which is the enum type
+we defined in the previous section.
+`MathResult` has a single formal parameter, the value of type `F32`
+returned as the result of the operation.
+
+For more information about port definitions, see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Ports).
+
+## Add the Model to the Project
+
+Add add the model
+`Ref/MathPorts/MathPorts.fpp` to the `Ref` project.
+Carry out the steps in the
+<a href="types_add">previous section</a>, after
+substituting `MathPorts` for `MathTypes`.
+
+## Build the Model
+
+Carry out the steps in the
+<a href="types_build">previous section</a>,
+in directory `MathPorts` instead of `MathTypes`.
+The generated code will go in
+`Ref/build-fprime-automatic-native/Ref/MathPorts`.
+For port definitions, the names of the auto-generated C++
+files end in `PortAc.hpp` and `PortAc.cpp`.
+You can look at this code if you wish.
+However, the auto-generated C++ port files are used
+by the autocoded component implementations (described below);
+you won't ever program directly against their interfaces.
+
+## Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/MathPorts`.
+To build this implementation, follow the steps
+described for <a href="type_ref">`MathTypes`</a>.
+
