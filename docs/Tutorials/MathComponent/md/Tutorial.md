@@ -1815,9 +1815,8 @@ converts each one to a JSON layout file.
 **Render the layout:**
 For this step, we will use the F Prime Visualizer (FPV) tool.
 If FPV is not installed on your system, then install it now:
-clone
-https://github.com/fprime-community/fprime-visual[this
-repository] and follow the instructions.
+clone [this repository](https://github.com/fprime-community/fprime-visual)
+and follow the instructions.
 
 In directory `Ref/Top`, run the following commands in an sh-compatible
 shell.
