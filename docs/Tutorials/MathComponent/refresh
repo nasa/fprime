@@ -1,5 +1,4 @@
 #!/bin/sh -e
 
-(cd adoc; ./refresh)
+(cd md; ./refresh)
 (cd json; ./refresh)
-asciidoctor -vn -o Tutorial.html Tutorial.adoc
