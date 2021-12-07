@@ -1,4 +1,4 @@
-/^include::/ {
+/^!include +/ {
   file = $0
   sub(/^!include +/, "", file)
   command = "cat " file

@@ -92,7 +92,17 @@ Now go into the directory `Ref/MathTypes`.
 In that directory, create a file `MathTypes.fpp` with the following contents:
 
 ```fpp
-!include ../MathTypes/MathTypes.fpp
+module Ref {
+
+  @ A math operation
+  enum MathOp {
+    ADD @< Addition
+    SUB @< Subtraction
+    MUL @< Multiplication
+    DIV @< Division
+  }
+
+}
 ```
 
 You can do this by typing, or by copy-paste.
