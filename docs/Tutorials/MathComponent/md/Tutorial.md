@@ -186,10 +186,10 @@ Makefile              MathOpEnumAc.hpp      autocoder
 ```
 
 The files `MathOpEnumAc.hpp` and
-`MathOpEnumAc.cpp` are the auto-generated {cpp} files
+`MathOpEnumAc.cpp` are the auto-generated C++ files
 corresponding to the `MathOp` enum.
 You may wish to study the file `MathOpEnumAc.hpp`.
-This file gives the interface to the {cpp} class `Ref::MathOp`.
+This file gives the interface to the C++ class `Ref::MathOp`.
 All enum types have a similar auto-generated class
 interface.
 
