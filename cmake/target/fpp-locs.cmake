@@ -70,6 +70,11 @@ endfunction()
 # Does nothing.  Fpp locations are truly global.
 ####
 function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+    if (NOT TARGET MODULE)
+        set(EMPTY_C_SRC "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
+        file(WRITE "${EMPTY_C_SRC}" "#define CMAKE_EMPTY_SOURCE\n")
+        add_library(${MODULE} "${EMPTY_C_SRC}") # Fake target to appease those who hand-edit targets outside of fprime
+    endif()
 endfunction()
 
 ####
