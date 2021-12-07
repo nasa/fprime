@@ -1035,7 +1035,7 @@ _(v1 + v2) f_.
 
    1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
       is updated by command.
-      This event is *throttled* to a limit of three.
+      This event is **throttled** to a limit of three.
       That means that after the event is emitted three times
       it will not be emitted any more, until the throttling
       is cleared by command (see below).
@@ -1049,7 +1049,7 @@ _(v1 + v2) f_.
 1. **Commands:** There is one command for clearing
 the event throttle.
 
-1. *Telemetry:*
+1. **Telemetry:**
 There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
@@ -1249,7 +1249,7 @@ parameters.
 1. Follow the steps given for the
 <a href="#math-sender_unit_setup">`MathSender` component</a>.
 
-1. Follow the steps given under *Modifying the code*
+1. Follow the steps given under **Modifying the code**
 for the
 <a href="#math-sender_exercise">random testing exercise</a>,
 so that you can use STest to pick random values.
