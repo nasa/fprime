@@ -119,8 +119,8 @@ generated code.
 For more information, see [_The FPP User's
 Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and-Annotations).
 
-## 2.2. Add the Model to the Project
 <a name="types_add"></a>
+## 2.2. Add the Model to the Project
 
 **Create Ref/MathTypes/CMakeLists.txt:**
 Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
@@ -147,8 +147,8 @@ Immediately after the last of those lines, add the following new line:
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
 ```
 
-## 2.3. Build the Model
 <a name="types_build"></a>
+## 2.3. Build the Model
 
 **Run the build:**
 Do the following:
@@ -193,8 +193,8 @@ This file gives the interface to the {cpp} class `Ref::MathOp`.
 All enum types have a similar auto-generated class
 interface.
 
-## 2.4. Reference Implementation
 <a name="types_ref"></a>
+## 2.4. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathTypes`.
