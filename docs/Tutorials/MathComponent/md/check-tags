@@ -11,7 +11,13 @@ fi
 undefined_tags=`./undefined-tags defined-tags.txt used-tags.txt`
 if test -n "$undefined_tags"
 then
-  echo "WARNING: There were undefined tags" 1>&2
+  echo "WARNING: Undefined tags" 1>&2
   echo $undefined_tags | tr ' ' '\n'
-  exit 1
+fi
+
+bad_refs=`awk -f bad-refs.awk $1 | tr '\n' ',' | sed s'/,$//'`
+if test -n "$bad_refs"
+then
+  echo "WARNING: Bad references"
+  echo $bad_refs | tr ',' '\n'
 fi

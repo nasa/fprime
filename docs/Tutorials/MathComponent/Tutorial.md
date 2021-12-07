@@ -22,6 +22,19 @@
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-More-Tests">4.5.3. Write and Run More Tests</a>
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing">4.5.4. Exercise: Random Testing</a>
   * <a href="#The-MathSender-Component_Reference-Implementation">4.6. Reference Implementation</a>
+  * <a href="#The-MathSender-Component_The-MathReceiver-Component">4.7. The MathReceiver Component</a>
+  * <a href="#The-MathSender-Component_Construct-the-FPP-Model">4.8. Construct the FPP Model</a>
+  * <a href="#The-MathSender-Component_Add-the-Model-to-the-Project">4.9. Add the Model to the Project</a>
+  * <a href="#The-MathSender-Component_Build-the-Stub-Implementation">4.10. Build the Stub Implementation</a>
+  * <a href="#The-MathSender-Component_Complete-the-Implementation">4.11. Complete the Implementation</a>
+  * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests">4.12. Write and Run Unit Tests</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment">4.12.1. Set up the Unit Test Environment</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Add-Helper-Code">4.12.2. Add Helper Code</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests">4.12.3. Write and Run Tests</a>
+  * <a href="#The-MathSender-Component_Reference-Implementation">4.13. Reference Implementation</a>
+  * <a href="#The-MathSender-Component_Exercises">4.14. Exercises</a>
+    * <a href="#The-MathSender-Component_Exercises_Adding-Telemetry">4.14.1. Adding Telemetry</a>
+    * <a href="#The-MathSender-Component_Exercises_Error-Handling">4.14.2. Error Handling</a>
 
 <a name="Introduction"></a>
 # 1. Introduction
@@ -1133,4 +1146,777 @@ You should see that the value _S_ was used in the runs you just did
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.
+
+<a name="The-MathSender-Component_The-MathReceiver-Component"></a>
+## 4.7. The MathReceiver Component
+
+Now we will build and test the `MathReceiver` component.
+We will use the same five steps as for the
+<a href="#math-sender">`MathSender`</a>.
+
+<a name="The-MathSender-Component_Construct-the-FPP-Model"></a>
+## 4.8. Construct the FPP Model
+
+**Create the MathReceiver directory:**
+Create the directory `Ref/MathReceiver`.
+
+**Create the FPP model file:**
+In directory `Ref/MathReceiver`, create a file
+`MathReceiver.fpp` with the following contents:
+
+```fpp
+module Ref {
+
+  @ Component for receiving and performing a math operation
+  queued component MathReceiver {
+
+    # ----------------------------------------------------------------------
+    # General ports
+    # ----------------------------------------------------------------------
+
+    @ Port for receiving the math operation
+    async input port mathOpIn: MathOp
+
+    @ Port for returning the math result
+    output port mathResultOut: MathResult
+
+    @ The rate group scheduler input
+    sync input port schedIn: Svc.Sched
+
+    # ----------------------------------------------------------------------
+    # Special ports
+    # ----------------------------------------------------------------------
+
+    @ Command receive
+    command recv port cmdIn
+
+    @ Command registration
+    command reg port cmdRegOut
+
+    @ Command response
+    command resp port cmdResponseOut
+
+    @ Event
+    event port eventOut
+
+    @ Parameter get
+    param get port prmGetOut
+
+    @ Parameter set
+    param set port prmSetOut
+
+    @ Telemetry
+    telemetry port tlmOut
+
+    @ Text event
+    text event port textEventOut
+
+    @ Time get
+    time get port timeGetOut
+
+    # ----------------------------------------------------------------------
+    # Parameters
+    # ----------------------------------------------------------------------
+
+    @ The multiplier in the math operation
+    param FACTOR: F32 default 1.0 id 0 \
+      set opcode 10 \
+      save opcode 11
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    @ Factor updated
+    event FACTOR_UPDATED(
+                          val: F32 @< The factor value
+                        ) \
+      severity activity high \
+      id 0 \
+      format "Factor updated to {f}" \
+      throttle 3
+
+    @ Math operation performed
+    event OPERATION_PERFORMED(
+                               val: MathOp @< The operation
+                             ) \
+      severity activity high \
+      id 1 \
+      format "{} operation performed"
+
+    @ Event throttle cleared
+    event THROTTLE_CLEARED \
+      severity activity high \
+      id 2 \
+      format "Event throttle cleared"
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    @ Clear the event throttle
+    async command CLEAR_EVENT_THROTTLE \
+      opcode 1
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ The operation
+    telemetry OPERATION: MathOp id 0
+
+    @ Multiplication factor
+    telemetry FACTOR: F32 id 1
+
+  }
+
+}
+```
+
+This code defines a component `Ref.MathReceiver`.
+The component is **queued**, which means it has a queue
+but no thread.
+Work occurs when the thread of another component invokes
+the `schedIn` port of this component.
+
+We have divided the specifiers of this component into six groups:
+
+1. **General ports:** There are three ports:
+an input port `mathOpIn` for receiving a math operation,
+an output port `mathResultOut` for sending a math result, and
+an input port `schedIn` for receiving invocations from the scheduler.
+`mathOpIn` is asynchronous.
+That means invocations of `mathOpIn` put messages on a queue.
+`schedIn` is synchronous.
+That means invocations of `schedIn` immediately call the
+handler function to do work.
+
+1. **Special ports:**
+As before, there are special ports for commands, events, telemetry,
+and time.
+There are also special ports for getting and setting parameters.
+We will explain the function of these ports below.
+
+1. **Parameters:** There is one **parameter**.
+A parameter is a constant that is configurable by command.
+In this case there is one parameter `FACTOR`.
+It has the default value 1.0 until its value is changed by command.
+When doing math, the `MathReceiver` component performs the requested
+operation and then multiplies by this factor.
+For example, if the arguments of the `mathOpIn` port
+are _v1_, `ADD`, and _v2_, and the factor is _f_,
+then the result sent on `mathResultOut` is
+_(v1 + v2) f_.
+
+1. **Events:** There are three event reports:
+
+   1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+      is updated by command.
+      This event is *throttled* to a limit of three.
+      That means that after the event is emitted three times
+      it will not be emitted any more, until the throttling
+      is cleared by command (see below).
+
+   1. `OPERATION_PERFORMED`: Emitted when this component
+      performs a math operation.
+
+   1. `THROTTLE_CLEARED`: Emitted when the event throttling
+      is cleared.
+
+1. **Commands:** There is one command for clearing
+the event throttle.
+
+1. *Telemetry:*
+There two telemetry channels: one for reporting
+the last operation received and one for reporting
+the factor parameter.
+
+For the parameters, events, commands, and telemetry, we chose
+to put in all the opcodes and identifiers explicitly.
+These can also be left implicit, as in the `MathSender`
+component example.
+For more information, see
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
+
+<a name="The-MathSender-Component_Add-the-Model-to-the-Project"></a>
+## 4.9. Add the Model to the Project
+
+Follow the steps given for the
+<a href="#math-sender_add-model">`MathSender` component</a>.
+
+<a name="The-MathSender-Component_Build-the-Stub-Implementation"></a>
+## 4.10. Build the Stub Implementation
+
+Follow the same steps as for the
+<a href="#math-sender_build-stub">`MathSender` component</a>.
+
+<a name="The-MathSender-Component_Complete-the-Implementation"></a>
+## 4.11. Complete the Implementation
+
+**Fill in the mathOpIn handler:**
+In `MathReceiver.cpp`, complete the implementation of
+`mathOpIn_handler` so that it looks like this:
+
+```cpp
+void MathReceiver ::
+  mathOpIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      F32 val1,
+      const MathOp& op,
+      F32 val2
+  )
+{
+
+    // Get the initial result
+    F32 res = 0.0;
+    switch (op.e) {
+        case MathOp::ADD:
+            res = val1 + val2;
+            break;
+        case MathOp::SUB:
+            res = val1 - val2;
+            break;
+        case MathOp::MUL:
+            res = val1 * val2;
+            break;
+        case MathOp::DIV:
+            res = val1 / val2;
+            break;
+        default:
+            FW_ASSERT(0, op.e);
+            break;
+    }
+
+    // Get the factor value
+    Fw::ParamValid valid;
+    F32 factor = paramGet_FACTOR(valid);
+    FW_ASSERT(
+        valid.e == Fw::ParamValid::VALID || valid.e == Fw::ParamValid::DEFAULT,
+        valid.e
+    );
+
+    // Multiply result by factor
+    res *= factor;
+
+    // Emit telemetry and events
+    this->log_ACTIVITY_HI_OPERATION_PERFORMED(op);
+    this->tlmWrite_OPERATION(op);
+
+    // Emit result
+    this->mathResultOut_out(0, res);
+
+}
+```
+
+This code does the following:
+
+1. Compute an initial result based on the input values and
+the requested operation.
+
+1. Get the value of the factor parameter.
+Check that the value is a valid value from the parameter
+database or a default parameter value.
+
+1. Multiply the initial result by the factor to generate
+the final result.
+
+1. Emit telemetry and events.
+
+1. Emit the result.
+
+Note that in step 1, `op` is an enum (a C++ class type), and `op.e`
+is the corresponding numeric value (an integer type).
+Note also that in the `default` case we deliberately fail
+an assertion.
+This is a standard pattern for exhaustive case checking.
+We should never hit the assertion.
+If we do, then a bug has occurred: we missed a case.
+
+**Fill in the schedIn handler:**
+In `MathReceiver.cpp`, complete the implementation of
+`schedIn_handler` so that it looks like this:
+
+```c++
+void MathReceiver ::
+  schedIn_handler(
+      const NATIVE_INT_TYPE portNum,
+      NATIVE_UINT_TYPE context
+  )
+{
+    U32 numMsgs = this->m_queue.getNumMsgs();
+    for (U32 i = 0; i < numMsgs; ++i) {
+        (void) this->doDispatch();
+    }
+}
+```
+
+This code dispatches all the messages on the queue.
+Note that for a queued component, we have to do this
+dispatch explicitly in the `schedIn` handler.
+For an active component, the framework auto-generates
+the dispatch code.
+
+**Fill in the CLEAR_EVENT_THROTTLE command handler:**
+In `MathReceiver.cpp`, complete the implementation of
+`CLEAR_EVENT_THROTTLE_cmdHandler` so that it looks like this:
+
+```c++
+void MathReceiver ::
+  CLEAR_EVENT_THROTTLE_cmdHandler(
+      const FwOpcodeType opCode,
+      const U32 cmdSeq
+  )
+{
+    // clear throttle
+    this->log_ACTIVITY_HI_FACTOR_UPDATED_ThrottleClear();
+    // send event that throttle is cleared
+    this->log_ACTIVITY_HI_THROTTLE_CLEARED();
+    // reply with completion status
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+```
+
+The call to `log_ACTIVITY_HI_FACTOR_UPDATED_ThrottleClear` clears
+the throttling of the `FACTOR_UPDATED` event.
+The next two lines send a notification event and send
+a command response.
+
+**Add a parameterUpdated function:**
+Add the following function to `MathReceiver.cpp`.
+You will need to add the corresponding function header
+to `MathReceiver.hpp`.
+
+```c++
+void MathReceiver ::
+   parameterUpdated(FwPrmIdType id)
+{
+    switch (id) {
+        case PARAMID_FACTOR: {
+            Fw::ParamValid valid;
+            F32 val = this->paramGet_FACTOR(valid);
+            FW_ASSERT(
+                valid.e == Fw::ParamValid::VALID || valid.e == Fw::ParamValid::DEFAULT,
+                valid.e
+            );
+            this->log_ACTIVITY_HI_FACTOR_UPDATED(val);
+            break;
+        }
+        default:
+            FW_ASSERT(0, id);
+            break;
+    }
+}
+```
+
+This code implements an optional function that, if present,
+is called when a parameter is updated by command.
+The parameter identifier is passed in as the `id` argument
+of the function.
+Here we do the following:
+
+. If the parameter identifier is `PARAMID_FACTOR` (the parameter
+identifier corresponding to the `FACTOR` parameter,
+then get the parameter value and emit an event report.
+
+. Otherwise fail an assertion.
+This code should never run, because there are no other
+parameters.
+
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests"></a>
+## 4.12. Write and Run Unit Tests
+
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment"></a>
+### 4.12.1. Set up the Unit Test Environment
+
+1. Follow the steps given for the
+<a href="#math-sender_unit_setup">`MathSender` component</a>.
+
+1. Follow the steps given under *Modifying the code*
+for the
+<a href="#math-sender_exercise">random testing exercise</a>,
+so that you can use STest to pick random values.
+
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Add-Helper-Code"></a>
+### 4.12.2. Add Helper Code
+
+**Add a ThrottleState enum class:**
+Add the following code to the beginning of the
+`Tester` class in `Tester.hpp`:
+
+```c++
+private:
+
+  // ----------------------------------------------------------------------
+  // Types
+  // ----------------------------------------------------------------------
+
+  enum class ThrottleState {
+    THROTTLED,
+    NOT_THROTTLED
+  };
+```
+
+This code defines a C++ enum class for recording whether an
+event is throttled.
+
+**Add helper functions:**
+Add each of the functions described below to the
+"Helper methods" section of `Tester.cpp`.
+For each function, you must add
+the corresponding function prototype to `Tester.hpp`.
+After adding each function, compile the unit tests
+to make sure that everything still compiles.
+Fix any errors that occur.
+
+Add a `pickF32Value` function.
+
+```c++
+F32 Tester ::
+  pickF32Value()
+{
+  const F32 m = 10e6;
+  return m * (1.0 - 2 * STest::Pick::inUnitInterval());
+}
+```
+
+This function picks a random `F32` value in the range
+_[ -10^6, 10^6 ]_.
+
+Add a `setFactor` function.
+
+```c++
+void Tester ::
+  setFactor(
+      F32 factor,
+      ThrottleState throttleState
+  )
+{
+    // clear history
+    this->clearHistory();
+    // set the parameter
+    this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+    const U32 instance = STest::Pick::any();
+    const U32 cmdSeq = STest::Pick::any();
+    this->paramSend_FACTOR(instance, cmdSeq);
+    if (throttleState == ThrottleState::NOT_THROTTLED) {
+        // verify the parameter update notification event was sent
+        ASSERT_EVENTS_SIZE(1);
+        ASSERT_EVENTS_FACTOR_UPDATED_SIZE(1);
+        ASSERT_EVENTS_FACTOR_UPDATED(0, factor);
+    }
+    else {
+        ASSERT_EVENTS_SIZE(0);
+    }
+}
+```
+
+This function does the following:
+
+1. Clear the test history.
+
+1. Send a command to the component to set the `FACTOR` parameter
+to the value `factor`.
+
+1. If `throttleState` is `NOT_THROTTLED`, then check
+that the event was emitted.
+Otherwise check that the event was throttled (not emitted).
+
+Add a function `computeResult` to `Tester.cpp`.
+
+```c++
+F32 Tester ::
+  computeResult(
+      F32 val1,
+      MathOp op,
+      F32 val2,
+      F32 factor
+  )
+{
+    F32 result = 0;
+    switch (op.e) {
+        case MathOp::ADD:
+            result = val1 + val2;
+            break;
+        case MathOp::SUB:
+            result = val1 - val2;
+            break;
+        case MathOp::MUL:
+            result = val1 * val2;
+            break;
+        case MathOp::DIV:
+            result = val1 / val2;
+            break;
+        default:
+            FW_ASSERT(0, op.e);
+            break;
+    }
+    result *= factor;
+    return result;
+}
+```
+
+This function carries out the math computation of the
+math component.
+By running this function and comparing, we can
+check the output of the component.
+
+Add a `doMathOp` function to `Tester.cpp`.
+
+```c++
+void Tester ::
+  doMathOp(
+      MathOp op,
+      F32 factor
+  )
+{
+
+    // pick values
+    const F32 val1 = pickF32Value();
+    const F32 val2 = pickF32Value();
+
+    // clear history
+    this->clearHistory();
+
+    // invoke operation port with add operation
+    this->invoke_to_mathOpIn(0, val1, op, val2);
+    // invoke scheduler port to dispatch message
+    const U32 context = STest::Pick::any();
+    this->invoke_to_schedIn(0, context);
+
+    // verify the result of the operation was returned
+
+    // check that there was one port invocation
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    // check that the port we expected was invoked
+    ASSERT_from_mathResultOut_SIZE(1);
+    // check that the component performed the operation correctly
+    const F32 result = computeResult(val1, op, val2, factor);
+    ASSERT_from_mathResultOut(0, result);
+
+    // verify events
+
+    // check that there was one event
+    ASSERT_EVENTS_SIZE(1);
+    // check that it was the op event
+    ASSERT_EVENTS_OPERATION_PERFORMED_SIZE(1);
+    // check that the event has the correct argument
+    ASSERT_EVENTS_OPERATION_PERFORMED(0, op);
+
+    // verify telemetry
+
+    // check that one channel was written
+    ASSERT_TLM_SIZE(1);
+    // check that it was the op channel
+    ASSERT_TLM_OPERATION_SIZE(1);
+    // check for the correct value of the channel
+    ASSERT_TLM_OPERATION(0, op);
+
+}
+```
+
+This function is similar to the `doMath` helper function that
+we wrote for the `MathSender` component.
+Notice that the method for invoking a port is different.
+Since the component is queued, we don't call `doDispatch`
+directly.
+Instead we invoke `schedIn`.
+
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests"></a>
+### 4.12.3. Write and Run Tests
+
+For each of the tests described below, you must add the
+corresponding function prototype to `Tester.hpp`
+and the corresponding test macro to `main.cpp`.
+If you can't remember how to do it, look back at the
+`MathSender` examples.
+After writing each test, run all the tests and make sure
+that they pass.
+
+**Write an ADD test:**
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+```c++
+void Tester ::
+  testAdd()
+{
+    // Set the factor parameter by command
+    const F32 factor = pickF32Value();
+    this->setFactor(factor, ThrottleState::NOT_THROTTLED);
+    // Do the add operation
+    this->doMathOp(MathOp::ADD, factor);
+}
+```
+
+This function calls the `setFactor` helper function
+to set the factor parameter.
+Then it calls the `doMathOp` function to
+do a math operation.
+
+**Write a SUB test:**
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+```c++
+void Tester ::
+  testSub()
+{
+    // Set the factor parameter by loading parameters
+    const F32 factor = pickF32Value();
+    this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+    // Do the operation
+    this->doMathOp(MathOp::SUB, factor);
+}
+```
+
+This test is similar to `testAdd`, but it shows
+another way to set a parameter.
+`testAdd` showed how to set a parameter by command.
+You can also set a parameter by initialization, as follows:
+
+. Call the `paramSet` function as shown.
+This function sets the parameter value in
+the part of the test harness that mimics the behavior of the
+parameter database component.
+
+. Call the `loadParameters` function as shown.
+In flight, the function `loadParameters` is typically called at the
+start of FSW to load the parameters from the database;
+here it loads the parameters from the test harness.
+There is no command to update a parameter, so `parameterUpdated`
+is not called, and no event is emitted.
+
+As before, after setting the parameter we call `doMathOp`
+to do the operation.
+
+**Write a MUL test:**
+This test is the same as the ADD test, except that it
+uses MUL instead of add.
+
+**Write a DIV test:**
+This test is the same as the SUB test, except that it
+uses DIV instead of SUB.
+
+**Write a throttle test:**
+Add the following function to the "Tests" section of `Tester.cpp`:
+
+```c++
+void Tester ::
+  testThrottle()
+{
+
+    // send the number of commands required to throttle the event
+    // Use the autocoded value so the unit test passes if the
+    // throttle value is changed
+    const F32 factor = pickF32Value();
+    for (
+        U16 cycle = 0;
+        cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
+        cycle++
+    ) {
+        this->setFactor(factor, ThrottleState::NOT_THROTTLED);
+    }
+
+    // Event should now be throttled
+    this->setFactor(factor, ThrottleState::THROTTLED);
+
+    // send the command to clear the throttle
+    this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
+    // invoke scheduler port to dispatch message
+    const U32 context = STest::Pick::any();
+    this->invoke_to_schedIn(0, context);
+    // verify clear event was sent
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
+
+    // Throttling should be cleared
+    this->setFactor(factor, ThrottleState::NOT_THROTTLED);
+
+}
+```
+
+This test first loops over the throttle count, which is stored
+for us in the constant `EVENTID_FACTOR_UPDATED_THROTTLE`
+of the `MathReceiver` component base class.
+On each iteration, it calls `setFactor`.
+At the end of this loop, the `FACTOR_UPDATED` event should be
+throttled.
+
+Next the test calls `setFactor` with a second argument of
+`ThrottleState::THROTTLED`.
+This code checks that the event is throttled.
+
+Next the test sends the command `CLEAR_EVENT_THROTTLE`,
+checks for the corresponding notification event,
+and checks that the throttling is cleared.
+
+<a name="The-MathSender-Component_Reference-Implementation"></a>
+## 4.13. Reference Implementation
+
+A reference implementation for this section is available at
+`docs/Tutorials/MathComponent/MathReceiver`.
+
+<a name="The-MathSender-Component_Exercises"></a>
+## 4.14. Exercises
+
+<a name="The-MathSender-Component_Exercises_Adding-Telemetry"></a>
+### 4.14.1. Adding Telemetry
+
+Add a telemetry channel that records the number of math
+operations performed.
+
+1. Add the channel to the FPP model.
+
+1. In the component implementation class, add a member
+variable `numMathOps` of type `U32`.
+Initialize the variable to zero in the class constructor.
+
+1. Revise the `mathOpIn` handler so that it increments
+`numMathOps` and emits the updated value as telemetry.
+
+1. Revise the unit tests to cover the new behavior.
+
+<a name="The-MathSender-Component_Exercises_Error-Handling"></a>
+### 4.14.2. Error Handling
+
+Think about what will happen if the floating-point
+math operation performed by `MathReceiver` causes an error.
+For example, suppose that `mathOpIn` is invoked with `op = DIV`
+and `val2 = 0.0`.
+What will happen?
+As currently designed and implemented, the `MathReceiver`
+component will perform the requested operation.
+On some systems the result will be `INF` (floating-point infinity).
+In this case, the result will be sent back to `MathSender`
+and reported in the usual way.
+On other systems, the hardware could issue a floating-point exception.
+
+Suppose you wanted to handle the case of division by zero
+explicitly.
+How would you change the design?
+Here are some questions to think about:
+
+1. How would you check for division by zero?
+Note that `val2 = 0.0` is not the only case in which a division
+by zero error can occur.
+It can also occur for very small values of `val2`.
+
+1. Should the error be caught in `MathSender` or `MathReceiver`?
+
+1. Suppose the design says that `MathSender` catches the error,
+and so never sends requests to `MathReceiver` to divide by zero.
+What if anything should `MathReceiver` do if it receives
+a divide by zero request?
+Carry out the operation normally?
+Emit a warning?
+Fail a FSW assertion?
+
+1. If the error is caught by `MathReceiver`, does the
+interface between the components have to change?
+If so, how?
+What should `MathSender` do if `MathReceiver`
+reports an error instead of a valid result?
+
+Revise the MathSender and MathReceiver components to implement your
+ideas.
+Add unit tests covering the new behavior.
 
