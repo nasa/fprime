@@ -205,9 +205,9 @@ do the following:
 
 1. Run `cp -R ../docs/Tutorials/MathComponent/MathTypes .`
 
-1. Update `Ref/CMakeLists.txt` as stated <a href="types_add">above</a>.
+1. Update `Ref/CMakeLists.txt` as stated <a href="#types_add">above</a>.
 
-1. Follow the steps for <a href="types_build">building the model</a>.
+1. Follow the steps for <a href="#types_build">building the model</a>.
 
 If you have modified the repo, revise the steps accordingly.
 For example, switch git branches, use `git stash` to stash
