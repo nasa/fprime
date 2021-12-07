@@ -47,7 +47,14 @@ include_directories("${CMAKE_BINARY_DIR}/F-Prime")
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.
 include_directories("${FPRIME_PROJECT_ROOT}")
-foreach (LIBRARY_DIR ${FPRIME_LIBRARY_LOCATIONS})
+foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+    # Including manifests from libraries
+    file(GLOB MANIFESTS RELATIVE "${LIBRARY_DIR}" "${LIBRARY_DIR}/*.cmake")
+    message(STATUS "Including library ${LIBRARY_DIR} with manifests ${MANIFESTS}")
+    # Check to see if the cmake directory exists and add it
+    if (IS_DIRECTORY "${LIBRARY_DIR}/cmake")
+        list(APPEND CMAKE_MODULE_PATH "${LIBRARY_DIR}/cmake")
+    endif()
     include_directories("${LIBRARY_DIR}")
 endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
