@@ -976,7 +976,7 @@ You should see that the value _S_ was used in the runs you just did
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.
 
-## The MathReceiver Component
+# The MathReceiver Component
 
 Now we will build and test the `MathReceiver` component.
 We will use the same five steps as for the

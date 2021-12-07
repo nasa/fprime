@@ -22,19 +22,19 @@
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-More-Tests">4.5.3. Write and Run More Tests</a>
     * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing">4.5.4. Exercise: Random Testing</a>
   * <a href="#The-MathSender-Component_Reference-Implementation">4.6. Reference Implementation</a>
-  * <a href="#The-MathSender-Component_The-MathReceiver-Component">4.7. The MathReceiver Component</a>
-  * <a href="#The-MathSender-Component_Construct-the-FPP-Model">4.8. Construct the FPP Model</a>
-  * <a href="#The-MathSender-Component_Add-the-Model-to-the-Project">4.9. Add the Model to the Project</a>
-  * <a href="#The-MathSender-Component_Build-the-Stub-Implementation">4.10. Build the Stub Implementation</a>
-  * <a href="#The-MathSender-Component_Complete-the-Implementation">4.11. Complete the Implementation</a>
-  * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests">4.12. Write and Run Unit Tests</a>
-    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment">4.12.1. Set up the Unit Test Environment</a>
-    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Add-Helper-Code">4.12.2. Add Helper Code</a>
-    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests">4.12.3. Write and Run Tests</a>
-  * <a href="#The-MathSender-Component_Reference-Implementation">4.13. Reference Implementation</a>
-  * <a href="#The-MathSender-Component_Exercises">4.14. Exercises</a>
-    * <a href="#The-MathSender-Component_Exercises_Adding-Telemetry">4.14.1. Adding Telemetry</a>
-    * <a href="#The-MathSender-Component_Exercises_Error-Handling">4.14.2. Error Handling</a>
+* <a href="#The-MathReceiver-Component">5. The MathReceiver Component</a>
+  * <a href="#The-MathReceiver-Component_Construct-the-FPP-Model">5.1. Construct the FPP Model</a>
+  * <a href="#The-MathReceiver-Component_Add-the-Model-to-the-Project">5.2. Add the Model to the Project</a>
+  * <a href="#The-MathReceiver-Component_Build-the-Stub-Implementation">5.3. Build the Stub Implementation</a>
+  * <a href="#The-MathReceiver-Component_Complete-the-Implementation">5.4. Complete the Implementation</a>
+  * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests">5.5. Write and Run Unit Tests</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment">5.5.1. Set up the Unit Test Environment</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Add-Helper-Code">5.5.2. Add Helper Code</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests">5.5.3. Write and Run Tests</a>
+  * <a href="#The-MathReceiver-Component_Reference-Implementation">5.6. Reference Implementation</a>
+  * <a href="#The-MathReceiver-Component_Exercises">5.7. Exercises</a>
+    * <a href="#The-MathReceiver-Component_Exercises_Adding-Telemetry">5.7.1. Adding Telemetry</a>
+    * <a href="#The-MathReceiver-Component_Exercises_Error-Handling">5.7.2. Error Handling</a>
 
 <a name="Introduction"></a>
 # 1. Introduction
@@ -1147,15 +1147,15 @@ You should see that the value _S_ was used in the runs you just did
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.
 
-<a name="The-MathSender-Component_The-MathReceiver-Component"></a>
-## 4.7. The MathReceiver Component
+<a name="The-MathReceiver-Component"></a>
+# 5. The MathReceiver Component
 
 Now we will build and test the `MathReceiver` component.
 We will use the same five steps as for the
 <a href="#math-sender">`MathSender`</a>.
 
-<a name="The-MathSender-Component_Construct-the-FPP-Model"></a>
-## 4.8. Construct the FPP Model
+<a name="The-MathReceiver-Component_Construct-the-FPP-Model"></a>
+## 5.1. Construct the FPP Model
 
 **Create the MathReceiver directory:**
 Create the directory `Ref/MathReceiver`.
@@ -1338,20 +1338,20 @@ component example.
 For more information, see
 [_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
 
-<a name="The-MathSender-Component_Add-the-Model-to-the-Project"></a>
-## 4.9. Add the Model to the Project
+<a name="The-MathReceiver-Component_Add-the-Model-to-the-Project"></a>
+## 5.2. Add the Model to the Project
 
 Follow the steps given for the
 <a href="#math-sender_add-model">`MathSender` component</a>.
 
-<a name="The-MathSender-Component_Build-the-Stub-Implementation"></a>
-## 4.10. Build the Stub Implementation
+<a name="The-MathReceiver-Component_Build-the-Stub-Implementation"></a>
+## 5.3. Build the Stub Implementation
 
 Follow the same steps as for the
 <a href="#math-sender_build-stub">`MathSender` component</a>.
 
-<a name="The-MathSender-Component_Complete-the-Implementation"></a>
-## 4.11. Complete the Implementation
+<a name="The-MathReceiver-Component_Complete-the-Implementation"></a>
+## 5.4. Complete the Implementation
 
 **Fill in the mathOpIn handler:**
 In `MathReceiver.cpp`, complete the implementation of
@@ -1522,11 +1522,11 @@ then get the parameter value and emit an event report.
 This code should never run, because there are no other
 parameters.
 
-<a name="The-MathSender-Component_Write-and-Run-Unit-Tests"></a>
-## 4.12. Write and Run Unit Tests
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests"></a>
+## 5.5. Write and Run Unit Tests
 
-<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment"></a>
-### 4.12.1. Set up the Unit Test Environment
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment"></a>
+### 5.5.1. Set up the Unit Test Environment
 
 1. Follow the steps given for the
 <a href="#math-sender_unit_setup">`MathSender` component</a>.
@@ -1536,8 +1536,8 @@ for the
 <a href="#math-sender_exercise">random testing exercise</a>,
 so that you can use STest to pick random values.
 
-<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Add-Helper-Code"></a>
-### 4.12.2. Add Helper Code
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Add-Helper-Code"></a>
+### 5.5.2. Add Helper Code
 
 **Add a ThrottleState enum class:**
 Add the following code to the beginning of the
@@ -1721,8 +1721,8 @@ Since the component is queued, we don't call `doDispatch`
 directly.
 Instead we invoke `schedIn`.
 
-<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests"></a>
-### 4.12.3. Write and Run Tests
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests"></a>
+### 5.5.3. Write and Run Tests
 
 For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
@@ -1849,17 +1849,17 @@ Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
-<a name="The-MathSender-Component_Reference-Implementation"></a>
-## 4.13. Reference Implementation
+<a name="The-MathReceiver-Component_Reference-Implementation"></a>
+## 5.6. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathReceiver`.
 
-<a name="The-MathSender-Component_Exercises"></a>
-## 4.14. Exercises
+<a name="The-MathReceiver-Component_Exercises"></a>
+## 5.7. Exercises
 
-<a name="The-MathSender-Component_Exercises_Adding-Telemetry"></a>
-### 4.14.1. Adding Telemetry
+<a name="The-MathReceiver-Component_Exercises_Adding-Telemetry"></a>
+### 5.7.1. Adding Telemetry
 
 Add a telemetry channel that records the number of math
 operations performed.
@@ -1875,8 +1875,8 @@ Initialize the variable to zero in the class constructor.
 
 1. Revise the unit tests to cover the new behavior.
 
-<a name="The-MathSender-Component_Exercises_Error-Handling"></a>
-### 4.14.2. Error Handling
+<a name="The-MathReceiver-Component_Exercises_Error-Handling"></a>
+### 5.7.2. Error Handling
 
 Think about what will happen if the floating-point
 math operation performed by `MathReceiver` causes an error.
