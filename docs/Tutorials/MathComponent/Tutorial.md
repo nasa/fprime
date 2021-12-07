@@ -1270,7 +1270,7 @@ module Ref {
 
     @ Clear the event throttle
     async command CLEAR_EVENT_THROTTLE \
-      opcode 1
+      opcode 0
 
     # ----------------------------------------------------------------------
     # Telemetry
