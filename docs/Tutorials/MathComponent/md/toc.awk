@@ -8,7 +8,7 @@
 
 BEGIN {
   in_code_block = 0
-  print "# Table of Contents"
+  print "## Table of Contents"
   print ""
 }
 

@@ -1,6 +1,6 @@
 # F' Math Component Tutorial
 
-# Table of Contents
+## Table of Contents
 
 * <a href="#Introduction">1. Introduction</a>
 * <a href="#The-MathOp-Type">2. The MathOp Type</a>
