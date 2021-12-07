@@ -1152,7 +1152,7 @@ A reference implementation for this section is available at
 
 Now we will build and test the `MathReceiver` component.
 We will use the same five steps as for the
-<a href="#math-sender">`MathSender`</a>.
+<a href="#math-sender">`MathSender` component</a>.
 
 <a name="The-MathReceiver-Component_Construct-the-FPP-Model"></a>
 ## 5.1. Construct the FPP Model
@@ -1310,17 +1310,17 @@ _(v1 + v2) f_.
 
 1. **Events:** There are three event reports:
 
-   1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+   a. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
       is updated by command.
       This event is *throttled* to a limit of three.
       That means that after the event is emitted three times
       it will not be emitted any more, until the throttling
       is cleared by command (see below).
 
-   1. `OPERATION_PERFORMED`: Emitted when this component
+   a. `OPERATION_PERFORMED`: Emitted when this component
       performs a math operation.
 
-   1. `THROTTLE_CLEARED`: Emitted when the event throttling
+   a. `THROTTLE_CLEARED`: Emitted when the event throttling
       is cleared.
 
 1. **Commands:** There is one command for clearing
