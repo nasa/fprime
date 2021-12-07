@@ -483,7 +483,7 @@ For more information on defining components, see
 Create a file `Ref/MathSender/CMakeLists.txt` with the following contents:
 
 ```cmake
-# 5. Register the standard build
+# Register the standard build
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
@@ -499,7 +499,7 @@ Add `Ref/MathSender` to `Ref/CMakeLists.txt`, as we did
 for <a href="#types_add">`Ref/MathTypes`</a>.
 
 <a name="math-sender_build-stub"></a>
-## 5.1. Build the Stub Implementation
+## 4.3. Build the Stub Implementation
 
 **Run the build:**
 Go into the directory `Ref/MathTypes`.
@@ -547,7 +547,7 @@ base class `MathSenderComponentBase`.
 The `MathSender` implementation class is a derived class
 of this base class.
 
-## 5.2. Complete the Implementation
+## 4.4. Complete the Implementation
 
 Now we can complete the stub implementation.
 In an editor, open the file `MathSender.cpp`.
@@ -662,7 +662,7 @@ telemetry channel and as a `RESULT` event report.
 Run `fprime-util build`.
 
 <a name="math-sender_unit"></a>
-## 5.3. Write and Run Unit Tests
+## 4.5. Write and Run Unit Tests
 
 **Unit tests** are an important part of FSW development.
 At the component level, unit tests typically invoke input ports, send commands,
@@ -679,7 +679,7 @@ in three steps:
 1. Write and run additional unit tests
 
 <a name="math-sender_unit_setup"></a>
-### 5.3.1. Set Up the Unit Test Environment
+### 4.5.1. Set Up the Unit Test Environment
 
 **Create the stub Tester class:**
 Do the following in directory `Ref/MathSender`:
@@ -720,7 +720,7 @@ Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
 ```cmake
-# 6. Register the unit test build
+# Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
@@ -765,7 +765,7 @@ to see what operations they provide.
 In the next sections we will provide some example uses
 of these operations.
 
-### 6.0.1. Write and Run One Test
+### 4.5.2. Write and Run One Test
 
 Now we will write a unit test that exercises the
 `DO_MATH` command.
@@ -950,7 +950,7 @@ value before emitting it.
 
 1. Rerun the test and observe what happens.
 
-### 6.0.2. Write and Run More Tests
+### 4.5.3. Write and Run More Tests
 
 **Add more command tests:**
 Try to follow the pattern given in the previous
@@ -1023,7 +1023,7 @@ Again you can try altering something in the component code
 to see what effect it has on the test output.
 
 <a name="math-sender_exercise"></a>
-### 6.0.3. Exercise: Random Testing
+### 4.5.4. Exercise: Random Testing
 
 F Prime provides a module called `STest`
 that provides helper classes and functions for writing
@@ -1084,7 +1084,7 @@ Try the following:
 You should see that the value _S_ was used in the runs you just did
 (corresponding to the last few entries in `seed-history`).
 
-### 6.0.4. Reference Implementation
+### 4.5.5. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.

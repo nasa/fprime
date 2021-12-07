@@ -2,9 +2,12 @@
 
 BEGIN {
   MAX_LEVELS = 10
+  in_code = 0
 }
 
-/^#+ / {
+$1 ~ "^```" { in_code = !in_code }
+
+/^#+ / && !in_code {
   new_level = length($1)
   ++levels[new_level]
   for (i = new_level + 1; i <= MAX_LEVELS; ++i) 
