@@ -289,13 +289,13 @@ For more information about port definitions, see
 Add add the model
 `Ref/MathPorts/MathPorts.fpp` to the `Ref` project.
 Carry out the steps in the
-<a href="types_add">previous section</a>, after
+<a href="#types_add">previous section</a>, after
 substituting `MathPorts` for `MathTypes`.
 
 ## 3.3. Build the Model
 
 Carry out the steps in the
-<a href="types_build">previous section</a>,
+<a href="#types_build">previous section</a>,
 in directory `MathPorts` instead of `MathTypes`.
 The generated code will go in
 `Ref/build-fprime-automatic-native/Ref/MathPorts`.
@@ -311,5 +311,5 @@ you won't ever program directly against their interfaces.
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathPorts`.
 To build this implementation, follow the steps
-described for <a href="type_ref">`MathTypes`</a>.
+described for <a href="#types_ref">`MathTypes`</a>.
 
