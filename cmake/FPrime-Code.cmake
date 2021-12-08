@@ -35,3 +35,9 @@ add_subdirectory("${FPRIME_FRAMEWORK_PATH}/CFDP/" "${CMAKE_BINARY_DIR}/F-Prime/C
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Utils/" "${CMAKE_BINARY_DIR}/F-Prime/Utils")
 # Always enable UTs for a project
 set(__FPRIME_NO_UT_GEN__ OFF)
+foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+    file(GLOB MANIFESTS RELATIVE "${LIBRARY_DIR}" CONFIGURE_DEPENDS "${LIBRARY_DIR}/*.cmake")
+    foreach (MANIFEST IN LISTS MANIFESTS)
+        include("${LIBRARY_DIR}/${MANIFEST}")
+    endforeach()
+endforeach()
