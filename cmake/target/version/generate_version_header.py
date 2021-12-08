@@ -52,15 +52,17 @@ def create_version_file(fid):
     fid.write("#endif\n")
     fid.write("\n")
 
+
 def main():
     """
     Main program entry point
     """
     if len(sys.argv) == 1:
         create_version_file(sys.stdout)
-    else: 
+    else:
         with open(sys.argv[1], "w") as fid:
             create_version_file(fid)
+
 
 if __name__ == "__main__":
     main()
