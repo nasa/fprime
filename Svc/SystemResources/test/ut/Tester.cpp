@@ -21,12 +21,12 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void) : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
+Tester ::Tester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -120,7 +120,7 @@ void Tester ::test_version_evr() {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // run
     this->connect_to_run(0, this->component.get_run_InputPort(0));
 
@@ -146,7 +146,7 @@ void Tester ::connectPorts(void) {
     this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <math.h>  //isnan()
+#include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
 #include <version.hpp>
 #include "Fw/Types/BasicTypes.hpp"
@@ -102,7 +102,7 @@ F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::Syst
         // Compute CPU % Utilization
         util = (static_cast<F32>(current.used - previous.used) / static_cast<F32>(current.total - previous.total)) *
                100.0f;
-        util = isnan(util) ? 100.0f : util;
+        util = std::isnan(util) ? 100.0f : util;
     }
     return util;
 }
@@ -133,9 +133,7 @@ void SystemResources::Cpu() {
 }
 
 void SystemResources::Mem() {
-    Os::SystemResources::SystemResourcesStatus status;
-
-    if ((status = Os::SystemResources::getMemUtil(m_mem)) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+    if (Os::SystemResources::getMemUtil(m_mem) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->tlmWrite_MEMORY_TOTAL(m_mem.total / 1024);
         this->tlmWrite_MEMORY_USED(m_mem.used / 1024);
     }
