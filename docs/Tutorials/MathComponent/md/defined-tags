@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+awk '/^<a name="/ {
+  tag = $0
+  sub(/^[^"]*"/, "", tag)
+  sub(/"[^"]*$/, "", tag)
+  print tag
+}' | sort

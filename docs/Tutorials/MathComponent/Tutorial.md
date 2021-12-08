@@ -1,68 +1,124 @@
-= Math Component Tutorial
-:toc: left
-:toclevels: 3
+# F' Math Component Tutorial
 
-== Introduction
+## Table of Contents
+
+* <a href="#Introduction">1. Introduction</a>
+* <a href="#The-MathOp-Type">2. The MathOp Type</a>
+  * <a href="#The-MathOp-Type_Construct-the-FPP-Model">2.1. Construct the FPP Model</a>
+  * <a href="#The-MathOp-Type_Add-the-Model-to-the-Project">2.2. Add the Model to the Project</a>
+  * <a href="#The-MathOp-Type_Build-the-Model">2.3. Build the Model</a>
+  * <a href="#The-MathOp-Type_Reference-Implementation">2.4. Reference Implementation</a>
+* <a href="#The-MathOp-and-MathResult-Ports">3. The MathOp and MathResult Ports</a>
+  * <a href="#The-MathOp-and-MathResult-Ports_Construct-the-FPP-Model">3.1. Construct the FPP Model</a>
+  * <a href="#The-MathOp-and-MathResult-Ports_Add-the-Model-to-the-Project">3.2. Add the Model to the Project</a>
+  * <a href="#The-MathOp-and-MathResult-Ports_Build-the-Model">3.3. Build the Model</a>
+  * <a href="#The-MathOp-and-MathResult-Ports_Reference-Implementation">3.4. Reference Implementation</a>
+* <a href="#The-MathSender-Component">4. The MathSender Component</a>
+  * <a href="#The-MathSender-Component_Construct-the-FPP-Model">4.1. Construct the FPP Model</a>
+  * <a href="#The-MathSender-Component_Add-the-Model-to-the-Project">4.2. Add the Model to the Project</a>
+  * <a href="#The-MathSender-Component_Build-the-Stub-Implementation">4.3. Build the Stub Implementation</a>
+  * <a href="#The-MathSender-Component_Complete-the-Implementation">4.4. Complete the Implementation</a>
+  * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests">4.5. Write and Run Unit Tests</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Set-Up-the-Unit-Test-Environment">4.5.1. Set Up the Unit Test Environment</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-One-Test">4.5.2. Write and Run One Test</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-More-Tests">4.5.3. Write and Run More Tests</a>
+    * <a href="#The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing">4.5.4. Exercise: Random Testing</a>
+  * <a href="#The-MathSender-Component_Reference-Implementation">4.6. Reference Implementation</a>
+* <a href="#The-MathReceiver-Component">5. The MathReceiver Component</a>
+  * <a href="#The-MathReceiver-Component_Construct-the-FPP-Model">5.1. Construct the FPP Model</a>
+  * <a href="#The-MathReceiver-Component_Add-the-Model-to-the-Project">5.2. Add the Model to the Project</a>
+  * <a href="#The-MathReceiver-Component_Build-the-Stub-Implementation">5.3. Build the Stub Implementation</a>
+  * <a href="#The-MathReceiver-Component_Complete-the-Implementation">5.4. Complete the Implementation</a>
+  * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests">5.5. Write and Run Unit Tests</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment">5.5.1. Set up the Unit Test Environment</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Add-Helper-Code">5.5.2. Add Helper Code</a>
+    * <a href="#The-MathReceiver-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests">5.5.3. Write and Run Tests</a>
+  * <a href="#The-MathReceiver-Component_Reference-Implementation">5.6. Reference Implementation</a>
+  * <a href="#The-MathReceiver-Component_Exercises">5.7. Exercises</a>
+    * <a href="#The-MathReceiver-Component_Exercises_Adding-Telemetry">5.7.1. Adding Telemetry</a>
+    * <a href="#The-MathReceiver-Component_Exercises_Error-Handling">5.7.2. Error Handling</a>
+* <a href="#Updating-the-Ref-Deployment">6. Updating the Ref Deployment</a>
+  * <a href="#Updating-the-Ref-Deployment_Defining-the-Component-Instances">6.1. Defining the Component Instances</a>
+  * <a href="#Updating-the-Ref-Deployment_Updating-the-Topology">6.2. Updating the Topology</a>
+  * <a href="#Updating-the-Ref-Deployment_Building-the-Ref-Deployment">6.3. Building the Ref Deployment</a>
+  * <a href="#Updating-the-Ref-Deployment_Visualizing-the-Ref-Topology">6.4. Visualizing the Ref Topology</a>
+  * <a href="#Updating-the-Ref-Deployment_Reference-Implementation">6.5. Reference Implementation</a>
+* <a href="#Running-the-Ref-Deployment">7. Running the Ref Deployment</a>
+  * <a href="#Running-the-Ref-Deployment_Sending-a-Command">7.1. Sending a Command</a>
+  * <a href="#Running-the-Ref-Deployment_Checking-Events">7.2. Checking Events</a>
+  * <a href="#Running-the-Ref-Deployment_Checking-Telemetry">7.3. Checking Telemetry</a>
+  * <a href="#Running-the-Ref-Deployment_Setting-Parameters">7.4. Setting Parameters</a>
+  * <a href="#Running-the-Ref-Deployment_Saving-Parameters">7.5. Saving Parameters</a>
+  * <a href="#Running-the-Ref-Deployment_GDS-Logs">7.6. GDS Logs</a>
+
+<a name="Introduction"></a>
+## 1. Introduction
 
 This tutorial shows how to develop, test, and deploy a simple topology
 consisting of two components:
 
-. `MathSender`: A component that receives commands and forwards work to `MathReceiver`.
-. `MathReceiver`: A component that carries out arithmetic operations and returns the results
-to `MathSender`.
+1. `MathSender`: A component that receives commands and forwards work to
+   `MathReceiver`.
+
+1. `MathReceiver`: A component that carries out arithmetic operations and
+   returns the results to `MathSender`.
 
 See the diagram below.
 
-[#math-top]
-.A simple topology for arithmetic computation
-image::png/top.png[Math Sender and Math Receiver]
+<a name="math-top"></a>
+![A simple topology for arithmetic computation](png/top.png)
 
-*What is covered:* The tutorial covers the following concepts:
+**What is covered:** The tutorial covers the following concepts:
 
-. Using the https://fprime-community.github.io/fpp[FPP modeling language]
-to specify the types and ports used by the components.
-. Using the F Prime build system to build the types and ports.
-. Developing the `MathSender` component: Specifying the component,
-building the component,
-completing the {cpp} component implementation, and writing
-component unit tests.
-. Developing the `MathReceiver` component.
-. Adding the new components and connections to the F Prime
-`Ref` application.
-. Using the F Prime Ground Data System (GDS) to run the updated `Ref`
-application.
+1. Using the [FPP modeling language](https://fprime-community.github.io/fpp) to
+   specify the types and ports used by the components.
 
-*Prerequisites:* This tutorial assumes the following:
+1. Using the F Prime build system to build the types and ports.
 
-. Basic knowledge of Unix: How to navigate in a shell and execute programs.
-. Basic knowledge of git: How to create a branch.
-. Basic knowledge of {cpp}, including class declarations, inheritance,
+1. Developing the `MathSender` component: Specifying the component, building
+   the component, completing the C++ component implementation, and writing
+   component unit tests.
+
+1. Developing the `MathReceiver` component.
+
+1. Adding the new components and connections to the F Prime `Ref` application.
+
+1. Using the F Prime Ground Data System (GDS) to run the updated `Ref`
+   application.
+
+**Prerequisites:** This tutorial assumes the following:
+
+1. Basic knowledge of Unix: How to navigate in a shell and execute programs.
+
+1. Basic knowledge of git: How to create a branch.
+
+1. Basic knowledge of C++, including class declarations, inheritance,
 and virtual functions.
 
 If you have not yet installed F Prime on your system, do so now.
 Follow the installation guide at `INSTALL.md`
-in the https://github.com/nasa/fprime[F Prime git repository].
+in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-*Git branch:* This tutorial is designed to work on the branch `release/v3.0.0`.
+**Git branch:** This tutorial is designed to work on the branch `release/v3.0.0`.
 
 Working on this tutorial will modify some files under version control in the
 F Prime git repository.
 Therefore it is a good idea to do this work on a new branch.
 For example:
 
-[source,bash]
-----
+```bash
 git checkout release/v3.0.0
 git checkout -b math-tutorial
-----
+```
 
 If you wish, you can save your work by committing to this branch.
 
-== The MathOp Type
+<a name="The-MathOp-Type"></a>
+## 2. The MathOp Type
 
-In F Prime, a *type definition* defines a kind of data that you can pass
+In F Prime, a **type definition** defines a kind of data that you can pass
 between components or use in commands and telemetry.
 
 For this tutorial, we need one type definition.
@@ -73,71 +129,81 @@ We will add the specification for the `MathOp` type to the
 `Ref` topology.
 We will do this in three stages:
 
-. Construct the FPP model.
-. Add the model to the project.
-. Build the model.
+1. Construct the FPP model.
 
-=== Construct the FPP Model
+1. Add the model to the project.
 
-*Create the MathTypes directory:*
+1. Build the model.
+
+<a name="The-MathOp-Type_Construct-the-FPP-Model"></a>
+### 2.1. Construct the FPP Model
+
+**Create the MathTypes directory:**
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathTypes`.
 This step creates a new directory `Ref/MathTypes`.
 This directory will contain our new type.
 
-*Create the FPP model file:*
+**Create the FPP model file:**
 Now go into the directory `Ref/MathTypes`.
 In that directory, create a file `MathTypes.fpp` with the following contents:
 
-[source,fpp]
-----
-include::../MathTypes/MathTypes.fpp[]
-----
+```fpp
+module Ref {
+
+  @ A math operation
+  enum MathOp {
+    ADD @< Addition
+    SUB @< Subtraction
+    MUL @< Multiplication
+    DIV @< Division
+  }
+
+}
+```
 
 You can do this by typing, or by copy-paste.
 
-This file defines an enumeration or *enum*
-with enumerated constants `ADD`, `SUB`, `MUL`, and `DIV`.
-These four constants represent the operations
-of addition, subtraction, multiplication, and division.
-The enum also defines a type `MathOp`; the enumerated
-constants are the values of this type.
-For more information on enums, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Enums[_The FPP User's Guide_].
+This file defines an enumeration or **enum** with enumerated constants `ADD`,
+`SUB`, `MUL`, and `DIV`.
+These four constants represent the operations of addition, subtraction,
+multiplication, and division.
+The enum also defines a type `MathOp`; the enumerated constants are the values
+of this type.
+For more information on enums, see [_The FPP User's 
+Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Enums).
 
 The enum `MathTypes` resides in an FPP module `Ref`.
-An FPP module is like a {cpp} namespace: it encloses
-several definitions, each of which is qualified with the
-name of the module.
-For more information on FPP modules, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Modules[_The FPP User's Guide_].
 
-The text following a symbol `@` or `@<` is called an
-*annotation*.
-These annotations are carried through the parsing and
-become comments in the generated code.
-For more information, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and-Annotations[_The FPP User's Guide_].
+An FPP module is like a C++ namespace: it encloses several definitions, each of
+which is qualified with the name of the module.
+For more information on FPP modules, see [_The FPP User's
+Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Modules).
 
+The text following a symbol `@` or `@<` is called an **annotation**.
+These annotations are carried through the parsing and become comments in the
+generated code.
+For more information, see [_The FPP User's
+Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Writing-Comments-and-Annotations).
 
-[[types_add]]
-=== Add the Model to the Project
+<a name="types_add"></a>
+<a name="The-MathOp-Type_Add-the-Model-to-the-Project"></a>
+### 2.2. Add the Model to the Project
 
-*Create Ref/MathTypes/CMakeLists.txt:*
+**Create Ref/MathTypes/CMakeLists.txt:**
 Create a file `Ref/MathTypes/CMakeLists.txt` with the following contents:
 
-[source,cmake]
-----
+```cmake
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathTypes.fpp"
 )
 
 register_fprime_module()
-----
+```
 
 This code will tell the build system how to build the FPP model.
 
-*Update Ref/CMakeLists.txt:*
+**Update Ref/CMakeLists.txt:**
 Now we need to add the new directory to the `Ref` project.
 To do that, open the file `Ref/CMakeLists.txt`.
 This file should already exist; it was put there by the developers
@@ -145,27 +211,30 @@ of the `Ref` topology.
 In this file, you should see several lines starting with `add_fprime_subdirectory`.
 Immediately after the last of those lines, add the following new line:
 
-[source,cmake]
-----
+```cmake
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MathTypes/")
-----
+```
 
-[[types_build]]
-=== Build the Model
+<a name="types_build"></a>
+<a name="The-MathOp-Type_Build-the-Model"></a>
+### 2.3. Build the Model
 
-*Run the build:*
+**Run the build:**
 Do the following:
 
-. Go to the directory `Ref/MathTypes`.
-. If you have not already run `fprime-util generate`, then do so now.
-. Run the command `fprime-util build`.
+1. Go to the directory `Ref/MathTypes`.
+
+1. If you have not already run `fprime-util generate`, then do so now.
+
+1. Run the command `fprime-util build`.
 
 The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
-If you get stuck, you can look at the <<types_ref,reference implementation>>.
+If you get stuck, you can look at the
+<a href="#types_ref">reference implementation</a>.
 
-*Inspect the generated code:*
+**Inspect the generated code:**
 Now go to the directory `Ref/build-fprime-automatic-native/Ref/MathTypes`
 (you may want to use `pushd`, or do this in a separate shell,
 so you don't lose your current working directory).
@@ -180,48 +249,48 @@ contains the generated code for `Ref/MathTypes`.
 Run `ls`.
 You should see something like this:
 
-[source,bash]
-----
+```bash
 CMakeFiles            MathOpEnumAc.cpp      MathOpEnumAi.xml.prev cmake_install.cmake
 Makefile              MathOpEnumAc.hpp      autocoder
-----
+```
 
 The files `MathOpEnumAc.hpp` and
-`MathOpEnumAc.cpp` are the auto-generated {cpp} files
+`MathOpEnumAc.cpp` are the auto-generated C++ files
 corresponding to the `MathOp` enum.
 You may wish to study the file `MathOpEnumAc.hpp`.
-This file gives the interface to the {cpp} class `Ref::MathOp`.
+This file gives the interface to the C++ class `Ref::MathOp`.
 All enum types have a similar auto-generated class
 interface.
 
-[[types_ref]]
-=== Reference Implementation
+<a name="types_ref"></a>
+<a name="The-MathOp-Type_Reference-Implementation"></a>
+### 2.4. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathTypes`.
 To build this implementation from a clean repository,
 do the following:
 
-. Go to the `Ref` directory.
+1. Go to the `Ref` directory.
 
-. Run `cp -R ../docs/Tutorials/MathComponent/MathTypes .`
+1. Run `cp -R ../docs/Tutorials/MathComponent/MathTypes .`
 
-. Update `Ref/CMakeLists.txt` as stated
-<<types_add,above>>.
+1. Update `Ref/CMakeLists.txt` as stated <a href="#types_add">above</a>.
 
-. Follow the steps for <<types_build,building the model>>.
+1. Follow the steps for <a href="#types_build">building the model</a>.
 
 If you have modified the repo, revise the steps accordingly.
 For example, switch git branches, use `git stash` to stash
 your changes, or move `MathTypes` to another directory such
 as `MathTypes-saved`.
 
-[[ports]]
-== The MathOp and MathResult Ports
+<a name="ports"></a>
+<a name="The-MathOp-and-MathResult-Ports"></a>
+## 3. The MathOp and MathResult Ports
 
-A *port* is the endpoint of a connection between
+A **port** is the endpoint of a connection between
 two components.
-A *port definition* is like a function signature;
+A **port definition** is like a function signature;
 it defines the type of the data carried on a port.
 
 For this tutorial, we need two port definitions:
@@ -234,21 +303,35 @@ operation from `MathReceiver` to `MathSender`.
 
 We follow the same three steps as in the previous section.
 
-=== Construct the FPP Model
+<a name="The-MathOp-and-MathResult-Ports_Construct-the-FPP-Model"></a>
+### 3.1. Construct the FPP Model
 
-*Create the MathPorts directory:*
+**Create the MathPorts directory:**
 Go to the directory `Ref` at the top-level of the
 F Prime repository and run `mkdir MathPorts`.
 This directory will contain our new ports.
 
-*Create the FPP model file:*
+**Create the FPP model file:**
 Now go into the directory `Ref/MathPorts`.
 Create a file `MathPorts.fpp` with the following contents:
 
-[source,fpp]
-----
-include::../MathPorts/MathPorts.fpp[]
-----
+```fpp
+module Ref {
+
+  @ Port for requesting an operation on two numbers
+  port MathOp(
+               val1: F32 @< The first operand
+               op: MathOp @< The operation
+               val2: F32 @< The second operand
+             )
+
+  @ Port for returning the result of a math operation
+  port MathResult(
+                   result: F32 @< the result of the operation
+                 )
+
+}
+```
 
 This file defines the ports `MathOp` and `MathResult`.
 `MathOp` has three formal parameters: a first operand, an
@@ -261,147 +344,240 @@ we defined in the previous section.
 returned as the result of the operation.
 
 For more information about port definitions, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Ports[_The FPP User's Guide_].
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Ports).
 
-=== Add the Model to the Project
+<a name="The-MathOp-and-MathResult-Ports_Add-the-Model-to-the-Project"></a>
+### 3.2. Add the Model to the Project
 
 Add add the model
 `Ref/MathPorts/MathPorts.fpp` to the `Ref` project.
 Carry out the steps in the
-<<types_add,previous section>>, after
+<a href="#types_add">previous section</a>, after
 substituting `MathPorts` for `MathTypes`.
 
-=== Build the Model
+<a name="The-MathOp-and-MathResult-Ports_Build-the-Model"></a>
+### 3.3. Build the Model
 
 Carry out the steps in the
-<<types_build,previous section>>,
+<a href="#types_build">previous section</a>,
 in directory `MathPorts` instead of `MathTypes`.
 The generated code will go in
 `Ref/build-fprime-automatic-native/Ref/MathPorts`.
-For port definitions, the names of the auto-generated {cpp}
+For port definitions, the names of the auto-generated C++
 files end in `PortAc.hpp` and `PortAc.cpp`.
 You can look at this code if you wish.
-However, the auto-generated {cpp} port files are used
+However, the auto-generated C++ port files are used
 by the autocoded component implementations (described below);
 you won't ever program directly against their interfaces.
 
-=== Reference Implementation
+<a name="The-MathOp-and-MathResult-Ports_Reference-Implementation"></a>
+### 3.4. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathPorts`.
 To build this implementation, follow the steps
-described for <<types_ref,`MathTypes`>>.
+described for <a href="#types_ref">`MathTypes`</a>.
 
-[[math-sender]]
-== The MathSender Component
+<a name="math-sender"></name>
+<a name="The-MathSender-Component"></a>
+## 4. The MathSender Component
 
 Now we can build and test the `MathSender` component.
 There are five steps:
 
-. Construct the FPP model.
-. Add the model to the project.
-. Build the stub implementation.
-. Complete the implementation.
-. Write and run unit tests.
+1. Construct the FPP model.
+1. Add the model to the project.
+1. Build the stub implementation.
+1. Complete the implementation.
+1. Write and run unit tests.
 
-=== Construct the FPP Model
+<a name="The-MathSender-Component_Construct-the-FPP-Model"></a>
+### 4.1. Construct the FPP Model
 
-*Create the MathSender directory:*
+**Create the MathSender directory:**
 Go to the directory `Ref` at the top-level of the
 F Prime repository.
 Run `mkdir MathSender` to create a directory for the new component.
 
-*Create the FPP model file:*
+**Create the FPP model file:**
 Now go into the directory `Ref/MathSender`.
 Create a file `MathSender.fpp` with the following contents:
 
-[source,fpp]
-----
-include::../MathSender/MathSender.fpp[]
-----
+```fpp
+module Ref {
+
+  @ Component for sending a math operation
+  active component MathSender {
+
+    # ----------------------------------------------------------------------
+    # General ports
+    # ----------------------------------------------------------------------
+
+    @ Port for sending the operation request
+    output port mathOpOut: MathOp
+
+    @ Port for receiving the result
+    async input port mathResultIn: MathResult
+
+    # ----------------------------------------------------------------------
+    # Special ports
+    # ----------------------------------------------------------------------
+
+    @ Command receive port
+    command recv port cmdIn
+
+    @ Command registration port
+    command reg port cmdRegOut
+
+    @ Command response port
+    command resp port cmdResponseOut
+
+    @ Event port
+    event port eventOut
+
+    @ Telemetry port
+    telemetry port tlmOut
+
+    @ Text event port
+    text event port textEventOut
+
+    @ Time get port
+    time get port timeGetOut
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    @ Do a math operation
+    async command DO_MATH(
+                           val1: F32 @< The first operand
+                           op: MathOp @< The operation
+                           val2: F32 @< The second operand
+                         )
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    @ Math command received
+    event COMMAND_RECV(
+                        val1: F32 @< The first operand
+                        op: MathOp @< The operation
+                        val2: F32 @< The second operand
+                      ) \
+      severity activity low \
+      format "Math command received: {f} {} {f}"
+
+    @ Received math result
+    event RESULT(
+                  result: F32 @< The math result
+                ) \
+      severity activity high \
+      format "Math result is {f}"
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ The first value
+    telemetry VAL1: F32
+
+    @ The operation
+    telemetry OP: MathOp
+
+    @ The second value
+    telemetry VAL2: F32
+
+    @ The result
+    telemetry RESULT: F32
+
+  }
+
+}
+```
 
 This code defines a component `Ref.MathSender`.
-The component is *active*, which means it has its
+The component is **active**, which means it has its
 own thread.
 
 Inside the definition of the `MathSender` component are
 several specifiers.
 We have divided the specifiers into five groups:
 
-. *General ports:* These are user-defined ports for
+1. **General ports:** These are user-defined ports for
 application-specific functions.
 There are two general ports: an output port `mathOpOut`
 of type `MathOp` and an input port `mathResultIn` of
 type `MathResult`.
 Notice that these port specifiers use the ports that
-we defined <<ports,above>>.
-The input port is *asynchronous*.
+we defined <a href="#ports">above</a>.
+The input port is **asynchronous**.
 This means that invoking the port (i.e., sending
 data on the port) puts a message on a queue.
 The handler runs later, on the thread of this component.
 
-. *Special ports:* These are ports that have a special
+1. **Special ports:** These are ports that have a special
 meaning in F Prime.
 There are ports for registering commands with the dispatcher,
 receiving commands, sending command responses, emitting
 event reports, emitting telemetry, and getting the time.
 
-. *Commands:* These are commands sent from the ground
+1. **Commands:** These are commands sent from the ground
 or from a sequencer and dispatched to this component.
 There is one command `DO_MATH` for doing a math operation.
 The command is asynchronous.
 This means that when the command arrives, it goes on a queue
 and its handler is later run on the thread of this component.
 
-. *Events:* These are event reports that this component
+1. **Events:** These are event reports that this component
 can emit.
 There are two event reports, one for receiving a command
 and one for receiving a result.
 
-. *Telemetry:* These are *channels* that define telemetry
+1. **Telemetry:** These are **channels** that define telemetry
 points that the this component can emit.
 There are four telemetry channels: three for the arguments
 to the last command received and one for the last
 result received.
 
 For more information on defining components, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[_The FPP User's Guide_].
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
 
-[[math-sender_add-model]]
-=== Add the Model to the Project
+<a name="math-sender_add-model"></a>
+<a name="The-MathSender-Component_Add-the-Model-to-the-Project"></a>
+### 4.2. Add the Model to the Project
 
-*Create Ref/MathSender/CMakeLists.txt:*
+**Create Ref/MathSender/CMakeLists.txt:**
 Create a file `Ref/MathSender/CMakeLists.txt` with the following contents:
 
-[source,cmake]
-----
+```cmake
 # Register the standard build
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
 )
 register_fprime_module()
-----
+```
 
 This code will tell the build system how to build the FPP model
 and component implementation.
 
-*Update Ref/CMakeLists.txt:*
+**Update Ref/CMakeLists.txt:**
 Add `Ref/MathSender` to `Ref/CMakeLists.txt`, as we did
-for <<types_add,`Ref/MathTypes`>>.
+for <a href="#types_add">`Ref/MathTypes`</a>.
 
-[[math-sender_build-stub]]
-=== Build the Stub Implementation
+<a name="math-sender_build-stub"></a>
+<a name="The-MathSender-Component_Build-the-Stub-Implementation"></a>
+### 4.3. Build the Stub Implementation
 
-*Run the build:*
+**Run the build:**
 Go into the directory `Ref/MathTypes`.
 Run the following commands:
 
-[source,bash]
-----
+```bash
 touch MathSender.cpp
 fprime-util impl
-----
+```
 
 The first command creates an empty file `MathSender.cpp`.
 The build rules we wrote in the previous section expect
@@ -415,11 +591,10 @@ in the directory:
 
 Run the following commands:
 
-[source,bash]
-----
+```bash
 mv MathSenderComponentImpl.cpp-template MathSender.cpp
 mv MathSenderComponentImpl.hpp-template MathSender.hpp
-----
+```
 
 These commands produce a template, or stub implementation,
 of the `MathSender` implementation class.
@@ -432,7 +607,7 @@ This should make the build go faster.
 You can use any number after `--jobs`, up to the number
 of cores available on your system.
 
-*Inspect the generated code:*
+**Inspect the generated code:**
 The generated code resides in the directory
 `Ref/fprime-build-automatic-native-ut/Ref/MathSender`.
 You may wish to look over the file `MathSenderComponentAc.hpp`
@@ -441,17 +616,17 @@ base class `MathSenderComponentBase`.
 The `MathSender` implementation class is a derived class
 of this base class.
 
-=== Complete the Implementation
+<a name="The-MathSender-Component_Complete-the-Implementation"></a>
+### 4.4. Complete the Implementation
 
 Now we can complete the stub implementation.
 In an editor, open the file `MathSender.cpp`.
 
-*Fill in the DO_MATH command handler:*
+**Fill in the DO_MATH command handler:**
 You should see a stub handler for the `DO_MATH`
 command that looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   DO_MATH_cmdHandler(
       const FwOpcodeType opCode,
@@ -464,7 +639,7 @@ void MathSender ::
   // TODO
   this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
-----
+```
 
 The handler `DO_MATH_handler` is called when the `MathSender`
 component receives a `DO_MATH` command.
@@ -472,8 +647,7 @@ This handler overrides the corresponding pure virtual
 function in the auto-generated base class.
 Fill in the handler so that it looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   DO_MATH_cmdHandler(
       const FwOpcodeType opCode,
@@ -490,7 +664,7 @@ void MathSender ::
   this->mathOpOut_out(0, val1, op, val2);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
-----
+```
 
 The first two arguments to the handler function provide
 the command opcode and the command sequence number
@@ -499,10 +673,12 @@ The remaining arguments are supplied when the command is sent,
 for example, from the F Prime ground data system (GDS).
 The implementation code does the following:
 
-. Emit telemetry and events.
-. Invoke the `mathOpOut` port to request that `MathReceiver`
+1. Emit telemetry and events.
+
+1. Invoke the `mathOpOut` port to request that `MathReceiver`
 perform the operation.
-. Send a command response indicating success.
+
+1. Send a command response indicating success.
 The command response goes out on the special port
 `cmdResponseOut`.
 
@@ -511,15 +687,14 @@ sending a command response.
 The proper behavior of other framework components (e.g., command
 dispatcher, command sequencer) depends upon adherence to this rule.
 
-*Check the build:*
+**Check the build:**
 Run `fprime-util build` again to make sure that everything still builds.
 
-*Fill in the mathResultIn handler:*
+**Fill in the mathResultIn handler:**
 You should see a stub handler for the `mathResultIn`
 port that looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   mathResultIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -528,7 +703,7 @@ void MathSender ::
 {
   // TODO
 }
-----
+```
 
 The handler `mathResultIn_handler` is called when the `MathReceiver`
 component code returns a result by invoking the `mathResultIn` port.
@@ -536,8 +711,7 @@ Again the handler overrides the corresponding pure virtual
 function in the auto-generated base class.
 Fill in the handler so that it looks like this:
 
-[source,c++]
-----
+```c++
 void MathSender ::
   mathResultIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -547,18 +721,19 @@ void MathSender ::
     this->tlmWrite_RESULT(result);
     this->log_ACTIVITY_HI_RESULT(result);
 }
-----
+```
 
 The implementation code emits the result on the `RESULT`
 telemetry channel and as a `RESULT` event report.
 
-*Check the build:*
+**Check the build:**
 Run `fprime-util build`.
 
-[[math-sender_unit]]
-=== Write and Run Unit Tests
+<a name="math-sender_unit"></a>
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests"></a>
+### 4.5. Write and Run Unit Tests
 
-*Unit tests* are an important part of FSW development.
+**Unit tests** are an important part of FSW development.
 At the component level, unit tests typically invoke input ports, send commands,
 and check for expected values on output ports (including telemetry and event
 ports).
@@ -566,56 +741,55 @@ ports).
 We will carry out the unit testing for the `MathSender` component
 in three steps:
 
-. Set up the unit test environment
-. Write and run one unit test
-. Write and run additional unit tests
+1. Set up the unit test environment
 
-[[math-sender_unit_setup]]
-==== Set Up the Unit Test Environment
+1. Write and run one unit test
 
-*Create the stub Tester class:*
+1. Write and run additional unit tests
+
+<a name="math-sender_unit_setup"></a>
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Set-Up-the-Unit-Test-Environment"></a>
+#### 4.5.1. Set Up the Unit Test Environment
+
+**Create the stub Tester class:**
 Do the following in directory `Ref/MathSender`:
 
-. Run `mkdir -p test/ut` to create the directory where
+1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-. Run the command `fprime-util impl --ut`.
+1. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-. Move these files to the `test/ut` directory:
+1. Move these files to the `test/ut` directory:
 
-+
-[source,bash]
-----
-mv Tester.* test/ut
-----
+   ```bash
+   mv Tester.* test/ut
+   ```
 
-*Create a stub main.cpp file:*
+**Create a stub main.cpp file:**
 Now go to the directory `Ref/MathSender/test/ut`.
 In that directory, create a file `main.cpp` with the
 following contents:
 
-[source,c++]
-----
+```c++
 #include "Tester.hpp"
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-----
+```
 
 This file is a stub for running tests using the
-https://github.com/google/googletest[Google Test framework].
+[Google Test framework](https://github.com/google/googletest).
 Right now there aren't any tests to run; we will add one
 in the next section.
 
-*Update Ref/MathSender/CMakeLists.txt:*
+**Update Ref/MathSender/CMakeLists.txt:**
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
-[source,cmake]
-----
+```cmake
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
@@ -623,33 +797,33 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()
-----
+```
 
 This code tells the build system how to build
 and run the unit tests.
 
-*Run the build:*
+**Run the build:**
 Now we can check that the unit test build is working.
 
-. If you have not yet run `fprime-util generate --ut`,
+1. If you have not yet run `fprime-util generate --ut`,
 then do so now.
 This step generates the CMake build cache for the unit
 tests.
 
-. Run `fprime-util build --ut`.
+1. Run `fprime-util build --ut`.
 Everything should build without errors.
 
-*Inspect the generated code:*
+**Inspect the generated code:**
 The generated code is located at
 `Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
 This directory contains two auto-generated classes:
 
-. `MathSenderGTestBase`: This is the direct base
+1. `MathSenderGTestBase`: This is the direct base
 class of `Tester`.
 It provides a test interface implemented with Google Test
 macros.
 
-. `MathSenderTesterBase`: This is the direct base
+1. `MathSenderTesterBase`: This is the direct base
 class of `MathSenderGTestBase`.
 It provides basic features such as histories of port
 invocations.
@@ -661,40 +835,39 @@ to see what operations they provide.
 In the next sections we will provide some example uses
 of these operations.
 
-==== Write and Run One Test
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-One-Test"></a>
+#### 4.5.2. Write and Run One Test
 
 Now we will write a unit test that exercises the
 `DO_MATH` command.
 We will do this in three phases:
 
-. In the `Tester` class, add a helper function for sending the command and
+1. In the `Tester` class, add a helper function for sending the command and
 checking the responses.
 That way multiple tests can reuse the same code.
 
-. In the `Tester` class, write a test function that
+1. In the `Tester` class, write a test function that
 calls the helper to run a test.
 
-. In the `main` function, write a Google Test macro
+1. In the `main` function, write a Google Test macro
 that invokes the test function.
 
-. Run the test.
+1. Run the test.
 
-*Add a helper function:*
+**Add a helper function:**
 Go into the directory `Ref/MathSender/test/ut`.
 In the file `Tester.hpp`, add the following lines
 to the section entitled "Helper methods":
 
-[source,c++]
-----
+```c++
 //! Test a DO_MATH command
 void testDoMath(MathOp op);
-----
+```
 
 In the file `Tester.cpp`, add the corresponding
 function body:
 
-[source,c++]
-----
+```c++
 void Tester ::
   testDoMath(MathOp op)
 {
@@ -752,7 +925,7 @@ void Tester ::
     ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);
 
 }
-----
+```
 
 This function is parameterized over different
 operations.
@@ -776,51 +949,48 @@ the same thread.
 
 There are a couple of pitfalls to watch out for with this pattern:
 
-. If you put work on the queue and forget to call `doDispatch`,
+1. If you put work on the queue and forget to call `doDispatch`,
 the work won't get dispatched.
 Likely this will cause a unit test failure.
 
-. If you call `doDispatch` without putting work on the queue,
+1. If you call `doDispatch` without putting work on the queue,
 the unit test will block until you kill the process (e.g.,
 with control-C).
 
-*Write a test function:*
+**Write a test function:**
 Next we will write a test function that calls
 `testDoMath` to test an `ADD` operation.
 In `Tester.hpp`, add the following line in the
 section entitled "Tests":
 
-[source,c++]
-----
+```c++
 //! Test an ADD command
 void testAddCommand();
-----
+```
 
 In `Tester.cpp`, add the corresponding function
 body:
 
-[source,c++]
-----
+```c++
 void Tester ::
     testAddCommand()
 {
     this->testDoMath(MathOp::ADD);
 }
-----
+```
 
 This function calls `testDoMath` to test an `ADD` command.
 
-*Write a test macro:*
+**Write a test macro:**
 Add the following code to the file `main.cpp`,
 before the definition of the `main` function:
 
-[source,c++]
-----
+```c++
 TEST(Nominal, AddCommand) {
     Ref::Tester tester;
     tester.testAddCommand();
 }
-----
+```
 
 The `TEST` macro is an instruction to Google Test to run a test.
 `Nominal` is the name of a test suite.
@@ -834,7 +1004,7 @@ each test starts in a fresh state.
 The second line invokes the function `testAddCommand`
 that we wrote in the previous section.
 
-*Run the test:*
+**Run the test:**
 Go back to directory `Ref/MathSender`.
 Run the command `fprime-util check`.
 The build system should compile and run the unit
@@ -844,16 +1014,17 @@ and passed.
 
 As an exercise, try the following:
 
-. Change the behavior of the component
-so that it does something correct.
+1. Change the behavior of the component
+so that it does something incorrect.
 For example, try adding one to a telemetry
 value before emitting it.
 
-. Rerun the test and observe what happens.
+1. Rerun the test and observe what happens.
 
-==== Write and Run More Tests
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Write-and-Run-More-Tests"></a>
+#### 4.5.3. Write and Run More Tests
 
-*Add more command tests:*
+**Add more command tests:**
 Try to follow the pattern given in the previous
 section to add three more tests, one each
 for operations `SUB`, `MUL`, and `DIV`.
@@ -865,73 +1036,67 @@ and a short test macro.
 Run the tests to make sure everything compiles and
 the tests pass.
 
-*Add a result test:*
+**Add a result test:**
 Add a test for exercising the scenario in which the `MathReceiver`
 component sends a result back to `MathSender`.
 
-. Add the following function signature in the "Tests"
-section of to `Tester.hpp`:
+1. Add the following function signature in the "Tests"
+   section of to `Tester.hpp`:
 
-+
-[source,c++]
-----
-//! Test receipt of a result
-void testResult();
-----
+   ```c++
+   //! Test receipt of a result
+   void testResult();
+   ```
 
-. Add the corresponding function body in `Tester.cpp`:
+1. Add the corresponding function body in `Tester.cpp`:
 
-+
-[source,cpp]
-----
-void Tester ::
-  testResult()
-{
-    // Generate an expected result
-    const F32 result = 10.0;
-    // reset all telemetry and port history
-    this->clearHistory();
-    // call result port with result
-    this->invoke_to_mathResultIn(0, result);
-    // retrieve the message from the message queue and dispatch the command to the handler
-    this->component.doDispatch();
-    // verify one telemetry value was written
-    ASSERT_TLM_SIZE(1);
-    // verify the desired telemetry channel was sent once
-    ASSERT_TLM_RESULT_SIZE(1);
-    // verify the values of the telemetry channel
-    ASSERT_TLM_RESULT(0, result);
-    // verify one event was sent
-    ASSERT_EVENTS_SIZE(1);
-    // verify the expected event was sent once
-    ASSERT_EVENTS_RESULT_SIZE(1);
-    // verify the expect value of the event
-    ASSERT_EVENTS_RESULT(0, result);
-}
-----
+   ```c++
+   void Tester ::
+     testResult()
+   {
+       // Generate an expected result
+       const F32 result = 10.0;
+       // reset all telemetry and port history
+       this->clearHistory();
+       // call result port with result
+       this->invoke_to_mathResultIn(0, result);
+       // retrieve the message from the message queue and dispatch the command to the handler
+       this->component.doDispatch();
+       // verify one telemetry value was written
+       ASSERT_TLM_SIZE(1);
+       // verify the desired telemetry channel was sent once
+       ASSERT_TLM_RESULT_SIZE(1);
+       // verify the values of the telemetry channel
+       ASSERT_TLM_RESULT(0, result);
+       // verify one event was sent
+       ASSERT_EVENTS_SIZE(1);
+       // verify the expected event was sent once
+       ASSERT_EVENTS_RESULT_SIZE(1);
+       // verify the expect value of the event
+       ASSERT_EVENTS_RESULT(0, result);
+   }
+   ```
 
-+
-This code is similar to the helper function in the previous section.
-The main difference is that it invokes a port directly
-(the `mathResultIn` port) instead of sending a command.
+   This code is similar to the helper function in the previous section.
+   The main difference is that it invokes a port directly
+   (the `mathResultIn` port) instead of sending a command.
 
-. Add the following test macro to `main.cpp`:
+1. Add the following test macro to `main.cpp`:
 
-+
-[source,cpp]
-----
-TEST(Nominal, Result) {
-    Ref::Tester tester;
-    tester.testResult();
-}
-----
+   ```c++
+   TEST(Nominal, Result) {
+       Ref::Tester tester;
+       tester.testResult();
+   }
+   ```
 
-. Run the tests.
+1. Run the tests.
 Again you can try altering something in the component code
 to see what effect it has on the test output.
 
-[[math-sender_exercise]]
-==== Exercise: Random Testing
+<a name="math-sender_exercise"></a>
+<a name="The-MathSender-Component_Write-and-Run-Unit-Tests_Exercise-Random-Testing"></a>
+#### 4.5.4. Exercise: Random Testing
 
 F Prime provides a module called `STest`
 that provides helper classes and functions for writing
@@ -941,38 +1106,32 @@ As an exercise, use the interface provided by
 tests instead of using hard-coded values such as 2.0, 3.0,
 and 10.
 
-*Modifying the code:* You will need to do the following:
+**Modifying the code:** You will need to do the following:
 
-. Add `#include "STest/Pick/Pick.hpp"` to `Tester.cpp`.
+1. Add `#include "STest/Pick/Pick.hpp"` to `Tester.cpp`.
 
-. Add the following
-line to `Ref/MathSender/CMakeLists.txt`, before `register_fprime_ut`:
+1. Add the following
+   line to `Ref/MathSender/CMakeLists.txt`, before `register_fprime_ut`:
 
-+
-[source,cmake]
-----
-set(UT_MOD_DEPS STest)
-----
+   ```cmake
+   set(UT_MOD_DEPS STest)
+   ```
 
-+
-This line tells the build system to make the unit test build
-depend on the `STest` build module.
+   This line tells the build system to make the unit test build
+   depend on the `STest` build module.
 
-. Add `#include STest/Random/Random.hpp` to `main.cpp`.
+1. Add `#include STest/Random/Random.hpp` to `main.cpp`.
 
-.  Add the following line to the `main` function of `main.cpp`,
-just before the return statement:
+1. Add the following line to the `main` function of `main.cpp`,
+   just before the return statement:
 
-+
-[source,cpp]
-----
-STest::Random::seed();
-----
+   ```c++
+   STest::Random::seed();
+   ```
 
-+
-This line seeds the random number generator used by STest.
+   This line seeds the random number generator used by STest.
 
-*Running the tests:*
+**Running the tests:**
 Recompile and rerun the tests.
 Now go to
 `Ref/build-fprime-automatic-native-ut/Ref/MathSender` and inspect the
@@ -980,7 +1139,7 @@ file `seed-history`.
 This file is a log of random seed values.
 Each line represents the seed used in the corresponding run.
 
-*Fixing the random seed:*
+**Fixing the random seed:**
 Sometimes you may want to run a test with a particular seed value,
 e.g., for replay debugging.
 To do this, put the seed value into a file `seed` in the same
@@ -990,48 +1149,155 @@ of generating a new seed.
 
 Try the following:
 
-. Copy the last value _S_ of `seed-history` into `seed`.
+1. Copy the last value _S_ of `seed-history` into `seed`.
 
-. In `Ref/MathSender`, re-run the unit tests a few times.
+1. In `Ref/MathSender`, re-run the unit tests a few times.
 
-. Inspect `Ref/build-fprime-automatic-native-ut/Ref/MathSender/seed-history`.
+1. Inspect `Ref/build-fprime-automatic-native-ut/Ref/MathSender/seed-history`.
 You should see that the value _S_ was used in the runs you just did
 (corresponding to the last few entries in `seed-history`).
 
-=== Reference Implementation
+<a name="The-MathSender-Component_Reference-Implementation"></a>
+### 4.6. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathSender`.
 
-== The MathReceiver Component
+<a name="The-MathReceiver-Component"></a>
+## 5. The MathReceiver Component
 
 Now we will build and test the `MathReceiver` component.
 We will use the same five steps as for the
-<<math-sender,`MathSender` component>>.
+<a href="#math-sender">`MathSender` component</a>.
 
-=== Construct the FPP Model
+<a name="The-MathReceiver-Component_Construct-the-FPP-Model"></a>
+### 5.1. Construct the FPP Model
 
-*Create the MathReceiver directory:*
+**Create the MathReceiver directory:**
 Create the directory `Ref/MathReceiver`.
 
-*Create the FPP model file:*
+**Create the FPP model file:**
 In directory `Ref/MathReceiver`, create a file
 `MathReceiver.fpp` with the following contents:
 
-[source,fpp]
-----
-include::../MathReceiver/MathReceiver.fpp[]
-----
+```fpp
+module Ref {
+
+  @ Component for receiving and performing a math operation
+  queued component MathReceiver {
+
+    # ----------------------------------------------------------------------
+    # General ports
+    # ----------------------------------------------------------------------
+
+    @ Port for receiving the math operation
+    async input port mathOpIn: MathOp
+
+    @ Port for returning the math result
+    output port mathResultOut: MathResult
+
+    @ The rate group scheduler input
+    sync input port schedIn: Svc.Sched
+
+    # ----------------------------------------------------------------------
+    # Special ports
+    # ----------------------------------------------------------------------
+
+    @ Command receive
+    command recv port cmdIn
+
+    @ Command registration
+    command reg port cmdRegOut
+
+    @ Command response
+    command resp port cmdResponseOut
+
+    @ Event
+    event port eventOut
+
+    @ Parameter get
+    param get port prmGetOut
+
+    @ Parameter set
+    param set port prmSetOut
+
+    @ Telemetry
+    telemetry port tlmOut
+
+    @ Text event
+    text event port textEventOut
+
+    @ Time get
+    time get port timeGetOut
+
+    # ----------------------------------------------------------------------
+    # Parameters
+    # ----------------------------------------------------------------------
+
+    @ The multiplier in the math operation
+    param FACTOR: F32 default 1.0 id 0 \
+      set opcode 10 \
+      save opcode 11
+
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    @ Factor updated
+    event FACTOR_UPDATED(
+                          val: F32 @< The factor value
+                        ) \
+      severity activity high \
+      id 0 \
+      format "Factor updated to {f}" \
+      throttle 3
+
+    @ Math operation performed
+    event OPERATION_PERFORMED(
+                               val: MathOp @< The operation
+                             ) \
+      severity activity high \
+      id 1 \
+      format "{} operation performed"
+
+    @ Event throttle cleared
+    event THROTTLE_CLEARED \
+      severity activity high \
+      id 2 \
+      format "Event throttle cleared"
+
+    # ----------------------------------------------------------------------
+    # Commands
+    # ----------------------------------------------------------------------
+
+    @ Clear the event throttle
+    async command CLEAR_EVENT_THROTTLE \
+      opcode 0
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ The operation
+    telemetry OPERATION: MathOp id 0
+
+    @ Multiplication factor
+    telemetry FACTOR: F32 id 1
+
+  }
+
+}
+```
 
 This code defines a component `Ref.MathReceiver`.
-The component is *queued*, which means it has a queue
+The component is **queued**, which means it has a queue
 but no thread.
 Work occurs when the thread of another component invokes
 the `schedIn` port of this component.
 
 We have divided the specifiers of this component into six groups:
 
-. *General ports:* There are three ports:
+1. **General ports:** There are three ports:
 an input port `mathOpIn` for receiving a math operation,
 an output port `mathResultOut` for sending a math result, and
 an input port `schedIn` for receiving invocations from the scheduler.
@@ -1041,13 +1307,13 @@ That means invocations of `mathOpIn` put messages on a queue.
 That means invocations of `schedIn` immediately call the
 handler function to do work.
 
-. *Special ports:*
+1. **Special ports:**
 As before, there are special ports for commands, events, telemetry,
 and time.
 There are also special ports for getting and setting parameters.
 We will explain the function of these ports below.
 
-. *Parameters:* There is one *parameter*.
+1. **Parameters:** There is one **parameter**.
 A parameter is a constant that is configurable by command.
 In this case there is one parameter `FACTOR`.
 It has the default value 1.0 until its value is changed by command.
@@ -1058,25 +1324,25 @@ are _v1_, `ADD`, and _v2_, and the factor is _f_,
 then the result sent on `mathResultOut` is
 _(v1 + v2) f_.
 
-. *Events:* There are three event reports:
+1. **Events:** There are three event reports:
 
-.. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
-is updated by command.
-This event is *throttled* to a limit of three.
-That means that after the event is emitted three times
-it will not be emitted any more, until the throttling
-is cleared by command (see below).
+   1. `FACTOR_UPDATED`: Emitted when the `FACTOR` parameter
+      is updated by command.
+      This event is **throttled** to a limit of three.
+      That means that after the event is emitted three times
+      it will not be emitted any more, until the throttling
+      is cleared by command (see below).
 
-.. `OPERATION_PERFORMED`: Emitted when this component
-performs a math operation.
+   1. `OPERATION_PERFORMED`: Emitted when this component
+      performs a math operation.
 
-.. `THROTTLE_CLEARED`: Emitted when the event throttling
-is cleared.
+   1. `THROTTLE_CLEARED`: Emitted when the event throttling
+      is cleared.
 
-. *Commands:* There is one command for clearing
+1. **Commands:** There is one command for clearing
 the event throttle.
 
-. *Telemetry:*
+1. **Telemetry:**
 There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
@@ -1086,26 +1352,28 @@ to put in all the opcodes and identifiers explicitly.
 These can also be left implicit, as in the `MathSender`
 component example.
 For more information, see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components[_The FPP User's Guide_].
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Components).
 
-=== Add the Model to the Project
+<a name="The-MathReceiver-Component_Add-the-Model-to-the-Project"></a>
+### 5.2. Add the Model to the Project
 
 Follow the steps given for the
-<<math-sender_add-model,`MathSender` component>>.
+<a href="#math-sender_add-model">`MathSender` component</a>.
 
-=== Build the Stub Implementation
+<a name="The-MathReceiver-Component_Build-the-Stub-Implementation"></a>
+### 5.3. Build the Stub Implementation
 
 Follow the same steps as for the
-<<math-sender_build-stub,`MathSender` component>>.
+<a href="#math-sender_build-stub">`MathSender` component</a>.
 
-=== Complete the Implementation
+<a name="The-MathReceiver-Component_Complete-the-Implementation"></a>
+### 5.4. Complete the Implementation
 
-*Fill in the mathOpIn handler:*
+**Fill in the mathOpIn handler:**
 In `MathReceiver.cpp`, complete the implementation of
 `mathOpIn_handler` so that it looks like this:
 
-[source,cpp]
-----
+```cpp
 void MathReceiver ::
   mathOpIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -1154,25 +1422,25 @@ void MathReceiver ::
     this->mathResultOut_out(0, res);
 
 }
-----
+```
 
 This code does the following:
 
-. Compute an initial result based on the input values and
+1. Compute an initial result based on the input values and
 the requested operation.
 
-. Get the value of the factor parameter.
+1. Get the value of the factor parameter.
 Check that the value is a valid value from the parameter
 database or a default parameter value.
 
-. Multiply the initial result by the factor to generate
+1. Multiply the initial result by the factor to generate
 the final result.
 
-. Emit telemetry and events.
+1. Emit telemetry and events.
 
-. Emit the result.
+1. Emit the result.
 
-Note that in step 1, `op` is an enum (a {cpp} class type), and `op.e`
+Note that in step 1, `op` is an enum (a C++ class type), and `op.e`
 is the corresponding numeric value (an integer type).
 Note also that in the `default` case we deliberately fail
 an assertion.
@@ -1180,12 +1448,11 @@ This is a standard pattern for exhaustive case checking.
 We should never hit the assertion.
 If we do, then a bug has occurred: we missed a case.
 
-*Fill in the schedIn handler:*
+**Fill in the schedIn handler:**
 In `MathReceiver.cpp`, complete the implementation of
 `schedIn_handler` so that it looks like this:
 
-[source,cpp]
-----
+```c++
 void MathReceiver ::
   schedIn_handler(
       const NATIVE_INT_TYPE portNum,
@@ -1197,7 +1464,7 @@ void MathReceiver ::
         (void) this->doDispatch();
     }
 }
-----
+```
 
 This code dispatches all the messages on the queue.
 Note that for a queued component, we have to do this
@@ -1205,12 +1472,11 @@ dispatch explicitly in the `schedIn` handler.
 For an active component, the framework auto-generates
 the dispatch code.
 
-*Fill in the CLEAR_EVENT_THROTTLE command handler:*
+**Fill in the CLEAR_EVENT_THROTTLE command handler:**
 In `MathReceiver.cpp`, complete the implementation of
 `CLEAR_EVENT_THROTTLE_cmdHandler` so that it looks like this:
 
-[source,cpp]
-----
+```c++
 void MathReceiver ::
   CLEAR_EVENT_THROTTLE_cmdHandler(
       const FwOpcodeType opCode,
@@ -1224,20 +1490,19 @@ void MathReceiver ::
     // reply with completion status
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
-----
+```
 
 The call to `log_ACTIVITY_HI_FACTOR_UPDATED_ThrottleClear` clears
 the throttling of the `FACTOR_UPDATED` event.
 The next two lines send a notification event and send
 a command response.
 
-*Add a parameterUpdated function:*
+**Add a parameterUpdated function:**
 Add the following function to `MathReceiver.cpp`.
 You will need to add the corresponding function header
 to `MathReceiver.hpp`.
 
-[source,cpp]
-----
+```c++
 void MathReceiver ::
    parameterUpdated(FwPrmIdType id)
 {
@@ -1257,7 +1522,7 @@ void MathReceiver ::
             break;
     }
 }
-----
+```
 
 This code implements an optional function that, if present,
 is called when a parameter is updated by command.
@@ -1265,34 +1530,36 @@ The parameter identifier is passed in as the `id` argument
 of the function.
 Here we do the following:
 
-. If the parameter identifier is `PARAMID_FACTOR` (the parameter
+1. If the parameter identifier is `PARAMID_FACTOR` (the parameter
 identifier corresponding to the `FACTOR` parameter,
 then get the parameter value and emit an event report.
 
-. Otherwise fail an assertion.
+1. Otherwise fail an assertion.
 This code should never run, because there are no other
 parameters.
 
-=== Write and Run Unit Tests
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests"></a>
+### 5.5. Write and Run Unit Tests
 
-==== Set up the Unit Test Environment
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Set-up-the-Unit-Test-Environment"></a>
+#### 5.5.1. Set up the Unit Test Environment
 
-. Follow the steps given for the
-<<math-sender_unit_setup,`MathSender` component>>.
+1. Follow the steps given for the
+<a href="#math-sender_unit_setup">`MathSender` component</a>.
 
-. Follow the steps given under *Modifying the code*
+1. Follow the steps given under **Modifying the code**
 for the
-<<math-sender_exercise,random testing exercise>>,
+<a href="#math-sender_exercise">random testing exercise</a>,
 so that you can use STest to pick random values.
 
-==== Add Helper Code
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Add-Helper-Code"></a>
+#### 5.5.2. Add Helper Code
 
-*Add a ThrottleState enum class:*
+**Add a ThrottleState enum class:**
 Add the following code to the beginning of the
 `Tester` class in `Tester.hpp`:
 
-[source,cpp]
-----
+```c++
 private:
 
   // ----------------------------------------------------------------------
@@ -1303,12 +1570,12 @@ private:
     THROTTLED,
     NOT_THROTTLED
   };
-----
+```
 
-This code defines a {cpp} enum class for recording whether an
+This code defines a C++ enum class for recording whether an
 event is throttled.
 
-*Add helper functions:*
+**Add helper functions:**
 Add each of the functions described below to the
 "Helper methods" section of `Tester.cpp`.
 For each function, you must add
@@ -1319,23 +1586,21 @@ Fix any errors that occur.
 
 Add a `pickF32Value` function.
 
-[source,cpp]
-----
+```c++
 F32 Tester ::
   pickF32Value()
 {
   const F32 m = 10e6;
   return m * (1.0 - 2 * STest::Pick::inUnitInterval());
 }
-----
+```
 
 This function picks a random `F32` value in the range
 _[ -10^6, 10^6 ]_.
 
 Add a `setFactor` function.
 
-[source,cpp]
-----
+```c++
 void Tester ::
   setFactor(
       F32 factor,
@@ -1359,23 +1624,22 @@ void Tester ::
         ASSERT_EVENTS_SIZE(0);
     }
 }
-----
+```
 
 This function does the following:
 
-. Clear the test history.
+1. Clear the test history.
 
-. Send a command to the component to set the `FACTOR` parameter
+1. Send a command to the component to set the `FACTOR` parameter
 to the value `factor`.
 
-. If `throttleState` is `NOT_THROTTLED`, then check
+1. If `throttleState` is `NOT_THROTTLED`, then check
 that the event was emitted.
 Otherwise check that the event was throttled (not emitted).
 
 Add a function `computeResult` to `Tester.cpp`.
 
-[source,cpp]
-----
+```c++
 F32 Tester ::
   computeResult(
       F32 val1,
@@ -1405,7 +1669,7 @@ F32 Tester ::
     result *= factor;
     return result;
 }
-----
+```
 
 This function carries out the math computation of the
 math component.
@@ -1414,8 +1678,7 @@ check the output of the component.
 
 Add a `doMathOp` function to `Tester.cpp`.
 
-[source,cpp]
-----
+```c++
 void Tester ::
   doMathOp(
       MathOp op,
@@ -1465,7 +1728,7 @@ void Tester ::
     ASSERT_TLM_OPERATION(0, op);
 
 }
-----
+```
 
 This function is similar to the `doMath` helper function that
 we wrote for the `MathSender` component.
@@ -1474,7 +1737,8 @@ Since the component is queued, we don't call `doDispatch`
 directly.
 Instead we invoke `schedIn`.
 
-==== Write and Run Tests
+<a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests"></a>
+#### 5.5.3. Write and Run Tests
 
 For each of the tests described below, you must add the
 corresponding function prototype to `Tester.hpp`
@@ -1484,11 +1748,10 @@ If you can't remember how to do it, look back at the
 After writing each test, run all the tests and make sure
 that they pass.
 
-*Write an ADD test:*
+**Write an ADD test:**
 Add the following function to the "Tests" section of `Tester.cpp`:
 
-[source,cpp]
-----
+```c++
 void Tester ::
   testAdd()
 {
@@ -1498,18 +1761,17 @@ void Tester ::
     // Do the add operation
     this->doMathOp(MathOp::ADD, factor);
 }
-----
+```
 
 This function calls the `setFactor` helper function
 to set the factor parameter.
 Then it calls the `doMathOp` function to
 do a math operation.
 
-*Write a SUB test:*
+**Write a SUB test:**
 Add the following function to the "Tests" section of `Tester.cpp`:
 
-[source,cpp]
-----
+```c++
 void Tester ::
   testSub()
 {
@@ -1520,19 +1782,19 @@ void Tester ::
     // Do the operation
     this->doMathOp(MathOp::SUB, factor);
 }
-----
+```
 
 This test is similar to `testAdd`, but it shows
 another way to set a parameter.
 `testAdd` showed how to set a parameter by command.
 You can also set a parameter by initialization, as follows:
 
-. Call the `paramSet` function as shown.
+1. Call the `paramSet` function as shown.
 This function sets the parameter value in
 the part of the test harness that mimics the behavior of the
 parameter database component.
 
-. Call the `loadParameters` function as shown.
+1. Call the `loadParameters` function as shown.
 In flight, the function `loadParameters` is typically called at the
 start of FSW to load the parameters from the database;
 here it loads the parameters from the test harness.
@@ -1542,19 +1804,18 @@ is not called, and no event is emitted.
 As before, after setting the parameter we call `doMathOp`
 to do the operation.
 
-*Write a MUL test:*
+**Write a MUL test:**
 This test is the same as the ADD test, except that it
 uses MUL instead of add.
 
-*Write a DIV test:*
+**Write a DIV test:**
 This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
-*Write a throttle test:*
+**Write a throttle test:**
 Add the following function to the "Tests" section of `Tester.cpp`:
 
-[source,cpp]
-----
+```c++
 void Tester ::
   testThrottle()
 {
@@ -1587,7 +1848,7 @@ void Tester ::
     this->setFactor(factor, ThrottleState::NOT_THROTTLED);
 
 }
-----
+```
 
 This test first loops over the throttle count, which is stored
 for us in the constant `EVENTID_FACTOR_UPDATED_THROTTLE`
@@ -1604,30 +1865,34 @@ Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
-=== Reference Implementation
+<a name="The-MathReceiver-Component_Reference-Implementation"></a>
+### 5.6. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/MathReceiver`.
 
-=== Exercises
+<a name="The-MathReceiver-Component_Exercises"></a>
+### 5.7. Exercises
 
-==== Adding Telemetry
+<a name="The-MathReceiver-Component_Exercises_Adding-Telemetry"></a>
+#### 5.7.1. Adding Telemetry
 
 Add a telemetry channel that records the number of math
 operations performed.
 
-. Add the channel to the FPP model.
+1. Add the channel to the FPP model.
 
-. In the component implementation class, add a member
+1. In the component implementation class, add a member
 variable `numMathOps` of type `U32`.
 Initialize the variable to zero in the class constructor.
 
-. Revise the `mathOpIn` handler so that it increments
+1. Revise the `mathOpIn` handler so that it increments
 `numMathOps` and emits the updated value as telemetry.
 
-. Revise the unit tests to cover the new behavior.
+1. Revise the unit tests to cover the new behavior.
 
-==== Error Handling
+<a name="The-MathReceiver-Component_Exercises_Error-Handling"></a>
+#### 5.7.2. Error Handling
 
 Think about what will happen if the floating-point
 math operation performed by `MathReceiver` causes an error.
@@ -1646,14 +1911,14 @@ explicitly.
 How would you change the design?
 Here are some questions to think about:
 
-. How would you check for division by zero?
+1. How would you check for division by zero?
 Note that `val2 = 0.0` is not the only case in which a division
 by zero error can occur.
 It can also occur for very small values of `val2`.
 
-. Should the error be caught in `MathSender` or `MathReceiver`?
+1. Should the error be caught in `MathSender` or `MathReceiver`?
 
-. Suppose the design says that `MathSender` catches the error,
+1. Suppose the design says that `MathSender` catches the error,
 and so never sends requests to `MathReceiver` to divide by zero.
 What if anything should `MathReceiver` do if it receives
 a divide by zero request?
@@ -1661,7 +1926,7 @@ Carry out the operation normally?
 Emit a warning?
 Fail a FSW assertion?
 
-. If the error is caught by `MathReceiver`, does the
+1. If the error is caught by `MathReceiver`, does the
 interface between the components have to change?
 If so, how?
 What should `MathSender` do if `MathReceiver`
@@ -1671,34 +1936,35 @@ Revise the MathSender and MathReceiver components to implement your
 ideas.
 Add unit tests covering the new behavior.
 
-== Updating the Ref Deployment
+<a name="Updating-the-Ref-Deployment"></a>
+## 6. Updating the Ref Deployment
 
 The next step in the tutorial is to define instances of the
 `MathSender` and `MathReceiver` components and add them
 to the `Ref` topology.
 
-=== Defining the Component Instances
+<a name="Updating-the-Ref-Deployment_Defining-the-Component-Instances"></a>
+### 6.1. Defining the Component Instances
 
 Go to the directory `Ref/Top` and open the file `instances.fpp`.
 This file defines the instances used in the topology for the
 `Ref` application.
 Update this file as described below.
 
-*Define the mathSender instance:*
+**Define the mathSender instance:**
 At the end of the section entitled "Active component instances,"
 add the following lines:
 
-[source,fpp]
-----
+```fpp
 instance mathSender: Ref.MathSender base id 0xE00 \
   queue size Default.queueSize \
   stack size Default.stackSize \
   priority 100
-----
+```
 
 This code defines an instance `mathSender` of component
 `MathSender`.
-It has *base identifier* 0xE00.
+It has **base identifier** 0xE00.
 FPP adds the base identifier to each the relative identifier
 defined in the component to compute the corresponding
 identifier for the instance.
@@ -1711,102 +1977,106 @@ and thread priority for the active component.
 Here we give `mathSender` the default queue size
 and stack size and a priority of 100.
 
-*Define the mathReceiver instance:*
+**Define the mathReceiver instance:**
 At the end of the section "Queued component instances,"
 add the following lines:
 
-[source,fpp]
-----
+```fpp
 instance mathReceiver: Ref.MathReceiver base id 0x2700 \
   queue size Default.queueSize
-----
+```
 
 This code defines an instance `mathReceiver` of
 component `MathReceiver`.
 It has base identifier 0x2700 and the default queue size.
 
-*More information:*
+**More information:**
 For more information on defining component instances,
 see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances[_The FPP User's Guide_].
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Component-Instances).
 
-=== Updating the Topology
+<a name="Updating-the-Ref-Deployment_Updating-the-Topology"></a>
+### 6.2. Updating the Topology
 
 Go to the directory `Ref/Top` and open the file `topology.fpp`.
 This file defines the topology for the `Ref` application.
 Update this file as described below.
 
-*Add the new instances:*
+**Add the new instances:**
 You should see a list of instances, each of which begins
 with the keyword `instance`.
 After the line `instance linuxTime`, add the following
 lines:
 
-[source,fpp]
-----
+```fpp
 instance mathSender
 instance mathReceiver
-----
+```
 
 These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
-*Check for unconnected ports:*
-This capability does not yet exist in the F Prime build system.
-When it does, you will be able to see a list of ports
+**Check for unconnected ports:**
+Run the following commands:
+
+```bash
+fprime-util fpp-check -u unconnected.txt
+cat unconnected.txt
+```
+
+You should see a list of ports
 that are unconnected in the `Ref` topology.
 Those ports will include the ports for the new instances
 `mathSender` and `mathReceiver`.
 
-*Connect mathReceiver to rate group 1:*
+**Connect mathReceiver to rate group 1:**
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
 Inside the block of that definition,
 find the line
-`rateGroup1Comp.RateGroupMemberOut[3] pass:[->] fileDownlink.Run`.
+`rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run`.
 After that line, add the line
 
-[source,fpp]
-----
+```fpp
 rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
-----
+```
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
 
-*Re-run the check for unconnected ports:*
+**Re-run the check for unconnected ports:**
 When this capability exists, you will be able to see
 that `mathReceiver.schedIn` is now connected
 (it no longer appears in the list).
 
-*Add the Math connections:*
+**Add the Math connections:**
 Find the Uplink connections that begin with the line
 `connections Uplink`.
 After the block of that definition, add the following
 lines:
 
-[source,fpp]
-----
+```fpp
 connections Math {
   mathSender.mathOpOut -> mathReceiver.mathOpIn
   mathReceiver.mathResultOut -> mathSender.mathResultIn
 }
-----
+```
 
 These lines add the connections between the `mathSender`
 and `mathReceiver` instances.
 
-*Re-run the check for unconnected ports:*
+**Re-run the check for unconnected ports:**
 When this capability exists, you will be able to see
 that the `mathSender` and `mathReceiver` ports are connected.
 
-*More information:*
+**More information:**
 For more information on defining topologies,
 see
-https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies[_The FPP User's Guide_].
+[_The FPP User's Guide_](https://fprime-community.github.io/fpp/fpp-users-guide.html#Defining-Topologies).
 
-=== Building the Ref Deployment
+<a name="Updating-the-Ref-Deployment_Building-the-Ref-Deployment"></a>
+### 6.3. Building the Ref Deployment
 
 Go to the `Ref` directory.
 Run `fprime-util build --jobs 4`.
@@ -1814,17 +2084,17 @@ The updated deployment should build without errors.
 The generated files are located at
 `Ref/build-fprime-automatic-native/Ref/Top`.
 
-=== Visualizing the Ref Topology
+<a name="Updating-the-Ref-Deployment_Visualizing-the-Ref-Topology"></a>
+### 6.4. Visualizing the Ref Topology
 
 Now we will see how to create a visualization (graphical rendering)
 of the Ref topology.
 
-*Generate the layout:*
+**Generate the layout:**
 For this step, we will use the F Prime Layout (FPL) tool.
 If FPL is not installed on your system, then install it how:
-clone
-https://github.com/fprime-community/fprime-layout[this
-repository] and follow the instructions.
+clone [this repository](https://github.com/fprime-community/fprime-layout)
+and follow the instructions.
 
 In directory `Ref/Top`, run the following commands in an sh-compatible
 shell such as bash.
@@ -1834,8 +2104,7 @@ to enter the `sh` shell, run these commands, and enter
 Or you can stay in your preferred shell and adjust these commands
 appropriately.
 
-[source,bash]
-----
+```bash
 cp ../build-fprime-automatic-native/Ref/Top/RefTopologyAppAi.xml .
 mkdir visual
 cd visual
@@ -1847,28 +2116,26 @@ echo "laying out $file"
 base=`basename $file .xml`
 fpl-convert-xml $file | fpl-layout > Ref/$base.json
 done
-----
+```
 
 This step extracts the connection graphs from the topology XML and
 converts each one to a JSON layout file.
 
-*Render the layout:*
+**Render the layout:**
 For this step, we will use the F Prime Visualizer (FPV) tool.
 If FPV is not installed on your system, then install it now:
-clone
-https://github.com/fprime-community/fprime-visual[this
-repository] and follow the instructions.
+clone [this repository](https://github.com/fprime-community/fprime-visual)
+and follow the instructions.
 
 In directory `Ref/Top`, run the following commands in an sh-compatible
 shell.
 Replace `[path to fpv root]` with the path to the
 root of the FPV repo on your system.
 
-[source,bash]
-----
+```bash
 echo DATA_FOLDER=Ref/ > .fpv-env
 nodemon [path to fpv root]/server/index.js ./.fpv-env
-----
+```
 
 You should see the FPV server application start up on the
 console.
@@ -1878,13 +2145,15 @@ You should see a Topology menu at the top of the window
 and a rendering of the Command topology below.
 Select Math from the topology menu.
 You should see a rendering of the Math topology.
-It should look similar to <<math-top,Figure 1>>.
+It should look similar to the
+<a href="#math-top">topology diagram shown above</a>.
 
 You can use the menu to view other topology graphs.
 When you are done, close the browser window and
 type control-C in the console to shut down the FPV server.
 
-=== Reference Implementation
+<a name="Updating-the-Ref-Deployment_Reference-Implementation"></a>
+### 6.5. Reference Implementation
 
 A reference implementation for this section is available at
 `docs/Tutorials/MathComponent/Top`.
@@ -1892,7 +2161,8 @@ To build this implementation, copy the files
 `instances.fpp` and `topology.fpp` from
 that directory to `Ref/Top`.
 
-== Running the Ref Deployment
+<a name="Running-the-Ref-Deployment"></a>
+## 7. Running the Ref Deployment
 
 Now we will use the F Prime Ground Data System (GDS) to run the Ref deployment.
 Go to the `Ref` directory and run `fprime-gds`.
@@ -1901,7 +2171,8 @@ The system is starting the Ref deployment executable, starting the GDS,
 and connecting them over the local network on your machine.
 After several seconds, a browser window should appear.
 
-=== Sending a Command
+<a name="Running-the-Ref-Deployment_Sending-a-Command"></a>
+### 7.1. Sending a Command
 
 At the top of the window are several buttons, each of which corresponds to
 a GDS view.
@@ -1912,9 +2183,11 @@ As you type, the GDS will filter the menu selections.
 When only one choice remains, stop typing and press return.
 You should see three boxes appear:
 
-. A text box for entering `val1`.
-. A menu for entering `op`.
-. A text box for entering `val2`.
+1. A text box for entering `val1`.
+
+1. A menu for entering `op`.
+
+1. A text box for entering `val2`.
 
 Fill in the arguments corresponding to the operation `1 + 2`.
 You can use the tab key to move between the boxes.
@@ -1922,7 +2195,8 @@ When you have done this, click the Send Command button.
 You should see a table entry at the bottom of the window
 indicating that the command was sent.
 
-=== Checking Events
+<a name="Running-the-Ref-Deployment_Checking-Events"></a>
+### 7.2. Checking Events
 
 Now click on the Events button at the top of the window.
 The view changes to the Events tab.
@@ -1932,7 +2206,8 @@ You should also see events indicating that `mathReceiver`
 performed an `ADD` operation and `mathSender`
 received a result of 3.0.
 
-=== Checking Telemetry
+<a name="Running-the-Ref-Deployment_Checking-Telemetry"></a>
+### 7.3. Checking Telemetry
 
 Click on the Channels button at the top of the window.
 You should see a table of telemetry channels.
@@ -1941,7 +2216,8 @@ channel received by the GDS.
 You should see the channels corresponding to the input
 values, the operation, and the result.
 
-=== Setting Parameters
+<a name="Running-the-Ref-Deployment_Setting-Parameters"></a>
+### 7.4. Setting Parameters
 
 Go back to the Commanding tab.
 Select the command `mathReceiver.FACTOR_PRM_SET`.
@@ -1958,7 +2234,8 @@ Check the Events tab.
 Because the factor is now 2.0, you should see a result
 value of 6.0.
 
-=== Saving Parameters
+<a name="Running-the-Ref-Deployment_Saving-Parameters"></a>
+### 7.5. Saving Parameters
 
 When you set a parameter by command, the new parameter
 value resides in the component that receives the command.
@@ -1974,11 +2251,11 @@ file system on your machine.
 To save the parameter `mathReceiver.FACTOR` to non-volatile storage,
 do the following:
 
-. Send the command `mathReceiver.FACTOR_PRM_SAVE`.
-This command saves the parameter value to the *parameter database*,
+1. Send the command `mathReceiver.FACTOR_PRM_SAVE`.
+This command saves the parameter value to the **parameter database**,
 which is a standard F Prime component for storing system parameters.
 
-. Send the command `prmDb.PRM_SAVE_FILE`.
+1. Send the command `prmDb.PRM_SAVE_FILE`.
 This command saves the parameter values in the parameter database
 to non-volatile storage.
 
@@ -1990,7 +2267,8 @@ to the disk.
 If you do only the first step, the parameter will not be
 saved to the disk.
 
-=== GDS Logs
+<a name="Running-the-Ref-Deployment_GDS-Logs"></a>
+### 7.6. GDS Logs
 
 As it runs, the GDS writes a log into a subdirectory of `Ref/logs`.
 The subdirectory is stamped with the current date.
@@ -2000,8 +2278,11 @@ different shell.)
 You should see the following logs, among others:
 
 * `Ref.log`: FSW console output.
+
 * `command.log`: Commands sent.
+
 * `event.log`: Event reports received.
+
 * `channel.log`: Telemetry points received.
 
 You can also view these logs via the GDS browser interface.
