@@ -7,7 +7,7 @@
 
 if ! test $# -eq 1
 then
-  echo 'usgage: check-refs file' 1>&2
+  echo 'usage: check-refs file' 1>&2
   exit 1
 fi
 

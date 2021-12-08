@@ -638,6 +638,7 @@ groupadd
 groupdict
 groupmod
 gse
+gsub
 gtags
 gtest
 GTestbase
