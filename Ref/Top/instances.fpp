@@ -362,4 +362,6 @@ module Ref {
 
   }
 
+  instance systemResources: Svc.SystemResources base id 0x4B00
+
 }

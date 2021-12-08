@@ -44,6 +44,7 @@ message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 # Setup the global include directories
 include_directories("${CMAKE_BINARY_DIR}")
 include_directories("${CMAKE_BINARY_DIR}/F-Prime")
+
 # Must always include the F prime core directory, as its headers are relative to
 # that directory. Same with the project directory for separated projects.
 include_directories("${FPRIME_PROJECT_ROOT}")
@@ -65,6 +66,7 @@ else()
     message(STATUS "[autocode/fpp] Generating fpp locator file -- DONE")
 
     register_fprime_target(target/noop)
+    register_fprime_target(target/version)
     register_fprime_target(target/build)
     register_fprime_target(target/dict)
     register_fprime_target(target/install)

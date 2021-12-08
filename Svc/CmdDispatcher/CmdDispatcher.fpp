@@ -123,7 +123,7 @@ module Svc {
                        Opcode: U32 @< The opcode with the error
                        error: Fw.CmdResponse @< The error value
                      ) \
-      severity warning high \
+      severity command \
       id 3 \
       format "Opcode 0x{x} completed with error {}"
 

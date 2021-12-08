@@ -55,6 +55,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/SizeFieldTooSmallFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/TooLargeFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/SequenceFiles/USecFieldTooShortFile.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/JoinWait.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )

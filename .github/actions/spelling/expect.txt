@@ -109,6 +109,7 @@ basestring
 bashcompinit
 Bassic
 batchmode
+bavail
 bbd
 bc
 bcm
@@ -496,6 +497,7 @@ FADV
 fadvise
 FAKELOGGER
 fallocate
+fallthrough
 fcheck
 fclose
 fcntl
@@ -554,6 +556,7 @@ fprofile
 fptr
 fputil
 fpv
+Fregoso
 frontend
 frox
 frsize
@@ -775,6 +778,7 @@ isfxmlwriter
 isgenerator
 ishii
 isinstance
+isnan
 isoschematron
 isr
 ISREG
@@ -932,6 +936,7 @@ membername
 memcheck
 memcmp
 memcpy
+meminfo
 memname
 memoization
 memoize
@@ -1326,6 +1331,7 @@ sbb
 SBF
 sbin
 sbt
+scanf
 sched
 schem
 schematron
@@ -1371,6 +1377,7 @@ setuptools
 setw
 sev
 sface
+sfregoso
 sgl
 SGN
 SHELLCOMMAND
@@ -1442,6 +1449,7 @@ startswith
 startuml
 startword
 staticmethod
+statfs
 statvfs
 STDC
 stddef
@@ -1711,6 +1719,7 @@ VERSIONED
 versioning
 vfd
 VFILE
+vfs
 vhd
 vhdl
 viewforum
@@ -1722,6 +1731,8 @@ virtualized
 vla
 vlist
 vm
+vmstat
+vmsize
 VMIN
 vn
 vsnprintf
