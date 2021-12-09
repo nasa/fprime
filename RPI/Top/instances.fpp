@@ -228,6 +228,32 @@ module RPI {
     Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
     """
 
+    phase Fpp.ToCpp.Phases.configConstants """
+    enum {
+      PRIORITY = 100,
+      STACK_SIZE = Default::stackSize
+    };
+    """
+
+    phase Fpp.ToCpp.Phases.startTasks """
+    // Initialize socket server if and only if there is a valid specification
+    if (state.hostName != nullptr && state.portNumber != 0) {
+        Os::TaskString name("ReceiveTask");
+        // Uplink is configured for receive so a socket task is started
+        comm.configure(state.hostName, state.portNumber);
+        comm.startSocketTask(
+            name,
+            ConfigConstants::comm::PRIORITY,
+            ConfigConstants::comm::STACK_SIZE
+        );
+    }
+    """
+
+    phase Fpp.ToCpp.Phases.freeThreads """
+    comm.stopSocketTask();
+    (void) comm.joinSocketTask(nullptr);
+    """
+
   }
 
   instance linuxTime: Svc.Time base id 1500 \

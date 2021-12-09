@@ -2,6 +2,7 @@
 #define RPITopologyDefs_HPP
 
 #include "Fw/Types/MallocAllocator.hpp"
+#include "RPI/Top/FppConstantsAc.hpp"
 
 namespace RPI {
 
@@ -13,7 +14,25 @@ namespace RPI {
   }
 
   // State for topology construction
-  using TopologyState = int;
+  struct TopologyState {
+    TopologyState() :
+      hostName(""),
+      portNumber(0)
+    {
+
+    }
+    TopologyState(
+        const char *hostName,
+        U32 portNumber
+    ) :
+      hostName(hostName),
+      portNumber(portNumber)
+    {
+
+    }
+    const char* hostName;
+    U32 portNumber;
+  };
 
   // Health ping entries
   namespace PingEntries {

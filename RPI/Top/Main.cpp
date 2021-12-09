@@ -3,9 +3,12 @@
 #include <ctype.h>
 
 #include <RPI/Top/Components.hpp>
+#include <RPI/Top/RPITopologyAc.hpp>
 
 #include <signal.h>
 #include <cstdio>
+
+RPI::TopologyState state;
 
 void print_usage() {
     (void) printf("Usage: ./RPI [options]\n-p\tport_number\n-a\thostname/IP address\n");
