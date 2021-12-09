@@ -12,7 +12,6 @@
 
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <RPI/Top/RpiSchedContexts.hpp>
 #include <ctype.h>
 
 namespace RPI {
@@ -98,7 +97,7 @@ namespace RPI {
   {
       // check which rate group call it is
       switch (context) {
-          case Rpi::CONTEXT_RPI_DEMO_1Hz:
+          case RG_CONTEXT_1Hz:
               // write telemetry channels
               this->tlmWrite_RD_LastMsg(this->m_lastUartMsg);
               this->tlmWrite_RD_UartRecvBytes(this->m_uartReadBytes);
@@ -108,7 +107,7 @@ namespace RPI {
               this->tlmWrite_RD_10HzTicks(this->m_10HzTicks);
               this->m_1HzTicks++;
               break;
-          case Rpi::CONTEXT_RPI_DEMO_10Hz:
+          case RG_CONTEXT_10Hz:
               // Toggle LED value
               if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
                   this->GpioWrite_out(2, (this->m_currLedVal == RpiDemo_GpioVal::SET));

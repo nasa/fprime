@@ -8,7 +8,7 @@ namespace RPI {
 
   }
 
-  namespace InitStatus {
+  namespace Init {
 
     bool status = true;
 

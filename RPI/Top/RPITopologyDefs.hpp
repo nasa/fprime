@@ -12,16 +12,6 @@ namespace RPI {
   // Declare the Linux timer here so it is visible in main
   extern Svc::LinuxTimer linuxTimer;
 
-  // A list of contexts for the rate groups
-  namespace RGContext {
-
-    enum {
-      CONTEXT_1Hz = 10, // 1 Hz cycle
-      CONTEXT_10Hz = 11 // 10 Hz cycle
-    };
-
-  }
-
   namespace Allocation {
 
     // Malloc allocator for topology construction
@@ -29,7 +19,7 @@ namespace RPI {
 
   }
 
-  namespace InitStatus {
+  namespace Init {
 
     // Initialization status
     extern bool status;

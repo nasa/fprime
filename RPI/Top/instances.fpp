@@ -23,7 +23,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { RGContext::CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_UINT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.instances """
@@ -105,7 +105,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, RGContext::CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_UINT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.instances """
@@ -342,13 +342,13 @@ module RPI {
       );
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
 
     phase Fpp.ToCpp.Phases.startTasks """
-    if (InitStatus::status) {
+    if (Init::status) {
       uartDrv.startReadThread();
     }
     else {
@@ -370,7 +370,7 @@ module RPI {
       const bool status = ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open LED driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
@@ -385,7 +385,7 @@ module RPI {
       const bool status = gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open GPIO 23 driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
@@ -400,7 +400,7 @@ module RPI {
       const bool status = gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open GPIO 24 driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
@@ -415,7 +415,7 @@ module RPI {
       const bool status = gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open GPIO 25 driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
@@ -430,7 +430,7 @@ module RPI {
       const bool status = gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open GPIO 17 driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
@@ -445,7 +445,7 @@ module RPI {
       const bool status = spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ);
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open SPI driver\\n");
-        InitStatus::status = false;
+        Init::status = false;
       }
     }
     """
