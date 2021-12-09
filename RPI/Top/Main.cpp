@@ -1,12 +1,11 @@
-#include <getopt.h>
+#include <cstdio>
 #include <cstdlib>
 #include <ctype.h>
+#include <getopt.h>
+#include <signal.h>
 
 #include <Os/Log.hpp>
 #include <RPI/Top/RPITopologyAc.hpp>
-
-#include <signal.h>
-#include <cstdio>
 
 RPI::TopologyState state;
 // Enable the console logging provided by Os::Log
