@@ -48,6 +48,8 @@ module RPI {
 
     telemetry connections instance chanTlm
 
+    text event connections instance textLogger
+
     time connections instance linuxTime
 
     # ----------------------------------------------------------------------
@@ -56,12 +58,9 @@ module RPI {
 
     connections XML {
       # rateGroup3Comp.RateGroupMemberOut[2] -> fileUplinkBufferManager.schedIn[0]
-      $health.LogText[0] -> textLogger.TextLogger[0]
       chanTlm.PktSend[0] -> downlink.comIn[0]
-      cmdDisp.LogText[0] -> textLogger.TextLogger[0]
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
       cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn[0]
-      cmdSeq.LogText[0] -> textLogger.TextLogger[0]
       cmdSeq.comCmdOut[0] -> cmdDisp.seqCmdBuff[1]
       comm.$recv[0] -> uplink.framedIn[0]
       comm.allocate[0] -> staticMemory.bufferAllocate[0]
@@ -70,22 +69,12 @@ module RPI {
       downlink.framedAllocate[0] -> staticMemory.bufferAllocate[1]
       downlink.framedOut[0] -> comm.send[0]
       eventLogger.FatalAnnounce[0] -> fatalHandler.FatalReceive[0]
-      eventLogger.LogText[0] -> textLogger.TextLogger[0]
       eventLogger.PktSend[0] -> downlink.comIn[0]
-      fatalAdapter.LogText[0] -> textLogger.TextLogger[0]
       fileDownlink.bufferSendOut[0] -> downlink.bufferIn[0]
       fileUplink.bufferSendOut[0] -> fileUplinkBufferManager.bufferSendIn[0]
-      gpio17Drv.LogText[0] -> textLogger.TextLogger[0]
-      gpio23Drv.LogText[0] -> textLogger.TextLogger[0]
-      gpio24Drv.LogText[0] -> textLogger.TextLogger[0]
-      gpio25Drv.LogText[0] -> textLogger.TextLogger[0]
-      ledDrv.LogText[0] -> textLogger.TextLogger[0]
       linuxTimer.CycleOut[0] -> rateGroupDriverComp.CycleIn[0]
-      prmDb.LogText[0] -> textLogger.TextLogger[0]
-      rateGroup10HzComp.LogText[0] -> textLogger.TextLogger[0]
       rateGroup10HzComp.RateGroupMemberOut[0] -> rpiDemo.Run[0]
       rateGroup10HzComp.RateGroupMemberOut[1] -> fileDownlink.Run[0]
-      rateGroup1HzComp.LogText[0] -> textLogger.TextLogger[0]
       rateGroup1HzComp.RateGroupMemberOut[0] -> chanTlm.Run[0]
       rateGroup1HzComp.RateGroupMemberOut[1] -> $health.Run[0]
       rateGroup1HzComp.RateGroupMemberOut[2] -> rpiDemo.Run[0]
@@ -102,9 +91,6 @@ module RPI {
       rpiDemo.UartWrite[0] -> uartDrv.serialSend[0]
       rpiDemo.prmGetOut[0] -> prmDb.getPrm[0]
       rpiDemo.prmSetOut[0] -> prmDb.setPrm[0]
-      rpiDemo.textEventOut[0] -> textLogger.TextLogger[0]
-      spiDrv.LogText[0] -> textLogger.TextLogger[0]
-      uartDrv.LogText[0] -> textLogger.TextLogger[0]
       uartDrv.serialRecv[0] -> rpiDemo.UartRead[0]
       uplink.bufferAllocate[0] -> fileUplinkBufferManager.bufferGetCallee[0]
       uplink.bufferDeallocate[0] -> fileUplinkBufferManager.bufferSendIn[0]
