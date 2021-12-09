@@ -15,9 +15,11 @@ void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
 }
 
+// Handle a signal, e.g. control-C
 static void sighandler(int signum) {
+    // Call the teardown function
+    // This causes the Linux timer to quit
     RPI::teardown(state);
-    RPI::linuxTimer.quit();
 }
 
 int main(int argc, char* argv[]) {
@@ -50,9 +52,15 @@ int main(int argc, char* argv[]) {
     signal(SIGINT,sighandler);
     signal(SIGTERM,sighandler);
 
+    // Start the Linux timer.
+    // The timer runs on the main thread until it quits
+    // in the teardown function, called from the signal
+    // handler
     RPI::linuxTimer.startTimer(100); //!< 10Hz
 
-    // Give time for threads to exit
+    // Signal handler was called, and linuxTimer quit.
+    // Time to exit the program.
+    // Give time for threads to exit.
     (void) printf("Waiting for threads...\n");
     Os::Task::delay(1000);
 

@@ -70,16 +70,21 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
-      BUFFER_SIZE = 5*1024
+      BUFFER_SIZE = 5*1024,
+      TIMEOUT = 30
     };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    cmdSeq.allocateBuffer(
-        0,
-        Allocation::mallocator,
-        ConfigConstants::cmdSeq::BUFFER_SIZE
-    );
+    {
+      using namespace ConfigConstants::cmdSeq;
+      cmdSeq.allocateBuffer(
+          0,
+          Allocation::mallocator,
+          ConfigConstants::cmdSeq::BUFFER_SIZE
+      );
+      cmdSeq.setTimeout(TIMEOUT);
+    }
     """
 
     phase Fpp.ToCpp.Phases.tearDownComponents """
@@ -154,7 +159,7 @@ module RPI {
   # ----------------------------------------------------------------------
 
   instance $health: Svc.Health base id 1100 \
-    queue size Default.queueSize \
+    queue size 25 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -191,17 +196,18 @@ module RPI {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    Svc::BufferManager::BufferBins upBuffMgrBins;
-    memset(&upBuffMgrBins, 0, sizeof(upBuffMgrBins));
     {
+      Svc::BufferManager::BufferBins bufferBins;
+      memset(&bufferBins, 0, sizeof(bufferBins));
       using namespace ConfigConstants::fileUplinkBufferManager;
-      upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
-      upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+      bufferBins.bins[0].bufferSize = STORE_SIZE;
+      bufferBins.bins[0].numBuffers = QUEUE_SIZE;
       fileUplinkBufferManager.setup(
           MGR_ID,
           0,
           Allocation::mallocator,
-          upBuffMgrBins
+          // OK to supply a local object here: BufferManager makes a copy
+          bufferBins
       );
     }
     """
@@ -249,8 +255,11 @@ module RPI {
     }
     """
 
-    phase Fpp.ToCpp.Phases.freeThreads """
+    phase Fpp.ToCpp.Phases.stopTasks """
     comm.stopSocketTask();
+    """
+
+    phase Fpp.ToCpp.Phases.freeThreads """
     (void) comm.joinSocketTask(nullptr);
     """
 
@@ -271,6 +280,10 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.instances """
     // Declared in RPITopologyDefs.cpp
+    """
+
+    phase Fpp.ToCpp.Phases.stopTasks """
+    linuxTimer.quit();
     """
 
   }
@@ -294,18 +307,81 @@ module RPI {
 
   instance textLogger: Svc.PassiveTextLogger base id 1900
 
-  instance uartDrv: Drv.LinuxSerialDriver base id 2000
+  instance uartDrv: Drv.LinuxSerialDriver base id 2000 \
+  {
 
-  instance ledDrv: Drv.LinuxGpioDriver base id 2100
+    phase Fpp.ToCpp.Phases.configComponents """
+    auto status = uartDrv.open("/dev/serial0",
+        Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
+        Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+        Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+        true
+    );
+    FW_ASSERT(status);
+    """
 
-  instance gpio23Drv: Drv.LinuxGpioDriver base id 2200
+    phase Fpp.ToCpp.Phases.startTasks """
+    uartDrv.startReadThread();
+    """
 
-  instance gpio24Drv: Drv.LinuxGpioDriver base id 2300
+    phase Fpp.ToCpp.Phases.stopTasks """
+    uartDrv.quitReadThread();
+    """
 
-  instance gpio25Drv: Drv.LinuxGpioDriver base id 2400
+  }
 
-  instance gpio17Drv: Drv.LinuxGpioDriver base id 2500
+  instance ledDrv: Drv.LinuxGpioDriver base id 2100 \
+  {
 
-  instance spiDrv: Drv.LinuxSpiDriver base id 2600
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    """
+
+  }
+
+  instance gpio23Drv: Drv.LinuxGpioDriver base id 2200 \
+  {
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    """
+
+  }
+
+  instance gpio24Drv: Drv.LinuxGpioDriver base id 2300 \
+  {
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    """
+
+  }
+
+  instance gpio25Drv: Drv.LinuxGpioDriver base id 2400 \
+  {
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN));
+    """
+
+  }
+
+  instance gpio17Drv: Drv.LinuxGpioDriver base id 2500 \
+  {
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN));
+    """
+
+  }
+
+  instance spiDrv: Drv.LinuxSpiDriver base id 2600 \
+  {
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    FW_ASSERT(spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ));
+    """
+
+  }
 
 } 
