@@ -12,19 +12,17 @@ RPI::TopologyState state;
 // Enable the console logging provided by Os::Log
 Os::Log logger;
 
-void print_usage() {
-    (void) printf("Usage: ./RPI [options]\n-p\tport_number\n-a\thostname/IP address\n");
+void print_usage(const char* app) {
+    (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
 }
-
-volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
     RPI::teardown(state);
-    terminate = 1;
+    RPI::linuxTimer.quit();
 }
 
 int main(int argc, char* argv[]) {
-    U32 port_number;
+    U32 port_number = 0; // Invalid port number forced
     I32 option;
     char *hostname;
     port_number = 0;
@@ -34,34 +32,31 @@ int main(int argc, char* argv[]) {
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {
             case 'h':
-                print_usage();
+                print_usage(argv[0]);
                 return 0;
                 break;
             case 'p':
-                port_number = atoi(optarg);
+                state.portNumber = static_cast<U32>(atoi(optarg));
                 break;
             case 'a':
-                hostname = optarg;
+                state.hostName = optarg;
                 break;
             case '?':
                 return 1;
             default:
-                print_usage();
+                print_usage(argv[0]);
                 return 1;
         }
     }
 
     (void) printf("Hit Ctrl-C to quit\n");
-
-    // TODO
-    //constructApp(port_number, hostname);
+    RPI::setup(state);
 
     // register signal handlers to exit program
     signal(SIGINT,sighandler);
     signal(SIGTERM,sighandler);
 
-    // TODO
-    //linuxTimer.startTimer(100); //!< 10Hz
+    RPI::linuxTimer.startTimer(100); //!< 10Hz
 
     // Give time for threads to exit
     (void) printf("Waiting for threads...\n");
