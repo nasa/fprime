@@ -19,7 +19,7 @@ module RPI {
   instance rateGroup10HzComp: Svc.ActiveRateGroup base id 200 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 120 \
+    priority 40 \
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
@@ -39,17 +39,17 @@ module RPI {
   instance chanTlm: Svc.TlmChan base id 400 \
     queue size Default.queueSize \ 
     stack size Default.stackSize \
-    priority 95
+    priority 25
 
   instance cmdDisp: Svc.CommandDispatcher base id 500 \
     queue size 20 \
     stack size Default.stackSize \
-    priority 100
+    priority 30
 
   instance prmDb: Svc.PrmDb base id 600 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 90 \
+    priority 20 \
   {
 
     phase Fpp.ToCpp.Phases.instances """
@@ -65,7 +65,7 @@ module RPI {
   instance cmdSeq: Svc.CmdSequencer base id 700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 100 \
+    priority 30 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -96,16 +96,16 @@ module RPI {
   instance fileUplink: Svc.FileUplink base id 800 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 100
+    priority 30
 
   instance rateGroup1HzComp: Svc.ActiveRateGroup base id 300 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 120 \
+    priority 40 \
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { RGContext::CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_UINT_TYPE context[] = { 0, 0, RGContext::CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.instances """
@@ -121,12 +121,12 @@ module RPI {
   instance eventLogger: Svc.ActiveLogger base id 1400 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 95
+    priority 25
 
   instance fileDownlink: Svc.FileDownlink base id 1800 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 90 \
+    priority 20 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -152,7 +152,7 @@ module RPI {
   instance rpiDemo: RPI.RpiDemo base id 2700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 80
+    priority 30
 
   # ----------------------------------------------------------------------
   # Queued component instances 
@@ -222,9 +222,31 @@ module RPI {
 
   instance staticMemory: Svc.StaticMemory base id 1200
 
-  instance downlink: Svc.Framer base id 1220
+  instance downlink: Svc.Framer base id 1220 \
+  {
 
-  instance uplink: Svc.Deframer base id 1240
+    phase Fpp.ToCpp.Phases.configObjects """
+    Svc::FprimeFraming framing;
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    downlink.setup(ConfigObjects::downlink::framing);
+    """
+
+  }
+
+  instance uplink: Svc.Deframer base id 1240 \
+  {
+
+    phase Fpp.ToCpp.Phases.configObjects """
+    Svc::FprimeDeframing deframing;
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    uplink.setup(ConfigObjects::uplink::deframing);
+    """
+
+  }
 
   instance comm: Drv.ByteStreamDriverModel base id 1260 \
     at "../../Drv/TcpClient/TcpClient.hpp" \
@@ -236,7 +258,7 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
-      PRIORITY = 100,
+      PRIORITY = 30,
       STACK_SIZE = Default::stackSize
     };
     """
@@ -311,17 +333,27 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    auto status = uartDrv.open("/dev/serial0",
-        Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
-        Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-        Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
-        true
-    );
-    FW_ASSERT(status);
+    {
+      const bool status = uartDrv.open("/dev/serial0",
+          Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
+          Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+          Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+          true
+      );
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
     phase Fpp.ToCpp.Phases.startTasks """
-    uartDrv.startReadThread();
+    if (InitStatus::status) {
+      uartDrv.startReadThread();
+    }
+    else {
+      Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
+    }
     """
 
     phase Fpp.ToCpp.Phases.stopTasks """
@@ -334,7 +366,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    {
+      const bool status = ledDrv.open(21, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open LED driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }
@@ -343,7 +381,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    {
+      const bool status = gpio23Drv.open(23, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open GPIO 23 driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }
@@ -352,7 +396,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT));
+    {
+      const bool status = gpio24Drv.open(24, Drv::LinuxGpioDriverComponentImpl::GPIO_OUT);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open GPIO 24 driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }
@@ -361,7 +411,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN));
+    {
+      const bool status = gpio25Drv.open(25, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open GPIO 25 driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }
@@ -370,7 +426,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN));
+    {
+      const bool status = gpio17Drv.open(17, Drv::LinuxGpioDriverComponentImpl::GPIO_IN);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open GPIO 17 driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }
@@ -379,7 +441,13 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
-    FW_ASSERT(spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ));
+    {
+      const bool status = spiDrv.open(0, 0, Drv::SPI_FREQUENCY_1MHZ);
+      if (!status) {
+        Fw::Logger::logMsg("[ERROR] Could not open SPI driver\\n");
+        InitStatus::status = false;
+      }
+    }
     """
 
   }

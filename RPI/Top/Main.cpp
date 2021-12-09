@@ -4,7 +4,6 @@
 #include <getopt.h>
 #include <signal.h>
 
-#include <Os/Log.hpp>
 #include <RPI/Top/RPITopologyAc.hpp>
 
 RPI::TopologyState state;

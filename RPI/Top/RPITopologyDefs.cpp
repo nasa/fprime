@@ -8,6 +8,12 @@ namespace RPI {
 
   }
 
+  namespace InitStatus {
+
+    bool status = true;
+
+  }
+
   Svc::LinuxTimer linuxTimer(FW_OPTIONAL_NAME("linuxTimer"));
 
 }

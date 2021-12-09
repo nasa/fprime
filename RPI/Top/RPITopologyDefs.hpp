@@ -2,7 +2,9 @@
 #define RPITopologyDefs_HPP
 
 #include "Fw/Types/MallocAllocator.hpp"
+#include "Os/Log.hpp"
 #include "RPI/Top/FppConstantsAc.hpp"
+#include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/LinuxTimer/LinuxTimer.hpp"
 
 namespace RPI {
@@ -24,6 +26,13 @@ namespace RPI {
 
     // Malloc allocator for topology construction
     extern Fw::MallocAllocator mallocator;
+
+  }
+
+  namespace InitStatus {
+
+    // Initialization status
+    extern bool status;
 
   }
 
