@@ -9,7 +9,7 @@ set(MOD_DEPS Os)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriver.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImpl.cpp"
     )
