@@ -2,13 +2,15 @@
 #include <cstdlib>
 #include <ctype.h>
 
-#include <RPI/Top/Components.hpp>
+#include <Os/Log.hpp>
 #include <RPI/Top/RPITopologyAc.hpp>
 
 #include <signal.h>
 #include <cstdio>
 
 RPI::TopologyState state;
+// Enable the console logging provided by Os::Log
+Os::Log logger;
 
 void print_usage() {
     (void) printf("Usage: ./RPI [options]\n-p\tport_number\n-a\thostname/IP address\n");
@@ -17,7 +19,7 @@ void print_usage() {
 volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
-    exitTasks();
+    RPI::teardown(state);
     terminate = 1;
 }
 
@@ -51,13 +53,15 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    constructApp(port_number, hostname);
+    // TODO
+    //constructApp(port_number, hostname);
 
     // register signal handlers to exit program
     signal(SIGINT,sighandler);
     signal(SIGTERM,sighandler);
 
-    linuxTimer.startTimer(100); //!< 10Hz
+    // TODO
+    //linuxTimer.startTimer(100); //!< 10Hz
 
     // Give time for threads to exit
     (void) printf("Waiting for threads...\n");

@@ -10,7 +10,6 @@ set(SOURCE_FILES
   #"${CMAKE_CURRENT_LIST_DIR}/RPITopologyAppAi.xml"
 	"${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
   "${CMAKE_CURRENT_LIST_DIR}/RPITopologyDefs.cpp"  
-  "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
   "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
 )

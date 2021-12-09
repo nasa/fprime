@@ -19,7 +19,7 @@ module RPI {
   instance rateGroup10HzComp: Svc.ActiveRateGroup base id 200 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10 \
+    priority 120 \
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
@@ -39,17 +39,17 @@ module RPI {
   instance chanTlm: Svc.TlmChan base id 400 \
     queue size Default.queueSize \ 
     stack size Default.stackSize \
-    priority 10
+    priority 95
 
   instance cmdDisp: Svc.CommandDispatcher base id 500 \
     queue size 20 \
     stack size Default.stackSize \
-    priority 10
+    priority 100
 
   instance prmDb: Svc.PrmDb base id 600 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10 \
+    priority 90 \
   {
 
     phase Fpp.ToCpp.Phases.instances """
@@ -65,7 +65,7 @@ module RPI {
   instance cmdSeq: Svc.CmdSequencer base id 700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10 \
+    priority 100 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -91,12 +91,12 @@ module RPI {
   instance fileUplink: Svc.FileUplink base id 800 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 10
+    priority 100
 
   instance rateGroup1HzComp: Svc.ActiveRateGroup base id 300 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10 \
+    priority 120 \
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
@@ -116,12 +116,12 @@ module RPI {
   instance eventLogger: Svc.ActiveLogger base id 1400 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10
+    priority 95
 
   instance fileDownlink: Svc.FileDownlink base id 1800 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 10 \
+    priority 90 \
   {
 
     phase Fpp.ToCpp.Phases.configConstants """
@@ -147,7 +147,7 @@ module RPI {
   instance rpiDemo: Rpi.RpiDemo base id 2700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 10
+    priority 80
 
   # ----------------------------------------------------------------------
   # Queued component instances 
@@ -266,7 +266,14 @@ module RPI {
 
   }
 
-  instance linuxTimer: Svc.LinuxTimer base id 1600
+  instance linuxTimer: Svc.LinuxTimer base id 1600 \
+  {
+
+    phase Fpp.ToCpp.Phases.instances """
+    // Declared in RPITopologyDefs.cpp
+    """
+
+  }
 
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 1700 \
   {

@@ -3,8 +3,12 @@
 
 #include "Fw/Types/MallocAllocator.hpp"
 #include "RPI/Top/FppConstantsAc.hpp"
+#include "Svc/LinuxTimer/LinuxTimer.hpp"
 
 namespace RPI {
+
+  // Declare the Linux timer here so it is visible in main
+  extern Svc::LinuxTimer linuxTimer;
 
   // A list of contexts for the rate groups
   namespace RGContext {

@@ -8,4 +8,6 @@ namespace RPI {
 
   }
 
+  Svc::LinuxTimer linuxTimer(FW_OPTIONAL_NAME("linuxTimer"));
+
 }
