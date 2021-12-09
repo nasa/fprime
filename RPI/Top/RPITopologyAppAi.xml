@@ -185,7 +185,7 @@
         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "5"/>
    </connection>
    <connection name = "RpiDemoReg">
-        <source component = "rpiDemo" port = "CmdReg" type = "CmdReg" num = "0"/>
+        <source component = "rpiDemo" port = "cmdRegOut" type = "CmdReg" num = "0"/>
         <target component = "cmdDisp" port = "compCmdReg" type = "CmdReg" num = "6"/>
    </connection>
 
@@ -217,7 +217,7 @@
    </connection>
    <connection name = "RpiDemoDisp">
         <source component = "cmdDisp" port = "compCmdSend" type = "Cmd" num = "6"/>
-        <target component = "rpiDemo" port = "CmdDisp" type = "Cmd" num = "0"/>
+        <target component = "rpiDemo" port = "cmdIn" type = "Cmd" num = "0"/>
    </connection>
    
     <!-- Command Reply Ports - Go to the same response port on the dispatcher -->
@@ -247,7 +247,7 @@
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
    </connection>
    <connection name = "RpiDemoReply">
-       <source component = "rpiDemo" port = "CmdStatus" type = "CmdResponse" num = "0"/>
+       <source component = "rpiDemo" port = "cmdResponseOut" type = "CmdResponse" num = "0"/>
         <target component = "cmdDisp" port = "compCmdStat" type = "CmdResponse" num = "0"/>
    </connection>
 
@@ -310,7 +310,7 @@
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
    <connection name = "RpiDemoLog">
-       <source component = "rpiDemo" port = "Log" type = "Log" num = "0"/>
+       <source component = "rpiDemo" port = "eventOut" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
    </connection>
    <connection name = "UartLog">
@@ -377,7 +377,7 @@
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
    <connection name = "RpiDemoTextLogger">
-       <source component = "rpiDemo" port = "LogText" type = "LogText" num = "0"/>
+       <source component = "rpiDemo" port = "textEventOut" type = "LogText" num = "0"/>
         <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
    </connection>
    <connection name = "UartLog">
@@ -440,7 +440,7 @@
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
    </connection>
    <connection name = "RpiDemoTlm">
-       <source component = "rpiDemo" port = "Tlm" type = "Tlm" num = "0"/>
+       <source component = "rpiDemo" port = "tlmOut" type = "Tlm" num = "0"/>
         <target component = "chanTlm" port = "TlmRecv" type = "Tlm" num = "0"/>
    </connection>
    <connection name = "UartTlm">
@@ -455,11 +455,11 @@
    <!-- Parameter Connections -->
    
    <connection name = "RpiPrmGet">
-       <source component = "rpiDemo" port = "ParamGet" type = "PrmGet" num = "0"/>
+       <source component = "rpiDemo" port = "prmGetOut" type = "PrmGet" num = "0"/>
         <target component = "prmDb" port = "getPrm" type = "PrmGet" num = "0"/>
    </connection>
    <connection name = "RpiPrmSet">
-       <source component = "rpiDemo" port = "ParamSet" type = "PrmSet" num = "0"/>
+       <source component = "rpiDemo" port = "prmSetOut" type = "PrmSet" num = "0"/>
         <target component = "prmDb" port = "setPrm" type = "PrmSet" num = "0"/>
    </connection>
 
@@ -506,7 +506,7 @@
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
    <connection name = "RpiDemoTime">
-       <source component = "rpiDemo" port = "Time" type = "Time" num = "0"/>
+       <source component = "rpiDemo" port = "timeGetOut" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
    </connection>
    <connection name = "UartDrvTime">
