@@ -22,12 +22,7 @@ static void sighandler(int signum) {
 }
 
 int main(int argc, char* argv[]) {
-    U32 port_number = 0; // Invalid port number forced
-    I32 option;
-    char *hostname;
-    port_number = 0;
-    option = 0;
-    hostname = nullptr;
+    I32 option = 0;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {

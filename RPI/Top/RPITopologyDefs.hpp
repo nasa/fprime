@@ -30,7 +30,7 @@ namespace RPI {
   // State for topology construction
   struct TopologyState {
     TopologyState() :
-      hostName(""),
+      hostName(nullptr),
       portNumber(0)
     {
 

@@ -142,8 +142,7 @@ void constructApp(U32 port_number, char* hostname) {
     downlink.setup(framing);
     uplink.setup(deframing);
 
-    // TODO
-    //constructRPIArchitecture();
+    constructRPIArchitecture();
 
     /* Register commands */
     cmdSeq.regCommands();
