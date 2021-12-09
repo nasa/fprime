@@ -12,6 +12,11 @@ This document contains the complete list of renamed symbols in v3.
 | Drv::SEND_OK | Drv::SendStatus::SEND_OK |
 | Drv::SEND_RETRY | Drv::SendStatus::SEND_RETRY |
 | Drv::SEND_ERROR | Drv::SendStatus::SEND_ERROR |
+| Drv::SER_OK | Drv::SerialReadStatus::SER_OK |
+| Drv::SER_PARITY_ERR | Drv::SerialReadStatus::SER_PARITY_ERR |
+| Drv::SER_NO_BUFFERS | Drv::SerialReadStatus::SER_NO_BUFFERS |
+| Drv::SER_BUFFER_TOO_SMALL | Drv::SerialReadStatus::SER_BUFFER_TOO_SMALL |
+| Drv::SER_OTHER_ERR | Drv::SerialReadStatus::SER_OTHER_ERR |
 | Fw::CommandResponse | Fw::CmdResponse |
 | Fw::COMMAND_OK | Fw::CmdResponse::OK |
 | Fw::COMMAND_INVALID_OPCODE | Fw::CmdResponse::INVALID_OPCODE |
