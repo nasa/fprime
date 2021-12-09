@@ -144,7 +144,7 @@ module RPI {
 
   }
 
-  instance rpiDemo: Rpi.RpiDemo base id 2700 \
+  instance rpiDemo: RPI.RpiDemo base id 2700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 80
@@ -279,7 +279,7 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
+    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
     """
 
     phase Fpp.ToCpp.Phases.instances """

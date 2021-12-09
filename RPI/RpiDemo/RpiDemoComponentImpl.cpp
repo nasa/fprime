@@ -10,13 +10,12 @@
 //
 // ======================================================================
 
-
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <RPI/Top/RpiSchedContexts.hpp>
 #include <ctype.h>
 
-namespace Rpi {
+namespace RPI {
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -296,4 +295,4 @@ namespace Rpi {
   }
 
 
-} // end namespace Rpi
+} // end namespace RPI

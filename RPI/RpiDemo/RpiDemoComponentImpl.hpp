@@ -10,13 +10,13 @@
 //
 // ======================================================================
 
-#ifndef RpiDemo_HPP
-#define RpiDemo_HPP
+#ifndef RPI_RpiDemoComponentImpl_HPP
+#define RPI_RpiDemoComponentImpl_HPP
 
 #include "RPI/RpiDemo/RpiDemoComponentAc.hpp"
 #include <RPI/RpiDemo/RpiDemoComponentImplCfg.hpp>
 
-namespace Rpi {
+namespace RPI {
 
   class RpiDemoComponentImpl :
     public RpiDemoComponentBase
@@ -149,6 +149,6 @@ namespace Rpi {
 
     };
 
-} // end namespace Rpi
+} // end namespace RPI
 
 #endif

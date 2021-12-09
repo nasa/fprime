@@ -1,4 +1,4 @@
-module Rpi {
+module RPI {
 
   @ An RPI demonstrator component
   active component RpiDemo {

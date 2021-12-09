@@ -3,12 +3,12 @@
 // Standardization header for RpiDemo
 // ======================================================================
 
-#ifndef Rpi_RpiDemo_HPP
-#define Rpi_RpiDemo_HPP
+#ifndef RPI_RpiDemo_HPP
+#define RPI_RpiDemo_HPP
 
 #include "RPI/RpiDemo/RpiDemoComponentImpl.hpp"
 
-namespace Rpi {
+namespace RPI {
 
   using RpiDemo = RpiDemoComponentImpl;
 

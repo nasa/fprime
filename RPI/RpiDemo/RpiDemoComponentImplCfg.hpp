@@ -8,7 +8,7 @@
 #ifndef RPI_RPIDEMO_RPIDEMOCOMPONENTIMPLCFG_HPP_
 #define RPI_RPIDEMO_RPIDEMOCOMPONENTIMPLCFG_HPP_
 
-namespace Rpi {
+namespace RPI {
     // configuration values
     enum {
         NUM_RPI_UART_BUFFERS = 5,
