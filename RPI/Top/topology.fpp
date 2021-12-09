@@ -56,8 +56,26 @@ module RPI {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
+    connections RateGroups {
+
+      # Timer
+      linuxTimer.CycleOut -> rateGroupDriverComp.CycleIn
+
+      # 10 Hz rate group
+      rateGroupDriverComp.CycleOut[0] -> rateGroup10HzComp.CycleIn
+      rateGroup10HzComp.RateGroupMemberOut[0] -> rpiDemo.Run
+      rateGroup10HzComp.RateGroupMemberOut[1] -> fileDownlink.Run
+
+      # 1 Hz rate group
+      rateGroupDriverComp.CycleOut[1] -> rateGroup1HzComp.CycleIn
+      rateGroup1HzComp.RateGroupMemberOut[0] -> chanTlm.Run
+      rateGroup1HzComp.RateGroupMemberOut[1] -> $health.Run
+      rateGroup1HzComp.RateGroupMemberOut[2] -> rpiDemo.Run
+      rateGroup1HzComp.RateGroupMemberOut[3] -> cmdSeq.schedIn
+
+    }
+
     connections XML {
-      # rateGroup3Comp.RateGroupMemberOut[2] -> fileUplinkBufferManager.schedIn[0]
       chanTlm.PktSend[0] -> downlink.comIn[0]
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
       cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn[0]
@@ -72,15 +90,6 @@ module RPI {
       eventLogger.PktSend[0] -> downlink.comIn[0]
       fileDownlink.bufferSendOut[0] -> downlink.bufferIn[0]
       fileUplink.bufferSendOut[0] -> fileUplinkBufferManager.bufferSendIn[0]
-      linuxTimer.CycleOut[0] -> rateGroupDriverComp.CycleIn[0]
-      rateGroup10HzComp.RateGroupMemberOut[0] -> rpiDemo.Run[0]
-      rateGroup10HzComp.RateGroupMemberOut[1] -> fileDownlink.Run[0]
-      rateGroup1HzComp.RateGroupMemberOut[0] -> chanTlm.Run[0]
-      rateGroup1HzComp.RateGroupMemberOut[1] -> $health.Run[0]
-      rateGroup1HzComp.RateGroupMemberOut[2] -> rpiDemo.Run[0]
-      rateGroup1HzComp.RateGroupMemberOut[3] -> cmdSeq.schedIn[0]
-      rateGroupDriverComp.CycleOut[0] -> rateGroup10HzComp.CycleIn[0]
-      rateGroupDriverComp.CycleOut[1] -> rateGroup1HzComp.CycleIn[0]
       rpiDemo.GpioRead[0] -> gpio25Drv.gpioRead[0]
       rpiDemo.GpioRead[1] -> gpio17Drv.gpioRead[0]
       rpiDemo.GpioWrite[0] -> gpio23Drv.gpioWrite[0]
