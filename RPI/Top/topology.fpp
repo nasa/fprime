@@ -56,6 +56,14 @@ module RPI {
     # Direct graph specifiers
     # ----------------------------------------------------------------------
 
+    connections Downlink {
+      chanTlm.PktSend -> downlink.comIn
+      downlink.bufferDeallocate -> fileDownlink.bufferReturn
+      downlink.framedOut -> comm.send
+      eventLogger.PktSend -> downlink.comIn
+      fileDownlink.bufferSendOut -> downlink.bufferIn
+    }
+
     connections RateGroups {
 
       # Timer
@@ -75,20 +83,19 @@ module RPI {
 
     }
 
+    connections StaticMemory {
+      comm.allocate -> staticMemory.bufferAllocate[0]
+      comm.deallocate -> staticMemory.bufferDeallocate[1]
+      downlink.framedAllocate -> staticMemory.bufferAllocate[1]
+      uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
+    }
+
     connections XML {
-      chanTlm.PktSend[0] -> downlink.comIn[0]
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
       cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn[0]
       cmdSeq.comCmdOut[0] -> cmdDisp.seqCmdBuff[1]
       comm.$recv[0] -> uplink.framedIn[0]
-      comm.allocate[0] -> staticMemory.bufferAllocate[0]
-      comm.deallocate[0] -> staticMemory.bufferDeallocate[1]
-      downlink.bufferDeallocate[0] -> fileDownlink.bufferReturn[0]
-      downlink.framedAllocate[0] -> staticMemory.bufferAllocate[1]
-      downlink.framedOut[0] -> comm.send[0]
       eventLogger.FatalAnnounce[0] -> fatalHandler.FatalReceive[0]
-      eventLogger.PktSend[0] -> downlink.comIn[0]
-      fileDownlink.bufferSendOut[0] -> downlink.bufferIn[0]
       fileUplink.bufferSendOut[0] -> fileUplinkBufferManager.bufferSendIn[0]
       rpiDemo.GpioRead[0] -> gpio25Drv.gpioRead[0]
       rpiDemo.GpioRead[1] -> gpio17Drv.gpioRead[0]
@@ -105,7 +112,6 @@ module RPI {
       uplink.bufferDeallocate[0] -> fileUplinkBufferManager.bufferSendIn[0]
       uplink.bufferOut[0] -> fileUplink.bufferSendIn[0]
       uplink.comOut[0] -> cmdDisp.seqCmdBuff[0]
-      uplink.framedDeallocate[0] -> staticMemory.bufferDeallocate[0]
     }
 
   }
