@@ -2,51 +2,31 @@ module RPI {
 
   topology RPI {
 
-    instance fatalHandler
-
-    instance rateGroup10HzComp
-
-    instance rateGroup1HzComp
+    instance $health
 
     instance chanTlm
 
     instance cmdDisp
 
-    instance prmDb
-
     instance cmdSeq
+
+    instance comm
+
+    instance downlink
+
+    instance eventLogger
+
+    instance fatalAdapter
+
+    instance fatalHandler
+
+    instance fileDownlink
 
     instance fileUplink
 
     instance fileUplinkBufferManager
 
-    instance fatalAdapter
-
-    instance $health
-
-    instance staticMemory
-
-    instance downlink
-
-    instance uplink
-
-    instance comm
-
-    instance eventLogger
-
-    instance linuxTime
-
-    instance linuxTimer
-
-    instance rateGroupDriverComp
-
-    instance fileDownlink
-
-    instance textLogger
-
-    instance uartDrv
-
-    instance ledDrv
+    instance gpio17Drv
 
     instance gpio23Drv
 
@@ -54,11 +34,31 @@ module RPI {
 
     instance gpio25Drv
 
-    instance gpio17Drv
+    instance ledDrv
+
+    instance linuxTime
+
+    instance linuxTimer
+
+    instance prmDb
+
+    instance rateGroup10HzComp
+
+    instance rateGroup1HzComp
+
+    instance rateGroupDriverComp
+
+    instance rpiDemo
 
     instance spiDrv
 
-    instance rpiDemo
+    instance staticMemory
+
+    instance textLogger
+
+    instance uartDrv
+
+    instance uplink
 
     connections XML {
       comm.allocate[0] -> staticMemory.bufferAllocate[0]
