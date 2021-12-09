@@ -331,7 +331,7 @@ module Ref {
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600 {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
+    NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
     """
 
     phase Fpp.ToCpp.Phases.instances """
