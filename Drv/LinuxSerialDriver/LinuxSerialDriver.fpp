@@ -2,23 +2,39 @@ module Drv {
 
   passive component LinuxSerialDriver {
 
-    include "Events.fppi"
+    # ----------------------------------------------------------------------
+    # General ports
+    # ----------------------------------------------------------------------
 
-    include "Telemetry.fppi"
+    sync input port readBufferSend: Fw.BufferSend
 
-    telemetry port Tlm
+    sync input port serialSend: Drv.SerialWrite
+
+    # ----------------------------------------------------------------------
+    # Special ports
+    # ----------------------------------------------------------------------
 
     event port Log
 
-    sync input port readBufferSend: [1] Fw.BufferSend
+    output port serialRecv: Drv.SerialRead
+
+    telemetry port Tlm
 
     text event port LogText
 
-    output port serialRecv: [1] Drv.SerialRead
-
     time get port Time
 
-    sync input port serialSend: [1] Drv.SerialWrite
+    # ----------------------------------------------------------------------
+    # Events
+    # ----------------------------------------------------------------------
+
+    include "Events.fppi"
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    include "Telemetry.fppi"
 
   }
 

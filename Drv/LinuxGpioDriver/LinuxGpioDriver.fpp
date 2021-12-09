@@ -3,7 +3,7 @@ module Drv {
   passive component LinuxGpioDriver {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     sync input port gpioWrite: Drv.GpioWrite
@@ -11,7 +11,7 @@ module Drv {
     output port intOut: [2] Svc.Cycle
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     event port Log
@@ -23,7 +23,7 @@ module Drv {
     time get port Time
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     include "Events.fppi"
