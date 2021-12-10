@@ -46,6 +46,8 @@ module RPI {
 
     health connections instance $health
 
+    param connections instance prmDb
+
     telemetry connections instance chanTlm
 
     text event connections instance textLogger
@@ -62,6 +64,25 @@ module RPI {
       downlink.framedOut -> comm.send
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
+    }
+
+    connections FaultProtection {
+      eventLogger.FatalAnnounce -> fatalHandler.FatalReceive
+    }
+
+    connections FileUplinkBuffers {
+      fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
+      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      uplink.bufferOut -> fileUplink.bufferSendIn
+    }
+
+    connections GPIO {
+      rpiDemo.GpioRead -> gpio25Drv.gpioRead
+      rpiDemo.GpioRead -> gpio17Drv.gpioRead
+      rpiDemo.GpioWrite[0] -> gpio23Drv.gpioWrite
+      rpiDemo.GpioWrite[1] -> gpio24Drv.gpioWrite
+      rpiDemo.GpioWrite[2] -> ledDrv.gpioWrite
     }
 
     connections RateGroups {
@@ -83,6 +104,15 @@ module RPI {
 
     }
 
+    connections Sequencer {
+      cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+      cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
+    }
+
+    connections SPI {
+      rpiDemo.SpiReadWrite -> spiDrv.SpiReadWrite
+    }
+
     connections StaticMemory {
       comm.allocate -> staticMemory.bufferAllocate[0]
       comm.deallocate -> staticMemory.bufferDeallocate[1]
@@ -90,28 +120,16 @@ module RPI {
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
     }
 
-    connections XML {
+    connections Uplink {
       cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-      cmdDisp.seqCmdStatus[1] -> cmdSeq.cmdResponseIn[0]
-      cmdSeq.comCmdOut[0] -> cmdDisp.seqCmdBuff[1]
-      comm.$recv[0] -> uplink.framedIn[0]
-      eventLogger.FatalAnnounce[0] -> fatalHandler.FatalReceive[0]
-      fileUplink.bufferSendOut[0] -> fileUplinkBufferManager.bufferSendIn[0]
-      rpiDemo.GpioRead[0] -> gpio25Drv.gpioRead[0]
-      rpiDemo.GpioRead[1] -> gpio17Drv.gpioRead[0]
-      rpiDemo.GpioWrite[0] -> gpio23Drv.gpioWrite[0]
-      rpiDemo.GpioWrite[1] -> gpio24Drv.gpioWrite[0]
-      rpiDemo.GpioWrite[2] -> ledDrv.gpioWrite[0]
-      rpiDemo.SpiReadWrite[0] -> spiDrv.SpiReadWrite[0]
-      rpiDemo.UartBuffers[0] -> uartDrv.readBufferSend[0]
-      rpiDemo.UartWrite[0] -> uartDrv.serialSend[0]
-      rpiDemo.prmGetOut[0] -> prmDb.getPrm[0]
-      rpiDemo.prmSetOut[0] -> prmDb.setPrm[0]
-      uartDrv.serialRecv[0] -> rpiDemo.UartRead[0]
-      uplink.bufferAllocate[0] -> fileUplinkBufferManager.bufferGetCallee[0]
-      uplink.bufferDeallocate[0] -> fileUplinkBufferManager.bufferSendIn[0]
-      uplink.bufferOut[0] -> fileUplink.bufferSendIn[0]
-      uplink.comOut[0] -> cmdDisp.seqCmdBuff[0]
+      comm.$recv -> uplink.framedIn
+      uplink.comOut -> cmdDisp.seqCmdBuff
+    }
+
+    connections UART {
+      rpiDemo.UartBuffers -> uartDrv.readBufferSend
+      rpiDemo.UartWrite -> uartDrv.serialSend
+      uartDrv.serialRecv -> rpiDemo.UartRead
     }
 
   }
