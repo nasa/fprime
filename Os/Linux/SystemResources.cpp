@@ -88,7 +88,7 @@ namespace Os {
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
-
+            // No string concerns, as string is discarded
             sscanf(line, "%*s %d %d %d %d", &cpu_data[0],
                    &cpu_data[1],
                    &cpu_data[2],
@@ -118,7 +118,7 @@ namespace Os {
         if (fp == nullptr) {
             return SYSTEM_RESOURCES_ERROR;
         }
-
+        // No string concerns as strings discarded
         if (fscanf(fp, "%*s %d %*s", &total) != 1 ||  /* 1st line is MemTotal */
             fscanf(fp, "%*s %d", &free) != 1) {   /* 2nd line is MemFree */
             fclose(fp);

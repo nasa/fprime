@@ -70,73 +70,56 @@ module Svc {
     telemetry NON_VOLATILE_FREE: U64 id 3 \
       format "{} KB"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU: F32 id 4
+    telemetry CPU: F32 id 4 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_00: F32 id 5
+    telemetry CPU_00: F32 id 5 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_01: F32 id 6
+    telemetry CPU_01: F32 id 6 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_02: F32 id 7
+    telemetry CPU_02: F32 id 7 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_03: F32 id 8
+    telemetry CPU_03: F32 id 8 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_04: F32 id 9
+    telemetry CPU_04: F32 id 9 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_05: F32 id 10
+    telemetry CPU_05: F32 id 10 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_06: F32 id 11
+    telemetry CPU_06: F32 id 11 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_07: F32 id 12
+    telemetry CPU_07: F32 id 12 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_08: F32 id 13
+    telemetry CPU_08: F32 id 13 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_09: F32 id 14
+    telemetry CPU_09: F32 id 14 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_10: F32 id 15
+    telemetry CPU_10: F32 id 15 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_11: F32 id 16
+    telemetry CPU_11: F32 id 16 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_12: F32 id 17
+    telemetry CPU_12: F32 id 17 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_13: F32 id 18
+    telemetry CPU_13: F32 id 18 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_14: F32 id 19
+    telemetry CPU_14: F32 id 19 format "{.2f} percent"
 
-    @ FPP from XML: could not translate format string "%3.2f percent"
     @ System's CPU Percentage
-    telemetry CPU_15: F32 id 20
+    telemetry CPU_15: F32 id 20 format "{.2f} percent"
 
     @ System's CPU Percentage
     telemetry VERSION: string size 40 id 21
