@@ -307,4 +307,39 @@ acknowledged.
             Cannot run new sequence when current sequence file is still running.
         </comment>
     </event>
+    <event id="25" name="CS_TimeoutUpdated" severity="ACTIVITY_HI"
+        format_string="Sequencer timeout updated to %d sec">
+        <comment>Sequencer timeout was updated</comment>
+        <args>
+            <arg name="time" type="U32">
+                <comment>The new timeout value</comment>
+            </arg>
+        </args>
+    </event>
+    <event id="26" name="CS_ErrHandle" severity="ACTIVITY_HI"
+        format_string="Error handling changed to %d">
+        <comment>Switched step mode</comment>
+        <args>
+            <arg type="ENUM" name="resp">
+                <comment>What the response should be</comment>
+                <enum name="SeqErrRespEvt">
+                    <item name="SEQ_ERR_RESP_FAIL_EVT"/>
+                    <item name="SEQ_ERR_RESP_IGNORE_EVT"/>
+            </enum>
+            </arg>
+        </args>
+    </event>
+    <event id="27" name="CS_ComandFailIgnored" severity="WARNING_LO"
+        format_string="Command failure ignored. Command: %d Opcode: %d">
+        <comment>Failed command was ignored</comment>
+        <args>
+            <arg name="command" type="U32">
+                <comment>The opcode</comment>
+            </arg>
+            <arg name="opcode" type="U32">
+                <comment>The opcode</comment>
+            </arg>
+        </args>
+    </event>
+
 </events>

@@ -25,5 +25,11 @@ acknowledged.
   </channel>
   <channel id="4" name="CS_SequencesCompleted" data_type="U32" abbrev="CSEQ-0004">
     <comment>The number of sequences completed.</comment>
+  </channel>
+  <channel id="5" name="CS_CurrTimeout" data_type="U32" abbrev="CSEQ-0005">
+    <comment>The current sequencer timeout</comment>
+  </channel>  
+  <channel id="6" name="CS_ErrCmdFailIg" data_type="bool" abbrev="CSEQ-0007">
+    <comment>If command errors are being ignored</comment>
   </channel>  
 </telemetry>
