@@ -120,16 +120,16 @@ module RPI {
       uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
     }
 
-    connections Uplink {
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-      comm.$recv -> uplink.framedIn
-      uplink.comOut -> cmdDisp.seqCmdBuff
-    }
-
     connections UART {
       rpiDemo.UartBuffers -> uartDrv.readBufferSend
       rpiDemo.UartWrite -> uartDrv.serialSend
       uartDrv.serialRecv -> rpiDemo.UartRead
+    }
+
+    connections Uplink {
+      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+      comm.$recv -> uplink.framedIn
+      uplink.comOut -> cmdDisp.seqCmdBuff
     }
 
   }
