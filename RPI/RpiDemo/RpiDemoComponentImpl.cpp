@@ -75,7 +75,7 @@ namespace RPI {
           case Fw::ParamValid::VALID:
               this->m_ledOn = (RpiDemo_LedState::BLINKING == initState.e);
               this->log_ACTIVITY_HI_RD_LedBlinkState(
-                  this->m_ledOn ? 
+                  this->m_ledOn ?
                   RpiDemo_LedState::BLINKING : RpiDemo_LedState::OFF
               );
               break;
@@ -111,7 +111,7 @@ namespace RPI {
               // Toggle LED value
               if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
                   this->GpioWrite_out(2, (this->m_currLedVal == RpiDemo_GpioVal::SET));
-                  this->m_currLedVal = (this->m_currLedVal == RpiDemo_GpioVal::SET) ? 
+                  this->m_currLedVal = (this->m_currLedVal == RpiDemo_GpioVal::SET) ?
                     RpiDemo_GpioVal::CLEAR : RpiDemo_GpioVal::SET;
               }
               break;

@@ -13,7 +13,7 @@ module RPI {
   }
 
   # ----------------------------------------------------------------------
-  # Active component instances 
+  # Active component instances
   # ----------------------------------------------------------------------
 
   instance rateGroup10HzComp: Svc.ActiveRateGroup base id 200 \
@@ -37,7 +37,7 @@ module RPI {
   }
 
   instance chanTlm: Svc.TlmChan base id 400 \
-    queue size Default.queueSize \ 
+    queue size Default.queueSize \
     stack size Default.stackSize \
     priority 25
 
@@ -155,7 +155,7 @@ module RPI {
     priority 30
 
   # ----------------------------------------------------------------------
-  # Queued component instances 
+  # Queued component instances
   # ----------------------------------------------------------------------
 
   instance $health: Svc.Health base id 1100 \
@@ -179,7 +179,7 @@ module RPI {
   }
 
   # ----------------------------------------------------------------------
-  # Passive component instances 
+  # Passive component instances
   # ----------------------------------------------------------------------
 
   instance fatalHandler: Svc.FatalHandler base id 100
@@ -452,4 +452,4 @@ module RPI {
 
   }
 
-} 
+}

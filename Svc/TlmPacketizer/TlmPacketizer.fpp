@@ -4,7 +4,7 @@ module Svc {
   active component TlmPacketizer {
 
     # ----------------------------------------------------------------------
-    # General ports 
+    # General ports
     # ----------------------------------------------------------------------
 
     @ Packet send port
@@ -23,7 +23,7 @@ module Svc {
     sync input port TlmRecv: Fw.Tlm
 
     # ----------------------------------------------------------------------
-    # Special ports 
+    # Special ports
     # ----------------------------------------------------------------------
 
     @ Command receive
@@ -48,7 +48,7 @@ module Svc {
     time get port timeGetOut
 
     # ----------------------------------------------------------------------
-    # Commands 
+    # Commands
     # ----------------------------------------------------------------------
 
     @ Set telemetry send level
@@ -64,7 +64,7 @@ module Svc {
       opcode 1
 
     # ----------------------------------------------------------------------
-    # Events 
+    # Events
     # ----------------------------------------------------------------------
 
     @ Telemetry channel is not part of a telemetry packet.
@@ -109,7 +109,7 @@ module Svc {
       format "Could not find packet ID {}"
 
     # ----------------------------------------------------------------------
-    # Telemetry 
+    # Telemetry
     # ----------------------------------------------------------------------
 
     @ Telemetry send level
