@@ -104,6 +104,8 @@ Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
 
 Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
 
+Svc::SystemResources resources(FW_OPTIONAL_NAME("resources"));
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -170,6 +172,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
+    resources.init(0);
 
     downlink.setup(framing);
     uplink.setup(deframing);
@@ -202,6 +205,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.regCommands();
     pingRcvr.regCommands();
     pktTlm.regCommands();
+    resources.regCommands();
 
     // read parameters
     prmDb.readParamFile();

@@ -49,6 +49,7 @@ endif()
 include_directories("${CMAKE_BINARY_DIR}")
 include_directories("${CMAKE_BINARY_DIR}/F-Prime")
 
+register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/version.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/dict.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/impl.cmake")
 register_fprime_target("${CMAKE_CURRENT_LIST_DIR}/target/testimpl.cmake")

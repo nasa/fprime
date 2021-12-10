@@ -28,6 +28,7 @@
 #include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
 #include <Svc/Framer/FramerComponentImpl.hpp>
 #include <Svc/Deframer/DeframerComponentImpl.hpp>
+#include <Svc/SystemResources/SystemResources.hpp>
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
 
@@ -65,4 +66,5 @@ extern Svc::StaticMemoryComponentImpl staticMemory;
 extern Drv::TcpClientComponentImpl comm;
 extern Svc::FramerComponentImpl downlink;
 extern Svc::DeframerComponentImpl uplink;
+extern Svc::SystemResources resources;
 #endif
