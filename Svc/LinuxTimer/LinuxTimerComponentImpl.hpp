@@ -13,7 +13,7 @@
 #ifndef LinuxTimer_HPP
 #define LinuxTimer_HPP
 
-#include <atomic>
+#include "Os/Mutex.hpp"
 #include "Svc/LinuxTimer/LinuxTimerComponentAc.hpp"
 
 namespace Svc {
@@ -50,7 +50,11 @@ namespace Svc {
       //! Quit timer
       void quit();
 
-      volatile std::atomic_bool m_quit; //!< flag to quit
+    PRIVATE:
+
+      Os::Mutex m_mutex; //!< mutex for quit flag
+
+      volatile bool m_quit; //!< flag to quit
 
       Svc::TimerVal m_timer;
 
