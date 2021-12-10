@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     // Start the Linux timer.
     // The timer runs on the main thread until it quits
     // in the teardown function, called from the signal
-    // handler
+    // handler.
     RPI::linuxTimer.startTimer(100); //!< 10Hz
 
     // Signal handler was called, and linuxTimer quit.
