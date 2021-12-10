@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  Baremetal/SystemResources.cpp
 // \author mstarch
-// \brief  hpp file for SystemResources component implementation class
+// \brief  cpp file for SystemResources component implementation class
 //
 // \copyright
 // Copyright 2021, by the California Institute of Technology.
@@ -27,8 +27,9 @@ SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks& cp
 
 
 SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {
-    memory_util.total = 0;
-    memory_util.util = 0;
+    // Always 100 percent
+    memory_util.total = 1;
+    memory_util.util = 1;
     return SYSTEM_RESOURCES_OK;
 }
 }  // namespace Os
