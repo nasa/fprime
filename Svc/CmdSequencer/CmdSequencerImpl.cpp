@@ -38,7 +38,8 @@ namespace Svc {
         m_timeout(0),
         m_blockState(Svc::CmdSequencer_BlockState::NO_BLOCK),
         m_opCode(0),
-        m_cmdSeq(0)
+        m_cmdSeq(0),
+        m_join_waiting(false)
     {
 
     }
@@ -98,6 +99,10 @@ namespace Svc {
             Svc::CmdSequencer_BlockState block) {
 
         if (not this->requireRunMode(STOPPED)) {
+            if (m_join_waiting) {
+                // Inform user previous seq file is not complete
+                this->log_WARNING_HI_CS_JoinWaitingNotComplete();
+            }
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
@@ -218,6 +223,23 @@ namespace Svc {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
+    void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(
+        const FwOpcodeType opCode, const U32 cmdSeq) {
+
+        // If there is no running sequence do not wait
+        if (m_runMode != RUNNING) {
+            this->log_WARNING_LO_CS_NoSequenceActive();
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
+            return;
+        } else {
+            m_join_waiting = true;
+            Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
+            this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, m_opCode);
+            m_cmdSeq = cmdSeq;
+            m_opCode = opCode;
+        }
+    }
+
     // ----------------------------------------------------------------------
     // Private helper methods
     // ----------------------------------------------------------------------
@@ -251,7 +273,9 @@ namespace Svc {
             this->seqDone_out(0,0,0,Fw::CmdResponse::EXECUTION_ERROR);
         }
 
-        if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState) {
+        if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
+            // Do not wait if sequence was canceled or a cmd failed
+            this->m_join_waiting = false;
             this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
 
@@ -446,10 +470,11 @@ namespace Svc {
             this->seqDone_out(0,0,0,Fw::CmdResponse::OK);
         }
 
-        if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState) {
+        if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
             this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::OK);
         }
 
+        m_join_waiting = false;
         this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
 
     }

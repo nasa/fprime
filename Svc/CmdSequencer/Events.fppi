@@ -198,3 +198,19 @@ event CS_CmdStarted(
   severity activity high \
   id 22 \
   format "Sequence {} started"
+
+@ Wait for the current running sequence file complete
+event CS_JoinWaiting(
+                      filename: string size 60 @< The sequence file
+                      recordNumber: U32 @< The record number
+                      opCode: U32 @< The opcode
+                    ) \
+  severity activity high \
+  id 23 \
+  format "Start waiting for sequence file {}: Command {} (opcode {}) to complete"
+
+@ Cannot run new sequence when current sequence file is still running.
+event CS_JoinWaitingNotComplete() \
+  severity warning high \
+  id 24 \
+  format "Still waiting for sequence file to complete"

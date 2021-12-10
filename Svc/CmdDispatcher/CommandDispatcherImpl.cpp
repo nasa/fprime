@@ -62,7 +62,7 @@ namespace Svc {
             this->m_numCmdErrors++;
             this->tlmWrite_CommandErrors(this->m_numCmdErrors);
             FW_ASSERT(response.e != Fw::CmdResponse::OK);
-            this->log_WARNING_HI_OpCodeError(opCode,response);
+            this->log_COMMAND_OpCodeError(opCode,response);
         }
         // look for command source
         NATIVE_INT_TYPE portToCall = -1;

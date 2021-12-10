@@ -14,6 +14,7 @@ extern "C" {
   void intervalTimerTest();
   void fileSystemTest();
   void validateFileTest(const char* filename);
+  void systemResourcesTest(void);
 }
 const char* filename;
 TEST(Nominal, StartTestTask) {
@@ -51,6 +52,9 @@ TEST(Nominal, FileSystemTest) {
 }
 TEST(Nominal, ValidateFileTest) {
    validateFileTest(filename);
+}
+TEST(Nominal, SystemResourcesTest) { 
+   systemResourcesTest();
 }
 
 int main(int argc, char* argv[]) {
