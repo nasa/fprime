@@ -110,6 +110,15 @@ namespace Svc {
   }
 
   void Tester ::
+    executeCommandsIgnoreError(
+        const char *const fileName, 
+        const U32 numCommands
+    )
+  {
+    ASSERT_TRUE(false) << "executeCommandsError is not implemented\n";
+  }
+
+  void Tester ::
     executeCommandsManual(
         const char *const fileName, 
         const U32 numCommands
@@ -194,6 +203,37 @@ namespace Svc {
         this->component.m_cmdTimeoutTimer.m_state
     );
   }
+
+  void Tester ::
+    parameterizedIgnoreFailedCommands(
+        SequenceFiles::File& file,
+        const U32 numCommands
+    )
+  {
+
+    // Set the time
+    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    const char *const fileName = file.getName().toChar();
+    file.write();
+    // Validate the file
+    this->validateFile(0, fileName);
+    // Start the sequence
+    this->runSequence(0, fileName);
+    // Execute commands
+    this->executeCommandsIgnoreError(fileName, numCommands);
+    // Check to see if the component has cleaned up
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::STOPPED,
+        this->component.m_runMode
+    );
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::Timer::CLEAR,
+        this->component.m_cmdTimeoutTimer.m_state
+    );
+  }
+
 
   void Tester ::
     parameterizedFileErrors(SequenceFiles::File& file)
@@ -428,6 +468,89 @@ namespace Svc {
     );
     // Set the test time to be after the timeout
     testTime.set(TB_WORKSTATION_TIME, 2 * TIMEOUT, 1);
+    this->setTestTime(testTime);
+    // Call the schedule port
+    this->invoke_to_schedIn(0, 0);
+    this->clearAndDispatch();
+    // Assert events
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_CS_SequenceTimeout(0, fileName, 0);
+    // Verify that the sequencer is idle again
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::STOPPED,
+        this->component.m_runMode
+    );
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::Timer::CLEAR,
+        this->component.m_cmdTimeoutTimer.m_state
+    );
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::Timer::CLEAR,
+        this->component.m_cmdTimer.m_state
+    );
+    ASSERT_EQ(0U, this->component.m_executedCount);
+    // Assert command response on seqDone
+    ASSERT_from_seqDone_SIZE(1);
+    ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+
+  }
+
+  void Tester ::
+    parameterizedSequenceTimeoutCommand(SequenceFiles::File& file)
+  {
+
+    // Set the time
+    Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
+    this->setTestTime(testTime);
+    // Write the file
+    const char *const fileName = file.getName().toChar();
+    file.write();
+    // Validate the file
+    this->validateFile(0, fileName);
+    // Assert that timer is clear
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::Timer::CLEAR,
+        this->component.m_cmdTimeoutTimer.m_state
+    );
+    // double-check the timeout value
+    ASSERT_EQ((NATIVE_UINT_TYPE)TIMEOUT, this->component.m_timeout);
+    // send the command to extend the timeout
+    this->sendCmd_CS_SET_TIMEOUT(0,0x10,4*TIMEOUT);
+    this->clearAndDispatch();
+    // verify EVR
+    ASSERT_EVENTS_CS_TimeoutUpdated_SIZE(1);
+    ASSERT_EVENTS_CS_TimeoutUpdated(0,(NATIVE_UINT_TYPE)4*TIMEOUT);
+    // verify timeout telemetry channel
+    ASSERT_TLM_CS_CurrTimeout_SIZE(1);
+    ASSERT_TLM_CS_CurrTimeout(0,(NATIVE_UINT_TYPE)4*TIMEOUT);
+    // verify new timeout value
+    ASSERT_EQ((NATIVE_UINT_TYPE)4*TIMEOUT, this->component.m_timeout);
+
+    // Run the sequence
+    this->runSequence(0, fileName);
+    // Check command buffers
+    Fw::ComBuffer comBuff;
+    CommandBuffers::create(comBuff, 0, 1);
+    ASSERT_from_comCmdOut_SIZE(1);
+    ASSERT_from_comCmdOut(0, comBuff, 0U);
+    // Assert that timer is set
+    ASSERT_EQ(
+        CmdSequencerComponentImpl::Timer::SET,
+        this->component.m_cmdTimeoutTimer.m_state
+    );
+
+    // Set the test time to be after the original timeout
+    testTime.set(TB_WORKSTATION_TIME, 2 * TIMEOUT, 1);
+    this->setTestTime(testTime);
+
+    // Call the schedule port
+    this->invoke_to_schedIn(0, 0);
+    this->clearAndDispatch();
+    // Assert no events
+    ASSERT_EVENTS_SIZE(0);
+
+    // Set the test time to be after the new timeout
+    testTime.set(TB_WORKSTATION_TIME, 6 * TIMEOUT, 1);
     this->setTestTime(testTime);
     // Call the schedule port
     this->invoke_to_schedIn(0, 0);
@@ -821,6 +944,16 @@ namespace Svc {
         cmdSeq,
         Fw::COMMAND_OK
     );
+  }
+
+  void Tester::textLogIn(const FwEventIdType id, //!< The event ID
+          Fw::Time& timeTag, //!< The time
+          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::TextLogString& text //!< The event string
+          ) {
+      TextLogEntry e = { id, timeTag, severity, text };
+
+      printTextLogHistoryEntry(e, stdout);
   }
 
 }

@@ -313,6 +313,13 @@ namespace Svc {
           const U32 numCommands //!< The number of commands in the sequence
       );
 
+      //! Execute sequence commands with a command response error
+      virtual void executeCommandsIgnoreError(
+          const char *const fileName, //!< The file name
+          const U32 numCommands //!< The number of commands in the sequence
+      );
+
+
       //! Execute commands for a manual sequence
       virtual void executeCommandsManual(
           const char *const fileName, //!< The file name
@@ -358,11 +365,22 @@ namespace Svc {
           const U32 numCommands //!< The number of commands to run
       );
 
+      //! Run a sequence with failed commands
+      void parameterizedIgnoreFailedCommands(
+          SequenceFiles::File& file, //!< The file
+          const U32 numCommands //!< The number of commands to run
+      );
+
       //! Don't load any sequence, then try to run a sequence
       void parameterizedNeverLoaded(void);
 
       //! Sequence timeout
       void parameterizedSequenceTimeout(
+          SequenceFiles::File& file //!< The file
+      );
+
+      //! Sequence timeout
+      void parameterizedSequenceTimeoutCommand(
           SequenceFiles::File& file //!< The file
       );
 
@@ -459,6 +477,14 @@ namespace Svc {
           const U32 cmdSeq, //!< The command sequence number
           const char* const fileName //!< The file name
       );
+
+      virtual void textLogIn(
+          const FwEventIdType id, /*!< The event ID*/
+          Fw::Time& timeTag, /*!< The time*/
+          const Fw::TextLogSeverity severity, /*!< The severity*/
+          const Fw::TextLogString& text /*!< The event string*/
+      );
+
 
     protected:
 

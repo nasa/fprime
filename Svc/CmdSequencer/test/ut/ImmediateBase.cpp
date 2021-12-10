@@ -456,6 +456,126 @@ namespace Svc {
       }
     }
 
+    void Tester ::
+      executeCommandsIgnoreError(
+          const char *const fileName, 
+          const U32 numCommands
+      )
+    {
+      // Check command buffer
+      Fw::ComBuffer comBuff;
+      CommandBuffers::create(comBuff, 0, 1);
+      ASSERT_from_comCmdOut_SIZE(1);
+      ASSERT_from_comCmdOut(0, comBuff, 0U);
+      // Send good status back
+      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::COMMAND_OK);
+      this->clearAndDispatch();
+      // Assert events
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_CS_CommandComplete(0, fileName, 0, 0);
+      // Assert telemetry
+      ASSERT_TLM_SIZE(1);
+      ASSERT_TLM_CS_CommandsExecuted(0, 1);
+
+      // Send command to ignore error
+      this->sendCmd_CS_SET_ERROR_MODE(0,0x10,CmdSequencerComponentBase::SEQ_ERR_RESP_IGNORE);
+      this->clearAndDispatch();
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_CS_ErrHandle_SIZE(1);
+      ASSERT_EVENTS_CS_ErrHandle(0,CmdSequencerComponentBase::SEQ_ERR_RESP_IGNORE_EVT);
+      ASSERT_TRUE(this->component.m_ignoreCmdFails);
+      // verify telemetry updates
+      ASSERT_TLM_CS_ErrCmdFailIg_SIZE(1);
+      ASSERT_TLM_CS_ErrCmdFailIg(0,true);
+      // Send failed status back
+      this->invoke_to_cmdResponseIn(
+          0,
+          2,
+          3,
+          Fw::COMMAND_EXECUTION_ERROR
+      );
+
+      this->clearAndDispatch();
+      ASSERT_EVENTS_SIZE(3);
+      ASSERT_EVENTS_CS_CommandError_SIZE(1);
+      ASSERT_EVENTS_CS_CommandError(
+          0,
+          fileName,
+          1,
+          2,
+          Fw::COMMAND_EXECUTION_ERROR
+      );
+      ASSERT_EVENTS_CS_ComandFailIgnored_SIZE(1);
+      ASSERT_EVENTS_CS_ComandFailIgnored(0,1,2);
+
+      ASSERT_EVENTS_CS_CommandComplete_SIZE(1);
+      ASSERT_EVENTS_CS_CommandComplete(0,fileName,1,2);
+
+      ASSERT_TLM_CS_Errors_SIZE(1);
+      ASSERT_TLM_CS_Errors(0, 1);
+
+      // Sequence shouldn't be done
+      ASSERT_from_seqDone_SIZE(0);
+
+      // The next command should have been emitted
+      CommandBuffers::create(comBuff, 2, 3);
+      ASSERT_from_comCmdOut_SIZE(1);
+      ASSERT_from_comCmdOut(0, comBuff, 0U);
+      
+      // Send good status back
+      this->invoke_to_cmdResponseIn(
+          0,
+          3,
+          4,
+          Fw::COMMAND_OK
+      );
+      this->clearAndDispatch();
+
+      // The next command should have been emitted
+      CommandBuffers::create(comBuff, 3, 4);
+      ASSERT_from_comCmdOut_SIZE(1);
+      ASSERT_from_comCmdOut(0, comBuff, 0U);
+
+      // Send command to no longer ignore command failures
+      this->sendCmd_CS_SET_ERROR_MODE(0,0x10,CmdSequencerComponentBase::SEQ_ERR_RESP_FAIL);
+      this->clearAndDispatch();
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_CS_ErrHandle_SIZE(1);
+      ASSERT_EVENTS_CS_ErrHandle(0,CmdSequencerComponentBase::SEQ_ERR_RESP_FAIL_EVT);
+      ASSERT_FALSE(this->component.m_ignoreCmdFails);
+      // verify telemetry updates
+      ASSERT_TLM_CS_ErrCmdFailIg_SIZE(1);
+      ASSERT_TLM_CS_ErrCmdFailIg(0,false);
+      // Send failed status back
+      this->invoke_to_cmdResponseIn(
+          0,
+          4,
+          5,
+          Fw::COMMAND_EXECUTION_ERROR
+      );
+
+      this->clearAndDispatch();
+
+      // Assert events
+      ASSERT_EVENTS_SIZE(1);
+      ASSERT_EVENTS_CS_CommandError_SIZE(1);
+      ASSERT_EVENTS_CS_CommandError(
+          0,
+          fileName,
+          3,
+          4,
+          Fw::COMMAND_EXECUTION_ERROR
+      );
+
+      // Assert telemetry
+      ASSERT_TLM_SIZE(1);
+      ASSERT_TLM_CS_Errors_SIZE(1);
+      ASSERT_TLM_CS_Errors(0, 2);
+      // Check for command complete on seqDone
+      ASSERT_from_seqDone_SIZE(1);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+    }
+
   }
 
 }

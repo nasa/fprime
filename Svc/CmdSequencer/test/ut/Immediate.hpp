@@ -63,6 +63,9 @@ namespace Svc {
         //! Run a sequence with failed commands
         void FailedCommands(void);
 
+        //! Run a sequence with failed commands
+        void IgnoreFailedCommands(void);
+
         //! Run an automatic sequence by command
         void AutoByCommand(void);
 
@@ -77,6 +80,9 @@ namespace Svc {
 
         //! Sequence timeout
         void SequenceTimeout(void);
+
+        //! Sequence timeout command
+        void SequenceTimeoutCommand(void);
 
         //! Start and cancel a sequence
         void Cancel(void);

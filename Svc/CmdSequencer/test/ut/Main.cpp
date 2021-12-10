@@ -73,6 +73,12 @@ TEST(Immediate, FailedCommands) {
   tester.FailedCommands();
 }
 
+TEST(Immediate, IgnoredFailedCommands) {
+  TEST_CASE(103.2.6,"Ignore failed commands");
+  Svc::Immediate::Tester tester;
+  tester.IgnoreFailedCommands();
+}
+
 TEST(Immediate, FailedCommandsAMPCS) {
   Svc::Immediate::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);
   tester.FailedCommands();
@@ -142,6 +148,11 @@ TEST(Immediate, NewSequenceAMPCS) {
 TEST(Immediate, SequenceTimeout) {
   Svc::Immediate::Tester tester;
   tester.SequenceTimeout();
+}
+
+TEST(Immediate, SequenceTimeoutCommand) {
+  Svc::Immediate::Tester tester;
+  tester.SequenceTimeoutCommand();
 }
 
 TEST(Immediate, SequenceTimeoutAMPCS) {
@@ -331,7 +342,6 @@ TEST(Mixed, Validate) {
   Svc::Mixed::Tester tester;
   tester.Validate();
 }
-
 
 TEST(Mixed, ValidateAMPCS) {
   Svc::Mixed::Tester tester(Svc::SequenceFiles::File::Format::AMPCS);

@@ -70,6 +70,15 @@ namespace Svc {
       this->parameterizedFailedCommands(file, numCommands);
     }
 
+        void Tester ::
+      IgnoreFailedCommands(void)
+    {
+      const U32 numRecords = 5; // enough cases to turn error handling on and off
+      const U32 numCommands = numRecords;
+      SequenceFiles::ImmediateFile file(numRecords, this->format);
+      this->parameterizedIgnoreFailedCommands(file, numCommands);
+    }
+
     void Tester ::
       FileErrors(void) 
     {
@@ -137,6 +146,14 @@ namespace Svc {
       const U32 numRecords = 5;
       SequenceFiles::ImmediateFile file(numRecords, this->format);
       this->parameterizedSequenceTimeout(file);
+    }
+
+    void Tester ::
+      SequenceTimeoutCommand(void) 
+    {
+      const U32 numRecords = 5;
+      SequenceFiles::ImmediateFile file(numRecords, this->format);
+      this->parameterizedSequenceTimeoutCommand(file);
     }
 
     void Tester ::

@@ -108,6 +108,11 @@ namespace Svc {
             const U32 numCommands //!< The number of commands in the sequence
         );
 
+        //! Execute sequence commands with a command response error
+        void executeCommandsIgnoreError(
+            const char *const fileName, //!< The file name
+            const U32 numCommands //!< The number of commands in the sequence
+        );
     };
 
   }
