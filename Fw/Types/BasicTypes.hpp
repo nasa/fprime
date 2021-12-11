@@ -116,13 +116,6 @@ typedef char CHAR;
 #define PRIVATE private //!< overridable private for unit testing
 #endif
 
-#if 0
-// Not ideal, but VxWorks doesn't have strnlen
-#ifdef __VXWORKS__
-NATIVE_INT_TYPE strnlen(const char *s, NATIVE_INT_TYPE maxlen);
-#endif
-#endif
-
 #ifdef __cplusplus
 } // extern "C"
 
