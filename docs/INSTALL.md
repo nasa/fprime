@@ -40,14 +40,20 @@ individuals and researchers, this is the recommended approach.
 ### Create and Activate a new Python Environment
 
 This will create a new virtual environment for F´ to be installed into. The following commands
-will create a new virtual environment called `fprime-venv` and ensure that the virtual environment
+will create a new virtual environment called `venv` and ensure that the virtual environment
 is activated.
 
 **Python 3.6+:**
 
+* Unix:
 ```
-python3 -m venv ./fprime-venv
-. ./fprime-venv/bin/activate
+python3 -m venv venv
+. ./venv/bin/activate
+```
+* Windows:
+```
+python3 -m venv venv
+./venv/scripts/activate
 ```
 
 Any time the user wishes to use F´, this virtual environment should be activated. This should be
@@ -58,7 +64,7 @@ done in each new shell the user uses. This is all that is required to activate F
 **Activate the Virtual Environment**
 
 ```
-. ./fprime-venv/bin/activate
+. ./venv/bin/activate
 ```
 
 ### Cloning the F´ Repository
