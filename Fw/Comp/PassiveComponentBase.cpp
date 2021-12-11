@@ -13,8 +13,6 @@ namespace Fw {
     void PassiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         FW_ASSERT(buffer);
         (void)snprintf(buffer, size, "Comp: %s", this->m_objName);
-        // null terminate
-        buffer[size-1] = 0;
     }
 #endif
     

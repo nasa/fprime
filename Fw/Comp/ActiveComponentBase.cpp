@@ -45,7 +45,6 @@ namespace Fw {
 #if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
     void ActiveComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
         (void)snprintf(buffer, size, "ActComp: %s", this->m_objName);
-        buffer[size-1] = 0;
     }
 #endif
 
