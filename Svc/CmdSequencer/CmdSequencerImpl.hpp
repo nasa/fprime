@@ -101,8 +101,8 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const U32 currTimeBase, //!< The current time base
-                  const U32 seqTimeBase //!< The sequence file time base
+                  const U16 currTimeBase, //!< The current time base
+                  const U16 seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch

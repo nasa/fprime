@@ -103,7 +103,7 @@ namespace Svc {
   }
 
   void CmdSequencerComponentImpl::Sequence::Events ::
-    timeBaseMismatch(const U32 currTimeBase, const U32 seqTimeBase)
+    timeBaseMismatch(const U16 currTimeBase, const U16 seqTimeBase)
   {
     Fw::LogStringArg& logFileName = this->m_sequence.getLogFileName();
     CmdSequencerComponentImpl& component = this->m_sequence.m_component;
