@@ -326,8 +326,10 @@ namespace Fw {
         // read from current location
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        val = (static_cast<U16>(this->getBuffAddr()[this->m_deserLoc + 1]) << 0)
-                | (static_cast<U16>(this->getBuffAddr()[this->m_deserLoc + 0]) << 8);
+        val = static_cast<U16>(
+            ((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
+            ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8)
+        );
         this->m_deserLoc += sizeof(val);
         return FW_SERIALIZE_OK;
     }
@@ -342,8 +344,10 @@ namespace Fw {
         // read from current location
         FW_ASSERT(this->getBuffAddr());
         // MSB first
-        val = (static_cast<I16>(this->getBuffAddr()[this->m_deserLoc + 1]) << 0)
-                | (static_cast<I16>(this->getBuffAddr()[this->m_deserLoc + 0]) << 8);
+        val = static_cast<I16>(
+            ((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
+            ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8)
+        );
         this->m_deserLoc += sizeof(val);
         return FW_SERIALIZE_OK;
     }

@@ -101,14 +101,14 @@ namespace Svc {
 
               //! Time base mismatch
               void timeBaseMismatch(
-                  const U32 currTimeBase, //!< The current time base
-                  const U32 seqTimeBase //!< The sequence file time base
+                  const TimeBase currTimeBase, //!< The current time base
+                  const TimeBase seqTimeBase //!< The sequence file time base
               );
 
               //! Time context mismatch
               void timeContextMismatch(
-                  const U32 currTimeContext, //!< The current time context
-                  const U32 seqTimeContext //!< The sequence file time context
+                  const FwTimeContextStoreType currTimeContext, //!< The current time context
+                  const FwTimeContextStoreType seqTimeContext //!< The sequence file time context
               );
 
             PRIVATE:

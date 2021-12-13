@@ -3,10 +3,6 @@
 #include <cassert>
 #include <cstdio>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <taskLib.h>
-#endif
-
 #define FW_ASSERT_DFL_MSG_LEN 256
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
