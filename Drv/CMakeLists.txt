@@ -21,7 +21,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwi
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TcpClient/")
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TcpServer/")
 	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Udp/")
-	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SocketIpDriver/")
 else()
     message(STATUS "Cannot use IP sockets with platform ${CMAKE_SYSTEM_NAME}. Skipping.")
 endif()
