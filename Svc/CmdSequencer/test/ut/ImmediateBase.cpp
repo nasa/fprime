@@ -505,8 +505,8 @@ namespace Svc {
           2,
           Fw::COMMAND_EXECUTION_ERROR
       );
-      ASSERT_EVENTS_CS_ComandFailIgnored_SIZE(1);
-      ASSERT_EVENTS_CS_ComandFailIgnored(0,1,2);
+      ASSERT_EVENTS_CS_CommandFailIgnored_SIZE(1);
+      ASSERT_EVENTS_CS_CommandFailIgnored(0,1,2);
 
       ASSERT_EVENTS_CS_CommandComplete_SIZE(1);
       ASSERT_EVENTS_CS_CommandComplete(0,fileName,1,2);

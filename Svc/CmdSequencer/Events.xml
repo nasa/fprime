@@ -329,7 +329,7 @@ acknowledged.
             </arg>
         </args>
     </event>
-    <event id="27" name="CS_ComandFailIgnored" severity="WARNING_LO"
+    <event id="27" name="CS_CommandFailIgnored" severity="WARNING_LO"
         format_string="Command failure ignored. Command: %d Opcode: %d">
         <comment>Failed command was ignored</comment>
         <args>

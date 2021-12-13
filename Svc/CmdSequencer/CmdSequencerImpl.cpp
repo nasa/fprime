@@ -302,34 +302,14 @@ namespace Svc {
                 if (not this->m_ignoreCmdFails) {
                     this->performCmd_Cancel();
                 } else {
-                    this->log_WARNING_LO_CS_ComandFailIgnored(this->m_executedCount, opcode);
-                    // Auto mode only for failed command bypass
+                    this->log_WARNING_LO_CS_CommandFailIgnored(this->m_executedCount, opcode);
                     this->commandComplete(opcode);
-                    if (not this->m_sequence->hasMoreRecords()) {
-                        // No data left
-                        this->m_runMode = STOPPED;
-                        this->sequenceComplete();
-                    } else {
-                        this->performCmd_Step();
-                    }
+                    this->performNext();
                 }
-            } else if (this->m_runMode == RUNNING && this->m_stepMode == AUTO) {
-                // Auto mode
+            }
+            else {
                 this->commandComplete(opcode);
-                if (not this->m_sequence->hasMoreRecords()) {
-                    // No data left
-                    this->m_runMode = STOPPED;
-                    this->sequenceComplete();
-                } else {
-                    this->performCmd_Step();
-                }
-            } else { 
-                // Manual step mode
-                this->commandComplete(opcode);
-                if (not this->m_sequence->hasMoreRecords()) {
-                    this->m_runMode = STOPPED;
-                    this->sequenceComplete();
-                }
+                this->performNext();
             }
         }
     }
@@ -543,6 +523,20 @@ namespace Svc {
         ++this->m_executedCount;
         ++this->m_totalExecutedCount;
         this->tlmWrite_CS_CommandsExecuted(this->m_totalExecutedCount);
+    }
+
+    void CmdSequencerComponentImpl ::
+      performNext()
+    {
+        // Transition to stop when out of data
+        if (not this->m_sequence->hasMoreRecords()) {
+            this->m_runMode = STOPPED;
+            this->sequenceComplete();
+        }
+        // Manual mode does not continue
+        else if (this->m_stepMode == AUTO) {
+            this->performCmd_Step();
+        }
     }
 
     void CmdSequencerComponentImpl ::

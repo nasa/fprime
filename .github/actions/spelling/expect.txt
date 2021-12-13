@@ -711,6 +711,7 @@ ifndef
 ifstr
 ifstream
 IFXML
+Ig
 ignorables
 iif
 IJET

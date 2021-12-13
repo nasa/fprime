@@ -715,6 +715,9 @@ namespace Svc {
           const Fw::CmdStringArg& fileName //!< The file name
       );
 
+      //! Transitions to STOP when out-of-data, steps on AUTO, waits on MANUAL 
+      void performNext();
+
       //! Perform a Cancel command
       void performCmd_Cancel(void);
 
