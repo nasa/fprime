@@ -1,7 +1,0 @@
-<telemetry>
-    <channel id="0" name="SPI_Bytes" data_type="U32">
-        <comment>
-        Bytes Sent/Received
-        </comment>
-    </channel>
-</telemetry>
