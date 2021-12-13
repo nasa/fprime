@@ -88,10 +88,10 @@ $(document).ready(function(){initNavTree('_svc_framer.html',''); initResizable()
 <div class="title">Framer Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1752"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md364"></a>
 Svc::Framer Framer Component</h1>
 <p>The Framer component is used to frame packets for downlink. It translates between the service layer (typically TlmChan, ActiveLogger, and FileDownlink) and the driver layer (<a class="el" href="namespace_drv.html">Drv</a>), where service typically deals with F´ types and the driver layer deals in streams of bytes. Framer serializes the F´ types into a stream of bytes and adds header/footer information to ensure transmission integrity. As an argument to <code>setup()</code> function Framer accepts a reference to a <code>FramingProtocol</code> to do the actual header/data/footer serialization. Users may substitute the framing protocol without changing the F´ topology hook-ups.</p>
-<h2><a class="anchor" id="autotoc_md1753"></a>
+<h2><a class="anchor" id="autotoc_md365"></a>
 Usage Examples</h2>
 <p>When using Framer component, the manager component (typically a service layer or a generic hub) initiates the transfer of data by calling bufferIn port. The Framer component will perform the serialization per <code>FramingProtocol</code> and will transfer the stream via bufferOut port.</p>
 <p>The following diagram is an example of framer usage with chanTlm and eventLogger:</p>
@@ -110,10 +110,10 @@ Usage Examples</h2>
 <div class="line"> </div>
 <div class="line">Fw::Buffer buf; // This could be data from bufferIn port</div>
 <div class="line">downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md1754"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md366"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram_framer.png" alt="classdiagram" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md1755"></a>
+<h2><a class="anchor" id="autotoc_md367"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TBD </td><td class="markdownTableBodyNone">TBD </td><td class="markdownTableBodyNone">TBD  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md1756"></a>
+<h2><a class="anchor" id="autotoc_md368"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

@@ -140,12 +140,6 @@ var hierarchy =
     [ "Fw::Logger", "class_fw_1_1_logger.html", [
       [ "Os::Log", "class_os_1_1_log.html", null ]
     ] ],
-    [ "MathReceiverComponentBase", null, [
-      [ "Ref::MathReceiverComponentImpl", "class_ref_1_1_math_receiver_component_impl.html", null ]
-    ] ],
-    [ "MathSenderComponentBase", null, [
-      [ "Ref::MathSenderComponentImpl", "class_ref_1_1_math_sender_component_impl.html", null ]
-    ] ],
     [ "Os::MaxHeap", "class_os_1_1_max_heap.html", null ],
     [ "Os::Mem", "class_os_1_1_mem.html", null ],
     [ "Fw::MemAllocator", "class_fw_1_1_mem_allocator.html", [
@@ -189,8 +183,8 @@ var hierarchy =
     ] ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],
-    [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
+    [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html", [
       [ "Svc::AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", null ],
       [ "Svc::CmdSequencerComponentImpl::FPrimeSequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html", null ]
