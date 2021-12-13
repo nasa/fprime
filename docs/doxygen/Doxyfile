@@ -899,7 +899,7 @@ RECURSIVE              = YES
 EXCLUDE                = ./docs/Architecture/ ./docs/UsersGuide/ ./docs/Tutorials/ ./docs/_data/ \
                          ./docs/INSTALL.md ./docs/projects.md ./docs/index.md ./docs/_config.yml ./docs/features.md \
                          *CMakeFiles/* ./Gds ./Fw/Python ./ptf ./Autocoders ./cmake ./gtest ./Ref ./RPI ./metrics \
-                         STest ./mk ./README.md
+                         STest ./mk ./README.md ./CONTRIBUTORS.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -915,7 +915,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */Autocoders/MagicDrawCompPlugin/* */cmake/* 
+EXCLUDE_PATTERNS       = */test/* */GTest/* */build-*/* */Autocoders/MagicDrawCompPlugin/* */cmake/* */docs/v*.* */README.md
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

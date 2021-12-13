@@ -80,8 +80,6 @@ This section is divided into three sub-sections:
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)
-    - [`fprime` Python Documentation](./api/python/fprime/html/index.html)
-    - [`fprime-gds` Python Documentation](./api/python/fprime-gds/html/index.html)
 
 
 
