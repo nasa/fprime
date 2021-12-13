@@ -141,12 +141,16 @@ class TopDictGenerator:
                 command_elem.attrib["opcode"] = "%s" % (
                     hex(int(command.get_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem.attrib.keys()):
-                    command_elem.attrib["description"] = command_elem.attrib["comment"]
+                if command.get_comment() is not None:
+                    command_elem.attrib["description"] = command.get_comment()
+
                 args_elem = etree.Element("args")
                 for arg in command.get_args():
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
+                    if arg.get_comment() is not None:
+                        arg_elem.attrib["description"] = arg.get_comment()
+
                     arg_type = arg.get_type()
                     if isinstance(arg_type, tuple):
                         type_name = "{}::{}::{}".format(
@@ -184,8 +188,6 @@ class TopDictGenerator:
                 channel_elem.attrib["id"] = "%s" % (
                     hex(int(chan.get_ids()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(channel_elem.attrib.keys()):
-                    channel_elem.attrib["description"] = channel_elem.attrib["comment"]
                 channel_type = chan.get_type()
                 if isinstance(channel_type, tuple):
                     type_name = "{}::{}::{}".format(
@@ -229,13 +231,17 @@ class TopDictGenerator:
                 )
                 event_elem.attrib["severity"] = event.get_severity()
                 format_string = event.get_format_string()
-                if "comment" in list(event_elem.attrib.keys()):
-                    event_elem.attrib["description"] = event_elem.attrib["comment"]
+                if event.get_comment() is not None:
+                    event_elem.attrib["description"] = event.get_comment()
+
                 args_elem = etree.Element("args")
                 arg_num = 0
                 for arg in event.get_args():
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
+                    if arg.get_comment() is not None:
+                        arg_elem.attrib["description"] = arg.get_comment()
+
                     arg_type = arg.get_type()
                     if isinstance(arg_type, tuple):
                         type_name = "{}::{}::{}".format(
@@ -294,9 +300,9 @@ class TopDictGenerator:
                 command_elem_set.attrib["opcode"] = "%s" % (
                     hex(int(parameter.get_set_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem_set.attrib.keys()):
+                if parameter.get_comment() is not None:
                     command_elem_set.attrib["description"] = (
-                        command_elem_set.attrib["comment"] + " parameter set"
+                        parameter.get_comment() + " parameter set"
                     )
                 else:
                     command_elem_set.attrib["description"] = (
@@ -353,9 +359,9 @@ class TopDictGenerator:
                 command_elem_save.attrib["opcode"] = "%s" % (
                     hex(int(parameter.get_save_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem_save.attrib.keys()):
+                if parameter.get_comment() is not None:
                     command_elem_save.attrib["description"] = (
-                        command_elem_save.attrib["comment"] + " parameter set"
+                        parameter.get_comment() + " parameter save"
                     )
                 else:
                     command_elem_save.attrib["description"] = (

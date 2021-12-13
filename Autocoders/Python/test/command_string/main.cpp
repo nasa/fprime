@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
 	TestCommand1Impl testImpl("TestCmdImpl");
 	testImpl.init(10);
-	testImpl.start(10,10*1024,100);
+	testImpl.start();
 	TestCommandSourceImpl cmdSrc("TestCmdSource");
 	cmdSrc.init();
 

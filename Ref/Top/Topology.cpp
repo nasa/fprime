@@ -104,6 +104,8 @@ Svc::FramerComponentImpl downlink(FW_OPTIONAL_NAME("downlink"));
 
 Svc::DeframerComponentImpl uplink(FW_OPTIONAL_NAME("uplink"));
 
+Svc::SystemResources resources(FW_OPTIONAL_NAME("resources"));
+
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
        return comp.getObjName();
@@ -170,6 +172,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     fatalHandler.init(0);
     health.init(25,0);
     pingRcvr.init(10);
+    resources.init(0);
 
     downlink.setup(framing);
     uplink.setup(deframing);
@@ -202,6 +205,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     health.regCommands();
     pingRcvr.regCommands();
     pktTlm.regCommands();
+    resources.regCommands();
 
     // read parameters
     prmDb.readParamFile();
@@ -239,26 +243,26 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
 
     // Active component startup
     // start rate groups
-    rateGroup1Comp.start(0, 120,10 * 1024);
-    rateGroup2Comp.start(0, 119,10 * 1024);
-    rateGroup3Comp.start(0, 118,10 * 1024);
+    rateGroup1Comp.start();
+    rateGroup2Comp.start();
+    rateGroup3Comp.start();
     // start driver
-    blockDrv.start(0,140,10*1024);
+    blockDrv.start();
     // start dispatcher
-    cmdDisp.start(0,101,10*1024);
+    cmdDisp.start();
     // start sequencer
-    cmdSeq.start(0,100,10*1024);
+    cmdSeq.start();
     // start telemetry
-    eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    pktTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
+    eventLogger.start();
+    chanTlm.start();
+    pktTlm.start();
+    prmDb.start();
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    fileManager.start(0, 100, 10*1024);
+    fileDownlink.start();
+    fileUplink.start();
+    fileManager.start();
 
-    pingRcvr.start(0, 100, 10*1024);
+    pingRcvr.start();
 
 
 
@@ -267,7 +271,7 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(hostname, port_number);
-        comm.startSocketTask(name, 100, 10 * 1024);
+        comm.startSocketTask(name);
     }
     return false;
 }

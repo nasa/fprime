@@ -105,7 +105,7 @@ The `dashboard-row` allows no properties.
 
 The F´ dashboard allows for several functional components as well. These components allow some access to the GDS data,
 and through the GDS, access to the embedded system.  These components manipulate channels, events, and commands. File
-handling components are currently not supported as they better suited for a full view.
+handling components are currently not supported as they are better suited for a full view.
 
 ### command-input
 
@@ -145,7 +145,7 @@ component with a filter for command severity to display commands as received by 
 ### event-list
 
 `event-list` displays a set of events as received by the GDS. This allows the user to monitor for all commands, or
-monitor for specific events. In addition, a filter may be used to look for certain severities. And example of the
+monitor for specific events. In addition, a filter may be used to look for certain severities. An example of the
 `event-list` component is shown below:
 
 ```xml

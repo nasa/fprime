@@ -14,6 +14,7 @@ extern "C" {
   void intervalTimerTest(void);
   void fileSystemTest(void);
   void validateFileTest(const char* filename);
+  void systemResourcesTest(void);
 }
 const char* filename;
 TEST(Nominal, StartTestTask) { 
@@ -38,14 +39,14 @@ TEST(Nominal, QTestPerformance) {
 TEST(Nominal, QTestConcurrentTest) { 
    qtest_concurrent();
 }
-TEST(Nominal, IntervalTimerTest) { 
-   intervalTimerTest();
-}
 TEST(Nominal, FileSystemTest) { 
    fileSystemTest();
 }
 TEST(Nominal, ValidateFileTest) { 
    validateFileTest(filename);
+}
+TEST(Nominal, SystemResourcesTest) { 
+   systemResourcesTest();
 }
 
 int main(int argc, char* argv[]) {

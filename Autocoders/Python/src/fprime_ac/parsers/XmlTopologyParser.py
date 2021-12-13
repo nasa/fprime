@@ -122,7 +122,7 @@ class XmlTopologyParser:
                         self.__prepend_instance_name = True
                 #
                 # The deployment attribute added so that instance
-                # dictionaries are install in the correct place.
+                # dictionaries are installed in the correct place.
                 #
                 if "deployment" in e.attrib:
                     self.__deployment = e.attrib["deployment"]

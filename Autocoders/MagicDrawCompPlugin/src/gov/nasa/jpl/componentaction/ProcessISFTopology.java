@@ -60,7 +60,7 @@ import com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port;
  * 					Some connectors are ignored depending on the multiplicity of the previous source port. This multiplicity is recalculated for every connector.
  * 				</li>
  * 				<li>
- *					When reached a port that is not owned by a subsystem, the type is checked. If the source port and the target port type do not matched, that target port is ignored.
+ *					When reached a port that is not owned by a subsystem, the type is checked. If the source port and the target port type do not match, that target port is ignored.
  * 				</li>
  * 				<li>
  * 					This process goes on for each source port until either the target port is found, all the associated connectors have been done being searched, or a time out variable is reached.
@@ -215,12 +215,12 @@ public class ProcessISFTopology {
 	 * <p>
 	 * 
 	 * The index checking/correction is done so multiplicities do not need to be specified for cmd/cmdReg or com/cmdResponse (with port names of seqCmdStatus and seqCmdBuff) blocks. 
-	 * The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type. Some of these port are not to be auto-indexed. 
+	 * The latter pair has the additional port name constraint because there are multiple other ports with the same cmdResponse type. Some of these ports are not to be auto-indexed. 
 	 * This makes it easier for the user to add and remove these ports without needing to worry about if the indexes of the pairings match.
 	 * 
 	 * <p> 
 	 * 
-	 * The program redefines the indexes in numerical order. Even if initial indexes are given, for the origin of Cmd and the target of CmdReg, they are overwritten. They target index of Cmd is preserved and also is written to the source of CmdReg. 
+	 * The program redefines the indexes in numerical order. Even if initial indexes are given, for the origin of Cmd and the target of CmdReg, they are overwritten. The target index of Cmd is preserved and also is written to the source of CmdReg. 
 	 * 
 	 * <p>
 	 * METHODOLOGY
@@ -318,7 +318,7 @@ public class ProcessISFTopology {
 				}
 				
 				if(noCompanionConn){
-					Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have an connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
+					Utils.throwConnectorException("The connection from " + searchPCT.source + " in subsystem " + searchPCT.sourceRoleParentName + " to " + searchPCT.target + " in subsystem " + searchPCT.targetRoleParentName + " of type " + searchPCT.sourcePortType + " does not have a connection going from the same objects of the opposite type. Auto-assigning indexes cannot be continued.");
 				}
 				else{
 					pctList.add(searchPCT);
@@ -414,7 +414,7 @@ public class ProcessISFTopology {
 	 * 
 	 * <p>
 	 * 
-	 * If the element is an instance of a subsystem, the subsystemOwners map is updated, where each key (name of subsystem) is associated with an list of two string arrays.
+	 * If the element is an instance of a subsystem, the subsystemOwners map is updated, where each key (name of subsystem) is associated with a list of two string arrays.
 	 * The first String corresponds to the instance name and the second corresponds to the name of the owner of the subsystem.
 	 * 
 	 * @param root Root of the system
@@ -660,9 +660,9 @@ public class ProcessISFTopology {
 	 * 
 	 * <p>
 	 * 
-	 * Additionally, to support multiple instances of ibds, is a a source instance and target instance name is created along side every connection. 
-	 * This name is the the root modules name followed by each subsystem which the connection's path goes through. 
-	 * This name is used if the program detect that target or source subsystem is used more than once.
+	 * Additionally, to support multiple instances of ibds, is a source instance and target instance name is created along side every connection. 
+	 * This name is the root modules name followed by each subsystem which the connection's path goes through. 
+	 * This name is used if the program detects that target or source subsystem is used more than once.
 	 * 
 	 * <p>
 	 * 
@@ -729,7 +729,7 @@ public class ProcessISFTopology {
 					ArrayList<String> targetNameList = new ArrayList<String>();
 					
 					
-					//Iterate through all the connectors associated with the the currPort
+					//Iterate through all the connectors associated with the currPort
 					while(i < 101){ //Infinite loop prevention.
 						String previousConnectorTargetID = ""; //Used to figure out if current connector target and previous connector target are the same
 						int previousConnectorTargetMult = 0;
@@ -761,7 +761,7 @@ public class ProcessISFTopology {
 							/*
 							 * if ( the current multiplicity is between the lower and upper multiplicities of the source connector AND the source multiplicity is not null OR
 							 *	the source multiplicity is null and the target multiplicity is null OR
-							 *	the source multiplicity is null and the current multiplicity is equal to a counter which keeps track of how long we we have had separate connectors iterate on the same  OR 
+							 *	the source multiplicity is null and the current multiplicity is equal to a counter which keeps track of how long we have had separate connectors iterate on the same  OR 
 							 *	the connectors associated with this port is one and the source multiplicity is null)
 							 */
 

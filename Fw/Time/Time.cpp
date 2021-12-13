@@ -22,11 +22,11 @@ namespace Fw {
     }
 
     void Time::set(U32 seconds, U32 useconds) {
-        this->set(TB_NONE,0,seconds,useconds);
+        this->set(this->m_timeBase,this->m_timeContext,seconds,useconds);
     }
 
     void Time::set(TimeBase timeBase, U32 seconds, U32 useconds) {
-        this->set(timeBase,0,seconds,useconds);
+        this->set(timeBase,this->m_timeContext,seconds,useconds);
     }
 
     Time::Time(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds) {

@@ -52,7 +52,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      * \brief Configures the Udp send settings but does not open the connection
      *
      * The UdpComponent may need to send to a remote UDP port. This call configures the hostname, port and send
-     * timeouts for that socket connection. This call should be preformed on system startup before send is called.
+     * timeouts for that socket connection. This call should be performed on system startup before send is called.
      * Note: hostname must be a dot-notation IP address of the form "x.x.x.x". DNS translation is left up
      * to the user.
      *
@@ -72,7 +72,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
      * \brief Configures the Udp receive settings but does not open the connection
      *
      * The UdpComponent may need to receive from a remote udp port. This call configures the hostname and port of that
-     * source. This call should be preformed on system startup before recv or send are called. Note: hostname must be a
+     * source. This call should be performed on system startup before recv or send are called. Note: hostname must be a
      * dot-notation IP address of the form "x.x.x.x". DNS translation is left up to the user.
      *
      * \param hostname: ip address of remote tcp server in the form x.x.x.x
@@ -106,7 +106,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
     /**
      * \brief returns a buffer to fill with data
      *
-     * Gets a reference to the a buffer to fill with data. This allows the component to determine how to provide a
+     * Gets a reference to a buffer to fill with data. This allows the component to determine how to provide a
      * buffer and the socket read task just fills said buffer.
      *
      * \return Fw::Buffer to fill with data
@@ -114,7 +114,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
     Fw::Buffer getBuffer();
 
     /**
-     * \brief sends a buffer to filled with data
+     * \brief sends a buffer to be filled with data
      *
      * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
      * component how to send back the buffer. Ignores buffers with error status error.

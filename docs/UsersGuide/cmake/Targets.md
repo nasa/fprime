@@ -16,7 +16,7 @@ For projects generating GNU make files, these targets can be executed with the `
 ## Built-In Targets
 
 The CMake system supplies several targets that are useful for all projects and thus are included
-as part of the CMake system. These targets are described in more detain below.
+as part of the CMake system. These targets are described in more detail below.
 
 ### `<MODULE>_coverage` Targets
 

@@ -58,7 +58,7 @@
 </para><para><ref refid="_i_s_f_port_8java" kindref="compound">ISFPort.java</ref> Helper object for port processing. <linebreak/>
  <ref refid="_isf_port_xml_writer_8java" kindref="compound">IsfPortXmlWriter.java</ref> - Writes the processed ports to XML documents.</para><para><heading level="3">Topology </heading>
 </para><para><ref refid="_process_i_s_f_topology_8java" kindref="compound">ProcessISFTopology.java</ref> - This object processes the model to create the topology XML diagrams. It can handle multiple subsystem within subsystems as well and multiple instantiations of subsystems and components. <linebreak/>
- <ref refid="_i_s_f_subsystem_8java" kindref="compound">ISFSubsystem.java</ref> - Contains many helper functions and objects used when process the model for the topology diagram. <linebreak/>
+ <ref refid="_i_s_f_subsystem_8java" kindref="compound">ISFSubsystem.java</ref> - Contains many helper functions and objects used when processing the model for the topology diagram. <linebreak/>
  <ref refid="_isf_sub_xml_writer_8java" kindref="compound">IsfSubXmlWriter.java</ref> - Writes the processed model to an XML document.</para></sect2>
 <sect2 id="index_1exceptions">
 <title>Exceptions</title>

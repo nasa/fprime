@@ -14,7 +14,7 @@
 
 namespace Os {
 /**
-* Wrapper class used to convert the the BufferQueue into a "handler" used by
+* Wrapper class used to convert the BufferQueue into a "handler" used by
 * the Queue class.
 */
 class BareQueueHandle {

@@ -125,7 +125,7 @@
                 </arg>          
             </args>
         </event>
-        <event id="3" name="OpCodeError" severity="WARNING_HI" format_string = "Opcode 0x%04X completed with error %d " >
+        <event id="3" name="OpCodeError" severity="COMMAND" format_string = "Opcode 0x%04X completed with error %d " >
             <comment>
             Op code completed with error event
             </comment>

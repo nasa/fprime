@@ -59,7 +59,7 @@ TEST(LoggerTests, BassicGoodLogger) {
     log.apply(logger);
 }
 /**
- * Test that null-logging works function works.
+ * Test that null-logging function works.
  */
 TEST(LoggerTests, BassicBadLogger) {
     // Basic discard logging

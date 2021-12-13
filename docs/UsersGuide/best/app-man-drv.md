@@ -27,7 +27,7 @@ initialization functions and Constructors allow for setup and construction from 
 
 Software layering allows separation of concerns by implementing logic such that a module only interacts with the layer
 below it. In addition layering allows for decoupling code dependencies, as upper layers depend down the later stack, but
-layers do not depend up the stack. Thus preventing circularly dependencies.
+layers do not depend up the stack. Thus preventing circular dependencies.
 
 Layers can be replaced to support reusability, simulation, and test.  Fault protection can be isolated to a single layer
 and thus handled at the appropriate level.

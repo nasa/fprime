@@ -215,7 +215,7 @@ namespace Svc {
     fileBufferOut.write(sourceFileName);
     FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
 
-    // Test send partial past end of file, should return COMMAND_OK but raise an warning event.
+    // Test send partial past end of file, should return COMMAND_OK but raise a warning event.
     Fw::CommandResponse expResp = FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::COMMAND_OK : Fw::COMMAND_VALIDATION_ERROR;
     this->sendFilePartial(sourceFileName, destFileName, expResp, sizeof(data), length);
     ASSERT_EVENTS_SIZE(1);
@@ -338,7 +338,7 @@ namespace Svc {
     destFileNameString  destFileArg(destFileName);
     Svc::SendFileResponse resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
 
-    ASSERT_EQ(resp.getstatus(), SendFileStatus::OK);
+    ASSERT_EQ(resp.getstatus(), SendFileStatus::STATUS_OK);
     ASSERT_EQ(resp.getcontext(), 0);
 
     this->component.Run_handler(0,0); // Dequeue file downlink request
@@ -350,7 +350,7 @@ namespace Svc {
     }
 
     ASSERT_from_FileComplete_SIZE(1);
-    ASSERT_from_FileComplete(0, Svc::SendFileResponse(SendFileStatus(SendFileStatus::OK), 0));
+    ASSERT_from_FileComplete(0, Svc::SendFileResponse(SendFileStatus(SendFileStatus::STATUS_OK), 0));
 
     // Assert telemetry
     ASSERT_TLM_SIZE(4);

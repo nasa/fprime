@@ -134,7 +134,7 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        // TODO make value a enum or check its value
+        // TODO make value an enum or check its value
 
         const char *val = value ? "1" : "0";
         const int len = 1;
@@ -350,7 +350,7 @@ namespace Drv {
 
         /*
         * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
-        * so cant check for it to look for error:
+        * so can't check for it to look for error:
         * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
         */
         if (stat < 0) {
@@ -397,10 +397,10 @@ namespace Drv {
   }
 
   Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-  startIntTask(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE cpuAffinity) {
+  startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE cpuAffinity) {
       Os::TaskString name;
       name.format("GPINT_%s",this->getObjName()); // The task name can only be 16 chars including null
-      Os::Task::TaskStatus stat = this->m_intTask.start(name,0,priority,20*1024,LinuxGpioDriverComponentImpl::intTaskEntry,this,cpuAffinity);
+      Os::Task::TaskStatus stat = this->m_intTask.start(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, Os::Task::TASK_DEFAULT, cpuAffinity);
 
       if (stat != Os::Task::TASK_OK) {
           DEBUG_PRINT("Task start error: %d\n",stat);
