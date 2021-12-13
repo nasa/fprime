@@ -1,5 +1,6 @@
 var namespace_os =
 [
+    [ "SystemResources", "namespace_os_1_1_system_resources.html", "namespace_os_1_1_system_resources" ],
     [ "BareQueueHandle", "class_os_1_1_bare_queue_handle.html", "class_os_1_1_bare_queue_handle" ],
     [ "BareTaskHandle", "class_os_1_1_bare_task_handle.html", "class_os_1_1_bare_task_handle" ],
     [ "BufferQueue", "class_os_1_1_buffer_queue.html", "class_os_1_1_buffer_queue" ],

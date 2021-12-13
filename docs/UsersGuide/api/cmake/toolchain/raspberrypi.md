@@ -2,7 +2,7 @@
 
 ## Raspberry PI Toolchain
 
-A toolchain file dor the raspberrypi. This toolchain can be used to build against the raspberry pi embedded Linux
+A toolchain file for the raspberrypi. This toolchain can be used to build against the raspberry pi embedded Linux
 target. In order to use this toolchain, the raspberry pi build tools should be cloned onto a Linux build host. These
 tools are available at: [https://github.com/raspberrypi/tools](https://github.com/raspberrypi/tools)
 

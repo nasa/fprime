@@ -143,8 +143,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2f832cc12c096a5cec253ac4ce026e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c0a0e8d9499f15b5f35bc051123b0a6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#a3c0a0e8d9499f15b5f35bc051123b0a6">open</a> (const char *const device, <a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#a9dad2b92cd0d996fa55f89aac44cb791">UartBaudRate</a> baud, <a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#aad14e14819d2e63364bf648587444389">UartFlowControl</a> fc, <a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#ae50cdaf949dec24d4f44d2dfb416cafe">UartParity</a> parity, bool block)</td></tr>
 <tr class="separator:a3c0a0e8d9499f15b5f35bc051123b0a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e5b00dfe3211767c1d7aa16d57fccc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#a0e5b00dfe3211767c1d7aa16d57fccc5">startReadThread</a> (<a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> priority, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> stackSize, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> cpuAffinity=-1)</td></tr>
-<tr class="separator:a0e5b00dfe3211767c1d7aa16d57fccc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b0db7064e5370bdd42f8c961f4327f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#a7b0db7064e5370bdd42f8c961f4327f1">startReadThread</a> (<a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> priority=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> stackSize=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>)</td></tr>
+<tr class="separator:a7b0db7064e5370bdd42f8c961f4327f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c6b5e10b3c9dc35261fe98a3c932ac8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html#a1c6b5e10b3c9dc35261fe98a3c932ac8">quitReadThread</a> (void)</td></tr>
 <tr class="memdesc:a1c6b5e10b3c9dc35261fe98a3c932ac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quit thread.  <a href="class_drv_1_1_linux_serial_driver_component_impl.html#a1c6b5e10b3c9dc35261fe98a3c932ac8">More...</a><br /></td></tr>
 <tr class="separator:a1c6b5e10b3c9dc35261fe98a3c932ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,7 +153,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00022">22</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00023">23</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a9dad2b92cd0d996fa55f89aac44cb791"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9dad2b92cd0d996fa55f89aac44cb791">&#9670;&nbsp;</a></span>UartBaudRate</h2>
@@ -224,7 +224,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a84c9b7f8a8e41db9575734e965a3a99eaaccbf6218fb9fd4750cbdd294c198b03"></a>BAUD_921K&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00045">45</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00046">46</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -244,7 +244,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a2ba16e50af2df9aa1c9190b1e34ebeb9a814646e41796706bb76271edbb5ea6a5"></a>HW_FLOW&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00056">56</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00057">57</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -265,7 +265,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ad9452c02c517a8491be9e7b7eb8f7f8ea25598e2120a13d9d5b30f2c9bd037931"></a>PARITY_EVEN&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00061">61</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html#l00062">62</a> of file <a class="el" href="linux_serial_driver_component_impl_8hpp_source.html">LinuxSerialDriverComponentImpl.hpp</a>.</p>
 
 </div>
 </div>
@@ -314,7 +314,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Destroy object LinuxSerialDriver </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00267">267</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00283">283</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
@@ -412,12 +412,12 @@ Public Member Functions</h2></td></tr>
 
 <p>Quit thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00410">410</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00425">425</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a0e5b00dfe3211767c1d7aa16d57fccc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e5b00dfe3211767c1d7aa16d57fccc5">&#9670;&nbsp;</a></span>startReadThread()</h2>
+<a id="a7b0db7064e5370bdd42f8c961f4327f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b0db7064e5370bdd42f8c961f4327f1">&#9670;&nbsp;</a></span>startReadThread()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -426,19 +426,19 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void Drv::LinuxSerialDriverComponentImpl::startReadThread </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>priority</em>, </td>
+          <td class="paramname"><em>priority</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>stackSize</em>, </td>
+          <td class="paramname"><em>stackSize</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td>
-          <td class="paramname"><em>cpuAffinity</em> = <code>-1</code>&#160;</td>
+          <td class="paramname"><em>cpuAffinity</em> = <code><a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -449,7 +449,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>start the serial poll thread. buffSize is the max receive buffer size </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00401">401</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html#l00417">417</a> of file <a class="el" href="linux_serial_driver_component_impl_8cpp_source.html">LinuxSerialDriverComponentImpl.cpp</a>.</p>
 
 </div>
 </div>

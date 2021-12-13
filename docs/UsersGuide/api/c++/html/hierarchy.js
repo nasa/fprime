@@ -56,6 +56,7 @@ var hierarchy =
     ] ],
     [ "Svc::AMPCSSequence::SequenceHeader::Constants", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header_1_1_constants.html", null ],
     [ "Fw::ConstByteArray", "struct_fw_1_1_const_byte_array.html", null ],
+    [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],
     [ "Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC", "struct_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence_1_1_c_r_c.html", null ],
     [ "Fw::FilePacket::DataPacket", "class_fw_1_1_file_packet_1_1_data_packet.html", null ],
     [ "DeframerComponentBase", null, [
@@ -151,6 +152,7 @@ var hierarchy =
       [ "Fw::MallocAllocator", "class_fw_1_1_malloc_allocator.html", null ],
       [ "Fw::MmapAllocator", "class_fw_1_1_mmap_allocator.html", null ]
     ] ],
+    [ "Os::SystemResources::MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", null ],
     [ "Svc::BufferLogger::File::Mode", "struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html", null ],
     [ "Os::Mutex", "class_os_1_1_mutex.html", null ],
     [ "Fw::ObjBase", "class_fw_1_1_obj_base.html", [
@@ -187,8 +189,8 @@ var hierarchy =
     ] ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],
-    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
+    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html", [
       [ "Svc::AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", null ],
       [ "Svc::CmdSequencerComponentImpl::FPrimeSequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html", null ]
@@ -249,6 +251,9 @@ var hierarchy =
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
     [ "StaticMemoryComponentBase", null, [
       [ "Svc::StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", null ]
+    ] ],
+    [ "SystemResourcesComponentBase", null, [
+      [ "Svc::SystemResources", "class_svc_1_1_system_resources.html", null ]
     ] ],
     [ "Os::Task", "class_os_1_1_task.html", null ],
     [ "Os::TaskId", "class_os_1_1_task_id.html", null ],

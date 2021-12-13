@@ -15,5 +15,6 @@ var dir_3bcf5ace2aff43f834a77bdf510f6078 =
     [ "Time", "dir_ad5036b24b27c1e9db5ef204ad56262f.html", "dir_ad5036b24b27c1e9db5ef204ad56262f" ],
     [ "Tlm", "dir_55a11719c8393f82e2bbfeb08617514d.html", "dir_55a11719c8393f82e2bbfeb08617514d" ],
     [ "Trap", "dir_00dacc8abc4bbd7b871c5f2fe5cf4db4.html", "dir_00dacc8abc4bbd7b871c5f2fe5cf4db4" ],
-    [ "Types", "dir_1f5253cb5e73e32ad3f32f3f04254099.html", "dir_1f5253cb5e73e32ad3f32f3f04254099" ]
+    [ "Types", "dir_1f5253cb5e73e32ad3f32f3f04254099.html", "dir_1f5253cb5e73e32ad3f32f3f04254099" ],
+    [ "Deprecate.hpp", "deprecate_8hpp.html", "_deprecate_8hpp" ]
 ];

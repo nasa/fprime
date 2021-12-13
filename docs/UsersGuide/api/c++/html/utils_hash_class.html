@@ -93,7 +93,7 @@ Utils::Hash</h1>
 <p>This directory contains a generic interface for creating hashes of data. It provides a mechanism for selecting different implementations of the hash interface, which could be as simple as an 8 bit checksum or as complex as a 256 bit SHA256 hash.</p>
 <p>The generic interface to the hashing utility is included in <code><a class="el" href="hash_8hpp.html">Utils/Hash/Hash.hpp</a></code>. Its corresponding generic hash buffer class (which is used to hold a computed hash digest) can be found in <code><a class="el" href="hash_buffer_8hpp.html">Utils/Hash/HashBuffer.hpp</a></code>. Some common implementation code for each class is included in <code><a class="el" href="hash_common_8cpp.html">Utils/Hash/HashCommon.cpp</a></code> and <code><a class="el" href="hash_buffer_common_8cpp.html">Utils/Hash/HashBufferCommon.cpp</a></code>.</p>
 <p>Specific implementations of the hashing utility are stored in subdirectories in <code>Utils/Hash/</code>. Currently, one such implementation exists in <code>Utils/Hash/openssl/</code> which provides a SHA256 hash using the openssl library. Another implementation is also provided which calculates a 32-bit CRC32, which depends on no external libraries.</p>
-<p>A specific implementation can be selecting by modifying the <code><a class="el" href="hash_config_8hpp.html">HashConfig.hpp</a></code> file.</p>
+<p>A specific implementation can be selected by modifying the <code><a class="el" href="hash_config_8hpp.html">HashConfig.hpp</a></code> file.</p>
 <h2><a class="anchor" id="autotoc_md1957"></a>
 Using &lt;tt&gt;hash&lt;/tt&gt;</h2>
 <p>The generic hash interface includes only 4 methods besides the constructor/destructor. A description of each method is included below:</p>

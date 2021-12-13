@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>F´ Flight Software - C/C++ Documentation: Os/Posix/TaskRoot.cpp File Reference</title>
+<title>F´ Flight Software - C/C++ Documentation: Os/MacOs/SystemResources.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('_task_root_8cpp.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('_os_2_mac_os_2_system_resources_8cpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -86,94 +86,44 @@ $(document).ready(function(){initNavTree('_task_root_8cpp.html',''); initResizab
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">TaskRoot.cpp File Reference</div>  </div>
+<div class="title">SystemResources.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="task_8hpp_source.html">Os/Task.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;mach/mach_error.h&gt;</code><br />
+<code>#include &lt;mach/mach_host.h&gt;</code><br />
+<code>#include &lt;mach/mach_init.h&gt;</code><br />
+<code>#include &lt;mach/mach_types.h&gt;</code><br />
+<code>#include &lt;mach/message.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="assert_8hpp_source.html">Fw/Types/Assert.hpp</a>&gt;</code><br />
-<code>#include &lt;sys/types.h&gt;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &lt;<a class="el" href="logger_8hpp_source.html">Fw/Logger/Logger.hpp</a>&gt;</code><br />
-<code>#include &lt;pthread.h&gt;</code><br />
-<code>#include &lt;errno.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="os_2_system_resources_8hpp_source.html">Os/SystemResources.hpp</a>&gt;</code><br />
 </div>
-<p><a href="task_root_8cpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="os_2_mac_os_2_system_resources_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespace_os"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html">Os</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a9e21a2a88f554186e2b2380b00eab944"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="task_root_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(x, ...)</td></tr>
-<tr class="separator:a9e21a2a88f554186e2b2380b00eab944"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a4ee8359e96d6555acca4f046dd66ef70"><td class="memItemLeft" align="right" valign="top">typedef void *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="task_root_8cpp.html#a4ee8359e96d6555acca4f046dd66ef70">pthread_func_ptr</a>) (void *)</td></tr>
-<tr class="separator:a4ee8359e96d6555acca4f046dd66ef70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a06d1174a477fcaffc9a274ddf0c42689"><td class="memItemLeft" align="right" valign="top">kern_return_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a06d1174a477fcaffc9a274ddf0c42689">Os::vm_stat_helper</a> (<a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;used, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;total)</td></tr>
+<tr class="memdesc:a06d1174a477fcaffc9a274ddf0c42689"><td class="mdescLeft">&#160;</td><td class="mdescRight">reads macOS virtual memory statistics for memory calculation  <a href="namespace_os.html#a06d1174a477fcaffc9a274ddf0c42689">More...</a><br /></td></tr>
+<tr class="separator:a06d1174a477fcaffc9a274ddf0c42689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0840df4b7f40767a6f67c85902c202fb"><td class="memItemLeft" align="right" valign="top">kern_return_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#a0840df4b7f40767a6f67c85902c202fb">Os::cpu_data_helper</a> (processor_cpu_load_info_t &amp;cpu_load_info, U32 &amp;cpu_count)</td></tr>
+<tr class="memdesc:a0840df4b7f40767a6f67c85902c202fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">helper around raw CPU capture API  <a href="namespace_os.html#a0840df4b7f40767a6f67c85902c202fb">More...</a><br /></td></tr>
+<tr class="separator:a0840df4b7f40767a6f67c85902c202fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfdc758506a18a310eaf4d7d5182bf51"><td class="memItemLeft" align="right" valign="top">kern_return_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os.html#abfdc758506a18a310eaf4d7d5182bf51">Os::cpu_by_index</a> (U32 cpu_index, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;used, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;total)</td></tr>
+<tr class="memdesc:abfdc758506a18a310eaf4d7d5182bf51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Query for a single CPU's ticks information.  <a href="namespace_os.html#abfdc758506a18a310eaf4d7d5182bf51">More...</a><br /></td></tr>
+<tr class="separator:abfdc758506a18a310eaf4d7d5182bf51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a9e21a2a88f554186e2b2380b00eab944"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e21a2a88f554186e2b2380b00eab944">&#9670;&nbsp;</a></span>DEBUG_PRINT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DEBUG_PRINT</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>...</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="task_root_8cpp_source.html#l00022">22</a> of file <a class="el" href="task_root_8cpp_source.html">TaskRoot.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="a4ee8359e96d6555acca4f046dd66ef70"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ee8359e96d6555acca4f046dd66ef70">&#9670;&nbsp;</a></span>pthread_func_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void*(* pthread_func_ptr) (void *)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="task_root_8cpp_source.html#l00024">24</a> of file <a class="el" href="task_root_8cpp_source.html">TaskRoot.cpp</a>.</p>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_e9da5da1901d789959541f1c8fbb921d.html">Os</a></li><li class="navelem"><a class="el" href="dir_5d2d44be9d89e5af4b3ae87b5b477c1c.html">Posix</a></li><li class="navelem"><a class="el" href="task_root_8cpp.html">TaskRoot.cpp</a></li>
+    <li class="navelem"><a class="el" href="dir_e9da5da1901d789959541f1c8fbb921d.html">Os</a></li><li class="navelem"><a class="el" href="dir_da072c950dfe9ef89d97b4f59ceb0221.html">MacOs</a></li><li class="navelem"><a class="el" href="os_2_mac_os_2_system_resources_8cpp.html">SystemResources.cpp</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.17 </li>

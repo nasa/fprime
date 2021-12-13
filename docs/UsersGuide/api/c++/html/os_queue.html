@@ -128,7 +128,7 @@ Os::Queue (Pthreads implementation)</h1>
 <ol type="1">
 <li><a class="anchor" id="num_queue"></a>*Number of Queues*: The current number of queues allocated in the system (static variable which starts at 0).</li>
 <li><a class="anchor" id="count"></a>*Count*: The current number of messages in the queue (starts at 0).</li>
-<li><a class="anchor" id="maxCount"></a>*Maximum Count*: The maximum number of messages ever seen in the queue since instantiation. This the a "high water mark" of the queue.</li>
+<li><a class="anchor" id="maxCount"></a>*Maximum Count*: The maximum number of messages ever seen in the queue since instantiation. This is the "high water mark" of the queue.</li>
 <li><a class="anchor" id="queue"></a>*Queue*: The queue data structure itself. The queue memory is allocated in a <code>U8*</code> buffer of size: (<a href="#msgSize">Message Size</a> + <code>sizeof(NATIVE_UINT_TYPE)</code>) * <a href="#depth">Depth</a></li>
 <li><a class="anchor" id="heap"></a>*Heap* (for priority queue only): The stable maximum binary heap data structure which orders stored messages with respect to priority. The size of the heap in memory is: <code>sizeof(NATIVE_UINT_TYPE)</code> * 3 * <a href="#depth">Depth</a>.</li>
 </ol>
@@ -246,7 +246,7 @@ Os::Queue (Pthreads implementation)</h1>
 <div class="line">Test complete.</div>
 <div class="line">---------------------</div>
 <div class="line">---------------------</div>
-</div><!-- fragment --><p>The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similar to the Posix queue implementation. Based on these results the the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a <a href="http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf">lock-free concurrent max heap data structure</a>. </p>
+</div><!-- fragment --><p>The Pthreads queues are significantly faster than posix queues on a single core. The Pthreads queue is marginally slower in a multi-threaded environment, but its performance is still very similar to the Posix queue implementation. Based on these results the Pthreads queue is performant enough for single core flight systems. It also looks to have reasonable performance when multi-threaded. If we wanted better multi-core performance, we could look into implementing a <a href="http://www.non-blocking.com/download/SunT03_PQueue_TR.pdf">lock-free concurrent max heap data structure</a>. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

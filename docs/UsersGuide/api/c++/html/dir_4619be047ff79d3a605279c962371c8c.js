@@ -6,5 +6,6 @@ var dir_4619be047ff79d3a605279c962371c8c =
     [ "IntervalTimer.cpp", "baremetal_2_interval_timer_8cpp.html", null ],
     [ "Mutex.cpp", "baremetal_2_mutex_8cpp.html", null ],
     [ "Queue.cpp", "baremetal_2_queue_8cpp.html", "_baremetal_2_queue_8cpp" ],
+    [ "SystemResources.cpp", "os_2_baremetal_2_system_resources_8cpp.html", null ],
     [ "Task.cpp", "baremetal_2_task_8cpp.html", null ]
 ];

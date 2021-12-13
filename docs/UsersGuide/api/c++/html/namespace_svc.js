@@ -34,6 +34,7 @@ var namespace_svc =
     [ "PrmDbImpl", "class_svc_1_1_prm_db_impl.html", "class_svc_1_1_prm_db_impl" ],
     [ "RateGroupDriverImpl", "class_svc_1_1_rate_group_driver_impl.html", "class_svc_1_1_rate_group_driver_impl" ],
     [ "StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", "class_svc_1_1_static_memory_component_impl" ],
+    [ "SystemResources", "class_svc_1_1_system_resources.html", "class_svc_1_1_system_resources" ],
     [ "TimerVal", "class_svc_1_1_timer_val.html", "class_svc_1_1_timer_val" ],
     [ "TlmChanImpl", "class_svc_1_1_tlm_chan_impl.html", "class_svc_1_1_tlm_chan_impl" ],
     [ "TlmPacketizer", "class_svc_1_1_tlm_packetizer.html", "class_svc_1_1_tlm_packetizer" ],

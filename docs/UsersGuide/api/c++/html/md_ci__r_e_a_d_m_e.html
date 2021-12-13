@@ -109,7 +109,7 @@ Using Jenkins</h1>
 Advanced Jenkins</h1>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Daily and Manual Builds</h2>
-<p>Some users like to have an repeating build of Jenkins on a Daily or Weekly schedule to ensure that the common branch (master, devel) are consistent and correct. This can be done by setting a scheduled build trigger and, if using the above <code>config.xml</code>, the <code>${ghprbActualCommit}</code> and <code>${ghprbTargetBranch}</code> environment variables should be set to the desired branch to build. This can be done in Jenkins's environment setup. This allows manual and scheduled builds without creating a separate job by defaulting the variables used by the Pull Request builder. The user could also setup a separate job to handle this.</p>
+<p>Some users like to have a repeating build of Jenkins on a Daily or Weekly schedule to ensure that the common branch (master, devel) are consistent and correct. This can be done by setting a scheduled build trigger and, if using the above <code>config.xml</code>, the <code>${ghprbActualCommit}</code> and <code>${ghprbTargetBranch}</code> environment variables should be set to the desired branch to build. This can be done in Jenkins's environment setup. This allows manual and scheduled builds without creating a separate job by defaulting the variables used by the Pull Request builder. The user could also setup a separate job to handle this.</p>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Future Jenkins Work</h1>
 <p>The following CI items are yet to be implemented:</p>

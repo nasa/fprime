@@ -23,8 +23,8 @@ the `-D` option there.
 Tells fprime to use the specific stubbed set of drivers as opposed to full implementation. This applies to drivers in
 the Drv package with the exception of the serial and ipv4 drivers where a generic cross-platform solution is expected.
 
-If unspecified, it will be set in the platform file for the give architecture. If specified, may be set to ON to use
-the stubbed drivers or OFF to used full driver implementations.
+If unspecified, it will be set in the platform file for the given architecture. If specified, may be set to ON to use
+the stubbed drivers or OFF to use full driver implementations.
 
 if (DEFINED FPRIME_USE_STUBBED_DRIVERS AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "ON" AND NOT "${FPRIME_USE_STUBBED_DRIVERS}" STREQUAL "OFF")
     message(FATAL_ERROR "FPRIME_USE_STUBBED_DRIVERS must be set to ON, OFF, or not supplied at all")
@@ -46,7 +46,7 @@ e.g. `-DCMAKE_DEBUG_OUTPUT=ON`
 
 ## `FPRIME_ENABLE_FRAMEWORK_UTS:`
 
-Allow a project to to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
+Allow a project to run fprime UTs from the core framework. Default: off, do not run fprime framework UTs. This
 does not affect project specified UTs.
 
 **Values:**
@@ -78,6 +78,20 @@ build instability. This option overrides the tools check enabling the system to 
 - OFF: (default) run tools check
 
 e.g. `-DSKIP_TOOLS_CHECK=ON`
+
+
+## `FPRIME_ENABLE_TEXT_LOGGERS:`
+
+When FPRIME_ENABLE_TEXT_LOGGERS is set, the ActiveTextLogger and PassiveConsoleTextLogger
+svc components are included in the build. When unset, those components are excluded,
+allowing FpConfig.hpp:FW_ENABLE_TEXT_LOGGING to be unset as well, to save space.
+TextLoggers will fail to build if FW_ENABLE_TEXT_LOGGING=0.
+
+**Values:**
+- ON: (default) retains the text logger components in the target list
+- OFF: removes text logger components from the target list
+
+e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
 
 
 ## `CMAKE_BUILD_TYPE:`

@@ -102,7 +102,7 @@ Svc::ActiveTextLogger Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ISF-ATL-001 </td><td class="markdownTableBodyNone">The <code>Svc::ActiveTextLogger</code> component shall print received log texts to standard output. </td><td class="markdownTableBodyNone">Unit Test; Inspection  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ISF-ATL-002 </td><td class="markdownTableBodyNone">The <code>Svc::ActiveTextLogger</code> component shall write received log texts to a optionally supplied file. </td><td class="markdownTableBodyNone">Unit Test  </td></tr>
+<td class="markdownTableBodyNone">ISF-ATL-002 </td><td class="markdownTableBodyNone">The <code>Svc::ActiveTextLogger</code> component shall write received log texts to an optionally supplied file. </td><td class="markdownTableBodyNone">Unit Test  </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ISF-ATL-003 </td><td class="markdownTableBodyNone">The <code>Svc::ActiveTextLogger</code> component shall format the passed log text on the calling thread context, and perform all other processing on the component's thread. </td><td class="markdownTableBodyNone">Inspection  </td></tr>
 <tr class="markdownTableRowEven">
@@ -131,11 +131,11 @@ Svc::ActiveTextLogger Component</h1>
 </table>
 <h3><a class="anchor" id="autotoc_md1569"></a>
 3.2 Functional Description</h3>
-<p>The <code>Svc::ActiveTextLogger</code> component provides an text logging function for the software that maintains consistent ordering by writing the logs from a thread.</p>
+<p>The <code>Svc::ActiveTextLogger</code> component provides a text logging function for the software that maintains consistent ordering by writing the logs from a thread.</p>
 <h4><a class="anchor" id="autotoc_md1570"></a>
 3.2.1 File Writing</h4>
 <p>Once a valid file and max size is supplied via a public function call, the <code>Svc::ActiveTextLogger</code> component writes to that file as well as standard output. The <code>Svc::ActiveTextLogger</code> component will stop writing to the file if it would exceed the maximum size.</p>
-<p>If the file supplied already exists, the <code>Svc::ActiveTextLogger</code> component will attempt to create a new file up to ten times by appending a integer suffix to end of the file name.</p>
+<p>If the file supplied already exists, the <code>Svc::ActiveTextLogger</code> component will attempt to create a new file up to ten times by appending an integer suffix to end of the file name.</p>
 <h3><a class="anchor" id="autotoc_md1571"></a>
 3.3 Scenarios</h3>
 <p>TODO</p>

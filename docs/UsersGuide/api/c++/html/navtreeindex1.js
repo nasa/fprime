@@ -2,6 +2,9 @@ var NAVTREEINDEX1 =
 {
 "deframing_protocol_interface_8hpp.html":[118,0,8,19,3],
 "deframing_protocol_interface_8hpp_source.html":[118,0,8,19,3],
+"deprecate_8hpp.html":[118,0,6,16],
+"deprecate_8hpp.html#aaf225a2b96038de3a42d61a1fa63654b":[118,0,6,16,0],
+"deprecate_8hpp_source.html":[118,0,6,16],
 "directory_8cpp.html":[118,0,7,1,0],
 "directory_8cpp_source.html":[118,0,7,1,0],
 "directory_8hpp.html":[118,0,7,7],
@@ -246,8 +249,5 @@ var NAVTREEINDEX1 =
 "framer_component_impl_8hpp_source.html":[118,0,8,18,2],
 "framing_protocol_8cpp.html":[118,0,8,19,6],
 "framing_protocol_8cpp_source.html":[118,0,8,19,6],
-"framing_protocol_8hpp.html":[118,0,8,19,7],
-"framing_protocol_8hpp_source.html":[118,0,8,19,7],
-"framing_protocol_interface_8hpp.html":[118,0,8,19,8],
-"framing_protocol_interface_8hpp_source.html":[118,0,8,19,8]
+"framing_protocol_8hpp.html":[118,0,8,19,7]
 };

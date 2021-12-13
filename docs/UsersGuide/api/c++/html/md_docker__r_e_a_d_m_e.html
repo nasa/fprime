@@ -114,7 +114,7 @@ Dockerfile</h1>
 <p>Docker uses a Dockerfile to describe the container that will be built. It is like a recipe for setting up a blank machine (Ubuntu, etc) into a dependency compliant machine. The F´ supplied Dockerfile uses Ubuntu 18.04 as a base and installs the required dependencies needed to build F´. The result is a containerized F´ builder for use with CI.</p>
 <h2><a class="anchor" id="autotoc_md11"></a>
 Dockerfile Explained</h2>
-<p>Dependencies are installed in one step. This includes an update and install of Ubuntu packages, running the ubuntu-packages script, and install the pip dependencies. Finally, the the app-cache is cleaned. Doing all this in one step prevents excessive Docker image size bloat by reducing the number of temporary file system layers.</p>
+<p>Dependencies are installed in one step. This includes an update and install of Ubuntu packages, running the ubuntu-packages script, and install the pip dependencies. Finally, the app-cache is cleaned. Doing all this in one step prevents excessive Docker image size bloat by reducing the number of temporary file system layers.</p>
 <h1><a class="anchor" id="autotoc_md12"></a>
 Manual Docker Usage</h1>
 <p>Should a user need to run this docker image for purposes other than CI, docker can be run manually to create an F´container. The user will be root when running the <code>fprime-base</code> image. Please ensure that the fprime-base image has been built or downloaded as latest. If downloaded, run with the tag <code>nasafprime/fprime-base:latest</code> instead of just <code>fprime-base:latest</code>. An fprime checkout should be mapped into the container.</p>

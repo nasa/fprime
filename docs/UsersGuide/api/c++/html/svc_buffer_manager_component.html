@@ -177,7 +177,7 @@ Svc::BufferManager</h1>
 3.6.2 bufferSendIn</h4>
 <p>When <code>BufferManager</code> receives notification of a free buffer on <a href="#bufferSendIn"><em>bufferSendIn</em></a>, it carries out the following steps:</p>
 <ol type="1">
-<li>Check to see if it an empty buffer. If so, issue a WARNING_LO event and return.</li>
+<li>Check to see if it is an empty buffer. If so, issue a WARNING_LO event and return.</li>
 <li>Extract the manager ID and buffer ID from the context member of the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> instance.</li>
 <li>If they are valid, use the buffer ID to find the allocated buffer.</li>
 <li>Clear the "allocated" flag to make the buffer available again.</li>
