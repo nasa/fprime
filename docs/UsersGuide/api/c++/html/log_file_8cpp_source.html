@@ -136,7 +136,7 @@ $(document).ready(function(){initNavTree('_log_file_8cpp_source.html',''); initR
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// Print to file if there is one, and given a valid size:</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordflow">if</span> (this-&gt;<a class="code" href="struct_svc_1_1_log_file.html#a9d0ba5d025c5fad0c3ac05cd0d1e4b8a">m_openFile</a> &amp;&amp; size &gt; 0) {</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="comment">// Make sure we wont exceed the maximum size:</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="comment">// Make sure we won&#39;t exceed the maximum size:</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="comment">// Note: second condition in if statement is true if there is overflow</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="comment">// in the addition below</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            U32 projectedSize = this-&gt;<a class="code" href="struct_svc_1_1_log_file.html#a4fdbd453b9f74ac754936bf9ad671327">m_currentFileSize</a> + size;</div>
@@ -147,7 +147,7 @@ $(document).ready(function(){initNavTree('_log_file_8cpp_source.html',''); initR
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                this-&gt;<a class="code" href="struct_svc_1_1_log_file.html#a9d0ba5d025c5fad0c3ac05cd0d1e4b8a">m_openFile</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                this-&gt;<a class="code" href="struct_svc_1_1_log_file.html#a1a51fcc5d1520e8aee595ed43176b330">m_file</a>.<a class="code" href="class_os_1_1_file.html#a5757573d43daf248341c636efb3f84e3">close</a>();</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            }</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="comment">// Wont exceed max size, so write to file:</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="comment">// Won&#39;t exceed max size, so write to file:</span></div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> writeSize = <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(size);</div>

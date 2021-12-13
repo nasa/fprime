@@ -8,6 +8,5 @@ var dir_5d2d44be9d89e5af4b3ae87b5b477c1c =
       [ "QueueHandle", "class_os_1_1_queue_handle.html", "class_os_1_1_queue_handle" ]
     ] ],
     [ "Task.cpp", "posix_2_task_8cpp.html", "_posix_2_task_8cpp" ],
-    [ "TaskId.cpp", "task_id_8cpp.html", null ],
-    [ "TaskRoot.cpp", "task_root_8cpp.html", "_task_root_8cpp" ]
+    [ "TaskId.cpp", "task_id_8cpp.html", null ]
 ];

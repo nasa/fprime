@@ -310,7 +310,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>configure the udp socket for incoming transmissions </p>
-<p>Configures the UDP handler to use the given hostname and port for incoming transmissions. Outgoing hostname and port are configured using the <code>configureSend</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as an single-direction receive port only.</p>
+<p>Configures the UDP handler to use the given hostname and port for incoming transmissions. Outgoing hostname and port are configured using the <code>configureSend</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as a single-direction receive port only.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hostname</td><td>socket uses for incoming transmissions. Must be of form x.x.x.x </td></tr>
@@ -363,7 +363,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>configure the udp socket for outgoing transmissions </p>
-<p>Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname and port are configured using the <code>configureRecv</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as an single-direction send port only.</p>
+<p>Configures the UDP handler to use the given hostname and port for outgoing transmissions. Incoming hostname and port are configured using the <code>configureRecv</code> function call for UDP as it requires separate host/port pairs for outgoing and incoming transmissions. Hostname DNS translation is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port cannot be set to 0 as dynamic port assignment is not supported. It is possible to configure the UDP port as a single-direction send port only.</p>
 <p>Note: delegates to <code><a class="el" href="class_drv_1_1_ip_socket.html#a98a57bf24cdeb8673be4780a8be2db55" title="configure the ip socket with host and transmission timeouts">IpSocket::configure</a></code></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

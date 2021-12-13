@@ -27,5 +27,5 @@ var class_drv_1_1_linux_serial_driver_component_impl =
     [ "init", "class_drv_1_1_linux_serial_driver_component_impl.html#a2f832cc12c096a5cec253ac4ce026e34", null ],
     [ "open", "class_drv_1_1_linux_serial_driver_component_impl.html#a3c0a0e8d9499f15b5f35bc051123b0a6", null ],
     [ "quitReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a1c6b5e10b3c9dc35261fe98a3c932ac8", null ],
-    [ "startReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a0e5b00dfe3211767c1d7aa16d57fccc5", null ]
+    [ "startReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a7b0db7064e5370bdd42f8c961f4327f1", null ]
 ];

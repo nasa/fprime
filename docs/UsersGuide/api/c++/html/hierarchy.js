@@ -56,6 +56,7 @@ var hierarchy =
     ] ],
     [ "Svc::AMPCSSequence::SequenceHeader::Constants", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header_1_1_constants.html", null ],
     [ "Fw::ConstByteArray", "struct_fw_1_1_const_byte_array.html", null ],
+    [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],
     [ "Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC", "struct_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence_1_1_c_r_c.html", null ],
     [ "Fw::FilePacket::DataPacket", "class_fw_1_1_file_packet_1_1_data_packet.html", null ],
     [ "DeframerComponentBase", null, [
@@ -139,18 +140,13 @@ var hierarchy =
     [ "Fw::Logger", "class_fw_1_1_logger.html", [
       [ "Os::Log", "class_os_1_1_log.html", null ]
     ] ],
-    [ "MathReceiverComponentBase", null, [
-      [ "Ref::MathReceiverComponentImpl", "class_ref_1_1_math_receiver_component_impl.html", null ]
-    ] ],
-    [ "MathSenderComponentBase", null, [
-      [ "Ref::MathSenderComponentImpl", "class_ref_1_1_math_sender_component_impl.html", null ]
-    ] ],
     [ "Os::MaxHeap", "class_os_1_1_max_heap.html", null ],
     [ "Os::Mem", "class_os_1_1_mem.html", null ],
     [ "Fw::MemAllocator", "class_fw_1_1_mem_allocator.html", [
       [ "Fw::MallocAllocator", "class_fw_1_1_malloc_allocator.html", null ],
       [ "Fw::MmapAllocator", "class_fw_1_1_mmap_allocator.html", null ]
     ] ],
+    [ "Os::SystemResources::MemUtil", "struct_os_1_1_system_resources_1_1_mem_util.html", null ],
     [ "Svc::BufferLogger::File::Mode", "struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html", null ],
     [ "Os::Mutex", "class_os_1_1_mutex.html", null ],
     [ "Fw::ObjBase", "class_fw_1_1_obj_base.html", [
@@ -249,6 +245,9 @@ var hierarchy =
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
     [ "StaticMemoryComponentBase", null, [
       [ "Svc::StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", null ]
+    ] ],
+    [ "SystemResourcesComponentBase", null, [
+      [ "Svc::SystemResources", "class_svc_1_1_system_resources.html", null ]
     ] ],
     [ "Os::Task", "class_os_1_1_task.html", null ],
     [ "Os::TaskId", "class_os_1_1_task_id.html", null ],
