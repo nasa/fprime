@@ -40,7 +40,10 @@ namespace Svc {
           if (-1 == ret) {
               Fw::Logger::logMsg("timer read error: %s\n", reinterpret_cast<POINTER_CAST>(strerror(errno)));
           }
-          if (this->m_quit) {
+          this->m_mutex.lock();
+          bool quit = this->m_quit;
+          this->m_mutex.unLock();
+          if (quit) {
               itval.it_interval.tv_sec = 0;
               itval.it_interval.tv_nsec = 0;
               itval.it_value.tv_sec = 0;

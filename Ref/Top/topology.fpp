@@ -52,6 +52,7 @@ module Ref {
     instance staticMemory
     instance textLogger
     instance uplink
+    instance systemResources
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -104,6 +105,7 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
+      rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn

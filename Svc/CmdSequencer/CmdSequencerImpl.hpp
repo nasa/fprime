@@ -655,6 +655,15 @@ namespace Svc {
           const Fw::CmdStringArg& fileName //!< The name of the sequence file
       );
 
+      //! Implementation for CS_JOIN command handler
+      //! Wait for sequences that are running to finish.
+			//! Allow user to run multiple seq files in SEQ_NO_BLOCK mode
+			//! then wait for them to finish before allowing more seq run request.
+      void CS_JOIN_WAIT_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq /*!< The command sequence number*/
+      );
+
     PRIVATE:
 
       // ----------------------------------------------------------------------
@@ -764,7 +773,7 @@ namespace Svc {
       Svc::CmdSequencer_BlockState::t m_blockState;
       FwOpcodeType m_opCode;
       U32 m_cmdSeq;
-
+      bool m_join_waiting;
   };
 
 };

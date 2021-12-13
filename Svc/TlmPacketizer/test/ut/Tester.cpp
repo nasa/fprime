@@ -4,7 +4,7 @@
 // \brief  cpp file for TlmPacketizer test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 
@@ -976,10 +976,10 @@ return;
     connectPorts()
   {
 
-    // TlmRecv
-    this->connect_to_TlmRecv(
+    // PktSend
+    this->component.set_PktSend_OutputPort(
         0,
-        this->component.get_TlmRecv_InputPort(0)
+        this->get_from_PktSend(0)
     );
 
     // Run
@@ -988,22 +988,40 @@ return;
         this->component.get_Run_InputPort(0)
     );
 
+    // TlmRecv
+    this->connect_to_TlmRecv(
+        0,
+        this->component.get_TlmRecv_InputPort(0)
+    );
+
+    // cmdIn
+    this->connect_to_cmdIn(
+        0,
+        this->component.get_cmdIn_InputPort(0)
+    );
+
+    // cmdRegOut
+    this->component.set_cmdRegOut_OutputPort(
+        0,
+        this->get_from_cmdRegOut(0)
+    );
+
+    // cmdResponseOut
+    this->component.set_cmdResponseOut_OutputPort(
+        0,
+        this->get_from_cmdResponseOut(0)
+    );
+
+    // eventOut
+    this->component.set_eventOut_OutputPort(
+        0,
+        this->get_from_eventOut(0)
+    );
+
     // pingIn
     this->connect_to_pingIn(
         0,
         this->component.get_pingIn_InputPort(0)
-    );
-
-    // CmdDisp
-    this->connect_to_CmdDisp(
-        0,
-        this->component.get_CmdDisp_InputPort(0)
-    );
-
-    // PktSend
-    this->component.set_PktSend_OutputPort(
-        0,
-        this->get_from_PktSend(0)
     );
 
     // pingOut
@@ -1012,40 +1030,22 @@ return;
         this->get_from_pingOut(0)
     );
 
-    // CmdStatus
-    this->component.set_CmdStatus_OutputPort(
+    // textEventOut
+    this->component.set_textEventOut_OutputPort(
         0,
-        this->get_from_CmdStatus(0)
+        this->get_from_textEventOut(0)
     );
 
-    // CmdReg
-    this->component.set_CmdReg_OutputPort(
+    // timeGetOut
+    this->component.set_timeGetOut_OutputPort(
         0,
-        this->get_from_CmdReg(0)
+        this->get_from_timeGetOut(0)
     );
 
-    // Tlm
-    this->component.set_Tlm_OutputPort(
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(
         0,
-        this->get_from_Tlm(0)
-    );
-
-    // Time
-    this->component.set_Time_OutputPort(
-        0,
-        this->get_from_Time(0)
-    );
-
-    // Log
-    this->component.set_Log_OutputPort(
-        0,
-        this->get_from_Log(0)
-    );
-
-    // LogText
-    this->component.set_LogText_OutputPort(
-        0,
-        this->get_from_LogText(0)
+        this->get_from_tlmOut(0)
     );
 
   }

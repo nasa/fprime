@@ -49,13 +49,13 @@ typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declara
  #else
   #define POINTER_CAST U8
  #endif
-#elif __i386 == 1 // GCC 4.1.2
+#elif defined (__i386) && __i386 == 1 // GCC 4.1.2
   #define POINTER_CAST U32
-#elif __x86_64 == 1 // GCC 4.1.2
+#elif defined (__x86_64) && __x86_64 == 1 // GCC 4.1.2
   #define POINTER_CAST U64
-#elif CPU == PPC604 // VxWorks 6.7 RAD750
+#elif defined (CPU) && defined (PPC604) && CPU == PPC604 // VxWorks 6.7 RAD750
   #define POINTER_CAST U32
-#elif CPU == SPARC
+#elif defined (CPU) && defined(SPARC) && CPU == SPARC
   #define POINTER_CAST U32
 #else
  #error Cannot get size of pointer cast!

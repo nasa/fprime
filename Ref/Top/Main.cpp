@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     option = 0;
     hostname = nullptr;
 
-    while ((option = getopt(argc, argv, "hdp:a:")) != -1){
+    while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {
             case 'h':
                 print_usage(argv[0]);

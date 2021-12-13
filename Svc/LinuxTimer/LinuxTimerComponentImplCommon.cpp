@@ -44,7 +44,9 @@ namespace Svc {
   }
 
   void LinuxTimerComponentImpl::quit() {
+      this->m_mutex.lock();
       this->m_quit = true;
+      this->m_mutex.unLock();
   }
 
 } // end namespace Svc
