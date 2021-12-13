@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">NASA-v2.0.0</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -88,28 +88,28 @@ $(document).ready(function(){initNavTree('_svc_watch_dog_port.html',''); initRes
 <div class="title">Svc::WatchDog Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md1227"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md528"></a>
 Svc::WatchDog Port</h1>
-<h2><a class="anchor" id="autotoc_md1228"></a>
+<h2><a class="anchor" id="autotoc_md529"></a>
 1. Introduction</h2>
 <p>The <code>Svc::WatchDog</code> port is used to ping active components to verify that they are still responsive and have not hung. <br  />
 </p>
-<h2><a class="anchor" id="autotoc_md1229"></a>
+<h2><a class="anchor" id="autotoc_md530"></a>
 2. Design</h2>
 <p>A health component in the system uses a set of ping ports to send a message to an active component. The active component is required to respond with the value in the key argument passed in the port by a certain timeout.</p>
-<h3><a class="anchor" id="autotoc_md1230"></a>
+<h3><a class="anchor" id="autotoc_md531"></a>
 2.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md1231"></a>
+<h4><a class="anchor" id="autotoc_md532"></a>
 2.1.1 Port Diagram</h4>
 <p>The <code>Svc::WatchDog</code> port has the following port diagram:</p>
 <p><img src="img/WatchDogBDD.jpg" alt="`Svc::WatchDog` Diagram" title="Svc::WatchDog Port" class="inline"/></p>
 <p>The <code>Svc::WatchDog</code> port has the following arguments:</p>
 <p>Argument | Type | Description --&mdash; | --------&mdash; code | U32 | Code for the watchdog reset <br  />
 </p>
-<h4><a class="anchor" id="autotoc_md1232"></a>
+<h4><a class="anchor" id="autotoc_md533"></a>
 2.1.2 Serializables</h4>
 <p>There are no serializables defined in the port</p>
-<h2><a class="anchor" id="autotoc_md1233"></a>
+<h2><a class="anchor" id="autotoc_md534"></a>
 3. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

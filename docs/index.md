@@ -34,6 +34,8 @@ F´ has the following features:
 
 ### F´ Release
 - [Latest Documentation](./latest.md)
+- [v2.1.0 Documentation](https://nasa.github.io/fprime/v2.1.0)
+- [v2.0.1 Documentation](https://nasa.github.io/fprime/v2.0.1)
 - [v2.0.0 Documentation](https://nasa.github.io/fprime/v2.0.0)
 - [v1.5 Series Documentation](https://nasa.github.io/fprime/v1.5)
 

@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">NASA-v2.0.0</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_active_rate_group_component.html'
 <div class="title">Svc::ActiveRateGroup Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md857"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md163"></a>
 Svc::ActiveRateGroup Component</h1>
-<h2><a class="anchor" id="autotoc_md858"></a>
+<h2><a class="anchor" id="autotoc_md164"></a>
 1. Introduction</h2>
 <p><code>Svc::ActiveRateGroup</code> is an active component that drives a set of components connected to <code>Svc::Sched</code> output ports. It contains an asynchronous input <code>Svc::Cycle</code> port. This port sends a message which wakes the component task. It contains an asynchronous input <code>Svc::Cycle</code> port. This port sends a message which wakes the component task. The task invokes each output port in order, passing an argument indicating the order. It tracks execution time and detects overruns.</p>
-<h2><a class="anchor" id="autotoc_md859"></a>
+<h2><a class="anchor" id="autotoc_md165"></a>
 2. Requirements</h2>
 <p>The requirements for <code>Svc::ActiveRateGroup</code> are as follows:</p>
 <table class="markdownTable">
@@ -108,15 +108,15 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ARG-004 </td><td class="markdownTableBodyNone">The <code>Svc::ActiveRateGroup</code> component shall report a warning event when a rate group cycle is started before previous is completed </td><td class="markdownTableBodyNone">Unit Test  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md860"></a>
+<h2><a class="anchor" id="autotoc_md166"></a>
 3. Design</h2>
-<h3><a class="anchor" id="autotoc_md861"></a>
+<h3><a class="anchor" id="autotoc_md167"></a>
 3.1 Context</h3>
-<h4><a class="anchor" id="autotoc_md862"></a>
+<h4><a class="anchor" id="autotoc_md168"></a>
 3.1.1 Component Diagram</h4>
 <p>The <code>Svc::ActiveRateGroup</code> component has the following component diagram:</p>
 <p><img src="img/ActiveRateGroupBDD.jpg" alt="ActiveRateGroup Diagram" title="ActiveRateGroup" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md863"></a>
+<h4><a class="anchor" id="autotoc_md169"></a>
 3.1.2 Ports</h4>
 <p>The <code>Svc::ActiveRateGroup</code> component uses the following port types:</p>
 <table class="markdownTable">
@@ -127,27 +127,27 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a href="../../Sched/docs/sdd.html"><code>Svc::Sched</code></a> </td><td class="markdownTableBodyNone">RateGroupMemberOut </td><td class="markdownTableBodyNone">Output </td><td class="markdownTableBodyNone">n/a </td><td class="markdownTableBodyNone">Rate group ports  </td></tr>
 </table>
-<h4><a class="anchor" id="autotoc_md864"></a>
+<h4><a class="anchor" id="autotoc_md170"></a>
 3.2 Functional Description</h4>
 <p>The <code>Svc::ActiveRateGroup</code> component has one input port that is called to wake up the task to execute one cycle. <br  />
  The task of the component calls the output ports in order, passing the context from the context list as the port argument.</p>
 <p>The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears the flag. If it detects that it has been set again at the end of the rate group cycle, it will declare a cycle slip, send an event, and increase the cycle slip counters.</p>
-<h3><a class="anchor" id="autotoc_md865"></a>
+<h3><a class="anchor" id="autotoc_md171"></a>
 3.3 Scenarios</h3>
-<h4><a class="anchor" id="autotoc_md866"></a>
+<h4><a class="anchor" id="autotoc_md172"></a>
 3.3.1 Rate Group Port Call</h4>
 <p>As described in the Functional Description section, the <code>Svc::ActiveRateGroup</code> component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:</p>
 <p><img src="img/RateGroupCall.jpg" alt="System Tick Port Call" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md867"></a>
+<h3><a class="anchor" id="autotoc_md173"></a>
 3.4 State</h3>
 <p><code>Svc::ActiveRateGroup</code> has no state machines.</p>
-<h3><a class="anchor" id="autotoc_md868"></a>
+<h3><a class="anchor" id="autotoc_md174"></a>
 3.5 Algorithms</h3>
 <p><code>Svc::ActiveRateGroup</code> has no significant algorithms.</p>
-<h2><a class="anchor" id="autotoc_md869"></a>
+<h2><a class="anchor" id="autotoc_md175"></a>
 4. Dictionaries</h2>
 <p>TBD</p>
-<h2><a class="anchor" id="autotoc_md870"></a>
+<h2><a class="anchor" id="autotoc_md176"></a>
 5. Module Checklists</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -159,7 +159,7 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Unit Test Checklist </td><td class="markdownTableBodyNone"><a href="Checklist_Unit_Test.xlsx">Link</a>  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md871"></a>
+<h2><a class="anchor" id="autotoc_md177"></a>
 6. Unit Testing</h2>
 <p>The unit test results are as follows:</p>
 <table class="markdownTable">
@@ -170,7 +170,7 @@ Svc::ActiveRateGroup Component</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Coverage Output </td><td class="markdownTableBodyNone"><a href="../test/ut/output/ActiveRateGroupImpl.cpp.gcov">Link</a>  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md872"></a>
+<h2><a class="anchor" id="autotoc_md178"></a>
 7. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
