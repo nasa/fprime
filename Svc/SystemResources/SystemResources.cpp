@@ -128,7 +128,7 @@ void SystemResources::Cpu() {
         }
     }
 
-    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / count);
+    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / static_cast<F32>(count));
     this->tlmWrite_CPU(cpuAvg);
 }
 

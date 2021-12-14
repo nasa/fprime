@@ -3,16 +3,14 @@
 
 #include <vxWorks.h>
 
-#if OK != 0
-#error "Expected OK = 0 in VxWorks build"
-#endif
-#define VXWORKS_OK 0
+// Covert OK macro to constexpr
+constexpr I32 VXWORKS_OK = OK;
 #undef OK
+constexpr I32 OK = VXWORKS_OK;
 
-#if ERROR != -1
-#error "Expected ERROR = -1 in VxWorks build"
-#endif
-#define VXWORKS_ERROR -1
+// Convert ERROR macro to constexpr
+constexpr I32 VXWORKS_ERROR = ERROR;
 #undef ERROR
+constexpr I32 ERROR = VXWORKS_ERROR;
 
 #endif
