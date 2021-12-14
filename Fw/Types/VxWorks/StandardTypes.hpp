@@ -3,14 +3,16 @@
 
 #include <vxWorks.h>
 
-// Covert OK macro to constexpr
-constexpr I32 VXWORKS_OK = OK;
+// Covert VxWorks OK and ERROR macros to enums
+enum {
+  VXWORKS_OK = OK,
+  VXWORKS_ERROR = ERROR
+};
 #undef OK
-constexpr I32 OK = VXWORKS_OK;
-
-// Convert ERROR macro to constexpr
-constexpr I32 VXWORKS_ERROR = ERROR;
 #undef ERROR
-constexpr I32 ERROR = VXWORKS_ERROR;
+enum {
+  OK = VXWORKS_OK,
+  ERROR = VXWORKS_ERROR
+};
 
 #endif
