@@ -16,7 +16,7 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/UdpSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverComponentAc.hpp"
+#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
 
 namespace Drv {
 
@@ -42,7 +42,7 @@ class UdpComponentImpl : public ByteStreamDriverModelComponentBase, public Socke
     /**
      * \brief Destroy the component
      */
-    ~UdpComponentImpl(void);
+    ~UdpComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket

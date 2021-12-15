@@ -70,23 +70,23 @@ namespace Fw {
         this->m_id = id;
     }
 
-    void LogPacket::setLogBuffer(LogBuffer& buffer) {
+    void LogPacket::setLogBuffer(const LogBuffer& buffer) {
         this->m_logBuffer = buffer;
     }
 
-    void LogPacket::setTimeTag(Fw::Time& timeTag) {
+    void LogPacket::setTimeTag(const Fw::Time& timeTag) {
         this->m_timeTag = timeTag;
     }
 
-    FwEventIdType LogPacket::getId(void) {
+    FwEventIdType LogPacket::getId() {
         return this->m_id;
     }
 
-    Fw::Time& LogPacket::getTimeTag(void) {
+    Fw::Time& LogPacket::getTimeTag() {
         return this->m_timeTag;
     }
 
-    LogBuffer& LogPacket::getLogBuffer(void) {
+    LogBuffer& LogPacket::getLogBuffer() {
          return this->m_logBuffer;
     }
 

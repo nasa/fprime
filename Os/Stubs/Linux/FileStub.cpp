@@ -10,22 +10,22 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 namespace Os {
 
-    static ReadInterceptor readInterceptor = 0;
-    static void *readInterceptorPtr = 0;
+    static ReadInterceptor readInterceptor = nullptr;
+    static void *readInterceptorPtr = nullptr;
 
-    static WriteInterceptor writeInterceptor = 0;
-    static void *writeInterceptorPtr = 0;
+    static WriteInterceptor writeInterceptor = nullptr;
+    static void *writeInterceptorPtr = nullptr;
 
-    static OpenInterceptor openInterceptor = 0;
-    static void *openInterceptorPtr = 0;
+    static OpenInterceptor openInterceptor = nullptr;
+    static void *openInterceptorPtr = nullptr;
 
-    static SeekInterceptor seekInterceptor = 0;
-    static void *seekInterceptorPtr = 0;
+    static SeekInterceptor seekInterceptor = nullptr;
+    static void *seekInterceptorPtr = nullptr;
 
     static NATIVE_INT_TYPE lastError = 0;
 
@@ -34,8 +34,8 @@ namespace Os {
         readInterceptorPtr = ptr;
     }
 
-    void clearReadInterceptor(void) {
-        readInterceptor = 0;
+    void clearReadInterceptor() {
+        readInterceptor = nullptr;
     }
 
     void registerWriteInterceptor(WriteInterceptor funcPtr, void *ptr) {
@@ -43,8 +43,8 @@ namespace Os {
         writeInterceptorPtr = ptr;
     }
 
-    void clearWriteInterceptor(void) {
-        writeInterceptor = 0;
+    void clearWriteInterceptor() {
+        writeInterceptor = nullptr;
     }
 
     void registerOpenInterceptor(OpenInterceptor funcPtr, void *ptr) {
@@ -52,8 +52,8 @@ namespace Os {
         openInterceptorPtr = ptr;
     }
 
-    void clearOpenInterceptor(void) {
-        openInterceptor = 0;
+    void clearOpenInterceptor() {
+        openInterceptor = nullptr;
     }
 
     void registerSeekInterceptor(SeekInterceptor funcPtr, void *ptr) {
@@ -61,8 +61,8 @@ namespace Os {
         seekInterceptorPtr = ptr;
     }
 
-    void clearSeekInterceptor(void) {
-        seekInterceptor = 0;
+    void clearSeekInterceptor() {
+        seekInterceptor = nullptr;
     }
 
     void setLastError(NATIVE_INT_TYPE error) {
@@ -120,7 +120,7 @@ namespace Os {
                 }
                 break;
             default:
-                FW_ASSERT(0,(NATIVE_INT_TYPE)mode);
+                FW_ASSERT(0,mode);
                 break;
         }
 
@@ -274,9 +274,9 @@ namespace Os {
                         break; // break out of while loop
                     } else {
                         // in order to move the pointer ahead, we need to cast it
-                        U8* charPtr = (U8*)buffer;
+                        U8* charPtr = static_cast<U8*>(buffer);
                         charPtr = &charPtr[readSize];
-                        buffer = (void*)charPtr;
+                        buffer = static_cast<void*>(charPtr);
                     }
                     maxIters--; // decrement loop count
                 }
@@ -414,16 +414,16 @@ namespace Os {
         return stat;
     }
 
-    void File::close(void) {
+    void File::close() {
         (void)::close(this->m_fd);
         this->m_mode = OPEN_NO_MODE;
     }
 
-    NATIVE_INT_TYPE File::getLastError(void) {
+    NATIVE_INT_TYPE File::getLastError() {
         return lastError;
     }
 
-    const char* File::getLastErrorString(void) {
+    const char* File::getLastErrorString() {
         return strerror(this->m_lastError);
     }
 

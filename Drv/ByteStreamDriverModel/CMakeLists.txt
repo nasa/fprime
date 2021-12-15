@@ -6,11 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamRecvPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamSendPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamPollPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamReadyPortAi.xml"
-    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverComponentAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/ByteStreamDriverModel.fpp"
 )
 
 register_fprime_module()

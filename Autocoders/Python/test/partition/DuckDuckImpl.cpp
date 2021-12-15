@@ -1,7 +1,7 @@
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
 #include <Fw/Types/FwBasicTypes.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 
@@ -11,7 +11,7 @@ namespace Duck {
 
         }
 
-        DuckImpl::~DuckImpl(void) {
+        DuckImpl::~DuckImpl() {
 
         }
 

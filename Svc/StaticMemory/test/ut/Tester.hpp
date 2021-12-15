@@ -30,11 +30,11 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,7 +44,7 @@ namespace Svc {
 
       //! Basic allocation and deallocation
       //!
-      void test_allocate(void);
+      void test_allocate();
 
     private:
 
@@ -54,11 +54,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

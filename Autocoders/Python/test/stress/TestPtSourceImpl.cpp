@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/stress/TestPtSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestPtSourceImpl::TestPtSourceImpl(const char* name) : StressTest::TestPortComponentBase(name)
@@ -20,7 +20,7 @@ StressTest::TestPortComponentBase()
 TestPtSourceImpl::~TestPtSourceImpl() {
 }
 
-void TestPtSourceImpl::init(void) {
+void TestPtSourceImpl::init() {
     StressTest::TestPortComponentBase::init();
 }
 
@@ -30,7 +30,7 @@ void TestPtSourceImpl::aport_Test(I32 arg4, F32 arg5, U8 arg6) {
     }
 }
 
-void TestPtSourceImpl::aport2_Test2(I32 arg4, F32 arg5, Ref::Gnc::Quaternion arg6) {
+void TestPtSourceImpl::aport2_Test2(I32 arg4, F32 arg5, const Ref::Gnc::Quaternion& arg6) {
     if (this->isConnected_aport2_OutputPort(0)) {
         this->aport2_out(0,arg4,arg5,arg6);
     }

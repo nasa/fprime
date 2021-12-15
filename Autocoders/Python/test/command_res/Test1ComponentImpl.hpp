@@ -46,7 +46,7 @@ namespace Cmd {
 
       //! Destroy object Test1
       //!
-      ~Test1ComponentImpl(void);
+      ~Test1ComponentImpl();
 
     PRIVATE:
 

@@ -15,24 +15,16 @@
 
 #include <bitset>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <thread>
 #include <chrono>
 
 using namespace std;
 
-// Registry
-static Fw::SimpleObjRegistry* simpleReg_ptr = 0;
-
 // Component instance pointers
-Example::ExampleArrayImpl* inst1 = 0;
-Example::ExampleArrayImpl* inst2 = 0;
-
-extern "C" {
-    void dumparch(void);
-    void dumpobj(const char* objName);
-}
+Example::ExampleArrayImpl* inst1 = nullptr;
+Example::ExampleArrayImpl* inst2 = nullptr;
 
 #ifdef TGT_OS_TYPE_LINUX
 extern "C" {
@@ -40,27 +32,13 @@ extern "C" {
 };
 #endif
 
-void dumparch(void) {
-    simpleReg_ptr->dump();
-}
-
-void dumpobj(const char* objName) {
-    simpleReg_ptr->dump(objName);
-}
-
-void constructArchitecture(void) {
-    Fw::PortBase::setTrace(true);
-    
-    simpleReg_ptr = new Fw::SimpleObjRegistry();
-
-    dumparch();
-}
-
 int main(int argc, char* argv[]) {
     // Construct the topology here.
-    constructArchitecture();
-    
-    setbuf(stdout, NULL);
+    Fw::PortBase::setTrace(true);
+    Fw::SimpleObjRegistry simpleReg_ptr;
+    simpleReg_ptr.dump();
+
+    setbuf(stdout, nullptr);
 
     cout << "Initialize Arrays" << endl;
 
@@ -91,22 +69,22 @@ int main(int argc, char* argv[]) {
     cout << "Serialize arrays" << endl;
     U8 buffer1[1024];
     U8 buffer2[1024];
-    
+
     Fw::SerialBuffer arraySerial1 = Fw::SerialBuffer(buffer1, sizeof(buffer1));
     Fw::SerialBuffer arraySerial2 = Fw::SerialBuffer(buffer2, sizeof(buffer2));
-    
+
     if (arraySerial1.serialize(array1) != Fw::FW_SERIALIZE_OK) {
         cout << "ERROR: bad serialization array1." << endl;
     } else {
         cout << "Serialized array1" << endl;
     }
-                
+
     if (arraySerial2.serialize(array2) != Fw::FW_SERIALIZE_OK) {
         cout << "ERROR: bad serialization array2." << endl;
     } else {
         cout << "Serialized array2" << endl;
     }
-                
+
     cout << "Serialized arrays" << endl;
 
 
@@ -125,7 +103,7 @@ int main(int argc, char* argv[]) {
     } else {
         cout << "Deserialized array2" << endl;
     }
-            
+
     cout << "Deserialized arrays" << endl;
 
     if (array1 != array1Save) {
@@ -138,7 +116,7 @@ int main(int argc, char* argv[]) {
     } else {
         cout << "Successful array2 check" << endl;
     }
-            
+
     // Create serializable
     int integer1 = 100;
     int integer2 = 10000;
@@ -147,17 +125,16 @@ int main(int argc, char* argv[]) {
     serial1.setMember2(integer2);
     serial1.setMember3(array1);
     serial1.setMember4(array3);
-            
+
     cout << "Invoked ports" << endl;
 
     cout << "Quitting..." << endl;
-    
+
     cout << "Deleting components..." << endl;
     delete inst1;
     delete inst2;
     cout << "Delete registration objects..." << endl;
-    delete simpleReg_ptr;
     cout << "Completed..." << endl;
-    
+
     return 0;
 }

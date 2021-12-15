@@ -35,7 +35,7 @@ kern_return_t vm_stat_helper(U64& used, U64& total) {
     vm_statistics_data_t vmstat;
     vm_size_t vmsize;
 
-    kern_return_t stat1 = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&vmstat, &count);
+    kern_return_t stat1 = host_statistics(mach_host_self(), HOST_VM_INFO, reinterpret_cast<host_info_t>(&vmstat), &count);
     kern_return_t stat2 = host_page_size(mach_host_self(), &vmsize);
 
     if (KERN_SUCCESS == stat1 and KERN_SUCCESS == stat2) {
@@ -63,7 +63,7 @@ kern_return_t vm_stat_helper(U64& used, U64& total) {
 kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info, U32& cpu_count) {
     mach_msg_type_number_t processor_msg_count;
     kern_return_t stat = host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO, &cpu_count,
-                                             (processor_info_array_t*)&cpu_load_info, &processor_msg_count);
+                                             reinterpret_cast<processor_info_array_t*>(&cpu_load_info), &processor_msg_count);
     return stat;
 }
 /**

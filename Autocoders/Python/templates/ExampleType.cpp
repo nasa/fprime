@@ -3,7 +3,7 @@
 
 namespace ANameSpace {
 
-mytype::mytype(void): Serializable() {
+mytype::mytype(): Serializable() {
 
 }
 
@@ -20,16 +20,16 @@ mytype::mytype(U32 val) : Serializable() {
     this->setVal(val);
 }
 
-const mytype& mytype::operator=(const mytype& src) {
+mytype& mytype::operator=(const mytype& src) {
     this->setVal(src.m_val);
-    return src;
+    return *this;
 }
 
 bool mytype::operator==(const mytype& src) const {
     return (this->m_val == src.m_val);
 }
 
-U32 mytype::getVal(void) {
+U32 mytype::getVal() {
     return this->m_val;
 }
 
@@ -42,7 +42,7 @@ Fw::SerializeStatus mytype::serialize(Fw::SerializeBufferBase& buffer) const {
     if (Fw::FW_SERIALIZE_OK != stat) {
         return stat;
     }
-    return buffer.serialize((NATIVE_INT_TYPE)mytype::TYPE_ID);
+    return buffer.serialize(static_cast<NATIVE_INT_TYPE>(mytype::TYPE_ID));
 }
 
 Fw::SerializeStatus mytype::deserialize(Fw::SerializeBufferBase& buffer) {
@@ -53,7 +53,7 @@ Fw::SerializeStatus mytype::deserialize(Fw::SerializeBufferBase& buffer) {
         return stat;
     }
 
-    if (id != (NATIVE_INT_TYPE)mytype::TYPE_ID) {
+    if (id != static_cast<NATIVE_INT_TYPE>(mytype::TYPE_ID)) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 

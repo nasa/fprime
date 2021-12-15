@@ -13,11 +13,11 @@ extern "C" {
 
 namespace Os
 {
-    TaskId::TaskId(void)
+    TaskId::TaskId()
     {
         id = pthread_self();
     }
-    TaskId::~TaskId(void)
+    TaskId::~TaskId()
     {
     }
     bool TaskId::operator==(const TaskId& T) const
@@ -26,9 +26,9 @@ namespace Os
     }
     bool TaskId::operator!=(const TaskId& T) const
     {
-        return !pthread_equal(id, T.id); 
+        return !pthread_equal(id, T.id);
     }
-    TaskIdRepr TaskId::getRepr(void) const
+    TaskIdRepr TaskId::getRepr() const
     {
         return this->id;
     }

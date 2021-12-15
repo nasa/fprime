@@ -182,7 +182,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         length = len(params)
         if length == 0:
-            return self.emitIndent(indent) + "void"
+            return ""
         else:
             str = ""
             for i in range(0, length - 1):
@@ -270,7 +270,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.param_opCode = ("opCode", "const FwOpcodeType", "The opcode")
         c.param_response = (
             "response",
-            "const Fw::CommandResponse",
+            "const Fw::CmdResponse",
             "The command response",
         )
 
@@ -313,7 +313,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.param_log_severity = ("severity", "const Fw::LogSeverity", "The severity")
         c.param_text_log_severity = (
             "severity",
-            "const Fw::TextLogSeverity",
+            "const Fw::TextLogSeverity&",
             "The severity",
         )
         c.param_args = ("args", "Fw::LogBuffer&", "The serialized arguments")

@@ -3,7 +3,7 @@
 #include <Os/Log.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define DEBUG_LVL 1
 
@@ -16,15 +16,15 @@ namespace Ref {
         this->m_sensor2 = 10.0;
         this->m_stats.setBuffRecv(0);
         this->m_stats.setBuffErr(0);
-        this->m_stats.setPacketStatus(PACKET_STATE_NO_PACKETS);
+        this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_NO_PACKETS);
     }
 
 
-    void RecvBuffImpl::init(void) {
-        RecvBuffComponentBase::init();
+    void RecvBuffImpl::init(NATIVE_INT_TYPE instanceId) {
+        RecvBuffComponentBase::init(instanceId);
     }
-    
-    RecvBuffImpl::~RecvBuffImpl(void) {
+
+    RecvBuffImpl::~RecvBuffImpl() {
 
     }
 
@@ -49,7 +49,7 @@ namespace Ref {
         // if first packet, send event
         if (not this->m_firstBuffReceived) {
             this->log_ACTIVITY_LO_FirstPacketReceived(id);
-            this->m_stats.setPacketStatus(PACKET_STATE_OK);
+            this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_OK);
             this->m_firstBuffReceived = true;
         }
 
@@ -65,7 +65,7 @@ namespace Ref {
             // send error event
             this->log_WARNING_HI_PacketChecksumError(id);
             // update stats
-            this->m_stats.setPacketStatus(PACKET_STATE_ERRORS);
+            this->m_stats.setPacketStatus(PacketRecvStatus::PACKET_STATE_ERRORS);
         }
         // update sensor values
         this->m_sensor1 += 5.0;
@@ -78,7 +78,7 @@ namespace Ref {
     }
 
     void RecvBuffImpl::toString(char* str, I32 buffer_size) {
-#if FW_OBJECT_NAMES == 1    
+#if FW_OBJECT_NAMES == 1
         (void)snprintf(str, buffer_size, "RecvBuffImpl: %s: ATM recd count: %d", this->m_objName,
                         (int) this->m_buffsReceived);
 #else

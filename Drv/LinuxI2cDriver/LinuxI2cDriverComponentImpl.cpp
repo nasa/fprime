@@ -21,7 +21,7 @@
 #include <sys/ioctl.h> // required for I2C device usage
 #include <linux/i2c.h> // required for struct / constant definitions
 #include <linux/i2c-dev.h> // required for constant definitions
-#include <errno.h>
+#include <cerrno>
 
 #define DEBUG_PRINT 0
 
@@ -49,7 +49,7 @@ namespace Drv {
   }
 
   LinuxI2cDriverComponentImpl ::
-    ~LinuxI2cDriverComponentImpl(void)
+    ~LinuxI2cDriverComponentImpl()
   {
     if (-1 != this->m_fd) { // check if file is open
       ::close(this->m_fd);

@@ -10,7 +10,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
@@ -19,8 +19,8 @@ namespace Svc {
         // Compute index for entry
 
         NATIVE_UINT_TYPE index = this->doHash(id);
-        TlmEntry* entryToUse = 0;
-        TlmEntry* prevEntry = 0;
+        TlmEntry* entryToUse = nullptr;
+        TlmEntry* prevEntry = nullptr;
 
         // Search to see if channel has already been stored or a bucket needs to be added
         if (this->m_tlmEntries[this->m_activeBuffer].slots[index]) {
@@ -41,7 +41,7 @@ namespace Svc {
                     FW_ASSERT(prevEntry);
                     prevEntry->next = entryToUse;
                     // clear next pointer
-                    entryToUse->next = 0;
+                    entryToUse->next = nullptr;
                     break;
                 }
             }
@@ -51,7 +51,7 @@ namespace Svc {
             // create new entry at slot head
             this->m_tlmEntries[this->m_activeBuffer].slots[index] = &this->m_tlmEntries[this->m_activeBuffer].buckets[this->m_tlmEntries[this->m_activeBuffer].free++];
             entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
-            entryToUse->next = 0;
+            entryToUse->next = nullptr;
         }
 
         // copy into entry

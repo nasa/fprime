@@ -1,5 +1,5 @@
 ####
-# platform.cmake.template: 
+# platform.cmake.template:
 #
 # This file acts as a template for the fprime platform files used by the CMake system.
 # These files specify build flags, compiler directives, and must specify an include
@@ -41,7 +41,7 @@
 #           this can be included to save time.
 #
 # **Note:** if copying the template, delete the message with FATAL_ERROR line. This is a fail-safe
-#           to prevent a raw-copy from being treated as a valid toolchain file. 
+#           to prevent a raw-copy from being treated as a valid toolchain file.
 ####
 
 ## STEP 1: DELETE the following fail-safe line
@@ -70,5 +70,5 @@ endif()
 # STEP 5: Specify a directory containing the "StandardTypes.hpp" headers, as well
 #         as other system headers. Other global headers can be placed here.
 #         Note: Typically, the Linux directory is a good default, as it grabs
-#         standard types from <stdint.h>. 
+#         standard types from <cstdint>.
 include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")

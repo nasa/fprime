@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RuleSequenceScenario.hpp
 // \author bocchino
 // \brief  Apply a fixed sequence of rules
@@ -7,12 +7,12 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RuleSequenceScenario_HPP
 #define STest_RuleSequenceScenario_HPP
 
-#include <assert.h>
+#include <cassert>
 
 #include "STest/Scenario/SequenceScenario.hpp"
 #include "STest/Scenario/RuleScenario.hpp"
@@ -27,7 +27,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RuleSequenceScenario from an array of rules
@@ -38,21 +38,21 @@ namespace STest {
       ) :
         SequenceScenario<State>(name, new Scenario<State>*[size], size)
       {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         Scenario<State>* *const scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < size; ++i) {
           scenarios[i] = new RuleScenario<State>(*rules[i]);
         }
       }
 
       //! Destroy object RuleSequenceScenario
-      ~RuleSequenceScenario(void) {
-        assert(this->scenarioArray != NULL);
+      ~RuleSequenceScenario() {
+        assert(this->scenarioArray != nullptr);
         Scenario<State>* *const scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < this->scenarioArray->size; ++i) {
-          assert(scenarios[i] != NULL);
+          assert(scenarios[i] != nullptr);
           delete scenarios[i];
         }
         delete scenarios;

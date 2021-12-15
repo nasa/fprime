@@ -30,11 +30,11 @@ namespace AcTest {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,7 +44,7 @@ namespace AcTest {
 
       //! To do
       //!
-      void msgTest(void);
+      void msgTest();
 
     private:
 
@@ -54,11 +54,11 @@ namespace AcTest {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

@@ -21,7 +21,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void Tester ::
-      QueueFull(void)
+      QueueFull()
     {
 
       Fw::Buffer buffer;

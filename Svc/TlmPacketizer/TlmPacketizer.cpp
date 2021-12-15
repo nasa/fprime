@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TlmPacketizerImpl.cpp
 // \author tcanham
 // \brief  cpp file for TlmPacketizer component implementation class
@@ -15,7 +15,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   TlmPacketizer ::
@@ -30,13 +30,13 @@ namespace Svc {
   {
       // clear slot pointers
       for (NATIVE_UINT_TYPE entry = 0; entry < TLMPACKETIZER_NUM_TLM_HASH_SLOTS; entry++) {
-          this->m_tlmEntries.slots[entry] = 0;
+          this->m_tlmEntries.slots[entry] = nullptr;
       }
       // clear buckets
       for (NATIVE_UINT_TYPE entry = 0; entry < TLMPACKETIZER_HASH_BUCKETS; entry++) {
           this->m_tlmEntries.buckets[entry].used = false;
           this->m_tlmEntries.buckets[entry].bucketNo = entry;
-          this->m_tlmEntries.buckets[entry].next = 0;
+          this->m_tlmEntries.buckets[entry].next = nullptr;
           this->m_tlmEntries.buckets[entry].id = 0;
       }
       // clear free index
@@ -59,13 +59,13 @@ namespace Svc {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     TlmPacketizerComponentBase::init(queueDepth, instance);
   }
 
   TlmPacketizer ::
-    ~TlmPacketizer(void)
+    ~TlmPacketizer()
   {
 
   }
@@ -150,8 +150,8 @@ namespace Svc {
   TlmPacketizer::TlmEntry* TlmPacketizer::findBucket(FwChanIdType id) {
       NATIVE_UINT_TYPE index = this->doHash(id);
       FW_ASSERT(index < TLMPACKETIZER_HASH_BUCKETS);
-      TlmEntry* entryToUse = 0;
-      TlmEntry* prevEntry = 0;
+      TlmEntry* entryToUse = nullptr;
+      TlmEntry* prevEntry = nullptr;
 
       // Search to see if channel has already been stored or a bucket needs to be added
       if (this->m_tlmEntries.slots[index]) {
@@ -173,7 +173,7 @@ namespace Svc {
                   FW_ASSERT(prevEntry);
                   prevEntry->next = entryToUse;
                   // clear next pointer
-                  entryToUse->next = 0;
+                  entryToUse->next = nullptr;
                   // set all packet offsets to -1 for new entry
                   for (NATIVE_UINT_TYPE pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
                       entryToUse->packetOffset[pktOffsetEntry] = -1;
@@ -187,7 +187,7 @@ namespace Svc {
           // create new entry at slot head
           this->m_tlmEntries.slots[index] = &this->m_tlmEntries.buckets[this->m_tlmEntries.free++];
           entryToUse = this->m_tlmEntries.slots[index];
-          entryToUse->next = 0;
+          entryToUse->next = nullptr;
           // set all packet offsets to -1 for new entry
           for (NATIVE_UINT_TYPE pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
               entryToUse->packetOffset[pktOffsetEntry] = -1;
@@ -215,7 +215,7 @@ namespace Svc {
       FW_ASSERT(this->m_configured);
       // get hash value for id
       NATIVE_UINT_TYPE index = this->doHash(id);
-      TlmEntry* entryToUse = 0;
+      TlmEntry* entryToUse = nullptr;
 
       // Search to see if the channel is being sent
       entryToUse = this->m_tlmEntries.slots[index];
@@ -338,7 +338,7 @@ namespace Svc {
       }
       this->tlmWrite_SendLevel(level);
       this->log_ACTIVITY_HI_LevelSet(level);
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   void TlmPacketizer ::
@@ -366,11 +366,11 @@ namespace Svc {
       // couldn't find it
       if (pkt == this->m_numPackets) {
           log_WARNING_LO_PacketNotFound(id);
-          this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_VALIDATION_ERROR);
+          this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
           return;
       }
 
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
 

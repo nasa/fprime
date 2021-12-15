@@ -2,7 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <cstring>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
@@ -33,12 +33,12 @@ namespace Svc {
 
     }
 
-    RateGroupDriverImpl::~RateGroupDriverImpl(void) {
+    RateGroupDriverImpl::~RateGroupDriverImpl() {
 
     }
-    
-    void RateGroupDriverImpl::init(void) {
-        RateGroupDriverComponentBase::init();
+
+    void RateGroupDriverImpl::init(NATIVE_INT_TYPE instanceId) {
+        RateGroupDriverComponentBase::init(instanceId);
     }
 
     void RateGroupDriverImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
@@ -55,7 +55,7 @@ namespace Svc {
                 }
             }
         }
-        
+
         // rollover the tick value when the tick count reaches the rollover value
         // the rollover value is the product of all the dividers. See comment in constructor.
         this->m_ticks = (this->m_ticks + 1) % this->m_rollover;

@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FileUplink.cpp
 // \author bocchino
 // \brief  cpp file for FileUplink component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <Svc/FileUplink/FileUplink.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -17,7 +17,7 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   FileUplink ::
@@ -36,13 +36,13 @@ namespace Svc {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     FileUplinkComponentBase::init(queueDepth, instance);
   }
 
   FileUplink ::
-    ~FileUplink(void)
+    ~FileUplink()
   {
 
   }
@@ -95,7 +95,7 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Private helper functions 
+  // Private helper functions
   // ----------------------------------------------------------------------
 
   void FileUplink ::
@@ -164,7 +164,7 @@ namespace Svc {
   }
 
   void FileUplink ::
-    handleCancelPacket(void)
+    handleCancelPacket()
   {
     this->packetsReceived.packetReceived();
     this->log_ACTIVITY_HI_UplinkCanceled();
@@ -191,14 +191,14 @@ namespace Svc {
     endPacket.getChecksum(stored);
     if (computed != stored) {
       this->warnings.badChecksum(
-          computed.getValue(), 
+          computed.getValue(),
           stored.getValue()
       );
     }
   }
 
   void FileUplink ::
-    goToStartMode(void)
+    goToStartMode()
   {
     this->file.osFile.close();
     this->receiveMode = START;
@@ -206,7 +206,7 @@ namespace Svc {
   }
 
   void FileUplink ::
-    goToDataMode(void)
+    goToDataMode()
   {
     this->receiveMode = DATA;
     this->lastSequenceIndex = 0;

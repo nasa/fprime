@@ -7,7 +7,7 @@
 
 #include <Autocoders/Python/test/stress/TestCommandImpl.hpp>
 #include <Fw/Types/String.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestCommand1Impl::TestCommand1Impl(const char* name) :  StressTest::TestCommandComponentBase(name)
@@ -28,7 +28,7 @@ void TestCommand1Impl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5
     printf("Received aport_Test_handler call with %i %f %d\n",arg4,arg5,arg6);
 }
 
-void TestCommand1Impl::aport2_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, Ref::Gnc::Quaternion arg6) {
+void TestCommand1Impl::aport2_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, const Ref::Gnc::Quaternion& arg6) {
     Fw::String str;
     arg6.toString(str);
     printf("Received aport2_Test2_handler call with %i %f %s\n",arg4,arg5,str.toChar());
@@ -52,19 +52,19 @@ void TestCommand1Impl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I3
     }
 
     printf("Got command args: %d %s\n", arg1, enum_str);
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
 
 void TestCommand1Impl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2) {
     printf("Got command args: %d %f\n", arg1, arg2);
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
 
-void TestCommand1Impl::printParam(void) {
-    Fw::ParamValid valid = Fw::PARAM_INVALID;
+void TestCommand1Impl::printParam() {
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
     const U32& prmRef = this->paramGet_someparam(valid);
 
-    printf("Parameter is: %d %s\n",prmRef,valid==Fw::PARAM_VALID?"VALID":"INVALID");
+    printf("Parameter is: %d %s\n",prmRef,valid==Fw::ParamValid::VALID?"VALID":"INVALID");
 }
 
 void TestCommand1Impl::genTlm(Ref::Gnc::Quaternion val) {

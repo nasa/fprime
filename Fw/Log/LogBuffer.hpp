@@ -2,7 +2,7 @@
  * LogBuffer.hpp
  *
  *  Created on: Sep 10, 2012
- *      Author: ppandian 
+ *      Author: ppandian
  */
 
 /*
@@ -31,11 +31,11 @@ namespace Fw {
             LogBuffer();
             LogBuffer(const LogBuffer& other);
             virtual ~LogBuffer();
-            const LogBuffer& operator=(const LogBuffer& other);
+            LogBuffer& operator=(const LogBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         private:
             U8 m_bufferData[FW_LOG_BUFFER_MAX_SIZE]; // command argument buffer

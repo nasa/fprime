@@ -218,7 +218,7 @@ void main( int argc, char *argv[] ) {
             prev_byte = 0;
             fp        = fopen( argv[a], "rb" );
 
-            if ( fp != NULL ) {
+            if ( fp != nullptr ) {
 
                 while( ( ch=fgetc( fp ) ) != EOF ) {
 

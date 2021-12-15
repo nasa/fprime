@@ -43,7 +43,7 @@ namespace Svc {
         public:
 
           //! Constructor
-          Mode(void) : value(IDLE) { }
+          Mode() : value(IDLE) { }
 
         public:
 
@@ -55,7 +55,7 @@ namespace Svc {
           }
 
           //! Get the Mode value
-          Type get(void) {
+          Type get() {
             this->mutex.lock();
             const Type value = this->value;
             this->mutex.unLock();
@@ -132,7 +132,7 @@ namespace Svc {
         public:
 
           //! Record a file sent
-          void fileSent(void) {
+          void fileSent() {
             ++this->n;
             this->fileDownlink->tlmWrite_FilesSent(n);
           }
@@ -160,7 +160,7 @@ namespace Svc {
         public:
 
           //! Record a packet sent
-          void packetSent(void) {
+          void packetSent() {
             ++this->n;
             this->fileDownlink->tlmWrite_PacketsSent(n);
           }
@@ -188,7 +188,7 @@ namespace Svc {
         public:
 
           //! Issue a File Open Error warning
-          void fileOpenError(void);
+          void fileOpenError();
 
           //! Issue a File Read Error warning
           void fileRead(const Os::File::Status status);
@@ -196,7 +196,7 @@ namespace Svc {
         PRIVATE:
 
           //! Record a warning
-          void warning(void) {
+          void warning() {
             ++this->n;
             this->fileDownlink->tlmWrite_Warnings(n);
           }
@@ -271,7 +271,7 @@ namespace Svc {
 
       //! Destroy object FileDownlink
       //!
-      ~FileDownlink(void);
+      ~FileDownlink();
 
     PRIVATE:
 
@@ -291,8 +291,8 @@ namespace Svc {
       //!
       Svc::SendFileResponse SendFile_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          sourceFileNameString sourceFilename, /*!< Path of file to downlink*/
-          destFileNameString destFilename, /*!< Path to store downlinked file at*/
+          const sourceFileNameString& sourceFilename, /*!< Path of file to downlink*/
+          const destFileNameString& destFilename, /*!< Path to store downlinked file at*/
           U32 offset, /*!< Amount of data in bytes to downlink from file. 0 to read until end of file*/
           U32 length /*!< Amount of data in bytes to downlink from file. 0 to read until end of file*/
       );
@@ -363,14 +363,14 @@ namespace Svc {
 
       //Individual packet transfer functions
       Os::File::Status sendDataPacket(U32 &byteOffset);
-      void sendCancelPacket(void);
-      void sendEndPacket(void);
-      void sendStartPacket(void);
+      void sendCancelPacket();
+      void sendEndPacket();
+      void sendStartPacket();
       void sendFilePacket(const Fw::FilePacket& filePacket);
 
       //State-helper functions
-      void exitFileTransfer(void);
-      void enterCooldown(void);
+      void exitFileTransfer();
+      void enterCooldown();
 
       //Function to acquire a buffer internally
       void getBuffer(Fw::Buffer& buffer, PacketType type);
@@ -379,7 +379,7 @@ namespace Svc {
       //Finish the file transfer
       void finishHelper(bool is_cancel);
       // Convert internal status enum to a command response;
-      Fw::CommandResponse statusToCmdResp(SendFileStatus status);
+      Fw::CmdResponse statusToCmdResp(SendFileStatus status);
       //Send response after completing file downlink
       void sendResponse(SendFileStatus resp);
 

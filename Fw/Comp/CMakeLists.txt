@@ -23,4 +23,4 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
 )
-register_fprime_module("${SOURCE_FILES}" "${MOD_DEPS}" "Fw_CompQueued")
+register_fprime_module("Fw_CompQueued")

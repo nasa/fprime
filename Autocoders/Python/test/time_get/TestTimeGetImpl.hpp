@@ -14,7 +14,7 @@ class TimeGetTesterImpl: public TimeGet::TimeGetTesterComponentBase {
     public:
         TimeGetTesterImpl(const char* compName);
         virtual ~TimeGetTesterImpl();
-        void init(void);
+        void init();
     protected:
         void test_time_get_handler();
 };

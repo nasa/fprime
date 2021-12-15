@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/RpiDemoComponentAi.xml"
+	"${CMAKE_CURRENT_LIST_DIR}/RpiDemo.fpp"
 	"${CMAKE_CURRENT_LIST_DIR}/RpiDemoComponentImpl.cpp"
 )
 register_fprime_module()

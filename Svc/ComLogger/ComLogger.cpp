@@ -9,7 +9,7 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/ValidateFile.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
@@ -33,11 +33,11 @@ namespace Svc {
     else {
       FW_ASSERT(maxFileSize > sizeof(0), maxFileSize); // must be a positive integer
     }
-    FW_ASSERT((NATIVE_UINT_TYPE)strnlen(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
-      (NATIVE_UINT_TYPE) strnlen(incomingFilePrefix, sizeof(this->filePrefix)), (NATIVE_UINT_TYPE) sizeof(this->filePrefix)); // ensure that file prefix is not too big
+    FW_ASSERT(strnlen(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
+      strnlen(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
     // Set the file prefix:
-    Fw::StringUtils::string_copy((char*) this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
+    Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
   }
 
   void ComLogger ::
@@ -50,7 +50,7 @@ namespace Svc {
   }
 
   ComLogger ::
-    ~ComLogger(void)
+    ~ComLogger()
   {
     // Close file:
     // this->closeFile();
@@ -123,7 +123,7 @@ namespace Svc {
     )
   {
     this->closeFile();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   void ComLogger ::
@@ -147,23 +147,23 @@ namespace Svc {
     // Create filename:
     Fw::Time timestamp = getTime();
     memset(this->fileName, 0, sizeof(this->fileName));
-    bytesCopied = snprintf((char*) this->fileName, sizeof(this->fileName), "%s_%d_%d_%06d.com",
-      this->filePrefix, (U32) timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds());
+    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%d_%d_%06d.com",
+      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
 
     // "A return value of size or more means that the output was truncated"
     // See here: http://linux.die.net/man/3/snprintf
     FW_ASSERT( bytesCopied < sizeof(this->fileName) );
 
     // Create sha filename:
-    bytesCopied = snprintf((char*) this->hashFileName, sizeof(this->hashFileName), "%s_%d_%d_%06d.com%s",
-      this->filePrefix, (U32) timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
+    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%d_%d_%06d.com%s",
+      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
     FW_ASSERT( bytesCopied < sizeof(this->hashFileName) );
 
-    Os::File::Status ret = file.open((char*) this->fileName, Os::File::OPEN_WRITE);
+    Os::File::Status ret = file.open(this->fileName, Os::File::OPEN_WRITE);
     if( Os::File::OP_OK != ret ) {
       if( !this->openErrorOccurred ) { // throttle this event, otherwise a positive
                                        // feedback event loop can occur!
-        Fw::LogStringArg logStringArg((char*) this->fileName);
+        Fw::LogStringArg logStringArg(this->fileName);
         this->log_WARNING_HI_FileOpenError(ret, logStringArg);
       }
       this->openErrorOccurred = true;
@@ -194,7 +194,7 @@ namespace Svc {
       this->fileMode = CLOSED;
 
       // Send event:
-      Fw::LogStringArg logStringArg((char*) this->fileName);
+      Fw::LogStringArg logStringArg(this->fileName);
       this->log_DIAGNOSTIC_FileClosed(logStringArg);
     }
   }
@@ -232,10 +232,10 @@ namespace Svc {
   {
     NATIVE_INT_TYPE size = length;
     Os::File::Status ret = file.write(data, size);
-    if( Os::File::OP_OK != ret || size != (NATIVE_INT_TYPE) length ) {
+    if( Os::File::OP_OK != ret || size != static_cast<NATIVE_INT_TYPE>(length) ) {
       if( !this->writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
-        Fw::LogStringArg logStringArg((char*) this->fileName);
+        Fw::LogStringArg logStringArg(this->fileName);
         this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
       }
       this->writeErrorOccurred = true;
@@ -251,10 +251,10 @@ namespace Svc {
     )
   {
     Os::ValidateFile::Status validateStatus;
-    validateStatus = Os::ValidateFile::createValidation((char*) this->fileName, (char*)this->hashFileName);
+    validateStatus = Os::ValidateFile::createValidation(this->fileName, this->hashFileName);
     if( Os::ValidateFile::VALIDATION_OK != validateStatus ) {
-      Fw::LogStringArg logStringArg1((char*) this->fileName);
-      Fw::LogStringArg logStringArg2((char*) this->hashFileName);
+      Fw::LogStringArg logStringArg1(this->fileName);
+      Fw::LogStringArg logStringArg2(this->hashFileName);
       this->log_WARNING_LO_FileValidationError(logStringArg1, logStringArg2, validateStatus);
     }
   }

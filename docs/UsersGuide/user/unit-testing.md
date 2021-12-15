@@ -106,7 +106,7 @@ ASSERT_CMD_RESPONSE(
     0, // Index in the history
     Component::OPCODE\_COMMAND\_NAME, // Expected command opcode
     cmdSeq, // Expected command sequence number
-    Fw::COMMAND_OK // Expected command response
+    Fw::CmdResponse::OK // Expected command response
 }
 ```
 

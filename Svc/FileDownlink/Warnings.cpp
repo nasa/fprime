@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Warnings.cpp
 // \author bocchino
 // \brief  cpp file for FileDownlink::Warnings
@@ -7,13 +7,13 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 #include <Svc/FileDownlink/FileDownlink.hpp>
 
 namespace Svc {
 
   void FileDownlink::Warnings ::
-    fileOpenError(void)
+    fileOpenError()
   {
     this->fileDownlink->log_WARNING_HI_FileOpenError(
         this->fileDownlink->file.sourceName

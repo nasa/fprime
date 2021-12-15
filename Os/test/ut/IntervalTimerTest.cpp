@@ -4,10 +4,10 @@
 #include <cstdio>
 
 extern "C" {
-    void intervalTimerTest(void);
+    void intervalTimerTest();
 }
 
-void intervalTimerTest(void) {
+void intervalTimerTest() {
     Os::IntervalTimer timer;
     timer.start();
     Os::Task::delay(1000);

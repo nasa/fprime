@@ -27,7 +27,7 @@ namespace TestComponents {
     ) :
       TestSerialComponentBase(compName)
 #else
-    TestSerialImpl(void)
+    TestSerialImpl()
 #endif
   {
 
@@ -44,7 +44,7 @@ namespace TestComponents {
   }
 
   TestSerialImpl ::
-    ~TestSerialImpl(void)
+    ~TestSerialImpl()
   {
 
   }

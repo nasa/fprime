@@ -13,6 +13,7 @@
 #include <Drv/Udp/UdpComponentImpl.hpp>
 #include <IpCfg.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Fw/Types/Assert.hpp"
 
 
 namespace Drv {
@@ -40,7 +41,7 @@ SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 p
     return m_socket.configureRecv(hostname, port);
 }
 
-UdpComponentImpl::~UdpComponentImpl(void) {}
+UdpComponentImpl::~UdpComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Implementations for socket read task virtual methods
@@ -55,7 +56,8 @@ Fw::Buffer UdpComponentImpl::getBuffer() {
 }
 
 void UdpComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    this->recv_out(0, buffer, (status == SOCK_SUCCESS) ? RECV_OK : RECV_ERROR);
+    Drv::RecvStatus recvStatus = (status == SOCK_SUCCESS) ? RecvStatus::RECV_OK : RecvStatus::RECV_ERROR;
+    this->recv_out(0, buffer, recvStatus);
 }
 
 void UdpComponentImpl::connected() {
@@ -73,16 +75,16 @@ Drv::SendStatus UdpComponentImpl::send_handler(const NATIVE_INT_TYPE portNum, Fw
     // Always return the buffer
     deallocate_out(0, fwBuffer);
     if ((status == SOCK_DISCONNECTED) || (status == SOCK_INTERRUPTED_TRY_AGAIN)) {
-        return SEND_RETRY;
+        return SendStatus::SEND_RETRY;
     } else if (status != SOCK_SUCCESS) {
-        return SEND_ERROR;
+        return SendStatus::SEND_ERROR;
     }
-    return SEND_OK;
+    return SendStatus::SEND_OK;
 }
 
 Drv::PollStatus UdpComponentImpl::poll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(0); // It is an error to call this handler on IP drivers
-    return Drv::POLL_ERROR;
+    return PollStatus::POLL_ERROR;
 }
 
 }  // end namespace Drv

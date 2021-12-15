@@ -45,7 +45,7 @@ namespace ExampleComponents {
 
       //! Destroy object Example
       //!
-      ~ExampleComponentImpl(void);
+      ~ExampleComponentImpl();
 
       void makePortCall(NATIVE_INT_TYPE port);
 
@@ -61,7 +61,7 @@ namespace ExampleComponents {
           const NATIVE_INT_TYPE portNum, //!< The port number
           I32 arg1, //!< A built-in type argument
           AnotherExample::SomeEnum arg2, //!< The ENUM argument
-          AnotherExample::arg6String arg6
+          const AnotherExample::arg6String& arg6
       );
 
     };

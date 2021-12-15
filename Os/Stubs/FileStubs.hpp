@@ -27,16 +27,16 @@ namespace Os {
     typedef bool (*SeekInterceptor)(Os::File::Status &status, NATIVE_INT_TYPE offset, bool absolute, void* ptr);
 
     void registerReadInterceptor(ReadInterceptor funcPtr, void* ptr);
-    void clearReadInterceptor(void);
+    void clearReadInterceptor();
 
     void registerWriteInterceptor(WriteInterceptor funcPtr, void* ptr);
-    void clearWriteInterceptor(void);
+    void clearWriteInterceptor();
 
     void registerOpenInterceptor(OpenInterceptor funcPtr, void* ptr);
-    void clearOpenInterceptor(void);
+    void clearOpenInterceptor();
 
     void registerSeekInterceptor(SeekInterceptor funcPtr, void* ptr);
-    void clearSeekInterceptor(void);
+    void clearSeekInterceptor();
 
     void setLastError(NATIVE_INT_TYPE error);
 

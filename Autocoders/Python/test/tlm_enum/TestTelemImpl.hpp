@@ -19,7 +19,7 @@ class TestTlmImpl: public Tlm::TestTlmComponentBase {
 #endif
         void genTlm(I32 val);
         virtual ~TestTlmImpl();
-        void init(void);
+        void init();
     protected:
         void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);
 };

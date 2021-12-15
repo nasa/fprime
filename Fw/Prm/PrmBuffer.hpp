@@ -2,7 +2,7 @@
  * Cmd.hpp
  *
  *  Created on: Sep 10, 2012
- *      Author: ppandian 
+ *      Author: ppandian
  */
 
 /*
@@ -31,11 +31,11 @@ namespace Fw {
             ParamBuffer();
             ParamBuffer(const ParamBuffer& other);
             virtual ~ParamBuffer();
-            const ParamBuffer& operator=(const ParamBuffer& other);
+            ParamBuffer& operator=(const ParamBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         private:
             U8 m_bufferData[FW_PARAM_BUFFER_MAX_SIZE]; // command argument buffer

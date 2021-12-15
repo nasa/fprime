@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <math.h>  //isnan()
+#include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
 #include <version.hpp>
 #include "Fw/Types/BasicTypes.hpp"
@@ -84,15 +84,15 @@ void SystemResources ::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TY
 void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          SystemResourceEnabled enable) {
-    m_enable = (enable == SYS_RES_ENABLED);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    m_enable = (enable == SystemResourceEnabled::ENABLED);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void SystemResources ::VERSION_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
     Fw::LogStringArg version_string(VERSION);
 
     this->log_ACTIVITY_LO_VERSION(version_string);
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::SystemResources::CpuTicks previous) {
@@ -102,7 +102,7 @@ F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::Syst
         // Compute CPU % Utilization
         util = (static_cast<F32>(current.used - previous.used) / static_cast<F32>(current.total - previous.total)) *
                100.0f;
-        util = isnan(util) ? 100.0f : util;
+        util = std::isnan(util) ? 100.0f : util;
     }
     return util;
 }
@@ -128,14 +128,12 @@ void SystemResources::Cpu() {
         }
     }
 
-    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / count);
+    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / static_cast<F32>(count));
     this->tlmWrite_CPU(cpuAvg);
 }
 
 void SystemResources::Mem() {
-    Os::SystemResources::SystemResourcesStatus status;
-
-    if ((status = Os::SystemResources::getMemUtil(m_mem)) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
+    if (Os::SystemResources::getMemUtil(m_mem) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->tlmWrite_MEMORY_TOTAL(m_mem.total / 1024);
         this->tlmWrite_MEMORY_USED(m_mem.used / 1024);
     }

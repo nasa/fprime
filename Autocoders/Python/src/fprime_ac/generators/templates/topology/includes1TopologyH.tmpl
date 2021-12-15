@@ -2,7 +2,7 @@
 ## This template will contain the includes and starting static code
 ##
 \#include <Fw/Obj/SimpleObjRegistry.hpp>
-\#include <string.h>
+\#include <cstring>
 
 #for $xml_name in $component_import_list:
 \#include <${xml_name}>
@@ -27,11 +27,11 @@ extern ${declaration_template}
 
 
 extern "C" {
-    void dumparch(void);
+    void dumparch();
     void dumpobj(const char* objName);
 }
 
 
-void dumparch(void);
+void dumparch();
 
 void dumpobj(const char* objName);

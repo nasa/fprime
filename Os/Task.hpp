@@ -41,20 +41,20 @@ namespace Os {
             TaskStatus start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority = TASK_DEFAULT, NATIVE_UINT_TYPE stackSize = TASK_DEFAULT,  NATIVE_UINT_TYPE cpuAffinity = TASK_DEFAULT, NATIVE_UINT_TYPE identifier = TASK_DEFAULT); //!< start the task
 
             // Deprecated: only the name, routine, and argument are **required** parameters.  This ordering of parameters is therefore inappropriate and will be removed in the future
-            DEPRECATED(TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = TASK_DEFAULT),
+            DEPRECATED(TaskStatus start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity = static_cast<NATIVE_INT_TYPE>(TASK_DEFAULT)),
                        "Please switch to start(Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier)"); //!< start the task
-            I32 getIdentifier(void); //!< get the identifier for the task
-            static TaskId getOsIdentifier(void); //Gets the Os Task ID. Useful for passive components.
+            I32 getIdentifier(); //!< get the identifier for the task
+            static TaskId getOsIdentifier(); //Gets the Os Task ID. Useful for passive components.
 
             static TaskStatus delay(NATIVE_UINT_TYPE msecs); //!< delay the task
-            static NATIVE_INT_TYPE getNumTasks(void);
+            static NATIVE_INT_TYPE getNumTasks();
 
             TaskStatus join(void **value_ptr); //!< Wait for task to finish
             void suspend(bool onPurpose = false); //!< suspend task
-            void resume(void); //!< resume execution of task
-            bool wasSuspended(void); //!< returns whether or not task was suspended on purpose
-            bool isSuspended(void); //!< check with OS to see if it is suspended already
-            bool isStarted(void); //!< check to see if task is started
+            void resume(); //!< resume execution of task
+            bool wasSuspended(); //!< returns whether or not task was suspended on purpose
+            bool isSuspended(); //!< check with OS to see if it is suspended already
+            bool isStarted(); //!< check to see if task is started
             void setStarted(bool started); //!< set task to started when thread is fully up. Avoids a VxWorks race condition.
             /**
              * Returns the task-handle owned by this task

@@ -6,7 +6,7 @@
 # build type.  This means the  following things to be setup:
 # 
 # 1. `gcov` must be available on the path
-# 2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
+# 2. `-DBUILD_TESTING=ON` must be supplied
 # 
 # Once the CMake build directory has been created the user can run the CMake targets
 # `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
@@ -30,70 +30,62 @@
 # The following functions are used to register the _coverage targets into the target system. They
 # are required for the system to register custom targets.
 ####
+
+# Global settings for coverage
+if (FPRIME_ENABLE_UT_COVERAGE)
+    # Note: this is to prevent filenames of the form file.cpp.<extension> and instead use file.<extension> instead to appease gcov
+    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
+    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+endif()
+
 ####
 #  Function `add_global_target`:
 #
-#  Adds a global target. Note: only run for "TESTING" builds.
+#  Adds a global target. Note: only run for "BUILD_TESTING=ON" builds.
 #
 # - **TARGET_NAME:** target name to be generated
 ####
 function(add_global_target TARGET_NAME)
-    # UTs don't supply directories
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
-        return()
+    if (FPRIME_ENABLE_UT_COVERAGE)
+        find_program(GCOV_EXE "gcov")
+        if (GCOV_EXE)
+            add_custom_target(${TARGET_NAME})
+        elseif()
+            add_custom_target(${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'gcov' not found. Will not calculate coverage.")
+        endif()
     endif()
-    add_custom_target(${TARGET_NAME})
 endfunction(add_global_target)
+
+
 ####
 # Dict function `add_module_target`:
 #
-# Creates each module's coverage targets.
+# Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
 #
 # - **MODULE_NAME:** name of the module
 # - **TARGET_NAME:** name of target to produce
-# - **GLOBAL_TARGET_NAME:** name of produced global target
-# - **AC_INPUTS:** list of autocoder inputs
 # - **SOURCE_FILES:** list of source file inputs
-# - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** hand specified dependencies of target
+# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+    get_target_property(FINAL_SOURCES "${MODULE_NAME}" SOURCES)
     # Protects against multiple calls to fprime_register_ut()
-    if (TARGET ${TARGET_NAME})
-        return()
-    endif()
-
-
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "TESTING")
+    if (TARGET ${MODULE_NAME}_${TARGET_NAME} OR NOT FINAL_SOURCES OR NOT FPRIME_ENABLE_UT_COVERAGE)
         return()
     endif()
 
     # Test for the 'gcov' program or bail with WARNING
     find_program(GCOV_EXE "gcov")
-    if (DEFINED GCOV_EXE-NOTFOUND)
-        message(WARNING "Failed to find 'gcov' program for calculating coverage")
-        return()
+    if (NOT GCOV_EXE)
+        add_custom_target(${MODULE}_${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'gcov' not found. Will not calculate coverage.")
+    else()
+        add_custom_target(
+            ${MODULE_NAME}_${TARGET_NAME}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
+            COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${FINAL_SOURCES}
+            COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
+        )
+        add_dependencies(${MODULE_NAME}_${TARGET_NAME} ${MODULE_NAME}_check)
+        add_dependencies(${TARGET_NAME} ${TARGET_NAME})
     endif()
-
-    set(COV_FILES "")
-    foreach(SRC_IN ${SOURCE_FILES};${AC_OUTPUTS})
-        get_filename_component(EXTN ${SRC_IN} EXT)
-        if (EXTN STREQUAL ".cpp")
-            list(APPEND COV_FILES ${SRC_IN})
-        endif()
-    endforeach()
-
-    # If unit test somehow has no source files, don't register coverage target
-    if(COV_FILES STREQUAL "")
-       return()
-    endif()
-
-    add_custom_target(
-        ${TARGET_NAME}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
-        COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${COV_FILES} 
-        COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
-    )
-    add_dependencies(${TARGET_NAME} ${MODULE_NAME}_check)
-    add_dependencies(${GLOBAL_TARGET_NAME} ${TARGET_NAME})
 endfunction(add_module_target)

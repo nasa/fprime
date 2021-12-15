@@ -198,13 +198,20 @@ class ModelParser:
                 m = a.get_modifier()
                 e = None
                 #
-                # Store modifier as language symbol
+                # Pass port scalar and specified arguments as specified
+                # and port non-specified non-scalar arguments by const reference
+                isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
+                isConstReference = False
+
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":
                     m = "&"
-                else:
+                elif TypesList.isPrimitiveType(t) or isEnum:
                     m = ""
+                else:
+                    isConstReference = True
+                    m = "&"
 
                 if t == "string":
                     t = n + "String"
@@ -230,7 +237,10 @@ class ModelParser:
                 #    c = ""
                 #    m = "&"
                 # print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n, t, c, m, e))
+                non_const_arg_type = t
+                if isConstReference:
+                    t = "const " + t
+                args_dict[name].append((n, t, c, m, e, non_const_arg_type))
         return args_dict
 
     def getPortArgsPrototypeStringDict(self, obj):
@@ -586,7 +596,7 @@ class ModelParser:
                         sys.exit(-1)
                     typeinfo = "enum"
                 elif t == "string":
-                    t = "Fw::LogStringArg&"
+                    t = "const Fw::LogStringArg&"
                     typeinfo = "string"
                 elif t not in TypesList.types_list:
                     typeinfo = "user"
@@ -614,7 +624,8 @@ class ModelParser:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
-                d2[l] = "void"
+                # If event has no arguments parameter string should be empty
+                d2[l] = ""
         return d2
 
     def getInternalInterfacesList(self, obj):
@@ -680,7 +691,7 @@ class ModelParser:
                     pass
                 else:
                     if from_proto:
-                        t = "%s&" % t
+                        t = "const %s&" % t
                     typeinfo = "user"
                 c = a.get_comment()
                 args_dict[name].append((n, t, c, typeinfo))
