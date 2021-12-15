@@ -6,7 +6,7 @@
 #include <Svc/ActiveTextLogger/ActiveTextLoggerImpl.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <time.h>
+#include <ctime>
 
 namespace Svc {
 
@@ -38,39 +38,39 @@ namespace Svc {
     void ActiveTextLoggerComponentImpl::TextLogger_handler(NATIVE_INT_TYPE portNum,
                                                   FwEventIdType id,
                                                   Fw::Time &timeTag,
-                                                  Fw::TextLogSeverity severity,
+                                                  const Fw::LogSeverity& severity,
                                                   Fw::TextLogString &text)
     {
 
         // Currently not doing any input filtering
         // TKC - 5/3/2018 - remove diagnostic
-        if (Fw::TEXT_LOG_DIAGNOSTIC == severity) {
+        if (Fw::LogSeverity::DIAGNOSTIC == severity.e) {
             return;
         }
 
         // Format the string here, so that it is done in the task context
         // of the caller.  Format doc borrowed from PassiveTextLogger.
         const char *severityString = "UNKNOWN";
-        switch (severity) {
-            case Fw::TEXT_LOG_FATAL:
+        switch (severity.e) {
+            case Fw::LogSeverity::FATAL:
                 severityString = "FATAL";
                 break;
-            case Fw::TEXT_LOG_WARNING_HI:
+            case Fw::LogSeverity::WARNING_HI:
                 severityString = "WARNING_HI";
                 break;
-            case Fw::TEXT_LOG_WARNING_LO:
+            case Fw::LogSeverity::WARNING_LO:
                 severityString = "WARNING_LO";
                 break;
-            case Fw::TEXT_LOG_COMMAND:
+            case Fw::LogSeverity::COMMAND:
                 severityString = "COMMAND";
                 break;
-            case Fw::TEXT_LOG_ACTIVITY_HI:
+            case Fw::LogSeverity::ACTIVITY_HI:
                 severityString = "ACTIVITY_HI";
                 break;
-            case Fw::TEXT_LOG_ACTIVITY_LO:
+            case Fw::LogSeverity::ACTIVITY_LO:
                 severityString = "ACTIVITY_LO";
                 break;
-            case Fw::TEXT_LOG_DIAGNOSTIC:
+            case Fw::LogSeverity::DIAGNOSTIC:
                 severityString = "DIAGNOSTIC";
                 break;
             default:
@@ -80,7 +80,6 @@ namespace Svc {
 
         // TODO: Add calling task id to format string
         char textStr[FW_INTERNAL_INTERFACE_STRING_MAX_SIZE];
-        NATIVE_INT_TYPE stat;
 
         if (timeTag.getTimeBase() == TB_WORKSTATION_TIME) {
 
@@ -89,11 +88,11 @@ namespace Svc {
             // interfering with our time object before we use it. However, the null pointer check is still needed
             // to ensure a successful call
             tm tm;
-            if (localtime_r(&t, &tm) == NULL) {
+            if (localtime_r(&t, &tm) == nullptr) {
                 return;
             }
 
-            stat = snprintf(textStr,
+            (void) snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
                             "EVENT: (%d) (%04d-%02d-%02dT%02d:%02d:%02d.%03u) %s: %s\n",
                             id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
@@ -102,19 +101,10 @@ namespace Svc {
         }
         else {
 
-            stat = snprintf(textStr,
+            (void) snprintf(textStr,
                             FW_INTERNAL_INTERFACE_STRING_MAX_SIZE,
                             "EVENT: (%d) (%d:%d,%d) %s: %s\n",
                             id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
-        }
-
-        // If there was an error then just return:
-        if (stat <= 0) {
-            return;
-        }
-        // If there was string text truncation:
-        else if (stat >= FW_INTERNAL_INTERFACE_STRING_MAX_SIZE) {
-            // Do nothing
         }
 
         // Call internal interface so that everything else is done on component thread,
@@ -144,7 +134,7 @@ namespace Svc {
 
     bool ActiveTextLoggerComponentImpl::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
-        FW_ASSERT(fileName != NULL);
+        FW_ASSERT(fileName != nullptr);
 
         return this->m_log_file.set_log_file(fileName, maxSize, maxBackups);
     }

@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 
 // TEST(Test, NominalTlm) {
 //   Svc::Tester tester;
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     }
 
     Drv::Tester tester;
-    
+
     int gpio = atoi(argv[1]);
     int output = atoi(argv[2]);
 

@@ -13,14 +13,14 @@ namespace Os {
             TaskString(const char* src); //!< char buffer constructor
             TaskString(const StringBase& src); //!< Copy constructor
             TaskString(const TaskString& src); //!< Copy constructor
-            TaskString(void); //!< default constructor
+            TaskString(); //!< default constructor
             TaskString& operator=(const TaskString& other); //!< assignment operator
             TaskString& operator=(const StringBase& other); //!< other string assignment operator
             TaskString& operator=(const char* other); //!< char* assignment operator
-            ~TaskString(void); //!< destructor
+            ~TaskString(); //!< destructor
 
-            const char* toChar(void) const; //!< get pointer to internal char buffer
-            NATIVE_UINT_TYPE getCapacity(void) const; //!< return buffer size
+            const char* toChar() const; //!< get pointer to internal char buffer
+            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
 
         private:
 

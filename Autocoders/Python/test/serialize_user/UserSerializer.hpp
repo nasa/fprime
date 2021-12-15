@@ -19,11 +19,11 @@ namespace ANameSpace {
             SERIALIZED_SIZE = sizeof(SomeUserStruct) + sizeof(I32)
         };
 
-        UserSerializer(void); // Default constructor
+        UserSerializer(); // Default constructor
         UserSerializer(const SomeUserStruct* src); // copy constructor
         UserSerializer(const SomeUserStruct& src); // copy constructor
         UserSerializer(SomeUserStruct arg); // constructor with arguments
-        const SomeUserStruct& operator=(const SomeUserStruct& src); // Equal operator
+        SomeUserStruct& operator=(const SomeUserStruct& src); // Equal operator
 
         void setVal(const SomeUserStruct& arg); // set values
 

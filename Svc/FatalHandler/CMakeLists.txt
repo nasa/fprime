@@ -8,7 +8,7 @@
 ####
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/FatalHandler.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/FatalHandlerComponentCommonImpl.cpp"
 )
 

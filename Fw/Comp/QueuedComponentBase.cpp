@@ -3,7 +3,7 @@
 #include <FpConfig.hpp>
 #include <Os/QueueString.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 
@@ -41,11 +41,11 @@ namespace Fw {
     	return this->m_queue.create(queueName, depth, msgSize);
     }
 
-    NATIVE_INT_TYPE QueuedComponentBase::getNumMsgsDropped(void) {
+    NATIVE_INT_TYPE QueuedComponentBase::getNumMsgsDropped() {
         return this->m_msgsDropped;
     }
 
-    void QueuedComponentBase::incNumMsgDropped(void) {
+    void QueuedComponentBase::incNumMsgDropped() {
         this->m_msgsDropped++;
     }
 

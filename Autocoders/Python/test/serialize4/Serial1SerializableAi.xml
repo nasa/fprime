@@ -18,9 +18,9 @@
             </enum>
             <default>MEM2</default>
         </member>
-        <member name="Member4" type="U32" size="3" comment = "Example member 4">
+        <member name="Member4" type="U32" array_size="3" comment = "Example member 4">
             <default>3</default>
         </member>
+        <member name="Member5" type="string" size="16" array_size="2" comment = "Example member 5"/>
     </members>
 </serializable>
-

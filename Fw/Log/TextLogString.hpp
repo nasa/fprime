@@ -19,14 +19,14 @@ namespace Fw {
             TextLogString(const char* src);
             TextLogString(const StringBase& src);
             TextLogString(const TextLogString& src);
-            TextLogString(void);
+            TextLogString();
             TextLogString& operator=(const TextLogString& other);
             TextLogString& operator=(const StringBase& other);
             TextLogString& operator=(const char* other);
-            ~TextLogString(void);
+            ~TextLogString();
 
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            const char* toChar() const;
+            NATIVE_UINT_TYPE getCapacity() const ;
 
         private:
 

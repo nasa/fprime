@@ -7,7 +7,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Svc/GroundInterface/GroundInterface.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <string.h>
+#include <cstring>
 
 namespace Svc {
 
@@ -39,7 +39,7 @@ namespace Svc {
   }
 
   GroundInterfaceComponentImpl ::
-    ~GroundInterfaceComponentImpl(void)
+    ~GroundInterfaceComponentImpl()
   {
 
   }

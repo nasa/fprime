@@ -21,8 +21,8 @@ namespace SvcTest {
             ComponentTesterImpl();
 #endif
             virtual ~ComponentTesterImpl();
-            void init(void);
-            void runTest(void);
+            void init();
+            void runTest();
         private:
     };
 

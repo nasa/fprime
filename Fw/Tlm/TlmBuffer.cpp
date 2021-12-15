@@ -7,7 +7,7 @@ namespace Fw {
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
-    
+
     TlmBuffer::TlmBuffer() {
     }
 
@@ -19,21 +19,25 @@ namespace Fw {
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const TlmBuffer& TlmBuffer::operator=(const TlmBuffer& other) {
+    TlmBuffer& TlmBuffer::operator=(const TlmBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
     }
 
-    NATIVE_UINT_TYPE TlmBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE TlmBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 
-    const U8* TlmBuffer::getBuffAddr(void) const {
+    const U8* TlmBuffer::getBuffAddr() const {
         return this->m_bufferData;
     }
 
-    U8* TlmBuffer::getBuffAddr(void) {
+    U8* TlmBuffer::getBuffAddr() {
         return this->m_bufferData;
     }
 

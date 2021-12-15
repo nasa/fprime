@@ -5,8 +5,8 @@
 #include <Fw/Types/String.hpp>
 
 #include <unistd.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -26,7 +26,7 @@ void testTestFileSystem() {
 	U32 file_count = 0;
 	const char test_string[] = "This is a test file.";
 	NATIVE_INT_TYPE test_string_len = 0;
-	
+
 
 	printf("Creating %s directory\n", test_dir1);
 	if ((file_sys_status = Os::FileSystem::createDirectory(test_dir1)) != Os::FileSystem::OP_OK) {
@@ -44,7 +44,7 @@ void testTestFileSystem() {
 		ASSERT_TRUE(0);
 	}
 	ASSERT_EQ(file_count,0);
-	
+
 	printf("Moving directory (%s) to (%s).\n", test_dir1, test_dir2);
 	if ((file_sys_status = Os::FileSystem::moveFile(test_dir1, test_dir2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to move directory (%s) to (%s).\n", test_dir1, test_dir2);
@@ -62,7 +62,7 @@ void testTestFileSystem() {
 	}
 	ASSERT_EQ(stat(test_dir1, &info),-1);
 	ASSERT_EQ(stat(test_dir2, &info),0);
-	
+
 	printf("Removing directory %s\n", test_dir2);
 	if ((file_sys_status = Os::FileSystem::removeDirectory(test_dir2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to remove directory: %s\n", test_dir2);
@@ -80,7 +80,7 @@ void testTestFileSystem() {
 	}
 
 	test_string_len = sizeof(test_string);
-	
+
 	printf("Writing to test file (%s) for testing.\n", test_file_name1);
 	if((file_status = test_file.write(test_string, test_string_len, true)) != Os::File::OP_OK) {
 		printf("\tFailed to write to file: %s\n.", test_file_name1);
@@ -109,7 +109,7 @@ void testTestFileSystem() {
 	}
 	ASSERT_EQ(stat(test_file_name1, &info),0);
 	ASSERT_EQ(stat(test_file_name2, &info),0);
-	
+
 	char file_buf1[64];
     char file_buf2[64];
 	// Read the two files and make sure they are the same
@@ -140,7 +140,7 @@ void testTestFileSystem() {
 		ASSERT_TRUE(0);
 	}
 	ASSERT_EQ(stat(test_file_name2, &info),-1);
-	
+
 	printf("Getting the number of files in (%s)\n", cur_dir);
 	if ((file_sys_status = Os::FileSystem::getFileCount(cur_dir, file_count)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to get number of files in (%s)\n", cur_dir);
@@ -148,7 +148,7 @@ void testTestFileSystem() {
 		ASSERT_TRUE(0);
 	}
 	ASSERT_TRUE(file_count > 0);
-	
+
 	printf("Reading the files in (%s)\n", cur_dir);
 	const int num_str = 5;
         U32 num_2 = num_str;
@@ -207,9 +207,9 @@ void testTestFileSystem() {
 }
 
 extern "C" {
-    void fileSystemTest(void);
+    void fileSystemTest();
 }
 
-void fileSystemTest(void) {
-    testTestFileSystem(); 
+void fileSystemTest() {
+    testTestFileSystem();
 }

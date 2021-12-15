@@ -35,7 +35,7 @@ class GenericRepeaterComponentImpl : public GenericRepeaterComponentBase {
 
     //! Destroy object GenericRepeater
     //!
-    ~GenericRepeaterComponentImpl(void);
+    ~GenericRepeaterComponentImpl();
 
   PRIVATE:
     // ----------------------------------------------------------------------

@@ -7,7 +7,7 @@
 #else
 \#include <$(name)TopologyAppAc.hpp>
 \#include <Fw/Obj/SimpleObjRegistry.hpp>
-\#include <string.h>
+\#include <cstring>
 
 //#for $p, $ns, $t in $component_header_list:
 //\#include <${p}/${ns}${t}Impl.hpp>
@@ -30,12 +30,12 @@ using namespace std;
 //#end for
 
 extern "C" {
-    void dumparch(void);
+    void dumparch();
     void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
 #if $is_ptr:
     simpleReg_ptr->dump();
 #else:

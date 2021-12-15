@@ -1,0 +1,10 @@
+#!/bin/sh
+
+files=`find . -mindepth 2 -maxdepth 2 -name update-locs | sed 's;^\./;;'`
+
+for file in $files
+do
+  dir=`dirname $file`
+  echo "updating locs in $dir"
+  (cd $dir; ./update-locs)
+done

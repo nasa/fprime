@@ -15,16 +15,24 @@ namespace Fw {
         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    CmdStringArg::CmdStringArg(void) : StringBase() {
+    CmdStringArg::CmdStringArg() : StringBase() {
         this->m_buf[0] = 0;
     }
 
     CmdStringArg& CmdStringArg::operator=(const CmdStringArg& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     CmdStringArg& CmdStringArg::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
@@ -34,14 +42,14 @@ namespace Fw {
         return *this;
     }
 
-    CmdStringArg::~CmdStringArg(void) {
+    CmdStringArg::~CmdStringArg() {
     }
 
-    const char* CmdStringArg::toChar(void) const {
+    const char* CmdStringArg::toChar() const {
         return this->m_buf;
     }
 
-    NATIVE_UINT_TYPE CmdStringArg::getCapacity(void) const {
+    NATIVE_UINT_TYPE CmdStringArg::getCapacity() const {
         return FW_CMD_STRING_MAX_SIZE;
     }
 }

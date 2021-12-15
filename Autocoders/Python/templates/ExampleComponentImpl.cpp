@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/templates/ExampleComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace ExampleComponents {
 
@@ -25,7 +25,7 @@ namespace ExampleComponents {
         ExampleComponentBase::init(queueDepth,instance);
     }
 
-    void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::mytype arg2, U8 arg3, Example3::ExampleSerializable arg4, AnotherExample::SomeEnum arg5) {
+    void ExampleComponentImpl::exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5) {
         Fw::TlmString arg = "A string arg";
         // write some telemetry
         this->tlmWrite_stringchan(arg);
@@ -47,11 +47,11 @@ namespace ExampleComponents {
     void ExampleComponentImpl::TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, ExampleComponentBase::CmdEnum arg2, const Fw::CmdStringArg& arg3) {
         // issue the test event with the opcode
         Fw::LogStringArg str = "TEST_CMD_1";
-        this->log_ACTIVITY_HI_SomeEvent(opCode,(F32)arg1, Example4::Example2(2.0,3.0,4,5), str,ExampleComponentBase::EVENT_MEMB2);
+        this->log_ACTIVITY_HI_SomeEvent(opCode, static_cast<F32>(arg1), Example4::Example2(2.0,3.0,4,5), str,ExampleComponentBase::EVENT_MEMB2);
         // write a value to a telemetry channel
         U32 chan = 12;
         this->tlmWrite_somechan(chan);
-        this->cmdResponse_out(opCode,cmdSeq, Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq, Fw::CmdResponse::OK);
     }
 
     void ExampleComponentImpl::TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2) {
@@ -59,7 +59,7 @@ namespace ExampleComponents {
         this->log_ACTIVITY_HI_SomeEvent(opCode,arg2, Example4::Example2(6.0,7.0,8,9), str,ExampleComponentBase::EVENT_MEMB3);
         Example4::Example2 ex(10.0,11.0,12,13);
         this->tlmWrite_anotherchan(ex); // <! Example output port
-        this->cmdResponse_out(opCode,cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+        this->cmdResponse_out(opCode,cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
     void ExampleComponentImpl::parameterUpdated(FwPrmIdType id) {
@@ -70,7 +70,7 @@ namespace ExampleComponents {
 
     }
 
-    void ExampleComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, Example4::Example2& arg4) {
+    void ExampleComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, const Example4::Example2& arg4) {
 
     }
 

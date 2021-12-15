@@ -3,10 +3,10 @@
 
 namespace Fw {
 
-    Time::Time(void) : m_seconds(0), m_useconds(0), m_timeBase(TB_NONE), m_timeContext(0)  {
+    Time::Time() : m_seconds(0), m_useconds(0), m_timeBase(TB_NONE), m_timeContext(0)  {
     }
 
-    Time::~Time(void) {
+    Time::~Time() {
     }
 
     Time::Time(const Time& other) : Serializable() {
@@ -40,7 +40,7 @@ namespace Fw {
         this->m_seconds = seconds;
     }
 
-    const Time& Time::operator=(const Time& other) {
+    Time& Time::operator=(const Time& other) {
         this->m_timeBase = other.m_timeBase;
         this->m_timeContext = other.m_timeContext;
         this->m_useconds = other.m_useconds;
@@ -131,19 +131,19 @@ namespace Fw {
         return buffer.deserialize(this->m_useconds);
     }
 
-    U32 Time::getSeconds(void) const {
+    U32 Time::getSeconds() const {
         return this->m_seconds;
     }
 
-    U32 Time::getUSeconds(void) const {
+    U32 Time::getUSeconds() const {
         return this->m_useconds;
     }
 
-    TimeBase Time::getTimeBase(void) const {
+    TimeBase Time::getTimeBase() const {
         return this->m_timeBase;
     }
 
-    U8 Time::getContext(void) const {
+    U8 Time::getContext() const {
         return this->m_timeContext;
     }
 

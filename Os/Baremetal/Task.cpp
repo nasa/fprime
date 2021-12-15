@@ -2,7 +2,9 @@
 #include <Os/Task.hpp>
 #include <Os/Baremetal/TaskRunner/BareTaskHandle.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
+#include <new>
+
 namespace Os {
 
 Task::Task() :
@@ -12,11 +14,11 @@ Task::Task() :
     m_started(false),
     m_suspendedOnPurpose(false)
 {}
-    
+
 Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
     //Get a task handle, and set it up
-    BareTaskHandle* handle = new BareTaskHandle();
-    if (handle == NULL) {
+    BareTaskHandle* handle = new(std::nothrow) BareTaskHandle();
+    if (handle == nullptr) {
        return Task::TASK_UNKNOWN_ERROR;
     }
     //Set handle member variables
@@ -55,17 +57,17 @@ Task::~Task() {
 }
 
 void Task::suspend(bool onPurpose) {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled = false;
 }
-                    
-void Task::resume(void) {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+
+void Task::resume() {
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled = true;
 }
 
-bool Task::isSuspended(void) {
-    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != NULL);
+bool Task::isSuspended() {
+    FW_ASSERT(reinterpret_cast<BareTaskHandle*>(this->m_handle) != nullptr);
     return !reinterpret_cast<BareTaskHandle*>(this->m_handle)->m_enabled;
 }
 

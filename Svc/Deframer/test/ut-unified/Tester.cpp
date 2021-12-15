@@ -32,7 +32,7 @@ Tester ::Tester(bool polling)
     component.setup(protocol);
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
@@ -103,14 +103,14 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
     }
     pollBuffer.setSize(m_incoming_buffer.getSize());
     delete[] incoming;
-    return Drv::POLL_OK;
+    return Drv::PollStatus::POLL_OK;
 }
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // framedIn
     this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
 
@@ -136,7 +136,7 @@ void Tester ::connectPorts(void) {
     this->component.set_framedPoll_OutputPort(0, this->get_from_framedPoll(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

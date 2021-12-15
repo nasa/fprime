@@ -22,7 +22,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
+    Tester() :
 #if FW_OBJECT_NAMES == 1
     LinuxSpiDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxSpiDriver")
@@ -36,7 +36,7 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -46,7 +46,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // SpiReadWrite
@@ -82,7 +82,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -104,7 +104,7 @@ namespace Drv {
 
   void Tester::sendBuffer(BYTE* buffer, NATIVE_INT_TYPE size) {
       Fw::Buffer w;
-      w.setdata((U64)buffer);
+      w.setdata(reinterpret_cast<POINTER_CAST>(buffer));
       w.setsize(size);
 
       printf("WRITE: ");
@@ -114,11 +114,11 @@ namespace Drv {
       printf("\n");
 
       BYTE* rb = 0;
-      rb = (BYTE*) malloc(size);
+      rb = new BYTE[size];
 
       FW_ASSERT(rb);
 
-      Fw::Buffer r(0,0,(U64)rb,size);
+      Fw::Buffer r(0,0, reinterpret_cast<POINTER_CAST>(rb),size);
 
       this->invoke_to_SpiReadWrite(0,w,r);
 
@@ -129,7 +129,7 @@ namespace Drv {
       }
       printf("\n");
 
-      free(rb);
+      delete[] rb;
   }
 
 } // end namespace Drv

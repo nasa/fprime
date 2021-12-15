@@ -38,7 +38,7 @@ namespace Ref {
   }
 
   MathSenderComponentImpl ::
-    ~MathSenderComponentImpl(void)
+    ~MathSenderComponentImpl()
   {
 
   }
@@ -105,7 +105,7 @@ namespace Ref {
     this->log_ACTIVITY_LO_MS_COMMAND_RECV(val1,val2,opEv);
     this->mathOut_out(0,val1,val2,opPort);
     // reply with completion status
-    this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Ref

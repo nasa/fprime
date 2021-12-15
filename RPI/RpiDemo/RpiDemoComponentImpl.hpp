@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RpiDemoImpl.hpp
 // \author tcanham
 // \brief  hpp file for RpiDemo component implementation class
@@ -7,20 +7,32 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
-#ifndef RpiDemo_HPP
-#define RpiDemo_HPP
+#ifndef RPI_RpiDemoComponentImpl_HPP
+#define RPI_RpiDemoComponentImpl_HPP
 
 #include "RPI/RpiDemo/RpiDemoComponentAc.hpp"
 #include <RPI/RpiDemo/RpiDemoComponentImplCfg.hpp>
 
-namespace Rpi {
+namespace RPI {
 
   class RpiDemoComponentImpl :
     public RpiDemoComponentBase
   {
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // Types
+      // ----------------------------------------------------------------------
+
+      // A list of contexts for the rate groups
+      enum {
+        RG_CONTEXT_1Hz = 10, // 1 Hz cycle
+        RG_CONTEXT_10Hz = 11 // 10 Hz cycle
+      };
 
     public:
 
@@ -47,7 +59,7 @@ namespace Rpi {
 
       //! Destroy object RpiDemo
       //!
-      ~RpiDemoComponentImpl(void);
+      ~RpiDemoComponentImpl();
 
     PRIVATE:
 
@@ -60,7 +72,7 @@ namespace Rpi {
       void Run_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
-      );
+      ) override;
 
       //! Handler implementation for UartRead
       //!
@@ -68,12 +80,12 @@ namespace Rpi {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
           Drv::SerialReadStatus &status /*!< Status of read*/
-      );
+      ) override;
 
     PRIVATE:
 
       // ----------------------------------------------------------------------
-      // Command handler implementations 
+      // Command handler implementations
       // ----------------------------------------------------------------------
 
       //! Implementation for RD_SendString command handler
@@ -82,24 +94,24 @@ namespace Rpi {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CmdStringArg& text /*!< String to send*/
-      );
+      ) override;
 
       //! Implementation for RD_SetGpio command handler
       //! Sets a GPIO port value
       void RD_SetGpio_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          GpioOutNum output, /*!< Output GPIO*/
-          GpioOutVal value /*!< GPIO value*/
-      );
+          RpiDemo_GpioOutNum output, /*!< Output GPIO*/
+          RpiDemo_GpioVal value /*!< GPIO value*/
+      ) override;
 
       //! Implementation for RD_GetGpio command handler
       //! Gets a GPIO port value
       void RD_GetGpio_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          GpioInNum input /*!< Input GPIO*/
-      );
+          RpiDemo_GpioInNum input /*!< Input GPIO*/
+      ) override;
 
       //! Implementation for RD_SendSpi command handler
       //! Sends SPI data, prints read data
@@ -107,15 +119,15 @@ namespace Rpi {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           const Fw::CmdStringArg& data /*!< data to send*/
-      );
+      ) override;
 
       //! Implementation for RD_SetLed command handler
       //! Sets LED state
       void RD_SetLed_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          LedState value /*!< GPIO value*/
-      );
+          RpiDemo_LedState value /*!< GPIO value*/
+      ) override;
 
       //! Implementation for RD_SetLedDivider command handler
       //! Sets the divided rate of the LED
@@ -123,18 +135,18 @@ namespace Rpi {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           U32 divider /*!< Divide 10Hz by this number*/
-      );
+      ) override;
 
 
       // This will be called once when task starts up
-      void preamble(void);
+      void preamble() override;
 
       // telemetry values
       U32 m_uartWriteBytes;
       U32 m_uartReadBytes;
       U32 m_spiBytes;
       Fw::TlmString m_lastUartMsg;
-      GpioOutVal m_currLedVal;
+      RpiDemo_GpioVal m_currLedVal;
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
       BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];
@@ -149,6 +161,6 @@ namespace Rpi {
 
     };
 
-} // end namespace Rpi
+} // end namespace RPI
 
 #endif

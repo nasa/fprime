@@ -111,7 +111,7 @@ class TestRefAppClass(object):
         try:
             self.api.send_command(
                 "eventLogger.SET_EVENT_FILTER",
-                ["FILTER_" + severity, "FILTER_" + enabled],
+                [severity, enabled],
             )
             return True
         except AssertionError:
@@ -279,5 +279,5 @@ class TestRefAppClass(object):
             == 0
         ), "Failed to run fprime-seqgen"
         self.assert_command(
-            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "SEQ_BLOCK"], max_delay=5
+            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
         )

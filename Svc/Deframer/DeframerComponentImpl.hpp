@@ -50,7 +50,7 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
 
     //! Destroy object Deframer
     //!
-    ~DeframerComponentImpl(void);
+    ~DeframerComponentImpl();
 
     //! Setup the object
     //!
@@ -74,9 +74,16 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
 
     //! Handler implementation for framedIn
     //!
+    //! Handler for input port cmdResponseIn
+    void cmdResponseIn_handler(
+        NATIVE_INT_TYPE portNum, //!< The port number
+        FwOpcodeType opcode, //!< The command opcode
+        U32 cmdSeq, //!< The command sequence number
+        const Fw::CmdResponse& response //!< The command response
+    );
     void framedIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                           Fw::Buffer& recvBuffer,  /*!< The raw bytes */
-                          Drv::RecvStatus recvStatus /*!< Status of the bytes */
+                          const Drv::RecvStatus& recvStatus /*!< Status of the bytes */
                           );
 
     //! Handler implementation for schedIn

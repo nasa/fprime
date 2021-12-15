@@ -14,16 +14,16 @@
 #include <Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Os/TaskString.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x,...)
@@ -280,7 +280,7 @@ namespace Drv {
   }
 
   LinuxSerialDriverComponentImpl ::
-    ~LinuxSerialDriverComponentImpl(void)
+    ~LinuxSerialDriverComponentImpl()
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing UART device %d\n", this->m_fd);
@@ -326,7 +326,7 @@ namespace Drv {
 
       Fw::Buffer buff;
 
-      while (1) {
+      while (true) {
           // wait for data
           int sizeRead = 0;
 
@@ -348,7 +348,7 @@ namespace Drv {
           if (not entryFound) {
               Fw::LogStringArg _arg = comp->m_device;
               comp->log_WARNING_HI_DR_NoBuffers(_arg);
-              serReadStat = Drv::SER_NO_BUFFERS; // added by m.chase 03.06.2017
+              serReadStat = SerialReadStatus::SER_NO_BUFFERS; // added by m.chase 03.06.2017
               comp->serialRecv_out(0,buff,serReadStat);
               // to avoid spinning, wait 50 ms
               Os::Task::delay(50);
@@ -400,13 +400,13 @@ namespace Drv {
               // TODO(mereweth) - check errno
               Fw::LogStringArg _arg = comp->m_device;
               comp->log_WARNING_HI_DR_ReadError(_arg,stat);
-              serReadStat = Drv::SER_OTHER_ERR; // added by m.chase 03.06.2017
+              serReadStat = SerialReadStatus::SER_OTHER_ERR; // added by m.chase 03.06.2017
               //comp->serialRecv_out(0,buff,Drv::SER_OTHER_ERR);
           } else {
 //              (void)clock_gettime(CLOCK_REALTIME,&stime);
 //              DEBUG_PRINT("<!<! Sending data to RceAdapter %u at %d %d\n", buff.getsize(), stime.tv_sec, stime.tv_nsec);
               buff.setSize(sizeRead);
-              serReadStat = Drv::SER_OK; // added by m.chase 03.06.2017
+              serReadStat = SerialReadStatus::SER_OK; // added by m.chase 03.06.2017
               //comp->serialRecv_out(0,buff,Drv::SER_OK);
           }
           comp->serialRecv_out(0,buff,serReadStat); // added by m.chase 03.06.2017
@@ -422,7 +422,7 @@ namespace Drv {
   }
 
   void LinuxSerialDriverComponentImpl ::
-    quitReadThread(void) {
+    quitReadThread() {
       this->m_quitReadThread = true;
   }
 

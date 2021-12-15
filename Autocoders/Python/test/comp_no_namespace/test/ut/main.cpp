@@ -9,9 +9,9 @@
 class ATester : public TestCommandGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : TestCommandGTestBase("comp",10) {
+        ATester() : TestCommandGTestBase("comp",10) {
 #else
-        ATester(void) : TestCommandGTestBase(10)  {
+        ATester() : TestCommandGTestBase(10)  {
 #endif
     }
 };

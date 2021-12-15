@@ -30,7 +30,7 @@ class TopDictGenerator:
     def set_current_comp(self, comp):
         self.__comp_type = comp.get_type()
         self.__comp_name = comp.get_name()
-        self.__comp_id = int(comp.get_base_id())
+        self.__comp_id = int(comp.get_base_id(), 0)
 
     def check_for_enum_xml(self):
         enum_file_list = self.__parsed_xml_dict[self.__comp_type].get_enum_type_files()
@@ -69,6 +69,7 @@ class TopDictGenerator:
                 for (
                     member_name,
                     member_type,
+                    member_array_size,
                     member_size,
                     member_format_specifier,
                     member_comment,

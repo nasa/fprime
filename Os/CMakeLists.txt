@@ -8,7 +8,7 @@
 
 # Basic module dependencies
 set(MOD_DEPS
-  "${CMAKE_THREAD_LIBS_INIT}" 
+  ${CMAKE_THREAD_LIBS_INIT}
   Fw/Cfg
   Fw/Types
   Fw/Logger
@@ -88,7 +88,7 @@ endif()
 register_fprime_module()
 
 # Add stubs directory for testing builds
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+if (BUILD_TESTING)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
 endif()
 

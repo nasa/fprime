@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  FilePacket.cpp
 // \author bocchino
 // \brief  cpp file for FilePacket
@@ -7,8 +7,8 @@
 // Copyright 2009-2016, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Fw/FilePacket/FilePacket.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -32,34 +32,34 @@ namespace Fw {
   }
 
   const FilePacket::Header& FilePacket ::
-    asHeader(void) const
+    asHeader() const
   {
     return this->header;
   }
 
   const FilePacket::StartPacket& FilePacket ::
-    asStartPacket(void) const
+    asStartPacket() const
   {
     FW_ASSERT(this->header.type == T_START);
     return this->startPacket;
   }
 
   const FilePacket::DataPacket& FilePacket ::
-    asDataPacket(void) const
+    asDataPacket() const
   {
     FW_ASSERT(this->header.type == T_DATA);
     return this->dataPacket;
   }
 
   const FilePacket::EndPacket& FilePacket ::
-    asEndPacket(void) const
+    asEndPacket() const
   {
     FW_ASSERT(this->header.type == T_END);
     return this->endPacket;
   }
 
   const FilePacket::CancelPacket& FilePacket ::
-    asCancelPacket(void) const
+    asCancelPacket() const
   {
     FW_ASSERT(this->header.type == T_CANCEL);
     return this->cancelPacket;
@@ -94,7 +94,7 @@ namespace Fw {
   }
 
   U32 FilePacket ::
-    bufferSize(void) const
+    bufferSize() const
   {
     switch (this->header.type) {
       case T_START:
@@ -132,7 +132,7 @@ namespace Fw {
   }
 
   // ----------------------------------------------------------------------
-  // Private instance methods 
+  // Private instance methods
   // ----------------------------------------------------------------------
 
   SerializeStatus FilePacket ::

@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SchedPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Sched.fpp"
 )
 
 register_fprime_module()

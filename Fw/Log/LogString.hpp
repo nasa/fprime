@@ -16,31 +16,25 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_LOG_STRING_MAX_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of two size words
             };
 
-            LogStringArg(const char* src);
-            LogStringArg(const StringBase& src);
-            LogStringArg(const LogStringArg& src);
-            LogStringArg(void);
-            ~LogStringArg(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
-            // This method is set by the autocode to the max length specified in the XML declaration for a particular event.
-            void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
+            LogStringArg();
+            LogStringArg(const LogStringArg& src); //!< LogStringArg string constructor
+            LogStringArg(const StringBase& src); //!< other string constructor
+            LogStringArg(const char* src); //!< char* source constructor
+            LogStringArg& operator=(const LogStringArg& other); //!< assignment operator
+            LogStringArg& operator=(const StringBase& other); //!< other string assignment operator
+            LogStringArg& operator=(const char* other); //!< char* assignment operator
+            ~LogStringArg();
 
-            const LogStringArg& operator=(const LogStringArg& other); //!< equal operator for other strings
+            const char* toChar() const override;
+            NATIVE_UINT_TYPE getCapacity() const override;
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
-#if FW_SERIALIZABLE_TO_STRING
-            void toString(StringBase& text) const;
-#endif
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; //!< serialization function
+            SerializeStatus serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLen) const override; //!< serialization function
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override; //!< deserialization function
 
         private:
 
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
-
             char m_buf[FW_LOG_STRING_MAX_SIZE];
-            NATIVE_UINT_TYPE m_maxSer;
     };
 
 }

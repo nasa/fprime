@@ -1,0 +1,14 @@
+Old Symbol
+New Symbol
+
+Fw::PARAM_UNINIT
+Fw::ParamValid::UNINIT
+
+Fw::PARAM_VALID
+Fw::ParamValid::VALID
+
+Fw::PARAM_INVALID
+Fw::ParamValid::INVALID
+
+Fw::PARAM_DEFAULT
+Fw::ParamValid::DEFAULT

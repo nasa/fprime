@@ -21,8 +21,8 @@ namespace Fw {
 
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
             SerializeStatus deserialize(SerializeBufferBase& buffer);
-            FwOpcodeType getOpCode(void) const;
-            CmdArgBuffer& getArgBuffer(void);
+            FwOpcodeType getOpCode() const;
+            CmdArgBuffer& getArgBuffer();
 
         protected:
             FwOpcodeType m_opcode;

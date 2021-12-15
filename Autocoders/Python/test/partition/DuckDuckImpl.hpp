@@ -10,7 +10,7 @@ namespace Duck {
 
         // Only called by derived class
         DuckImpl(const char* compName);
-        ~DuckImpl(void);
+        ~DuckImpl();
 
     private:
         // downcall for input ports

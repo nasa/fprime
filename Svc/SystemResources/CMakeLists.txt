@@ -7,22 +7,22 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
 )
 set(MOD_DEPS
   Os
 )
 register_fprime_module()
-get_module_name(${CMAKE_CURRENT_LIST_DIR})
-add_dependencies(${MODULE_NAME} version)
-
+if (NOT FPRIME_FPP_LOCS_BUILD)
+    get_module_name(${CMAKE_CURRENT_LIST_DIR})
+    add_dependencies(${MODULE_NAME} version)
+endif()
 ### UTs ###
 set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/SystemResourcesComponentAi.xml"
 )
 register_fprime_ut()
 # Implementation requires switch cascade

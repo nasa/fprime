@@ -2,7 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include "Fw/Types/Assert.hpp"
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {
@@ -19,32 +19,32 @@ namespace Fw {
 
     PortBase::PortBase()
                 :
-                Fw::ObjBase(0),
-                m_connObj(0)
-#if FW_PORT_TRACING == 1     
+                Fw::ObjBase(nullptr),
+                m_connObj(nullptr)
+#if FW_PORT_TRACING == 1
                 ,m_trace(false),
                 m_override_trace(false)
-#endif                
+#endif
     {
-        
-    }
-    
-    PortBase::~PortBase(void) {
-        
-    }
-    
-    void PortBase::init(void) {
-        ObjBase::init();
-        
-    }
-    
-    bool PortBase::isConnected(void) {
-        return m_connObj == 0?false:true;
+
     }
 
-#if FW_PORT_TRACING == 1    
-    
-    void PortBase::trace(void) {
+    PortBase::~PortBase() {
+
+    }
+
+    void PortBase::init() {
+        ObjBase::init();
+
+    }
+
+    bool PortBase::isConnected() {
+        return m_connObj == nullptr?false:true;
+    }
+
+#if FW_PORT_TRACING == 1
+
+    void PortBase::trace() {
         bool do_trace = false;
 
         if (this->m_override_trace) {
@@ -57,9 +57,9 @@ namespace Fw {
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
-            Fw::Logger::logMsg("Trace: %s\n", (POINTER_CAST)this->m_objName, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %s\n", reinterpret_cast<POINTER_CAST>(this->m_objName), 0, 0, 0, 0, 0);
 #else
-            Fw::Logger::logMsg("Trace: %p\n", (POINTER_CAST)this, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %p\n", reinterpret_cast<POINTER_CAST>(this), 0, 0, 0, 0, 0);
 #endif
         }
     }
@@ -74,7 +74,7 @@ namespace Fw {
     }
 
 #endif // FW_PORT_TRACING
-    
+
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
     void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
@@ -86,7 +86,7 @@ namespace Fw {
     }
 #endif // FW_OBJECT_TO_STRING
 #endif // FW_OBJECT_NAMES
-    
-    
+
+
 }
 
