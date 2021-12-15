@@ -11,7 +11,7 @@
  */
 
 #include <Fw/Types/MmapAllocator.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/mman.h>
 #include <Fw/Types/Assert.hpp>
 
@@ -24,11 +24,11 @@ namespace Fw {
     }
 
     void *MmapAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &size, bool& recoverable) {
-        void* addr = mmap(NULL, size, PROT_READ | PROT_WRITE,
+        void* addr = mmap(nullptr, size, PROT_READ | PROT_WRITE,
                              MAP_SHARED | MAP_ANONYMOUS, -1, 0);
         if (addr == MAP_FAILED) {
             size = 0;
-            return NULL;
+            return nullptr;
         }
         this->m_length = size;
 

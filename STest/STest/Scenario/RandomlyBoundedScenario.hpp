@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RandomlyBoundedScenario.hpp
 // \author bocchino
 // \brief  Run a scenario, applying a random bound on the number of steps
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RandomlyBoundedScenario_HPP
 #define STest_RandomlyBoundedScenario_HPP
@@ -25,7 +25,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RandomlyBoundedScenario
@@ -39,14 +39,14 @@ namespace STest {
         scenario(scenario),
         start(start),
         length(length),
-        boundedScenario(NULL)
+        boundedScenario(nullptr)
       {
 
       }
 
       //! Destroy object RandomlyBoundedScenario
-      virtual ~RandomlyBoundedScenario(void) {
-        if (this->boundedScenario != NULL) {
+      virtual ~RandomlyBoundedScenario() {
+        if (this->boundedScenario != nullptr) {
           delete this->boundedScenario;
         }
       }
@@ -58,17 +58,17 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
-        if (this->boundedScenario != NULL) {
+      void reset_Scenario() {
+        if (this->boundedScenario != nullptr) {
           delete this->boundedScenario;
         }
         const U32 bound = Random::startLength(this->start, this->length);
         this->boundedScenario = new BoundedScenario<State>(
-            this->name, 
+            this->name,
             this->scenario,
             bound
         );
-        assert(this->boundedScenario != NULL);
+        assert(this->boundedScenario != nullptr);
         this->boundedScenario->reset();
       }
 
@@ -77,21 +77,21 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        assert(this->boundedScenario != NULL);
+        assert(this->boundedScenario != nullptr);
         return this->boundedScenario->nextRule(state);
       }
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
-        assert(this->boundedScenario != NULL);
+      bool isDone_Scenario() const {
+        assert(this->boundedScenario != nullptr);
         return this->boundedScenario->isDone();
       }
 
     private:
 
       // ----------------------------------------------------------------------
-      // Private member variables 
+      // Private member variables
       // ----------------------------------------------------------------------
 
       //! The scenario to run

@@ -14,7 +14,7 @@
 #include <Utils/Hash/Hash.hpp>
 
 #include <limits.h>
-#include <stdio.h>
+#include <cstdio>
 #include <cstdarg>
 
 // some limits.h don't have PATH_MAX
@@ -50,7 +50,7 @@ namespace Svc {
           NATIVE_INT_TYPE instance //!< The instance number
       );
 
-      ~ComLogger(void);
+      ~ComLogger();
 
       // ----------------------------------------------------------------------
       // Handler implementations
@@ -80,13 +80,13 @@ namespace Svc {
       // Constants:
       // ----------------------------------------------------------------------
       // The maximum size of a filename
-      enum { 
+      enum {
         MAX_FILENAME_SIZE = NAME_MAX, // as defined in limits.h
         MAX_PATH_SIZE = COMLOGGER_PATH_MAX
       };
 
       // The filename data:
-      U8 filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR filePrefix[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U32 maxFileSize;
 
       // ----------------------------------------------------------------------
@@ -99,16 +99,16 @@ namespace Svc {
 
       FileMode fileMode;
       Os::File file;
-      U8 fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
-      U8 hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR fileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
+      CHAR hashFileName[MAX_FILENAME_SIZE + MAX_PATH_SIZE];
       U32 byteCount;
       bool writeErrorOccurred;
       bool openErrorOccurred;
       bool storeBufferLength;
-      
+
       // ----------------------------------------------------------------------
       // File functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       void openFile(
       );
 
@@ -122,10 +122,10 @@ namespace Svc {
 
       // ----------------------------------------------------------------------
       // Helper functions:
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       bool writeToFile(
-        void* data, 
+        void* data,
         U16 length
       );
 

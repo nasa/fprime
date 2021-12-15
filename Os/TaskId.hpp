@@ -17,11 +17,11 @@
 namespace Os {
   class TaskId {
     public:
-        TaskId(void);
-        ~TaskId(void);
+        TaskId();
+        ~TaskId();
         bool operator==(const TaskId& T) const;
         bool operator!=(const TaskId& T) const;
-        TaskIdRepr getRepr(void) const;
+        TaskIdRepr getRepr() const;
     private:
         TaskIdRepr id;
   };

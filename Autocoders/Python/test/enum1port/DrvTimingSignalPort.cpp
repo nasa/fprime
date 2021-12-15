@@ -1,6 +1,6 @@
 #include <Fw/Types/FwAssert.hpp>
 #include <Drv/BlockDriver/DrvTimingSignalPort.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 extern I32 debug_flag;
 
@@ -12,15 +12,15 @@ namespace Drv {
         class TimingSignalPortBuffer : public Fw::SerializeBufferBase {
 
             public:
-                NATIVE_INT_TYPE getBuffCapacity(void) const {
+                NATIVE_INT_TYPE getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -32,11 +32,11 @@ namespace Drv {
 
     }
 
-    InputTimingSignalPort::InputTimingSignalPort(void) :
+    InputTimingSignalPort::InputTimingSignalPort() :
             m_func(0) {
     }
 
-    void InputTimingSignalPort::init(void) {
+    void InputTimingSignalPort::init() {
         Fw::InputPortBase::init();
     }
 
@@ -81,11 +81,11 @@ namespace Drv {
     }
 #endif
 
-    OutputTimingSignalPort::OutputTimingSignalPort(void) :
+    OutputTimingSignalPort::OutputTimingSignalPort() :
             m_port(0) {
     }
 
-    void OutputTimingSignalPort::init(void) {
+    void OutputTimingSignalPort::init() {
         Fw::OutputPortBase::init();
     }
 
@@ -107,7 +107,7 @@ namespace Drv {
 #if FW_PORT_SERIALIZATION
         } else if (this->m_serPort) {
             TimingSignalPortBuffer buffer;
-            Fw::SerializeStatus status = buffer.serialize((I32)signal);
+            Fw::SerializeStatus status = buffer.serialize(static_cast<I32>(signal));
             FW_ASSERT(Fw::FW_SERIALIZE_OK == status);
             this->m_serPort->invokeSerial(buffer);
 #endif

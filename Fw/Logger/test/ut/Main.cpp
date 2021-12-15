@@ -14,7 +14,7 @@
 #include <Fw/Logger/test/ut/LoggerRules.hpp>
 #include <gtest/gtest.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define STEP_COUNT 10000
 
@@ -64,8 +64,8 @@ TEST(LoggerTests, BassicGoodLogger) {
 TEST(LoggerTests, BassicBadLogger) {
     // Basic discard logging
     MockLogging::FakeLogger logger;
-    Fw::Logger::registerLogger(NULL);
-    logger.s_current = NULL;
+    Fw::Logger::registerLogger(nullptr);
+    logger.s_current = nullptr;
     LoggerRules::LogBad log("Log Discarded");
     log.apply(logger);
 }

@@ -22,17 +22,17 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : DeframerComponentBase(compName), DeframingProtocolInterface(),
-    m_protocol(NULL), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
+    m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {}
 
 void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
 }
 
-DeframerComponentImpl ::~DeframerComponentImpl(void) {}
+DeframerComponentImpl ::~DeframerComponentImpl() {}
 
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
-    FW_ASSERT(m_protocol == NULL);
+    FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     protocol.setup(*this);
 }
@@ -42,10 +42,17 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+                                                   FwOpcodeType opcode,
+                                                   U32 cmdSeq,
+                                                   const Fw::CmdResponse& response) {
+  // Nothing to do
+}
+
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
-                                              Drv::RecvStatus recvStatus) {
-    if (Drv::RECV_OK == recvStatus) {
+                                              const Drv::RecvStatus& recvStatus) {
+    if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
         processBuffer(recvBuffer);
     }
     framedDeallocate_out(0, recvBuffer);
@@ -56,7 +63,7 @@ void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATI
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
         Drv::PollStatus status = framedPoll_out(0, buffer);
-        if (status == Drv::POLL_OK) {
+        if (status == Drv::PollStatus::POLL_OK) {
             processBuffer(buffer);
         }
     }
@@ -107,7 +114,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
 }
 
 void DeframerComponentImpl ::processRing() {
-    FW_ASSERT(m_protocol != NULL);
+    FW_ASSERT(m_protocol != nullptr);
     // Maximum limit to the loop as at least one byte is process per iteration unless needed > remaining size
     const U32 loop_limit = m_in_ring.get_capacity() + 1;
 

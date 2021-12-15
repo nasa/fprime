@@ -2,7 +2,7 @@
 #include <Fw/Comp/ActiveComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/TaskString.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x,...)
@@ -12,15 +12,15 @@ namespace Fw {
     class ActiveComponentExitSerializableBuffer : public Fw::SerializeBufferBase {
 
         public:
-            NATIVE_UINT_TYPE getBuffCapacity(void) const {
+            NATIVE_UINT_TYPE getBuffCapacity() const {
                 return sizeof(m_buff);
             }
 
-            U8* getBuffAddr(void) {
+            U8* getBuffAddr() {
                 return m_buff;
             }
 
-            const U8* getBuffAddr(void) const {
+            const U8* getBuffAddr() const {
                 return m_buff;
             }
 
@@ -74,13 +74,13 @@ namespace Fw {
 #else
         Os::Task::taskRoutine routine = this->s_baseTask;
 #endif
-        Os::Task::TaskStatus status = this->m_task.start(taskName, routine,this, priority, stackSize, cpuAffinity, identifier);
-        FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
+        Os::Task::TaskStatus status = this->m_task.start(taskName, routine, this, priority, stackSize, cpuAffinity, identifier);
+        FW_ASSERT(status == Os::Task::TASK_OK,static_cast<NATIVE_INT_TYPE>(status));
     }
 
-    void ActiveComponentBase::exit(void) {
+    void ActiveComponentBase::exit() {
         ActiveComponentExitSerializableBuffer exitBuff;
-        SerializeStatus stat = exitBuff.serialize((I32)ACTIVE_COMPONENT_EXIT);
+        SerializeStatus stat = exitBuff.serialize(static_cast<I32>(ACTIVE_COMPONENT_EXIT));
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         (void)this->m_queue.send(exitBuff,0,Os::Queue::QUEUE_NONBLOCKING);
         DEBUG_PRINT("exit %s\n", this->getObjName());
@@ -92,7 +92,7 @@ namespace Fw {
     }
 
     void ActiveComponentBase::s_baseBareTask(void* ptr) {
-        FW_ASSERT(ptr != NULL);
+        FW_ASSERT(ptr != nullptr);
         ActiveComponentBase* comp = reinterpret_cast<ActiveComponentBase*>(ptr);
         //Start if not started
         if (!comp->m_task.isStarted()) {
@@ -112,7 +112,7 @@ namespace Fw {
                 comp->m_task.setStarted(false);
                 break;
             default:
-                FW_ASSERT(0,(NATIVE_INT_TYPE)loopStatus);
+                FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(loopStatus));
         }
     }
     void ActiveComponentBase::s_baseTask(void* ptr) {
@@ -130,7 +130,7 @@ namespace Fw {
         comp->finalizer();
     }
 
-    void ActiveComponentBase::loop(void) {
+    void ActiveComponentBase::loop() {
 
         bool quitLoop = false;
         while (!quitLoop) {
@@ -142,16 +142,16 @@ namespace Fw {
                     quitLoop = true;
                     break;
                 default:
-                    FW_ASSERT(0,(NATIVE_INT_TYPE)loopStatus);
+                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(loopStatus));
             }
         }
 
     }
 
-    void ActiveComponentBase::preamble(void) {
+    void ActiveComponentBase::preamble() {
     }
 
-    void ActiveComponentBase::finalizer(void) {
+    void ActiveComponentBase::finalizer() {
     }
 
 }

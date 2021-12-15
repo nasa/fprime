@@ -31,11 +31,11 @@ namespace Fw {
             CmdArgBuffer();  //!< default constructor
             CmdArgBuffer(const CmdArgBuffer& other);  //!< other arg buffer constructor
             virtual ~CmdArgBuffer();  //!< destructor
-            const CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
+            CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const;  //!< return capacity of buffer (how much it can hold)
-            U8* getBuffAddr(void);  //!< return address of buffer (non const version)
-            const U8* getBuffAddr(void) const;  //!< return address of buffer (const version)
+            NATIVE_UINT_TYPE getBuffCapacity() const;  //!< return capacity of buffer (how much it can hold)
+            U8* getBuffAddr();  //!< return address of buffer (non const version)
+            const U8* getBuffAddr() const;  //!< return address of buffer (const version)
 
         private:
             U8 m_bufferData[FW_CMD_ARG_BUFFER_MAX_SIZE]; //!< command argument buffer

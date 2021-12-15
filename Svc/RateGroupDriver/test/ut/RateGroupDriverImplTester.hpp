@@ -28,7 +28,7 @@ namespace Svc {
 
             Svc::RateGroupDriverImpl& m_impl;
 
-            void clearPortCalls(void);
+            void clearPortCalls();
 
             bool m_portCalls[3];
 

@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 #include "Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp"
 #include <unistd.h>
 
@@ -61,7 +61,7 @@ void run_router_test(Drv::Tester& tester)
 
 
 int main(int argc, char **argv) {
-    if ((argc < 1) || (argv[1] == NULL)) {
+    if ((argc < 1) || (argv[1] == nullptr)) {
         printf("Need arg - name of device to open\n");
         return 1;
     }

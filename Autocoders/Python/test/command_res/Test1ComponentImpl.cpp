@@ -27,7 +27,7 @@ namespace Cmd {
     ) :
       Test1ComponentBase(compName)
 #else
-    Test1Impl(void)
+    Test1Impl()
 #endif
   {
 
@@ -43,7 +43,7 @@ namespace Cmd {
   }
 
   Test1ComponentImpl ::
-    ~Test1ComponentImpl(void)
+    ~Test1ComponentImpl()
   {
 
   }
@@ -76,7 +76,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   void Test1ComponentImpl ::
@@ -88,7 +88,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Cmd

@@ -61,14 +61,14 @@ namespace ${namespace} {
             ${name}String(const char* src); //!< char array constructor
             ${name}String(const Fw::StringBase& src); //!< string base constructor
             ${name}String(const ${name}String& src); //!< string base constructor
-            ${name}String(void); //!< default constructor
+            ${name}String(); //!< default constructor
             ${name}String& operator=(const ${name}String& other); //!< assignment operator
             ${name}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
             ${name}String& operator=(const char* other); //!< char* assignment operator
-            ~${name}String(void); //!< destructor
+            ~${name}String(); //!< destructor
 
-            const char* toChar(void) const; //!< retrieves char buffer of string
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            const char* toChar() const; //!< retrieves char buffer of string
+            NATIVE_UINT_TYPE getCapacity() const;
 
         private:
 
@@ -108,7 +108,7 @@ namespace ${namespace} {
     // ----------------------------------------------------------------------
 
       //! Construct a ${name} with default initialization
-      ${name}(void);
+      ${name}();
 
       //! Construct a ${name} and initialize its elements from an array
       ${name}(
@@ -155,17 +155,17 @@ namespace ${namespace} {
       ) const;
 
       //! Assignment operator
-      const ${name}& operator=(
+      ${name}& operator=(
           const ${name}& other //!< The other object
       );
 
       //! Assignment operator from array
-      const ${name}& operator=(
+      ${name}& operator=(
           const ElementType (&a)[SIZE] //!< The array
       );
 
       //! Assignment operator from element
-      const ${name}& operator=(
+      ${name}& operator=(
           const ElementType& e //!< The element
       );
 

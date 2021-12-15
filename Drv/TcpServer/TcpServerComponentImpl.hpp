@@ -17,7 +17,7 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverComponentAc.hpp"
+#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
 
 namespace Drv {
 
@@ -43,7 +43,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
     /**
      * \brief Destroy the component
      */
-    ~TcpServerComponentImpl(void);
+    ~TcpServerComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket

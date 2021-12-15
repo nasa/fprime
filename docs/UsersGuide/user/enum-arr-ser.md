@@ -95,7 +95,7 @@ These can all be designed and used in the modeling of F´ and the C++ implementa
 ### Enums
 
 Enums are a fixed set of values that can be referred to by name, but are stored and transmitted as an integer type. The
-auto-generator produces a class to wrap the type providing convenient functions.
+auto-generator produces a class to wrap the type providing convenience functions.
 
 ### Arrays
 

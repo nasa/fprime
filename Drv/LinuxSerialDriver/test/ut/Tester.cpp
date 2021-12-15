@@ -11,8 +11,8 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 
 #define INSTANCE 0
@@ -43,9 +43,9 @@ namespace Drv {
     // allocate and configure buffers
     for (NATIVE_INT_TYPE buffer = 0; buffer < m_numBuffers; buffer++) {
         // initialize buffers
-        this->m_readData[buffer] = (BYTE*)malloc(bufferSize);
+        this->m_readData[buffer] = new BYTE[bufferSize];
         FW_ASSERT(this->m_readData[buffer]);
-        this->m_readBuffer[buffer].setdata((U64)this->m_readData[buffer]);
+        this->m_readBuffer[buffer].setdata(reinterpret_cast<POINTER_CAST>(this->m_readData[buffer]));
         this->m_readBuffer[buffer].setsize(bufferSize);
         this->m_readBuffer[buffer].setbufferID(buffer);
 
@@ -62,14 +62,14 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
       // kill thread
       this->component.quitReadThread();
       // free buffers
       for (NATIVE_INT_TYPE buffer = 0; buffer < m_numBuffers; buffer++) {
           // initialize buffers
-          free(this->m_readData[buffer]);
+          delete[] this->m_readData[buffer];
       }
 
   }
@@ -82,7 +82,7 @@ namespace Drv {
       sendSerial(BYTE* data, NATIVE_INT_TYPE size)
   {
     Fw::Buffer buff;
-    buff.setdata((U64)data);
+    buff.setdata(reinterpret_cast<POINTER_CAST>(data));
     buff.setsize(size);
 
     this->invoke_to_serialSend(0,buff);
@@ -158,7 +158,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // serialSend
@@ -206,7 +206,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

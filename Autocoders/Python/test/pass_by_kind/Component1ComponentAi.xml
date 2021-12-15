@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="Component1" kind="queued" namespace="Example">
+    <import_port_type>Autocoders/Python/test/pass_by_kind/Port1PortAi.xml</import_port_type>
+    <comment>A demonstration component with ports to test pass_by logic</comment>
+    <ports>
+        <port name="AsyncPort" kind="async_input" data_type="Example::Port1" max_number="1"/>
+        <port name="SyncPort" kind="sync_input" data_type="Example::Port1" max_number="1"/>
+    </ports>
+</component>

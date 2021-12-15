@@ -31,7 +31,7 @@ void StaticMemoryComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     StaticMemoryComponentBase::init(instance);
 }
 
-StaticMemoryComponentImpl ::~StaticMemoryComponentImpl(void) {}
+StaticMemoryComponentImpl ::~StaticMemoryComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports

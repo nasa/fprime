@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <string.h>
+#include <cstring>
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -26,7 +26,7 @@ namespace Fw {
   }
 
   U32 FilePacket::PathName ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return sizeof(this->length) + this->length;
   }

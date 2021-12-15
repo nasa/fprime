@@ -1,18 +1,18 @@
 #include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
+#include <cstring>
+#include <cstdio>
 #include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
 
 namespace Fw {
 
 #if FW_OBJECT_REGISTRATION == 1
-    ObjRegistry* ObjBase::s_objRegistry = 0;
-#endif    
+    ObjRegistry* ObjBase::s_objRegistry = nullptr;
+#endif
 
 #if FW_OBJECT_NAMES == 1
     ObjBase::ObjBase(const char* objName) {
-        if (0 == objName) {
+        if (nullptr == objName) {
             this->setObjName("NoName");
         } else {
             this->setObjName(objName);
@@ -23,21 +23,21 @@ namespace Fw {
 
     }
 #endif
-   
-    void ObjBase::init(void) {
-#if FW_OBJECT_REGISTRATION        
+
+    void ObjBase::init() {
+#if FW_OBJECT_REGISTRATION
         if (ObjBase::s_objRegistry) {
             ObjBase::s_objRegistry->regObject(this);
         }
-#endif        
+#endif
     }
 
     ObjBase::~ObjBase() {
 
     }
 
-#if FW_OBJECT_NAMES == 1    
-    const char* ObjBase::getObjName(void) {
+#if FW_OBJECT_NAMES == 1
+    const char* ObjBase::getObjName() {
         return this->m_objName;
     }
 
@@ -52,14 +52,14 @@ namespace Fw {
             str[0] = 0;
         }
     }
-#endif    
 #endif
-    
-#if FW_OBJECT_REGISTRATION == 1    
+#endif
+
+#if FW_OBJECT_REGISTRATION == 1
     void ObjBase::setObjRegistry(ObjRegistry* reg) {
         ObjBase::s_objRegistry = reg;
     }
-    
+
     ObjRegistry::~ObjRegistry() {
     }
 

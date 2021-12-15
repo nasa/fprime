@@ -37,14 +37,14 @@ namespace Svc {
         this->m_cmdSendRcvd = true;
     }
 
-    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CommandResponse response) {
+    void CommandDispatcherImplTester::from_seqCmdStatus_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         this->m_seqStatusRcvd = true;
         this->m_seqStatusOpCode = opCode;
         this->m_seqStatusCmdSeq = cmdSeq;
         this->m_seqStatusCmdResponse = response;
     }
 
-    void CommandDispatcherImplTester::runNominalDispatch(void) {
+    void CommandDispatcherImplTester::runNominalDispatch() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -121,18 +121,18 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-        ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+        ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
         // verify sequence table entry
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq,(U32)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq, 0u);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort, 0);
 
         // verify command received
         ASSERT_TRUE(this->m_cmdSendRcvd);
         ASSERT_EQ(this->m_cmdSendOpCode,testOpCode);
-        ASSERT_EQ(this->m_cmdSendCmdSeq,(U32)0);
+        ASSERT_EQ(this->m_cmdSendCmdSeq,0);
         // check argument
         U32 checkVal;
         ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal),Fw::FW_SERIALIZE_OK);
@@ -141,31 +141,31 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_OK);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::OK);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
         ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq,(U32)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].seq,0u);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context,testContext);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeCompleted_SIZE(1);
-        ASSERT_EVENTS_OpCodeCompleted(0,(U32)testOpCode);
+        ASSERT_EVENTS_OpCodeCompleted(0u,testOpCode);
 
         REQUIREMENT("CD-004");
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
-        ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
+        ASSERT_EQ(this->m_seqStatusOpCode,testOpCode);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
-    void CommandDispatcherImplTester::runNopCommands(void) {
+    void CommandDispatcherImplTester::runNopCommands() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -211,8 +211,8 @@ namespace Svc {
         // send NO_OP command
         this->m_seqStatusRcvd = false;
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(buff.serialize((FwOpcodeType)CommandDispatcherImpl::OPCODE_CMD_NO_OP),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_NO_OP)),Fw::FW_SERIALIZE_OK);
 
         this->clearEvents();
         this->invoke_to_seqCmdBuff(0,buff,12);
@@ -231,15 +231,15 @@ namespace Svc {
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_NO_OP,this->m_seqStatusOpCode);
         // Verify correct context value is passed back.
-        ASSERT_EQ((U32)12,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(12u,this->m_seqStatusCmdSeq);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
 
         // send NO_OP_STRING command
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         buff.resetSer();
         ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(buff.serialize((FwOpcodeType)CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(FwOpcodeType(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING)),Fw::FW_SERIALIZE_OK);
         // serialize arg1
         Fw::CmdStringArg argString("BOO!");
         ASSERT_EQ(buff.serialize(argString),Fw::FW_SERIALIZE_OK);
@@ -259,20 +259,20 @@ namespace Svc {
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING,this->m_seqStatusOpCode);
-        ASSERT_EQ((U32)13,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(13u,this->m_seqStatusCmdSeq);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
 
         // send TEST_CMD_1 command
         this->m_seqStatusRcvd = false;
         buff.resetSer();
-        ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(buff.serialize((FwOpcodeType)CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1)),Fw::FW_SERIALIZE_OK);
         // serialize arg1
-        ASSERT_EQ(buff.serialize((I32)1),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<I32>(1)),Fw::FW_SERIALIZE_OK);
         // serialize arg2
-        ASSERT_EQ(buff.serialize((F32)2.3),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<F32>(2.3)),Fw::FW_SERIALIZE_OK);
         // serialize arg3
-        ASSERT_EQ(buff.serialize((U8)4),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<U8>(4)),Fw::FW_SERIALIZE_OK);
 
         this->clearEvents();
         this->invoke_to_seqCmdBuff(0,buff,14);
@@ -290,16 +290,16 @@ namespace Svc {
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1,this->m_seqStatusOpCode);
-        ASSERT_EQ((U32)14,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_OK);
+        ASSERT_EQ(14u,this->m_seqStatusCmdSeq);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::OK);
     }
 
-    void CommandDispatcherImplTester::runCommandReregister(void) {
+    void CommandDispatcherImplTester::runCommandReregister() {
         // register built-in commands
         this->m_impl.regCommands();
         // clear reg events
         this->clearEvents();
-        
+
         // register our own command
         FwOpcodeType testOpCode = 0x50;
         this->invoke_to_compCmdReg(0,0x50);
@@ -320,14 +320,14 @@ namespace Svc {
         ASSERT_TRUE(this->m_impl.m_entryTable[4].used);
         ASSERT_EQ(this->m_impl.m_entryTable[4].opcode,testOpCode);
         ASSERT_EQ(this->m_impl.m_entryTable[4].port,0);
-        
+
         // verify re-registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeReregistered_SIZE(1);
         ASSERT_EVENTS_OpCodeReregistered(0,testOpCode,0);
     }
 
-    void CommandDispatcherImplTester::runInvalidOpcodeDispatch(void) {
+    void CommandDispatcherImplTester::runInvalidOpcodeDispatch() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -380,7 +380,7 @@ namespace Svc {
         // verify registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-        ASSERT_EVENTS_OpCodeRegistered(0,(U32)testOpCode,0,4);
+        ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
 
         // dispatch a test command with a bad opcode
         U32 testCmdArg = 100;
@@ -399,17 +399,17 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_InvalidCommand_SIZE(1);
-        ASSERT_EVENTS_InvalidCommand(0,(U32)testOpCode+1);
+        ASSERT_EVENTS_InvalidCommand(0u,testOpCode+1);
 
         // Verify status passed back to port
 
         ASSERT_TRUE(this->m_seqStatusRcvd);
-        ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode+1);
+        ASSERT_EQ(this->m_seqStatusOpCode,testOpCode+1);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_INVALID_OPCODE);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::INVALID_OPCODE);
     }
 
-    void CommandDispatcherImplTester::runFailedCommand(void) {
+    void CommandDispatcherImplTester::runFailedCommand() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -461,7 +461,7 @@ namespace Svc {
         // verify registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-        ASSERT_EVENTS_OpCodeRegistered(0,(U32)testOpCode,0,4);
+        ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
 
         U32 currSeq = 0;
 
@@ -480,14 +480,14 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-        ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+        ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
         // verify sequence table entry
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context,testContext);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // verify command received
         ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -501,24 +501,24 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_EXECUTION_ERROR);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::EXECUTION_ERROR);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
         ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode, CommandDispatcherComponentBase::ERR_EXECUTION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,testOpCode, Fw::CmdResponse::EXECUTION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
         ASSERT_EQ(this->m_seqStatusCmdSeq,testContext);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_EXECUTION_ERROR);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::EXECUTION_ERROR);
 
         // dispatch a test command
         currSeq++;
@@ -534,14 +534,14 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-        ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+        ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
         // verify sequence table entry
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context,testContext);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // verify command received
         ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -554,25 +554,25 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_INVALID_OPCODE);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::INVALID_OPCODE);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
         ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_INVALID_OPCODE);
+        ASSERT_EVENTS_OpCodeError(0,testOpCode,Fw::CmdResponse::INVALID_OPCODE);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
-        ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
+        ASSERT_EQ(this->m_seqStatusOpCode,testOpCode);
         ASSERT_EQ(testContext,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_INVALID_OPCODE);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::INVALID_OPCODE);
 
         currSeq++;
         // dispatch a test command
@@ -588,13 +588,13 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-        ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+        ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
         // verify sequence table entry
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context,testContext);
 
         // verify command received
@@ -608,28 +608,28 @@ namespace Svc {
         this->clearEvents();
         this->m_seqStatusRcvd = false;
         // perform command response
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // Check dispatch table
         ASSERT_FALSE(this->m_impl.m_sequenceTracker[0].used);
         ASSERT_EQ(currSeq,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // Verify completed event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeError_SIZE(1);
-        ASSERT_EVENTS_OpCodeError(0,(U32)testOpCode,CommandDispatcherComponentBase::ERR_VALIDATION_ERROR);
+        ASSERT_EVENTS_OpCodeError(0,testOpCode,Fw::CmdResponse::VALIDATION_ERROR);
 
         // Verify status passed back to port
         ASSERT_TRUE(this->m_seqStatusRcvd);
-        ASSERT_EQ(this->m_seqStatusOpCode,(U32)testOpCode);
+        ASSERT_EQ(this->m_seqStatusOpCode,testOpCode);
         ASSERT_EQ(testContext,this->m_seqStatusCmdSeq);
-        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::COMMAND_VALIDATION_ERROR);
+        ASSERT_EQ(this->m_seqStatusCmdResponse,Fw::CmdResponse::VALIDATION_ERROR);
     }
 
-    void CommandDispatcherImplTester::runInvalidCommand(void) {
+    void CommandDispatcherImplTester::runInvalidCommand() {
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
             ASSERT_TRUE(this->m_impl.m_entryTable[entry].used == false);
@@ -649,7 +649,7 @@ namespace Svc {
         FwOpcodeType testOpCode = 0x50;
         this->clearEvents();
         Fw::ComBuffer buff;
-        ASSERT_EQ(buff.serialize((U32)100),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(U32(100)),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testOpCode),Fw::FW_SERIALIZE_OK);
         ASSERT_EQ(buff.serialize(testCmdArg),Fw::FW_SERIALIZE_OK);
 
@@ -659,11 +659,11 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_MalformedCommand_SIZE(1);
-        ASSERT_EVENTS_MalformedCommand(0,CommandDispatcherComponentBase::ERR_TYPE_MISMATCH);
+        ASSERT_EVENTS_MalformedCommand(0,Fw::DeserialStatus::TYPE_MISMATCH);
 
     }
 
-    void CommandDispatcherImplTester::runOverflowCommands(void) {
+    void CommandDispatcherImplTester::runOverflowCommands() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -716,7 +716,7 @@ namespace Svc {
         // verify registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-        ASSERT_EVENTS_OpCodeRegistered(0,(U32)testOpCode,0,4);
+        ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
 
         for (NATIVE_UINT_TYPE disp = 0; disp < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1; disp++) {
             // dispatch a test command
@@ -735,14 +735,14 @@ namespace Svc {
                 // verify dispatch event
                 ASSERT_EVENTS_SIZE(1);
                 ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-                ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+                ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
                 // verify sequence table entry
                 ASSERT_TRUE(this->m_impl.m_sequenceTracker[disp].used);
                 ASSERT_EQ(disp,this->m_impl.m_sequenceTracker[disp].seq);
                 ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].opCode,testOpCode);
                 ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].context,testContext);
-                ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].callerPort,(NATIVE_INT_TYPE)0);
+                ASSERT_EQ(this->m_impl.m_sequenceTracker[disp].callerPort,0);
 
                 // verify command received
                 ASSERT_TRUE(this->m_cmdSendRcvd);
@@ -761,7 +761,7 @@ namespace Svc {
 
     }
 
-    void CommandDispatcherImplTester::runClearCommandTracking(void) {
+    void CommandDispatcherImplTester::runClearCommandTracking() {
 
         // verify dispatch table is empty
         for (NATIVE_UINT_TYPE entry = 0; entry < FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_entryTable); entry++) {
@@ -814,7 +814,7 @@ namespace Svc {
         // verify registration event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-        ASSERT_EVENTS_OpCodeRegistered(0,(U32)testOpCode,0,4);
+        ASSERT_EVENTS_OpCodeRegistered(0,testOpCode,0,4);
 
         // dispatch a test command
         U32 testCmdArg = 100;
@@ -830,19 +830,19 @@ namespace Svc {
         // verify dispatch event
         ASSERT_EVENTS_SIZE(1);
         ASSERT_EVENTS_OpCodeDispatched_SIZE(1);
-        ASSERT_EVENTS_OpCodeDispatched(0,(U32)testOpCode,0);
+        ASSERT_EVENTS_OpCodeDispatched(0,testOpCode,0);
 
         // verify sequence table entry
         ASSERT_TRUE(this->m_impl.m_sequenceTracker[0].used);
-        ASSERT_EQ((U32)0,this->m_impl.m_sequenceTracker[0].seq);
+        ASSERT_EQ(0u,this->m_impl.m_sequenceTracker[0].seq);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].opCode,testOpCode);
         ASSERT_EQ(this->m_impl.m_sequenceTracker[0].context,testContext);
-        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,(NATIVE_INT_TYPE)0);
+        ASSERT_EQ(this->m_impl.m_sequenceTracker[0].callerPort,0);
 
         // verify command received
         ASSERT_TRUE(this->m_cmdSendRcvd);
         ASSERT_EQ(this->m_cmdSendOpCode,testOpCode);
-        ASSERT_EQ((U32)0,this->m_cmdSendCmdSeq);
+        ASSERT_EQ(0u,this->m_cmdSendCmdSeq);
         // check argument
         U32 checkVal;
         ASSERT_EQ(this->m_cmdSendArgs.deserialize(checkVal),Fw::FW_SERIALIZE_OK);
@@ -853,7 +853,7 @@ namespace Svc {
 
         buff.resetSer();
         ASSERT_EQ(buff.serialize(FwPacketDescriptorType(Fw::ComPacket::FW_PACKET_COMMAND)),Fw::FW_SERIALIZE_OK);
-        ASSERT_EQ(buff.serialize((FwOpcodeType)CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING),Fw::FW_SERIALIZE_OK);
+        ASSERT_EQ(buff.serialize(static_cast<FwOpcodeType>(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING)),Fw::FW_SERIALIZE_OK);
 
         this->invoke_to_seqCmdBuff(0,buff,testContext);
         // send buffer to command dispatcher
@@ -873,7 +873,7 @@ namespace Svc {
 
         clearHistory();
         // send command complete
-        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::COMMAND_OK);
+        this->invoke_to_compCmdStat(0,testOpCode,this->m_cmdSendCmdSeq,Fw::CmdResponse::OK);
         ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK,this->m_impl.doDispatch());
 
         // verify no status returned

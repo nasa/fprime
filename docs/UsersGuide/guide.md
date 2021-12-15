@@ -63,6 +63,7 @@ This section is divided into three sub-sections:
     - [Sequencing in F´](./gds/seqgen.md)
 - Full Development Guides: technical details for full F´ implementations
     - [Configuring F´](./dev/configuring-fprime.md)
+    - [v3 Migration Guide](./user/v3-migration-guide.md)
     - [A Tour of the Source Tree](./dev/source-tree.md)
     - [F´ XML Specifications](./dev/xml-specification.md):
     - [F´ Implementation Classes](./dev/implementation.md)

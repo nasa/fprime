@@ -7,6 +7,7 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
+// ======================================================================
 
 #include "Fw/Types/String.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
@@ -36,7 +37,7 @@ namespace Svc {
     }
 
     File ::
-      ~File(void)
+      ~File()
     {
 
     }

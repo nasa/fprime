@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm_string/TestTelemRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <Fw/Tlm/TlmString.hpp>
 
 #if FW_OBJECT_NAMES == 1
@@ -31,7 +31,7 @@ void TestTelemRecvImpl::tlmRecvPort_handler(NATIVE_INT_TYPE portNum, FwChanIdTyp
     printf("ID: %d TLM value is \"%s\". Time is %d:%d base: %d\n",id,tlmVal.toChar(),timeTag.getSeconds(),timeTag.getUSeconds(),timeTag.getTimeBase());
 }
 
-void TestTelemRecvImpl::init(void) {
+void TestTelemRecvImpl::init() {
     Tlm::TelemTesterComponentBase::init();
 }
 

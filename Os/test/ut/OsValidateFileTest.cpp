@@ -5,7 +5,7 @@
 #include <Utils/Hash/HashBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 void testValidateFile(const char* fileName) {
 

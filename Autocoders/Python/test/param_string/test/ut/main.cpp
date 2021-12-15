@@ -11,9 +11,9 @@
 class ATester : public Prm::TestPrmGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : Prm::TestPrmGTestBase("comp",10) {
+        ATester() : Prm::TestPrmGTestBase("comp",10) {
 #else
-        ATester(void) : Prm::TestPrmGTestBase(10)  {
+        ATester() : Prm::TestPrmGTestBase(10)  {
 #endif
     }
 };

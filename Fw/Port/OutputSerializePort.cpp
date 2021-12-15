@@ -1,6 +1,6 @@
 #include <Fw/Port/OutputSerializePort.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_SERIALIZATION
 
@@ -13,11 +13,11 @@ namespace Fw {
 
     OutputSerializePort::~OutputSerializePort() {
     }
-    
-    void OutputSerializePort::init(void) {
+
+    void OutputSerializePort::init() {
         OutputPortBase::init();
     }
-    
+
 #if FW_OBJECT_TO_STRING == 1
     void OutputSerializePort::toString(char* buffer, NATIVE_INT_TYPE size) {
 #if FW_OBJECT_NAMES == 1
@@ -32,7 +32,7 @@ namespace Fw {
     }
 #endif
 
-    
+
 }
 
 #endif // FW_PORT_SERIALIZATION

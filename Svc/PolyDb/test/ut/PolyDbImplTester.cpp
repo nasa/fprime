@@ -23,7 +23,7 @@ namespace Svc {
     PolyDbImplTester::~PolyDbImplTester() {
     }
 
-    void PolyDbImplTester::runNominalReadWrite(void) {
+    void PolyDbImplTester::runNominalReadWrite() {
 
         enum {
             NUM_TEST_VALS = 12 // one for each type supported
@@ -32,18 +32,18 @@ namespace Svc {
         Fw::PolyType vals[NUM_TEST_VALS];
 
         // set test values
-        vals[0] = (U8)1;
-        vals[1] = (I8)2;
-        vals[2] = (U16)3;
-        vals[3] = (I16)4;
-        vals[4] = (U32)5;
-        vals[5] = (I32)6;
-        vals[6] = (U64)7;
-        vals[7] = (I64)8;
-        vals[8] = (F32)9.0;
-        vals[9] = (F64)10.0;
+        vals[0] = static_cast<U8>(1);
+        vals[1] = static_cast<I8>(2);
+        vals[2] = static_cast<U16>(3);
+        vals[3] = static_cast<I16>(4);
+        vals[4] = static_cast<U32>(5);
+        vals[5] = static_cast<I32>(6);
+        vals[6] = static_cast<U64>(7);
+        vals[7] = static_cast<I64>(8);
+        vals[8] = static_cast<F32>(9.0);
+        vals[9] = static_cast<F64>(10.0);
         vals[10] = true;
-        vals[11] = (void*)0x100;
+        vals[11] = reinterpret_cast<void*>(0x100);
 
         Fw::Time ts(TB_NONE,6,7);
 
@@ -53,7 +53,8 @@ namespace Svc {
         bool r004Emitted = false;
 
         // read and write normal values for each entry in the database with each status type
-        for (MeasurementStatus mstat = MEASUREMENT_OK; mstat <= MEASUREMENT_STALE;) {
+        for (MeasurementStatus::t mstatValue = MeasurementStatus::OK; mstatValue <= MeasurementStatus::STALE;) {
+            MeasurementStatus mstat(mstatValue);
             for (U32 entry = 0; entry < POLYDB_NUM_DB_ENTRIES; entry++) {
                 if (not r001Emitted) {
                     REQUIREMENT("PDB-001");
@@ -82,9 +83,9 @@ namespace Svc {
                     REQUIREMENT("PDB-004");
                     r004Emitted = true;
                 }
-                ASSERT_EQ(mstat,checkStat);
+                ASSERT_EQ(mstatValue,checkStat.e);
             }
-            mstat = (MeasurementStatus)((NATIVE_INT_TYPE)mstat + 1);
+            mstatValue = static_cast<MeasurementStatus::t>(mstatValue + 1);
         }
 
     }

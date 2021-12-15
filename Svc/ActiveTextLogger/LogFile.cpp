@@ -8,8 +8,8 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <limits>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 
 namespace Svc {
@@ -39,7 +39,7 @@ namespace Svc {
     bool LogFile::write_to_log(const char *const buf, const U32 size)
     {
 
-        FW_ASSERT(buf != NULL);
+        FW_ASSERT(buf != nullptr);
 
         bool status = true;
 
@@ -79,7 +79,7 @@ namespace Svc {
 
     bool LogFile::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
-        FW_ASSERT(fileName != NULL);
+        FW_ASSERT(fileName != nullptr);
 
         // If there is already a previously open file then close it:
         if (this->m_openFile) {

@@ -2,7 +2,7 @@
 // Created by mstarch on 12/7/20.
 //
 #include <gtest/gtest.h>
-#include <string.h>
+#include <cstring>
 #include <Fw/Types/StringUtils.hpp>
 
 TEST(Nominal, string_copy) {

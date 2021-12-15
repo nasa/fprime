@@ -34,11 +34,11 @@ namespace Svc {
     public:
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -60,7 +60,7 @@ namespace Svc {
       //!
       void from_fileUplinkBufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_uplinkPort
@@ -75,28 +75,28 @@ namespace Svc {
       //!
       void from_fileDownlinkBufferSendOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_fileUplinkBufferGet
       //!
       Fw::Buffer from_fileUplinkBufferGet_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 size 
+          U32 size
       );
 
       //! Handler for from_write
       //!
       void from_write_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
       //! Handler for from_readPoll
       //!
       void from_readPoll_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
     private:
@@ -107,11 +107,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

@@ -169,6 +169,24 @@ class XmlSerializeParser:
                         sys.exit(-1)
                     n = member.attrib["name"]
                     t = member.attrib["type"]
+                    if "array_size" in list(member.attrib.keys()):
+                        if t == "ENUM":
+                            PRINT.info(
+                                "%s: Member %s: arrays of enums not supported yet!"
+                                % (xml_file, n)
+                            )
+                            sys.exit(-1)
+                        array_size = member.attrib["array_size"]
+                        if not array_size.isdigit():
+                            PRINT.info(
+                                "{}: Member {}: array_size must be a number".format(
+                                    xml_file, n
+                                )
+                            )
+                            sys.exit(-1)
+                    else:
+                        array_size = None
+
                     if "size" in list(member.attrib.keys()):
                         if t == "ENUM":
                             PRINT.info(
@@ -176,16 +194,24 @@ class XmlSerializeParser:
                                 % (xml_file, n)
                             )
                             sys.exit(-1)
-                        s = member.attrib["size"]
-                        if not s.isdigit():
+                        size = member.attrib["size"]
+                        if not size.isdigit():
                             PRINT.info(
-                                "{}: Member {}: size must be a number".format(
+                                "{}: Member {}: array_size must be a number".format(
                                     xml_file, n
                                 )
                             )
                             sys.exit(-1)
+                        if t != "string":
+                            PRINT.info(
+                                "%s: Member %s: size is only valid for string members"
+                                % (xml_file, n)
+                            )
+                            sys.exit(-1)
+
                     else:
-                        s = None
+                        size = None
+
                     if "format" in list(member.attrib.keys()):
                         f = member.attrib["format"]
                     else:
@@ -194,7 +220,7 @@ class XmlSerializeParser:
                         else:  # Must be included type, which will use toString method
                             f = "%s"
                     if t == "string":
-                        if s is None:
+                        if size is None:
                             PRINT.info(
                                 "%s: member %s string must specify size tag"
                                 % (xml_file, member.tag)
@@ -233,7 +259,7 @@ class XmlSerializeParser:
                             )
                             sys.exit(-1)
 
-                    self.__members.append((n, t, s, f, c, d))
+                    self.__members.append((n, t, array_size, size, f, c, d))
 
         #
         # Generate a type id here using SHA256 algorithm and XML stringified file.

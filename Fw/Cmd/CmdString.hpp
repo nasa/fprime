@@ -19,14 +19,14 @@ namespace Fw {
             CmdStringArg(const char* src);
             CmdStringArg(const StringBase& src);
             CmdStringArg(const CmdStringArg& src);
-            CmdStringArg(void);
+            CmdStringArg();
             CmdStringArg& operator=(const CmdStringArg& other);
             CmdStringArg& operator=(const StringBase& other);
             CmdStringArg& operator=(const char* other);
-            ~CmdStringArg(void);
+            ~CmdStringArg();
 
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            const char* toChar() const;
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
 
         private:
 

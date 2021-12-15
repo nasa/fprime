@@ -14,6 +14,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
+#include <limits>
 
 namespace Svc {
 
@@ -79,7 +80,7 @@ namespace Svc {
   }
 
   FileDownlink ::
-    ~FileDownlink(void)
+    ~FileDownlink()
   {
 
   }
@@ -100,7 +101,7 @@ namespace Svc {
         NATIVE_INT_TYPE real_size = 0;
         NATIVE_INT_TYPE prio = 0;
         Os::Queue::QueueStatus stat = fileQueue.receive(
-          (U8 *) &this->curEntry,
+          reinterpret_cast<U8*>(&this->curEntry),
           sizeof(this->curEntry),
           real_size,
           prio,
@@ -148,8 +149,8 @@ namespace Svc {
   Svc::SendFileResponse FileDownlink ::
     SendFile_handler(
         const NATIVE_INT_TYPE portNum,
-        sourceFileNameString sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
-        destFileNameString destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const sourceFileNameString& sourceFilename, // lgtm[cpp/large-parameter] dictated by command architecture
+        const destFileNameString& destFilename, // lgtm[cpp/large-parameter] dictated by command architecture
         U32 offset,
         U32 length
     )
@@ -169,10 +170,10 @@ namespace Svc {
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      return SendFileResponse(SendFileStatus::STATUS_ERROR, U32_MAX);
+      return SendFileResponse(SendFileStatus::STATUS_ERROR, std::numeric_limits<U32>::max());
     }
     return SendFileResponse(SendFileStatus::STATUS_OK, entry.context);
   }
@@ -234,7 +235,7 @@ namespace Svc {
     entry.source = FileDownlink::COMMAND;
     entry.opCode = opCode;
     entry.cmdSeq = cmdSeq;
-    entry.context = U32_MAX;
+    entry.context = std::numeric_limits<U32>::max();
 
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -242,10 +243,10 @@ namespace Svc {
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
   }
 
@@ -267,7 +268,7 @@ namespace Svc {
     entry.source = FileDownlink::COMMAND;
     entry.opCode = opCode;
     entry.cmdSeq = cmdSeq;
-    entry.context = U32_MAX;
+    entry.context = std::numeric_limits<U32>::max();
 
 
     FW_ASSERT(sourceFilename.length() < sizeof(entry.srcFilename));
@@ -275,10 +276,10 @@ namespace Svc {
     Fw::StringUtils::string_copy(entry.srcFilename, sourceFilename.toChar(), sizeof(entry.srcFilename));
     Fw::StringUtils::string_copy(entry.destFilename, destFilename.toChar(), sizeof(entry.destFilename));
 
-    Os::Queue::QueueStatus status = fileQueue.send((U8 *) &entry, sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
+    Os::Queue::QueueStatus status = fileQueue.send(reinterpret_cast<U8*>(&entry), sizeof(entry), 0, Os::Queue::QUEUE_NONBLOCKING);
 
     if(status != Os::Queue::QUEUE_OK) {
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_EXECUTION_ERROR);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
   }
 
@@ -292,32 +293,32 @@ namespace Svc {
       if (this->mode.get() == Mode::DOWNLINK || this->mode.get() == Mode::WAIT) {
           this->mode.set(Mode::CANCEL);
       }
-      this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   // ----------------------------------------------------------------------
   // Private helper methods
   // ----------------------------------------------------------------------
 
-  Fw::CommandResponse FileDownlink ::
+  Fw::CmdResponse FileDownlink ::
     statusToCmdResp(SendFileStatus status)
   {
     switch(status.e) {
     case SendFileStatus::STATUS_OK:
-      return Fw::COMMAND_OK;
+      return Fw::CmdResponse::OK;
     case SendFileStatus::STATUS_ERROR:
-      return Fw::COMMAND_EXECUTION_ERROR;
+      return Fw::CmdResponse::EXECUTION_ERROR;
     case SendFileStatus::STATUS_INVALID:
-      return Fw::COMMAND_VALIDATION_ERROR;
+      return Fw::CmdResponse::VALIDATION_ERROR;
     case SendFileStatus::STATUS_BUSY:
-        return Fw::COMMAND_BUSY;
+        return Fw::CmdResponse::BUSY;
     default:
         // Trigger assertion if given unknown status
         FW_ASSERT(false);
     }
 
     // It's impossible to reach this, but added to suppress gcc missing return warning
-    return Fw::COMMAND_EXECUTION_ERROR;
+    return Fw::CmdResponse::EXECUTION_ERROR;
   }
 
   void FileDownlink ::
@@ -411,7 +412,7 @@ namespace Svc {
     const Fw::FilePacket::DataPacket dataPacket = {
       { Fw::FilePacket::T_DATA, this->sequenceIndex },
       byteOffset,
-      (U16)dataSize,
+      static_cast<U16>(dataSize),
       buffer
     };
     ++this->sequenceIndex;
@@ -426,7 +427,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendCancelPacket(void)
+    sendCancelPacket()
   {
     Fw::Buffer buffer;
     const Fw::FilePacket::CancelPacket cancelPacket = {
@@ -444,7 +445,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendEndPacket(void)
+    sendEndPacket()
   {
     const Fw::FilePacket::Header header = {
       Fw::FilePacket::T_END,
@@ -464,7 +465,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    sendStartPacket(void)
+    sendStartPacket()
   {
     Fw::FilePacket::StartPacket startPacket;
     startPacket.initialize(
@@ -481,7 +482,7 @@ namespace Svc {
     sendFilePacket(const Fw::FilePacket& filePacket)
   {
     const U32 bufferSize = filePacket.bufferSize();
-    FW_ASSERT(this->buffer.getData() != 0);
+    FW_ASSERT(this->buffer.getData() != nullptr);
     FW_ASSERT(this->buffer.getSize() >= bufferSize, bufferSize, this->buffer.getSize());
     const Fw::SerializeStatus status = filePacket.toBuffer(this->buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
@@ -494,7 +495,7 @@ namespace Svc {
   }
 
   void FileDownlink ::
-    enterCooldown(void)
+    enterCooldown()
   {
     this->file.osFile.close();
     this->mode.set(Mode::COOLDOWN);

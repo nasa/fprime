@@ -8,7 +8,7 @@ namespace Partition {
 	class PartitionImpl : public PartitionBase  {
 	public:
 		PartitionImpl(const char* compName);
-		~PartitionImpl(void);
+		~PartitionImpl();
 
 	private:
 		// downcall for input port

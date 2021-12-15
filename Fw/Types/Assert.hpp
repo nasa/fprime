@@ -5,15 +5,8 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
-
 #define FW_ASSERT(...)
-#define FW_STATIC_ASSERT(...)
-
 #else // ASSERT is defined
-
-#define FW_STATIC_CAT_(a, b) a ## b
-#define FW_STATIC_CAT(a, b) FW_STATIC_CAT_(a, b)
-#define FW_STATIC_ASSERT(cond) typedef int FW_STATIC_CAT(FW_STATIC_ASSERT,__LINE__)[(cond) ? 1 : -1]
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
 #define FILE_NAME_ARG NATIVE_UINT_TYPE
@@ -21,10 +14,10 @@
     ((void) ((cond) ? (0) : \
     (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
 #else
-#define FILE_NAME_ARG const U8*
+#define FILE_NAME_ARG const CHAR*
 #define FW_ASSERT(cond, ...) \
     ((void) ((cond) ? (0) : \
-    (Fw::SwAssert((U8*)__FILE__, __LINE__, ##__VA_ARGS__))))
+    (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
 #endif
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
@@ -59,7 +52,7 @@ namespace Fw {
     // Base class for declaring an assert hook
     class AssertHook {
         public:
-            AssertHook() : previousHook(NULL) {}; //!< constructor
+            AssertHook() : previousHook(nullptr) {}; //!< constructor
             virtual ~AssertHook() {}; //!< destructor
             // override this function to intercept asserts
             virtual void reportAssert(
@@ -75,14 +68,14 @@ namespace Fw {
                     );
             // default reportAssert() will call this when the message is built
             // override it to do another kind of print. printf by default
-            virtual void printAssert(const I8* msg);
+            virtual void printAssert(const CHAR* msg);
             // do assert action. By default, calls assert.
             // Called after reportAssert()
-            virtual void doAssert(void);
+            virtual void doAssert();
             // register the hook
-            void registerHook(void);
+            void registerHook();
             // deregister the hook
-            void deregisterHook(void);
+            void deregisterHook();
 
         protected:
         private:

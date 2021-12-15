@@ -30,11 +30,11 @@ namespace TestComponents {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,7 +44,7 @@ namespace TestComponents {
 
       //! To do
       //!
-      void toDo(void);
+      void toDo();
 
     private:
 
@@ -67,11 +67,11 @@ namespace TestComponents {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
