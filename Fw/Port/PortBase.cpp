@@ -2,6 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cstdio>
+#include "Fw/Types/Assert.hpp"
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {
@@ -77,10 +78,11 @@ namespace Fw {
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
     void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-        (void)snprintf(buffer, size, "Port: %s %s->(%s)", this->m_objName, this->m_connObj ? "C" : "NC",
-                        this->m_connObj ? this->m_connObj->getObjName() : "None");
-        // NULL terminate
-        buffer[size-1] = 0;
+        FW_ASSERT(size > 0);
+        if (snprintf(buffer, size, "Port: %s %s->(%s)", this->m_objName, this->m_connObj ? "C" : "NC",
+                     this->m_connObj ? this->m_connObj->getObjName() : "None") < 0) {
+            buffer[0] = 0;
+        }
     }
 #endif // FW_OBJECT_TO_STRING
 #endif // FW_OBJECT_NAMES

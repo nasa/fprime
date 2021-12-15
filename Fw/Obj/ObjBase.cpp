@@ -2,6 +2,7 @@
 #include <Fw/Obj/ObjBase.hpp>
 #include <cstring>
 #include <cstdio>
+#include <Fw/Types/Assert.hpp>
 
 namespace Fw {
 
@@ -46,8 +47,10 @@ namespace Fw {
     }
 #if FW_OBJECT_TO_STRING == 1
     void ObjBase::toString(char* str, NATIVE_INT_TYPE size) {
-        (void)snprintf(str, size, "Obj: %s",this->m_objName);
-        str[size-1] = 0;
+        FW_ASSERT(size > 0);
+        if (snprintf(str, size, "Obj: %s",this->m_objName) < 0) {
+            str[0] = 0;
+        }
     }
 #endif
 #endif
