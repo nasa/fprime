@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['i8_3015',['I8',['../basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6',1,'BasicTypes.hpp']]]
+  ['deframer_3033',['Deframer',['../namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c',1,'Svc']]]
 ];

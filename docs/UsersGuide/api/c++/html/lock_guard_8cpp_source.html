@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -110,25 +110,25 @@ $(document).ready(function(){initNavTree('_lock_guard_8cpp_source.html',''); ini
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    ) :</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      m_mutex(mutex)</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    this-&gt;m_mutex.<a class="code" href="class_os_1_1_mutex.html#ab1ae378bd3e1de5426defb4b441c34f3">lock</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    this-&gt;m_mutex.<a class="code" href="class_os_1_1_mutex.html#ac5d17d14c786aa62c35b5e25cf3c1201">lock</a>();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  }</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="class_utils_1_1_lock_guard.html#ab124f3c02f72327bbf6a032a93daebd3">LockGuard ::</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_utils_1_1_lock_guard.html#ab124f3c02f72327bbf6a032a93daebd3">   27</a></span>&#160;<a class="code" href="class_utils_1_1_lock_guard.html#ab124f3c02f72327bbf6a032a93daebd3">    ~LockGuard</a> ()</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    this-&gt;m_mutex.<a class="code" href="class_os_1_1_mutex.html#a7d4879f0b4519f483de9b3014adb6467">unLock</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    this-&gt;m_mutex.<a class="code" href="class_os_1_1_mutex.html#aa974f5edcf1d28241dbbba77fed21e23">unLock</a>();</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;} <span class="comment">// end namespace Utils</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_utils_1_1_lock_guard_html_a13d06a5c22a32125819e00779b0121da"><div class="ttname"><a href="class_utils_1_1_lock_guard.html#a13d06a5c22a32125819e00779b0121da">Utils::LockGuard::LockGuard</a></div><div class="ttdeci">LockGuard(Os::Mutex &amp;mutex)</div><div class="ttdef"><b>Definition:</b> <a href="lock_guard_8cpp_source.html#l00018">LockGuard.cpp:18</a></div></div>
-<div class="ttc" id="aclass_os_1_1_mutex_html_ab1ae378bd3e1de5426defb4b441c34f3"><div class="ttname"><a href="class_os_1_1_mutex.html#ab1ae378bd3e1de5426defb4b441c34f3">Os::Mutex::lock</a></div><div class="ttdeci">void lock(void)</div><div class="ttdoc">lock the mutex</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_mutex_8cpp_source.html#l00012">Mutex.cpp:12</a></div></div>
-<div class="ttc" id="aclass_os_1_1_mutex_html_a7d4879f0b4519f483de9b3014adb6467"><div class="ttname"><a href="class_os_1_1_mutex.html#a7d4879f0b4519f483de9b3014adb6467">Os::Mutex::unLock</a></div><div class="ttdeci">void unLock(void)</div><div class="ttdoc">unlock the mutex</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_mutex_8cpp_source.html#l00013">Mutex.cpp:13</a></div></div>
 <div class="ttc" id="anamespace_utils_html"><div class="ttname"><a href="namespace_utils.html">Utils</a></div><div class="ttdef"><b>Definition:</b> <a href="c_r_c_checker_8cpp_source.html#l00020">CRCChecker.cpp:20</a></div></div>
+<div class="ttc" id="aclass_os_1_1_mutex_html_ac5d17d14c786aa62c35b5e25cf3c1201"><div class="ttname"><a href="class_os_1_1_mutex.html#ac5d17d14c786aa62c35b5e25cf3c1201">Os::Mutex::lock</a></div><div class="ttdeci">void lock()</div><div class="ttdoc">lock the mutex</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_mutex_8cpp_source.html#l00012">Mutex.cpp:12</a></div></div>
 <div class="ttc" id="aclass_utils_1_1_lock_guard_html_ab124f3c02f72327bbf6a032a93daebd3"><div class="ttname"><a href="class_utils_1_1_lock_guard.html#ab124f3c02f72327bbf6a032a93daebd3">Utils::LockGuard::~LockGuard</a></div><div class="ttdeci">~LockGuard()</div><div class="ttdef"><b>Definition:</b> <a href="lock_guard_8cpp_source.html#l00027">LockGuard.cpp:27</a></div></div>
 <div class="ttc" id="aclass_os_1_1_mutex_html"><div class="ttname"><a href="class_os_1_1_mutex.html">Os::Mutex</a></div><div class="ttdef"><b>Definition:</b> <a href="mutex_8hpp_source.html#l00008">Mutex.hpp:8</a></div></div>
 <div class="ttc" id="a_lock_guard_8hpp_html"><div class="ttname"><a href="lock_guard_8hpp.html">LockGuard.hpp</a></div></div>
+<div class="ttc" id="aclass_os_1_1_mutex_html_aa974f5edcf1d28241dbbba77fed21e23"><div class="ttname"><a href="class_os_1_1_mutex.html#aa974f5edcf1d28241dbbba77fed21e23">Os::Mutex::unLock</a></div><div class="ttdeci">void unLock()</div><div class="ttdoc">unlock the mutex</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_mutex_8cpp_source.html#l00013">Mutex.cpp:13</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

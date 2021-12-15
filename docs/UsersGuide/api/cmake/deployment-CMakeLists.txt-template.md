@@ -32,9 +32,6 @@ Also the project languages "C" and "CXX" (C++) must be supplied.
 
 Next, call `cmake_minimum_required` and set VERSION to 3.5 or greater.
 
-Finally, if desired set the `CMAKE_BUILD_TYPE` variable. Used to specify DEBUG/RELEASE builds.
-See: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
-
 **Example:**
 ```
 project(Ref C CXX)

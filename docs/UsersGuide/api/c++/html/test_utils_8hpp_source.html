@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -136,8 +136,8 @@ $(document).ready(function(){initNavTree('_test_utils_8hpp_source.html',''); ini
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// Example:</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">//   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::COMMAND_OK, channel);</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">//   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::COMMAND_OK, channel, dutyCycle);</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">//   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::CmdResponse::OK, channel);</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">//   SEND_CMD(PWR_SW_MGR_SET_DUTY_CYCLE, Fw::CmdResponse::OK, channel, dutyCycle);</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">//   SEND_CMD(PWR_SW_MGR_PWR_ON, Fw::COMMAND_EXECUTION_ERROR, illegalChannel);</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="test_utils_8hpp.html#acc1b0e818a4ae9f18e6701b6c3704ef3">   53</a></span>&#160;<span class="preprocessor">#define SEND_CMD(cmd, status, ...) \</span></div>
@@ -174,7 +174,7 @@ $(document).ready(function(){initNavTree('_test_utils_8hpp_source.html',''); ini
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">//   SEND_CMD_NO_EXPECT(FILE_DWN_SEND_APID, 100, 0, 0, 0);</span></div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">//   // ...</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">//   ASSERT_LAST_CMD(FILE_DWN_SEND_APID, Fw::COMMAND_OK);</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">//   ASSERT_LAST_CMD(FILE_DWN_SEND_APID, Fw::CmdResponse::OK);</span></div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="test_utils_8hpp.html#a257ceb48c0a090f307102f2958ad8215">   89</a></span>&#160;<span class="preprocessor">#define ASSERT_LAST_CMD(cmd, status) \</span></div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">  ASSERT_LAST_CMD_COMP(TEST_COMP, cmd, status)</span></div>

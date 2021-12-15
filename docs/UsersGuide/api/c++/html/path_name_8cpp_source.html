@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -100,7 +100,7 @@ $(document).ready(function(){initNavTree('_path_name_8cpp_source.html',''); init
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="file_packet_8hpp.html">Fw/FilePacket/FilePacket.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
@@ -115,8 +115,8 @@ $(document).ready(function(){initNavTree('_path_name_8cpp_source.html',''); init
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    this-&gt;value = <a class="code" href="class_fw_1_1_file_packet_1_1_path_name.html#ad075901a334a7dbe1414870e60ca9b01">value</a>;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  }</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  U32 <a class="code" href="class_fw_1_1_file_packet_1_1_path_name.html#a908438faf6d6d6ca6954c3883ae495e7">FilePacket::PathName ::</a></div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_fw_1_1_file_packet_1_1_path_name.html#a908438faf6d6d6ca6954c3883ae495e7">   29</a></span>&#160;<a class="code" href="class_fw_1_1_file_packet_1_1_path_name.html#a908438faf6d6d6ca6954c3883ae495e7">    bufferSize</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  U32 <a class="code" href="class_fw_1_1_file_packet_1_1_path_name.html#a927fb44d83cb00b6c9405d7b7f4ea1ef">FilePacket::PathName ::</a></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_fw_1_1_file_packet_1_1_path_name.html#a927fb44d83cb00b6c9405d7b7f4ea1ef">   29</a></span>&#160;<a class="code" href="class_fw_1_1_file_packet_1_1_path_name.html#a927fb44d83cb00b6c9405d7b7f4ea1ef">    bufferSize</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">  </span>{</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(this-&gt;length) + this-&gt;length;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  }</div>
@@ -133,7 +133,7 @@ $(document).ready(function(){initNavTree('_path_name_8cpp_source.html',''); init
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* addrLeft = serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#ac55f1172d14360d3bd73c5ffc6bcbc56">getBuffAddrLeft</a>();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* addrLeft = serialBuffer.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a6087f5e97e6b0d6dc3e87ef5e76f6fce">getBuffAddrLeft</a>();</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> bytes[MAX_LENGTH];</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keyword">const</span> <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> status =</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        serialBuffer.<a class="code" href="class_fw_1_1_serial_buffer.html#a6734c2235cec03a265138213b333c337">popBytes</a>(bytes, this-&gt;length);</div>
@@ -173,10 +173,12 @@ $(document).ready(function(){initNavTree('_path_name_8cpp_source.html',''); init
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="aclass_fw_1_1_file_packet_1_1_path_name_html_a927fb44d83cb00b6c9405d7b7f4ea1ef"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_path_name.html#a927fb44d83cb00b6c9405d7b7f4ea1ef">Fw::FilePacket::PathName::bufferSize</a></div><div class="ttdeci">U32 bufferSize() const</div><div class="ttdoc">Compute the buffer size needed to hold this PathName.</div><div class="ttdef"><b>Definition:</b> <a href="path_name_8cpp_source.html#l00029">PathName.cpp:29</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serial_buffer_html"><div class="ttname"><a href="class_fw_1_1_serial_buffer.html">Fw::SerialBuffer</a></div><div class="ttdoc">A variable-length serializable buffer.</div><div class="ttdef"><b>Definition:</b> <a href="serial_buffer_8hpp_source.html#l00024">SerialBuffer.hpp:24</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">Fw::SerializeStatus</a></div><div class="ttdeci">SerializeStatus</div><div class="ttdoc">forward declaration for string</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00014">Serializable.hpp:14</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_path_name_html_a5254f977a493a87e37f0ac9605df76f6"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_path_name.html#a5254f977a493a87e37f0ac9605df76f6">Fw::FilePacket::PathName::initialize</a></div><div class="ttdeci">void initialize(const char *const value)</div><div class="ttdoc">Initialize a PathName.</div><div class="ttdef"><b>Definition:</b> <a href="path_name_8cpp_source.html#l00021">PathName.cpp:21</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00076">BasicTypes.hpp:76</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a6087f5e97e6b0d6dc3e87ef5e76f6fce"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a6087f5e97e6b0d6dc3e87ef5e76f6fce">Fw::SerializeBufferBase::getBuffAddrLeft</a></div><div class="ttdeci">const U8 * getBuffAddrLeft() const</div><div class="ttdoc">gets address of remaining non-deserialized data.</div></div>
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_path_name_html_ae0088f5b8056839752e45a26dc607e28a94123744cb6bf7be6c95b6299c9669e3"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_path_name.html#ae0088f5b8056839752e45a26dc607e28a94123744cb6bf7be6c95b6299c9669e3">Fw::FilePacket::PathName::MAX_LENGTH</a></div><div class="ttdeci">@ MAX_LENGTH</div><div class="ttdef"><b>Definition:</b> <a href="file_packet_8hpp_source.html#l00052">FilePacket.hpp:52</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00015">Serializable.hpp:15</a></div></div>
@@ -184,10 +186,8 @@ $(document).ready(function(){initNavTree('_path_name_8cpp_source.html',''); init
 <div class="ttc" id="aclass_fw_1_1_serial_buffer_html_a6734c2235cec03a265138213b333c337"><div class="ttname"><a href="class_fw_1_1_serial_buffer.html#a6734c2235cec03a265138213b333c337">Fw::SerialBuffer::popBytes</a></div><div class="ttdeci">SerializeStatus popBytes(U8 *const addr, NATIVE_UINT_TYPE n)</div><div class="ttdoc">Pop n bytes off the buffer.</div><div class="ttdef"><b>Definition:</b> <a href="serial_buffer_8cpp_source.html#l00062">SerialBuffer.cpp:62</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a99f6c704e514620bf8e26dc28a6f698a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a99f6c704e514620bf8e26dc28a6f698a">Fw::SerializeBufferBase::deserialize</a></div><div class="ttdeci">SerializeStatus deserialize(U8 &amp;val)</div><div class="ttdoc">deserialize 8-bit unsigned int</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00290">Serializable.cpp:290</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_file_packet_1_1_path_name_html_ad075901a334a7dbe1414870e60ca9b01"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_path_name.html#ad075901a334a7dbe1414870e60ca9b01">Fw::FilePacket::PathName::value</a></div><div class="ttdeci">const char * value</div><div class="ttdoc">Pointer to the path value.</div><div class="ttdef"><b>Definition:</b> <a href="file_packet_8hpp_source.html#l00060">FilePacket.hpp:60</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_file_packet_1_1_path_name_html_a908438faf6d6d6ca6954c3883ae495e7"><div class="ttname"><a href="class_fw_1_1_file_packet_1_1_path_name.html#a908438faf6d6d6ca6954c3883ae495e7">Fw::FilePacket::PathName::bufferSize</a></div><div class="ttdeci">U32 bufferSize(void) const</div><div class="ttdoc">Compute the buffer size needed to hold this PathName.</div><div class="ttdef"><b>Definition:</b> <a href="path_name_8cpp_source.html#l00029">PathName.cpp:29</a></div></div>
 <div class="ttc" id="a_file_packet_8hpp_html"><div class="ttname"><a href="file_packet_8hpp.html">FilePacket.hpp</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00021">Buffer.cpp:21</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_ac55f1172d14360d3bd73c5ffc6bcbc56"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#ac55f1172d14360d3bd73c5ffc6bcbc56">Fw::SerializeBufferBase::getBuffAddrLeft</a></div><div class="ttdeci">const U8 * getBuffAddrLeft(void) const</div><div class="ttdoc">gets address of remaining non-deserialized data.</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -92,7 +92,7 @@ $(document).ready(function(){initNavTree('_rate_group_driver_impl_8cpp_source.ht
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
@@ -123,12 +123,12 @@ $(document).ready(function(){initNavTree('_rate_group_driver_impl_8cpp_source.ht
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_svc_1_1_rate_group_driver_impl.html#a66c9e244780bbce0a42620af7204e20c">   36</a></span>&#160;    <a class="code" href="class_svc_1_1_rate_group_driver_impl.html#a66c9e244780bbce0a42620af7204e20c">RateGroupDriverImpl::~RateGroupDriverImpl</a>(<span class="keywordtype">void</span>) {</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_svc_1_1_rate_group_driver_impl.html#a11ea63ce992833d5f7f5d9cc5f5e9f5e">   36</a></span>&#160;    <a class="code" href="class_svc_1_1_rate_group_driver_impl.html#a11ea63ce992833d5f7f5d9cc5f5e9f5e">RateGroupDriverImpl::~RateGroupDriverImpl</a>() {</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_svc_1_1_rate_group_driver_impl.html#acb93f9ad8993f3e8988c76f1c68e4794">   40</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_rate_group_driver_impl.html#acb93f9ad8993f3e8988c76f1c68e4794">RateGroupDriverImpl::init</a>(<span class="keywordtype">void</span>) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        RateGroupDriverComponentBase::init();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="class_svc_1_1_rate_group_driver_impl.html#a96034ba5797cb48aefdd641e868bbdbc">   40</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_rate_group_driver_impl.html#a96034ba5797cb48aefdd641e868bbdbc">RateGroupDriverImpl::init</a>(<a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instanceId) {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        RateGroupDriverComponentBase::init(instanceId);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> RateGroupDriverImpl::CycleIn_handler(<a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> portNum, <a class="code" href="class_svc_1_1_timer_val.html">Svc::TimerVal</a>&amp; cycleStart) {</div>
@@ -145,7 +145,7 @@ $(document).ready(function(){initNavTree('_rate_group_driver_impl_8cpp_source.ht
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="comment">// rollover the tick value when the tick count reaches the rollover value</span></div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="comment">// the rollover value is the product of all the dividers. See comment in constructor.</span></div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        this-&gt;m_ticks = (this-&gt;m_ticks + 1) % this-&gt;m_rollover;</div>
@@ -155,13 +155,13 @@ $(document).ready(function(){initNavTree('_rate_group_driver_impl_8cpp_source.ht
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="aclass_svc_1_1_rate_group_driver_impl_html_a96034ba5797cb48aefdd641e868bbdbc"><div class="ttname"><a href="class_svc_1_1_rate_group_driver_impl.html#a96034ba5797cb48aefdd641e868bbdbc">Svc::RateGroupDriverImpl::init</a></div><div class="ttdeci">void init(NATIVE_INT_TYPE instanceId=0)</div><div class="ttdoc">RateGroupDriverImpl initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="rate_group_driver_impl_8cpp_source.html#l00040">RateGroupDriverImpl.cpp:40</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_rate_group_driver_impl_html_a11ea63ce992833d5f7f5d9cc5f5e9f5e"><div class="ttname"><a href="class_svc_1_1_rate_group_driver_impl.html#a11ea63ce992833d5f7f5d9cc5f5e9f5e">Svc::RateGroupDriverImpl::~RateGroupDriverImpl</a></div><div class="ttdeci">~RateGroupDriverImpl()</div><div class="ttdoc">RateGroupDriverImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="rate_group_driver_impl_8cpp_source.html#l00036">RateGroupDriverImpl.cpp:36</a></div></div>
 <div class="ttc" id="a_rate_group_driver_impl_8hpp_html"><div class="ttname"><a href="rate_group_driver_impl_8hpp.html">RateGroupDriverImpl.hpp</a></div><div class="ttdoc">RateGroupDivider component implementation.</div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_ad9e564dbb201424b4ce880740f6f5aa4"><div class="ttname"><a href="basic_types_8hpp.html#ad9e564dbb201424b4ce880740f6f5aa4">FW_NUM_ARRAY_ELEMENTS</a></div><div class="ttdeci">#define FW_NUM_ARRAY_ELEMENTS(a)</div><div class="ttdoc">number of elements in an array</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00158">BasicTypes.hpp:158</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_rate_group_driver_impl_html_acb93f9ad8993f3e8988c76f1c68e4794"><div class="ttname"><a href="class_svc_1_1_rate_group_driver_impl.html#acb93f9ad8993f3e8988c76f1c68e4794">Svc::RateGroupDriverImpl::init</a></div><div class="ttdeci">void init(void)</div><div class="ttdoc">RateGroupDriverImpl initialization function.</div><div class="ttdef"><b>Definition:</b> <a href="rate_group_driver_impl_8cpp_source.html#l00040">RateGroupDriverImpl.cpp:40</a></div></div>
+<div class="ttc" id="a_basic_types_8hpp_html_ad9e564dbb201424b4ce880740f6f5aa4"><div class="ttname"><a href="basic_types_8hpp.html#ad9e564dbb201424b4ce880740f6f5aa4">FW_NUM_ARRAY_ELEMENTS</a></div><div class="ttdeci">#define FW_NUM_ARRAY_ELEMENTS(a)</div><div class="ttdoc">number of elements in an array</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00101">BasicTypes.hpp:101</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_timer_val_html"><div class="ttname"><a href="class_svc_1_1_timer_val.html">Svc::TimerVal</a></div><div class="ttdoc">Serializable class for carrying timer values.</div><div class="ttdef"><b>Definition:</b> <a href="timer_val_8hpp_source.html#l00022">TimerVal.hpp:22</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_rate_group_driver_impl_html_a66c9e244780bbce0a42620af7204e20c"><div class="ttname"><a href="class_svc_1_1_rate_group_driver_impl.html#a66c9e244780bbce0a42620af7204e20c">Svc::RateGroupDriverImpl::~RateGroupDriverImpl</a></div><div class="ttdeci">~RateGroupDriverImpl(void)</div><div class="ttdoc">RateGroupDriverImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="rate_group_driver_impl_8cpp_source.html#l00036">RateGroupDriverImpl.cpp:36</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_rate_group_driver_impl_html_a89398256ca166b21de5f34ff45909cd1"><div class="ttname"><a href="class_svc_1_1_rate_group_driver_impl.html#a89398256ca166b21de5f34ff45909cd1">Svc::RateGroupDriverImpl::RateGroupDriverImpl</a></div><div class="ttdeci">RateGroupDriverImpl(const char *compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers)</div><div class="ttdoc">RateGroupDriverImpl constructor.</div><div class="ttdef"><b>Definition:</b> <a href="rate_group_driver_impl_8cpp_source.html#l00009">RateGroupDriverImpl.cpp:9</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>

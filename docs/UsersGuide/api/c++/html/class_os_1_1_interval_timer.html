@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -109,12 +109,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35edaab197b63294a4cc0ade5661d4b8"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a35edaab197b63294a4cc0ade5661d4b8">~IntervalTimer</a> ()</td></tr>
 <tr class="memdesc:a35edaab197b63294a4cc0ade5661d4b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="class_os_1_1_interval_timer.html#a35edaab197b63294a4cc0ade5661d4b8">More...</a><br /></td></tr>
 <tr class="separator:a35edaab197b63294a4cc0ade5661d4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9bacd73c6c22dd294281fdfcdbe0762"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#ad9bacd73c6c22dd294281fdfcdbe0762">start</a> (void)</td></tr>
-<tr class="separator:ad9bacd73c6c22dd294281fdfcdbe0762"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8baf49f372f20aced5e6b1adb16f1590"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a8baf49f372f20aced5e6b1adb16f1590">stop</a> (void)</td></tr>
-<tr class="separator:a8baf49f372f20aced5e6b1adb16f1590"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f77203dc5f89469014d65031abbb802"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a0f77203dc5f89469014d65031abbb802">getDiffUsec</a> (void)</td></tr>
-<tr class="separator:a0f77203dc5f89469014d65031abbb802"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ea967af93b6e2349e738cf83a5d070a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a9ea967af93b6e2349e738cf83a5d070a">start</a> ()</td></tr>
+<tr class="separator:a9ea967af93b6e2349e738cf83a5d070a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a455bdfced0258d9e599637021cb73059"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a455bdfced0258d9e599637021cb73059">stop</a> ()</td></tr>
+<tr class="separator:a455bdfced0258d9e599637021cb73059"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a790a12883eae7cfa3562ea5db0716711"><td class="memItemLeft" align="right" valign="top">U32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_os_1_1_interval_timer.html#a790a12883eae7cfa3562ea5db0716711">getDiffUsec</a> ()</td></tr>
+<tr class="separator:a790a12883eae7cfa3562ea5db0716711"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -178,8 +178,28 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a790a12883eae7cfa3562ea5db0716711"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a790a12883eae7cfa3562ea5db0716711">&#9670;&nbsp;</a></span>getDiffUsec() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">U32 Os::IntervalTimer::getDiffUsec </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the difference in usecond difference between start and stop times. The caller must have called start and stop previously. </p><dl class="section return"><dt>Returns</dt><dd>U32: microseconds difference in the interval </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="interval_timer_common_8cpp_source.html#l00034">34</a> of file <a class="el" href="interval_timer_common_8cpp_source.html">IntervalTimerCommon.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ade211557f1e423ea385628382f201913"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade211557f1e423ea385628382f201913">&#9670;&nbsp;</a></span>getDiffUsec() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ade211557f1e423ea385628382f201913">&#9670;&nbsp;</a></span>getDiffUsec() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,27 +237,6 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a0f77203dc5f89469014d65031abbb802"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f77203dc5f89469014d65031abbb802">&#9670;&nbsp;</a></span>getDiffUsec() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">U32 Os::IntervalTimer::getDiffUsec </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Returns the difference in usecond difference between start and stop times. The caller must have called start and stop previously. </p><dl class="section return"><dt>Returns</dt><dd>U32: microseconds difference in the interval </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="interval_timer_common_8cpp_source.html#l00034">34</a> of file <a class="el" href="interval_timer_common_8cpp_source.html">IntervalTimerCommon.cpp</a>.</p>
-
-</div>
-</div>
 <a id="a066d0d7b78803cfdaf7cf5f9a50ccdd9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a066d0d7b78803cfdaf7cf5f9a50ccdd9">&#9670;&nbsp;</a></span>getRawTime()</h2>
 
@@ -267,8 +266,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad9bacd73c6c22dd294281fdfcdbe0762"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9bacd73c6c22dd294281fdfcdbe0762">&#9670;&nbsp;</a></span>start()</h2>
+<a id="a9ea967af93b6e2349e738cf83a5d070a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ea967af93b6e2349e738cf83a5d070a">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,7 +275,6 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Os::IntervalTimer::start </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -288,8 +286,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8baf49f372f20aced5e6b1adb16f1590"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8baf49f372f20aced5e6b1adb16f1590">&#9670;&nbsp;</a></span>stop()</h2>
+<a id="a455bdfced0258d9e599637021cb73059"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a455bdfced0258d9e599637021cb73059">&#9670;&nbsp;</a></span>stop()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,7 +295,6 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Os::IntervalTimer::stop </td>
           <td>(</td>
-          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>

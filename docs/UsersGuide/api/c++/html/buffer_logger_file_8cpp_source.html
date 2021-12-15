@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  BufferLogger::File ::</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    ~File(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    ~File()</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    this-&gt;close();</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  }</div>
@@ -194,7 +194,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  }</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keywordtype">void</span> BufferLogger::File ::</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    closeAndEmitEvent(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    closeAndEmitEvent()</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  {</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">if</span> (this-&gt;mode == <a class="code" href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606fa6cb8db4ba6538561dca97ff40c2b7665">File::Mode::OPEN</a>) {</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      this-&gt;close();</div>
@@ -208,12 +208,12 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordtype">void</span> BufferLogger::File ::</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    open(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    open()</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;mode == <a class="code" href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606fa638e9c062bf82cabe755f4c5ee708a1a">File::Mode::CLOSED</a>);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="comment">// NOTE(mereweth) - check that file path has been set and that initLog has been called</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span> ((this-&gt;baseName.<a class="code" href="class_fw_1_1_string_base.html#a0d0ce3fc95f8e630b7ece3074bf49931">toChar</a>()[0] == <span class="charliteral">&#39;\0&#39;</span>) ||</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span> ((this-&gt;baseName.<a class="code" href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">toChar</a>()[0] == <span class="charliteral">&#39;\0&#39;</span>) ||</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        (this-&gt;sizeOfSize &gt; <span class="keyword">sizeof</span>(U32)) ||</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        (this-&gt;maxSize &lt;= this-&gt;sizeOfSize)) {</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        this-&gt;bufferLogger.log_WARNING_HI_BL_NoLogFileOpenInitError();</div>
@@ -309,7 +309,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  }</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  <span class="keywordtype">void</span> BufferLogger::File ::</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    writeHashFile(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    writeHashFile()</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <a class="code" href="class_os_1_1_validated_file.html">Os::ValidatedFile</a> validatedFile(this-&gt;name.toChar());</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespace_os_1_1_validate_file.html#a1ba410583104275caa3071c92e24f9b1">Os::ValidateFile::Status</a> status =</div>
@@ -325,7 +325,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  }</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="keywordtype">bool</span> BufferLogger::File ::</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  flush(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  flush()</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  {</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="comment">// NOTE(if your fprime uses buffered file I/O, re-enable this)</span></div>
@@ -346,7 +346,7 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  }</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  <span class="keywordtype">void</span> BufferLogger::File ::</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    close(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    close()</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  {</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordflow">if</span> (this-&gt;mode == <a class="code" href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606fa6cb8db4ba6538561dca97ff40c2b7665">File::Mode::OPEN</a>) {</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;      <span class="comment">// Close file</span></div>
@@ -370,15 +370,15 @@ $(document).ready(function(){initNavTree('_buffer_logger_file_8cpp_source.html',
 <div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00076">BasicTypes.hpp:76</a></div></div>
 <div class="ttc" id="a_validated_file_8hpp_html"><div class="ttname"><a href="validated_file_8hpp.html">ValidatedFile.hpp</a></div></div>
 <div class="ttc" id="a_validate_file_8hpp_html"><div class="ttname"><a href="validate_file_8hpp.html">ValidateFile.hpp</a></div><div class="ttdoc">Defines a file class to validate files or generate a file validator file.</div></div>
-<div class="ttc" id="aclass_fw_1_1_string_html_a957e8e902c4ecfad57524047ff95ad35"><div class="ttname"><a href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">Fw::String::toChar</a></div><div class="ttdeci">const char * toChar() const</div><div class="ttdoc">gets char buffer</div><div class="ttdef"><b>Definition:</b> <a href="string_8cpp_source.html#l00040">String.cpp:40</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_string_html_a957e8e902c4ecfad57524047ff95ad35"><div class="ttname"><a href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">Fw::String::toChar</a></div><div class="ttdeci">const char * toChar() const</div><div class="ttdoc">gets char buffer</div><div class="ttdef"><b>Definition:</b> <a href="string_8cpp_source.html#l00048">String.cpp:48</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_aa167c5af184fd73d6937ee4154696105a626c9f0570ced53ed79104f83b71854b"><div class="ttname"><a href="class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105a626c9f0570ced53ed79104f83b71854b">Os::File::OPEN_WRITE</a></div><div class="ttdeci">@ OPEN_WRITE</div><div class="ttdoc">Open file for writing.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00017">File.hpp:17</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_string_base_html_a0d0ce3fc95f8e630b7ece3074bf49931"><div class="ttname"><a href="class_fw_1_1_string_base.html#a0d0ce3fc95f8e630b7ece3074bf49931">Fw::StringBase::toChar</a></div><div class="ttdeci">virtual const char * toChar(void) const =0</div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_a8102cd7c96c1a0e32032119f14c1c4bc"><div class="ttname"><a href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a></div><div class="ttdeci">unsigned int NATIVE_UINT_TYPE</div><div class="ttdoc">native unsigned integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00030">BasicTypes.hpp:30</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_string_html"><div class="ttname"><a href="class_fw_1_1_string.html">Fw::String</a></div><div class="ttdef"><b>Definition:</b> <a href="string_8hpp_source.html#l00010">String.hpp:10</a></div></div>
 <div class="ttc" id="aclass_os_1_1_validated_file_html"><div class="ttname"><a href="class_os_1_1_validated_file.html">Os::ValidatedFile</a></div><div class="ttdoc">A validated file.</div><div class="ttdef"><b>Definition:</b> <a href="validated_file_8hpp_source.html#l00023">ValidatedFile.hpp:23</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7">Os::File::Status</a></div><div class="ttdeci">Status</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00024">File.hpp:24</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_string_base_html_a210146c2a89c2ba9b995f3a9ddbd64a9"><div class="ttname"><a href="class_fw_1_1_string_base.html#a210146c2a89c2ba9b995f3a9ddbd64a9">Fw::StringBase::toChar</a></div><div class="ttdeci">virtual const CHAR * toChar() const =0</div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">Os::File::OP_OK</a></div><div class="ttdeci">@ OP_OK</div><div class="ttdoc">Operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00025">File.hpp:25</a></div></div>
 <div class="ttc" id="astruct_svc_1_1_buffer_logger_1_1_file_1_1_mode_html_a2ec257a538c939ffcd04d39e07c8606fa638e9c062bf82cabe755f4c5ee708a1a"><div class="ttname"><a href="struct_svc_1_1_buffer_logger_1_1_file_1_1_mode.html#a2ec257a538c939ffcd04d39e07c8606fa638e9c062bf82cabe755f4c5ee708a1a">Svc::BufferLogger::File::Mode::CLOSED</a></div><div class="ttdeci">@ CLOSED</div><div class="ttdef"><b>Definition:</b> <a href="buffer_logger_8hpp_source.html#l00043">BufferLogger.hpp:43</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>

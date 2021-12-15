@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('md__svc__tlm_packetizer_docs_sdd.html'
 TlmPacketizer Component</h1>
 <h2><a class="anchor" id="autotoc_md528"></a>
 1. Introduction</h2>
-<p>The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> Component is used to store telemetry values written by other components. The values are stored in serialized form. TlmPacketizer differs from <code>Svc::TlmChan</code> in that it stores telemetry in defined packets instead of streaming the updates as they come. The defined packets are passed in as a table to the <code>setPacketList()</code> public method. When telemetry updates are passed to the component, they are placed at the offset in a packet buffer defined by the table. When the <code>run()</code> port is called, all the defined packets are sent to the output port with the most recent . This is meant to replace <code>Svc::TlmCham</code> for use cases where a more compact packet format is desired. The disadvantage is that all channels are pushed whether or not they have been updated.</p>
+<p>The <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> Component is used to store telemetry values written by other components. The values are stored in serialized form. TlmPacketizer differs from <code><a class="el" href="namespace_svc.html#ab9da719ff8cb3a94359ed8a4035e8d6d">Svc::TlmChan</a></code> in that it stores telemetry in defined packets instead of streaming the updates as they come. The defined packets are passed in as a table to the <code>setPacketList()</code> public method. When telemetry updates are passed to the component, they are placed at the offset in a packet buffer defined by the table. When the <code>run()</code> port is called, all the defined packets are sent to the output port with the most recent . This is meant to replace <code>Svc::TlmCham</code> for use cases where a more compact packet format is desired. The disadvantage is that all channels are pushed whether or not they have been updated.</p>
 <h2><a class="anchor" id="autotoc_md529"></a>
 2. Requirements</h2>
 <p>The requirements for <code><a class="el" href="class_svc_1_1_tlm_packetizer.html">Svc::TlmPacketizer</a></code> are as follows:</p>
@@ -121,7 +121,7 @@ TlmPacketizer Component</h1>
 <p><img src="img/TlmPacketizerBDD.jpg" alt="Svc::TlmPacketizer Diagram" title="Svc::TlmPacketizer" class="inline"/></p>
 <h4><a class="anchor" id="autotoc_md533"></a>
 3.1.2 Ports</h4>
-<p>The <code>Svc::TlmChan</code> component uses the following port types:</p>
+<p>The <code><a class="el" href="namespace_svc.html#ab9da719ff8cb3a94359ed8a4035e8d6d">Svc::TlmChan</a></code> component uses the following port types:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Port Data Type </th><th class="markdownTableHeadNone">Name </th><th class="markdownTableHeadNone">Direction </th><th class="markdownTableHeadNone">Kind </th><th class="markdownTableHeadNone">Usage  </th></tr>

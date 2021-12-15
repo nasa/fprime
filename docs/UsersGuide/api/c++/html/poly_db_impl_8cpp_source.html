@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('_poly_db_impl_8cpp_source.html',''); i
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="class_svc_1_1_poly_db_impl.html#aec6d24d976afda00e31e828b90dfdc84">   13</a></span>&#160;    <a class="code" href="class_svc_1_1_poly_db_impl.html#aec6d24d976afda00e31e828b90dfdc84">PolyDbImpl::PolyDbImpl</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* name) : PolyDbComponentBase(name) {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="comment">// initialize all entries to stale</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> entry = 0; entry &lt; POLYDB_NUM_DB_ENTRIES; entry++) {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            this-&gt;m_db[entry].status = MEASUREMENT_STALE;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            this-&gt;m_db[entry].status = MeasurementStatus::STALE;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        }</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    }</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
@@ -138,7 +138,7 @@ $(document).ready(function(){initNavTree('_poly_db_impl_8cpp_source.html',''); i
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="a_poly_db_impl_8hpp_html"><div class="ttname"><a href="poly_db_impl_8hpp.html">PolyDbImpl.hpp</a></div><div class="ttdoc">PolyDb is a database for storing telemetry for internal software use.</div></div>
 <div class="ttc" id="aclass_svc_1_1_poly_db_impl_html_aec6d24d976afda00e31e828b90dfdc84"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html#aec6d24d976afda00e31e828b90dfdc84">Svc::PolyDbImpl::PolyDbImpl</a></div><div class="ttdeci">PolyDbImpl(const char *name)</div><div class="ttdoc">PolyDbImpl constructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8cpp_source.html#l00013">PolyDbImpl.cpp:13</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_poly_type_html"><div class="ttname"><a href="class_fw_1_1_poly_type.html">Fw::PolyType</a></div><div class="ttdef"><b>Definition:</b> <a href="poly_type_8hpp_source.html#l00012">PolyType.hpp:12</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_poly_db_impl_html_a93f7b152758733d0e8722d417fe8dc72"><div class="ttname"><a href="class_svc_1_1_poly_db_impl.html#a93f7b152758733d0e8722d417fe8dc72">Svc::PolyDbImpl::~PolyDbImpl</a></div><div class="ttdeci">virtual ~PolyDbImpl()</div><div class="ttdoc">PolyDbImpl destructor.</div><div class="ttdef"><b>Definition:</b> <a href="poly_db_impl_8cpp_source.html#l00041">PolyDbImpl.cpp:41</a></div></div>

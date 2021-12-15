@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -106,10 +106,10 @@ $(document).ready(function(){initNavTree('_framing_protocol_8cpp_source.html',''
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_svc_1_1_framing_protocol.html#a494362534a6508f568a064d7cc879c5c">   19</a></span>&#160;<a class="code" href="class_svc_1_1_framing_protocol.html#a494362534a6508f568a064d7cc879c5c">FramingProtocol::FramingProtocol</a>() : m_interface(<a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) {}</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_svc_1_1_framing_protocol.html#a494362534a6508f568a064d7cc879c5c">   19</a></span>&#160;<a class="code" href="class_svc_1_1_framing_protocol.html#a494362534a6508f568a064d7cc879c5c">FramingProtocol::FramingProtocol</a>() : m_interface(nullptr) {}</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="class_svc_1_1_framing_protocol.html#af352a46c4ed8b2bfa901ff8680b00da3">   21</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_framing_protocol.html#af352a46c4ed8b2bfa901ff8680b00da3">FramingProtocol::setup</a>(<a class="code" href="class_framing_protocol_interface.html">FramingProtocolInterface</a>&amp; interface) {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<a class="code" href="class_svc_1_1_framing_protocol.html#ab51610526c1b2a24d4c6f5fa80ac1ad3">m_interface</a> == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<a class="code" href="class_svc_1_1_framing_protocol.html#ab51610526c1b2a24d4c6f5fa80ac1ad3">m_interface</a> == <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_svc_1_1_framing_protocol.html#ab51610526c1b2a24d4c6f5fa80ac1ad3">m_interface</a> = &amp;interface;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;};</div>
@@ -120,10 +120,9 @@ $(document).ready(function(){initNavTree('_framing_protocol_8cpp_source.html',''
 <div class="ttc" id="aclass_framing_protocol_interface_html"><div class="ttname"><a href="class_framing_protocol_interface.html">FramingProtocolInterface</a></div><div class="ttdoc">interface supplied to the framing protocol</div><div class="ttdef"><b>Definition:</b> <a href="framing_protocol_interface_8hpp_source.html#l00026">FramingProtocolInterface.hpp:26</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_framing_protocol_html_a494362534a6508f568a064d7cc879c5c"><div class="ttname"><a href="class_svc_1_1_framing_protocol.html#a494362534a6508f568a064d7cc879c5c">Svc::FramingProtocol::FramingProtocol</a></div><div class="ttdeci">FramingProtocol()</div><div class="ttdoc">constructor</div><div class="ttdef"><b>Definition:</b> <a href="framing_protocol_8cpp_source.html#l00019">FramingProtocol.cpp:19</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_framing_protocol_html_af352a46c4ed8b2bfa901ff8680b00da3"><div class="ttname"><a href="class_svc_1_1_framing_protocol.html#af352a46c4ed8b2bfa901ff8680b00da3">Svc::FramingProtocol::setup</a></div><div class="ttdeci">void setup(FramingProtocolInterface &amp;interface)</div><div class="ttdoc">setup function called to supply the interface used for allocation and sending</div><div class="ttdef"><b>Definition:</b> <a href="framing_protocol_8cpp_source.html#l00021">FramingProtocol.cpp:21</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="a_framing_protocol_8hpp_html"><div class="ttname"><a href="framing_protocol_8hpp.html">FramingProtocol.hpp</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a070d2ce7b6bb7e5c05602aa8c308d0c4"><div class="ttname"><a href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></div><div class="ttdeci">#define NULL</div><div class="ttdoc">NULL.</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00100">BasicTypes.hpp:100</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

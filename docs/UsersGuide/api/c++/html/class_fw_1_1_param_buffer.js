@@ -6,8 +6,8 @@ var class_fw_1_1_param_buffer =
     [ "ParamBuffer", "class_fw_1_1_param_buffer.html#ad968c83f1c1cf7822772062b178c0b2f", null ],
     [ "ParamBuffer", "class_fw_1_1_param_buffer.html#a5125b961384b8685e7f45b3ed667882c", null ],
     [ "~ParamBuffer", "class_fw_1_1_param_buffer.html#a21eb0b86820a7594150cce0a21f4d093", null ],
-    [ "getBuffAddr", "class_fw_1_1_param_buffer.html#ae9a533e7dfd4a3ed98e7f6862ef4f713", null ],
-    [ "getBuffAddr", "class_fw_1_1_param_buffer.html#a0691c10dcd9633084924d010110c5952", null ],
-    [ "getBuffCapacity", "class_fw_1_1_param_buffer.html#a3bcce1acb72f24037069216e3d844980", null ],
-    [ "operator=", "class_fw_1_1_param_buffer.html#a21364632b8a9fd9a8c2a729b713db7fe", null ]
+    [ "getBuffAddr", "class_fw_1_1_param_buffer.html#a8d8a8b317cd914e0b07897f4a29151a8", null ],
+    [ "getBuffAddr", "class_fw_1_1_param_buffer.html#a7c12f91339dea9ac0a3655b4c4e6f5eb", null ],
+    [ "getBuffCapacity", "class_fw_1_1_param_buffer.html#a2c3347ab2da899f77419b493cffa80e3", null ],
+    [ "operator=", "class_fw_1_1_param_buffer.html#a2f452f7f5884e3524cfaec5edb314bb8", null ]
 ];

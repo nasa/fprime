@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['p_2974',['p',['../struct_s_h_a512state__st.html#ac374088935867ed28c9210a4ce44e754',1,'SHA512state_st']]],
-  ['packet_5fupdate_5fmode_2975',['PACKET_UPDATE_MODE',['../namespace_svc.html#ac2edd2bdea80d07c0c3c5a479d30df24',1,'Svc']]]
+  ['queue_2987',['queue',['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle']]],
+  ['queuelock_2988',['queueLock',['../class_os_1_1_queue_handle.html#a908bcca196ccf16d9ae4bba386f4292e',1,'Os::QueueHandle']]],
+  ['queuenotempty_2989',['queueNotEmpty',['../class_os_1_1_queue_handle.html#a1ac4eaffe9a7a1f550c5515ed47f23e2',1,'Os::QueueHandle']]],
+  ['queuenotfull_2990',['queueNotFull',['../class_os_1_1_queue_handle.html#ae195753a519fa765ac1176e05e1ba299',1,'Os::QueueHandle']]]
 ];

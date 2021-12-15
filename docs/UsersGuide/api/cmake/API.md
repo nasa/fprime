@@ -27,11 +27,7 @@ directories. This creates a directed acyclic graph of modules, one subgraph of w
 for each executable/module/library defined in the system.  The subgraph should also be a DAG.
 
 This directory is computed based off the closest path in `FPRIME_BUILD_LOCATIONS`. It must be set to
-be used. Otherwise, an error will occur.
-
-A user can specify an optional argument to set the build-space, creating a sub-directory under
-the `CMAKE_BINARY_DIR` to place the outputs of the builds of this directory. This is typically
-**not needed**. `EXCLUDE_FROM_ALL` can also be supplied.
+be used. Otherwise, an error will occur. `EXCLUDE_FROM_ALL` can also be supplied.
 See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 
 **Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
@@ -52,7 +48,7 @@ autocoding and source inputs, and (optionally) any non-standard link dependencie
 
 Required variables (defined in calling scope):
 
-- **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
+- **SOURCE_FILES:** cmake list of input source files. Place any "*.fpp", "*Ai.xml", "*.c", "*.cpp"
   etc files here. This list will be split into autocoder inputs, and hand-coded sources based on the name/type.
 
 **i.e.:**
@@ -64,8 +60,8 @@ set(SOURCE_FILES
 ```
 - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
-  the autocoder inputs to the module. If not set or supplied, only fprime
-  inferable dependencies will be available. Link flags like "-lpthread" can be here.
+  the autocoder inputs to the module. If not set or supplied, only fprime inferable dependencies will be available.
+  Link flags like "-lpthread" can be added here as well.
 
 **i.e.:**
 ```
@@ -75,10 +71,6 @@ set(LINK_DEPS
     Module2
     -lpthread)
 ```
-
-**Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-          these as positional arguments overrides any specified in the parent scope.  This is typically not done.
-
 
 ### Standard `add_fprime_module` Example ###
 
@@ -98,7 +90,7 @@ register_fprime_module()
 ### Non-Autocoded and Autocode-Only Modules Example ###
 
 Modules that do not require autocoding need not specify *.xml files as source. Thus, code-only modules just define
-*.cpp. **Note:** no dependency inference is done without autocoder inputs.
+*.cpp. **Note:** dependency inference is only done when autocoder inputs (.fpp, .xml) are supplied.
 
 ```
 set(SOURCE_FILE
@@ -107,7 +99,7 @@ set(SOURCE_FILE
 
 register_fprime_module()
 ```
-Modules requiring only autocoding can just specify *.xml files.
+Modules requiring only autocoding may just specify *.xml files.
 
 ```
 set(SOURCE_FILE
@@ -176,9 +168,6 @@ set(LINK_DEPS
     -lpthread)
 ```
 
-**Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-          these as positional arguments overrides any specified in the parent scope.
-
 **Note:** this operates almost identically to `register_fprime_module` with respect to the variable definitions. The
           difference is this call will yield an optionally named linked binary file.
 
@@ -227,6 +216,69 @@ register_fprime_executable()
 
 
 
+## Function `register_fprime_deployment`:
+
+Registers an deployment using the fprime build system. This comes with dependency management and
+fprime autocoding capabilities. This requires two variables to define autocoding and source inputs, and
+(optionally) any non-standard link dependencies.
+
+An executable will be created and automatically install itself and its dependencies into the out-of-cache build
+artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. To skip this
+installation step, set the SKIP_INSTALL variable before registering an executable. Dictionary generation will also be
+done as part of this step.
+
+Required variables (defined in calling scope):
+
+- **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
+                 etc. files here. This list will be split into autocoder inputs and sources.
+**i.e.:**
+```
+set(SOURCE_FILES
+    MyComponentAi.xml
+    SomeFile.cpp
+    MyComponentImpl.cpp)
+```
+
+- **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
+  needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
+  the autocoder inputs to the module. If not set or supplied, only fprime
+  inferable dependencies will be available. Link flags like "-lpthread" can be here.
+
+**i.e.:**
+```
+set(LINK_DEPS
+    Module1
+    Module2
+    -lpthread)
+```
+
+**Note:** this operates almost identically to `register_fprime_executable` and `register_fprime_module` with respect
+to the variable definitions. The difference is this call will yield an optionally named linked binary file,
+dictionary generation is done, the executable binary will be named for ${PROJECT_NAME}, and deployment helper targets
+are created.
+
+### Standard fprime Deployment Example ###
+
+To create a standard fprime deployment, an executable needs to be created. This executable
+uses the CMake PROJECT_NAME as the executable name. Thus, it can be created with the following
+source lists. In most fprime deployments, some modules must be specified as they don't tie
+directly to an Ai.xml.
+
+```
+set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+)
+# Note: supply non-explicit dependencies here. These are implementations to an XML that is
+# defined in a different module.
+set(MOD_DEPS
+  Svc/PassiveConsoleTextLogger
+  Svc/SocketGndIf
+  Svc/LinuxTime
+)
+register_fprime_deployment()
+```
+
+
 ## Function `register_fprime_ut`:
 
 Registers an executable unit-test using the fprime build system. This comes with dependency
@@ -267,15 +319,6 @@ set(UT_MOD_DEPS
     Module2
     -lpthread)
 ```
-
-  **Note:** if desired, these fields may be supplied in-order as arguments to the function. Passing
-            these as positional arguments overrides any specified in the parent scope.
-
-  **Note:** UTs automatically depend on the module. In order to prevent this, explicitly pass in args
-            to this module, excluding the module.
-
-        e.g. register_fprime_ut("MY_SPECIAL_UT" "${SOME_SOURCE_FILE_LIST}" "") #No dependencies.
-
  **Note:** this is typically called after any other register calls in the module.
 
 ### Unit-Test Example ###
@@ -292,25 +335,6 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 ```
-
-### Unit-Test Without GTest/TesterBase Example ###
-
-Some unit tests run without the need for the autocoding the GTest and TesterBase files. This can be
-done without specifying the Ai.xml file. Most of the time, this style requires specifying some module
-dependencies.
-
-```
-set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/CmdDispatcher/CommandDispatcherComponentAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandDispatcherImplTester.cpp"
-)
-set(UT_MOD_DEPS
-  Os
-)
-register_fprime_ut()
-```
-
 
 
 ## Function `register_fprime_target`:
@@ -335,21 +359,18 @@ function(register_fprime_target TARGET_FILE_PATH)
 endfunction(register_fprime_target)
 
 function(register_fprime_ut_target TARGET_FILE_PATH)
-    register_fprime_target_generic(FPRIME_UT_TARGET_LIST ${TARGET_FILE_PATH})
+    # UT targets only allowed when testing
+    if (BUILD_TESTING)
+        register_fprime_target_generic(FPRIME_UT_TARGET_LIST ${TARGET_FILE_PATH})
+    endif()
 endfunction(register_fprime_ut_target)
 
 function(register_fprime_target_generic TARGET_LIST TARGET_FILE_PATH)
-    # Check for some problems moving forward
-    if (NOT EXISTS ${TARGET_FILE_PATH})
-        message(FATAL_ERROR "${TARGET_FILE_PATH} does not exist.")
-        return()
-    endif()
     # Update the global list of target files
     set(TMP "${${TARGET_LIST}}")
     list(APPEND TMP "${TARGET_FILE_PATH}")
     list(REMOVE_DUPLICATES TMP)
     SET(${TARGET_LIST} "${TMP}" CACHE INTERNAL "${TARGET_LIST}: custom fprime targets" FORCE)
-
     #Setup global target. Note: module targets found during module processing
     setup_global_target("${TARGET_FILE_PATH}")
 endfunction(register_fprime_target_generic)

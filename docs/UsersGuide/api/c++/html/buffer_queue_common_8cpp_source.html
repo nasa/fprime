@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <a href="buffer_queue_common_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// \title  BufferQueueCommon.hpp</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// \author dinkel</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  This file implements some of the methods for the generic </span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  This file implements some of the methods for the generic</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//         buffer queue data structure declared in BufferQueue.hpp that</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//         are common amongst different queue implementations.</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">//</span></div>
@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="buffer_queue_8hpp.html">Os/Pthreads/BufferQueue.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
@@ -112,7 +112,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ad6d712b94c53fc6eeaf099982a4b0bd5">   25</a></span>&#160;  <a class="code" href="class_os_1_1_buffer_queue.html#ad6d712b94c53fc6eeaf099982a4b0bd5">BufferQueue::BufferQueue</a>() {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// Set member variables:</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;queue = <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    this-&gt;queue = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    this-&gt;msgSize = 0;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    this-&gt;depth = 0;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    this-&gt;count = 0;</div>
@@ -125,10 +125,10 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a163b04376b7a663099a1eb46b0e71b4d">   38</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#a163b04376b7a663099a1eb46b0e71b4d">BufferQueue::create</a>(<a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> depth, <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> msgSize) {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// Queue is already set up. destroy it and try again:</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a> != this-&gt;queue) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (<span class="keyword">nullptr</span> != this-&gt;queue) {</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      this-&gt;finalize();</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a> == this-&gt;queue, (POINTER_CAST) this-&gt;queue);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">nullptr</span> == this-&gt;queue, <span class="keyword">reinterpret_cast&lt;</span>POINTER_CAST<span class="keyword">&gt;</span>(this-&gt;queue));</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// Set member variables:</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    this-&gt;msgSize = msgSize;</div>
@@ -138,7 +138,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ad18f9a1ef99f7c0e34a2c8b1d0e50a53">   51</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#ad18f9a1ef99f7c0e34a2c8b1d0e50a53">BufferQueue::push</a>(<span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* buffer, <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> size, <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> priority) {</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(size &lt;= this-&gt;msgSize);   </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(size &lt;= this-&gt;msgSize);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">if</span>( this-&gt;<a class="code" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">isFull</a>() ) {</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
@@ -169,7 +169,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span>( !ret ) {</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="comment">// Decrement count:</span></div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    --this-&gt;count;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
@@ -179,7 +179,7 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">   91</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">BufferQueue::isFull</a>() {</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> (this-&gt;count == this-&gt;depth);</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
 <div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">   95</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">BufferQueue::isEmpty</a>() {</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">return</span> (this-&gt;count == 0);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  }</div>
@@ -193,12 +193,12 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">  108</a></span>&#160;  <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">BufferQueue::getMsgSize</a>() { </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> this-&gt;msgSize; </div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">  108</a></span>&#160;  <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">BufferQueue::getMsgSize</a>() {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> this-&gt;msgSize;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  }</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">  112</a></span>&#160;  <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">BufferQueue::getDepth</a>() { </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> this-&gt;depth; </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">  112</a></span>&#160;  <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> <a class="code" href="class_os_1_1_buffer_queue.html#a4c560b468e1b33b3562d27d7c7e05fd8">BufferQueue::getDepth</a>() {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> this-&gt;depth;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <a class="code" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> BufferQueue::getBufferIndex(<a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> index) {</div>
@@ -256,13 +256,12 @@ $(document).ready(function(){initNavTree('_buffer_queue_common_8cpp_source.html'
 <div class="ttc" id="a_buffer_queue_8hpp_html"><div class="ttname"><a href="buffer_queue_8hpp.html">BufferQueue.hpp</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_a8102cd7c96c1a0e32032119f14c1c4bc"><div class="ttname"><a href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a></div><div class="ttdeci">unsigned int NATIVE_UINT_TYPE</div><div class="ttdoc">native unsigned integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00030">BasicTypes.hpp:30</a></div></div>
 <div class="ttc" id="aclass_os_1_1_buffer_queue_html_a9a351ec41f4e9fa27ed7c0d34ef80703"><div class="ttname"><a href="class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703">Os::BufferQueue::isEmpty</a></div><div class="ttdeci">bool isEmpty()</div><div class="ttdoc">check if the queue is empty</div><div class="ttdef"><b>Definition:</b> <a href="buffer_queue_common_8cpp_source.html#l00095">BufferQueueCommon.cpp:95</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="aclass_os_1_1_buffer_queue_html_ae62b62521a12d436bbd9cb33fb46c997"><div class="ttname"><a href="class_os_1_1_buffer_queue.html#ae62b62521a12d436bbd9cb33fb46c997">Os::BufferQueue::isFull</a></div><div class="ttdeci">bool isFull()</div><div class="ttdoc">check if the queue is full</div><div class="ttdef"><b>Definition:</b> <a href="buffer_queue_common_8cpp_source.html#l00091">BufferQueueCommon.cpp:91</a></div></div>
 <div class="ttc" id="aclass_os_1_1_buffer_queue_html_a2311df41ce25c4d86da3c830c03e2226"><div class="ttname"><a href="class_os_1_1_buffer_queue.html#a2311df41ce25c4d86da3c830c03e2226">Os::BufferQueue::getMsgSize</a></div><div class="ttdeci">NATIVE_UINT_TYPE getMsgSize()</div><div class="ttdoc">Get the maximum message size.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_queue_common_8cpp_source.html#l00108">BufferQueueCommon.cpp:108</a></div></div>
 <div class="ttc" id="aclass_os_1_1_buffer_queue_html_a163b04376b7a663099a1eb46b0e71b4d"><div class="ttname"><a href="class_os_1_1_buffer_queue.html#a163b04376b7a663099a1eb46b0e71b4d">Os::BufferQueue::create</a></div><div class="ttdeci">bool create(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize)</div><div class="ttdoc">BufferQueue creation.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_queue_common_8cpp_source.html#l00038">BufferQueueCommon.cpp:38</a></div></div>
 <div class="ttc" id="aclass_os_1_1_buffer_queue_html_a32332796417ae292de3b3f360fc41d4a"><div class="ttname"><a href="class_os_1_1_buffer_queue.html#a32332796417ae292de3b3f360fc41d4a">Os::BufferQueue::pop</a></div><div class="ttdeci">bool pop(U8 *buffer, NATIVE_UINT_TYPE &amp;size, NATIVE_INT_TYPE &amp;priority)</div><div class="ttdoc">pop an item off the queue</div><div class="ttdef"><b>Definition:</b> <a href="buffer_queue_common_8cpp_source.html#l00072">BufferQueueCommon.cpp:72</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a070d2ce7b6bb7e5c05602aa8c308d0c4"><div class="ttname"><a href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></div><div class="ttdeci">#define NULL</div><div class="ttdoc">NULL.</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00100">BasicTypes.hpp:100</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

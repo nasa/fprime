@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -85,7 +85,7 @@ $(document).ready(function(){initNavTree('_svc_cmd_sequencer_component.html','')
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Svc::CmdSequencer Component </div>  </div>
+<div class="title"><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md255"></a>
@@ -95,22 +95,22 @@ Svc::CmdSequencer Component</h1>
 <p>The command sequencer is a component that iterates through a set of commands contained in binary form in a file located in a file system available to the sequencer. A command to the sequencer specifies the file to execute. The file can contain commands that execute immediately, after a delay, or at an absolute time. The sequence will abort if any given command in the sequence returns a failed status.</p>
 <h2><a class="anchor" id="autotoc_md257"></a>
 2 Requirements</h2>
-<p>The requirements for <code>Svc::CmdSequencer</code> are as follows:</p>
+<p>The requirements for <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> are as follows:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Requirement </th><th class="markdownTableHeadNone">Description </th><th class="markdownTableHeadNone">Verification Method </th><th class="markdownTableHeadNone">Rationale  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">ISF-CMDS-001 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall read sequence files. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">CmdSequencer gets commands from the sequence file.  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-001 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall read sequence files. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">CmdSequencer gets commands from the sequence file.  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ISF-CMDS-002 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall validate the sequence files with a CRC. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">CmdSequencer need to know it has a valid file.  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-002 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall validate the sequence files with a CRC. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">CmdSequencer need to know it has a valid file.  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">ISF-CMDS-003 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall provide a command to validate the sequence file. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Waiting to validate the file only when running it can cause operational issues  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-003 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall provide a command to validate the sequence file. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Waiting to validate the file only when running it can cause operational issues  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ISF-CMDS-004 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall cancel the sequence upon receiving a failed command status. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">A sequence should not continue if a command fails since subsequent commands may depend on the outcome  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-004 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall cancel the sequence upon receiving a failed command status. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">A sequence should not continue if a command fails since subsequent commands may depend on the outcome  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">ISF-CMDS-005 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall provide a command to cancel the existing sequence </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Operator should be able to cancel the sequence if it is hung or needs to be stopped.  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-005 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall provide a command to cancel the existing sequence </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Operator should be able to cancel the sequence if it is hung or needs to be stopped.  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ISF-CMDS-006 </td><td class="markdownTableBodyNone">The <code>Svc::CmdSequencer</code> component shall provide an overall sequence timeout. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Sequencer should quit if a component fails to send a command response  </td></tr>
+<td class="markdownTableBodyNone">ISF-CMDS-006 </td><td class="markdownTableBodyNone">The <code><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">Svc::CmdSequencer</a></code> component shall provide an overall sequence timeout. </td><td class="markdownTableBodyNone">Unit Test </td><td class="markdownTableBodyNone">Sequencer should quit if a component fails to send a command response  </td></tr>
 </table>
 <h2><a class="anchor" id="autotoc_md258"></a>
 3 Design</h2>
@@ -179,7 +179,7 @@ Svc::CmdSequencer Component</h1>
 <li>You must not have validated or run any sequences since calling <code>loadSequence</code>, since these operations clear the buffer.</li>
 </ul>
 <p><a class="anchor" id="autotoc_md274"></a></p><h5>3.2.3.4 pingIn</h5>
-<p>The <code>pingIn</code> port is called by the <code>Svc::Health</code> component to verify that the <code>CmdSequencer</code> thread is still functional. The handler simply takes the provided code and calls the <code>pingOut</code> port.</p>
+<p>The <code>pingIn</code> port is called by the <code><a class="el" href="namespace_svc.html#a5bb83e68a0d5a63bbbbbed880a13fd09">Svc::Health</a></code> component to verify that the <code>CmdSequencer</code> thread is still functional. The handler simply takes the provided code and calls the <code>pingOut</code> port.</p>
 <h3><a class="anchor" id="autotoc_md275"></a>
 3.3 Component Structure</h3>
 <h4><a class="anchor" id="autotoc_md276"></a>

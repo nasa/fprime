@@ -7,7 +7,7 @@ coverage requires the system supply a `gcov` target and the code be built with t
 build type.  This means the  following things to be setup:
 
 1. `gcov` must be available on the path
-2. `-DCMAKE_BUILD_TYPE=TESTING` must be supplied
+2. `-DBUILD_TESTING=ON` must be supplied
 
 Once the CMake build directory has been created the user can run the CMake targets
 `<MODULE>_coverage` where <MODULE> is the name of the module to generate coverage for. These
@@ -34,21 +34,18 @@ are required for the system to register custom targets.
 
 ##  Function `add_global_target`:
 
- Adds a global target. Note: only run for "TESTING" builds.
+ Adds a global target. Note: only run for "BUILD_TESTING=ON" builds.
 
 - **TARGET_NAME:** target name to be generated
 
 
 ## Dict function `add_module_target`:
 
-Creates each module's coverage targets.
+Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
 
 - **MODULE_NAME:** name of the module
 - **TARGET_NAME:** name of target to produce
-- **GLOBAL_TARGET_NAME:** name of produced global target
-- **AC_INPUTS:** list of autocoder inputs
 - **SOURCE_FILES:** list of source file inputs
-- **AC_OUTPUTS:** list of autocoder outputs
-- **MOD_DEPS:** hand specified dependencies of target
+- **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 
 

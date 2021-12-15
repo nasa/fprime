@@ -23,9 +23,9 @@ var class_drv_1_1_linux_serial_driver_component_impl =
       [ "PARITY_EVEN", "class_drv_1_1_linux_serial_driver_component_impl.html#ad9452c02c517a8491be9e7b7eb8f7f8ea25598e2120a13d9d5b30f2c9bd037931", null ]
     ] ],
     [ "LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html#aae56fad33ce1749277783d6f2d34464f", null ],
-    [ "~LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html#a1a10f72c4a2bcbb7c214296da5b4c87a", null ],
+    [ "~LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html#a8151aca07e233ce702a5e23f2d442cc0", null ],
     [ "init", "class_drv_1_1_linux_serial_driver_component_impl.html#a2f832cc12c096a5cec253ac4ce026e34", null ],
     [ "open", "class_drv_1_1_linux_serial_driver_component_impl.html#a3c0a0e8d9499f15b5f35bc051123b0a6", null ],
-    [ "quitReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a1c6b5e10b3c9dc35261fe98a3c932ac8", null ],
+    [ "quitReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a71b7d22a857dcb6f13e24ca52a249a6e", null ],
     [ "startReadThread", "class_drv_1_1_linux_serial_driver_component_impl.html#a7b0db7064e5370bdd42f8c961f4327f1", null ]
 ];

@@ -11,7 +11,7 @@ var class_os_1_1_event =
       [ "EV_NO_WAIT", "class_os_1_1_event.html#a1f530559d2474bfbd26e96810ce0e4e6a9756fe75f4faac13010b913df1f92702", null ],
       [ "EV_WAIT_FOREVER", "class_os_1_1_event.html#a1f530559d2474bfbd26e96810ce0e4e6aa21ee9ba6918bb0e5a29ac6c74c03808", null ]
     ] ],
-    [ "clear", "class_os_1_1_event.html#a57db1201a816e164959979946388c2d8", null ],
+    [ "clear", "class_os_1_1_event.html#a57b8d6a0a2cd942da56dc0d15c03d460", null ],
     [ "receive", "class_os_1_1_event.html#ab1f7ad57d4a5c2e0daabbd05efca2c31", null ],
     [ "send", "class_os_1_1_event.html#aec20b6c4c9cb1d3f90537ac17b8cf381", null ]
 ];

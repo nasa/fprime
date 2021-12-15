@@ -9,7 +9,7 @@ var _linux_2_file_system_8cpp =
     [ "getFileSize", "linux_2_file_system_8cpp.html#a532586de0a715a818fa6e437792d6d82", null ],
     [ "getFreeSpace", "linux_2_file_system_8cpp.html#abad653e2beacc22dabf5c9292499d848", null ],
     [ "handleFileError", "linux_2_file_system_8cpp.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2", null ],
-    [ "initAndCheckFileStats", "linux_2_file_system_8cpp.html#ad5df534b36274232fa392df65cfb0606", null ],
+    [ "initAndCheckFileStats", "linux_2_file_system_8cpp.html#ae3aab765b588856e37710720bcd3d165", null ],
     [ "moveFile", "linux_2_file_system_8cpp.html#a4d57326006eacb1c947c884e8f2c3574", null ],
     [ "readDirectory", "linux_2_file_system_8cpp.html#aef0e542bc6a12590a0ac50784739bd91", null ],
     [ "removeDirectory", "linux_2_file_system_8cpp.html#a8ebc004827e449953db79b509e260d6c", null ],

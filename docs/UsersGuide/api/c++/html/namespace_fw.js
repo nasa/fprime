@@ -38,7 +38,6 @@ var namespace_fw =
     [ "SerializeBufferBase", "class_fw_1_1_serialize_buffer_base.html", "class_fw_1_1_serialize_buffer_base" ],
     [ "String", "class_fw_1_1_string.html", "class_fw_1_1_string" ],
     [ "StringBase", "class_fw_1_1_string_base.html", "class_fw_1_1_string_base" ],
-    [ "StructSerializable", "class_fw_1_1_struct_serializable.html", "class_fw_1_1_struct_serializable" ],
     [ "TextLogString", "class_fw_1_1_text_log_string.html", "class_fw_1_1_text_log_string" ],
     [ "Time", "class_fw_1_1_time.html", "class_fw_1_1_time" ],
     [ "TlmBuffer", "class_fw_1_1_tlm_buffer.html", "class_fw_1_1_tlm_buffer" ],

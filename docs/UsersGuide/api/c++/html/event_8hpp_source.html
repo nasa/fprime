@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -119,13 +119,14 @@ $(document).ready(function(){initNavTree('_event_8hpp_source.html',''); initResi
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keyword">static</span> I32 <a class="code" href="class_os_1_1_event.html#aec20b6c4c9cb1d3f90537ac17b8cf381">send</a>(<span class="keyword">const</span> <a class="code" href="class_os_1_1_task_id.html">TaskId</a>&amp; tid, <span class="keyword">const</span> U32 events);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <span class="keyword">static</span> I32 <a class="code" href="class_os_1_1_event.html#ab1f7ad57d4a5c2e0daabbd05efca2c31">receive</a>(<span class="keyword">const</span> U32 events, <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a> options,</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                               <span class="keyword">const</span> I32 timeout, U32* eventsReceived);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keyword">static</span> I32 <a class="code" href="class_os_1_1_event.html#a57db1201a816e164959979946388c2d8">clear</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keyword">static</span> I32 <a class="code" href="class_os_1_1_event.html#a57b8d6a0a2cd942da56dc0d15c03d460">clear</a>();</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    };</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="aclass_os_1_1_event_html_a57b8d6a0a2cd942da56dc0d15c03d460"><div class="ttname"><a href="class_os_1_1_event.html#a57b8d6a0a2cd942da56dc0d15c03d460">Os::Event::clear</a></div><div class="ttdeci">static I32 clear()</div></div>
 <div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00007">File.cpp:7</a></div></div>
 <div class="ttc" id="aclass_os_1_1_event_html"><div class="ttname"><a href="class_os_1_1_event.html">Os::Event</a></div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00014">Event.hpp:14</a></div></div>
 <div class="ttc" id="aclass_os_1_1_event_html_a0066af638f60b8e7cbd8f70f6bb01a5ba86f09ee901346cef2192e3802ca4082d"><div class="ttname"><a href="class_os_1_1_event.html#a0066af638f60b8e7cbd8f70f6bb01a5ba86f09ee901346cef2192e3802ca4082d">Os::Event::EV_EVENTS_WAIT_ALL</a></div><div class="ttdeci">@ EV_EVENTS_WAIT_ALL</div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00022">Event.hpp:22</a></div></div>
@@ -137,7 +138,6 @@ $(document).ready(function(){initNavTree('_event_8hpp_source.html',''); initResi
 <div class="ttc" id="aclass_os_1_1_event_html_a0066af638f60b8e7cbd8f70f6bb01a5bad5449720e5e4a589931d11e5958925a3"><div class="ttname"><a href="class_os_1_1_event.html#a0066af638f60b8e7cbd8f70f6bb01a5bad5449720e5e4a589931d11e5958925a3">Os::Event::EV_EVENTS_KEEP_UNWANTED</a></div><div class="ttdeci">@ EV_EVENTS_KEEP_UNWANTED</div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00025">Event.hpp:25</a></div></div>
 <div class="ttc" id="aclass_os_1_1_event_html_a0066af638f60b8e7cbd8f70f6bb01a5baa3040eb88bb316305554152966f01683"><div class="ttname"><a href="class_os_1_1_event.html#a0066af638f60b8e7cbd8f70f6bb01a5baa3040eb88bb316305554152966f01683">Os::Event::EV_EVENTS_RETURN_ALL</a></div><div class="ttdeci">@ EV_EVENTS_RETURN_ALL</div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00024">Event.hpp:24</a></div></div>
 <div class="ttc" id="aclass_os_1_1_event_html_a0066af638f60b8e7cbd8f70f6bb01a5babab5f54589d69030f944391a56bc1e7c"><div class="ttname"><a href="class_os_1_1_event.html#a0066af638f60b8e7cbd8f70f6bb01a5babab5f54589d69030f944391a56bc1e7c">Os::Event::EV_EVENTS_FETCH</a></div><div class="ttdeci">@ EV_EVENTS_FETCH</div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00026">Event.hpp:26</a></div></div>
-<div class="ttc" id="aclass_os_1_1_event_html_a57db1201a816e164959979946388c2d8"><div class="ttname"><a href="class_os_1_1_event.html#a57db1201a816e164959979946388c2d8">Os::Event::clear</a></div><div class="ttdeci">static I32 clear(void)</div></div>
 <div class="ttc" id="aclass_os_1_1_event_html_a1f530559d2474bfbd26e96810ce0e4e6aa21ee9ba6918bb0e5a29ac6c74c03808"><div class="ttname"><a href="class_os_1_1_event.html#a1f530559d2474bfbd26e96810ce0e4e6aa21ee9ba6918bb0e5a29ac6c74c03808">Os::Event::EV_WAIT_FOREVER</a></div><div class="ttdeci">@ EV_WAIT_FOREVER</div><div class="ttdef"><b>Definition:</b> <a href="event_8hpp_source.html#l00018">Event.hpp:18</a></div></div>
 <div class="ttc" id="aclass_os_1_1_event_html_ab1f7ad57d4a5c2e0daabbd05efca2c31"><div class="ttname"><a href="class_os_1_1_event.html#ab1f7ad57d4a5c2e0daabbd05efca2c31">Os::Event::receive</a></div><div class="ttdeci">static I32 receive(const U32 events, const U8 options, const I32 timeout, U32 *eventsReceived)</div></div>
 <div class="ttc" id="aclass_os_1_1_task_id_html"><div class="ttname"><a href="class_os_1_1_task_id.html">Os::TaskId</a></div><div class="ttdef"><b>Definition:</b> <a href="task_id_8hpp_source.html#l00018">TaskId.hpp:18</a></div></div>

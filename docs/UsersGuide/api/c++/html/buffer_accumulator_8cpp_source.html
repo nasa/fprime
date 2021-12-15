@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8cpp_source.html',
 <div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="class_svc_1_1_buffer_accumulator.html#afb6555f4eba7aa8248fe2e0143fde9ac">   23</a></span>&#160;<a class="code" href="class_svc_1_1_buffer_accumulator.html#afb6555f4eba7aa8248fe2e0143fde9ac">      BufferAccumulator</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> compName) :</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        BufferAccumulatorComponentBase(compName),</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        mode(DRAIN),</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        bufferMemory(<a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>),</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        bufferMemory(nullptr),</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        bufferQueue(),</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        send(true),</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        numWarnings(0),</div>
@@ -131,8 +131,8 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8cpp_source.html',
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    BufferAccumulatorComponentBase::init(queueDepth, instance);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="class_svc_1_1_buffer_accumulator.html#adcde2aeef355a6ed926fe6516a2d89d4">BufferAccumulator ::</a></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_svc_1_1_buffer_accumulator.html#adcde2aeef355a6ed926fe6516a2d89d4">   45</a></span>&#160;<a class="code" href="class_svc_1_1_buffer_accumulator.html#adcde2aeef355a6ed926fe6516a2d89d4">    ~BufferAccumulator</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">BufferAccumulator ::</a></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">   45</a></span>&#160;<a class="code" href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">    ~BufferAccumulator</a>()</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
@@ -239,7 +239,7 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8cpp_source.html',
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      this-&gt;send = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    this-&gt;cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    this-&gt;cmdResponse_out(opCode, cmdSeq, <a class="code" href="vx_works_2_standard_types_8hpp.html#a4790f45dcc812c1b00184a2edccdddf5a2bc49ec37d6a5715dd23e85f1ff5bb59">Fw::CmdResponse::OK</a>);</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  }</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
@@ -247,7 +247,7 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8cpp_source.html',
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="keywordtype">void</span> BufferAccumulator ::</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    sendStoredBuffer(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    sendStoredBuffer()</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  {</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;send);</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> buffer;</div>
@@ -265,19 +265,19 @@ $(document).ready(function(){initNavTree('_buffer_accumulator_8cpp_source.html',
 <div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_afb6555f4eba7aa8248fe2e0143fde9ac"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#afb6555f4eba7aa8248fe2e0143fde9ac">Svc::BufferAccumulator::BufferAccumulator</a></div><div class="ttdeci">BufferAccumulator(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00023">BufferAccumulator.cpp:23</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_mem_allocator_html_aa03b3a36290c0f438bc3ed4574dc2a5e"><div class="ttname"><a href="class_fw_1_1_mem_allocator.html#aa03b3a36290c0f438bc3ed4574dc2a5e">Fw::MemAllocator::allocate</a></div><div class="ttdeci">virtual void * allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &amp;size, bool &amp;recoverable)=0</div><div class="ttdoc">Allocate memory.</div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_adcde2aeef355a6ed926fe6516a2d89d4"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#adcde2aeef355a6ed926fe6516a2d89d4">Svc::BufferAccumulator::~BufferAccumulator</a></div><div class="ttdeci">~BufferAccumulator(void)</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00045">BufferAccumulator.cpp:45</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_ac71af9e662c99c5e311bc26d96ff215a"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#ac71af9e662c99c5e311bc26d96ff215a">Svc::BufferAccumulator::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00036">BufferAccumulator.cpp:36</a></div></div>
 <div class="ttc" id="a_buffer_accumulator_8hpp_html"><div class="ttname"><a href="buffer_accumulator_8hpp.html">BufferAccumulator.hpp</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_ae350b00ba65798fe0467accb7577a15e"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#ae350b00ba65798fe0467accb7577a15e">Svc::BufferAccumulator::~BufferAccumulator</a></div><div class="ttdeci">~BufferAccumulator()</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00045">BufferAccumulator.cpp:45</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_a2280eba690a664ed3028131f41dffe05"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#a2280eba690a664ed3028131f41dffe05">Svc::BufferAccumulator::deallocateQueue</a></div><div class="ttdeci">void deallocateQueue(Fw::MemAllocator &amp;allocator)</div><div class="ttdoc">Return allocated queue. Should be done during shutdown.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00071">BufferAccumulator.cpp:71</a></div></div>
-<div class="ttc" id="a_fp_config_8hpp_html_a32d34ba1548079db6e25c3d0b1b386f0"><div class="ttname"><a href="fp_config_8hpp.html#a32d34ba1548079db6e25c3d0b1b386f0">FwOpcodeType</a></div><div class="ttdeci">#define FwOpcodeType</div><div class="ttdoc">Type representation for a command opcode.</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00062">FpConfig.hpp:62</a></div></div>
+<div class="ttc" id="a_fp_config_8hpp_html_a32d34ba1548079db6e25c3d0b1b386f0"><div class="ttname"><a href="fp_config_8hpp.html#a32d34ba1548079db6e25c3d0b1b386f0">FwOpcodeType</a></div><div class="ttdeci">#define FwOpcodeType</div><div class="ttdoc">Type representation for a command opcode.</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00058">FpConfig.hpp:58</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_a8102cd7c96c1a0e32032119f14c1c4bc"><div class="ttname"><a href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a></div><div class="ttdeci">unsigned int NATIVE_UINT_TYPE</div><div class="ttdoc">native unsigned integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00030">BasicTypes.hpp:30</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_buffer_accumulator_html_a16be0726f4574705ce2290e6a1ff4b74"><div class="ttname"><a href="class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74">Svc::BufferAccumulator::allocateQueue</a></div><div class="ttdeci">void allocateQueue(NATIVE_INT_TYPE identifier, Fw::MemAllocator &amp;allocator, NATIVE_UINT_TYPE maxNumBuffers)</div><div class="ttdef"><b>Definition:</b> <a href="buffer_accumulator_8cpp_source.html#l00054">BufferAccumulator.cpp:54</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_mem_allocator_html"><div class="ttname"><a href="class_fw_1_1_mem_allocator.html">Fw::MemAllocator</a></div><div class="ttdef"><b>Definition:</b> <a href="mem_allocator_8hpp_source.html#l00044">MemAllocator.hpp:44</a></div></div>
+<div class="ttc" id="a_vx_works_2_standard_types_8hpp_html_a4790f45dcc812c1b00184a2edccdddf5a2bc49ec37d6a5715dd23e85f1ff5bb59"><div class="ttname"><a href="vx_works_2_standard_types_8hpp.html#a4790f45dcc812c1b00184a2edccdddf5a2bc49ec37d6a5715dd23e85f1ff5bb59">OK</a></div><div class="ttdeci">@ OK</div><div class="ttdef"><b>Definition:</b> <a href="vx_works_2_standard_types_8hpp_source.html#l00014">StandardTypes.hpp:14</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a070d2ce7b6bb7e5c05602aa8c308d0c4"><div class="ttname"><a href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></div><div class="ttdeci">#define NULL</div><div class="ttdoc">NULL.</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00100">BasicTypes.hpp:100</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -90,14 +90,14 @@ $(document).ready(function(){initNavTree('_svc_static_memory.html',''); initResi
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md506"></a>
 Svc::StaticMemory Static Memory Component</h1>
-<p>The StaticMemory component is a drop in replacement for Svc::BufferManager that allocates memory out of a static pool of memory. This allows for allocations of known sizes and usage patterns to avoid extra dynamic memory complexity at the expense of extra allocations.</p>
+<p>The StaticMemory component is a drop in replacement for <a class="el" href="namespace_svc.html#aeb3193997902632484c232bdc813a5f8">Svc::BufferManager</a> that allocates memory out of a static pool of memory. This allows for allocations of known sizes and usage patterns to avoid extra dynamic memory complexity at the expense of extra allocations.</p>
 <p><b>Note:</b> the static memory component operates under the following caveats.</p>
 <ol type="1">
 <li>Each port index has dedicate memory and should be assigned to one allocator</li>
 <li>Memory sizes are fixed size</li>
 <li>Memory must be deallocated before being allocated again.</li>
 </ol>
-<p><b>See:</b> Svc::BufferManager for usage examples.</p>
+<p><b>See:</b> <a class="el" href="namespace_svc.html#aeb3193997902632484c232bdc813a5f8">Svc::BufferManager</a> for usage examples.</p>
 <h2><a class="anchor" id="autotoc_md507"></a>
 Configuration</h2>
 <p>StaticMemory number of allocations and ports are configured using <code>AcConstants.ini</code> as shown below. This sets the number of allocate and deallocate port indices as well as the memory segments.</p>
@@ -114,7 +114,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">STAMEM-001 </td><td class="markdownTableBodyNone">The static memory shall allocate a fixed block per port index </td><td class="markdownTableBodyNone">unit test  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">STAMEM-002 </td><td class="markdownTableBodyNone">The static memory shall define allocate and deallocate ports shadowing Svc::BufferManager </td><td class="markdownTableBodyNone">unit test  </td></tr>
+<td class="markdownTableBodyNone">STAMEM-002 </td><td class="markdownTableBodyNone">The static memory shall define allocate and deallocate ports shadowing <a class="el" href="namespace_svc.html#aeb3193997902632484c232bdc813a5f8">Svc::BufferManager</a> </td><td class="markdownTableBodyNone">unit test  </td></tr>
 </table>
 <h2><a class="anchor" id="autotoc_md509"></a>
 Change Log</h2>

@@ -1,7 +1,7 @@
 var class_fw_1_1_file_packet_1_1_data_packet =
 [
     [ "HEADERSIZE", "class_fw_1_1_file_packet_1_1_data_packet.html#a7e41ae264401a9594c491ea935be18e6a33c69bd675c7d79f7d0551ed9fdb18b8", null ],
-    [ "bufferSize", "class_fw_1_1_file_packet_1_1_data_packet.html#a3a14c986eb3c195cde884c1667b328b1", null ],
+    [ "bufferSize", "class_fw_1_1_file_packet_1_1_data_packet.html#af74edc92a8ad795aedcc9d7ea1550d05", null ],
     [ "initialize", "class_fw_1_1_file_packet_1_1_data_packet.html#a3f315b1c293fe28b8825bd764aabcc25", null ],
     [ "toBuffer", "class_fw_1_1_file_packet_1_1_data_packet.html#a3e80f1b17135813a054583e2d7c569a0", null ],
     [ "FilePacket", "class_fw_1_1_file_packet_1_1_data_packet.html#a017d6c45fe8f75de4eb3a3c2b1647044", null ],

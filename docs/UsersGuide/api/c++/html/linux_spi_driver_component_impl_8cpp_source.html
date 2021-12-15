@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -104,15 +104,15 @@ $(document).ready(function(){initNavTree('_linux_spi_driver_component_impl_8cpp_
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;cstdio&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;sys/ioctl.h&gt;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;linux/types.h&gt;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;linux/spi/spidev.h&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;errno.h&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;cerrno&gt;</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">//#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="linux_spi_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">   28</a></span>&#160;<span class="preprocessor">#define DEBUG_PRINT(x,...)</span></div>
@@ -136,8 +136,8 @@ $(document).ready(function(){initNavTree('_linux_spi_driver_component_impl_8cpp_
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        spi_ioc_transfer tr;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// Zero for unused fields:</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        memset(&amp;tr, 0, <span class="keyword">sizeof</span>(tr));</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        tr.tx_buf = (<a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>)writeBuffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>();</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        tr.rx_buf = (<a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>)readBuffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        tr.tx_buf = <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>(writeBuffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>());</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        tr.rx_buf = <span class="keyword">reinterpret_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>(readBuffer.<a class="code" href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">getData</a>());</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        tr.len = writeBuffer.<a class="code" href="class_fw_1_1_buffer.html#a82190e37d06defba369d8c4bff9662de">getSize</a>();</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">/*</span></div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">            .speed_hz = 0,</span></div>
@@ -257,7 +257,7 @@ $(document).ready(function(){initNavTree('_linux_spi_driver_component_impl_8cpp_
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_spi_driver_component_impl.html#acb0f41c2e2debe04eaa8d6a41a703e7b">  170</a></span>&#160;    <a class="code" href="class_drv_1_1_linux_spi_driver_component_impl.html#acb0f41c2e2debe04eaa8d6a41a703e7b">LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl</a>(<span class="keywordtype">void</span>) {</div>
+<div class="line"><a name="l00170"></a><span class="lineno"><a class="line" href="class_drv_1_1_linux_spi_driver_component_impl.html#a2b05e431412a0a2f5dfd8231e4e160e5">  170</a></span>&#160;    <a class="code" href="class_drv_1_1_linux_spi_driver_component_impl.html#a2b05e431412a0a2f5dfd8231e4e160e5">LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl</a>() {</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <a class="code" href="linux_spi_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a>(<span class="stringliteral">&quot;Closing SPI device %d\n&quot;</span>,this-&gt;m_fd);</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        (void) close(this-&gt;m_fd);</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
@@ -267,12 +267,12 @@ $(document).ready(function(){initNavTree('_linux_spi_driver_component_impl_8cpp_
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_fw_1_1_buffer_html_a0f7344fefd6813ce700c7e39dfd2ce29"><div class="ttname"><a href="class_fw_1_1_buffer.html#a0f7344fefd6813ce700c7e39dfd2ce29">Fw::Buffer::getData</a></div><div class="ttdeci">U8 * getData() const</div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00060">Buffer.cpp:60</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00076">BasicTypes.hpp:76</a></div></div>
-<div class="ttc" id="aclass_drv_1_1_linux_spi_driver_component_impl_html_acb0f41c2e2debe04eaa8d6a41a703e7b"><div class="ttname"><a href="class_drv_1_1_linux_spi_driver_component_impl.html#acb0f41c2e2debe04eaa8d6a41a703e7b">Drv::LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl</a></div><div class="ttdeci">~LinuxSpiDriverComponentImpl(void)</div><div class="ttdef"><b>Definition:</b> <a href="linux_spi_driver_component_impl_8cpp_source.html#l00170">LinuxSpiDriverComponentImpl.cpp:170</a></div></div>
-<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="block_driver_impl_8cpp_source.html#l00005">BlockDriverImpl.cpp:5</a></div></div>
+<div class="ttc" id="anamespace_drv_html"><div class="ttname"><a href="namespace_drv.html">Drv</a></div><div class="ttdef"><b>Definition:</b> <a href="block_driver_8hpp_source.html#l00011">BlockDriver.hpp:11</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="asha_8h_html_ae5a6272795b1b8e0045aa7a4319dceb8"><div class="ttname"><a href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a></div><div class="ttdeci">#define U64(C)</div><div class="ttdef"><b>Definition:</b> <a href="sha_8h_source.html#l00176">sha.h:176</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html_a82190e37d06defba369d8c4bff9662de"><div class="ttname"><a href="class_fw_1_1_buffer.html#a82190e37d06defba369d8c4bff9662de">Fw::Buffer::getSize</a></div><div class="ttdeci">U32 getSize() const</div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00064">Buffer.cpp:64</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_spi_driver_component_impl_html_a2b05e431412a0a2f5dfd8231e4e160e5"><div class="ttname"><a href="class_drv_1_1_linux_spi_driver_component_impl.html#a2b05e431412a0a2f5dfd8231e4e160e5">Drv::LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl</a></div><div class="ttdeci">~LinuxSpiDriverComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="linux_spi_driver_component_impl_8cpp_source.html#l00170">LinuxSpiDriverComponentImpl.cpp:170</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_spi_driver_component_impl_html_af4cbee93f9670c3a41bbf3fcaa3d74da"><div class="ttname"><a href="class_drv_1_1_linux_spi_driver_component_impl.html#af4cbee93f9670c3a41bbf3fcaa3d74da">Drv::LinuxSpiDriverComponentImpl::open</a></div><div class="ttdeci">bool open(NATIVE_INT_TYPE device, NATIVE_INT_TYPE select, SpiFrequency clock)</div><div class="ttdoc">Open device.</div><div class="ttdef"><b>Definition:</b> <a href="linux_spi_driver_component_impl_8cpp_source.html#l00073">LinuxSpiDriverComponentImpl.cpp:73</a></div></div>
 <div class="ttc" id="a_linux_spi_driver_component_impl_8cpp_html_a9e21a2a88f554186e2b2380b00eab944"><div class="ttname"><a href="linux_spi_driver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(x,...)</div><div class="ttdef"><b>Definition:</b> <a href="linux_spi_driver_component_impl_8cpp_source.html#l00028">LinuxSpiDriverComponentImpl.cpp:28</a></div></div>
 <div class="ttc" id="anamespace_drv_html_a61d09174558e3591ec1e787fc84c27ff"><div class="ttname"><a href="namespace_drv.html#a61d09174558e3591ec1e787fc84c27ff">Drv::SpiFrequency</a></div><div class="ttdeci">SpiFrequency</div><div class="ttdef"><b>Definition:</b> <a href="linux_spi_driver_component_impl_8hpp_source.html#l00027">LinuxSpiDriverComponentImpl.hpp:27</a></div></div>

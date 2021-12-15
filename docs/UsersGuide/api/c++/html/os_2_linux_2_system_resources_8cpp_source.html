@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -99,10 +99,10 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// acknowledged.</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span>              <span class="comment">/* fopen() */</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span>             <span class="comment">/* scanf */</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;cstdio&gt;</span>              <span class="comment">/* fopen() */</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;cstdlib&gt;</span>             <span class="comment">/* scanf */</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;sys/vfs.h&gt;</span>            <span class="comment">/* statfs() */</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="os_2_system_resources_8hpp.html">Os/SystemResources.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
@@ -111,20 +111,20 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> <a class="code" href="namespace_os_1_1_system_resources.html#abde26d1d560b6470f5bbf2d4ad69a16f">SystemResources::getCpuCount</a>(U32 &amp;cpuCount) {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordtype">char</span> line[512] = {0};</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        FILE *fp = <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        FILE *fp = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        U32 cpu_count = 0;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordflow">if</span> ((fp = fopen(<span class="stringliteral">&quot;/proc/stat&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>)) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordflow">if</span> ((fp = fopen(<span class="stringliteral">&quot;/proc/stat&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>)) == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) { <span class="comment">//1st line.  Aggregate cpu line. Skip</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <span class="keyword">nullptr</span>) { <span class="comment">//1st line.  Aggregate cpu line. Skip</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            fclose(fp);</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        }</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">for</span> (U32 i = 0; i &lt; <a class="code" href="namespace_os.html#a371efa0c349be94e5d11d10f2d2ff0e5">LINUX_CPU_LINE_LIMIT</a>; i++) {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) { <span class="comment">//cpu# line</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <span class="keyword">nullptr</span>) { <span class="comment">//cpu# line</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            }</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
@@ -141,7 +141,7 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> <a class="code" href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">SystemResources::getCpuTicks</a>(CpuTicks &amp;cpu_ticks, U32 cpu_index) {</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordtype">char</span> line[512] = {0};</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        FILE *fp = <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        FILE *fp = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        U32 cpu_data[4] = {0};</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        U32 cpuCount = 0;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> status  = <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
@@ -156,19 +156,19 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span> ((fp = fopen(<span class="stringliteral">&quot;/proc/stat&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>)) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span> ((fp = fopen(<span class="stringliteral">&quot;/proc/stat&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>)) == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) { <span class="comment">//1st line.  Aggregate cpu line.</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <span class="keyword">nullptr</span>) { <span class="comment">//1st line.  Aggregate cpu line.</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            fclose(fp);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">for</span> (U32 i = 0; i &lt; cpu_index + 1; i++) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) { <span class="comment">//cpu# line</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span>(line), fp) == <span class="keyword">nullptr</span>) { <span class="comment">//cpu# line</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                fclose(fp);</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            }</div>
@@ -178,7 +178,7 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                fclose(fp);</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="comment">// No string concerns, as string is discarded</span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            sscanf(line, <span class="stringliteral">&quot;%*s %d %d %d %d&quot;</span>, &amp;cpu_data[0],</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                   &amp;cpu_data[1],</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                   &amp;cpu_data[2],</div>
@@ -197,7 +197,7 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    }</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">SystemResources::SystemResourcesStatus</a> <a class="code" href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">SystemResources::getMemUtil</a>(MemUtil &amp;memory_util) {</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        FILE *fp = <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        FILE *fp = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> total = 0;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> free = 0;</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="comment">// Fallbacks</span></div>
@@ -205,10 +205,10 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        memory_util.used = 1;</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        fp = fopen(<span class="stringliteral">&quot;/proc/meminfo&quot;</span>, <span class="stringliteral">&quot;r&quot;</span>);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordflow">if</span> (fp == <a class="code" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>) {</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordflow">if</span> (fp == <span class="keyword">nullptr</span>) {</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        }</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="comment">// No string concerns as strings discarded</span></div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordflow">if</span> (fscanf(fp, <span class="stringliteral">&quot;%*s %d %*s&quot;</span>, &amp;total) != 1 ||  <span class="comment">/* 1st line is MemTotal */</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            fscanf(fp, <span class="stringliteral">&quot;%*s %d&quot;</span>, &amp;free) != 1) {   <span class="comment">/* 2nd line is MemFree */</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            fclose(fp);</div>
@@ -237,7 +237,6 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_abde26d1d560b6470f5bbf2d4ad69a16f"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#abde26d1d560b6470f5bbf2d4ad69a16f">Os::SystemResources::getCpuCount</a></div><div class="ttdeci">SystemResourcesStatus getCpuCount(U32 &amp;cpu_count)</div><div class="ttdoc">Request the count of the CPUs detected by the system.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00015">SystemResources.cpp:15</a></div></div>
 <div class="ttc" id="anamespace_os_html_a371efa0c349be94e5d11d10f2d2ff0e5"><div class="ttname"><a href="namespace_os.html#a371efa0c349be94e5d11d10f2d2ff0e5">Os::LINUX_CPU_LINE_LIMIT</a></div><div class="ttdeci">static const U32 LINUX_CPU_LINE_LIMIT</div><div class="ttdef"><b>Definition:</b> <a href="os_2_linux_2_system_resources_8cpp_source.html#l00020">SystemResources.cpp:20</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_a070d2ce7b6bb7e5c05602aa8c308d0c4"><div class="ttname"><a href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a></div><div class="ttdeci">#define NULL</div><div class="ttdoc">NULL.</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00100">BasicTypes.hpp:100</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_a92ad97f8e7fccda7ea0334d50478c316"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">Os::SystemResources::getMemUtil</a></div><div class="ttdeci">SystemResourcesStatus getMemUtil(MemUtil &amp;memory_util)</div><div class="ttdoc">Calculate the across-all-cpu average tick information.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00029">SystemResources.cpp:29</a></div></div>
 <div class="ttc" id="a_os_2_system_resources_8hpp_html"><div class="ttname"><a href="os_2_system_resources_8hpp.html">SystemResources.hpp</a></div></div>
 <!-- start footer part -->

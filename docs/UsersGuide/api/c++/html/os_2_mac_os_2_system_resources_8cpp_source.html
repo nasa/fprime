@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('_os_2_mac_os_2_system_resources_8cpp_s
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    vm_statistics_data_t vmstat;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    vm_size_t vmsize;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    kern_return_t stat1 = host_statistics(mach_host_self(), HOST_VM_INFO, (host_info_t)&amp;vmstat, &amp;count);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    kern_return_t stat1 = host_statistics(mach_host_self(), HOST_VM_INFO, <span class="keyword">reinterpret_cast&lt;</span>host_info_t<span class="keyword">&gt;</span>(&amp;vmstat), &amp;count);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    kern_return_t stat2 = host_page_size(mach_host_self(), &amp;vmsize);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> (KERN_SUCCESS == stat1 and KERN_SUCCESS == stat2) {</div>
@@ -131,7 +131,7 @@ $(document).ready(function(){initNavTree('_os_2_mac_os_2_system_resources_8cpp_s
 <div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="namespace_os.html#a0840df4b7f40767a6f67c85902c202fb">   63</a></span>&#160;kern_return_t <a class="code" href="namespace_os.html#a0840df4b7f40767a6f67c85902c202fb">cpu_data_helper</a>(processor_cpu_load_info_t&amp; cpu_load_info, U32&amp; cpu_count) {</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    mach_msg_type_number_t processor_msg_count;</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    kern_return_t stat = host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO, &amp;cpu_count,</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                                             (processor_info_array_t*)&amp;cpu_load_info, &amp;processor_msg_count);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                                             <span class="keyword">reinterpret_cast&lt;</span>processor_info_array_t*<span class="keyword">&gt;</span>(&amp;cpu_load_info), &amp;processor_msg_count);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">return</span> stat;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
 <div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="namespace_os.html#abfdc758506a18a310eaf4d7d5182bf51">   82</a></span>&#160;kern_return_t <a class="code" href="namespace_os.html#abfdc758506a18a310eaf4d7d5182bf51">cpu_by_index</a>(U32 cpu_index, <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&amp; used, <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a>&amp; total) {</div>
@@ -196,7 +196,7 @@ $(document).ready(function(){initNavTree('_os_2_mac_os_2_system_resources_8cpp_s
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
 <div class="ttc" id="asha_8h_html_ae5a6272795b1b8e0045aa7a4319dceb8"><div class="ttname"><a href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a></div><div class="ttdeci">#define U64(C)</div><div class="ttdef"><b>Definition:</b> <a href="sha_8h_source.html#l00176">sha.h:176</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_a1d44f29f3dcd5069d256d55a67372e9e"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">Os::SystemResources::getCpuTicks</a></div><div class="ttdeci">SystemResourcesStatus getCpuTicks(CpuTicks &amp;ticks, U32 cpu_index=0)</div><div class="ttdoc">Get the CPU tick information for a given CPU.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00021">SystemResources.cpp:21</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="anamespace_os_html_a06d1174a477fcaffc9a274ddf0c42689"><div class="ttname"><a href="namespace_os.html#a06d1174a477fcaffc9a274ddf0c42689">Os::vm_stat_helper</a></div><div class="ttdeci">kern_return_t vm_stat_helper(U64 &amp;used, U64 &amp;total)</div><div class="ttdoc">reads macOS virtual memory statistics for memory calculation</div><div class="ttdef"><b>Definition:</b> <a href="os_2_mac_os_2_system_resources_8cpp_source.html#l00033">SystemResources.cpp:33</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_abde26d1d560b6470f5bbf2d4ad69a16f"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#abde26d1d560b6470f5bbf2d4ad69a16f">Os::SystemResources::getCpuCount</a></div><div class="ttdeci">SystemResourcesStatus getCpuCount(U32 &amp;cpu_count)</div><div class="ttdoc">Request the count of the CPUs detected by the system.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00015">SystemResources.cpp:15</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_a92ad97f8e7fccda7ea0334d50478c316"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">Os::SystemResources::getMemUtil</a></div><div class="ttdeci">SystemResourcesStatus getMemUtil(MemUtil &amp;memory_util)</div><div class="ttdoc">Calculate the across-all-cpu average tick information.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00029">SystemResources.cpp:29</a></div></div>

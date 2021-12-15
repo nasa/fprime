@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="title">UdpReceiverComponentImpl.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="udp_receiver_component_impl_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<a href="udp_receiver_component_impl_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// \title  UdpReceiverImpl.cpp</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">// \author tcanham</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">// \brief  cpp file for UdpReceiver component implementation class</span></div>
@@ -97,16 +97,16 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// Copyright 2009-2015, by the California Institute of Technology.</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// ALL RIGHTS RESERVED.  United States Government Sponsorship</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// acknowledged.</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// </span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ====================================================================== </span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="udp_receiver_component_impl_8hpp.html">Svc/UdpReceiver/UdpReceiverComponentImpl.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;sys/types.h&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;errno.h&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;cerrno&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;sys/socket.h&gt;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;arpa/inet.h&gt;</span></div>
@@ -118,7 +118,7 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// Construction, initialization, and destruction </span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// Construction, initialization, and destruction</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// ----------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl ::</a></div>
@@ -139,13 +139,13 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">UdpReceiverComponentImpl ::</a></div>
 <div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">   50</a></span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">    init</a>(</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">const</span> <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    ) </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    )</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  {</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    UdpReceiverComponentBase::init(instance);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a65836d736422878e57793d031845bfcf">UdpReceiverComponentImpl ::</a></div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a65836d736422878e57793d031845bfcf">   58</a></span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a65836d736422878e57793d031845bfcf">    ~UdpReceiverComponentImpl</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">UdpReceiverComponentImpl ::</a></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">   58</a></span>&#160;<a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">    ~UdpReceiverComponentImpl</a>()</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <span class="keywordflow">if</span> (this-&gt;m_fd != -1) {</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          close(this-&gt;m_fd);</div>
@@ -165,7 +165,7 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      sockaddr_in saddr;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="comment">// zero out the structure</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      memset((<span class="keywordtype">char</span> *) &amp;saddr, 0, <span class="keyword">sizeof</span>(saddr));</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      memset(&amp;saddr, 0, <span class="keyword">sizeof</span>(saddr));</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      saddr.sin_family = AF_INET;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      saddr.sin_port = htons(atoi(port));</div>
@@ -218,12 +218,12 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::workerTask(<span class="keywordtype">void</span>* ptr) {</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      <a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a> *compPtr = <span class="keyword">static_cast&lt;</span><a class="code" href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">UdpReceiverComponentImpl</a>*<span class="keyword">&gt;</span>(ptr);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <span class="keywordflow">while</span> (1) {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;          compPtr-&gt;doRecv();</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      }</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  }</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::doRecv(<span class="keywordtype">void</span>) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::doRecv() {</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="comment">// wait for data from the socket</span></div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;      <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> psize = recvfrom(</div>
@@ -310,34 +310,35 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;  }</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordtype">void</span> UdpReceiverComponentImpl::UdpSerialBuffer::operator=(<span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer&amp; UdpReceiverComponentImpl::UdpSerialBuffer::operator=(<span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;      this-&gt;resetSer();</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;      this-&gt;serialize(other.getBuffAddr(),other.getBuffLength(),<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;  }</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      memcpy(this-&gt;m_buff,other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a75fba6f1399b0c945534848952896cd3">getBuffAddr</a>(),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      this-&gt;setBuffLen(other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  }</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;          <span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.getBuffLength(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.getBuffLength());</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;      memcpy(this-&gt;m_buff,other.m_buff,other.getBuffLength());</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;      this-&gt;setBuffLen(other.getBuffLength());</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  }</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(): <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  }</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;  }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;          <span class="keyword">const</span> <a class="code" href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a>&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;      memcpy(this-&gt;m_buff,other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">getBuffAddr</a>(),other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;      this-&gt;setBuffLen(other.<a class="code" href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">getBuffLength</a>());</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  }</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;          <span class="keyword">const</span> UdpReceiverComponentImpl::UdpSerialBuffer&amp; other) : <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;      <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(<span class="keyword">sizeof</span>(this-&gt;m_buff)&gt;= other.getBuffLength(),<span class="keyword">sizeof</span>(this-&gt;m_buff),other.getBuffLength());</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;      memcpy(this-&gt;m_buff,other.m_buff,other.getBuffLength());</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;      this-&gt;setBuffLen(other.getBuffLength());</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  UdpReceiverComponentImpl::UdpSerialBuffer::UdpSerialBuffer(): <a class="code" href="namespace_fw.html">Fw</a>::SerializeBufferBase() {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  }</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;} <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;} <span class="comment">// end namespace Svc</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00043">Serializable.hpp:43</a></div></div>
@@ -346,22 +347,22 @@ $(document).ready(function(){initNavTree('_udp_receiver_component_impl_8cpp_sour
 <div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00076">BasicTypes.hpp:76</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_aeaaf74a6304195acbf5db506f01a6526"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#aeaaf74a6304195acbf5db506f01a6526">Svc::UdpReceiverComponentImpl::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00050">UdpReceiverComponentImpl.cpp:50</a></div></div>
 <div class="ttc" id="anamespace_fw_html_aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020"><div class="ttname"><a href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a></div><div class="ttdeci">@ FW_SERIALIZE_OK</div><div class="ttdoc">Serialization/Deserialization operation was successful.</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00015">Serializable.hpp:15</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a75fba6f1399b0c945534848952896cd3"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a75fba6f1399b0c945534848952896cd3">Fw::SerializeBufferBase::getBuffAddr</a></div><div class="ttdeci">virtual U8 * getBuffAddr(void)=0</div><div class="ttdoc">gets buffer address for data filling</div></div>
 <div class="ttc" id="aclass_os_1_1_task_html_aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9"><div class="ttname"><a href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8fa38fdf68e513d964c543e6082ffde55b9">Os::Task::TASK_OK</a></div><div class="ttdeci">@ TASK_OK</div><div class="ttdoc">message sent/received okay</div><div class="ttdef"><b>Definition:</b> <a href="task_8hpp_source.html#l00020">Task.hpp:20</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_string_html"><div class="ttname"><a href="class_os_1_1_task_string.html">Os::TaskString</a></div><div class="ttdef"><b>Definition:</b> <a href="task_string_8hpp_source.html#l00010">TaskString.hpp:10</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_html_aa1922f0444b26ffce3526353e291af8f"><div class="ttname"><a href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a></div><div class="ttdeci">TaskStatus</div><div class="ttdef"><b>Definition:</b> <a href="task_8hpp_source.html#l00019">Task.hpp:19</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a363a7f17ef5757aede389595faff21cd"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a363a7f17ef5757aede389595faff21cd">Svc::UdpReceiverComponentImpl::~UdpReceiverComponentImpl</a></div><div class="ttdeci">~UdpReceiverComponentImpl()</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00058">UdpReceiverComponentImpl.cpp:58</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_a8102cd7c96c1a0e32032119f14c1c4bc"><div class="ttname"><a href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a></div><div class="ttdeci">unsigned int NATIVE_UINT_TYPE</div><div class="ttdoc">native unsigned integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00030">BasicTypes.hpp:30</a></div></div>
-<div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a65836d736422878e57793d031845bfcf"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a65836d736422878e57793d031845bfcf">Svc::UdpReceiverComponentImpl::~UdpReceiverComponentImpl</a></div><div class="ttdeci">~UdpReceiverComponentImpl(void)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00058">UdpReceiverComponentImpl.cpp:58</a></div></div>
-<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00009">Assert.hpp:9</a></div></div>
+<div class="ttc" id="a_assert_8hpp_html_ae203ae2022a5f92eea0ceb85a0d62c3c"><div class="ttname"><a href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a></div><div class="ttdeci">#define FW_ASSERT(...)</div><div class="ttdef"><b>Definition:</b> <a href="assert_8hpp_source.html#l00008">Assert.hpp:8</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a875e65a3ecc1d0fe7003e4e6b5d5fb9d"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a875e65a3ecc1d0fe7003e4e6b5d5fb9d">Svc::UdpReceiverComponentImpl::open</a></div><div class="ttdeci">void open(const char *port)</div><div class="ttdoc">Open the connection.</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00065">UdpReceiverComponentImpl.cpp:65</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_af08cd535e1b3cb7442cd389654bffdba"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">Fw::SerializeBufferBase::getBuffLength</a></div><div class="ttdeci">NATIVE_UINT_TYPE getBuffLength() const</div><div class="ttdoc">returns current buffer size</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00587">Serializable.cpp:587</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_af08cd535e1b3cb7442cd389654bffdba"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#af08cd535e1b3cb7442cd389654bffdba">Fw::SerializeBufferBase::getBuffLength</a></div><div class="ttdeci">NATIVE_UINT_TYPE getBuffLength() const</div><div class="ttdoc">returns current buffer size</div><div class="ttdef"><b>Definition:</b> <a href="serializable_8cpp_source.html#l00591">Serializable.cpp:591</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_aca9509c37a2094ce6e6cc66a87298de8"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#aca9509c37a2094ce6e6cc66a87298de8">Svc::UdpReceiverComponentImpl::startThread</a></div><div class="ttdeci">void startThread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE affinity)</div><div class="ttdoc">start worker thread</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00096">UdpReceiverComponentImpl.cpp:96</a></div></div>
 <div class="ttc" id="a_task_string_8hpp_html"><div class="ttname"><a href="task_string_8hpp.html">TaskString.hpp</a></div></div>
 <div class="ttc" id="a_udp_receiver_component_impl_8hpp_html"><div class="ttname"><a href="udp_receiver_component_impl_8hpp.html">UdpReceiverComponentImpl.hpp</a></div></div>
 <div class="ttc" id="aclass_svc_1_1_udp_receiver_component_impl_html_a765166cf52158b3f40e1dcf9078b0827"><div class="ttname"><a href="class_svc_1_1_udp_receiver_component_impl.html#a765166cf52158b3f40e1dcf9078b0827">Svc::UdpReceiverComponentImpl::UdpReceiverComponentImpl</a></div><div class="ttdeci">UdpReceiverComponentImpl(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00035">UdpReceiverComponentImpl.cpp:35</a></div></div>
-<div class="ttc" id="aclass_os_1_1_task_html_ad310818e9faa33e1a8f930b673aa7e45"><div class="ttname"><a href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">Os::Task::start</a></div><div class="ttdeci">TaskStatus start(const Fw::StringBase &amp;name, taskRoutine routine, void *arg, NATIVE_UINT_TYPE priority=TASK_DEFAULT, NATIVE_UINT_TYPE stackSize=TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity=TASK_DEFAULT, NATIVE_UINT_TYPE identifier=TASK_DEFAULT)</div><div class="ttdoc">start the task</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_task_8cpp_source.html#l00016">Task.cpp:16</a></div></div>
+<div class="ttc" id="aclass_os_1_1_task_html_ad310818e9faa33e1a8f930b673aa7e45"><div class="ttname"><a href="class_os_1_1_task.html#ad310818e9faa33e1a8f930b673aa7e45">Os::Task::start</a></div><div class="ttdeci">TaskStatus start(const Fw::StringBase &amp;name, taskRoutine routine, void *arg, NATIVE_UINT_TYPE priority=TASK_DEFAULT, NATIVE_UINT_TYPE stackSize=TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity=TASK_DEFAULT, NATIVE_UINT_TYPE identifier=TASK_DEFAULT)</div><div class="ttdoc">start the task</div><div class="ttdef"><b>Definition:</b> <a href="baremetal_2_task_8cpp_source.html#l00018">Task.cpp:18</a></div></div>
 <div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="a_udp_receiver_component_impl_8cpp_html_a9e21a2a88f554186e2b2380b00eab944"><div class="ttname"><a href="udp_receiver_component_impl_8cpp.html#a9e21a2a88f554186e2b2380b00eab944">DEBUG_PRINT</a></div><div class="ttdeci">#define DEBUG_PRINT(x,...)</div><div class="ttdef"><b>Definition:</b> <a href="udp_receiver_component_impl_8cpp_source.html#l00026">UdpReceiverComponentImpl.cpp:26</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html_a0b5e0fdec08aa08e7eedd2e9bde10b7a"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a">Fw::SerializeBufferBase::getBuffAddr</a></div><div class="ttdeci">virtual U8 * getBuffAddr()=0</div><div class="ttdoc">gets buffer address for data filling</div></div>
 <div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_ae2c29dc7dc30247eb4144d3d058d1852"><div class="ttname"><a href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a></div><div class="ttdeci">int NATIVE_INT_TYPE</div><div class="ttdoc">native integer type declaration</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00029">BasicTypes.hpp:29</a></div></div>
 <div class="ttc" id="anamespace_fw_html"><div class="ttname"><a href="namespace_fw.html">Fw</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8cpp_source.html#l00021">Buffer.cpp:21</a></div></div>

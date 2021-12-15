@@ -6,8 +6,8 @@ var class_fw_1_1_tlm_buffer =
     [ "TlmBuffer", "class_fw_1_1_tlm_buffer.html#ad642ad9cda224ff36c800231592635dc", null ],
     [ "TlmBuffer", "class_fw_1_1_tlm_buffer.html#ac0ab9f4b0bd8a6ee5bd7f5787f87f33f", null ],
     [ "~TlmBuffer", "class_fw_1_1_tlm_buffer.html#ad84bcd3cc55cb9879ffe679a95452780", null ],
-    [ "getBuffAddr", "class_fw_1_1_tlm_buffer.html#ad4158f3c9818bb4db60007074976e0dd", null ],
-    [ "getBuffAddr", "class_fw_1_1_tlm_buffer.html#a2906242cecb8cfe99fcb40c0c683f2eb", null ],
-    [ "getBuffCapacity", "class_fw_1_1_tlm_buffer.html#afef754d72f08050fa90408e63852de9d", null ],
-    [ "operator=", "class_fw_1_1_tlm_buffer.html#a8f3a727d0290f51882be9a90c7283ece", null ]
+    [ "getBuffAddr", "class_fw_1_1_tlm_buffer.html#a2cb2250e5b87c2fb8d0ae7d80e00ffc1", null ],
+    [ "getBuffAddr", "class_fw_1_1_tlm_buffer.html#a7fd456f4fc866a04942cf3146bb65993", null ],
+    [ "getBuffCapacity", "class_fw_1_1_tlm_buffer.html#a63e53fe5f55530668716f15ccaf35d8f", null ],
+    [ "operator=", "class_fw_1_1_tlm_buffer.html#a5bb697b60c8f14b040746404593a4ec3", null ]
 ];

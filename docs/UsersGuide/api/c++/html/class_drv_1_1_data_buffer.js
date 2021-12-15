@@ -7,8 +7,8 @@ var class_drv_1_1_data_buffer =
     [ "DataBuffer", "class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5", null ],
     [ "DataBuffer", "class_drv_1_1_data_buffer.html#af55d4ce3ecf584dbb82d8b7abfb8d6af", null ],
     [ "~DataBuffer", "class_drv_1_1_data_buffer.html#a9fbf2f26b0ead1f308a640aa17cffecc", null ],
-    [ "getBuffAddr", "class_drv_1_1_data_buffer.html#ad895de9a5b6526fe6dfa14d60ece18bb", null ],
-    [ "getBuffAddr", "class_drv_1_1_data_buffer.html#a644f38aff7fb1c63db8937971ddf96cd", null ],
-    [ "getBuffCapacity", "class_drv_1_1_data_buffer.html#a4d564d9d63d39b9f1d1a0bfd033bc59c", null ],
-    [ "operator=", "class_drv_1_1_data_buffer.html#a8015a023ec188ef3f3ea22b83b39c03e", null ]
+    [ "getBuffAddr", "class_drv_1_1_data_buffer.html#aaa65da22ae38e7a1dcb5934bf045a4d3", null ],
+    [ "getBuffAddr", "class_drv_1_1_data_buffer.html#a3620d52b983fa94ba6cfe5e7f44b9834", null ],
+    [ "getBuffCapacity", "class_drv_1_1_data_buffer.html#a9fd3168635931ddf72c06639bbb68ca6", null ],
+    [ "operator=", "class_drv_1_1_data_buffer.html#a2c9f28fb02012fff74dbc627e246acf7", null ]
 ];

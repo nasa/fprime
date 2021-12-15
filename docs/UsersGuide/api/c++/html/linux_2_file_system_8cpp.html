@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -100,8 +100,8 @@ $(document).ready(function(){initNavTree('_linux_2_file_system_8cpp.html',''); i
 <code>#include &lt;sys/stat.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &lt;dirent.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;cstdio&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;sys/statvfs.h&gt;</code><br />
 </div>
@@ -132,8 +132,8 @@ Functions</h2></td></tr>
 <tr class="separator:a4d57326006eacb1c947c884e8f2c3574"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2">Os::FileSystem::handleFileError</a> (File::Status fileStatus)</td></tr>
 <tr class="separator:a11a6c8be7cf56ffd2e9a9cb4fbf7a5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5df534b36274232fa392df65cfb0606"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#ad5df534b36274232fa392df65cfb0606">Os::FileSystem::initAndCheckFileStats</a> (const char *filePath, struct stat *fileInfo=<a class="el" href="basic_types_8hpp.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>)</td></tr>
-<tr class="separator:ad5df534b36274232fa392df65cfb0606"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3aab765b588856e37710720bcd3d165"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#ae3aab765b588856e37710720bcd3d165">Os::FileSystem::initAndCheckFileStats</a> (const char *filePath, struct stat *fileInfo=nullptr)</td></tr>
+<tr class="separator:ae3aab765b588856e37710720bcd3d165"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72df80b8e7e3e503b8fd26a6e1232316"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a72df80b8e7e3e503b8fd26a6e1232316">Os::FileSystem::copyFileData</a> (File source, File destination, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> size)</td></tr>
 <tr class="separator:a72df80b8e7e3e503b8fd26a6e1232316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d8d0bc159589ebf09030dff7b294816"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a8d8d0bc159589ebf09030dff7b294816">Os::FileSystem::copyFile</a> (const char *originPath, const char *destPath)</td></tr>

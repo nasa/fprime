@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -91,13 +91,13 @@ $(document).ready(function(){initNavTree('_x86_2_interval_timer_8cpp_source.html
 <a href="x86_2_interval_timer_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="interval_timer_8hpp.html">Os/IntervalTimer.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="comment">// Adapted from: http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="comment">// should be t1In - t2In</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    U32 <a class="code" href="class_os_1_1_interval_timer.html#a0f77203dc5f89469014d65031abbb802">IntervalTimer::getDiffUsec</a>(<span class="keyword">const</span> RawTime&amp; t1In, <span class="keyword">const</span> RawTime&amp; t2In) {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    U32 <a class="code" href="class_os_1_1_interval_timer.html#a790a12883eae7cfa3562ea5db0716711">IntervalTimer::getDiffUsec</a>(<span class="keyword">const</span> RawTime&amp; t1In, <span class="keyword">const</span> RawTime&amp; t2In) {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        RawTime result = {t1In.upper - t2In.upper, 0};</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keywordflow">if</span> (t1In.lower &lt; t2In.lower) {</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            result.upper -= 1; <span class="comment">// subtract nsec carry to seconds</span></div>
@@ -112,8 +112,8 @@ $(document).ready(function(){initNavTree('_x86_2_interval_timer_8cpp_source.html
 </div><!-- doc-content -->
 <div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00007">File.cpp:7</a></div></div>
 <div class="ttc" id="a_interval_timer_8hpp_html"><div class="ttname"><a href="interval_timer_8hpp.html">IntervalTimer.hpp</a></div></div>
-<div class="ttc" id="aclass_os_1_1_interval_timer_html_a0f77203dc5f89469014d65031abbb802"><div class="ttname"><a href="class_os_1_1_interval_timer.html#a0f77203dc5f89469014d65031abbb802">Os::IntervalTimer::getDiffUsec</a></div><div class="ttdeci">U32 getDiffUsec(void)</div><div class="ttdef"><b>Definition:</b> <a href="interval_timer_common_8cpp_source.html#l00034">IntervalTimerCommon.cpp:34</a></div></div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
+<div class="ttc" id="aclass_os_1_1_interval_timer_html_a790a12883eae7cfa3562ea5db0716711"><div class="ttname"><a href="class_os_1_1_interval_timer.html#a790a12883eae7cfa3562ea5db0716711">Os::IntervalTimer::getDiffUsec</a></div><div class="ttdeci">U32 getDiffUsec()</div><div class="ttdef"><b>Definition:</b> <a href="interval_timer_common_8cpp_source.html#l00034">IntervalTimerCommon.cpp:34</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

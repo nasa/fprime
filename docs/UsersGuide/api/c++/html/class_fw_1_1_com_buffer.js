@@ -6,8 +6,8 @@ var class_fw_1_1_com_buffer =
     [ "ComBuffer", "class_fw_1_1_com_buffer.html#a1de7deb311f94cb459d9c5b928858542", null ],
     [ "ComBuffer", "class_fw_1_1_com_buffer.html#afb1fac352d042b448b8a8359b2116309", null ],
     [ "~ComBuffer", "class_fw_1_1_com_buffer.html#ac92da76ce0ebde4a4f9ae0f827cd17ea", null ],
-    [ "getBuffAddr", "class_fw_1_1_com_buffer.html#ab289deead830fb10490d2fffa0aefd30", null ],
-    [ "getBuffAddr", "class_fw_1_1_com_buffer.html#ada96dafa885ff700a6f10a8974572b3e", null ],
-    [ "getBuffCapacity", "class_fw_1_1_com_buffer.html#a2908e7ffef78c1437d294be4c57e0c88", null ],
-    [ "operator=", "class_fw_1_1_com_buffer.html#a24d45984d74a02761e3bca643365a457", null ]
+    [ "getBuffAddr", "class_fw_1_1_com_buffer.html#a97b9ef6daed2ebbabafeca6794e4261b", null ],
+    [ "getBuffAddr", "class_fw_1_1_com_buffer.html#a579d36c646ece96c2b27a6d1a73b0629", null ],
+    [ "getBuffCapacity", "class_fw_1_1_com_buffer.html#a042965c138877dd8e1d21f3766eddd29", null ],
+    [ "operator=", "class_fw_1_1_com_buffer.html#a28f1bff5009ec0c703fbce577b41751c", null ]
 ];

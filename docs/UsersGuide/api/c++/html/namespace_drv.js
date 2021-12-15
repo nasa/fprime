@@ -7,8 +7,6 @@ var namespace_drv =
     [ "LinuxI2cDriverComponentImpl", "class_drv_1_1_linux_i2c_driver_component_impl.html", "class_drv_1_1_linux_i2c_driver_component_impl" ],
     [ "LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html", "class_drv_1_1_linux_serial_driver_component_impl" ],
     [ "LinuxSpiDriverComponentImpl", "class_drv_1_1_linux_spi_driver_component_impl.html", "class_drv_1_1_linux_spi_driver_component_impl" ],
-    [ "SocketHelper", "class_drv_1_1_socket_helper.html", "class_drv_1_1_socket_helper" ],
-    [ "SocketIpDriverComponentImpl", "class_drv_1_1_socket_ip_driver_component_impl.html", "class_drv_1_1_socket_ip_driver_component_impl" ],
     [ "SocketReadTask", "class_drv_1_1_socket_read_task.html", "class_drv_1_1_socket_read_task" ],
     [ "SocketState", "struct_drv_1_1_socket_state.html", "struct_drv_1_1_socket_state" ],
     [ "TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", "class_drv_1_1_tcp_client_component_impl" ],

@@ -5,37 +5,18 @@
 Dictionary target definition file. Used to define `dict` and `<MODULE>_dict` targets. Defined as
 a standard target pattern. This means that the following functions are defined:
 
-- `add_global_target`: adds a global target 'dict'
 - `add_module_target`: adds sub-targets for '<MODULE_NAME>_dict'
-
-
-## Function `dict`:
-
-Generate a dictionary from any *AppAi.xml file that we see
-
-
-## Dict function `add_global_target`:
-
-Add target for the `dict` custom target. Dictionaries are built-in targets, but they are defined
-as custom targets. This handles the top-level dictionary target `dict` and registers the steps to
-perform the generation of the target.  TARGET_NAME should be set to `dict`.
-
-- **TARGET_NAME:** target name to be generated
 
 
 ## Dict function `add_module_target`:
 
-Adds a module-by-module target for producing dictionaries. These dictionaries take the outputs
-from the autocoder and copies them into the correct directory. These outputs are then handled as
-part of the global `dict` target above.
+Process the dictionary target on each module that is defined. Since the topology module is going to do the dictionary
+generation work for us, we just need to add a dependency on the module that contains the dictionary in its list of
+autocoder output files.
 
-
-- **MODULE_NAME:** name of the module
-- **TARGET_NAME:** name of target to produce
-- **GLOBAL_TARGET_NAME:** name of produced global target
-- **AC_INPUTS:** list of autocoder inputs
-- **SOURCE_FILES:** list of source file inputs
-- **AC_OUTPUTS:** list of autocoder outputs
-- **MOD_DEPS:** module dependencies of the target
+- **MODULE:** name of the module
+- **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
+- **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
+- **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 
 

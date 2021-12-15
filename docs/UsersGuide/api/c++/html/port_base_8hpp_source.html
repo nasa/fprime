@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('_port_base_8hpp_source.html',''); init
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="serializable_8hpp.html">Fw/Types/Serializable.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1            </span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">void</span> setConnTrace(<span class="keywordtype">bool</span> trace);</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;}</div>
@@ -105,51 +105,51 @@ $(document).ready(function(){initNavTree('_port_base_8hpp_source.html',''); init
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_fw_1_1_port_base.html">   16</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_fw_1_1_port_base.html">PortBase</a> : <span class="keyword">public</span> <a class="code" href="class_fw_1_1_obj_base.html">Fw::ObjBase</a> {</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1            </span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <span class="keyword">static</span> <span class="keywordtype">void</span> setTrace(<span class="keywordtype">bool</span> trace); <span class="comment">// !&lt; turn tracing on or off</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordtype">void</span> overrideTrace(<span class="keywordtype">bool</span> <span class="keyword">override</span>, <span class="keywordtype">bool</span> trace); <span class="comment">// !&lt; override tracing for a particular port</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <span class="keywordtype">bool</span> <a class="code" href="class_fw_1_1_port_base.html#a084b5ec35cfb866c99abe975761f426b">isConnected</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <span class="keywordtype">bool</span> <a class="code" href="class_fw_1_1_port_base.html#a4c3479fc0ba605dfe42c27bcc574a65b">isConnected</a>();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <span class="comment">// Should only be accessed by derived classes</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <a class="code" href="class_fw_1_1_port_base.html#a0adeed5e5d9a27ccdbae02da048b4cd7">PortBase</a>(); <span class="comment">// Constructor</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <span class="keyword">virtual</span> <a class="code" href="class_fw_1_1_port_base.html#a987689cef60c5f4b1a5cf66f4e1da9d1">~PortBase</a>(); <span class="comment">// Destructor</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_port_base.html#abdee36620cf3148001441228f76c4cd4">init</a>(<span class="keywordtype">void</span>); <span class="comment">// !&lt; initialization function</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1            </span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordtype">void</span> trace(<span class="keywordtype">void</span>); <span class="comment">// !&lt;  trace port calls if active</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_port_base.html#a1948e3e6b4b6506fb059162abc053123">init</a>(); <span class="comment">// !&lt; initialization function</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordtype">void</span> trace(); <span class="comment">// !&lt;  trace port calls if active</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">   33</a></span>&#160;            <a class="code" href="class_fw_1_1_obj_base.html">Fw::ObjBase</a>* <a class="code" href="class_fw_1_1_port_base.html#af1781f18a2fd371fe586caa8c3d066dd">m_connObj</a>; <span class="comment">// !&lt; object port is connected to</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#if FW_OBJECT_TO_STRING</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keyword">virtual</span> <span class="keywordtype">void</span> toString(<span class="keywordtype">char</span>* str, <a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> size);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#endif            </span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1            </span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#if FW_PORT_TRACING == 1</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keyword">static</span> <span class="keywordtype">bool</span> s_trace; <span class="comment">// !&lt; global tracing is active</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keywordtype">bool</span> m_trace; <span class="comment">// !&lt; local trace flag</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordtype">bool</span> m_override_trace; <span class="comment">// !&lt; flag to override global trace</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif            </span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="comment">// Disable constructors</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="class_fw_1_1_port_base.html#a0adeed5e5d9a27ccdbae02da048b4cd7">PortBase</a>(<a class="code" href="class_fw_1_1_port_base.html">PortBase</a>*);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <a class="code" href="class_fw_1_1_port_base.html#a0adeed5e5d9a27ccdbae02da048b4cd7">PortBase</a>(<a class="code" href="class_fw_1_1_port_base.html">PortBase</a>&amp;);</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <a class="code" href="class_fw_1_1_port_base.html">PortBase</a>&amp; operator=(<a class="code" href="class_fw_1_1_port_base.html">PortBase</a>&amp;);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    };</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_fw_1_1_obj_base_html"><div class="ttname"><a href="class_fw_1_1_obj_base.html">Fw::ObjBase</a></div><div class="ttdoc">Brief class description.</div><div class="ttdef"><b>Definition:</b> <a href="obj_base_8hpp_source.html#l00033">ObjBase.hpp:33</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_port_base_html_abdee36620cf3148001441228f76c4cd4"><div class="ttname"><a href="class_fw_1_1_port_base.html#abdee36620cf3148001441228f76c4cd4">Fw::PortBase::init</a></div><div class="ttdeci">virtual void init(void)</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00036">PortBase.cpp:36</a></div></div>
-<div class="ttc" id="aclass_fw_1_1_port_base_html_a084b5ec35cfb866c99abe975761f426b"><div class="ttname"><a href="class_fw_1_1_port_base.html#a084b5ec35cfb866c99abe975761f426b">Fw::PortBase::isConnected</a></div><div class="ttdeci">bool isConnected(void)</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00041">PortBase.cpp:41</a></div></div>
 <div class="ttc" id="a_serializable_8hpp_html"><div class="ttname"><a href="serializable_8hpp.html">Serializable.hpp</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_port_base_html_a0adeed5e5d9a27ccdbae02da048b4cd7"><div class="ttname"><a href="class_fw_1_1_port_base.html#a0adeed5e5d9a27ccdbae02da048b4cd7">Fw::PortBase::PortBase</a></div><div class="ttdeci">PortBase()</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00020">PortBase.cpp:20</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_port_base_html_a1948e3e6b4b6506fb059162abc053123"><div class="ttname"><a href="class_fw_1_1_port_base.html#a1948e3e6b4b6506fb059162abc053123">Fw::PortBase::init</a></div><div class="ttdeci">virtual void init()</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00036">PortBase.cpp:36</a></div></div>
+<div class="ttc" id="aclass_fw_1_1_port_base_html_a4c3479fc0ba605dfe42c27bcc574a65b"><div class="ttname"><a href="class_fw_1_1_port_base.html#a4c3479fc0ba605dfe42c27bcc574a65b">Fw::PortBase::isConnected</a></div><div class="ttdeci">bool isConnected()</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00041">PortBase.cpp:41</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_port_base_html"><div class="ttname"><a href="class_fw_1_1_port_base.html">Fw::PortBase</a></div><div class="ttdef"><b>Definition:</b> <a href="port_base_8hpp_source.html#l00016">PortBase.hpp:16</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_port_base_html_a987689cef60c5f4b1a5cf66f4e1da9d1"><div class="ttname"><a href="class_fw_1_1_port_base.html#a987689cef60c5f4b1a5cf66f4e1da9d1">Fw::PortBase::~PortBase</a></div><div class="ttdeci">virtual ~PortBase()</div><div class="ttdef"><b>Definition:</b> <a href="port_base_8cpp_source.html#l00032">PortBase.cpp:32</a></div></div>
 <div class="ttc" id="a_obj_base_8hpp_html"><div class="ttname"><a href="obj_base_8hpp.html">ObjBase.hpp</a></div><div class="ttdoc">Declarations for Fw::ObjBase and Fw::ObjRegistry.</div></div>

@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">F´ Flight Software - C/C++ Documentation
-   &#160;<span id="projectnumber">NASA-v1.6.0</span>
+   &#160;<span id="projectnumber">Latest</span>
    </div>
    <div id="projectbrief">A framework for building embedded system applications to NASA flight quality standards.</div>
   </td>
@@ -136,7 +136,7 @@ $(document).ready(function(){initNavTree('_file_common_8cpp_source.html',''); in
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            status = file.<a class="code" href="class_os_1_1_file.html#afb96676526fb2ccb793736fff72e5c5b">read</a>(file_buffer, chunk, <span class="keyword">false</span>);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            offset += chunk;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="comment">//Close file, then update CRC. This reduces time file is required open</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            file.<a class="code" href="class_os_1_1_file.html#a5757573d43daf248341c636efb3f84e3">close</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            file.<a class="code" href="class_os_1_1_file.html#a6b8ea70d7703dcecfb071c0b791ef554">close</a>();</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keywordflow">if</span> (chunk != 0 &amp;&amp; status == <a class="code" href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7ab195b6300645908a16f113ed9eae7ee3">OP_OK</a>) {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                <span class="keywordflow">for</span> (U32 ci = 0; <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a><span class="keyword">&gt;</span>(ci) &lt; chunk; ci++) {</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                    seed = <a class="code" href="lib__crc_8c.html#a50bb3734936f451cb9a4b791a970ffa4">update_crc_32</a>(seed, file_buffer[ci]);</div>
@@ -163,7 +163,7 @@ $(document).ready(function(){initNavTree('_file_common_8cpp_source.html',''); in
 </div><!-- doc-content -->
 <div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00007">File.cpp:7</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a6aa792af9943464add12cdea71b20123"><div class="ttname"><a href="class_os_1_1_file.html#a6aa792af9943464add12cdea71b20123">Os::File::niceCRC32</a></div><div class="ttdeci">static Status niceCRC32(U32 &amp;crc, const char *fileName)</div><div class="ttdoc">Calculates CRC32 of file, not burdening FS.</div><div class="ttdef"><b>Definition:</b> <a href="file_common_8cpp_source.html#l00017">FileCommon.cpp:17</a></div></div>
-<div class="ttc" id="aclass_os_1_1_file_html_a5757573d43daf248341c636efb3f84e3"><div class="ttname"><a href="class_os_1_1_file.html#a5757573d43daf248341c636efb3f84e3">Os::File::close</a></div><div class="ttdeci">void close(void)</div><div class="ttdoc">close file</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00037">File.cpp:37</a></div></div>
+<div class="ttc" id="aclass_os_1_1_file_html_a6b8ea70d7703dcecfb071c0b791ef554"><div class="ttname"><a href="class_os_1_1_file.html#a6b8ea70d7703dcecfb071c0b791ef554">Os::File::close</a></div><div class="ttdeci">void close()</div><div class="ttdoc">close file</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00037">File.cpp:37</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_afb96676526fb2ccb793736fff72e5c5b"><div class="ttname"><a href="class_os_1_1_file.html#afb96676526fb2ccb793736fff72e5c5b">Os::File::read</a></div><div class="ttdeci">Status read(void *buffer, NATIVE_INT_TYPE &amp;size, bool waitForFull=true)</div><div class="ttdoc">waitForFull = true to wait for all bytes to be read</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00029">File.cpp:29</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00076">BasicTypes.hpp:76</a></div></div>
 <div class="ttc" id="aclass_os_1_1_file_html_a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998"><div class="ttname"><a href="class_os_1_1_file.html#a7ee286422e714489bb92d2228075f0b7a47f14b86c38a965aee25ad46e436e998">Os::File::OTHER_ERROR</a></div><div class="ttdeci">@ OTHER_ERROR</div><div class="ttdoc">A catch-all for other errors. Have to look in implementation-specific code.</div><div class="ttdef"><b>Definition:</b> <a href="file_8hpp_source.html#l00032">File.hpp:32</a></div></div>

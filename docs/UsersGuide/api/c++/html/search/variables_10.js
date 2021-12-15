@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['queue_2976',['queue',['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle']]],
-  ['queuelock_2977',['queueLock',['../class_os_1_1_queue_handle.html#a908bcca196ccf16d9ae4bba386f4292e',1,'Os::QueueHandle']]],
-  ['queuenotempty_2978',['queueNotEmpty',['../class_os_1_1_queue_handle.html#a1ac4eaffe9a7a1f550c5515ed47f23e2',1,'Os::QueueHandle']]],
-  ['queuenotfull_2979',['queueNotFull',['../class_os_1_1_queue_handle.html#ae195753a519fa765ac1176e05e1ba299',1,'Os::QueueHandle']]]
+  ['readinterceptor_2991',['readInterceptor',['../namespace_os.html#a5a1c65f464b716dc0dbc9ecbed22c3fd',1,'Os']]],
+  ['readinterceptorptr_2992',['readInterceptorPtr',['../namespace_os.html#a0e23ab1974f2567f0f21c229784a6dd2',1,'Os']]],
+  ['routine_2993',['routine',['../struct_os_1_1_task_1_1_task_routine_wrapper.html#af01cd6df1663dbe369ddf788ff17b8c7',1,'Os::Task::TaskRoutineWrapper']]]
 ];

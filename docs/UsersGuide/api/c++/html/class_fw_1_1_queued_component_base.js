@@ -9,9 +9,9 @@ var class_fw_1_1_queued_component_base =
     [ "QueuedComponentBase", "class_fw_1_1_queued_component_base.html#a0305b851ba8d539bbb86c360b7be7502", null ],
     [ "~QueuedComponentBase", "class_fw_1_1_queued_component_base.html#ae5bc7cdbe8557011d65d8c6be983e6db", null ],
     [ "createQueue", "class_fw_1_1_queued_component_base.html#a1a7fac3d50b52aec1c9179e6f0885eb9", null ],
-    [ "doDispatch", "class_fw_1_1_queued_component_base.html#af0d15b63fdf1378b282facd1e4b5bea9", null ],
-    [ "getNumMsgsDropped", "class_fw_1_1_queued_component_base.html#a56f7e1cfd46c30050b0bfc6a06151696", null ],
-    [ "incNumMsgDropped", "class_fw_1_1_queued_component_base.html#a5775ad86da71610cfb74c4d6107a83d1", null ],
+    [ "doDispatch", "class_fw_1_1_queued_component_base.html#a4ee7162faca3e6d0a9a4e8a5f832f140", null ],
+    [ "getNumMsgsDropped", "class_fw_1_1_queued_component_base.html#aae93d7c1cd7a1383c55b074c7666c276", null ],
+    [ "incNumMsgDropped", "class_fw_1_1_queued_component_base.html#a8fd00979f15a17e2c51336a5a19eaa8b", null ],
     [ "init", "class_fw_1_1_queued_component_base.html#a494e9feb883911562c112b4687f654a4", null ],
     [ "m_queue", "class_fw_1_1_queued_component_base.html#a5a63ac5cbe1a1ad5314f739b2b2130fe", null ]
 ];
