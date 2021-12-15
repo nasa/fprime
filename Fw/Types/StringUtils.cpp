@@ -8,8 +8,8 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
         return destination;
     }
 
-    // Copying an overlapping range is undefined
-    FW_ASSERT(source < destination || destination + num <= source);
+    // Copying a right overlapping range is undefined
+    FW_ASSERT(destination < source ||  source + num < destination);
 
     char* returned = strncpy(destination, source, num);
     destination[num - 1] = '\0';
