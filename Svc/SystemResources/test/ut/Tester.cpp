@@ -36,6 +36,7 @@ void Tester ::test_tlm(bool enabled) {
     U32 count = 0;
     if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->invoke_to_run(0, 0);
+        count = (count <= 16) ? count : 16;
         // All cascades expected
         switch (count) {
             case 16:
