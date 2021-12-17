@@ -1,5 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.ISFSubsystem.getIDTargetPort" name="gov.nasa.jpl.componentaction.ISFSubsystem.getIDTargetPort">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_subsystem.html#a811f2f4fdb8447c79541ba9a7eba8f4b" title="gov.nasa.jpl.componentaction.\lISFSubsystem.getTargetConnEnd" alt="" coords="259,5,482,43"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_subsystem.html#a8d892025f44c008c6afd8c263ce6f458" title="gov.nasa.jpl.componentaction.\lISFSubsystem.getConnEnd" alt="" coords="530,5,731,43"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_utils.html#afb67c5cdf8debaca7812864e86685fd9" title="gov.nasa.jpl.componentaction.\lUtils.throwConnectorException" alt="" coords="780,5,983,43"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.ISFComponent.newAddPort" name="gov.nasa.jpl.componentaction.ISFComponent.newAddPort">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component_1_1port_object.html#a7acd3d39f7d4d58238d8a775d5fecaaf" title="gov.nasa.jpl.componentaction.\lISFComponent.portObject.portObject" alt="" coords="275,5,517,43"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component.html#a18d1885312f59b16ed2a43ca059d050c" title="gov.nasa.jpl.componentaction.\lISFComponent.getPortDataType" alt="" coords="289,67,503,106"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component.html#ab070273e1864833d0b55062dc224ae33" title="gov.nasa.jpl.componentaction.\lISFComponent.getPortDataTypeNamespace" alt="" coords="253,130,539,169"/>
-<area shape="rect" id="node6" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component.html#a27979d4dedfc260f3e44655824cf3d3e" title="gov.nasa.jpl.componentaction.\lISFComponent.getPortStereotype" alt="" coords="285,193,507,231"/>
-<area shape="rect" id="node7" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component.html#a9f264ef3ba76a1ecc5aa42e13cd93221" title="gov.nasa.jpl.componentaction.\lISFComponent.getPortProperty" alt="" coords="292,255,500,294"/>
-<area shape="rect" id="node5" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_component.html#a92968a00a3cfed968283fddf0fd46204" title="gov.nasa.jpl.componentaction.\lISFComponent.getPortTypeProperty" alt="" coords="587,130,824,169"/>
-</map>
