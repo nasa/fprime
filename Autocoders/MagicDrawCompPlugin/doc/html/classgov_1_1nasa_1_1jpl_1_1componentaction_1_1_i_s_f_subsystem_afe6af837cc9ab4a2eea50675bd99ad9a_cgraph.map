@@ -1,5 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.ISFSubsystem.getSourcePortType" name="gov.nasa.jpl.componentaction.ISFSubsystem.getSourcePortType">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_subsystem.html#a2860b5135b693b6e31e1115281ca8b24" title="gov.nasa.jpl.componentaction.\lISFSubsystem.getSourceConnEnd" alt="" coords="281,5,509,43"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_subsystem.html#a8d892025f44c008c6afd8c263ce6f458" title="gov.nasa.jpl.componentaction.\lISFSubsystem.getConnEnd" alt="" coords="557,5,758,43"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_utils.html#afb67c5cdf8debaca7812864e86685fd9" title="gov.nasa.jpl.componentaction.\lUtils.throwConnectorException" alt="" coords="806,5,1010,43"/>
-</map>
