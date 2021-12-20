@@ -1,5 +1,6 @@
 var NAVTREEINDEX12 =
 {
+"class_svc_1_1_static_memory_component_impl.html#aa07aae371b03d4edd528326756383ed6":[20,0,4,33,1],
 "class_svc_1_1_static_memory_component_impl.html#adda9e53b38fdf83af52d5ae40f70c4ce":[20,0,4,33,2],
 "class_svc_1_1_system_resources.html":[20,0,4,34],
 "class_svc_1_1_system_resources.html#a17f286edf25e465d53bfe92dc8a6bb4d":[20,0,4,34,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX12 =
 "files.html":[21,0],
 "functions.html":[20,3,0],
 "functions.html":[20,3,0,0],
-"functions_b.html":[20,3,0,1],
-"functions_c.html":[20,3,0,2]
+"functions_b.html":[20,3,0,1]
 };
