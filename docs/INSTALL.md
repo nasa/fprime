@@ -20,46 +20,13 @@ available on the user's Operating System, then a Virtual Machine should be used.
 Requirements:
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. [CMake 3.5](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-3. Bash or Bash compatible shell
-4. CLang or GCC compiler
-5. [Python 3.6+](https://www.python.org/downloads/) and PIP
-6. Python Virtual Environment \* (pip install venv or pip install virtualenv)
+2. Java 1.8 or newer, e.g. [OpenJDK](https://openjdk.java.net/)
+3. [CMake 3.5](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
+4. Bash or Bash compatible shell
+5. CLang or GCC compiler
+6. [Python 3.6+](https://www.python.org/downloads/) and PIP
 
-You can install them using this one-liner command :
-
-```sudo apt-get update && sudo apt-get -y install cmake git python3-pip``` (for Debian based OS'es)
-
-OR
-
-``` yum install cmake git python3-pip ``` (for RHEL OS)
-
-**Note:** it is possible to install and run F´ without a virtual environment, however; for
-individuals and researchers, this is the recommended approach.
-
-### Create and Activate a new Python Environment
-
-This will create a new virtual environment for F´ to be installed into. The following commands
-will create a new virtual environment called `fprime-venv` and ensure that the virtual environment
-is activated.
-
-**Python 3.6+:**
-
-```
-python3 -m venv ./fprime-venv
-. ./fprime-venv/bin/activate
-```
-
-Any time the user wishes to use F´, this virtual environment should be activated. This should be
-done in each new shell the user uses. This is all that is required to activate F´ for use.
-
-**Note:** file system for VirtualEnvironment should support symbolic links, or use the `--always-copy` flag to pip.
-
-**Activate the Virtual Environment**
-
-```
-. ./fprime-venv/bin/activate
-```
+**Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
 ### Cloning the F´ Repository
 
@@ -110,27 +77,29 @@ installation).
 
 ## (Optional) Installing Tab Completion
 
-Several of F´s command-line utilities support tab completion. To enable these tools to use it, see the [instructions here](UsersGuide/user/autocomplete.md).
+Several of F´s command-line utilities support tab completion. To enable these tools to use it, see the
+[instructions here](UsersGuide/user/autocomplete.md).
 
 ## Troubleshooting
 
 This section will add some known hints to trouble-shooting with the installation of F´. This will hopefully help users
 install things more effectively.
 
-### Ubuntu, Debian, Python PIP, and Python Virtual Environments
+### Ubuntu, Debian, Java and Python PIP
 
-Ubuntu and possibly other Debian variants don't include the virtual environment nor pip packages in the default python 3
-installation. To get a fully functional Python 3 installation, use these commands on Ubuntu:
+Ubuntu and possibly other Debian variants don't include the pip packages in the default python 3 installation. To get a
+fully functional, use these commands on Ubuntu and Debian based systems:
 
 ```
-sudo apt install python3 python3-pip python3-venv
+sudo apt install git cmake default-jre python3 python3-pip
 ```
 
 Now you should be able to run the installation without trouble.
 
 ### Mac OS X and CMake Command Not Found
 
-If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake command-line tools must be added to the user's PATH or default system libraries. The quickest command to do that is:
+If the user chooses to install CMake directly from the CMake site (not using homebrew nor Mac Ports), then the CMake
+command-line tools must be added to the user's PATH or default system libraries. The quickest command to do that is:
 
 ```
 sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
@@ -141,10 +110,6 @@ More information can be found [here](https://stackoverflow.com/questions/3066860
 ### System Python, Packages, and Python3
 
 Many operating systems offer python PIP packages through their package manager (apt, yum, etc). Most python projects
-recommend avoiding those packages, but rather installing from PIP in a virtual environment. The reason for this is that the
-version of the python package from the OS may not be the required version that the python project depends on. Thus, for
-F´ we strongly recommend using a virtual environment and not system packages.
-
-If the user chooses to use system python as their python to run F´, they must ensure that "python" available on the path
-points to a Python3 install, not the Python 2 installation that most OSes default to. Also, packages F´ uses when installing
-may break the system Python, and prevent the OS from functioning. Use at your own risk.
+recommend avoiding those packages, but rather installing from PIP in a virtual environment. The reason for this is that
+the version of the python package from the OS may not be the required version that the python project depends on. Thus,
+users may choose to install F´ into a virtual environment. This is outside the scope of this document.

@@ -821,6 +821,7 @@ joshuaa
 jpg
 jpl
 jplffs
+jre
 jsdelivr
 JSO
 json
@@ -1081,6 +1082,7 @@ onlinepubs
 OPCODEBASE
 opcodes
 opendir
+openjdk
 opengroup
 openpyxl
 openssl

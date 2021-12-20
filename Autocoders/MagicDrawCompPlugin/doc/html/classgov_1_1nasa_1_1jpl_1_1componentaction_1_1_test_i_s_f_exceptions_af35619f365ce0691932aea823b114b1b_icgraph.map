@@ -1,6 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.TestISFExceptions.getElementsOfStereotype" name="gov.nasa.jpl.componentaction.TestISFExceptions.getElementsOfStereotype">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_test_i_s_f_exceptions.html#ae1c8d7b9584b42e28ad1ca86533ce3ca" title="gov.nasa.jpl.componentaction.\lTestISFExceptions.getCompForTesting" alt="" coords="342,67,594,106"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_test_i_s_f_exceptions.html#a3bf516ca50c3b2cda5a56ad604b972c8" title="gov.nasa.jpl.componentaction.\lTestISFExceptions.testActiveComponent" alt="" coords="666,5,928,43"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_test_i_s_f_exceptions.html#ad1e116416bca3f5a487301062a0591d3" title="gov.nasa.jpl.componentaction.\lTestISFExceptions.testQueuedComponentAsync" alt="" coords="643,67,952,106"/>
-<area shape="rect" id="node5" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_test_i_s_f_exceptions.html#a9fca700d2d507710129966a5bfcc1760" title="gov.nasa.jpl.componentaction.\lTestISFExceptions.testQueuedComponentSync" alt="" coords="646,130,949,169"/>
-</map>
