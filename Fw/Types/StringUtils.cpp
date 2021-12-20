@@ -17,6 +17,6 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
     return returned;
 }
 
-U32 Fw::StringUtils::string_length(CHAR* source, U32 max_len) {
+U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
     return strnlen(source, max_len);
 }

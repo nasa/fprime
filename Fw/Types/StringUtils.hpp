@@ -30,7 +30,7 @@ char* string_copy(char* destination, const char* source, U32 num);
  * \param max_len: the maximum length of the source string
  * \return length of the source string or max_len
  */
-U32 string_length(CHAR* source, U32 max_len);
+U32 string_length(const CHAR* source, U32 max_len);
 
 };      // namespace StringUtils
 };      // namespace Fw
