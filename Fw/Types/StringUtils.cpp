@@ -8,7 +8,7 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
         return destination;
     }
 
-    // Copying a right overlapping range is undefined
+    // Copying an overlapping range is undefined
     U32 source_len = string_length(source, num) + 1;
     FW_ASSERT(source + source_len <= destination || destination + num <= source);
 
