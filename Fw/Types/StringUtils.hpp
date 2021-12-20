@@ -24,7 +24,7 @@ char* string_copy(char* destination, const char* source, U32 num);
 
 /**
  * \brief get the length of the source string or max_len if the string is
- * longer then max_len.
+ * longer than max_len.
  *
  * \param source: string to calculate the length
  * \param max_len: the maximum length of the source string
