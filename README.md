@@ -22,6 +22,7 @@ The following utilities are prerequisites to installing F´:
 * [cmake](https://cmake.org/)
 * [git](https://git-scm.com/)
 * [Python](https://www.python.org/) 3.6+ with pip
+* [Java](https://openjdk.java.net/)
 
 Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required.
 
