@@ -32,6 +32,10 @@ jobs:
           path: ./gps-tutorial/fprime
 
       # Build tutorial test
-      - name: tutorial-test
-        uses: ./gps-tutorial/fprime/.github/actions/tutorial/
-        id: github-tutorial-action
+      - name: Install fprime tools
+        run: pip3 install fprime-tools fprime-gds
+      - name: GPS Tutorial Build
+        working-directory: ./gps-tutorial/GpsApp
+        run: |
+          fprime-util generate
+          fprime-util build
