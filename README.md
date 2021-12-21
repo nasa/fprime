@@ -59,8 +59,6 @@ As F´ becomes a community centered product line, there are more items available
 
 To ask questions, discuss improvements, ask for help, please use the project's GitHub Discussions at: [https://github.com/nasa/fprime/discussions](https://github.com/nasa/fprime/discussions).
 
-A former source of information, now depreciated, is available on the F´ Community Group [https://groups.google.com/d/forum/fprime-community](https://groups.google.com/g/fprime-community).
-
 The F´ community GitHub Organization contains third party contributions, more documentation of flight software development, and more! [https://github.com/fprime-community](https://github.com/fprime-community).
 
 You can open issues with this repository at: [https://github.com/nasa/fprime/issues](https://github.com/nasa/fprime/issues)
@@ -94,6 +92,10 @@ F´ is tailored to the level of complexity required for small missions. This mak
 The typed port connections provide strong compile-time guarantees of correctness.
 
 ## F´ Release Notes
+
+### Release 3.0: Release and Migration Notes
+
+Version 3.0.0 of F´ comes with several major enhancements to the framework. This release contains an update to use the FPP modeling language and the C++ standard has been updated to C++11. These are fairly substantial changes and users should consult the version 3 [migration guide](https://nasa.github.io/fprime/UsersGuide/user/v3-migration-guide.html) when adopting F´ version 3. 
 
 ### Release 2.0: Release and Migration Notes
 
@@ -132,11 +134,20 @@ Migration considerations:
 * `fprime-util generate --ut -DFPRIME_ENABLE_FRAMEWORK_UTS=OFF` will be removed in favor of future `fprime-util check` variants
 * `Autocoders/MagicDrawCompPlugin` will be removed in a near-term release
 
+### Release 2.0.1: Release Notes
+
+This is a point release that repaired some compilation issues with VxWorks 6.  This will be the last release supporting VxWorks 6.
+
+### Release 2.1.0: Release Notes
+
+This is the final release of the F´ version 2 releases. This should be the chosen release for projects unable to upgrade to C++11 and/or adopt FPP.
+
+
 ### Release 1.0
 
 * This is the initial release of the software to open source. See the license file for terms of use.
 
-### Release 1.01
+### Release 1.0.1
 
 * Updated contributor list. No code changes.
 
