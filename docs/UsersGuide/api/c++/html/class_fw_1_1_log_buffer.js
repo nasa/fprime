@@ -1,7 +1,7 @@
 var class_fw_1_1_log_buffer =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_log_buffer.html#a5fcbb603b54898dd37185d95e1953764afaa8549b82a7724f346c85a7e4d467b5", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_log_buffer.html#a5fcbb603b54898dd37185d95e1953764ad44b88529132943a55349972c9d34c7a", null ],
+    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_log_buffer.html#a29a9d373cab5bfb9d7f072b0e7bd2e30afaa8549b82a7724f346c85a7e4d467b5", null ],
+    [ "SERIALIZED_SIZE", "class_fw_1_1_log_buffer.html#a29a9d373cab5bfb9d7f072b0e7bd2e30ad44b88529132943a55349972c9d34c7a", null ],
     [ "LogBuffer", "class_fw_1_1_log_buffer.html#a7ed2fbd388a231fcb77940e851d7d1c8", null ],
     [ "LogBuffer", "class_fw_1_1_log_buffer.html#a78b03d7c06ad1effea1aaa403fa45ff8", null ],
     [ "LogBuffer", "class_fw_1_1_log_buffer.html#a77701296cfc3a2878b4f41d4b10efed9", null ],

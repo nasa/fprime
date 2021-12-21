@@ -106,8 +106,8 @@ var hierarchy =
       [ "Svc::GroundInterfaceComponentImpl", "class_svc_1_1_ground_interface_component_impl.html", null ]
     ] ],
     [ "Utils::Hash", "class_utils_1_1_hash.html", null ],
-    [ "Svc::CmdSequencerComponentImpl::Sequence::Header", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_header.html", null ],
     [ "Fw::FilePacket::Header", "class_fw_1_1_file_packet_1_1_header.html", null ],
+    [ "Svc::CmdSequencerComponentImpl::Sequence::Header", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_header.html", null ],
     [ "HealthComponentBase", null, [
       [ "Svc::HealthImpl", "class_svc_1_1_health_impl.html", null ]
     ] ],
@@ -152,40 +152,11 @@ var hierarchy =
       [ "Fw::PassiveComponentBase", "class_fw_1_1_passive_component_base.html", [
         [ "Fw::QueuedComponentBase", "class_fw_1_1_queued_component_base.html", [
           [ "Fw::ActiveComponentBase", "class_fw_1_1_active_component_base.html", null ]
-        ] ],
-        [ "Svc::SystemResourcesComponentBase", "class_svc_1_1_system_resources_component_base.html", [
-          [ "Svc::SystemResources", "class_svc_1_1_system_resources.html", null ]
         ] ]
       ] ],
       [ "Fw::PortBase", "class_fw_1_1_port_base.html", [
-        [ "Fw::InputPortBase", "class_fw_1_1_input_port_base.html", [
-          [ "Fw::InputCmdPort", "class_fw_1_1_input_cmd_port.html", null ],
-          [ "Fw::InputCmdRegPort", "class_fw_1_1_input_cmd_reg_port.html", null ],
-          [ "Fw::InputCmdResponsePort", "class_fw_1_1_input_cmd_response_port.html", null ],
-          [ "Fw::InputComPort", "class_fw_1_1_input_com_port.html", null ],
-          [ "Fw::InputLogPort", "class_fw_1_1_input_log_port.html", null ],
-          [ "Fw::InputLogTextPort", "class_fw_1_1_input_log_text_port.html", null ],
-          [ "Fw::InputTimePort", "class_fw_1_1_input_time_port.html", null ],
-          [ "Fw::InputTlmPort", "class_fw_1_1_input_tlm_port.html", null ],
-          [ "Svc::InputCpuUtilPort", "class_svc_1_1_input_cpu_util_port.html", null ],
-          [ "Svc::InputMemUtilPort", "class_svc_1_1_input_mem_util_port.html", null ],
-          [ "Svc::InputPhysMemUtilPort", "class_svc_1_1_input_phys_mem_util_port.html", null ],
-          [ "Svc::InputSchedPort", "class_svc_1_1_input_sched_port.html", null ]
-        ] ],
-        [ "Fw::OutputPortBase", "class_fw_1_1_output_port_base.html", [
-          [ "Fw::OutputCmdPort", "class_fw_1_1_output_cmd_port.html", null ],
-          [ "Fw::OutputCmdRegPort", "class_fw_1_1_output_cmd_reg_port.html", null ],
-          [ "Fw::OutputCmdResponsePort", "class_fw_1_1_output_cmd_response_port.html", null ],
-          [ "Fw::OutputComPort", "class_fw_1_1_output_com_port.html", null ],
-          [ "Fw::OutputLogPort", "class_fw_1_1_output_log_port.html", null ],
-          [ "Fw::OutputLogTextPort", "class_fw_1_1_output_log_text_port.html", null ],
-          [ "Fw::OutputTimePort", "class_fw_1_1_output_time_port.html", null ],
-          [ "Fw::OutputTlmPort", "class_fw_1_1_output_tlm_port.html", null ],
-          [ "Svc::OutputCpuUtilPort", "class_svc_1_1_output_cpu_util_port.html", null ],
-          [ "Svc::OutputMemUtilPort", "class_svc_1_1_output_mem_util_port.html", null ],
-          [ "Svc::OutputPhysMemUtilPort", "class_svc_1_1_output_phys_mem_util_port.html", null ],
-          [ "Svc::OutputSchedPort", "class_svc_1_1_output_sched_port.html", null ]
-        ] ]
+        [ "Fw::InputPortBase", "class_fw_1_1_input_port_base.html", null ],
+        [ "Fw::OutputPortBase", "class_fw_1_1_output_port_base.html", null ]
       ] ]
     ] ],
     [ "Svc::AMPCSSequence::Record::Opcode", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_opcode.html", null ],
@@ -211,8 +182,8 @@ var hierarchy =
     ] ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],
-    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::AMPCSSequence::Record", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_record.html", null ],
+    [ "Svc::CmdSequencerComponentImpl::Sequence::Record", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence_1_1_record.html", null ],
     [ "Svc::CmdSequencerComponentImpl::Sequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_sequence.html", [
       [ "Svc::AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", null ],
       [ "Svc::CmdSequencerComponentImpl::FPrimeSequence", "class_svc_1_1_cmd_sequencer_component_impl_1_1_f_prime_sequence.html", null ]
@@ -268,6 +239,9 @@ var hierarchy =
     [ "Fw::FilePacket::StartPacket", "struct_fw_1_1_file_packet_1_1_start_packet.html", null ],
     [ "StaticMemoryComponentBase", null, [
       [ "Svc::StaticMemoryComponentImpl", "class_svc_1_1_static_memory_component_impl.html", null ]
+    ] ],
+    [ "SystemResourcesComponentBase", null, [
+      [ "Svc::SystemResources", "class_svc_1_1_system_resources.html", null ]
     ] ],
     [ "Os::Task", "class_os_1_1_task.html", null ],
     [ "Os::TaskId", "class_os_1_1_task_id.html", null ],
