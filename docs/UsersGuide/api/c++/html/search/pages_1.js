@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['drv_20components_20and_20classes_3471',['Drv Components and Classes',['../drv.html',1,'']]],
-  ['drv_3a_3ablockdriver_20component_3472',['Drv::BlockDriver Component',['../drv_block_driver_component.html',1,'Drv']]],
-  ['deframer_20component_3473',['Deframer Component',['../svc_deframer.html',1,'']]]
+  ['contributing_20guidelines_3474',['Contributing Guidelines',['../md__c_o_n_t_r_i_b_u_t_i_n_g.html',1,'']]]
 ];
