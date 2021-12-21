@@ -75,7 +75,8 @@ is not blocked by the system firewall, and is properly forwarded to the network 
 home network where the pi and the user's computer are connected to the same network, these typically do not require special setup.
 
 ```
-./scripts/run_rpi_cross.sh
+cd fprime/RPI
+fprime-gds -n --dictionary ./build-artifacts/raspberrypi/dict/RPITopologyAppDictionary.xml
 ```
 The ground station should now appear in the user's default browser. Should the user wish to terminate the ground system, return to that terminal
 and press CTRL-C to shut it down. Please allow it a few moments to finalize and exit.  The user may then kill the browser tab displaying the GUI.
@@ -99,6 +100,8 @@ following command to launch the embedded application:
 
 Switching back to the browser's GUI, the user should see channelized telemetry updating by clicking on the "Channels" tab and events by clicking
 on the "Events" tab.
+
+**Note:** the user should ensure that port 50000 is allowed through the ground computer's firewall.
 
 **Run some commands:**
 
