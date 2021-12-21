@@ -61,7 +61,7 @@ Once a pull request has been submitted the following process will begin.
 
 ### Submission Review
 
-The pull request changes will be reviewed by the team and community supporting F´. Often this means that a discussion on how to improve the submission will arise. Engage in the conversation and work with the commenters to improve the code. Remember, F´ is flight software running in remote environments. This means we hold submissions to very high standards.  Do not fear, we are happy to work with contributors to help meet these standards!
+The pull request changes will be reviewed by the team and community supporting F´. Often this means that a discussion on how to improve the submission will arise. Engage in the conversation and work with reviewers to improve the code. Remember, F´ is flight software running in remote environments. This means we hold submissions to very high standards.  Do not fear, we are happy to work with contributors to help meet these standards!
 
 Submission reviews can take some time for the team to complete. These reviews may take additional time for pull requests that are very large, touch sensitive code, or have not been [discussed](https://github.com/nasa/fprime/discussions) beforehand. Sometimes changes are determined to best fit in another repository or package. Please be patient with us and remember we are all one team.
 
