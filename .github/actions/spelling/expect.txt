@@ -1431,6 +1431,7 @@ splitext
 splitlines
 sprintf
 Sqlite
+SQL's
 sramanan
 srand
 srandom
