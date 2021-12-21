@@ -41,7 +41,7 @@ Key packages include:
 Contributors to the [fprime](https://github.com/nasa/fprime) repository should understand the following key folders:
 
 - [docs/UsersGuide](https://github.com/nasa/fprime/tree/devel/docs/UsersGuide): add new documentation in this or a subfolder
-- [Fw](https://github.com/nasa/fprime/tree/devel/Fw): changes here will be reviewed carefully
+- [Fw](https://github.com/nasa/fprime/tree/devel/Fw): changes here will be reviewed carefully because this code is critical across F
 - [Ref](https://github.com/nasa/fprime/tree/devel/Ref): update and maintain the Reference application here
 
 ## Development Process
