@@ -1,7 +1,7 @@
 var class_fw_1_1_text_log_string =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_text_log_string.html#a3e5f0406d733c2b68969d480c9175350a1245e7540a5985587dd65bbf42d35824", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_text_log_string.html#a3e5f0406d733c2b68969d480c9175350a5f0761a85baad4307d1575ecd2c4c8b9", null ],
+    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_text_log_string.html#a018f7c742b45c11ed081a1b42e985c66a1245e7540a5985587dd65bbf42d35824", null ],
+    [ "SERIALIZED_SIZE", "class_fw_1_1_text_log_string.html#a018f7c742b45c11ed081a1b42e985c66a5f0761a85baad4307d1575ecd2c4c8b9", null ],
     [ "TextLogString", "class_fw_1_1_text_log_string.html#a4cff29cf90a13487f4e9006ccaf7900e", null ],
     [ "TextLogString", "class_fw_1_1_text_log_string.html#ae89b5c38a92c2195e5a4c83e61b66a8a", null ],
     [ "TextLogString", "class_fw_1_1_text_log_string.html#a9c6d47d6129d92bb7996a235284d3109", null ],
