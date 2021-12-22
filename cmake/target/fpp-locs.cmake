@@ -88,7 +88,7 @@ function(add_global_target TARGET_NAME)
     if (DEFINED FPP_LOCATE_DEFS-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    add_custom_target("${TARGET_NAME}" COMMAND ${CMAKE_COMMAND} -E env FPP_LOCATE_DEFS="${FPP_LOCATE_DEFS}" "${FPP_LOCATE_DEFS_HELPER}" "${CMAKE_BINARY_DIR}/locs.fpp" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} "$<TARGET_PROPERTY:${TARGET_NAME},INPUTS>" COMMAND_EXPAND_LISTS)
+    add_custom_target("${TARGET_NAME}" COMMAND "${FPP_LOCATE_DEFS_HELPER}" "${CMAKE_BINARY_DIR}/locs.fpp" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} "$<TARGET_PROPERTY:${TARGET_NAME},INPUTS>" COMMAND_EXPAND_LISTS)
     set_property(TARGET "${TARGET_NAME}" PROPERTY INPUTS "")
 endfunction(add_global_target)
 
