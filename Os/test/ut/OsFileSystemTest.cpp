@@ -1,11 +1,12 @@
+#include <gtest/gtest.h>
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 
 #include <unistd.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -25,66 +26,66 @@ void testTestFileSystem() {
 	U32 file_count = 0;
 	const char test_string[] = "This is a test file.";
 	NATIVE_INT_TYPE test_string_len = 0;
-	
+
 
 	printf("Creating %s directory\n", test_dir1);
 	if ((file_sys_status = Os::FileSystem::createDirectory(test_dir1)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to create directory: %s\n", test_dir1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_dir1, &info) == 0);
+	ASSERT_EQ(stat(test_dir1, &info),0);
 
 	// Check directory file count
 	printf("Checking directory file count of %s is 0.\n", test_dir1);
 	if ((file_sys_status = Os::FileSystem::getFileCount(test_dir1, file_count)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to get file count of %s\n", test_dir1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(file_count == 0);
-	
+	ASSERT_EQ(file_count,0);
+
 	printf("Moving directory (%s) to (%s).\n", test_dir1, test_dir2);
 	if ((file_sys_status = Os::FileSystem::moveFile(test_dir1, test_dir2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to move directory (%s) to (%s).\n", test_dir1, test_dir2);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_dir1, &info) == -1);
-	FW_ASSERT(stat(test_dir2, &info) == 0);
+	ASSERT_EQ(stat(test_dir1, &info),-1);
+	ASSERT_EQ(stat(test_dir2, &info),0);
 
 	printf("Trying to copy directory (%s) to (%s).\n", test_dir2, test_dir1);
 	if ((file_sys_status = Os::FileSystem::copyFile(test_dir2, test_dir1)) == Os::FileSystem::OP_OK) {
 		printf("\tShould not have been able to copy a directory %s to %s.\n", test_dir2, test_dir1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_dir1, &info) == -1);
-	FW_ASSERT(stat(test_dir2, &info) == 0);
-	
+	ASSERT_EQ(stat(test_dir1, &info),-1);
+	ASSERT_EQ(stat(test_dir2, &info),0);
+
 	printf("Removing directory %s\n", test_dir2);
 	if ((file_sys_status = Os::FileSystem::removeDirectory(test_dir2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to remove directory: %s\n", test_dir2);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_dir2, &info) == -1);
+	ASSERT_EQ(stat(test_dir2, &info),-1);
 
 	//Create a file
 	printf("Creating test file (%s)\n", test_file_name1);
 	if ((file_status = test_file.open(test_file_name1, Os::File::OPEN_WRITE)) != Os::File::OP_OK) {
 		printf("\tFailed to create file: %s\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 
 	test_string_len = sizeof(test_string);
-	
+
 	printf("Writing to test file (%s) for testing.\n", test_file_name1);
 	if((file_status = test_file.write(test_string, test_string_len, true)) != Os::File::OP_OK) {
 		printf("\tFailed to write to file: %s\n.", test_file_name1);
 		printf("\tReturn status: %d\n", file_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 
 	//Close test file
@@ -96,19 +97,19 @@ void testTestFileSystem() {
 	if ((file_sys_status = Os::FileSystem::getFileSize(test_file_name1, file_size)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to get file size of %s\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(file_size == sizeof(test_string));
+	ASSERT_EQ(file_size,sizeof(test_string));
 
 	printf("Copying file (%s) to (%s).\n", test_file_name1, test_file_name2);
 	if ((file_sys_status = Os::FileSystem::copyFile(test_file_name1, test_file_name2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to copy file (%s) to (%s)\n", test_file_name1, test_file_name2);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_file_name1, &info) == 0);
-	FW_ASSERT(stat(test_file_name2, &info) == 0);
-	
+	ASSERT_EQ(stat(test_file_name1, &info),0);
+	ASSERT_EQ(stat(test_file_name2, &info),0);
+
 	char file_buf1[64];
     char file_buf2[64];
 	// Read the two files and make sure they are the same
@@ -122,40 +123,40 @@ void testTestFileSystem() {
 	test_file.read(&file_buf2, test_string_len, false);
 	test_file.close();
 
-	FW_ASSERT(strcmp(file_buf1, file_buf2) == 0);
+	ASSERT_EQ(strcmp(file_buf1, file_buf2),0);
 
 	printf("Removing test file 1 (%s)\n", test_file_name1);
 	if ((file_sys_status = Os::FileSystem::removeFile(test_file_name1)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to remove file (%s)\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_file_name1, &info) == -1);
+	ASSERT_EQ(stat(test_file_name1, &info),-1);
 
 	printf("Removing test file 2 (%s)\n", test_file_name2);
 	if ((file_sys_status = Os::FileSystem::removeFile(test_file_name2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to remove file (%s)\n", test_file_name2);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_file_name2, &info) == -1);
-	
+	ASSERT_EQ(stat(test_file_name2, &info),-1);
+
 	printf("Getting the number of files in (%s)\n", cur_dir);
 	if ((file_sys_status = Os::FileSystem::getFileCount(cur_dir, file_count)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to get number of files in (%s)\n", cur_dir);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(file_count > 0);
-	
+	ASSERT_TRUE(file_count > 0);
+
 	printf("Reading the files in (%s)\n", cur_dir);
 	const int num_str = 5;
         U32 num_2 = num_str;
-	Fw::EightyCharString str_array[num_str];
+	Fw::String str_array[num_str];
 	if ((file_sys_status = Os::FileSystem::readDirectory(cur_dir, num_str, str_array, num_2)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to read files in (%s)\n", cur_dir);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 	else {
 		for (int i = 0; i < num_str; ++i) {
@@ -167,7 +168,7 @@ void testTestFileSystem() {
 	if ((file_sys_status = Os::FileSystem::changeWorkingDirectory(up_dir)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to change working directory to: %s\n", up_dir);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 
 	printf("Checking current working directory is (%s)\n", up_dir);
@@ -180,7 +181,7 @@ void testTestFileSystem() {
 	if ((file_status = test_file.open(test_file_name1, Os::File::OPEN_CREATE)) != Os::File::OP_OK) {
 		printf("\tFailed to OPEN_CREATE file: %s\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 
 	//Close test file
@@ -192,23 +193,23 @@ void testTestFileSystem() {
 	if ((file_status = test_file.open(test_file_name1, Os::File::OPEN_CREATE)) != Os::File::FILE_EXISTS) {
 		printf("\tFailed to not to overwrite existing file: %s\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
 
 	printf("Removing test file 1 (%s)\n", test_file_name1);
 	if ((file_sys_status = Os::FileSystem::removeFile(test_file_name1)) != Os::FileSystem::OP_OK) {
 		printf("\tFailed to remove file (%s)\n", test_file_name1);
 		printf("\tReturn status: %d\n", file_sys_status);
-		FW_ASSERT(0);
+		ASSERT_TRUE(0);
 	}
-	FW_ASSERT(stat(test_file_name1, &info) == -1);
+	ASSERT_EQ(stat(test_file_name1, &info),-1);
 
 }
 
 extern "C" {
-    void fileSystemTest(void);
+    void fileSystemTest();
 }
 
-void fileSystemTest(void) {
-    testTestFileSystem(); 
+void fileSystemTest() {
+    testTestFileSystem();
 }

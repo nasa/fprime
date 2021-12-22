@@ -43,13 +43,5 @@ set(UT_SOURCE_FILES
 )
 register_fprime_ut()
 
-# ac.ini needs to be copied into Autocode directory
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING" AND NOT __FPRIME_NO_UT_GEN__)
-  add_custom_target(py_ac_test_stress_ac_ini
-     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/Autocode
-     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/ac.ini ${CMAKE_CURRENT_LIST_DIR}/Autocode
-  )
-  add_dependencies(${MODULE_NAME}_ut_exe py_ac_test_stress_ac_ini)
-endif()
-
-
+# ac.ini needs to be copied into binary directory
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/ac.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

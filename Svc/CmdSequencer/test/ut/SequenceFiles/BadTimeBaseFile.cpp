@@ -1,14 +1,14 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BadTimeBaseFile.cpp
 // \author Rob Bocchino
 // \brief  BadTimeBaseFile implementation
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/Buffers.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/FPrime/FPrime.hpp"
@@ -24,7 +24,7 @@ namespace Svc {
         File(format),
         n(n)
     {
-      Fw::EightyCharString s;
+      Fw::String s;
       s.format("bad_time_base_%u", n);
       this->setName(s.toChar());
     }
@@ -60,7 +60,7 @@ namespace Svc {
             argument,
             buffer
         );
-      } 
+      }
       FPrime::Records::serialize(
           CmdSequencerComponentImpl::Sequence::Record::END_OF_SEQUENCE,
           t,

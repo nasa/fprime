@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+(cd md; ./refresh)
+(cd json; ./refresh)

@@ -11,7 +11,7 @@
  */
 
 #include <Fw/Types/MallocAllocator.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace Fw {
 
@@ -26,7 +26,7 @@ namespace Fw {
         // heap memory is never recoverable
         recoverable = false;
         void *mem = ::malloc(size);
-        if (NULL == mem) {
+        if (nullptr == mem) {
             size = 0; // set to zero if can't get memory
         }
         return mem;

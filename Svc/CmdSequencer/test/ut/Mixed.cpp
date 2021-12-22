@@ -1,14 +1,13 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Mixed.cpp
 // \author Canham/Bocchino
 // \brief  Test mixed immediate, relative, and absolute commands
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/Mixed.hpp"
@@ -19,7 +18,7 @@ namespace Svc {
   namespace Mixed {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -30,11 +29,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      AutoByCommand(void)
+      AutoByCommand()
     {
       SequenceFiles::MixedFile file(this->format);
       const U32 numCommands = 4;
@@ -43,19 +42,19 @@ namespace Svc {
     }
 
     void Tester ::
-      Validate(void)
+      Validate()
     {
       SequenceFiles::MixedFile file(this->format);
       this->parameterizedValidate(file);
     }
 
     // ----------------------------------------------------------------------
-    // Private helper methods 
+    // Private helper methods
     // ----------------------------------------------------------------------
 
     void Tester ::
       executeCommandsAuto(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands,
           const U32 bound,
           const CmdExecMode::t mode
@@ -90,7 +89,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::COMMAND_OK);
+      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -114,7 +113,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 2, 0, Fw::COMMAND_OK);
+      this->invoke_to_cmdResponseIn(0, 2, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -149,7 +148,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 4, 0, Fw::COMMAND_OK);
+      this->invoke_to_cmdResponseIn(0, 4, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -178,7 +177,7 @@ namespace Svc {
       ASSERT_from_comCmdOut_SIZE(1);
       ASSERT_from_comCmdOut(0, comBuff, 0U);
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 6, 0, Fw::COMMAND_OK);
+      this->invoke_to_cmdResponseIn(0, 6, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
       // Assert that timer is clear - no scheduled command
       ASSERT_EQ(
@@ -195,7 +194,7 @@ namespace Svc {
       ASSERT_TLM_CS_CommandsExecuted(0, 4);
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
       // Run a cycle. Should be no output
       this->invoke_to_schedIn(0, 0);
       this->clearAndDispatch();

@@ -31,9 +31,6 @@
 #
 # Next, call `cmake_minimum_required` and set VERSION to 3.5 or greater.
 #
-# Finally, if desired set the `CMAKE_BUILD_TYPE` variable. Used to specify DEBUG/RELEASE builds.
-# See: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
-# 
 # **Example:**
 # ```
 # project(Ref C CXX)
@@ -100,7 +97,7 @@ include("<PATH-TO>/cmake/FPrime-Code.cmake")
 # This section includes deployment specific directories. This allows use of non-
 # core components in the topology, which is also added here.
 #
-# Step 4: include all this subdirectories.
+# Step 4: include all the subdirectories.
 ##
 # Add component subdirectories
 add_fprime_subdirectory("<PATH-TO-MODULE>")

@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  ${name}ComponentImpl.hpp
+// \title  ${name}.hpp
 // \author $user
 // \brief  hpp file for ${name} component implementation class
 //
@@ -21,7 +21,7 @@ namespace ${namespace} {
   #end for
 #end if
 
-  class ${name}ComponentImpl :
+  class ${name} :
     public $component_base
   {
 
@@ -33,7 +33,7 @@ namespace ${namespace} {
 
       //! Construct object $name
       //!
-      ${name}ComponentImpl(
+      ${name}(
 $emit_non_port_params([ $param_compName ])
       );
 
@@ -45,7 +45,7 @@ $emit_non_port_params($params_init_hpp)
 
       //! Destroy object $name
       //!
-      ~${name}ComponentImpl(void);
+      ~${name}();
 
 #if len($typed_user_input_ports) > 0:
     PRIVATE:

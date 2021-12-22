@@ -8,70 +8,53 @@ namespace ${n} {
 #if $type == "string":
 
     ${argname}String::${argname}String(const char* src): StringBase() {
-        this->copyBuff(src,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     ${argname}String::${argname}String(const Fw::StringBase& src): StringBase() {
-        this->copyBuff(src.toChar(),this->getCapacity());
+         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     ${argname}String::${argname}String(const ${argname}String& src): StringBase() {
-        this->copyBuff(src.toChar(),this->getCapacity());
+         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    ${argname}String::${argname}String(void): StringBase() {
+    ${argname}String::${argname}String(): StringBase() {
         this->m_buf[0] = 0;
     }
 
-    ${argname}String::~${argname}String(void) {
-    }
-
-    NATIVE_UINT_TYPE ${argname}String::length(void) const {
-        return (NATIVE_UINT_TYPE)strnlen(this->m_buf,sizeof(this->m_buf));
-    }
-
-    const char* ${argname}String::toChar(void) const {
-        return this->m_buf;
-    }
-
-    void ${argname}String::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
+    ${argname}String& ${argname}String::operator=(const ${argname}String& other) {
+        if(this == &other) {
+            return *this;
         }
-    }
 
-    Fw::SerializeStatus ${argname}String::serialize(Fw::SerializeBufferBase& buffer) const {
-        NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
-        // serialize string as buffer
-        return buffer.serialize((U8*)this->m_buf,strSize);
-    }
-
-    Fw::SerializeStatus ${argname}String::deserialize(Fw::SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
-        // deserialize string
-        Fw::SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
-        // make sure it is null-terminated
-        this->terminate(maxSize);
-
-        return stat;
-    }
-
-    NATIVE_UINT_TYPE ${argname}String::getCapacity(void) const {
-        return sizeof(this->m_buf);
-    }
-
-    const ${argname}String& ${argname}String::operator=(const ${argname}String& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
-    void ${argname}String::terminate(NATIVE_UINT_TYPE size) {
-        // null terminate the string
-        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
+    ${argname}String& ${argname}String::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
+    }
+
+    ${argname}String& ${argname}String::operator=(const char* other) {
+        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        return *this;
+    }
+
+    ${argname}String::~${argname}String() {
+    }
+
+    const char* ${argname}String::toChar() const {
+        return this->m_buf;
+    }
+
+    NATIVE_UINT_TYPE ${argname}String::getCapacity() const {
+        return sizeof(this->m_buf);
     }
 
 #end if
@@ -92,19 +75,23 @@ namespace ${n} {
     }
 
     const ${argname}Buffer& ${argname}Buffer::operator=(const ${argname}Buffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
         return other;
     }
 
-    NATIVE_UINT_TYPE ${argname}Buffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE ${argname}Buffer::getBuffCapacity() const {
         return sizeof(this->m_data);
     }
 
-    const U8* ${argname}Buffer::getBuffAddr(void) const {
+    const U8* ${argname}Buffer::getBuffAddr() const {
         return this->m_data;
     }
 
-    U8* ${argname}Buffer::getBuffAddr(void) {
+    U8* ${argname}Buffer::getBuffAddr() {
         return this->m_data;
     }
 
@@ -116,21 +103,31 @@ namespace ${n} {
         class ${name}PortBuffer : public Fw::SerializeBufferBase {
 
             public:
-                NATIVE_UINT_TYPE getBuffCapacity(void) const {
-                    return sizeof(m_buff);
+                NATIVE_UINT_TYPE getBuffCapacity() const {
+                    return Input${name}Port::SERIALIZED_SIZE;
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
+#if len($arg_list) > 0:
                     return m_buff;
+#else
+                    return nullptr;
+#end if
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
+#if len($arg_list) > 0:
                     return m_buff;
+#else
+                    return nullptr;
+#end if
                 }
 
         private:
 
+#if len($arg_list) > 0:
             U8 m_buff[Input${name}Port::SERIALIZED_SIZE];
+#end if
 
         };
 

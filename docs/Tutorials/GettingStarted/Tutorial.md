@@ -6,7 +6,7 @@ This tutorial will walk the user through the basic usage of the F´ development 
 through the above installation guide, and has a working F´ installation.
 
 The goal of this Tutorial is to build familiarity with the F´environment and tools. It does not walk the user through
-creation of new F´ items, but rather users the existing F´ `Ref` example as a place to operate the tools, learn the
+creation of new F´ items, but rather use the existing F´ `Ref` example as a place to operate the tools, learn the
 environment, and learn F´.
 
 The full development process is covered in the [Math Component Tutorial](../MathComponent/Tutorial.md), which will build
@@ -20,7 +20,7 @@ walk the F´ development process steps against existing reference goals.
 
 ## F´ Terminology
 
-This section will cover basic terminology used in this and other tutorial with respect to F´.  It may be used as a
+This section will cover basic terminology used in this and other tutorials with respect to F´.  It may be used as a
 reference for keywords that have specific meaning in an F´ project.
 
 **Port:** a port represents a connection between *Components*. These act as communication channels in F´. This allows
@@ -37,7 +37,7 @@ may define *Commands*, *Events*, *Channels*, and *Parameters*, which define stan
 An event is composed of a name, format string, and set of arguments that described what happened. Events represent a
 history of the system. Events are defined per-*component*.
 
-**Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels are consist of
+**Channel:** a channel, also known as a telemetry item, is a single value read and downlinked. Channels consist of
 a type, a format specifier, and a value. Channels represent current system state. Channels are defined per-*component*.
 
 **Command:** a command is uplinked data items that instructs the system to perform an action. *Commands* consist of an
@@ -204,18 +204,11 @@ cd fprime/Ref
 fprime-util build raspberrypi
 ```
 
-## Installing the F´ Executable and Dictionaries
-
-Once the deployment is built, it would be nice to be able to install the binary and dictionaries. This will enable the users to
-quickly find and run the deployment. This installation can be run using the following command. Everything will be installed to
-the directory defining the deployment. i.e. `fprime/Ref/bin`. Install will also invoke `build` so users should use this in-place
-of build for deployments.
-
-**Installing the Ref Deployment and Running the Binary Assuming Linux**
+**Running the Binary Assuming Linux**
 ```
 cd fprime/Ref
 fprime-util build
-./bin/Linux/Ref # Run the deployment
+./build-artifacts/Linux/bin/Ref # Run the deployment
 CTRL-C # Exit the application
 ```
 Running the application as part of the development ground data system is shown below.
@@ -228,7 +221,7 @@ fprime-util build raspberrypi
 
 ## Building and Running Unit Tests
 
-Unit tests can be build using the the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
+Unit tests can be built using the `build --ut` command of the `fprime-util`. This will allow us to build the unit tests
 in preparation to run them.  The user can also just run `check` to build and run the unit tests.
 
 Before building unit tests, the unit test build cache must be generated:

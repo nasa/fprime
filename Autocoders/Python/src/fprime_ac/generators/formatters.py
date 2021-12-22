@@ -51,7 +51,7 @@ class CommentFormatters:
 
     def _strip_without_code(self, line_list):
         """
-        Protected method that strips spaces, carriage returns etc. off each line
+        A protected method that strips spaces, carriage returns, etc. off each line
         in the list of lines.  Except that lines between a start @code line and
         an end @code line are left alone.
 
@@ -175,7 +175,7 @@ class CommentFormatters:
     def commentDraw(self, user_comment, arguments, type="iface", check_and_send=False):
         """
         This method is used to format the comments for a function. The
-        comments will includes information about each argument. The text
+        comments will include information about each argument. The text
         is formatted in doxygen style.
         """
 
@@ -269,7 +269,7 @@ class CommentFormatters:
     def commentHeaderFormat(self, comment_stuff, type="iface"):
         """
         Method to format header comments and add interface type label. No limit
-        on line length imposed so it is assumed the XML is reasonable length
+        on line length is imposed so it is assumed the XML is of reasonable length
         text lines. Recognizes @code directives for doxygen.
         """
 
@@ -383,8 +383,8 @@ class CommentFormatters:
                 if len_with_word < 76:
                     this_line = this_line + " " + this_word
                 else:
-                    # This even handles case where this_word is longer than line limit
-                    # remember to get rid of the trailing space at end of line
+                    # This even handles the case where this_word is longer than the line limit
+                    # remember to get rid of the trailing space at end of the line
                     self._dlog(ddt2, "...append formatted_comment here.")
                     if formatted_comment == "":
                         if this_line != "":
@@ -417,9 +417,9 @@ class Formatters:
     Class that provides a collection of routines to format strings for
     code generation.  The start of this class is generic for doing
     all sorts of string name manipulations for formatting.
-    The rest of these routines a legacy for rename things toward
+    The rest of these routines are a legacy for renaming things towards
     the MSL naming conventions or test something exists.  As time
-    goes by the MSL naming routines will be removed and replaced
+    goes by, the MSL naming routines will be removed and replaced
     by newer ones.
     """
 
@@ -452,7 +452,7 @@ class Formatters:
 
     def capFirstCharTuple3(self, t, en):
         """
-        For three element tuple capitalize first character of select
+        For three element tuple capitalize the first character of select
         elements.   They are enabled by binary bits (e.g. en=111 sets
         each element, en=010 set element 1, etc.)
         @param t: A three element tuple
@@ -475,7 +475,7 @@ class Formatters:
 
     def capFirstChar(self, s):
         """
-        Capitalize first character of string name.
+        Capitalize the first character of string name.
         """
         return s[0].upper() + s[1:]
 
@@ -582,7 +582,7 @@ class Formatters:
 
     def msgTypedefName(self, id, name, name_sep="AcMsg"):
         """
-        Return the name of msg typedef from a import function name.
+        Return the name of msg typedef from an import function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         @param name_sep: A string placed between the id and interface name
@@ -618,7 +618,7 @@ class Formatters:
     def msgUnionArgName(self, msg_type):
         """
         Return the name of a standard argument for a union
-        used to determine maximum size of a message type.
+        used to determine the maximum size of a message type.
         @param msg_type: The Typedef msg name (must include 'AcMsg')
         """
         if -1 != msg_type.find("AcMsg"):
@@ -636,7 +636,7 @@ class Formatters:
     def msgTokenName(self, id, name):
         """
         Return the name of msg typedef
-        from a input function name.
+        from an input function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         """
@@ -657,7 +657,7 @@ class Formatters:
     def opcodeName(self, id, name):
         """
         Return the name of command opcode
-        from a input function name.
+        from an input function name.
         @param id: The module id.
         @param name: Original function name with '_' separation.
         """
@@ -702,11 +702,11 @@ class Formatters:
         # Check characters
         if len(re.findall("[^A-Z0-9_]", name_string)) != 0:
             PRINT.info(
-                "ERROR: DETECTED INVALID CHARACTER IN COMMAND STEM NAME (%s)."
+                "ERROR: DETECTED AN INVALID CHARACTER IN COMMAND STEM NAME (%s)."
                 % name_string
             )
             raise Exception(
-                "Fatal error detected invalid character in command stem name."
+                "Fatal error, detected an invalid character in command stem name."
             )
         # All is ok
         return name_string
@@ -718,7 +718,7 @@ class Formatters:
         names than through exception and stop
         everything.
         @param cmd_name_list: list of command function names.
-        @return: TRUE if all command stem names are unique, else raise exception.
+        @return: TRUE if all command stem names are unique, else raise an exception.
         """
         cmds = list()
 
@@ -759,7 +759,7 @@ class Formatters:
     def commentInArgsPresent(self, args):
         """
         Given a list of argument tuples
-        return True if an comment for
+        return True if a comment for
         an arg is found, else return False.
         """
         for arg in args:
@@ -797,7 +797,7 @@ class Formatters:
         If there is a comment with any arg
         then pad the function with 80 " "
         so arguments will format on new line.
-        @param name: Name of function.
+        @param name: Name of the function.
         @param args: List of argument tuples.
         """
         if self.commentInArgsPresent(args) == True:
@@ -816,7 +816,7 @@ class Formatters:
 
     def formComment(self, comment):
         """
-        If comment greater then max truncate
+        If comment greater than max truncate
         and add '...' else leave it alone.
 
         If comment is not "" prefix with '///< '.
@@ -876,19 +876,19 @@ class Formatters:
 
     def simpleFuncDraw(self, name, args, proto=True, indent=0):
         """
-        This is a simply C function formatter. The arguments are a function
-        name, and its arguments. A string is returned that is a C code
+        This is a simple C function formatter. The arguments are a function
+        name and its arguments. A string is returned that is a C code
         function declaration. The proto flag is used to properly terminate
         the function.
         """
 
-        # Get the simply case out of the way.
+        # Get the simple case out of the way.
         if len(args) == 0:
 
             if proto == True:
-                function_str = name.strip() + "(void);"
+                function_str = name.strip() + "();"
             else:
-                function_str = name.strip() + "(void) {"
+                function_str = name.strip() + "() {"
 
             return function_str
 
@@ -1051,7 +1051,7 @@ class Formatters:
         Method to format a function line
         formatFun but add argument comments
         if they exist.
-        @param name: Name of function.
+        @param name: Name of the function.
         @param args: List of arguments in tuple form.
         @param proto: Prototype flag for non-header file use.
         """

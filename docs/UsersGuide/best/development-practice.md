@@ -2,7 +2,7 @@
 
 The purpose of this guide is to layout the standard F´ development process. This is the process used
 by most developers who use F´ and, as such, many of the F´ tools are written to support the stages
-of the process. This guild will walk through each step in this process.
+of the process. This guide will walk through each step in this process.
 
 The process:
 1. [High Level Design](#high-level-design): Draft high level requirements and architecture.
@@ -47,10 +47,10 @@ There are two options for creating a deployment:
 You can create an in-tree deployment, where a deployment is created within the F´ git repository.
 This is convenient and requires minimal setup, but placing your code within the F´ source tree
 can make it harder to update F´ in the future if the project wants to take advantage of future
-bug fixes and features. To create a in-tree deployment, the Ref application can be copied and used
+bug fixes and features. To create an in-tree deployment, the Ref application can be copied and used
 as a starting point.
 
-Another option is creating an standalone deployment, where the deployment is setup by itself and
+Another option is creating a standalone deployment, where the deployment is setup by itself and
 points to a F´ installation. This requires more upfront work to setup, but provides the benefit
 of separating mission code from F´ framework code.
 
@@ -64,7 +64,7 @@ mission
 └── library (git submodule to an external library)
 ```
 
-After creating the project layout, an external deployments can also be created by coping the Ref
+After creating the project layout, an external deployments can also be created by copying the Ref
 application.
 
 After copying the Ref app, both in-tree and standalone deployments need to create and modify a
@@ -89,7 +89,7 @@ interfaces with other components.
 ### Creating a Port
 
 Once the interfaces between components have been defined, ports should be created to implement those
-interfaces.
+interfaces. This can be done by hand or by using `fprime-util new --port`.
 
 It's recommended that ports are kept in their own directories separate from components.
 
@@ -100,13 +100,24 @@ To create a new port:
 3. Add the new port xml file to `SOURCE_FILES` in the `CMakeLists.txt` file in the directory
 4. If necessary, add port directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
+Alternatively, you may use `fprime-util new --port` from the fprime-tools package. This will 
+walk the user through a few prompts about the port they want to create. Then the following
+will be done automatically:
+
+1. If the specified directory for the port does not exist, it will be created
+2. The `*Ai.xml` file will be generated, with information and arguments filled in
+3. The port will be added to the source files of `CMakeLists.txt`. If there is no `CMakeLists.txt`
+   file, one will be automatically generated and filled out
+4. If necessary, the port directory will be added to the deployment's cmake file with 
+   `add_fprime_subdirectory`
+
 ### Creating a Component Definition
 
 The first step in creating a component is to create the component xml definition, which defines
 which interfaces it implements, what commands it supports, which telemetry it provides, and what
-events it produces.
+events it produces. This can be done by hand or by using `fprime-util new --component`.
 
-To create a new component definition:
+To create a new component definition by hand:
 
 1. Create a new component directory
 2. Create a new component `*Ai.xml` file, possibly by copying from an existing component.
@@ -117,12 +128,38 @@ To create a new component definition:
    variable in the file.
 7. Add component directory to the deployment's cmake file with `add_fprime_subdirectory`.
 
+Alternatively, you may use `fprime-util new --component` from the fprime-tools package. This will 
+walk the user through a few prompts about the component they are creating. Then the following
+will be done automatically:
+
+1. A new component directory will be created
+2. The `*Ai.xml` file will be generated, filled out with all of the information provided by 
+   the user
+3. Commands, telemetry, events, and parameters will be added to the xml file based on what 
+   the user chooses through the prompts
+4. Ports necessary for commands, telemetry, events, and parameters will be automatically
+   added to the `*Ai.xml` file depending which elements the user chooses to include
+5. A component `CMakeLists.txt` file will be generated and the component xml will be added
+   to the source files.
+6. The component directory will be added to the deployments cmake file with
+   `add_fprime-subdirectory`
+7. The user is given the option to generate implementation `*.cpp` and `*.hpp` files
+8. The user is given the option to generate a unit test directory with necessary
+   unit test files within it.
+9. An SDD file is generated with documentation about ports, commands, events,  
+   telemetry, parameters, and time of creation already filled out
+
+The `fprime-util new --component` uses the builtin cookiecutter template by default, 
+but users can substitute their own component template by using the component_cookiecutter 
+field of the settings.ini file. To learn more, see [Creating and Using a Cookiecutter Template](../dev/cookiecutter.md).
 ### Component Implementation
 
 Next, the developer typically runs `fprime-util impl` to produce `-template` files of the hand-coded
-.cpp and .hpp files. These can be used as a basis for implementation with all the stubs in place for
-the developer to implement the design. Developers then fill in these files and stubs with an
-implementation that supports the functionality of the design.
+.cpp and .hpp files. However, if your component was created with `fprime-util new --component` and 
+you select yes when asked about generating implementation files, this is automatically done. 
+These can be used as a basis for implementation with all the stubs in place for the developer to 
+implement the design. Developers then fill in these files and stubs with an implementation that 
+supports the functionality of the design.
 
 The component can then be built as development proceeds to look for errors.  Ports are entirely
 autogenerated and do not need an implementation.
@@ -130,8 +167,11 @@ autogenerated and do not need an implementation.
 ### Component Unit Testing
 
 Along with implementation, unit tests can be templated and implemented to test against the
-requirements of the component. These should be developed an run often to ensure the implemented
+requirements of the component. These should be developed and run often to ensure the implemented
 component works.
+
+Note: If `fprime-util new --cookiecutter` was used to create the component, and the user chose
+the generate unit tests, steps 1-3 should be skipped because these are automatically done.
 
 To add unit tests to a component:
 
@@ -151,7 +191,7 @@ To add a component to the topology:
 
 1. In the topology `*Ai.xml` file
     - Import the component `*Ai.xml` xml file.
-    - Instantiate the component as many time as necessary.
+    - Instantiate the component as many times as necessary.
     - Connect component output ports with the corresponding input port and vice versa.
 2. In the topology `Components.hpp` file, declare the component with the same name as the topology
    xml file.

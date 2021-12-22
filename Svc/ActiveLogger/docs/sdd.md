@@ -56,7 +56,7 @@ event is seen.
 
 The `Svc::ActiveLogger` `LogRecv` input port handler filters events to lessen the load on the downstream components. The
 filters can be set by severity and ID. By default, the DIAGNOSTIC events are filtered out since the number of DIAGNOSTIC
-evens can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
+events can be quite high.  All defaults can be globally configured in `config/ActiveLoggerImplCfg.hpp`. Filters are
 modified at runtime by the `SET_EVENT_FILTER` command.
 
 The component also allows filtering events by event ID. There is a configuration parameter that sets the number of IDs
@@ -102,13 +102,7 @@ Unit Test Checklist | [Link](Checklist_Unit_test.xlsx)
 
 ## 6. Unit Testing
 
-[Unit Test Output](../test/ut/output/test.txt)
-
-[Coverage Output - `ActiveLoggerImpl.cpp`](../test/ut/output/ActiveLoggerImpl.cpp.gcov)
-
-[Coverage Output - `ActiveLoggerComponentAc.cpp`](../test/ut/output/ActiveLoggerComponentAc.cpp.gcov)
-
-[Report](../test/ut/output/SvcActiveLogger_gcov.txt)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

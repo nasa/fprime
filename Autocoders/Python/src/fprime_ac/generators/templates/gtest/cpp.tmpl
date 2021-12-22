@@ -41,7 +41,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
   }
 
   $gtest_base ::
-    ~${gtest_base}(void)
+    ~${gtest_base}()
   {
 
   }
@@ -56,7 +56,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
 $emit_cpp_params($params_assert_size)
     ) const
   {
-    ASSERT_EQ((unsigned long) size, this->cmdResponseHistory->size())
+    ASSERT_EQ(size, this->cmdResponseHistory->size())
       $failure_message
       $LTLT "  Value:    Size of command response history\n"
       $LTLT "  Expected: " $LTLT size $LTLT "\n"

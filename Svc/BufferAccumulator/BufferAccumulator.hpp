@@ -37,7 +37,7 @@ namespace Svc {
             ArrayFIFOBuffer();
 
             //! Destroy an ArrayFIFOBuffer File object
-            ~ArrayFIFOBuffer(void);
+            ~ArrayFIFOBuffer();
 
             void init(Fw::Buffer *const elements, //!< The array elements
                       NATIVE_UINT_TYPE capacity //!< The capacity
@@ -58,11 +58,11 @@ namespace Svc {
 
             //! Get the size of the queue
             //! \return The size
-            U32 getSize(void) const;
+            U32 getSize() const;
 
             //! Get the capacity of the queue
             //! \return The capacity
-            U32 getCapacity(void) const;
+            U32 getCapacity() const;
 
         PRIVATE:
 
@@ -107,7 +107,7 @@ namespace Svc {
 
       //! Destroy BufferAccumulator instance
       //!
-      ~BufferAccumulator(void);
+      ~BufferAccumulator();
 
       // ----------------------------------------------------------------------
       // Public methods
@@ -179,7 +179,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Send a stored buffer
-      void sendStoredBuffer(void);
+      void sendStoredBuffer();
 
     PRIVATE:
 

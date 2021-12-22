@@ -10,29 +10,25 @@ namespace Fw {
 
     class CmdStringArg : public Fw::StringBase {
         public:
-        
+
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_CMD_STR,
                 SERIALIZED_SIZE = FW_CMD_STRING_MAX_SIZE + sizeof(FwBuffSizeType)
             };
-        
+
             CmdStringArg(const char* src);
             CmdStringArg(const StringBase& src);
             CmdStringArg(const CmdStringArg& src);
-            CmdStringArg(void);
-            ~CmdStringArg(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
+            CmdStringArg();
+            CmdStringArg& operator=(const CmdStringArg& other);
+            CmdStringArg& operator=(const StringBase& other);
+            CmdStringArg& operator=(const char* other);
+            ~CmdStringArg();
 
-            const CmdStringArg& operator=(const CmdStringArg& other); //!< equal operator for other strings
-            
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
-            
+            const char* toChar() const;
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
+
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy source buffer, overwriting
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[FW_CMD_STRING_MAX_SIZE];
     };

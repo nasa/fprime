@@ -40,7 +40,7 @@ namespace Drv {
   }
 
   LinuxI2cDriverComponentImpl ::
-    ~LinuxI2cDriverComponentImpl(void)
+    ~LinuxI2cDriverComponentImpl()
   {
 
   }
@@ -54,7 +54,7 @@ namespace Drv {
   // Handler implementations for user-defined typed input ports
   // ----------------------------------------------------------------------
 
-  // Note this this port handler is guarded, so we can make the ioctl call
+  // Note this port handler is guarded, so we can make the ioctl call
 
   I2cStatus LinuxI2cDriverComponentImpl ::
     write_handler(

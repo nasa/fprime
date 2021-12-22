@@ -70,7 +70,7 @@ namespace Svc {
             FwPacketDescriptorType desc;
             stat = this->m_rcvdBuffer[packet].deserialize(desc);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-            ASSERT_EQ(desc,(FwPacketDescriptorType)Fw::ComPacket::FW_PACKET_TELEM);
+            ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
             // next piece should be event ID
             FwEventIdType sentId;
             stat = this->m_rcvdBuffer[packet].deserialize(sentId);
@@ -93,7 +93,7 @@ namespace Svc {
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
             ASSERT_EQ(readVal, val);
             // packet should be empty
-            ASSERT_EQ(this->m_rcvdBuffer[packet].getBuffLeft(),(NATIVE_UINT_TYPE)0);
+            ASSERT_EQ(this->m_rcvdBuffer[packet].getBuffLeft(),0u);
         }
 
         ASSERT_TRUE(packetFound);
@@ -137,7 +137,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runNominalChannel(void) {
+    void TlmChanImplTester::runNominalChannel() {
 
         this->clearBuffs();
         // send first buffer
@@ -166,7 +166,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runMultiChannel(void) {
+    void TlmChanImplTester::runMultiChannel() {
 
 
         FwChanIdType IDs[] = {
@@ -197,7 +197,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runTooManyChannels(void) {
+    void TlmChanImplTester::runTooManyChannels() {
 
         // This will assert, so disable after testing
 
@@ -211,7 +211,7 @@ namespace Svc {
 
     }
 
-    void TlmChanImplTester::runOffNominal(void) {
+    void TlmChanImplTester::runOffNominal() {
 
         // Ask for a packet that isn't written yet
         Fw::TlmBuffer buff;
@@ -226,11 +226,11 @@ namespace Svc {
 
         // Read back value
         this->invoke_to_TlmGet(0,10,timeTag,buff);
-        ASSERT_EQ((NATIVE_UINT_TYPE)0,buff.getBuffLength());
+        ASSERT_EQ(0u,buff.getBuffLength());
 
     }
 
-    void TlmChanImplTester::clearBuffs(void) {
+    void TlmChanImplTester::clearBuffs() {
         this->m_numBuffs = 0;
         for (NATIVE_INT_TYPE n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
             this->m_rcvdBuffer[n].resetSer();
@@ -244,11 +244,11 @@ namespace Svc {
                 " id: 0x%08X"
                 " bucket: %d"
                 " next: %p\n",
-                entry,entry->id,entry->bucketNo,entry->next
+                static_cast<void *>(entry),entry->id,entry->bucketNo,static_cast<void *>(entry->next)
                 );
     }
 
-    void TlmChanImplTester::dumpHash(void) {
+    void TlmChanImplTester::dumpHash() {
 //        printf("**Buffer 0\n");
         for (NATIVE_INT_TYPE slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
             printf("Slot: %d\n",slot);
@@ -256,7 +256,7 @@ namespace Svc {
                 TlmChanImpl::TlmEntry* entry = m_impl.m_tlmEntries[0].slots[slot];
                 for (NATIVE_INT_TYPE bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
                     dumpTlmEntry(entry);
-                    if (entry->next == 0) {
+                    if (entry->next == nullptr) {
                         break;
                     } else {
                         entry = entry->next;

@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/queued1/TestComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace SvcTest {
 

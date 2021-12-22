@@ -1,14 +1,14 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ImmediateBase.cpp
 // \author Canham/Bocchino
 // \brief  Base class for Immediate and ImmediateEOS
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
 #include "Svc/CmdSequencer/test/ut/ImmediateBase.hpp"
@@ -19,7 +19,7 @@ namespace Svc {
   namespace ImmediateBase {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -38,7 +38,7 @@ namespace Svc {
           SequenceFiles::File& file,
           const U32 numCommands,
           const U32 bound
-      ) 
+      )
     {
 
       REQUIREMENT("ISF-CMDS-003");
@@ -72,7 +72,7 @@ namespace Svc {
       );
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
 
     }
 
@@ -81,7 +81,7 @@ namespace Svc {
           SequenceFiles::File& file,
           const U32 numCommands,
           const U32 bound
-      ) 
+      )
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -96,13 +96,13 @@ namespace Svc {
       // Execute commands
       this->executeCommandsAuto(
           fileName,
-          numCommands, 
+          numCommands,
           bound,
           CmdExecMode::NO_NEW_SEQUENCE
       );
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
     }
 
     void Tester ::
@@ -124,7 +124,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_START,
           startCmdSeq,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -157,7 +157,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_START,
           startCmdSeq,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -169,10 +169,10 @@ namespace Svc {
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
       ASSERT_CMD_RESPONSE(
-          0, 
-          CmdSequencerComponentBase::OPCODE_CS_AUTO, 
+          0,
+          CmdSequencerComponentBase::OPCODE_CS_AUTO,
           autoCmdSeq,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -187,7 +187,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_MANUAL,
           manualCmdSeq,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -212,12 +212,12 @@ namespace Svc {
       // Run another sequence
       this->parameterizedAutoByPort(file, numCommands, bound);
       // Try to run a loaded sequence
-      Fw::EightyCharString fArg("");
+      Fw::String fArg("");
       this->invoke_to_seqRunIn(0, fArg);
       this->clearAndDispatch();
       // Assert seqDone response
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0U, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+      ASSERT_from_seqDone(0U, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR));
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_NoSequenceActive_SIZE(1);
@@ -261,7 +261,7 @@ namespace Svc {
       );
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
       // Send step command. Should return error since no active sequence
       const U32 stepCmdSeq = 12;
       this->sendCmd_CS_STEP(0, stepCmdSeq);
@@ -272,7 +272,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_STEP,
           stepCmdSeq,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -287,7 +287,7 @@ namespace Svc {
           SequenceFiles::File& file,
           const U32 numCommands,
           const U32 bound
-      ) 
+      )
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -318,7 +318,7 @@ namespace Svc {
       );
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
     }
 
     void Tester ::
@@ -326,7 +326,7 @@ namespace Svc {
           SequenceFiles::File& file,
           const U32 numCommands,
           const U32 bound
-      ) 
+      )
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -341,22 +341,22 @@ namespace Svc {
       // Execute commands
       this->executeCommandsAuto(
           fileName,
-          numCommands, 
+          numCommands,
           bound,
           CmdExecMode::NO_NEW_SEQUENCE
       );
       // Check for command complete on seqDone
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_OK);
+      ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));
     }
 
-    // ---------------------------------------------------------------------- 
+    // ----------------------------------------------------------------------
     // Protected helper methods
-    // ---------------------------------------------------------------------- 
+    // ----------------------------------------------------------------------
 
     void Tester ::
       executeCommandsAuto(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands,
           const U32 bound,
           const CmdExecMode::t mode
@@ -379,7 +379,7 @@ namespace Svc {
           this->startNewSequence(fileName);
         }
         // Send status back
-        this->invoke_to_cmdResponseIn(0, i, 0, Fw::COMMAND_OK);
+        this->invoke_to_cmdResponseIn(0, i, 0, Fw::CmdResponse(Fw::CmdResponse::OK));
         this->clearAndDispatch();
         if (i < numCommands - 1) {
           // Assert events
@@ -398,14 +398,14 @@ namespace Svc {
           ASSERT_TLM_SIZE(2);
           ASSERT_TLM_CS_CommandsExecuted(0, i + 1);
           ASSERT_TLM_CS_SequencesCompleted(0, 1);
-        } 
+        }
       }
 
     }
 
     void Tester ::
       executeCommandsError(
-          const char *const fileName, 
+          const char *const fileName,
           const U32 numCommands
       )
     {
@@ -417,7 +417,7 @@ namespace Svc {
         ASSERT_from_comCmdOut(0, comBuff, 0U);
         if (i == 0) {
           // Send good status back
-          this->invoke_to_cmdResponseIn(0, i, 0, Fw::COMMAND_OK);
+          this->invoke_to_cmdResponseIn(0, i, 0, Fw::CmdResponse(Fw::CmdResponse::OK));
           this->clearAndDispatch();
           // Assert events
           ASSERT_EVENTS_SIZE(1);
@@ -425,14 +425,14 @@ namespace Svc {
           // Assert telemetry
           ASSERT_TLM_SIZE(1);
           ASSERT_TLM_CS_CommandsExecuted(0, i + 1);
-        } 
+        }
         else {
           // Send failed status back
           this->invoke_to_cmdResponseIn(
               0,
               i,
               0,
-              Fw::COMMAND_EXECUTION_ERROR
+              Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR)
           );
           this->clearAndDispatch();
           // Assert events
@@ -443,7 +443,7 @@ namespace Svc {
               fileName,
               1,
               i,
-              Fw::COMMAND_EXECUTION_ERROR
+              Fw::CmdResponse::EXECUTION_ERROR
           );
           // Assert telemetry
           ASSERT_TLM_SIZE(1);
@@ -451,7 +451,7 @@ namespace Svc {
           ASSERT_TLM_CS_Errors(0, 1);
           // Check for command complete on seqDone
           ASSERT_from_seqDone_SIZE(1);
-          ASSERT_from_seqDone(0, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+          ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR));
         }
       }
     }

@@ -99,7 +99,7 @@ make
 
 ## CMake Customization
 
-Sometimes users need to crack open the CMake structure in order to do things like adding a external
+Sometimes users need to crack open the CMake structure in order to do things like adding an external
 library/build system, adding custom make targets, building utilities, etc. These issues are described
 here: [Customization](Customization.md)
 

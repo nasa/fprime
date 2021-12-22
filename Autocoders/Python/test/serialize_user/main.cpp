@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 #endif
 
     comp.init(10);
-    comp.start(10, 10 * 1024, 100);
+    comp.start();
 
     AnotherExample::InputExamplePort* port = comp.get_exampleInput_InputPort(0);
 

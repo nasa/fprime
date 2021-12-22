@@ -8,9 +8,9 @@ At minimum this file can be blank, but more commonly included paths for "Standar
 Build flags, and other includes can be added in to support different compile time options. In addition,
 these files can define CMake option flags specific to the build.
 
-In order to create a new platform from scratch, the use can copy "platform.cmake.template" and fill it
+In order to create a new platform from scratch, the user can copy "platform.cmake.template" and fill it
 out in order to generate the new platform file. It will guide the user through the setup of this
 piece.
 
 To understand the platform template: [Platform Template File](../api/cmake/platform/platform-template.md)
-To use the template: [fprime Platform Template](https://github.com/nasa/fprime/cmake/platform/platform.cmake.template)
+To use the template: [fprime Platform Template](https://github.com/nasa/fprime/blob/devel/cmake/platform/platform.cmake.template)

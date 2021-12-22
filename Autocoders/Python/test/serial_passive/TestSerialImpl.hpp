@@ -47,7 +47,7 @@ namespace TestComponents {
 
       //! Destroy object TestSerial
       //!
-      ~TestSerialImpl(void);
+      ~TestSerialImpl();
 
     PRIVATE:
 

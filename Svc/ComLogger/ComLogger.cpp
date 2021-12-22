@@ -7,20 +7,21 @@
 #include <Svc/ComLogger/ComLogger.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Os/ValidateFile.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   ComLogger ::
     ComLogger(const char* compName, const char* incomingFilePrefix, U32 maxFileSize, bool storeBufferLength) :
-      ComLoggerComponentBase(compName), 
+      ComLoggerComponentBase(compName),
       maxFileSize(maxFileSize),
-      fileMode(CLOSED), 
+      fileMode(CLOSED),
       byteCount(0),
       writeErrorOccurred(false),
       openErrorOccurred(false),
@@ -32,16 +33,14 @@ namespace Svc {
     else {
       FW_ASSERT(maxFileSize > sizeof(0), maxFileSize); // must be a positive integer
     }
-    FW_ASSERT((NATIVE_UINT_TYPE)strnlen(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix), 
-      (NATIVE_UINT_TYPE) strnlen(incomingFilePrefix, sizeof(this->filePrefix)), (NATIVE_UINT_TYPE) sizeof(this->filePrefix)); // ensure that file prefix is not too big
+    FW_ASSERT(strnlen(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
+      strnlen(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
     // Set the file prefix:
-    memset(this->filePrefix, 0, sizeof(this->filePrefix)); // probably unnecessary, but I am paranoid.
-    U8* dest = (U8*) strncpy((char*) this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
-    FW_ASSERT(dest == this->filePrefix, reinterpret_cast<U64>(dest), reinterpret_cast<U64>(this->filePrefix));
+    Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));
   }
 
-  void ComLogger :: 
+  void ComLogger ::
     init(
       NATIVE_INT_TYPE queueDepth, //!< The queue depth
       NATIVE_INT_TYPE instance //!< The instance number
@@ -51,12 +50,12 @@ namespace Svc {
   }
 
   ComLogger ::
-    ~ComLogger(void)
+    ~ComLogger()
   {
     // Close file:
     // this->closeFile();
     // NOTE: the above did not work because we don't want to issue an event
-    // in the destructor. This can cause "virtual method called" segmentation 
+    // in the destructor. This can cause "virtual method called" segmentation
     // faults.
     // So I am copying part of that function here.
     if( OPEN == this->fileMode ) {
@@ -90,7 +89,7 @@ namespace Svc {
 
     // Get length of buffer:
     U32 size32 = data.getBuffLength();
-    // ComLogger only writes 16-bit sizes to save space 
+    // ComLogger only writes 16-bit sizes to save space
     // on disk:
     FW_ASSERT(size32 < 65536, size32);
     U16 size = size32 & 0xFFFF;
@@ -117,14 +116,14 @@ namespace Svc {
     }
   }
 
-  void ComLogger :: 
+  void ComLogger ::
     CloseFile_cmdHandler(
       FwOpcodeType opCode,
       U32 cmdSeq
     )
   {
     this->closeFile();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
   void ComLogger ::
@@ -148,23 +147,23 @@ namespace Svc {
     // Create filename:
     Fw::Time timestamp = getTime();
     memset(this->fileName, 0, sizeof(this->fileName));
-    bytesCopied = snprintf((char*) this->fileName, sizeof(this->fileName), "%s_%d_%d_%06d.com", 
-      this->filePrefix, (U32) timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds());
+    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%d_%d_%06d.com",
+      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
 
     // "A return value of size or more means that the output was truncated"
     // See here: http://linux.die.net/man/3/snprintf
     FW_ASSERT( bytesCopied < sizeof(this->fileName) );
 
     // Create sha filename:
-    bytesCopied = snprintf((char*) this->hashFileName, sizeof(this->hashFileName), "%s_%d_%d_%06d.com%s", 
-      this->filePrefix, (U32) timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
+    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%d_%d_%06d.com%s",
+      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
     FW_ASSERT( bytesCopied < sizeof(this->hashFileName) );
 
-    Os::File::Status ret = file.open((char*) this->fileName, Os::File::OPEN_WRITE);
+    Os::File::Status ret = file.open(this->fileName, Os::File::OPEN_WRITE);
     if( Os::File::OP_OK != ret ) {
       if( !this->openErrorOccurred ) { // throttle this event, otherwise a positive
                                        // feedback event loop can occur!
-        Fw::LogStringArg logStringArg((char*) this->fileName);
+        Fw::LogStringArg logStringArg(this->fileName);
         this->log_WARNING_HI_FileOpenError(ret, logStringArg);
       }
       this->openErrorOccurred = true;
@@ -176,8 +175,8 @@ namespace Svc {
       this->byteCount = 0;
 
       // Set mode:
-      this->fileMode = OPEN; 
-    }    
+      this->fileMode = OPEN;
+    }
   }
 
   void ComLogger ::
@@ -195,7 +194,7 @@ namespace Svc {
       this->fileMode = CLOSED;
 
       // Send event:
-      Fw::LogStringArg logStringArg((char*) this->fileName);
+      Fw::LogStringArg logStringArg(this->fileName);
       this->log_DIAGNOSTIC_FileClosed(logStringArg);
     }
   }
@@ -208,7 +207,7 @@ namespace Svc {
   {
     if( this->storeBufferLength ) {
       U8 buffer[sizeof(size)];
-      Fw::SerialBuffer serialLength(&buffer[0], sizeof(size)); 
+      Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
       serialLength.serialize(size);
       if(this->writeToFile(serialLength.getBuffAddr(),
               static_cast<U16>(serialLength.getBuffLength()))) {
@@ -227,16 +226,16 @@ namespace Svc {
 
   bool ComLogger ::
     writeToFile(
-      void* data, 
+      void* data,
       U16 length
     )
   {
     NATIVE_INT_TYPE size = length;
     Os::File::Status ret = file.write(data, size);
-    if( Os::File::OP_OK != ret || size != (NATIVE_INT_TYPE) length ) {
+    if( Os::File::OP_OK != ret || size != static_cast<NATIVE_INT_TYPE>(length) ) {
       if( !this->writeErrorOccurred ) { // throttle this event, otherwise a positive
                                         // feedback event loop can occur!
-        Fw::LogStringArg logStringArg((char*) this->fileName);
+        Fw::LogStringArg logStringArg(this->fileName);
         this->log_WARNING_HI_FileWriteError(ret, size, length, logStringArg);
       }
       this->writeErrorOccurred = true;
@@ -247,15 +246,15 @@ namespace Svc {
     return true;
   }
 
-  void ComLogger :: 
+  void ComLogger ::
     writeHashFile(
     )
   {
     Os::ValidateFile::Status validateStatus;
-    validateStatus = Os::ValidateFile::createValidation((char*) this->fileName, (char*)this->hashFileName);
+    validateStatus = Os::ValidateFile::createValidation(this->fileName, this->hashFileName);
     if( Os::ValidateFile::VALIDATION_OK != validateStatus ) {
-      Fw::LogStringArg logStringArg1((char*) this->fileName);
-      Fw::LogStringArg logStringArg2((char*) this->hashFileName);
+      Fw::LogStringArg logStringArg1(this->fileName);
+      Fw::LogStringArg logStringArg2(this->hashFileName);
       this->log_WARNING_LO_FileValidationError(logStringArg1, logStringArg2, validateStatus);
     }
   }

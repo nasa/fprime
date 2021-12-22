@@ -12,6 +12,7 @@ from fprime_ac.utils import (
 
 from fprime_ac.utils.buildroot import search_for_file
 
+
 class TopDictGenerator:
     def __init__(self, parsed_xml_dict, log):
         self.__log = log
@@ -29,7 +30,7 @@ class TopDictGenerator:
     def set_current_comp(self, comp):
         self.__comp_type = comp.get_type()
         self.__comp_name = comp.get_name()
-        self.__comp_id = int(comp.get_base_id())
+        self.__comp_id = int(comp.get_base_id(), 0)
 
     def check_for_enum_xml(self):
         enum_file_list = self.__parsed_xml_dict[self.__comp_type].get_enum_type_files()
@@ -37,12 +38,12 @@ class TopDictGenerator:
             self.__check_enum_files(enum_file_list)
 
     def check_for_serial_xml(self):
-        serializable_file_list = self.__parsed_xml_dict[self.__comp_type].get_serializable_type_files()
+        serializable_file_list = self.__parsed_xml_dict[
+            self.__comp_type
+        ].get_serializable_type_files()
         if serializable_file_list is not None:
             for serializable_file in serializable_file_list:
-                serializable_file = search_for_file(
-                    "Serializable", serializable_file
-                )
+                serializable_file = search_for_file("Serializable", serializable_file)
                 serializable_model = XmlSerializeParser.XmlSerializeParser(
                     serializable_file
                 )
@@ -68,17 +69,19 @@ class TopDictGenerator:
                 for (
                     member_name,
                     member_type,
+                    member_array_size,
                     member_size,
                     member_format_specifier,
                     member_comment,
+                    member_default,
                 ) in serializable_model.get_members():
                     member_elem = etree.Element("member")
                     member_elem.attrib["name"] = member_name
-                    member_elem.attrib[
-                        "format_specifier"
-                    ] = member_format_specifier
+                    member_elem.attrib["format_specifier"] = member_format_specifier
                     if member_comment is not None:
                         member_elem.attrib["description"] = member_comment
+                    if member_default is not None:
+                        member_elem.attrib["default"] = member_default
                     if isinstance(member_type, tuple):
                         type_name = "{}::{}::{}".format(
                             serializable_type,
@@ -107,11 +110,7 @@ class TopDictGenerator:
             enum_file = search_for_file("Enum", enum_file)
             enum_model = XmlEnumParser.XmlEnumParser(enum_file)
             enum_elem = etree.Element("enum")
-            enum_type = (
-                enum_model.get_namespace()
-                + "::"
-                + enum_model.get_name()
-            )
+            enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
             enum_elem.attrib["type"] = enum_type
             enum_value = 0
             for (
@@ -143,14 +142,16 @@ class TopDictGenerator:
                 command_elem.attrib["opcode"] = "%s" % (
                     hex(int(command.get_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem.attrib.keys()):
-                    command_elem.attrib["description"] = command_elem.attrib[
-                        "comment"
-                    ]
+                if command.get_comment() is not None:
+                    command_elem.attrib["description"] = command.get_comment()
+
                 args_elem = etree.Element("args")
                 for arg in command.get_args():
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
+                    if arg.get_comment() is not None:
+                        arg_elem.attrib["description"] = arg.get_comment()
+
                     arg_type = arg.get_type()
                     if isinstance(arg_type, tuple):
                         type_name = "{}::{}::{}".format(
@@ -181,19 +182,13 @@ class TopDictGenerator:
                     hex(int(chan.get_ids()[0], base=0) + self.__comp_id)
                 )
                 if chan.get_format_string() is not None:
-                    channel_elem.attrib[
-                        "format_string"
-                    ] = chan.get_format_string()
+                    channel_elem.attrib["format_string"] = chan.get_format_string()
                 if chan.get_comment() is not None:
                     channel_elem.attrib["description"] = chan.get_comment()
 
                 channel_elem.attrib["id"] = "%s" % (
                     hex(int(chan.get_ids()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(channel_elem.attrib.keys()):
-                    channel_elem.attrib["description"] = channel_elem.attrib[
-                        "comment"
-                    ]
                 channel_type = chan.get_type()
                 if isinstance(channel_type, tuple):
                     type_name = "{}::{}::{}".format(
@@ -237,15 +232,17 @@ class TopDictGenerator:
                 )
                 event_elem.attrib["severity"] = event.get_severity()
                 format_string = event.get_format_string()
-                if "comment" in list(event_elem.attrib.keys()):
-                    event_elem.attrib["description"] = event_elem.attrib[
-                        "comment"
-                    ]
+                if event.get_comment() is not None:
+                    event_elem.attrib["description"] = event.get_comment()
+
                 args_elem = etree.Element("args")
                 arg_num = 0
                 for arg in event.get_args():
                     arg_elem = etree.Element("arg")
                     arg_elem.attrib["name"] = arg.get_name()
+                    if arg.get_comment() is not None:
+                        arg_elem.attrib["description"] = arg.get_comment()
+
                     arg_type = arg.get_type()
                     if isinstance(arg_type, tuple):
                         type_name = "{}::{}::{}".format(
@@ -256,8 +253,10 @@ class TopDictGenerator:
                         enum_elem = self.__extract_enum_elem(type_name, arg_type[1])
                         self.__enum_list.append(enum_elem)
                         # replace enum format string %d with %s for ground system
-                        format_string = DictTypeConverter.DictTypeConverter().format_replace(
-                            format_string, arg_num, "d", "s"
+                        format_string = (
+                            DictTypeConverter.DictTypeConverter().format_replace(
+                                format_string, arg_num, "d", "s"
+                            )
                         )
                     else:
                         type_name = arg_type
@@ -298,15 +297,13 @@ class TopDictGenerator:
                 param_default = None
                 command_elem_set = etree.Element("command")
                 command_elem_set.attrib["component"] = self.__comp_name
-                command_elem_set.attrib["mnemonic"] = (
-                    parameter.get_name() + "_PRM_SET"
-                )
+                command_elem_set.attrib["mnemonic"] = parameter.get_name() + "_PRM_SET"
                 command_elem_set.attrib["opcode"] = "%s" % (
                     hex(int(parameter.get_set_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem_set.attrib.keys()):
+                if parameter.get_comment() is not None:
                     command_elem_set.attrib["description"] = (
-                        command_elem_set.attrib["comment"] + " parameter set"
+                        parameter.get_comment() + " parameter set"
                     )
                 else:
                     command_elem_set.attrib["description"] = (
@@ -363,9 +360,9 @@ class TopDictGenerator:
                 command_elem_save.attrib["opcode"] = "%s" % (
                     hex(int(parameter.get_save_opcodes()[0], base=0) + self.__comp_id)
                 )
-                if "comment" in list(command_elem_save.attrib.keys()):
+                if parameter.get_comment() is not None:
                     command_elem_save.attrib["description"] = (
-                        command_elem_save.attrib["comment"] + " parameter set"
+                        parameter.get_comment() + " parameter save"
                     )
                 else:
                     command_elem_save.attrib["description"] = (
@@ -387,16 +384,16 @@ class TopDictGenerator:
                 self.__parameter_list.append(param_elem)
 
     def check_for_arrays(self):
-        array_file_list = self.__parsed_xml_dict[self.__comp_type].get_array_type_files()
+        array_file_list = self.__parsed_xml_dict[
+            self.__comp_type
+        ].get_array_type_files()
         if array_file_list is not None:
             for array_file in array_file_list:
                 array_file = search_for_file("Array", array_file)
                 array_model = XmlArrayParser.XmlArrayParser(array_file)
                 array_elem = etree.Element("array")
 
-                array_name = (
-                    array_model.get_namespace() + "::" + array_model.get_name()
-                )
+                array_name = array_model.get_namespace() + "::" + array_model.get_name()
                 array_elem.attrib["name"] = array_name
 
                 array_type = array_model.get_type()
@@ -451,7 +448,8 @@ class TopDictGenerator:
                     i = 0
                     while i < len(children1) and i < len(children2):
                         if (
-                            not children1[i].attrib["name"] == children2[i].attrib["name"]
+                            not children1[i].attrib["name"]
+                            == children2[i].attrib["name"]
                             and should_remove
                         ):
                             should_remove = False
@@ -463,7 +461,7 @@ class TopDictGenerator:
 
     def get_enum_list(self):
         return self.__enum_list
-    
+
     def get_serializable_list(self):
         return self.__serializable_list
 

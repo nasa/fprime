@@ -2,13 +2,9 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 
-#if FW_SERIALIZABLE_TO_STRING
-#include <Fw/Types/EightyCharString.hpp>
-#endif
-
 namespace ANameSpace {
 
-UserSerializer::UserSerializer(void): Serializable() {
+UserSerializer::UserSerializer(): Serializable() {
 
 }
 
@@ -25,9 +21,9 @@ UserSerializer::UserSerializer(SomeUserStruct val) : Serializable() {
     this->setVal(val);
 }
 
-const SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
+SomeUserStruct& UserSerializer::operator=(const SomeUserStruct& src) {
     this->setVal(src);
-    return src;
+    return this->m_struct;
 }
 
 void UserSerializer::getVal(SomeUserStruct& arg) {
@@ -39,13 +35,14 @@ void UserSerializer::setVal(const SomeUserStruct& val) {
 }
 
 Fw::SerializeStatus UserSerializer::serialize(Fw::SerializeBufferBase& buffer) const {
-    return buffer.serialize((U8*)&m_struct,sizeof(m_struct));
+    return buffer.serialize(reinterpret_cast<const U8*>(&m_struct),sizeof(m_struct));
 }
 
 Fw::SerializeStatus UserSerializer::deserialize(Fw::SerializeBufferBase& buffer) {
     NATIVE_UINT_TYPE serSize = sizeof(m_struct);
-    return buffer.deserialize((U8*)&m_struct,serSize);
+    Fw::SerializeStatus stat =  buffer.deserialize(reinterpret_cast<U8*>(&m_struct),serSize);
     FW_ASSERT(serSize == sizeof(m_struct));
+    return stat;
 }
 
 

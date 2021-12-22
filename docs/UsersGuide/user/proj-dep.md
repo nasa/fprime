@@ -32,7 +32,7 @@ systems.
 
 Figure 1 shows an example of a project, the Mars Helicopter flight software, which was implemented with F´. The Mars
 Helicopter is the project, but has two deployments: one designated for the helicopter, and one designated for the base
-station allowing the.
+station.
 
 ## Deployments
 
@@ -58,7 +58,7 @@ A topology is a specific set of interconnected components that represent a syste
 each component, and list connections between the ports of the components.
 
 Projects contain one or more deployments that are closely related, as discussed above, while deployments contain a
-that represents the design of the system including, ports, and components needed for the specific use of F´.
+topology that represents the design of the system including, ports, and components needed for the specific use of F´.
 
 ## Conclusion
 

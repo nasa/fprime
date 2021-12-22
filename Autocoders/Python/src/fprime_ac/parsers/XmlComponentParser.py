@@ -99,7 +99,7 @@ class XmlComponentParser:
 
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
-        fd.close() #Close the file, which is only used for the parsing above
+        fd.close()  # Close the file, which is only used for the parsing above
 
         # Validate against current schema. if more are imported later in the process, they will be reevaluated
         relax_file_handler = open(ROOTDIR + self.Config.get("schema", "component"))
@@ -1438,7 +1438,7 @@ class Port:
 
 class CommandArg:
     """
-    Data container for an command argument
+    Data container for a command argument
     """
 
     def __init__(self, name, type, size=None, comment=None):

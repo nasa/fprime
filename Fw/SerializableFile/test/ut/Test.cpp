@@ -2,8 +2,8 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MallocAllocator.hpp>

@@ -1,9 +1,9 @@
 #include <Fw/Comp/QueuedComponentBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/EightyCharString.hpp>
 #include <FpConfig.hpp>
+#include <Os/QueueString.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Fw {
 
@@ -14,21 +14,23 @@ namespace Fw {
     QueuedComponentBase::~QueuedComponentBase() {
 
     }
-    
+
     void QueuedComponentBase::init(NATIVE_INT_TYPE instance) {
         PassiveComponentBase::init(instance);
     }
 
 #if FW_OBJECT_TO_STRING == 1 && FW_OBJECT_NAMES == 1
     void QueuedComponentBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-        (void)snprintf(buffer, size,"QueueComp: %s", this->m_objName);
-        buffer[size-1] = 0;
+        FW_ASSERT(size > 0);
+        if (snprintf(buffer, size,"QueueComp: %s", this->m_objName) < 0) {
+            buffer[0] = 0;
+        }
     }
 #endif
-    
+
     Os::Queue::QueueStatus QueuedComponentBase::createQueue(NATIVE_INT_TYPE depth, NATIVE_INT_TYPE msgSize) {
-        
-        Fw::EightyCharString queueName;
+
+        Os::QueueString queueName;
 #if FW_OBJECT_NAMES == 1
         queueName = this->m_objName;
 #else
@@ -39,11 +41,11 @@ namespace Fw {
     	return this->m_queue.create(queueName, depth, msgSize);
     }
 
-    NATIVE_INT_TYPE QueuedComponentBase::getNumMsgsDropped(void) {
+    NATIVE_INT_TYPE QueuedComponentBase::getNumMsgsDropped() {
         return this->m_msgsDropped;
     }
 
-    void QueuedComponentBase::incNumMsgDropped(void) {
+    void QueuedComponentBase::incNumMsgDropped() {
         this->m_msgsDropped++;
     }
 

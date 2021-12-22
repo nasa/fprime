@@ -4,9 +4,9 @@
 // 10/20/15, L.E. Day
 // 8 Apr 2016 Refactored: L. J. Reder
 
-\#include <string.h>
-\#include <stdio.h>
-\#include <assert.h>
+\#include <cstring>
+\#include <cstdio>
+\#include <cassert>
 \#include <FpConfig.hpp>
 \#include <DiebApps/Ff3TelemetryCollector/TlmPacketDefBase.hpp>
 \#include <DiebApps/Ff3TelemetryCollector/TlmPacket.hpp>
@@ -157,11 +157,11 @@ namespace TlmPacker
 
 }
 
-U32 tlmPacketDefBase::getMaxPacketBytes(void) {
+U32 tlmPacketDefBase::getMaxPacketBytes() {
     return MAX_PACKET_BYTES;
 }
 
-U32 tlmPacketDefBase::getMaxNumCycles(void) {
+U32 tlmPacketDefBase::getMaxNumCycles() {
     return NUM_CYCLES;
 }
 
@@ -198,12 +198,12 @@ U16 tlmPacketDefBase::getPacketToChannelMapping(I32 id)
     return missing_channel;
 }
 
-F32 tlmPacketDefBase::getDuration(void) {
+F32 tlmPacketDefBase::getDuration() {
     return $tlm_duration;
 }
 
 
-F32 tlmPacketDefBase::getPeriod(void) {
+F32 tlmPacketDefBase::getPeriod() {
     return $tlm_period;
 }
 
@@ -240,7 +240,7 @@ tlmPacketDefBase *tlmPacketDefBase::getPacketById(I32 packet_id)
     int i;
     for (i = 0; i < NUM_PACKETS; i++)
     {
-        if (packet_id == (I32)TlmPacker::packet_list[i]->getPacketId())
+        if (packet_id == static_cast<I32>(TlmPacker::packet_list[i]->getPacketId()))
         {
             return TlmPacker::packet_list[i];
         }
@@ -253,7 +253,7 @@ tlmPacketDefBase *tlmPacketDefBase::ingestPacket(I32 packet_id, const void *pack
 {
     for (int i = 0; i < NUM_PACKETS; i++)
     {
-    if (packet_id == (I32)TlmPacker::packet_list[i]->getPacketId())
+    if (packet_id == static_cast<I32>(TlmPacker::packet_list[i]->getPacketId()))
     {
         TlmPacker::packet_list[i]->ingestPacket(packet);
         return TlmPacker::packet_list[i];

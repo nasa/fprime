@@ -1,0 +1,26 @@
+Old Symbol
+New Symbol
+
+Drv::POLL_OK
+Drv::PollStatus::POLL_OK
+
+Drv::POLL_RETRY
+Drv::PollStatus::POLL_RETRY
+
+Drv::POLL_ERROR
+Drv::PollStatus::POLL_ERROR
+
+Drv::RECV_OK
+Drv::RecvStatus::RECV_OK
+
+Drv::RECV_ERROR
+Drv::RecvStatus::RECV_ERROR
+
+Drv::SEND_OK
+Drv::SendStatus::SEND_OK
+
+Drv::SEND_RETRY
+Drv::SendStatus::SEND_RETRY
+
+Drv::SEND_ERROR
+Drv::SendStatus::SEND_ERROR

@@ -1,14 +1,13 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Mixed.hpp
 // \author Canham/Bocchino
 // \brief  Test mixed immediate, relative, and absolute commands
 //
 // \copyright
-// Copyright (C) 2018 California Institute of Technology.
+// Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+// ======================================================================
 
 #ifndef Svc_Mixed_HPP
 #define Svc_Mixed_HPP
@@ -32,26 +31,26 @@ namespace Svc {
 
         //! Construct object Tester
         Tester(
-            const SequenceFiles::File::Format::t format = 
+            const SequenceFiles::File::Format::t format =
             SequenceFiles::File::Format::F_PRIME //!< The file format to use
         );
 
       public:
 
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
         // Tests
-        // ---------------------------------------------------------------------- 
+        // ----------------------------------------------------------------------
 
         //! Run an automatic sequence by command
-        void AutoByCommand(void);
+        void AutoByCommand();
 
         //! Validate a sequence file
-        void Validate(void);
+        void Validate();
 
       private:
 
         // ----------------------------------------------------------------------
-        // Private helper methods 
+        // Private helper methods
         // ----------------------------------------------------------------------
 
         //! Execute sequence commands for an automatic sequence

@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_component_exception.html" title="gov.nasa.jpl.componentaction.\lComponentException" alt="" coords="133,5,334,43"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_connector_exception.html" title="gov.nasa.jpl.componentaction.\lConnectorException" alt="" coords="133,67,334,106"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_exception.html" title="gov.nasa.jpl.componentaction.\lLoadIDException" alt="" coords="133,130,334,169"/>
-<area shape="rect" id="node5" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_port_exception.html" title="gov.nasa.jpl.componentaction.\lPortException" alt="" coords="133,193,334,231"/>
-</map>

@@ -8,8 +8,8 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <limits>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 
 namespace Svc {
@@ -39,14 +39,14 @@ namespace Svc {
     bool LogFile::write_to_log(const char *const buf, const U32 size)
     {
 
-        FW_ASSERT(buf != NULL);
+        FW_ASSERT(buf != nullptr);
 
         bool status = true;
 
         // Print to file if there is one, and given a valid size:
         if (this->m_openFile && size > 0) {
 
-            // Make sure we wont exceed the maximum size:
+            // Make sure we won't exceed the maximum size:
             // Note: second condition in if statement is true if there is overflow
             // in the addition below
             U32 projectedSize = this->m_currentFileSize + size;
@@ -57,7 +57,7 @@ namespace Svc {
                 this->m_openFile = false;
                 this->m_file.close();
             }
-            // Wont exceed max size, so write to file:
+            // Won't exceed max size, so write to file:
             else {
 
                 NATIVE_INT_TYPE writeSize = static_cast<NATIVE_INT_TYPE>(size);
@@ -79,7 +79,7 @@ namespace Svc {
 
     bool LogFile::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
-        FW_ASSERT(fileName != NULL);
+        FW_ASSERT(fileName != nullptr);
 
         // If there is already a previously open file then close it:
         if (this->m_openFile) {
@@ -88,17 +88,17 @@ namespace Svc {
         }
 
         // If file name is too large, return failure:
-        U32 fileNameSize = strnlen(fileName, Fw::EightyCharString::STRING_SIZE);
-        if (fileNameSize == Fw::EightyCharString::STRING_SIZE) {
+        U32 fileNameSize = strnlen(fileName, Fw::String::STRING_SIZE);
+        if (fileNameSize == Fw::String::STRING_SIZE) {
             return false;
         }
 
         U32 suffix = 0;
         U64 tmp;
-        char fileNameFinal[Fw::EightyCharString::STRING_SIZE];
+        char fileNameFinal[Fw::String::STRING_SIZE];
         (void) strncpy(fileNameFinal,fileName,
-                       Fw::EightyCharString::STRING_SIZE);
-        fileNameFinal[Fw::EightyCharString::STRING_SIZE-1] = 0;
+                       Fw::String::STRING_SIZE);
+        fileNameFinal[Fw::String::STRING_SIZE-1] = 0;
 
         // Check if file already exists, and if it does try to tack on a suffix.
         // Quit after 10 suffix addition tries (first try is w/ the original name).
@@ -107,7 +107,7 @@ namespace Svc {
 
             // If the file name was the max size, then can't append a suffix,
             // so just fail:
-            if (fileNameSize == (Fw::EightyCharString::STRING_SIZE-1)) {
+            if (fileNameSize == (Fw::String::STRING_SIZE-1)) {
                 return false;
             }
 
@@ -117,7 +117,7 @@ namespace Svc {
                 break;
             }
 
-            NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::EightyCharString::STRING_SIZE,
+            NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::String::STRING_SIZE,
                                             "%s%d",fileName,suffix);
 
             // If there was error, then just fail:
@@ -126,7 +126,7 @@ namespace Svc {
             }
 
             // There should never be truncation:
-            FW_ASSERT(stat < Fw::EightyCharString::STRING_SIZE);
+            FW_ASSERT(stat < Fw::String::STRING_SIZE);
 
             ++suffix;
         }
@@ -134,8 +134,8 @@ namespace Svc {
         // If failed trying to make a new file, just use the original file
         if (failedSuffix) {
             (void) strncpy(fileNameFinal,fileName,
-                           Fw::EightyCharString::STRING_SIZE);
-            fileNameFinal[Fw::EightyCharString::STRING_SIZE-1] = 0;
+                           Fw::String::STRING_SIZE);
+            fileNameFinal[Fw::String::STRING_SIZE-1] = 0;
         }
 
         // Open the file (using CREATE so that it truncates an already existing file):

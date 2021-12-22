@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ComPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Com.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ComPacket.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.cpp"
 )

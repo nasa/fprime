@@ -16,8 +16,9 @@
 #include "Os/Pthreads/BufferQueue.hpp"
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
+#include <new>
 
 // This is a priority queue implementation implemented using a stable max heap.
 // Elements pushed onto the queue will be popped off in priority order.
@@ -67,26 +68,33 @@ namespace Os {
 
   bool BufferQueue::initialize(NATIVE_UINT_TYPE depth, NATIVE_UINT_TYPE msgSize) {
     // Create the priority queue data structure on the heap:
-    MaxHeap* heap = new MaxHeap;
-    if (NULL == heap) {
+    MaxHeap* heap = new(std::nothrow) MaxHeap;
+    if (nullptr == heap) {
       return false;
     }
     if( !heap->create(depth) ) {
+      delete heap;
       return false;
     }
-    U8* data = new U8[depth*(sizeof(msgSize) + msgSize)];  
-    if (NULL == data) {
+    U8* data = new(std::nothrow) U8[depth*(sizeof(msgSize) + msgSize)];
+    if (nullptr == data) {
+      delete heap;
       return false;
     }
-    NATIVE_UINT_TYPE* indexes = new NATIVE_UINT_TYPE[depth];
-    if (NULL == indexes) {
+    NATIVE_UINT_TYPE* indexes = new(std::nothrow) NATIVE_UINT_TYPE[depth];
+    if (nullptr == indexes) {
+      delete heap;
+      delete[] data;
       return false;
     }
     for(NATIVE_UINT_TYPE ii = 0; ii < depth; ++ii) {
         indexes[ii] = getBufferIndex(ii);
     }
-    PriorityQueue* priorityQueue = new PriorityQueue;
-    if (NULL == priorityQueue) {
+    PriorityQueue* priorityQueue = new(std::nothrow) PriorityQueue;
+    if (nullptr == priorityQueue) {
+      delete heap;
+      delete[] data;
+      delete[] indexes;
       return false;
     }
     priorityQueue->heap = heap;
@@ -100,24 +108,24 @@ namespace Os {
 
   void BufferQueue::finalize() {
     PriorityQueue* pQueue = static_cast<PriorityQueue*>(this->queue);
-    if (NULL != pQueue)
+    if (nullptr != pQueue)
     {
       MaxHeap* heap = pQueue->heap;
-      if (NULL != heap) {
-        delete heap; 
+      if (nullptr != heap) {
+        delete heap;
       }
       U8* data = pQueue->data;
-      if (NULL != data) {
-        delete [] data; 
+      if (nullptr != data) {
+        delete [] data;
       }
       NATIVE_UINT_TYPE* indexes = pQueue->indexes;
-      if (NULL != indexes)
+      if (nullptr != indexes)
       {
-        delete [] indexes; 
+        delete [] indexes;
       }
-      delete pQueue; 
+      delete pQueue;
     }
-    this->queue = NULL;
+    this->queue = nullptr;
   }
 
   bool BufferQueue::enqueue(const U8* buffer, NATIVE_UINT_TYPE size, NATIVE_INT_TYPE priority) {
@@ -129,7 +137,7 @@ namespace Os {
 
     // Get an available data index:
     NATIVE_UINT_TYPE index = checkoutIndex(pQueue, this->depth);
-    
+
     // Insert the data into the heap:
     bool ret = heap->push(priority, index);
     FW_ASSERT(ret, ret);
@@ -139,7 +147,7 @@ namespace Os {
 
     return true;
   }
- 
+
   bool BufferQueue::dequeue(U8* buffer, NATIVE_UINT_TYPE& size, NATIVE_INT_TYPE &priority) {
 
     // Extract queue handle variables:

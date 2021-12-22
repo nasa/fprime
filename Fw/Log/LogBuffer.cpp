@@ -7,7 +7,7 @@ namespace Fw {
         SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_UINT_TYPE>(stat));
     }
-    
+
     LogBuffer::LogBuffer() {
     }
 
@@ -15,26 +15,30 @@ namespace Fw {
     }
 
     LogBuffer::LogBuffer(const LogBuffer& other) : Fw::SerializeBufferBase() {
-        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
+        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
 
-    const LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
-        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_data,other.getBuffLength());
+    LogBuffer& LogBuffer::operator=(const LogBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
     }
 
-    NATIVE_UINT_TYPE LogBuffer::getBuffCapacity(void) const {
-        return sizeof(this->m_data);
+    NATIVE_UINT_TYPE LogBuffer::getBuffCapacity() const {
+        return sizeof(this->m_bufferData);
     }
 
-    const U8* LogBuffer::getBuffAddr(void) const {
-        return this->m_data;
+    const U8* LogBuffer::getBuffAddr() const {
+        return this->m_bufferData;
     }
 
-    U8* LogBuffer::getBuffAddr(void) {
-        return this->m_data;
+    U8* LogBuffer::getBuffAddr() {
+        return this->m_bufferData;
     }
 
 }

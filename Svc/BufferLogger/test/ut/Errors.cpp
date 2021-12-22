@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "Errors.hpp"
 #include "Os/ValidatedFile.hpp"
@@ -20,12 +20,12 @@ namespace Svc {
   namespace Errors {
 
     void Tester ::
-      LogFileOpen(void)
+      LogFileOpen()
     {
       // Remove buf directory
       (void) system("rm -rf buf");
 
-      this->component.m_file.baseName = Fw::EightyCharString("LogFileOpen");
+      this->component.m_file.baseName = Fw::String("LogFileOpen");
 
       // Check initial state
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
@@ -81,12 +81,12 @@ namespace Svc {
     }
 
     void Tester ::
-      LogFileWrite(void)
+      LogFileWrite()
     {
       ASSERT_EQ(BufferLogger::File::Mode::CLOSED, this->component.m_file.mode);
       ASSERT_EVENTS_SIZE(0);
 
-      this->component.m_file.baseName = Fw::EightyCharString("LogFileWrite");
+      this->component.m_file.baseName = Fw::String("LogFileWrite");
 
       // Send data
       this->sendComBuffers(1);
@@ -98,7 +98,7 @@ namespace Svc {
       this->sendComBuffers(1);
 
       // Construct file name
-      Fw::EightyCharString fileName;
+      Fw::String fileName;
       fileName.format(
           "%s%s%s",
           this->component.m_file.prefix.toChar(),
@@ -162,9 +162,9 @@ namespace Svc {
     }
 
     void Tester ::
-      LogFileValidation(void)
+      LogFileValidation()
     {
-      this->component.m_file.baseName = Fw::EightyCharString("LogFileValidation");
+      this->component.m_file.baseName = Fw::String("LogFileValidation");
 
       // Send data
       this->sendComBuffers(1);
@@ -175,7 +175,7 @@ namespace Svc {
       this->dispatchOne();
       // Check events
       ASSERT_EVENTS_SIZE(2);
-      Fw::EightyCharString fileName;
+      Fw::String fileName;
       fileName.format(
           "%s%s%s",
           this->component.m_file.prefix.toChar(),
@@ -187,7 +187,7 @@ namespace Svc {
           fileName.toChar()
       );
       Os::ValidatedFile validatedFile(fileName.toChar());
-      const Fw::EightyCharString& hashFileName = validatedFile.getHashFileName();
+      const Fw::String& hashFileName = validatedFile.getHashFileName();
       ASSERT_EVENTS_BL_LogFileValidationError(
           0,
           hashFileName.toChar(),

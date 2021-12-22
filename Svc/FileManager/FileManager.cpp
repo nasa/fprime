@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -44,7 +44,7 @@ namespace Svc {
   }
 
   FileManager ::
-    ~FileManager(void)
+    ~FileManager()
   {
 
   }
@@ -235,14 +235,14 @@ namespace Svc {
     const char evalStr[] = "eval '%s' 1>>%s 2>&1\n";
     const U32 bufferSize = sizeof(evalStr) - 4 + 2 * FW_CMD_STRING_MAX_SIZE;
     char buffer[bufferSize];
-    
+
     NATIVE_INT_TYPE bytesCopied = snprintf(
         buffer, sizeof(buffer), evalStr,
         command.toChar(),
         logFileName.toChar()
     );
     FW_ASSERT(static_cast<NATIVE_UINT_TYPE>(bytesCopied) < sizeof(buffer));
-    
+
     const int status = system(buffer);
     return status;
   }
@@ -271,7 +271,7 @@ namespace Svc {
         opCode,
         cmdSeq,
         (status == Os::FileSystem::OP_OK) ?
-          Fw::COMMAND_OK : Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR
     );
   }
 

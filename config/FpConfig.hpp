@@ -12,10 +12,6 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 
-// A helper macro to declare errors in definitions of the constants
-#define FW_CONFIG_ERROR( condition, name )\
-    typedef char assert_failed_ ## name [ (condition) ? 1 : -1 ];
-
 // To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
 // these defaults will be overridden
 
@@ -67,11 +63,15 @@
 #endif
 
 #ifndef FwEventIdType
-#define FwEventIdType U32                   //!< Type representation for a event id
+#define FwEventIdType U32                   //!< Type representation for an event id
 #endif
 
 #ifndef FwPrmIdType
 #define FwPrmIdType U32                     //!< Type representation for a parameter id
+#endif
+
+#ifndef FwTlmPacketizeIdType
+#define FwTlmPacketizeIdType U16            //!< Packetized telemetry packet id
 #endif
 
 // How big the size of a buffer (or string) representation is
@@ -160,6 +160,7 @@
 #define FW_NO_ASSERT                        1   //!< Asserts turned off
 #define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
 #define FW_FILENAME_ASSERT                  3   //!< Uses the file name in the assert - image stores filenames
+#define FW_ASSERT_DFL_MSG_LEN               256 //!< Maximum assert message length when using the default assert handler
 
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT //!< Defines the type of assert used
@@ -231,7 +232,7 @@
 #define FW_CMD_STRING_MAX_SIZE           40   //!< Max character size of command string arguments
 #endif
 
-// Normally when a command is deserialized, the handler checks to see if there any any leftover
+// Normally when a command is deserialized, the handler checks to see if there are any leftover
 // bytes in the buffer. If there are, it assumes that the command was corrupted somehow since
 // the serialized size should match the serialized size of the argument list. In some cases,
 // command buffers are padded so the data can be larger than the serialized size of the command.
@@ -337,7 +338,7 @@ enum TimeBase {
 #define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 #endif
 
-// These setting configure whether or not the timebase and context values for the Fw::Time
+// These settings configure whether or not the timebase and context values for the Fw::Time
 // class are used. Some systems may not use or need those fields
 
 #ifndef FW_USE_TIME_BASE

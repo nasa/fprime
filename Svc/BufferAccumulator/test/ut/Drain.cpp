@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <string.h>
+#include <cstring>
 
 #include "Drain.hpp"
 
@@ -23,7 +23,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     void Tester ::
-      OK(void)
+      OK()
     {
       ASSERT_EQ(BufferAccumulator::DRAIN, this->component.mode);
       Fw::Buffer buffers[MAX_NUM_BUFFERS];

@@ -25,7 +25,7 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-    #include <string.h>
+    #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <sys/socket.h>
     #include <unistd.h>
@@ -34,7 +34,7 @@
     #error OS not supported for IP Socket Communications
 #endif
 
-#include <string.h>
+#include <cstring>
 
 namespace Drv {
 
@@ -78,7 +78,7 @@ SocketIpStatus TcpServerSocket::startup() {
     return SOCK_SUCCESS;
 }
 
-void TcpServerSocket::shutdown(void) {
+void TcpServerSocket::shutdown() {
     (void)::shutdown(this->m_base_fd, SHUT_RDWR);
     (void)::close(this->m_base_fd);
     m_base_fd = -1;
@@ -88,7 +88,7 @@ void TcpServerSocket::shutdown(void) {
 SocketIpStatus TcpServerSocket::openProtocol(NATIVE_INT_TYPE& fd) {
     NATIVE_INT_TYPE clientFd = -1;
     // TCP requires accepting on a the socket to get the client socket file descriptor.
-    if ((clientFd = ::accept(m_base_fd, NULL, NULL)) < 0) {
+    if ((clientFd = ::accept(m_base_fd, nullptr, nullptr)) < 0) {
         return SOCK_FAILED_TO_ACCEPT; // What we have here is a failure to communicate
     }
     // Setup client send timeouts

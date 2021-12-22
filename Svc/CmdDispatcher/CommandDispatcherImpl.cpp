@@ -8,7 +8,7 @@
 #include <Svc/CmdDispatcher/CommandDispatcherImpl.hpp>
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
     CommandDispatcherImpl::CommandDispatcherImpl(const char* name) :
@@ -54,38 +54,15 @@ namespace Svc {
         FW_ASSERT(slotFound,opCode);
     }
 
-    void CommandDispatcherImpl::compCmdStat_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, Fw::CommandResponse response) {
+    void CommandDispatcherImpl::compCmdStat_handler(NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdResponse &response) {
         // check response and log
-        if (Fw::COMMAND_OK == response) {
+        if (Fw::CmdResponse::OK == response.e) {
             this->log_COMMAND_OpCodeCompleted(opCode);
         } else {
             this->m_numCmdErrors++;
             this->tlmWrite_CommandErrors(this->m_numCmdErrors);
-            ErrorResponse evrResp = ERR_UNEXP;
-            switch (response) {
-                case Fw::COMMAND_INVALID_OPCODE:
-                    evrResp = ERR_INVALID_OPCODE;
-                    break;
-                case Fw::COMMAND_VALIDATION_ERROR:
-                    evrResp = ERR_VALIDATION_ERROR;
-                    break;
-                case Fw::COMMAND_FORMAT_ERROR:
-                    evrResp = ERR_FORMAT_ERROR;
-                    break;
-                case Fw::COMMAND_EXECUTION_ERROR:
-                    evrResp = ERR_EXECUTION_ERROR;
-                    break;
-                case Fw::COMMAND_BUSY:
-                    evrResp = ERR_BUSY;
-                    break;
-                case Fw::COMMAND_OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    evrResp = ERR_UNEXP;
-                    break;
-            }
-            this->log_WARNING_HI_OpCodeError(opCode,evrResp);
+            FW_ASSERT(response.e != Fw::CmdResponse::OK);
+            this->log_COMMAND_OpCodeError(opCode,response);
         }
         // look for command source
         NATIVE_INT_TYPE portToCall = -1;
@@ -118,30 +95,10 @@ namespace Svc {
         Fw::SerializeStatus stat = cmdPkt.deserialize(data);
 
         if (stat != Fw::FW_SERIALIZE_OK) {
-            CmdSerError serErr = ERR_UNEXP_STAT;
-            switch (stat) {
-                case Fw::FW_DESERIALIZE_BUFFER_EMPTY:
-                    serErr = ERR_BUFFER_TOO_SMALL;
-                    break;
-                case Fw::FW_DESERIALIZE_FORMAT_ERROR:
-                    serErr = ERR_BUFFER_FORMAT;
-                    break;
-                case Fw::FW_DESERIALIZE_SIZE_MISMATCH:
-                    serErr = ERR_SIZE_MISMATCH;
-                    break;
-                case Fw::FW_DESERIALIZE_TYPE_MISMATCH:
-                    serErr = ERR_TYPE_MISMATCH;
-                    break;
-                case Fw::FW_SERIALIZE_OK:
-                    FW_ASSERT(0); // should never get here
-                    break;
-                default:
-                    serErr = ERR_UNEXP_STAT;
-                    break;
-            }
+            Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
             this->log_WARNING_HI_MalformedCommand(serErr);
             if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
-                this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::COMMAND_VALIDATION_ERROR);
+                this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::VALIDATION_ERROR);
             }
             return;
         }
@@ -177,7 +134,7 @@ namespace Svc {
                 if (not pendingFound) {
                     this->log_WARNING_HI_TooManyCommands(cmdPkt.getOpCode());
                     if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
-                        this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::COMMAND_EXECUTION_ERROR);
+                        this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::EXECUTION_ERROR);
                     }
                     return;
                 }
@@ -196,7 +153,7 @@ namespace Svc {
         	this->m_numCmdErrors++;
         	// Fail command back to port, if connected
         	if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
-        	    this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::COMMAND_INVALID_OPCODE);
+        	    this->seqCmdStatus_out(portNum,cmdPkt.getOpCode(),context,Fw::CmdResponse::INVALID_OPCODE);
         	}
         	this->tlmWrite_CommandErrors(this->m_numCmdErrors);
         }
@@ -209,19 +166,19 @@ namespace Svc {
     	Fw::LogStringArg no_op_string("Hello, World!");
     	// Log event for NO_OP here.
     	this->log_ACTIVITY_HI_NoOpReceived();
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImpl::CMD_NO_OP_STRING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& arg1) {
 		Fw::LogStringArg msg(arg1.toChar());
     	// Echo the NO_OP_STRING args here.
     	this->log_ACTIVITY_HI_NoOpStringReceived(msg);
-    	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    	this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImpl::CMD_TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2, U8 arg3) {
     	this->log_ACTIVITY_HI_TestCmd1Args(arg1,arg2,arg3);
-    	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+    	this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImpl::CMD_CLEAR_TRACKING_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -229,7 +186,7 @@ namespace Svc {
         for (NATIVE_INT_TYPE entry = 0; entry < CMD_DISPATCHER_SEQUENCER_TABLE_SIZE; entry++) {
             this->m_sequenceTracker[entry].used = false;
         }
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void CommandDispatcherImpl::pingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {

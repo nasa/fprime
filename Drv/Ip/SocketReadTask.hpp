@@ -44,15 +44,15 @@ class SocketReadTask {
      * to the Os::Task::start call. cpuAffinity defaults to -1.
      *
      * \param name: name of the task
-     * \param priority: priority of the started task. See: Os::Task::start.
-     * \param stack: stack size provided to the task. See: Os::Task::start.
      * \param reconnect: automatically reconnect socket when closed. Default: true.
-     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start.
+     * \param priority: priority of the started task. See: Os::Task::start. Default: -1, not prioritized
+     * \param stack: stack size provided to the task. See: Os::Task::start. Default: -1, posix threads default
+     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: -1, don't care
      */
     void startSocketTask(const Fw::StringBase &name,
-                         const NATIVE_INT_TYPE priority,
-                         const NATIVE_INT_TYPE stack,
                          const bool reconnect = true,
+                         const NATIVE_INT_TYPE priority = -1,
+                         const NATIVE_INT_TYPE stack = -1,
                          const NATIVE_INT_TYPE cpuAffinity = -1);
 
     /**
@@ -83,7 +83,7 @@ class SocketReadTask {
      * Called to stop the socket read task. It is an error to call this before the thread has been started using the
      * startSocketTask call. This will stop the read task and close the client socket.
      */
-    void stopSocketTask(void);
+    void stopSocketTask();
 
     /**
      * \brief joins to the stopping read task to wait for it to close
@@ -112,7 +112,7 @@ class SocketReadTask {
     /**
      * \brief returns a buffer to fill with data
      *
-     * Gets a reference to the a buffer to fill with data. This allows the component to determine how to provide a
+     * Gets a reference to a buffer to fill with data. This allows the component to determine how to provide a
      * buffer and the socket read task just fills said buffer.
      *
      * Note: this must be implemented by the inheritor
@@ -122,7 +122,7 @@ class SocketReadTask {
     virtual Fw::Buffer getBuffer() = 0;
 
     /**
-     * \brief sends a buffer to filled with data
+     * \brief sends a buffer to be filled with data
      *
      * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
      * component how to send back the buffer.
@@ -132,6 +132,11 @@ class SocketReadTask {
      * \return Fw::Buffer filled with data to send out
      */
     virtual void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) = 0;
+
+    /**
+     * \brief called when the IPv4 system has been connected
+     */
+    virtual void connected() = 0;
 
     /**
      * \brief a task designed to read from the socket and output incoming data

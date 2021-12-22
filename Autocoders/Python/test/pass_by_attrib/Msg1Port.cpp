@@ -11,15 +11,15 @@ namespace Ports {
         class Msg1PortBuffer : public Fw::SerializeBufferBase {
 
             public:
-                I32 getBuffCapacity(void) const {
+                I32 getBuffCapacity() const {
                     return sizeof(m_buff);
                 }
 
-                U8* getBuffAddr(void) {
+                U8* getBuffAddr() {
                     return m_buff;
                 }
 
-                const U8* getBuffAddr(void) const {
+                const U8* getBuffAddr() const {
                     return m_buff;
                 }
 
@@ -30,12 +30,12 @@ namespace Ports {
         };
 
     }
-    InputMsg1Port::InputMsg1Port(void) :
+    InputMsg1Port::InputMsg1Port() :
         Fw::InputPortBase(),
         m_func(0) {
     }
 
-    void InputMsg1Port::init(void) {
+    void InputMsg1Port::init() {
         Fw::InputPortBase::init();
     }
 
@@ -83,12 +83,12 @@ namespace Ports {
     }
 #endif
 
-OutputMsg1Port::OutputMsg1Port(void) :
+OutputMsg1Port::OutputMsg1Port() :
             Fw::OutputPortBase(),
     m_port(0) {
 }
 
-void OutputMsg1Port::init(void) {
+void OutputMsg1Port::init() {
     Fw::OutputPortBase::init();
 }
 

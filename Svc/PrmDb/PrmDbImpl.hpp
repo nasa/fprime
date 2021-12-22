@@ -15,7 +15,7 @@
 
 #include <Svc/PrmDb/PrmDbComponentAc.hpp>
 #include <PrmDbImplCfg.hpp>
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Os/Mutex.hpp>
 
 namespace Svc {
@@ -57,7 +57,7 @@ namespace Svc {
             //!  The readFile function reads the set of parameters from the file passed in to
             //!  the constructor.
             //!
-            void readParamFile(void); // NOTE: Assumed to run at initialization time. No guard of data structure.
+            void readParamFile(); // NOTE: Assumed to run at initialization time. No guard of data structure.
 
             //!  \brief PrmDb destructor
             //!
@@ -108,9 +108,9 @@ namespace Svc {
             //!  This function clears all entries from the RAM database
             //!
 
-            void clearDb(void); //!< clear the parameter database
+            void clearDb(); //!< clear the parameter database
 
-            Fw::EightyCharString m_fileName; //!< filename for parameter storage
+            Fw::String m_fileName; //!< filename for parameter storage
 
             struct t_dbStruct {
                 bool used; //!< whether slot is being used

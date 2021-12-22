@@ -12,22 +12,22 @@ namespace Fw {
 
     class OutputPortBase : public PortBase {
         public:
-#if FW_PORT_SERIALIZATION == 1           
+#if FW_PORT_SERIALIZATION == 1
             void registerSerialPort(InputPortBase* port); // !< register a port for serialized calls
             SerializeStatus invokeSerial(SerializeBufferBase &buffer); // !< invoke the port with a serialized version of the call
-#endif            
+#endif
 
         protected:
-            
+
             OutputPortBase(); // constructor
             virtual ~OutputPortBase(); // destructor
-            virtual void init(void);
-            
+            virtual void init();
+
 #if FW_OBJECT_TO_STRING == 1
             virtual void toString(char* str, NATIVE_INT_TYPE size);
 #endif
 
-#if FW_PORT_SERIALIZATION == 1           
+#if FW_PORT_SERIALIZATION == 1
             Fw::InputPortBase* m_serPort; // !< pointer to port for serialized calls
 #endif
         private:

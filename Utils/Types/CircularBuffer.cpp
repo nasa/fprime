@@ -18,7 +18,7 @@
     #include <Os/Log.hpp>
 #endif
 
-#include <stdio.h>
+#include <cstdio>
 
 
 namespace Types {

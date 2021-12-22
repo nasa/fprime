@@ -1,63 +1,55 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Os/QueueString.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Os {
 
-    QueueString::QueueString(const char* src) : StringBase()  {
-        this->copyBuff(src,sizeof(this->m_buf));
+    QueueString::QueueString(const char* src) : StringBase() {
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     QueueString::QueueString(const StringBase& src) : StringBase()  {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     QueueString::QueueString(const QueueString& src)  : StringBase() {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    QueueString::QueueString(void) : StringBase()  {
+    QueueString::QueueString() : StringBase()  {
         this->m_buf[0] = 0;
     }
 
-    QueueString::~QueueString(void) {
-    }
+    QueueString& QueueString::operator=(const QueueString& other) {
+        if(this == &other) {
+            return *this;
+        }
 
-    const QueueString& QueueString::operator=(const QueueString& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
+    QueueString& QueueString::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
 
-    NATIVE_UINT_TYPE QueueString::length(void) const {
-        return strnlen(this->m_buf,sizeof(this->m_buf));
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
     }
 
-    const char* QueueString::toChar(void) const {
+    QueueString& QueueString::operator=(const char* other) {
+        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        return *this;
+    }
+
+    QueueString::~QueueString() {
+    }
+
+    const char* QueueString::toChar() const {
         return this->m_buf;
     }
 
-    void QueueString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
-    }
-    
-    NATIVE_UINT_TYPE QueueString::getCapacity(void) const {
+    NATIVE_UINT_TYPE QueueString::getCapacity() const {
         return FW_QUEUE_NAME_MAX_SIZE;
     }
-
-    void QueueString::terminate(NATIVE_UINT_TYPE size) {
-        // null terminate the string
-        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
-    }
-    
 }

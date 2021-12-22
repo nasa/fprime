@@ -32,20 +32,16 @@ namespace ${namespace} {
             ${argname}String(const char* src); //!< char buffer constructor
             ${argname}String(const Fw::StringBase& src); //!< other string constructor
             ${argname}String(const ${argname}String& src); //!< same type string constructor
-            ${argname}String(void); //!< default constructor
-            virtual ~${argname}String(void); //!< destructor
-            const char* toChar(void) const; //!< return internal buffer
-            NATIVE_UINT_TYPE length(void) const; //!< length of string
+            ${argname}String(); //!< default constructor
+            ${argname}String& operator=(const ${argname}String& other); //!< assignment operator
+            ${argname}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
+            ${argname}String& operator=(const char* other); //!< char* assignment operator
+            ~${argname}String(); //!< destructor
 
-            const ${argname}String& operator=(const ${argname}String& other); //!< equal operator for other strings
-
-            Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const; //!< deserialization method
-            Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer); //!< serialization method
+            const char* toChar() const; //!< return internal buffer
+            NATIVE_UINT_TYPE getCapacity() const;
 
         private:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size); //!< copy buffer, overwriting old string
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
 
             char m_buf[${size}]; //!< buffer for string
     };
@@ -66,9 +62,9 @@ namespace ${namespace} {
             virtual ~${argname}Buffer(); //!< destructor
             const ${argname}Buffer& operator=(const ${argname}Buffer& other); //!< equal operator
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; //!< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void); //!< returns address of internal buffer
-            const U8* getBuffAddr(void) const; //!< returns address of internal buffer, const version
+            NATIVE_UINT_TYPE getBuffCapacity() const; //!< returns capacity, not current size, of buffer
+            U8* getBuffAddr(); //!< returns address of internal buffer
+            const U8* getBuffAddr() const; //!< returns address of internal buffer, const version
 
         private:
             U8 m_data[${size}]; //!< data buffer

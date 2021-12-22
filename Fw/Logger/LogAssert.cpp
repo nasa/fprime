@@ -67,11 +67,11 @@ namespace Fw {
 
     }
 
-    void LogAssertHook::printAssert(const I8* msg) {
+    void LogAssertHook::printAssert(const CHAR* msg) {
         // do nothing since reportAssert() sends message
     }
 
-    void LogAssertHook::doAssert(void) {
+    void LogAssertHook::doAssert() {
     }
 
 } // namespace Fw

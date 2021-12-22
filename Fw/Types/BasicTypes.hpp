@@ -49,13 +49,13 @@ typedef unsigned int NATIVE_UINT_TYPE; //!< native unsigned integer type declara
  #else
   #define POINTER_CAST U8
  #endif
-#elif __i386 == 1 // GCC 4.1.2
+#elif defined (__i386) && __i386 == 1 // GCC 4.1.2
   #define POINTER_CAST U32
-#elif __x86_64 == 1 // GCC 4.1.2
+#elif defined (__x86_64) && __x86_64 == 1 // GCC 4.1.2
   #define POINTER_CAST U64
-#elif CPU == PPC604 // VxWorks 6.7 RAD750
+#elif defined (CPU) && defined (PPC604) && CPU == PPC604 // VxWorks 6.7 RAD750
   #define POINTER_CAST U32
-#elif CPU == SPARC
+#elif defined (CPU) && defined(SPARC) && CPU == SPARC
   #define POINTER_CAST U32
 #else
  #error Cannot get size of pointer cast!
@@ -90,15 +90,13 @@ typedef U8              BYTE; //!< byte type
  typedef int64_t        I64; //!< 64-bit signed integer
  typedef uint64_t       U64; //!< 64-bit unsigned integer
 #endif
- 
+
 typedef float   F32; //!< 32-bit floating point
 #if FW_HAS_F64
  typedef double  F64; //!< 64-bit floating point
 #endif
 
-#ifndef NULL
-#define NULL  (0)  //!< NULL
-#endif
+typedef char CHAR;
 
 #define FW_NUM_ARRAY_ELEMENTS(a)  (sizeof(a)/sizeof((a)[0])) //!< number of elements in an array
 
@@ -116,11 +114,6 @@ typedef float   F32; //!< 32-bit floating point
 
 #ifndef PRIVATE
 #define PRIVATE private //!< overridable private for unit testing
-#endif
-
-// Not ideal, but VxWorks doesn't have strnlen
-#ifdef __VXWORKS__
-NATIVE_INT_TYPE strnlen(const char *s, NATIVE_INT_TYPE maxlen);
 #endif
 
 #ifdef __cplusplus

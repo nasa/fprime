@@ -21,7 +21,7 @@
     *   The file tst_crc.c contains a small  sample  program  which     *
     *   demonstrates  the  use of the functions for calculating the     *
     *   CRC-CCITT, CRC-16 and CRC-32 values of data. The file  cal-     *
-    *   culates  the three different CRC's for a file who's name is     *
+    *   culates  the three different CRC's for a file whose name is     *
     *   either provided at the command  line,  or  typed  in  right     *
     *   after the program has started.                                  *
     *                                                                   *
@@ -218,7 +218,7 @@ void main( int argc, char *argv[] ) {
             prev_byte = 0;
             fp        = fopen( argv[a], "rb" );
 
-            if ( fp != NULL ) {
+            if ( fp != nullptr ) {
 
                 while( ( ch=fgetc( fp ) ) != EOF ) {
 

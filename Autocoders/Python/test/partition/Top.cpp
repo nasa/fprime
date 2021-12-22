@@ -10,7 +10,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
@@ -29,12 +29,12 @@ Partition::PartitionImpl *partitionComp_ptr = 0;
 
 
 extern "C" {
-	void dumparch(void);
+	void dumparch();
 	void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
 	simpleRegPtr->dump();
 }
 
@@ -43,7 +43,7 @@ void dumpobj(const char* objName) {
 }
 
 
-void constructArchitecture(void) {
+void constructArchitecture() {
 
 	Fw::PortBase::setTrace(true);
 
@@ -66,8 +66,8 @@ void constructArchitecture(void) {
 	partitionComp_ptr->getoutputPort2SerializeOutputPort()->registerSerialPort(hueyComp_ptr->getinputPort3Msg3InputPort());
 
 	// Active component startup
-	// start(identifier, stack size, priority)
-	hueyComp_ptr->start(0, 10 * 1024, 100);
+	// start()
+	hueyComp_ptr->start();
 
 	dumparch();
 
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])  {
 	// Ask for input to huey or duey here.
 	char in[80];
 	U32 cmd;
-	Fw::EightyCharString *str;
+	Fw::String *str;
 	char str2[80];
 	//
 	while ( strcmp(in,"quit") != 0) {
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])  {
 			cout << "Enter short string: ";
 			cin >> str2;
 			cout << "The string 2 is: " << str2 << endl;
-			str = new Fw::EightyCharString(str2);
+			str = new Fw::String(str2);
 			cout << "hueyComp_ptr->getexternInputPort1InputPort()->msg_in(" << cmd << "," << str2 << ")" << endl;
 			hueyComp_ptr->getexternInputPort1Msg1InputPort()->msg_in(cmd,*str);
 		} else if (in[0] == '3') {

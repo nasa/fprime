@@ -10,38 +10,31 @@ namespace Fw {
 
     class TlmString : public Fw::StringBase {
         public:
-        
+
             enum {
                 SERIALIZED_TYPE_ID = FW_TYPEID_TLM_STR,
                 SERIALIZED_SIZE = FW_TLM_STRING_MAX_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of size word
             };
-        
-            TlmString(const char* src);
-            TlmString(const StringBase& src);
-            TlmString(const TlmString& src);
-            TlmString(void);
-            ~TlmString(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
-            void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
-            
-            const TlmString& operator=(const TlmString& other); //!< equal operator for other strings
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
-            
-#if FW_SERIALIZABLE_TO_STRING
-            void toString(StringBase& text) const;
-#endif
-        PRIVATE:
-            void copyBuff(const char* buff, NATIVE_UINT_TYPE size);
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
+            TlmString();
+            TlmString(const TlmString& src); //!< TlmString string constructor
+            TlmString(const StringBase& src); //!< other string constructor
+            TlmString(const char* src); //!< char* source constructor
+            TlmString& operator=(const TlmString& other); //!< assignment operator
+            TlmString& operator=(const StringBase& other); //!< other string assignment operator
+            TlmString& operator=(const char* other); //!< char* assignment operator
+            ~TlmString();
 
+            const char* toChar() const override;
+            NATIVE_UINT_TYPE getCapacity() const override;
+
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; //!< serialization function
+            SerializeStatus serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLen) const override; //!< serialization function
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override; //!< deserialization function
+
+        private:
             char m_buf[FW_TLM_STRING_MAX_SIZE];
-            NATIVE_UINT_TYPE m_maxSer;
     };
-
 }
 
 #endif

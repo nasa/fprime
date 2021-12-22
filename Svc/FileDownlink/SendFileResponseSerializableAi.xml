@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<serializable name="SendFileResponse" namespace="Svc">
-    <import_enum_type>Svc/FileDownlink/SendFileStatusEnumAi.xml</import_enum_type>
-    <members>
-        <member type="Svc::SendFileStatus" name="status" format="%s"/>
-        <member type="U32" name="context" format="%d" />
-    </members>
-</serializable>

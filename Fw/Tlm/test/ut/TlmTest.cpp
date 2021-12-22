@@ -8,7 +8,7 @@ TEST(FwTlmTest,TlmPacketSerialize) {
 
     Fw::TlmPacket pktIn;
     Fw::TlmBuffer buffIn;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize((U32)12));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffIn.serialize(static_cast<U32>(12)));
     Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
 
     pktIn.setId(10);
@@ -24,13 +24,13 @@ TEST(FwTlmTest,TlmPacketSerialize) {
     Fw::Time timeOut(TB_WORKSTATION_TIME,10,11);
 
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,comBuff.deserialize(pktOut));
-    ASSERT_EQ(pktOut.getId(),(FwChanIdType)10);
+    ASSERT_EQ(pktOut.getId(),10u);
     ASSERT_EQ(pktOut.getTimeTag(),timeOut);
     U32 valOut = 0;
     buffOut = pktOut.getTlmBuffer();
     buffOut.resetDeser();
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,buffOut.deserialize(valOut));
-    ASSERT_EQ(valOut,(U32)12);
+    ASSERT_EQ(valOut,12u);
 
 }
 

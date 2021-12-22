@@ -1,1 +1,0 @@
-`nosetests --where=. app1 app2 cnt_only active_tester command1_b -v`

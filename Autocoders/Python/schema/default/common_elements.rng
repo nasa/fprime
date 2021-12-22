@@ -16,7 +16,6 @@
         <a:documentation>Defines how the variable is being passed.</a:documentation>
         <choice>
             <value>reference</value>
-            <value>value</value>
             <value>pointer</value>
         </choice>
     </define>
@@ -118,7 +117,7 @@
     </define>
 
     <define name="id_define">
-        <a:documentation>Defines a ID data type. Acceptable values formats include "10" , "0xA" , "xA".
+        <a:documentation>Defines an ID data type. Acceptable values formats include "10" , "0xA" , "xA".
         </a:documentation>
         <data type="string">
             <param name="pattern">((0?x[0-9A-Fa-f]+)|\d+)</param>
@@ -276,18 +275,24 @@
         <!-- This is a common choice within many elements. -->
 
         <choice>
-            <!-- Choice one: Type = string and size is also an attribute -->
+            <!-- Choice one: Type = string or buffer and size is also an attribute -->
             <group>
                 <choice>
                     <!-- Choice between 'type' and 'data_type'. This is to preserve compatibility with the telemetry channels -->
                     <attribute name="type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
-                        <value>string</value>
+                        <choice>
+                            <value>string</value>
+                            <value>buffer</value>
+                        </choice>
                     </attribute>
 
                     <attribute name="data_type">
                         <a:documentation>The type of data being passed through the argument.</a:documentation>
-                        <value>string</value>
+                        <choice>
+                            <value>string</value>
+                            <value>buffer</value>
+                        </choice>
                     </attribute>
                 </choice>
 
@@ -295,6 +300,13 @@
                     <a:documentation>The size of the argument.</a:documentation>
                     <data type="nonNegativeInteger"/>
                 </attribute>
+
+                <optional>
+                    <attribute name="array_size">
+                        <a:documentation>The length of the array.</a:documentation>
+                        <data type="nonNegativeInteger"/>
+                    </attribute>
+                </optional>
             </group>
 
             <!--Choice two: Type = ENUM and Enum element inside block -->
@@ -347,8 +359,8 @@
                 </choice>
 
                 <optional>
-                    <attribute name="size">
-                        <a:documentation>The size of the argument.</a:documentation>
+                    <attribute name="array_size">
+                        <a:documentation>The length of the array.</a:documentation>
                         <data type="nonNegativeInteger"/>
                     </attribute>
                 </optional>

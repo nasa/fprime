@@ -6,7 +6,7 @@
 The `Svc::TlmChan` Component is used to store telemetry values written by other components. The values are stored in serialized form. 
 The data is stored as a set of telemetry channels in a table. 
 The data can be individually read back or periodically pushed to another component for transporting out of the system. 
-`Svc::TlmChan` is a implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
+`Svc::TlmChan` is an implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
 
 ## 2. Requirements
 
@@ -58,7 +58,7 @@ This diagram shows the scenario where telemetry packets are generated for an ext
 
 #### 3.3.2 Telemetry Database Option
 
-This diagram shows the scenario where telemetry packets are stored an retrieved as a database:
+This diagram shows the scenario where telemetry packets are stored and retrieved as a database:
 
 ![External User Scenario](img/DatabaseScenario.jpg) 
 
@@ -85,14 +85,7 @@ Unit Test Checklist  | [Link](Checklist_Unit_Test.xlsx)
 
 ## 6. Unit Testing
 
-File | Contents
----- | --------
-Unit Test Output | [Link](../test/ut/output/test.txt)
-Coverage - TlmChanImpl.cpp | [Link](../test/ut/output/TlmChanImpl.cpp.gcov)
-Coverage - TlmChanImplGet.cpp | [Link](../test/ut/output/TlmChanImplGet.cpp.gcov)
-Coverage - TlmChanImplRecv.cpp | [Link](../test/ut/output/TlmChanImplRecv.cpp.gcov)
-Coverage - TlmChanImplTask.cpp | [Link](../test/ut/output/TlmChanImplTask.cpp.gcov)
-Coverage - TlmChanComponentAc.cpp | [Link](../test/ut/output/TlmChanComponentAc.cpp.gcov)
+To see unit test coverage run fprime-util check --coverage
 
 ## 7. Change Log
 

@@ -1,78 +1,55 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Prm/PrmString.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Fw {
 
     ParamString::ParamString(const char* src) : StringBase()  {
-        this->copyBuff(src,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
     ParamString::ParamString(const StringBase& src) : StringBase()  {
-        this->copyBuff(src.toChar(),this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
     ParamString::ParamString(const ParamString& src) : StringBase()  {
-        this->copyBuff(src.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    ParamString::ParamString(void) : StringBase()  {
+    ParamString::ParamString() : StringBase()  {
         this->m_buf[0] = 0;
     }
 
-    ParamString::~ParamString(void) {
-    }
-
-    NATIVE_UINT_TYPE ParamString::length(void) const {
-        return strnlen(this->m_buf,sizeof(this->m_buf));
-    }
-
-    const char* ParamString::toChar(void) const {
-        return this->m_buf;
-    }
-
-    void ParamString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
+    ParamString& ParamString::operator=(const ParamString& other) {
+        if(this == &other) {
+            return *this;
         }
-    }
-    
-    SerializeStatus ParamString::serialize(SerializeBufferBase& buffer) const {
-        NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
-        // serialize string as buffer
-        return buffer.serialize((U8*)this->m_buf,strSize);
-    }
-    
-    SerializeStatus ParamString::deserialize(SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
-        // deserialize string
-        SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
-        // make sure it is null-terminated
-        this->terminate(maxSize);
 
-        return stat;
-    }
-
-    NATIVE_UINT_TYPE ParamString::getCapacity(void) const {
-        return FW_PARAM_STRING_MAX_SIZE;
-    }
-
-    void ParamString::terminate(NATIVE_UINT_TYPE size) {
-        // null terminate the string
-        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
-    }
-
-    const ParamString& ParamString::operator=(const ParamString& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
+    ParamString& ParamString::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
+    }
+
+    ParamString& ParamString::operator=(const char* other) {
+        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        return *this;
+    }
+
+    ParamString::~ParamString() {
+    }
+
+    const char* ParamString::toChar() const {
+        return this->m_buf;
+    }
+
+    NATIVE_UINT_TYPE ParamString::getCapacity() const {
+        return FW_PARAM_STRING_MAX_SIZE;
+    }
 }

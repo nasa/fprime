@@ -57,7 +57,7 @@ namespace Svc {
             //!
             //!  The destructor of the class is empty
 
-            ~ActiveRateGroupImpl(void);
+            ~ActiveRateGroupImpl();
 
         PRIVATE:
 
@@ -94,10 +94,10 @@ namespace Svc {
             //!  \brief Task preamble
             //!
             //!  This method is called prior to entering the message loop.
-            //!  It issues and event indicating that the task has started.
+            //!  It issues an event indicating that the task has started.
             //!
 
-            void preamble(void);
+            void preamble();
 
             U32 m_cycles; //!< cycles executed
             U32 m_maxTime; //!< maximum execution time in microseconds

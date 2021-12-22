@@ -6,8 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/SerialReadPortAi.xml"
-	"${CMAKE_CURRENT_LIST_DIR}/SerialWritePortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SerialDriverPorts.fpp"
 )
 
 register_fprime_module()

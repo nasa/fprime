@@ -10,14 +10,14 @@ namespace Duck {
 
         // Only called by derived class
         DuckImpl(const char* compName);
-        ~DuckImpl(void);
+        ~DuckImpl();
 
     private:
         // downcall for input ports
-        I32 externInputPort1_Msg1_handler(U32 cmd, Fw::EightyCharString str);
+        I32 externInputPort1_Msg1_handler(U32 cmd, Fw::String str);
         I32 externInputPort3_Msg3_handler(U32 cmd);
-        I32 inputPort1_Msg1_handler(U32 cmd, Fw::EightyCharString str);
-        I32 inputPort2_Msg1_handler(U32 cmd, Fw::EightyCharString str);
+        I32 inputPort1_Msg1_handler(U32 cmd, Fw::String str);
+        I32 inputPort2_Msg1_handler(U32 cmd, Fw::String str);
         I32 inputPort3_Msg3_handler(U32 cmd);
     };
 };

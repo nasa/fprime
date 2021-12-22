@@ -6,7 +6,7 @@
 #ifndef SVCLOGFILE_HPP_
 #define SVCLOGFILE_HPP_
 
-#include <Fw/Types/EightyCharString.hpp>
+#include <Fw/Types/String.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 
@@ -55,7 +55,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         // The name of the file to text logs to:
-        Fw::EightyCharString m_fileName;
+        Fw::String m_fileName;
 
         // The file to write text logs to:
         Os::File m_file;
@@ -63,7 +63,7 @@ namespace Svc {
         // The max size of the text log file:
         U32 m_maxFileSize;
 
-        // True if there is currently a open file to write text logs to:
+        // True if there is currently an open file to write text logs to:
         bool m_openFile;
 
         // Current size of the file:

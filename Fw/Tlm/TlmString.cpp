@@ -1,74 +1,81 @@
-#include <Fw/Types/StringType.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Tlm/TlmString.hpp>
-#include <Fw/Types/Assert.hpp>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Fw {
 
-    TlmString::TlmString(const char* src) :  StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src,sizeof(this->m_buf));
+    TlmString::TlmString(const char* src) :  StringBase() {
+        Fw::StringUtils::string_copy(this->m_buf, src, sizeof(this->m_buf));
     }
 
-    TlmString::TlmString(const StringBase& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.toChar(),sizeof(this->m_buf));
+    TlmString::TlmString(const StringBase& src) : StringBase() {
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    TlmString::TlmString(const TlmString& src) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
-        this->copyBuff(src.m_buf,sizeof(this->m_buf));
+    TlmString::TlmString(const TlmString& src) : StringBase() {
+        Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    TlmString::TlmString(void) : StringBase(), m_maxSer(FW_TLM_STRING_MAX_SIZE) {
+    TlmString::TlmString() : StringBase() {
         this->m_buf[0] = 0;
     }
 
-    TlmString::~TlmString(void) {
+    TlmString& TlmString::operator=(const TlmString& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
     }
 
-    NATIVE_UINT_TYPE TlmString::length(void) const {
-        return strnlen(this->m_buf,sizeof(this->m_buf));
+    TlmString& TlmString::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
+        return *this;
     }
 
-    const char* TlmString::toChar(void) const {
+    TlmString& TlmString::operator=(const char* other) {
+        Fw::StringUtils::string_copy(this->m_buf, other, sizeof(this->m_buf));
+        return *this;
+    }
+
+    TlmString::~TlmString() {
+    }
+
+    const char* TlmString::toChar() const {
         return this->m_buf;
     }
 
-    void TlmString::copyBuff(const char* buff, NATIVE_UINT_TYPE size) {
-        FW_ASSERT(buff);
-        // check for self copy
-        if (buff != this->m_buf) {
-            (void)strncpy(this->m_buf,buff,size);
-            // NULL terminate
-            this->terminate(sizeof(this->m_buf));
-        }
+    NATIVE_UINT_TYPE TlmString::getCapacity() const {
+        return FW_TLM_STRING_MAX_SIZE;
     }
-    
+
     SerializeStatus TlmString::serialize(SerializeBufferBase& buffer) const {
-        NATIVE_UINT_TYPE strSize = strnlen(this->m_buf,sizeof(this->m_buf));
+        return this->serialize(buffer, this->length());
+    }
+
+    SerializeStatus TlmString::serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLength) const {
+        NATIVE_INT_TYPE len = FW_MIN(maxLength,this->length());
 #if FW_AMPCS_COMPATIBLE
-        // serialize string in AMPC compatible way
-        // AMPC requires an 8-bit argument size value before the string
-
-        // Omit the null terminator character because AMPCS does not like
-        // \0 in its strings. So subtract 1 from strSize
-        strSize--;
-
-        // serialize 8-bit size
-        SerializeStatus stat = buffer.serialize(static_cast<U8>(strSize));
+        // serialize 8-bit size with null terminator removed
+        U8 strSize = len - 1;
+        SerializeStatus stat = buffer.serialize(strSize);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
-        return buffer.serialize((U8*)this->m_buf,strSize,true);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),strSize, true);
 #else
-        return buffer.serialize((U8*)this->m_buf,strSize);
+        return buffer.serialize(reinterpret_cast<const U8*>(this->toChar()),len);
 #endif
     }
-    
+
     SerializeStatus TlmString::deserialize(SerializeBufferBase& buffer) {
-        NATIVE_UINT_TYPE maxSize = sizeof(this->m_buf);
-        // deserialize string
+        NATIVE_UINT_TYPE maxSize = this->getCapacity() - 1;
+        CHAR* raw = const_cast<CHAR*>(this->toChar());
+
 #if FW_AMPCS_COMPATIBLE
         // AMPCS encodes 8-bit string size
         U8 strSize;
@@ -76,44 +83,18 @@ namespace Fw {
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
-        NATIVE_UINT_TYPE buffSize = strSize;
-        // To make sure there is space when we add the null terminator
-        // which was omitted in the serialization of this buffer
-        strSize++;
-        stat = buffer.deserialize((U8*)this->m_buf,buffSize,true);
-        this->m_buf[strSize-1] = 0;
+        strSize = FW_MIN(maxSize,strSize);
+        stat = buffer.deserialize(reinterpret_cast<U8*>(raw),strSize,true);
+        // AMPCS Strings not null terminated
+        if(strSize < maxSize) {
+            raw[strSize] = 0;
+        }
 #else
-        // deserialize string
-        SerializeStatus stat = buffer.deserialize((U8*)this->m_buf,maxSize);
+        SerializeStatus stat = buffer.deserialize(reinterpret_cast<U8*>(raw),maxSize);
 #endif
-        // make sure it is null-terminated
-        this->terminate(maxSize);
 
+        // Null terminate deserialized string
+        raw[maxSize] = 0;
         return stat;
     }
-
-    void TlmString::setMaxSerialize(NATIVE_UINT_TYPE size) {
-        this->m_maxSer = FW_MIN(size,FW_TLM_STRING_MAX_SIZE);
-    }
-
-    NATIVE_UINT_TYPE TlmString::getCapacity(void) const {
-        return FW_TLM_STRING_MAX_SIZE;
-    }
-    
-    void TlmString::terminate(NATIVE_UINT_TYPE size) {
-        // null terminate the string
-        this->m_buf[size < sizeof(this->m_buf)?size:sizeof(this->m_buf)-1] = 0;
-    }
-
-    const TlmString& TlmString::operator=(const TlmString& other) {
-        this->copyBuff(other.m_buf,this->getCapacity());
-        return *this;
-    }
-
-
-#if FW_SERIALIZABLE_TO_STRING
-    void TlmString::toString(StringBase& text) const {
-        text = this->m_buf;
-    }
-#endif    
 }
