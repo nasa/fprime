@@ -1,0 +1,4 @@
+#!/bin/sh
+OUTFILE="$1"
+shift
+fpp-locate-defs "$@" > "${OUTFILE}"
