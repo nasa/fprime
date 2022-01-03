@@ -4,7 +4,7 @@ When contributing to F´ it is important to understand the style guidelines that
 provided by the team. The information in this guide may not be complete and will evolve as the project continues. When
 unclear, follow reasonable conventions for the language at-hand.
 
-**Note:** these guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed/
+**Note:** these guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed.
 
 ## F´ and Flight Software
 
@@ -17,9 +17,10 @@ cost of readability or maintainability and that can mean simpler solutions are m
 ## C++
 
 C++ in F´ is written primarily following the [embedded C++](https://en.wikipedia.org/wiki/Embedded_C%2B%2B) style with
-some notable deviations. C++ is written under the [C++11 standard](https://en.cppreference.com/w/cpp/11), however; some
-C++11 features are avoided to support some incomplete C++11 implementations. Code format is based on the clang-format
-Chromium style.  There are also a number of "rules-of-thumb" that C++ implementors should know.
+some notable deviations. In addition, F´ follows the JPL Coding Standards as adapted from C. C++ is written under the
+[C++11 standard](https://en.cppreference.com/w/cpp/11), however; some C++11 features are avoided to support some
+incomplete C++11 implementations. Code format is based on the clang-format Chromium style.  There are also a number of
+"rules-of-thumb" that C++ implementors should know.
 
 ### Embedded C++ Usage
 
@@ -27,15 +28,22 @@ F´ is written with a modified embedded C++ style. Please note, unit test implem
 requirements as they run off-platform in a development context. The core points of embedded C++ that F´ uses are:
 
 1. No exceptions, code must compile with `-fno-exceptions`
-2. No uses of templates, nor the Standard Template Library
+2. No uses of templates nor the Standard Template Library
 3. No typeid or run-time type information
-4. **Use** `static_cast`, `reinterpret_cast`, and `const_cast` where apparent. Avoid dangerous C-style and
-`dynamic_cast` casting.
-5. Limited use of multiple-inheritance and virtual base classes are permitted. See rules of thumb.
+
+F´ has a few rules that deviate from the embedded C++ standard. This is done to increase safety, increase readability,
+and enable modern C++ development. These deviations are:
+
+1. Use namespaces to reduce naming conflicts.
+2. Use `std::numeric_limits` for mix/max values. Template implementations of `std::numeric_limits` have been approved.
+3. **Use** `static_cast`, `reinterpret_cast`, and `const_cast` instead of dangerous C-style and `dynamic_cast` casting.
+4. Limited use of multiple-inheritance and virtual base classes are permitted. See rules of thumb.
+
+### JPL Coding Standards
 
 There are additional rules from the software's heritage as NASA/JPL Flight Software (see 
 [Power of 10 Rules](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code) ) and the
-framework itself. The guidelines are summarized below.
+framework itself. The guidelines were adapted from C guidelines and are summarized below:
 
 1. No recursion; No GOTOs
 2. Loops must have a fixed-bound
@@ -46,6 +54,8 @@ framework itself. The guidelines are summarized below.
 7. Avoid the preprocessor and especially complex uses of the preprocessor
 8. Prefer `Fw` and `Os` implementations. e.g. use `FW_ASSERT` and `Os::Mutex` over `cassert` and `std::mutex`
 9. Compile without warnings, errors, and static analysis failures (e.g. pass continuous integration)
+10. Do not use `Os::Task::delay` to synchronize between threads
+11. Explicit enumeration values should be specified for all values or none at all
 
 ### C++11 Usage
 
@@ -53,7 +63,7 @@ F´ has been updated to support C++11. Some C++11 implementations are incomplete
 Thus, there are some things that developers should be aware of when using C++11 features:
 
 1. Many C++11 features use templates under-the-hood.  Prefer `Fw` and `Os` implementations for these features.
-2. Use of `std::atomic` is known not to work
+2. Use of `std::atomic` is known to not work is some cases. Use is avoided.
 
 ### Clang Format
 
@@ -109,6 +119,8 @@ the submission review.
 2. Avoid inheritance from more than one hand-coded class
 3. Avoid inheritance from hand-coded descendants of autocoded classes and parents (e.g. `Fw::PortBase` and
    `Fw::PassiveComponentBase`) not. i.e avoid inheritance from other Components, Ports, or classes that do.
+4. Avoid multiple inheritance paths that derive from a common base class a.k.a
+   [the diamond problem](https://www.cprogramming.com/tutorial/virtual_inheritance.html)
 
 A normal usage for multiple-inheritance and virtual-inheritance in F´ is to setup
 [interfaces](https://en.wikipedia.org/wiki/Interface_(Java)) as is often done in Java. This consists of a virtual C++
