@@ -59,7 +59,7 @@ Thus, there are some things that developers should be aware of when using C++11 
 
 F´ uses clang format based on Chromium. Currently, clang-format does not properly handle `PRIVATE`, `PROTECTED`, and
 `STATIC` access modifiers used to enable whitebox unit testing. There are several solutions that are being considered to
-fix this and, once complete, the full codebase will be formatted. New submissions should attempt to format
+fix this and, once complete, the full code base will be formatted. New submissions should attempt to format
 appropriately and edit-around these modifiers as necessary. A `.clang-format` file is supplied at the root of the
 repository.
 

@@ -256,6 +256,7 @@ cplusplus
 CPOL
 cpos
 cpp
+cppreference
 cpuset
 cpy
 CRCAMPCS
@@ -361,6 +362,7 @@ dlog
 dnp
 DNs
 doall
+docblocks
 docbook
 dockerfile
 docset
