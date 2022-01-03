@@ -70,6 +70,7 @@ var menudata={children:[
 {text:"d",url:"namespacemembers_type.html#index_d"},
 {text:"e",url:"namespacemembers_type.html#index_e"},
 {text:"f",url:"namespacemembers_type.html#index_f"},
+{text:"g",url:"namespacemembers_type.html#index_g"},
 {text:"h",url:"namespacemembers_type.html#index_h"},
 {text:"l",url:"namespacemembers_type.html#index_l"},
 {text:"o",url:"namespacemembers_type.html#index_o"},

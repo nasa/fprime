@@ -111,10 +111,13 @@ var NAVTREEINDEX2 =
 "fw_type_classes.html#autotoc_md139":[1,10,0,1],
 "fw_type_classes.html#autotoc_md140":[1,10,0,1,0],
 "fw_type_classes.html#autotoc_md141":[1,10,0,2],
-"generic_hub_component_impl_8cpp.html":[22,0,6,20,1],
-"generic_hub_component_impl_8cpp_source.html":[22,0,6,20,1],
-"generic_hub_component_impl_8hpp.html":[22,0,6,20,2],
-"generic_hub_component_impl_8hpp_source.html":[22,0,6,20,2],
+"generic_hub_8hpp.html":[22,0,6,20,1],
+"generic_hub_8hpp.html#a2726e21edb6ef5238cd546d94c01c0fa":[22,0,6,20,1,0],
+"generic_hub_8hpp_source.html":[22,0,6,20,1],
+"generic_hub_component_impl_8cpp.html":[22,0,6,20,2],
+"generic_hub_component_impl_8cpp_source.html":[22,0,6,20,2],
+"generic_hub_component_impl_8hpp.html":[22,0,6,20,3],
+"generic_hub_component_impl_8hpp_source.html":[22,0,6,20,3],
 "generic_repeater_component_impl_8cpp.html":[22,0,6,21,1],
 "generic_repeater_component_impl_8cpp_source.html":[22,0,6,21,1],
 "generic_repeater_component_impl_8hpp.html":[22,0,6,21,2],
@@ -246,8 +249,5 @@ var NAVTREEINDEX2 =
 "linux_gpio_driver_component_impl_8cpp.html#ad534804a7c32c3e80135fc5fdab43c9c":[22,0,3,4,1,9],
 "linux_gpio_driver_component_impl_8cpp_source.html":[22,0,3,4,1],
 "linux_gpio_driver_component_impl_8hpp.html":[22,0,3,4,2],
-"linux_gpio_driver_component_impl_8hpp_source.html":[22,0,3,4,2],
-"linux_gpio_driver_component_impl_common_8cpp.html":[22,0,3,4,3],
-"linux_gpio_driver_component_impl_common_8cpp_source.html":[22,0,3,4,3],
-"linux_gpio_driver_component_impl_stub_8cpp.html":[22,0,3,4,4]
+"linux_gpio_driver_component_impl_8hpp_source.html":[22,0,3,4,2]
 };
