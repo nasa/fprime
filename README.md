@@ -91,6 +91,6 @@ F´ is tailored to the level of complexity required for small missions. This mak
 
 The typed port connections provide strong compile-time guarantees of correctness.
 
-## F´ Release Notes
+## Release Notes
 
 The version history and artifacts associated with the project can be found at [Releases](https://github.com/nasa/fprime/releases).
