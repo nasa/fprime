@@ -117,6 +117,12 @@ allocations will always be returned or a software error will be tripped.
 
 Svc.StaticMemory is described in more detail [here](../api/c++/html/svc_static_memory.html).
 
+**When To Use Svc.StaticMemory**
+
+Use Svc.StaticMemory in situations where memory must always be available and sharing nor efficient use of memory is a
+concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
+allocation and deallocation.
+
 ***Usage Requirements***
 
 Since this component is designed to be simple, its usage has several caveats. These caveats are, for the most part,
@@ -129,27 +135,43 @@ enforced by assertions and thus failure to abide by them will result in software
 These rules imply that memory allocated from Svc.StaticMemory should never be sent through an asynchronous port as this
 will risks violating item 3.
 
+
+**Connections**
+
+All connections to Svc.StaticMemory are done using parallel port indices per-client. This is shown in the Topology
+snippet shown below:
+
+```fpp
+      client1.allocate -> my_static_memory.bufferAllocate[0]
+      client1.deallocate -> my_static_memory.bufferDeallocate[0]
+      
+      client2.allocate -> my_static_memory.bufferAllocate[1]
+      client2.deallocate -> my_static_memory.bufferDeallocate[1]
+```
+
+Svc.StaticMemory does not use any other ports. Please review configuration to ensure that sufficient regions are
+available for the number of clients used.
+
 ***Configuration and Setup***
 
 Allocation region size is configured in the `StaticMemoryConfig.hpp` header and maximum client number is configured in
 `AcConstants.fpp`. No other configuration or setup is necessary.
 
-**When To Use Svc.StaticMemory**
-
-Use Svc.StaticMemory in situations where memory must always be available and sharing nor efficient use of memory is a
-concern. Svc.StaticMemory is typically not suitable for situations where asynchronous memory handling occurs between 
-allocation and deallocation.
-
 ### Svc.BufferManager
 
 Svc.BufferManager uses multiple bins of memory with fixed-size sub-allocations within a bin. It has a single allocate
-and deallocate port that may take any size allocation request. Svc.BufferManager searches all bins with suballocation
+and deallocate port that may take any size allocation request. Svc.BufferManager searches all bins with sub-allocation
 size larger than the request for an available buffer, which it then marks as used and returns.
 
 There are no restriction on the ordering of calls for allocation and deallocation. Clients may have multiple
 outstanding allocations and thus asynchronous usage of these allocations is supported.
 
 Svc.BufferManager is described in more detail [here](../api/c++/html/svc_buffer_manager_component.html).
+
+**When To Use Svc.BufferManager**
+
+Svc.BufferManager must be used when asynchronous handling of memory is needed or sharing of memory is desired. It can
+be used generically but comes at the cost of complexity of implementation and of setup.
 
 **Usage Requirements**
 
@@ -162,6 +184,22 @@ Buffer manager will assert under the following conditions:
 3. A returned buffer is returned with a correct buffer ID, but hasn't already been allocated.
 4. A returned buffer has an indicated size larger than originally allocated.
 5. A returned buffer has a pointer outside the region originally allocated.
+
+**Connections**
+
+All connections to Svc.BufferManager can be done using the single pair of allocate and deallocate ports. This is shown
+in the following snippet of a topology:
+
+```fpp
+      client1.allocate -> my_buffer_manager.bufferGetCallee
+      client1.deallocate -> my_buffer_manager.bufferSendIn
+      
+      client2.allocate -> my_buffer_manager.bufferGetCallee
+      client2.deallocate -> my_buffer_manager.bufferSendIn
+```
+
+The buffer manager should also be hooked up to a rate group used to downlink telemetry and it requires standard
+telemetry, events, and time connections.
 
 **Configuration and Setup**
 
@@ -223,9 +261,20 @@ The above trivial example allows for a few small allocations and one large alloc
 the large allocation is used for the small allocation use case and thus care should be taken to ensure that smaller use
 cases have sufficient number of buffers to prevent stealing of larger allocations.
 
-**When To Use Svc.BufferManager**
+## Separation of `Fw::Buffer` Allocation and Deallocation
 
-Svc.BufferManager must be used when asynchronous handling of memory is needed or sharing of memory is desired. It can
-be used generically but comes at the cost of complexity of implementation and of setup.
+There is no requirement that the allocating component and the deallocating component are the same. Thus components may
+be chained together for multiple processing steps before deallocation. There are two requirements:
 
-## Chaining `Fw::Buffer` Usage
+1. `Fw::Buffers` must eventually be returned to the instance that allocated them
+2. `Svc.StaticMemory` cannot be used in chains involving asynchronous calls
+
+Inter-component connections typically use the same `Fw.BufferSend` port to pass the buffer along the chain. A sample
+chain is shown here using Svc.BufferManager as the allocation source.
+
+```fpp
+      comp1.allocate -> my_buffer_manager.bufferGetCallee
+      comp1.sendToProcess -> comp2.process
+      comp2.sendToProcessMore -> comp3.processMore
+      comp3.deallocate -> my_buffer_manager.bufferSendIn
+```
