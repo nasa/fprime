@@ -90,6 +90,7 @@ $(document).ready(function(){initNavTree('md__c_o_n_t_r_i_b_u_t_i_n_g.html','');
 <div class="contents">
 <div class="textblock"><p>F´ is a free and open source project used to build embedded software! Are you ready to contribute?</p>
 <p>In this file you can find basic information on contributing to <a href="https://github.com/nasa/fprime">F´</a>. We will walk through how to contribute and the process contributions follow. Remember, we may ask for changes or adjustments to make your submission the best it can be. Fear not! Your submission is still valued! You may even comment on other submissions to help them improve.</p>
+<p>Make sure to review our style guidelines when developing code to ensure it meets the standards for F´´</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Ways of Contributing</h1>
 <p>The best way to contribute to F´ is to remain positive and engaged. Just about every contribution needs some improvement before it is ready to be folded in. Stand behind your work, push it forward, and work with us!</p>
@@ -105,7 +106,7 @@ Ways of Contributing</h1>
 Where to Start</h1>
 <p>First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a reference application. Contributors can find information in our <a href="https://nasa.github.io/fprime/">documentation</a>. Keep track of inconsistencies or bugs as these should be reported!</p>
 <p>When you are ready to join discussions and submit bug reports use one of the above links!</p>
-<p>To contribute to the F´ framework directly, consider writing <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3ADocumentation">needed documentation</a> or starting with an <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22">easy first issue</a>. When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure, development process, and helpful tips sections below.</p>
+<p>To contribute to the F´ framework directly, consider writing <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3ADocumentation">needed documentation</a> or starting with an <a href="https://github.com/nasa/fprime/issues?q=is%3Aissue+is%3Aopen+label%3A%22Easy+First+Issue%22">easy first issue</a>. When starting to modify F´ directly, ask questions, seek help, and be patient. Remember to review the project structure, development process, and helpful tips sections below. Following the style guidelines is a must for contributing code to F´.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Project Structure</h1>
 <p>The F´ project is designed as a base software <a href="https://github.com/nasa/fprime">framework</a> with additional <a href="https://github.com/fprime-community">packages</a> designed to extend the framework. This means that occasionally we may move contributions in or out of these packages.</p>
@@ -153,11 +154,7 @@ Keep Submissions Small</h2>
 <p>Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced Github tools this can increase the effort required to review a submission. Be careful with the changes you are submitting.</p>
 <h1><a class="anchor" id="autotoc_md11"></a>
 Run Tests</h1>
-<p>The automatic checking system will run all our unit tests and integration tests across several systems. However, this process will take time. Try to run the unit tests locally during development before submitting a PR and use the automatic checks as a safety net.</p>
-<h1><a class="anchor" id="autotoc_md12"></a>
-Code Formatting</h1>
-<p>When working with python it is required that the user run the <code>black</code> formatter. Failing to use this format will result in an automatic check error. Other languages (C++, Scala, CMake, ...) should follow the format of the files being edited. New files should, at this time, follow a standard format for the given language.</p>
-<p>A solution for C++ formatting is forthcoming and users must follow it when it has been implemented. </p>
+<p>The automatic checking system will run all our unit tests and integration tests across several systems. However, this process will take time. Try to run the unit tests locally during development before submitting a PR and use the automatic checks as a safety net. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

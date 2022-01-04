@@ -88,9 +88,9 @@ $(document).ready(function(){initNavTree('_fw_buffer_serializable_buffer_get_buf
 <div class="title"><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a> Serializable / Fw::BufferGet Port / Fw::BufferSend Port </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md60"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md59"></a>
 Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
-<h2><a class="anchor" id="autotoc_md61"></a>
+<h2><a class="anchor" id="autotoc_md60"></a>
 1 Introduction</h2>
 <p>This module provides the following elements:</p>
 <ul>
@@ -98,10 +98,10 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 <li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a <a href="../../../Svc/BufferManager/docs/sdd.html"><code>BufferManager</code></a> component.</li>
 <li>A port <code>Fw::BufferSend</code> for sending a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from one component to another.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md62"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 2 Design</h2>
 <p><a class="anchor" id="FwBuffer"></a> </p>
-<h3><a class="anchor" id="autotoc_md63"></a>
+<h3><a class="anchor" id="autotoc_md62"></a>
 2.1 The Type Fw::Buffer</h3>
 <p><code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is a serializable class. It contains the following members:</p>
 <table class="markdownTable">
@@ -117,11 +117,11 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 <td class="markdownTableBodyNone"><code>size</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone">The size of the buffer in bytes.  </td></tr>
 </table>
 <p>A value of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is <em>valid</em> if its <code>data</code> member is non-zero; otherwise it is <em>invalid</em>.</p>
-<h3><a class="anchor" id="autotoc_md64"></a>
+<h3><a class="anchor" id="autotoc_md63"></a>
 2.2 The Port Fw::BufferGet</h3>
 <p>As shown in the following diagram, <code>Fw::BufferGet</code> has one argument <code>size</code> of type <code>U32</code>. It returns a value of type <a href="#FwBuffer"><code>Fw::Buffer</code></a>.</p>
 <p><img src="img/BufferGetBDD.jpg" alt="`Fw::BufferGet` Diagram" title="Fw::BufferGet Port" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md65"></a>
+<h3><a class="anchor" id="autotoc_md64"></a>
 2.3 The Port Fw::BufferSend</h3>
 <p>As shown in the following diagram, <code>Fw::BufferSend</code> has one argument <code>fwBuffer</code> of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>.</p>
 <p><img src="img/BufferSendBDD.jpg" alt="`Fw::BufferSend` Diagram" title="Fw::BufferSend Port" class="inline"/> </p>
