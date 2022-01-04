@@ -63,7 +63,7 @@ F´ has been updated to support C++11. Some C++11 implementations are incomplete
 Thus, there are some things that developers should be aware of when using C++11 features:
 
 1. Many C++11 features use templates under-the-hood.  Prefer `Fw` and `Os` implementations for these features.
-2. Use of `std::atomic` is known to not work is some cases. Use is avoided.
+2. Use of `std::atomic` is known to not work in some cases. Use is avoided.
 
 ### Clang Format
 
