@@ -93,4 +93,4 @@ The typed port connections provide strong compile-time guarantees of correctness
 
 ## Release Notes
 
-The version history and artifacts associated with the project can be found at [Releases](https://github.com/nasa/fprime/releases).
+The version history and artifacts associated with the project can be found at [Releases](https://github.com/nasa/fprime/releases) and [CHANGELOG.md](./CHANGELOG.md).
