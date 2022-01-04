@@ -56,6 +56,7 @@ This section is divided into three sub-sections:
     - [Rate Groups and Timeliness](./best/rate-group.md)
     - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
     - [Documenting F´ Projects](./best/documentation.md)
+    - [Code and Style Guidelines](./dev/code-style.md)
 - F´ Ground Data System Tools (GDS)
     - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
