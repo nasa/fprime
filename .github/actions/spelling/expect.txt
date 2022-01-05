@@ -924,6 +924,7 @@ maxsize
 maxspew
 mccabe
 mcomment
+MCT
 mcternan
 mday
 mdbasiccomponents

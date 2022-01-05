@@ -51,7 +51,7 @@ will be pushed out to the hardware. Drivers respond to sends with on of the foll
 
 1. SendStatus.SEND_OK: indicates the send was successful
 2. SendStatus.SEND_RETRY: indicates a subsequent retransmission will likely succeed 
-3. SendStatus.SEND_ERROR: send errored, the data was not sent, and future success cannot be predicted
+3. SendStatus.SEND_ERROR: send failed, the data was not sent, and future success cannot be predicted
 
 **Polling Data**
 
@@ -62,7 +62,7 @@ the driver's poll input port where the buffer is filled with available data.  Po
 
 1. PollStatus.POLL_OK: indicates the buffer is filled with valid data
 2. PollStatus.POLL_RETRY: indicates a subsequent retry of the polling call will likely result in valid data
-3. PollStatus.POLL_ERROR: polling errored, the buffer data is invalid, and future success cannot be predicted
+3. PollStatus.POLL_ERROR: polling failed, the buffer data is invalid, and future success cannot be predicted
 
 **Receiving Data**
 
@@ -72,8 +72,8 @@ has an internal task that calls the receive output port when data has been recei
 nothing to retry.
 
 
-1. RecvStaus.RECV_OK: receive works as expected and the buffer has valid data
-2. RecvStatus.RECV_ERROR: receive errored and the buffer does not have valid data
+1. RecvStatus.RECV_OK: receive works as expected and the buffer has valid data
+2. RecvStatus.RECV_ERROR: receive failed and the buffer does not have valid data
 
 ### Uplink
 
@@ -93,7 +93,7 @@ complete. This buffer is updated with the latest data then processed for message
 
 ### Downlink
 
-Downlink takes ub F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
+Downlink takes in F´ data and wraps the data with bytes supporting the necessary protocol. This assembled data is then
 sent to the driver for handling. Downlink is implemented with the [Svc.Framer](../api/c++/html/svc_framer.html)
 component, which implements the [FramingProtocolInterface](../api/c++/html/class_framing_protocol_interface.html).
 
@@ -165,8 +165,8 @@ class MyDeframeProtocol : public DeframingProtocol {
         return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
     }
 ```
-Here the protocol starts a frame with `0xdeadbeef` and uses size to extra the data. Deframering is typically the inverse
-of the frameing protocol as seen in this example.
+Here the protocol starts a frame with `0xdeadbeef` and uses size to extra the data. Deframing is typically the inverse
+of the framing protocol as seen in this example.
 
 **Note:** implementors should always use `peak` to get data and never rotate it, as Svc.Deframer will rotate the buffer
 based on the status.
