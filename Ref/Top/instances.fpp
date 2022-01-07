@@ -257,6 +257,7 @@ module Ref {
         comm.configure(state.hostName, state.portNumber);
         comm.startSocketTask(
             name,
+            true,
             ConfigConstants::comm::PRIORITY,
             ConfigConstants::comm::STACK_SIZE
         );
