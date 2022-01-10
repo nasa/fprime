@@ -84,7 +84,7 @@ endfunction(add_fprime_subdirectory)
 #
 # **i.e.:**
 # ```
-# set(LINK_DEPS
+# set(MOD_DEPS
 #     Os
 #     Module1
 #     Module2
@@ -195,7 +195,7 @@ endfunction(register_fprime_module)
 #
 # **i.e.:**
 # ```
-# set(LINK_DEPS
+# set(MOD_DEPS
 #     Module1
 #     Module2
 #     -lpthread)
@@ -298,7 +298,7 @@ endfunction(register_fprime_executable)
 #
 # **i.e.:**
 # ```
-# set(LINK_DEPS
+# set(MOD_DEPS
 #     Module1
 #     Module2
 #     -lpthread)
