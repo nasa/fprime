@@ -65,7 +65,7 @@ set(SOURCE_FILES
 
 **i.e.:**
 ```
-set(LINK_DEPS
+set(MOD_DEPS
     Os
     Module1
     Module2
@@ -162,7 +162,7 @@ set(SOURCE_FILES
 
 **i.e.:**
 ```
-set(LINK_DEPS
+set(MOD_DEPS
     Module1
     Module2
     -lpthread)
@@ -246,7 +246,7 @@ set(SOURCE_FILES
 
 **i.e.:**
 ```
-set(LINK_DEPS
+set(MOD_DEPS
     Module1
     Module2
     -lpthread)
