@@ -5,7 +5,7 @@
 # should install FPP on the system path and that will be used.
 ####
 
-set(FPP_VERSION ee355fc99eb8040157c62e69f58ac6a8435cd981)
+set(FPP_VERSION 6ba36114c1bd2fbb480761e8ea1459342a924d62)
 set(FPP_TOOLS_PATH "${CMAKE_BINARY_DIR}/fpp-tools-install" CACHE PATH "Installation path for fpp tools")
 
 ####
