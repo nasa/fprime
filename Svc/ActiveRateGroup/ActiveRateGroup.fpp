@@ -9,7 +9,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ The rate group cycle input
-    async input port CycleIn: Cycle drop
+    async input port CycleIn: Svc.Cycle drop
 
     @ Scheduler output port to rate group members
     output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
