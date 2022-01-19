@@ -3,7 +3,6 @@
 #
 # Required tools for the fprime CMake system.
 ####
-
 find_program(FPUTIL NAMES fprime-util REQUIRED)
 find_program(PYTHON NAMES python3 python REQUIRED)
 find_program(JAVA java PATHS ENV JAVA_HOME ENV PATH REQUIRED)
@@ -18,3 +17,10 @@ elseif(NOT JAVA)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/fpp-download/fpp.cmake")
+
+
+
+message(STATUS "[fpp-tools] fpp-depend found at: ${FPP_DEPEND}")
+message(STATUS "[fpp-tools] fpp-to-xml found at: ${FPP_TO_XML}")
+message(STATUS "[fpp-tools] fpp-to-cpp found at: ${FPP_TO_CPP}")
+message(STATUS "[fpp-tools] fpp-locate-defs found at: ${FPP_LOCATE_DEFS}")

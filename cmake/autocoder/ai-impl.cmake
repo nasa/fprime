@@ -46,8 +46,8 @@ function(get_generated_files AC_INPUT_FILE)
 
     string(REGEX REPLACE "${XML_TYPE}Ai\\.xml" "" AC_OBJ_NAME "${AC_INPUT_NAME}")
     string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
-    set(GENERATED_FILES "${CMAKE_CURRENT_LIST_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.hpp-template"
-                        "${CMAKE_CURRENT_LIST_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.cpp-template")
+    set(GENERATED_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.hpp-template"
+                        "${CMAKE_CURRENT_SOURCE_DIR}/${AC_OBJ_NAME}${XML_TYPE}Impl.cpp-template")
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 endfunction(get_generated_files)
 
@@ -65,6 +65,6 @@ endfunction(get_dependencies)
 # Sets up the AI XML autocoder to generate files.
 ####
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    setup_ai_autocode_variant("-t" "${CMAKE_CURRENT_LIST_DIR}" "" "${AC_INPUT_FILE}" "${GENERATED_FILES}"
+    setup_ai_autocode_variant("-t" "${CMAKE_CURRENT_SOURCE_DIR}" "" "${AC_INPUT_FILE}" "${GENERATED_FILES}"
                               "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
 endfunction(setup_autocode)

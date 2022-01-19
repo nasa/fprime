@@ -37,7 +37,7 @@ endfunction (is_supported)
 # hold this information.
 ####
 function(get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES ${CMAKE_CURRENT_LIST_DIR}/Tester.cpp ${CMAKE_CURRENT_LIST_DIR}/Tester.hpp ${CMAKE_CURRENT_LIST_DIR}/TestMain.cpp PARENT_SCOPE)
+    set(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp PARENT_SCOPE)
 endfunction(get_generated_files)
 
 ####
@@ -54,7 +54,7 @@ endfunction(get_dependencies)
 # Setup the autocoder build commands. This is a required function of a given autocoder implementation.
 ####
 function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_LIST_DIR}/TesterBase.hpp ${CMAKE_CURRENT_LIST_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_LIST_DIR}/GTestBase.hpp ${CMAKE_CURRENT_LIST_DIR}/GTestBase.cpp)
-    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_LIST_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
+    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp)
+    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_SOURCE_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
                               "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
 endfunction()

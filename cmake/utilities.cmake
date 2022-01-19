@@ -181,10 +181,16 @@ endfunction()
 # i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
 #      Svc/ActiveLogger also becomes Svc_ActiveLogger
 #
-# - **DIRECTORY_PATH:** path to infer MODULE_NAME from
+# - **DIRECTORY_PATH:** (optional) path to infer MODULE_NAME from. Default: CMAKE_CURRENT_LIST_DIR
 # - **Return: MODULE_NAME** (set in parent scope)
 ####
-function(get_module_name DIRECTORY_PATH)
+function(get_module_name)
+    # Set optional arguments
+    if (ARGN)
+        set(DIRECTORY_PATH "${ARGN}")
+    else()
+        set(DIRECTORY_PATH "${CMAKE_CURRENT_LIST_DIR}")
+    endif()
     # If DIRECTORY_PATH exists, then find its offset from BUILD_ROOT to calculate the module
     # name. If it does not exist, then it is assumed to be an offset already and is carried
     # forward in the calculation.

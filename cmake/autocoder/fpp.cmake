@@ -10,7 +10,7 @@ include(autocoder/default)
 # Does not handle source files one-by-one, but as a complete set
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)
 set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
-set(FPP_FRAMEWORK_DEFAULT_DEPS Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg)
+set(FPRIME_FRAMEWORK_MODULES Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg)
 
 ####
 # `is_supported`:
@@ -98,26 +98,26 @@ function(get_generated_files AC_INPUT_FILES)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    set(DIRECT_DEPENDENCIES_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
-    set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
-    set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
-    set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
-    set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/framework.txt")
-    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_DEPENDENCIES_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE} -f ${FRAMEWORK_FILE}"
-        CACHE INTERNAL "Last command to annotate memo file" FORCE)
-    execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
-        -d "${DIRECT_DEPENDENCIES_FILE}"
-        -i "${INCLUDED_FILE}"
-        -m "${MISSING_FILE}"
-        -g "${GENERATED_FILE}"
-        -f "${FRAMEWORK_FILE}"
-        RESULT_VARIABLE ERR_RETURN
-        OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
-    # Report failure.  If we are generating files, this must work.
-    if (ERR_RETURN)
-        message(FATAL_ERROR "Failed to run '${LAST_DEP_COMMAND}' and RC ${ERR_RETURN}")
-        return()
-    endif()
+    set(DIRECT_DEPENDENCIES_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/direct.txt")
+    set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/include.txt")
+    set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/missing.txt")
+    set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/generated.txt")
+    set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/framework.txt")
+    #set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_DEPENDENCIES_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE} -f ${FRAMEWORK_FILE}"
+    #    CACHE INTERNAL "Last command to annotate memo file" FORCE)
+    #execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
+    #    -d "${DIRECT_DEPENDENCIES_FILE}"
+    #    -i "${INCLUDED_FILE}"
+    #    -m "${MISSING_FILE}"
+    #    -g "${GENERATED_FILE}"
+    #    -f "${FRAMEWORK_FILE}"
+    #    RESULT_VARIABLE ERR_RETURN
+    #    OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+    ## Report failure.  If we are generating files, this must work.
+    #if (ERR_RETURN)
+    #    message(FATAL_ERROR "Failed to run '${LAST_DEP_COMMAND}' and RC ${ERR_RETURN}")
+    #    return()
+    #endif()
 
     # Read files and convert to lists of dependencies. e.g. read INCLUDED_FILE file into INCLUDED variable, then process
     foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK)
@@ -125,14 +125,18 @@ function(get_generated_files AC_INPUT_FILES)
         string(STRIP "${${NAME}}" "${NAME}")
         string(REGEX REPLACE "\n" ";" "${NAME}" "${${NAME}}")
     endforeach()
-
     # Handle captured standard out
     string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
-    # List of framework dependencies: detected + builtin, subset from "this module" and further.
-    list(APPEND FRAMEWORK ${FPP_FRAMEWORK_DEFAULT_DEPS})
-    list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
-    math(EXPR START_INDEX "${START_INDEX} + 1")
-    list(SUBLIST FRAMEWORK ${START_INDEX} -1 FRAMEWORK)
+    # Subset the framework dependencies, or where possible use the Fw interface target
+    if (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
+        list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
+        list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
+        math(EXPR START_INDEX "${START_INDEX} + 1")
+        list(SUBLIST FRAMEWORK ${START_INDEX} -1 FRAMEWORK)
+    else()
+        list(APPEND FRAMEWORK Fw)
+    endif()
+
 
     # First assemble the generated files list
     set(GENERATED_FILES)
@@ -196,8 +200,6 @@ endfunction(get_dependencies)
 # EXTRAS: used to publish the 'imported' file dependencies of the given input files
 ####
 function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    find_program(FPP_TO_XML fpp-to-xml)
-    find_program(FPP_TO_CPP fpp-to-cpp)
     if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
@@ -250,7 +252,7 @@ endfunction(setup_autocode)
 ####
 function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
     init_variables(OUTPUT_DATA)
-    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    get_module_name("${CMAKE_CURRENT_SOURCE_DIR}")
     set(CURRENT_MODULE "${MODULE_NAME}")
     foreach(INCLUDE IN LISTS AC_INPUT_FILES FILE_LIST)
         get_module_name(${INCLUDE})

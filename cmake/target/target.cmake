@@ -32,6 +32,45 @@
 #  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
 
+function(setup_single_target TARGET_FILE)
+    # Import the target with defaults for when functions are not defined
+    include(target/default)
+    include("${TARGET_FILE}")
+    # Announce for the debug log
+    get_target_name("${TARGET_FILE}")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "[target] Setting up '${TARGET_NAME}' on all modules")
+    endif()
+    add_global_target("${TARGET_NAME}")
+    # Loop through all modules setting up the given target with them
+    foreach(MODULE IN LISTS GLOBAL_MODULES)
+        get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+        get_target_property(SOURCE_FILES "${MODULE}" FP_SRC)
+        get_target_property(DEPENDENCIES "${MODULE}" FP_DEP)
+        get_target_property(CMAKE_CURRENT_SOURCE_DIR "${MODULE}" FP_SRCD)
+        get_target_property(CMAKE_CURRENT_BINARY_DIR "${MODULE}" FP_BIND)
+        set(MODULE_NAME "${MODULE}")
+
+        if (NOT MODULE_TYPE STREQUAL "Deployment")
+            add_module_target("${MODULE}" "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
+        else()
+            get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
+            add_deployment_target("${MODULE}" "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}" "${FP_RECURSIVE_DEPS}")
+        endif()
+    endforeach()
+endfunction(setup_single_target)
+
+
+function(setup_targets ALL_MODULES)
+    # Grab the list of targets
+    get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
+    list(REMOVE_DUPLICATES TARGETS)
+
+    foreach(TARGET IN LISTS TARGETS)
+        setup_single_target("${TARGET}" "${ALL_MODULES}")
+    endforeach()
+endfunction(setup_targets)
+
 ####
 # Function `get_target_name`:
 #
@@ -58,32 +97,32 @@ endfunction(get_target_name)
 # Sets up the global target with default target or custom target
 # - **TARGET_FILE_NAME:** name of target file
 ####
-function(setup_global_target TARGET_FILE_PATH)
-    # Include the file and look for definitions
-    include(target/default)
-    include("${TARGET_FILE_PATH}")
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[target] Setting up '${TARGET_FILE_PATH}' global target")
-    endif()
-    get_target_name("${TARGET_FILE_PATH}")
-    add_global_target(${TARGET_NAME})
-endfunction(setup_global_target)
+#function(setup_global_target TARGET_FILE_PATH)
+#    # Include the file and look for definitions
+#    include(target/default)
+#    include("${TARGET_FILE_PATH}")
+#    if (CMAKE_DEBUG_OUTPUT)
+#        message(STATUS "[target] Setting up '${TARGET_FILE_PATH}' global target")
+#    endif()
+#    get_target_name("${TARGET_FILE_PATH}")
+#    add_global_target(${TARGET_NAME})
+#endfunction(setup_global_target)
 
 ####
 # Function `setup_deployment_target`:
 #
 # Sets up an individual deployment target.
 ####
-function(setup_deployment_target MODULE_NAME TARGET_FILE_PATH SOURCE_FILES DEPENDENCIES FULL_DEPENDENCIES)
-    # Include the file and look for definitions
-    include(target/default)
-    include("${TARGET_FILE_PATH}")
-    get_target_name("${TARGET_FILE_PATH}")
-    if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[target] Setting up '${TARGET_NAME}' on ${MODULE_NAME}")
-    endif()
-    add_deployment_target(${MODULE_NAME} "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}" "${FULL_DEPENDENCIES}")
-endfunction(setup_deployment_target)
+#function(setup_deployment_target MODULE_NAME TARGET_FILE_PATH SOURCE_FILES DEPENDENCIES FULL_DEPENDENCIES)
+#    # Include the file and look for definitions
+#    include(target/default)
+#    include("${TARGET_FILE_PATH}")
+#    get_target_name("${TARGET_FILE_PATH}")
+#    if (CMAKE_DEBUG_OUTPUT)
+#        message(STATUS "[target] Setting up '${TARGET_NAME}' on ${MODULE_NAME}")
+#    endif()
+#    add_deployment_target(${MODULE_NAME} "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}" "${FULL_DEPENDENCIES}")
+#endfunction(setup_deployment_target)
 
 ####
 # Function `setup_all_deployment_targets`:

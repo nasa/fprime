@@ -25,7 +25,7 @@ function(locate_fpp_tools NO_DEFAULTS)
         unset(${TOOL} CACHE)
         find_program(${TOOL} ${PROGRAM} PATHS ${FPP_TOOLS_PATH} NO_DEFAULT_PATH)
         find_program(${TOOL} ${PROGRAM} PATHS ${FPP_TOOLS_PATH})
-
+        continue()
         # If the tool exists, check the version
         if (${TOOL})
             execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)

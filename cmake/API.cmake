@@ -430,41 +430,34 @@ endfunction(register_fprime_ut)
 ####
 # Function `register_fprime_target`:
 #
-# Some custom targets require a multi-phase build process that is run for each module, and for the
-# deployment/executable that is being built. These must therefore register module-specific and
-# deployment specific instructions.
+# This function allows users to register custom build targets into the build system.  These targets are defined in a
+# CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
+# per-deployment. See: [Targets](targets.md).
 #
-# **Examples:**
-# - dict: build sub dictionaries for each module, and roll-up into a global deployment dictionary
-# - sloc: lines of code are counted per-module
-# - docs: documentation is also per-module
+# This function takes in either a file path to the CMake file defining targets, or a short include path that accompishes
+# the same thing. Note: make sure the directory is on the CMake include path to use the second form. The supplied file
+# should define three functions: `add_global_target`, `add_module_target`, and `add_deployment_target`.
 #
-# This function allows the user to register a file containing two functions `add_module_target`
-# and `add_global_target`. `add_global_target` adds a top-level target like `make dict` which will
-# then depend on every one of the targets created in `add_module_target`.
-#
-# **TARGET_FILE_PATH:** path to file defining above functions 
+# **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 function(register_fprime_target TARGET_FILE_PATH)
-    register_fprime_target_generic(FPRIME_TARGET_LIST ${TARGET_FILE_PATH})
+    set_property(GLOBAL APPEND PROPERTY FPRIME_TARGET_LIST "${TARGET_FILE_PATH}")
 endfunction(register_fprime_target)
 
+####
+# Function `register_fprime_ut_target`:
+#
+# Identical to the above `register_fprime_target` function except that these targets are only created when the system
+# is building unit tests. e.g. BUILD_TESTING=ON.
+#
+# **TARGET_FILE_PATH:** include path or file path files
+###
 function(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
     if (BUILD_TESTING)
-        register_fprime_target_generic(FPRIME_UT_TARGET_LIST ${TARGET_FILE_PATH})
+        register_fprime_target("${TARGET_FILE_PATH}")
     endif()
 endfunction(register_fprime_ut_target)
-
-function(register_fprime_target_generic TARGET_LIST TARGET_FILE_PATH)
-    # Update the global list of target files
-    set(TMP "${${TARGET_LIST}}")
-    list(APPEND TMP "${TARGET_FILE_PATH}")
-    list(REMOVE_DUPLICATES TMP)
-    SET(${TARGET_LIST} "${TMP}" CACHE INTERNAL "${TARGET_LIST}: custom fprime targets" FORCE)
-    #Setup global target. Note: module targets found during module processing
-    setup_global_target("${TARGET_FILE_PATH}")
-endfunction(register_fprime_target_generic)
 
 #### Documentation links
 # Next Topics:
@@ -473,4 +466,5 @@ endfunction(register_fprime_target_generic)
 #  - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
 #  - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
 #  - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
+#  - Adding Targets: [Targets](targets.md) for help defining custom build targets
 ####

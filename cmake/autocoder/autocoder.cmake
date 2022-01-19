@@ -207,7 +207,10 @@ endfunction(_filter_sources)
 ####
 function(__ac_process_sources SOURCES INFO_ONLY)
     # Run the autocode setup process now with memoization
-    __memoize("${SOURCES}")
+    get_generated_files("${SOURCES}")
+    get_dependencies("${SOURCES}")
+    resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
+
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 

@@ -6,116 +6,102 @@
 # but also comes with a function to run the separate build of fprime.
 ####
 
-# Properties needed to be forwarded to the internal cmake call
-set(NEEDED_PROPERTIES
-        FPRIME_CONFIG_DIR
-        FPRIME_AC_CONSTANTS_FILE
-        FPRIME_ENVIRONMENT_FILE
-        FPRIME_SETTINGS_FILE
-        FPRIME_LIBRARY_LOCATIONS
-        FPRIME_PROJECT_ROOT
-        FPRIME_FRAMEWORK_PATH
-        CMAKE_TOOLCHAIN_FILE
-        CMAKE_BUILD_TYPE
-        CMAKE_DEBUG_OUTPUT
-        FPRIME_USE_STUBBED_DRIVERS
-        FPRIME_USE_BAREMETAL_SCHEDULER
-        FPP_TOOLS_PATH
-)
+# Static and configuration FPP files
 set(FPP_CONFIGS
     "${FPRIME_CONFIG_DIR}/AcConstants.fpp"
     "${FPRIME_CONFIG_DIR}/FpConfig.fpp"
     "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp"
 )
-set(FPP_LOCATE_DEFS_HELPER "${CMAKE_CURRENT_LIST_DIR}/fpp-locs/fpp-locate-defs-helper")
+set(FPP_LOCATE_DEFS_HELPER "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-redirect-helper")
+set(FPP_DEPEND_PARALLELIZE "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-wrapper/fpp-depend-parallelize.py")
+set(FPP_LOCS_FILE "${CMAKE_BINARY_DIR}/locs.fpp")
 
 ####
-# Run the CMake build for generating the locs.fpp file. Should be called by the primary build in order to build the
-# locator files needed by the project.
+# Function `determine_global_fpps`:
+#
+# Processes the global set of modules and determines all FPP files.
+# OUTPUT_VAR: variable storing the output of this call
+# MODULES: global set of modules passed in
 ####
-function(generate_fpp_locs)
-    set(CALL_PROPS)
-    foreach (PROPERTY IN LISTS NEEDED_PROPERTIES)
-        if (NOT "${${PROPERTY}}" STREQUAL "")
-            list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
+function(determine_global_fpp_inputs MODULES)
+    include(autocoder/fpp)
+    # Loop through the modules
+    foreach (MODULE IN LISTS MODULES)
+        get_target_property(SOURCES "${MODULE}" FP_SRC)
+        # Check each source for FPP support
+        foreach(SOURCE IN LISTS SOURCES)
+            is_supported("${SOURCE}")
+            if (IS_SUPPORTED)
+                set_property(GLOBAL APPEND PROPERTY ALL_FPPS "${SOURCE}")
+                set_property(TARGET "${MODULE}" APPEND PROPERTY FPP_INPUTS "${SOURCE}")
+            endif()
+        endforeach()
+    endforeach()
+endfunction(determine_global_fpp_inputs)
+
+####
+# Function `generate_locations`:
+#
+# Generates the FPP locations index. This is needed for all subsequent steps of FPP.
+####
+function(generate_locations)
+    if (NOT FPP_LOCATE_DEFS)
+        message(FATAL_ERROR "Unable to determine fpp-locate-defs executable")
+    endif()
+    message(STATUS "Generating FPP location index")
+    get_property(FPP_FILES GLOBAL PROPERTY ALL_FPPS)
+    execute_process(COMMAND "${FPP_LOCATE_DEFS_HELPER}" "${FPP_LOCS_FILE}" "${FPP_LOCATE_DEFS}" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} ${FPP_FILES} COMMAND_ERROR_IS_FATAL ANY)
+    message(STATUS "Generating FPP location index - DONE")
+endfunction()
+
+####
+# Function `generate_dependencies`:
+#
+# Generate dependencies for FPP modules. This is done here for performance, and the generated caches will be read later.
+# MODULES: modules to generate from
+####
+function(generate_dependencies MODULES)
+    if (NOT FPP_DEPEND)
+        message(FATAL_ERROR "Unable to determine fpp-depend executable")
+    endif()
+    if (NOT PYTHON)
+        message(FATAL_ERROR "Unable to determine python executable")
+    endif()
+    message(STATUS "Generating FPP dependency caches")
+    set(CACHE_FILE "${CMAKE_BINARY_DIR}/fpp-depend-input" )
+    file(WRITE "${CACHE_FILE}" "")
+    foreach(MODULE IN LISTS MODULES)
+        get_target_property(TARGET_FPPS "${MODULE}" FPP_INPUTS)
+        get_target_property(BIN_DIR "${MODULE}" FP_BIND)
+        if (TARGET_FPPS)
+            file(APPEND "${CACHE_FILE}" "${BIN_DIR};${TARGET_FPPS}\n")
         endif()
     endforeach()
-    # Execute the generate step
-    set(LOCS_DIR "${CMAKE_BINARY_DIR}/fpp-locs")
-    set(LOCS_FILE "${LOCS_DIR}/locs.fpp")
-
-    # Only generate the FPP locs cache when it doesn't exist.  Otherwise just build.
-    if (NOT IS_DIRECTORY LOCS_DIR)
-        file(MAKE_DIRECTORY "${LOCS_DIR}")
-        execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" "${CMAKE_CURRENT_SOURCE_DIR}" -DFPRIME_FPP_LOCS_BUILD=ON ${CALL_PROPS}
-                RESULT_VARIABLE result
-                OUTPUT_FILE "${LOCS_DIR}/generate-output.log"
-                WORKING_DIRECTORY "${LOCS_DIR}")
-        if(result)
-            message(FATAL_ERROR "CMake step for generating fpp-locs build failed: ${result}")
-        endif()
-    endif()
-    execute_process(COMMAND ${CMAKE_COMMAND} --build . --target fpp-locs
-            RESULT_VARIABLE result
-            OUTPUT_FILE "${LOCS_DIR}/build-output.log"
-            WORKING_DIRECTORY "${LOCS_DIR}" )
-    if(result)
-        message(FATAL_ERROR "CMake step for building fpp-locs build failed: ${result}")
-    endif()
-    set(FPP_LOCS_FILE "${LOCS_FILE}" CACHE INTERNAL "File containing the locators for FPP" FORCE)
-endfunction()
+    execute_process(COMMAND "${PYTHON}" "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CACHE_FILE}" COMMAND_ERROR_IS_FATAL ANY)
+    message(STATUS "Generating FPP dependency caches - DONE")
+endfunction(generate_dependencies)
 
 ####
-# fpp-locs function `add_deployment_target`:
+# Function `add_global_target`:
 #
-# Does nothing.  Fpp locations are truly global.
-####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
-    if (NOT TARGET MODULE)
-        set(EMPTY_C_SRC "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
-        file(WRITE "${EMPTY_C_SRC}" "#define CMAKE_EMPTY_SOURCE\n")
-        add_library(${MODULE} "${EMPTY_C_SRC}") # Fake target to appease those who hand-edit targets outside of fprime
-    endif()
-endfunction()
-
-####
-# fpp-locs function `add_global_target`:
-#
-# This function takes the INPUTS property added to our global
+# Performs special FPP setup and handling.
 ####
 function(add_global_target TARGET_NAME)
-    find_program(FPP_LOCATE_DEFS fpp-locate-defs)
-    if (DEFINED FPP_LOCATE_DEFS-NOTFOUND)
-        message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
-    endif()
-    add_custom_target("${TARGET_NAME}" COMMAND "${FPP_LOCATE_DEFS_HELPER}" "${CMAKE_BINARY_DIR}/locs.fpp" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} "$<TARGET_PROPERTY:${TARGET_NAME},INPUTS>" COMMAND_EXPAND_LISTS)
-    set_property(TARGET "${TARGET_NAME}" PROPERTY INPUTS "")
+    get_property(GLOBAL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    # One-time FPP setup done to absolve performance issues
+    determine_global_fpp_inputs("${GLOBAL_MODULES}")
+    generate_locations()
+    generate_dependencies("${GLOBAL_MODULES}")
 endfunction(add_global_target)
 
 ####
-# fpp-locs function `add_module_target`:
-#
-# This target appends sources that are handled by the fpp autocoder to the source list of the fpp-locs-gen target. This
-# target will run the location generation from those matching sources
-#
-# - **MODULE:** name of the module
-# - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
-# - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
-# - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
+# Not defined to prevent defaults from engaging
+####
+function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+endfunction()
+
+####
+# Not defined to prevent defaults from engaging
 ####
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    include(autocoder/default)
-    include(autocoder/fpp)
-    foreach(SOURCE IN LISTS SOURCES)
-        is_supported("${SOURCE}")
-        if (IS_SUPPORTED)
-            set_property(TARGET "${TARGET}" APPEND PROPERTY INPUTS "${SOURCE}")
-        endif()
-    endforeach()
-    # Since fpp-locs runs as an independent build, we must force a target to exist
-    if (NOT TARGET MODULE)
-        set(EMPTY_C_SRC "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
-        file(WRITE "${EMPTY_C_SRC}" "#define CMAKE_EMPTY_SOURCE\n")
-        add_library(${MODULE} "${EMPTY_C_SRC}") # Fake target to appease those who hand-edit targets outside of fprime
-    endif()
 endfunction(add_module_target)

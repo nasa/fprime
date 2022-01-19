@@ -17,6 +17,39 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
+
+####
+# Function `recurse_targets`:
+#
+# A helper that pulls out module dependencies that are also fprime modules.
+####
+function(recurse_targets TARGET OUTPUT BOUND)
+    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    set(TARGET_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
+    endif()
+    # Extra dependencies
+    list(APPEND TARGET_DEPENDENCIES ${ARGN})
+    if (TARGET_DEPENDENCIES)
+        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
+    endif()
+
+    set(RESULTS_LOCAL)
+    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
+        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
+            list(APPEND BOUND "${NEW_TARGET}")
+            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
+            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
+        endif()
+    endforeach()
+    if (RESULTS_LOCAL)
+        list(REMOVE_DUPLICATES RESULTS_LOCAL)
+    endif()
+    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
+endfunction()
+
+
 ####
 # Build function `add_global_target`:
 #
@@ -47,12 +80,12 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
         endif()
     endforeach()
     # Setup the actual target
-    if (FPRIME_OBJECT_TYPE STREQUAL "Library")
-        # Add the library name
-        add_library(${MODULE} ${COMPILE_SOURCES})
-    else()
-        add_executable(${MODULE} ${COMPILE_SOURCES})
-    endif()
+    #if (FPRIME_OBJECT_TYPE STREQUAL "Library")
+    #    # Add the library name
+    #    add_library(${MODULE} ${COMPILE_SOURCES})
+    #else()
+    #    add_executable(${MODULE} ${COMPILE_SOURCES})
+    #endif()
 
     # Set those files as generated to prevent build errors
     foreach(SOURCE IN LISTS GENERATED)
@@ -88,6 +121,8 @@ endfunction()
 ####
 function(add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
     add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
+    recurse_targets("${MODULE}" RESULTS "" ${RESOLVED})
+    set_property(TARGET "${MODULE}" PROPERTY FP_RECURSIVE_DEPS "${RESULTS}")
 endfunction()
 
 ####
@@ -101,8 +136,11 @@ endfunction()
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    message(STATUS "Adding ${FPRIME_OBJECT_TYPE}: ${MODULE}")
+    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+    message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
+
     run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai-xml)
+
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
     setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
     # Special flags applied to modules when compiling with testing enabled
