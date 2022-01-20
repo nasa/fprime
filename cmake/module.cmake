@@ -20,13 +20,10 @@ set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
 # - **DEPENDENCIES**: dependencies as defined by user, unfiltered. Includes target names and link flags.
 ####
 function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DEPENDENCIES)
-    # Prevent out-of-order setups
-    get_property(ALREADY_SETUP GLOBAL PROPERTY TARGETS_GENERATED SET)
-    if (ALREADY_SETUP)
-        message(FATAL_ERROR "Cannot call 'register_fprime_*' functions after 'register_fprime_deployment'")
-    endif()
+    set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
 
     # Add the base elements to the system
+    message("Adding ${TARGET_TYPE}: ${TARGET_NAME}")
     if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment" OR TARGET_TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" "${EMPTY}")
     elseif(TARGET_TYPE STREQUAL "Library")
@@ -34,21 +31,14 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
     else()
         message(FATAL_ERROR "Module ${TARGET_NAME} cannot register object of type ${TARGET_TYPE}")
     endif()
-    set_target_properties("${TARGET_NAME}" PROPERTIES FP_SRC "${SOURCE_FILES}" FP_DEP "${DEPENDENCIES}" FP_TYPE "${TARGET_TYPE}" FP_SRCD "${CMAKE_CURRENT_SOURCE_DIR}" FP_BIND "${CMAKE_CURRENT_BINARY_DIR}")
+
+    # Modules properties for posterity
+    set_target_properties("${TARGET_NAME}" PROPERTIES FP_TYPE "${TARGET_TYPE}")
     set_property(GLOBAL APPEND PROPERTY FPRIME_MODULES "${TARGET_NAME}")
+
+    setup_module_targets("${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(generate_base_module_properties)
 
-####
-# Function `generate_targets`:
-#
-# Transitions from the source analysis phase of the build to the target definition phase of the build. This cano only
-# happen once, so it locks-out new calls to `register_fprime_*` functions
-#####
-function(generate_targets)
-    set_property(GLOBAL PROPERTY TARGETS_GENERATED TRUE)
-    get_property(GLOBAL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    setup_targets("${GLOBAL_MODULES}")
-endfunction(generate_targets)
 ####
 # Function `generate_deployment:`
 #
@@ -60,7 +50,6 @@ endfunction(generate_targets)
 ####
 function(generate_deployment EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
     generate_base_module_properties("Deployment" "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-    generate_targets()
 endfunction(generate_deployment)
 ####
 # Function `generate_executable:`

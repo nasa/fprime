@@ -32,44 +32,46 @@
 #  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
 
-function(setup_single_target TARGET_FILE)
+function(setup_global_target TARGET_FILE)
+    include(target/default)
+    include("${TARGET_FILE}")
+    add_global_target("${TARGET_NAME}")
+endfunction(setup_global_target)
+
+
+function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     # Import the target with defaults for when functions are not defined
     include(target/default)
     include("${TARGET_FILE}")
+
     # Announce for the debug log
     get_target_name("${TARGET_FILE}")
     if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "[target] Setting up '${TARGET_NAME}' on all modules")
+        message(STATUS "[target] Setting up '${TARGET_NAME}' on all module ${MODULE}")
     endif()
-    add_global_target("${TARGET_NAME}")
-    # Loop through all modules setting up the given target with them
-    foreach(MODULE IN LISTS GLOBAL_MODULES)
-        get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
-        get_target_property(SOURCE_FILES "${MODULE}" FP_SRC)
-        get_target_property(DEPENDENCIES "${MODULE}" FP_DEP)
-        get_target_property(CMAKE_CURRENT_SOURCE_DIR "${MODULE}" FP_SRCD)
-        get_target_property(CMAKE_CURRENT_BINARY_DIR "${MODULE}" FP_BIND)
-        set(MODULE_NAME "${MODULE}")
+    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
 
-        if (NOT MODULE_TYPE STREQUAL "Deployment")
-            add_module_target("${MODULE}" "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-        else()
-            get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
-            add_deployment_target("${MODULE}" "${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}" "${FP_RECURSIVE_DEPS}")
+    if (NOT MODULE_TYPE STREQUAL "Deployment")
+        add_module_target("${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
+    else()
+        get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
+        if (NOT RECURSIVE_DEPENDENCIES)
+            resolve_dependencies(RESOLVED ${DEPENDENCIES})
+            recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" "${RESOLVED}")
+            set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
         endif()
-    endforeach()
+        add_deployment_target("${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
+    endif()
 endfunction(setup_single_target)
 
 
-function(setup_targets ALL_MODULES)
+function(setup_module_targets MODULE SOURCES DEPS)
     # Grab the list of targets
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
-    list(REMOVE_DUPLICATES TARGETS)
-
     foreach(TARGET IN LISTS TARGETS)
-        setup_single_target("${TARGET}" "${ALL_MODULES}")
+        setup_single_target("${TARGET}" "${MODULE}" "${SOURCES}" "${DEPS}")
     endforeach()
-endfunction(setup_targets)
+endfunction(setup_module_targets)
 
 ####
 # Function `get_target_name`:

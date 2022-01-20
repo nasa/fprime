@@ -72,13 +72,14 @@ endfunction(add_global_target)
 # - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
 ####
 function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
-    # Compilable sources
-    set(COMPILE_SOURCES)
+    # Add generated sources
     foreach(SOURCE IN LISTS SOURCES GENERATED)
         if (NOT SOURCE IN_LIST EXCLUDED_SOURCES)
-            list(APPEND COMPILE_SOURCES "${SOURCE}")
+            message(STATUS ">>>${SOURCE}<<<")
+            target_sources("${MODULE}" PRIVATE "${SOURCE}")
         endif()
     endforeach()
+    #message("#####${SOURCES}")
     # Setup the actual target
     #if (FPRIME_OBJECT_TYPE STREQUAL "Library")
     #    # Add the library name
@@ -90,11 +91,22 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
     # Set those files as generated to prevent build errors
     foreach(SOURCE IN LISTS GENERATED)
         set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
+        set_property(SOURCE ${SOURCE} PROPERTY GENERATED 1)
+        set_property(SOURCE "${SOURCE}" TARGET_DIRECTORY "${MODULE}" PROPERTY GENERATED TRUE)
     endforeach()
     # Setup the hash file for our sources
     foreach(SRC_FILE ${COMPILE_SOURCES})
         set_hash_flag("${SRC_FILE}")
     endforeach()
+
+    get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
+    list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
+    #message("---${MODULE_SOURCES}")
+    set_target_properties(
+            ${MODULE}
+            PROPERTIES
+            SOURCES "${MODULE_SOURCES}"
+    )
 
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -138,6 +150,7 @@ endfunction()
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
+    message("#####${SOURCES}")
 
     run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai-xml)
 

@@ -24,6 +24,7 @@ message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
 include(required)
+include(prescan) #Must come after required if tools detection is to be inherited
 include(platform/platform)
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
@@ -74,19 +75,23 @@ include_directories("${FPRIME_CONFIG_DIR}")
 #
 
 # FPP preparation and the build target must come first, and in that order
-register_fprime_target(target/fpp-locs)
-register_fprime_target(target/build)
-
-register_fprime_target(target/noop)
-register_fprime_target(target/version)
-register_fprime_target(target/dict)
-register_fprime_target(target/install)
-register_fprime_ut_target(target/ut)
-
-if (FPRIME_ENABLE_UTIL_TARGETS)
-    register_fprime_target(target/impl)
-    register_fprime_ut_target(target/check)
-    register_fprime_ut_target(target/check_leak)
-    register_fprime_ut_target(target/coverage)
-    register_fprime_ut_target(target/testimpl)
+if (FPRIME_PRESCAN)
+    register_fprime_target(target/prescan)
+else()
+    perform_prescan()
+    register_fprime_target(target/fpp-locs)
+    register_fprime_target(target/build)
 endif()
+#register_fprime_target(target/noop)
+#register_fprime_target(target/version)
+#register_fprime_target(target/dict)
+#register_fprime_target(target/install)
+#register_fprime_ut_target(target/ut)
+
+#if (FPRIME_ENABLE_UTIL_TARGETS)
+#    register_fprime_target(target/impl)
+#    register_fprime_ut_target(target/check)
+#    register_fprime_ut_target(target/check_leak)
+#    register_fprime_ut_target(target/coverage)
+#    register_fprime_ut_target(target/testimpl)
+#endif()

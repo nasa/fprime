@@ -441,7 +441,18 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 function(register_fprime_target TARGET_FILE_PATH)
-    set_property(GLOBAL APPEND PROPERTY FPRIME_TARGET_LIST "${TARGET_FILE_PATH}")
+    # Prevent out-of-order setups
+    get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
+    if (MODULE_DETECTION_STARTED)
+        message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
+    endif()
+
+
+    get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
+    if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
+        set_property(GLOBAL APPEND PROPERTY FPRIME_TARGET_LIST "${TARGET_FILE_PATH}")
+        setup_global_target("${TARGET_FILE_PATH}")
+    endif()
 endfunction(register_fprime_target)
 
 ####

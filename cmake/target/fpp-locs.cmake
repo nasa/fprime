@@ -54,6 +54,10 @@ function(generate_locations)
     message(STATUS "Generating FPP location index - DONE")
 endfunction()
 
+function(fpp_depend_in_parallel MODULES)
+    execute_process(COMMAND "${PYTHON}" "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CMAKE_BINARY_DIR}/fpp-depend-input" COMMAND_ERROR_IS_FATAL ANY)
+endfunction()
+
 ####
 # Function `generate_dependencies`:
 #
@@ -68,16 +72,7 @@ function(generate_dependencies MODULES)
         message(FATAL_ERROR "Unable to determine python executable")
     endif()
     message(STATUS "Generating FPP dependency caches")
-    set(CACHE_FILE "${CMAKE_BINARY_DIR}/fpp-depend-input" )
-    file(WRITE "${CACHE_FILE}" "")
-    foreach(MODULE IN LISTS MODULES)
-        get_target_property(TARGET_FPPS "${MODULE}" FPP_INPUTS)
-        get_target_property(BIN_DIR "${MODULE}" FP_BIND)
-        if (TARGET_FPPS)
-            file(APPEND "${CACHE_FILE}" "${BIN_DIR};${TARGET_FPPS}\n")
-        endif()
-    endforeach()
-    execute_process(COMMAND "${PYTHON}" "${FPP_DEPEND_PARALLELIZE}" "${FPP_DEPEND}" "${FPP_LOCS_FILE}" "${CACHE_FILE}" COMMAND_ERROR_IS_FATAL ANY)
+    fpp_depend_in_parallel("${MODULES}")
     message(STATUS "Generating FPP dependency caches - DONE")
 endfunction(generate_dependencies)
 

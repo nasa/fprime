@@ -216,6 +216,7 @@ function(__ac_process_sources SOURCES INFO_ONLY)
 
     # Run the generation setup when not requesting "info only"
     if (NOT INFO_ONLY)
+        get_target_property(CMAKE_CURRENT_LIST_DIR "${MODULE_NAME}" FP_LSTD)
         setup_autocode("${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
     endif()
 endfunction()

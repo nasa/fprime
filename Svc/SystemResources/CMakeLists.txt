@@ -14,7 +14,7 @@ set(MOD_DEPS
   Os
 )
 register_fprime_module()
-if (NOT FPRIME_FPP_LOCS_BUILD)
+if (TARGET version)
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
     add_dependencies(${MODULE_NAME} version)
 endif()
