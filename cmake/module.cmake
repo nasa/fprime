@@ -23,7 +23,7 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
     set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
 
     # Add the base elements to the system
-    message("Adding ${TARGET_TYPE}: ${TARGET_NAME}")
+    #message(STATUS "Adding ${TARGET_TYPE}: ${TARGET_NAME}")
     if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment" OR TARGET_TYPE STREQUAL "Unit Test")
         add_executable("${TARGET_NAME}" "${EMPTY}")
     elseif(TARGET_TYPE STREQUAL "Library")

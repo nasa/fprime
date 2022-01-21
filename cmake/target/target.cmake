@@ -31,19 +31,26 @@
 #  - **AC_OUTPUTS:** list of autocoder outputs. These are Ac.cpp and Ac.hpp files.
 #  - **MOD_DEPS:** list of specified dependencies of target. Use: fprime_ai_info for Ai.xml info
 ####
+include_guard()
+
+macro(add_pr)
+
 
 function(setup_global_target TARGET_FILE)
-    include(target/default)
-    include("${TARGET_FILE}")
+    if (NOT DEFINED FPRIME_PRESCAN)
+        include(target/default)
+        include("${TARGET_FILE}")
+    endif()
     add_global_target("${TARGET_NAME}")
 endfunction(setup_global_target)
 
 
 function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     # Import the target with defaults for when functions are not defined
-    include(target/default)
-    include("${TARGET_FILE}")
-
+    if (NOT DEFINED FPRIME_PRESCAN)
+        include(target/default)
+        include("${TARGET_FILE}")
+    endif()
     # Announce for the debug log
     get_target_name("${TARGET_FILE}")
     if (CMAKE_DEBUG_OUTPUT)
@@ -55,7 +62,7 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
         add_module_target("${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
         get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
-        if (NOT RECURSIVE_DEPENDENCIES)
+        if (NOT RECURSIVE_DEPENDENCIES AND NOT DEFINED FPRIME_PRESCAN)
             resolve_dependencies(RESOLVED ${DEPENDENCIES})
             recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" "${RESOLVED}")
             set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")

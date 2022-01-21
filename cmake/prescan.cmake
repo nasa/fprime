@@ -35,6 +35,7 @@ function(perform_prescan)
             -DCMAKE_CXX_COMPILER_FORCED=TRUE
             ${CALL_PROPS}
         RESULT_VARIABLE result
+        OUTPUT_FILE "${PRESCAN_DIR}/prescan.log"
         WORKING_DIRECTORY "${PRESCAN_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
     )

@@ -6,6 +6,7 @@
 #
 # Note: autocoders need to be run by targets. See target/target.cmake.
 ####
+include_guard()
 include(utilities)
 
 ####

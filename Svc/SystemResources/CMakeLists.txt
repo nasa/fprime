@@ -17,6 +17,8 @@ register_fprime_module()
 if (TARGET version)
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
     add_dependencies(${MODULE_NAME} version)
+else()
+    file(WRITE "${CMAKE_BINARY_DIR}/version.hpp" "#ifndef __VERSION_HPP__\n#define __VERSION_HPP\nstatic const char* VERSION = \"NOT_AVAILABLE\"\n#endif\n;")
 endif()
 ### UTs ###
 set(UT_SOURCE_FILES

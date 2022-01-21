@@ -101,7 +101,7 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
     list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    #message("---${MODULE_SOURCES}")
+    message("---${MODULE_SOURCES}")
     set_target_properties(
             ${MODULE}
             PROPERTIES
