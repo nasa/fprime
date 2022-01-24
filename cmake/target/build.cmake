@@ -55,8 +55,8 @@ endfunction()
 #
 # Specifically does nothing.  The "all" target of a normal cmake build will cover this case.
 ####
-function(add_global_target TARGET)
-endfunction(add_global_target)
+function(build_add_global_target TARGET)
+endfunction(build_add_global_target)
 
 ####
 # setup_build_module:
@@ -101,7 +101,7 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
     list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    message("---${MODULE_SOURCES}")
+    #message("---${MODULE_SOURCES}")
     set_target_properties(
             ${MODULE}
             PROPERTIES
@@ -131,10 +131,10 @@ endfunction()
 # Adds in a deployment target, which for build, is just a normal module target. See: add_module_target for a description
 # of arguments. FULL_DEPENDENCY_LIST is unused (these are already known to CMake).
 ####
-function(add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
-    add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
-    recurse_targets("${MODULE}" RESULTS "" ${RESOLVED})
-    set_property(TARGET "${MODULE}" PROPERTY FP_RECURSIVE_DEPS "${RESULTS}")
+function(build_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
+    build_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
+    #recurse_targets("${MODULE}" RESULTS "" ${RESOLVED})
+    #set_property(TARGET "${MODULE}" PROPERTY FP_RECURSIVE_DEPS "${RESULTS}")
 endfunction()
 
 ####
@@ -147,12 +147,12 @@ endfunction()
 # - **SOURCES:** list of source file inputs from the CMakeLists.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
     message("#####${SOURCES}")
 
-    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai-xml)
+    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
 
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
     setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
@@ -165,4 +165,4 @@ function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${MODULE}")
     endif()
-endfunction(add_module_target)
+endfunction(build_add_module_target)

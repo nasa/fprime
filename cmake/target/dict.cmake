@@ -8,7 +8,7 @@
 ####
 
 # Dictionaries are per-deployment, a global variant does not make sense
-function(add_global_target)
+function(dict_add_global_target)
 endfunction()
 
 ####
@@ -23,9 +23,9 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+function(dict_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
-    run_ac_set("${SOURCES}" INFO_ONLY autocoder/fpp INFO_ONLY autocoder/ai-xml)
+    run_ac_set("${SOURCES}" INFO_ONLY autocoder/fpp INFO_ONLY autocoder/ai_xml)
     set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TopologyAppDictionary.xml")
     foreach(FILE IN LISTS AC_GENERATED)
         if (FILE STREQUAL DICTIONARY)
@@ -33,4 +33,4 @@ function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
             break()
         endif()
     endforeach()
-endfunction(add_module_target)
+endfunction(dict_add_module_target)

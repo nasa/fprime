@@ -14,7 +14,7 @@
 #
 # Does nothing. Prevents default target.
 ####
-function(add_global_target TARGET)
+function(testimpl_add_global_target TARGET)
 endfunction()
 
 ####
@@ -22,7 +22,7 @@ endfunction()
 #
 # Does nothing. Prevents default "roll-up" target.
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(testimpl_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
 endfunction()
 
 ####
@@ -36,11 +36,11 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
+function(testimpl_add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
     # Try to generate dictionaries for every AC input file
     if (NOT TARGET "${TARGET_MOD_NAME}")
-        run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai-ut-impl)
+        run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_ut_impl)
         add_custom_target("${TARGET_MOD_NAME}" DEPENDS ${AC_GENERATED})
     endif()
-endfunction(add_module_target)
+endfunction(testimpl_add_module_target)

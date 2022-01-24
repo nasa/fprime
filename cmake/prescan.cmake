@@ -35,10 +35,11 @@ function(perform_prescan)
             -DCMAKE_CXX_COMPILER_FORCED=TRUE
             ${CALL_PROPS}
         RESULT_VARIABLE result
-        OUTPUT_FILE "${PRESCAN_DIR}/prescan.log"
+
         WORKING_DIRECTORY "${PRESCAN_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
     )
+    # OUTPUT_FILE "${PRESCAN_DIR}/prescan.log"
     file(READ "${CMAKE_BINARY_DIR}/prescan-fpp-list" FPP_LISTING OFFSET 1) # Skips leading ";" preventing null element
     set_property(GLOBAL PROPERTY FP_FPP_LIST ${FPP_LISTING})
     message(STATUS "Performing CMake source prescan -- DONE")

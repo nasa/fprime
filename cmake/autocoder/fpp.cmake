@@ -20,12 +20,12 @@ set(FPRIME_FRAMEWORK_MODULES Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port 
 #
 # AC_INPUT_FILE: filepath for consideration
 ####
-function(is_supported AC_INPUT_FILE)
+function(fpp_is_supported AC_INPUT_FILE)
     set(IS_SUPPORTED FALSE PARENT_SCOPE)
     if (AC_INPUT_FILE MATCHES ".*.fpp")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
     endif()
-endfunction(is_supported)
+endfunction(fpp_is_supported)
 
 ####
 # `regenrate_memo`:
@@ -93,7 +93,7 @@ endfunction(regenerate_memo)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_generated_files AC_INPUT_FILES)
+function(fpp_get_generated_files AC_INPUT_FILES)
     find_program(FPP_DEPEND fpp-depend)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
@@ -167,7 +167,7 @@ function(get_generated_files AC_INPUT_FILES)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
     set(EXTRAS "${IMPORTED}" PARENT_SCOPE)
-endfunction(get_generated_files)
+endfunction(fpp_get_generated_files)
 
 ####
 # `get_dependencies`:
@@ -180,12 +180,12 @@ endfunction(get_generated_files)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_dependencies AC_INPUT_FILES)
+function(fpp_get_dependencies AC_INPUT_FILES)
     # Should have been inherited from previous call to `get_generated_files`
     if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
         message(FATAL_ERROR "The CMake system is inconsistent. Please contact a developer.")
     endif()
-endfunction(get_dependencies)
+endfunction(fpp_get_dependencies)
 
 ####
 # `setup_autocode`:
@@ -199,7 +199,7 @@ endfunction(get_dependencies)
 # FILE_DEPENDENCIES: specific file dependencies of the given input sources
 # EXTRAS: used to publish the 'imported' file dependencies of the given input files
 ####
-function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
+function(fpp_setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
@@ -239,7 +239,7 @@ function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_
                 DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
-endfunction(setup_autocode)
+endfunction(fpp_setup_autocode)
 
 ####
 # `fpp_to_modules`:

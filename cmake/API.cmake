@@ -440,7 +440,8 @@ endfunction(register_fprime_ut)
 #
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
-function(register_fprime_target TARGET_FILE_PATH)
+macro(register_fprime_target TARGET_FILE_PATH)
+    include("${TARGET_FILE_PATH}")
     # Prevent out-of-order setups
     get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
     if (MODULE_DETECTION_STARTED)
@@ -453,7 +454,7 @@ function(register_fprime_target TARGET_FILE_PATH)
         set_property(GLOBAL APPEND PROPERTY FPRIME_TARGET_LIST "${TARGET_FILE_PATH}")
         setup_global_target("${TARGET_FILE_PATH}")
     endif()
-endfunction(register_fprime_target)
+endmacro(register_fprime_target)
 
 ####
 # Function `register_fprime_ut_target`:
@@ -463,12 +464,12 @@ endfunction(register_fprime_target)
 #
 # **TARGET_FILE_PATH:** include path or file path files
 ###
-function(register_fprime_ut_target TARGET_FILE_PATH)
+macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
     if (BUILD_TESTING)
         register_fprime_target("${TARGET_FILE_PATH}")
     endif()
-endfunction(register_fprime_ut_target)
+endmacro(register_fprime_ut_target)
 
 #### Documentation links
 # Next Topics:

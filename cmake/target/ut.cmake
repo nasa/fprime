@@ -9,7 +9,7 @@
 #
 # Implementation defines the target using `add_custom_target` and nothing more.
 ####
-function(add_global_target TARGET)
+function(ut_add_global_target TARGET)
     if (FPRIME_ENABLE_UTIL_TARGETS)
         add_custom_target(${TARGET})
     endif()
@@ -26,7 +26,7 @@ endfunction(add_global_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     if (NOT FPRIME_ENABLE_UTIL_TARGETS)
         return()
     endif()
@@ -50,7 +50,7 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Protects against multiple calls to fprime_register_ut()
     if (NOT BUILD_TESTING)
         return()
@@ -75,4 +75,4 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${UT_EXE_NAME}")
     endif()
-endfunction(add_module_target)
+endfunction(ut_add_module_target)

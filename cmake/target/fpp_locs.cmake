@@ -81,22 +81,22 @@ endfunction(generate_dependencies)
 #
 # Performs special FPP setup and handling.
 ####
-function(add_global_target TARGET_NAME)
+function(fpp_locs_add_global_target TARGET_NAME)
     get_property(GLOBAL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
     # One-time FPP setup done to absolve performance issues
     determine_global_fpp_inputs("${GLOBAL_MODULES}")
     generate_locations()
     generate_dependencies("${GLOBAL_MODULES}")
-endfunction(add_global_target)
+endfunction(fpp_locs_add_global_target)
 
 ####
 # Not defined to prevent defaults from engaging
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(fpp_locs_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
 endfunction()
 
 ####
 # Not defined to prevent defaults from engaging
 ####
-function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-endfunction(add_module_target)
+function(fpp_locs_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+endfunction(fpp_locs_add_module_target)
