@@ -46,15 +46,15 @@ followed by the usage in C++.
 ```c++
     ...
     const U32 needed_size = 1024;
-    Fw::Buffer my_buffer = this->allocate_out(needed_size);
+    Fw::Buffer my_buffer = this->allocate_out(0, needed_size);
     
     if (my_buffer.getSize() < needed_size) {
-        this->deallocate_out(my_buffer);
+        this->deallocate_out(0, my_buffer);
         this->log_WARNING_LO_MemoryAllocationFailed();
     } else {
         ...
         ...
-        this->deallocate_out(my_buffer);
+        this->deallocate_out(0, my_buffer);
     }
 ```
 
@@ -154,8 +154,9 @@ available for the number of clients used.
 
 ***Configuration and Setup***
 
-Allocation region size is configured in the `StaticMemoryConfig.hpp` header and maximum client number is configured in
-`AcConstants.fpp`. No other configuration or setup is necessary.
+Allocation region size is configured in the `StaticMemoryConfig.hpp` header using the `STATIC_MEMORY_ALLOCATION_SIZE`
+value and maximum client number is configured in `AcConstants.fpp` using the `StaticMemoryAllocations` value. No other
+configuration or setup is necessary.
 
 ### Svc.BufferManager
 
@@ -203,7 +204,8 @@ telemetry, events, and time connections.
 
 **Configuration and Setup**
 
-The number of sub allocations is configured in the `BufferManagerComponentImplCfg.hpp` header.
+The number of sub allocations is configured in the `BufferManagerComponentImplCfg.hpp` header using the 
+`BUFFERMGR_MAX_NUM_BINS` value.
 
 When using Svc.BufferManager the `Svc::BufferManagerComponentImpl.setup()` method must be called supplying a U16 manager
 ID, a buffer id, an implementation of [Fw::MemAllocator](../api/c++/html/class_fw_1_1_mem_allocator.html) used to
