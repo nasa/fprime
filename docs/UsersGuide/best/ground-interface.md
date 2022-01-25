@@ -2,7 +2,8 @@
 
 This guide will discuss the F´ ground interface layers and how to customize them. There are two parts to the ground
 interface: the spacecraft side, and the ground side. This guide will primarily focus on the spacecraft side adaptation
-as the most common pattern is to adapt F´ flight software for some other ground system (Cosmos, OpenMCT, etc). This
+as the most common pattern is to adapt F´ flight software for some other ground system (e.g.
+[Cosmos]( https://github.com/BallAerospace/COSMOS), [OpenMCT](https://nasa.github.io/openmct/), etc). This
 document will walk through common adaptations in hopes that projects will not need to replace the ground interface
 entirely.
 
@@ -10,6 +11,9 @@ In the most basic form, the F´ ground system pattern consists of two sides: upl
 have two layers: framing and driver.  Uplink handles data coming from the remote side of the interface, downlink handles
 data going to the remote interface, framing handles serializing and deserializing data to and from byte buffers, and the
 driver layer handles writing data to and from the hardware.
+
+![Ground Interface Block Diagram](./img/ground-interface.jpg)
+
 
 Also of note is the framing protocol, which breaks out the handling of the byte serialization for quick adaptation. Each
 of these stages need to allocate memory and thus users should also consult the [buffer management](./dynamic-memory.md)
@@ -30,17 +34,18 @@ architecture is described below.
 
 ### Driver
 
-Drivers manager hardware communications. These can be simple hardware interfaces (e.g. TCP or UART) or far more complex
+Drivers manage hardware communications. These can be simple hardware interfaces (e.g. TCP or UART) or far more complex
 constructs (e.g. radios, spacecraft buses). From the perspective of F´, the driver has two functions: provide incoming
 data, and handle outgoing data.
 
 **Note:** typically projects use a single driver to handle both input and output, however; two drivers may be used to
 if differing behavior is needed for uplink and downlink.(e.g. UDP downlink for speed and  Tcp uplink reliability).
 
-All drivers implement an input port used to send data out to the hardware. Drivers implement at least one of two methods
-to receive data: an input port to poll to ask for data and an output read port for asynchronous data, which often is
-supported by a read thread. Generic drivers implement both such that they can be used in a threaded context or rate
-group driven calling context.
+All drivers implement an input port receiving data from the framer. The driver should write input data to the hardware
+the driver manages. Drivers implement at least one of two methods to retrieve data from hardware: an input port
+to poll for available data and an output read port for asynchronous data, which often is supported by a read thread.
+Generic drivers implement both such that they can be used in a threaded context or rate group driven polling context.
+The driver is responsible for reading the data from the hardware in either context.
 
 **Note:** the F´ uplink layer is compatible with both polling and receiving drivers as described in **Uplink** below.
 
