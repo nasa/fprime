@@ -78,7 +78,6 @@ This section is divided into three sub-sections:
     - [F´ On Baremetal and Multi-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
-    - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)

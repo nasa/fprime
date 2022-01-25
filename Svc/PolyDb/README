@@ -4,4 +4,3 @@ It has guarded ports that control access to the database.
 PolyDbComponentAi.xml - The XML definition of the PolyDb component
 PolyDbImpl.hpp(.cpp) - The implementation file for PolyDb
 PolyDbImplCfg.hpp - configuration for implementation class
-PolyDbModule.mdxml - MagicDraw project file that describes the PolyDb component

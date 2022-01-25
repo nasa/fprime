@@ -33,7 +33,6 @@ Tester.*
 !**/test/ut/TesterBase.*
 !**/test/ut/Tester.*
 
-*.mdxml.bak
 *.sconsign.dblite
 *.class
 .classpath
