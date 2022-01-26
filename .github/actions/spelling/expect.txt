@@ -1088,6 +1088,7 @@ opcodes
 opendir
 openjdk
 opengroup
+openmct
 openpyxl
 openssl
 oper
