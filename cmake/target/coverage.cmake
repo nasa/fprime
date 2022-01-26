@@ -30,14 +30,6 @@
 # The following functions are used to register the _coverage targets into the target system. They
 # are required for the system to register custom targets.
 ####
-
-# Global settings for coverage
-if (FPRIME_ENABLE_UT_COVERAGE)
-    # Note: this is to prevent filenames of the form file.cpp.<extension> and instead use file.<extension> instead to appease gcov
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-endif()
-
 ####
 #  Function `add_global_target`:
 #
@@ -82,7 +74,7 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
         add_custom_target(
             ${MODULE_NAME}_${TARGET_NAME}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/coverage
-            COMMAND ${GCOV_EXE} -o CMakeFiles/${MODULE_NAME}.dir/ ${FINAL_SOURCES}
+            COMMAND ${GCOV_EXE} -o ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${MODULE_NAME}.dir/ ${FINAL_SOURCES}
             COMMAND ${CMAKE_COMMAND} -E copy *.gcov ${CMAKE_CURRENT_LIST_DIR}/coverage
         )
         add_dependencies(${MODULE_NAME}_${TARGET_NAME} ${MODULE_NAME}_check)
