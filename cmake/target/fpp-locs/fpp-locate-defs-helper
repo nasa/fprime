@@ -1,4 +1,4 @@
 #!/bin/sh
 OUT_FILE="$1"
 shift
-fpp-locate-defs "$@" > "${OUT_FILE}"
+${FPP_LOCATE_DEFS} "$@" > "${OUT_FILE}"
