@@ -613,12 +613,10 @@ def main():
     #
     if len(args) == 0:
         print("Usage: %s [options] xml_filename" % sys.argv[0])
-        return
     elif len(args) == 1:
         xml_filename = args[0]
     else:
         print("ERROR: Too many filenames, should only have one")
-        return
 
     print("Processing packet file %s" % xml_filename)
     set_build_roots(os.environ.get("BUILD_ROOT"))
