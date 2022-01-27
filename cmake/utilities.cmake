@@ -1,5 +1,81 @@
 include_guard()
 
+####
+# Function `plugin_name`:
+#
+# From a plugin include path retrieve the plugin name. This is the name without any .cmake extension.
+#
+# INCLUDE_PATH: path to plugin
+# OUTPUT_VARIABLE: variable to set in caller's scope with result
+####
+function(plugin_name INCLUDE_PATH OUTPUT_VARIABLE)
+    get_filename_component(TEMP_NAME "${INCLUDE_PATH}" NAME_WE)
+    set("${OUTPUT_VARIABLE}" ${TEMP_NAME} PARENT_SCOPE)
+endfunction(plugin_name)
+
+####
+# Function `plugin_include_helper`:
+#
+# Designed to help include API files (targets, autocoders) in an efficient way within CMake. This function imports a
+# CMake file and defines a `dispatch_<function>(PLUGIN_NAME ...)` function for each function name in ARGN. Thus users
+# of the imported plugin can call `dispatch_<function>(PLUGIN_NAME ...)` to dispatch a function as implemented in a
+# plugin.
+#
+# INCLUDE_PATH: path to file to include
+####
+function(plugin_include_helper INCLUDE_PATH)
+    plugin_name("${INCLUDE_PATH}" PLUGIN_NAME)
+    foreach(PLUGIN_FUNCTION IN LISTS ARGN)
+        # Include the file if we have not found the prefixed function name yet
+        if (NOT COMMAND "${PLUGIN_NAME}_${PLUGIN_FUNCTION}")
+            include("${INCLUDE_PATH}")
+        endif()
+        # If cmake_language is not available, we have to improve
+        if(${CMAKE_VERSION} VERSION_LESS "3.18.0")
+            message(FATAL_ERROR "NOT IMPLEMENTED")
+        endif()
+    endforeach()
+endfunction(plugin_include_helper)
+
+
+
+
+####
+# Macro `renaming_import_helper`:
+#
+# This will import the given file and in the case where `cmake_language` is not available, it will rename the function
+# to someth
+####
+macro(run_named_function_helper INCLUDE_PATH PREFIX FUNCTION_NO_PREFIX)
+    # (Re)include is necessary when:
+    #  1. Haven't yet included the file
+    #  2. When no `cmake_language` call is available
+    if (NOT COMMAND "${PREFIX}_${FUNCTION_NO_PREFIX}")
+        include("${INCLUDE_PATH}")
+    endif()
+endmacro()
+
+
+
+####
+# call_by_prefix:
+#
+# Function used to call a function by name. Uses `cmake_language(CALL ...)` for CMake version >= 3.18 and uses the
+# generate and include helper file otherwise.
+#
+# PREFIX: prefix to function
+# NAME: name of function w/o prefix
+# ARGN: forwarded to functions
+####
+function(call_by_prefix PREFIX FUNCTION)
+    if (COMMAND cmake_language)
+        cmake_language(CALL "${PREFIX}_${FUNCTION}" $ARGN)
+    else()
+        include("${CMAKE_BINARY_DIR}/cmake-helpers/${FUNCTION}.cmake")
+
+    endif()
+endfunction()
+
 
 ####
 # init_variables:

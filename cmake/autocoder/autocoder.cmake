@@ -100,12 +100,9 @@ endfunction()
 # INFO_ONLY: TRUE if only information is needed, FALSE to run otherwise
 ####
 function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
-    #include(autocoder/default) # Default function definitions perform validation
+    plugin_include_helper("${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
     set(AUTOCODER_NAME "${AUTOCODER_CMAKE}")
     get_filename_component(AUTOCODER_NAME "${AUTOCODER_CMAKE}" NAME)
-    if (NOT COMMAND ${AUTOCODER_NAME}_setup_autocode)
-        include(${AUTOCODER_CMAKE})
-    endif()
 
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
@@ -191,7 +188,7 @@ function(_filter_sources OUTPUT_NAME)
     # Loop over the list and check
     foreach (SOURCE_LIST IN LISTS ARGN)
         foreach(SOURCE IN LISTS SOURCE_LIST)
-            cmake_language(CALL ${AUTOCODER_NAME}_is_supported "${SOURCE}")
+            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}")
             if (IS_SUPPORTED)
                 list(APPEND OUTPUT_LIST "${SOURCE}")
             endif()
@@ -211,8 +208,8 @@ endfunction(_filter_sources)
 ####
 function(__ac_process_sources SOURCES INFO_ONLY)
     # Run the autocode setup process now with memoization
-    cmake_language(CALL ${AUTOCODER_NAME}_get_generated_files "${SOURCES}")
-    cmake_language(CALL ${AUTOCODER_NAME}_get_dependencies "${SOURCES}")
+    cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
+    cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
     resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
 
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
@@ -221,7 +218,7 @@ function(__ac_process_sources SOURCES INFO_ONLY)
     # Run the generation setup when not requesting "info only"
     if (NOT INFO_ONLY)
         get_target_property(CMAKE_CURRENT_LIST_DIR "${MODULE_NAME}" FP_LSTD)
-        cmake_language(CALL ${AUTOCODER_NAME}_setup_autocode "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
+        cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
     endif()
 endfunction()
 

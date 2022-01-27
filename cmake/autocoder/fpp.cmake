@@ -5,7 +5,6 @@
 # autocoder API and wraps calls to the FPP tools.
 ####
 include(utilities)
-include(autocoder/default)
 
 # Does not handle source files one-by-one, but as a complete set
 set(HANDLES_INDIVIDUAL_SOURCES FALSE)

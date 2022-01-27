@@ -34,12 +34,9 @@
 include_guard()
 
 function(setup_global_target TARGET_FILE)
-    include("${TARGET_FILE}")
+    plugin_include_helper("${TARGET_FILE}" add_global_target add_module_target add_deployment_target)
     get_target_name("${TARGET_FILE}")
-
-    if (COMMAND ${TARGET_NAME}_add_global_target)
-       cmake_language(CALL ${TARGET_NAME}_add_global_target "${TARGET_NAME}")
-    endif()
+    cmake_language(CALL "${TARGET_NAME}_add_global_target" "${TARGET_NAME}")
 endfunction(setup_global_target)
 
 
@@ -52,11 +49,7 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
 
     if (NOT MODULE_TYPE STREQUAL "Deployment")
-        if (COMMAND ${TARGET_NAME}_add_module_target)
-            cmake_language(CALL ${TARGET_NAME}_add_module_target "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
-        endif()
-
-        #add_module_target("${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
+        cmake_language(CALL "${TARGET_NAME}_add_module_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
     else()
         get_target_property(RECURSIVE_DEPENDENCIES "${MODULE}" FP_RECURSIVE_DEPS)
         if (NOT RECURSIVE_DEPENDENCIES AND NOT DEFINED FPRIME_PRESCAN)
@@ -64,10 +57,7 @@ function(setup_single_target TARGET_FILE MODULE SOURCES DEPENDENCIES)
             recurse_targets("${MODULE}" RECURSIVE_DEPENDENCIES "" "${RESOLVED}")
             set_target_properties("${MODULE}" PROPERTIES FP_RECURSIVE_DEPS "${RECURSIVE_DEPENDENCIES}")
         endif()
-        if (COMMAND ${TARGET_NAME}_add_deployment_target)
-            cmake_language(CALL ${TARGET_NAME}_add_deployment_target "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
-        endif()
-        #add_deployment_target("${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
+        cmake_language(CALL "${TARGET_NAME}_add_deployment_target" "${MODULE}" "${TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}" "${RECURSIVE_DEPENDENCIES}")
     endif()
 endfunction(setup_single_target)
 
