@@ -924,6 +924,7 @@ maxsize
 maxspew
 mccabe
 mcomment
+MCT
 mcternan
 mday
 mdbasiccomponents
@@ -1087,6 +1088,7 @@ opcodes
 opendir
 openjdk
 opengroup
+openmct
 openpyxl
 openssl
 oper
