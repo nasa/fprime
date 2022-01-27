@@ -27,6 +27,7 @@ set(FPP_CONFIGS
     "${FPRIME_CONFIG_DIR}/FpConfig.fpp"
     "${FPRIME_FRAMEWORK_PATH}/Fpp/ToCpp.fpp"
 )
+set(FPP_LOCATE_DEFS_HELPER "${CMAKE_CURRENT_LIST_DIR}/fpp-locs/fpp-locate-defs-helper")
 
 ####
 # Run the CMake build for generating the locs.fpp file. Should be called by the primary build in order to build the
@@ -87,8 +88,8 @@ function(add_global_target TARGET_NAME)
     if (DEFINED FPP_LOCATE_DEFS-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    add_custom_target("${TARGET_NAME}" COMMAND "${FPP_LOCATE_DEFS}" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} $<TARGET_PROPERTY:${TARGET_NAME},INPUTS> > "${CMAKE_BINARY_DIR}/locs.fpp" VERBATIM)
-    set_target_properties("${TARGET_NAME}" PROPERTIES INPUTS "")
+    add_custom_target("${TARGET_NAME}" COMMAND ${CMAKE_COMMAND} -E env FPP_LOCATE_DEFS="${FPP_LOCATE_DEFS}" "${FPP_LOCATE_DEFS_HELPER}" "${CMAKE_BINARY_DIR}/locs.fpp" -d "${CMAKE_BINARY_DIR}" ${FPP_CONFIGS} "$<TARGET_PROPERTY:${TARGET_NAME},INPUTS>" COMMAND_EXPAND_LISTS)
+    set_property(TARGET "${TARGET_NAME}" PROPERTY INPUTS "")
 endfunction(add_global_target)
 
 ####
@@ -108,9 +109,7 @@ function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     foreach(SOURCE IN LISTS SOURCES)
         is_supported("${SOURCE}")
         if (IS_SUPPORTED)
-            get_target_property(TARGET_INPUTS "${TARGET}" INPUTS)
-            set(TARGET_INPUTS " ${TARGET_INPUTS} ${SOURCE}") #Space separated list, to work around generator failure
-            set_target_properties("${TARGET}" PROPERTIES INPUTS "${TARGET_INPUTS}")
+            set_property(TARGET "${TARGET}" APPEND PROPERTY INPUTS "${SOURCE}")
         endif()
     endforeach()
     # Since fpp-locs runs as an independent build, we must force a target to exist
