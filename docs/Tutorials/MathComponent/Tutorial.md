@@ -757,35 +757,13 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-1. Run the command `fprime-util impl --ut`.
-It should generate files `Tester.cpp` and `Tester.hpp`.
-
-1. Move these files to the `test/ut` directory:
-
-   ```bash
-   mv Tester.* test/ut
-   ```
-
-**Create a stub main.cpp file:**
-Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create a file `main.cpp` with the
-following contents:
-
-```c++
-#include "Tester.hpp"
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+1. Create two placeholder unit test files so that the CMake cache can be generated:
+```sh
+touch test/ut/Tester.cpp
+touch test/ut/main.cpp
 ```
 
-This file is a stub for running tests using the
-[Google Test framework](https://github.com/google/googletest).
-Right now there aren't any tests to run; we will add one
-in the next section.
-
-**Update Ref/MathSender/CMakeLists.txt:**
+1. Update Ref/MathSender/CMakeLists.txt:
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -801,6 +779,35 @@ register_fprime_ut()
 
 This code tells the build system how to build
 and run the unit tests.
+
+1. Run `fprime-util generate --ut` to generate the unit test cache.
+
+1. Run the command `fprime-util impl --ut`.
+It should generate files `Tester.cpp` and `Tester.hpp`.
+
+1. Move these files to the `test/ut` directory and replace the old placeholders:
+
+   ```bash
+   mv Tester.* test/ut
+   ```
+
+**Create a stub main.cpp file:**
+Now go to the directory `Ref/MathSender/test/ut`.
+In that directory, open the file `main.cpp` and add the following contents:
+
+```c++
+#include "Tester.hpp"
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+```
+
+This file is a stub for running tests using the
+[Google Test framework](https://github.com/google/googletest).
+Right now there aren't any tests to run; we will add one
+in the next section.
 
 **Run the build:**
 Now we can check that the unit test build is working.
