@@ -757,13 +757,13 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-1. Create two placeholder unit test files so that the CMake cache can be generated:
+2. Create two placeholder unit test files so that the CMake cache can be generated:
 ```sh
 touch test/ut/Tester.cpp
 touch test/ut/main.cpp
 ```
 
-1. Update Ref/MathSender/CMakeLists.txt:
+3. Update Ref/MathSender/CMakeLists.txt:
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -780,12 +780,12 @@ register_fprime_ut()
 This code tells the build system how to build
 and run the unit tests.
 
-1. Run `fprime-util generate --ut` to generate the unit test cache.
+4. Run `fprime-util generate --ut` to generate the unit test cache.
 
-1. Run the command `fprime-util impl --ut`.
+5. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-1. Move these files to the `test/ut` directory and replace the old placeholders:
+6. Move these files to the `test/ut` directory and replace the old placeholders:
 
    ```bash
    mv Tester.* test/ut
