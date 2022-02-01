@@ -23,22 +23,23 @@ function(perform_prescan)
             list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
         endif()
     endforeach()
-
     # Run CMake as effeciently as possible
     file(MAKE_DIRECTORY "${PRESCAN_DIR}")
     execute_process(
-        COMMAND /usr/bin/time "${CMAKE_COMMAND}"
+        COMMAND "${CMAKE_COMMAND}"
             -G "${CMAKE_GENERATOR}"
             "${CMAKE_CURRENT_SOURCE_DIR}"
-            -DFPRIME_PRESCAN=${CMAKE_BINARY_DIR}
-            -DCMAKE_C_COMPILER_FORCED=TRUE
-            -DCMAKE_CXX_COMPILER_FORCED=TRUE
+            "-DFPRIME_PRESCAN=${CMAKE_BINARY_DIR}"
+            "-DCMAKE_C_COMPILER_FORCED=TRUE"
+            "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
             ${CALL_PROPS}
         RESULT_VARIABLE result
-
         WORKING_DIRECTORY "${PRESCAN_DIR}"
-        COMMAND_ERROR_IS_FATAL ANY
     )
+    # Check run
+    if (NOT "${result}" EQUAL 0)
+        message(FATAL_ERROR "Failed to run prescan, cannot continue.")
+    endif()
     # OUTPUT_FILE "${PRESCAN_DIR}/prescan.log"
     file(READ "${CMAKE_BINARY_DIR}/prescan-fpp-list" FPP_LISTING OFFSET 1) # Skips leading ";" preventing null element
     set_property(GLOBAL PROPERTY FP_FPP_LIST ${FPP_LISTING})

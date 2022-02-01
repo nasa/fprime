@@ -63,7 +63,7 @@ include_directories("${FPRIME_FRAMEWORK_PATH}")
 include_directories("${FPRIME_CONFIG_DIR}")
 
 # FPP preparation and the build target must come first, and in that order
-if (FPRIME_PRESCAN)
+if (DEFINED FPRIME_PRESCAN)
     register_fprime_target(target/prescan)
 else()
     perform_prescan()
