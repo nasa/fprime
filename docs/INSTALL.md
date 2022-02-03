@@ -51,6 +51,10 @@ tools package. This is to enable users to choose which tools they'd like to use.
 pip install --upgrade fprime-tools fprime-gds
 ```
 
+> Note: On some systems pip places user-installed tools in the `.local` folder.
+This results in a `fprime-util: command not found` error when trying to run 
+fprime-util. You will need to add `.local` to your `$PATH` or run as an admin.
+
 ## Checking Your F´ Installation
 
 The user may easily checkout that their F´ installation has succeeded by testing the following
