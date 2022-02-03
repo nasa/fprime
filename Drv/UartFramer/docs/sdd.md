@@ -12,7 +12,15 @@ UART connection.
 
 ### Component Diagram
 
-![Component Diagram](./img/UartFramer.png)
+![Component Diagram](img/UartFramer.svg)
+
+### Port List
+
+|Port Name|Description|
+|---|---|
+|DeframerAllocate|Allocates buffers for the UART driver to send to the deframer via the UartFramer.|
+|FramerDeallocate|Deallocate buffers sent by the framer|
+|
 
 ### Initialization
 
