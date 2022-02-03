@@ -434,7 +434,7 @@ endfunction(register_fprime_ut)
 # CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
 # per-deployment. See: [Targets](targets.md).
 #
-# This function takes in either a file path to the CMake file defining targets, or a short include path that accompishes
+# This function takes in either a file path to a CMake file defining targets, or an short include path that accomplishes
 # the same thing. Note: make sure the directory is on the CMake include path to use the second form. The supplied file
 # should define three functions: `add_global_target`, `add_module_target`, and `add_deployment_target`.
 #

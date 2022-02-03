@@ -452,6 +452,7 @@ endianness
 endif
 endl
 endloc
+endmacro
 endswith
 enduml
 ENOENT

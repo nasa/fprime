@@ -23,7 +23,7 @@ function(perform_prescan)
             list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
         endif()
     endforeach()
-    # Run CMake as effeciently as possible
+    # Run CMake as efficiently as possible
     file(MAKE_DIRECTORY "${PRESCAN_DIR}")
     execute_process(
         COMMAND "${CMAKE_COMMAND}"
