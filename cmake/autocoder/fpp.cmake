@@ -8,11 +8,9 @@ include(utilities)
 
 # Does not handle source files one-by-one, but as a complete set
 set_property(GLOBAL PROPERTY FPP_HANDLES_INDIVIDUAL_SOURCES FALSE)
-set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
-set(FPRIME_FRAMEWORK_MODULES Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg)
 
 ####
-# `is_supported`:
+# Function `is_supported`:
 #
 # Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
 # IS_SUPPORTED in parent scope to be TRUE if FPP can process the given file or FALSE otherwise.
@@ -26,9 +24,21 @@ function(fpp_is_supported AC_INPUT_FILE)
     endif()
 endfunction(fpp_is_supported)
 
+####
+# Function `fpp_get_framework_dependency_helper`:
+#
+# Helps detect framework dependencies. Either, it calculates specific dependencies *or* if the Fw roll-up target exists,
+# it will depend on that.  Note: targets within Fw always calculate the internal Fw targets as depending on Fw would
+# cause a circular dependency.
+#
+# MODULE_NAME: current module being processed
+# FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
+####
 function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     # Subset the framework dependencies, or where possible use the Fw interface target
-    if (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
+    if (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
+        message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
+    elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
         math(EXPR START_INDEX "${START_INDEX} + 1")
@@ -40,7 +50,7 @@ function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
 endfunction(fpp_get_framework_dependency_helper)
 
 ####
-# `get_generated_files`:
+# Function `fpp_get_generated_files`:
 #
 # Given a set of supported autocoder input files, this will produce a list of files that will be generated. It sets the
 # following variables in parent scope:
@@ -109,7 +119,7 @@ function(fpp_get_generated_files AC_INPUT_FILES)
 endfunction(fpp_get_generated_files)
 
 ####
-# `get_dependencies`:
+# Function `fpp_get_dependencies`:
 #
 # Given a set of supported autocoder input files, this will produce a set of dependencies. Since this should have
 # already been done in `get_generated_files` the implementation just checks the variables are still set.
@@ -127,7 +137,7 @@ function(fpp_get_dependencies AC_INPUT_FILES)
 endfunction(fpp_get_dependencies)
 
 ####
-# `setup_autocode`:
+# Function `fpp_setup_autocode`:
 #
 # Sets up the steps to run the autocoder and produce the files during the build. This is passed the lists generated
 # in calls to `get_generated_files` and `get_dependencies`.
@@ -203,10 +213,8 @@ function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
         # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
         # CMakeLists.txt in that directory that sets up the aforementioned known module and associated target.
         if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
-            #message(STATUS "Excluding: ${MODULE_NAME} from ${CURRENT_MODULE} with ${INCLUDE}")
             continue() # Skip adding to module list
         endif()
-        #message(STATUS "Adding: ${MODULE_NAME} with ${INCLUDE}")
         list(APPEND OUTPUT_DATA "${MODULE_NAME}")
     endforeach()
     set(${OUTPUT_VAR} "${OUTPUT_DATA}" PARENT_SCOPE)

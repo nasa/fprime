@@ -1,4 +1,3 @@
-
 ####
 # cmake/target/version.cmake:
 #

@@ -47,46 +47,6 @@ function (run_ac_set SOURCES)
     set(AC_SOURCES "${CONSUMED_SOURCES_LIST}" PARENT_SCOPE)
 endfunction()
 
-
-####
-# __memoize:
-#
-# This take two "long" processing steps of the autocoder that run during the configuration step of CMake and notes the
-# output such that the results are cached and repeated unless the input file has changed since the last pass through
-# this function. This is done for efficiency when the generate dependencies or generate files step takes a large
-# execution costs.
-#
-# Note: cached variables are the following: GENERATED_FILES, MODULE_DEPENDENCIES, FILE_DEPENDENCIES
-#
-# SOURCES: source file that is being parsed and must have changed for a recalculation
-####
-function (__memoize SOURCES)
-    set(SOURCES_HASH "multiple")
-    if (HANDLES_INDIVIDUAL_SOURCES)
-        string(MD5 SOURCES_HASH "${SOURCES}")
-    endif()
-    set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${AUTOCODER_NAME}.${SOURCES_HASH}.dep")
-
-    regenerate_memo(FORCE_REGENERATE "${MEMO_FILE}" "${SOURCES}")
-    if (FORCE_REGENERATE)
-        get_generated_files("${SOURCES}")
-        get_dependencies("${SOURCES}")
-        resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
-        file(WRITE "${MEMO_FILE}" "${GENERATED_FILES}\n${MODULE_DEPENDENCIES}\n${FILE_DEPENDENCIES}\n${EXTRAS}\n${LAST_DEP_COMMAND}\n")
-    # Otherwise read from file
-    else()
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Using memo ${MEMO_FILE}'")
-        endif()
-        file(READ "${MEMO_FILE}" CONTENTS)
-        read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    endif()
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
-endfunction()
-
 ####
 # run_ac:
 #
