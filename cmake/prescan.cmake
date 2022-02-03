@@ -25,10 +25,15 @@ set(NEEDED_PROPERTIES
     FPRIME_USE_STUBBED_DRIVERS
     FPRIME_USE_BAREMETAL_SCHEDULER
     FPP_TOOLS_PATH
+    BUILD_TESTING
 )
 # Directory in-which to build the prescan directory
 set(PRESCAN_DIR "${CMAKE_BINARY_DIR}/prescan")
 
+# Fake STest and GTest in the prescan
+if (BUILD_TESTING AND DEFINED FPRIME_PRESCAN)
+    add_library(STest "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+endif()
 ####
 # Function `_get_call_properties`:
 #

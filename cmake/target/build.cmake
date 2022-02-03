@@ -78,24 +78,10 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
             target_sources("${MODULE}" PRIVATE "${SOURCE}")
         endif()
     endforeach()
-    #message("#####${SOURCES}")
-    # Setup the actual target
-    #if (FPRIME_OBJECT_TYPE STREQUAL "Library")
-    #    # Add the library name
-    #    add_library(${MODULE} ${COMPILE_SOURCES})
-    #else()
-    #    add_executable(${MODULE} ${COMPILE_SOURCES})
-    #endif()
 
     # Set those files as generated to prevent build errors
     foreach(SOURCE IN LISTS GENERATED)
         set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
-        set_property(SOURCE ${SOURCE} PROPERTY GENERATED 1)
-        set_property(SOURCE "${SOURCE}" TARGET_DIRECTORY "${MODULE}" PROPERTY GENERATED TRUE)
-    endforeach()
-    # Setup the hash file for our sources
-    foreach(SRC_FILE ${COMPILE_SOURCES})
-        set_hash_flag("${SRC_FILE}")
     endforeach()
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
@@ -105,6 +91,10 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
             PROPERTIES
             SOURCES "${MODULE_SOURCES}"
     )
+    # Setup the hash file for our sources
+    foreach(SRC_FILE IN LISTS MODULE_SOURCES)
+        set_hash_flag("${SRC_FILE}")
+    endforeach()
 
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -131,8 +121,6 @@ endfunction()
 ####
 function(build_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
     build_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
-    #recurse_targets("${MODULE}" RESULTS "" ${RESOLVED})
-    #set_property(TARGET "${MODULE}" PROPERTY FP_RECURSIVE_DEPS "${RESULTS}")
 endfunction()
 
 ####

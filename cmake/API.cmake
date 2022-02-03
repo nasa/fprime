@@ -447,11 +447,14 @@ macro(register_fprime_target TARGET_FILE_PATH)
     if (MODULE_DETECTION_STARTED)
         message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
     endif()
-
-
-    get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
+    # Get the target list to add this target to or use default
+    set(LIST_NAME FPRIME_TARGET_LIST)
+    if (${ARGC} GREATER 1)
+        set(LIST_NAME "${ARGV1}")
+    endif()
+    get_property(TARGETS GLOBAL PROPERTY "${LIST_NAME}")
     if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-        set_property(GLOBAL APPEND PROPERTY FPRIME_TARGET_LIST "${TARGET_FILE_PATH}")
+        set_property(GLOBAL APPEND PROPERTY "${LIST_NAME}" "${TARGET_FILE_PATH}")
         setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_target)
@@ -467,7 +470,7 @@ endmacro(register_fprime_target)
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
     if (BUILD_TESTING)
-        register_fprime_target("${TARGET_FILE_PATH}")
+        register_fprime_target("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
     endif()
 endmacro(register_fprime_ut_target)
 

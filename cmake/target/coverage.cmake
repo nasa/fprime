@@ -49,6 +49,9 @@ function(coverage_add_global_target TARGET_NAME)
 endfunction(coverage_add_global_target)
 
 
+function(coverage_add_deployment_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+endfunction()
+
 ####
 # Dict function `add_module_target`:
 #
@@ -62,7 +65,7 @@ endfunction(coverage_add_global_target)
 function(coverage_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     get_target_property(FINAL_SOURCES "${MODULE_NAME}" SOURCES)
     # Protects against multiple calls to fprime_register_ut()
-    if (TARGET ${MODULE_NAME}_${TARGET_NAME} OR NOT FINAL_SOURCES OR NOT FPRIME_ENABLE_UT_COVERAGE)
+    if (TARGET ${MODULE_NAME}_${TARGET_NAME} OR NOT FINAL_SOURCES OR NOT FPRIME_ENABLE_UT_COVERAGE OR NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
         return()
     endif()
 

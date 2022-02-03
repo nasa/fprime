@@ -114,7 +114,21 @@ endfunction(setup_single_target)
 ####
 function(setup_module_targets MODULE SOURCES DEPENDENCIES)
     # Grab the list of targets
+    set(LIST_NAME FPRIME_TARGET_LIST)
+    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+
+    # Get both normal and ut target lists
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
+    get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
+
+    # UT targets are the only targets run on unit tests, and are includede in deployments
+    if (MODULE_TYPE STREQUAL "Deployment")
+        list(APPEND TARGETS ${UT_TARGETS})
+    elseif (MODULE_TYPE STREQUAL "Unit Test")
+        set(TARGETS "${UT_TARGETS}")
+    endif()
+
+    # Now run through each of the determined targets
     foreach(TARGET IN LISTS TARGETS)
         setup_single_target("${TARGET}" "${MODULE}" "${SOURCES}" "${DEPENDENCIES}")
     endforeach()

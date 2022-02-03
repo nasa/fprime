@@ -53,7 +53,9 @@ endfunction()
 ####
 function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Protects against multiple calls to fprime_register_ut()
-    if (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
+    if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
+        return()
+    elseif (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
         add_custom_target(
             "${MODULE_NAME}_${TARGET_NAME}"
             COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete

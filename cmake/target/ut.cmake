@@ -5,7 +5,7 @@
 ####
 
 ####
-# `add_global_target`:
+# `ut_add_global_target`:
 #
 # Implementation defines the target using `add_custom_target` and nothing more.
 ####
@@ -13,10 +13,10 @@ function(ut_add_global_target TARGET)
     if (FPRIME_ENABLE_UTIL_TARGETS)
         add_custom_target(${TARGET})
     endif()
-endfunction(add_global_target)
+endfunction(ut_add_global_target)
 
 
-# Function `add_deployment_target`:
+# Function `ut_add_deployment_target`:
 #
 # Creates a target for UTs per-deployment.
 #
@@ -37,11 +37,11 @@ function(ut_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPEND
             add_dependencies("${MODULE}_${TARGET}" ${DEPENDENCY_UTS})
         endif()
     endforeach()
-endfunction()
+endfunction(ut_add_deployment_target)
 
 
 ####
-# Dict function `add_module_target`:
+# Dict function `ut_add_module_target`:
 #
 # Creates each module's coverage targets. Note: only run for "BUILD_TESTING=ON" builds.
 #
@@ -52,12 +52,12 @@ endfunction()
 ####
 function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Protects against multiple calls to fprime_register_ut()
-    if (NOT BUILD_TESTING)
+    if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
         return()
     endif()
-    message(STATUS "Adding ${FPRIME_OBJECT_TYPE}: ${UT_EXE_NAME}")
-    run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai-ut)
-    resolve_dependencies(RESOLVED gtest_main -lpthread ${DEPENDENCIES} ${AC_DEPENDENCIES})
+    message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
+    run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_ut)
+    resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
     setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 
     target_include_directories("${UT_EXE_NAME}" PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

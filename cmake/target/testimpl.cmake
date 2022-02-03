@@ -10,23 +10,23 @@
 ####
 
 ####
-# testimpl `add_global_target`:
+# Function `testimpl_add_global_target`:
 #
-# Does nothing. Prevents default target.
+# Does nothing.
 ####
 function(testimpl_add_global_target TARGET)
 endfunction()
 
 ####
-# testimpl `add_deployment_target`:
+# Function `testimpl_add_deployment_target`:
 #
-# Does nothing. Prevents default "roll-up" target.
+# Does nothing.
 ####
 function(testimpl_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
 endfunction()
 
 ####
-# testimpl function `add_module_target`:
+# Function `testimpl_add_module_target`:
 #
 # Adds a module-by-module target for producing ut implementations. Take in the Ai.xml file and produces a set of test
 # templates. Note: the testimpl autocoder path is: fpp (already run by the main build) followed by ai-ut-impl.

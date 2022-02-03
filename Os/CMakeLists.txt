@@ -102,6 +102,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsFileSystemTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsSystemResourcesTest.cpp"
 )
+#set(UT_MOD_DEPS "-lrt")
 register_fprime_ut()
 
 # Second UT Pthreads

@@ -23,9 +23,10 @@ function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DE
     set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
 
     # Add the base elements to the system
-    #message(STATUS "Adding ${TARGET_TYPE}: ${TARGET_NAME}")
-    if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment" OR TARGET_TYPE STREQUAL "Unit Test")
+    if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment")
         add_executable("${TARGET_NAME}" "${EMPTY}")
+    elseif(TARGET_TYPE STREQUAL "Unit Test")
+        add_executable("${UT_EXE_NAME}" "${EMPTY}")
     elseif(TARGET_TYPE STREQUAL "Library")
         add_library("${TARGET_NAME}" "${EMPTY}")
     else()
@@ -90,10 +91,11 @@ endfunction(generate_library)
 # - *DEPENDENCIES:* dependencies bound for link and cmake dependencies
 #
 ####
-function(generate_ut UT_EXE_NAME UT_SOURCES_FILE DEPENDENCIES)
+function(generate_ut UT_EXE_NAME UT_SOURCES_FILE UT_DEPENDENCIES)
     # Only for BUILD_TESTING
     if (BUILD_TESTING)
-        generate_base_module_properties("Unit Test" "${MODULE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
+        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+        generate_base_module_properties("Unit Test" "${MODULE_NAME}" "${UT_SOURCES_FILE}" "${UT_DEPENDENCIES}")
     endif()
 endfunction(generate_ut)
 
