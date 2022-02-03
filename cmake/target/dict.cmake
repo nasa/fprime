@@ -11,6 +11,10 @@
 function(dict_add_global_target)
 endfunction()
 
+# For now, using the by-product output of the autocode step
+function(dict_add_deployment_target)
+endfunction()
+
 ####
 # Dict function `add_module_target`:
 #

@@ -75,7 +75,6 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
     # Add generated sources
     foreach(SOURCE IN LISTS SOURCES GENERATED)
         if (NOT SOURCE IN_LIST EXCLUDED_SOURCES)
-            message(STATUS ">>>${SOURCE}<<<")
             target_sources("${MODULE}" PRIVATE "${SOURCE}")
         endif()
     endforeach()
@@ -101,7 +100,6 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
     list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    #message("---${MODULE_SOURCES}")
     set_target_properties(
             ${MODULE}
             PROPERTIES
@@ -150,10 +148,7 @@ endfunction()
 function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
-    message("#####${SOURCES}")
-
     run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
-
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
     setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
     # Special flags applied to modules when compiling with testing enabled

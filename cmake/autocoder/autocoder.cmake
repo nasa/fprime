@@ -100,9 +100,15 @@ endfunction()
 # INFO_ONLY: TRUE if only information is needed, FALSE to run otherwise
 ####
 function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
-    plugin_include_helper("${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
-    set(AUTOCODER_NAME "${AUTOCODER_CMAKE}")
-    get_filename_component(AUTOCODER_NAME "${AUTOCODER_CMAKE}" NAME)
+    plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
+
+    # Find the one variable set in the autocoder
+    string(TOUPPER "${AUTOCODER_NAME}" AUTOCODER_NAME_UPPER)
+    get_property(HANDLES_INDIVIDUAL_SOURCES_SET GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES" SET)
+    if (NOT HANDLES_INDIVIDUAL_SOURCES_SET)
+        message(FATAL_ERROR "${AUTOCODER_CMAKE} does not define boolean property ${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
+    endif()
+    get_property(HANDLES_INDIVIDUAL_SOURCES GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
 
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
@@ -217,7 +223,6 @@ function(__ac_process_sources SOURCES INFO_ONLY)
 
     # Run the generation setup when not requesting "info only"
     if (NOT INFO_ONLY)
-        get_target_property(CMAKE_CURRENT_LIST_DIR "${MODULE_NAME}" FP_LSTD)
         cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
     endif()
 endfunction()

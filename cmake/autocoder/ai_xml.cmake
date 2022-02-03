@@ -8,7 +8,7 @@ include(utilities)
 include(autocoder/ai-shared)
 
 # Process singular input files
-set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+set_property(GLOBAL PROPERTY AI_XML_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
 ####
 # `is_supported`:

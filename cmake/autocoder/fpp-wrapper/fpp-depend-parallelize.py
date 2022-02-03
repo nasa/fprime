@@ -10,8 +10,9 @@ def run_process(directory, arguments):
     """ Runs the fpp-depend process """
     working_dir = directory / "fpp-cache"
     working_dir.mkdir(parents=True, exist_ok=True)
-    return subprocess.Popen(arguments, cwd=working_dir, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                            stderr=subprocess.PIPE)
+    with open(working_dir / "stdout.txt", "w") as capture_file:
+        return subprocess.Popen(arguments, cwd=working_dir, stdin=subprocess.DEVNULL, stdout=capture_file,
+                                stderr=subprocess.PIPE)
 
 
 def raise_on_error(process, arguments):

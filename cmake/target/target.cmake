@@ -34,8 +34,7 @@
 include_guard()
 
 function(setup_global_target TARGET_FILE)
-    plugin_include_helper("${TARGET_FILE}" add_global_target add_module_target add_deployment_target)
-    get_target_name("${TARGET_FILE}")
+    plugin_include_helper(TARGET_NAME "${TARGET_FILE}" add_global_target add_module_target add_deployment_target)
     cmake_language(CALL "${TARGET_NAME}_add_global_target" "${TARGET_NAME}")
 endfunction(setup_global_target)
 

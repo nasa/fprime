@@ -7,7 +7,7 @@ include(utilities)
 include(autocoder/ai-shared)
 
 # Handles singular source files.
-set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+set_property(GLOBAL PROPERTY AI_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
 ####
 # `is_supported`:

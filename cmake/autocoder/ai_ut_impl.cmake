@@ -12,7 +12,7 @@ if (NOT BUILD_TESTING)
 endif()
 
 # Handles source files individually
-set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+set_property(GLOBAL PROPERTY AI_UT_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
 ####
 # `is_supported`:
