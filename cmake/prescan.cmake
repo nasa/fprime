@@ -71,6 +71,7 @@ function(perform_prescan)
             "-DFPRIME_PRESCAN=${CMAKE_BINARY_DIR}"
             "-DCMAKE_C_COMPILER_FORCED=TRUE"
             "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
+            "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
             ${CALL_PROPS}
         RESULT_VARIABLE result
         WORKING_DIRECTORY "${PRESCAN_DIR}"

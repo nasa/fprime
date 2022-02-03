@@ -1,3 +1,8 @@
+####
+# utilities.cmake:
+#
+# Utility and support functions for the fprime CMake build system.
+####
 include_guard()
 
 ####
