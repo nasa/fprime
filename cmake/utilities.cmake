@@ -53,7 +53,7 @@ endfunction(generate_individual_function_call)
 #
 # This function is used to setup a fake implementation of `cmake_language` calls on implementations of CMake that
 # predate its creation.  The facsimile is incomplete, but for the purposes of this build system, it will be sufficient
-# meaning that it can route all the plugin functions correctly but specifically **not** arbitraty function calls.
+# meaning that it can route all the plugin functions correctly but specifically **not** arbitrary function calls.
 #
 # Functions supported by this call are expected in the GLOBAL property: CMAKE_LANGUAGE_ROUTE_LIST
 #
