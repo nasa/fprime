@@ -62,24 +62,28 @@ endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
 include_directories("${FPRIME_CONFIG_DIR}")
 
-# FPP preparation and the build target must come first, and in that order
+# To prescan, either we register the prescan target or we run the prescan CMake
 if (DEFINED FPRIME_PRESCAN)
-    register_fprime_target(target/prescan)
+    register_fprime_target_helper(target/prescan FPRIME_TARGET_LIST)
 else()
     perform_prescan()
-    register_fprime_target(target/fpp_locs)
-    register_fprime_target(target/build)
-    register_fprime_target(target/noop)
-    register_fprime_target(target/version)
-    register_fprime_target(target/dict)
-    register_fprime_target(target/install)
-    register_fprime_ut_target(target/ut)
-
-    if (FPRIME_ENABLE_UTIL_TARGETS)
-        register_fprime_target(target/impl)
-        register_fprime_ut_target(target/check)
-        register_fprime_ut_target(target/check_leak)
-        register_fprime_ut_target(target/coverage)
-        register_fprime_ut_target(target/testimpl)
-    endif()
 endif()
+
+# FPP locations must come at the front of the list, then build
+register_fprime_target(target/fpp_locs)
+register_fprime_target(target/build)
+register_fprime_target(target/noop)
+register_fprime_target(target/version)
+register_fprime_target(target/dict)
+register_fprime_target(target/install)
+register_fprime_ut_target(target/ut)
+
+if (FPRIME_ENABLE_UTIL_TARGETS)
+    register_fprime_target(target/impl)
+    register_fprime_ut_target(target/check)
+    register_fprime_ut_target(target/check_leak)
+    register_fprime_ut_target(target/coverage)
+    register_fprime_ut_target(target/testimpl)
+endif()
+
+

@@ -428,7 +428,7 @@ function(register_fprime_ut)
 endfunction(register_fprime_ut)
 
 ####
-# Function `register_fprime_target`:
+# Macro `register_fprime_target`:
 #
 # This function allows users to register custom build targets into the build system.  These targets are defined in a
 # CMake file and consist of three functions that operate on different parts of the build: global, per-module, and
@@ -441,6 +441,33 @@ endfunction(register_fprime_ut)
 # **TARGET_FILE_PATH:** include path or file path file defining above functions
 ###
 macro(register_fprime_target TARGET_FILE_PATH)
+    # Normal registered targets don't run in prescan
+    if (NOT DEFINED FPRIME_PRESCAN)
+        register_fprime_target_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+    endif()
+endmacro(register_fprime_target)
+
+####
+# Macro `register_fprime_ut_target`:
+#
+# Identical to the above `register_fprime_target` function except that these targets are only created when the system
+# is building unit tests. e.g. BUILD_TESTING=ON.
+#
+# **TARGET_FILE_PATH:** include path or file path files
+###
+macro(register_fprime_ut_target TARGET_FILE_PATH)
+    # UT targets only allowed when testing
+    if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
+        register_fprime_target("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
+    endif()
+endmacro(register_fprime_ut_target)
+
+####
+# Macro `register_fprime_target_helper`:
+#
+# Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
+####
+macro(register_fprime_target_helper TARGET_FILE_PATH TARGET_LIST)
     include("${TARGET_FILE_PATH}")
     # Prevent out-of-order setups
     get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
@@ -452,27 +479,13 @@ macro(register_fprime_target TARGET_FILE_PATH)
     if (${ARGC} GREATER 1)
         set(LIST_NAME "${ARGV1}")
     endif()
-    get_property(TARGETS GLOBAL PROPERTY "${LIST_NAME}")
+    get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
     if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
         set_property(GLOBAL APPEND PROPERTY "${LIST_NAME}" "${TARGET_FILE_PATH}")
         setup_global_target("${TARGET_FILE_PATH}")
     endif()
-endmacro(register_fprime_target)
+endmacro(register_fprime_target_helper)
 
-####
-# Function `register_fprime_ut_target`:
-#
-# Identical to the above `register_fprime_target` function except that these targets are only created when the system
-# is building unit tests. e.g. BUILD_TESTING=ON.
-#
-# **TARGET_FILE_PATH:** include path or file path files
-###
-macro(register_fprime_ut_target TARGET_FILE_PATH)
-    # UT targets only allowed when testing
-    if (BUILD_TESTING)
-        register_fprime_target("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
-    endif()
-endmacro(register_fprime_ut_target)
 
 #### Documentation links
 # Next Topics:

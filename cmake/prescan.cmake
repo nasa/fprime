@@ -11,12 +11,14 @@
 # compiler checks, running an individual target, but it **must** inherit the same properties as specified in the outer
 # full build or the information will be wrong.
 ####
+
+# NOTE: **ensure** that list properties are added by hand in the actual call. Otherwise they are expanded and break
+# the call below.
 set(NEEDED_PROPERTIES
     FPRIME_CONFIG_DIR
     FPRIME_AC_CONSTANTS_FILE
     FPRIME_ENVIRONMENT_FILE
     FPRIME_SETTINGS_FILE
-    FPRIME_LIBRARY_LOCATIONS
     FPRIME_PROJECT_ROOT
     FPRIME_FRAMEWORK_PATH
     CMAKE_TOOLCHAIN_FILE
@@ -44,7 +46,8 @@ function(_get_call_properties)
     set(CALL_PROPS)
     foreach (PROPERTY IN LISTS NEEDED_PROPERTIES)
         if (NOT "${${PROPERTY}}" STREQUAL "")
-            list(APPEND CALL_PROPS "-D${PROPERTY}=${${PROPERTY}}")
+            set(CALL_PROP "-D${PROPERTY}=${${PROPERTY}}")
+            list(APPEND CALL_PROPS "${CALL_PROP}")
         endif()
     endforeach()
     set(CALL_PROPS "${CALL_PROPS}" PARENT_SCOPE)
@@ -77,6 +80,7 @@ function(perform_prescan)
             "-DCMAKE_C_COMPILER_FORCED=TRUE"
             "-DCMAKE_CXX_COMPILER_FORCED=TRUE"
             "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
+            "-DFPRIME_LIBRARY_LOCATIONS=${FPRIME_LIBRARY_LOCATIONS}"
             ${CALL_PROPS}
         RESULT_VARIABLE result
         WORKING_DIRECTORY "${PRESCAN_DIR}"
