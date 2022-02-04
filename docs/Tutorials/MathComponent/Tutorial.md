@@ -757,13 +757,7 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-2. Create two placeholder unit test files so that the CMake cache can be generated:
-```sh
-touch test/ut/Tester.cpp
-touch test/ut/main.cpp
-```
-
-3. Update Ref/MathSender/CMakeLists.txt:
+2. Update Ref/MathSender/CMakeLists.txt:
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -771,8 +765,6 @@ Add the following lines to `CMakeLists.txt`:
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()
 ```
@@ -785,15 +777,15 @@ and run the unit tests.
 5. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-6. Move these files to the `test/ut` directory and replace the old placeholders:
+6. Move these files to the `test/ut` directory:
 
-   ```bash
-   mv Tester.* test/ut
-   ```
+```bash
+mv Tester.* test/ut
+```
 
 **Create a stub main.cpp file:**
 Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, open the file `main.cpp` and add the following contents:
+In that directory, create the file `main.cpp` and add the following contents:
 
 ```c++
 #include "Tester.hpp"
@@ -808,6 +800,20 @@ This file is a stub for running tests using the
 [Google Test framework](https://github.com/google/googletest).
 Right now there aren't any tests to run; we will add one
 in the next section.
+
+7. Add the new files to the build.
+
+Open `MathSender/CMakeLists.txt` and modify the `UT_SOURCE_FILES` by adding
+your new test files:
+```cmake
+# Register the unit test build
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+)
+register_fprime_ut()
+```
 
 **Run the build:**
 Now we can check that the unit test build is working.
