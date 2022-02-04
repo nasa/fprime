@@ -21,11 +21,11 @@ ACTIVERATEGROUPIMPLCFG
 ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 actools
-acwrap
 acxz
 addoffset
 addon
 adminlist
+adoc
 aeiouy
 afterstatinfo
 agg
@@ -34,7 +34,7 @@ ALLEXTERNALS
 alloc
 Alltypes
 alphanums
-ampc
+ampcs
 amsmath
 aname
 ANamespace
@@ -67,7 +67,7 @@ arijitdas
 arinc
 arity
 arpa
-ASerialize
+asciidoctor
 asm
 aspx
 ASTRING
@@ -113,7 +113,6 @@ bavail
 bbd
 bc
 bcm
-BDRV
 BDV
 bfree
 bibtex
@@ -136,7 +135,6 @@ bootup
 brc
 bre
 bsd
-BSerialize
 bslash
 buf
 BUFFERALLOCATE
@@ -144,6 +142,7 @@ BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
 buffsize
 BUGLIST
+bugprone
 builddir
 buildroot
 builtins
@@ -192,6 +191,7 @@ chr
 chrono
 ci
 cin
+cinttypes
 CIRCULARSTATE
 classdiagram
 classdoc
@@ -200,13 +200,13 @@ classmethod
 classname
 classpath
 classtype
+climits
 clion
 CLOCAL
 closedir
 CLOSEFILE
 cloudbees
 cls
-cmak
 cmake
 cmath
 Cmdd
@@ -217,7 +217,6 @@ CMDREG
 cmds
 CMDSEQ
 cmp
-cn
 cnt
 cntx
 cobj
@@ -243,7 +242,6 @@ config
 configparser
 configurability
 configurator
-Connectedoutput
 cookiecutter
 cooldown
 coor
@@ -258,6 +256,8 @@ cplusplus
 CPOL
 cpos
 cpp
+cppreference
+cprogramming
 cpuset
 cpy
 CRCAMPCS
@@ -273,13 +273,14 @@ Crosscompiling
 crt
 CRTSCTS
 cryptsoft
-CSEQ
 Csharp
+csignal
 CSIZE
 css
 cstat
 cstdarg
 cstddef
+cstdint
 cstdio
 cstdlib
 CSTOPB
@@ -330,21 +331,23 @@ deps
 deque
 deregistration
 deser
+Deserial
 deserialization
 deserialize
 deserialized
 deserializing
 dest
 DEVNULL
-dfdc
+DFL
 DFPRIME
 DGRAM
+dhesikan
 DHTML
 diafile
 dictgen
 dicts
 dictvalue
-differend
+difflib
 diffs
 diles
 dinkel
@@ -359,6 +362,8 @@ dll
 dlog
 dnp
 DNs
+doall
+docblocks
 docbook
 dockerfile
 docset
@@ -402,19 +407,16 @@ DSTUBBED
 DSYNC
 DTGT
 dtor
-DUCKCOMP
 Duerschmid
 duey
 dumparch
 dumpobj
 DVI
-Dvr
 DWN
 dylib
 EACCES
 EAGAIN
 eay
-eb
 EBADF
 EBUSY
 ECLIPSEHELP
@@ -465,6 +467,7 @@ enumparam
 eobj
 eol
 EPERM
+eps
 EROFS
 errfile
 errmsg
@@ -492,7 +495,6 @@ exitcode
 expandtabs
 expr
 exprtokens
-EXTN
 Fabcdef
 FADV
 fadvise
@@ -504,7 +506,6 @@ fclose
 fcntl
 fd
 fdset
-FDWN
 featuredarticles
 FEEDNAME
 ffff
@@ -512,7 +513,7 @@ fflush
 Ffs
 fgetc
 fgets
-FH
+fh
 filecmp
 filedown
 FILEDOWNLINK
@@ -528,14 +529,12 @@ finalizer
 findall
 fio
 Firefox
-FIXME
-Fixme
+fixme
 flist
 FNDELAY
 fnmatch
 fno
 fns
-followd
 FONTNAME
 FONTPATH
 FONTSIZE
@@ -547,8 +546,10 @@ formatline
 foundin
 fpconfighpp
 FPGA
+fpl
 FPL
 fpp
+fppi
 FPport
 fprim
 fprime
@@ -557,6 +558,7 @@ fprintf
 fprofile
 fptr
 fputil
+fpv
 Fregoso
 frontend
 frox
@@ -594,7 +596,6 @@ getcwd
 getdata
 getdefaultencoding
 getenv
-getexample
 getextern
 gethostbyname
 gethostname
@@ -636,12 +637,14 @@ GPINT
 gpio
 graphviz
 grayscales
+grep
 grnd
 GROUNDINTERFACERULES
 groupadd
 groupdict
 groupmod
 gse
+gsub
 gtags
 gtest
 GTestbase
@@ -703,6 +706,7 @@ idl
 idx
 ieeetr
 iface
+ifchange
 ifcomment
 ifdef
 iflag
@@ -738,7 +742,6 @@ inode
 inorder
 INPCK
 Inputline
-INPUTPORT
 installable
 INSTALLDIR
 instanceof
@@ -749,7 +752,7 @@ integertypename
 interoperability
 intlimits
 ints
-inttype
+Inttype
 invisi
 ioc
 ioctl
@@ -772,7 +775,6 @@ isdigit
 isdir
 isequal
 isf
-ISFA
 isfgen
 isfile
 isfpluginexec
@@ -822,6 +824,7 @@ joshuaa
 jpg
 jpl
 jplffs
+jre
 jsdelivr
 JSO
 json
@@ -846,7 +849,6 @@ len
 lestarch
 levelname
 lflag
-lgcov
 lgtm
 lhash
 libc
@@ -862,6 +864,7 @@ lightyellow
 lindent
 lineno
 lineroo
+lineterm
 linting
 linux
 LINUXSERIALDRIVER
@@ -873,11 +876,11 @@ ljust
 lkml
 lld
 llvm
-llx
 loadfile
 localhost
 localtime
 LOCKGUARDTESTER
+locs
 LOGASSERT
 LOGFILE
 LOGGERRULES
@@ -899,7 +902,6 @@ LTIMER
 LTLT
 LVL
 lxml
-lxr
 MACROFILE
 magicdraw
 mailto
@@ -912,7 +914,6 @@ MAKEVAR
 malloc
 MALLOCALLOCATOR
 mallocator
-Managerm
 Manglapus
 mathjax
 maxdepth
@@ -923,6 +924,7 @@ maxsize
 maxspew
 mccabe
 mcomment
+MCT
 mcternan
 mday
 mdbasiccomponents
@@ -942,6 +944,8 @@ memcmp
 memcpy
 meminfo
 memname
+memoization
+memoize
 memoizing
 memset
 MEMTEST
@@ -955,6 +959,7 @@ methodstub
 microcontrollers
 microsoft
 middleware
+mindepth
 MINGW
 mkdir
 mkdtemp
@@ -987,6 +992,7 @@ mstat
 mstring
 MTIME
 mtype
+mul
 multiline
 multioptionals
 multirequired
@@ -1015,6 +1021,7 @@ NDELAY
 ndiffs
 netdb
 Netscape
+Netscape's
 newloc
 newroot
 newself
@@ -1031,6 +1038,7 @@ nmsgs
 noargport
 NOCOLOR
 NOCTTY
+nodemon
 nogen
 nolog
 nomagic
@@ -1042,13 +1050,13 @@ Nop
 noreturn
 normalwidths
 normpath
-nosetests
 NOSIZE
 NOSPEC
 nostdlib
 notask
 notchars
 NOTFOUND
+nothrow
 NOTYPE
 Nowicki
 npm
@@ -1059,8 +1067,6 @@ NSPACES
 nukenewlines
 nullptr
 numargs
-Numinput
-Numoutput
 nums
 nxt
 objclass
@@ -1074,13 +1080,15 @@ oflag
 okidocki
 oldeol
 OMG
+OMG's
 onchange
 onlinepubs
-OParg
 OPCODEBASE
 opcodes
 opendir
+openjdk
 opengroup
+openmct
 openpyxl
 openssl
 oper
@@ -1122,8 +1130,7 @@ params
 PARENB
 PARODD
 parseable
-PARTITIONHUBCOMP
-PASSIVEC
+pathlib
 pathmaker
 pbuild
 pcmake
@@ -1141,7 +1148,6 @@ phtml
 pid
 PINGSEND
 pinit
-pipsetup
 pkill
 pkts
 plainnat
@@ -1208,7 +1214,6 @@ ptbool
 ptestrun
 ptf
 pthread
-PTLM
 ptmcg
 pton
 ptr
@@ -1257,7 +1262,6 @@ RBF
 Rce
 RCHILD
 rcs
-Rcv
 rcvd
 RCVTIMEO
 RDONLY
@@ -1335,6 +1339,7 @@ saxutils
 sbb
 SBF
 sbin
+sbt
 scanf
 sched
 schem
@@ -1349,14 +1354,12 @@ searchdata
 SEARCHENGINE
 segfault
 sendfile
-sendline
 SENDPARTIAL
 sendto
 seqgen
 serafin
 serializables
 serializer
-serialns
 setaffinity
 setattr
 setbuf
@@ -1367,13 +1370,9 @@ SETFL
 setinheritsched
 setitem
 SETLOGGING
-setname
 setop
-setopt
-setoutput
 setprotocol
 setquaternion
-setresult
 setschedparam
 setschedpolicy
 setsize
@@ -1384,7 +1383,6 @@ settime
 settingsini
 settype
 setuptools
-setval
 setw
 sev
 sface
@@ -1438,6 +1436,7 @@ splitext
 splitlines
 sprintf
 Sqlite
+SQL's
 sramanan
 srand
 srandom
@@ -1462,7 +1461,6 @@ startword
 staticmethod
 statfs
 statvfs
-stdarg
 STDC
 stddef
 stderr
@@ -1582,6 +1580,7 @@ textui
 tfile
 tflat
 tfn
+tgz
 thepihut
 Thhmmss
 thiscol
@@ -1625,6 +1624,8 @@ tmptokens
 tmptree
 tname
 tnum
+toc
+toclevels
 toctree
 todo
 TODOLIST
@@ -1690,6 +1691,7 @@ UNEXP
 unexport
 unicode
 UNINIT
+uniq
 unistd
 Unithem
 unittest
@@ -1736,11 +1738,13 @@ virtualbox
 virtualenv
 virtualization
 virtualized
+vla
 vlist
 vm
 vmstat
 vmsize
 VMIN
+vn
 vsnprintf
 VTIME
 vtype
@@ -1757,6 +1761,7 @@ weakref
 website
 Werror
 Wextra
+wget
 whitebox
 whitelist
 wiki
@@ -1772,6 +1777,12 @@ workspaces
 wp
 writelines
 WRONLY
+Wconversion
+Wformat
+Woverloaded
+Wshadow
+Wsign
+Wundef
 wrs
 WSL
 www
@@ -1779,6 +1790,7 @@ wx
 wxgui
 Xabcdefx
 xapian
+xargs
 xcode
 xdf
 xdffe
@@ -1805,3 +1817,4 @@ yacgen
 yml
 yyyymmdd
 zsh
+zu

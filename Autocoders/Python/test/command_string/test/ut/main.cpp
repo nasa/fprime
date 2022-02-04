@@ -11,9 +11,9 @@
 class ATester : public AcTest::TestCommandGTestBase {
     public:
 #if FW_OBJECT_NAMES == 1
-        ATester(void) : AcTest::TestCommandGTestBase("comp",10) {
+        ATester() : AcTest::TestCommandGTestBase("comp",10) {
 #else
-        ATester(void) : AcTest::TestCommandGTestBase(10)  {
+        ATester() : AcTest::TestCommandGTestBase(10)  {
 #endif
     }
 };

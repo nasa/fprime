@@ -1,26 +1,31 @@
 #include <getopt.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <ctype.h>
 
-#include <Ref/Top/Components.hpp>
+#include <Os/Log.hpp>
+#include <Ref/Top/RefTopologyAc.hpp>
 
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
 }
 
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
+
+Ref::TopologyState state;
+// Enable the console logging provided by Os::Log
+Os::Log logger;
 
 volatile sig_atomic_t terminate = 0;
 
 static void sighandler(int signum) {
-    exitTasks();
+    Ref::teardown(state);
     terminate = 1;
 }
 
-void run1cycle(void) {
+void run1cycle() {
     // call interrupt to emulate a clock
-    blockDrv.callIsr();
+    Ref::blockDrv.callIsr();
     Os::Task::delay(1000); //10Hz
 }
 
@@ -41,26 +46,22 @@ int main(int argc, char* argv[]) {
     I32 option;
     char *hostname;
     option = 0;
-    hostname = NULL;
-    bool dump = false;
+    hostname = nullptr;
 
-    while ((option = getopt(argc, argv, "hdp:a:")) != -1){
+    while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {
             case 'h':
                 print_usage(argv[0]);
                 return 0;
                 break;
             case 'p':
-                port_number = atoi(optarg);
+                port_number = static_cast<U32>(atoi(optarg));
                 break;
             case 'a':
                 hostname = optarg;
                 break;
             case '?':
                 return 1;
-            case 'd':
-                dump = true;
-                break;
             default:
                 print_usage(argv[0]);
                 return 1;
@@ -69,10 +70,8 @@ int main(int argc, char* argv[]) {
 
     (void) printf("Hit Ctrl-C to quit\n");
 
-    bool quit = constructApp(dump, port_number, hostname);
-    if (quit) {
-        return 0;
-    }
+    state = Ref::TopologyState(hostname, port_number);
+    Ref::setup(state);
 
     // register signal handlers to exit program
     signal(SIGINT,sighandler);

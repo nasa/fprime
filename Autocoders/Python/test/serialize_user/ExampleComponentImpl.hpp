@@ -20,7 +20,7 @@ class ExampleComponentImpl: public ExampleComponents::ExampleComponentComponentB
         void init(NATIVE_INT_TYPE queueDepth);
         virtual ~ExampleComponentImpl();
     private:
-        void exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::UserSerializer arg2);
+        void exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::UserSerializer& arg2);
 };
 
 #endif /* TESTCOMMAND1IMPL_HPP_ */

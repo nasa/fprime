@@ -1,15 +1,16 @@
-// ====================================================================== 
+// ======================================================================
 // \title  MathReceiver.hpp
-// \author tcanham
+// \author tcanham, bocchino
 // \brief  cpp file for MathReceiver test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2021, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
+#include "STest/Pick/Pick.hpp"
 #include "Tester.hpp"
 
 #define INSTANCE 0
@@ -19,441 +20,102 @@
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       MathReceiverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathReceiver")
-#else
-      MathReceiverGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testAddCommand(void) 
+    testAdd()
   {
-      // load parameters
-      this->component.loadParameters();
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_ADD);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      // Since factor1 is the default value of 0, result will be zero
-      ASSERT_from_mathOut(0,0.0);
-      // verify telemetry and events
-
-      // the event and telemetry channel use the Ref::MathOp type for values
-      Ref::MathOp checkOp(2.0,3.0,Ref::ADD,0.0);
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
-
-      // clear the history before sending the command
-      this->clearHistory();
-      // send the command to set factor1 to 2.0
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_MR_FACTOR1_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1(0,2.0);
-      ASSERT_TLM_MR_FACTOR1S_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1S(0,1);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-
-      // Repeat the operation with the new factor
-
-      // clear the history before sending the port call
-      this->clearHistory();
-
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_ADD);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      // Now that factor1 is updated, the result should be:
-      F32 result = (2.0+3.0)*2.0;
-      ASSERT_from_mathOut(0,result);
-      // verify telemetry and events
-
-      // the event and telemetry channel use the Ref::MathOp type for values
-      checkOp.set(2.0,3.0,Ref::ADD,result);
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
-
-      // clear the history
-      this->clearHistory();
-
-      // set the test value for the parameter
-      this->paramSet_factor2(3.0,Fw::PARAM_VALID);
-      // now send the factor2 parameter to the component
-      this->paramSend_factor2(0,0);
-      // verify the parameter update notification event was sent
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_UPDATED_FACTOR2_SIZE(1);
-      ASSERT_EVENTS_MR_UPDATED_FACTOR2(0,3.0);
-
-      // Do the computation again and verify that the parameter was used
-
-      // clear the history
-      this->clearHistory();
-
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_ADD);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      // Now that factor2 parameter is updated, the result should be:
-      result = (2.0+3.0)*2.0/3.0;
-      ASSERT_from_mathOut(0,result);
-      // verify telemetry and events
-
-      // the event and telemetry channel use the Ref::MathOp type for values
-      checkOp.set(2.0,3.0,Ref::ADD,result);
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
-      
-}
-
-  void Tester ::
-    testSubCommand(void) 
-  {
-      // set the test value for the parameter before loading - it will be initialized to this value
-      this->paramSet_factor2(5.0,Fw::PARAM_VALID);
-
-      // load parameters
-      this->component.loadParameters();
-
-      // send the command to set factor1 to 2.0
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_MR_FACTOR1_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1(0,2.0);
-      ASSERT_TLM_MR_FACTOR1S_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1S(0,1);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
-      // clear the history
-      this->clearHistory();
-
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_SUB);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-      F32 result = (2.0-3.0)*2.0/5.0;
-      // the event and telemetry channel use the Ref::MathOp type for values
-      Ref::MathOp checkOp(2.0,3.0,Ref::SUB,result);
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      ASSERT_from_mathOut(0,result);
-      // verify telemetry and events
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
+      // Set the factor parameter by command
+      const F32 factor = pickF32Value();
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
+      // Do the add operation
+      this->doMathOp(MathOp::ADD, factor);
   }
 
   void Tester ::
-    testMultCommand(void) 
+    testSub()
   {
-      // set the test value for the parameter before loading - it will be initialized to this value
-      this->paramSet_factor2(-1.0,Fw::PARAM_VALID);
-
-      // load parameters
+      // Set the factor parameter by loading parameters
+      const F32 factor = pickF32Value();
+      this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
       this->component.loadParameters();
-
-      // send the command to set factor1 to 2.0
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
-      ASSERT_TLM_MR_FACTOR1S_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1S(0,1);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_MR_FACTOR1_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1(0,2.0);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
-      // clear the history
-      this->clearHistory();
-
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_MULTIPLY);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-      F32 result = (2.0*3.0)*2.0/-1.0;
-      // the event and telemetry channel use the Ref::MathOp type for values
-      Ref::MathOp checkOp(2.0,3.0,Ref::MULT,result);
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      ASSERT_from_mathOut(0,result);
-      // verify telemetry and events
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
+      // Do the operation
+      this->doMathOp(MathOp::SUB, factor);
   }
 
   void Tester ::
-    testDivCommand(void) 
+    testMul()
   {
-      // set the test value for the parameter before loading - it will be initialized to this value
-      this->paramSet_factor2(25.0,Fw::PARAM_VALID);
-
-      // load parameters
-      this->component.loadParameters();
-
-      // send the command to set factor1 to 2.0
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
-      ASSERT_TLM_MR_FACTOR1S_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1S(0,1);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_MR_FACTOR1_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1(0,2.0);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
-      // clear the history
-      this->clearHistory();
-
-      // invoke operation port with add operation
-      this->invoke_to_mathIn(0,2.0,3.0,Ref::MATH_DIVIDE);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-
-      // verify the result of the operation was returned
-      F32 result = (2.0/3.0)*2.0/25;
-      // the event and telemetry channel use the Ref::MathOp type for values
-      Ref::MathOp checkOp(2.0,3.0,Ref::DIVIDE,result);
-
-      // check that there was one and only one port invocation
-      ASSERT_FROM_PORT_HISTORY_SIZE(1);
-      // check that only the port we expected was invoked
-      ASSERT_from_mathOut_SIZE(1);
-      // check that the component did the operation correctly. 
-      ASSERT_from_mathOut(0,result);
-      // verify telemetry and events
-
-      // check that there was only one event
-      ASSERT_EVENTS_SIZE(1);
-      // check that it was the op event
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED_SIZE(1);
-      // check that the event has the correct argument
-      ASSERT_EVENTS_MR_OPERATION_PERFORMED(0,checkOp);
-
-      // check that there was only one channel written
-      ASSERT_TLM_SIZE(1);
-      // check that it was the op channel
-      ASSERT_TLM_MR_OPERATION_SIZE(1);
-      // check for the correct value of the channel
-      ASSERT_TLM_MR_OPERATION(0,checkOp);
+      // Set the factor parameter by command
+      const F32 factor = 3.0;
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
+      // Do the add operation
+      this->doMathOp(MathOp::MUL, factor);
   }
 
   void Tester ::
-    testThrottle(void) 
+    testDiv()
+  {
+      // Set the factor parameter by loading parameters
+      const F32 factor = 3.0;
+      this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+      this->component.loadParameters();
+      // Do the operation
+      this->doMathOp(MathOp::DIV, factor);
+  }
+
+  void Tester ::
+    testThrottle()
   {
 
       // send the number of commands required to throttle the event
-      // Use the autocoded value so the unit test passes if the 
+      // Use the autocoded value so the unit test passes if the
       // throttle value is changed
-      for (NATIVE_UINT_TYPE cycle = 0; cycle < MathReceiverComponentBase::EVENTID_MR_SET_FACTOR1_THROTTLE; cycle++) {
-          // send the command to set factor1 to 2.0
-          this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-          // invoke scheduler port to dispatch message
-          this->invoke_to_SchedIn(0,0);
-          // verify the changed value events
-          ASSERT_EVENTS_SIZE(1);
-          ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-          ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
-          // verify the changed value channel
-          ASSERT_TLM_SIZE(2);
-          ASSERT_TLM_MR_FACTOR1_SIZE(1);
-          ASSERT_TLM_MR_FACTOR1(0,2.0);
-          ASSERT_TLM_MR_FACTOR1S_SIZE(1);
-          ASSERT_TLM_MR_FACTOR1S(0,cycle+1);
-          
-          // verify the command response was sent
-          ASSERT_CMD_RESPONSE_SIZE(1);
-          ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-          
-          // clear the history
-          this->clearHistory();
+      const F32 factor = pickF32Value();
+      for (
+          U16 cycle = 0;
+          cycle < MathReceiverComponentBase::EVENTID_FACTOR_UPDATED_THROTTLE;
+          cycle++
+      ) {
+          this->setFactor(factor, ThrottleState::NOT_THROTTLED);
       }
 
-      // sending the command now will not result in an event since
-      // the throttle value has been reached
-
-      // send the command to set factor1 to 2.0
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value events
-      ASSERT_EVENTS_SIZE(0);
-      // verify the changed value channel
-      ASSERT_TLM_SIZE(2);
-      ASSERT_TLM_MR_FACTOR1_SIZE(1);
-      ASSERT_TLM_MR_FACTOR1(0,2.0);
-      // verify the command response was sent
-      ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,MathReceiverComponentBase::OPCODE_MR_SET_FACTOR1,10,Fw::COMMAND_OK);
-      
-      // clear the history
-      this->clearHistory();
+      // Event should now be throttled
+      this->setFactor(factor, ThrottleState::THROTTLED);
 
       // send the command to clear the throttle
-      this->sendCmd_MR_CLEAR_EVENT_THROTTLE(0,10);
+      const U32 instance = STest::Pick::any();
+      const U32 cmdSeq = STest::Pick::any();
+      this->sendCmd_CLEAR_EVENT_THROTTLE(instance, cmdSeq);
       // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
+      const U32 context = STest::Pick::any();
+      this->invoke_to_schedIn(0, context);
       // verify clear event was sent
       ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_THROTTLE_CLEARED_SIZE(1);
-      
-      // clear the history
-      this->clearHistory();
-      // sending the command will now produce the event again
-      this->sendCmd_MR_SET_FACTOR1(0,10,2.0);
-      // invoke scheduler port to dispatch message
-      this->invoke_to_SchedIn(0,0);
-      // verify the changed value event
-      ASSERT_EVENTS_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1_SIZE(1);
-      ASSERT_EVENTS_MR_SET_FACTOR1(0,2.0);
+      ASSERT_EVENTS_THROTTLE_CLEARED_SIZE(1);
+
+      // Throttling should be cleared
+      this->setFactor(factor, ThrottleState::NOT_THROTTLED);
 
   }
 
@@ -462,103 +124,209 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    from_mathOut_handler(
+    from_mathResultOut_handler(
         const NATIVE_INT_TYPE portNum,
         F32 result
     )
   {
-    this->pushFromPortEntry_mathOut(result);
+    this->pushFromPortEntry_mathResultOut(result);
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
+  F32 Tester ::
+    pickF32Value()
+  {
+    const F32 m = 10e6;
+    return m * (1.0 - 2 * STest::Pick::inUnitInterval());
+  }
+
   void Tester ::
-    connectPorts(void) 
+    setFactor(
+        F32 factor,
+        ThrottleState throttleState
+    )
+  {
+      // clear history
+      this->clearHistory();
+      // set the parameter
+      this->paramSet_FACTOR(factor, Fw::ParamValid::VALID);
+      const U32 instance = STest::Pick::any();
+      const U32 cmdSeq = STest::Pick::any();
+      this->paramSend_FACTOR(instance, cmdSeq);
+      if (throttleState == ThrottleState::NOT_THROTTLED) {
+          // verify the parameter update notification event was sent
+          ASSERT_EVENTS_SIZE(1);
+          ASSERT_EVENTS_FACTOR_UPDATED_SIZE(1);
+          ASSERT_EVENTS_FACTOR_UPDATED(0, factor);
+      }
+      else {
+          ASSERT_EVENTS_SIZE(0);
+      }
+  }
+
+  F32 Tester ::
+    computeResult(
+        F32 val1,
+        MathOp op,
+        F32 val2,
+        F32 factor
+    )
+  {
+      F32 result = 0;
+      switch (op.e) {
+          case MathOp::ADD:
+              result = val1 + val2;
+              break;
+          case MathOp::SUB:
+              result = val1 - val2;
+              break;
+          case MathOp::MUL:
+              result = val1 * val2;
+              break;
+          case MathOp::DIV:
+              result = val1 / val2;
+              break;
+          default:
+              FW_ASSERT(0, op.e);
+              break;
+      }
+      result *= factor;
+      return result;
+  }
+
+  void Tester ::
+    doMathOp(MathOp op, F32 factor)
   {
 
-    // mathIn
-    this->connect_to_mathIn(
+      // pick values
+      const F32 val1 = pickF32Value();
+      const F32 val2 = pickF32Value();
+
+      // clear history
+      this->clearHistory();
+
+      // invoke operation port with add operation
+      this->invoke_to_mathOpIn(0, val1, op, val2);
+      // invoke scheduler port to dispatch message
+      const U32 context = STest::Pick::any();
+      this->invoke_to_schedIn(0, context);
+
+      // verify the result of the operation was returned
+
+      // check that there was one port invocation
+      ASSERT_FROM_PORT_HISTORY_SIZE(1);
+      // check that the port we expected was invoked
+      ASSERT_from_mathResultOut_SIZE(1);
+      // check that the component performed the operation correctly
+      const F32 result = computeResult(val1, op, val2, factor);
+      ASSERT_from_mathResultOut(0, result);
+
+      // verify events
+
+      // check that there was one event
+      ASSERT_EVENTS_SIZE(1);
+      // check that it was the op event
+      ASSERT_EVENTS_OPERATION_PERFORMED_SIZE(1);
+      // check that the event has the correct argument
+      ASSERT_EVENTS_OPERATION_PERFORMED(0, op);
+
+      // verify telemetry
+
+      // check that one channel was written
+      ASSERT_TLM_SIZE(1);
+      // check that it was the op channel
+      ASSERT_TLM_OPERATION_SIZE(1);
+      // check for the correct value of the channel
+      ASSERT_TLM_OPERATION(0, op);
+
+  }
+
+  void Tester ::
+    connectPorts()
+  {
+
+    // mathOpIn
+    this->connect_to_mathOpIn(
         0,
-        this->component.get_mathIn_InputPort(0)
+        this->component.get_mathOpIn_InputPort(0)
     );
 
-    // SchedIn
-    this->connect_to_SchedIn(
+    // schedIn
+    this->connect_to_schedIn(
         0,
-        this->component.get_SchedIn_InputPort(0)
+        this->component.get_schedIn_InputPort(0)
     );
 
-    // CmdDisp
-    this->connect_to_CmdDisp(
+    // cmdIn
+    this->connect_to_cmdIn(
         0,
-        this->component.get_CmdDisp_InputPort(0)
+        this->component.get_cmdIn_InputPort(0)
     );
 
-    // mathOut
-    this->component.set_mathOut_OutputPort(
-        0, 
-        this->get_from_mathOut(0)
+    // mathResultOut
+    this->component.set_mathResultOut_OutputPort(
+        0,
+        this->get_from_mathResultOut(0)
     );
 
-    // CmdStatus
-    this->component.set_CmdStatus_OutputPort(
-        0, 
-        this->get_from_CmdStatus(0)
+    // cmdResponseOut
+    this->component.set_cmdResponseOut_OutputPort(
+        0,
+        this->get_from_cmdResponseOut(0)
     );
 
-    // CmdReg
-    this->component.set_CmdReg_OutputPort(
-        0, 
-        this->get_from_CmdReg(0)
+    // cmdRegOut
+    this->component.set_cmdRegOut_OutputPort(
+        0,
+        this->get_from_cmdRegOut(0)
     );
 
-    // ParamGet
-    this->component.set_ParamGet_OutputPort(
-        0, 
-        this->get_from_ParamGet(0)
+    // prmGetOut
+    this->component.set_prmGetOut_OutputPort(
+        0,
+        this->get_from_prmGetOut(0)
     );
 
-    // ParamSet
-    this->component.set_ParamSet_OutputPort(
-        0, 
-        this->get_from_ParamSet(0)
+    // prmSetOut
+    this->component.set_prmSetOut_OutputPort(
+        0,
+        this->get_from_prmSetOut(0)
     );
 
-    // Tlm
-    this->component.set_Tlm_OutputPort(
-        0, 
-        this->get_from_Tlm(0)
+    // tlmOut
+    this->component.set_tlmOut_OutputPort(
+        0,
+        this->get_from_tlmOut(0)
     );
 
-    // Time
-    this->component.set_Time_OutputPort(
-        0, 
-        this->get_from_Time(0)
+    // timeGetOut
+    this->component.set_timeGetOut_OutputPort(
+        0,
+        this->get_from_timeGetOut(0)
     );
 
-    // Log
-    this->component.set_Log_OutputPort(
-        0, 
-        this->get_from_Log(0)
+    // eventOut
+    this->component.set_eventOut_OutputPort(
+        0,
+        this->get_from_eventOut(0)
     );
 
-    // LogText
-    this->component.set_LogText_OutputPort(
-        0, 
-        this->get_from_LogText(0)
+    // textEventOut
+    this->component.set_textEventOut_OutputPort(
+        0,
+        this->get_from_textEventOut(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
-    this->component.init(
-        QUEUE_DEPTH, INSTANCE
-    );
+    this->component.init(QUEUE_DEPTH, INSTANCE);
   }
 
 } // end namespace Ref

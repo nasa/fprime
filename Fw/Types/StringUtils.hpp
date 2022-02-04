@@ -21,6 +21,17 @@ namespace StringUtils {
  * \return destination buffer
  */
 char* string_copy(char* destination, const char* source, U32 num);
+
+/**
+ * \brief get the length of the source string or max_len if the string is
+ * longer than max_len.
+ *
+ * \param source: string to calculate the length
+ * \param max_len: the maximum length of the source string
+ * \return length of the source string or max_len
+ */
+U32 string_length(const CHAR* source, U32 max_len);
+
 };      // namespace StringUtils
 };      // namespace Fw
 #endif  // FW_STRINGUTILS_HPP

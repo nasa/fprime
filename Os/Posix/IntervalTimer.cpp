@@ -8,8 +8,8 @@
  */
 #include <Os/IntervalTimer.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <time.h>
-#include <errno.h>
+#include <ctime>
+#include <cerrno>
 
 namespace Os {
     void IntervalTimer::getRawTime(RawTime& time) {

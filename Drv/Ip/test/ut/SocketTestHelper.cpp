@@ -8,7 +8,7 @@
 
 #include <sys/socket.h>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 #include <arpa/inet.h>
 
 namespace Drv {
@@ -21,7 +21,7 @@ void force_recv_timeout(Drv::IpSocket& socket) {
     struct timeval timeout;
     timeout.tv_sec = 0;
     timeout.tv_usec = 50; // 50ms max before test failure
-    setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, (char *) &timeout, sizeof(timeout));
+    setsockopt(socket.m_fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout));
 }
 
 void validate_random_data(U8 *data, U8 *truth, U32 size) {
@@ -33,7 +33,7 @@ void validate_random_data(U8 *data, U8 *truth, U32 size) {
 void fill_random_data(U8 *data, U32 size) {
     ASSERT_NE(size, 0u) << "Trying to fill random data of size 0";
     for (U32 i = 0; i < size; i++) {
-        data[i] = (U8) STest::Pick::any();
+        data[i] = static_cast<U8>(STest::Pick::any());
     }
 }
 
@@ -49,8 +49,8 @@ void fill_random_buffer(Fw::Buffer &buffer) {
 
 void send_recv(Drv::IpSocket& sender, Drv::IpSocket& receiver) {
     I32 size = MAX_DRV_TEST_MESSAGE_SIZE;
-    U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE];
-    U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE];
+    U8 buffer_out[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
+    U8 buffer_in[MAX_DRV_TEST_MESSAGE_SIZE] = {0};
 
     // Send receive validate block
     Drv::Test::fill_random_data(buffer_out, MAX_DRV_TEST_MESSAGE_SIZE);

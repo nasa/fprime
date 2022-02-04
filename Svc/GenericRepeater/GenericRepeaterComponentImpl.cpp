@@ -26,7 +26,7 @@ void GenericRepeaterComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GenericRepeaterComponentBase::init(instance);
 }
 
-GenericRepeaterComponentImpl ::~GenericRepeaterComponentImpl(void) {}
+GenericRepeaterComponentImpl ::~GenericRepeaterComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined serial input ports

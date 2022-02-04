@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  InvalidFiles.cpp
 // \author Canham/Bocchino
 // \brief  Test immediate command sequences with EOS record
@@ -7,6 +7,7 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
+// ======================================================================
 
 #include "Os/FileSystem.hpp"
 #include "Svc/CmdSequencer/test/ut/CommandBuffers.hpp"
@@ -17,7 +18,7 @@ namespace Svc {
   namespace InvalidFiles {
 
     // ----------------------------------------------------------------------
-    // Constructors 
+    // Constructors
     // ----------------------------------------------------------------------
 
     Tester ::
@@ -28,11 +29,11 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Tests 
+    // Tests
     // ----------------------------------------------------------------------
 
     void Tester ::
-      BadCRC(void)
+      BadCRC()
     {
 
       REQUIREMENT("ISF-CMDS-002");
@@ -45,7 +46,7 @@ namespace Svc {
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -53,7 +54,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       const CmdSequencerComponentImpl::FPrimeSequence::CRC& crc =
@@ -71,7 +72,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadRecordDescriptor(void)
+      BadRecordDescriptor()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -90,7 +91,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -101,7 +102,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_FORMAT_ERROR
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -109,7 +110,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -122,7 +123,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadTimeBase(void)
+      BadTimeBase()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -141,7 +142,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -155,7 +156,7 @@ namespace Svc {
     }
 
     void Tester ::
-      BadTimeContext(void)
+      BadTimeContext()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 1, 1);
@@ -174,7 +175,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -183,14 +184,14 @@ namespace Svc {
     }
 
     void Tester ::
-      EmptyFile(void)
+      EmptyFile()
     {
       // Write the file
       SequenceFiles::EmptyFile file(this->format);
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -198,14 +199,14 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_HEADER_SIZE,
+          CmdSequencer_FileReadStage::READ_HEADER_SIZE,
           Os::FileSystem::OP_OK
       );
       // Assert telemetry
@@ -214,7 +215,7 @@ namespace Svc {
     }
 
     void Tester ::
-      DataAfterRecords(void)
+      DataAfterRecords()
     {
 
       REQUIREMENT("ISF-CMDS-001");
@@ -236,7 +237,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -246,7 +247,7 @@ namespace Svc {
     }
 
     void Tester ::
-      FileTooLarge(void)
+      FileTooLarge()
     {
       // Write the file
       SequenceFiles::TooLargeFile file(BUFFER_SIZE, this->format);
@@ -256,7 +257,7 @@ namespace Svc {
       Fw::Time testTime(TB_WORKSTATION_TIME, 0, 0);
       this->setTestTime(testTime);
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -264,7 +265,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -276,14 +277,14 @@ namespace Svc {
     }
 
     void Tester ::
-      MissingCRC(void)
+      MissingCRC()
     {
       // Write the file
       SequenceFiles::MissingCRCFile file(this->format);
       const char *const fileName = file.getName().toChar();
       file.write();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert no response on seqDone
       ASSERT_from_seqDone_SIZE(0);
@@ -293,14 +294,14 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -317,14 +318,14 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -336,13 +337,13 @@ namespace Svc {
       this->clearAndDispatch();
       // Assert seqDone response
       ASSERT_from_seqDone_SIZE(1);
-      ASSERT_from_seqDone(0U, 0U, 0U, Fw::COMMAND_EXECUTION_ERROR);
+      ASSERT_from_seqDone(0U, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR));
       // Assert events
       ASSERT_EVENTS_SIZE(1);
       ASSERT_EVENTS_CS_FileInvalid(
           0,
           fileName,
-          CmdSequencerComponentBase::SEQ_READ_SEQ_CRC,
+          CmdSequencer_FileReadStage::READ_SEQ_CRC,
           sizeof(U8)
       );
       // Assert telemetry
@@ -351,14 +352,14 @@ namespace Svc {
     }
 
     void Tester ::
-      MissingFile(void)
+      MissingFile()
     {
       // Remove the file
       SequenceFiles::MissingFile file(this->format);
       const char *const fileName = file.getName().toChar();
       file.remove();
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -366,7 +367,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse(Fw::CmdResponse::EXECUTION_ERROR)
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -377,7 +378,7 @@ namespace Svc {
     }
 
     void Tester ::
-      SizeFieldTooLarge(void)
+      SizeFieldTooLarge()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -395,7 +396,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -406,7 +407,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -414,7 +415,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -427,7 +428,7 @@ namespace Svc {
     }
 
     void Tester ::
-      SizeFieldTooSmall(void)
+      SizeFieldTooSmall()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -445,7 +446,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -457,7 +458,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -465,7 +466,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -479,7 +480,7 @@ namespace Svc {
     }
 
     void Tester ::
-      USecFieldTooShort(void)
+      USecFieldTooShort()
     {
       // Set the time
       Fw::Time testTime(TB_WORKSTATION_TIME, 1, 1);
@@ -497,7 +498,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_VALIDATE,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);
@@ -508,7 +509,7 @@ namespace Svc {
           Fw::FW_DESERIALIZE_SIZE_MISMATCH
       );
       // Run the sequence
-      this->sendCmd_CS_RUN(0, 0, fileName,CmdSequencerComponentBase::SEQ_NO_BLOCK);
+      this->sendCmd_CS_RUN(0, 0, fileName,Svc::CmdSequencer_BlockState::NO_BLOCK);
       this->clearAndDispatch();
       // Assert command response
       ASSERT_CMD_RESPONSE_SIZE(1);
@@ -516,7 +517,7 @@ namespace Svc {
           0,
           CmdSequencerComponentBase::OPCODE_CS_RUN,
           0,
-          Fw::COMMAND_EXECUTION_ERROR
+          Fw::CmdResponse::EXECUTION_ERROR
       );
       // Assert events
       ASSERT_EVENTS_SIZE(1);

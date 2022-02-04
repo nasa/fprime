@@ -1,6 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.LoadIDConfig.configItem.configItem" name="gov.nasa.jpl.componentaction.LoadIDConfig.configItem.configItem">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_config_1_1config_item.html#a6d41eae19afb1b06c786111c4a5fad20" title="gov.nasa.jpl.componentaction.\lLoadIDConfig.configItem.equals" alt="" coords="314,5,526,43"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_config.html#a66833a5ed66996a3d4c7157c951bc398" title="gov.nasa.jpl.componentaction.\lLoadIDConfig.validateAndProcessConfig" alt="" coords="289,67,551,106"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_config.html#a0f7bacd9bad01ea3d107eaa740efc10b" title="gov.nasa.jpl.componentaction.\lLoadIDConfig.process" alt="" coords="600,67,800,106"/>
-<area shape="rect" id="node5" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_config_action.html#af5b596c444349e427124ce3b29d5a366" title="gov.nasa.jpl.componentaction.\lLoadIDConfigAction.actionPerformed" alt="" coords="849,67,1090,106"/>
-</map>

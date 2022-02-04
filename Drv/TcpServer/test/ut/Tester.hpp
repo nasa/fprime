@@ -33,11 +33,11 @@ namespace Drv {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -48,19 +48,19 @@ namespace Drv {
 
       //! Test basic messaging
       //!
-      void test_basic_messaging(void);
+      void test_basic_messaging();
 
       //! Test basic reconnection behavior
       //!
-      void test_multiple_messaging(void);
+      void test_multiple_messaging();
 
       //! Test receive via thread
       //!
-      void test_receive_thread(void);
+      void test_receive_thread();
 
       //! Test advanced (duration) reconnect
       //!
-      void test_advanced_reconnect(void);
+      void test_advanced_reconnect();
 
       // Helpers
       void test_with_loop(U32 iterations, bool recv_thread=false);
@@ -75,8 +75,8 @@ namespace Drv {
       //!
       void from_recv_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &recvBuffer, 
-          RecvStatus recvStatus 
+          Fw::Buffer &recvBuffer,
+          const RecvStatus &recvStatus
       );
 
       //! Handler for from_ready
@@ -89,14 +89,14 @@ namespace Drv {
       //!
       Fw::Buffer from_allocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 size 
+          U32 size
       );
 
       //! Handler for from_deallocate
       //!
       void from_deallocate_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
     private:
@@ -107,11 +107,11 @@ namespace Drv {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

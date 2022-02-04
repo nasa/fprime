@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  CRCChecker.cpp
 // \author ortega
 // \brief  cpp file for a crc32 checker
@@ -7,7 +7,7 @@
 // Copyright 2009-2020, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include <FpConfig.hpp>
 #include <cstdio> // For snprintf
@@ -21,7 +21,7 @@ namespace Utils {
 
   crc_stat_t create_checksum_file(const char* const fname)
   {
-    FW_ASSERT(fname != NULL);
+    FW_ASSERT(fname != nullptr);
 
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
@@ -45,7 +45,7 @@ namespace Utils {
       return FAILED_FILE_SIZE;
     }
 
-    int_file_size = filesize;
+    int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
     if(static_cast<U64>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
@@ -105,7 +105,7 @@ namespace Utils {
 
     // Write  checksum  file
     bytes_to_write = sizeof(checksum);
-    stat = f.write((U8*)(&checksum), bytes_to_write);
+    stat = f.write(reinterpret_cast<U8*>(&checksum), bytes_to_write);
     if(stat != Os::File::OP_OK || sizeof(checksum) != bytes_to_write)
     {
       f.close();
@@ -122,7 +122,7 @@ namespace Utils {
       Os::File f;
       Os::File::Status stat;
       char hashFilename[CRC_MAX_FILENAME_SIZE];
-      FW_ASSERT(fname != NULL);
+      FW_ASSERT(fname != nullptr);
       // open checksum file
       I32 s_stat = snprintf(hashFilename,  CRC_MAX_FILENAME_SIZE, "%s%s", fname, HASH_EXTENSION_STRING);
       FW_ASSERT(s_stat > 0);
@@ -135,7 +135,7 @@ namespace Utils {
 
       // Read  checksum  file
       NATIVE_INT_TYPE checksum_from_file_size = sizeof(checksum_from_file);
-      stat = f.read((U8*)(&checksum_from_file), checksum_from_file_size);
+      stat = f.read(reinterpret_cast<U8*>(&checksum_from_file), checksum_from_file_size);
       if(stat != Os::File::OP_OK || checksum_from_file_size != sizeof(checksum_from_file))
       {
         f.close();
@@ -149,7 +149,7 @@ namespace Utils {
 
   crc_stat_t verify_checksum(const char* const fname, U32 &expected, U32 &actual)
   {
-    FW_ASSERT(fname != NULL);
+    FW_ASSERT(fname != nullptr);
 
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
@@ -171,7 +171,7 @@ namespace Utils {
       return FAILED_FILE_SIZE;
     }
 
-    int_file_size = filesize;
+    int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
     if(static_cast<U64>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;

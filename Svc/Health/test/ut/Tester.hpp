@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health/test/ut/Tester.hpp
 // \author jdperez
 // \brief  hpp file for Health test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
@@ -30,28 +30,28 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
-      void nominalTlm(void);
-      void warningTlm(void);
-      void faultTlm(void);
-      void disableAllMonitoring(void);
-      void disableOneMonitoring(void);
-      void updatePingTimeout(void);
-      void watchdogCheck(void);
-      void nominalCmd(void);
-      void nominal2CmdsDuringTlm(void);
-      void miscellaneous(void);
+      void nominalTlm();
+      void warningTlm();
+      void faultTlm();
+      void disableAllMonitoring();
+      void disableOneMonitoring();
+      void updatePingTimeout();
+      void watchdogCheck();
+      void nominalCmd();
+      void nominal2CmdsDuringTlm();
+      void miscellaneous();
 
     private:
 
@@ -81,13 +81,13 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
-      void dispatchAll(void);
+      void dispatchAll();
 
     private:
 
@@ -108,7 +108,7 @@ namespace Svc {
 
       void textLogIn(const FwEventIdType id, //!< The event ID
                 Fw::Time& timeTag, //!< The time
-                const Fw::TextLogSeverity severity, //!< The severity
+                const Fw::LogSeverity severity, //!< The severity
                 const Fw::TextLogString& text //!< The event string
                 );
 

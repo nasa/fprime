@@ -412,7 +412,7 @@ what has been generated. The critical sections for our implementation are in `Gp
  73     )
  74   {
  75     // TODO
- 76     this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+ 76     this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
  77   }
 ```
 
@@ -478,7 +478,7 @@ namespace GpsApp {
     ) :
       GpsComponentBase(compName),
 #else
-      GpsComponentBase(void),
+      GpsComponentBase(),
 #endif
       // Initialize the lock to "false"
       m_locked(false)
@@ -499,7 +499,7 @@ namespace GpsApp {
   //        work with. This code will loop through our member variables holding the buffers and send them to the linux
   //        serial driver.  'preamble' is automatically called after the system is constructed, before the system runs
   //        at steady-state. This allows for initialization code that invokes working ports.
-  void GpsComponentImpl :: preamble(void)
+  void GpsComponentImpl :: preamble()
   {
       for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_UART_BUFFERS; buffer++) {
           //Assign the raw data to the buffer. Make sure to include the side of the region assigned.
@@ -511,7 +511,7 @@ namespace GpsApp {
   }
 
   GpsComponentImpl ::
-    ~GpsComponentImpl(void)
+    ~GpsComponentImpl()
   {
 
   }
@@ -643,7 +643,7 @@ namespace GpsApp {
         log_WARNING_HI_Gps_LockLost();
     }
     //Step 9: complete command
-    this->cmdResponse_out(opCode, cmdSeq, Fw::COMMAND_OK);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 } // end namespace GpsApp
 
@@ -716,11 +716,11 @@ namespace GpsApp {
 
       //! Preamble
       //!
-      void preamble(void);
+      void preamble();
 
       //! Destroy object Gps
       //!
-      ~GpsComponentImpl(void);
+      ~GpsComponentImpl();
 
     PRIVATE:
       // ----------------------------------------------------------------------

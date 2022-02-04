@@ -15,7 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 
-#include <stdio.h>
+#include <cstdio>
 
 namespace Svc {
 
@@ -25,20 +25,20 @@ namespace Svc {
         this->m_activeBuffer = 0;
         // clear slot pointers
         for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_NUM_TLM_HASH_SLOTS; entry++) {
-            this->m_tlmEntries[0].slots[entry] = 0;
-            this->m_tlmEntries[1].slots[entry] = 0;
+            this->m_tlmEntries[0].slots[entry] = nullptr;
+            this->m_tlmEntries[1].slots[entry] = nullptr;
         }
         // clear buckets
         for (NATIVE_UINT_TYPE entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
             this->m_tlmEntries[0].buckets[entry].used = false;
             this->m_tlmEntries[0].buckets[entry].updated = false;
             this->m_tlmEntries[0].buckets[entry].bucketNo = entry;
-            this->m_tlmEntries[0].buckets[entry].next = 0;
+            this->m_tlmEntries[0].buckets[entry].next = nullptr;
             this->m_tlmEntries[0].buckets[entry].id = 0;
             this->m_tlmEntries[1].buckets[entry].used = false;
             this->m_tlmEntries[1].buckets[entry].updated = false;
             this->m_tlmEntries[1].buckets[entry].bucketNo = entry;
-            this->m_tlmEntries[1].buckets[entry].next = 0;
+            this->m_tlmEntries[1].buckets[entry].next = nullptr;
             this->m_tlmEntries[1].buckets[entry].id = 0;
         }
         // clear free index

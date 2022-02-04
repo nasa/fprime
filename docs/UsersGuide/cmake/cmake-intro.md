@@ -19,7 +19,7 @@ Installation guides for CMake can be found here: [https://cmake.org/install/](ht
 A Basic CMake tutorial can be found here: [https://cmake.org/cmake/help/latest/guide/tutorial/index.html](https://cmake.org/cmake/help/latest/guide/tutorial/index.html).
 Although fprime tries to simplify CMake usage for fprime specific tasks, an understanding of basic CMake is useful.
 
-## Getting Started Using with and F`
+## Getting Started with CMake and F´
 
 CMake as a system auto-generates OS-specific make files for building F´. Once these file are
 generated, standard make tools can be run to perform the compiling, assembling, linking etc. In other words, CMake is a

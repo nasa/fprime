@@ -95,7 +95,7 @@ void constructApp(U32 port_number, char* hostname) {
     // Initialize the rate groups
     rateGroup10HzComp.init(10,0);
     rateGroup1HzComp.init(10,1);
-    
+
 #if FW_ENABLE_TEXT_LOGGING
     textLogger.init();
 #endif
@@ -243,7 +243,7 @@ void constructApp(U32 port_number, char* hostname) {
     uartDrv.startReadThread();
 
     // Initialize socket server if and only if there is a valid specification
-    if (hostname != NULL && port_number != 0) {
+    if (hostname != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
         comm.configure(hostname, port_number);
@@ -251,7 +251,7 @@ void constructApp(U32 port_number, char* hostname) {
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     uartDrv.quitReadThread();
     linuxTimer.quit();
     rateGroup1HzComp.exit();
@@ -265,7 +265,7 @@ void exitTasks(void) {
     cmdSeq.exit();
     rpiDemo.exit();
     comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
+    (void) comm.joinSocketTask(nullptr);
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }

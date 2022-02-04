@@ -19,14 +19,14 @@ namespace Fw {
             InternalInterfaceString(const char* src); //!< char* source constructor
             InternalInterfaceString(const StringBase& src); //!< other string constructor
             InternalInterfaceString(const InternalInterfaceString& src); //!< other string constructor
-            InternalInterfaceString(void); //!< default constructor
+            InternalInterfaceString(); //!< default constructor
             InternalInterfaceString& operator=(const InternalInterfaceString& other); //!< assignment operator
             InternalInterfaceString& operator=(const StringBase& other); //!< other string assignment operator
             InternalInterfaceString& operator=(const char* other); //!< char* assignment operator
-            ~InternalInterfaceString(void); //!< destructor
+            ~InternalInterfaceString(); //!< destructor
 
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
 
         private:
 

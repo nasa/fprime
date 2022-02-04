@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AssertFatalAdapterImpl.cpp
 // \author tcanham
 // \brief  cpp file for AssertFatalAdapter component implementation class
@@ -7,16 +7,16 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
 namespace Fw {
     void defaultReportAssert
@@ -30,7 +30,7 @@ namespace Fw {
             AssertArg arg4,
             AssertArg arg5,
             AssertArg arg6,
-            I8* destBuffer,
+            CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
 
@@ -39,7 +39,7 @@ namespace Fw {
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   AssertFatalAdapterComponentImpl ::
@@ -57,13 +57,13 @@ namespace Svc {
   void AssertFatalAdapterComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     AssertFatalAdapterComponentBase::init(instance);
   }
 
   AssertFatalAdapterComponentImpl ::
-    ~AssertFatalAdapterComponentImpl(void)
+    ~AssertFatalAdapterComponentImpl()
   {
 
   }
@@ -94,13 +94,13 @@ namespace Svc {
       this->m_compPtr = compPtr;
   }
 
-  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(0) {
+  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(nullptr) {
   }
 
   AssertFatalAdapterComponentImpl::AssertFatalAdapter::~AssertFatalAdapter() {
   }
 
-  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert(void) {
+  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert() {
       // do nothing since there will be a FATAL
   }
 
@@ -121,12 +121,12 @@ namespace Svc {
       Fw::LogStringArg fileArg;
       fileArg.format("0x%08X",file);
 #else
-      Fw::LogStringArg fileArg((const char*)file);
+      Fw::LogStringArg fileArg(file);
 #endif
 
-      I8 msg[FW_ASSERT_TEXT_SIZE] = {0};
+      CHAR msg[FW_ASSERT_TEXT_SIZE] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      fprintf(stderr, "%s\n",(const char*)msg);
+      fprintf(stderr, "%s\n", msg);
 
       switch (numArgs) {
           case 0:

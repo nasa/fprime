@@ -10,7 +10,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
@@ -29,12 +29,12 @@ Partition::PartitionImpl *partitionComp_ptr = 0;
 
 
 extern "C" {
-	void dumparch(void);
+	void dumparch();
 	void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
 	simpleRegPtr->dump();
 }
 
@@ -43,7 +43,7 @@ void dumpobj(const char* objName) {
 }
 
 
-void constructArchitecture(void) {
+void constructArchitecture() {
 
 	Fw::PortBase::setTrace(true);
 

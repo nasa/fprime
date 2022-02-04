@@ -1,12 +1,14 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <errno.h>
 
 #include <pthread.h>
+#include <cerrno>
+#include <cstring>
+#include <ctime>
+#include <cstdio>
+#include <new>
 #include <sched.h>
-#include <limits.h>
-#include <string.h>
-#include <time.h>
+#include <climits>
 #include <Fw/Logger/Logger.hpp>
 
 
@@ -19,7 +21,7 @@ void* pthread_entry_wrapper(void* arg) {
     Os::Task::TaskRoutineWrapper *task = reinterpret_cast<Os::Task::TaskRoutineWrapper*>(arg);
     FW_ASSERT(task->routine);
     task->routine(task->arg);
-    return NULL;
+    return nullptr;
 }
 
 namespace Os {
@@ -149,7 +151,7 @@ namespace Os {
         }
 
         tid = new pthread_t;
-        const char* message = NULL;
+        const char* message = nullptr;
 
         stat = pthread_create(tid, &att, pthread_entry_wrapper, arg);
         switch (stat) {
@@ -175,15 +177,16 @@ namespace Os {
         }
         (void)pthread_attr_destroy(&att);
         if (stat != 0) {
+            (void)pthread_join(*tid, nullptr);
             delete tid;
-            tid = NULL;
+            tid = nullptr;
             Fw::Logger::logMsg("pthread_create: %s. %s\n", reinterpret_cast<POINTER_CAST>(message), reinterpret_cast<POINTER_CAST>(strerror(stat)));
             return tStat;
         }
         return Task::TASK_OK;
     }
 
-    Task::Task() : m_handle(0), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
+    Task::Task() : m_handle(reinterpret_cast<POINTER_CAST>(nullptr)), m_identifier(0), m_affinity(-1), m_started(false), m_suspendedOnPurpose(false), m_routineWrapper() {
     }
 
     Task::TaskStatus Task::start(const Fw::StringBase &name, taskRoutine routine, void* arg, NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize,  NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
@@ -212,10 +215,10 @@ namespace Os {
         if (status != TASK_OK) {
             return status;
         }
-        FW_ASSERT(tid != NULL);
+        FW_ASSERT(tid != nullptr);
 
         // Handle a successfully created task
-        this->m_handle = (POINTER_CAST)tid;
+        this->m_handle = reinterpret_cast<POINTER_CAST>(tid);
         Task::s_numTasks++;
         // If a registry has been registered, register task
         if (Task::s_taskRegistry) {
@@ -259,7 +262,7 @@ namespace Os {
 
     Task::~Task() {
     	if (this->m_handle) {
-    		delete (pthread_t*)this->m_handle;
+    		delete reinterpret_cast<pthread_t*>(this->m_handle);
     	}
         // If a registry has been registered, remove task
         if (Task::s_taskRegistry) {
@@ -275,16 +278,16 @@ namespace Os {
         FW_ASSERT(0);
     }
 
-    void Task::resume(void) {
+    void Task::resume() {
         FW_ASSERT(0);
     }
 
-    bool Task::isSuspended(void) {
+    bool Task::isSuspended() {
         FW_ASSERT(0);
         return false;
     }
 
-    TaskId Task::getOsIdentifier(void) {
+    TaskId Task::getOsIdentifier() {
         TaskId T;
         return T;
     }
@@ -294,7 +297,7 @@ namespace Os {
         if (!(this->m_handle)) {
             return TASK_JOIN_ERROR;
         }
-        stat = pthread_join(*((pthread_t*) this->m_handle), value_ptr);
+        stat = pthread_join(*reinterpret_cast<pthread_t*>(this->m_handle), value_ptr);
 
         if (stat != 0) {
             return TASK_JOIN_ERROR;

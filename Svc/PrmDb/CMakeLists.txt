@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PrmDbComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PrmDb.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/PrmDbImpl.cpp"
 )
 
@@ -18,7 +18,7 @@ set(UT_MOD_DEPS
     Os_Stubs
 )
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/PrmDb/PrmDbComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/PrmDb/PrmDb.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/PrmDbImplTester.cpp"
 )

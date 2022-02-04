@@ -7,14 +7,14 @@ supplied. CMake is run as a command line call to the cmake system. Thus CMake mu
 
 @author mstarch
 """
-import os
 import sys
 import shutil
-import time
 import tempfile
+import select
 import subprocess
-import functools
-import platform
+from pathlib import Path
+
+import pytest
 
 # Constants to supplied to the calls to subprocess
 CMAKE = "cmake"
@@ -22,71 +22,67 @@ MAKE_CALL = "make"
 MAKE_ARGS = ["-j2"]
 
 
-def register_test(
-    module, name, build_dir=None, options=None, expected=None, targets=None
-):
-    """
-    Registers a test to the given module using the given name. This will create a function of the
-    form test_<name> registered to the module ready for autodetect.
+def subprocess_helper(args, cwd):
+    """Subprocess helper used to 'tee' the output to: console and capture"""
 
-    :param module: name of module for registration
-    :param name: name to register test with
-    """
-    module = sys.modules[module]
-    if options is None:
-        options = getattr(module, "OPTIONS", {})
-    if expected is None:
-        expected = getattr(module, "EXPECTED", [])
-    if build_dir is None:
-        build_dir = getattr(module, "BUILD_DIR")
-    if targets is None:
-        targets = getattr(module, "TARGETS", [""])
-    name = "test_{0}".format(name.replace("/", "_").replace("-", "_").replace(" ", "_"))
-    setattr(
-        module,
-        name,
-        functools.partial(
-            run_build, build_dir, expected, make_targets=targets, options=options
-        ),
+    def read_available(proc, stdout, stderr):
+        lines = {stdout: [], stderr: []}
+        while proc.poll() is None:
+            ready, _, _ = select.select([stdout, stderr], [], [])
+            for stream in ready:
+                line = stream.readline()
+                lines[stream].append(line)
+                if "-s" in sys.argv or "--capture=no" in sys.argv:
+                    print(
+                        line,
+                        end="",
+                        file=(sys.stdout if stream == stdout else sys.stderr),
+                    )
+        lines[stdout].extend(stdout.readlines())
+        lines[stderr].extend(stderr.readlines())
+        return (
+            proc.poll(),
+            [line for line in lines[stdout] if line.strip() != ""],
+            [line for line in lines[stderr] if line.strip() != ""],
+        )
+
+    # Verbose output desired from pytest
+    proc = subprocess.Popen(
+        args=args,
+        cwd=str(cwd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
     )
+    return read_available(proc, proc.stdout, proc.stderr)
 
 
-def run_cmake(build_path, options={}, capout=False):
+def run_cmake(source_directory, build_path, options=None):
     """
     Runs the cmake in the current directory with the given options and build_path
 
+    :param source_directory: source directory to run CMake within
     :param build_path: path to build
     :param options: options to pass CMake
     :return: True if successful, False otherwise
     """
-    keys = {}
     args = [CMAKE]
+    options = {} if options is None else options
     for option in options.keys():
         value = options[option]
         args.append("-D{0}={1}".format(option, value))
-    args.append(build_path)
-    if capout:
-        keys["stdout"] = subprocess.PIPE
-        keys["stderr"] = subprocess.PIPE
-    # If the output is not sent into the terminal, route the output to no-op discarder or the
-    # process will block on pytests' inability to handle all the output silently
-    elif not "-s" in sys.argv and not "--capture=no" in sys.argv:
-        keys["stdout"] = subprocess.DEVNULL
-        keys["stderr"] = subprocess.DEVNULL
-    print("Running:", args, "With args:", keys)
-    proc = subprocess.Popen(args, **keys)
-    if capout:
-        stdout, stderr = proc.communicate()
-        return (proc.pid == 0, stdout, stderr)
-    return proc.wait() == 0
+    args.append(source_directory)
+
+    return subprocess_helper(args, build_path)
 
 
-def run_make(target):
+def run_make(build_directory, target):
     """
     Runs the make command to ensure that the CMake system can follow through and finish the build.
     Note: this assumes that the provided application built properly. Thus, those unit tests should
     run first.
 
+    :param build_directory: build directory to change to
     :param target: target to the make command
     :return: True if successful, False otherwise
     """
@@ -94,71 +90,60 @@ def run_make(target):
     if target != "":
         args.append(target)
     args.extend(MAKE_ARGS)
-    proc = subprocess.Popen(args)
-    return proc.wait() == 0
+    return subprocess_helper(args, build_directory)
 
 
-def assert_exists(expected, install_dest, start_time):
-    """
-    Goes through all of the expected files and check to ensure that each is a file. This also
-    ensures that the file is new enough to have been generated at the start of this build.
+def assert_process_success(data_object, errors_ok=False):
+    """Assert the subprocess runs worked as expected"""
+    for field in ["source", "build", "install", "cmake", "targets"]:
+        assert field in data_object, f"Data object malformed: missing '{field}' field"
+        assert field in data_object, f"Data object malformed: missing '{field}' field"
 
-    :param expected: list of expected files. Relative to build. <FPRIME> replaced with f prime dir.
-    :param start_time: time of the start of this build
-    """
-    for expect in expected:
-        expect = expect.replace(
-            "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
-        )
-        expect = expect.replace(
-            "<FPRIME_INSTALL>", os.path.join(install_dest, platform.system())
-        )
-        assert os.path.exists(expect), "CMake build failed to generate '{0}'".format(
-            expect
-        )
-        assert (
-            os.path.getmtime(expect) >= start_time
-        ), "CMake did not recreate/update '{0}'".format(expect)
+    return_code, stdout, stderr = data_object["cmake"]
+    assert return_code == 0, f"CMake generation failed with return code {return_code}"
+    assert stdout, "CMake generated no standard out process"
+    assert not stderr or errors_ok, f"CMake generated errors:\n{''.join(stderr)}"
+
+    for target, output in data_object["targets"].items():
+        return_code, stdout, stderr = output
+        assert return_code == 0, f"CMake failed building '{target}'"
+        assert stdout, "CMake generated no standard out building '{target}'"
 
 
-def run_build(
-    build_path, expected_outputs, build_directory=None, make_targets=[""], options={}
+def get_build(
+    fixture_name,
+    source_directory,
+    cmake_arguments=None,
+    make_targets=None,
+    install_directory=None,
 ):
-    """
-    Run the CMake command, and any number of make commands. Ensures that the calls all process as
-    expected, and that the expected outputs are produced.
+    """Generate and build a cmake deployment, then returns a pytest fixture for it"""
+    cmake_arguments = {} if cmake_arguments is None else cmake_arguments
+    build_directory = Path(tempfile.mkdtemp())
+    install_directory_calc = Path(
+        Path(source_directory) / "build-artifacts"
+        if install_directory is None
+        else install_directory
+    )
+    make_targets = ["all"] if make_targets is None else make_targets
+    if install_directory is not None:
+        cmake_arguments["CMAKE_INSTALL_PREFIX"] = str(install_directory)
 
-    :param build_path: target path. Usually <FPRIME>/Ref. <FPRIME> replaced with f prime dir.
-    :param expected_outputs: list of files to check for. Relative to build directory.
-    :param build_directory: directory in which to perform the build, default is a temporary dir.
-    :param make_targets: list of make targets to run.
-    :param options: options to supply to the cmake system.
-    :return: True if the test passes, False if there is an error
-    """
-    start_time = time.time()
-    if build_directory is not None:
-        raise Exception("Named build directories not supported, yet.")
-    owd = os.getcwd()
-    tmpd = tempfile.mkdtemp()
+    cmake_output = run_cmake(source_directory, build_directory, cmake_arguments)
+    target_outputs = {
+        target: run_make(build_directory, target) for target in make_targets
+    }
 
-    if not "FPRIME_INSTALL_DEST" in options:
-        options["FPRIME_INSTALL_DEST"] = os.path.join(tmpd, "build-artifacts")
+    @pytest.fixture(scope="session", name=fixture_name)
+    def fixture_function():
+        yield {
+            "source": source_directory,
+            "build": build_directory,
+            "install": install_directory_calc,
+            "cmake": cmake_output,
+            "targets": target_outputs,
+        }
+        shutil.rmtree(build_directory, ignore_errors=True)
+        shutil.rmtree(install_directory, ignore_errors=True)
 
-    try:
-        os.chdir(tmpd)
-        build_path = build_path.replace(
-            "<FPRIME>", os.path.join(os.path.dirname(__file__), "..", "..", "..")
-        )
-        assert run_cmake(
-            build_path, options=options
-        ), "CMake failed for path '{0}' and options '{1}'".format(build_path, options)
-        for target in make_targets:
-            assert run_make(
-                target
-            ), "Failed to build '{0}' target for '{1}' and options '{2}'".format(
-                target, build_path, options
-            )
-        assert_exists(expected_outputs, options["FPRIME_INSTALL_DEST"], start_time)
-    finally:
-        os.chdir(owd)
-        shutil.rmtree(tmpd, ignore_errors=False)
+    return fixture_function

@@ -29,8 +29,8 @@ namespace Fw {
                 AssertArg arg5,
                 AssertArg arg6
             );
-            void printAssert(const I8* msg);
-            void doAssert(void);
+            void printAssert(const CHAR* msg);
+            void doAssert();
     };
 
 }

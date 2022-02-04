@@ -14,15 +14,15 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Types/Assert.hpp>
 
-#include <stdint.h>
+#include <cstdint>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
-#include <errno.h>
+#include <cerrno>
 
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x,...)
@@ -46,8 +46,8 @@ namespace Drv {
         spi_ioc_transfer tr;
         // Zero for unused fields:
         memset(&tr, 0, sizeof(tr));
-        tr.tx_buf = (U64)writeBuffer.getData();
-        tr.rx_buf = (U64)readBuffer.getData();
+        tr.tx_buf = reinterpret_cast<U64>(writeBuffer.getData());
+        tr.rx_buf = reinterpret_cast<U64>(readBuffer.getData());
         tr.len = writeBuffer.getSize();
 /*
             .speed_hz = 0,
@@ -167,7 +167,7 @@ namespace Drv {
 
     }
 
-    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl(void) {
+    LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {
         DEBUG_PRINT("Closing SPI device %d\n",this->m_fd);
         (void) close(this->m_fd);
     }

@@ -25,7 +25,7 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-    #include <string.h>
+    #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     #include <sys/socket.h>
     #include <unistd.h>
@@ -34,8 +34,8 @@
     #error OS not supported for IP Socket Communications
 #endif
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 namespace Drv {
 

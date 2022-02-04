@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
 )
 set(MOD_DEPS

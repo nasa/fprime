@@ -21,12 +21,12 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void) : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
+Tester ::Tester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -36,6 +36,7 @@ void Tester ::test_tlm(bool enabled) {
     U32 count = 0;
     if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->invoke_to_run(0, 0);
+        count = (count <= 16) ? count : 16;
         // All cascades expected
         switch (count) {
             case 16:
@@ -104,9 +105,9 @@ void Tester ::test_tlm(bool enabled) {
 }
 
 void Tester ::test_disable_enable() {
-    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_DISABLED);
+    this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::DISABLED);
     this->test_tlm(false);
-    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_ENABLED);
+    this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::ENABLED);
     this->test_tlm(true);
 }
 
@@ -120,7 +121,7 @@ void Tester ::test_version_evr() {
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // run
     this->connect_to_run(0, this->component.get_run_InputPort(0));
 
@@ -146,7 +147,7 @@ void Tester ::connectPorts(void) {
     this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

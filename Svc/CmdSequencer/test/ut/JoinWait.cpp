@@ -82,7 +82,7 @@ namespace Svc {
       ASSERT_TRUE(this->component.m_join_waiting);
       
       // Send status back
-      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::COMMAND_OK);
+      this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
       this->clearAndDispatch();
 
       // Make sure we received completion for both command and join_wait

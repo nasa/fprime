@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CmdSequencerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/CmdSequencerImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Events.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FPrimeSequence.cpp"
@@ -18,7 +18,7 @@ set(SOURCE_FILES
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/CmdSequencer/CmdSequencerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/CmdSequencer/CmdSequencer.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/AMPCS.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandBuffers.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Health.cpp"

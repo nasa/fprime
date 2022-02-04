@@ -9,7 +9,7 @@
 ####
 # Libraries that make-up F prime. Hurray!
 # Ignore GTest for non-test builds
-if (${CMAKE_BUILD_TYPE} STREQUAL "TESTING")
+if (BUILD_TESTING)
     include("${FPRIME_FRAMEWORK_PATH}/cmake/googletest-download/googletest.cmake")
     add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
 endif()
@@ -24,6 +24,9 @@ add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Autocoders/" "${CMAKE_BINARY_DIR}/F-P
 if (FPRIME_ENABLE_FRAMEWORK_UTS)
     set(__FPRIME_NO_UT_GEN__ OFF)
 endif()
+# Faux libraries used as interfaces to non-autocoded fpp items
+add_library(config INTERFACE)
+add_library(Fpp INTERFACE)
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Fw/" "${CMAKE_BINARY_DIR}/F-Prime/Fw")
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Svc/" "${CMAKE_BINARY_DIR}/F-Prime/Svc")
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Os/" "${CMAKE_BINARY_DIR}/F-Prime/Os")
@@ -32,3 +35,9 @@ add_subdirectory("${FPRIME_FRAMEWORK_PATH}/CFDP/" "${CMAKE_BINARY_DIR}/F-Prime/C
 add_subdirectory("${FPRIME_FRAMEWORK_PATH}/Utils/" "${CMAKE_BINARY_DIR}/F-Prime/Utils")
 # Always enable UTs for a project
 set(__FPRIME_NO_UT_GEN__ OFF)
+foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
+    file(GLOB MANIFESTS RELATIVE "${LIBRARY_DIR}" CONFIGURE_DEPENDS "${LIBRARY_DIR}/*.cmake")
+    foreach (MANIFEST IN LISTS MANIFESTS)
+        include("${LIBRARY_DIR}/${MANIFEST}")
+    endforeach()
+endforeach()

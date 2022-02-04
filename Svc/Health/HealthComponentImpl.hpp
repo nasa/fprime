@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Health.hpp
 // \author Tim, J.Perez
 // \brief  hpp file for Health component implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #ifndef Health_HPP
 #define Health_HPP
@@ -75,14 +75,14 @@ namespace Svc {
             //!  \brief Component destructor
             //!
             //!  The destructor for HealthImpl is empty
-            ~HealthImpl(void);
+            ~HealthImpl();
 
         PROTECTED:
 
             //!  \brief additional checks function
             //!
             //!  Does additional checks based on the platform
-            virtual void doOtherChecks(void);
+            virtual void doOtherChecks();
 
         PRIVATE:
 
@@ -109,7 +109,7 @@ namespace Svc {
             //!  \param opCode Command opcode
             //!  \param cmdSeq Command sequence
             //!  \param enable Enum for enabling/disabling tracker
-            void HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, HealthEnabled enable);
+            void HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, Fw::Enabled enable);
 
             //!  \brief HLTH_PING_ENABLE handler
             //!
@@ -119,7 +119,7 @@ namespace Svc {
             //!  \param cmdSeq Command sequence
             //!  \param entry Ping entry number
             //!  \param enable Enum for enabling/disabling tracker
-            void HLTH_PING_ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, PingEnabled enable);
+            void HLTH_PING_ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, Fw::Enabled enable);
 
             //!  \brief HLTH_CHNG_PING handler
             //!
@@ -139,7 +139,7 @@ namespace Svc {
                 PingEntry entry; //!< entry passed by user
                 U32 cycleCount; //!< current cycle count
                 U32 key; //!< key passed to ping
-                PingEnabled enabled; //!< if current ping result is checked
+                Fw::Enabled::t enabled; //!< if current ping result is checked
             } m_pingTrackerEntries[NUM_PINGSEND_OUTPUT_PORTS];
 
             NATIVE_INT_TYPE findEntry(Fw::CmdStringArg entry);
@@ -149,7 +149,7 @@ namespace Svc {
             U32 m_key; //!< current key value. Just increments for each ping entry.
             U32 m_watchDogCode; //!< stores code used for watchdog stroking
             U32 m_warnings; //!< number of slip warnings issued
-            HealthEnabled m_enabled; //!< if the pinger is enabled
+            Fw::Enabled m_enabled; //!< if the pinger is enabled
             U32 queue_depth; //!< queue depth passed by user
 
     };

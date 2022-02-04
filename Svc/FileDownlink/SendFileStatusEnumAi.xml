@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<enum namespace = "Svc" name="SendFileStatus">
-    <comment>Status of file transfer.</comment>
-    <item name="STATUS_OK" value="0"/>
-    <item name="STATUS_ERROR" value="1"/>
-    <item name="STATUS_INVALID" value="2"/>
-    <item name="STATUS_BUSY" value="3"/>
-</enum>

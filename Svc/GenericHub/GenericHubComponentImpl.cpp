@@ -14,10 +14,9 @@
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
-#include "string.h"
 
 // Required port serialization or the hub cannot work
-FW_STATIC_ASSERT(FW_PORT_SERIALIZATION);
+static_assert(FW_PORT_SERIALIZATION, "FW_PORT_SERIALIZATION must be enabled to use GenericHub");
 
 namespace Svc {
 
@@ -31,13 +30,13 @@ void GenericHubComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     GenericHubComponentBase::init(instance);
 }
 
-GenericHubComponentImpl ::~GenericHubComponentImpl(void) {}
+GenericHubComponentImpl ::~GenericHubComponentImpl() {}
 
 void GenericHubComponentImpl ::send_data(const HubType type,
                                          const NATIVE_INT_TYPE port,
                                          const U8* data,
                                          const U32 size) {
-    FW_ASSERT(data != NULL);
+    FW_ASSERT(data != nullptr);
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
     Fw::Buffer outgoing = dataOutAllocate_out(0, size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType));

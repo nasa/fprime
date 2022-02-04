@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Pick_spin.hpp
 // \author AUTO-GENERATED: DO NOT EDIT
 // \brief  Pick_spin interface
@@ -12,7 +12,7 @@
 #ifndef STEST_PICK_SPIN_HPP
 #define STEST_PICK_SPIN_HPP
 
-#include <assert.h>
+#include <cassert>
 #include <cstddef>
 #include <limits.h>
 
@@ -32,7 +32,7 @@ namespace STest {
       };
 
       //! Initialize the module
-      void init(void);
+      void init();
 
       //! Initialize a rule
       void initRule(

@@ -7,7 +7,7 @@ namespace Fw {
 	    SerializeStatus stat = SerializeBufferBase::setBuff(args,size);
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
     }
-    
+
 	ParamBuffer::ParamBuffer() {
     }
 
@@ -19,21 +19,25 @@ namespace Fw {
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 	}
 
-	const ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
-	    SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
+    ParamBuffer& ParamBuffer::operator=(const ParamBuffer& other) {
+        if(this == &other) {
+            return *this;
+        }
+
+        SerializeStatus stat = SerializeBufferBase::setBuff(other.m_bufferData,other.getBuffLength());
         FW_ASSERT(FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
         return *this;
-	}
+    }
 
-    NATIVE_UINT_TYPE ParamBuffer::getBuffCapacity(void) const {
+    NATIVE_UINT_TYPE ParamBuffer::getBuffCapacity() const {
         return sizeof(this->m_bufferData);
     }
 
-    const U8* ParamBuffer::getBuffAddr(void) const {
+    const U8* ParamBuffer::getBuffAddr() const {
         return this->m_bufferData;
     }
 
-    U8* ParamBuffer::getBuffAddr(void) {
+    U8* ParamBuffer::getBuffAddr() {
         return this->m_bufferData;
     }
 

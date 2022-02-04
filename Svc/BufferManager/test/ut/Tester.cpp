@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BufferManager.hpp
 // \author tcanham
 // \brief  cpp file for BufferManager test harness implementation class
@@ -7,13 +7,13 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/Test/UnitTest.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
@@ -63,15 +63,15 @@ class TestAllocator: public Fw::MemAllocator {
             this->m_alloc.deallocate(identifier,ptr);
         }
 
-        NATIVE_UINT_TYPE getId(void) {
+        NATIVE_UINT_TYPE getId() {
             return this->m_reqId;
         }
 
-        NATIVE_UINT_TYPE getSize(void) {
+        NATIVE_UINT_TYPE getSize() {
             return this->m_reqSize;
         }
 
-        void* getMem(void) {
+        void* getMem() {
             return this->m_mem;
         }
 
@@ -80,18 +80,18 @@ class TestAllocator: public Fw::MemAllocator {
           NATIVE_UINT_TYPE m_reqId;
           NATIVE_UINT_TYPE m_reqSize;
           void* m_mem;
-          
+
 };
 
 
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
+    Tester() :
 #if FW_OBJECT_NAMES == 1
       BufferManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferManager")
@@ -105,17 +105,17 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    testSetup(void) 
+    testSetup()
   {
 
       REQUIREMENT("FPRIME-BM-001");
@@ -138,16 +138,16 @@ namespace Svc {
 
       // Check that enough buffers were created
       ASSERT_EQ(
-        BIN0_NUM_BUFFERS + 
-        BIN1_NUM_BUFFERS + 
+        BIN0_NUM_BUFFERS +
+        BIN1_NUM_BUFFERS +
         BIN2_NUM_BUFFERS,
         this->component.m_numStructs
         );
 
-      REQUIREMENT("FPRIME-BM-005");  
+      REQUIREMENT("FPRIME-BM-005");
 
       // check that enough memory was requested
-      NATIVE_UINT_TYPE memSize = 
+      NATIVE_UINT_TYPE memSize =
         (BIN0_NUM_BUFFERS + BIN1_NUM_BUFFERS + BIN2_NUM_BUFFERS)*sizeof(Svc::BufferManagerComponentImpl::AllocatedBuffer) +
         (BIN0_NUM_BUFFERS*BIN0_BUFFER_SIZE + BIN1_NUM_BUFFERS*BIN1_BUFFER_SIZE + BIN2_NUM_BUFFERS*BIN2_BUFFER_SIZE);
       ASSERT_EQ(memSize,alloc.getSize());
@@ -191,7 +191,7 @@ namespace Svc {
       ASSERT_FALSE(this->component.m_setup);
   }
 
-  void Tester::oneBufferSize(void) {
+  void Tester::oneBufferSize() {
 
       BufferManagerComponentImpl::BufferBins bins;
       memset(&bins,0,sizeof(bins));
@@ -237,17 +237,17 @@ namespace Svc {
       // clear histories
       this->clearHistory();
 
-      REQUIREMENT("FPRIME-BM-006"); 
+      REQUIREMENT("FPRIME-BM-006");
 
       // randomly return buffers
       time_t t;
-      srand((unsigned) time(&t));
+      srand(static_cast<unsigned>(time(&t)));
 
       bool returned[BIN1_NUM_BUFFERS] = {false};
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS; b++) {
           NATIVE_UINT_TYPE entry;
-          while (1) {
+          while (true) {
               entry = rand() % BIN1_NUM_BUFFERS;
               if (not returned[entry]) {
                   returned[entry] = true;
@@ -287,7 +287,7 @@ namespace Svc {
 
   }
 
-  void Tester::multBuffSize(void) {
+  void Tester::multBuffSize() {
 
       BufferManagerComponentImpl::BufferBins bins;
       memset(&bins,0,sizeof(bins));
@@ -306,7 +306,7 @@ namespace Svc {
 
       REQUIREMENT("FPRIME-BM-002");
 
-      // BufferManager should be able to provide the whole pool worth of buffers 
+      // BufferManager should be able to provide the whole pool worth of buffers
       // for a requested size smaller than the smallest bin.
 
       for (NATIVE_UINT_TYPE b=0; b<BIN0_NUM_BUFFERS+BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
@@ -380,7 +380,7 @@ namespace Svc {
       // clear histories
       this->clearEvents();
 
-      // BufferManager should be able to provide the BIN1 and BIN2 worth of buffers 
+      // BufferManager should be able to provide the BIN1 and BIN2 worth of buffers
       // for a requested size just smaller than the BIN1 size
 
       for (NATIVE_UINT_TYPE b=0; b<BIN1_NUM_BUFFERS+BIN2_NUM_BUFFERS; b++) {
@@ -439,7 +439,7 @@ namespace Svc {
           ASSERT_FALSE(this->component.m_buffers[b].allocated);
       }
 
-      // BufferManager should be able to provide the BIN2 worth of buffers 
+      // BufferManager should be able to provide the BIN2 worth of buffers
       // for a requested size just smaller than the BIN2 size
 
       for (NATIVE_UINT_TYPE b=0; b<BIN2_NUM_BUFFERS; b++) {
@@ -505,11 +505,11 @@ namespace Svc {
 
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // bufferSendIn
@@ -526,38 +526,38 @@ namespace Svc {
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
-        0, 
+        0,
         this->get_from_timeCaller(0)
     );
 
     // eventOut
     this->component.set_eventOut_OutputPort(
-        0, 
+        0,
         this->get_from_eventOut(0)
     );
 
     // textEventOut
     this->component.set_textEventOut_OutputPort(
-        0, 
+        0,
         this->get_from_textEventOut(0)
     );
 
     // tlmOut
     this->component.set_tlmOut_OutputPort(
-        0, 
+        0,
         this->get_from_tlmOut(0)
     );
 
     // schedIn
     this->connect_to_schedIn(
-        0, 
+        0,
         this->component.get_schedIn_InputPort(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -567,7 +567,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };

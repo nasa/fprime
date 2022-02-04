@@ -33,7 +33,6 @@ Tester.*
 !**/test/ut/TesterBase.*
 !**/test/ut/Tester.*
 
-*.mdxml.bak
 *.sconsign.dblite
 *.class
 .classpath
@@ -76,5 +75,10 @@ GTestBase.*
 /Fw/Python/src/fprime.egg-info
 /Gds/src/fprime_gds.egg-info
 **/DefaultDict/serializable/*
+
+fprime-venv
+xml
+depend
+
 /.idea/
 /venv/

@@ -10,12 +10,12 @@ namespace Example {
 
 		// Only called by derived class
 		ExampleEnumImpl(const char* compName);
-		~ExampleEnumImpl(void);
+		~ExampleEnumImpl();
 		void init(NATIVE_INT_TYPE queueDepth);
 
     private:
-        void ExEnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
-        void EnumIn_handler(NATIVE_INT_TYPE portNum, Example::Enum1 enum1, Example::Serial1 serial1);
+        void ExEnumIn_handler(NATIVE_INT_TYPE portNum, const Example::Enum1& enum1, const Example::Serial1& serial1);
+        void EnumIn_handler(NATIVE_INT_TYPE portNum, const Example::Enum1& enum1, const Example::Serial1& serial1);
 	};
 
 };

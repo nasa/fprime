@@ -1,29 +1,21 @@
 
-set (GEN_VERSION_FILE_CMD ${CMAKE_CURRENT_LIST_DIR}/version/generate_version_header.py "${CMAKE_BINARY_DIR}/version.hpp")
-
-function(add_global_target TARGET_NAME)
-
-    add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/version.hpp" __PHONY__ COMMAND ${CMAKE_COMMAND} -E chdir ${FPRIME_PROJECT_ROOT} ${GEN_VERSION_FILE_CMD})
-    add_custom_target(${TARGET_NAME} ALL DEPENDS "${CMAKE_BINARY_DIR}/version.hpp" __PHONY__)
-
-endfunction(add_global_target)
-
 ####
-# Dict function `add_module_target`:
+# cmake/target/version.cmake:
 #
-# Adds a module-by-module target for producing dictionaries. These dictionaries take the outputs
-# from the autocoder and copies them into the correct directory. These outputs are then handled as
-# part of the global `dict` target above.
-#
-#
-# - **MODULE_NAME:** name of the module
-# - **TARGET_NAME:** name of target to produce
-# - **GLOBAL_TARGET_NAME:** name of produced global target
-# - **AC_INPUTS:** list of autocoder inputs
-# - **SOURCE_FILES:** list of source file inputs
-# - **AC_OUTPUTS:** list of autocoder outputs
-# - **MOD_DEPS:** module dependencies of the target
+# A basic versioning target which will produce the version.hpp file.
 ####
-function(add_module_target MODULE_NAME TARGET_NAME GLOBAL_TARGET_NAME AC_INPUTS SOURCE_FILES AC_OUTPUTS MOD_DEPS)
+set(FPRIME_VERSION_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_header.py" CACHE PATH "Script used to generate version.hpp")
 
+function(add_global_target TARGET)
+    set(OUTPUT_FILE "${CMAKE_BINARY_DIR}/version.hpp")
+    add_custom_command(
+       OUTPUT "${OUTPUT_FILE}" __PHONY__
+       COMMAND ${CMAKE_COMMAND} -E chdir "${FPRIME_PROJECT_ROOT}" "${FPRIME_VERSION_SCRIPT}" "${OUTPUT_FILE}")
+    add_custom_target(${TARGET} DEPENDS "${OUTPUT_FILE}" __PHONY__)
+endfunction()
+
+function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+endfunction()
+
+function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
 endfunction(add_module_target)

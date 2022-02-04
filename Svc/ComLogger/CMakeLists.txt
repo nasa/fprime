@@ -7,14 +7,14 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ComLoggerComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/ComLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ComLogger.cpp"
 )
 
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/ComLogger/ComLoggerComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/ComLogger/ComLogger.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Main.cpp"
 )

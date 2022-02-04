@@ -6,7 +6,7 @@
  */
 
 #include <Autocoders/Python/test/tlm2/TestTelemImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_OBJECT_NAMES == 1
 TestTlmImpl::TestTlmImpl(const char* name) : Tlm::TestTlmComponentBase(name)
@@ -19,7 +19,7 @@ TestTlmImpl::TestTlmImpl() : Tlm::TestTlmComponentBase()
 TestTlmImpl::~TestTlmImpl() {
 }
 
-void TestTlmImpl::init(void) {
+void TestTlmImpl::init() {
     Tlm::TestTlmComponentBase::init();
 }
 

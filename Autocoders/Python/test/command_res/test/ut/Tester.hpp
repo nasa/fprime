@@ -30,11 +30,11 @@ namespace Cmd {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,7 +44,7 @@ namespace Cmd {
 
       //! Test residual
       //!
-      void residualTest(void);
+      void residualTest();
 
     private:
 
@@ -54,11 +54,11 @@ namespace Cmd {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

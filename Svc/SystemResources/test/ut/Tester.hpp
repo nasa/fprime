@@ -26,11 +26,11 @@ class Tester : public SystemResourcesGTestBase {
   public:
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester();
 
     //! Destroy object Tester
     //!
-    ~Tester(void);
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------
@@ -56,11 +56,11 @@ class Tester : public SystemResourcesGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts();
 
     //! Initialize components
     //!
-    void initComponents(void);
+    void initComponents();
 
   private:
     // ----------------------------------------------------------------------

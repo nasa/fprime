@@ -1,7 +1,7 @@
 #include "Os/Pthreads/BufferQueue.hpp"
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 using namespace Os;
 
@@ -98,8 +98,8 @@ int main() {
   const char* messages[DEPTH] = {"hello", "how are you", "pretty good", "cosmic bro", "kthxbye"};
   // Fill queue:
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
-    printf("Pushing '%s' at priority %d with size %d\n", messages[ii], priorities[ii], (int)strlen(messages[ii]));
-    ret = queue2.push((U8*) messages[ii], (int)strlen(messages[ii]), priorities[ii]);
+    printf("Pushing '%s' at priority %d with size %zu\n", messages[ii], priorities[ii], strlen(messages[ii]));
+    ret = queue2.push(reinterpret_cast<const U8*>(messages[ii]), strlen(messages[ii]), priorities[ii]);
     FW_ASSERT(ret, ret);
     count = queue2.getCount();
     maxCount = queue2.getMaxCount();
@@ -118,7 +118,7 @@ int main() {
   char temp[101];
   size = sizeof(temp) - 1; // Leave room for extra \0 because of the message print
   for(NATIVE_UINT_TYPE ii = 0; ii < DEPTH; ++ii) {
-    ret = queue2.pop((U8*) temp, size, priority);
+    ret = queue2.pop(reinterpret_cast<U8*>(temp), size, priority);
     temp[size] = '\0';
     FW_ASSERT(ret, ret);
     FW_ASSERT(priority == orderedPriorities[ii], priority);

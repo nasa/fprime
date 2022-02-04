@@ -30,11 +30,11 @@ namespace Svc {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -44,13 +44,13 @@ namespace Svc {
 
       //! Test Setup
       //!
-      void testSetup(void);
+      void testSetup();
 
       //! One buffer size
-      void oneBufferSize(void);
+      void oneBufferSize();
 
       //! Multiple buffer sizes
-      void multBuffSize(void);
+      void multBuffSize();
 
     private:
 
@@ -60,11 +60,11 @@ namespace Svc {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
@@ -79,7 +79,7 @@ namespace Svc {
       void textLogIn(
           const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
       );
 
