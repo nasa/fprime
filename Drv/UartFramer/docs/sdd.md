@@ -70,9 +70,81 @@ If the `UartFramer` cannot allocate an additional buffer for the serial receive 
 
 ## Interconnections
 
-The following is a diagram of how the `UartFramer` would be connected to the Framer and Deframer and LinuxSerialDriver components in a typical topology.
+The following is a diagram of how the `UartFramer` would be connected to the `Framer` and `Deframer` and LinuxSerialDriver components in a typical topology. Note that the types are in the diagram rather than instance names which would be in the actual topology specification.
 
+![Topolgy Example](img/Topo.svg)
 
+## FPP examples
+
+An example instance of the `LinuxSerialDriver` in the topology is as follows:
+
+```
+instance gndUart: Drv.LinuxSerialDriver \
+    base id 2000 \
+  {
+
+  phase Fpp.ToCpp.Phases.configComponents """
+  bool openStat = gndUart.open("/dev/ttyUL1",
+    Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
+    Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+    Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+    true
+    );
+  FW_ASSERT(openStat);
+  
+  """
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  gndUart.startReadThread();
+  """
+
+  phase Fpp.ToCpp.Phases.stopTasks """
+  gndUart.quitReadThread();
+  """
+
+  }
+```
+
+The `LinuxSerialDriver` FPP is included as an illustration of how to initialize the UART driver and to relate to the FPP topology code below.
+
+An example instance of the `UartFramer` in the topology FPP is as follows:
+
+```
+instance gndUartFramer: Drv.UartFramer \
+    base id 2100 \
+  {
+
+  phase Fpp.ToCpp.Phases.startTasks """
+  gndUartFramer.allocate(10,1024);
+  """
+
+  }
+```
+
+This code pre-allocates 10 1K buffers for the UART driver. It places this call in the initialization phase where component tasks are started, where we know all connections have been completed.
+
+An example set of connections in the topology FPP is as follows:
+
+```
+  connections SomeDeployment {
+
+    gndUart.serialRecv[0] -> gndUartFramer.serialRecv[0]
+    gndUartFramer.serialSend[0] -> gndUart.serialSend[0]
+    gndUartFramer.readBufferSend[0] -> gndUart.readBufferSend[0]
+
+    gndUartFramer.DeframerAllocate[0] -> gndBufferManager.bufferGetCallee[0]
+    gndUartFramer.FramerDeallocate[0] -> staticMemory.bufferDeallocate[1]
+
+    gndUartFramer.Deframer[0] -> uplink.framedIn[0]
+    uplink.framedDeallocate[0] -> gndBufferManager.bufferSendIn[0]
+
+    downlink.framedOut[0] -> gndUartFramer.Framer[0]
+    downlink.framedAllocate[0] -> staticMemory.bufferAllocate[1]
+
+    ...
+```
+
+This matches the diagram above where instance names are used as opposed to type names in the diagram.
 
 ## Requirements
 
