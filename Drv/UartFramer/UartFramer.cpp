@@ -83,6 +83,7 @@ namespace Drv {
   {
 
       Drv::RecvStatus outStat = Drv::RecvStatus::RECV_OK;
+      // Check the UART status
       if (status != Drv::SerialReadStatus::SER_OK) {
         outStat = Drv::RecvStatus::RECV_ERROR;
       }
