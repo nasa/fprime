@@ -423,6 +423,11 @@ function(register_fprime_ut)
     if (DEFINED UT_INCLUDE_GTEST)
         set(INCLUDE_GTEST ${UT_INCLUDE_GTEST})
     endif()
+    # Check no multiple UTs
+    if (TARGET UT_NAME)
+        message(FATAL_ERROR "${UT_NAME} already used. Please supply a unique name using 'register_fprime_ut(NAME)'")
+    endif()
+
     # Explicit call to module register
     generate_ut("${UT_NAME}" "${UT_SOURCE_FILES}" "${MD_IFS}")
 endfunction(register_fprime_ut)
@@ -458,7 +463,7 @@ endmacro(register_fprime_target)
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
     if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_target("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
+        register_fprime_target_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
     endif()
 endmacro(register_fprime_ut_target)
 

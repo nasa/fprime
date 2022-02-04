@@ -120,7 +120,6 @@ function(setup_module_targets MODULE SOURCES DEPENDENCIES)
     # Get both normal and ut target lists
     get_property(TARGETS GLOBAL PROPERTY FPRIME_TARGET_LIST)
     get_property(UT_TARGETS GLOBAL PROPERTY FPRIME_UT_TARGET_LIST)
-
     # UT targets are the only targets run on unit tests, and are included in deployments
     if (MODULE_TYPE STREQUAL "Deployment")
         list(APPEND TARGETS ${UT_TARGETS})
