@@ -71,6 +71,7 @@ namespace Drv {
   {
     this->serialSend_out(0,sendBuffer);
     this->FramerDeallocate_out(0,sendBuffer);
+    // no status from send, so return OK
     return Drv::SendStatus::SEND_OK;
   }
 
