@@ -72,7 +72,7 @@ If the `UartFramer` cannot allocate an additional buffer for the serial receive 
 
 The following is a diagram of how the `UartFramer` would be connected to the `Framer` and `Deframer` and LinuxSerialDriver components in a typical topology. Note that the types are in the diagram rather than instance names which would be in the actual topology specification.
 
-![Topolgy Example](img/Topo.svg)
+![Topology Example](img/Topo.svg)
 
 ## FPP examples
 
