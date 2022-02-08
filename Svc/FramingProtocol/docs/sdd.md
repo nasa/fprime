@@ -47,11 +47,11 @@ at `Ref/Top/instances.fpp`.
 To implement and use a new framing protocol, do the following:
 
 1. Implement the abstract class `FramingProtocolInterface`
-as discussed in Section 2.1.
+as discussed in Section 3.1.
 This class defines helper operations used when framing a packet.
 
 1. Implement the abstract class `FramingProtocol` as discussed
-in Section 2.1.
+in Section 3.1.
 This class defines the operation of framing a data packet.
 
 1. Instantiate the class implemented in step 1.
@@ -77,12 +77,12 @@ at `Ref/Top/instances.fpp`.
 To implement and use a new deframing protocol, do the following:
 
 1. Implement the abstract class `DeframingProtocolInterface`
-as discussed in Section 2.2.
+as discussed in Section 3.2.
 This class defines helper operations used when deframing a framed
 packet.
 
 1. Implement the abstract class `DeframingProtocol` as discussed
-in Section 2.2.
+in Section 3.2.
 This class defines the operation of deframing a framed packet.
 
 1. Instantiate the class implemented in step 1.
@@ -192,7 +192,7 @@ virtual void route(Fw::Buffer& data) = 0;
 ```
 
 The method `allocate` should allocate memory, as described in
-Section 2.1.1.
+Section 3.1.1.
 
 The method `route` should send (route) the data stored in the buffer.
 A typical implementation invokes either an `Fw::Com` port (e.g., for sending
@@ -218,7 +218,7 @@ for deframing.
 `deframe` returns a value of type `DeframingStatus` indicating what happened.
 
 The abstract class `DeframingProtocol` provides a protected member `m_interface`.
-It operates as described in Section 2.1.2.
+It operates as described in Section 3.1.2.
 
 Your implementation of `deframe` should do the following:
 
