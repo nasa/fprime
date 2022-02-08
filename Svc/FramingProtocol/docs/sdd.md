@@ -8,8 +8,8 @@ protocols used by the `Svc::Framer` and `Svc::Deframer` components.
 for transmission to the ground.
 `Svc::Deframer` uses a deframing protocol to extract
 data from framed packets received from the ground.
-The `FramingProtocol` library allows the same framer and deframer
-components to operate with multiple protocols.
+The `FramingProtocol` library allows these components to operate with multiple 
+protocols.
 Each protocol corresponds to a different implementation
 of the interface.
 
