@@ -121,7 +121,7 @@ if the allocation failed.
 A typical implementation invokes a port connected to a memory allocation component.
 
 The method `send` should send the data stored in the buffer.
-A typical implementation invokes a `BufferSend` port.
+A typical implementation invokes an `Fw::BufferSend` port.
 
 #### 2.1.2. Implementing `FramingProtocol`
 
@@ -186,8 +186,8 @@ The method `allocate` should allocate memory, as described in
 Section 2.1.1.
 
 The method `route` should send (route) the data stored in the buffer.
-A typical implementation invokes either a `Com` port (e.g., for sending
-commands) or a `BufferSend` port (e.g., for sending file packets).
+A typical implementation invokes either an `Fw::Com` port (e.g., for sending
+commands) or a `Fw::BufferSend` port (e.g., for sending file packets).
 
 #### 2.2.2. Implementing `DeframingProtocol`
 
