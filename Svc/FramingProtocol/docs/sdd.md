@@ -15,9 +15,11 @@ of the interface.
 
 This library implements a default F' protocol that works with
 the F' Ground Data System (GDS).
-The F' protocol uses the following format for both framing and
-deframing: four-byte start word `0xDEADBEEF`, data, four-byte Cyclic Redundancy Check
-(CRC) value.
+The F' protocol uses the following format for framing and deframing: frame
+header, data, hash value.
+A frame header consists of a four-byte start word `0xDEADBEEF`,
+a four byte frame size, and a value of type `Fw::ComPacketType`,
+serialized as an `I32`.
 Users may provide new protocols by implementing the abstract classes
 defined in this library.
 
@@ -195,7 +197,6 @@ commands) or a `Fw::BufferSend` port (e.g., for sending file packets).
 To implement `DeframingProtocol`, you must implement the following pure
 virtual method:
 
-
 ```c++
 virtual DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed) = 0;
 ```
@@ -232,7 +233,35 @@ to hold the deframed data.
 
 ### 3.1. Framing
 
-TODO
+The F Prime framing protocol operates as follows:
+
+1. Compute the frame size:
+
+   1. If `packet_type` is `Fw::ComPacket::FW_PACKET_UNKNOWN`, then the size
+is the frame header size (8 bytes) plus the data size plus the size
+of the hash value.
+
+   1. Otherwise the size is the frame header size plus four bytes for
+the serialized packet type plus the data size plus the size of the
+hash value.
+
+1. Allocate a buffer large enough to hold the frame.
+
+1. Serialize the start word and frame size into the buffer.
+
+1. Serialize the packet type if known.
+
+1. Serialize the data.
+**Note: If the packet type is not known, then the first four bytes
+of the data must contain the packet type.
+Otherwise the framed data will not have a valid header.**
+
+1. Calculate and serialize the hash value.
+
+1. Set the buffer size to the frame size, in case the allocator
+returned a larger buffer.
+
+1. Send the buffer.
 
 ### 3.2. Deframing
 
