@@ -120,7 +120,7 @@ succeeded; or (2) an invalid buffer (i.e., a buffer whose address is zero)
 if the allocation failed.
 A typical implementation invokes a port connected to a memory allocation component.
 
-The method `send` should send a buffer.
+The method `send` should send the data stored in the buffer.
 A typical implementation invokes a `BufferSend` port.
 
 ### Implementing `FramingProtocol`
@@ -165,11 +165,40 @@ To implement a deframing protocol, do the following:
 
 ### Implementing `DeframingProtocolInterface`
 
-TODO
+`DeframingProtocolInterface` defines helper methods for framing data.
+Typically these methods are implemented by an F Prime component (e.g., `Svc::Deframer`),
+because they require port invocations.
+The component `Svc::Deframer` provides an implementation of `DeframingProtocolInterface`
+that you can use.
+It does this by inheriting from `DeframingProtocolInterface` and implementing
+its abstract methods.
+
+To implement `DeframingProtocolInterface`, you must implement the following
+pure virtual methods:
+
+```c++
+virtual Fw::Buffer allocate(const U32 size) = 0;
+
+virtual void route(Fw::Buffer& data) = 0;
+```
+
+The method `allocate` should allocate memory, as described above
+for `FramingProtocolInterface`.
+
+The method `send` should send the data stored in the buffer.
+A typical implementation invokes either a `Com` port (e.g., for sending
+commands) or a `BufferSend` port (e.g., for sending file packets).
 
 ### Implementing `DeframingProtocol`
 
 TODO
+
+```c++
+virtual DeframingStatus deframe(
+    Types::CircularBuffer& buffer,
+    U32& needed
+) = 0;
+```
 
 # Default F' Implementation
 
@@ -180,24 +209,6 @@ TODO
 ## Deframing
 
 TODO
-
-# Usage
-
-
-DeframingProtocol:
-```c++
-virtual DeframingStatus deframe(
-    Types::CircularBuffer& buffer,
-    U32& needed
-) = 0;
-```
-
-DeframingProtocol Interface:
-```c++
-    virtual Fw::Buffer allocate(const U32 size) = 0;
-
-    virtual void route(Fw::Buffer& data) = 0;
-```
 
 ## Class Diagrams
 
