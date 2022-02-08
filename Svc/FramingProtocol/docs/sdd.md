@@ -146,7 +146,7 @@ This member is a pointer, initially null.
 After the `setup` method of `FramingProtocol` is called, it
 points to a concrete instance of `FramingProtocolInterface`.
 
-When implementing the `frame` method, you should do the following:
+Your implementation of `frame` should do the following:
 
 1. Use `m_interface->allocate` to allocate a buffer to hold the framed data.
 
