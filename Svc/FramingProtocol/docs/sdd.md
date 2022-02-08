@@ -182,8 +182,8 @@ virtual Fw::Buffer allocate(const U32 size) = 0;
 virtual void route(Fw::Buffer& data) = 0;
 ```
 
-The method `allocate` should allocate memory, as described above
-for `FramingProtocolInterface`.
+The method `allocate` should allocate memory, as described in
+Section 2.1.1.
 
 The method `send` should send the data stored in the buffer.
 A typical implementation invokes either a `Com` port (e.g., for sending
