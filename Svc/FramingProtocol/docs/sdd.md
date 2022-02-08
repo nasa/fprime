@@ -141,10 +141,10 @@ This method is called with the following arguments:
 
 * `packet_type`: The type of data to frame.
 
-The absract class `FramingProtocol` provides a protected member `m_interface`.
+The abstract class `FramingProtocol` provides a protected member `m_interface`.
 This member is a pointer, initially null.
 After the `setup` method of `FramingProtocol` is called, it
-and points to a concrete instance of `FramingProtocolInterface`.
+points to a concrete instance of `FramingProtocolInterface`.
 
 When implementing the `frame` method, you should do the following:
 
