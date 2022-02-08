@@ -298,7 +298,7 @@ If not, report the number of bytes needed and return status.
 If it is not valid, return status.
 
 1. Allocate a buffer large enough to hold the frame data.
-Set its size to be exactly the data size.
+Set its size to be exactly the frame data size.
 
 1. Serialize the frame data into the buffer.
 
