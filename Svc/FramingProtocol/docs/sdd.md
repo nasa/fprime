@@ -18,8 +18,7 @@ the F' Ground Data System (GDS).
 The F' protocol uses the following format for framing and deframing: frame
 header, data, hash value.
 A frame header consists of a four-byte start word `0xDEADBEEF`,
-a four byte frame size, and a value of type `Fw::ComPacketType`,
-serialized as an `I32`.
+and a four byte frame size.
 Users may provide new protocols by implementing the abstract classes
 defined in this library.
 
@@ -29,6 +28,7 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 FramingProtocol-001 | `Svc::FramingProtocol` shall provide the interface to a protocol for wrapping data packets in frames|Inspection
 FramingProtocol-002 | `Svc::FramingProtocol` shall provide the interface to a protocol for extracting data from framed packets|Inspection
+FramingProtocol-003 | `Svc::FramingProtocol` shall provide an implementation of the framing and deframing protocols that works with the F Prime GDS|Unit test
 
 ## 2. Using the Interface
 
@@ -242,26 +242,31 @@ to hold the deframed data.
 
 The F Prime framing protocol operates as follows:
 
-1. Compute the frame size:
+1. Compute the size of the data stored in the frame (the "frame data size")
 
-   1. If `packet_type` is `Fw::ComPacket::FW_PACKET_UNKNOWN`, then the size
-is the frame header size (8 bytes) plus the data size plus the size
-of the hash value.
+   1. If `packet_type` is `Fw::ComPacket::FW_PACKET_UNKNOWN`, then the frame data
+size is the size of the provided data.
 
-   1. Otherwise the size is the frame header size plus four bytes for
-the serialized packet type plus the data size plus the size of the
-hash value.
+   1. Otherwise the frame data size is size of the provided data plus four bytes for
+the serialized packet type.
+
+1. Compute the frame size: data size plus frame header size plus hash value size.
 
 1. Allocate a buffer large enough to hold the frame.
 
 1. Serialize the start word and frame size into the buffer.
+This forms the frame header.
 
-1. Serialize the packet type if known.
+1. Serialize the frame data:
 
-1. Serialize the data.
-**Note: If the packet type is not known, then the first four bytes
-of the data must contain the packet type.
-Otherwise the framed data will not have a valid header.**
+   1. Serialize the packet type if known.
+
+   1. Serialize the provided data.
+**Note: The F Prime GDS assumes that the first four bytes of data are
+the serialized packet type.
+Therefore, if the packet type is unknown (no serialization in the previous step),
+then the first four bytes of the incoming data must contain the 
+serialized packet type.**
 
 1. Calculate and serialize the hash value.
 
@@ -272,7 +277,32 @@ returned a larger buffer.
 
 ### 4.2. Deframing
 
-TODO
+The F Prime deframing protocol operates as follows:
+
+1. Check whether at least 8 bytes (the frame header size)
+are available in the circular buffer.
+If not, report that many bytes needed and return status.
+
+1. Read the start word and data size out of the circular buffer.
+
+1. Compute the frame size: frame header size plus data size plus hash value size.
+
+1. Check that the frame size is valid.
+If not, return with error.
+
+1. Check that the circular buffer has enough bytes for the rest of the
+frame.
+If not, report the number of bytes needed and return status.
+
+1. Validate the hash value.
+If it is not valid, return status.
+
+1. Allocate a buffer large enough to hold the frame data.
+Set its size to be exactly the data size.
+
+1. Serialize the frame data into the buffer.
+
+1. Send the buffer.
 
 ## 5. Class Diagrams
 
