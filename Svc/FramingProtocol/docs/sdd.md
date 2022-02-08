@@ -185,7 +185,7 @@ virtual void route(Fw::Buffer& data) = 0;
 The method `allocate` should allocate memory, as described in
 Section 2.1.1.
 
-The method `send` should send the data stored in the buffer.
+The method `route` should send (route) the data stored in the buffer.
 A typical implementation invokes either a `Com` port (e.g., for sending
 commands) or a `BufferSend` port (e.g., for sending file packets).
 
