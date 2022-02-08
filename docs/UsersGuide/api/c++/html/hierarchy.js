@@ -266,6 +266,9 @@ var hierarchy =
     [ "Svc::TlmPacketizerPacketList", "struct_svc_1_1_tlm_packetizer_packet_list.html", null ],
     [ "Utils::TokenBucket", "class_utils_1_1_token_bucket.html", null ],
     [ "Fw::TrapHandler", "class_fw_1_1_trap_handler.html", null ],
+    [ "UartFramerComponentBase", null, [
+      [ "Drv::UartFramer", "class_drv_1_1_uart_framer.html", null ]
+    ] ],
     [ "UdpReceiverComponentBase", null, [
       [ "Svc::UdpReceiverComponentImpl", "class_svc_1_1_udp_receiver_component_impl.html", null ]
     ] ],

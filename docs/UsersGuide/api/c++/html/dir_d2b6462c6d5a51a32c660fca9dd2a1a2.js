@@ -10,5 +10,6 @@ var dir_d2b6462c6d5a51a32c660fca9dd2a1a2 =
     [ "LinuxSpiDriver", "dir_93231718ab2a22a30f13b81bd9bbb817.html", "dir_93231718ab2a22a30f13b81bd9bbb817" ],
     [ "TcpClient", "dir_618d7795118739559b27356cd2668752.html", "dir_618d7795118739559b27356cd2668752" ],
     [ "TcpServer", "dir_4553222075ba3e6c376a07a0c9dd009c.html", "dir_4553222075ba3e6c376a07a0c9dd009c" ],
+    [ "UartFramer", "dir_2c92378fc648ad5be423508da028f7d6.html", "dir_2c92378fc648ad5be423508da028f7d6" ],
     [ "Udp", "dir_2386f4046990e351b81f49d54a1ff984.html", "dir_2386f4046990e351b81f49d54a1ff984" ]
 ];

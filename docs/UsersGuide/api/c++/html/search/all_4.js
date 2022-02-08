@@ -55,5 +55,6 @@ var searchData=
   ['dr_5fmax_5fnum_5fbuffers_289',['DR_MAX_NUM_BUFFERS',['../linux_serial_driver_component_impl_cfg_8hpp.html#adc29c2ff13d900c2f185ee95427fb06cac21518fb9a8126033e887ee9ede7c936',1,'LinuxSerialDriverComponentImplCfg.hpp']]],
   ['drv_290',['Drv',['../namespace_drv.html',1,'Drv'],['../drv.html',1,'(Global Namespace)']]],
   ['drv_3a_3ablockdriver_20component_291',['Drv::BlockDriver Component',['../drv_block_driver_component.html',1,'Drv']]],
-  ['deframer_20component_292',['Deframer Component',['../svc_deframer.html',1,'']]]
+  ['drv_3a_3auartframer_20uart_20framer_20component_292',['Drv::UartFramer UART Framer Component',['../md__drv__uart_framer_docs_sdd.html',1,'']]],
+  ['deframer_20component_293',['Deframer Component',['../svc_deframer.html',1,'']]]
 ];

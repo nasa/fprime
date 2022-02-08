@@ -99,114 +99,129 @@ var NAVTREE =
         [ "Change Log", "drv_tcp_server.html#autotoc_md63", null ]
       ] ]
     ] ],
+    [ "Drv::UartFramer UART Framer Component", "md__drv__uart_framer_docs_sdd.html", [
+      [ "Design", "md__drv__uart_framer_docs_sdd.html#autotoc_md65", [
+        [ "Component Diagram", "md__drv__uart_framer_docs_sdd.html#autotoc_md66", null ],
+        [ "Port List", "md__drv__uart_framer_docs_sdd.html#autotoc_md67", null ],
+        [ "Initialization", "md__drv__uart_framer_docs_sdd.html#autotoc_md68", null ]
+      ] ],
+      [ "Uplink", "md__drv__uart_framer_docs_sdd.html#autotoc_md69", null ],
+      [ "Downlink", "md__drv__uart_framer_docs_sdd.html#autotoc_md70", null ],
+      [ "Error handling", "md__drv__uart_framer_docs_sdd.html#autotoc_md71", null ],
+      [ "Interconnections", "md__drv__uart_framer_docs_sdd.html#autotoc_md72", null ],
+      [ "FPP examples", "md__drv__uart_framer_docs_sdd.html#autotoc_md73", null ],
+      [ "Requirements", "md__drv__uart_framer_docs_sdd.html#autotoc_md74", null ],
+      [ "Requirements on other components or topologies", "md__drv__uart_framer_docs_sdd.html#autotoc_md75", null ],
+      [ "Change Log", "md__drv__uart_framer_docs_sdd.html#autotoc_md76", null ]
+    ] ],
     [ "Udp  Component", "drv_udp.html", [
-      [ "Drv::Udp Udp Component", "drv_udp.html#autotoc_md64", [
-        [ "Design", "drv_udp.html#autotoc_md65", null ],
-        [ "Usage", "drv_udp.html#autotoc_md66", null ],
-        [ "Class Diagram", "drv_udp.html#autotoc_md67", null ],
-        [ "Requirements", "drv_udp.html#autotoc_md68", null ],
-        [ "Change Log", "drv_udp.html#autotoc_md69", null ]
+      [ "Drv::Udp Udp Component", "drv_udp.html#autotoc_md77", [
+        [ "Design", "drv_udp.html#autotoc_md78", null ],
+        [ "Usage", "drv_udp.html#autotoc_md79", null ],
+        [ "Class Diagram", "drv_udp.html#autotoc_md80", null ],
+        [ "Requirements", "drv_udp.html#autotoc_md81", null ],
+        [ "Change Log", "drv_udp.html#autotoc_md82", null ]
       ] ]
     ] ],
     [ "Svc::ActiveRateGroup Component", "svc_active_rate_group_component.html", [
-      [ "Svc::ActiveRateGroup Component", "svc_active_rate_group_component.html#autotoc_md186", [
-        [ "1. Introduction", "svc_active_rate_group_component.html#autotoc_md187", null ],
-        [ "2. Requirements", "svc_active_rate_group_component.html#autotoc_md188", null ],
-        [ "3. Design", "svc_active_rate_group_component.html#autotoc_md189", [
-          [ "3.1 Context", "svc_active_rate_group_component.html#autotoc_md190", [
-            [ "3.1.1 Component Diagram", "svc_active_rate_group_component.html#autotoc_md191", null ],
-            [ "3.1.2 Ports", "svc_active_rate_group_component.html#autotoc_md192", null ],
-            [ "3.2 Functional Description", "svc_active_rate_group_component.html#autotoc_md193", null ]
+      [ "Svc::ActiveRateGroup Component", "svc_active_rate_group_component.html#autotoc_md199", [
+        [ "1. Introduction", "svc_active_rate_group_component.html#autotoc_md200", null ],
+        [ "2. Requirements", "svc_active_rate_group_component.html#autotoc_md201", null ],
+        [ "3. Design", "svc_active_rate_group_component.html#autotoc_md202", [
+          [ "3.1 Context", "svc_active_rate_group_component.html#autotoc_md203", [
+            [ "3.1.1 Component Diagram", "svc_active_rate_group_component.html#autotoc_md204", null ],
+            [ "3.1.2 Ports", "svc_active_rate_group_component.html#autotoc_md205", null ],
+            [ "3.2 Functional Description", "svc_active_rate_group_component.html#autotoc_md206", null ]
           ] ],
-          [ "3.3 Scenarios", "svc_active_rate_group_component.html#autotoc_md194", [
-            [ "3.3.1 Rate Group Port Call", "svc_active_rate_group_component.html#autotoc_md195", null ]
+          [ "3.3 Scenarios", "svc_active_rate_group_component.html#autotoc_md207", [
+            [ "3.3.1 Rate Group Port Call", "svc_active_rate_group_component.html#autotoc_md208", null ]
           ] ],
-          [ "3.4 State", "svc_active_rate_group_component.html#autotoc_md196", null ],
-          [ "3.5 Algorithms", "svc_active_rate_group_component.html#autotoc_md197", null ]
+          [ "3.4 State", "svc_active_rate_group_component.html#autotoc_md209", null ],
+          [ "3.5 Algorithms", "svc_active_rate_group_component.html#autotoc_md210", null ]
         ] ],
-        [ "4. Dictionaries", "svc_active_rate_group_component.html#autotoc_md198", null ],
-        [ "5. Module Checklists", "svc_active_rate_group_component.html#autotoc_md199", null ],
-        [ "6. Unit Testing", "svc_active_rate_group_component.html#autotoc_md200", null ],
-        [ "7. Change Log", "svc_active_rate_group_component.html#autotoc_md201", null ]
+        [ "4. Dictionaries", "svc_active_rate_group_component.html#autotoc_md211", null ],
+        [ "5. Module Checklists", "svc_active_rate_group_component.html#autotoc_md212", null ],
+        [ "6. Unit Testing", "svc_active_rate_group_component.html#autotoc_md213", null ],
+        [ "7. Change Log", "svc_active_rate_group_component.html#autotoc_md214", null ]
       ] ]
     ] ],
     [ "Deframer Component", "svc_deframer.html", [
-      [ "Svc::Deframer Deframer Component", "svc_deframer.html#autotoc_md315", [
-        [ "Design", "svc_deframer.html#autotoc_md316", null ],
-        [ "Usage Examples", "svc_deframer.html#autotoc_md317", null ],
-        [ "Class Diagram", "svc_deframer.html#autotoc_md318", null ],
-        [ "Requirements", "svc_deframer.html#autotoc_md319", null ],
-        [ "Change Log", "svc_deframer.html#autotoc_md320", null ]
+      [ "Svc::Deframer Deframer Component", "svc_deframer.html#autotoc_md328", [
+        [ "Design", "svc_deframer.html#autotoc_md329", null ],
+        [ "Usage Examples", "svc_deframer.html#autotoc_md330", null ],
+        [ "Class Diagram", "svc_deframer.html#autotoc_md331", null ],
+        [ "Requirements", "svc_deframer.html#autotoc_md332", null ],
+        [ "Change Log", "svc_deframer.html#autotoc_md333", null ]
       ] ]
     ] ],
     [ "Framer  Component", "svc_framer.html", [
-      [ "Svc::Framer Framer Component", "svc_framer.html#autotoc_md387", [
-        [ "Usage Examples", "svc_framer.html#autotoc_md388", null ],
-        [ "Class Diagram", "svc_framer.html#autotoc_md389", null ],
-        [ "Requirements", "svc_framer.html#autotoc_md390", null ],
-        [ "Change Log", "svc_framer.html#autotoc_md391", null ]
+      [ "Svc::Framer Framer Component", "svc_framer.html#autotoc_md400", [
+        [ "Usage Examples", "svc_framer.html#autotoc_md401", null ],
+        [ "Class Diagram", "svc_framer.html#autotoc_md402", null ],
+        [ "Requirements", "svc_framer.html#autotoc_md403", null ],
+        [ "Change Log", "svc_framer.html#autotoc_md404", null ]
       ] ]
     ] ],
     [ "FramingProtocol", "svc_framing_protocol.html", [
-      [ "Svc::FramingProtocol FramingProtocol Component", "svc_framing_protocol.html#autotoc_md392", null ],
-      [ "Usage", "svc_framing_protocol.html#autotoc_md393", [
-        [ "Change Log", "svc_framing_protocol.html#autotoc_md394", null ]
+      [ "Svc::FramingProtocol FramingProtocol Component", "svc_framing_protocol.html#autotoc_md405", null ],
+      [ "Usage", "svc_framing_protocol.html#autotoc_md406", [
+        [ "Change Log", "svc_framing_protocol.html#autotoc_md407", null ]
       ] ]
     ] ],
     [ "Generic Hub Component", "svc_generic_hub.html", [
-      [ "Svc::GenericHub Generic Hub Component", "svc_generic_hub.html#autotoc_md395", [
-        [ "Design", "svc_generic_hub.html#autotoc_md396", [
-          [ "Example Formations", "svc_generic_hub.html#autotoc_md397", null ]
+      [ "Svc::GenericHub Generic Hub Component", "svc_generic_hub.html#autotoc_md408", [
+        [ "Design", "svc_generic_hub.html#autotoc_md409", [
+          [ "Example Formations", "svc_generic_hub.html#autotoc_md410", null ]
         ] ],
-        [ "Configuration", "svc_generic_hub.html#autotoc_md398", null ],
-        [ "Idiosyncrasies", "svc_generic_hub.html#autotoc_md399", null ],
-        [ "Requirements", "svc_generic_hub.html#autotoc_md400", null ],
-        [ "Change Log", "svc_generic_hub.html#autotoc_md401", null ]
+        [ "Configuration", "svc_generic_hub.html#autotoc_md411", null ],
+        [ "Idiosyncrasies", "svc_generic_hub.html#autotoc_md412", null ],
+        [ "Requirements", "svc_generic_hub.html#autotoc_md413", null ],
+        [ "Change Log", "svc_generic_hub.html#autotoc_md414", null ]
       ] ]
     ] ],
     [ "Generic Repeater Component", "svc_generic_repeater.html", [
-      [ "Svc::GenericRepeater Generic Repeater Component", "svc_generic_repeater.html#autotoc_md402", [
-        [ "Design", "svc_generic_repeater.html#autotoc_md403", null ],
-        [ "Configuration", "svc_generic_repeater.html#autotoc_md404", null ],
-        [ "Idiosyncrasies", "svc_generic_repeater.html#autotoc_md405", null ],
-        [ "Requirements", "svc_generic_repeater.html#autotoc_md406", null ],
-        [ "Change Log", "svc_generic_repeater.html#autotoc_md407", null ]
+      [ "Svc::GenericRepeater Generic Repeater Component", "svc_generic_repeater.html#autotoc_md415", [
+        [ "Design", "svc_generic_repeater.html#autotoc_md416", null ],
+        [ "Configuration", "svc_generic_repeater.html#autotoc_md417", null ],
+        [ "Idiosyncrasies", "svc_generic_repeater.html#autotoc_md418", null ],
+        [ "Requirements", "svc_generic_repeater.html#autotoc_md419", null ],
+        [ "Change Log", "svc_generic_repeater.html#autotoc_md420", null ]
       ] ]
     ] ],
     [ "Static Memory Component", "svc_static_memory.html", [
-      [ "Svc::StaticMemory Static Memory Component", "svc_static_memory.html#autotoc_md529", [
-        [ "Configuration", "svc_static_memory.html#autotoc_md530", null ],
-        [ "Requirements", "svc_static_memory.html#autotoc_md531", null ],
-        [ "Change Log", "svc_static_memory.html#autotoc_md532", null ]
+      [ "Svc::StaticMemory Static Memory Component", "svc_static_memory.html#autotoc_md542", [
+        [ "Configuration", "svc_static_memory.html#autotoc_md543", null ],
+        [ "Requirements", "svc_static_memory.html#autotoc_md544", null ],
+        [ "Change Log", "svc_static_memory.html#autotoc_md545", null ]
       ] ]
     ] ],
     [ "sdd", "md__svc__tlm_packetizer_docs_sdd.html", [
-      [ "TlmPacketizer Component", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md550", [
-        [ "1. Introduction", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md551", null ],
-        [ "2. Requirements", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md552", null ],
-        [ "3. Design", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md553", [
-          [ "3.1 Context", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md554", [
-            [ "3.1.1 Component Diagram", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md555", null ],
-            [ "3.1.2 Ports", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md556", null ],
-            [ "3.2 Functional Description", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md557", null ]
+      [ "TlmPacketizer Component", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md563", [
+        [ "1. Introduction", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md564", null ],
+        [ "2. Requirements", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md565", null ],
+        [ "3. Design", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md566", [
+          [ "3.1 Context", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md567", [
+            [ "3.1.1 Component Diagram", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md568", null ],
+            [ "3.1.2 Ports", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md569", null ],
+            [ "3.2 Functional Description", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md570", null ]
           ] ],
-          [ "3.3 Scenarios", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md558", [
-            [ "3.3.1 External User Option", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md559", null ]
+          [ "3.3 Scenarios", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md571", [
+            [ "3.3.1 External User Option", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md572", null ]
           ] ],
-          [ "3.4 State", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md560", null ],
-          [ "3.5 Algorithms", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md561", null ]
+          [ "3.4 State", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md573", null ],
+          [ "3.5 Algorithms", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md574", null ]
         ] ],
-        [ "4. Dictionaries", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md562", null ],
-        [ "5. Module Checklists", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md563", null ],
-        [ "6. Unit Testing", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md564", null ],
-        [ "7. Change Log", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md565", null ]
+        [ "4. Dictionaries", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md575", null ],
+        [ "5. Module Checklists", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md576", null ],
+        [ "6. Unit Testing", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md577", null ],
+        [ "7. Change Log", "md__svc__tlm_packetizer_docs_sdd.html#autotoc_md578", null ]
       ] ]
     ] ],
     [ "TlmPacketizer", "md__svc__tlm_packetizer_docs__tlm_packetizer.html", [
-      [ "TlmPacketizer Component Dictionary", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md566", [
-        [ "Command List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md567", null ],
-        [ "Telemetry Channel List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md568", null ],
-        [ "Event List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md569", null ]
+      [ "TlmPacketizer Component Dictionary", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md579", [
+        [ "Command List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md580", null ],
+        [ "Telemetry Channel List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md581", null ],
+        [ "Event List", "md__svc__tlm_packetizer_docs__tlm_packetizer.html#autotoc_md582", null ]
       ] ]
     ] ],
     [ "Namespaces", "namespaces.html", [
@@ -256,16 +271,16 @@ var NAVTREEINDEX =
 "fp_config_8hpp.html#aeca480c2a7c2d15beec606e82bf16bac",
 "linux_gpio_driver_component_impl_common_8cpp.html",
 "pthreads_2_queue_8cpp.html#a3eb3d757db517edadaed7443bda3f71c",
-"svc_cmd_dispatcher_component.html#autotoc_md255",
-"svc_rate_group_driver_component.html#autotoc_md508",
-"validate_file_common_8cpp_source.html",
-"class_fw_1_1_cmd_arg_buffer.html#a3b0f7c262260af527a14f6e7f8dec095acab6d4cad1674b7eaf306186f86426f9",
-"class_fw_1_1_poly_type.html#a5a504592c49a0be8ae4dfac3e2566922",
-"class_os_1_1_buffer_queue.html#a9a351ec41f4e9fa27ed7c0d34ef80703",
-"class_os_1_1_validated_file.html",
-"class_svc_1_1_rate_group_driver_impl.html#afef9a94b3240bc5f1d3a855e52193cef",
-"functions.html",
-"sha_8h.html#ab7ca087b2f4896acc5a9e55a018fb99c"
+"svc_cmd_dispatcher_component.html#autotoc_md268",
+"svc_rate_group_driver_component.html#autotoc_md521",
+"validate_file_common_8cpp.html#ae930b408addcfa27b935d9bef5fd7b0f",
+"class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53",
+"class_fw_1_1_poly_type.html#a0629351d82e3b919354182669b8dd0a5",
+"class_os_1_1_bare_task_handle.html#a6899789fe45e5df9c613b57894107114",
+"class_os_1_1_task_string.html#a1b9ee2de65b2f4d38049df17f0aa25c6",
+"class_svc_1_1_prm_db_impl.html#a01e79b090692c03d4f937b79c8193aa0",
+"dir_f606b51f4786cb5a4c2eb0b41a17e086.html",
+"sha_8h.html#a322ff23dfbf746e0864f4e81786141b6"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

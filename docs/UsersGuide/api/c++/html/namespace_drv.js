@@ -13,6 +13,7 @@ var namespace_drv =
     [ "TcpClientSocket", "class_drv_1_1_tcp_client_socket.html", "class_drv_1_1_tcp_client_socket" ],
     [ "TcpServerComponentImpl", "class_drv_1_1_tcp_server_component_impl.html", "class_drv_1_1_tcp_server_component_impl" ],
     [ "TcpServerSocket", "class_drv_1_1_tcp_server_socket.html", "class_drv_1_1_tcp_server_socket" ],
+    [ "UartFramer", "class_drv_1_1_uart_framer.html", "class_drv_1_1_uart_framer" ],
     [ "UdpComponentImpl", "class_drv_1_1_udp_component_impl.html", "class_drv_1_1_udp_component_impl" ],
     [ "UdpSocket", "class_drv_1_1_udp_socket.html", "class_drv_1_1_udp_socket" ]
 ];
