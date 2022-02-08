@@ -111,8 +111,6 @@ pure virtual methods:
 ```c++
     virtual Fw::Buffer allocate(const U32 size) = 0;
 
-    virtual Fw::Time time() = 0;
-
     virtual void send(Fw::Buffer& outgoing) = 0;
 ```
 
@@ -122,15 +120,39 @@ succeeded; or (2) an invalid buffer (i.e., a buffer whose address is zero)
 if the allocation failed.
 A typical implementation invokes a port connected to a memory allocation component.
 
-The method `time` should return the current time.
-A typical implementation invokes a time get port.
-
 The method `send` should send a buffer.
 A typical implementation invokes a `BufferSend` port.
 
 ### Implementing `FramingProtocol`
 
-TODO
+`FramingProtocol` defines the operation of framing a packet.
+To implement `FramingProtocol`, you must implement the following pure
+virtual method:
+
+```c++
+virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
+```
+
+This method is called with the following arguments:
+
+* `data`: A pointer to the data to frame.
+
+* `size`: The number of bytes to frame.
+
+* `packet_type`: The type of data to frame.
+
+The absract class `FramingProtocol` provides a protected member `m_interface`.
+This member is a pointer, initially null.
+After the `setup` method of `FramingProtocol` is called, it
+and points to a concrete instance of `FramingProtocolInterface`.
+
+When implementing the `frame` method, you should do the following:
+
+1. Use `m_interface->allocate` to allocate a buffer to hold the framed data.
+
+1. Frame the data into the buffer allocated in step 1.
+
+1. Use `m_interface->send` to send the buffer.
 
 ## Deframing
 
@@ -147,11 +169,6 @@ TODO
 TODO
 
 # Usage
-
-FramingProtocol:
-```c++
-virtual void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) = 0;
-```
 
 
 DeframingProtocol:
