@@ -156,6 +156,19 @@ Your implementation of `frame` should do the following:
 
 ## Deframing
 
+To implement a deframing protocol, do the following:
+
+1. Implement the abstract class `DeframingProtocolInterface`.
+
+1. Use the implementation in step 1 to implement the abstract class
+`DeframingProtocol`.
+
+### Implementing `DeframingProtocolInterface`
+
+TODO
+
+### Implementing `DeframingProtocol`
+
 TODO
 
 # Default F' Implementation
