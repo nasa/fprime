@@ -191,14 +191,39 @@ commands) or a `Fw::BufferSend` port (e.g., for sending file packets).
 
 #### 2.2.2. Implementing `DeframingProtocol`
 
-TODO
+`DeframingProtocol` defines the operation of deframing a packet.
+To implement `DeframingProtocol`, you must implement the following pure
+virtual method:
+
 
 ```c++
-virtual DeframingStatus deframe(
-    Types::CircularBuffer& buffer,
-    U32& needed
-) = 0;
+virtual DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed) = 0;
 ```
+
+This method is called with the following arguments:
+
+* `buffer`: A circular buffer holding the data to deframe.
+
+* `needed`: A reference for returning the number of bytes needed
+for deframing.
+
+`deframe` returns a value of type `DeframingStatus` indicating what happened.
+
+The abstract class `DeframingProtocol` provides a protected member `m_interface`.
+It operates as described in Section 2.1.2.
+
+Your implementation of `deframe` should do the following:
+
+1. Use `m_interface->allocate` to allocate a buffer to hold the deframed data.
+
+1. Peek into the circular buffer and determine how many bytes are needed
+for deframing.
+If that many bytes are available, deframe the data into the buffer allocated in step 1.
+Otherwise set status indicating invalid size.
+
+1. Use `m_interface->route` to send the buffer.
+
+1. Return status.
 
 ## 3. Default F' Implementation
 
