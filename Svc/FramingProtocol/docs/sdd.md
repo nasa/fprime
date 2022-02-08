@@ -250,12 +250,12 @@ size is the size of the provided data.
    1. Otherwise the frame data size is size of the provided data plus four bytes for
 the serialized packet type.
 
-1. Compute the frame size: data size plus frame header size plus hash value size.
+1. Compute the frame size: frame data size plus frame header size plus hash value size.
 
 1. Allocate a buffer large enough to hold the frame.
 
 1. Serialize the start word and frame size into the buffer.
-This forms the frame header.
+This operation forms the frame header.
 
 1. Serialize the frame data:
 
