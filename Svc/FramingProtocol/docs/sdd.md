@@ -11,7 +11,7 @@ data from framed packets received from the ground.
 The `FramingProtocol` library allows these components to operate with multiple 
 protocols.
 Each protocol corresponds to a different implementation
-of the interface.
+of the interface provided by this library.
 
 This library implements a default F' protocol that works with
 the F' Ground Data System (GDS).
