@@ -21,9 +21,9 @@ deframing: four-byte start word `0xDEADBEEF`, data, four-byte Cyclic Redundancy 
 Users may provide new protocols by implementing the abstract classes
 defined in this library.
 
-# Using the Interface
+## 1. Using the Interface
 
-## Framing
+### 1.1. Framing
 
 To use the F' framing protocol, do the following:
 
@@ -38,11 +38,11 @@ at `Ref/Top/instances.fpp`.
 To implement and use a new framing protocol, do the following:
 
 1. Implement the abstract class `FramingProtocolInterface`
-as discussed in the next section.
+as discussed in Section 2.1.
 This class defines helper operations used when framing a packet.
 
 1. Implement the abstract class `FramingProtocol` as discussed
-in the next section.
+in Section 2.1.
 This class defines the operation of framing a data packet.
 
 1. Instantiate the class implemented in step 1.
@@ -53,7 +53,7 @@ the instance created in step 3 to its `setup` method.
 1. Instantiate the `Svc::Framer` component, passing the instance created 
 in step 4 to its `setup` method.
 
-## Deframing
+### 1.2. Deframing
 
 To use the F' deframing protocol, do the following:
 
@@ -68,12 +68,12 @@ at `Ref/Top/instances.fpp`.
 To implement and use a new deframing protocol, do the following:
 
 1. Implement the abstract class `DeframingProtocolInterface`
-as discussed in the next section.
+as discussed in Section 2.2.
 This class defines helper operations used when deframing a framed
 packet.
 
 1. Implement the abstract class `DeframingProtocol` as discussed
-in the next section.
+in Section 2.2.
 This class defines the operation of deframing a framed packet.
 
 1. Instantiate the class implemented in step 1.
@@ -84,9 +84,9 @@ the instance created in step 3 to its `setup` method.
 1. Instantiate the `Svc::Deframer` component, passing the instance created 
 in step 4 to its `setup` method.
 
-# Implementing a Protocol
+## 2. Implementing a Protocol
 
-## Framing
+### 2.1. Framing
 
 To implement a framing protocol, do the following:
 
@@ -95,7 +95,7 @@ To implement a framing protocol, do the following:
 1. Use the implementation in step 1 to implement the abstract class
 `FramingProtocol`.
 
-### Implementing `FramingProtocolInterface`
+#### 2.1.1. Implementing `FramingProtocolInterface`
 
 `FramingProtocolInterface` defines helper methods for framing data.
 Typically these methods are implemented by an F Prime component (e.g., `Svc::Framer`),
@@ -123,7 +123,7 @@ A typical implementation invokes a port connected to a memory allocation compone
 The method `send` should send the data stored in the buffer.
 A typical implementation invokes a `BufferSend` port.
 
-### Implementing `FramingProtocol`
+#### 2.1.2. Implementing `FramingProtocol`
 
 `FramingProtocol` defines the operation of framing a packet.
 To implement `FramingProtocol`, you must implement the following pure
@@ -154,7 +154,7 @@ Your implementation of `frame` should do the following:
 
 1. Use `m_interface->send` to send the buffer.
 
-## Deframing
+### 2.2. Deframing
 
 To implement a deframing protocol, do the following:
 
@@ -163,7 +163,7 @@ To implement a deframing protocol, do the following:
 1. Use the implementation in step 1 to implement the abstract class
 `DeframingProtocol`.
 
-### Implementing `DeframingProtocolInterface`
+#### 2.2.1. Implementing `DeframingProtocolInterface`
 
 `DeframingProtocolInterface` defines helper methods for framing data.
 Typically these methods are implemented by an F Prime component (e.g., `Svc::Deframer`),
@@ -189,7 +189,7 @@ The method `send` should send the data stored in the buffer.
 A typical implementation invokes either a `Com` port (e.g., for sending
 commands) or a `BufferSend` port (e.g., for sending file packets).
 
-### Implementing `DeframingProtocol`
+#### 2.2.2. Implementing `DeframingProtocol`
 
 TODO
 
@@ -200,17 +200,17 @@ virtual DeframingStatus deframe(
 ) = 0;
 ```
 
-# Default F' Implementation
+## 3. Default F' Implementation
 
-## Framing
-
-TODO
-
-## Deframing
+### 3.1. Framing
 
 TODO
 
-## Class Diagrams
+### 3.2. Deframing
+
+TODO
+
+## 4. Class Diagrams
 
 ![FramingProtocol Impl Diagram](./img/framingProtocol_impl_diagram.png)
 
@@ -220,7 +220,7 @@ Diagram view of DeframingProtocol:
 
 *Diagrams generated with [SourceTrail](https://github.com/CoatiSoftware/Sourcetrail)*
 
-## Change Log
+## 5. Change Log
 
 | Date | Description |
 |---|---|
