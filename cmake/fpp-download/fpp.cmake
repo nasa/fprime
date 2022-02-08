@@ -5,7 +5,7 @@
 # should install FPP on the system path and that will be used.
 ####
 
-set(FPP_VERSION 1f3fdbfdd1832c9ec9b2acae6de3ba45669d4851)
+set(FPP_VERSION v1.0.0-24-g52b996cb)
 set(FPP_TOOLS_PATH "${CMAKE_BINARY_DIR}/fpp-tools-install" CACHE PATH "Installation path for fpp tools")
 
 ####
@@ -15,7 +15,7 @@ set(FPP_TOOLS_PATH "${CMAKE_BINARY_DIR}/fpp-tools-install" CACHE PATH "Installat
 # above install location and then to the system path as a fallback.
 ####
 function(locate_fpp_tools NO_DEFAULTS)
-    set(FPP_RE_MATCH "(v[0-9].[0-9].[0-9]) commit ([a-f0-9]+)")
+    set(FPP_RE_MATCH "(v[0-9]+\.[0-9]+\.[0-9]+[a-g0-9-]*)")
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
         string(TOLOWER ${TOOL} PROGRAM)
@@ -30,10 +30,10 @@ function(locate_fpp_tools NO_DEFAULTS)
         if (${TOOL})
             execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)
             if (OUTPUT_TEXT MATCHES "${FPP_RE_MATCH}")
-                if ("${CMAKE_MATCH_1}" STREQUAL "${FPP_VERSION}" OR "${CMAKE_MATCH_2}" STREQUAL "${FPP_VERSION}")
+                if ("${CMAKE_MATCH_1}" STREQUAL "${FPP_VERSION}")
                     continue()
                 endif()
-                message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_0} not expected version ${FPP_VERSION}")
+                message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_1} not expected version ${FPP_VERSION}")
             endif()
         endif()
         set(FPP_FOUND False PARENT_SCOPE)
