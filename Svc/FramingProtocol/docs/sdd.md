@@ -214,14 +214,17 @@ It operates as described in Section 2.1.2.
 
 Your implementation of `deframe` should do the following:
 
-1. Use `m_interface->allocate` to allocate a buffer to hold the deframed data.
+1. Determine how many bytes are needed for deframing, peeking into
+the circular buffer if necessary (e.g., to read a length).
 
-1. Peek into the circular buffer and determine how many bytes are needed
-for deframing.
-If that many bytes are available, deframe the data into the buffer allocated in step 1.
-Otherwise set status indicating invalid size.
+1. If that many bytes are available in the circular buffer:
 
-1. Use `m_interface->route` to send the buffer.
+   1. Use `m_interface->allocate` to allocate an `Fw::Buffer`
+to hold the deframed data.
+
+   1. Deframe the data into the allocated buffer.
+
+   1. Use `m_interface->route` to send the buffer.
 
 1. Return status.
 
