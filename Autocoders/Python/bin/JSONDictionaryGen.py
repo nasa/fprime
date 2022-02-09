@@ -105,6 +105,7 @@ def main():
         PRINT.info("\nUsage: %s [options] xml_filename" % sys.argv[0])
         PRINT.info("ERROR: Cannot create dictionary\n")
         sys.exit(-1)
+        return
     else:
         xmlFilename = args[0]
 
