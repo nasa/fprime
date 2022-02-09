@@ -197,6 +197,7 @@ def main():
         xml_filename = args[0]
     else:
         print("ERROR: Too many filenames, should only have one")
+        return
 
     #
     # Check for BUILD_ROOT variable for XML port searches
