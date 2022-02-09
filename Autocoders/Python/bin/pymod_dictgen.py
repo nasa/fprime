@@ -316,10 +316,12 @@ def main():
     #
     if len(args) == 0:
         print("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
+        return
     elif len(args) == 1:
         xml_filename = args[0]
     else:
         print("ERROR: Too many filenames, should only have one")
+        return
 
     #
     # Check for BUILD_ROOT variable for XML port searches
