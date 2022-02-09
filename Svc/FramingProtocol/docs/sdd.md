@@ -17,8 +17,8 @@ This library implements a default F' protocol that works with
 the F' Ground Data System (GDS).
 The F' protocol uses the following format for framing and deframing: frame
 header, data, hash value.
-A frame header consists of a four-byte start word `0xDEADBEEF`,
-and a four byte frame size.
+A frame header consists of a four-byte start word `0xDEADBEEF`
+and a four byte data size.
 Users may provide new protocols by implementing the abstract classes
 defined in this library.
 
@@ -254,7 +254,7 @@ the serialized packet type.
 
 1. Allocate a buffer large enough to hold the frame.
 
-1. Serialize the start word and frame size into the buffer.
+1. Serialize the start word and frame data size into the buffer.
 This operation forms the frame header.
 
 1. Serialize the frame data:
