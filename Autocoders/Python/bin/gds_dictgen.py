@@ -192,6 +192,7 @@ def main():
     #
     if len(args) == 0:
         print("Usage: %s [options] xml_filename" % sys.argv[0])
+        return
     elif len(args) == 1:
         xml_filename = args[0]
     else:
