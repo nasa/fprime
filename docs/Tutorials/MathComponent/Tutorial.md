@@ -101,7 +101,7 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-**Git branch:** This tutorial is designed to work on the branch `release/v3.0.0`.
+**F' Version:** This tutorial is designed to work with release `v3.0.0`.
 
 Working on this tutorial will modify some files under version control in the
 F Prime git repository.
@@ -109,7 +109,7 @@ Therefore it is a good idea to do this work on a new branch.
 For example:
 
 ```bash
-git checkout release/v3.0.0
+git checkout -b release/v3.0.0 v3.0.0
 git checkout -b math-tutorial
 ```
 
@@ -571,7 +571,7 @@ for <a href="#types_add">`Ref/MathTypes`</a>.
 ### 4.3. Build the Stub Implementation
 
 **Run the build:**
-Go into the directory `Ref/MathTypes`.
+Go into the directory `Ref/MathSender`.
 Run the following commands:
 
 ```bash
@@ -2017,7 +2017,7 @@ These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
 **Check for unconnected ports:**
-Run the following commands:
+Run the following commands in the `Ref/Top` directory:
 
 ```bash
 fprime-util fpp-check -u unconnected.txt
@@ -2033,14 +2033,13 @@ Those ports will include the ports for the new instances
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
-Inside the block of that definition,
-find the line
-`rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run`.
-After that line, add the line
-
+After the last entry for the `rateGroup1Comp` (rate group 1) add the line:
 ```fpp
-rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
+rateGroup1Comp.RateGroupMemberOut[5] -> mathReceiver.schedIn
 ```
+
+> You might need to change the array index 5 to be one greater than the previous
+`rateGroup1Comp` index. Otherwise you'll get a duplicate connection error.
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
