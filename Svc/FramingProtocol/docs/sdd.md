@@ -13,9 +13,9 @@ any one of several protocols.
 Each protocol corresponds to a different implementation
 of the interface provided by this library.
 
-This library implements a default F' protocol that works with
+This library implements default F' protocols that work with
 the F' Ground Data System (GDS).
-The F' protocol uses the following frame format: frame
+The F' protocols use the following frame format: frame
 header, data, hash value.
 A frame header consists of a four-byte start word `0xDEADBEEF`
 and a four byte data size.
