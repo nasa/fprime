@@ -28,8 +28,8 @@ defined in the `FramingProtocol` library.
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
-FramingProtocol-001 | `Svc::FramingProtocol` shall provide the interface to a protocol for wrapping data packets in frames|Inspection
-FramingProtocol-002 | `Svc::FramingProtocol` shall provide the interface to a protocol for extracting data from framed packets|Inspection
+FramingProtocol-001 | `Svc::FramingProtocol` shall provide the interface to a protocol for wrapping data in frames for transmission to the ground|Inspection
+FramingProtocol-002 | `Svc::FramingProtocol` shall provide the interface to a protocol for extracting data from frames received from the ground|Inspection
 FramingProtocol-003 | `Svc::FramingProtocol` shall provide an implementation of the framing and deframing protocols that works with the F Prime GDS|Unit test
 
 ## 2. Using the Interface
