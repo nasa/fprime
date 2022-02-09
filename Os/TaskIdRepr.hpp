@@ -11,7 +11,7 @@
 #if defined(TGT_OS_TYPE_LINUX) || defined(TGT_OS_TYPE_DARWIN)
 extern "C" {
 #include <pthread.h>
-};
+}
 #endif
 
 namespace Os {

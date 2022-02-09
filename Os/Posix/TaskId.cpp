@@ -7,7 +7,7 @@
 
 extern "C" {
 #include <pthread.h>
-};
+}
 
 #include <Os/TaskId.hpp>
 
