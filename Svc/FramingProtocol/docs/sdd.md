@@ -176,7 +176,7 @@ To implement a deframing protocol, do the following:
 
 #### 3.2.1. Implementing `DeframingProtocolInterface`
 
-`DeframingProtocolInterface` defines helper methods for framing data.
+`DeframingProtocolInterface` defines helper methods for deframing data.
 Typically these methods are implemented by an F Prime component (e.g., `Svc::Deframer`),
 because they require port invocations.
 The component `Svc::Deframer` provides an implementation of `DeframingProtocolInterface`
