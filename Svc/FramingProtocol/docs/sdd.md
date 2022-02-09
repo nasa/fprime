@@ -4,10 +4,10 @@
 The `FramingProtocol` library defines the interface to the
 framing and deframing
 protocols used by the `Svc::Framer` and `Svc::Deframer` components.
-`Svc::Framer` uses a framing protocol to wrap data in framed packets
+`Svc::Framer` uses a framing protocol to wrap data in frames
 for transmission to the ground.
 `Svc::Deframer` uses a deframing protocol to extract
-data from framed packets received from the ground.
+data from frames received from the ground.
 The `FramingProtocol` library allows these components to operate with 
 any one of several protocols.
 Each protocol corresponds to a different implementation
