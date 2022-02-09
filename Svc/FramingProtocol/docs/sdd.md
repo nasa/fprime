@@ -306,6 +306,8 @@ Set its size to be exactly the frame data size.
 
 1. Send the buffer.
 
+1. Return success status.
+
 ## 5. Class Diagrams
 
 ![FramingProtocol Impl Diagram](./img/framingProtocol_impl_diagram.png)
