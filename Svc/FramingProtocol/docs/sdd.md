@@ -1,17 +1,17 @@
 \page SvcFramingProtocol FramingProtocol
 # Svc::FramingProtocol Library
 
-The `FramingProtocol` library defines the interface to the
+The `FramingProtocol` library defines the interfaces to the
 framing and deframing
 protocols used by the `Svc::Framer` and `Svc::Deframer` components.
 `Svc::Framer` uses a framing protocol to wrap data in frames
 for transmission to the ground.
 `Svc::Deframer` uses a deframing protocol to extract
 data from frames received from the ground.
-The `FramingProtocol` library allows these components to operate with 
-any one of several protocols.
+The `FramingProtocol` library allows each these components to 
+operate with any one of several protocols.
 Each protocol corresponds to a different implementation
-of the interface provided by this library.
+of an interface provided by this library.
 
 This library implements default F' protocols that work with
 the F' Ground Data System (GDS).
