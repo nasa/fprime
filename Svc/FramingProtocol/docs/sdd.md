@@ -15,12 +15,14 @@ of the interface provided by this library.
 
 This library implements a default F' protocol that works with
 the F' Ground Data System (GDS).
-The F' protocol uses the following format for framing and deframing: frame
+The F' protocol uses the following frame format: frame
 header, data, hash value.
 A frame header consists of a four-byte start word `0xDEADBEEF`
 and a four byte data size.
+The hash value is defined by the `Utils::Hash` library.
+
 Users may provide new protocols by implementing the abstract classes
-defined in this library.
+defined in the `FramingProtocol` library.
 
 ## 1. Requirements
 
