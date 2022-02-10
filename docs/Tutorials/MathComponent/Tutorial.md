@@ -2296,7 +2296,7 @@ By default, there is no log selected.
 ## 8. Running Ref on the Raspberry Pi
 
 In this section we will take our Ref topology and cross-compile it for the
-Raspberry Pi. In orer to fully benefit from this tutorial, the user should
+Raspberry Pi. In order to fully benefit from this tutorial, the user should
 acquire a Raspberry Pi and have the cross-compilation toolchain as described
 in [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md).
 
