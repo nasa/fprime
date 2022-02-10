@@ -38,7 +38,7 @@ FramingProtocol-003 | `Svc::FramingProtocol` shall implement the framing and def
 
 To use the F' framing protocol, do the following:
 
-1. Instantiate the class `FPrimeFraming` defined in this library.
+1. Instantiate the class `FprimeFraming` defined in this library.
 
 1. Instantiate the `Svc::Framer` component, passing the instance
 created in step 1 to its `setup` method.
@@ -68,7 +68,7 @@ in step 4 to its `setup` method.
 
 To use the F' deframing protocol, do the following:
 
-1. Instantiate the class `FPrimeDeframing` defined in this library.
+1. Instantiate the class `FprimeDeframing` defined in this library.
 
 1. Instantiate the `Svc::Deframer` component, passing the instance
 created in step 1 to its `setup` method.
