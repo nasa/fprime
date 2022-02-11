@@ -1150,6 +1150,7 @@ PINGSEND
 pinit
 pkill
 pkts
+placeholders
 plainnat
 plantuml
 plugin
