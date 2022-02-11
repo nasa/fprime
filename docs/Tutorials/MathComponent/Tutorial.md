@@ -756,19 +756,35 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-1. Run the command `fprime-util impl --ut`.
+2. Update Ref/MathSender/CMakeLists.txt:
+Go back to the directory `Ref/MathSender`.
+Add the following lines to `CMakeLists.txt`:
+
+```cmake
+# Register the unit test build
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
+)
+register_fprime_ut()
+```
+
+This code tells the build system how to build
+and run the unit tests.
+
+4. Run `fprime-util generate --ut` to generate the unit test cache.
+
+5. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-1. Move these files to the `test/ut` directory:
+6. Move these files to the `test/ut` directory:
 
-   ```bash
-   mv Tester.* test/ut
-   ```
+```bash
+mv Tester.* test/ut
+```
 
 **Create a stub main.cpp file:**
 Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create a file `main.cpp` with the
-following contents:
+In that directory, create the file `main.cpp` and add the following contents:
 
 ```c++
 #include "Tester.hpp"
@@ -784,22 +800,19 @@ This file is a stub for running tests using the
 Right now there aren't any tests to run; we will add one
 in the next section.
 
-**Update Ref/MathSender/CMakeLists.txt:**
-Go back to the directory `Ref/MathSender`.
-Add the following lines to `CMakeLists.txt`:
+7. Add the new files to the build.
 
+Open `MathSender/CMakeLists.txt` and modify the `UT_SOURCE_FILES` by adding
+your new test files:
 ```cmake
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )
 register_fprime_ut()
 ```
-
-This code tells the build system how to build
-and run the unit tests.
 
 **Run the build:**
 Now we can check that the unit test build is working.
