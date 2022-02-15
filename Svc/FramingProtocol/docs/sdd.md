@@ -8,8 +8,8 @@ protocols used by the `Svc::Framer` and `Svc::Deframer` components.
 for transmission to the ground.
 `Svc::Deframer` uses a deframing protocol to extract
 data from frames received from the ground.
-The `FramingProtocol` library allows each these components to 
-operate with any one of several protocols.
+The `FramingProtocol` library allows each of these components to operate with
+any one of several protocols.
 Each protocol corresponds to a different implementation
 of an interface provided by this library.
 
@@ -58,10 +58,10 @@ This class defines the operation of framing a data packet.
 
 1. Instantiate the class implemented in step 1.
 
-1. Instantiate the class implemented in step 2, passing 
+1. Instantiate the class implemented in step 2, passing
 the instance created in step 3 to its `setup` method.
 
-1. Instantiate the `Svc::Framer` component, passing the instance created 
+1. Instantiate the `Svc::Framer` component, passing the instance created
 in step 4 to its `setup` method.
 
 ### 2.2. Deframing
@@ -89,10 +89,10 @@ This class defines the operation of deframing a framed packet.
 
 1. Instantiate the class implemented in step 1.
 
-1. Instantiate the class implemented in step 2, passing 
+1. Instantiate the class implemented in step 2, passing
 the instance created in step 3 to its `setup` method.
 
-1. Instantiate the `Svc::Deframer` component, passing the instance created 
+1. Instantiate the `Svc::Deframer` component, passing the instance created
 in step 4 to its `setup` method.
 
 ## 3. Implementing a Protocol
@@ -249,7 +249,7 @@ The F Prime framing protocol operates as follows:
    1. If `packet_type` is `Fw::ComPacket::FW_PACKET_UNKNOWN`, then the frame data
 size is the size of the provided data.
 
-   1. Otherwise the frame data size is the size of the provided data plus four 
+   1. Otherwise the frame data size is the size of the provided data plus four
 bytes for the serialized packet type.
 
 1. Compute the frame size: frame data size plus frame header size plus hash value size.
@@ -267,7 +267,7 @@ This operation forms the frame header.
 **Note: The F Prime GDS assumes that the first four bytes of data are
 the serialized packet type.
 Therefore, if the packet type is unknown (no serialization in the previous step),
-then the first four bytes of the incoming data must contain the 
+then the first four bytes of the incoming data must contain the
 serialized packet type.**
 
 1. Calculate and serialize the hash value.
