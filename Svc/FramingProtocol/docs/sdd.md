@@ -323,4 +323,4 @@ Diagram view of DeframingProtocol:
 | Date | Description |
 |---|---|
 | 2021-01-30 | Initial Draft |
-| 2021-02-07 | Revised |
+| 2021-02-15 | Revised |
