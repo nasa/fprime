@@ -776,6 +776,6 @@ namespace Svc {
       bool m_join_waiting;
   };
 
-};
+}
 
 #endif
