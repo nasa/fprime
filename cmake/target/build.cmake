@@ -17,39 +17,6 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
-
-####
-# Function `recurse_targets`:
-#
-# A helper that pulls out module dependencies that are also fprime modules.
-####
-function(recurse_targets TARGET OUTPUT BOUND)
-    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    set(TARGET_DEPENDENCIES)
-    if (TARGET "${TARGET}")
-        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
-    endif()
-    # Extra dependencies
-    list(APPEND TARGET_DEPENDENCIES ${ARGN})
-    if (TARGET_DEPENDENCIES)
-        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
-    endif()
-
-    set(RESULTS_LOCAL)
-    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
-        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
-            list(APPEND BOUND "${NEW_TARGET}")
-            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
-            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
-        endif()
-    endforeach()
-    if (RESULTS_LOCAL)
-        list(REMOVE_DUPLICATES RESULTS_LOCAL)
-    endif()
-    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
-endfunction()
-
-
 ####
 # Build function `add_global_target`:
 #
@@ -108,7 +75,11 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
             add_dependencies(${MODULE} "${DEPENDENCY}")
             list(APPEND TARGET_DEPENDENCIES "${DEPENDENCY}")
         endif()
-        target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
+        # Avoid linking custom targets, and executables
+        is_target_library(IS_LIB "${DEPENDENCY}")
+        if (NOT TARGET "${DEPENDENCY}" OR IS_LIB)
+            target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
+        endif()
     endforeach()
     set_property(TARGET "${MODULE}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${TARGET_DEPENDENCIES})
 endfunction()

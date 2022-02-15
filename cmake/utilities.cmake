@@ -178,6 +178,43 @@ function(resolve_dependencies OUTPUT_VAR)
     set(${OUTPUT_VAR} "${RESOLVED}" PARENT_SCOPE)
 endfunction(resolve_dependencies)
 
+####
+# Function `is_target_real`:
+#
+# Does this target represent a real item (executable, library)? OUTPUT is set to TRUE when real, and FALSE otherwise.
+#
+# OUTPUT: variable to set
+# TEST_TARGET: target to set
+####
+function(is_target_real OUTPUT TEST_TARGET)
+    if (TARGET "${DEPENDENCY}")
+        get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
+        # Make sure this is not a utility target
+        if (NOT TARGET_TYPE STREQUAL "UTILITY")
+            set("${OUTPUT}" TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+    set("${OUTPUT}" FALSE PARENT_SCOPE)
+endfunction()
+
+####
+# Function `is_target_library`:
+#
+# Does this target represent a real library? OUTPUT is set to TRUE when real, and FALSE otherwise.
+#
+# OUTPUT: variable to set
+# TEST_TARGET: target to set
+####
+function(is_target_library OUTPUT TEST_TARGET)
+    set("${OUTPUT}" FALSE PARENT_SCOPE)
+    if (TARGET "${TEST_TARGET}")
+        get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
+        if (NOT TARGET_TYPE STREQUAL "UTILITY" AND NOT TARGET_TYPE STREQUAL "EXECUTABLE")
+            set("${OUTPUT}" TRUE PARENT_SCOPE)
+        endif()
+    endif()
+endfunction()
 
 ####
 # build_relative_path:

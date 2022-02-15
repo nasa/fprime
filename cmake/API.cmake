@@ -249,21 +249,20 @@ endfunction(register_fprime_module)
 #
 ####
 function(register_fprime_executable)
+    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
     if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
         message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
+    elseif (NOT DEFINED EXECUTABLE_NAME AND ARGC LESS 1 AND TARGET "${MODULE_NAME}")
+        message(FATAL_ERROR "EXECUTABLE_NAME must be set or passed in. Use register_fprime_deployment() for deployments")
     endif()
-    # PROJECT_NAME is used for the executable name, unless otherwise specified.
-    if(NOT DEFINED EXECUTABLE_NAME)
-        set(EXECUTABLE_NAME ${PROJECT_NAME})
+    # MODULE_NAME is used for the executable name, unless otherwise specified.
+    if(NOT DEFINED EXECUTABLE_NAME AND ARGC GREATER 0)
+        set(EXECUTABLE_NAME "${ARGV0}")
+    elseif(NOT DEFINED EXECUTABLE_NAME)
+        set(EXECUTABLE_NAME "${MODULE_NAME}")
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Register executable and module with name '<exe name>_exe', then create an empty target with
-    # name '<exe name>' that depends on the executable. This enables additional post-processing
-    # targets that depend on the built executable.
-    generate_executable("${EXECUTABLE_NAME}_exe" "${SOURCE_FILES}" "${MOD_DEPS}")
-    set_target_properties("${EXECUTABLE_NAME}_exe" PROPERTIES OUTPUT_NAME "${EXECUTABLE_NAME}")
-    add_custom_target(${EXECUTABLE_NAME} ALL)
-    add_dependencies("${EXECUTABLE_NAME}" "${EXECUTABLE_NAME}_exe")
+    generate_executable("${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
 endfunction(register_fprime_executable)
 
 
@@ -331,13 +330,13 @@ endfunction(register_fprime_executable)
 # ```
 ####
 function(register_fprime_deployment)
+    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
     if (NOT DEFINED SOURCE_FILES AND NOT DEFINED MOD_DEPS)
         message(FATAL_ERROR "SOURCE_FILES or MOD_DEPS must be defined when registering an executable")
+    elseif(NOT MODULE_NAME STREQUAL PROJECT_NAME)
+        message(WARNING "Project name ${PROJECT_NAME} does not match expected name ${MODULE_NAME}")
     endif()
     get_nearest_build_root(${CMAKE_CURRENT_LIST_DIR})
-    # Register executable and module with name '<exe name>_exe', then create an empty target with
-    # name '<exe name>' that depends on the executable. This enables additional post-processing
-    # targets that depend on the built executable.
     generate_deployment("${PROJECT_NAME}" "${SOURCE_FILES}" "${MOD_DEPS}")
 endfunction(register_fprime_deployment)
 
