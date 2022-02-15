@@ -14,7 +14,6 @@ set_property(GLOBAL PROPERTY FPRIME_MODULES)
 # variables, the path handling is setup in between.
 include(options)
 include(settings)
-#include(profile/profile)
 # Sets up the build locations of the CMake system. This becomes the root of files
 # being searched for in the cmake system.
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")

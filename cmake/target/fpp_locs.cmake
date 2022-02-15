@@ -1,7 +1,7 @@
 ####
-# fpp-locs.cmake:
+# fpp_locs.cmake:
 #
-# fpp-locs is a special target used to build fpp-locs file output. It is run in a special build of the fprime system
+# fpp_locs is a special target used to build fpp_locs file output. It is run in a special build of the fprime system
 # specifically focused on generating the locator file for fpp.  It registers normal targets for building these items,
 # but also comes with a function to run the separate build of fprime.
 ####
