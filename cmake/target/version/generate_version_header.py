@@ -19,28 +19,16 @@
 """
 import sys
 import os
-import subprocess
+import argparse
+
+from fprime_ac.utils.version import (
+    get_fprime_version,
+    get_project_version,
+    FALLBACK_VERSION,
+)
 
 
-FALLBACK_VERSION = "v3.0.0"  # Keep up-to-date on release tag
-
-
-def get_version_str(working_dir):
-    """
-    System call to get the git hash
-
-    Return: String with git hash
-    """
-    try:
-        output = subprocess.check_output(
-            ["git", "describe", "--tags", "--always"], cwd=working_dir
-        )
-        return output.strip().decode("ascii")
-    except subprocess.CalledProcessError:
-        return FALLBACK_VERSION
-
-
-def create_version_file(fid, framework_version, project_version=None):
+def create_version_file(fid, framework_version, project_version):
     """
     Create the version file using the provided name and path.
     """
@@ -57,19 +45,9 @@ def create_version_file(fid, framework_version, project_version=None):
     fid.write("#define _VERSION_HPP_\n")
     fid.write("\n")
     fid.write(
-        'static const char* PROJECT_VERSION = "{}";\n'.format(
-            project_version if project_version is not None else "unknown"
-        )
-    )
-    fid.write(
         'static const char* FRAMEWORK_VERSION = "{}";\n'.format(framework_version)
     )
-    fid.write(
-        'static const char* VERSION = "{}{}";\n'.format(
-            project_version + "/" if project_version is not None else "",
-            framework_version,
-        )
-    )
+    fid.write('static const char* PROJECT_VERSION = "{}";\n'.format(framework_version))
     fid.write("\n")
     fid.write("#endif\n")
     fid.write("\n")
@@ -79,19 +57,36 @@ def main():
     """
     Main program entry point
     """
-    versions = []
-    for path in [
-        os.environ.get("FPRIME_FRAMEWORK_PATH", os.getcwd()),
-        os.environ.get("FPRIME_PROJECT_ROOT", None),
-    ]:
-        if path is not None:
-            versions.append(get_version_str(path))
+    parser = argparse.ArgumentParser(description="Create version header")
+    parser.add_argument(
+        "output",
+        nargs="?",
+        type=argparse.FileType("w"),
+        default=sys.stdout,
+        help="Path to write version header into",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        default=False,
+        help="Check framework and fallback version",
+    )
+    args = parser.parse_args()
 
-    if len(sys.argv) == 1:
-        create_version_file(sys.stdout, *versions)
-    else:
-        with open(sys.argv[1], "w") as fid:
-            create_version_file(fid, *versions)
+    # Build the version output
+    fprime_version = get_fprime_version()
+    project_version = get_project_version()
+    create_version_file(args.output, fprime_version, project_version)
+
+    # Check version if asked to do so
+    if args.check and not fprime_version.startswith(FALLBACK_VERSION):
+        expected = fprime_version[: len(FALLBACK_VERSION)]
+        print(
+            f"[ERROR] Fallback version { FALLBACK_VERSION } not updated. Expected { expected }.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -30,6 +30,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ./gps-tutorial/fprime
+          fetch-depth: 0
+      - run: git fetch --tags
 
       # Build tutorial test
       - name: Install fprime tools

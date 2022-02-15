@@ -94,11 +94,13 @@ void Tester ::test_tlm(bool enabled) {
                 ASSERT_TLM_MEMORY_TOTAL_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_NON_VOLATILE_FREE_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE((enabled) ? 1 : 0);
-                ASSERT_TLM_VERSION_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_FRAMEWORK_VERSION_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_PROJECT_VERSION_SIZE((enabled) ? 1 : 0);
                 if (enabled) {
-                    ASSERT_TLM_VERSION(0, VERSION);
+                    ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+                    ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
                 }
-                ASSERT_TLM_SIZE((enabled) ? (count + 6) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + ver
+                ASSERT_TLM_SIZE((enabled) ? (count + 7) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + 2 ver
                 break;
         }
     }
@@ -113,8 +115,10 @@ void Tester ::test_disable_enable() {
 
 void Tester ::test_version_evr() {
     this->sendCmd_VERSION(0, 0);
-    ASSERT_EVENTS_VERSION_SIZE(1);
-    ASSERT_EVENTS_VERSION(0, VERSION);
+    ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
+    ASSERT_EVENTS_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+    ASSERT_EVENTS_PROJECT_VERSION_SIZE(1);
+    ASSERT_EVENTS_PROJECT_VERSION(0, FRAMEWORK_VERSION);
 }
 
 // ----------------------------------------------------------------------

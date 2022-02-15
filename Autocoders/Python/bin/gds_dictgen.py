@@ -26,7 +26,7 @@ from fprime_ac.models import TopoFactory
 from fprime_ac.parsers import XmlParser, XmlTopologyParser
 from fprime_ac.utils import ConfigManager, TopDictGenerator
 from fprime_ac.utils.buildroot import get_build_roots, set_build_roots
-from fprime_ac.utils.version import get_fprime_version
+from fprime_ac.utils.version import get_fprime_version, get_project_version
 
 # Generators to produce the code
 try:
@@ -130,7 +130,8 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
 
     topology_dict = etree.Element("dictionary")
     topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
-    topology_dict.attrib["framework_version"] = get_fprime_version()
+    topology_dict.attrib["framework_version"] = get_fprime_version().lstrip("v")
+    topology_dict.attrib["project_version"] = get_project_version().lstrip("v")
 
     top_dict_gen = TopDictGenerator.TopDictGenerator(
         parsed_xml_dict, print if VERBOSE else lambda _: None
