@@ -90,7 +90,6 @@ def pinit():
 
 
 def main():
-
     parser = pinit()
     (opts, args) = parser.parse_args()
 
@@ -116,7 +115,7 @@ def main():
     if not opts.build_root_overwrite is None:
         set_build_roots(opts.build_root_overwrite)
     else:
-        if ("BUILD_ROOT" in os.environ.keys()) == False:
+        if ("BUILD_ROOT" in os.environ.keys()) is False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])
@@ -305,19 +304,19 @@ def main():
 
     # Prepend instance name to commands, events, and channels with duplicate component types
     # PRINT.info(json.dumps(instanceIDs, indent=4))
-    for telemetryType, idDict in list(instanceIDs.items()):
-        for name, ids in list(idDict.items()):
+    for telemetry_type, id_dict in list(instanceIDs.items()):
+        for name, ids in list(id_dict.items()):
             if len(ids) > 1:
                 for id in ids:
-                    telem = dictionary[deployment][telemetryType][id]
+                    telem = dictionary[deployment][telemetry_type][id]
                     name = telem["name"]
-                    instanceName = telem["instance"]
-                    name = "_".join([instanceName, name])
+                    instance_name = telem["instance"]
+                    name = "_".join([instance_name, name])
                     telem["name"] = name
 
     # Stringify JSON -- indent option makes it readable, can be removed if file
     # size is an issue
-    jsonStr = json.dumps(dictionary, indent=4)
+    json_str = json.dumps(dictionary, indent=4)
 
     # Create output directory if it doesn't exist
     directory = os.path.dirname(outFilepath)
@@ -326,7 +325,7 @@ def main():
 
     # Write JSON to file
     outFile = open(outFilepath, "w")
-    outFile.write(jsonStr)
+    outFile.write(json_str)
     descriptionFile = open(descriptionFilename, "w")
     descriptionFile.write(outFilepath)
     PRINT.info("\nJSON output written to %s" % outFilepath)
