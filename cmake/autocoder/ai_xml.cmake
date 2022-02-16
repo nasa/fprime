@@ -8,7 +8,7 @@ include(utilities)
 include(autocoder/ai-shared)
 
 # Process singular input files
-set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+set_property(GLOBAL PROPERTY AI_XML_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
 ####
 # `is_supported`:
@@ -18,12 +18,12 @@ set(HANDLES_INDIVIDUAL_SOURCES TRUE)
 #
 # AC_INPUT_FILE: filepath for consideration
 ####
-function(is_supported AC_INPUT_FILE)
+function(ai_xml_is_supported AC_INPUT_FILE)
     set(IS_SUPPORTED FALSE PARENT_SCOPE)
     if (AC_INPUT_FILE MATCHES ".*Ai\\.xml")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
     endif()
-endfunction (is_supported)
+endfunction (ai_xml_is_supported)
 
 ####
 # `get_generated_files`:
@@ -41,7 +41,7 @@ endfunction (is_supported)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_generated_files AC_INPUT_FILE)
+function(ai_xml_get_generated_files AC_INPUT_FILE)
     set(EXCLUDE_TOP_ACS FALSE)
     # Ai.xml files can come from multiple places. One is as a generated file from within the BINARY directory and the
     # other as a source file input.  Generated files will follow a convention and would not generate dependencies.
@@ -86,7 +86,7 @@ function(get_generated_files AC_INPUT_FILE)
     endif()
     set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-endfunction(get_generated_files)
+endfunction(ai_xml_get_generated_files)
 
 ####
 # `get_dependencies`:
@@ -99,12 +99,12 @@ endfunction(get_generated_files)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_dependencies AC_INPUT_FILE)
+function(ai_xml_get_dependencies AC_INPUT_FILE)
     # Should have been inherited from previous call to `get_generated_files`
     if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
         message(FATAL_ERROR "The CMake system is inconsistent. Please contact a developer.")
     endif()
-endfunction(get_dependencies)
+endfunction(ai_xml_get_dependencies)
 
 ####
 # Function `__ai_info`:
@@ -153,7 +153,7 @@ endfunction(__ai_info)
 #
 # Sets up the AI XML autocoder to generate files.
 ####
-function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
+function(ai_xml_setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     set(GEN_ARGS)
     set(EXTRA_COMMANDS "")
 
@@ -171,4 +171,5 @@ function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_D
     endif()
     setup_ai_autocode_variant("${GEN_ARGS}" "${CMAKE_CURRENT_BINARY_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
                               "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
-endfunction(setup_autocode)
+
+endfunction(ai_xml_setup_autocode)

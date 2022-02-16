@@ -12,7 +12,7 @@ if (NOT BUILD_TESTING)
 endif()
 
 # Handles source files individually
-set(HANDLES_INDIVIDUAL_SOURCES TRUE)
+set_property(GLOBAL PROPERTY AI_UT_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
 ####
 # `is_supported`:
@@ -23,12 +23,12 @@ set(HANDLES_INDIVIDUAL_SOURCES TRUE)
 #
 # AC_INPUT_FILE: filepath for consideration
 ####
-function(is_supported AC_INPUT_FILE)
+function(ai_ut_impl_is_supported AC_INPUT_FILE)
     set(IS_SUPPORTED FALSE PARENT_SCOPE)
     if (AC_INPUT_FILE MATCHES ".*ComponentAi\\.xml")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
     endif()
-endfunction (is_supported)
+endfunction (ai_ut_impl_is_supported)
 
 ####
 # get_generated_files:
@@ -36,25 +36,25 @@ endfunction (is_supported)
 # This autocoder always generates Tester.cpp, Tester.hpp, and TestMain.cpp.  Sets GENERATED_FILES in parent scope to
 # hold this information.
 ####
-function(get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES ${CMAKE_CURRENT_LIST_DIR}/Tester.cpp ${CMAKE_CURRENT_LIST_DIR}/Tester.hpp ${CMAKE_CURRENT_LIST_DIR}/TestMain.cpp PARENT_SCOPE)
-endfunction(get_generated_files)
+function(ai_ut_impl_get_generated_files AC_INPUT_FILE)
+    set(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp PARENT_SCOPE)
+endfunction(ai_ut_impl_get_generated_files)
 
 ####
 # get_dependencies:
 #
 # No dependencies, this function is a no-op.
 ####
-function(get_dependencies AC_INPUT_FILE)
-endfunction(get_dependencies)
+function(ai_ut_impl_get_dependencies AC_INPUT_FILE)
+endfunction(ai_ut_impl_get_dependencies)
 
 ####
 # setup_autocode:
 #
 # Setup the autocoder build commands. This is a required function of a given autocoder implementation.
 ####
-function(setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_LIST_DIR}/TesterBase.hpp ${CMAKE_CURRENT_LIST_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_LIST_DIR}/GTestBase.hpp ${CMAKE_CURRENT_LIST_DIR}/GTestBase.cpp)
-    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_LIST_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
+function(ai_ut_impl_setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
+    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp)
+    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_SOURCE_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
                               "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
 endfunction()

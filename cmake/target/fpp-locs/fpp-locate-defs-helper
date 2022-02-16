@@ -1,4 +1,0 @@
-#!/bin/sh
-OUT_FILE="$1"
-shift
-${FPP_LOCATE_DEFS} "$@" > "${OUT_FILE}"

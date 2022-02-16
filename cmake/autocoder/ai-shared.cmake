@@ -1,3 +1,4 @@
+include_guard()
 ###
 # Function `cheetah`:
 #
@@ -38,7 +39,6 @@ endfunction(cheetah)
 # FILE_DEPENDENCIES: files this module depends on
 ####
 function(setup_ai_autocode_variant VARIANT_ARGS OUTPUT_DIR EXTRA_COMMANDS AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES)
-    find_program(PYTHON NAMES python3 python)
     string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
     add_custom_command(
             OUTPUT  ${GENERATED_FILES}

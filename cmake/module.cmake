@@ -7,6 +7,38 @@
 # These are used as the building blocks of F prime items. This includes deployments,
 # tools, and individual components.
 ####
+include(target/target)
+set(EMPTY "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+
+####
+# Function `generate_base_module_properties`:
+#
+# Helper used to generate the base module properties in the system along with the core target that can be adjusted
+# later.
+# - **TARGET_NAME**: target name being generated
+# - **SOURCE_FILES**: source files as defined by user, unfiltered. Includes autocode and source inputs.
+# - **DEPENDENCIES**: dependencies as defined by user, unfiltered. Includes target names and link flags.
+####
+function(generate_base_module_properties TARGET_TYPE TARGET_NAME SOURCE_FILES DEPENDENCIES)
+    set_property(GLOBAL PROPERTY MODULE_DETECTION TRUE)
+
+    # Add the base elements to the system
+    if (TARGET_TYPE STREQUAL "Executable" OR TARGET_TYPE STREQUAL "Deployment")
+        add_executable("${TARGET_NAME}" "${EMPTY}")
+    elseif(TARGET_TYPE STREQUAL "Unit Test")
+        add_executable("${UT_EXE_NAME}" "${EMPTY}")
+    elseif(TARGET_TYPE STREQUAL "Library")
+        add_library("${TARGET_NAME}" "${EMPTY}")
+    else()
+        message(FATAL_ERROR "Module ${TARGET_NAME} cannot register object of type ${TARGET_TYPE}")
+    endif()
+
+    # Modules properties for posterity
+    set_target_properties("${TARGET_NAME}" PROPERTIES FP_TYPE "${TARGET_TYPE}")
+    set_property(GLOBAL APPEND PROPERTY FPRIME_MODULES "${TARGET_NAME}")
+
+    setup_module_targets("${TARGET_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
+endfunction(generate_base_module_properties)
 
 ####
 # Function `generate_deployment:`
@@ -18,18 +50,7 @@
 # - **DEPENDENCIES:** specified module-level dependencies
 ####
 function(generate_deployment EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
-    # CMake object type
-    if (NOT DEFINED FPRIME_OBJECT_TYPE)
-        set(FPRIME_OBJECT_TYPE "Deployment")
-    endif()
-    setup_all_deployment_targets(FPRIME_TARGET_LIST "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-    if (TARGET "${EXECUTABLE_NAME}" AND NOT FPRIME_FPP_LOCS_BUILD)
-        add_dependencies("${EXECUTABLE_NAME}" "${EXECUTABLE_NAME}_dict")
-    endif()
-    # Add unit test targets to deployment
-    if (BUILD_TESTING)
-        setup_all_deployment_targets(FPRIME_UT_TARGET_LIST "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
-    endif()
+    generate_base_module_properties("Deployment" "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(generate_deployment)
 ####
 # Function `generate_executable:`
@@ -41,11 +62,7 @@ endfunction(generate_deployment)
 # - **DEPENDENCIES:** specified module-level dependencies
 ####
 function(generate_executable EXECUTABLE_NAME SOURCE_FILES DEPENDENCIES)
-    # CMake object type
-    if (NOT DEFINED FPRIME_OBJECT_TYPE)
-        set(FPRIME_OBJECT_TYPE "Executable")
-    endif()
-    setup_all_module_targets(FPRIME_TARGET_LIST "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
+    generate_base_module_properties("Executable" "${EXECUTABLE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(generate_executable)
 
 ####
@@ -60,11 +77,7 @@ endfunction(generate_executable)
 #
 ####
 function(generate_library MODULE_NAME SOURCE_FILES DEPENDENCIES)
-  if (NOT DEFINED FPRIME_OBJECT_TYPE)
-      set(FPRIME_OBJECT_TYPE "Library")
-  endif()
-  # Register all targets on this module, then introspect
-  setup_all_module_targets(FPRIME_TARGET_LIST "${MODULE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
+  generate_base_module_properties("Library" "${MODULE_NAME}" "${SOURCE_FILES}" "${DEPENDENCIES}")
 endfunction(generate_library)
 
 ####
@@ -78,11 +91,11 @@ endfunction(generate_library)
 # - *DEPENDENCIES:* dependencies bound for link and cmake dependencies
 #
 ####
-function(generate_ut UT_EXE_NAME UT_SOURCES_FILE DEPENDENCIES)
-    if (NOT DEFINED FPRIME_OBJECT_TYPE)
-        set(FPRIME_OBJECT_TYPE "Unit Test")
+function(generate_ut UT_EXE_NAME UT_SOURCES_FILE UT_DEPENDENCIES)
+    # Only for BUILD_TESTING
+    if (BUILD_TESTING)
+        get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+        generate_base_module_properties("Unit Test" "${MODULE_NAME}" "${UT_SOURCES_FILE}" "${UT_DEPENDENCIES}")
     endif()
-    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
-    setup_all_module_targets(FPRIME_UT_TARGET_LIST ${MODULE_NAME} "${UT_SOURCES_FILE}" "${DEPENDENCIES}")
 endfunction(generate_ut)
 

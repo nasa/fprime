@@ -9,7 +9,7 @@
 ####
 # Libraries that make-up F prime. Hurray!
 # Ignore GTest for non-test builds
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
     include("${FPRIME_FRAMEWORK_PATH}/cmake/googletest-download/googletest.cmake")
     add_subdirectory("${FPRIME_FRAMEWORK_PATH}/STest/" "${CMAKE_BINARY_DIR}/F-Prime/STest")
 endif()
