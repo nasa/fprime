@@ -5,80 +5,52 @@
 # autocoder API and wraps calls to the FPP tools.
 ####
 include(utilities)
-include(autocoder/default)
 
 # Does not handle source files one-by-one, but as a complete set
-set(HANDLES_INDIVIDUAL_SOURCES FALSE)
-set(FPP_RUN_OR_REMOVE "${CMAKE_CURRENT_LIST_DIR}/fpp-wrapper/fpp-run-or-remove")
-set(FPP_FRAMEWORK_DEFAULT_DEPS Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg)
+set_property(GLOBAL PROPERTY FPP_HANDLES_INDIVIDUAL_SOURCES FALSE)
 
 ####
-# `is_supported`:
+# Function `is_supported`:
 #
 # Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
 # IS_SUPPORTED in parent scope to be TRUE if FPP can process the given file or FALSE otherwise.
 #
 # AC_INPUT_FILE: filepath for consideration
 ####
-function(is_supported AC_INPUT_FILE)
+function(fpp_is_supported AC_INPUT_FILE)
     set(IS_SUPPORTED FALSE PARENT_SCOPE)
     if (AC_INPUT_FILE MATCHES ".*.fpp")
         set(IS_SUPPORTED TRUE PARENT_SCOPE)
     endif()
-endfunction(is_supported)
+endfunction(fpp_is_supported)
 
 ####
-# `regenrate_memo`:
+# Function `fpp_get_framework_dependency_helper`:
 #
-# Determines if the memo file used by the autocoder system needs to be regenerated, or if the memoization can be read
-# as-is.  Sets variable named with OUTPUT to TRUE or FALSE in parent scope.
-
-# OUTPUT: name of variable to set in parent scope. Will be set to TRUE or FALSE.
-# MEMO_FILE: path to memo file in question
-# SOURCES_INPUT: list of sources used to generate the given memo file
+# Helps detect framework dependencies. Either, it calculates specific dependencies *or* if the Fw roll-up target exists,
+# it will depend on that.  Note: targets within Fw always calculate the internal Fw targets as depending on Fw would
+# cause a circular dependency.
+#
+# MODULE_NAME: current module being processed
+# FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
 ####
-function(regenerate_memo OUTPUT MEMO_FILE SOURCES_INPUT)
-    # Initialize variables
-    set(${OUTPUT} FALSE PARENT_SCOPE)
-    set(LOCS_MOVED FALSE)
-    set(OUTPUT_TEXT "n/a")
-    set(ALL_FPP_INPUTS)
-    set(PREV_LOCS_FILE "${MEMO_FILE}.locs.prev")
-    default_regenerate_helper(MEMO_MISSING CHANGED "${MEMO_FILE}" "${SOURCES_INPUT}")
-
-    # Read the memo file for dependencies, should it exist
-    if (NOT MEMO_MISSING)
-        file(READ "${MEMO_FILE}" CONTENTS)
-        read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES ALL_FPP_INPUTS)
+function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
+    # Subset the framework dependencies, or where possible use the Fw interface target
+    if (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
+        message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
+    elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
+        list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
+        list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
+        math(EXPR START_INDEX "${START_INDEX} + 1")
+        list(SUBLIST FRAMEWORK ${START_INDEX} -1 FRAMEWORK)
+    else()
+        list(APPEND FRAMEWORK Fw)
     endif()
-    set_property(GLOBAL PROPERTY "FPP_LOCATIONS_CACHE_${MODULE_NAME}" "${PREV_LOCS_FILE}")
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PREV_LOCS_FILE}")
-    # Look at changed inter-module dependencies
-    if (ALL_FPP_INPUTS)
-        # Subset module deps by what changed
-        string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
-        find_program(PYTHON NAMES python3 python REQUIRED)
-        execute_process(COMMAND ${CMAKE_COMMAND} -E env 
-            PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
-            BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime
-            ${PYTHON} "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/fpp-locs-differ/fpp-locs-differ.py" ${FPP_LOCS_FILE} ${PREV_LOCS_FILE}
-            ${ALL_FPP_INPUTS} OUTPUT_VARIABLE OUTPUT_TEXT OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE RESULT_OUT)
-        if (NOT RESULT_OUT EQUAL "0")
-            set(LOCS_MOVED TRUE)
-        endif()
-    endif()
-    # Regenerating on any of the above
-    if (MEMO_MISSING OR CHANGED OR LOCS_MOVED)
-        execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FPP_LOCS_FILE} ${PREV_LOCS_FILE}) 
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Regenerating memo '${MEMO_FILE}' because: (memo missing: ${MEMO_MISSING}, sources changed: ${CHANGED}, dependencies moved: ${LOCS_MOVED} (${OUTPUT_TEXT}))")
-        endif()
-	    set(${OUTPUT} TRUE PARENT_SCOPE)
-    endif()
-endfunction(regenerate_memo)
+    set(FRAMEWORK "${FRAMEWORK}" PARENT_SCOPE)
+endfunction(fpp_get_framework_dependency_helper)
 
 ####
-# `get_generated_files`:
+# Function `fpp_get_generated_files`:
 #
 # Given a set of supported autocoder input files, this will produce a list of files that will be generated. It sets the
 # following variables in parent scope:
@@ -93,53 +65,35 @@ endfunction(regenerate_memo)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_generated_files AC_INPUT_FILES)
+function(fpp_get_generated_files AC_INPUT_FILES)
     find_program(FPP_DEPEND fpp-depend)
     if (DEFINED FPP_TO_DEPEND-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
-    set(DIRECT_DEPENDENCIES_FILE "${CMAKE_CURRENT_BINARY_DIR}/direct.txt")
-    set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/included.txt")
-    set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/missing.txt")
-    set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/generated.txt")
-    set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/framework.txt")
-    set(LAST_DEP_COMMAND "${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES} -d ${DIRECT_DEPENDENCIES_FILE} -i ${INCLUDED_FILE} -m ${MISSING_FILE} -g ${GENERATED_FILE} -f ${FRAMEWORK_FILE}"
-        CACHE INTERNAL "Last command to annotate memo file" FORCE)
-    execute_process(COMMAND ${FPP_DEPEND} ${FPP_LOCS_FILE} ${AC_INPUT_FILES}
-        -d "${DIRECT_DEPENDENCIES_FILE}"
-        -i "${INCLUDED_FILE}"
-        -m "${MISSING_FILE}"
-        -g "${GENERATED_FILE}"
-        -f "${FRAMEWORK_FILE}"
-        RESULT_VARIABLE ERR_RETURN
-        OUTPUT_VARIABLE STDOUT OUTPUT_STRIP_TRAILING_WHITESPACE)
-    # Report failure.  If we are generating files, this must work.
-    if (ERR_RETURN)
-        message(FATAL_ERROR "Failed to run '${LAST_DEP_COMMAND}' and RC ${ERR_RETURN}")
-        return()
-    endif()
+    set(DIRECT_DEPENDENCIES_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/direct.txt")
+    set(INCLUDED_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/include.txt")
+    set(MISSING_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/missing.txt")
+    set(GENERATED_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/generated.txt")
+    set(FRAMEWORK_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/framework.txt")
+    set(STDOUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/fpp-cache/stdout.txt")
 
     # Read files and convert to lists of dependencies. e.g. read INCLUDED_FILE file into INCLUDED variable, then process
-    foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK)
+    foreach(NAME INCLUDED MISSING GENERATED DIRECT_DEPENDENCIES FRAMEWORK STDOUT)
+        if (NOT EXISTS "${${NAME}_FILE}")
+            message(FATAL_ERROR "fpp-depend cache did not generate '${${NAME}_FILE}'")
+        endif()
         file(READ "${${NAME}_FILE}" "${NAME}")
         string(STRIP "${${NAME}}" "${NAME}")
-        string(REGEX REPLACE "\n" ";" "${NAME}" "${${NAME}}")
+        string(REPLACE "\n" ";" "${NAME}" "${${NAME}}")
     endforeach()
 
-    # Handle captured standard out
-    string(REGEX REPLACE "\n" ";" IMPORTED "${STDOUT}")
-    # List of framework dependencies: detected + builtin, subset from "this module" and further.
-    list(APPEND FRAMEWORK ${FPP_FRAMEWORK_DEFAULT_DEPS})
-    list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
-    math(EXPR START_INDEX "${START_INDEX} + 1")
-    list(SUBLIST FRAMEWORK ${START_INDEX} -1 FRAMEWORK)
+    fpp_get_framework_dependency_helper("${MODULE_NAME}" "${FRAMEWORK}")
 
     # First assemble the generated files list
     set(GENERATED_FILES)
     foreach(LINE IN LISTS GENERATED)
         list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${LINE}")
     endforeach()
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 
     # If we have missing dependencies, print and fail
     if (MISSING)
@@ -154,19 +108,18 @@ function(get_generated_files AC_INPUT_FILES)
     fpp_to_modules("${DIRECT_DEPENDENCIES}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
-
     # File dependencies are any files that this depends on
-    set(FILE_DEPENDENCIES)
-    list(APPEND FILE_DEPENDENCIES ${AC_INPUT_FILES} ${INCLUDED})
+    set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${STDOUT})
 
     # Should have been inherited from previous call to `get_generated_files`
+    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
     set(EXTRAS "${IMPORTED}" PARENT_SCOPE)
-endfunction(get_generated_files)
+endfunction(fpp_get_generated_files)
 
 ####
-# `get_dependencies`:
+# Function `fpp_get_dependencies`:
 #
 # Given a set of supported autocoder input files, this will produce a set of dependencies. Since this should have
 # already been done in `get_generated_files` the implementation just checks the variables are still set.
@@ -176,15 +129,15 @@ endfunction(get_generated_files)
 #
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
-function(get_dependencies AC_INPUT_FILES)
+function(fpp_get_dependencies AC_INPUT_FILES)
     # Should have been inherited from previous call to `get_generated_files`
     if (NOT DEFINED MODULE_DEPENDENCIES OR NOT DEFINED FILE_DEPENDENCIES)
-        message(FATAL_ERROR "The CMake system is inconsistent. Please contact a developer.")
+        message(FATAL_ERROR "The CMake system is inconsistent. Expected pre-calculated MODULE_DEPENDENCIES.")
     endif()
-endfunction(get_dependencies)
+endfunction(fpp_get_dependencies)
 
 ####
-# `setup_autocode`:
+# Function `fpp_setup_autocode`:
 #
 # Sets up the steps to run the autocoder and produce the files during the build. This is passed the lists generated
 # in calls to `get_generated_files` and `get_dependencies`.
@@ -195,9 +148,7 @@ endfunction(get_dependencies)
 # FILE_DEPENDENCIES: specific file dependencies of the given input sources
 # EXTRAS: used to publish the 'imported' file dependencies of the given input files
 ####
-function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    find_program(FPP_TO_XML fpp-to-xml)
-    find_program(FPP_TO_CPP fpp-to-cpp)
+function(fpp_setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
     if (DEFINED FPP_TO_XML-NOTFOUND OR DEFINED FPP_TO_CPP-NOTFOUND)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
@@ -219,25 +170,24 @@ function(setup_autocode AC_INPUT_FILES GENERATED_FILES MODULE_DEPENDENCIES FILE_
     endforeach()
 
     # Add in steps for Ai.xml generation
-    get_property(REMOVAL_FILE GLOBAL PROPERTY "FPP_LOCATIONS_CACHE_${MODULE_NAME}")
     if (GENERATED_AI)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
-                COMMAND ${FPP_RUN_OR_REMOVE} ${REMOVAL_FILE} ${FPP_TO_XML} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${FILE_DEPENDENCIES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
-                DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                DEPENDS ${EXTRAS} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT  ${GENERATED_CPP}
-                COMMAND ${FPP_RUN_OR_REMOVE} ${REMOVAL_FILE} ${FPP_TO_CPP} ${AC_INPUT_FILES} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${INCLUDES}
+                COMMAND ${REMOVAL_FILE} ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${FILE_DEPENDENCIES}
                 "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
-                DEPENDS ${AC_INPUT_FILE} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                DEPENDS ${EXTRAS} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
-endfunction(setup_autocode)
+endfunction(fpp_setup_autocode)
 
 ####
 # `fpp_to_modules`:
@@ -250,7 +200,7 @@ endfunction(setup_autocode)
 ####
 function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
     init_variables(OUTPUT_DATA)
-    get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+    get_module_name("${CMAKE_CURRENT_SOURCE_DIR}")
     set(CURRENT_MODULE "${MODULE_NAME}")
     foreach(INCLUDE IN LISTS AC_INPUT_FILES FILE_LIST)
         get_module_name(${INCLUDE})
@@ -263,10 +213,8 @@ function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
         # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
         # CMakeLists.txt in that directory that sets up the aforementioned known module and associated target.
         if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
-            #message(STATUS "Excluding: ${MODULE_NAME} from ${CURRENT_MODULE} with ${INCLUDE}")
             continue() # Skip adding to module list
         endif()
-        #message(STATUS "Adding: ${MODULE_NAME} with ${INCLUDE}")
         list(APPEND OUTPUT_DATA "${MODULE_NAME}")
     endforeach()
     set(${OUTPUT_VAR} "${OUTPUT_DATA}" PARENT_SCOPE)

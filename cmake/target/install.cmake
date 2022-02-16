@@ -6,7 +6,7 @@
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE CACHE BOOL "Install all dependency" FORCE)
 
 # Dictionaries are per-deployment, a global variant does not make sense
-function(add_global_target)
+function(install_add_global_target)
 endfunction()
 
 # Function `add_deployment_target`:
@@ -19,7 +19,7 @@ endfunction()
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
     install(TARGETS ${MODULE} ${FULL_DEPENDENCIES}
             RUNTIME DESTINATION ${TOOLCHAIN_NAME}/bin
@@ -31,5 +31,5 @@ function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENC
 endfunction()
 
 # Install is per-deployment, a module-by-module variant does not make sense
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
-endfunction(add_module_target)
+function(install_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+endfunction(install_add_module_target)

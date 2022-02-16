@@ -11,7 +11,7 @@ set(MEM_TEST_CLI_OPTIONS '--leak-check=full --error-exitcode=100 --show-leak-kin
 #
 # - **TARGET_NAME:** target name to be generated
 ####
-function(add_global_target TARGET_NAME)
+function(check_leak_add_global_target TARGET_NAME)
     find_program(VALGRIND valgrind)
     if (VALGRIND)
         add_custom_target(${TARGET_NAME}
@@ -23,7 +23,7 @@ function(add_global_target TARGET_NAME)
     else()
         add_custom_target(${TARGET_NAME} COMMAND ${CMAKE_COMMAND} -E echo "[WARNING] 'valgrind' not found. Will not check for leaks.")
     endif()
-endfunction(add_global_target)
+endfunction(check_leak_add_global_target)
 
 ####
 # Function `add_deployment_target`:
@@ -36,7 +36,7 @@ endfunction(add_global_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(check_leak_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     find_program(VALGRIND valgrind)
     if (VALGRIND)
         set(ALL_UTS)
@@ -74,7 +74,7 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+function(check_leak_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     find_program(VALGRIND valgrind)
     # Protects against multiple calls to fprime_register_ut()
     if (NOT VALGRIND)
@@ -95,4 +95,4 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     endif()
     add_dependencies("${MODULE_NAME}_${TARGET_NAME}" ${UT_EXE_NAME})
     add_dependencies("${TARGET_NAME}" ${UT_EXE_NAME})
-endfunction(add_module_target)
+endfunction(check_leak_add_module_target)

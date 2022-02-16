@@ -6,6 +6,7 @@
 #
 # Note: autocoders need to be run by targets. See target/target.cmake.
 ####
+include_guard()
 include(utilities)
 
 ####
@@ -46,46 +47,6 @@ function (run_ac_set SOURCES)
     set(AC_SOURCES "${CONSUMED_SOURCES_LIST}" PARENT_SCOPE)
 endfunction()
 
-
-####
-# __memoize:
-#
-# This take two "long" processing steps of the autocoder that run during the configuration step of CMake and notes the
-# output such that the results are cached and repeated unless the input file has changed since the last pass through
-# this function. This is done for efficiency when the generate dependencies or generate files step takes a large
-# execution costs.
-#
-# Note: cached variables are the following: GENERATED_FILES, MODULE_DEPENDENCIES, FILE_DEPENDENCIES
-#
-# SOURCES: source file that is being parsed and must have changed for a recalculation
-####
-function (__memoize SOURCES)
-    set(SOURCES_HASH "multiple")
-    if (HANDLES_INDIVIDUAL_SOURCES)
-        string(MD5 SOURCES_HASH "${SOURCES}")
-    endif()
-    set(MEMO_FILE "${CMAKE_CURRENT_BINARY_DIR}/${AUTOCODER_NAME}.${SOURCES_HASH}.dep")
-
-    regenerate_memo(FORCE_REGENERATE "${MEMO_FILE}" "${SOURCES}")
-    if (FORCE_REGENERATE)
-        get_generated_files("${SOURCES}")
-        get_dependencies("${SOURCES}")
-        resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
-        file(WRITE "${MEMO_FILE}" "${GENERATED_FILES}\n${MODULE_DEPENDENCIES}\n${FILE_DEPENDENCIES}\n${EXTRAS}\n${LAST_DEP_COMMAND}\n")
-    # Otherwise read from file
-    else()
-        if (CMAKE_DEBUG_OUTPUT)
-            message(STATUS "[Autocode/${AUTOCODER_NAME}] Using memo ${MEMO_FILE}'")
-        endif()
-        file(READ "${MEMO_FILE}" CONTENTS)
-        read_from_lines("${CONTENTS}" GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    endif()
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
-endfunction()
-
 ####
 # run_ac:
 #
@@ -99,9 +60,15 @@ endfunction()
 # INFO_ONLY: TRUE if only information is needed, FALSE to run otherwise
 ####
 function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
-    include(autocoder/default) # Default function definitions perform validation
-    include(${AUTOCODER_CMAKE})
-    set(AUTOCODER_NAME "${AUTOCODER_CMAKE}")
+    plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
+
+    # Find the one variable set in the autocoder
+    string(TOUPPER "${AUTOCODER_NAME}" AUTOCODER_NAME_UPPER)
+    get_property(HANDLES_INDIVIDUAL_SOURCES_SET GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES" SET)
+    if (NOT HANDLES_INDIVIDUAL_SOURCES_SET)
+        message(FATAL_ERROR "${AUTOCODER_CMAKE} does not define boolean property ${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
+    endif()
+    get_property(HANDLES_INDIVIDUAL_SOURCES GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
 
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
@@ -187,7 +154,7 @@ function(_filter_sources OUTPUT_NAME)
     # Loop over the list and check
     foreach (SOURCE_LIST IN LISTS ARGN)
         foreach(SOURCE IN LISTS SOURCE_LIST)
-            is_supported("${SOURCE}")
+            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}")
             if (IS_SUPPORTED)
                 list(APPEND OUTPUT_LIST "${SOURCE}")
             endif()
@@ -207,13 +174,16 @@ endfunction(_filter_sources)
 ####
 function(__ac_process_sources SOURCES INFO_ONLY)
     # Run the autocode setup process now with memoization
-    __memoize("${SOURCES}")
+    cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
+    cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
+    resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
+
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 
     # Run the generation setup when not requesting "info only"
     if (NOT INFO_ONLY)
-        setup_autocode("${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
+        cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
     endif()
 endfunction()
 

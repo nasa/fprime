@@ -17,13 +17,46 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
+
+####
+# Function `recurse_targets`:
+#
+# A helper that pulls out module dependencies that are also fprime modules.
+####
+function(recurse_targets TARGET OUTPUT BOUND)
+    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
+    set(TARGET_DEPENDENCIES)
+    if (TARGET "${TARGET}")
+        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
+    endif()
+    # Extra dependencies
+    list(APPEND TARGET_DEPENDENCIES ${ARGN})
+    if (TARGET_DEPENDENCIES)
+        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
+    endif()
+
+    set(RESULTS_LOCAL)
+    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
+        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
+            list(APPEND BOUND "${NEW_TARGET}")
+            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
+            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
+        endif()
+    endforeach()
+    if (RESULTS_LOCAL)
+        list(REMOVE_DUPLICATES RESULTS_LOCAL)
+    endif()
+    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
+endfunction()
+
+
 ####
 # Build function `add_global_target`:
 #
 # Specifically does nothing.  The "all" target of a normal cmake build will cover this case.
 ####
-function(add_global_target TARGET)
-endfunction(add_global_target)
+function(build_add_global_target TARGET)
+endfunction(build_add_global_target)
 
 ####
 # setup_build_module:
@@ -39,27 +72,27 @@ endfunction(add_global_target)
 # - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
 ####
 function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
-    # Compilable sources
-    set(COMPILE_SOURCES)
+    # Add generated sources
     foreach(SOURCE IN LISTS SOURCES GENERATED)
         if (NOT SOURCE IN_LIST EXCLUDED_SOURCES)
-            list(APPEND COMPILE_SOURCES "${SOURCE}")
+            target_sources("${MODULE}" PRIVATE "${SOURCE}")
         endif()
     endforeach()
-    # Setup the actual target
-    if (FPRIME_OBJECT_TYPE STREQUAL "Library")
-        # Add the library name
-        add_library(${MODULE} ${COMPILE_SOURCES})
-    else()
-        add_executable(${MODULE} ${COMPILE_SOURCES})
-    endif()
 
     # Set those files as generated to prevent build errors
     foreach(SOURCE IN LISTS GENERATED)
         set_source_files_properties(${SOURCE} PROPERTIES GENERATED TRUE)
     endforeach()
+
+    get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
+    list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
+    set_target_properties(
+            ${MODULE}
+            PROPERTIES
+            SOURCES "${MODULE_SOURCES}"
+    )
     # Setup the hash file for our sources
-    foreach(SRC_FILE ${COMPILE_SOURCES})
+    foreach(SRC_FILE IN LISTS MODULE_SOURCES)
         set_hash_flag("${SRC_FILE}")
     endforeach()
 
@@ -86,8 +119,8 @@ endfunction()
 # Adds in a deployment target, which for build, is just a normal module target. See: add_module_target for a description
 # of arguments. FULL_DEPENDENCY_LIST is unused (these are already known to CMake).
 ####
-function(add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
-    add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
+function(build_add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
+    build_add_module_target("${MODULE}" "${TARGET}" "${SOURCES}" "${DEPENDENCIES}")
 endfunction()
 
 ####
@@ -100,9 +133,10 @@ endfunction()
 # - **SOURCES:** list of source file inputs from the CMakeLists.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    message(STATUS "Adding ${FPRIME_OBJECT_TYPE}: ${MODULE}")
-    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai-xml)
+function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
+    get_target_property(MODULE_TYPE "${MODULE}" FP_TYPE)
+    message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
+    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
     setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
     # Special flags applied to modules when compiling with testing enabled
@@ -114,4 +148,4 @@ function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     if (CMAKE_DEBUG_OUTPUT)
         introspect("${MODULE}")
     endif()
-endfunction(add_module_target)
+endfunction(build_add_module_target)
