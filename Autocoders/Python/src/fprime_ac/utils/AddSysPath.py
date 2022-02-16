@@ -30,13 +30,13 @@ def AddSysPath(new_path):
         new_path = new_path.lower()
 
     # Check against all currently available paths
-    for x in sys.path:
-        x = os.path.abspath(x)
+    for item in sys.path:
+        item = os.path.abspath(item)
 
         if sys.platform == "win32":
-            x = x.lower()
+            item = item.lower()
 
-        if new_path in (x, x + os.sep):
+        if new_path in (item, item + os.sep):
             return 0
 
     sys.path.append(new_path)
@@ -47,8 +47,8 @@ def AddSysPath(new_path):
 if __name__ == "__main__":
 
     print("Before:")
-    for x in sys.path:
-        print(x)
+    for item in sys.path:
+        print(item)
 
     if sys.platform == "win32":
         print(AddSysPath("c:\\Temp"))
@@ -57,5 +57,5 @@ if __name__ == "__main__":
         print(AddSysPath("/usr/lib"))
 
     print("After:")
-    for x in sys.path:
-        print(x)
+    for item in sys.path:
+        print(item)
