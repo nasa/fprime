@@ -5,7 +5,7 @@
 Installs fprime into the build-artifacts folder. This is done using CMake's install command. Requires CMake 3.13+.
 
 
-## function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+## function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
     install(TARGETS ${MODULE} ${FULL_DEPENDENCIES}
             RUNTIME DESTINATION ${TOOLCHAIN_NAME}/bin
@@ -17,5 +17,5 @@ Installs fprime into the build-artifacts folder. This is done using CMake's inst
 endfunction()
 
 Install is per-deployment, a module-by-module variant does not make sense
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
-endfunction(add_module_target)
+function(install_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+endfunction(install_add_module_target)

@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ./autocoder/ai-ut.cmake
+**Note:** auto-generated from comments in: ./autocoder/ai_ut.cmake
 
 ## autocoder/ai-ut:
 

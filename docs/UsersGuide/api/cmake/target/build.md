@@ -6,6 +6,11 @@ This target sets up the build for every module in the system. WARNING: it regist
 not including _build. This is for historical reasons.
 
 
+## Function `recurse_targets`:
+
+A helper that pulls out module dependencies that are also fprime modules.
+
+
 ## Build function `add_global_target`:
 
 Specifically does nothing.  The "all" target of a normal cmake build will cover this case.

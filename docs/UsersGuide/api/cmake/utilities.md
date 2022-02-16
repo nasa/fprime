@@ -1,5 +1,58 @@
 **Note:** auto-generated from comments in: ./utilities.cmake
 
+## utilities.cmake:
+
+Utility and support functions for the fprime CMake build system.
+
+
+## Function `plugin_name`:
+
+From a plugin include path retrieve the plugin name. This is the name without any .cmake extension.
+
+INCLUDE_PATH: path to plugin
+OUTPUT_VARIABLE: variable to set in caller's scope with result
+
+
+## Function `generate_individual_function_call`:
+
+Generates a routing table entry for the faux cmake_language call for an individual function. This call consists of
+a single `elseif(name == function and ARGC == ARG_COUNT)` to support a call to the function with ARG_COUNT arguments.
+This is a helper function intended for use within `generate_faux_cmake_language`.
+
+OUTPUT_FILE: file to write these `elseif` blocks into
+FUNCTION: name of function to write out
+ARG_COUNT: number of args for this particular invocation of the call
+
+
+## Function `generate_faux_cmake_language`:
+
+This function is used to setup a fake implementation of `cmake_language` calls on implementations of CMake that
+predate its creation.  The facsimile is incomplete, but for the purposes of this build system, it will be sufficient
+meaning that it can route all the plugin functions correctly but specifically **not** arbitrary function calls.
+
+Functions supported by this call are expected in the GLOBAL property: CMAKE_LANGUAGE_ROUTE_LIST
+
+This is accomplished by writing out a CMake file that contains a macro that looks like the `cmake_language(CALL)`
+feature but is implemented by an `if (NAME == FUNCTION) FUNCTION() endif()` table. This file is built within and
+included when finished.
+
+In terms of performance:
+  - Native `cmake_language(CALL)` is incredibly fast
+  - This faux implementation is slow
+  - Repetitive including of .cmake files to "switch" implementations (as done in fprime v3.0.0) is **much** slower
+
+
+## Function `plugin_include_helper`:
+
+Designed to help include API files (targets, autocoders) in an efficient way within CMake. This function imports a
+CMake file and defines a `dispatch_<function>(PLUGIN_NAME ...)` function for each function name in ARGN. Thus users
+of the imported plugin can call `dispatch_<function>(PLUGIN_NAME ...)` to dispatch a function as implemented in a
+plugin.
+
+OUTPUT_VARIABLE: set with the plugin name that has last been included
+INCLUDE_PATH: path to file to include
+
+
 ## init_variables:
 
 Initialize all variables passed in to empty variables in the calling scope.
@@ -73,7 +126,7 @@ following:
 i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
      Svc/ActiveLogger also becomes Svc_ActiveLogger
 
-- **DIRECTORY_PATH:** path to infer MODULE_NAME from
+- **DIRECTORY_PATH:** (optional) path to infer MODULE_NAME from. Default: CMAKE_CURRENT_LIST_DIR
 - **Return: MODULE_NAME** (set in parent scope)
 
 

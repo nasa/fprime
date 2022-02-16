@@ -9,6 +9,15 @@ These are used as the building blocks of F prime items. This includes deployment
 tools, and individual components.
 
 
+## Function `generate_base_module_properties`:
+
+Helper used to generate the base module properties in the system along with the core target that can be adjusted
+later.
+- **TARGET_NAME**: target name being generated
+- **SOURCE_FILES**: source files as defined by user, unfiltered. Includes autocode and source inputs.
+- **DEPENDENCIES**: dependencies as defined by user, unfiltered. Includes target names and link flags.
+
+
 ## Function `generate_deployment:`
 
 Top-level executable generation. Core allows for generation of UT specifics without affecting API.

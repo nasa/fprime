@@ -124,6 +124,22 @@ TextLoggers will fail to build if FW_ENABLE_TEXT_LOGGING=0.
 e.g. `-DFPRIME_ENABLE_TEXT_LOGGERS=OFF`
 
 
+## `FPRIME_SKIP_TOOLS_VERSION_CHECK`:
+
+Skips version checking on fprime tools. This is an advanced option that should be used when the user knows the version
+of their tools is appropriate and the system would otherwise detect the tool version as an incompatible version. This
+can be used, specifically, to enable user maintained variants of standard tools.
+
+Note: no version checking will be done and as such version miss-matches will not be reported at all. Errors that
+result from version incompatibilities will be up to the user to resolve.
+
+**Values:**
+- ON:  skip the tool version check, enabling any tools found on the PATH to run
+- OFF: (default) ensure that the tools found on the path have the required version before running
+
+e.g. `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON`
+
+
 ## `FPRIME_FPP_LOCS_BUILD`:
 
 For internal use only.  Used to setup build to generate FPP location file.  Run as a sub-build within fprime.

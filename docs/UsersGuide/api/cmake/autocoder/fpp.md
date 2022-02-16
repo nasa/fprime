@@ -6,7 +6,7 @@ CMake implementation of an fprime autocoder. Includes the necessary function def
 autocoder API and wraps calls to the FPP tools.
 
 
-## `is_supported`:
+## Function `is_supported`:
 
 Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
 IS_SUPPORTED in parent scope to be TRUE if FPP can process the given file or FALSE otherwise.
@@ -14,17 +14,17 @@ IS_SUPPORTED in parent scope to be TRUE if FPP can process the given file or FAL
 AC_INPUT_FILE: filepath for consideration
 
 
-## `regenrate_memo`:
+## Function `fpp_get_framework_dependency_helper`:
 
-Determines if the memo file used by the autocoder system needs to be regenerated, or if the memoization can be read
-as-is.  Sets variable named with OUTPUT to TRUE or FALSE in parent scope.
+Helps detect framework dependencies. Either, it calculates specific dependencies *or* if the Fw roll-up target exists,
+it will depend on that.  Note: targets within Fw always calculate the internal Fw targets as depending on Fw would
+cause a circular dependency.
 
-OUTPUT: name of variable to set in parent scope. Will be set to TRUE or FALSE.
-MEMO_FILE: path to memo file in question
-SOURCES_INPUT: list of sources used to generate the given memo file
+MODULE_NAME: current module being processed
+FRAMEWORK: list of framework dependencies. **NOTE:** will be overridden in PARENT_SCOPE with updated list
 
 
-## `get_generated_files`:
+## Function `fpp_get_generated_files`:
 
 Given a set of supported autocoder input files, this will produce a list of files that will be generated. It sets the
 following variables in parent scope:
@@ -40,7 +40,7 @@ setting this information now will prevent a duplicated call to the tooling.
 AC_INPUT_FILES: list of supported autocoder input files
 
 
-## `get_dependencies`:
+## Function `fpp_get_dependencies`:
 
 Given a set of supported autocoder input files, this will produce a set of dependencies. Since this should have
 already been done in `get_generated_files` the implementation just checks the variables are still set.
@@ -51,7 +51,7 @@ already been done in `get_generated_files` the implementation just checks the va
 AC_INPUT_FILES: list of supported autocoder input files
 
 
-## `setup_autocode`:
+## Function `fpp_setup_autocode`:
 
 Sets up the steps to run the autocoder and produce the files during the build. This is passed the lists generated
 in calls to `get_generated_files` and `get_dependencies`.

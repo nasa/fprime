@@ -1,4 +1,4 @@
-**Note:** auto-generated from comments in: ./autocoder/ai-xml.cmake
+**Note:** auto-generated from comments in: ./autocoder/ai_xml.cmake
 
 ## autocoder/ai-xml.cmake
 

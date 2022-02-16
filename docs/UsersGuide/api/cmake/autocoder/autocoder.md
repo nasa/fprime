@@ -18,18 +18,6 @@ SOURCES: source file input list
 ...: autocoder include or INFO_ONLY
 
 
-## __memoize:
-
-This take two "long" processing steps of the autocoder that run during the configuration step of CMake and notes the
-output such that the results are cached and repeated unless the input file has changed since the last pass through
-this function. This is done for efficiency when the generate dependencies or generate files step takes a large
-execution costs.
-
-Note: cached variables are the following: GENERATED_FILES, MODULE_DEPENDENCIES, FILE_DEPENDENCIES
-
-SOURCES: source file that is being parsed and must have changed for a recalculation
-
-
 ## run_ac:
 
 Run the autocoder across the set of source files, SOURCES, and the previously generated sources, GENERATED_SOURCES.
