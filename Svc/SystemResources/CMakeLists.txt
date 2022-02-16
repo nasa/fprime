@@ -22,6 +22,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
+get_module_name("${CMAKE_CURRENT_LIST_DIR}")
 # Implementation requires switch cascade
 if (TARGET ${MODULE_NAME}_ut_exe)
     target_compile_options(${MODULE_NAME}_ut_exe PRIVATE -Wno-implicit-fallthrough)
