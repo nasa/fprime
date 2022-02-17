@@ -12,10 +12,10 @@ The logical store is byte addressable with addresses
 0 through _n-1_, where _n_ is the current store size.
 It grows by increasing the top address from _n_
 to _n + m_ and copying _m_ bytes of data into the
-memory so allocated.
+logical memory so allocated.
 It shrinks by deleting the lowest _m_ addresses
-and reassigning the addresses of the remaining bytes
-starting at zero.
+and renumbering the logical addresses of the
+remaining bytes starting at zero.
 
 The implementation uses a fixed-size physical store,
 with top and bottom pointers that increase when the
@@ -24,6 +24,11 @@ pass the end of the physical store.
 The implementation reserves one byte for itself, so
 the maximum size of the logical store is one less than the size of the physical
 store.
+
+`CircularBuffer` does not provide concurrency control.
+If multiple threads use the buffer, the uses must
+be guarded by other concurrency control, e.g.,
+a queue or lock.
 
 The `CircularBuffer` type provides the following operations.
 
