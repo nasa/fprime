@@ -4,7 +4,7 @@
 // \brief  hpp file for DeframingProtocol class
 //
 // \copyright
-// Copyright 2009-2021, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -14,8 +14,8 @@
 #include "Fw/Com/ComPacket.hpp"
 #include "Utils/Types/CircularBuffer.hpp"
 
-#ifndef DEFRAMING_PROTOCOL_HPP
-#define DEFRAMING_PROTOCOL_HPP
+#ifndef SVC_DEFRAMING_PROTOCOL_HPP
+#define SVC_DEFRAMING_PROTOCOL_HPP
 
 namespace Svc {
 
@@ -62,4 +62,4 @@ class DeframingProtocol {
     DeframingProtocolInterface* m_interface;
 };
 };
-#endif  // OWLS_PROTOCOL_HPP
+#endif  // SVC_DEFRAMING_PROTOCOL_HPP
