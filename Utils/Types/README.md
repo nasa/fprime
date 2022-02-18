@@ -117,11 +117,12 @@ NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
 If `serialization = true`, then return the maximum logical
 store size minus the current logical store size.
 This is the number of bytes that may be added to the logical
-store without deleting any data, and without exceeding
-the maximum size.
+store without deleting data.
 
 If `serialization = false`, then return the current logical
 store size.
+This is the maximum number of bytes that may be read from
+the logical store without adding data.
 
 _TODO: This interface could be improved._
 
