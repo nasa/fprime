@@ -4,10 +4,10 @@
 # Implementation template autocoder file.
 ####
 include(utilities)
+include(autocoder/helpers)
 include(autocoder/ai-shared)
 
-# Handles singular source files.
-set_property(GLOBAL PROPERTY AI_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
+autocoder_setup_for_individual_sources()
 
 ####
 # `is_supported`:
@@ -19,10 +19,7 @@ set_property(GLOBAL PROPERTY AI_IMPL_HANDLES_INDIVIDUAL_SOURCES TRUE)
 # AC_INPUT_FILE: filepath for consideration
 ####
 function(ai_impl_is_supported AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    if (AC_INPUT_FILE MATCHES ".*ComponentAi\\.xml")
-        set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    endif()
+    autocoder_support_by_suffix("ComponentAi.xml" "${AC_INPUT_FILE}")
 endfunction (ai_impl_is_supported)
 
 ####

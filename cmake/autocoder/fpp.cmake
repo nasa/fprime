@@ -5,9 +5,10 @@
 # autocoder API and wraps calls to the FPP tools.
 ####
 include(utilities)
+include(autocoder/helpers)
 set(FPP_VERSION v1.0.1)
-set_property(GLOBAL PROPERTY FPP_HANDLES_INDIVIDUAL_SOURCES FALSE)
 
+autocoder_setup_for_multiple_sources()
 ####
 # locate_fpp_tools:
 #
@@ -51,10 +52,7 @@ endfunction(locate_fpp_tools)
 # AC_INPUT_FILE: filepath for consideration
 ####
 function(fpp_is_supported AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    if (AC_INPUT_FILE MATCHES ".*.fpp")
-        set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    endif()
+    autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}")
 endfunction(fpp_is_supported)
 
 ####

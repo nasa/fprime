@@ -4,16 +4,18 @@
 # Unit test support files autocoder. Only run when BUILD_TESTING is set. Otherwise it is not registered.
 ####
 include(utilities)
+include(autocoder/helpers)
 include(autocoder/ai-shared)
+
+
 
 # Bail if not testing
 if (NOT BUILD_TESTING)
     return()
 endif()
 
-# Process singular input files
-set_property(GLOBAL PROPERTY AI_UT_HANDLES_INDIVIDUAL_SOURCES TRUE)
 
+autocoder_setup_for_individual_sources()
 ####
 # `is_supported`:
 #
@@ -24,10 +26,7 @@ set_property(GLOBAL PROPERTY AI_UT_HANDLES_INDIVIDUAL_SOURCES TRUE)
 # AC_INPUT_FILE: filepath for consideration
 ####
 function(ai_ut_is_supported AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    if (AC_INPUT_FILE MATCHES ".*ComponentAi\\.xml")
-        set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    endif()
+    autocoder_support_by_suffix("ComponentAi.xml" "${AC_INPUT_FILE}")
 endfunction (ai_ut_is_supported)
 
 ####

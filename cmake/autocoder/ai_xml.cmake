@@ -5,11 +5,10 @@
 # setup of the the original CMake system.
 #####
 include(utilities)
+include(autocoder/helpers)
 include(autocoder/ai-shared)
 
-# Process singular input files
-set_property(GLOBAL PROPERTY AI_XML_HANDLES_INDIVIDUAL_SOURCES TRUE)
-
+autocoder_setup_for_individual_sources()
 ####
 # `is_supported`:
 #
@@ -19,10 +18,7 @@ set_property(GLOBAL PROPERTY AI_XML_HANDLES_INDIVIDUAL_SOURCES TRUE)
 # AC_INPUT_FILE: filepath for consideration
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    if (AC_INPUT_FILE MATCHES ".*Ai\\.xml")
-        set(IS_SUPPORTED TRUE PARENT_SCOPE)
-    endif()
+    autocoder_support_by_suffix("Ai.xml" "${AC_INPUT_FILE}")
 endfunction (ai_xml_is_supported)
 
 ####
