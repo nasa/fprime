@@ -26,20 +26,13 @@ function (run_ac_set SOURCES)
     if (ARGN)
         set(AC_LIST "${ARGN}")
     endif()
-    set(INFO_ONLY OFF)
     init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILE_LIST CONSUMED_SOURCES_LIST)
     foreach(AC_CMAKE IN LISTS AC_LIST)
         init_variables(MODULE_DEPENDENCIES GENERATED_FILES CONSUMED_SOURCES)
-        # Allow info only runs
-        if (AC_CMAKE STREQUAL "INFO_ONLY")
-            set(INFO_ONLY ON)
-            continue()
-        endif()
-        run_ac("${AC_CMAKE}" "${SOURCES}" "${GENERATED_FILE_LIST}" "${INFO_ONLY}")
+        run_ac("${AC_CMAKE}" "${SOURCES}" "${GENERATED_FILE_LIST}")
         list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
         list(APPEND GENERATED_FILE_LIST ${GENERATED_FILES})
         list(APPEND CONSUMED_SOURCES_LIST ${CONSUMED_SOURCES})
-        set(INFO_ONLY OFF)
     endforeach()
 
     # Return variables
@@ -58,9 +51,8 @@ endfunction()
 # AUTOCODER_CMAKE: cmake file containing autocoder definition
 # SOURCES: sources input to run on the autocoder
 # GENERATED_SOURCES: sources created by other autocoders
-# INFO_ONLY: TRUE if only information is needed, FALSE to run otherwise
 ####
-function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
+function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
     plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
     # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
@@ -95,7 +87,7 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
         if (HANDLES_INDIVIDUAL_SOURCES)
             init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILES_LIST)
             foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
-                __ac_process_sources("${SOURCE}" "${INFO_ONLY}")
+                __ac_process_sources("${SOURCE}")
                 list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
                 list(APPEND GENERATED_FILES_LIST ${GENERATED_FILES})
                 # Check if this would have generated something, if not don't mark the file as used
@@ -106,7 +98,7 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
             set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES_LIST}")
             set(GENERATED_FILES "${GENERATED_FILES_LIST}")
         else()
-            __ac_process_sources("${AC_INPUT_SOURCES}" "${INFO_ONLY}")
+            __ac_process_sources("${AC_INPUT_SOURCES}")
             if (GENERATED_FILES)
                 set(CONSUMED_SOURCES "${AC_INPUT_SOURCES}")
             endif()
@@ -142,7 +134,7 @@ endfunction(run_ac)
 ####
 function(_describe_autocoder_prep AUTOCODER_NAME AC_INPUT_SOURCES)
     # Start by displaying inputs to autocoders
-    if (CMAKE_DEBUG_OUTPUT AND NOT INFO_ONLY)
+    if (CMAKE_DEBUG_OUTPUT)
         message(STATUS "[Autocode/${AUTOCODER_NAME}] Autocoding Input Sources:")
         foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
             message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${SOURCE}")
@@ -210,13 +202,11 @@ endfunction(_filter_sources)
 ####
 # __ac_process_sources:
 #
-# Process sources found in SOURCES list.  If INFO_ONLY is set, then the autocoder is not setup, but rather only the
-# dependency and file information is generated. Otherwise, the autocoder is setup to run on sources. Helper function.
-#
+# Process sources found in SOURCES list and sets up the autocoder to run on the sources by registering a rule to create
+# those sources.
 # SOURCES: source file list. Note: if the autocoder sets HANDLES_INDIVIDUAL_SOURCES this will be singular
-# INFO_ONLY: TRUE if only information is to be generated FALSE (normal) to setup autocoding rules
 ####
-function(__ac_process_sources SOURCES INFO_ONLY)
+function(__ac_process_sources SOURCES)
     # Run the autocode setup process now with memoization
     cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
     cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
@@ -226,8 +216,6 @@ function(__ac_process_sources SOURCES INFO_ONLY)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 
     # Run the generation setup when not requesting "info only"
-    if (NOT INFO_ONLY)
-        cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
-    endif()
+    cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
 endfunction()
 
