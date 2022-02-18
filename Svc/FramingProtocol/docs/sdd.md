@@ -127,8 +127,8 @@ pure virtual methods:
 
 The method `allocate` should accept a size in bytes and return (1) an `Fw::Buffer`
 that points to a memory allocation of at least that size if the allocation
-succeeded; or (2) an invalid buffer (i.e., a buffer whose address is zero)
-if the allocation failed.
+succeeded; or (2) an invalid buffer (i.e., a buffer whose address is null
+and whose size is zero) if the allocation failed.
 A typical implementation invokes a port connected to a memory allocation component.
 
 The method `send` should send the data stored in the buffer.
@@ -233,8 +233,12 @@ the circular buffer if necessary (e.g., to read a length).
 to hold the deframed data.
 
    1. Deframe the data into the allocated buffer.
+The deframing operation should read, but not delete bytes from,
+the buffer.
 
    1. Use `m_interface->route` to send the buffer.
+
+1. Set `needed` to record the number of bytes needed.
 
 1. Return status.
 
