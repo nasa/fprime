@@ -179,71 +179,76 @@ $(document).ready(function(){initNavTree('_svc_2_system_resources_2_system_resou
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordtype">void</span> SystemResources ::VERSION_cmdHandler(<span class="keyword">const</span> <a class="code" href="fp_config_8hpp.html#a32d34ba1548079db6e25c3d0b1b386f0">FwOpcodeType</a> opCode, <span class="keyword">const</span> U32 cmdSeq) {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> version_string(VERSION);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    this-&gt;log_ACTIVITY_LO_VERSION(version_string);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    this-&gt;cmdResponse_out(opCode, cmdSeq, <a class="code" href="vx_works_2_standard_types_8hpp.html#a4790f45dcc812c1b00184a2edccdddf5a2bc49ec37d6a5715dd23e85f1ff5bb59">Fw::CmdResponse::OK</a>);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> SystemResources::compCpuUtil(<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html">Os::SystemResources::CpuTicks</a> current, <a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html">Os::SystemResources::CpuTicks</a> previous) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> util = 100.0f;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="comment">// Prevent divide by zero on fast-sample</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">if</span> ((current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a>) != 0) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">// Compute CPU % Utilization</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        util = (<span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a768a414fc532a66781696d5492c7b17e">used</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a768a414fc532a66781696d5492c7b17e">used</a>) / <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a>)) *</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;               100.0f;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        util = std::isnan(util) ? 100.0f : util;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> util;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keywordtype">void</span> SystemResources::Cpu() {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    U32 count = 0;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> cpuAvg = 0;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">for</span> (U32 i = 0; i &lt; m_cpu_count &amp;&amp; i &lt; CPU_COUNT; i++) {</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">Os::SystemResources::SystemResourcesStatus</a> status = <a class="code" href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">Os::SystemResources::getCpuTicks</a>(m_cpu[i], i);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="comment">// Best-effort calculations and telemetry</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordflow">if</span> (status == <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">Os::SystemResources::SYSTEM_RESOURCES_OK</a>) {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            cpuAvg += cpuUtil;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <span class="comment">// Send telemetry using telemetry output table</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_cpu_tlm_functions[i]);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            (this-&gt;*m_cpu_tlm_functions[i])(cpuUtil, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>());</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="comment">// Store cpu used and total</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            m_cpu_prev[i] = m_cpu[i];</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            count++;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(count));</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    this-&gt;tlmWrite_CPU(cpuAvg);</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;}</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="keywordtype">void</span> SystemResources::Mem() {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">Os::SystemResources::getMemUtil</a>(m_mem) == <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">Os::SystemResources::SYSTEM_RESOURCES_OK</a>) {</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        this-&gt;tlmWrite_MEMORY_TOTAL(m_mem.<a class="code" href="struct_os_1_1_system_resources_1_1_mem_util.html#afb2b30d6f6a7a6d44e2ec0a03fd29a06">total</a> / 1024);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        this-&gt;tlmWrite_MEMORY_USED(m_mem.<a class="code" href="struct_os_1_1_system_resources_1_1_mem_util.html#ab9bda4310f4b640ef670a023e53eea8b">used</a> / 1024);</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;}</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="keywordtype">void</span> SystemResources::PhysMem() {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> total = 0;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> free = 0;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">Os::FileSystem::getFreeSpace</a>(<span class="stringliteral">&quot;/&quot;</span>, total, free) == <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a>) {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        this-&gt;tlmWrite_NON_VOLATILE_FREE(free / 1024);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        this-&gt;tlmWrite_NON_VOLATILE_TOTAL(total / 1024);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    }</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keywordtype">void</span> SystemResources::Version() {</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <a class="code" href="class_fw_1_1_tlm_string.html">Fw::TlmString</a> version_string(VERSION);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    this-&gt;tlmWrite_VERSION(version_string);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> version_string(FRAMEWORK_VERSION);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    this-&gt;log_ACTIVITY_LO_FRAMEWORK_VERSION(version_string);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    version_string = PROJECT_VERSION;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    this-&gt;log_ACTIVITY_LO_PROJECT_VERSION(version_string);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    this-&gt;cmdResponse_out(opCode, cmdSeq, <a class="code" href="vx_works_2_standard_types_8hpp.html#a4790f45dcc812c1b00184a2edccdddf5a2bc49ec37d6a5715dd23e85f1ff5bb59">Fw::CmdResponse::OK</a>);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> SystemResources::compCpuUtil(<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html">Os::SystemResources::CpuTicks</a> current, <a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html">Os::SystemResources::CpuTicks</a> previous) {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> util = 100.0f;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="comment">// Prevent divide by zero on fast-sample</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">if</span> ((current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a>) != 0) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="comment">// Compute CPU % Utilization</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        util = (<span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a768a414fc532a66781696d5492c7b17e">used</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a768a414fc532a66781696d5492c7b17e">used</a>) / <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(current.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a> - previous.<a class="code" href="struct_os_1_1_system_resources_1_1_cpu_ticks.html#a13c5080aca60b5e3fbeba3a266d7b3e2">total</a>)) *</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;               100.0f;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        util = std::isnan(util) ? 100.0f : util;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> util;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;}</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="keywordtype">void</span> SystemResources::Cpu() {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    U32 count = 0;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> cpuAvg = 0;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">for</span> (U32 i = 0; i &lt; m_cpu_count &amp;&amp; i &lt; CPU_COUNT; i++) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">Os::SystemResources::SystemResourcesStatus</a> status = <a class="code" href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">Os::SystemResources::getCpuTicks</a>(m_cpu[i], i);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="comment">// Best-effort calculations and telemetry</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">if</span> (status == <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">Os::SystemResources::SYSTEM_RESOURCES_OK</a>) {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a> cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            cpuAvg += cpuUtil;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            <span class="comment">// Send telemetry using telemetry output table</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <a class="code" href="assert_8hpp.html#ae203ae2022a5f92eea0ceb85a0d62c3c">FW_ASSERT</a>(this-&gt;m_cpu_tlm_functions[i]);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            (this-&gt;*m_cpu_tlm_functions[i])(cpuUtil, <a class="code" href="class_fw_1_1_time.html">Fw::Time</a>());</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <span class="comment">// Store cpu used and total</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            m_cpu_prev[i] = m_cpu[i];</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            count++;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    cpuAvg = (count == 0) ? 0.0f : (cpuAvg / <span class="keyword">static_cast&lt;</span><a class="code" href="basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b">F32</a><span class="keyword">&gt;</span>(count));</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    this-&gt;tlmWrite_CPU(cpuAvg);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;}</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="keywordtype">void</span> SystemResources::Mem() {</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">Os::SystemResources::getMemUtil</a>(m_mem) == <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">Os::SystemResources::SYSTEM_RESOURCES_OK</a>) {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        this-&gt;tlmWrite_MEMORY_TOTAL(m_mem.<a class="code" href="struct_os_1_1_system_resources_1_1_mem_util.html#afb2b30d6f6a7a6d44e2ec0a03fd29a06">total</a> / 1024);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        this-&gt;tlmWrite_MEMORY_USED(m_mem.<a class="code" href="struct_os_1_1_system_resources_1_1_mem_util.html#ab9bda4310f4b640ef670a023e53eea8b">used</a> / 1024);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    }</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;}</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="keywordtype">void</span> SystemResources::PhysMem() {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> total = 0;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> free = 0;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">Os::FileSystem::getFreeSpace</a>(<span class="stringliteral">&quot;/&quot;</span>, total, free) == <a class="code" href="namespace_os_1_1_file_system.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa1dc231d78e920a1bb300ce9fc9d49e9d">Os::FileSystem::OP_OK</a>) {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        this-&gt;tlmWrite_NON_VOLATILE_FREE(free / 1024);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        this-&gt;tlmWrite_NON_VOLATILE_TOTAL(total / 1024);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;}</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="keywordtype">void</span> SystemResources::Version() {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <a class="code" href="class_fw_1_1_tlm_string.html">Fw::TlmString</a> version_string(FRAMEWORK_VERSION);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    this-&gt;tlmWrite_FRAMEWORK_VERSION(version_string);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    version_string= PROJECT_VERSION;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    this-&gt;tlmWrite_PROJECT_VERSION(version_string);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;}</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}  <span class="comment">// end namespace Svc</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_adf8c81979861abb1fbc0a7985c27dcc6"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6">Os::SystemResources::SystemResourcesStatus</a></div><div class="ttdeci">SystemResourcesStatus</div><div class="ttdef"><b>Definition:</b> <a href="os_2_system_resources_8hpp_source.html#l00020">SystemResources.hpp:20</a></div></div>

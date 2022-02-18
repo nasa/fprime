@@ -140,9 +140,9 @@ result from version incompatibilities will be up to the user to resolve.
 e.g. `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON`
 
 
-## `FPRIME_FPP_LOCS_BUILD`:
+## `FPRIME_CHECK_FRAMEWORK_VERSION`:
 
-For internal use only.  Used to setup build to generate FPP location file.  Run as a sub-build within fprime.
+For internal use only.  Used to check the framework version has been updated on tags.
 
 
 ## Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
