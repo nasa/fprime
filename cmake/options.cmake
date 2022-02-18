@@ -172,13 +172,14 @@ option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
 #
 # e.g. `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON`
 ####
+option(FPRIME_SKIP_TOOLS_VERSION_CHECK "Skip the version checking of tools" OFF)
 
 ####
-# `FPRIME_FPP_LOCS_BUILD`:
+# `FPRIME_CHECK_FRAMEWORK_VERSION`:
 #
-# For internal use only.  Used to setup build to generate FPP location file.  Run as a sub-build within fprime.
+# For internal use only.  Used to check the framework version has been updated on tags.
 ####
-option(FPRIME_FPP_LOCS_BUILD "Skip the tools check for older clients." OFF)
+option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when building." OFF)
 
 # Backwards compatibility, when build type=TESTING BUILD_TESTING is on
 string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)

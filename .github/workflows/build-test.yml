@@ -17,6 +17,9 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git fetch --tags
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
     - name: F prime CI step
@@ -73,6 +76,9 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git fetch --tags
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
     - name: Setup Dependencies
@@ -93,6 +99,9 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git fetch --tags
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
     - name: Setup Dependencies
@@ -114,6 +123,9 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: git fetch --tags
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
     - name: CMake Tests

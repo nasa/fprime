@@ -89,9 +89,11 @@ void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
 }
 
 void SystemResources ::VERSION_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
-    Fw::LogStringArg version_string(VERSION);
+    Fw::LogStringArg version_string(FRAMEWORK_VERSION);
+    this->log_ACTIVITY_LO_FRAMEWORK_VERSION(version_string);
 
-    this->log_ACTIVITY_LO_VERSION(version_string);
+    version_string = PROJECT_VERSION;
+    this->log_ACTIVITY_LO_PROJECT_VERSION(version_string);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -150,7 +152,10 @@ void SystemResources::PhysMem() {
 }
 
 void SystemResources::Version() {
-    Fw::TlmString version_string(VERSION);
-    this->tlmWrite_VERSION(version_string);
+    Fw::TlmString version_string(FRAMEWORK_VERSION);
+    this->tlmWrite_FRAMEWORK_VERSION(version_string);
+
+    version_string= PROJECT_VERSION;
+    this->tlmWrite_PROJECT_VERSION(version_string);
 }
 }  // end namespace Svc
