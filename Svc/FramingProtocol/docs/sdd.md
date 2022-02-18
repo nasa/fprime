@@ -125,11 +125,11 @@ pure virtual methods:
     virtual void send(Fw::Buffer& outgoing) = 0;
 ```
 
-The method `allocate` should accept a size in bytes and return (1) an `Fw::Buffer`
-that points to a memory allocation of at least that size if the allocation
-succeeded; or (2) an invalid buffer (i.e., a buffer whose address is null
-and whose size is zero) if the allocation failed.
-A typical implementation invokes a port connected to a memory allocation component.
+The method `allocate` should accept a size in bytes and return an `Fw::Buffer`
+that (1) points to a memory allocation of at least that size if the allocation
+succeeded; or (2) has size zero if the allocation failed.
+A typical implementation invokes a port connected to a memory allocation
+component.
 
 The method `send` should send the data stored in the buffer.
 A typical implementation invokes an `Fw::BufferSend` port.
