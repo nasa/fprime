@@ -8,6 +8,7 @@
 ####
 include_guard()
 include(utilities)
+include(autocoder/helpers)
 
 ####
 # run_ac_set:
@@ -61,24 +62,85 @@ endfunction()
 ####
 function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
     plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
-
-    # Find the one variable set in the autocoder
-    string(TOUPPER "${AUTOCODER_NAME}" AUTOCODER_NAME_UPPER)
-    get_property(HANDLES_INDIVIDUAL_SOURCES_SET GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES" SET)
-    if (NOT HANDLES_INDIVIDUAL_SOURCES_SET)
-        message(FATAL_ERROR "${AUTOCODER_CMAKE} does not define boolean property ${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
-    endif()
-    get_property(HANDLES_INDIVIDUAL_SOURCES GLOBAL PROPERTY "${AUTOCODER_NAME_UPPER}_HANDLES_INDIVIDUAL_SOURCES")
-
+    # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
+
+    # Break early if there are no sources, no need to autocode nothing
     if (NOT AC_INPUT_SOURCES)
         if (CMAKE_DEBUG_OUTPUT)
             message(STATUS "[Autocode/${AUTOCODER_NAME}] No sources detected")
         endif()
         return()
     endif()
+    string(SHA1 "SRCS_HASH" "${AC_INPUT_SOURCES};${AUTOCODER_CMAKE}")
 
+    get_property(DEP_SET DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES" SET)
+    get_property(GEN_SET DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED" SET)
+    get_property(CON_SET DIRECTORY PROPERTY "${SRCS_HASH}_CONSUMED" SET)
+
+
+    # If we have not set these properties, run the autocoder setup function
+    if (NOT DEP_SET AND NOT GEN_SET AND NOT CON_SET)
+        _describe_autocoder_prep("${AUTOCODER_NAME}" "${AC_INPUT_SOURCES}")
+
+        # Find the one variable set in the autocoder
+        get_property(HANDLES_INDIVIDUAL_SOURCES_SET GLOBAL PROPERTY "${AUTOCODER_NAME}_HANDLES_INDIVIDUAL_SOURCES" SET)
+        if (NOT HANDLES_INDIVIDUAL_SOURCES_SET)
+            message(FATAL_ERROR "${AUTOCODER_CMAKE} did not call one of the autocoder_setup_for_*_sources functions")
+        endif()
+        get_property(HANDLES_INDIVIDUAL_SOURCES GLOBAL PROPERTY "${AUTOCODER_NAME}_HANDLES_INDIVIDUAL_SOURCES")
+        set(CONSUMED_SOURCES)
+        # Handles individual/multiple source handling
+        if (HANDLES_INDIVIDUAL_SOURCES)
+            init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILES_LIST)
+            foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
+                __ac_process_sources("${SOURCE}" "${INFO_ONLY}")
+                list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
+                list(APPEND GENERATED_FILES_LIST ${GENERATED_FILES})
+                # Check if this would have generated something, if not don't mark the file as used
+                if (GENERATED_FILES)
+                    list(APPEND CONSUMED_SOURCES "${SOURCE}")
+                endif()
+            endforeach()
+            set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES_LIST}")
+            set(GENERATED_FILES "${GENERATED_FILES_LIST}")
+        else()
+            __ac_process_sources("${AC_INPUT_SOURCES}" "${INFO_ONLY}")
+            if (GENERATED_FILES)
+                set(CONSUMED_SOURCES "${AC_INPUT_SOURCES}")
+            endif()
+        endif()
+        set_property(DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES" "${MODULE_DEPENDENCIES}")
+        set_property(DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED" "${GENERATED_FILES}")
+        set_property(DIRECTORY PROPERTY "${SRCS_HASH}_CONSUMED" "${CONSUMED_SOURCES}")
+        set_property(DIRECTORY PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES" "${FILE_DEPENDENCIES}")
+        _describe_autocoder_run("${AUTOCODER_NAME}")
+        # Configure depends on this source file if it causes a change to module dependencies
+        if (MODULE_DEPENDENCIES)
+            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CONSUMED_SOURCES})
+        endif()
+    endif()
+    get_property(DEPS DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES")
+    get_property(GENS DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED")
+    get_property(CONS DIRECTORY PROPERTY "${SRCS_HASH}_CONSUMED")
+
+    # Return variables
+    set(MODULE_DEPENDENCIES "${DEPS}" PARENT_SCOPE)
+    set(GENERATED_FILES "${GENS}" PARENT_SCOPE)
+    set(CONSUMED_SOURCES "${CONS}" PARENT_SCOPE)
+endfunction(run_ac)
+
+####
+# Function `_describe_autocoder_prep`:
+#
+# Discribes the inputs into an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Run before running the
+# autocoder
+#
+# AUTOCODER_NAME: name of autocoder being run
+# AC_INPUT_SOURCES: input files to autocoder
+####
+function(_describe_autocoder_prep AUTOCODER_NAME AC_INPUT_SOURCES)
     # Start by displaying inputs to autocoders
     if (CMAKE_DEBUG_OUTPUT AND NOT INFO_ONLY)
         message(STATUS "[Autocode/${AUTOCODER_NAME}] Autocoding Input Sources:")
@@ -86,60 +148,42 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES INFO_ONLY)
             message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${SOURCE}")
         endforeach()
     endif()
-
-    set(CONSUMED_SOURCES)
-    # Handles individual/multiple source handling
-    if (HANDLES_INDIVIDUAL_SOURCES)
-        init_variables(MODULE_DEPENDENCIES_LIST GENERATED_FILES_LIST)
-        foreach(SOURCE IN LISTS AC_INPUT_SOURCES)
-            __ac_process_sources("${SOURCE}" "${INFO_ONLY}")
-            list(APPEND MODULE_DEPENDENCIES_LIST ${MODULE_DEPENDENCIES})
-            list(APPEND GENERATED_FILES_LIST ${GENERATED_FILES})
-            # Check if this would have generated something, if not don't mark the file as used
-            if (GENERATED_FILES)
-                list(APPEND CONSUMED_SOURCES "${SOURCE}")
-            endif()
-        endforeach()
-        set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES_LIST}")
-        set(GENERATED_FILES "${GENERATED_FILES_LIST}")
-    else()
-        __ac_process_sources("${AC_INPUT_SOURCES}" "${INFO_ONLY}")
-        if (GENERATED_FILES)
-            set(CONSUMED_SOURCES "${AC_INPUT_SOURCES}")
-        endif()
-    endif()
+endfunction()
+####
+# Function `_describe_autocoder_run`:
+#
+# Describe the results of an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Must have run the autocoder
+# already and set the properties.
+#
+# AUTOCODER_NAME: name of autocoder being described
+####
+function(_describe_autocoder_run AUTOCODER_NAME)
     # When actually generating items, explain what is done and why
-    if (CMAKE_DEBUG_OUTPUT AND NOT INFO_ONLY)
+    if (CMAKE_DEBUG_OUTPUT)
+        get_property(DEPS DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES")
+        get_property(GENS DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED")
+        get_property(CONS DIRECTORY PROPERTY "${SRCS_HASH}_CONSUMED")
+        get_property(FILES DIRECTORY PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES")
         message(STATUS "[Autocode/${AUTOCODER_NAME}] Generated Files:")
-        foreach(GENERATED_FILE IN LISTS GENERATED_FILES)
+        foreach(GENERATED_FILE IN LISTS GENS)
             message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${GENERATED_FILE}")
         endforeach()
         # Output file dependency status block
-        if (FILE_DEPENDENCIES)
+        if (FILES)
             message(STATUS "[Autocode/${AUTOCODER_NAME}] File Dependencies:")
-            foreach(FILE_DEPENDENCY IN LISTS FILE_DEPENDENCIES)
+            foreach(FILE_DEPENDENCY IN LISTS FILES)
                 message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${FILE_DEPENDENCY}")
             endforeach()
         endif()
         # Output module dependency status block
-        if (MODULE_DEPENDENCIES)
+        if (DEPS)
             message(STATUS "[Autocode/${AUTOCODER_NAME}] Module Dependencies:")
-            foreach(MODULE_DEPENDENCY IN LISTS MODULE_DEPENDENCIES)
+            foreach(MODULE_DEPENDENCY IN LISTS DEPS)
                 message(STATUS "[Autocode/${AUTOCODER_NAME}]   ${MODULE_DEPENDENCY}")
             endforeach()
         endif()
     endif()
-    # Configure depends on this source file if it causes a change to module dependencies
-    if (MODULE_DEPENDENCIES)
-	    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CONSUMED_SOURCES})
-    endif()
-
-    # Return variables
-    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-    set(CONSUMED_SOURCES "${CONSUMED_SOURCES}" PARENT_SCOPE)
-endfunction(run_ac)
-
+endfunction()
 ####
 # _filter_sources:
 #
