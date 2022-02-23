@@ -56,9 +56,9 @@ class Tester : public DeframerGTestBase {
 
     void update_header_info(U32 garbage_index, U8 garbage_byte);
 
-    void setInputParams(FP_FRAME_TOKEN_TYPE size,
+    void setInputParams(FpFrameHeader::TokenType size,
                         U8* buffer,
-                        FP_FRAME_TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
+                        FpFrameHeader::TokenType packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
 
   private:
     // ----------------------------------------------------------------------
@@ -126,8 +126,8 @@ class Tester : public DeframerGTestBase {
     bool m_polling;
 
     //! Expected buffer, for checking of the interface
-    //FP_FRAME_TOKEN_TYPE m_size;
-    //FP_FRAME_TOKEN_TYPE m_packet;
+    //FpFrameHeader::TokenType m_size;
+    //FpFrameHeader::TokenType m_packet;
     //
     //Fw::Buffer m_incoming_file_buffer;
 
@@ -140,7 +140,7 @@ class Tester : public DeframerGTestBase {
     bool m_garbage;
     Fw::ComPacket::ComPacketType m_uplink_com_type;
     // Initialize to empty list to appease valgrind
-    U8 m_uplink_data[(sizeof(FP_FRAME_TOKEN_TYPE) * 2) + sizeof(U32) + FW_COM_BUFFER_MAX_SIZE] = {};*/
+    U8 m_uplink_data[(sizeof(FpFrameHeader::TokenType) * 2) + sizeof(U32) + FW_COM_BUFFER_MAX_SIZE] = {};*/
 };
 
 }  // end namespace Svc

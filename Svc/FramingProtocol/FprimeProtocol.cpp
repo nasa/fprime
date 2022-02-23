@@ -15,8 +15,6 @@
 
 namespace Svc {
 
-const FP_FRAME_TOKEN_TYPE FprimeFraming::START_WORD = static_cast<FP_FRAME_TOKEN_TYPE>(0xdeadbeef);
-
 FprimeFraming::FprimeFraming(): FramingProtocol() {}
 
 FprimeDeframing::FprimeDeframing(): DeframingProtocol() {}
@@ -25,15 +23,15 @@ void FprimeFraming::frame(const U8* const data, const U32 size, Fw::ComPacket::C
     FW_ASSERT(data != nullptr);
     FW_ASSERT(m_interface != nullptr);
     // Use of I32 size is explicit as ComPacketType will be specifically serialized as an I32
-    FP_FRAME_TOKEN_TYPE real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
-    FP_FRAME_TOKEN_TYPE total = real_data_size + FP_FRAME_HEADER_SIZE + HASH_DIGEST_LENGTH;
+    FpFrameHeader::TokenType real_data_size = size + ((packet_type != Fw::ComPacket::FW_PACKET_UNKNOWN) ? sizeof(I32) : 0);
+    FpFrameHeader::TokenType total = real_data_size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     Fw::Buffer buffer = m_interface->allocate(total);
     Fw::SerializeBufferBase& serializer = buffer.getSerializeRepr();
     Utils::HashBuffer hash;
 
     // Serialize data
     Fw::SerializeStatus status;
-    status = serializer.serialize(START_WORD);
+    status = serializer.serialize(FpFrameHeader::START_WORD);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     
     status = serializer.serialize(real_data_size);
@@ -82,22 +80,22 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
 }
 
 DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffer& ring, U32& needed) {
-    FP_FRAME_TOKEN_TYPE start = 0;
-    FP_FRAME_TOKEN_TYPE size = 0;
+    FpFrameHeader::TokenType start = 0;
+    FpFrameHeader::TokenType size = 0;
     FW_ASSERT(m_interface != nullptr);
     // Check for header or ask for more data
-    if (ring.get_remaining_size() < FP_FRAME_HEADER_SIZE) {
-        needed = FP_FRAME_HEADER_SIZE;
+    if (ring.get_remaining_size() < FpFrameHeader::SIZE) {
+        needed = FpFrameHeader::SIZE;
         return DeframingProtocol::DEFRAMING_MORE_NEEDED;
     }
     // Peek into the header and read out values
     Fw::SerializeStatus status = ring.peek(start, 0);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = ring.peek(size, sizeof(FP_FRAME_TOKEN_TYPE));
+    status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    needed = (FP_FRAME_HEADER_SIZE + size + HASH_DIGEST_LENGTH);
+    needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
     // Check the header for correctness
-    if ((start != FprimeFraming::START_WORD) || (size >= (ring.get_capacity() - FP_FRAME_HEADER_SIZE - HASH_DIGEST_LENGTH))) {
+    if ((start != FpFrameHeader::START_WORD) || (size >= (ring.get_capacity() - FpFrameHeader::SIZE - HASH_DIGEST_LENGTH))) {
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
     }
     // Check for enough data to deserialize everything otherwise break and wait for more.
@@ -113,7 +111,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // that causes issues in routing. adjust size
     FW_ASSERT(buffer.getSize() >= size);
     buffer.setSize(size);
-    ring.peek(buffer.getData(), size, FP_FRAME_HEADER_SIZE);
+    ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }

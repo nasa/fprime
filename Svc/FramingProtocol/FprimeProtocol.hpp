@@ -16,28 +16,49 @@
 #include <Svc/FramingProtocol/FramingProtocol.hpp>
 #include <Svc/FramingProtocol/DeframingProtocol.hpp>
 
-#define FP_FRAME_TOKEN_TYPE U32
-#define FP_FRAME_HEADER_SIZE (sizeof(FP_FRAME_TOKEN_TYPE) * 2)
-
 namespace Svc {
-/**
- * \brief class implementing the fprime serialization protocol
- */
-class FprimeFraming: public FramingProtocol {
-  public:
-    static const FP_FRAME_TOKEN_TYPE START_WORD;
-    FprimeFraming();
 
-    void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type);
-};
+  // Definitions for the F Prime frame header
+  namespace FpFrameHeader {
 
-class FprimeDeframing : public DeframingProtocol {
-  public:
-    FprimeDeframing();
+    //! Token type for F Prime frame header
+    using TokenType = U32;
 
-    bool validate(Types::CircularBuffer& buffer, U32 size);
+    enum {
+      //! Header size for F Prime frame header
+      SIZE = sizeof(TokenType) * 2
+    };
 
-    DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed);
-};
+    //! The start word for F Prime framing
+    const TokenType START_WORD = static_cast<TokenType>(0xdeadbeef);
+
+  }
+
+  //! \brief Implements the F Prime framing protocol
+  class FprimeFraming: public FramingProtocol {
+    public:
+
+      FprimeFraming();
+
+      void frame(
+          const U8* const data,
+          const U32 size,
+          Fw::ComPacket::ComPacketType packet_type
+      );
+
+  };
+
+  //! \brief Implements the F Prime deframing protocol
+  class FprimeDeframing : public DeframingProtocol {
+    public:
+
+      FprimeDeframing();
+
+      bool validate(Types::CircularBuffer& buffer, U32 size);
+
+      DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed);
+
+  };
+
 };
 #endif  // SVC_FPRIME_PROTOCOL_HPP
