@@ -38,13 +38,15 @@ namespace Svc {
   class FprimeFraming: public FramingProtocol {
     public:
 
+      //! Constructor
       FprimeFraming();
 
+      //! Implementats the frame method
       void frame(
           const U8* const data,
           const U32 size,
           Fw::ComPacket::ComPacketType packet_type
-      );
+      ) override;
 
   };
 
@@ -52,11 +54,20 @@ namespace Svc {
   class FprimeDeframing : public DeframingProtocol {
     public:
 
+      //! Constructor
       FprimeDeframing();
 
+      //! Validates data against the stored hash value
+      //! 1. Computes the hash value V of bytes [0,SIZE-1] in the circular buffer
+      //! 2. Compares V against bytes [SIZE, SIZE + HASH_DIGEST_LENGTH - 1] of
+      //!    the circular buffer, which are expected to be the stored hash value.
       bool validate(Types::CircularBuffer& buffer, U32 size);
 
-      DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed);
+      //! Implements the deframe method
+      DeframingStatus deframe(
+          Types::CircularBuffer& buffer,
+          U32& needed
+      ) override;
 
   };
 
