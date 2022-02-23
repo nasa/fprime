@@ -10,11 +10,11 @@
 //
 // ======================================================================
 
-#include "Svc/FramingProtocol/FramingProtocolInterface.hpp"
-#include "Fw/Com/ComPacket.hpp"
-
 #ifndef SVC_FRAMING_PROTOCOL_HPP
 #define SVC_FRAMING_PROTOCOL_HPP
+
+#include "Svc/FramingProtocol/FramingProtocolInterface.hpp"
+#include "Fw/Com/ComPacket.hpp"
 
 namespace Svc {
 /**

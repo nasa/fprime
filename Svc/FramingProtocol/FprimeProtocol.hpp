@@ -10,10 +10,11 @@
 //
 // ======================================================================
 
+#ifndef SVC_FPRIME_PROTOCOL_HPP
+#define SVC_FPRIME_PROTOCOL_HPP
+
 #include <Svc/FramingProtocol/FramingProtocol.hpp>
 #include <Svc/FramingProtocol/DeframingProtocol.hpp>
-#ifndef FPRIMEPROTOCOL_HPP
-#define FPRIMEPROTOCOL_HPP
 
 #define FP_FRAME_TOKEN_TYPE U32
 #define FP_FRAME_HEADER_SIZE (sizeof(FP_FRAME_TOKEN_TYPE) * 2)
@@ -39,4 +40,4 @@ class FprimeDeframing : public DeframingProtocol {
     DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed);
 };
 };
-#endif  // FPRIMEPROTOCOL_HPP
+#endif  // SVC_FPRIME_PROTOCOL_HPP

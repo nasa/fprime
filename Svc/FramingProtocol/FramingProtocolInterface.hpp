@@ -10,12 +10,12 @@
 //
 // ======================================================================
 
-
 #ifndef SVC_FRAMING_PROTOCOL_INTERFACE_HPP
 #define SVC_FRAMING_PROTOCOL_INTERFACE_HPP
 
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Time/Time.hpp>
+
 /**
  * \brief interface supplied to the framing protocol
  *
