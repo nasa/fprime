@@ -132,4 +132,5 @@ NATIVE_UINT_TYPE get_capacity();
 
 Return the physical store size (one more than the logical store size).
 
-_TODO: This interface could be improved._
+_TODO: This interface should probably return the logical store size.
+The framing protocol implementation seems to assume that it does._
