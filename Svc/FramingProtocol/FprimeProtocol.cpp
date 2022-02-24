@@ -95,7 +95,14 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
     // Check the header for correctness
-    if ((start != FpFrameHeader::START_WORD) || ((size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH) >= ring.get_capacity())) {
+    const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
+    if (start != FpFrameHeader::START_WORD) {
+        // Start word must be valid
+        return DeframingProtocol::DEFRAMING_INVALID_FORMAT;
+    }
+    if (frameSize + 1 > ring.get_capacity()) {
+        // Frame size is too large
+        // Note: ring.get_capacity returns one more than the available buffer capacity
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
     }
     // Check for enough data to deserialize everything otherwise break and wait for more.
