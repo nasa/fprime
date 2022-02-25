@@ -20,6 +20,11 @@
 
 #include <cstdio>
 
+// An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
+#define ASSERT_CONSISTENT(store, size, X) \
+    FW_ASSERT(X >= store && X < (store + size), \
+              reinterpret_cast<POINTER_CAST>(X), \
+              reinterpret_cast<POINTER_CAST>(store))
 
 namespace Types {
 
@@ -41,12 +46,12 @@ NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
 }
 
 NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) const {
-    // Note: a byte is lost in order to prevent wrap-around confusion
+    const NATIVE_UINT_TYPE capacity = this->get_capacity();
     const NATIVE_UINT_TYPE remaining = (m_tail >= m_head) ?
-        (m_size - 1 - (reinterpret_cast<POINTER_CAST>(m_tail) - reinterpret_cast<POINTER_CAST>(m_head))) :
+        (capacity - (reinterpret_cast<POINTER_CAST>(m_tail) - reinterpret_cast<POINTER_CAST>(m_head))) :
         (reinterpret_cast<POINTER_CAST>(m_head) - reinterpret_cast<POINTER_CAST>(m_tail) - 1);
     FW_ASSERT(remaining != static_cast<NATIVE_UINT_TYPE>(-1));
-    return serialization ? remaining : m_size - 1 - remaining;
+    return serialization ? remaining : capacity - remaining;
 }
 
 U8* CircularBuffer :: increment(U8* const pointer, NATIVE_UINT_TYPE amount) {
@@ -157,7 +162,7 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
     return Fw::FW_SERIALIZE_OK;
 }
 
-NATIVE_UINT_TYPE CircularBuffer ::get_capacity() {
+NATIVE_UINT_TYPE CircularBuffer ::get_capacity() const {
     // The implementation reserves one byte in order to prevent wrap-around confusion
     FW_ASSERT(m_size > 0);
     return m_size - 1;

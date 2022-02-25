@@ -11,20 +11,15 @@
  *  Created on: Apr 4, 2019
  *      Author: lestarch
  */
-#include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
 
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
 #define TYPES_CIRCULAR_BUFFER_HPP
 
-//#define CIRCULAR_DEBUG
+#include <FpConfig.hpp>
+#include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
 
-// An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
-#define ASSERT_CONSISTENT(store, size, X) \
-    FW_ASSERT(X >= store && X < (store + size), \
-              reinterpret_cast<POINTER_CAST>(X), \
-              reinterpret_cast<POINTER_CAST>(store))
+//#define CIRCULAR_DEBUG
 
 namespace Types {
 
@@ -109,7 +104,7 @@ class CircularBuffer {
          * because the implementation reserves one byte for itself.
          * \return capacity of the buffer
          */
-        NATIVE_UINT_TYPE get_capacity();
+        NATIVE_UINT_TYPE get_capacity() const;
 
 #ifdef CIRCULAR_DEBUG
         void print();
