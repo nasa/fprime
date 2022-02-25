@@ -41,7 +41,7 @@ NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
     return this->get_capacity() - m_allocated_size;
 }
 
-NATIVE_UINT_TYPE CircularBuffer :: increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount) {
+NATIVE_UINT_TYPE CircularBuffer :: increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount) const {
     FW_ASSERT(idx < m_store_size);
     return (idx + amount) % m_store_size;
 }
@@ -62,11 +62,11 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset) {
+Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset) const {
     return peek(reinterpret_cast<U8&>(value), offset);
 }
 
-Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
+Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
     if ((sizeof(U8) + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -77,7 +77,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) {
+Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
     if ((sizeof(U32) + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -94,7 +94,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) 
     return Fw::FW_SERIALIZE_OK;
 }
 
-Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) {
+Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
     if ((size + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -120,8 +120,7 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
 }
 
 NATIVE_UINT_TYPE CircularBuffer ::get_capacity() const {
-    FW_ASSERT(m_store_size > 0);
-    return m_store_size - 1;
+    return m_store_size;
 }
 
 #ifdef CIRCULAR_DEBUG

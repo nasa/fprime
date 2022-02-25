@@ -51,21 +51,21 @@ class CircularBuffer {
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0) const;
         /**
          * Deserialize data into the given variable without moving the head pointer
          * \param value: value to fill
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0) const;
         /**
          * Deserialize data into the given variable without moving the head pointer
          * \param value: value to fill
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0) const;
 
         /**
          * Deserialize data into the given buffer without moving the head variable.
@@ -74,7 +74,7 @@ class CircularBuffer {
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0) const;
 
         /**
          * Rotate the head pointer effectively erasing data from the circular buffer and making
@@ -100,9 +100,6 @@ class CircularBuffer {
         /**
          * Get the logical capacity of the buffer, i.e., the number of available
          * bytes when the buffer is empty
-         * Note: the logical capacity is one less than the physical size,
-         * because the implementation reserves one byte for itself.
-         * \return capacity of the buffer
          */
         NATIVE_UINT_TYPE get_capacity() const;
 
@@ -116,7 +113,7 @@ class CircularBuffer {
          * \param amount: amount to increment
          * \return: new index value
          */
-        NATIVE_UINT_TYPE increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1);
+        NATIVE_UINT_TYPE increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1) const;
         //! Memory store backing this circular buffer
         U8* const m_store;
         //! Allocated size

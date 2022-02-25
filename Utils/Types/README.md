@@ -21,9 +21,8 @@ The implementation uses a fixed-size physical store,
 with top and bottom pointers that increase when the
 logical store grows and shrinks, and that wrap around when they
 pass the end of the physical store.
-The implementation reserves one byte for itself, so
-the maximum size of the logical store is one less than the size of the physical
-store.
+The maximum size of the logical store is equal to the size
+of the physical store.
 
 `CircularBuffer` does not provide concurrency control.
 If multiple threads use the buffer, the uses must
@@ -40,8 +39,7 @@ CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size)
 
 Construct a circular buffer with the given physical store,
 specified as a starting pointer and a size in bytes.
-The implementation reserves one byte of the physical store,
-so the maximum logical store size is one less than the
+The maximum logical store size is equal to the
 physical store size.
 
 ### Adding Data
@@ -132,6 +130,6 @@ store without deleting data.
 NATIVE_UINT_TYPE get_capacity();
 ```
 
-Return the maximum logical store size (one less than the physical store size).
+Return the maximum logical store size (equal to the physical store size).
 This is the total number of bytes that may be added to an empty
 circular buffer.
