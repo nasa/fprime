@@ -24,10 +24,9 @@ namespace Types {
 
 CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) :
     m_store(buffer),
-    m_allocated_size(0),
     m_store_size(size),
     m_head_idx(0),
-    m_tail_idx(0)
+    m_allocated_size(0)
 {
   FW_ASSERT(m_store_size > 0);
 }
@@ -38,10 +37,10 @@ NATIVE_UINT_TYPE CircularBuffer :: get_allocated_size() const {
 
 NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
     FW_ASSERT(m_allocated_size <= m_store_size);
-    return this->get_capacity() - m_allocated_size;
+    return m_store_size - m_allocated_size;
 }
 
-NATIVE_UINT_TYPE CircularBuffer :: increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount) const {
+NATIVE_UINT_TYPE CircularBuffer :: advance_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount) const {
     FW_ASSERT(idx < m_store_size);
     return (idx + amount) % m_store_size;
 }
@@ -52,10 +51,11 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
         return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
     }
     // Copy in all the supplied data
+    NATIVE_UINT_TYPE idx = advance_idx(m_head_idx, m_allocated_size);
     for (U32 i = 0; i < size; i++) {
-        m_store[m_tail_idx] = buffer[i];
-        // Wrap-around increment of tail
-        m_tail_idx = increment_idx(m_tail_idx);
+        FW_ASSERT(idx < m_store_size);
+        m_store[idx] = buffer[i];
+        idx = advance_idx(idx);
     }
     m_allocated_size += size;
     FW_ASSERT(m_allocated_size <= this->get_capacity());
@@ -68,10 +68,10 @@ Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset)
 
 Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
-    if ((sizeof(U8) + offset) > get_allocated_size()) {
+    if ((sizeof(U8) + offset) > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    const NATIVE_UINT_TYPE idx = increment_idx(m_head_idx, offset);
+    const NATIVE_UINT_TYPE idx = advance_idx(m_head_idx, offset);
     FW_ASSERT(idx < m_store_size, idx);
     value = m_store[idx];
     return Fw::FW_SERIALIZE_OK;
@@ -79,32 +79,32 @@ Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) c
 
 Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
-    if ((sizeof(U32) + offset) > get_allocated_size()) {
+    if ((sizeof(U32) + offset) > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     value = 0;
-    NATIVE_UINT_TYPE peeker_idx = increment_idx(m_head_idx, offset);
+    NATIVE_UINT_TYPE idx = advance_idx(m_head_idx, offset);
 
     // Deserialize all the bytes from network format
     for (NATIVE_UINT_TYPE i = 0; i < sizeof(U32); i++) {
-        FW_ASSERT(peeker_idx < m_store_size);
-        value = (value << 8) | static_cast<U32>(m_store[peeker_idx]);
-        peeker_idx = increment_idx(peeker_idx);
+        FW_ASSERT(idx < m_store_size);
+        value = (value << 8) | static_cast<U32>(m_store[idx]);
+        idx = advance_idx(idx);
     }
     return Fw::FW_SERIALIZE_OK;
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) const {
     // Check there is sufficient data
-    if ((size + offset) > get_allocated_size()) {
+    if ((size + offset) > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    NATIVE_UINT_TYPE peeker_idx = increment_idx(m_head_idx, offset);
+    NATIVE_UINT_TYPE idx = advance_idx(m_head_idx, offset);
     // Deserialize all the bytes from network format
     for (NATIVE_UINT_TYPE i = 0; i < size; i++) {
-        FW_ASSERT(peeker_idx < m_store_size);
-        buffer[i] = m_store[peeker_idx];
-        peeker_idx = increment_idx(peeker_idx);
+        FW_ASSERT(idx < m_store_size);
+        buffer[i] = m_store[idx];
+        idx = advance_idx(idx);
     }
     return Fw::FW_SERIALIZE_OK;
 }
@@ -114,7 +114,7 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
     if (amount > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    m_head_idx = increment_idx(m_head_idx, amount);
+    m_head_idx = advance_idx(m_head_idx, amount);
     m_allocated_size -= amount;
     return Fw::FW_SERIALIZE_OK;
 }
@@ -125,11 +125,11 @@ NATIVE_UINT_TYPE CircularBuffer ::get_capacity() const {
 
 #ifdef CIRCULAR_DEBUG
 void CircularBuffer :: print() {
-    NATIVE_UINT_TYPE pointer_idx = m_head_idx;
+    NATIVE_UINT_TYPE idx = m_head_idx;
     Os::Log::logMsg("Ring: ", 0, 0, 0, 0, 0, 0);
-    while (pointer_idx != m_tail_idx) {
-    	Os::Log::logMsg("%c", m_store[pointer_idx], 0, 0, 0, 0, 0);
-        pointer_idx = increment_idx(pointer_idx);
+    for (NATIVE_UINT_TYPE i = 0; i < m_allocated_size; ++i) {
+    	  Os::Log::logMsg("%c", m_store[idx], 0, 0, 0, 0, 0);
+        idx = advance_idx(idx);
     }
     Os::Log::logMsg("\n", 0, 0, 0, 0, 0, 0);
 }
