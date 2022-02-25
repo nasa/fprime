@@ -111,10 +111,11 @@ Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NA
 
 Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
     // Check there is sufficient data
-    if (amount > get_allocated_size()) {
+    if (amount > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     m_head_idx = increment_idx(m_head_idx, amount);
+    m_allocated_size -= amount;
     return Fw::FW_SERIALIZE_OK;
 }
 
