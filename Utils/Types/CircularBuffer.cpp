@@ -20,71 +20,45 @@
 
 #include <cstdio>
 
-// An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
-#define ASSERT_CONSISTENT(store, size, X) \
-    FW_ASSERT(X >= store && X < (store + size), \
-              reinterpret_cast<POINTER_CAST>(X), \
-              reinterpret_cast<POINTER_CAST>(store))
-
 namespace Types {
 
 CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) :
     m_store(buffer),
-    m_size(size),
-    m_head(m_store),
-    m_tail(m_store)
+    m_allocated_size(0),
+    m_store_size(size),
+    m_head_idx(0),
+    m_tail_idx(0)
 {
-  FW_ASSERT(m_size > 0);
+  FW_ASSERT(m_store_size > 0);
 }
 
 NATIVE_UINT_TYPE CircularBuffer :: get_allocated_size() const {
-  return get_remaining_size(false);
+    return m_allocated_size;
 }
 
 NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
-  return get_remaining_size(true);
+    FW_ASSERT(m_allocated_size <= m_store_size);
+    return this->get_capacity() - m_allocated_size;
 }
 
-NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) const {
-    const NATIVE_UINT_TYPE capacity = this->get_capacity();
-    const NATIVE_UINT_TYPE remaining = (m_tail >= m_head) ?
-        (capacity - (reinterpret_cast<POINTER_CAST>(m_tail) - reinterpret_cast<POINTER_CAST>(m_head))) :
-        (reinterpret_cast<POINTER_CAST>(m_head) - reinterpret_cast<POINTER_CAST>(m_tail) - 1);
-    FW_ASSERT(remaining != static_cast<NATIVE_UINT_TYPE>(-1));
-    return serialization ? remaining : capacity - remaining;
-}
-
-U8* CircularBuffer :: increment(U8* const pointer, NATIVE_UINT_TYPE amount) {
-    U8* ret = pointer;
-    //TODO: need O(1) implementation here
-    for (NATIVE_UINT_TYPE i = 0; i < amount; i++) {
-        ret = ret + 1;
-        if (ret >= (m_store + m_size)) {
-            ret = m_store;
-        }
-    }
-    return ret;
+NATIVE_UINT_TYPE CircularBuffer :: increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount) {
+    FW_ASSERT(idx < m_store_size);
+    return (idx + amount) % m_store_size;
 }
 
 Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NATIVE_UINT_TYPE size) {
-    // Check that the head and tail pointers are consistent
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient space
-    if (size > get_remaining_size(true)) {
+    if (size > get_free_size()) {
         return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
     }
     // Copy in all the supplied data
     for (U32 i = 0; i < size; i++) {
-        *m_tail = buffer[i];
+        m_store[m_tail_idx] = buffer[i];
         // Wrap-around increment of tail
-        m_tail = increment(m_tail);
-        FW_ASSERT(m_tail != m_head,
-                reinterpret_cast<POINTER_CAST>(m_tail),
-                reinterpret_cast<POINTER_CAST>(m_head));
+        m_tail_idx = increment_idx(m_tail_idx);
     }
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
+    m_allocated_size += size;
+    FW_ASSERT(m_allocated_size <= this->get_capacity());
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -93,88 +67,69 @@ Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset)
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
-    // Check that the head and tail pointers are consistent
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if ((sizeof(U8) + offset) > get_remaining_size(false)) {
+    if ((sizeof(U8) + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    value = *increment(m_head, offset);
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
+    const NATIVE_UINT_TYPE idx = increment_idx(m_head_idx, offset);
+    FW_ASSERT(idx < m_store_size, idx);
+    value = m_store[idx];
     return Fw::FW_SERIALIZE_OK;
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) {
-    // Check that the head and tail pointers are consistent
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if ((sizeof(U32) + offset) > get_remaining_size(false)) {
+    if ((sizeof(U32) + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    U8* peeker = m_head;
     value = 0;
-    peeker = increment(peeker, offset);
+    NATIVE_UINT_TYPE peeker_idx = increment_idx(m_head_idx, offset);
+
     // Deserialize all the bytes from network format
     for (NATIVE_UINT_TYPE i = 0; i < sizeof(U32); i++) {
-        value = (value << 8) | static_cast<U32>(*peeker);
-        peeker = increment(peeker);
+        FW_ASSERT(peeker_idx < m_store_size);
+        value = (value << 8) | static_cast<U32>(m_store[peeker_idx]);
+        peeker_idx = increment_idx(peeker_idx);
     }
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) {
-    // Check that the head and tail pointers are consistent
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if ((size + offset) > get_remaining_size(false)) {
+    if ((size + offset) > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    U8* peeker = m_head;
-    peeker = increment(peeker, offset);
+    NATIVE_UINT_TYPE peeker_idx = increment_idx(m_head_idx, offset);
     // Deserialize all the bytes from network format
     for (NATIVE_UINT_TYPE i = 0; i < size; i++) {
-        *buffer = *peeker;
-        peeker = increment(peeker);
-        buffer = buffer + 1;
+        FW_ASSERT(peeker_idx < m_store_size);
+        buffer[i] = m_store[peeker_idx];
+        peeker_idx = increment_idx(peeker_idx);
     }
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
 Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
-    // Check that the head and tail pointers are consistent
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     // Check there is sufficient data
-    if (amount > get_remaining_size(false)) {
+    if (amount > get_allocated_size()) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    m_head = increment(m_head, amount);
-    ASSERT_CONSISTENT(m_store, m_size, m_head);
-    ASSERT_CONSISTENT(m_store, m_size, m_tail);
+    m_head_idx = increment_idx(m_head_idx, amount);
     return Fw::FW_SERIALIZE_OK;
 }
 
 NATIVE_UINT_TYPE CircularBuffer ::get_capacity() const {
-    // The implementation reserves one byte in order to prevent wrap-around confusion
-    FW_ASSERT(m_size > 0);
-    return m_size - 1;
+    FW_ASSERT(m_store_size > 0);
+    return m_store_size - 1;
 }
 
 #ifdef CIRCULAR_DEBUG
 void CircularBuffer :: print() {
-    U8* pointer = m_head;
+    NATIVE_UINT_TYPE pointer_idx = m_head_idx;
     Os::Log::logMsg("Ring: ", 0, 0, 0, 0, 0, 0);
-    while (pointer != m_tail) {
-    	Os::Log::logMsg("%c", *pointer, 0, 0, 0, 0, 0);
-        pointer = increment(pointer);
+    while (pointer_idx != m_tail_idx) {
+    	Os::Log::logMsg("%c", m_store[pointer_idx], 0, 0, 0, 0, 0);
+        pointer_idx = increment_idx(pointer_idx);
     }
     Os::Log::logMsg("\n", 0, 0, 0, 0, 0, 0);
 }

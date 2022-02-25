@@ -111,27 +111,24 @@ class CircularBuffer {
 #endif
     private:
         /**
-         * Get the remaining size in this circular buffer.
-         * \param serialization: is this serialization (opposed to deserialization)
-         * \return remaining size for serialization/deserialization
-         */
-        NATIVE_UINT_TYPE get_remaining_size(bool serialization = false) const;
-
-        /**
-         * Returns a wrap-incremented pointer.
-         * \param pointer: pointer to increment and wrap.
+         * Returns a wrap-incremented index into the store.
+         * \param idx: index to increment and wrap.
          * \param amount: amount to increment
-         * \return: new pointer value
+         * \return: new index value
          */
-        U8* increment(U8* const pointer, NATIVE_UINT_TYPE amount = 1);
+        NATIVE_UINT_TYPE increment_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1);
         //! Memory store backing this circular buffer
         U8* const m_store;
+        //! Allocated size
+        NATIVE_UINT_TYPE m_allocated_size;
         //! Size of the backed data store
-        const NATIVE_UINT_TYPE m_size;
-        //! Head pointer. As items are deserialized, this will move forward.
-        U8* m_head;
-        //! Tail pointer. As items are serialized, this will move forward.
-        U8* m_tail;
+        const NATIVE_UINT_TYPE m_store_size;
+        //! Head index. As items are deserialized, this will move forward
+        //! and wrap around.
+        NATIVE_UINT_TYPE m_head_idx;
+        //! Tail index. As items are serialized, this will move forward
+        //! and wrap around.
+        NATIVE_UINT_TYPE m_tail_idx;
 };
 } //End Namespace Types
 #endif
