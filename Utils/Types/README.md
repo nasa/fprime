@@ -17,12 +17,16 @@ It shrinks by deleting the lowest _m_ addresses
 and renumbering the logical addresses of the
 remaining bytes starting at zero.
 
-The implementation uses a fixed-size physical store,
-with top and bottom pointers that increase when the
-logical store grows and shrinks, and that wrap around when they
-pass the end of the physical store.
-The maximum size of the logical store is equal to the size
-of the physical store.
+The implementation uses a fixed-size physical store.
+The logical store is represented as a base or head index into
+the physical store and an allocated size.
+Initially both are zero.
+When data is added to the circular buffer, the allocated size grows.
+If necessary the logical store wraps around to the
+beginning of the physical store.
+When data is removed from the circular buffer, the allocated
+size shrinks, and the head pointer advances, wrapping
+around if necessary.
 
 `CircularBuffer` does not provide concurrency control.
 If multiple threads use the buffer, the uses must
@@ -39,8 +43,6 @@ CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size)
 
 Construct a circular buffer with the given physical store,
 specified as a starting pointer and a size in bytes.
-The maximum logical store size is equal to the
-physical store size.
 
 ### Adding Data
 
@@ -60,7 +62,7 @@ No data is actually serialized (the data is copied byte for byte).
 ### Reading Data
 
 ```c++
-Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0);
+Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0) const;
 ```
 
 If `offset` is not a valid address of the logical store,
@@ -69,13 +71,13 @@ Otherwise read a `char` value at address `offset` of the logical store
 and store the result into `value`.
 
 ```c++
-Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0);
+Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0) const;
 ```
 
 Same as previous, but read a `U8` value.
 
 ```c++
-Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0);
+Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0) const;
 ```
 
 If `offset` through `offset` + 3 are not valid addresses
@@ -85,10 +87,10 @@ interpret them as an unsigned 32-bit integer in big endian order,
 and store the result into `value`.
 
 ```c++
-Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0);
+Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0) const;
 ```
 
-If `offset` through `offset + size - 1` are not valid
+If `offset` through `offset + size - 1` are not all valid
 addresses in the logical store, then return an error.
 Otherwise copy `size` bytes starting at `offset` into
 the memory starting at `buffer`.
