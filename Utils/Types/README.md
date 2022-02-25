@@ -111,27 +111,27 @@ and set the logical store size to _s_ - `amount`.
 ### Querying Buffer State
 
 ```c++
-NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
+NATIVE_UINT_TYPE get_allocated_size() const;
 ```
 
-If `serialization = true`, then return the maximum logical
-store size minus the current logical store size.
-This is the number of bytes that may be added to the logical
-store without deleting data.
-
-If `serialization = false`, then return the current logical
-store size.
+Return the number of allocated bytes, i.e., the
+current logical store size.
 This is the maximum number of bytes that may be read from
 the logical store without adding data.
 
-_TODO: This interface could be improved._
+```c++
+NATIVE_UINT_TYPE get_free_size() const;
+```
+
+Return the number of free bytes, i.e., the
+maximum logical store size minus the current logical store size.
+This is the number of bytes that may be added to the logical
+store without deleting data.
 
 ```c++
 NATIVE_UINT_TYPE get_capacity();
 ```
 
-Return the physical store size (one more than the logical store size).
-
-_TODO: This interface should probably return the logical store size.
-The framing protocol implementation should probably be updated to match.
-The current interface invites off-by-one errors._
+Return the maximum logical store size (one less than the physical store size).
+This is the total number of bytes that may be added to an empty
+circular buffer.

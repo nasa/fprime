@@ -28,9 +28,19 @@ CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) 
     m_size(size),
     m_head(m_store),
     m_tail(m_store)
-{}
+{
+  FW_ASSERT(m_size > 0);
+}
 
-NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) {
+NATIVE_UINT_TYPE CircularBuffer :: get_allocated_size() const {
+  return get_remaining_size(false);
+}
+
+NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
+  return get_remaining_size(true);
+}
+
+NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) const {
     // Note: a byte is lost in order to prevent wrap-around confusion
     const NATIVE_UINT_TYPE remaining = (m_tail >= m_head) ?
         (m_size - 1 - (reinterpret_cast<POINTER_CAST>(m_tail) - reinterpret_cast<POINTER_CAST>(m_head))) :
@@ -148,7 +158,9 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
 }
 
 NATIVE_UINT_TYPE CircularBuffer ::get_capacity() {
-    return m_size;
+    // The implementation reserves one byte in order to prevent wrap-around confusion
+    FW_ASSERT(m_size > 0);
+    return m_size - 1;
 }
 
 #ifdef CIRCULAR_DEBUG

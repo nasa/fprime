@@ -37,7 +37,7 @@ class CircularBuffer {
          * Note: ownership of the supplied buffer is held until the circular buffer is destructed.
          *
          * \param buffer: supplied buffer used as a data store.
-         * \param size: size of the supplied data store.
+         * \param size: the of the supplied data store.
          */
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
 
@@ -90,15 +90,24 @@ class CircularBuffer {
         Fw::SerializeStatus rotate(NATIVE_UINT_TYPE amount);
 
         /**
-         * Get the remaining size in this circular buffer.
-         * \param serialization: is this serialization (opposed to deserialization)
-         * \return remaining size for serialization/deserialization
+         * Get the number of bytes allocated in the buffer
+         * \return number of bytes
          */
-        NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
+        NATIVE_UINT_TYPE get_allocated_size() const;
 
         /**
-         * Get the max size of buffer, not remaining.
-         * \return capacity total of the buffer
+         * Get the number of free bytes, i.e., the number
+         * of bytes that may be stored in the buffer without
+         * deleting data and without exceeding the buffer capacity
+         */
+        NATIVE_UINT_TYPE get_free_size() const;
+
+        /**
+         * Get the logical capacity of the buffer, i.e., the number of available
+         * bytes when the buffer is empty
+         * Note: the logical capacity is one less than the physical size,
+         * because the implementation reserves one byte for itself.
+         * \return capacity of the buffer
          */
         NATIVE_UINT_TYPE get_capacity();
 
@@ -106,6 +115,13 @@ class CircularBuffer {
         void print();
 #endif
     private:
+        /**
+         * Get the remaining size in this circular buffer.
+         * \param serialization: is this serialization (opposed to deserialization)
+         * \return remaining size for serialization/deserialization
+         */
+        NATIVE_UINT_TYPE get_remaining_size(bool serialization = false) const;
+
         /**
          * Returns a wrap-incremented pointer.
          * \param pointer: pointer to increment and wrap.
