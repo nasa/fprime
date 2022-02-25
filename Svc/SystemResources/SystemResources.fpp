@@ -47,12 +47,20 @@ module Svc {
       opcode 1
 
     @ Version of the git repository.
-    event VERSION(
+    event FRAMEWORK_VERSION(
                    version: string size 40 @< version string
                  ) \
       severity activity low \
       id 0 \
-      format "Version: [{}]"
+      format "Framework Version: [{}]"
+
+    @ Version of the git repository.
+    event PROJECT_VERSION(
+                   version: string size 40 @< version string
+                 ) \
+      severity activity low \
+      id 1 \
+      format "Project Version: [{}]"
 
     @ Total system memory in KB
     telemetry MEMORY_TOTAL: U64 id 0 \
@@ -121,8 +129,11 @@ module Svc {
     @ System's CPU Percentage
     telemetry CPU_15: F32 id 20 format "{.2f} percent"
 
-    @ System's CPU Percentage
-    telemetry VERSION: string size 40 id 21
+    @ Software framework version
+    telemetry FRAMEWORK_VERSION: string size 40 id 21
+
+    @ Software project version
+    telemetry PROJECT_VERSION: string size 40 id 22
 
   }
 

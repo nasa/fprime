@@ -1,17 +1,57 @@
 """ fprime version handling and reporting """
 import os
-from setuptools_scm import get_version
+import subprocess
 
-ROOT_PARENT_COUNT = 5
+
+FALLBACK_VERSION = "v3.0.0"  # Keep up-to-date on release tag
+
+
+def get_version_str(working_dir, fallback=FALLBACK_VERSION):
+    """
+    System call to get the version. It uses `git describe --tags --always` to get a standard version string as used
+    across fprime. The working directory should be set to a (project, library, fprime) from which to obtain the version.
+
+    Args:
+        working_dir: working directory to introspect for version
+        fallback: version to fallback to if git is not working
+    Return:
+        String containing the version for the given working directory
+    """
+    try:
+        output = subprocess.check_output(
+            ["git", "describe", "--tags", "--always"], cwd=working_dir
+        )
+        return output.strip().decode("ascii")
+    except Exception:
+        return fallback
 
 
 def get_fprime_version():
-    """Gets the fprime version using setuptools_scm"""
-    # First try to read the SCM version
-    try:
-        return get_version(
-            root=os.sep.join([".."] * ROOT_PARENT_COUNT), relative_to=__file__
-        )
-    # Fallback to a specified version when SCM is unavailable
-    except LookupError:
-        return "1.5.4"  # Must be kept up-to-date when tagging
+    """Calculate the fprime framework version
+
+    Calculate the fprime framework version. This uses `get_version_str` and fallback to the FALLBACK_VERSION as
+    specified within this file.
+
+    Return:
+        Version of fprime framework
+    """
+    fprime_directory = os.environ.get(
+        "FPRIME_FRAMEWORK_PATH", os.path.dirname(__file__)
+    )
+    return get_version_str(working_dir=fprime_directory, fallback=FALLBACK_VERSION)
+
+
+def get_project_version(fallback=FALLBACK_VERSION):
+    """Calculate the fprime project version
+
+    Calculate the fprime project version. This uses `get_version_str` and fallback to the FALLBACK_VERSION as
+    specified within this file unless the fallback argument was passed in.
+
+    Args:
+        fallback: version to fallback to if git is not working
+
+    Return:
+        Version of fprime framework
+    """
+    fprime_directory = os.environ.get("FPRIME_PROJECT_ROOT", os.path.dirname(__file__))
+    return get_version_str(working_dir=fprime_directory, fallback=fallback)
