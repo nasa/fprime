@@ -176,7 +176,7 @@ Queue::QueueStatus bareReceiveBlock(BareQueueHandle& handle, U8* buffer, NATIVE_
     }
     else {
         actualSize = 0;
-        if( size > (static_cast<NATIVE_UINT_TYPE>(capacity) ) {
+        if( size > (static_cast<NATIVE_UINT_TYPE>(capacity)) ) {
             // The buffer capacity was too small!
             status = Queue::QUEUE_SIZE_MISMATCH;
         }
