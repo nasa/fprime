@@ -135,7 +135,7 @@ This is the number of bytes that may be added to the logical
 store without deleting data.
 
 ```c++
-NATIVE_UINT_TYPE get_capacity();
+NATIVE_UINT_TYPE get_capacity() const;
 ```
 
 Return the maximum logical store size (equal to the physical store size).
