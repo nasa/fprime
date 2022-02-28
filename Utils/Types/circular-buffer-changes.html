@@ -1,0 +1,13 @@
+<HTML>
+<BODY>
+<TABLE>
+<H1>Changes to Circular Buffer</H1>
+
+<TR><TH>Change<TH>Reason
+<TR BGCOLOR="skyblue"><TD>Revise implementation to use a head index and an allocated size instead of head and tail pointers<TD>Simplifies the implementation. Eliminates the one-byte discrepancy between the physical and logical store sizes.
+<TR><TD>Replace <code>get_remaining_size(bool)</code> with <code>get_allocated_size</code> and <code>get_free_size</code><TD>The interface is easier to understand.
+<TR BGCOLOR="skyblue"><TD>Add <code>const</code> to interface functions where possible<TD>C++ coding practice
+<TR><TD>Add SDD<TD>Required documentation
+</TABLE>
+</BODY>
+</HTML>
