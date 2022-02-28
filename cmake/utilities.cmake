@@ -129,6 +129,57 @@ function(plugin_include_helper OUTPUT_VARIABLE INCLUDE_PATH)
 endfunction(plugin_include_helper)
 
 ####
+# starts_with:
+#
+# Check if the string input starts with the given prefix. Sets OUTPUT_VAR to TRUE when it does and sets OUTPUT_VAR to
+# FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+#
+# Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+# in order to ensure speed.
+#
+# OUTPUT_VAR: variable to set
+# STRING: string to check
+# PREFIX: expected ending
+####
+function(starts_with OUTPUT_VAR STRING PREFIX)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    string(LENGTH "${PREFIX}" PREFIX_LENGTH)
+    string(SUBSTRING "${STRING}" "0" "${PREFIX_LENGTH}" FOUND_PREFIX)
+    # Check the substring
+    if (FOUND_PREFIX STREQUAL "${PREFIX}")
+        set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+    endif()
+endfunction(starts_with)
+
+####
+# ends_with:
+#
+# Check if the string input ends with the given suffix. Sets OUTPUT_VAR to TRUE when it does and  sets OUTPUT_VAR to
+# FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+#
+# Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+# in order to ensure speed.
+#
+# OUTPUT_VAR: variable to set
+# STRING: string to check
+# SUFFIX: expected ending
+####
+function(ends_with OUTPUT_VAR STRING SUFFIX)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    string(LENGTH "${STRING}" INPUT_LENGTH)
+    string(LENGTH "${SUFFIX}" SUFFIX_LENGTH)
+    if (INPUT_LENGTH GREATER_EQUAL SUFFIX_LENGTH)
+        # Calculate the substring of suffix length at end of string
+        math(EXPR START "${INPUT_LENGTH} - ${SUFFIX_LENGTH}")
+        string(SUBSTRING "${STRING}" "${START}" "${SUFFIX_LENGTH}" FOUND_SUFFIX)
+        # Check the substring
+        if (FOUND_SUFFIX STREQUAL "${SUFFIX}")
+            set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+        endif()
+    endif()
+endfunction(ends_with)
+
+####
 # init_variables:
 #
 # Initialize all variables passed in to empty variables in the calling scope.
@@ -170,6 +221,12 @@ function(resolve_dependencies OUTPUT_VAR)
     # Resolve all dependencies
     set(RESOLVED)
     foreach(DEPENDENCY IN LISTS ARGN)
+        # No resolution is done on linker-only dependencies
+        linker_only(LINKER_ONLY "${DEPENDENCY}")
+        if (LINKER_ONLY)
+            list(APPEND RESOLVED "${DEPENDENCY}")
+            continue()
+        endif()
         get_module_name(${DEPENDENCY})
         if (NOT MODULE_NAME IN_LIST RESOLVED)
             list(APPEND RESOLVED "${MODULE_NAME}")
@@ -178,6 +235,62 @@ function(resolve_dependencies OUTPUT_VAR)
     set(${OUTPUT_VAR} "${RESOLVED}" PARENT_SCOPE)
 endfunction(resolve_dependencies)
 
+####
+# Function `is_target_real`:
+#
+# Does this target represent a real item (executable, library)? OUTPUT is set to TRUE when real, and FALSE otherwise.
+#
+# OUTPUT: variable to set
+# TEST_TARGET: target to set
+####
+function(is_target_real OUTPUT TEST_TARGET)
+    if (TARGET "${DEPENDENCY}")
+        get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
+        # Make sure this is not a utility target
+        if (NOT TARGET_TYPE STREQUAL "UTILITY")
+            set("${OUTPUT}" TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+    set("${OUTPUT}" FALSE PARENT_SCOPE)
+endfunction()
+
+####
+# Function `is_target_library`:
+#
+# Does this target represent a real library? OUTPUT is set to TRUE when real, and FALSE otherwise.
+#
+# OUTPUT: variable to set
+# TEST_TARGET: target to set
+####
+function(is_target_library OUTPUT TEST_TARGET)
+    set("${OUTPUT}" FALSE PARENT_SCOPE)
+    if (TARGET "${TEST_TARGET}")
+        get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
+        ends_with(IS_LIBRARY "${TARGET_TYPE}" "_LIBRARY")
+        set("${OUTPUT}" "${IS_LIBRARY}" PARENT_SCOPE)
+    endif()
+endfunction()
+
+####
+# linker_only:
+#
+# Checks if a given dependency should be supplied to the linker only. These will not be supplied as CMake dependencies
+# but will be supplied as link libraries. These tokens are of several types:
+#
+# 1. Linker flags: starts with -l
+# 2. Existing Files: accounts for pre-existing libraries shared and otherwise
+#
+# OUTPUT_VAR: variable to set in PARENT_SCOPE to TRUE/FALSE
+# TOKEN: token to check if "linker only"
+####
+function(linker_only OUTPUT_VAR TOKEN)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    starts_with(IS_LINKER_FLAG "${TOKEN}" "-l")
+    if (IS_LINKER_FLAG OR (EXISTS "${TOKEN}" AND NOT IS_DIRECTORY "${TOKEN}"))
+        set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+    endif()
+endfunction()
 
 ####
 # build_relative_path:
