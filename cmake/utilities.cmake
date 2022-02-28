@@ -129,6 +129,57 @@ function(plugin_include_helper OUTPUT_VARIABLE INCLUDE_PATH)
 endfunction(plugin_include_helper)
 
 ####
+# starts_with:
+#
+# Check if the string input starts with the given prefix. Sets OUTPUT_VAR to TRUE when it does and sets OUTPUT_VAR to
+# FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+#
+# Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+# in order to ensure speed.
+#
+# OUTPUT_VAR: variable to set
+# STRING: string to check
+# PREFIX: expected ending
+####
+function(starts_with OUTPUT_VAR STRING PREFIX)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    string(LENGTH "${PREFIX}" PREFIX_LENGTH)
+    string(SUBSTRING "${STRING}" "0" "${PREFIX_LENGTH}" FOUND_PREFIX)
+    # Check the substring
+    if (FOUND_PREFIX STREQUAL "${PREFIX}")
+        set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+    endif()
+endfunction(starts_with)
+
+####
+# ends_with:
+#
+# Check if the string input ends with the given suffix. Sets OUTPUT_VAR to TRUE when it does and  sets OUTPUT_VAR to
+# FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+#
+# Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+# in order to ensure speed.
+#
+# OUTPUT_VAR: variable to set
+# STRING: string to check
+# SUFFIX: expected ending
+####
+function(ends_with OUTPUT_VAR STRING SUFFIX)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    string(LENGTH "${STRING}" INPUT_LENGTH)
+    string(LENGTH "${SUFFIX}" SUFFIX_LENGTH)
+    if (INPUT_LENGTH GREATER_EQUAL SUFFIX_LENGTH)
+        # Calculate the substring of suffix length at end of string
+        math(EXPR START "${INPUT_LENGTH} - ${SUFFIX_LENGTH}")
+        string(SUBSTRING "${STRING}" "${START}" "${SUFFIX_LENGTH}" FOUND_SUFFIX)
+        # Check the substring
+        if (FOUND_SUFFIX STREQUAL "${SUFFIX}")
+            set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+        endif()
+    endif()
+endfunction(ends_with)
+
+####
 # init_variables:
 #
 # Initialize all variables passed in to empty variables in the calling scope.
