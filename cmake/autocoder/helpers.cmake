@@ -5,6 +5,7 @@
 # so that implementers can handle standard functions easily.
 ####
 include_guard()
+include("utilities")
 ####
 # Macro `autocoder_support_by_suffix`:
 #
@@ -20,19 +21,9 @@ include_guard()
 # **AC_INPUT_FILE**: file to check with suffix
 ####
 macro(autocoder_support_by_suffix SUFFIX AC_INPUT_FILE)
-    set(IS_SUPPORTED FALSE PARENT_SCOPE)
-    # Suffix is the length
-    string(LENGTH "${AC_INPUT_FILE}" INPUT_LENGTH)
-    string(LENGTH "${SUFFIX}" SUFFIX_LENGTH)
-    if (INPUT_LENGTH GREATER_EQUAL SUFFIX_LENGTH)
-        # Calculate the substring of suffix length at end of string
-        math(EXPR START "${INPUT_LENGTH} - ${SUFFIX_LENGTH}")
-        string(SUBSTRING "${AC_INPUT_FILE}" "${START}" "${SUFFIX_LENGTH}" FOUND_SUFFIX)
-        # Check the substring
-        if (FOUND_SUFFIX STREQUAL "${SUFFIX}")
-            set(IS_SUPPORTED TRUE PARENT_SCOPE)
-        endif()
-    endif()
+    ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "${SUFFIX}")
+    # Note: set in PARENT_SCOPE in macro is intended. Caller **wants** to set IS_SUPPORTED in their parent's scope.
+    set(IS_SUPPORTED "${IS_SUPPORTED}" PARENT_SCOPE)
 endmacro()
 
 ####

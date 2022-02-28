@@ -24,6 +24,23 @@ function(cheetah CHEETAH_TEMPLATES)
     set_property(GLOBAL APPEND PROPERTY CODEGEN_OUTPUTS ${PYTHON_TEMPLATES})
 endfunction(cheetah)
 
+
+macro(ai_shared_setup)
+    # Ai autocoder dependencies are **always** the codegen target (builds cheetah)
+    set(AUTOCODER_DEPENDENCIES "${CODEGEN_TARGET}" PARENT_SCOPE)
+
+    string(REPLACE ";" ":" FPRIME_BUILD_LOCATIONS_SEP "${FPRIME_BUILD_LOCATIONS}")
+    # Base script must setup environment for codegen, call codegen.py, and ensure the basic flags are set
+    set(AI_BASE_SCRIPT
+        "${CMAKE_COMMAND}" -E env
+            PYTHONPATH=${PYTHON_AUTOCODER_DIR}/src:${PYTHON_AUTOCODER_DIR}/utils
+            BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime
+            FPRIME_AC_CONSTANTS_FILE=${FPRIME_AC_CONSTANTS_FILE}
+            PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
+        ${PYTHON} ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py --build_root
+    )
+endmacro()
+
 ####
 # `setup_ai_autocode_variant`:
 #

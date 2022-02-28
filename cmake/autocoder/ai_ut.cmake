@@ -30,38 +30,27 @@ function(ai_ut_is_supported AC_INPUT_FILE)
 endfunction (ai_ut_is_supported)
 
 ####
-# get_generated_files:
+# ai_ut_setup:
 #
-# This autocoder always generates TesterBase.cpp, TesterBase.hpp, and GTestBase.{c|h}pp files when INCLUDE_GTEST is set.
-# Sets GENERATED_FILES in parent scope to hold this information.
+# Sets up the autocoder to generate UT files into the binary directory. This is done such that the UTs can build with
+# a complete unit test framework.
 ####
-function(ai_ut_get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES ${CMAKE_CURRENT_BINARY_DIR}/TesterBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/TesterBase.hpp)
+function(ai_ut_setup AC_INPUT_FILE)
+    set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
+    set(AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.hpp")
     # GTest flag handling
     if (INCLUDE_GTEST)
-        list(APPEND GENERATED_FILES ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp)
-    endif()
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-endfunction(ai_ut_get_generated_files)
-
-####
-# get_dependencies:
-#
-# No dependencies, this function is a no-op.
-####
-function(ai_ut_get_dependencies AC_INPUT_FILE)
-endfunction(ai_ut_get_dependencies)
-
-####
-# setup_autocode:
-#
-# Setup the autocoder build commands. This is a required function of a given autocoder implementation.
-####
-function(ai_ut_setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
-    if (NOT INCLUDE_GTEST)
+        list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
+    else()
         set(REMOVAL_LIST "${REMOVAL_LIST} ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
     endif()
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    # Get the shared setup for all AI autocoders
+    ai_shared_setup()
+    # Specifically setup the `add_custom_command` call as the requires extra commands to run
+    add_custom_command(OUTPUT "${AUTOCODER_GENERATED}" COMMAND ${AI_BASE_SCRIPT} -p "${CMAKE_BINARY_DIR}")
+
+
     set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${REMOVAL_LIST})
     setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_BINARY_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
                               "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")

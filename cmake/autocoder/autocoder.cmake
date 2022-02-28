@@ -14,11 +14,10 @@ include(autocoder/helpers)
 # run_ac_set:
 #
 # Run a set of autocoder allowing back-to-back execution of a set of autocoders. SOURCES are the source files that are
-# input into the autocoder filters.  Extra arguments may be an include path for an autocoder (e.g. autocoder/fpp) or can
-# be INFO_ONLY to mark the next autocoder as only generating info.
+# input into the autocoder filters.  Extra arguments may be an include path for an autocoder (e.g. autocoder/fpp).
 #
 # SOURCES: source file input list
-# ...: autocoder include or INFO_ONLY
+# ...: autocoder include
 ####
 function (run_ac_set SOURCES)
     # Get the source list, if passed in
@@ -208,14 +207,34 @@ endfunction(_filter_sources)
 ####
 function(__ac_process_sources SOURCES)
     # Run the autocode setup process now with memoization
-    cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
-    cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
-    resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
+#    cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
+#    cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
+#    resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
 
-    set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
+    # Asserts for consistency
+    if (DEFINED AUTOCODER_SCRIPT)
+        message(FATAL_ERROR "AUTOCODER_SCRIPT set to ${AUTOCODER_SCIPRT} before setup autocoder call.")
+    elseif(DEFINED AUTOCODER_GENERATED)
+        message(FATAL_ERROR "AUTOCODER_GENERATED set to ${AUTOCODER_GENERATED} before setup autocoder call.")
+    elseif(DEFINED AUTOCODER_INPUTS)
+        message(FATAL_ERROR "AUTOCODER_INPUTS set to ${AUTOCODER_INPUTS} before setup autocoder call.")
+    elseif(DEFINED AUTOCODER_DEPENDENCIES)
+        message(FATAL_ERROR "AUTOCODER_DEPENDENCIES set to ${AUTOCODER_DEPENDENCIES} before setup autocoder call.")
+    endif()
 
     # Run the generation setup when not requesting "info only"
     cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
+
+    if (NOT DEFINED AUTOCODER_GENERATED)
+        message(FATAL_ERROR "Autocoder must set AUTOCODER_GENERATED to files to be generated")
+    elseif(DEFINED AUTOCODER_SCRIPT AND NOT DEFINED AUTOCODER_INPUTS)
+        message(FATAL_ERROR "Autocoder must set both AUTOCODER_INPUTS when using AUTOCODER_SCRIPT")
+    elseif(DEFINED AUTOCODER_SCRIPT)
+        add_custom_command(OUTPUT "${AUTOCODER_GENERATED}" COMMAND "${AUTOCODER_SCRIPT}" ${AUTOCODER_INPUTS} DEPENDENCIES ${AUTOCODER_INPUTS})
+    endif()
+
+    set(MODULE_DEPENDENCIES ${AUTOCODER_DEPENDENCIES} PARENT_SCOPE)
+    set(GENERATED_FILES ${AUTOCODER_GENERATED} PARENT_SCOPE)
+    set(FILE_DEPENDENCIES ${AUTOCODER_INPUTS} PARENT_SCOPE)
 endfunction()
 
