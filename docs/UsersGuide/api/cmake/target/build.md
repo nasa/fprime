@@ -6,17 +6,12 @@ This target sets up the build for every module in the system. WARNING: it regist
 not including _build. This is for historical reasons.
 
 
-## Function `recurse_targets`:
-
-A helper that pulls out module dependencies that are also fprime modules.
-
-
 ## Build function `add_global_target`:
 
 Specifically does nothing.  The "all" target of a normal cmake build will cover this case.
 
 
-## setup_build_module:
+## build_setup_build_module:
 
 Helper function to setup the module. This was the historical core of the CMake system, now embedded as part of this
 build target. It adds a the target (library, executable), sets up compiler source files, flags generated sources,

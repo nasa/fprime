@@ -53,6 +53,32 @@ OUTPUT_VARIABLE: set with the plugin name that has last been included
 INCLUDE_PATH: path to file to include
 
 
+## starts_with:
+
+Check if the string input starts with the given prefix. Sets OUTPUT_VAR to TRUE when it does and sets OUTPUT_VAR to
+FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+
+Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+in order to ensure speed.
+
+OUTPUT_VAR: variable to set
+STRING: string to check
+PREFIX: expected ending
+
+
+## ends_with:
+
+Check if the string input ends with the given suffix. Sets OUTPUT_VAR to TRUE when it does and  sets OUTPUT_VAR to
+FALSE when it does not. OUTPUT_VAR is the name of the variable in PARENT_SCOPE that will be set.
+
+Note: regexs in CMake are known to be inefficient. Thus `starts_with` and `ends_with` are implemented without them
+in order to ensure speed.
+
+OUTPUT_VAR: variable to set
+STRING: string to check
+SUFFIX: expected ending
+
+
 ## init_variables:
 
 Initialize all variables passed in to empty variables in the calling scope.
@@ -71,6 +97,34 @@ directory separators with "_".  E.g. fprime/Fw/Time becomes Fw_Time.
 
 OUTPUT_VAR: variable to fill in parent scope
 ARGN: list of dependencies to resolve
+
+
+## Function `is_target_real`:
+
+Does this target represent a real item (executable, library)? OUTPUT is set to TRUE when real, and FALSE otherwise.
+
+OUTPUT: variable to set
+TEST_TARGET: target to set
+
+
+## Function `is_target_library`:
+
+Does this target represent a real library? OUTPUT is set to TRUE when real, and FALSE otherwise.
+
+OUTPUT: variable to set
+TEST_TARGET: target to set
+
+
+## linker_only:
+
+Checks if a given dependency should be supplied to the linker only. These will not be supplied as CMake dependencies
+but will be supplied as link libraries. These tokens are of several types:
+
+1. Linker flags: starts with -l
+2. Existing Files: accounts for pre-existing libraries shared and otherwise
+
+OUTPUT_VAR: variable to set in PARENT_SCOPE to TRUE/FALSE
+TOKEN: token to check if "linker only"
 
 
 ## build_relative_path:
