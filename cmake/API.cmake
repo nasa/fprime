@@ -80,7 +80,8 @@ endfunction(add_fprime_subdirectory)
 # - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
 #   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
 #   the autocoder inputs to the module. If not set or supplied, only fprime inferable dependencies will be available.
-#   Link flags like "-lpthread" can be added here as well.
+#   Link flags like "-lpthread" can be added here as well. Do NOT supply executable targets in MOD_DEPS. See:
+#   `register_fprime_executable` for alternatives.
 #
 # **i.e.:**
 # ```
@@ -168,9 +169,11 @@ endfunction(register_fprime_module)
 # fprime autocoding capabilities. This requires three variables to define the executable name,
 # autocoding and source inputs, and (optionally) any non-standard link dependencies.
 #
+# Note: this is not intended for deployment executables (e.g. an fprime binary) but rather for utilities,
+# helper executables and tools. To register a deployment binary see `register_fprime_deployment`.
+#
 # Executables will automatically install itself and its dependencies into the out-of-cache build
-# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. To skip this
-# installation step, set the SKIP_INSTALL variable before registering an executable.
+# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built.
 #
 # Required variables (defined in calling scope):
 #
@@ -202,51 +205,26 @@ endfunction(register_fprime_module)
 # ```
 #
 # **Note:** this operates almost identically to `register_fprime_module` with respect to the variable definitions. The
-#           difference is this call will yield an optionally named linked binary file.
+#           difference is this call will yield an optionally named linked binary executable.
 #
-# ### Standard fprime Deployment Example ###
+# ### Caveats ###
 #
-# To create a standard fprime deployment, an executable needs to be created. This executable
-# uses the CMake PROJECT_NAME as the executable name. Thus, it can be created with the following
-# source lists. In most fprime deployments, some modules must be specified as they don't tie
-# directly to an Ai.xml.
+# Executable targets should not be supplied as dependencies through MOD_DEPS  (e.g. to register_fprime_deployment).
+# Doing so may cause problems with final linking of other executables due to multiple main function definitions. A
+# better model would be to add a CMake only dependency without using MOD_DEPS.
 #
+# **Note:** these errors are definition order dependent and thus users should not supply executables through MOD_DEPS
+# even if it seems to work correctly.
+#
+#  **i.e.:**
 # ```
-# set(SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR}/RefTopologyAppAi.xml"
-#   "${CMAKE_CURRENT_LIST_DIR}/Topology.cpp"  
-#   "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
-# )
-# # Note: supply non-explicit dependencies here. These are implementations to an XML that is
-# # defined in a different module.
-# set(MOD_DEPS
-#   Svc/PassiveConsoleTextLogger
-#   Svc/SocketGndIf
-#   Svc/LinuxTime
-# )
-# register_fprime_executable()
+# set(SOURCE_FILES "tool.c")
+# register_fprime_executable(TOOL)
+# ...
+# ...
+# register_fprime_deployment(MY_DEPLOYMENT)
+# add_dependencies(MY_DEPLOYMENT TOOL) # CMake only dependency
 # ```
-# ### fprime Executable With Autocoding/Dependencies ###
-#
-# Developers can make executables or other utilities that take advantage of fprime autocoding
-# and fprime dependencies. These can be registered using the same executable registrar function
-# but should specify a specific executable name.
-#
-# ```
-# set(EXECUTABLE_NAME "MyUtility")
-#
-# set(SOURCE_FILES
-#   "${CMAKE_CURRENT_LIST_DIR)/ModuleAi.xml"
-#   "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"  
-# )
-# set(MOD_DEPS
-#   Svc/LinuxTime
-#   -lm
-#   -lpthread
-# )
-# register_fprime_executable()
-# ```
-#
 ####
 function(register_fprime_executable)
     get_module_name("${CMAKE_CURRENT_LIST_DIR}")
@@ -274,14 +252,15 @@ endfunction(register_fprime_executable)
 # (optionally) any non-standard link dependencies.
 #
 # An executable will be created and automatically install itself and its dependencies into the out-of-cache build
-# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. To skip this
-# installation step, set the SKIP_INSTALL variable before registering an executable. Dictionary generation will also be
-# done as part of this step.
+# artifacts directory, specified by the FPRIME_INSTALL_DEST variable, when built. This will automatically run all
+# deployment targets such that the standard deployment will be built (e.g. the dictionary will be built).
+#
+# This is typically called from within the top-level CMakeLists.txt file that defines a deployment.
 #
 # Required variables (defined in calling scope):
 #
 # - **SOURCE_FILES:** cmake list of input source files. Place any "*Ai.xml", "*.c", "*.cpp"
-#                  etc. files here. This list will be split into autocoder inputs and sources.
+#                     etc. files here. This list will be split into autocoder inputs and sources.
 # **i.e.:**
 # ```
 # set(SOURCE_FILES
@@ -290,23 +269,22 @@ endfunction(register_fprime_executable)
 #     MyComponentImpl.cpp)
 # ```
 #
-# - **MOD_DEPS:** (optional) cmake list of extra link dependencies. This is optional, and only
-#   needed if non-standard link dependencies are used, or if a dependency cannot be inferred from the include graph of
-#   the autocoder inputs to the module. If not set or supplied, only fprime
-#   inferable dependencies will be available. Link flags like "-lpthread" can be here.
+# - **MOD_DEPS:** cmake list of extra link dependencies. This is almost always required to supply the topology module.
+#                 Other entries are only needed when they cannot be inferred from the model (e.g. linker flags). Do NOT
+#                 supply executable targets in MOD_DEPS. See: `register_fprime_executable` for alternatives.
 #
 # **i.e.:**
 # ```
 # set(MOD_DEPS
+#     ${PROJECT_NAME}/Top
 #     Module1
 #     Module2
 #     -lpthread)
 # ```
 #
 # **Note:** this operates almost identically to `register_fprime_executable` and `register_fprime_module` with respect
-# to the variable definitions. The difference is this call will yield an optionally named linked binary file,
-# dictionary generation is done, the executable binary will be named for ${PROJECT_NAME}, and deployment helper targets
-# are created.
+# to the variable definitions. The difference is deployment targets will be run (e.g. dictionary generation), and the
+# executable binary will be named for ${PROJECT_NAME}.
 #
 # ### Standard fprime Deployment Example ###
 #
@@ -322,9 +300,7 @@ endfunction(register_fprime_executable)
 # # Note: supply non-explicit dependencies here. These are implementations to an XML that is
 # # defined in a different module.
 # set(MOD_DEPS
-#   Svc/PassiveConsoleTextLogger
-#   Svc/SocketGndIf
-#   Svc/LinuxTime
+#   ${PROJECT_NAME}/Top
 # )
 # register_fprime_deployment()
 # ```

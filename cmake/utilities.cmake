@@ -221,6 +221,12 @@ function(resolve_dependencies OUTPUT_VAR)
     # Resolve all dependencies
     set(RESOLVED)
     foreach(DEPENDENCY IN LISTS ARGN)
+        # No resolution is done on linker-only dependencies
+        linker_only(LINKER_ONLY "${DEPENDENCY}")
+        if (LINKER_ONLY)
+            list(APPEND RESOLVED "${DEPENDENCY}")
+            continue()
+        endif()
         get_module_name(${DEPENDENCY})
         if (NOT MODULE_NAME IN_LIST RESOLVED)
             list(APPEND RESOLVED "${MODULE_NAME}")
@@ -261,9 +267,28 @@ function(is_target_library OUTPUT TEST_TARGET)
     set("${OUTPUT}" FALSE PARENT_SCOPE)
     if (TARGET "${TEST_TARGET}")
         get_target_property(TARGET_TYPE "${DEPENDENCY}" TYPE)
-        if (NOT TARGET_TYPE STREQUAL "UTILITY" AND NOT TARGET_TYPE STREQUAL "EXECUTABLE")
-            set("${OUTPUT}" TRUE PARENT_SCOPE)
-        endif()
+        ends_with(IS_LIBRARY "${TARGET_TYPE}" "_LIBRARY")
+        set("${OUTPUT}" "${IS_LIBRARY}" PARENT_SCOPE)
+    endif()
+endfunction()
+
+####
+# linker_only:
+#
+# Checks if a given dependency should be supplied to the linker only. These will not be supplied as CMake dependencies
+# but will be supplied as link libraries. These tokens are of several types:
+#
+# 1. Linker flags: starts with -l
+# 2. Existing Files: accounts for pre-existing libraries shared and otherwise
+#
+# OUTPUT_VAR: variable to set in PARENT_SCOPE to TRUE/FALSE
+# TOKEN: token to check if "linker only"
+####
+function(linker_only OUTPUT_VAR TOKEN)
+    set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    starts_with(IS_LINKER_FLAG "${TOKEN}" "-l")
+    if (IS_LINKER_FLAG OR (EXISTS "${TOKEN}" AND NOT IS_DIRECTORY "${TOKEN}"))
+        set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
     endif()
 endfunction()
 
