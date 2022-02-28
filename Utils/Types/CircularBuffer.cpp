@@ -128,7 +128,7 @@ void CircularBuffer :: print() {
     NATIVE_UINT_TYPE idx = m_head_idx;
     Os::Log::logMsg("Ring: ", 0, 0, 0, 0, 0, 0);
     for (NATIVE_UINT_TYPE i = 0; i < m_allocated_size; ++i) {
-    	  Os::Log::logMsg("%c", m_store[idx], 0, 0, 0, 0, 0);
+        Os::Log::logMsg("%c", m_store[idx], 0, 0, 0, 0, 0);
         idx = advance_idx(idx);
     }
     Os::Log::logMsg("\n", 0, 0, 0, 0, 0, 0);

@@ -109,8 +109,8 @@ class CircularBuffer {
     private:
         /**
          * Returns a wrap-advanced index into the store.
-         * \param idx: index to increment and wrap.
-         * \param amount: amount to increment
+         * \param idx: index to advance and wrap.
+         * \param amount: amount to advance
          * \return: new index value
          */
         NATIVE_UINT_TYPE advance_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1) const;
