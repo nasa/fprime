@@ -22,11 +22,17 @@ The logical store is represented as a base or head index into
 the physical store and an allocated size.
 Initially both are zero.
 When data is added to the circular buffer, the allocated size grows.
-If necessary the logical store wraps around to the
-beginning of the physical store.
 When data is removed from the circular buffer, the allocated
-size shrinks, and the head pointer advances, wrapping
-around if necessary.
+size shrinks, and the head pointer advances.
+
+The allocated store size never exceeds the physical store size.
+However, when the head index is greater than zero, the sum of
+the head index and the allocated size may exceed
+the physical store size.
+In this case, the logical store wraps around to the beginning
+of the physical store.
+Further, deleting data while in this state may cause
+the head index to wrap around.
 
 `CircularBuffer` does not provide concurrency control.
 If multiple threads use the buffer, the uses must
