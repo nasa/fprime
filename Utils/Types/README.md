@@ -9,9 +9,9 @@ This type uses a circular buffer to implement a bounded FIFO stream,
 i.e., a logical store that can grow to a maximum
 size and can shrink.
 The logical store is byte addressable with addresses
-0 through _n-1_, where _n_ is the current store size.
-It grows by increasing the top address from _n_
-to _n + m_ and copying _m_ bytes of data into the
+0 through _n - 1_, where _n_ is the current store size.
+It grows by increasing the top address from _n - 1_
+to _n + m - 1_ and copying _m_ bytes of data into the
 logical memory so allocated.
 It shrinks by deleting the lowest _m_ addresses
 and renumbering the logical addresses of the
