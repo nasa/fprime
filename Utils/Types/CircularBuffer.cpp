@@ -18,8 +18,6 @@
     #include <Os/Log.hpp>
 #endif
 
-#include <cstdio>
-
 namespace Types {
 
 CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) :
