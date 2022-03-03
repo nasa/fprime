@@ -10,6 +10,8 @@
  *
  *  Created on: Apr 4, 2019
  *      Author: lestarch
+ *  Revised March 2022
+ *      Author: bocchino
  */
 
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
@@ -106,7 +108,7 @@ class CircularBuffer {
 #ifdef CIRCULAR_DEBUG
         void print();
 #endif
-    private:
+    PRIVATE:
         /**
          * Returns a wrap-advanced index into the store.
          * \param idx: index to advance and wrap.
