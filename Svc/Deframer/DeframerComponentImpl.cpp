@@ -120,12 +120,12 @@ void DeframerComponentImpl ::processRing() {
 
     // Inner-loop, process ring buffer looking for at least the header
     U32 i = 0;
-    for (i = 0; (m_in_ring.get_remaining_size() > 0) and (i < loop_limit); i++) {
-        const U32 remaining = m_in_ring.get_remaining_size();
+    for (i = 0; (m_in_ring.get_allocated_size() > 0) and (i < loop_limit); i++) {
+        const U32 remaining = m_in_ring.get_allocated_size();
         U32 needed = 0; // Needed is an out-only variable, and should be reset each loop
         DeframingProtocol::DeframingStatus status = m_protocol->deframe(m_in_ring, needed);
         FW_ASSERT(needed != 0); //Deframing protocol must always set needed to a non-zero value
-        FW_ASSERT(remaining == m_in_ring.get_remaining_size()); // Deframing protocol must not consume data only view it
+        FW_ASSERT(remaining == m_in_ring.get_allocated_size()); // Deframing protocol must not consume data only view it
         // Successful deframing consumes messages
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
             m_in_ring.rotate(needed);
@@ -133,7 +133,7 @@ void DeframerComponentImpl ::processRing() {
         // Break on the condition that more is needed
         else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
             // Deframing protocol reported inconsistent "more is needed" and needed size
-            FW_ASSERT(needed > m_in_ring.get_remaining_size(), needed, m_in_ring.get_remaining_size());
+            FW_ASSERT(needed > m_in_ring.get_allocated_size(), needed, m_in_ring.get_allocated_size());
             break;
         }
         // Error statuses  reset needed and rotate away 1 byte
@@ -157,8 +157,8 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
     // Note: max iteration bounded by processing 1 byte per iteration
     for (i = 0; (i < (buffer.getSize() + 1)) and (buffer_offset < buffer.getSize()); i++) {
         U32 remaining = buffer.getSize() - buffer_offset;
-        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_remaining_size(true))
-                                        ? m_in_ring.get_remaining_size(true)
+        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_free_size())
+                                        ? m_in_ring.get_free_size()
                                         : static_cast<NATIVE_UINT_TYPE>(remaining);
         m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
         buffer_offset = buffer_offset + ser_size;

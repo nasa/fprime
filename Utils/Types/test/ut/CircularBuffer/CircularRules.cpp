@@ -68,7 +68,7 @@ namespace Types {
 
 
     bool PeekOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available >= sizeof(I8) + state.getPeekOffset();
         }
@@ -133,7 +133,7 @@ namespace Types {
 
 
     bool PeekBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available < sizeof(I8) + state.getPeekOffset();
         }
@@ -179,7 +179,7 @@ namespace Types {
 
 
     bool RotateOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available >= state.getRandomSize();
     }
 
@@ -194,7 +194,7 @@ namespace Types {
 
 
     bool RotateBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available < state.getRandomSize();
     }
 
