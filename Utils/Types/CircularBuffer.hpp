@@ -10,21 +10,18 @@
  *
  *  Created on: Apr 4, 2019
  *      Author: lestarch
+ *  Revised March 2022
+ *      Author: bocchino
  */
-#include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
 
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
 #define TYPES_CIRCULAR_BUFFER_HPP
 
-//#define CIRCULAR_DEBUG
+#include <FpConfig.hpp>
+#include <Fw/Types/BasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
 
-// An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
-#define ASSERT_CONSISTENT(store, size, X) \
-    FW_ASSERT(X >= store && X < (store + size), \
-              reinterpret_cast<POINTER_CAST>(X), \
-              reinterpret_cast<POINTER_CAST>(store))
+//#define CIRCULAR_DEBUG
 
 namespace Types {
 
@@ -34,15 +31,15 @@ class CircularBuffer {
          * Circular buffer constructor. Wraps the supplied buffer as the new data store. Buffer
          * size is supplied in the 'size' argument.
          *
-         * Note: ownership of the supplied buffer is held until the circular buffer is destructed.
+         * Note: ownership of the supplied buffer is held until the circular buffer is deallocated
          *
          * \param buffer: supplied buffer used as a data store.
-         * \param size: size of the supplied data store.
+         * \param size: the of the supplied data store.
          */
         CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
-         * Serialize a given buffer into this circular buffer. Will not accept more data then
+         * Serialize a given buffer into this circular buffer. Will not accept more data than
          * space available. This means it will not overwrite existing data.
          * \param buffer: supplied buffer to be serialized.
          * \param size: size of the supplied buffer.
@@ -51,26 +48,26 @@ class CircularBuffer {
         Fw::SerializeStatus serialize(const U8* const buffer, const NATIVE_UINT_TYPE size);
 
         /**
-         * Deserialize data into the given variable without moving the head pointer
+         * Deserialize data into the given variable without moving the head index
          * \param value: value to fill
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0) const;
         /**
-         * Deserialize data into the given variable without moving the head pointer
+         * Deserialize data into the given variable without moving the head index
          * \param value: value to fill
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0) const;
         /**
-         * Deserialize data into the given variable without moving the head pointer
+         * Deserialize data into the given variable without moving the head index
          * \param value: value to fill
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0) const;
 
         /**
          * Deserialize data into the given buffer without moving the head variable.
@@ -79,10 +76,10 @@ class CircularBuffer {
          * \param offset: offset from head to start peak. Default: 0
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
          */
-        Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0);
+        Fw::SerializeStatus peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset = 0) const;
 
         /**
-         * Rotate the head pointer effectively erasing data from the circular buffer and making
+         * Rotate the head index, deleting data from the circular buffer and making
          * space. Cannot rotate more than the available space.
          * \param amount: amount to rotate by (in bytes)
          * \return Fw::FW_SERIALIZE_OK on success or something else on error
@@ -90,37 +87,44 @@ class CircularBuffer {
         Fw::SerializeStatus rotate(NATIVE_UINT_TYPE amount);
 
         /**
-         * Get the remaining size in this circular buffer.
-         * \param serialization: is this serialization (opposed to deserialization)
-         * \return remaining size for serialization/deserialization
+         * Get the number of bytes allocated in the buffer
+         * \return number of bytes
          */
-        NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
+        NATIVE_UINT_TYPE get_allocated_size() const;
 
         /**
-         * Get the max size of buffer, not remaining.
-         * \return capacity total of the buffer
+         * Get the number of free bytes, i.e., the number
+         * of bytes that may be stored in the buffer without
+         * deleting data and without exceeding the buffer capacity
          */
-        NATIVE_UINT_TYPE get_capacity();
+        NATIVE_UINT_TYPE get_free_size() const;
+
+        /**
+         * Get the logical capacity of the buffer, i.e., the number of available
+         * bytes when the buffer is empty
+         */
+        NATIVE_UINT_TYPE get_capacity() const;
 
 #ifdef CIRCULAR_DEBUG
         void print();
 #endif
-    private:
+    PRIVATE:
         /**
-         * Returns a wrap-incremented pointer.
-         * \param pointer: pointer to increment and wrap.
-         * \param amount: amount to increment
-         * \return: new pointer value
+         * Returns a wrap-advanced index into the store.
+         * \param idx: index to advance and wrap.
+         * \param amount: amount to advance
+         * \return: new index value
          */
-        U8* increment(U8* const pointer, NATIVE_UINT_TYPE amount = 1);
-        //! Memory store backing this circular buffer
+        NATIVE_UINT_TYPE advance_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT_TYPE amount = 1) const;
+        //! Physical store backing this circular buffer
         U8* const m_store;
-        //! Size of the backed data store
-        const NATIVE_UINT_TYPE m_size;
-        //! Head pointer. As items are deserialized, this will move forward.
-        U8* m_head;
-        //! Tail pointer. As items are serialized, this will move forward.
-        U8* m_tail;
+        //! Size of the physical store
+        const NATIVE_UINT_TYPE m_store_size;
+        //! Index into m_store of byte zero in the logical store.
+        //! When memory is deallocated, this index moves forward and wraps around.
+        NATIVE_UINT_TYPE m_head_idx;
+        //! Allocated size (size of the logical store)
+        NATIVE_UINT_TYPE m_allocated_size;
 };
 } //End Namespace Types
 #endif

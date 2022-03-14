@@ -85,7 +85,7 @@ namespace Types {
         // Constructor
         PeekOkRule(const Fw::String& name);
 
-        // Peek ok available for when buffer size - remaining size  - 1 <= peek size
+        // Peek ok available for when buffer size - remaining size <= peek size
         bool precondition(const MockTypes::CircularState& state);
 
         // Action that tests the buffer's ability to peek
@@ -101,7 +101,7 @@ namespace Types {
         // Constructor
         PeekBadRule(const Fw::String& name);
 
-        // Peek bad available for when buffer size - remaining size  - 1 > peek size
+        // Peek bad available for when buffer size - remaining size > peek size
         bool precondition(const MockTypes::CircularState& state);
 
         // Action that tests the buffer's ability to peek with a fail
