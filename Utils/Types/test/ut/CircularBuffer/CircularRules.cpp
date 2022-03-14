@@ -40,10 +40,12 @@ namespace Types {
 
 
     void SerializeOkRule::action(MockTypes::CircularState& state) {
+        state.checkSizes();
         Fw::SerializeStatus status = state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize());
         state.setRemainingSize(state.getRemainingSize() - state.getRandomSize());
         ASSERT_TRUE(state.addInfinite(state.getBuffer(), state.getRandomSize()));
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        state.checkSizes();
     }
 
 
@@ -184,9 +186,11 @@ namespace Types {
     }
 
     void RotateOkRule::action(MockTypes::CircularState& state) {
+        state.checkSizes();
         ASSERT_EQ(state.getTestBuffer().rotate(state.getRandomSize()), Fw::FW_SERIALIZE_OK);
         ASSERT_TRUE(state.rotate(state.getRandomSize()));
         state.setRemainingSize(state.getRemainingSize() + state.getRandomSize());
+        state.checkSizes();
     }
 
 
