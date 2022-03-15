@@ -127,16 +127,8 @@ jobs:
       working-directory: Ref 
 
     - name: Test
-      run: ./ci/tests/Ref.bash
-
-    # Archive the outputs
-    - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
-      if: always()
-      with:
-        name: ci-ref-logs
-        path: ci-logs.tar.gz
-        retention-days: 5
+      run: fprime-util check --all --jobs "$(nproc || printf '%s\n' 1)"
+      working-directory: Ref
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
