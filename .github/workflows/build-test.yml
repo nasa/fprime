@@ -15,6 +15,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
       - uses: actions/cache@v2
         with:
           path: ~/.cache/pip
@@ -23,16 +24,13 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install fprime tools
         run: pip3 install fprime-tools fprime-gds
+
       - name: Cache clang-tidy-12
         uses: actions/cache@v2
         id: cache-clang-tidy-12
         with:
           path: "~/clang-tidy-12"
           key: "clang-tidy-12"
-      - name: Setup Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install clang-tidy-12
       - name: Install clang-tidy-12
         env:
           CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
@@ -44,16 +42,16 @@ jobs:
             mkdir -p ~/clang-tidy-12
             sudo dpkg -L clang-tidy-12 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/clang-tidy-12/
           fi
-    - name: Cache fprime-util generate
-      uses: actions/cache@v2
-      id: cache-fprime-util-generate
-      with:
+      - name: Cache fprime-util generate
+        uses: actions/cache@v2
+        id: cache-fprime-util-generate
+        with:
           path: "~/fprime-util-generate"
           key: "fprime-util-generate"
-    - name: fprime-util generate
-      env:
-        CACHE_HIT: ${{steps.cache-fprime-util-generate.outputs.cache-hit}}
-      run: |
+      - name: fprime-util generate
+        env:
+          CACHE_HIT: ${{steps.cache-fprime-util-generate.outputs.cache-hit}}
+        run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate/* $(pwd)/
           else
@@ -62,35 +60,34 @@ jobs:
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
           fi
 
-    - name: Flight Code Compilation
-      run: fprime-util build --all -j4
-    
+      - name: Flight Code Compilation
+        run: fprime-util build --all -j4
 
   test:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
 
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install fprime tools
+        run: pip3 install fprime-tools fprime-gds
 
-    - name: Cache clang-tidy-12
-      uses: actions/cache@v2
-      id: cache-clang-tidy-12
-      with:
+      - name: Cache clang-tidy-12
+        uses: actions/cache@v2
+        id: cache-clang-tidy-12
+        with:
           path: "~/clang-tidy-12"
           key: "clang-tidy-12"
-    - name: Install clang-tidy-12
-      env:
-        CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
-      run: |
+      - name: Install clang-tidy-12
+        env:
+          CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
+        run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/clang-tidy-12/* /
           else
@@ -100,16 +97,16 @@ jobs:
             sudo dpkg -L clang-tidy-12 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/clang-tidy-12/
           fi
 
-    - name: Cache fprime-util generate
-      uses: actions/cache@v2
-      id: cache-fprime-util-generate-Ref
-      with:
+      - name: Cache fprime-util generate
+        uses: actions/cache@v2
+        id: cache-fprime-util-generate-Ref
+        with:
           path: "~/fprime-util-generate-Ref"
           key: "fprime-util-generate-Ref"
-    - name: Run fprime-util generate
-      env:
-        CACHE_HIT: ${{steps.cache-fprime-util-generate-Ref.outputs.cache-hit}}
-      run: |
+      - name: Run fprime-util generate
+        env:
+          CACHE_HIT: ${{steps.cache-fprime-util-generate-Ref.outputs.cache-hit}}
+        run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate-Ref/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
@@ -119,16 +116,16 @@ jobs:
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate-Ref/
           fi
 
-    - name: Cache fprime-util generate --ut
-      uses: actions/cache@v2
-      id: cache-fprime-util-generate-ut-Ref
-      with:
+      - name: Cache fprime-util generate --ut
+        uses: actions/cache@v2
+        id: cache-fprime-util-generate-ut-Ref
+        with:
           path: "~/fprime-util-generate-ut-Ref"
           key: "fprime-util-generate-ut-Ref"
-    - name: Run fprime-util generate--ut
-      env:
-        CACHE_HIT: ${{steps.cache-fprime-util-generate-ut-Ref.outputs.cache-hit}}
-      run: |
+      - name: Run fprime-util generate--ut
+        env:
+          CACHE_HIT: ${{steps.cache-fprime-util-generate-ut-Ref.outputs.cache-hit}}
+        run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate-ut-Ref/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
@@ -137,23 +134,23 @@ jobs:
             mkdir -p ~/fprime-util-generate-ut-Ref
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut-Ref/
           fi
-      working-directory: Ref 
-    
-    # - name: Compile
-    #   run: fprime-util build --all -j4
-    #   working-directory: Ref 
+        working-directory: Ref
 
-    # - name: F prime CI step
-    #   run: ./ci/tests/Ref.bash
+      - name: Compile
+        run: fprime-util build --all -j4
+        working-directory: Ref
 
-    # # Archive the outputs
-    # - name: 'Archive Logs'
-    #   uses: actions/upload-artifact@v2
-    #   if: always()
-    #   with:
-    #     name: ci-ref-logs
-    #     path: ci-logs.tar.gz
-    #     retention-days: 5
+      - name: F prime CI step
+        run: ./ci/tests/Ref.bash
+
+      # Archive the outputs
+      - name: "Archive Logs"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: ci-ref-logs
+          path: ci-logs.tar.gz
+          retention-days: 5
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
@@ -200,4 +197,3 @@ jobs:
   #       name: ci-framework-logs
   #       path: ci-logs.tar.gz
   #       retention-days: 5
-
