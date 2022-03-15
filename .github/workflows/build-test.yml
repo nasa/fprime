@@ -82,25 +82,6 @@ jobs:
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
-    - name: Cache clang-tidy-12
-      uses: actions/cache@v2
-      id: cache-clang-tidy-12
-      with:
-          path: "~/clang-tidy-12"
-          key: "clang-tidy-12"
-    - name: Install clang-tidy-12
-      env:
-        CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
-      run: |
-          if [[ "$CACHE_HIT" == 'true' ]]; then
-            sudo cp --verbose --force --recursive ~/clang-tidy-12/* /
-          else
-            sudo apt-get update
-            sudo apt-get install --yes clang-tidy-12
-            mkdir -p ~/clang-tidy-12
-            sudo dpkg -L clang-tidy-12 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/clang-tidy-12/
-          fi
-
     - name: Cache fprime-util generate
       uses: actions/cache@v2
       id: cache-fprime-util-generate
@@ -115,10 +96,11 @@ jobs:
             sudo cp --verbose --force --recursive ~/fprime-util-generate/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
           else
-            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+            fprime-util generate
             mkdir -p ~/fprime-util-generate
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
           fi
+      working-directory: Ref 
 
     - name: Cache fprime-util generate --ut
       uses: actions/cache@v2
@@ -138,9 +120,11 @@ jobs:
             mkdir -p ~/fprime-util-generate-ut
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut/
           fi
+      working-directory: Ref 
     
     - name: Compile
       run: fprime-util build --all -j4
+      working-directory: Ref 
 
     - name: Test
       run: ./ci/tests/Ref.bash
