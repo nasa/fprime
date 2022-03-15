@@ -5,7 +5,7 @@
 # Helpers to test via FP util
 ####
 set -e
-export FPUTIL_TARGETS=("generate" "generate --ut" "build" "build --all" "check --all")
+export FPUTIL_TARGETS=("check --all")
 ####
 # fputil_action:
 #
