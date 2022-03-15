@@ -26,7 +26,9 @@ namespace MockTypes {
         m_infinite_write(0),
         m_infinite_size(0),
         m_test_buffer(CIRCULAR_BUFFER_MEMORY, static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)))
-    { }
+    {
+        memset(m_buffer, 0, sizeof m_buffer);
+    }
 
     CircularState::~CircularState() {
         if (m_infinite_size != 0) {
