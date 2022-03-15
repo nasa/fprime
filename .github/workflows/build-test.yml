@@ -127,7 +127,7 @@ jobs:
       working-directory: Ref 
 
     - name: Test
-      run: ./ci/tests/Ref.bash
+      run: sudo ./ci/tests/Ref.bash
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
