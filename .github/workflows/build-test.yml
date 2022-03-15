@@ -63,7 +63,7 @@ jobs:
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
           fi
 
-    - name: Flight Code Compilation
+    - name: Compile
       run: fprime-util build --all -j4
     
 
@@ -138,8 +138,11 @@ jobs:
             mkdir -p ~/fprime-util-generate-ut
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut/
           fi
+    
+    - name: Compile
+      run: fprime-util build --all -j4
 
-    - name: F prime CI step
+    - name: Test
       run: ./ci/tests/Ref.bash
 
     # Archive the outputs
