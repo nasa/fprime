@@ -27,30 +27,28 @@ function(ai_ut_impl_is_supported AC_INPUT_FILE)
 endfunction (ai_ut_impl_is_supported)
 
 ####
-# get_generated_files:
-#
-# This autocoder always generates Tester.cpp, Tester.hpp, and TestMain.cpp.  Sets GENERATED_FILES in parent scope to
-# hold this information.
-####
-function(ai_ut_impl_get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp PARENT_SCOPE)
-endfunction(ai_ut_impl_get_generated_files)
-
-####
-# get_dependencies:
-#
-# No dependencies, this function is a no-op.
-####
-function(ai_ut_impl_get_dependencies AC_INPUT_FILE)
-endfunction(ai_ut_impl_get_dependencies)
-
-####
 # setup_autocode:
 #
 # Setup the autocoder build commands. This is a required function of a given autocoder implementation.
 ####
-function(ai_ut_impl_setup_autocode AC_INPUT_FILE GENERATED_FILES MODULE_DEPENDENCIES FILE_DEPENDENCIES EXTRAS)
-    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp)
-    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_SOURCE_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
-                              "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
+function(ai_ut_impl_setup_autocode AC_INPUT_FILE)
+    set(AUTOCODER_GENERATED
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tester.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tester.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/TestMain.cpp
+    )
+    # Get the shared setup for all AI autocoders
+    ai_shared_setup("${CMAKE_CURRENT_SOURCE_DIR}")
+    # Specifically setup the `add_custom_command` call as the requires extra commands to run
+    add_custom_command(
+            OUTPUT ${AUTOCODER_GENERATED}
+            COMMAND ${AI_BASE_SCRIPT} -u "${AC_INPUT_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E remove
+                ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.hpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp
+            DEPENDS "${AC_INPUT_FILE}"
+    )
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 endfunction()

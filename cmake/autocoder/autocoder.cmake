@@ -206,11 +206,6 @@ endfunction(_filter_sources)
 # SOURCES: source file list. Note: if the autocoder sets HANDLES_INDIVIDUAL_SOURCES this will be singular
 ####
 function(__ac_process_sources SOURCES)
-    # Run the autocode setup process now with memoization
-#    cmake_language(CALL "${AUTOCODER_NAME}_get_generated_files" "${SOURCES}")
-#    cmake_language(CALL "${AUTOCODER_NAME}_get_dependencies" "${SOURCES}")
-#    resolve_dependencies(MODULE_DEPENDENCIES ${MODULE_DEPENDENCIES})
-
     # Asserts for consistency
     if (DEFINED AUTOCODER_SCRIPT)
         message(FATAL_ERROR "AUTOCODER_SCRIPT set to ${AUTOCODER_SCIPRT} before setup autocoder call.")
@@ -223,14 +218,14 @@ function(__ac_process_sources SOURCES)
     endif()
 
     # Run the generation setup when not requesting "info only"
-    cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}" "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${EXTRAS}")
+    cmake_language(CALL "${AUTOCODER_NAME}_setup_autocode" "${SOURCES}")
 
     if (NOT DEFINED AUTOCODER_GENERATED)
-        message(FATAL_ERROR "Autocoder must set AUTOCODER_GENERATED to files to be generated")
+        message(FATAL_ERROR "Autocoder ${AUTOCODER_NAME} did not set AUTOCODER_GENERATED to files to be generated")
     elseif(DEFINED AUTOCODER_SCRIPT AND NOT DEFINED AUTOCODER_INPUTS)
-        message(FATAL_ERROR "Autocoder must set both AUTOCODER_INPUTS when using AUTOCODER_SCRIPT")
+        message(FATAL_ERROR "Autocoder ${AUTOCODER_NAME} did not set both AUTOCODER_INPUTS when using AUTOCODER_SCRIPT")
     elseif(DEFINED AUTOCODER_SCRIPT)
-        add_custom_command(OUTPUT "${AUTOCODER_GENERATED}" COMMAND "${AUTOCODER_SCRIPT}" ${AUTOCODER_INPUTS} DEPENDENCIES ${AUTOCODER_INPUTS})
+        add_custom_command(OUTPUT "${AUTOCODER_GENERATED}" COMMAND "${AUTOCODER_SCRIPT}" ${AUTOCODER_INPUTS} DEPENDS ${AUTOCODER_INPUTS} ${AUTOCODER_DEPEDENCIES})
     endif()
 
     set(MODULE_DEPENDENCIES ${AUTOCODER_DEPENDENCIES} PARENT_SCOPE)

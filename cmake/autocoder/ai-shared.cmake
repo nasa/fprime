@@ -1,4 +1,5 @@
 include_guard()
+include(utilities)
 ###
 # Function `cheetah`:
 #
@@ -24,8 +25,30 @@ function(cheetah CHEETAH_TEMPLATES)
     set_property(GLOBAL APPEND PROPERTY CODEGEN_OUTPUTS ${PYTHON_TEMPLATES})
 endfunction(cheetah)
 
+function(ai_split_xml_path AC_INPUT_FILE)
+    get_filename_component(AC_INPUT_NAME "${AC_INPUT_FILE}" NAME)
+    foreach(AI_TYPE IN ITEMS "Component" "Port" "Enum" "Serializable" "Array" "TopologyApp")
+        ends_with(HAS_SUFFIX "${AC_INPUT_NAME}" "${AI_TYPE}Ai.xml")
+        if (HAS_SUFFIX)
+            set(XML_TYPE "${AI_TYPE}")
+            break()
+        endif()
+    endforeach()
+    # Required check of output of Ai.xml generator
+    if (NOT XML_TYPE)
+        message(FATAL_ERROR "[Autocode/ai-xml] Cannot support Ai file of name ${AC_INPUT_NAME}")
+    endif()
+    ##string(TOLOWER "${XML_TYPE}" XML_LOWER_TYPE)
+    string(REPLACE "${XML_TYPE}Ai.xml" "" OBJ_NAME "${AC_INPUT_NAME}")
+    # Set outputs in the parent scope
+    string(TOLOWER ${XML_TYPE} XML_LOWER_TYPE)
+    set(XML_LOWER_TYPE "${XML_LOWER_TYPE}" PARENT_SCOPE)
+    set(XML_TYPE "${XML_TYPE}" PARENT_SCOPE)
+    set(OBJ_NAME "${OBJ_NAME}" PARENT_SCOPE)
+endfunction()
 
-macro(ai_shared_setup)
+
+macro(ai_shared_setup OUTPUT_DIR)
     # Ai autocoder dependencies are **always** the codegen target (builds cheetah)
     set(AUTOCODER_DEPENDENCIES "${CODEGEN_TARGET}" PARENT_SCOPE)
 
@@ -37,7 +60,7 @@ macro(ai_shared_setup)
             BUILD_ROOT=${FPRIME_BUILD_LOCATIONS_SEP}:${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/F-Prime
             FPRIME_AC_CONSTANTS_FILE=${FPRIME_AC_CONSTANTS_FILE}
             PYTHON_AUTOCODER_DIR=${PYTHON_AUTOCODER_DIR}
-        ${PYTHON} ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py --build_root
+        ${PYTHON} ${FPRIME_FRAMEWORK_PATH}/Autocoders/Python/bin/codegen.py -p "${OUTPUT_DIR}" --build_root
     )
 endmacro()
 

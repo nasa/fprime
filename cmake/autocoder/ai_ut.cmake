@@ -35,7 +35,7 @@ endfunction (ai_ut_is_supported)
 # Sets up the autocoder to generate UT files into the binary directory. This is done such that the UTs can build with
 # a complete unit test framework.
 ####
-function(ai_ut_setup AC_INPUT_FILE)
+function(ai_ut_setup_autocode AC_INPUT_FILE)
     set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
     set(AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.hpp")
     # GTest flag handling
@@ -44,14 +44,15 @@ function(ai_ut_setup AC_INPUT_FILE)
     else()
         set(REMOVAL_LIST "${REMOVAL_LIST} ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
     endif()
-    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+
     # Get the shared setup for all AI autocoders
-    ai_shared_setup()
+    ai_shared_setup("${CMAKE_CURRENT_BINARY_DIR}")
     # Specifically setup the `add_custom_command` call as the requires extra commands to run
-    add_custom_command(OUTPUT "${AUTOCODER_GENERATED}" COMMAND ${AI_BASE_SCRIPT} -p "${CMAKE_BINARY_DIR}")
-
-
-    set(EXTRA_COMMANDS ${CMAKE_COMMAND} -E remove ${REMOVAL_LIST})
-    setup_ai_autocode_variant("-u" "${CMAKE_CURRENT_BINARY_DIR}" "${EXTRA_COMMANDS}" "${AC_INPUT_FILE}"
-                              "${GENERATED_FILES}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}")
+    add_custom_command(
+        OUTPUT ${AUTOCODER_GENERATED}
+        COMMAND ${AI_BASE_SCRIPT} -u "${AC_INPUT_FILE}"
+        COMMAND ${CMAKE_COMMAND} -E remove ${REMOVAL_LIST}
+        DEPENDS "${AC_INPUT_FILE}"
+    )
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 endfunction(ai_ut_setup_autocode)
