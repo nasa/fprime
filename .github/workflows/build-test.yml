@@ -122,21 +122,21 @@ jobs:
           fi
       working-directory: Ref 
     
-    # - name: Compile
-    #   run: fprime-util build --all -j4
-    #   working-directory: Ref 
+    - name: Compile
+      run: fprime-util build --all -j4
+      working-directory: Ref 
 
-    # - name: Test
-    #   run: ./ci/tests/Ref.bash
+    - name: Test
+      run: ./ci/tests/Ref.bash
 
-    # # Archive the outputs
-    # - name: 'Archive Logs'
-    #   uses: actions/upload-artifact@v2
-    #   if: always()
-    #   with:
-    #     name: ci-ref-logs
-    #     path: ci-logs.tar.gz
-    #     retention-days: 5
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-ref-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
