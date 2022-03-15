@@ -64,7 +64,7 @@ jobs:
           fi
 
     - name: Compile
-      run: fprime-util build --all -j4
+      run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
     
 
   test:
@@ -123,7 +123,7 @@ jobs:
       working-directory: Ref 
     
     - name: Compile
-      run: fprime-util build --all -j4
+      run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
       working-directory: Ref 
 
     - name: Test
