@@ -12,8 +12,6 @@ export SCRIPT_DIR="$(dirname ${BASH_SOURCE})"
 
 #### NEEDED ENVIRONMENT ####
 export FPRIME_DIR="$(cd ${SCRIPT_DIR}/../..; pwd)"
-export LOG_DIR="${FPRIME_DIR}/ci-Ref-logs-$(date +"%Y-%m-%dT%H%M%S")"
-mkdir -p "${LOG_DIR}"
 
 # Directory to be used for Ref CI test
 export FPUTIL_DEPLOYS="${FPRIME_DIR}/Ref"
@@ -38,5 +36,3 @@ done
 
 # Test Completed
 echo -e "${GREEN}CI test ${FPUTIL_DEPLOYS} Ref SUCCESSFUL${NOCOLOR}"
-
-archive_logs

@@ -17,7 +17,7 @@ export FPUTIL_TARGETS=("check --all")
 function fputil_action {
     export WORKDIR="${1}"
     export TARGET="${2}"
-    let JOBS="${JOBS:-$(( ( RANDOM % 100 )  + 1 ))}"
+    let JOBS="$(nproc || printf '%s\n' 1)"
     (
         PLATFORM=""
 
@@ -29,7 +29,7 @@ function fputil_action {
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         else
 	        echo "[INFO] FP Util in ${WORKDIR} running ${TARGET}"
-            fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} > "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.out.log" 2> "${LOG_DIR}/${WORKDIR//\//_}_${TARGET/ /}.err.log" \
+            fprime-util ${TARGET} ${PLATFORM} ${CMAKE_EXTRA_SETTINGS} \
                 || fail_and_stop "Failed to run '${TARGET}' in ${WORKDIR}"
         fi
     ) || exit 1

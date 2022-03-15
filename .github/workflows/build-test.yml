@@ -127,8 +127,7 @@ jobs:
       working-directory: Ref 
 
     - name: Test
-      run: fprime-util check --all --jobs "$(nproc || printf '%s\n' 1)"
-      working-directory: Ref
+      run: ./ci/tests/Ref.bash
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
