@@ -114,7 +114,22 @@ jobs:
             mkdir -p ~/clang-tidy-12
             sudo dpkg -L clang-tidy-12 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/clang-tidy-12/
           fi
-      - name: Flight Code Static Analysis
-        run: |
-          fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
-          fprime-util build --all -j4
+    - name: Cache fprime-util generate
+      uses: actions/cache@v2
+      id: cache-fprime-util-generate
+      with:
+          path: "~/fprime-util-generate"
+          key: "fprime-util-generate"
+    - name: fprime-util generate
+      env:
+        CACHE_HIT: ${{steps.cache-fprime-util-generate.outputs.cache-hit}}
+      run: |
+          if [[ "$CACHE_HIT" == 'true' ]]; then
+            sudo cp --verbose --force --recursive ~/fprime-util-generate/* $(pwd)/
+          else
+            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+            mkdir -p ~/fprime-util-generate
+            sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
+          fi
+    - name: Flight Code Compilation
+      run: fprime-util build --all -j4
