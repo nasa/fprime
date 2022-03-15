@@ -10,88 +10,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  #### RE-ENABLE: when merging new framework updates from nasa/fprime/master
-  # Framework:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/cache@v2
-  #     with:
-  #       path: ~/.cache/pip
-  #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-  #       restore-keys: |
-  #         ${{ runner.os }}-pip-
-  #   - name: Install fprime tools
-  #     run: pip3 install fprime-tools fprime-gds
-  #   - name: F prime CI step
-  #     run: ./ci/tests/Framework.bash
-  #   # Archive the outputs
-  #   - name: 'Archive Logs'
-  #     uses: actions/upload-artifact@v2
-  #     if: always()
-  #     with:
-  #       name: ci-framework-logs
-  #       path: ci-logs.tar.gz
-  #       retention-days: 5
-
-  Ref:
-    runs-on: ubuntu-latest
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install fprime tools
-        run: pip3 install fprime-tools fprime-gds
-      - name: F prime CI step
-        run: ./ci/tests/Ref.bash
-      # Archive the outputs
-      - name: "Archive Logs"
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          path: "~/fprime-util-generate-v2"
-          key: "fprime-util-generate-v2"
-      - name: Run fprime-util generate
-        env:
-          CACHE_HIT: ${{steps.cache-fprime-util-generate-v2.outputs.cache-hit}}
-        run: |
-          if [[ "$CACHE_HIT" == 'true' ]]; then
-            sudo cp --verbose --force --recursive ~/fprime-util-generate-v2/* $(pwd)/
-            sudo chown -R $USER:$GROUP $(pwd)
-          else
-            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/../release.clang-tidy"
-            mkdir -p ~/fprime-util-generate-v2
-            sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate-v2/
-          fi
-
-  #### RE-ENABLE: when integration tests are written
-  # Integration:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #   - uses: actions/checkout@v2
-  #   - name: Install fprime tools
-  #     run: pip3 install fprime-tools fprime-gds
-  #   - name: Setup Dependencies
-  #     run: sudo apt-get install valgrind
-  #   - name: F prime CI step
-  #     run: ./ci/tests/30-ints.bash
-  #   # Archive the outputs
-  #   - name: 'Archive Logs'
-  #     uses: actions/upload-artifact@v2
-  #     if: always()
-  #     with:
-  #       name: ci-int-logs
-  #       path: ci-logs.tar.gz
-  #       retention-days: 5
-
-  Compilation:
+  setup:
     runs-on: ubuntu-latest
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -142,5 +61,91 @@ jobs:
             mkdir -p ~/fprime-util-generate
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
           fi
+
+  compile:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
     - name: Flight Code Compilation
       run: fprime-util build --all -j4
+
+  test:
+    needs: compile
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache fprime-util generate --ut
+      uses: actions/cache@v2
+      id: cache-fprime-util-generate-ut
+      with:
+          path: "~/fprime-util-generate-ut"
+          key: "fprime-util-generate-ut"
+    - name: Run fprime-util generate--ut
+      env:
+        CACHE_HIT: ${{steps.cache-fprime-util-generate-ut.outputs.cache-hit}}
+      run: |
+          if [[ "$CACHE_HIT" == 'true' ]]; then
+            sudo cp --verbose --force --recursive ~/fprime-util-generate-ut/* $(pwd)/
+            sudo chown -R $USER:$GROUP $(pwd)
+          else
+            fprime-util generate --ut
+            mkdir -p ~/fprime-util-generate-ut
+            sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut/
+          fi
+
+    - name: F prime CI step
+      run: ./ci/tests/Ref.bash
+    # Archive the outputs
+    - name: 'Archive Logs'
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: ci-ref-logs
+        path: ci-logs.tar.gz
+        retention-days: 5
+
+  #### RE-ENABLE: when integration tests are written
+  # Integration:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #   - uses: actions/checkout@v2
+  #   - name: Install fprime tools
+  #     run: pip3 install fprime-tools fprime-gds
+  #   - name: Setup Dependencies
+  #     run: sudo apt-get install valgrind
+  #   - name: F prime CI step
+  #     run: ./ci/tests/30-ints.bash
+  #   # Archive the outputs
+  #   - name: 'Archive Logs'
+  #     uses: actions/upload-artifact@v2
+  #     if: always()
+  #     with:
+  #       name: ci-int-logs
+  #       path: ci-logs.tar.gz
+  #       retention-days: 5
+
+  #### RE-ENABLE: when merging new framework updates from nasa/fprime/master
+  # Framework:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/cache@v2
+  #     with:
+  #       path: ~/.cache/pip
+  #       key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-pip-
+  #   - name: Install fprime tools
+  #     run: pip3 install fprime-tools fprime-gds
+  #   - name: F prime CI step
+  #     run: ./ci/tests/Framework.bash
+  #   # Archive the outputs
+  #   - name: 'Archive Logs'
+  #     uses: actions/upload-artifact@v2
+  #     if: always()
+  #     with:
+  #       name: ci-framework-logs
+  #       path: ci-logs.tar.gz
+  #       retention-days: 5
+
