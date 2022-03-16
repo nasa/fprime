@@ -112,10 +112,10 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
         # Are we excluding the generated files or not
         if (EXCLUDE_TOP_ACS)
             set(REMOVALS "${GENERATED_FILES}")
-            set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")
+            set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
         else()
             set(REMOVALS "${CMAKE_BINARY_DIR}}/does-not-exist-cmake-test-file")
-            list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")
+            list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}${XML_TYPE}Dictionary.xml")
         endif()
         add_custom_command(
             OUTPUT ${GENERATED_FILES}
