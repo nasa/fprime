@@ -2,7 +2,8 @@
 # autocoder/ai-xml.cmake
 #
 # Primary Ai XML autocoder that sets up the C++ file generation. This is a implementation of the singular autocoder
-# setup of the the original CMake system.
+# setup of the the original CMake system. It process AI XML files and produces the autocoder output files Ac.hpp and
+# Ac.cpp files.
 #####
 include(utilities)
 include(autocoder/helpers)
@@ -10,12 +11,10 @@ include(autocoder/ai-shared)
 
 autocoder_setup_for_individual_sources()
 ####
-# `is_supported`:
+# `ai_xml_is_supported`:
 #
-# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-# IS_SUPPORTED in parent scope to be TRUE if the source is an AI XML file or FALSE otherwise.
-#
-# AC_INPUT_FILE: filepath for consideration
+# Required function, processes ComponentAi.xml files.
+# `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
     autocoder_support_by_suffix("Ai.xml" "${AC_INPUT_FILE}")
@@ -28,8 +27,6 @@ endfunction (ai_xml_is_supported)
 # following variables in parent scope:
 #
 # - GENERATED_FILES: a list of files generated for the given input sources
-# - MODULE_DEPENDENCIES: inter-module dependencies determined from the given input sources
-# - FILE_DEPENDENCIES: specific file dependencies of the given input sources
 # - EXTRAS: used to publish the 'xml type' file and files to remove
 #
 # Note: although this function is only required to set `GENERATED_FILES`, the remaining information is also set as
@@ -38,8 +35,6 @@ endfunction (ai_xml_is_supported)
 # AC_INPUT_FILES: list of supported autocoder input files
 ####
 function(ai_xml_get_generated_files AC_INPUT_FILE)
-
-
     set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.hpp"
                         "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.cpp")
 
@@ -54,7 +49,6 @@ function(ai_xml_get_generated_files AC_INPUT_FILE)
     set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
 endfunction(ai_xml_get_generated_files)
-
 
 ####
 # Function `__ai_info`:
@@ -96,9 +90,9 @@ macro(__ai_info XML_PATH MODULE_NAME)
 endmacro(__ai_info)
 
 ####
-# `setup_autocode`:
+# `ai_xml_setup_autocode`:
 #
-# Sets up the AI XML autocoder to generate files.
+# Required function, sets up a custom command to produce Ac.hpp and Ac.cpp files.
 ####
 function(ai_xml_setup_autocode AC_INPUT_FILE)
     __ai_info("${AC_INPUT_FILE}" "${MODULE_NAME}")

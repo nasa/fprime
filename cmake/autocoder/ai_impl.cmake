@@ -1,7 +1,8 @@
 ####
 # autocoder/ai-impl:
 #
-# Implementation template autocoder file.
+# Autocoder implementation for the generation of implementation templates. This is triggered by the `impl` target and
+# runs codegen to produce the template files.
 ####
 include(utilities)
 include(autocoder/helpers)
@@ -10,23 +11,19 @@ include(autocoder/ai-shared)
 autocoder_setup_for_individual_sources()
 
 ####
-# `is_supported`:
+# `ai_impl_is_supported`:
 #
-# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-# IS_SUPPORTED in parent scope to be TRUE if the source file is an AI XML component file or FALSE otherwise. This only
-# processes component ai xml files.
-#
-# AC_INPUT_FILE: filepath for consideration
+# Required function, processes ComponentAi.xml files.
+# `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(ai_impl_is_supported AC_INPUT_FILE)
     autocoder_support_by_suffix("ComponentAi.xml" "${AC_INPUT_FILE}")
 endfunction (ai_impl_is_supported)
 
-
 ####
 # `setup_autocode`:
 #
-# Sets up the AI XML autocoder to generate files.
+# Required function, sets up a custom command to produce .hpp-template and .cpp-template files.
 ####
 function(ai_impl_setup_autocode AC_INPUT_FILE)
     ai_split_xml_path("${AC_INPUT_FILE}")

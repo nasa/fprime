@@ -1,39 +1,34 @@
 ####
 # autocoder/ai-ut:
 #
-# Unit test support files autocoder. Only run when BUILD_TESTING is set. Otherwise it is not registered.
+# Defines functions for the UT autocoder that uses AI XML inputs to generate the TesterBase and GTestBase files. This is
+# built on the same shared setup as the other AI autocoders, but only run when `BUILD_TESTING` is set.
 ####
 include(utilities)
 include(autocoder/helpers)
 include(autocoder/ai-shared)
-
-
 
 # Bail if not testing
 if (NOT BUILD_TESTING)
     return()
 endif()
 
-
 autocoder_setup_for_individual_sources()
+
 ####
-# `is_supported`:
+# `ai_ut_is_supported`:
 #
-# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-# IS_SUPPORTED in parent scope to be TRUE if the source file is an AI XML component file or FALSE otherwise. This only
-# processes component ai xml files.
-#
-# AC_INPUT_FILE: filepath for consideration
+# Required function, processes ComponentAi.xml files.
+# `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(ai_ut_is_supported AC_INPUT_FILE)
     autocoder_support_by_suffix("ComponentAi.xml" "${AC_INPUT_FILE}")
 endfunction (ai_ut_is_supported)
 
 ####
-# ai_ut_setup:
+# `ai_ut_setup_autocode`:
 #
-# Sets up the autocoder to generate UT files into the binary directory. This is done such that the UTs can build with
-# a complete unit test framework.
+# Required function, sets up a custom command to produce TesterBase and GTestBase files.
 ####
 function(ai_ut_setup_autocode AC_INPUT_FILE)
     set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")

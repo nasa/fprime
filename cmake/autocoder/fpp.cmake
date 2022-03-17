@@ -46,10 +46,8 @@ endfunction(locate_fpp_tools)
 ####
 # Function `is_supported`:
 #
-# Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-# IS_SUPPORTED in parent scope to be TRUE if FPP can process the given file or FALSE otherwise.
-#
-# AC_INPUT_FILE: filepath for consideration
+# Required function, processes ComponentAi.xml files.
+# `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(fpp_is_supported AC_INPUT_FILE)
     autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}")

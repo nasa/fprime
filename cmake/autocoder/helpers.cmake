@@ -32,7 +32,7 @@ endmacro()
 # Function to set AUTOCODER_NAME in parent scope. Helper to the below two function, not intended for users to call this
 # function.
 #
-# FUNCTION_NAME: function name for producing error mesage
+# FUNCTION_NAME: function name for producing error message
 ####
 function(_set_autocoder_name FUNCTION_NAME)
     get_filename_component(AUTOCODER_DIRPATH "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)

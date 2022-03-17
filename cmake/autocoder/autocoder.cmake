@@ -125,7 +125,7 @@ endfunction(run_ac)
 ####
 # Function `_describe_autocoder_prep`:
 #
-# Discribes the inputs into an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Run before running the
+# Describes the inputs into an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Run before running the
 # autocoder
 #
 # AUTOCODER_NAME: name of autocoder being run
@@ -140,6 +140,7 @@ function(_describe_autocoder_prep AUTOCODER_NAME AC_INPUT_SOURCES)
         endforeach()
     endif()
 endfunction()
+
 ####
 # Function `_describe_autocoder_run`:
 #
@@ -175,6 +176,7 @@ function(_describe_autocoder_run AUTOCODER_NAME)
         endif()
     endif()
 endfunction()
+
 ####
 # _filter_sources:
 #
@@ -208,7 +210,7 @@ endfunction(_filter_sources)
 function(__ac_process_sources SOURCES)
     # Asserts for consistency
     if (DEFINED AUTOCODER_SCRIPT)
-        message(FATAL_ERROR "AUTOCODER_SCRIPT set to ${AUTOCODER_SCIPRT} before setup autocoder call.")
+	    message(FATAL_ERROR "AUTOCODER_SCRIPT set to ${AUTOCODER_SCRIPT} before setup autocoder call.")
     elseif(DEFINED AUTOCODER_GENERATED)
         message(FATAL_ERROR "AUTOCODER_GENERATED set to ${AUTOCODER_GENERATED} before setup autocoder call.")
     elseif(DEFINED AUTOCODER_INPUTS)
@@ -225,7 +227,7 @@ function(__ac_process_sources SOURCES)
     elseif(DEFINED AUTOCODER_SCRIPT AND NOT DEFINED AUTOCODER_INPUTS)
         message(FATAL_ERROR "Autocoder ${AUTOCODER_NAME} did not set both AUTOCODER_INPUTS when using AUTOCODER_SCRIPT")
     elseif(DEFINED AUTOCODER_SCRIPT)
-        add_custom_command(OUTPUT ${AUTOCODER_GENERATED} COMMAND ${AUTOCODER_SCRIPT} ${AUTOCODER_INPUTS} DEPENDS ${AUTOCODER_INPUTS} ${AUTOCODER_DEPEDENCIES})
+	    add_custom_command(OUTPUT ${AUTOCODER_GENERATED} COMMAND ${AUTOCODER_SCRIPT} ${AUTOCODER_INPUTS} DEPENDS ${AUTOCODER_INPUTS} ${AUTOCODER_DEPENDENCIES})
     endif()
 
     set(MODULE_DEPENDENCIES ${AUTOCODER_DEPENDENCIES} PARENT_SCOPE)
