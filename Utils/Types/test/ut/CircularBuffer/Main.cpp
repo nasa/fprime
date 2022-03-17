@@ -172,6 +172,20 @@ TEST(CircularBufferTests, BasicRotateBadTest) {
     rotateBad.apply(state);
 }
 
+/**
+ * Test boundary cases
+ */
+TEST(CircularBufferTests, BoundaryCases) {
+    MockTypes::CircularState state;
+    // Serialize an empty buffer
+    state.setRandom(0, 0, 0);
+    Types::SerializeOkRule serializeOk("serializeOk");
+    serializeOk.apply(state);
+    // Serialize a max size buffer
+    state.setRandom(MAX_BUFFER_SIZE, 0, 0);
+    serializeOk.apply(state);
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
