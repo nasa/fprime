@@ -29,6 +29,8 @@ RUN npm install -g nodemon
 # Build and compile FPP dep
 RUN git clone https://github.com/fprime-community/fpp.git fpp \
     && cd fpp/compiler \
+    # if running into unexpected version errors, adjust this commit hash
+    && git checkout ee355fc99eb8040157c62e69f58ac6a8435cd981 \
     && export FPP_SBT_FLAGS='--batch -Dsbt.server.forcestart=true' \
     && ./install /usr/local/bin/fpp
 ENV FPP_INSTALL_DIR=/usr/local/bin/fpp
