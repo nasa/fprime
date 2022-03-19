@@ -57,7 +57,6 @@ jobs:
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
-            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
           else
             fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
             mkdir -p ~/fprime-util-generate
@@ -96,7 +95,6 @@ jobs:
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate-Ref/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
-            fprime-util generate
           else
             fprime-util generate
             mkdir -p ~/fprime-util-generate-Ref
@@ -117,7 +115,6 @@ jobs:
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate-ut-Ref/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
-            fprime-util generate --ut
           else
             fprime-util generate --ut
             mkdir -p ~/fprime-util-generate-ut-Ref
