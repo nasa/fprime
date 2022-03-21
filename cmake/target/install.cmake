@@ -3,7 +3,27 @@
 #
 # Installs fprime into the build-artifacts folder. This is done using CMake's install command. Requires CMake 3.13+.
 ####
+include(utilities)
+
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE CACHE BOOL "Install all dependency" FORCE)
+
+####
+# Function `_install_real_helper`:
+#
+# Ensures targets are real before installing them. Real targets are executables, libraries, and other compile artifacts.
+# - **OUTPUT**: output variable set with list of real dependencies
+# - **FULL_DEPENDENCIES**: full list of (recursive) dependencies
+####
+function(_install_real_helper OUTPUT FULL_DEPENDENCIES)
+    set(OUTPUT_LIST)
+    foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
+        is_target_real(IS_REAL "${DEPENDENCY}")
+        if (IS_REAL)
+            list(APPEND OUTPUT_LIST "${DEPENDENCY}")
+        endif()
+    endforeach()
+    set("${OUTPUT}" "${OUTPUT_LIST}" PARENT_SCOPE)
+endfunction()
 
 # Dictionaries are per-deployment, a global variant does not make sense
 function(install_add_global_target)
@@ -21,7 +41,8 @@ endfunction()
 ####
 function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
-    install(TARGETS ${MODULE} ${FULL_DEPENDENCIES}
+    _install_real_helper(INSTALL_DEPENDENCIES "${FULL_DEPENDENCIES}")
+    install(TARGETS ${MODULE} ${INSTALL_DEPENDENCIES}
             RUNTIME DESTINATION ${TOOLCHAIN_NAME}/bin
             LIBRARY DESTINATION ${TOOLCHAIN_NAME}/lib
             ARCHIVE DESTINATION ${TOOLCHAIN_NAME}/lib/static)

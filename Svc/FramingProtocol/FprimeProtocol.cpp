@@ -84,7 +84,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     FpFrameHeader::TokenType size = 0;
     FW_ASSERT(m_interface != nullptr);
     // Check for header or ask for more data
-    if (ring.get_remaining_size() < FpFrameHeader::SIZE) {
+    if (ring.get_allocated_size() < FpFrameHeader::SIZE) {
         needed = FpFrameHeader::SIZE;
         return DeframingProtocol::DEFRAMING_MORE_NEEDED;
     }
@@ -100,13 +100,12 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
         // Start word must be valid
         return DeframingProtocol::DEFRAMING_INVALID_FORMAT;
     }
-    if (frameSize + 1 > ring.get_capacity()) {
+    if (frameSize > ring.get_capacity()) {
         // Frame size is too large
-        // Note: ring.get_capacity returns one more than the available buffer capacity
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
     }
     // Check for enough data to deserialize everything otherwise break and wait for more.
-    else if (ring.get_remaining_size() < needed) {
+    else if (ring.get_allocated_size() < needed) {
         return DeframingProtocol::DEFRAMING_MORE_NEEDED;
     }
     // Check the checksum
@@ -114,8 +113,8 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
         return DeframingProtocol::DEFRAMING_INVALID_CHECKSUM;
     }
     Fw::Buffer buffer = m_interface->allocate(size);
-    // some allocators may return buffers larger than requested
-    // that causes issues in routing. adjust size
+    // Some allocators may return buffers larger than requested.
+    // That causes issues in routing; adjust size
     FW_ASSERT(buffer.getSize() >= size);
     buffer.setSize(size);
     ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);

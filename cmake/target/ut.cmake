@@ -3,6 +3,7 @@
 #
 # UTs target implementation.
 ####
+include(target/build) # Borrows some implementation
 set(UT_TARGET "ut_exe") # For historical reasons
 ####
 # `ut_add_global_target`:
@@ -58,7 +59,7 @@ function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
     run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_ut)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
-    setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
+    build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 
     target_include_directories("${UT_EXE_NAME}" PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})

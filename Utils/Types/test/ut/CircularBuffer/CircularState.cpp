@@ -16,7 +16,7 @@ U8 CIRCULAR_BUFFER_MEMORY[MAX_BUFFER_SIZE];
 namespace MockTypes {
 
     CircularState::CircularState() :
-        m_remaining_size(static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)) - 1), // One Byte overhead
+        m_remaining_size(static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY))),
         m_random_size(MAX_BUFFER_SIZE),
         m_peek_offset(0),
         m_peek_type(0),

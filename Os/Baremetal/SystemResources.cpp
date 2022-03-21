@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <Os/SystemResources.hpp>
+
 namespace Os {
 
 SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32& cpuCount) {
@@ -29,7 +31,7 @@ SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks& cp
 SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil& memory_util) {
     // Always 100 percent
     memory_util.total = 1;
-    memory_util.util = 1;
+    memory_util.used = 1;
     return SYSTEM_RESOURCES_OK;
 }
 }  // namespace Os

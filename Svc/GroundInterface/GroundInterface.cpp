@@ -176,7 +176,7 @@ namespace Svc {
       TOKEN_TYPE start;
       U32 checksum; //TODO: make this run a CRC32
       // Inner-loop, process ring buffer looking for at least the header
-      while (m_in_ring.get_remaining_size() >= HEADER_SIZE) {
+      while (m_in_ring.get_allocated_size() >= HEADER_SIZE) {
           m_data_size = 0;
           // Peek into the header and read out values
           Fw::SerializeStatus status = m_in_ring.peek(start, 0);
@@ -189,7 +189,7 @@ namespace Svc {
               continue;
           }
           // Check for enough data to deserialize everything otherwise break and wait for more.
-          else if (m_in_ring.get_remaining_size() < (HEADER_SIZE + m_data_size + sizeof(END_WORD))) {
+          else if (m_in_ring.get_allocated_size() < (HEADER_SIZE + m_data_size + sizeof(END_WORD))) {
               break;
           }
           // Continue with the data portion and checksum
@@ -211,8 +211,8 @@ namespace Svc {
   {
       NATIVE_UINT_TYPE buffer_offset = 0;
       while (buffer_offset < buffer.getSize()) {
-          NATIVE_UINT_TYPE ser_size = (buffer.getSize() >= m_in_ring.get_remaining_size(true)) ?
-              m_in_ring.get_remaining_size(true) : static_cast<NATIVE_UINT_TYPE>(buffer.getSize());
+          NATIVE_UINT_TYPE ser_size = (buffer.getSize() >= m_in_ring.get_free_size()) ?
+              m_in_ring.get_free_size() : static_cast<NATIVE_UINT_TYPE>(buffer.getSize());
           m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
           buffer_offset = buffer_offset + ser_size;
           processRing();

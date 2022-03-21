@@ -4,6 +4,7 @@
 # This target sets up the build for every module in the system. WARNING: it registers a target set to the module name,
 # not including _build. This is for historical reasons.
 ####
+include_guard()
 include(autocoder/autocoder)
 include(utilities)
 
@@ -17,39 +18,6 @@ if (FPRIME_ENABLE_UT_COVERAGE)
     list(APPEND FPRIME_TESTING_REQUIRED_LINK_FLAGS --coverage)
 endif()
 
-
-####
-# Function `recurse_targets`:
-#
-# A helper that pulls out module dependencies that are also fprime modules.
-####
-function(recurse_targets TARGET OUTPUT BOUND)
-    get_property(ALL_MODULES GLOBAL PROPERTY FPRIME_MODULES)
-    set(TARGET_DEPENDENCIES)
-    if (TARGET "${TARGET}")
-        get_property(TARGET_DEPENDENCIES TARGET "${TARGET}" PROPERTY FPRIME_TARGET_DEPENDENCIES)
-    endif()
-    # Extra dependencies
-    list(APPEND TARGET_DEPENDENCIES ${ARGN})
-    if (TARGET_DEPENDENCIES)
-        list(REMOVE_DUPLICATES TARGET_DEPENDENCIES)
-    endif()
-
-    set(RESULTS_LOCAL)
-    foreach(NEW_TARGET IN LISTS TARGET_DEPENDENCIES)
-        if (NOT NEW_TARGET IN_LIST BOUND AND NEW_TARGET IN_LIST ALL_MODULES)
-            list(APPEND BOUND "${NEW_TARGET}")
-            recurse_targets("${NEW_TARGET}" RESULTS "${BOUND}")
-            list(APPEND RESULTS_LOCAL ${RESULTS} "${NEW_TARGET}")
-        endif()
-    endforeach()
-    if (RESULTS_LOCAL)
-        list(REMOVE_DUPLICATES RESULTS_LOCAL)
-    endif()
-    set(${OUTPUT} "${RESULTS_LOCAL}" PARENT_SCOPE)
-endfunction()
-
-
 ####
 # Build function `add_global_target`:
 #
@@ -59,7 +27,7 @@ function(build_add_global_target TARGET)
 endfunction(build_add_global_target)
 
 ####
-# setup_build_module:
+# build_setup_build_module:
 #
 # Helper function to setup the module. This was the historical core of the CMake system, now embedded as part of this
 # build target. It adds a the target (library, executable), sets up compiler source files, flags generated sources,
@@ -71,7 +39,7 @@ endfunction(build_add_global_target)
 # - EXCLUDED_SOURCES: sources already "consumed", that is, processed by an autocoder
 # - DEPENDENCIES: dependencies of this module. Also link flags and libraries.
 ####
-function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
+function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCIES)
     # Add generated sources
     foreach(SOURCE IN LISTS SOURCES GENERATED)
         if (NOT SOURCE IN_LIST EXCLUDED_SOURCES)
@@ -104,11 +72,21 @@ function(setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPENDENCI
     # this prevents the need for manually specifying link orders.
     set(TARGET_DEPENDENCIES)
     foreach(DEPENDENCY ${DEPENDENCIES})
-        if (NOT DEPENDENCY MATCHES "^-l.*")
+        linker_only(LINKER_ONLY "${DEPENDENCY}")
+        # Add a cmake dependency as long as this is not to be supplied only to the linker
+        if (NOT LINKER_ONLY)
             add_dependencies(${MODULE} "${DEPENDENCY}")
             list(APPEND TARGET_DEPENDENCIES "${DEPENDENCY}")
         endif()
-        target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
+        # Linker accepts all only linker items (e.g. linker flags, pre-built libraries, etc) and anything that is
+        # defined as a library within cmake, and all undefined targets. This has several implications:
+        #
+        # 1. Targets that will exist, but do not exist at the time of this call will be assumed to be a library
+        # 2. EXECUTABLE and UTILITY targets can only be added to MOD_DEPS when they are pre-defined
+        is_target_library(IS_LIB "${DEPENDENCY}")
+        if (LINKER_ONLY OR NOT TARGET "${DEPENDENCY}" OR IS_LIB)
+            target_link_libraries(${MODULE} PUBLIC "${DEPENDENCY}")
+        endif()
     endforeach()
     set_property(TARGET "${MODULE}" PROPERTY FPRIME_TARGET_DEPENDENCIES ${TARGET_DEPENDENCIES})
 endfunction()
@@ -138,7 +116,7 @@ function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     message(STATUS "Adding ${MODULE_TYPE}: ${MODULE}")
     run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
     resolve_dependencies(RESOLVED ${DEPENDENCIES} ${AC_DEPENDENCIES} )
-    setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
+    build_setup_build_module("${MODULE}" "${SOURCES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
     # Special flags applied to modules when compiling with testing enabled
     if (BUILD_TESTING)
         target_compile_options("${MODULE}" PRIVATE ${FPRIME_TESTING_REQUIRED_COMPILE_FLAGS})

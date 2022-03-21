@@ -15,6 +15,8 @@ jobs:
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
     - name: Setup Dependencies
-      run: sudo apt-get install doxygen
+      run: |
+           sudo apt-get update
+           sudo apt-get install doxygen
     - name: Autodocs
       run: .github/actions/autodoc.bash
