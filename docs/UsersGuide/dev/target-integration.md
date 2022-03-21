@@ -45,7 +45,7 @@ module, and a list of dependencies supplied to the module (i.e. the `MOD_DEPS` v
 to run autocoders on the module. The name of the target added should be: `${TARGET}_${MODULE}`.
 
 Module targets often attach to the global target as dependencies such that all the module targets run before the global
-target runs. An example is procided that runs `my_autocoder` on each module.
+target runs. An example is provided that runs `my_autocoder` on each module.
 
 ```cmake
 include(autocoder/autocoder)

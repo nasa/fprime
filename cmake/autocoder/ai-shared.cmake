@@ -1,7 +1,7 @@
 ####
 # `autocoder/ai-shared.cmake`:
 #
-# Shared implementation for AI XML files. Contains helper and base functions for writing those autoocoder more easily.
+# Shared implementation for AI XML files. Contains helper and base functions for writing those autocoder more easily.
 ####
 include_guard()
 include(utilities)
@@ -64,7 +64,7 @@ endfunction()
 ####
 # Macro `ai_shared_setup`:
 #
-# Get the shared setup for the ai autocoder (e.g. codgen invocation). Used in multiple ai autocoders.
+# Get the shared setup for the ai autocoder (e.g. codegen invocation). Used in multiple ai autocoders.
 #
 # OUTPUT_DIR: directory to place outputs into
 # Returns: AI_BASE_SCRIPT, configured codegen call.
