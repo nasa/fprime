@@ -41,7 +41,7 @@ namespace Svc {
       //! Constructor
       FprimeFraming();
 
-      //! Implementats the frame method
+      //! Implements the frame method
       void frame(
           const U8* const data,
           const U32 size,
