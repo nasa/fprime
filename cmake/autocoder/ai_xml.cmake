@@ -121,7 +121,7 @@ function(ai_xml_setup_autocode AC_INPUT_FILE)
         add_custom_command(
             OUTPUT ${GENERATED_FILES}
             COMMAND ${AI_BASE_SCRIPT} "${AC_INPUT_FILE}"
-            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${AC_INPUT_FILE}" "${FILE_DEPENDENCIES}"
+            DEPENDS "${AC_INPUT_FILE}" "${MODULE_DEPENDENCIES}" "${FILE_DEPENDENCIES}" "${CODEGEN_TARGET}"
         )
     endif()
     set(AUTOCODER_GENERATED "${GENERATED_FILES}" PARENT_SCOPE)

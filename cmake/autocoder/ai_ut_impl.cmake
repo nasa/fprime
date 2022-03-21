@@ -47,7 +47,7 @@ function(ai_ut_impl_setup_autocode AC_INPUT_FILE)
                 ${CMAKE_CURRENT_SOURCE_DIR}/TesterBase.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.hpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/GTestBase.cpp
-            DEPENDS "${AC_INPUT_FILE}"
+            DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 endfunction()

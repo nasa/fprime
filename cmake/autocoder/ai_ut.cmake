@@ -47,7 +47,7 @@ function(ai_ut_setup_autocode AC_INPUT_FILE)
         OUTPUT ${AUTOCODER_GENERATED}
         COMMAND ${AI_BASE_SCRIPT} -u "${AC_INPUT_FILE}"
         COMMAND ${CMAKE_COMMAND} -E remove ${REMOVAL_LIST}
-        DEPENDS "${AC_INPUT_FILE}"
+        DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
 endfunction(ai_ut_setup_autocode)
