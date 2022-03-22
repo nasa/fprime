@@ -119,6 +119,10 @@ void test_serialization() {
     Fw::Buffer buffer_new;
     externalSerializeBuffer.deserialize(buffer_new);
     ASSERT_EQ(buffer_new, buffer);
+
+    // Make sure internal ExternalSerializeBuffer is reinitialized
+    ASSERT_EQ(buffer_new.m_serialize_repr.m_buff,data);
+    ASSERT_EQ(buffer_new.m_serialize_repr.m_buffSize,sizeof(data));
 }
 
 
