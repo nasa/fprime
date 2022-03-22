@@ -131,7 +131,7 @@ $(document).ready(function(){initNavTree('_buffer_8cpp_source.html',''); initRes
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    m_context(context)</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">if</span>(m_bufferData != <span class="keyword">nullptr</span>){</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(m_bufferData, m_size);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(this-&gt;m_bufferData, this-&gt;m_size);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
@@ -162,14 +162,14 @@ $(document).ready(function(){initNavTree('_buffer_8cpp_source.html',''); initRes
 <div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_fw_1_1_buffer.html#a8e22fb1466a971f05b264a4dbee6f789">   72</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_buffer.html#a8e22fb1466a971f05b264a4dbee6f789">Buffer::setData</a>(<a class="code" href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a>* <span class="keyword">const</span> data) {</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    this-&gt;m_bufferData = data;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">if</span> (m_bufferData != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(m_bufferData, m_size);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(this-&gt;m_bufferData, this-&gt;m_size);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    }</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">   79</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_fw_1_1_buffer.html#aaccda454a4786c7d9d89c4dccc5e2c53">Buffer::setSize</a>(<span class="keyword">const</span> U32 size) {</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    this-&gt;m_size = size;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> (m_bufferData != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(m_bufferData, m_size);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(this-&gt;m_bufferData, this-&gt;m_size);</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
@@ -181,7 +181,7 @@ $(document).ready(function(){initNavTree('_buffer_8cpp_source.html',''); initRes
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    this-&gt;m_bufferData = data;</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    this-&gt;m_size = size;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">if</span> (m_bufferData != <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(m_bufferData, m_size);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(this-&gt;m_bufferData, this-&gt;m_size);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    this-&gt;m_context = context;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
@@ -243,31 +243,35 @@ $(document).ready(function(){initNavTree('_buffer_8cpp_source.html',''); initRes
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordflow">if</span> (stat != <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32a2c3101a788d56aa3d3020fa20d54a020">Fw::FW_SERIALIZE_OK</a>) {</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keywordflow">return</span> stat;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">return</span> stat;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;}</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING  || BUILD_UT</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="keywordtype">void</span> Buffer::toString(<a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; text)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> * formatString = <span class="stringliteral">&quot;(data = %p, size = %u,context = %u)&quot;</span>;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">char</span> outputString[<a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>];</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    (void)snprintf(outputString, <a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>, formatString, this-&gt;m_bufferData, this-&gt;m_size,</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                   this-&gt;m_context);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="comment">// Force NULL termination</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    outputString[<a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>-1] = 0;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    text = outputString;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> Buffer&amp; obj) {</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <a class="code" href="class_fw_1_1_string.html">Fw::String</a> str;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        obj.toString(str);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        os &lt;&lt; str.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>();</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;} <span class="comment">// end namespace Fw</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordflow">if</span> (this-&gt;m_bufferData != <span class="keyword">nullptr</span>) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        this-&gt;m_serialize_repr.<a class="code" href="class_fw_1_1_external_serialize_buffer.html#a4a40b9c8a2ccb948e50df3a6a082be0d">setExtBuffer</a>(this-&gt;m_bufferData, this-&gt;m_size);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">return</span> stat;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING  || BUILD_UT</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="keywordtype">void</span> Buffer::toString(<a class="code" href="class_fw_1_1_string_base.html">Fw::StringBase</a>&amp; text)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> * formatString = <span class="stringliteral">&quot;(data = %p, size = %u,context = %u)&quot;</span>;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">char</span> outputString[<a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>];</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    (void)snprintf(outputString, <a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>, formatString, this-&gt;m_bufferData, this-&gt;m_size,</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                   this-&gt;m_context);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="comment">// Force NULL termination</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    outputString[<a class="code" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</a>-1] = 0;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    text = outputString;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;}</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="preprocessor">#ifdef BUILD_UT</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> Buffer&amp; obj) {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <a class="code" href="class_fw_1_1_string.html">Fw::String</a> str;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        obj.toString(str);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        os &lt;&lt; str.<a class="code" href="class_fw_1_1_string.html#a957e8e902c4ecfad57524047ff95ad35">toChar</a>();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="keywordflow">return</span> os;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    }</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;} <span class="comment">// end namespace Fw</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_fw_1_1_serialize_buffer_base_html"><div class="ttname"><a href="class_fw_1_1_serialize_buffer_base.html">Fw::SerializeBufferBase</a></div><div class="ttdef"><b>Definition:</b> <a href="serializable_8hpp_source.html#l00043">Serializable.hpp:43</a></div></div>
