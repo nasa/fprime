@@ -24,7 +24,7 @@
  */
 TEST(CircularBufferTests, RandomCircularTests) {
     F64 max_addr_mem = sizeof(NATIVE_UINT_TYPE) * 8.0;
-    max_addr_mem = pow(2.0, max_addr_mem) - 1.0;
+    max_addr_mem = pow(2.0, max_addr_mem);
     // Ensure the maximum memory use is less that the max addressable memory
     F64 max_used_mem = static_cast<double>(STEP_COUNT) * static_cast<double>(MAX_BUFFER_SIZE);
     ASSERT_LT(max_used_mem, max_addr_mem);
@@ -82,7 +82,7 @@ TEST(CircularBufferTests, BasicSerializeTest) {
 TEST(CircularBufferTests, BasicOverflowTest) {
     // Setup state and fill it with garbage
     MockTypes::CircularState state;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK , state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize() - 1));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK , state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize()));
     state.setRemainingSize(0);
 
     // Create rules, and assign them into the array
@@ -114,7 +114,7 @@ TEST(CircularBufferTests, BasicPeekTest) {
     }
     state.addInfinite(buffer, sizeof(buffer));
     state.getTestBuffer().serialize(buffer, sizeof(buffer));
-    state.setRemainingSize(MAX_BUFFER_SIZE - 1 - 1030);
+    state.setRemainingSize(MAX_BUFFER_SIZE - 1030);
     // Run all peek variants
     Types::PeekOkRule peekOk("peekOk");
     state.setRandom(0, 0, 0);
@@ -172,7 +172,22 @@ TEST(CircularBufferTests, BasicRotateBadTest) {
     rotateBad.apply(state);
 }
 
+/**
+ * Test boundary cases
+ */
+TEST(CircularBufferTests, BoundaryCases) {
+    MockTypes::CircularState state;
+    // Serialize an empty buffer
+    state.setRandom(0, 0, 0);
+    Types::SerializeOkRule serializeOk("serializeOk");
+    serializeOk.apply(state);
+    // Serialize a max size buffer
+    state.setRandom(MAX_BUFFER_SIZE, 0, 0);
+    serializeOk.apply(state);
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

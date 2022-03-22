@@ -11,6 +11,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <gtest/gtest.h>
 
 U8 CIRCULAR_BUFFER_MEMORY[MAX_BUFFER_SIZE];
 namespace MockTypes {
@@ -25,7 +26,9 @@ namespace MockTypes {
         m_infinite_write(0),
         m_infinite_size(0),
         m_test_buffer(CIRCULAR_BUFFER_MEMORY, static_cast<NATIVE_UINT_TYPE>(sizeof(CIRCULAR_BUFFER_MEMORY)))
-    { }
+    {
+        memset(m_buffer, 0, sizeof m_buffer);
+    }
 
     CircularState::~CircularState() {
         if (m_infinite_size != 0) {
@@ -110,5 +113,11 @@ namespace MockTypes {
 
     Types::CircularBuffer& CircularState::getTestBuffer() {
         return m_test_buffer;
+    }
+
+    void CircularState::checkSizes() const {
+        const NATIVE_UINT_TYPE allocated_size = (MAX_BUFFER_SIZE - m_remaining_size);
+        ASSERT_EQ(m_test_buffer.get_free_size(), m_remaining_size);
+        ASSERT_EQ(m_test_buffer.get_allocated_size(), allocated_size);
     }
 }
