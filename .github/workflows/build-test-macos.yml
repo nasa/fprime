@@ -21,7 +21,7 @@ jobs:
         fetch-depth: 0
     - run: git fetch --tags
     - name: Install fprime tools
-      run: pip3 install $GITHUB_WORKSPACE/
+      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
     # Archive the outputs
@@ -39,7 +39,7 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     - name: Install fprime tools
-      run: pip3 install $GITHUB_WORKSPACE/
+      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
     # Archive the outputs
@@ -60,7 +60,7 @@ jobs:
         fetch-depth: 0
     - run: git fetch --tags
     - name: Install fprime tools
-      run: pip3 install $GITHUB_WORKSPACE/
+      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
     - name: Install coreutils
       run: brew install coreutils
     - name: F prime CI step
