@@ -51,7 +51,7 @@ class CommentFormatters:
 
     def _strip_without_code(self, line_list):
         """
-        A Protected method that strips spaces, carriage returns, etc. off each line
+        A protected method that strips spaces, carriage returns, etc. off each line
         in the list of lines.  Except that lines between a start @code line and
         an end @code line are left alone.
 
@@ -886,9 +886,9 @@ class Formatters:
         if len(args) == 0:
 
             if proto == True:
-                function_str = name.strip() + "(void);"
+                function_str = name.strip() + "();"
             else:
-                function_str = name.strip() + "(void) {"
+                function_str = name.strip() + "() {"
 
             return function_str
 

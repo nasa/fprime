@@ -25,6 +25,9 @@ xmi:id="[^"]*"
 # uuid:
 \b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b
 
+# github hash
+[a-f0-9]{40}
+
 # https://www.gnu.org/software/groff/manual/groff.html
 # man troff content
 \\f[BCIPR]

@@ -9,10 +9,10 @@
 // acknowledged.
 //
 // ======================================================================
-#include <stdio.h>              /* fopen() */
-#include <stdlib.h>             /* scanf */
+#include <cstdio>              /* fopen() */
+#include <cstdlib>             /* scanf */
 #include <sys/vfs.h>            /* statfs() */
-#include <string.h>
+#include <cstring>
 #include <Os/SystemResources.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -21,20 +21,20 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
         char line[512] = {0};
-        FILE *fp = NULL;
+        FILE *fp = nullptr;
         U32 cpu_count = 0;
 
-        if ((fp = fopen("/proc/stat", "r")) == NULL) {
+        if ((fp = fopen("/proc/stat", "r")) == nullptr) {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        if (fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line. Skip
+        if (fgets(line, sizeof(line), fp) == nullptr) { //1st line.  Aggregate cpu line. Skip
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
         }
 
         for (U32 i = 0; i < LINUX_CPU_LINE_LIMIT; i++) {
-            if (fgets(line, sizeof(line), fp) == NULL) { //cpu# line
+            if (fgets(line, sizeof(line), fp) == nullptr) { //cpu# line
                 break;
             }
 
@@ -51,7 +51,7 @@ namespace Os {
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuTicks(CpuTicks &cpu_ticks, U32 cpu_index) {
         char line[512] = {0};
-        FILE *fp = NULL;
+        FILE *fp = nullptr;
         U32 cpu_data[4] = {0};
         U32 cpuCount = 0;
         SystemResources::SystemResourcesStatus status  = SYSTEM_RESOURCES_ERROR;
@@ -66,19 +66,19 @@ namespace Os {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        if ((fp = fopen("/proc/stat", "r")) == NULL) {
+        if ((fp = fopen("/proc/stat", "r")) == nullptr) {
 
             return SYSTEM_RESOURCES_ERROR;
 
         }
 
-        if (fgets(line, sizeof(line), fp) == NULL) { //1st line.  Aggregate cpu line.
+        if (fgets(line, sizeof(line), fp) == nullptr) { //1st line.  Aggregate cpu line.
             fclose(fp);
             return SYSTEM_RESOURCES_ERROR;
         }
 
         for (U32 i = 0; i < cpu_index + 1; i++) {
-            if (fgets(line, sizeof(line), fp) == NULL) { //cpu# line
+            if (fgets(line, sizeof(line), fp) == nullptr) { //cpu# line
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
@@ -88,7 +88,7 @@ namespace Os {
                 fclose(fp);
                 return SYSTEM_RESOURCES_ERROR;
             }
-
+            // No string concerns, as string is discarded
             sscanf(line, "%*s %d %d %d %d", &cpu_data[0],
                    &cpu_data[1],
                    &cpu_data[2],
@@ -107,7 +107,7 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
-        FILE *fp = NULL;
+        FILE *fp = nullptr;
         NATIVE_INT_TYPE total = 0;
         NATIVE_INT_TYPE free = 0;
         // Fallbacks
@@ -115,10 +115,10 @@ namespace Os {
         memory_util.used = 1;
 
         fp = fopen("/proc/meminfo", "r");
-        if (fp == NULL) {
+        if (fp == nullptr) {
             return SYSTEM_RESOURCES_ERROR;
         }
-
+        // No string concerns as strings discarded
         if (fscanf(fp, "%*s %d %*s", &total) != 1 ||  /* 1st line is MemTotal */
             fscanf(fp, "%*s %d", &free) != 1) {   /* 2nd line is MemFree */
             fclose(fp);

@@ -5,7 +5,7 @@
 #include "PortSelector.hpp"
 #include <sys/socket.h>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 #include <arpa/inet.h>
 
 namespace Drv {
@@ -34,7 +34,7 @@ U16 get_free_port(bool udp) {
         return 0;
     }
     socklen_t size = sizeof(address);
-    if (::getsockname(socketFd, ((struct sockaddr *) &address), &size) == -1) {
+    if (::getsockname(socketFd, reinterpret_cast<struct sockaddr *>(&address), &size) == -1) {
         ::close(socketFd);
         return 0;
     }

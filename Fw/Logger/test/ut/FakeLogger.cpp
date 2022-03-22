@@ -10,10 +10,10 @@
 #include <Fw/Logger/test/ut/FakeLogger.hpp>
 
 extern "C" {
-    #include <string.h>
+    #include <cstring>
 }
 namespace MockLogging {
-    Fw::Logger* FakeLogger::s_current = NULL;
+    Fw::Logger* FakeLogger::s_current = nullptr;
 
     FakeLogger::FakeLogger() {
         memset(&m_last, 0, sizeof(m_last));
@@ -73,7 +73,7 @@ namespace MockLogging {
     }
 
     void FakeLogger::reset() {
-        m_last.fmt = 0;
+        m_last.fmt = nullptr;
         m_last.a0 = 0;
         m_last.a1 = 0;
         m_last.a2 = 0;

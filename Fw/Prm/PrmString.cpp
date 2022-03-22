@@ -15,16 +15,24 @@ namespace Fw {
         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    ParamString::ParamString(void) : StringBase()  {
+    ParamString::ParamString() : StringBase()  {
         this->m_buf[0] = 0;
     }
 
     ParamString& ParamString::operator=(const ParamString& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     ParamString& ParamString::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
@@ -34,14 +42,14 @@ namespace Fw {
         return *this;
     }
 
-    ParamString::~ParamString(void) {
+    ParamString::~ParamString() {
     }
 
-    const char* ParamString::toChar(void) const {
+    const char* ParamString::toChar() const {
         return this->m_buf;
     }
 
-    NATIVE_UINT_TYPE ParamString::getCapacity(void) const {
+    NATIVE_UINT_TYPE ParamString::getCapacity() const {
         return FW_PARAM_STRING_MAX_SIZE;
     }
 }

@@ -7,14 +7,14 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupImpl.cpp"
 )
 
 register_fprime_module()
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveRateGroup/ActiveRateGroupComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/ActiveRateGroup/ActiveRateGroup.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveRateGroupTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/ActiveRateGroupImplTester.cpp"
 )

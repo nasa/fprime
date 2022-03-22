@@ -1,27 +1,22 @@
 #include "gtest/gtest.h"
 #include <Os/Task.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 extern "C" {
-    void startTestTask(int iters);
+    void startTestTask();
 }
-
-Os::Task* testTask = 0;
 
 void someTask(void* ptr) {
-
-    long iters = (long) ptr;
-
-    while (iters--) {
-        Os::Task::delay(1000);
-        printf("Tick %ld!\n",iters);
-    }
+    bool* ran = static_cast<bool*>(ptr);
+    *ran = true;
 }
 
-void startTestTask(int iters) {
-    long localIter = iters;
-    testTask = new Os::Task();
+void startTestTask() {
+    volatile bool taskRan = false;
+    Os::Task testTask;
     Os::TaskString name("ATestTask");
-    Os::Task::TaskStatus stat = testTask->start(name, someTask, (void*)localIter);
+    Os::Task::TaskStatus stat = testTask.start(name,someTask,const_cast<bool*>(&taskRan));
     ASSERT_EQ(stat, Os::Task::TASK_OK);
+    testTask.join(nullptr);
+    ASSERT_EQ(taskRan, true);
 }

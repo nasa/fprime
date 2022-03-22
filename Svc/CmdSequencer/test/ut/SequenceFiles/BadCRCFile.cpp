@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  BadCRCFile.cpp
 // \author Rob Bocchino
 // \brief  BadCRCFile implementation
@@ -7,6 +7,7 @@
 // Copyright (C) 2009-2018 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
+// ======================================================================
 
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/AMPCS/AMPCS.hpp"
 #include "Svc/CmdSequencer/test/ut/SequenceFiles/BadCRCFile.hpp"
@@ -71,7 +72,7 @@ namespace Svc {
     }
 
     const CmdSequencerComponentImpl::FPrimeSequence::CRC& BadCRCFile ::
-      getCRC(void) const
+      getCRC() const
     {
       return this->crc;
     }

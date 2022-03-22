@@ -26,13 +26,13 @@ namespace Svc {
             m_key(0),
             m_watchDogCode(0),
             m_warnings(0),
-            m_enabled(HLTH_CHK_ENABLED),
+            m_enabled(Fw::Enabled::ENABLED),
             queue_depth(0) {
         // clear tracker by disabling pings
         for (NATIVE_UINT_TYPE entry = 0;
                 entry < FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries);
                 entry++) {
-            this->m_pingTrackerEntries[entry].enabled = HLTH_PING_DISABLED;
+            this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::DISABLED;
         }
     }
 
@@ -56,12 +56,12 @@ namespace Svc {
             FW_ASSERT(pingEntries[entry].warnCycles <= pingEntries[entry].fatalCycles, pingEntries[entry].warnCycles, pingEntries[entry].fatalCycles);
             this->m_pingTrackerEntries[entry].entry = pingEntries[entry];
             this->m_pingTrackerEntries[entry].cycleCount = 0;
-            this->m_pingTrackerEntries[entry].enabled = HLTH_PING_ENABLED;
+            this->m_pingTrackerEntries[entry].enabled = Fw::Enabled::ENABLED;
             this->m_pingTrackerEntries[entry].key = 0;
         }
     }
 
-    HealthImpl::~HealthImpl(void) {
+    HealthImpl::~HealthImpl() {
 
     }
 
@@ -92,13 +92,13 @@ namespace Svc {
             FW_ASSERT(MSG_DISPATCH_OK == stat);
         }
 
-        if (this->m_enabled) {
+        if (this->m_enabled == Fw::Enabled::ENABLED) {
             // cycle through ping table, pinging ports that are not awaiting a reply
             // for ports that are awaiting a reply, decrement their counters
             // and check for violations
 
             for (NATIVE_UINT_TYPE entry = 0; entry < this->m_numPingEntries; entry++) {
-                if (HLTH_PING_ENABLED == this->m_pingTrackerEntries[entry].enabled) {
+                if (Fw::Enabled::ENABLED == this->m_pingTrackerEntries[entry].enabled) {
                     // If clear entry
                     if (0 == this->m_pingTrackerEntries[entry].cycleCount) {
                         // start a ping
@@ -145,48 +145,48 @@ namespace Svc {
     // Command handler implementations
     // ----------------------------------------------------------------------
 
-    void HealthImpl::HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, HealthEnabled enable) {
+    void HealthImpl::HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, Fw::Enabled enable) {
         this->m_enabled = enable;
-        HealthIsEnabled isEnabled = HEALTH_CHECK_DISABLED;
-        if (enable) {
-            isEnabled = HEALTH_CHECK_ENABLED;
+        Fw::Enabled isEnabled = Fw::Enabled::DISABLED;
+        if (enable == Fw::Enabled::ENABLED) {
+            isEnabled = Fw::Enabled::ENABLED;
         }
         this->log_ACTIVITY_HI_HLTH_CHECK_ENABLE(isEnabled);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
 
-    void HealthImpl::HLTH_PING_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, PingEnabled enable) {
+    void HealthImpl::HLTH_PING_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, Fw::Enabled enable) {
         // check to see if entry is in range
         NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
 
         if (-1 == entryIndex) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
         // check enable value
-        if (enable != HealthImpl::HLTH_PING_DISABLED && enable != HealthImpl::HLTH_PING_ENABLED) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+        if (enable != Fw::Enabled::DISABLED && enable != Fw::Enabled::ENABLED) {
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
-        this->m_pingTrackerEntries[entryIndex].enabled = enable;
-        HealthPingIsEnabled isEnabled = HEALTH_PING_DISABLED;
-        if (enable) {
-            isEnabled = HEALTH_PING_ENABLED;
+        this->m_pingTrackerEntries[entryIndex].enabled = enable.e;
+        Fw::Enabled isEnabled(Fw::Enabled::DISABLED);
+        if (enable == Fw::Enabled::ENABLED) {
+            isEnabled = Fw::Enabled::ENABLED;
         }
         Fw::LogStringArg arg;
         arg = entry;
         this->log_ACTIVITY_HI_HLTH_CHECK_PING(isEnabled,arg);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     void HealthImpl::HLTH_CHNG_PING_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& entry, U32 warningValue, U32 fatalValue) {
         // check to see if entry is in range
         NATIVE_INT_TYPE entryIndex = this->findEntry(entry);
         if (-1 == entryIndex) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
@@ -195,7 +195,7 @@ namespace Svc {
             Fw::LogStringArg arg;
             arg = entry;
             this->log_WARNING_HI_HLTH_PING_INVALID_VALUES(arg,warningValue,fatalValue);
-            this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_VALIDATION_ERROR);
+            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
             return;
         }
 
@@ -203,7 +203,7 @@ namespace Svc {
         this->m_pingTrackerEntries[entryIndex].entry.fatalCycles = fatalValue;
         Fw::LogStringArg arg = entry;
         this->log_ACTIVITY_HI_HLTH_PING_UPDATED(arg,warningValue,fatalValue);
-        this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+        this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
     NATIVE_INT_TYPE HealthImpl::findEntry(Fw::CmdStringArg entry) {

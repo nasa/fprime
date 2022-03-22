@@ -50,17 +50,17 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
     comm.init(0);
     ...
-    if (hostname != NULL && port_number != 0) {
+    if (hostname != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         comm.configure(hostname, port_number);
         comm.startSocketTask(name);
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
+    (void) comm.joinSocketTask(nullptr);
 }
 ```
 ## Class Diagram

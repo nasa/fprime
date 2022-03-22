@@ -1,5 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.ProcessISFProject.processPorts" name="gov.nasa.jpl.componentaction.ProcessISFProject.processPorts">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_port.html#af5941e29cc1aa98d287f8679d31f9cbf" title="gov.nasa.jpl.componentaction.\lISFPort.addData" alt="" coords="266,5,467,43"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_port.html#ab6952696e36b63b35e07c0b6d45c153d" title="gov.nasa.jpl.componentaction.\lISFPort.addReturn" alt="" coords="266,67,467,106"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_i_s_f_port.html#a0043fd2665326ddb5fd6faf8a5f12608" title="gov.nasa.jpl.componentaction.\lISFPort.getDataTypeProperty" alt="" coords="514,37,715,75"/>
-</map>

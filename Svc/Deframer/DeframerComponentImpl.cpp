@@ -22,17 +22,17 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : DeframerComponentBase(compName), DeframingProtocolInterface(),
-    m_protocol(NULL), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
+    m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {}
 
 void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
 }
 
-DeframerComponentImpl ::~DeframerComponentImpl(void) {}
+DeframerComponentImpl ::~DeframerComponentImpl() {}
 
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
-    FW_ASSERT(m_protocol == NULL);
+    FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     protocol.setup(*this);
 }
@@ -42,10 +42,17 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+                                                   FwOpcodeType opcode,
+                                                   U32 cmdSeq,
+                                                   const Fw::CmdResponse& response) {
+  // Nothing to do
+}
+
 void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
-                                              Drv::RecvStatus recvStatus) {
-    if (Drv::RECV_OK == recvStatus) {
+                                              const Drv::RecvStatus& recvStatus) {
+    if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
         processBuffer(recvBuffer);
     }
     framedDeallocate_out(0, recvBuffer);
@@ -56,7 +63,7 @@ void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATI
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
         Drv::PollStatus status = framedPoll_out(0, buffer);
-        if (status == Drv::POLL_OK) {
+        if (status == Drv::PollStatus::POLL_OK) {
             processBuffer(buffer);
         }
     }
@@ -107,18 +114,18 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
 }
 
 void DeframerComponentImpl ::processRing() {
-    FW_ASSERT(m_protocol != NULL);
+    FW_ASSERT(m_protocol != nullptr);
     // Maximum limit to the loop as at least one byte is process per iteration unless needed > remaining size
     const U32 loop_limit = m_in_ring.get_capacity() + 1;
 
     // Inner-loop, process ring buffer looking for at least the header
     U32 i = 0;
-    for (i = 0; (m_in_ring.get_remaining_size() > 0) and (i < loop_limit); i++) {
-        const U32 remaining = m_in_ring.get_remaining_size();
+    for (i = 0; (m_in_ring.get_allocated_size() > 0) and (i < loop_limit); i++) {
+        const U32 remaining = m_in_ring.get_allocated_size();
         U32 needed = 0; // Needed is an out-only variable, and should be reset each loop
         DeframingProtocol::DeframingStatus status = m_protocol->deframe(m_in_ring, needed);
         FW_ASSERT(needed != 0); //Deframing protocol must always set needed to a non-zero value
-        FW_ASSERT(remaining == m_in_ring.get_remaining_size()); // Deframing protocol must not consume data only view it
+        FW_ASSERT(remaining == m_in_ring.get_allocated_size()); // Deframing protocol must not consume data only view it
         // Successful deframing consumes messages
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
             m_in_ring.rotate(needed);
@@ -126,7 +133,7 @@ void DeframerComponentImpl ::processRing() {
         // Break on the condition that more is needed
         else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
             // Deframing protocol reported inconsistent "more is needed" and needed size
-            FW_ASSERT(needed > m_in_ring.get_remaining_size(), needed, m_in_ring.get_remaining_size());
+            FW_ASSERT(needed > m_in_ring.get_allocated_size(), needed, m_in_ring.get_allocated_size());
             break;
         }
         // Error statuses  reset needed and rotate away 1 byte
@@ -150,8 +157,8 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
     // Note: max iteration bounded by processing 1 byte per iteration
     for (i = 0; (i < (buffer.getSize() + 1)) and (buffer_offset < buffer.getSize()); i++) {
         U32 remaining = buffer.getSize() - buffer_offset;
-        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_remaining_size(true))
-                                        ? m_in_ring.get_remaining_size(true)
+        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_free_size())
+                                        ? m_in_ring.get_free_size()
                                         : static_cast<NATIVE_UINT_TYPE>(remaining);
         m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
         buffer_offset = buffer_offset + ser_size;

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-
-<component name="AssertFatalAdapter" kind="passive" namespace="Svc">
-    <import_dictionary>Svc/AssertFatalAdapter/AssertFatalEvents.xml</import_dictionary>
-    <comment>A component for turning FW_ASSERTs into FATALs</comment>
-</component>
-

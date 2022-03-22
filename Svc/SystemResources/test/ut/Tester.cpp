@@ -21,12 +21,12 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void) : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
+Tester ::Tester() : SystemResourcesGTestBase("Tester", MAX_HISTORY_SIZE), component("SystemResources") {
     this->initComponents();
     this->connectPorts();
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -36,6 +36,7 @@ void Tester ::test_tlm(bool enabled) {
     U32 count = 0;
     if (Os::SystemResources::getCpuCount(count) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
         this->invoke_to_run(0, 0);
+        count = (count <= 16) ? count : 16;
         // All cascades expected
         switch (count) {
             case 16:
@@ -93,34 +94,38 @@ void Tester ::test_tlm(bool enabled) {
                 ASSERT_TLM_MEMORY_TOTAL_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_NON_VOLATILE_FREE_SIZE((enabled) ? 1 : 0);
                 ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE((enabled) ? 1 : 0);
-                ASSERT_TLM_VERSION_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_FRAMEWORK_VERSION_SIZE((enabled) ? 1 : 0);
+                ASSERT_TLM_PROJECT_VERSION_SIZE((enabled) ? 1 : 0);
                 if (enabled) {
-                    ASSERT_TLM_VERSION(0, VERSION);
+                    ASSERT_TLM_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+                    ASSERT_TLM_PROJECT_VERSION(0, PROJECT_VERSION);
                 }
-                ASSERT_TLM_SIZE((enabled) ? (count + 6) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + ver
+                ASSERT_TLM_SIZE((enabled) ? (count + 7) : 0); // CPU count channels + avg + 2 mem + 2 non-volatile + 2 ver
                 break;
         }
     }
 }
 
 void Tester ::test_disable_enable() {
-    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_DISABLED);
+    this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::DISABLED);
     this->test_tlm(false);
-    this->sendCmd_ENABLE(0, 0, SystemResourcesComponentBase::SystemResourceEnabled::SYS_RES_ENABLED);
+    this->sendCmd_ENABLE(0, 0, SystemResourceEnabled::ENABLED);
     this->test_tlm(true);
 }
 
 void Tester ::test_version_evr() {
     this->sendCmd_VERSION(0, 0);
-    ASSERT_EVENTS_VERSION_SIZE(1);
-    ASSERT_EVENTS_VERSION(0, VERSION);
+    ASSERT_EVENTS_FRAMEWORK_VERSION_SIZE(1);
+    ASSERT_EVENTS_FRAMEWORK_VERSION(0, FRAMEWORK_VERSION);
+    ASSERT_EVENTS_PROJECT_VERSION_SIZE(1);
+    ASSERT_EVENTS_PROJECT_VERSION(0, FRAMEWORK_VERSION);
 }
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // run
     this->connect_to_run(0, this->component.get_run_InputPort(0));
 
@@ -146,7 +151,7 @@ void Tester ::connectPorts(void) {
     this->component.set_LogText_OutputPort(0, this->get_from_LogText(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }

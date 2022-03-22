@@ -55,7 +55,7 @@ namespace Fw {
         SerializeStatus stat;
 
         len = AMPCS_EVR_TASK_NAME_LEN;
-        stat = buffer.deserialize((U8*)this->m_taskName, len, true);
+        stat = buffer.deserialize(this->m_taskName, len, true);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
@@ -86,9 +86,9 @@ namespace Fw {
     }
 
     void AmpcsEvrLogPacket::setTaskName(U8 *taskName, U8 len) {
-        FW_ASSERT(taskName != NULL);
+        FW_ASSERT(taskName != nullptr);
         FW_ASSERT(len == AMPCS_EVR_TASK_NAME_LEN);
-       
+
         memcpy(this->m_taskName, (const void*)taskName, len);
     }
 
@@ -108,23 +108,23 @@ namespace Fw {
         this->m_logBuffer = buffer;
     }
 
-    const U8* AmpcsEvrLogPacket::getTaskName(void) const {
+    const U8* AmpcsEvrLogPacket::getTaskName() const {
         return this->m_taskName;
     }
 
-    U32 AmpcsEvrLogPacket::getId(void) const {
+    U32 AmpcsEvrLogPacket::getId() const {
         return this->m_eventID;
     }
 
-    U32 AmpcsEvrLogPacket::getOverSeqNum(void) const {
+    U32 AmpcsEvrLogPacket::getOverSeqNum() const {
         return this->m_overSeqNum;
     }
 
-    U32 AmpcsEvrLogPacket::getCatSeqNum(void) const {
+    U32 AmpcsEvrLogPacket::getCatSeqNum() const {
         return this->m_catSeqNum;
     }
 
-    LogBuffer& AmpcsEvrLogPacket::getLogBuffer(void) {
+    LogBuffer& AmpcsEvrLogPacket::getLogBuffer() {
          return this->m_logBuffer;
     }
 

@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/BlockDriverComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/BlockDriver.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/BlockDriverImpl.cpp"
 )
 

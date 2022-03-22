@@ -13,7 +13,7 @@ namespace Ref {
             // Only called by derived class
             SendBuffImpl(const char* compName); //!< constructor
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0); //!< initialization function
-            ~SendBuffImpl(void); //!< destructor
+            ~SendBuffImpl(); //!< destructor
 
         private:
 
@@ -57,7 +57,7 @@ namespace Ref {
             void parameterUpdated(FwPrmIdType id); //!< Notification function for changed parameters
 
             // send state
-            ActiveState m_state;
+            SendBuff_ActiveState m_state;
 };
 
 }

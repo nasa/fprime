@@ -42,7 +42,7 @@ namespace Svc {
                 i,
                 BufferLogger::OPCODE_BL_CLOSEFILE,
                 i,
-                Fw::COMMAND_OK
+                Fw::CmdResponse::OK
             );
           }
 
@@ -216,7 +216,7 @@ namespace Svc {
       private:
 
         //! Send data
-        void sendData(void) {
+        void sendData() {
           this->sendComBuffers(MAX_ENTRIES_PER_FILE);
         }
 
@@ -224,7 +224,7 @@ namespace Svc {
 
         //! Set the state
         void setState(
-            const BufferLogger::LogState state //!< The state
+            const BufferLogger_LogState state //!< The state
         ) {
           this->clearHistory();
           this->sendCmd_BL_SetLogging(0, 0, state);
@@ -234,7 +234,7 @@ namespace Svc {
               0,
               BufferLogger::OPCODE_BL_SETLOGGING,
               0,
-              Fw::COMMAND_OK
+              Fw::CmdResponse::OK
           );
         }
 
@@ -242,7 +242,7 @@ namespace Svc {
         void testLoggingOn() {
           this->component.m_file.baseName = Fw::String("OnOffTester");
           this->sendData();
-          this->setState(BufferLogger::LOGGING_OFF);
+          this->setState(BufferLogger_LogState::LOGGING_OFF);
           this->checkLogFileIntegrity(
               this->component.m_file.name.toChar(),
               MAX_BYTES_PER_FILE,
@@ -252,10 +252,10 @@ namespace Svc {
 
         //! Test logging off
         void testLoggingOff() {
-          this->setState(BufferLogger::LOGGING_OFF);
+          this->setState(BufferLogger_LogState::LOGGING_OFF);
           this->sendData();
           ASSERT_EVENTS_SIZE(0);
-          this->setState(BufferLogger::LOGGING_ON);
+          this->setState(BufferLogger_LogState::LOGGING_ON);
         }
 
     };

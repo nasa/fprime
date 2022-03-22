@@ -45,7 +45,7 @@ void runTimingTest(U32 iterations) {
 }
 
 extern "C" {
-    void runTest(void);
+    void runTest();
 }
 
 void runTest(U32 iterations) {

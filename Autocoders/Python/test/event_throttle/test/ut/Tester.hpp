@@ -30,11 +30,11 @@ namespace Somewhere {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
 
     public:
@@ -44,7 +44,7 @@ namespace Somewhere {
       // ----------------------------------------------------------------------
 
       //! test event throttling
-      void doEventThrottleTest(void);
+      void doEventThrottleTest();
 
     private:
 
@@ -54,18 +54,18 @@ namespace Somewhere {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
       void textLogIn(
                 const FwEventIdType id, //!< The event ID
                 Fw::Time& timeTag, //!< The time
-                const Fw::TextLogSeverity severity, //!< The severity
+                const Fw::LogSeverity severity, //!< The severity
                 const Fw::TextLogString& text //!< The event string
             );
       // ----------------------------------------------------------------------

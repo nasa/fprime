@@ -12,10 +12,10 @@ namespace Drv {
         // Only called by derived class
         BlockDriverImpl(const char* compName);
 
-        void init(NATIVE_INT_TYPE queueDepth);
-        ~BlockDriverImpl(void);
+        void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instanceId = 0);
+        ~BlockDriverImpl();
         // a little hack to get the reference running
-        void callIsr(void);
+        void callIsr();
 
     private:
 
@@ -29,7 +29,7 @@ namespace Drv {
             const NATIVE_INT_TYPE portNum, /*!< The port number*/
             U32 key /*!< Value to return to pinger*/
         );
-        
+
         // static ISR callback
         static void s_driverISR(void* arg);
 

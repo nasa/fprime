@@ -1,20 +1,20 @@
 #include <Fw/Port/InputSerializePort.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 #if FW_PORT_SERIALIZATION == 1
 
 namespace Fw {
 
     // SerializePort has no call interface. It is to pass through serialized data
-    InputSerializePort::InputSerializePort() : InputPortBase(), m_func(0) {
+    InputSerializePort::InputSerializePort() : InputPortBase(), m_func(nullptr) {
     }
     InputSerializePort::~InputSerializePort() {
     }
-    
-    void InputSerializePort::init(void) {
+
+    void InputSerializePort::init() {
         InputPortBase::init();
-        
+
     }
 
     SerializeStatus InputSerializePort::invokeSerial(SerializeBufferBase &buffer) {

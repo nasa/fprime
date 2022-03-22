@@ -172,8 +172,13 @@
 
     <define name="F32_define">
         <a:documentation>32 bit float</a:documentation>
+        <!--
+        Use text instead of "float" here
+        "Float" does not accept the C++ syntax for F32 literal values, e.g., 1.0f
         <data type="float">
         </data>
+        -->
+        <text/>
     </define>
 
     <define name="F64_define">

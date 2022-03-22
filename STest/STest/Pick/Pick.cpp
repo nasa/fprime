@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Pick.cpp
 // \author AUTO-GENERATED: DO NOT EDIT
 // \brief  Pick implementation
@@ -15,7 +15,7 @@ namespace STest {
 
   namespace Pick {
 
-    U32 any(void) {
+    U32 any() {
       return lowerUpper(0, 0xFFFFFFFFU);
     }
 

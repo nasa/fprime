@@ -4,4 +4,3 @@ It looks up opcodes in a table build by component registrations. It also handles
 CommandDispatcherComponentAi.xml - Command dispatcher component specification
 CommandDispatcherImpl.hpp(.cpp) - Command dispatcher implementation
 CommandDispatcherImplCfg.hpp - Command dispatcher configuration
-CmdDispatcherModule.mdxml - MagicDraw project file describing component

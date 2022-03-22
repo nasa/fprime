@@ -17,7 +17,11 @@ namespace Os {
     SimpleQueueRegistry::~SimpleQueueRegistry() {
     }
 
+    void SimpleQueueRegistry::regQueue(Queue* obj) {
+    }
 
+    void SimpleQueueRegistry::dump() {
+    }
 
 } /* namespace Os */
 

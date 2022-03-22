@@ -5,7 +5,7 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
+if (BUILD_TESTING)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test/TestSerializable")
 endif()
 set(SOURCE_FILES

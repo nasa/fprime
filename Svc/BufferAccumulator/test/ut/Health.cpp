@@ -17,7 +17,7 @@ namespace Svc {
   namespace Health {
 
     void Tester ::
-      Ping(void)
+      Ping()
     {
 
       U32 key = 42;

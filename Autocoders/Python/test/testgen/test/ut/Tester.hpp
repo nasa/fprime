@@ -18,11 +18,11 @@ namespace Ref {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -34,11 +34,11 @@ namespace Ref {
       //!
 		//! Test operation command
 		//!
-		void testAddCommand(void);
-		void testSubCommand(void);
-		void testMultCommand(void);
-		void testDivCommand(void);
-      void toDo(void);
+		void testAddCommand();
+		void testSubCommand();
+		void testMultCommand();
+		void testDivCommand();
+      void toDo();
 
     private:
 
@@ -50,8 +50,8 @@ namespace Ref {
       //!
       void from_mathOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          F32 val1, 
-          F32 val2, 
+          F32 val1,
+          F32 val2,
           MathOperation operation /*!< operation argument*/
       );
 
@@ -63,11 +63,11 @@ namespace Ref {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 

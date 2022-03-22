@@ -44,15 +44,16 @@ To develop applications with F´, the following requirements of the user's syste
 
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
 2. [CMake](https://cmake.org/download/) available on the system path
-3. Bash or Bash compatible shell
-4. Clang or GCC compiler
-5. [Python 3](https://www.python.org/downloads/) and PIP 
+3. Java 1.8 or newer, e.g. [OpenJDK](https://openjdk.java.net/)
+4. Bash or Bash compatible shell
+5. Clang or GCC compiler
+6. [Python 3](https://www.python.org/downloads/) and PIP 
 
 ## Quick Installation Guide
 
 F´ can be quickly installed and ready to use by:
 1. Cloning the GitHub repository
-2. Installing Python code (typically in a virtual environment)
+2. Installing Python code
 3. Building one of our reference applications. 
 
 For full installation instructions please see:

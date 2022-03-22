@@ -19,7 +19,7 @@ namespace ${n} {
 
 class ${name} : public Fw::Serializable {
 
-#for ($memname,$type,$size,$format,$comment,$default) in $mem_list:
+#for ($memname,$type,$array_size,$size,$format,$comment,$default) in $mem_list:
 #if $type == "string":
 
   public:
@@ -33,14 +33,14 @@ class ${name} : public Fw::Serializable {
             ${memname}String(const char* src); //!< char array constructor
             ${memname}String(const Fw::StringBase& src); //!< string base constructor
             ${memname}String(const ${memname}String& src); //!< string base constructor
-            ${memname}String(void); //!< default constructor
+            ${memname}String(); //!< default constructor
             ${memname}String& operator=(const ${memname}String& other); //!< assignment operator
             ${memname}String& operator=(const Fw::StringBase& other); //!< other string assignment operator
             ${memname}String& operator=(const char* other); //!< char* assignment operator
-            ~${memname}String(void); //!< destructor
+            ~${memname}String(); //!< destructor
 
-            const char* toChar(void) const; //!< retrieves char buffer of string
-            NATIVE_UINT_TYPE getCapacity(void) const ;
+            const char* toChar() const; //!< retrieves char buffer of string
+            NATIVE_UINT_TYPE getCapacity() const ;
 
         private:
 

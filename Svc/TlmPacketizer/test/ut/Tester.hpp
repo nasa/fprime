@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  TlmPacketizer/test/ut/Tester.hpp
 // \author tcanham
 // \brief  hpp file for TlmPacketizer test harness implementation class
@@ -36,9 +36,9 @@ namespace Svc {
 
     public:
 
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
       // Tests
-      // ---------------------------------------------------------------------- 
+      // ----------------------------------------------------------------------
 
       //! Initialization test
       //!
@@ -111,7 +111,7 @@ namespace Svc {
       virtual void textLogIn(
           const FwEventIdType id, /*!< The event ID*/
           Fw::Time& timeTag, /*!< The time*/
-          const Fw::TextLogSeverity severity, /*!< The severity*/
+          const Fw::LogSeverity severity, /*!< The severity*/
           const Fw::TextLogString& text /*!< The event string*/
       );
 

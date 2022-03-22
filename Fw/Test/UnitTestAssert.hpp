@@ -29,7 +29,7 @@ namespace Test {
             UnitTestAssert();
             virtual ~UnitTestAssert();
             // function for hook
-            void doAssert(void);
+            void doAssert();
             void reportAssert(
                     FILE_NAME_ARG file,
                     NATIVE_UINT_TYPE lineNo,

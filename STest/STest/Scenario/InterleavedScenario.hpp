@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  InterleavedScenario.hpp
 // \author bocchino
 // \brief  Randomly interleave several scenarios
@@ -7,13 +7,13 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_InterleavedScenario_HPP
 #define STest_InterleavedScenario_HPP
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 #include "STest/Scenario/Scenario.hpp"
 #include "STest/Scenario/ScenarioArray.hpp"
@@ -28,7 +28,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct an InterleavedScenario object
@@ -44,8 +44,8 @@ namespace STest {
       }
 
       //! Destroy an InterleavedScenario object
-      ~InterleavedScenario(void) {
-        assert(this->scenarioArray != NULL);
+      ~InterleavedScenario() {
+        assert(this->scenarioArray != nullptr);
         delete this->scenarioArray;
       }
 
@@ -56,8 +56,8 @@ namespace STest {
       // ----------------------------------------------------------------------
 
       //! The virtual implementation of reset required by Scenario
-      void reset_Scenario(void) {
-        assert(this->scenarioArray != NULL);
+      void reset_Scenario() {
+        assert(this->scenarioArray != nullptr);
         this->scenarioArray->reset();
       }
 
@@ -66,12 +66,12 @@ namespace STest {
       Rule<State>* nextRule_Scenario(
           State& state //!< The system state
       ) {
-        assert(this->scenarioArray != NULL);
-        Rule<State>* rule = NULL;
+        assert(this->scenarioArray != nullptr);
+        Rule<State>* rule = nullptr;
         bool seen[this->scenarioArray->size];
         memset(seen, 0, this->scenarioArray->size * sizeof(bool));
         U32 numSeen = 0;
-        Scenario<State>* *const scenarios = 
+        Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
         U32 numIterations = 0;
         const U32 maxIterations = 0xFFFFFFFFU;
@@ -83,7 +83,7 @@ namespace STest {
             continue;
           }
           rule = scenarios[i]->nextRule(state);
-          if (rule != NULL) {
+          if (rule != nullptr) {
             break;
           }
           seen[i] = true;
@@ -94,13 +94,13 @@ namespace STest {
 
       //! The virtual implementation of isDone required by Scenario
       //! \return Whether the scenario is done
-      bool isDone_Scenario(void) const {
+      bool isDone_Scenario() const {
         bool result = true;
-        Scenario<State>* *const scenarios = 
+        Scenario<State>* *const scenarios =
           this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < scenarioArray->size; ++i) {
-          assert(scenarios[i] != NULL);
+          assert(scenarios[i] != nullptr);
           if (!scenarios[i]->isDone()) {
             result = false;
             break;
@@ -112,7 +112,7 @@ namespace STest {
     protected:
 
       // ----------------------------------------------------------------------
-      // Protected member variables 
+      // Protected member variables
       // ----------------------------------------------------------------------
 
       //! The scenarios to interleave

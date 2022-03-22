@@ -20,8 +20,8 @@
 // countries or providing access to foreign persons.
 // ======================================================================
 
-\#include <string.h>
-\#include <stdio.h>
+\#include <cstring>
+\#include <cstdio>
 
 \#include "Fw/Types/Assert.hpp"
 \#include <Fw/Types/StringUtils.hpp>
@@ -46,16 +46,24 @@ namespace ${namespace} {
         Fw::StringUtils::string_copy(this->m_buf, src.toChar(), sizeof(this->m_buf));
     }
 
-    ${name}::${name}String::${name}String(void): StringBase() {
+    ${name}::${name}String::${name}String(): StringBase() {
         this->m_buf[0] = 0;
     }
 
     ${name}::${name}String& ${name}::${name}String::operator=(const ${name}String& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
 
     ${name}::${name}String& ${name}::${name}String::operator=(const StringBase& other) {
+        if(this == &other) {
+            return *this;
+        }
+
         Fw::StringUtils::string_copy(this->m_buf, other.toChar(), sizeof(this->m_buf));
         return *this;
     }
@@ -65,14 +73,14 @@ namespace ${namespace} {
         return *this;
     }
 
-    ${name}::${name}String::~${name}String(void) {
+    ${name}::${name}String::~${name}String() {
     }
 
-    const char* ${name}::${name}String::toChar(void) const {
+    const char* ${name}::${name}String::toChar() const {
         return this->m_buf;
     }
 
-    NATIVE_UINT_TYPE ${name}::${name}String::getCapacity(void) const {
+    NATIVE_UINT_TYPE ${name}::${name}String::getCapacity() const {
         return sizeof(this->m_buf);
     }
 
@@ -83,7 +91,7 @@ namespace ${namespace} {
   // ----------------------------------------------------------------------
 
   ${name} ::
-    ${name}(void) :
+    ${name}() :
       Serializable()
   {
     *this = ${name}(
@@ -171,16 +179,20 @@ namespace ${namespace} {
   }
 
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ${name}& other)
   {
+    if(this == &other) {
+      return *this;
+    }
+
     for(U32 index = 0; index < SIZE; index++) {
       this->elements[index] = other.elements[index];
     }
     return *this;
   }
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ElementType (&a)[SIZE])
   {
     for(U32 index = 0; index < SIZE; index++) {
@@ -189,7 +201,7 @@ namespace ${namespace} {
     return *this;
   }
 
-  const ${name}& ${name} ::
+  ${name}& ${name} ::
     operator=(const ElementType& e)
   {
     for(U32 index = 0; index < SIZE; index++) {
@@ -244,7 +256,7 @@ void ${name}::toString(Fw::StringBase& text) const {
 #if $type == "bool":
       ,this->elements[$index]?"T":"F"
 #else if $type == "ENUM":
-      ,(NATIVE_INT_TYPE)this->elements[$index]
+      ,static_cast<NATIVE_INT_TYPE>(this->elements[$index])
 #else if $typeinfo == "extern":
       ,str${index}.toChar()
 #else if $type == "string":

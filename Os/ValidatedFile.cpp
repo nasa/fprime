@@ -25,7 +25,7 @@ namespace Os {
   }
 
   Os::ValidateFile::Status ValidatedFile ::
-    validate(void)
+    validate()
   {
     const Os::ValidateFile::Status status =
       Os::ValidateFile::validate(

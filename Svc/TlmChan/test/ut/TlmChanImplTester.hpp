@@ -20,10 +20,10 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominalChannel(void);
-            void runMultiChannel(void);
-            void runOffNominal(void);
-            void runTooManyChannels(void);
+            void runNominalChannel();
+            void runMultiChannel();
+            void runOffNominal();
+            void runTooManyChannels();
 
         private:
             Svc::TlmChanImpl& m_impl;
@@ -39,10 +39,10 @@ namespace Svc {
             NATIVE_UINT_TYPE m_numBuffs;
             Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
             bool m_bufferRecv;
-            void clearBuffs(void);
+            void clearBuffs();
 
             // dump functions
-            void dumpHash(void);
+            void dumpHash();
             static void dumpTlmEntry(TlmChanImpl::TlmEntry* entry);
             //! Handler for from_pingOut
             //!

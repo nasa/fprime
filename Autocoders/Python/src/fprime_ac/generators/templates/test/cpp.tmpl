@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-\#include <stdlib.h>
-\#include <string.h>
+\#include <cstdlib>
+\#include <cstring>
 \#include "TesterBase.hpp"
 
 #if $namespace_list != None
@@ -79,7 +79,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
   }
 
   ${tester_base} ::
-    ~${tester_base}(void)
+    ~${tester_base}()
   {
 #if $has_commands or $has_parameters:
     // Destroy command history
@@ -118,7 +118,7 @@ $emit_cpp_params([ $param_instance ])
     )
   {
 #for $ids, $prm_name, $type, $osets, $osaves, $size, $default, $comment, $typeinfo in $parameters:
-    this->m_param_${prm_name}_valid = Fw::PARAM_UNINIT;
+    this->m_param_${prm_name}_valid = Fw::ParamValid::UNINIT;
 #end for
 
     // Initialize base class
@@ -200,9 +200,9 @@ $emit_cpp_params([ $param_instance ])
   #for $instance, $type, $direction, $role in $ports:
     #if $direction == "Input":
   NATIVE_INT_TYPE ${tester_base} ::
-    getNum_to_${instance}(void) const
+    getNum_to_${instance}() const
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_to_${instance});
+    return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_to_${instance}));
   }
 
     #else if $direction == "Output":
@@ -210,9 +210,9 @@ $emit_cpp_params([ $param_instance ])
 \#if FW_ENABLE_TEXT_LOGGING == 1
       #end if
   NATIVE_INT_TYPE ${tester_base} ::
-    getNum_from_${instance}(void) const
+    getNum_from_${instance}() const
   {
-    return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_from_${instance});
+    return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_from_${instance}));
   }
       #if $role == "LogTextEvent":
 \#endif
@@ -404,7 +404,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse &response
     )
   {
     ${tester_base}* _testerBase =
@@ -446,7 +446,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::LogSeverity severity,
+        const Fw::LogSeverity &severity,
         Fw::LogBuffer &args
     )
   {
@@ -464,7 +464,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
         const NATIVE_INT_TYPE portNum,
         FwEventIdType id,
         Fw::Time &timeTag,
-        Fw::TextLogSeverity severity,
+        const Fw::LogSeverity &severity,
         Fw::TextLogString &text
     )
   {
@@ -503,7 +503,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
       static_cast<${tester_base}*>(component);
 
     Fw::SerializeStatus _status;
-    Fw::ParamValid _ret = Fw::PARAM_VALID;
+    Fw::ParamValid _ret = Fw::ParamValid::VALID;
     val.resetSer();
 
     const U32 idBase = _testerBase->getIdBase();
@@ -618,7 +618,7 @@ $emit_cpp_port_params([ $param_callComp, $param_portNum] + $params)
   // ----------------------------------------------------------------------
 
   void ${tester_base} ::
-    clearFromPortHistory(void)
+    clearFromPortHistory()
   {
     this->fromPortHistorySize = 0;
   #for $instance, $type, $sync, $priority, $role, $max_num in $typed_user_output_ports:
@@ -704,7 +704,7 @@ $emit_cpp_port_params([ $param_portNum ] + $port_params[$instance])
     cmdResponseIn(
         const FwOpcodeType opCode,
         const U32 seq,
-        const Fw::CommandResponse response
+        const Fw::CmdResponse response
     )
   {
     CmdResponse e = { opCode, seq, response };
@@ -732,7 +732,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
     #end if
     #for $arg_name, $arg_type, $comment, $is_enum in $args:
       #if $is_enum == "enum":
-    _status = buff.serialize((FwEnumStoreType) ${arg_name});
+    _status = buff.serialize(static_cast<FwEnumStoreType>(${arg_name}));
       #else
     _status = buff.serialize($arg_name);
       #end if
@@ -894,7 +894,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
   }
 
   void ${tester_base} ::
-    clearTlm(void)
+    clearTlm()
   {
     this->tlmSize = 0;
   #for $ids, $tlm_name, $type, $size, $update, $comment, $typeinfo in $channels:
@@ -1058,7 +1058,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
   }
 
   void ${tester_base} ::
-    clearEvents(void)
+    clearEvents()
   {
     this->eventsSize = 0;
   #for $ids, $event_name, $severity, $format_string, $throttle, $comment in $events:
@@ -1081,7 +1081,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
     textLogIn(
         const U32 id,
         Fw::Time &timeTag,
-        const Fw::TextLogSeverity severity,
+        const Fw::LogSeverity severity,
         const Fw::TextLogString &text
     )
   {
@@ -1096,26 +1096,26 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
     )
   {
     const char *severityString = "UNKNOWN";
-    switch (e.severity) {
-      case Fw::TEXT_LOG_FATAL:
+    switch (e.severity.e) {
+      case Fw::LogSeverity::FATAL:
         severityString = "FATAL";
         break;
-      case Fw::TEXT_LOG_WARNING_HI:
+      case Fw::LogSeverity::WARNING_HI:
         severityString = "WARNING_HI";
         break;
-      case Fw::TEXT_LOG_WARNING_LO:
+      case Fw::LogSeverity::WARNING_LO:
         severityString = "WARNING_LO";
         break;
-      case Fw::TEXT_LOG_COMMAND:
+      case Fw::LogSeverity::COMMAND:
         severityString = "COMMAND";
         break;
-      case Fw::TEXT_LOG_ACTIVITY_HI:
+      case Fw::LogSeverity::ACTIVITY_HI:
         severityString = "ACTIVITY_HI";
         break;
-      case Fw::TEXT_LOG_ACTIVITY_LO:
+      case Fw::LogSeverity::ACTIVITY_LO:
         severityString = "ACTIVITY_LO";
         break;
-      case Fw::TEXT_LOG_DIAGNOSTIC:
+      case Fw::LogSeverity::DIAGNOSTIC:
        severityString = "DIAGNOSTIC";
         break;
       default:

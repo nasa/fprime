@@ -21,7 +21,7 @@ set(MOD_DEPS
 register_fprime_module()
 
 # The PortSelector library and testing helper is only needed on Testing build
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "TESTING")
+if (BUILD_TESTING)
 	add_library(PortSelector STATIC
 		"${CMAKE_CURRENT_LIST_DIR}/test/ut/PortSelector.cpp"
 		"${CMAKE_CURRENT_LIST_DIR}/test/ut/SocketTestHelper.cpp")

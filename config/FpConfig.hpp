@@ -12,10 +12,6 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 
-// A helper macro to declare errors in definitions of the constants
-#define FW_CONFIG_ERROR( condition, name )\
-    typedef char assert_failed_ ## name [ (condition) ? 1 : -1 ];
-
 // To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
 // these defaults will be overridden
 
@@ -164,6 +160,7 @@
 #define FW_NO_ASSERT                        1   //!< Asserts turned off
 #define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
 #define FW_FILENAME_ASSERT                  3   //!< Uses the file name in the assert - image stores filenames
+#define FW_ASSERT_DFL_MSG_LEN               256 //!< Maximum assert message length when using the default assert handler
 
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT //!< Defines the type of assert used

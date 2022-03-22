@@ -13,12 +13,13 @@
 
 #include <mqueue.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#include <time.h>
+#include <cerrno>
+#include <cstring>
+#include <cstdio>
+#include <ctime>
 #include <sys/time.h>
 #include <pthread.h>
+#include <new>
 
 #define IPC_QUEUE_TIMEOUT_SEC (1)
 
@@ -67,7 +68,7 @@ namespace Os {
         handle = mq_open(this->m_name.toChar(), O_RDWR | O_CREAT | O_EXCL, 0666, &att);
 
         // If queue already exists, then unlink it and try again.
-        if (-1 == (NATIVE_INT_TYPE) handle) {
+        if (-1 ==  handle) {
             switch (errno) {
                 case EEXIST:
                     (void)mq_unlink(this->m_name.toChar());
@@ -78,17 +79,17 @@ namespace Os {
 
             handle = mq_open(this->m_name.toChar(), O_RDWR | O_CREAT | O_EXCL, 0666, &att);
 
-            if (-1 == (NATIVE_INT_TYPE) handle) {
+            if (-1 == handle) {
                 return QUEUE_UNINITIALIZED;
             }
         }
 
         // Set up queue handle:
-        QueueHandle* queueHandle = new QueueHandle(handle);
-        if (NULL == queueHandle) {
+        QueueHandle* queueHandle = new(std::nothrow) QueueHandle(handle);
+        if (nullptr == queueHandle) {
           return QUEUE_UNINITIALIZED;
         }
-        this->m_handle = (POINTER_CAST) queueHandle;
+        this->m_handle = reinterpret_cast<POINTER_CAST>(queueHandle);
 
         Queue::s_numQueues++;
 
@@ -97,31 +98,31 @@ namespace Os {
 
     IPCQueue::~IPCQueue() {
         // Clean up the queue handle:
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
-        if (NULL != queueHandle) {
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
+        if (nullptr != queueHandle) {
           delete queueHandle;
         }
-        this->m_handle = (POINTER_CAST) NULL; // important so base Queue class doesn't free it
+        this->m_handle = reinterpret_cast<POINTER_CAST>(nullptr); // important so base Queue class doesn't free it
         (void) mq_unlink(this->m_name.toChar());
     }
 
     Queue::QueueStatus IPCQueue::send(const U8* buffer, NATIVE_INT_TYPE size, NATIVE_INT_TYPE priority, QueueBlocking block) {
 
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         if (-1 == handle) {
             return QUEUE_UNINITIALIZED;
         }
 
-        if (NULL == buffer) {
+        if (nullptr == buffer) {
             return QUEUE_EMPTY_BUFFER;
         }
 
         bool keepTrying = true;
         while (keepTrying) {
             struct timeval now;
-            gettimeofday(&now,NULL);
+            gettimeofday(&now,nullptr);
             struct timespec wait;
             wait.tv_sec = now.tv_sec;
             wait.tv_nsec = now.tv_usec * 1000;
@@ -129,7 +130,7 @@ namespace Os {
             if (block == QUEUE_BLOCKING) {
                 wait.tv_sec += IPC_QUEUE_TIMEOUT_SEC;
             }
-            NATIVE_INT_TYPE stat = mq_timedsend(handle, (const char*) buffer, size, priority, &wait);
+            NATIVE_INT_TYPE stat = mq_timedsend(handle, reinterpret_cast<const char*>(buffer), size, priority, &wait);
             if (-1 == stat) {
                 switch (errno) {
                     case EINTR:
@@ -163,7 +164,7 @@ namespace Os {
 
     Queue::QueueStatus IPCQueue::receive(U8* buffer, NATIVE_INT_TYPE capacity, NATIVE_INT_TYPE &actualSize, NATIVE_INT_TYPE &priority, QueueBlocking block) {
 
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         if (-1 == handle) {
@@ -174,7 +175,7 @@ namespace Os {
         bool notFinished = true;
         while (notFinished) {
             struct timeval now;
-            gettimeofday(&now,NULL);
+            gettimeofday(&now,nullptr);
             struct timespec wait;
             wait.tv_sec = now.tv_sec;
             wait.tv_nsec = now.tv_usec * 1000;
@@ -182,11 +183,11 @@ namespace Os {
             if (block == QUEUE_BLOCKING) {
                 wait.tv_sec += IPC_QUEUE_TIMEOUT_SEC;
             }
-            size = mq_timedreceive(handle, (char*) buffer, (size_t) capacity,
+            size = mq_timedreceive(handle, reinterpret_cast<char*>(buffer), static_cast<size_t>(capacity),
 #ifdef TGT_OS_TYPE_VXWORKS
-                        (int*)&priority, &wait);
+                        reinterpret_cast<int*>(&priority), &wait);
 #else
-                        (unsigned int*) &priority, &wait);
+                        reinterpret_cast<unsigned int*>(&priority), &wait);
 #endif
 
             if (-1 == size) { // error
@@ -217,43 +218,43 @@ namespace Os {
             }
         }
 
-        actualSize = (NATIVE_INT_TYPE) size;
+        actualSize = static_cast<NATIVE_INT_TYPE>(size);
         return QUEUE_OK;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getNumMsgs(void) const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    NATIVE_INT_TYPE IPCQueue::getNumMsgs() const {
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_curmsgs;
+        return static_cast<U32>(attr.mq_curmsgs);
     }
 
-    NATIVE_INT_TYPE IPCQueue::getMaxMsgs(void) const {
+    NATIVE_INT_TYPE IPCQueue::getMaxMsgs() const {
         //FW_ASSERT(0);
         return 0;
     }
 
-    NATIVE_INT_TYPE IPCQueue::getQueueSize(void) const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    NATIVE_INT_TYPE IPCQueue::getQueueSize() const {
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_maxmsg;
+        return static_cast<U32>(attr.mq_maxmsg);
     }
 
-    NATIVE_INT_TYPE IPCQueue::getMsgSize(void) const {
-        QueueHandle* queueHandle = (QueueHandle*) this->m_handle;
+    NATIVE_INT_TYPE IPCQueue::getMsgSize() const {
+        QueueHandle* queueHandle = reinterpret_cast<QueueHandle*>(this->m_handle);
         mqd_t handle = queueHandle->handle;
 
         struct mq_attr attr;
         int status = mq_getattr(handle, &attr);
         FW_ASSERT(status == 0);
-        return (U32) attr.mq_msgsize;
+        return static_cast<U32>(attr.mq_msgsize);
     }
 
 }

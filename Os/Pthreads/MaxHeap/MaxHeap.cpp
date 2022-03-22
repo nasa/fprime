@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  MaxHeap.cpp
 // \author dinkel
-// \brief  An implementation of a stable max heap data structure. Items 
+// \brief  An implementation of a stable max heap data structure. Items
 //         popped off the heap are guaranteed to be in order of decreasing
-//         "value" (max removed first). Items of equal "value" will be 
-//         popped off in FIFO order. The performance of both push and pop 
+//         "value" (max removed first). Items of equal "value" will be
+//         popped off in FIFO order. The performance of both push and pop
 //         is O(log(n)).
 //
 // \copyright
@@ -17,46 +17,48 @@
 #include "Os/Pthreads/MaxHeap/MaxHeap.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
-#include <stdio.h>
 #include <Fw/Logger/Logger.hpp>
+
+#include <new>
+#include <cstdio>
 
 // Macros for traversing the heap:
 #define LCHILD(x) (2 * x + 1)
 #define RCHILD(x) (2 * x + 2)
 #define PARENT(x) ((x - 1) / 2)
-  
+
 namespace Os {
-    
+
     MaxHeap::MaxHeap() {
       // Initialize the heap:
       this->capacity = 0;
-      this->heap = NULL;
+      this->heap = nullptr;
       this->size = 0;
       this->order = 0;
     }
-  
+
     MaxHeap::~MaxHeap() {
       delete [] this->heap;
-      this->heap = NULL;
+      this->heap = nullptr;
     }
 
     bool MaxHeap::create(NATIVE_UINT_TYPE capacity)
     {
       // The heap has already been created.. so delete
       // it and try again.
-      if( NULL != this->heap ) {
+      if( nullptr != this->heap ) {
         delete [] this->heap;
-        this->heap = NULL;
+        this->heap = nullptr;
       }
 
-      this->heap = new Node[capacity];
-      if( NULL == this->heap ) {
+      this->heap = new(std::nothrow) Node[capacity];
+      if( nullptr == this->heap ) {
         return false;
       }
       this->capacity = capacity;
       return true;
     }
-  
+
     bool MaxHeap::push(NATIVE_INT_TYPE value, NATIVE_UINT_TYPE id) {
       // If the queue is full, return false:
       if(this->isFull()) {
@@ -72,16 +74,16 @@ namespace Os {
       NATIVE_UINT_TYPE maxCount = 0;
 
       // Start at the bottom of the heap and work our ways
-      // upwards until we find a parent that has a value 
+      // upwards until we find a parent that has a value
       // greater than ours.
       while(index && maxCount < maxIter) {
         // Get the parent index:
         parent = PARENT(index);
-        // The parent index should ALWAYS be less than the 
+        // The parent index should ALWAYS be less than the
         // current index. Let's verify that.
         FW_ASSERT(parent < index, parent, index);
         // If the current value is less than the parent,
-        // then the current index is in the correct place, 
+        // then the current index is in the correct place,
         // so break out of the loop:
         if(value <= this->heap[parent].value) {
           break;
@@ -119,15 +121,15 @@ namespace Os {
       id = this->heap[0].id;
 
       // Now place the last element on the heap in
-      // the root position, and resize the heap. 
-      // This will put the smallest value in the 
+      // the root position, and resize the heap.
+      // This will put the smallest value in the
       // heap on the top, violating the heap property.
       NATIVE_UINT_TYPE index = this->size-1;
       // Fw::Logger::logMsg("Putting on top: i: %u v: %d\n", index, this->heap[index].value);
       this->heap[0]= this->heap[index];
       --this->size;
 
-      // Now that the heap property is violated, we 
+      // Now that the heap property is violated, we
       // need to reorganize the heap to restore it's
       // heapy-ness.
       this->heapify();
@@ -143,7 +145,7 @@ namespace Os {
     bool MaxHeap::isEmpty() {
       return (this->size == 0);
     }
-    
+
     // Get the current size of the heap:
     NATIVE_UINT_TYPE MaxHeap::getSize() {
       return this->size;
@@ -200,21 +202,21 @@ namespace Os {
         }
 
         // Swap the largest node with the current node:
-        // Fw::Logger::logMsg("Swapping: i: %u v: %d with i: %u v: %d\n", 
+        // Fw::Logger::logMsg("Swapping: i: %u v: %d with i: %u v: %d\n",
         //   index, this->heap[index].value,
         //   largest, this->heap[largest].value);
         this->swap(index, largest);
 
         // Set the new index to whichever child was larger:
         index = largest;
-      }  
+      }
 
       // Check for programming errors or bit flips:
       FW_ASSERT(maxCount < maxIter, maxCount, maxIter);
       FW_ASSERT(index <= this->size, index);
     }
 
-    // Return the maximum priority index between two nodes. If their 
+    // Return the maximum priority index between two nodes. If their
     // priorities are equal, return the oldest to keep the heap stable
     NATIVE_UINT_TYPE MaxHeap::max(NATIVE_UINT_TYPE a, NATIVE_UINT_TYPE b) {
       FW_ASSERT(a < this->size, a, this->size);
@@ -223,7 +225,7 @@ namespace Os {
       // Extract the priorities:
       NATIVE_INT_TYPE aValue = this->heap[a].value;
       NATIVE_INT_TYPE bValue = this->heap[b].value;
-      
+
       // If the priorities are equal, the "larger" one will be
       // the "older" one as determined by order pushed on to the
       // heap. Using this secondary ordering technique makes the

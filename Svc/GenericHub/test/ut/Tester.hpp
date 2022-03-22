@@ -29,11 +29,11 @@ class Tester : public GenericHubGTestBase {
   public:
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester();
 
     //! Destroy object Tester
     //!
-    ~Tester(void);
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------
@@ -42,15 +42,15 @@ class Tester : public GenericHubGTestBase {
 
     //! Test of basic in/out of a set of serialized ports
     //!
-    void test_in_out(void);
+    void test_in_out();
 
     //! Test of buffer in/out of a set of buffer ports
     //!
-    void test_buffer_io(void);
+    void test_buffer_io();
 
     //! Test of random in/out of a set of file and normal ports
     //!
-    void test_random_io(void);
+    void test_random_io();
 
   private:
     // ----------------------------------------------------------------------
@@ -104,11 +104,11 @@ class Tester : public GenericHubGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts();
 
     //! Initialize components
     //!
-    void initComponents(void);
+    void initComponents();
 
   private:
     // ----------------------------------------------------------------------
