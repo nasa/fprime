@@ -21,7 +21,7 @@ jobs:
         fetch-depth: 0
     - run: git fetch --tags
     - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+      run: pip3 install $GITHUB_WORKSPACE/
     - name: Install RPI Toolchain
       run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
     - name: F prime CI step

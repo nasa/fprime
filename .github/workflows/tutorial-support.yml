@@ -35,7 +35,7 @@ jobs:
 
       # Build tutorial test
       - name: Install fprime tools
-        run: pip3 install fprime-tools fprime-gds
+        run: pip3 install ./gps-tutorial/fprime/
       - name: GPS Tutorial Build
         working-directory: ./gps-tutorial/GpsApp
         run: |

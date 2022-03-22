@@ -13,7 +13,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+      run: pip3 install $GITHUB_WORKSPACE/
     - name: Setup Dependencies
       run: |
            sudo apt-get update
