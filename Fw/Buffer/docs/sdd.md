@@ -25,10 +25,10 @@ to pass outside a given address space.
 
 Name | Type | Accessors | Purpose
 ---- | ---- | --------- | -------
-m_bufferData | U8* | `getData()`/`setData()`       | Pointer to the raw memory wrapped by this buffer
-m_size       | U32 | `getSize()`/`setSize()`       | Size of the raw memory region wrapped by this buffer
-m_context    | U32 | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
-m_serialize_repr |  Fw::ExternalSerializeBuffer | `getSerializeRepr()` | Interface for serialization to internal buffer
+`m_bufferData` | `U8*` | `getData()`/`setData()`       | Pointer to the raw memory wrapped by this buffer
+`m_size`       | `U32` | `getSize()`/`setSize()`       | Size of the raw memory region wrapped by this buffer
+`m_context`    | `U32` | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
+`m_serialize_repr` | `Fw::ExternalSerializeBuffer` | `getSerializeRepr()` | Interface for serialization to internal buffer
 
 If the size of the data is set to 0, the pointer returned by `getData()` and the the serialization interface returned by
 `getSerializeRepr()` are considered invalid and should not be used.
@@ -58,37 +58,34 @@ the `m_size` field to zero to indicate that the buffer is invalid.
 
 Receivers of `Fw::Buffer` objects are expected to check the `m_size` field before using the buffer.
 
-### Serializing to `Fw::Buffer`
+### Serializing and Deserializing with `Fw::Buffer`
 
-A given `Fw::Buffer`'s data can be serialized to using the serialization interface returned by `getSerializeRepr()`. The
-serialization interface **is not** stored when passed between components and thus serialization should be performed
-within one context.  The following C++ snippet shows the process for serializing data to a buffer.
+Users can obtain a SerializeBuffer, `sb`, by calling `getSerializeRepr()`. This serialize buffer is backed by the memory
+of the `Fw::Buffer` and is initially empty.  Users can serialize and deserialize through `sb` to copy to/from the backed
+memory. 
 
+The state of `sb` persists as long as the current `Fw::Buffer` object exists. If an `Fw::Buffer` is sent through a port
+call, passed by-value to a function call, or otherwise copied, the state of `sb` is reset and it is once again empty.
+
+**Serializing to `Fw::Buffer`**
 ```c++
 U32 my_data = 10001;
 U8  my_byte = 2;
-Fw::ExternalSerializeBuffer& serializer = my_fw_buffer.getSerializeRepr();
-serializer.resetSer();  // Return the serialization to the beginning of the memory region
-serializer.serialize(my_data);
-serializer.serialize(my_byte);
+Fw::ExternalSerializeBuffer& sb = my_fw_buffer.getSerializeRepr();
+sb.resetSer();  // Return the serialization to the beginning of the memory region
+sb.serialize(my_data);
+sb.serialize(my_byte);
 ```
 
-### Deserializing from `Fw::Buffer`
+Since the initial state of `sb` is empty, deserialization requires setting the size of the data available for
+deserialization. This can be done with the `sb.setBuffLen()` method passing in the `Fw::Buffer` size.
 
-A given `Fw::Buffer`'s data can be deserialized using the serialization interface returned by `getSerializeRepr()`. The
-serialization interface **is not** stored when passed between components and thus deserialization should be performed
-within one context.  The following C++ snippet shows the process for deserializing data to a buffer.
-
+**Deserializing from `Fw::Buffer`**
 ```c++
 U32 my_data = 0;
 U8  my_byte = 0;
-Fw::ExternalSerializeBuffer& deserializer = my_fw_buffer.getSerializeRepr();
-deserializer.sbb.setBuffLen(buffer.getSize());  // Set available data for deserialization to the whole memory region
-deserializer.deserialize(my_data);
-deserializer.deserialize(my_byte);
+Fw::ExternalSerializeBuffer& sb = my_fw_buffer.getSerializeRepr();
+sb.setBuffLen(buffer.getSize());  // Set available data for deserialization to the whole memory region
+sb.deserialize(my_data);
+sb.deserialize(my_byte);
 ```
-
-**Note:** this interface is given as a convenience for working with `Fw::Buffers`, but does not guarantee that the
-serialization location persists through a `Fw::BufferSend` call.  The typically pattern of serialize, send, deserialize
-works as expected but multi-stage serialization or deserialization does not work without external management of the
-serialization and deserialization pointers.
