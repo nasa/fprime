@@ -15,13 +15,11 @@ jobs:
   Framework:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - run: git fetch --tags
-    - name: Install fprime tools
-      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
     # Archive the outputs
@@ -36,10 +34,11 @@ jobs:
   Ref:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
     # Archive the outputs
@@ -54,14 +53,12 @@ jobs:
   Integration:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - run: git fetch --tags
-    - name: Install fprime tools
-      run: pip3 install setuptools_scm urllib3  $GITHUB_WORKSPACE/
-    - name: Setup Dependencies
+    - uses: ./.github/actions/setup
+    - name: Setup Valgrind
       run: |
            sudo apt-get update
            sudo apt-get install valgrind
@@ -79,13 +76,11 @@ jobs:
   Quality:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - run: git fetch --tags
-    - name: Install fprime tools
-      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
+    - uses: ./.github/actions/setup
     - name: Setup Dependencies
       run: |
         sudo apt-get update
@@ -103,13 +98,11 @@ jobs:
   CMake:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - run: git fetch --tags
-    - name: Install fprime tools
-      run: pip3 install setuptools_scm urllib3 $GITHUB_WORKSPACE/
+    - uses: ./.github/actions/setup
     - name: CMake Tests
       working-directory: ./cmake/test
       run: pytest

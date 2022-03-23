@@ -18,7 +18,7 @@ if (NOT FPUTIL)
 elseif (NOT PYTHON)
     message(FATAL_ERROR "python3 was not found. Please ensure python3 is on the path.")
 elseif(NOT FPP_FOUND)
-    message(FATAL_ERROR "fpp tools where not found. Please install the fpp tool suite.")
+    message(FATAL_ERROR "fpp tools were not found. Please install the fpp tool suite.")
 endif()
 
 
