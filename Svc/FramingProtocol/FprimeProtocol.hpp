@@ -43,9 +43,9 @@ namespace Svc {
 
       //! Implements the frame method
       void frame(
-          const U8* const data,
-          const U32 size,
-          Fw::ComPacket::ComPacketType packet_type
+          const U8* const data, //!< The data
+          const U32 size, //!< The data size in bytes
+          Fw::ComPacket::ComPacketType packet_type //!< The packet type
       ) override;
 
   };
@@ -58,15 +58,19 @@ namespace Svc {
       FprimeDeframing();
 
       //! Validates data against the stored hash value
-      //! 1. Computes the hash value V of bytes [0,SIZE-1] in the circular buffer
-      //! 2. Compares V against bytes [SIZE, SIZE + HASH_DIGEST_LENGTH - 1] of
+      //! 1. Computes the hash value V of bytes [0,size-1] in the circular buffer
+      //! 2. Compares V against bytes [size, size + HASH_DIGEST_LENGTH - 1] of
       //!    the circular buffer, which are expected to be the stored hash value.
-      bool validate(Types::CircularBuffer& buffer, U32 size);
+      bool validate(
+          Types::CircularBuffer& buffer, //!< The circular buffer
+          U32 size //!< The data size in bytes
+      );
 
       //! Implements the deframe method
+      //! \return Status
       DeframingStatus deframe(
-          Types::CircularBuffer& buffer,
-          U32& needed
+          Types::CircularBuffer& buffer, //!< The circular buffer
+          U32& needed //!< The number of bytes needed, updated by the caller
       ) override;
 
   };

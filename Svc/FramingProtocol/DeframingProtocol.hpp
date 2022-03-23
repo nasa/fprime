@@ -41,8 +41,8 @@ class DeframingProtocol {
         DEFRAMING_INVALID_SIZE, /*!< Invalid size found */
         DEFRAMING_INVALID_CHECKSUM, /*!< Invalid checksum */
         DEFRAMING_MORE_NEEDED, /*!< Successful deframing likely with more data */
-        DEFRAMING_INVALID_FORMAT, /*< Invalid format */
-        DEFRAMING_MAX_STATUS
+        DEFRAMING_INVALID_FORMAT, /*!< Invalid format */
+        DEFRAMING_MAX_STATUS /*!< The number of status enumerations */
     };
     //! Constructor
     //!
