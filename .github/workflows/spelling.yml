@@ -17,7 +17,13 @@ jobs:
     name: Spell checking
     runs-on: ubuntu-latest
     steps:
+    - name: checkout-merge
+      if: "contains(github.event_name, 'pull_request')"
+      uses: actions/checkout@v2
+      with:
+        ref: refs/pull/${{github.event.pull_request.number}}/merge
     - name: checkout
+      if: ${{ github.event_name == 'push' }}
       uses: actions/checkout@v2
     - uses: check-spelling/check-spelling@v0.0.19
       id: spelling
