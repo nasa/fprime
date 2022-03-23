@@ -16,6 +16,8 @@
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Time/Time.hpp>
 
+namespace Svc {
+
 /**
  * \brief interface supplied to the framing protocol
  *
@@ -37,4 +39,6 @@ class FramingProtocolInterface {
 
 };
 
+}
 #endif  // SVC_FRAMING_PROTOCOL_INTERFACE_HPP
+

@@ -16,6 +16,9 @@
 
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Time/Time.hpp>
+
+namespace Svc {
+
 /**
  * \brief interface supplied to the deframing protocol
  *
@@ -41,4 +44,5 @@ class DeframingProtocolInterface {
 
 };
 
+}
 #endif  // SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP

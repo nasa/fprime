@@ -75,5 +75,5 @@ namespace Svc {
 
   };
 
-};
+}
 #endif  // SVC_FPRIME_PROTOCOL_HPP

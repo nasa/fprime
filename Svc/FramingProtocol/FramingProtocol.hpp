@@ -48,5 +48,5 @@ class FramingProtocol {
   PROTECTED:
     FramingProtocolInterface* m_interface;
 };
-};
+}
 #endif  // SVC_FRAMING_PROTOCOL_HPP
