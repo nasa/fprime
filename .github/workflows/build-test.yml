@@ -120,15 +120,19 @@ jobs:
             mkdir -p ~/fprime-util-generate-ut-Ref
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut-Ref/
           fi
-      working-directory: Ref 
-    
+      working-directory: Ref
+
+    - name: Refresh googletest
+      run: sudo rm -r /build-fprime-automatic-native-ut/googletest-download
+      working-directory: Ref
+
     - name: Compile Source
       run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
       working-directory: Ref
 
     - name: Compile Tests
       run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
-      working-directory: Ref  
+      working-directory: Ref
 
     - name: Test
       run: fprime-util check --all
