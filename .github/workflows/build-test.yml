@@ -122,12 +122,17 @@ jobs:
           fi
       working-directory: Ref 
     
-    - name: Compile
+    - name: Compile Source
       run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
-      working-directory: Ref 
+      working-directory: Ref
+
+    - name: Compile Tests
+      run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
+      working-directory: Ref  
 
     - name: Test
-      run: sudo ./ci/tests/Ref.bash
+      run: fprime-util check --all
+      working-directory: Ref
 
   #### RE-ENABLE: when integration tests are written
   # Integration:
