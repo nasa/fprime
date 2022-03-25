@@ -33,6 +33,7 @@ RUN git clone https://github.com/fprime-community/fpp.git fpp \
     && git checkout ee355fc99eb8040157c62e69f58ac6a8435cd981 \
     && export FPP_SBT_FLAGS='--batch -Dsbt.server.forcestart=true' \
     && ./install /usr/local/bin/fpp
+    && cd /usr/src
 ENV FPP_INSTALL_DIR=/usr/local/bin/fpp
 ENV PATH=${PATH}:${FPP_INSTALL_DIR}
 
@@ -54,4 +55,5 @@ ENV PATH=${PATH}:${FPV_INSTALL_DIR}
 
 # Copy files over and update tools
 RUN pip install --upgrade fprime-tools fprime-gds
+ENV PATH=${PATH}:~/.local/bin
 COPY . .
