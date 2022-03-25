@@ -71,7 +71,7 @@ namespace Drv {
       //! start the serial poll thread.
       //! buffSize is the max receive buffer size
       //!
-      void startReadThread(NATIVE_INT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_INT_TYPE stackSize = Os::Task::TASK_DEFAULT, NATIVE_INT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
+      void startReadThread(NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE stackSize = Os::Task::TASK_DEFAULT, NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
 
       //! Quit thread
       void quitReadThread();
