@@ -414,7 +414,7 @@ namespace Drv {
   }
 
   void LinuxSerialDriverComponentImpl ::
-    startReadThread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
+    startReadThread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity) {
 
       Os::TaskString task("SerReader");
       Os::Task::TaskStatus stat = this->m_readTask.start(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);
