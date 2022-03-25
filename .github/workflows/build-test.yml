@@ -6,24 +6,24 @@ name: CI
 # events but only for the master branch
 on:
   pull_request:
-    branches: [main-msp, dev-msp]
+    branches: [ main-msp, dev-msp ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install fprime tools
-        run: pip3 install fprime-tools fprime-gds
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
 
       - name: Cache clang-tidy-12
         uses: actions/cache@v2
@@ -134,23 +134,19 @@ jobs:
             mkdir -p ~/fprime-util-generate-ut-Ref
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native-ut/ ~/fprime-util-generate-ut-Ref/
           fi
-        working-directory: Ref
+      working-directory: Ref 
+    
+    - name: Compile Source
+      run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
+      working-directory: Ref
 
-      - name: Compile
-        run: fprime-util build --all -j4
-        working-directory: Ref
+    - name: Compile Tests
+      run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
+      working-directory: Ref  
 
-      - name: F prime CI step
-        run: ./ci/tests/Ref.bash
-
-      # Archive the outputs
-      - name: "Archive Logs"
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: ci-ref-logs
-          path: ci-logs.tar.gz
-          retention-days: 5
+    - name: Test
+      run: fprime-util check --all
+      working-directory: Ref
 
   #### RE-ENABLE: when integration tests are written
   # Integration:

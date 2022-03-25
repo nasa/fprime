@@ -28,7 +28,11 @@ RUN git clone https://github.com/fprime-community/fpp.git fpp \
     # if running into unexpected version errors, adjust this commit hash
     && git checkout ee355fc99eb8040157c62e69f58ac6a8435cd981 \
     && export FPP_SBT_FLAGS='--batch -Dsbt.server.forcestart=true' \
+<<<<<<< HEAD
     && ./install /usr/local/bin/fpp \
+=======
+    && ./install /usr/local/bin/fpp
+>>>>>>> feat: commit build --ut build artifacts and remove test bash script dependency
     && cd /usr/src
 ENV FPP_INSTALL_DIR=/usr/local/bin/fpp
 ENV PATH=${PATH}:${FPP_INSTALL_DIR}
@@ -58,5 +62,8 @@ RUN apt-get -y install libxml2 libxslt-dev
 # Copy files over and update tools
 RUN pip install --upgrade fprime-tools fprime-gds
 ENV PATH=${PATH}:~/.local/bin
+<<<<<<< HEAD
 RUN git config --global --add safe.directory /usr/src
+=======
+>>>>>>> feat: commit build --ut build artifacts and remove test bash script dependency
 COPY . .
