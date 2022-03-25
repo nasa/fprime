@@ -122,10 +122,6 @@ jobs:
           fi
       working-directory: Ref
 
-    - name: Refresh googletest
-      run: sudo rm -r /build-fprime-automatic-native-ut/googletest-download
-      working-directory: Ref
-
     - name: Compile Source
       run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
       working-directory: Ref
