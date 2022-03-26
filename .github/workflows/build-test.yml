@@ -24,26 +24,12 @@ jobs:
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
-    - name: Download ccache
-      id: ccache
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y ccache
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
 
-    - name: Prepare ccache timestamp
-      id: ccache_cache_timestamp
-      shell: cmake -P {0}
+    - name: set ccache path
       run: |
-        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-        message("::set-output name=timestamp::${current_date}")
-
-    - name: ccache cache files
-      uses: actions/cache@v2
-      with:
-        path: ~/.ccache
-        key: ${{ runner.os  }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
-        restore-keys: |
-            ${{ runner.os  }}-ccache-
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 
     - name: Cache clang-tidy-12
       uses: actions/cache@v2
@@ -108,6 +94,10 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2
 
+    - name: set ccache path
+      run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+
     - name: Cache fprime-util generate
       uses: actions/cache@v2
       id: cache-fprime-util-generate-Ref
@@ -126,7 +116,6 @@ jobs:
             mkdir -p ~/fprime-util-generate-Ref
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate-Ref/
           fi
-      working-directory: Ref 
 
     - name: Cache fprime-util generate --ut
       uses: actions/cache@v2
