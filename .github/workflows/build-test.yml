@@ -13,7 +13,6 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
     - uses: actions/cache@v2
