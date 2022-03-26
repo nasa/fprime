@@ -25,6 +25,27 @@ jobs:
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
+    - name: Download ccache
+      id: ccache
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y ccache
+
+    - name: Prepare ccache timestamp
+      id: ccache_cache_timestamp
+      shell: cmake -P {0}
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=timestamp::${current_date}")
+
+    - name: ccache cache files
+      uses: actions/cache@v2
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os  }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        restore-keys: |
+            ${{ runner.os  }}-ccache-
+
     - name: Cache clang-tidy-12
       uses: actions/cache@v2
       id: cache-clang-tidy-12
