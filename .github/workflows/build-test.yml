@@ -85,6 +85,12 @@ jobs:
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
+    - name: Download ccache
+      id: ccache
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y ccache
+
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
       shell: cmake -P {0}
@@ -93,20 +99,12 @@ jobs:
         message("::set-output name=timestamp::${current_date}")
 
     - name: ccache cache files
-      uses: actions/cache@v1.1.0
+      uses: actions/cache@v2
       with:
-        path: .ccache
-        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        path: ~/.ccache
+        key: ${{ runner.os  }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
         restore-keys: |
-            ${{ matrix.config.name }}-ccache-
-
-    - name: Download ccache
-      id: ccache
-      shell: cmake -P {0}
-      run: |
-        set(ccache_url "https://github.com/cristianadam/ccache/releases/download/v$ENV{CCACHE_VERSION}/${ { runner.os } }.tar.xz")
-        file(DOWNLOAD "${ccache_url}" ./ccache.tar.xz SHOW_PROGRESS)
-        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./ccache.tar.xz)
+            ${{ runner.os  }}-ccache-
 
     - name: Cache fprime-util generate
       uses: actions/cache@v2
