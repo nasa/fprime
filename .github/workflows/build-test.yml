@@ -123,11 +123,7 @@ jobs:
           fi
       working-directory: Ref
 
-    - name: Compile Source
-      run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
-      working-directory: Ref
-
-    - name: Compile Tests
+    - name: Compile tests and source
       run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
       working-directory: Ref
 
