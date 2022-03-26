@@ -1,6 +1,5 @@
 build/
 build*/
-gtest/
 
 AutoXML/
 test_harness/src/test_harness-C/application.out
