@@ -74,12 +74,14 @@ jobs:
       with:
         submodules: true 
 
-    - uses: actions/cache@v2
+    - name: cache pip
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
@@ -93,10 +95,10 @@ jobs:
     - name: ccache cache files
       uses: actions/cache@v1.1.0
       with:
-      path: .ccache
-      key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
-      restore-keys: |
-          ${{ matrix.config.name }}-ccache-
+        path: .ccache
+        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        restore-keys: |
+            ${{ matrix.config.name }}-ccache-
 
     - name: Download ccache
       id: ccache
