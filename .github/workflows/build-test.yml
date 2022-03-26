@@ -13,22 +13,22 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install fprime tools
-        run: pip3 install fprime-tools fprime-gds
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install fprime tools
+      run: pip3 install fprime-tools fprime-gds
 
-      - name: Cache clang-tidy-12
-        uses: actions/cache@v2
-        id: cache-clang-tidy-12
-        with:
+    - name: Cache clang-tidy-12
+      uses: actions/cache@v2
+      id: cache-clang-tidy-12
+      with:
           path: "~/clang-tidy-12"
           key: "clang-tidy-12"
       - name: Install clang-tidy-12
@@ -70,8 +70,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        submodules: true 
       with:
         submodules: true 
 
