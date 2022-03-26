@@ -29,6 +29,8 @@ project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 # components will be placed in the F-Prime binary subdirectory to keep them from
 # colliding with deployment specific items.
 ##
+add_definitions(-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
+
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")

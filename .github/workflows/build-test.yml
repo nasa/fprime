@@ -138,8 +138,25 @@ jobs:
       working-directory: Ref
 
     # all necessary files for unit testing are built
+    # fprime system specific files are cached and reloaded
+    - name: cache compile tests and source
+      uses: actions/cache@v2
+      id: cache-fprime-util-build
+      with:
+          path: "~/fprime-util-build-Ref"
+          key: "fprime-util-build-Ref"
     - name: compile tests and source
-      run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
+      env:
+        CACHE_HIT: ${{steps.cache-fprime-util-build.outputs.cache-hit}}
+      run: |
+          if [[ "$CACHE_HIT" == 'true' ]]; then
+            sudo cp --verbose --force --recursive ~/fprime-util-build-Ref/* $(pwd)/
+            sudo chown -R $USER:$GROUP $(pwd)
+          else
+            fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
+            mkdir -p ~/fprime-util-build-Ref
+            sudo cp --verbose --force --recursive $(pwd)/build-artifacts/ ~/fprime-util-build-Ref/
+          fi
       working-directory: Ref
 
     # unit tests are run
