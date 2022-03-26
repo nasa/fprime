@@ -2,45 +2,38 @@
 
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   pull_request:
-    branches: [main-msp, dev-msp]
+    branches: [ main-msp, dev-msp ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  compile:
+  # compiles the full codebase using clang tidy, which lints our code
+  compile + lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
+    
+    # pip dependencies are cached and reloaded
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Install fprime tools
+    - name: install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-
-    - name: set ccache path
-      run: |
-        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-
-    - name: Cache clang-tidy-12
+    # clang-tidy compiler is cached and reloaded
+    - name: cache clang-tidy-12
       uses: actions/cache@v2
       id: cache-clang-tidy-12
       with:
           path: "~/clang-tidy-12"
           key: "clang-tidy-12"
-      - name: Install clang-tidy-12
-        env:
-          CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
-        run: |
+    - name: install clang-tidy-12
+      env:
+        CACHE_HIT: ${{steps.cache-clang-tidy-12.outputs.cache-hit}}
+      run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/clang-tidy-12/* /
           else
@@ -50,16 +43,17 @@ jobs:
             sudo dpkg -L clang-tidy-12 | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/clang-tidy-12/
           fi
 
-      - name: Cache fprime-util generate
-        uses: actions/cache@v2
-        id: cache-fprime-util-generate
-        with:
+    # fprime system specific files are cached and reloaded
+    - name: cache fprime-util generate
+      uses: actions/cache@v2
+      id: cache-fprime-util-generate
+      with:
           path: "~/fprime-util-generate"
           key: "fprime-util-generate"
-      - name: Run fprime-util generate
-        env:
-          CACHE_HIT: ${{steps.cache-fprime-util-generate.outputs.cache-hit}}
-        run: |
+    - name: run fprime-util generate
+      env:
+        CACHE_HIT: ${{steps.cache-fprime-util-generate.outputs.cache-hit}}
+      run: |
           if [[ "$CACHE_HIT" == 'true' ]]; then
             sudo cp --verbose --force --recursive ~/fprime-util-generate/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
@@ -69,10 +63,11 @@ jobs:
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate/
           fi
 
-    - name: Compile
+    # code is compiled with lint rules on
+    - name: compile + lint
       run: fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
     
-
+  # compiles the full codebase, then runs unit tests
   test:
     runs-on: ubuntu-latest
     steps:
@@ -82,6 +77,7 @@ jobs:
       with:
         submodules: true 
 
+    # pip dependencies are cached and reloaded
     - name: cache pip
       uses: actions/cache@v2
       with:
@@ -89,24 +85,25 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-
     - name: Install fprime tools
       run: pip3 install fprime-tools fprime-gds
 
+    # ccache caches and reloads c binary files between workflows to reduce
+    # build time
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2
-
     - name: set ccache path
       run: |
         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
 
-    - name: Cache fprime-util generate
+    # fprime system specific files are cached and reloaded
+    - name: cache fprime-util generate
       uses: actions/cache@v2
       id: cache-fprime-util-generate-Ref
       with:
           path: "~/fprime-util-generate-Ref"
           key: "fprime-util-generate-Ref"
-    - name: Run fprime-util generate
+    - name: run fprime-util generate
       env:
         CACHE_HIT: ${{steps.cache-fprime-util-generate-Ref.outputs.cache-hit}}
       run: |
@@ -119,13 +116,14 @@ jobs:
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate-Ref/
           fi
 
-    - name: Cache fprime-util generate --ut
+    # fprime system specific test files are cached and reloaded
+    - name: cache fprime-util generate --ut
       uses: actions/cache@v2
       id: cache-fprime-util-generate-ut-Ref
       with:
           path: "~/fprime-util-generate-ut-Ref"
           key: "fprime-util-generate-ut-Ref"
-    - name: Run fprime-util generate--ut
+    - name: run fprime-util generate--ut
       env:
         CACHE_HIT: ${{steps.cache-fprime-util-generate-ut-Ref.outputs.cache-hit}}
       run: |
@@ -139,11 +137,13 @@ jobs:
           fi
       working-directory: Ref
 
-    - name: Compile tests and source
+    # all necessary files for unit testing are built
+    - name: compile tests and source
       run: fprime-util build --all --ut --jobs "$(nproc || printf '%s\n' 1)"
       working-directory: Ref
 
-    - name: Test
+    # unit tests are run
+    - name: test
       run: fprime-util check --all
       working-directory: Ref
 
