@@ -5,13 +5,6 @@
 ####
 cmake_minimum_required(VERSION 3.13)
 
-file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}" ccache_basedir)
-set(ENV{CCACHE_BASEDIR} "${ccache_basedir}")
-set(ENV{CCACHE_DIR} "${ccache_basedir}/.ccache")
-set(ENV{CCACHE_COMPRESS} "true")
-set(ENV{CCACHE_COMPRESSLEVEL} "6")
-set(ENV{CCACHE_MAXSIZE} "600M")
-
 project(FPrime C CXX)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F prime project" FORCE)
