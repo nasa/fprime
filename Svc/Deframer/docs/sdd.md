@@ -72,7 +72,7 @@ SVC-DEFRAMER-006 | `Svc::Deframer` shall use an instance of `Svc::DeframingProto
 SVC-DEFRAMER-007 | `Svc::Deframer` shall interpret the first four bytes of the extracted data as a 32-bit signed integer holding the packet type. | 32 bits should be enough to hold any packet type. Fixing the size at 32 bits keeps the implementation simple. | Test
 SVC-DEFRAMER-008 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
 SVC-DEFRAMER-009 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
-SVC-DEFRAMER-009 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
+SVC-DEFRAMER-010 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
 
 ## 4. Design
  
