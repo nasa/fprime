@@ -25,10 +25,10 @@ Deframer is typically connected to a
 [byte stream driver](../../../Drv/ByteStreamDriverModel).
 It supports two configurations for streaming data:
 
-1. **Polling:** This configuration supports drivers that lack their own threads.
-   In this configuration Deframer polls the driver looking for new data.
+1. **Poll:** This configuration supports drivers that lack their own threads.
+   In this configuration Deframer polls the driver for data.
 
-2. **Callback:** This configuration supports drivers that have their own threads.
+2. **Push:** This configuration supports drivers that have their own threads.
    In this configuration the driver pushes data to the Deframer.
 
 ## 2. Assumptions
@@ -37,7 +37,7 @@ It supports two configurations for streaming data:
 and framing protocols used to instantiate the components (a)
 match each other and (b) match the protocol used by the ground data system.
 
-1. You should use only one data streaming configuration (polling or callback)
+1. You should use only one data streaming configuration (poll or push)
 in any FSW topology that uses `Svc::Framer` and `Svc::Deframer`.
 
 ## 3. Requirements
