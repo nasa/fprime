@@ -82,7 +82,7 @@ SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sen
 The diagram below shows the `Deframer` component.
 
 <div>
-<img src="img/Deframer.png" width=500/>
+<img src="img/Deframer.png" width=700/>
 </div>
 
 ### 4.2. Ports
