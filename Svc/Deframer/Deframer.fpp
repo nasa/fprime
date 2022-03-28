@@ -11,13 +11,13 @@ module Svc {
     sync input port cmdResponseIn: Fw.CmdResponse
 
     @ Port for receiving data pushed from the byte stream driver.
-    @ TODO: Why is this port guarded? By assumption framedIn and framedPoll
-    @ should never both be connected.
+    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
+    @ should never both be connected._
     guarded input port framedIn: Drv.ByteStreamRecv
 
     @ Schedule in port.
-    @ TODO: Why is this port guarded? By assumption framedIn and framedPoll
-    @ should never both be connected.
+    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
+    @ should never both be connected._
     guarded input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------

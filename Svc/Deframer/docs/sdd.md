@@ -92,8 +92,8 @@ The diagram below shows the `Deframer` component.
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher |
-| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving data pushed from the byte stream driver. TODO: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected. |
-| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port. TODO: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected. |
+| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving data pushed from the byte stream driver. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
+| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
 | `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects, e.g., for file uplink |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers allocated with bufferAllocate |
 | `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating received buffers containing framed data |
