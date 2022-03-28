@@ -56,8 +56,8 @@ protocol used with `Deframer` (a)
 matches the framing protocol used with `Framer` and (b) match the protocol
 used by the ground data system.
 
-1. You should use only one data streaming configuration (poll or push)
-with each instance of `Deframer`.
+1. In any topology that uses an instance _I_ of `Deframer`, you should connect
+the poll interface of _I_ or the push interface of _I_, but not both.
 
 ## 3. Requirements
 
@@ -67,7 +67,7 @@ SVC-DEFRAMER-001 | `Svc::Deframer` shall accept a sequence of byte buffers and i
 SVC-DEFRAMER-002 | `Svc::Deframer` shall accept byte buffers containing uplink frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Test
 SVC-DEFRAMER-003 | `Svc::Deframer` shall accept byte buffers containing uplink frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Test
 SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface for pushing the byte buffers to be deframed. | This interface supports applications in which the byte stream driver has its own thread. | Test
-SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface for polling for available byte buffers. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
+SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface that periodically polls for available byte buffers, if the port is connected. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
 SVC-DEFRAMER-006 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
 SVC-DEFRAMER-007 | `Svc::Deframer` shall interpret the first four bytes of the extracted data as a 32-bit signed integer holding the packet type. | 32 bits should be enough to hold any packet type. Fixing the size at 32 bits keeps the implementation simple. | Test
 SVC-DEFRAMER-008 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
