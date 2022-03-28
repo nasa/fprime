@@ -67,12 +67,13 @@ SVC-DEFRAMER-001 | `Svc::Deframer` shall accept a sequence of byte buffers and i
 SVC-DEFRAMER-002 | `Svc::Deframer` shall accept byte buffers containing uplink frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Test
 SVC-DEFRAMER-003 | `Svc::Deframer` shall accept byte buffers containing uplink frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Test
 SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface for pushing the byte buffers to be deframed. | This interface supports applications in which the byte stream driver has its own thread. | Test
-SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface that periodically polls for available byte buffers, if the port is connected. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
-SVC-DEFRAMER-006 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
-SVC-DEFRAMER-007 | `Svc::Deframer` shall interpret the first four bytes of the extracted data as a 32-bit signed integer holding the packet type. | 32 bits should be enough to hold any packet type. Fixing the size at 32 bits keeps the implementation simple. | Test
-SVC-DEFRAMER-008 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
-SVC-DEFRAMER-009 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
-SVC-DEFRAMER-010 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
+SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface for polling for byte buffers to be deframed. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
+SVC-DEFRAMER-006 | If the polling interface is connected, then `Svc::Deframer` shall poll for byte buffers on its `schedIn` port. | This requirement allows the system scheduler to drive the periodic polling. | Test
+SVC-DEFRAMER-007 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
+SVC-DEFRAMER-008 | `Svc::Deframer` shall interpret the first four bytes of the extracted data as a 32-bit signed integer holding the packet type. | 32 bits should be enough to hold any packet type. Fixing the size at 32 bits keeps the implementation simple. | Test
+SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
+SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
+SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
 
 ## 4. Design
  
@@ -89,7 +90,16 @@ The diagram below shows the `Deframer` component.
 `Deframer` has the following ports:
 
 | Kind | Name | Port Type | Usage |
-|-----------|------|------|-------|
+|------|------|-----------|-------|
+| `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher |
+| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving data pushed from the byte stream driver. TODO: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected. |
+| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port. TODO: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected. |
+| `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects, e.g., for file uplink |
+| `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers allocated with bufferAllocate |
+| `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating received buffers containing framed data |
+| `output` | `bufferOut` | `Fw.BufferSend` | Port for sending buffers allocated with bufferAllocate. The receiver is responsible for the deallocation. |
+| `output` | `comOut` | `Fw.Com` | Port for sending Com packets, e.g., command packets |
+| `output` | `framedPoll` | `Drv.ByteStreamPoll` | Port that polls for data from the byte stream driver |
 
 ### 4.3. TODO
 

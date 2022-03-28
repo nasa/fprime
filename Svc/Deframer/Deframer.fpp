@@ -10,12 +10,14 @@ module Svc {
     @ Port for receiving command responses from the command dispatcher
     sync input port cmdResponseIn: Fw.CmdResponse
 
-    @ Port for receiving data pushed from the byte stream driver
-    @ This port is guarded to protect concurrent interaction with schedIn
+    @ Port for receiving data pushed from the byte stream driver.
+    @ TODO: Why is this port guarded? By assumption framedIn and framedPoll
+    @ should never both be connected.
     guarded input port framedIn: Drv.ByteStreamRecv
 
-    @ Schedule in port
-    @ This port is guarded to protect concurrent interaction with framedIn
+    @ Schedule in port.
+    @ TODO: Why is this port guarded? By assumption framedIn and framedPoll
+    @ should never both be connected.
     guarded input port schedIn: Svc.Sched
 
     # ----------------------------------------------------------------------
@@ -32,8 +34,8 @@ module Svc {
     @ Port for deallocating received buffers containing framed data
     output port framedDeallocate: Fw.BufferSend
 
-    @ Port for sending buffers allocated with bufferAllocate
-    @ The receiver is responsible for the deallocation
+    @ Port for sending buffers allocated with bufferAllocate.
+    @ The receiver is responsible for the deallocation.
     output port bufferOut: Fw.BufferSend
 
     @ Port for sending Com packets, e.g., command packets
