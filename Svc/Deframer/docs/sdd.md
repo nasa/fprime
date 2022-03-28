@@ -5,11 +5,11 @@
 ## 1. Introduction
 
 `Svc::Deframer` is a passive component.
-It accepts as input a sequence of byte buffers.
-The buffers typically come from a ground data system via a
+It accepts as input a sequence of byte buffers, which
+typically come from a ground data system via a
 [byte stream driver](../../../Drv/ByteStreamDriverModel/docs/sdd.md).
-It interprets the concatenated of the buffers
-data as a sequence of uplink frames.
+It interprets the concatenated data of the buffers
+as a sequence of uplink frames.
 The uplink frames are not required to be aligned on a
 buffer boundary, and each uplink frame may span one or more buffers.
 For each complete frame received, `Deframer`
