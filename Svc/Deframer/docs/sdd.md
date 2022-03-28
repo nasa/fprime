@@ -39,7 +39,8 @@ then `Deframer` defers deframing until the next buffer is available.
 Deframer supports two configurations for streaming data:
 
 1. **Poll:** This configuration works with a passive byte stream driver.
-   In this configuration, `Deframer` periodically polls the driver for buffers.
+   In this configuration, `Deframer` polls the driver for buffers
+   on its `schedIn` cycle.
    If the polling succeeds (so a buffer _B_ is available), then `Deframer`
    owns _B_ for the rest of the cycle.
 
