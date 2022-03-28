@@ -10,12 +10,12 @@ typically come from a ground data system via a
 [byte stream driver](../../../Drv/ByteStreamDriverModel/docs/sdd.md).
 It interprets the concatenated data of the buffers
 as a sequence of uplink frames.
-The uplink frames are not required to be aligned on a
-buffer boundary, and each uplink frame may span one or more buffers.
-For each complete frame received, `Deframer`
-validates the frame and extracts its message data.
-It passes the message data to other components in the service layer, e.g., 
-[`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md),
+The uplink frames are not required to be aligned on the
+buffer boundaries, and each uplink frame may span one or more buffers.
+For each complete frame _F_ received, `Deframer`
+validates _F_ and extracts a data packet from _F_.
+It sends the data packet to another component in the service layer, e.g., 
+an instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md),
 [`Svc::FileUplink`](../../FileUplink/docs/sdd.md),
 or [`Svc::GenericHub`](../../GenericHub/docs/sdd.md).
 
@@ -24,33 +24,42 @@ of the [`Svc::DeframingProtocol` interface](../../FramingProtocol/docs/sdd.md).
 By instantiating `Svc::Framer` with a matching implementation of
 `Svc::FramingProtocol`, you will get matching framing (for downlink)
 and deframing (for uplink).
+The implementation of the deframing protocol specifies exactly what is
+in each frame; typically it is a frame header, a data packet, and a hash value.
 
-On receiving a buffer, `Svc::Deframer` copies the data from the buffer
-into a circular buffer and calls the `deframe` method of
-the `Svc::DeframingProtocol` implementation.
-If there is more data than will fit in the circular buffer,
-then `Deframer` repeats this process until the buffer is empty.
-If there is not enough data to complete the deframing, then
-`Deframer` defers deframing until the next buffer is available.
+On receiving a buffer _B_, `Deframer` (1) copies the data from _B_
+into a circular buffer _CB_ owned by `Deframer` and (2)
+calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
+passing a reference to _CB_ as input.
+If _B_ holds more data than will fit in _CB_,
+then `Deframer` repeats this process until _B_ is empty.
+If deframing requires more data than is available in _B_,
+then `Deframer` defers deframing until the next buffer is available.
 
 Deframer supports two configurations for streaming data:
 
 1. **Poll:** This configuration supports byte stream drivers
    that have no thread.
-   In this configuration Deframer polls the driver for data.
+   In this configuration, `Deframer` periodically polls the driver for buffers.
+   If the polling succeeds (so a buffer _B_ is available), then `Deframer`
+   owns _B_ for the rest of the cycle.
 
 2. **Push:** This configuration supports byte stream drivers
    that have their own threads.
-   In this configuration the driver pushes data to the Deframer.
+   In this configuration the driver pushes buffers to the Deframer.
+   In this configuration, the Deframer permanently owns each buffer _B_
+   that it receives, and it deallocates _B_ when it is finished processing
+   the data in _B_.
 
 ## 2. Assumptions
 
 1. If you use `Deframer` together with `Svc::Framer`, then the deframing
-and framing protocols used to instantiate the components (a)
-match each other and (b) match the protocol used by the ground data system.
+protocol used with `Deframer` (a)
+matches the framing protocol used with `Framer` and (b) match the protocol
+used by the ground data system.
 
 1. You should use only one data streaming configuration (poll or push)
-in any FSW topology that uses `Svc::Framer` and `Svc::Deframer`.
+with each instance of `Deframer`.
 
 ## 3. Requirements
 
@@ -59,8 +68,12 @@ Requirement | Description | Rationale | Verification Method
 SVC-DEFRAMER-001 | `Svc::Deframer` shall accept a sequence of byte buffers and interpret their concatenated data as a sequence of uplink frames. | The purpose of the component is to do uplink deframing. | Test
 SVC-DEFRAMER-002 | `Svc::Deframer` shall accept byte buffers containing uplink frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Test
 SVC-DEFRAMER-003 | `Svc::Deframer` shall accept byte buffers containing uplink frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Test
-SVC-DEFRAMER-004 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
-SVC-DEFRAMER-005 | `Svc::Deframer` shall separately route command packets and file packets. | Command packets and file packets are typically handled by different components. | Test
+SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface for pushing the byte buffers to be deframed. | This interface supports applications in which the byte stream driver has its own thread. | Test
+SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface for polling for available byte buffers. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
+SVC-DEFRAMER-006 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
+SVC-DEFRAMER-007 | `Svc::Deframer` shall interpret the first four bytes of the extracted data as a 32-bit signed integer holding the packet type | 32 bits should be enough to hold any packet type. For simplicity, we hard-code the 32-bit size. | Test
+SVC-DEFRAMER-008 | `Svc::Deframer` shall decode and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
+SVC-DEFRAMER-009 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
 
 ## 4. Design
  
