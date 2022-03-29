@@ -217,7 +217,7 @@ The implementation of `route` takes a reference to an
 
       1. Send _B_ on `bufferOut`.
 
-      1. Set _deallocate = false_.
+      1. Set `deallocate = false`.
 
 1. If `deallocate = true`, then invoke `bufferDeallocate`
    to deallocate _B_.
@@ -240,24 +240,44 @@ It does the following:
       This is _R_ = _S_ - `buffer_offset`.
 
    1. Compute _C_, the number of bytes to copy from _B_ into the
-      circular buffer _CB_.
+      circular buffer `m_in_ring`.
 
-      1. Let _F_ be the free space in _CB_.
+      1. Let _F_ be the number of free bytes in `m_in_ring`.
       
       1. If _R_ < _F_, then _C_ = _R_.
       
       1. Otherwise _C_ = _F_.
       
    1. Copy _C_ bytes from _B_ starting at `buffer_offset`
-      into _CB_.
+      into `m_in_ring`.
 
    1. Advance `buffer_offset` by _C_.
 
-   1. Call `processRing`.
+   1. Call <a href="#processRing">`processRing`</a>
+      to process the data in `m_in_ring`.
 
+_TBD: The assertion at the end of the loop doesn't look right.
+I don't see how the condition can ever fail._
+
+<a name="processRing"></a>
 #### 3.8.2. processRing
 
-TODO
+Process ring does the following.
+In a bounded loop, while there is data remaining in the
+`m_in_ring`, do:
+
+1. Call the `deframe` method of `m_protocol` on `m_in_ring`, returning
+   a status value _S_ and the number _N_ of bytes used in deframing.
+
+1. If _S_ = `SUCCESS`, then rotate `m_in_ring` by _N_ bytes (i.e.,
+   deallocate _N_ bytes from the head of `m_in_ring`.
+
+1. Otherwise if _S_ = `MORE_NEEDED`, then do nothing.
+   Further processing will occur on the next call, after more
+   data goes into `m_in_ring`.
+
+1. Otherwise rotate `m_in_ring` by one byte, to skip byte by byte over
+   bad data until we find a valid frame.
 
 ### 3.9. [Previous SDD]
 
