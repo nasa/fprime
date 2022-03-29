@@ -367,12 +367,16 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 #### 4.2.2. Passive Byte Stream Driver
 
 **Sending a command packet:** The following sequence diagram shows what
-happens when `passiveComm` sends data to `Deframer`, and 
-`Deframer` decodes the data into a command packet.
+happens when `passiveComm` sends data to `deframer`, and 
+`deframer` decodes the data into a command packet.
 
 ![Passive byte stream driver, command packet](img/passive-cmd-packet.png)
 
-**Sending a file packet:** TODO
+**Sending a file packet:** The following sequence diagram shows what
+happens when `passiveComm` sends data to `deframer`, and 
+`Deframer` decodes the data into a file packet.
+
+![Passive byte stream driver, file packet](img/passive-file-packet.png)
 
 ### 4.3. Using Svc::GenericHub
 

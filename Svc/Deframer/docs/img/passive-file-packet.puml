@@ -1,0 +1,29 @@
+@startuml
+
+participant rateGroup order 1
+participant passiveComm order 2
+participant deframer order 3
+participant buffMgr order 4
+participant fileUplink order 5
+
+activate rateGroup
+
+rateGroup -> deframer: Send schedule tick [schedIn]
+
+deframer -> passiveComm: Poll for data [framedPoll]
+
+alt Data available
+
+  deframer -> buffMgr: Allocate buffer B [bufferAllocate]
+  deframer -> deframer: Deframe data into B
+  deframer ->> fileUplink: Send B [bufferOut]
+
+deactivate rateGroup
+
+  activate fileUplink
+  fileUplink -> buffMgr: Deallocate B
+  deactivate fileUplink
+
+end
+
+@enduml
