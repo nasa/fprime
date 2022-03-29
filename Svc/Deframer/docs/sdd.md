@@ -101,7 +101,34 @@ The diagram below shows the `Deframer` component.
 | `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers to the command dispatcher. |
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
-### 4.3. TODO
+### 4.3. State
+
+`Deframer` maintains the following state:
+
+1. `m_protocol`: A pointer to the implementation of `DeframingProtocol`
+   used for deframing.
+
+1. `m_in_ring`: An instance of `Types::CircularBuffer` for storing data to be deframed.
+
+1. `m_ring_buffer`: The storage backing the circular buffer: an array of 1024 `U8` values.
+
+1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
+
+### 4.4. Port Handlers
+
+#### 4.4.1. framedIn
+
+TODO
+
+#### 4.4.2. schedIn
+
+TODO
+
+#### 4.4.3. cmdResponseIn
+
+TODO
+
+### 4.5. [Previous SDD]]
 
 1. Deframer will accept incoming buffers.
 
