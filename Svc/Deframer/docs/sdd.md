@@ -56,8 +56,8 @@ protocol used with `Deframer` (a)
 must match the framing protocol used with `Framer` and (b) must match
 the protocol used by the ground data system.
 
-1. In any topology that uses an instance _I_ of `Deframer`, you must connect
-the poll interface of _I_ or the push interface of _I_, but not both.
+1. In any topology that uses an instance _D_ of `Deframer`, you must connect
+the poll interface of _D_ or the push interface of _D_, but not both.
 
 ## 3. Requirements
 
@@ -114,21 +114,45 @@ The diagram below shows the `Deframer` component.
 
 1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
 
-### 4.4. Port Handlers
-
-#### 4.4.1. framedIn
+### 4.4. Configuration
 
 TODO
 
-#### 4.4.2. schedIn
+### 4.5. Port Handlers
+
+#### 4.5.1. framedIn
 
 TODO
 
-#### 4.4.3. cmdResponseIn
+#### 4.5.2. schedIn
 
 TODO
 
-### 4.5. [Previous SDD]
+#### 4.5.3. cmdResponseIn
+
+TODO
+
+### 4.6. Implementation of Svc::DeframingProtocolInterface
+
+#### 4.6.1. allocate
+
+TODO
+
+#### 4.6.2. route
+
+TODO
+
+### 4.7. Helper Functions
+
+#### 4.7.1. processBuffer
+
+TODO
+
+#### 4.7.2. processRing
+
+TODO
+
+### 4.8. [Previous SDD]
 
 1. Deframer will accept incoming buffers.
 
