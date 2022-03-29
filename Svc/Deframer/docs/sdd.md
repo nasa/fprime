@@ -269,7 +269,7 @@ In a bounded loop, while there is data remaining in `m_in_ring`, do:
    a status value _S_ and the number _N_ of bytes used in deframing.
 
 1. If _S_ = `SUCCESS`, then rotate `m_in_ring` by _N_ bytes (i.e.,
-   deallocate _N_ bytes from the head of `m_in_ring`.
+   deallocate _N_ bytes from the head of `m_in_ring`).
 
 1. Otherwise if _S_ = `MORE_NEEDED`, then do nothing.
    Further processing will occur on the next call, after more

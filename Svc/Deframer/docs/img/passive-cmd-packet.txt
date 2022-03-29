@@ -15,7 +15,8 @@ activate "Svc::ActiveRateGroup"
 alt Data available
 
   "Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
-  "Svc::Deframer" -> "Svc::Deframer": Use B to construct a command packet C
+  "Svc::Deframer" -> "Svc::Deframer": Deframe data into B
+  "Svc::Deframer" -> "Svc::Deframer": Copy B into a command packet C
   "Svc::Deframer" ->> "Svc::CommandDispatcher": Send C [comOut]
   "Svc::Deframer" -> "Svc::BufferManager": Deallocate B [bufferDeallocate]
 
