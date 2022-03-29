@@ -101,6 +101,7 @@ The diagram below shows the `Deframer` component.
 | `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers to the command dispatcher. |
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
+<a name="derived-classes"></a>
 ### 4.3. Derived Classes
 
 `Deframer` is derived from `DeframerComponentBase` as usual.
@@ -138,7 +139,8 @@ The `setup` method does the following:
    1. Store a pointer to _P_ in `m_protocol`.
 
    1. Pass `*this` into the setup method for _P_.
-      As noted above, `*this` is the instance of `Svc::DeframingProtocolInterface`
+      As noted <a href="#dpi-impl">above</a>, `*this`
+      is the instance of `Svc::DeframingProtocolInterface`
       used by _P_.
 
 For an example of setting up a `Deframer` instance, see the
