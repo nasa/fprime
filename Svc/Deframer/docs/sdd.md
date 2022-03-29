@@ -262,9 +262,7 @@ I don't see how the condition can ever fail._
 <a name="processRing"></a>
 #### 3.8.2. processRing
 
-Process ring does the following.
-In a bounded loop, while there is data remaining in the
-`m_in_ring`, do:
+In a bounded loop, while there is data remaining in `m_in_ring`, do:
 
 1. Call the `deframe` method of `m_protocol` on `m_in_ring`, returning
    a status value _S_ and the number _N_ of bytes used in deframing.
@@ -276,32 +274,9 @@ In a bounded loop, while there is data remaining in the
    Further processing will occur on the next call, after more
    data goes into `m_in_ring`.
 
-1. Otherwise rotate `m_in_ring` by one byte, to skip byte by byte over
+1. Otherwise something is wrong.
+   Rotate `m_in_ring` by one byte, to skip byte by byte over
    bad data until we find a valid frame.
-
-### 3.9. [Previous SDD]
-
-1. Deframer will accept incoming buffers.
-
-1. Upon buffer receipt, it will delegate processing to a `DeframingInstance`.
-
-    1. If that delegation returns an error, it will discard the first byte and keep processing.
-
-    1. If that delegation returns need more status, it will accumulate more 
-       buffers until it has the size specified, and then rerun the processing.
-
-    1. If that delegation returns success, it will discard `size` bytes and 
-       start at the next message.
-
-1. When a `route` call is called-back to the Deframer, it will send the message 
-   to the `Fw::Com` output port of the `Fw::Buffer` output port based on the 
-   specified type in the route call.
-
-1. If an allocate callback is made, it will delegate that allocation to the 
-   bufferAllocate call.
-
-1. If step three is routing to `Fw::Com`, it must pass the buffer to the 
-   `bufferDeallocate` port.
 
 ### 3.10. Commands, Telemetry, Events, and Parameters
 
