@@ -11,18 +11,22 @@
  */
 
 #include <Fw/Types/AlignedAllocator.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <stdlib.h>
 
 namespace Fw {
 
     AlignedAllocator::AlignedAllocator(NATIVE_UINT_TYPE alignment)
     : m_alignment(alignment) {
+        // according to man page, alignment of zero is undefined so assert
+        FW_ASSERT(alignment);
     } 
 
     AlignedAllocator::~AlignedAllocator() {
     }
 
     void *AlignedAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &size, bool& recoverable) {
+
         // don't use identifier
         // heap memory is never recoverable
         recoverable = false;

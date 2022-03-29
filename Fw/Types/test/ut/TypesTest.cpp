@@ -7,6 +7,7 @@
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Fw/Types/AlignedAllocator.hpp>
 
 #include <cstdio>
 #include <cstring>
@@ -440,7 +441,8 @@ TEST(SerializationTest,Serialization1) {
     stat1 = buff.serialize(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
 
-    std::cout << "Buffer contents: " << buff << std::endl;
+    // TKC - commented out due to fprime-util choking on output
+    // std::cout << "Buffer contents: " << buff << std::endl;
 
     // Serialize second buffer and test for equality
     buff2.resetSer();
@@ -1152,6 +1154,53 @@ TEST(AllocatorTest,MallocAllocatorTest) {
     ASSERT_FALSE(recoverable);
     // deallocate memory
     allocator.deallocate(100,ptr);
+}
+
+TEST(AllocatorTest,AlignedAllocatorTest) {
+
+    // spot check some alignments, but it really depends on the underlying C library
+    // Note that these may be false positives depending on the underlying heap scheme
+
+    // Test alignment 2 
+    Fw::AlignedAllocator allocator_2(2);
+    NATIVE_UINT_TYPE size = 100; // one hundred bytes
+    bool recoverable;
+    void *ptr = allocator_2.allocate(10,size,recoverable);
+    ASSERT_EQ(100,size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    POINTER_CAST ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x1);
+    // deallocate memory
+    allocator_2.deallocate(100,ptr);
+
+    // Test alignment 4 
+    Fw::AlignedAllocator allocator_4(4);
+    size = 1000; // one hundred bytes
+    ptr = allocator_4.allocate(10,size,recoverable);
+    ASSERT_EQ(1000,size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x3);
+    // deallocate memory
+    allocator_4.deallocate(100,ptr);
+
+    // Test alignment 32 
+    Fw::AlignedAllocator allocator_32(32);
+    size = 1000; // one hundred bytes
+    ptr = allocator_32.allocate(10,size,recoverable);
+    ASSERT_EQ(1000,size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x1F);
+    // deallocate memory
+    allocator_32.deallocate(100,ptr);
+
 }
 
 int main(int argc, char **argv) {
