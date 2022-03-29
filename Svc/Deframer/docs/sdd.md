@@ -47,8 +47,8 @@ Deframer supports two configurations for streaming data:
 
 2. **Push:** This configuration works with an active byte stream driver.
    In this configuration the driver invokes a guarded port of `Deframer` to
-   a send a buffer _FB_ that it owns to `Deframer`.
-   The invocation transfers ownership of _FB_ to `Deframer`.
+   send a buffer _FB_ to `Deframer`.
+   The invocation transfers ownership of _FB_ from the driver to `Deframer`.
    Deframing occurs on the thread of the byte stream driver.
    `Deframer` deallocates _FB_ before it returns from
    the guarded port call.
