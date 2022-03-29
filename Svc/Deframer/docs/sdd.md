@@ -128,7 +128,7 @@ TODO
 
 TODO
 
-### 4.5. [Previous SDD]]
+### 4.5. [Previous SDD]
 
 1. Deframer will accept incoming buffers.
 
