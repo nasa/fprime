@@ -165,8 +165,8 @@ It does the following:
 
 2. Deallocate _FB_ by invoking `framedDeallocate`.
 
-_TBD: It seems to me that the `framedIn` handler should assert that 
-framedPoll is not connected, since we are supposed to use one or the other._
+_TBD: If we are enforcing the restriction on use, should the `framedIn` handler assert that 
+framedPoll is not connected?_
 
 #### 3.6.2. schedIn
 
@@ -182,8 +182,8 @@ The `schedIn` port handler does the following:
    1. If new data is available, then call 
        <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
-_TBD: It seems to me that the `schedIn` handler should assert that
-`framedIn` is not connected, since we are supposed to use one or the other._
+_TBD: If we are enforcing the restriction on use, should t the `schedIn` handler
+assert that `framedIn` is not connected?_
 
 #### 3.6.3. cmdResponseIn
 
