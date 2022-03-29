@@ -4,24 +4,6 @@ module Svc {
   passive component Deframer {
 
     # ----------------------------------------------------------------------
-    # Rate group scheduling 
-    # ----------------------------------------------------------------------
-
-    @ Schedule in port, driven by a rate group.
-    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
-    @ should never both be connected._
-    guarded input port schedIn: Svc.Sched
-
-    # ----------------------------------------------------------------------
-    # Command responses
-    # ----------------------------------------------------------------------
-
-    @ Port for receiving command responses from the command dispatcher
-    @ Invoking this port does nothing. It exists in order to allow the matching
-    @ connection in the topology.
-    sync input port cmdResponseIn: Fw.CmdResponse
-
-    # ----------------------------------------------------------------------
     # Receiving framed data via push
     # ----------------------------------------------------------------------
 
@@ -39,17 +21,23 @@ module Svc {
     # Receiving framed data via poll
     # ----------------------------------------------------------------------
 
+    @ Schedule in port, driven by a rate group.
+    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
+    @ should never both be connected._
+    guarded input port schedIn: Svc.Sched
+
     @ Port that polls for data from the byte stream driver.
-    @ Deframer invokes this port on its schedIn cycle.
+    @ Deframer invokes this port on its schedIn cycle, if it is connected.
     @ No allocation or occurs when invoking this port.
-    @ The polling uses a 1024-byte buffer owned by Deframer.
+    @ The data transfer uses a 1024-byte pre-allocated buffer
+    @ owned by Deframer.
     output port framedPoll: Drv.ByteStreamPoll
 
     # ----------------------------------------------------------------------
     # Memory management for deframing and for sending file packets
     # ----------------------------------------------------------------------
 
-    @ Port for allocating Fw::Buffer objects.
+    @ Port for allocating Fw::Buffer objects from a buffer manager.
     @ When Deframer invokes this port, it receives a buffer B and
     @ takes ownership of it. It uses B internally for deframing.
     @ Then one of two things happens:
@@ -74,11 +62,17 @@ module Svc {
     output port bufferDeallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Sending command packets
+    # Sending command packets and receiving command responses
     # ----------------------------------------------------------------------
 
-    @ Port for sending command packets as Com buffers
+    @ Port for sending command packets as Com buffers to the
+    @ command dispatcher.
     output port comOut: Fw.Com
+
+    @ Port for receiving command responses from the command dispatcher.
+    @ Invoking this port does nothing. The port exists to allow the matching
+    @ connection in the topology.
+    sync input port cmdResponseIn: Fw.CmdResponse
 
   }
 
