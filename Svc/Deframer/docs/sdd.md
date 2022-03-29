@@ -370,8 +370,8 @@ The following sequence diagram shows what happens when `activeComm`
 sends data to `deframer`, and `deframer`
 decodes the data into a command packet.
 Vertical bars represent threads.
-Solid arrows represent synchronous port calls, and open arrows
-represent asynchronous port calls.
+Solid arrows represent synchronous port invocations, and open arrows
+represent asynchronous port invocations.
 
 ![Active byte stream driver, command packet](img/active-cmd-packet.png)
 
