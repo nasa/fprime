@@ -1,11 +1,11 @@
-comm
+activeComm
 allocate
 0
 buffMgr
 bufferGetCallee
 0
 
-comm
+activeComm
 recv
 0
 deframer

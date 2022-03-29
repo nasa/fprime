@@ -7,7 +7,7 @@ participant "Svc::FileUplink" order 4
 
 activate "Drv::ByteStreamDriverModel (Active)"
 
-"Drv::ByteStreamDriverModel (Active)" -> "Svc::BufferManager": Allocate frame buffer F
+"Drv::ByteStreamDriverModel (Active)" -> "Svc::BufferManager": Allocate buffer F
 "Drv::ByteStreamDriverModel (Active)" -> "Drv::ByteStreamDriverModel (Active)": Fill F with framed data
 "Drv::ByteStreamDriverModel (Active)" -> "Svc::Deframer": Send F [framedIn]
 

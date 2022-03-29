@@ -291,19 +291,17 @@ None.
 
 ## 4. Example Uses
 
-### 4.1. With an Active Byte Stream Driver
-
-#### 4.1.1. Topology Diagrams
+### 4.1. Topology Diagrams
 
 The following topology diagrams show how to connect `Svc::Deframer`
-to an active byte stream driver.
+to a byte stream driver, a command dispatcher, and a file uplink component.
 The diagrams use the following instances:
 
 * `buffMgr`: An instance of [`Svc::BufferManager`](../../BufferManager/docs/sdd.md)
 
 * `cmdDisp`: An instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md)
 
-* `comm`: An active instance of 
+* `activeComm`: An active instance of 
 [`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
 [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
@@ -311,27 +309,47 @@ The diagrams use the following instances:
 
 * `fileUplink`: An instance of [`Svc::FileUplink`](../../FileUplink/docs/sdd.md).
 
-**Buffers containing framed data:**
+* `passiveComm`: A passive instance of 
+[`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
+_TBD_.
+
+* `rateGroup`: An instance of [`Svc::ActiveRateGroup`](../../ActiveRateGroup/docs/sdd.md).
+
+Topologies 1a and 1b are alternate topologies.
+You should use one or the other.
+In topology 3, the `fileUplink` component and its connections are
+optional.
+
+**Topology 1a: Buffers containing framed data (active byte stream driver):**
 
 <div>
-<img src="img/active-top-framed.png" width=1000/>
+<img src="img/top-framed-active.png" width=1000/>
 </div>
 
-**Command packets and command responses:**
+**Topology 1b: Buffers containing framed data (passive byte stream driver):**
 
 <div>
-<img src="img/active-top-cmd.png" width=800/>
+<img src="img/top-framed-passive.png" width=1000/>
 </div>
 
-**Buffers containing packet data:**
+**Topology 2: Command packets and command responses:**
 
 <div>
-<img src="img/active-top-file.png" width=1000/>
+<img src="img/top-cmd.png" width=800/>
 </div>
 
-#### 4.1.2. Sending a Command Packet
+**Topology 3: Buffers containing packet data:**
 
-The following sequence diagram shows the steps that occur when an
+<div>
+<img src="img/top-file.png" width=1000/>
+</div>
+
+### 4.2. Sequence Diagrams
+
+#### 4.2.1. Active Byte Stream Driver
+
+**Sending a command packet:**
+The following sequence diagram shows what happens when an
 active byte stream driver sends data to `Deframer`, and `Deframer`
 decodes the data into a command packet.
 Vertical bars represent threads.
@@ -340,25 +358,24 @@ represent asynchronous port calls.
 
 ![Active byte stream driver, command packet](img/active-cmd-packet.png)
 
-#### 4.1.3. Sending a File Packet
-
-The following sequence diagram shows the steps that occur when an
+**Sending a file packet:**
+The following sequence diagram shows what happens when an
 active byte stream driver sends data to `Deframer`, and `Deframer`
 decodes the data into a file packet.
 
 ![Active byte stream driver, file packet](img/active-file-packet.png)
 
-### 4.2. With a Passive Byte Stream Driver
+#### 4.2.2. Passive Byte Stream Driver
 
-#### 4.2.1. Sending a Command Packet
-
-The following sequence diagram shows the steps that occur when an
-active byte stream driver sends data to `Deframer`, and `Deframer`
-decodes the data into a command packet.
+**Sending a command packet:** The following sequence diagram shows what
+happens when a passive byte stream driver sends data to `Deframer`, and 
+`Deframer` decodes the data into a command packet.
 
 ![Passive byte stream driver, command packet](img/passive-cmd-packet.png)
 
-#### 4.2.2. Sending a File Packet
+**Sending a file packet:** TODO
+
+### 4.3. Using Svc::GenericHub
 
 TODO
 
