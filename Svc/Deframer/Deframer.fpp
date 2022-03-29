@@ -39,11 +39,10 @@ module Svc {
     # Receiving framed data via poll
     # ----------------------------------------------------------------------
 
-    @ Port that polls for data from the byte stream driver
+    @ Port that polls for data from the byte stream driver.
     @ Deframer invokes this port on its schedIn cycle.
-    @ No allocation occurs when invoking this port.
-    @ If polling succeeds (a buffer is available), then Deframer owns
-    @ the buffer for the remainder of the schedIn cycle.
+    @ No allocation or occurs when invoking this port.
+    @ The polling uses a 1024-byte buffer owned by Deframer.
     output port framedPoll: Drv.ByteStreamPoll
 
     # ----------------------------------------------------------------------

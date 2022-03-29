@@ -41,14 +41,13 @@ Deframer supports two configurations for streaming data:
 1. **Poll:** This configuration works with a passive byte stream driver.
    In this configuration, `Deframer` polls the driver for buffers
    on its `schedIn` cycle.
-   If the polling succeeds (so a buffer _B_ is available), then `Deframer`
-   owns _B_ for the rest of the cycle.
+   No buffer allocation occurs when polling.
+   The polling uses a 1024-byte buffer owned by `Deframer`.
 
 2. **Push:** This configuration works with an active byte stream driver.
    In this configuration the driver pushes buffers to the Deframer.
-   The Deframer permanently owns each buffer _B_
-   that it receives, and it deallocates _B_ when it is finished processing
-   the data in _B_.
+   The Deframer takes ownership of each buffer _B_ that it receives.
+   It deallocates _B_ when it is finished processing the data in _B_.
 
 ## 2. Assumptions
 
