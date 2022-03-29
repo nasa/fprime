@@ -141,6 +141,9 @@ The `setup` method does the following:
       As noted above, `*this` is the instance of `Svc::DeframingProtocolInterface`
       used by _P_.
 
+For an example of setting up a `Deframer` instance, see the
+`uplink` instance in [`Ref/Top/instances.fpp`](../../../Ref/Top/instances.fpp).
+
 ### 4.6. Port Handlers
 
 #### 4.6.1. framedIn
@@ -216,17 +219,6 @@ The following diagram is an example of Deframer usage with a `TcpClient` and
 `GenericHub` component:
 
 ![framer_example](./img/deframer_example_2.png)
-
-The following is a typical Deframing setup:
-
-```c++
-Svc::FprimeDeframing deframing_obj; // Deframing protocol obj;
-Svc::DeframerComponentImpl uplink_obj("Deframer"); // Deframer obj
-
-uplink_obj.init(0);
-uplink_obj.setup(deframing_obj);
-
-```
 
 ## 6. Class Diagram
 
