@@ -101,7 +101,18 @@ The diagram below shows the `Deframer` component.
 | `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers to the command dispatcher. |
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
-### 4.3. State
+### 4.3. Derived Classes
+
+`Deframer` is derived from `DeframerComponentBase` as usual.
+It is also derived (via C++ multiple inheritance) from 
+`Svc::DeframingProtocolInterface`.
+The multiple inheritance makes the `Deframer` instance into the
+instance of `Svc::DeframingProtocolInterface` that is required
+to use `Svc::DeframingProtocol`.
+See <a href="#dpi-impl">below</a> for a description of how `Deframer` implements
+`DeframingProtocolInterface`.
+
+### 4.4. State
 
 `Deframer` maintains the following state:
 
@@ -114,45 +125,58 @@ The diagram below shows the `Deframer` component.
 
 1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
 
-### 4.4. Configuration
+### 4.5. Instance Setup
+
+To set up an instance of `Deframer`, you do the following:
+
+1. Call the constructor and the `init` method in the usual way
+for an F Prime passive component.
+
+1. Call the `setup` method and passing in an instance _P_ of `Svc::DeframingProtocol`.
+The `setup` method does the following:
+
+   1. Store a pointer to _P_ in `m_protocol`.
+
+   1. Pass `*this` into the setup method for _P_.
+      As noted above, `*this` is the instance of `Svc::DeframingProtocolInterface`
+      used by _P_.
+
+### 4.6. Port Handlers
+
+#### 4.6.1. framedIn
 
 TODO
 
-### 4.5. Port Handlers
-
-#### 4.5.1. framedIn
+#### 4.6.2. schedIn
 
 TODO
 
-#### 4.5.2. schedIn
+#### 4.6.3. cmdResponseIn
 
 TODO
 
-#### 4.5.3. cmdResponseIn
+<a name="dpi-impl"></a>
+### 4.7. Implementation of Svc::DeframingProtocolInterface
+
+#### 4.7.1. allocate
 
 TODO
 
-### 4.6. Implementation of Svc::DeframingProtocolInterface
-
-#### 4.6.1. allocate
+#### 4.7.2. route
 
 TODO
 
-#### 4.6.2. route
+### 4.8. Helper Functions
+
+#### 4.8.1. processBuffer
 
 TODO
 
-### 4.7. Helper Functions
-
-#### 4.7.1. processBuffer
+#### 4.8.2. processRing
 
 TODO
 
-#### 4.7.2. processRing
-
-TODO
-
-### 4.8. [Previous SDD]
+### 4.9. [Previous SDD]
 
 1. Deframer will accept incoming buffers.
 

@@ -21,7 +21,9 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : DeframerComponentBase(compName), DeframingProtocolInterface(),
+DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : 
+    DeframerComponentBase(compName), 
+    DeframingProtocolInterface(),
     m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {}
 
@@ -34,6 +36,8 @@ DeframerComponentImpl ::~DeframerComponentImpl() {}
 void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
     FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
+    // Pass this as the DeframingProtocolInstance to protocol setup
+    // Deframer is derived from and implements DeframingProtocolInterface
     protocol.setup(*this);
 }
 
