@@ -158,7 +158,7 @@ The port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
 It does the following:
 
 1. If _S_ is `RECV_OK`, then call <a 
-   href="#process-buffer">`processBuffer`</a>, passing in _B_.
+   href="#processBuffer">`processBuffer`</a>, passing in _B_.
 
 2. Deallocate _B_ by invoking `framedDeallocate`.
 
