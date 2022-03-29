@@ -1,25 +1,25 @@
 @startuml
 
-participant "Drv::ByteStreamDriverModel (Active)" order 1
-participant "Svc::Deframer" order 2
-participant "Svc::BufferManager" order 3
-participant "Svc::FileUplink" order 4
+participant passiveComm order 1
+participant deframer order 2
+participant buffMgr order 3
+participant fileUplink order 4
 
-activate "Drv::ByteStreamDriverModel (Active)"
+activate passiveComm
 
-"Drv::ByteStreamDriverModel (Active)" -> "Svc::BufferManager": Allocate buffer F
-"Drv::ByteStreamDriverModel (Active)" -> "Drv::ByteStreamDriverModel (Active)": Fill F with framed data
-"Drv::ByteStreamDriverModel (Active)" -> "Svc::Deframer": Send F [framedIn]
+passiveComm -> buffMgr: Allocate buffer F
+passiveComm -> passiveComm: Fill F with framed data
+passiveComm -> deframer: Send F [framedIn]
 
-"Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
-"Svc::Deframer" -> "Svc::Deframer": Deframe F into B
-"Svc::Deframer" ->> "Svc::FileUplink": Send B [bufferOut]
-"Svc::Deframer" -> "Svc::BufferManager": Deallocate F [framedDeallocate]
+deframer -> buffMgr: Allocate buffer B [bufferAllocate]
+deframer -> deframer: Deframe F into B
+deframer ->> fileUplink: Send B [bufferOut]
+deframer -> buffMgr: Deallocate F [framedDeallocate]
 
-deactivate "Drv::ByteStreamDriverModel (Active)"
+deactivate passiveComm
 
-activate "Svc::FileUplink"
-"Svc::FileUplink" -> "Svc::BufferManager": Deallocate B
-deactivate "Svc::FileUplink"
+activate fileUplink
+fileUplink -> buffMgr: Deallocate B
+deactivate fileUplink
 
 @enduml

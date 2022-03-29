@@ -1,27 +1,27 @@
 @startuml
 
-participant "Drv::ByteStreamDriverModel (Active)" order 1
-participant "Svc::Deframer" order 2
-participant "Svc::BufferManager" order 3
-participant "Svc::CommandDispatcher" order 4
+participant activeComm order 1
+participant deframer order 2
+participant buffMgr order 3
+participant cmdDisp order 4
 
-activate "Drv::ByteStreamDriverModel (Active)"
+activate activeComm
 
-"Drv::ByteStreamDriverModel (Active)" -> "Svc::BufferManager": Allocate buffer F
-"Drv::ByteStreamDriverModel (Active)" -> "Drv::ByteStreamDriverModel (Active)": Fill F with framed data
-"Drv::ByteStreamDriverModel (Active)" -> "Svc::Deframer": Send F [framedIn]
+activeComm -> buffMgr: Allocate buffer F
+activeComm -> activeComm: Fill F with framed data
+activeComm -> deframer: Send F [framedIn]
 
-"Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
-"Svc::Deframer" -> "Svc::Deframer": Deframe F into B
-"Svc::Deframer" -> "Svc::Deframer": Copy B into a command packet C
-"Svc::Deframer" ->> "Svc::CommandDispatcher": Send C [comOut]
-"Svc::Deframer" -> "Svc::BufferManager": Deallocate B [bufferDeallocate]
-"Svc::Deframer" -> "Svc::BufferManager": Deallocate F [framedDeallocate]
+deframer -> buffMgr: Allocate buffer B [bufferAllocate]
+deframer -> deframer: Deframe F into B
+deframer -> deframer: Copy B into a command packet C
+deframer ->> cmdDisp: Send C [comOut]
+deframer -> buffMgr: Deallocate B [bufferDeallocate]
+deframer -> buffMgr: Deallocate F [framedDeallocate]
 
-deactivate "Drv::ByteStreamDriverModel (Active)"
+deactivate activeComm
 
-activate "Svc::CommandDispatcher"
-"Svc::CommandDispatcher" -> "Svc::Deframer": Send cmd response [cmdResponseIn]
-deactivate "Svc::CommandDispatcher"
+activate cmdDisp
+cmdDisp -> deframer: Send cmd response [cmdResponseIn]
+deactivate cmdDisp
 
 @enduml

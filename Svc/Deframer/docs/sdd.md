@@ -297,13 +297,13 @@ The following topology diagrams show how to connect `Svc::Deframer`
 to a byte stream driver, a command dispatcher, and a file uplink component.
 The diagrams use the following instances:
 
-* `buffMgr`: An instance of [`Svc::BufferManager`](../../BufferManager/docs/sdd.md)
-
-* `cmdDisp`: An instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md)
-
 * `activeComm`: An active instance of 
 [`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
 [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
+
+* `buffMgr`: An instance of [`Svc::BufferManager`](../../BufferManager/docs/sdd.md)
+
+* `cmdDisp`: An instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md)
 
 * `deframer`: An instance of `Svc::Deframer`.
 
@@ -317,7 +317,7 @@ _TBD_.
 
 Topologies 1a and 1b are alternate topologies.
 You should use one or the other.
-In topology 3, the `fileUplink` component and its connections are
+In topology 3, the `fileUplink` instance and its connections are
 optional.
 
 **Topology 1a: Buffers containing framed data (active byte stream driver):**
@@ -349,8 +349,8 @@ optional.
 #### 4.2.1. Active Byte Stream Driver
 
 **Sending a command packet:**
-The following sequence diagram shows what happens when an
-active byte stream driver sends data to `Deframer`, and `Deframer`
+The following sequence diagram shows what happens when `activeComm`
+sends data to `deframer`, and `deframer`
 decodes the data into a command packet.
 Vertical bars represent threads.
 Solid arrows represent synchronous port calls, and open arrows
@@ -359,16 +359,15 @@ represent asynchronous port calls.
 ![Active byte stream driver, command packet](img/active-cmd-packet.png)
 
 **Sending a file packet:**
-The following sequence diagram shows what happens when an
-active byte stream driver sends data to `Deframer`, and `Deframer`
-decodes the data into a file packet.
+The following sequence diagram shows what happens when `activeComm`
+sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
 ![Active byte stream driver, file packet](img/active-file-packet.png)
 
 #### 4.2.2. Passive Byte Stream Driver
 
 **Sending a command packet:** The following sequence diagram shows what
-happens when a passive byte stream driver sends data to `Deframer`, and 
+happens when `passiveComm` sends data to `Deframer`, and 
 `Deframer` decodes the data into a command packet.
 
 ![Passive byte stream driver, command packet](img/passive-cmd-packet.png)

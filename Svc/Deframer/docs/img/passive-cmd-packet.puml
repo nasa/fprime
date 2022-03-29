@@ -1,30 +1,30 @@
 @startuml
 
-participant "Svc::ActiveRateGroup" order 1
-participant "Drv::ByteStreamDriverModel (Passive)" order 2
-participant "Svc::Deframer" order 3
-participant "Svc::BufferManager" order 4
-participant "Svc::CommandDispatcher" order 5
+participant rateGroup order 1
+participant passiveComm order 2
+participant deframer order 3
+participant buffMgr order 4
+participant cmdDisp order 5
 
-activate "Svc::ActiveRateGroup"
+activate rateGroup
 
-"Svc::ActiveRateGroup" -> "Svc::Deframer": Send schedule tick [schedIn]
+rateGroup -> deframer: Send schedule tick [schedIn]
 
-"Svc::Deframer" -> "Drv::ByteStreamDriverModel (Passive)": Poll for data [framedPoll]
+deframer -> passiveComm: Poll for data [framedPoll]
 
 alt Data available
 
-  "Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
-  "Svc::Deframer" -> "Svc::Deframer": Deframe data into B
-  "Svc::Deframer" -> "Svc::Deframer": Copy B into a command packet C
-  "Svc::Deframer" ->> "Svc::CommandDispatcher": Send C [comOut]
-  "Svc::Deframer" -> "Svc::BufferManager": Deallocate B [bufferDeallocate]
+  deframer -> buffMgr: Allocate buffer B [bufferAllocate]
+  deframer -> deframer: Deframe data into B
+  deframer -> deframer: Copy B into a command packet C
+  deframer ->> cmdDisp: Send C [comOut]
+  deframer -> buffMgr: Deallocate B [bufferDeallocate]
 
-deactivate "Svc::ActiveRateGroup"
+deactivate rateGroup
 
-  activate "Svc::CommandDispatcher"
-  "Svc::CommandDispatcher" -> "Svc::Deframer": Send cmd response [cmdResponseIn]
-  deactivate "Svc::CommandDispatcher"
+  activate cmdDisp
+  cmdDisp -> deframer: Send cmd response [cmdResponseIn]
+  deactivate cmdDisp
 
 end
 
