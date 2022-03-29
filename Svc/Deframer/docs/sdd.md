@@ -293,7 +293,36 @@ None.
 
 ### 4.1. With an Active Byte Stream Driver
 
-#### 4.1.1. Sending a Command Packet
+#### 4.1.1. Topology Diagrams
+
+The following topology diagrams show how to connect `Svc::Deframer`
+to an active byte stream driver.
+The diagrams use the following instances:
+
+* `buffMgr`: An instance of `Svc::BufferManager`
+
+* `cmdDisp`: An instance of `Svc::CommandDispatcher`
+
+* `comm`: An active instance of `Drv::ByteStreamDriverModel`, for example,
+`Drv::TcpClient`.
+
+* `deframer`: An instance of `Svc::Deframer`
+
+* `fileUplink`: An instance of `Svc::FileUplink`
+
+<div>
+<img src="img/active-top-buffers.png" width=1000/>
+</div>
+
+<div>
+<img src="img/active-top-cmd.png" width=800/>
+</div>
+
+<div>
+<img src="img/active-top-file.png" width=1000/>
+</div>
+
+#### 4.1.2. Sending a Command Packet
 
 The following sequence diagram shows the steps that occur when an
 active byte stream driver sends data to `Deframer`, and `Deframer`
@@ -304,7 +333,7 @@ represent asynchronous port calls.
 
 ![Active byte stream driver, command packet](img/active-cmd-packet.png)
 
-#### 4.1.2. Sending a File Packet
+#### 4.1.3. Sending a File Packet
 
 The following sequence diagram shows the steps that occur when an
 active byte stream driver sends data to `Deframer`, and `Deframer`

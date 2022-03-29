@@ -1,0 +1,13 @@
+deframer
+bufferOut
+0
+fileUplink
+bufferSendIn
+0
+
+fileUplink
+bufferSendOut
+0
+buffMgr
+bufferSendIn
+0
