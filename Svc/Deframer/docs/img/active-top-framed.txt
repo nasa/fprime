@@ -13,20 +13,6 @@ framedIn
 0
 
 deframer
-bufferAllocate
-0
-buffMgr
-bufferGetCallee
-0
-
-deframer
-bufferDeallocate
-0
-buffMgr
-bufferSendIn
-0
-
-deframer
 framedDeallocate
 0
 buffMgr

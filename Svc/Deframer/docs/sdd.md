@@ -311,13 +311,19 @@ The diagrams use the following instances:
 
 * `fileUplink`: An instance of [`Svc::FileUplink`](../../FileUplink/docs/sdd.md).
 
+**Buffers containing framed data:**
+
 <div>
-<img src="img/active-top-buffers.png" width=1000/>
+<img src="img/active-top-framed.png" width=1000/>
 </div>
+
+**Command packets and command responses:**
 
 <div>
 <img src="img/active-top-cmd.png" width=800/>
 </div>
+
+**Buffers containing packet data:**
 
 <div>
 <img src="img/active-top-file.png" width=1000/>
