@@ -113,6 +113,10 @@ to use `Svc::DeframingProtocol`.
 See <a href="#dpi-impl">below</a> for a description of how `Deframer` implements
 `DeframingProtocolInterface`.
 
+Here is a class diagram for `Deframer`:
+
+![classdiagram](./img/class_diagram_deframer.png)
+
 ### 4.4. State
 
 `Deframer` maintains the following state:
@@ -222,11 +226,7 @@ The following diagram is an example of Deframer usage with a `TcpClient` and
 
 ![framer_example](./img/deframer_example_2.png)
 
-## 6. Class Diagram
-
-![classdiagram](./img/class_diagram_deframer.png)
-
-## 7. Change Log
+## 6. Change Log
 
 | Date | Description |
 |---|---|
