@@ -46,8 +46,8 @@ Deframer supports two configurations for streaming data:
    _FB_ is a 1024-byte buffer owned by `Deframer`.
 
 2. **Push:** This configuration works with an active byte stream driver.
-   In this configuration the driver pushes buffers _FB_ that it owns
-   to the Deframer by invoking a guarded port.
+   In this configuration the driver invokes a guarded port of `Deframer` to
+   push buffers _FB_ that it owns to `Deframer`.
    The invocation transfers ownership of _FB_ to `Deframer`.
    Deframing occurs on the thread of the byte stream driver.
    `Deframer` deallocates _FB_ before it returns from
