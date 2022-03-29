@@ -139,7 +139,7 @@ The `setup` method does the following:
    1. Store a pointer to _P_ in `m_protocol`.
 
    1. Pass `*this` into the setup method for _P_.
-      As noted <a href="#dpi-impl">above</a>, `*this`
+      As noted <a href="#derived-classes">above</a>, `*this`
       is the instance of `Svc::DeframingProtocolInterface`
       used by _P_.
 
