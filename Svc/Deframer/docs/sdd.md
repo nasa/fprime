@@ -299,16 +299,17 @@ The following topology diagrams show how to connect `Svc::Deframer`
 to an active byte stream driver.
 The diagrams use the following instances:
 
-* `buffMgr`: An instance of `Svc::BufferManager`
+* `buffMgr`: An instance of [`Svc::BufferManager`](../../BufferManager/docs/sdd.md)
 
-* `cmdDisp`: An instance of `Svc::CommandDispatcher`
+* `cmdDisp`: An instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md)
 
-* `comm`: An active instance of `Drv::ByteStreamDriverModel`, for example,
-`Drv::TcpClient`.
+* `comm`: An active instance of 
+[`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
+[`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
-* `deframer`: An instance of `Svc::Deframer`
+* `deframer`: An instance of `Svc::Deframer`.
 
-* `fileUplink`: An instance of `Svc::FileUplink`
+* `fileUplink`: An instance of [`Svc::FileUplink`](../../FileUplink/docs/sdd.md).
 
 <div>
 <img src="img/active-top-buffers.png" width=1000/>
