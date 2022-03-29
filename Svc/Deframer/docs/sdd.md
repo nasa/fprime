@@ -10,7 +10,7 @@ typically come from a ground data system via a
 [byte stream driver](../../../Drv/ByteStreamDriverModel/docs/sdd.md).
 It interprets the concatenated data of the buffers
 as a sequence of uplink frames.
-The uplink frames are not required to be aligned on the
+The uplink frames need not be aligned on the
 buffer boundaries, and each frame may span one or more buffers.
 For each complete frame _F_ received, `Deframer`
 validates _F_ and extracts a data packet from _F_.
@@ -21,11 +21,11 @@ or [`Svc::GenericHub`](../../GenericHub/docs/sdd.md).
 
 When instantiating Deframer, you must provide an implementation
 of [`Svc::DeframingProtocol`](../../FramingProtocol/docs/sdd.md).
+This implementation specifies exactly what is
+in each frame; typically it is a frame header, a data packet, and a hash value.
 By instantiating `Svc::Framer` with a matching implementation of
 `Svc::FramingProtocol`, you will get matching framing (for downlink)
 and deframing (for uplink).
-The implementation of the deframing protocol specifies exactly what is
-in each frame; typically it is a frame header, a data packet, and a hash value.
 
 On receiving a buffer _B_, `Deframer` (1) copies the data from _B_
 into a circular buffer _CB_ owned by `Deframer` and (2)
@@ -33,7 +33,8 @@ calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
 passing a reference to _CB_ as input.
 If _B_ holds more data than will fit in _CB_,
 then `Deframer` repeats this process until _B_ is empty.
-If deframing requires more data than is available in _B_,
+If the protocol implementation reports that it needs more data
+than is available in _B_,
 then `Deframer` defers deframing until the next buffer is available.
 
 Deframer supports two configurations for streaming data:
