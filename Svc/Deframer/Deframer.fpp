@@ -55,7 +55,7 @@ module Svc {
     @ Then one of two things happens:
     @
     @ 1. B contains a file packet, which Deframer sends on bufferOut.
-    @    In this case ownershp of B passes to the receiver.
+    @    In this case ownership of B passes to the receiver.
     @
     @ 2. B does not contain a file packet, or bufferOut is unconnected.
     @    In this case Deframer deallocates B on bufferDeallocate.
