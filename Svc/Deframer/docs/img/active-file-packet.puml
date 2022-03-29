@@ -1,22 +1,22 @@
 @startuml
 
-participant passiveComm order 1
+participant activeComm order 1
 participant deframer order 2
 participant buffMgr order 3
 participant fileUplink order 4
 
-activate passiveComm
+activate activeComm
 
-passiveComm -> buffMgr: Allocate buffer F
-passiveComm -> passiveComm: Fill F with framed data
-passiveComm -> deframer: Send F [framedIn]
+activeComm -> buffMgr: Allocate buffer F
+activeComm -> activeComm: Fill F with framed data
+activeComm -> deframer: Send F [framedIn]
 
 deframer -> buffMgr: Allocate buffer B [bufferAllocate]
 deframer -> deframer: Deframe F into B
 deframer ->> fileUplink: Send B [bufferOut]
 deframer -> buffMgr: Deallocate F [framedDeallocate]
 
-deactivate passiveComm
+deactivate activeComm
 
 activate fileUplink
 fileUplink -> buffMgr: Deallocate B
