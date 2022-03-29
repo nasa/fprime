@@ -154,11 +154,11 @@ For an example of setting up a `Deframer` instance, see the
 
 #### 4.6.1. framedIn
 
-The port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
+The `framedIn` port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
 It does the following:
 
-1. If _S_ is `RECV_OK`, then call <a 
-   href="#processBuffer">`processBuffer`</a>, passing in _B_.
+1. If _S_ = `RECV_OK`, then call
+   <a href="#processBuffer">`processBuffer`</a>, passing in _B_.
 
 2. Deallocate _B_ by invoking `framedDeallocate`.
 
@@ -167,11 +167,27 @@ framedPoll is not connected, since we are supposed to use one or the other._
 
 #### 4.6.2. schedIn
 
-TODO
+The `schedIn` port handler does the following:
+
+1. Construct an `Fw::Buffer` _B_ that wraps `m_poll_buffer`.
+   _TBD: B could be a component member, or it could move into the conditional._
+
+1. If `framedPoll` is connected, then 
+
+   1. Invoke `framedPollOut`, passing in _B_, to poll for new data.
+
+   1. If new data is available, then call 
+       <a href="#processBuffer">`processBuffer`</a>, passing in _B_.
+
+_TBD: It seems to me that the `schedIn` handler should assert that
+`framedIn` is not connected, since we are supposed to use one or the other._
 
 #### 4.6.3. cmdResponseIn
 
-TODO
+The `cmdResponseIn` handler does nothing.
+It exists to provide the necessary symmetry in the topology
+(every component that sends a command to the dispatcher should
+accept a matching response).
 
 <a name="dpi-impl"></a>
 ### 4.7. Implementation of Svc::DeframingProtocolInterface
