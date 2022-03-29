@@ -54,10 +54,10 @@ Deframer supports two configurations for streaming data:
 
 1. If you use `Deframer` together with `Svc::Framer`, then the deframing
 protocol used with `Deframer` (a)
-matches the framing protocol used with `Framer` and (b) match the protocol
-used by the ground data system.
+must match the framing protocol used with `Framer` and (b) must match
+the protocol used by the ground data system.
 
-1. In any topology that uses an instance _I_ of `Deframer`, you should connect
+1. In any topology that uses an instance _I_ of `Deframer`, you must connect
 the poll interface of _I_ or the push interface of _I_, but not both.
 
 ## 3. Requirements
