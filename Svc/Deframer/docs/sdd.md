@@ -427,6 +427,9 @@ Revise the port number of `hub.buffersIn` as appropriate for your application.
 When `hub` receives a buffer on `buffersIn`, it copies the data across
 the connection to the other hub and deallocates the buffer.
 
+If you don't need to transmit file packets across the hub, then you can
+omit the `hub` The `hub` connections shown in this topology.
+
 ## 5. Change Log
 
 | Date | Description |
