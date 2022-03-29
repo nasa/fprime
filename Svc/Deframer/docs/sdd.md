@@ -291,6 +291,7 @@ None.
 
 ## 4. Example Uses
 
+<a name="top-diagrams"></a>
 ### 4.1. Topology Diagrams
 
 The following topology diagrams show how to connect `Svc::Deframer`
@@ -332,11 +333,19 @@ optional.
 <img src="img/top-framed-passive.png" width=1000/>
 </div>
 
+Revise the port number of `rateGroup.RateGroupMemberOut` as
+appropriate for your application.
+
 **Topology 2: Command packets and command responses:**
 
 <div>
 <img src="img/top-cmd.png" width=800/>
 </div>
+
+Revise the port numbers of `cmdDisp.seqCmdBuff` and 
+`cmdDisp.compCmdStat` as appropriate for your application.
+If you model your topology in FPP, then FPP can automatically
+assign these numbers.
 
 **Topology 3: Buffers containing packet data:**
 
@@ -380,11 +389,39 @@ happens when `passiveComm` sends data to `deframer`, and
 
 ### 4.3. Using Svc::GenericHub
 
-TODO
+You can use `Deframer` with an instance of
+[`Svc::GenericHub`](../../GenericHub/docs/sdd.md) to send deframed
+command packets and file packets across a network connection, instead of
+directly to a command dispatcher or file uplink component.
+To send deframed packets this way, do the following:
+
+1. In the topology described <a href="#top-diagrams">above</a>,
+instead of the `cmdDisp` and `fileUplink` instances, use an
+instance `hub` of type `Svc::GenericHub`.
+
+1. Revise topologies 2 and 3 as shown below.
+
+**Topology 2: Command packets**
+
+<div>
+<img src="img/hub-cmd.png" width=800/>
+</div>
+
+Revise the port number of `hub.portIn` as appropriate for your application.
+
+**Topology 3: Buffers containing packet data**
+
+<div>
+<img src="img/hub-file.png" width=1000/>
+</div>
+
+Revise the port number of `hub.buffersIn` as appropriate for your application.
+When `hub` receives a buffer on `buffersIn`, it copies the data across
+the connection to the other hub and deallocates the buffer.
 
 ## 5. Change Log
 
 | Date | Description |
 |---|---|
 | 2021-01-30 | Initial Draft |
-| 2022-03-28 | Revised |
+| 2022-03-29 | Revised |
