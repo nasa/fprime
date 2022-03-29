@@ -239,13 +239,15 @@ It does the following:
    1. Compute the amount of remaining data in _B_.
       This is _R_ = _S_ - `buffer_offset`.
 
-   1. Compute _C_, the amount of data to copy into the
+   1. Compute _C_, the number of bytes to copy from _B_ into the
       circular buffer _CB_.
-      Let _F_ be the free space in _CB_.
-      If _R_ < _F_, then _C_ = _R_.
-      Otherwise _C_ = _F_.
-      
 
+      1. Let _F_ be the free space in _CB_.
+      
+      1. If _R_ < _F_, then _C_ = _R_.
+      
+      1. Otherwise _C_ = _F_.
+      
    1. Copy _C_ bytes from _B_ starting at `buffer_offset`
       into _CB_.
 
