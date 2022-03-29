@@ -27,14 +27,14 @@ By instantiating `Svc::Framer` with a matching implementation of
 `Svc::FramingProtocol`, you will get matching framing (for downlink)
 and deframing (for uplink).
 
-On receiving a buffer _B_, `Deframer` (1) copies the data from _B_
-into a circular buffer _CB_ owned by `Deframer` and (2)
+On receiving a buffer _F_ containing framed data, `Deframer` 
+(1) copies the data from _F_ into a circular buffer _CB_ owned by `Deframer` and (2)
 calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
 passing a reference to _CB_ as input.
-If _B_ holds more data than will fit in _CB_,
-then `Deframer` repeats this process until _B_ is empty.
+If _F_ holds more data than will fit in _CB_,
+then `Deframer` repeats this process until _F_ is empty.
 If the protocol implementation reports that it needs more data
-than is available in _B_,
+than is available in _F_,
 then `Deframer` defers deframing until the next buffer is available.
 
 Deframer supports two configurations for streaming data:
@@ -47,8 +47,8 @@ Deframer supports two configurations for streaming data:
 
 2. **Push:** This configuration works with an active byte stream driver.
    In this configuration the driver pushes buffers to the Deframer.
-   The Deframer takes ownership of each buffer _B_ that it receives.
-   It deallocates _B_ when it is finished processing the data in _B_.
+   The Deframer takes ownership of each buffer _F_ that it receives.
+   It deallocates _F_ when it is finished processing the data in _F_.
 
 ## 2. Assumptions
 
@@ -153,13 +153,13 @@ For an example of setting up a `Deframer` instance, see the
 
 #### 3.6.1. framedIn
 
-The `framedIn` port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
+The `framedIn` port handler receives an `Fw::Buffer` _F_ and a receive status _S_.
 It does the following:
 
 1. If _S_ = `RECV_OK`, then call
-   <a href="#processBuffer">`processBuffer`</a>, passing in _B_.
+   <a href="#processBuffer">`processBuffer`</a>, passing in _F_.
 
-2. Deallocate _B_ by invoking `framedDeallocate`.
+2. Deallocate _F_ by invoking `framedDeallocate`.
 
 _TBD: It seems to me that the `framedIn` handler should assert that 
 framedPoll is not connected, since we are supposed to use one or the other._
@@ -168,12 +168,12 @@ framedPoll is not connected, since we are supposed to use one or the other._
 
 The `schedIn` port handler does the following:
 
-1. Construct an `Fw::Buffer` _B_ that wraps `m_poll_buffer`.
+1. Construct an `Fw::Buffer` _F_ that wraps `m_poll_buffer`.
    _TBD: B could be a component member, or it could move into the conditional._
 
 1. If `framedPoll` is connected, then 
 
-   1. Invoke `framedPollOut`, passing in _B_, to poll for new data.
+   1. Invoke `framedPollOut`, passing in _F_, to poll for new data.
 
    1. If new data is available, then call 
        <a href="#processBuffer">`processBuffer`</a>, passing in _B_.
@@ -191,10 +191,12 @@ accept a matching response).
 <a name="dpi-impl"></a>
 ### 3.7. Implementation of Svc::DeframingProtocolInterface
 
+<a name="allocate"></a>
 #### 3.7.1. allocate
 
 The implementation of `allocate` invokes `bufferAllocate`.
 
+<a name="route"></a>
 #### 3.7.2. route
 
 The implementation of `route` takes a reference to an
@@ -265,10 +267,14 @@ I don't see how the condition can ever fail._
 
 In a bounded loop, while there is data remaining in `m_in_ring`, do:
 
-1. Call the `deframe` method of `m_protocol` on `m_in_ring`, returning
-   a status value _S_ and the number _N_ of bytes used in deframing.
+1. Call the `deframe` method of `m_protocol` on `m_in_ring`.
+   The `deframe` method calls <a href="#allocate">`allocate`</a> and
+   <a href="#route">`route`</a> as necessary.
+   It returns a status value _S_ and the number _N_ of bytes
+   needed for successful deframing.
 
-1. If _S_ = `SUCCESS`, then rotate `m_in_ring` by _N_ bytes (i.e.,
+1. If _S_ = `SUCCESS`, then _N_ represents the number of bytes
+   used in a successful deframing. Rotate `m_in_ring` by _N_ bytes (i.e.,
    deallocate _N_ bytes from the head of `m_in_ring`).
 
 1. Otherwise if _S_ = `MORE_NEEDED`, then do nothing.
