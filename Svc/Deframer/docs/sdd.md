@@ -20,7 +20,7 @@ an instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md),
 or [`Svc::GenericHub`](../../GenericHub/docs/sdd.md).
 
 When instantiating Deframer, you must provide an implementation
-of the [`Svc::DeframingProtocol` interface](../../FramingProtocol/docs/sdd.md).
+of [`Svc::DeframingProtocol`](../../FramingProtocol/docs/sdd.md).
 By instantiating `Svc::Framer` with a matching implementation of
 `Svc::FramingProtocol`, you will get matching framing (for downlink)
 and deframing (for uplink).
@@ -106,7 +106,7 @@ The diagram below shows the `Deframer` component.
 
 `Deframer` is derived from `DeframerComponentBase` as usual.
 It is also derived (via C++ multiple inheritance) from 
-`Svc::DeframingProtocolInterface`.
+[`Svc::DeframingProtocolInterface`](../../FramingProtocol/docs/sdd.md).
 The multiple inheritance makes the `Deframer` instance into the
 instance of `Svc::DeframingProtocolInterface` that is required
 to use `Svc::DeframingProtocol`.
@@ -161,6 +161,9 @@ It does the following:
    href="#processBuffer">`processBuffer`</a>, passing in _B_.
 
 2. Deallocate _B_ by invoking `framedDeallocate`.
+
+_TBD: It seems to me that the `framedIn` handler should assert that 
+framedPoll is not connected, since we are supposed to use one or the other._
 
 #### 4.6.2. schedIn
 
