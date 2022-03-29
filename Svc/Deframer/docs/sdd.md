@@ -33,9 +33,9 @@ calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
 passing a reference to _CB_ as input.
 If _FB_ holds more data than will fit in _CB_,
 then `Deframer` repeats this process until _FB_ is empty.
-If the protocol implementation reports that it needs more data
-than is available in _FB_,
-then `Deframer` defers deframing until the next buffer is available.
+If the protocol implementation reports that the data in _CB_
+represents an incomplete frame, then `Deframer` postpones deframing
+until the next buffer becomes available.
 
 Deframer supports two configurations for streaming data:
 
