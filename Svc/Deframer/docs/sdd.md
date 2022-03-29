@@ -75,9 +75,7 @@ SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the follo
 SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
 SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
 
-## 4. Design
- 
-### 4.1. Component Diagram
+## 4. Component Diagram
 
 The diagram below shows the `Deframer` component.
 
@@ -85,7 +83,7 @@ The diagram below shows the `Deframer` component.
 <img src="img/Deframer.png" width=700/>
 </div>
 
-### 4.2. Ports
+## 5. Ports
 
 `Deframer` has the following ports:
 
@@ -102,7 +100,7 @@ The diagram below shows the `Deframer` component.
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
 <a name="derived-classes"></a>
-### 4.3. Derived Classes
+## 6. Derived Classes
 
 `Deframer` is derived from `DeframerComponentBase` as usual.
 It is also derived (via C++ multiple inheritance) from 
@@ -117,7 +115,7 @@ Here is a class diagram for `Deframer`:
 
 ![classdiagram](./img/class_diagram_deframer.png)
 
-### 4.4. State
+## 7. State
 
 `Deframer` maintains the following state:
 
@@ -130,7 +128,7 @@ Here is a class diagram for `Deframer`:
 
 1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
 
-### 4.5. Setup
+## 8. Setup
 
 To set up an instance of `Deframer`, you do the following:
 
@@ -150,9 +148,9 @@ The `setup` method does the following:
 For an example of setting up a `Deframer` instance, see the
 `uplink` instance in [`Ref/Top/instances.fpp`](../../../Ref/Top/instances.fpp).
 
-### 4.6. Port Handlers
+## 9. Port Handlers
 
-#### 4.6.1. framedIn
+### 9.1. framedIn
 
 The `framedIn` port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
 It does the following:
@@ -165,7 +163,7 @@ It does the following:
 _TBD: It seems to me that the `framedIn` handler should assert that 
 framedPoll is not connected, since we are supposed to use one or the other._
 
-#### 4.6.2. schedIn
+### 9.2. schedIn
 
 The `schedIn` port handler does the following:
 
@@ -182,7 +180,7 @@ The `schedIn` port handler does the following:
 _TBD: It seems to me that the `schedIn` handler should assert that
 `framedIn` is not connected, since we are supposed to use one or the other._
 
-#### 4.6.3. cmdResponseIn
+### 9.3. cmdResponseIn
 
 The `cmdResponseIn` handler does nothing.
 It exists to provide the necessary symmetry in the topology
@@ -190,28 +188,28 @@ It exists to provide the necessary symmetry in the topology
 accept a matching response).
 
 <a name="dpi-impl"></a>
-### 4.7. Implementation of Svc::DeframingProtocolInterface
+## 10. Implementation of Svc::DeframingProtocolInterface
 
-#### 4.7.1. allocate
-
-TODO
-
-#### 4.7.2. route
+### 10.1. allocate
 
 TODO
 
-### 4.8. Helper Functions
+### 10.2. route
+
+TODO
+
+## 11. Helper Functions
 
 <a name="processBuffer"></a>
-#### 4.8.1. processBuffer
+### 11.1. processBuffer
 
 TODO
 
-#### 4.8.2. processRing
+### 11.2. processRing
 
 TODO
 
-### 4.9. [Previous SDD]
+## 12. [Previous SDD]
 
 1. Deframer will accept incoming buffers.
 
@@ -235,7 +233,11 @@ TODO
 1. If step three is routing to `Fw::Com`, it must pass the buffer to the 
    `bufferDeallocate` port.
 
-## 5. Usage Examples
+## 13. Commands, Telemetry, Events, and Parameters
+
+None.
+
+## 14. Usage Examples
 
 When Deframer component receives the data from a manager component (typically a 
 service layer such as ground uplinkComm or TcpClient) via polling or a 
@@ -252,7 +254,7 @@ The following diagram is an example of Deframer usage with a `TcpClient` and
 
 ![framer_example](./img/deframer_example_2.png)
 
-## 6. Change Log
+## 15. Change Log
 
 | Date | Description |
 |---|---|
