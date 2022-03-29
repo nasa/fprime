@@ -27,14 +27,14 @@ By instantiating `Svc::Framer` with a matching implementation of
 `Svc::FramingProtocol`, you will get matching framing (for downlink)
 and deframing (for uplink).
 
-On receiving a buffer _F_ containing framed data, `Deframer` 
-(1) copies the data from _F_ into a circular buffer _CB_ owned by `Deframer` and (2)
+On receiving a buffer _FB_ containing framed data, `Deframer` 
+(1) copies the data from _FB_ into a circular buffer _CB_ owned by `Deframer` and (2)
 calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
 passing a reference to _CB_ as input.
-If _F_ holds more data than will fit in _CB_,
-then `Deframer` repeats this process until _F_ is empty.
+If _FB_ holds more data than will fit in _CB_,
+then `Deframer` repeats this process until _FB_ is empty.
 If the protocol implementation reports that it needs more data
-than is available in _F_,
+than is available in _FB_,
 then `Deframer` defers deframing until the next buffer is available.
 
 Deframer supports two configurations for streaming data:
@@ -43,12 +43,12 @@ Deframer supports two configurations for streaming data:
    In this configuration, `Deframer` polls the driver for buffers
    on its `schedIn` cycle.
    No buffer allocation occurs when polling.
-   The polling uses a 1024-byte buffer owned by `Deframer`.
+   _FB_ is a 1024-byte buffer owned by `Deframer`.
 
 2. **Push:** This configuration works with an active byte stream driver.
    In this configuration the driver pushes buffers to the Deframer.
-   The Deframer takes ownership of each buffer _F_ that it receives.
-   It deallocates _F_ when it is finished processing the data in _F_.
+   The Deframer takes ownership of each buffer _FB_ that it receives.
+   It deallocates _FB_ when it is finished processing the data in _FB_.
 
 ## 2. Assumptions
 
@@ -153,13 +153,13 @@ For an example of setting up a `Deframer` instance, see the
 
 #### 3.6.1. framedIn
 
-The `framedIn` port handler receives an `Fw::Buffer` _F_ and a receive status _S_.
+The `framedIn` port handler receives an `Fw::Buffer` _FB_ and a receive status _S_.
 It does the following:
 
 1. If _S_ = `RECV_OK`, then call
-   <a href="#processBuffer">`processBuffer`</a>, passing in _F_.
+   <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
-2. Deallocate _F_ by invoking `framedDeallocate`.
+2. Deallocate _FB_ by invoking `framedDeallocate`.
 
 _TBD: It seems to me that the `framedIn` handler should assert that 
 framedPoll is not connected, since we are supposed to use one or the other._
@@ -168,15 +168,15 @@ framedPoll is not connected, since we are supposed to use one or the other._
 
 The `schedIn` port handler does the following:
 
-1. Construct an `Fw::Buffer` _F_ that wraps `m_poll_buffer`.
-   _TBD: B could be a component member, or it could move into the conditional._
+1. Construct an `Fw::Buffer` _FB_ that wraps `m_poll_buffer`.
+   _TBD: FB could be a component member, or it could move into the conditional._
 
 1. If `framedPoll` is connected, then 
 
-   1. Invoke `framedPollOut`, passing in _F_, to poll for new data.
+   1. Invoke `framedPollOut`, passing in _FB_, to poll for new data.
 
    1. If new data is available, then call 
-       <a href="#processBuffer">`processBuffer`</a>, passing in _B_.
+       <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
 _TBD: It seems to me that the `schedIn` handler should assert that
 `framedIn` is not connected, since we are supposed to use one or the other._
@@ -200,22 +200,25 @@ The implementation of `allocate` invokes `bufferAllocate`.
 #### 3.7.2. route
 
 The implementation of `route` takes a reference to an
-`Fw::Buffer` _B_ and does the following:
+`Fw::Buffer` _PB_ (a packet buffer) and does the following:
 
 1. Set `deallocate = true`.
 
-1. Deserialize the first four bytes of _B_ as an `I32` packet type.
+1. Deserialize the first four bytes of _PB_ as an `I32` packet type.
+   _TBD: What if FwPacketDescriptorType is not a 32-bit value?
+   Then it seems like this won't work. Do we need to translate the incoming
+   value to FwPacketDescriptorType?_
 
-1. If the deserialization succeeds, then switch on the packet type _P_.
+1. If the deserialization succeeds, then switch on the packet type _PB_.
 
-   1. If _P_ = `FW_PACKET_COMMAND`, then send the contents
-      of _B_ as a Com buffer on `comOut`.
+   1. If _PB_ = `FW_PACKET_COMMAND`, then send the contents
+      of _PB_ as a Com buffer on `comOut`.
 
-   1. Otherwise if _P_ = `FW_PACKET_FILE` and `bufferOut` is connected,
+   1. Otherwise if _PB_ = `FW_PACKET_FILE` and `bufferOut` is connected,
       then
 
-      1. Shift the pointer of _B_ four bytes forward and
-         reduce the size of _B_ by four to skip the size.
+      1. Shift the pointer of _PB_ four bytes forward and
+         reduce the size of _PB_ by four to skip the packet type.
 
       1. Send _B_ on `bufferOut`.
 
@@ -223,14 +226,15 @@ The implementation of `route` takes a reference to an
          of the buffer to pass to the receiver.
 
 1. If `deallocate = true`, then invoke `bufferDeallocate`
-   to deallocate _B_.
+   to deallocate _PB_.
 
 ### 3.8. Helper Functions
 
 <a name="processBuffer"></a>
 #### 3.8.1. processBuffer
 
-`processBuffer` accepts a reference to an `Fw::Buffer` _B_.
+`processBuffer` accepts a reference to an `Fw::Buffer` _FB_
+(a frame buffer).
 It does the following:
 
 1. Set `buffer_offset` = 0.
@@ -239,10 +243,10 @@ It does the following:
 
 1. In a bounded loop, while `buffer_offset` < _S_, do:
 
-   1. Compute the amount of remaining data in _B_.
+   1. Compute the amount of remaining data in _FB_.
       This is _R_ = _S_ - `buffer_offset`.
 
-   1. Compute _C_, the number of bytes to copy from _B_ into the
+   1. Compute _C_, the number of bytes to copy from _FB_ into the
       circular buffer `m_in_ring`.
 
       1. Let _F_ be the number of free bytes in `m_in_ring`.
@@ -251,7 +255,7 @@ It does the following:
       
       1. Otherwise _C_ = _F_.
       
-   1. Copy _C_ bytes from _B_ starting at `buffer_offset`
+   1. Copy _C_ bytes from _FB_ starting at `buffer_offset`
       into `m_in_ring`.
 
    1. Advance `buffer_offset` by _C_.

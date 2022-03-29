@@ -7,19 +7,19 @@ participant fileUplink order 4
 
 activate activeComm
 
-activeComm -> buffMgr: Allocate buffer F
-activeComm -> activeComm: Fill F with framed data
-activeComm -> deframer: Send F [framedIn]
+activeComm -> buffMgr: Allocate frame buffer FB
+activeComm -> activeComm: Fill FB with framed data
+activeComm -> deframer: Send FB [framedIn]
 
-deframer -> buffMgr: Allocate buffer B [bufferAllocate]
-deframer -> deframer: Deframe F into B
-deframer ->> fileUplink: Send B [bufferOut]
-deframer -> buffMgr: Deallocate F [framedDeallocate]
+deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
+deframer -> deframer: Deframe FB into PB
+deframer ->> fileUplink: Send PB [bufferOut]
+deframer -> buffMgr: Deallocate FB [framedDeallocate]
 
 deactivate activeComm
 
 activate fileUplink
-fileUplink -> buffMgr: Deallocate B
+fileUplink -> buffMgr: Deallocate PB
 deactivate fileUplink
 
 @enduml

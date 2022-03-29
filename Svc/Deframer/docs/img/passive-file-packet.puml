@@ -14,14 +14,14 @@ deframer -> passiveComm: Poll for data [framedPoll]
 
 alt Data available
 
-  deframer -> buffMgr: Allocate buffer B [bufferAllocate]
-  deframer -> deframer: Deframe data into B
-  deframer ->> fileUplink: Send B [bufferOut]
+  deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
+  deframer -> deframer: Deframe data into PB
+  deframer ->> fileUplink: Send PB [bufferOut]
 
 deactivate rateGroup
 
   activate fileUplink
-  fileUplink -> buffMgr: Deallocate B
+  fileUplink -> buffMgr: Deallocate PB
   deactivate fileUplink
 
 end

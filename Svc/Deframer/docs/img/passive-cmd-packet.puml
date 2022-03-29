@@ -14,11 +14,11 @@ deframer -> passiveComm: Poll for data [framedPoll]
 
 alt Data available
 
-  deframer -> buffMgr: Allocate buffer B [bufferAllocate]
-  deframer -> deframer: Deframe data into B
-  deframer -> deframer: Copy B into a command packet C
+  deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
+  deframer -> deframer: Deframe data into PB
+  deframer -> deframer: Copy PB into a command packet C
   deframer ->> cmdDisp: Send C [comOut]
-  deframer -> buffMgr: Deallocate B [bufferDeallocate]
+  deframer -> buffMgr: Deallocate PB [bufferDeallocate]
 
 deactivate rateGroup
 
