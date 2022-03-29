@@ -45,6 +45,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/adapter/eps/hardware/payloadPower/ports/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/adapter/eps/hardware/payloadPower/types/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/adapter/eps/hardware/payloadPower/component/")
 
 # Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
