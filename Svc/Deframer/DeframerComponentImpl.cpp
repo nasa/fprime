@@ -104,12 +104,16 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
                 data.setSize(data.getSize() - sizeof(packet_type));
                 bufferOut_out(0, data);
             }
+            else {
+                // Deallocate the unused buffer
+                bufferDeallocate_out(0, data);
+            }
             break;
         }
         default:
             // In the case that we do not know the packet type, we should deallocate the request
             bufferDeallocate_out(0, data);
-            return;
+            break;
     }
 }
 

@@ -93,13 +93,13 @@ The diagram below shows the `Deframer` component.
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher |
-| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving data pushed from the byte stream driver. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
+| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving data pushed from the byte stream driver. The deframer must deallocate these buffers. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
 | `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
-| `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects, e.g., for file uplink |
+| `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects to hold file packets |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers allocated with bufferAllocate |
-| `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating received buffers containing framed data |
+| `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on framedIn |
 | `output` | `bufferOut` | `Fw.BufferSend` | Port for sending buffers allocated with bufferAllocate. The receiver is responsible for the deallocation. |
-| `output` | `comOut` | `Fw.Com` | Port for sending Com packets, e.g., command packets |
+| `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers |
 | `output` | `framedPoll` | `Drv.ByteStreamPoll` | Port that polls for data from the byte stream driver |
 
 ### 4.3. TODO
