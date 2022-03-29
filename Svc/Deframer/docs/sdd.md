@@ -35,7 +35,7 @@ If _FB_ holds more data than will fit in _CB_,
 then `Deframer` repeats this process until _FB_ is empty.
 If the protocol implementation reports that the data in _CB_
 represents an incomplete frame, then `Deframer` postpones deframing
-until the next buffer becomes available.
+until the next buffer _FB_ becomes available.
 
 Deframer supports two configurations for streaming data:
 
