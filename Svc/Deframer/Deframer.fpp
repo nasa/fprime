@@ -1,14 +1,15 @@
 module Svc {
 
   @ A component for deframing input received from the ground
+  @ via a byte stream driver, which may be active or passive
   passive component Deframer {
 
     # ----------------------------------------------------------------------
     # Receiving framed data via push
     # ----------------------------------------------------------------------
 
-    @ Port for receiving data pushed from the byte stream driver.
-    @ After using a buffer received on this port, Deframer deallocates it
+    @ Port for receiving frame buffers FB pushed from the byte stream driver.
+    @ After using a buffer FB received on this port, Deframer deallocates it
     @ by invoking framedDeallocate.
     @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
     @ should never both be connected._
@@ -29,7 +30,7 @@ module Svc {
     @ Port that polls for data from the byte stream driver.
     @ Deframer invokes this port on its schedIn cycle, if it is connected.
     @ No allocation or occurs when invoking this port.
-    @ The data transfer uses a 1024-byte pre-allocated buffer
+    @ The data transfer uses a 1024-byte pre-allocated frame buffer
     @ owned by Deframer.
     output port framedPoll: Drv.ByteStreamPoll
 
@@ -38,15 +39,15 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Port for allocating Fw::Buffer objects from a buffer manager.
-    @ When Deframer invokes this port, it receives a buffer B and
-    @ takes ownership of it. It uses B internally for deframing.
+    @ When Deframer invokes this port, it receives a packet buffer PB and
+    @ takes ownership of it. It uses PB internally for deframing.
     @ Then one of two things happens:
     @
-    @ 1. B contains a file packet, which Deframer sends on bufferOut.
-    @    In this case ownership of B passes to the receiver.
+    @ 1. PB contains a file packet, which Deframer sends on bufferOut.
+    @    In this case ownership of PB passes to the receiver.
     @
-    @ 2. B does not contain a file packet, or bufferOut is unconnected.
-    @    In this case Deframer deallocates B on bufferDeallocate.
+    @ 2. PB does not contain a file packet, or bufferOut is unconnected.
+    @    In this case Deframer deallocates PB on bufferDeallocate.
     output port bufferAllocate: Fw.BufferGet
 
     @ Port for sending file packets (case 1 above).
