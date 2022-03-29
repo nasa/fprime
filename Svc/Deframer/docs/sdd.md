@@ -209,14 +209,14 @@ The implementation of `route` takes a reference to an
 1. Set `deallocate = true`.
 
 1. Deserialize the first four bytes of _PB_ as an `I32` packet type.
-   _TBD: What if FwPacketDescriptorType is not a 32-bit value?
-   Then it seems like this won't work. Do we need to translate the incoming
-   value to FwPacketDescriptorType?_
 
 1. If the deserialization succeeds, then switch on the packet type _PB_.
 
    1. If _PB_ = `FW_PACKET_COMMAND`, then send the contents
       of _PB_ as a Com buffer on `comOut`.
+      _TBD: What if FwPacketDescriptorType is not a 32-bit value?
+      Then it seems like this won't work. Do we need to translate the incoming
+      value to FwPacketDescriptorType?_
 
    1. Otherwise if _PB_ = `FW_PACKET_FILE` and `bufferOut` is connected,
       then
