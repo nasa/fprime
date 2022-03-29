@@ -227,7 +227,31 @@ The implementation of `route` takes a reference to an
 <a name="processBuffer"></a>
 #### 3.8.1. processBuffer
 
-TODO
+`processBuffer` accepts a reference to an `Fw::Buffer` _B_.
+It does the following:
+
+1. Set `buffer_offset` = 0.
+
+1. Set _S_ = `buffer.getSize()`.
+
+1. In a bounded loop, while `buffer_offset` < _S_, do:
+
+   1. Compute the amount of remaining data in _B_.
+      This is _R_ = _S_ - `buffer_offset`.
+
+   1. Compute _C_, the amount of data to copy into the
+      circular buffer _CB_.
+      Let _F_ be the free space in _CB_.
+      If _R_ < _F_, then _C_ = _R_.
+      Otherwise _C_ = _F_.
+      
+
+   1. Copy _C_ bytes from _B_ starting at `buffer_offset`
+      into _CB_.
+
+   1. Advance `buffer_offset` by _C_.
+
+   1. Call `processRing`.
 
 #### 3.8.2. processRing
 
