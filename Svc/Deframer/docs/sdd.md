@@ -202,22 +202,23 @@ The implementation of `route` takes a reference to an
 
 1. Set `deallocate = true`.
 
-1. Deserialize the first four bytes of _B_ as an _I32_ packet type.
+1. Deserialize the first four bytes of _B_ as an `I32` packet type.
 
-1. If the deserialization succeeds, switch on the packet type _P_.
+1. If the deserialization succeeds, then switch on the packet type _P_.
 
    1. If _P_ = `FW_PACKET_COMMAND`, then send the contents
       of _B_ as a Com buffer on `comOut`.
 
-   1. Otherwise if _P_ = `FW_PACKET_FILE`, then check
-      whether `bufferOut` is connected. If it is, then
+   1. Otherwise if _P_ = `FW_PACKET_FILE` and `bufferOut` is connected,
+      then
 
       1. Shift the pointer of _B_ four bytes forward and
          reduce the size of _B_ by four to skip the size.
 
       1. Send _B_ on `bufferOut`.
 
-      1. Set `deallocate = false`.
+      1. Set `deallocate = false`. This step causes ownership
+         of the buffer to pass to the receiver.
 
 1. If `deallocate = true`, then invoke `bufferDeallocate`
    to deallocate _B_.
