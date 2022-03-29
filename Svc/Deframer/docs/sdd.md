@@ -130,7 +130,7 @@ Here is a class diagram for `Deframer`:
 
 1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
 
-### 4.5. Instance Setup
+### 4.5. Setup
 
 To set up an instance of `Deframer`, you do the following:
 
@@ -154,7 +154,13 @@ For an example of setting up a `Deframer` instance, see the
 
 #### 4.6.1. framedIn
 
-TODO
+The port handler receives an `Fw::Buffer` _B_ and a receive status _S_.
+It does the following:
+
+1. If _S_ is `RECV_OK`, then call <a 
+   href="#process-buffer">`processBuffer`</a>, passing in _B_.
+
+2. Deallocate _B_ by invoking `framedDeallocate`.
 
 #### 4.6.2. schedIn
 
@@ -177,6 +183,7 @@ TODO
 
 ### 4.8. Helper Functions
 
+<a name="processBuffer"></a>
 #### 4.8.1. processBuffer
 
 TODO
