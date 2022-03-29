@@ -1,0 +1,30 @@
+@startuml
+
+participant "Svc::ActiveRateGroup" order 1
+participant "Drv::ByteStreamDriverModel (Passive)" order 2
+participant "Svc::Deframer" order 3
+participant "Svc::BufferManager" order 4
+participant "Svc::CommandDispatcher" order 5
+
+activate "Svc::ActiveRateGroup"
+
+"Svc::ActiveRateGroup" -> "Svc::Deframer": Send schedule tick [schedIn]
+
+"Svc::Deframer" -> "Drv::ByteStreamDriverModel (Passive)": Poll for data [framedPoll]
+
+alt Data available
+
+  "Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
+  "Svc::Deframer" -> "Svc::Deframer": Use B to construct a command packet C
+  "Svc::Deframer" ->> "Svc::CommandDispatcher": Send C [comOut]
+  "Svc::Deframer" -> "Svc::BufferManager": Deallocate B [bufferDeallocate]
+
+deactivate "Svc::ActiveRateGroup"
+
+  activate "Svc::CommandDispatcher"
+  "Svc::CommandDispatcher" -> "Svc::Deframer": Send cmd response [cmdResponseIn]
+  deactivate "Svc::CommandDispatcher"
+
+end
+
+@enduml

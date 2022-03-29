@@ -1,0 +1,27 @@
+@startuml
+
+participant "Drv::ByteStreamDriverModel (Active)" order 1
+participant "Svc::Deframer" order 2
+participant "Svc::BufferManager" order 3
+participant "Svc::CommandDispatcher" order 4
+
+activate "Drv::ByteStreamDriverModel (Active)"
+
+"Drv::ByteStreamDriverModel (Active)" -> "Svc::BufferManager": Allocate frame buffer F
+"Drv::ByteStreamDriverModel (Active)" -> "Drv::ByteStreamDriverModel (Active)": Fill F with framed data
+"Drv::ByteStreamDriverModel (Active)" -> "Svc::Deframer": Send F [framedIn]
+
+"Svc::Deframer" -> "Svc::BufferManager": Allocate buffer B [bufferAllocate]
+"Svc::Deframer" -> "Svc::Deframer": Deframe F into B
+"Svc::Deframer" -> "Svc::Deframer": Copy B into a command packet C
+"Svc::Deframer" ->> "Svc::CommandDispatcher": Send C [comOut]
+"Svc::Deframer" -> "Svc::BufferManager": Deallocate B [bufferDeallocate]
+"Svc::Deframer" -> "Svc::BufferManager": Deallocate F [framedDeallocate]
+
+deactivate "Drv::ByteStreamDriverModel (Active)"
+
+activate "Svc::CommandDispatcher"
+"Svc::CommandDispatcher" -> "Svc::Deframer": Send cmd response [cmdResponseIn]
+deactivate "Svc::CommandDispatcher"
+
+@enduml

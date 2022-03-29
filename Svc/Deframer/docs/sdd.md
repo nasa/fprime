@@ -255,7 +255,7 @@ It does the following:
    1. Advance `buffer_offset` by _C_.
 
    1. Call <a href="#processRing">`processRing`</a>
-      to process the data in `m_in_ring`.
+      to process the data stored in `m_in_ring`.
 
 _TBD: The assertion at the end of the loop doesn't look right.
 I don't see how the condition can ever fail._
@@ -279,26 +279,46 @@ In a bounded loop, while there is data remaining in `m_in_ring`, do:
    Rotate `m_in_ring` by one byte, to skip byte by byte over
    bad data until we find a valid frame.
 
-### 3.10. Commands, Telemetry, Events, and Parameters
+### 3.9. Commands, Telemetry, Events, and Parameters
 
 None.
 
-## 4. Usage Examples
+## 4. Example Uses
 
-When Deframer component receives the data from a manager component (typically a 
-service layer such as ground uplinkComm or TcpClient) via polling or a 
-callback, the Deframer will perform the deserialization per `DeframingProtocol` 
-and will transfer the stream via `bufferOut` or `comOut` port to components 
-such as `CmdDisp`, `FileUplink`, or a `GenericHub`.
+### 4.1. With an Active Byte Stream Driver
 
-The following diagram is an example of Deframer usage with and `uplinkComm` component:
+#### 4.1.1. Sending a Command Packet
 
-![framer_example](./img/deframer_example_1.png)
+The following sequence diagram shows the steps that occur when an
+active byte stream driver sends data to `Deframer`, and `Deframer`
+decodes the data into a command packet.
+Vertical bars represent threads.
+Solid arrows represent synchronous port calls, and open arrows
+represent asynchronous port calls.
 
-The following diagram is an example of Deframer usage with a `TcpClient` and 
-`GenericHub` component:
+![Active byte stream driver, command packet](img/active-cmd-packet.png)
 
-![framer_example](./img/deframer_example_2.png)
+#### 4.1.2. Sending a File Packet
+
+The following sequence diagram shows the steps that occur when an
+active byte stream driver sends data to `Deframer`, and `Deframer`
+decodes the data into a file packet.
+
+![Active byte stream driver, file packet](img/active-file-packet.png)
+
+### 4.2. With a Passive Byte Stream Driver
+
+#### 4.2.1. Sending a Command Packet
+
+The following sequence diagram shows the steps that occur when an
+active byte stream driver sends data to `Deframer`, and `Deframer`
+decodes the data into a command packet.
+
+![Passive byte stream driver, command packet](img/passive-cmd-packet.png)
+
+#### 4.2.2. Sending a File Packet
+
+TODO
 
 ## 5. Change Log
 
