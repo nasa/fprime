@@ -193,11 +193,36 @@ accept a matching response).
 
 #### 3.7.1. allocate
 
-TODO
+The implementation of `allocate` invokes the `bufferAllocate`
+port.
 
 #### 3.7.2. route
 
-TODO
+The implementation of `route` takes a reference to an
+`Fw::Buffer` _B_ and does the following:
+
+1. Set `deallocate = true`.
+
+1. Deserialize the first four bytes of _B_ as an _I32_ packet type.
+
+1. If the deserialization succeeds, switch on the packet type _P_.
+
+   1. If _P_ = `FW_PACKET_COMMAND`, then send the contents
+      of _B_ as a Com buffer on the `comOut` port.
+
+   1. Otherwise if _P_ = `FW_PACKET_FILE`, then check
+      whether `bufferOut` is connected. If it is, then
+
+      1. Shift the pointer four bytes forward in _B_ and
+         reduce the size of _B_ by four to skip
+         the size.
+
+      1. Send _B_ on `bufferOut`.
+
+      1. Set _deallocate = false_.
+
+1. If `deallocate = true`, then invoke the `bufferDeallocate`
+   port to deallocate _B_.
 
 ### 3.8. Helper Functions
 
