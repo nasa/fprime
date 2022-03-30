@@ -32,7 +32,5 @@ set(UT_MOD_DEPS
 )
 register_fprime_ut()
 
-register_fprime_ut("Fw_Types_TypesTest")
-
 # Non-test directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
