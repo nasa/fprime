@@ -12,7 +12,7 @@
 
 #include <Fw/Types/AlignedAllocator.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace Fw {
 
@@ -31,7 +31,7 @@ namespace Fw {
         // heap memory is never recoverable
         recoverable = false;
         void *mem = ::aligned_alloc(this->m_alignment,size);
-        if (NULL == mem) {
+        if (nullptr == mem) {
             size = 0; // set to zero if can't get memory
         }
         return mem;

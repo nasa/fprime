@@ -30,6 +30,9 @@ aeiouy
 afterstatinfo
 agg
 aheared
+alignedallocator
+AlignedAllocator
+ALIGNEDALLOCATOR
 ALLEXTERNALS
 alloc
 Alltypes
