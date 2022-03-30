@@ -293,14 +293,14 @@ In a bounded loop, while there is data remaining in `m_in_ring`, do:
    Rotate `m_in_ring` by one byte, to skip byte by byte over
    bad data until we find a valid frame.
 
-### 3.9. Commands, Telemetry, Events, and Parameters
+## 4. Ground Interface
 
 None.
 
-## 4. Example Uses
+## 5. Example Uses
 
 <a name="top-diagrams"></a>
-### 4.1. Topology Diagrams
+### 5.1. Topology Diagrams
 
 The following topology diagrams show how to connect `Svc::Deframer`
 to a byte stream driver, a command dispatcher, and a file uplink component.
@@ -361,9 +361,9 @@ assign these numbers.
 <img src="img/top-file.png" width=1000/>
 </div>
 
-### 4.2. Sequence Diagrams
+### 5.2. Sequence Diagrams
 
-#### 4.2.1. Active Byte Stream Driver
+#### 5.2.1. Active Byte Stream Driver
 
 **Sending a command packet:**
 The following sequence diagram shows what happens when `activeComm`
@@ -381,7 +381,7 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
 ![Active byte stream driver, file packet](img/active-file-packet.png)
 
-#### 4.2.2. Passive Byte Stream Driver
+#### 5.2.2. Passive Byte Stream Driver
 
 **Sending a command packet:** The following sequence diagram shows what
 happens when `passiveComm` sends data to `deframer`, and 
@@ -395,7 +395,7 @@ happens when `passiveComm` sends data to `deframer`, and
 
 ![Passive byte stream driver, file packet](img/passive-file-packet.png)
 
-### 4.3. Using Svc::GenericHub
+### 5.3. Using Svc::GenericHub
 
 You can use `Deframer` with an instance of
 [`Svc::GenericHub`](../../GenericHub/docs/sdd.md) to send deframed
@@ -430,7 +430,7 @@ the connection to the other hub and deallocates the buffer.
 If you don't need to transmit file packets across the hub, then you can
 omit the `hub` connections shown in this topology.
 
-## 5. Change Log
+## 6. Change Log
 
 | Date | Description |
 |---|---|
