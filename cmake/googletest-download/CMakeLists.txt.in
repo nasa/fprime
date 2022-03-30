@@ -5,7 +5,7 @@ project(googletest-download NONE)
 include(ExternalProject)
 ExternalProject_Add(googletest
   SOURCE_DIR        "${FPRIME_FRAMEWORK_PATH}/gtest/googletest-src"
-  BINARY_DIR        "${FPRIME_FRAMEWORK_PATH}/gtest/googletest-build-${TOOLCHAIN_NAME}"
+  BINARY_DIR        "${FPRIME_FRAMEWORK_PATH}/gtestbuild/googletest-build-${TOOLCHAIN_NAME}"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
