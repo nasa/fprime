@@ -225,8 +225,9 @@ The implementation of `route` takes a reference to an
 
 1. Set `deallocate = true`.
 
-1. Let _n_ = `sizeof(FwPacketDescriptorType)`.
-Deserialize the first _n_ bytes of _PB_ as value of type `FwPacketDescriptorType`.
+1. Let _N_ = `sizeof(FwPacketDescriptorType)`.
+Deserialize the first _N_ bytes of _PB_ as a value of type
+`FwPacketDescriptorType`.
 
 1. If the deserialization succeeds, then switch on the packet type _T_.
 
