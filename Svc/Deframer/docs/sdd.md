@@ -53,9 +53,9 @@ Deframer supports two configurations for streaming data:
 
 ## 2. Assumptions
 
-1. For any deployment _D_ containing an instance _I_ of `Deframer`, the
+1. For any deployment _D_ that uses an instance _I_ of `Deframer`, the
    deframing protocol used with _I_ matches the uplink protocol of
-   any ground system connected to _D_.
+   any ground system that sends frames to _I_.
 
 1. In any topology _T_, for any instance _I_ of `Deframer` in _T_,
    exactly one of the poll interface of _I_ or the push interface of _I_
@@ -66,7 +66,7 @@ Deframer supports two configurations for streaming data:
    The first _n_ bytes of the packet hold the packet descriptor value
    `Fw::ComPacket::FW_PACKET_COMMAND` (for a command packet) or
    `Fw::ComPacket::FW_PACKET_FILE` (for a file packet),
-   serialized as an unsigned value in big-endian byte order.
+   serialized as an unsigned integer in big-endian byte order.
    The number of bytes _n_ matches the size of the type defined by the
    C preprocessor symbol `FwPacketDescriptorType` in the F Prime FSW.
 
@@ -346,13 +346,13 @@ optional.
 **Topology 1a: Buffers containing framed data (active byte stream driver):**
 
 <div>
-<img src="img/top-framed-active.png" width=1000/>
+<img src="img/top/framed-active.png" width=1000/>
 </div>
 
 **Topology 1b: Buffers containing framed data (passive byte stream driver):**
 
 <div>
-<img src="img/top-framed-passive.png" width=1000/>
+<img src="img/top/framed-passive.png" width=1000/>
 </div>
 
 Revise the port number of `rateGroup.RateGroupMemberOut` as
@@ -361,7 +361,7 @@ appropriate for your application.
 **Topology 2: Command packets and command responses:**
 
 <div>
-<img src="img/top-cmd.png" width=800/>
+<img src="img/top/cmd.png" width=800/>
 </div>
 
 Revise the port numbers of `cmdDisp.seqCmdBuff` and 
@@ -372,7 +372,7 @@ assign these numbers.
 **Topology 3: Buffers containing packet data:**
 
 <div>
-<img src="img/top-file.png" width=1000/>
+<img src="img/top/file.png" width=1000/>
 </div>
 
 ### 6.2. Sequence Diagrams
@@ -387,13 +387,13 @@ Vertical bars represent threads.
 Solid arrows represent synchronous port invocations, and open arrows
 represent asynchronous port invocations.
 
-![Active byte stream driver, command packet](img/active-cmd-packet.png)
+![Active byte stream driver, command packet](img/sequence-diagrams/active-cmd-packet.png)
 
 **Sending a file packet:**
 The following sequence diagram shows what happens when `activeComm`
 sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
-![Active byte stream driver, file packet](img/active-file-packet.png)
+![Active byte stream driver, file packet](img/sequence-diagrams/active-file-packet.png)
 
 #### 6.2.2. Passive Byte Stream Driver
 
@@ -401,13 +401,13 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 happens when `passiveComm` sends data to `deframer`, and 
 `deframer` decodes the data into a command packet.
 
-![Passive byte stream driver, command packet](img/passive-cmd-packet.png)
+![Passive byte stream driver, command packet](img/sequence-diagrams/passive-cmd-packet.png)
 
 **Sending a file packet:** The following sequence diagram shows what
 happens when `passiveComm` sends data to `deframer`, and 
 `Deframer` decodes the data into a file packet.
 
-![Passive byte stream driver, file packet](img/passive-file-packet.png)
+![Passive byte stream driver, file packet](img/sequence-diagrams/passive-file-packet.png)
 
 ### 6.3. Using Svc::GenericHub
 
@@ -426,7 +426,7 @@ instance `hub` of type `Svc::GenericHub`.
 **Topology 2: Command packets**
 
 <div>
-<img src="img/hub-cmd.png" width=800/>
+<img src="img/top/hub-cmd.png" width=800/>
 </div>
 
 Revise the port number of `hub.portIn` as appropriate for your application.
@@ -434,7 +434,7 @@ Revise the port number of `hub.portIn` as appropriate for your application.
 **Topology 3: Buffers containing packet data**
 
 <div>
-<img src="img/hub-file.png" width=1000/>
+<img src="img/top/hub-file.png" width=1000/>
 </div>
 
 Revise the port number of `hub.buffersIn` as appropriate for your application.
