@@ -24,9 +24,6 @@ When instantiating Deframer, you must provide an implementation
 of [`Svc::DeframingProtocol`](../../FramingProtocol/docs/sdd.md).
 This implementation specifies exactly what is
 in each frame; typically it is a frame header, a data packet, and a hash value.
-By instantiating `Svc::Framer` with a matching implementation of
-`Svc::FramingProtocol`, you will get matching framing (for downlink)
-and deframing (for uplink).
 
 On receiving a buffer _FB_ containing framed data, `Deframer` 
 (1) copies the data from _FB_ into a circular buffer _CB_ owned by `Deframer` and (2)
@@ -44,7 +41,7 @@ Deframer supports two configurations for streaming data:
    In this configuration, `Deframer` polls the driver for buffers
    on its `schedIn` cycle.
    No buffer allocation occurs when polling.
-   _FB_ is a 1024-byte buffer owned by `Deframer`.
+   _FB_ is a buffer owned by `Deframer`.
 
 2. **Push:** This configuration works with an active byte stream driver.
    In this configuration the driver invokes a guarded port of `Deframer` to
@@ -56,14 +53,22 @@ Deframer supports two configurations for streaming data:
 
 ## 2. Assumptions
 
-1. If you use `Deframer` together with `Svc::Framer`, then the deframing
-   protocol used with `Deframer` (a)
-   must match the framing protocol used with `Framer` and (b) must match
-   the protocol used by the ground data system.
+1. For any deployment _D_ containing an instance _I_ of `Deframer`, the
+   deframing protocol used with _I_ matches the uplink protocol of
+   any ground system connected to _D_.
 
-1. In any topology that uses an instance _D_ of `Deframer`, you must connect
-   the poll interface of _D_ or the push interface of _D_, but not both.
-   _TBD: Is this restriction necessary? The ports are guarded._
+1. In any topology _T_, for any instance _I_ of `Deframer` in _T_,
+   exactly one of the poll interface of _I_ or the push interface of _I_
+   is connected.
+
+1. Each frame received by `Deframer` contains an F Prime command packet
+   or file packet _P_.
+   The first _n_ bytes of the packet hold the packet descriptor value
+   `Fw::ComPacket::FW_PACKET_COMMAND` (for a command packet) or
+   `Fw::ComPacket::FW_PACKET_FILE` (for a file packet),
+   serialized as an unsigned value in big-endian byte order.
+   The number of bytes _n_ matches the size of the type defined by the
+   C preprocessor symbol `FwPacketDescriptorType` in the F Prime FSW.
 
 ## 3. Requirements
 
@@ -81,7 +86,9 @@ SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the follo
 SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
 SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
 
-### 3.1. Component Diagram
+## 4. Design
+
+### 4.1. Component Diagram
 
 The diagram below shows the `Deframer` component.
 
@@ -89,16 +96,16 @@ The diagram below shows the `Deframer` component.
 <img src="img/Deframer.png" width=700/>
 </div>
 
-### 3.2. Ports
+### 4.2. Ports
 
 `Deframer` has the following ports:
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving frame buffers FB pushed from the byte stream driver. After using a buffer FB received on this port, Deframer deallocates it by invoking framedDeallocate. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
+| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving frame buffers FB pushed from the byte stream driver. After using a buffer FB received on this port, Deframer deallocates it by invoking framedDeallocate. _TODO: Make this port sync, and assert on setup that exactly one of framedIn and framedPoll is connected._ |
 | `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on framedIn. |
-| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port, driven by a rate group. _TBD: Why is this port guarded? By assumption framedIn and framedPoll should never both be connected._ |
-| `output` | `framedPoll` | `Drv.ByteStreamPoll` | Port that polls for data from the byte stream driver. Deframer invokes this port on its schedIn cycle, if it is connected. No allocation or occurs when invoking this port. The data transfer uses a 1024-byte pre-allocated frame buffer owned by Deframer. |
+| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port, driven by a rate group. _TODO: Make this port sync, and assert on setup that exactly one of framedIn and framedPoll is connected._ |
+| `output` | `framedPoll` | `Drv.ByteStreamPoll` | Port that polls for data from the byte stream driver. Deframer invokes this port on its schedIn cycle, if it is connected. No allocation or occurs when invoking this port. The data transfer uses a pre-allocated frame buffer owned by Deframer. |
 | `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects from a buffer manager. When Deframer invokes this port, it receives a packet buffer PB and takes ownership of it. It uses PB internally for deframing. Then one of two things happens:  1. PB contains a file packet, which Deframer sends on bufferOut. In this case ownership of PB passes to the receiver.  2. PB does not contain a file packet, or bufferOut is unconnected. In this case Deframer deallocates PB on bufferDeallocate. |
 | `output` | `bufferOut` | `Fw.BufferSend` | Port for sending file packets (case 1 above). The file packets are wrapped in Fw::Buffer objects allocated with bufferAllocate. Ownership of the Fw::Buffer passes to the receiver, which is responsible for the deallocation. |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating temporary buffers allocated with bufferAllocate (case 2 above). Deallocation occurs here when there is nothing to send on bufferOut. |
@@ -106,7 +113,7 @@ The diagram below shows the `Deframer` component.
 | `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
 <a name="derived-classes"></a>
-### 3.3. Derived Classes
+### 4.3. Derived Classes
 
 `Deframer` is derived from `DeframerComponentBase` as usual.
 It is also derived (via C++ multiple inheritance) from 
@@ -121,7 +128,7 @@ Here is a class diagram for `Deframer`:
 
 ![classdiagram](./img/class_diagram_deframer.png)
 
-### 3.4. State
+### 4.4. State
 
 `Deframer` maintains the following state:
 
@@ -130,11 +137,27 @@ Here is a class diagram for `Deframer`:
 
 1. `m_in_ring`: An instance of `Types::CircularBuffer` for storing data to be deframed.
 
-1. `m_ring_buffer`: The storage backing the circular buffer: an array of 1024 `U8` values.
+1. `m_ring_buffer`: The storage backing the circular buffer: an array of `RING_BUFFER_SIZE`
+`U8` values.
+_Implementation TODO: The ring buffer is currently hard-coded to 1024 bytes._
 
-1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `U8` values.
+1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `POLL_BUFFER_SIZE`
+values.
+_Implementation TODO: The poll buffer is currently hard-coded to 1024 bytes._
 
-### 3.5. Setup
+### Header File Configuration
+
+The `Deframer` header file provides the following configurable constants:
+_Implementation TODO: The implementation currently does not provide these
+configuration constants._
+
+1. `Svc::Deframer::RING_BUFFER_SIZE`: The size of the circular buffer.
+The capacity of the circular buffer must be large enough to hold a
+complete frame.
+
+1. `Svc::Deframer::POLL_BUFFER_SIZE`: The size of the buffer used for polling data.
+
+### 4.5. Runtime Setup
 
 To set up an instance of `Deframer`, you do the following:
 
@@ -154,9 +177,9 @@ The `setup` method does the following:
 For an example of setting up a `Deframer` instance, see the
 `uplink` instance in [`Ref/Top/instances.fpp`](../../../Ref/Top/instances.fpp).
 
-### 3.6. Port Handlers
+### 4.6. Port Handlers
 
-#### 3.6.1. framedIn
+#### 4.6.1. framedIn
 
 The `framedIn` port handler receives an `Fw::Buffer` _FB_ and a receive status _S_.
 It does the following:
@@ -166,15 +189,11 @@ It does the following:
 
 2. Deallocate _FB_ by invoking `framedDeallocate`.
 
-_TBD: If we are enforcing the restriction on use, should the `framedIn` handler assert that 
-framedPoll is not connected?_
-
-#### 3.6.2. schedIn
+#### 4.6.2. schedIn
 
 The `schedIn` port handler does the following:
 
 1. Construct an `Fw::Buffer` _FB_ that wraps `m_poll_buffer`.
-   _TBD: FB could be a component member, or it could move into the conditional._
 
 1. If `framedPoll` is connected, then 
 
@@ -183,10 +202,7 @@ The `schedIn` port handler does the following:
    1. If new data is available, then call 
        <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
-_TBD: If we are enforcing the restriction on use, should t the `schedIn` handler
-assert that `framedIn` is not connected?_
-
-#### 3.6.3. cmdResponseIn
+#### 4.6.3. cmdResponseIn
 
 The `cmdResponseIn` handler does nothing.
 It exists to provide the necessary symmetry in the topology
@@ -194,15 +210,15 @@ It exists to provide the necessary symmetry in the topology
 accept a matching response).
 
 <a name="dpi-impl"></a>
-### 3.7. Implementation of Svc::DeframingProtocolInterface
+### 4.7. Implementation of Svc::DeframingProtocolInterface
 
 <a name="allocate"></a>
-#### 3.7.1. allocate
+#### 4.7.1. allocate
 
 The implementation of `allocate` invokes `bufferAllocate`.
 
 <a name="route"></a>
-#### 3.7.2. route
+#### 4.7.2. route
 
 The implementation of `route` takes a reference to an
 `Fw::Buffer` _PB_ (a packet buffer) and does the following:
@@ -233,10 +249,10 @@ The implementation of `route` takes a reference to an
 1. If `deallocate = true`, then invoke `bufferDeallocate`
    to deallocate _PB_.
 
-### 3.8. Helper Functions
+### 4.8. Helper Functions
 
 <a name="processBuffer"></a>
-#### 3.8.1. processBuffer
+#### 4.8.1. processBuffer
 
 `processBuffer` accepts a reference to an `Fw::Buffer` _FB_
 (a frame buffer).
@@ -268,11 +284,8 @@ It does the following:
    1. Call <a href="#processRing">`processRing`</a>
       to process the data stored in `m_in_ring`.
 
-_TBD: The assertion at the end of the loop doesn't look right.
-I don't see how the condition can ever fail._
-
 <a name="processRing"></a>
-#### 3.8.2. processRing
+#### 4.8.2. processRing
 
 In a bounded loop, while there is data remaining in `m_in_ring`, do:
 
@@ -294,14 +307,14 @@ In a bounded loop, while there is data remaining in `m_in_ring`, do:
    Rotate `m_in_ring` by one byte, to skip byte by byte over
    bad data until we find a valid frame.
 
-## 4. Ground Interface
+## 5. Ground Interface
 
 None.
 
-## 5. Example Uses
+## 6. Example Uses
 
 <a name="top-diagrams"></a>
-### 5.1. Topology Diagrams
+### 6.1. Topology Diagrams
 
 The following topology diagrams show how to connect `Svc::Deframer`
 to a byte stream driver, a command dispatcher, and a file uplink component.
@@ -362,9 +375,9 @@ assign these numbers.
 <img src="img/top-file.png" width=1000/>
 </div>
 
-### 5.2. Sequence Diagrams
+### 6.2. Sequence Diagrams
 
-#### 5.2.1. Active Byte Stream Driver
+#### 6.2.1. Active Byte Stream Driver
 
 **Sending a command packet:**
 The following sequence diagram shows what happens when `activeComm`
@@ -382,7 +395,7 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
 ![Active byte stream driver, file packet](img/active-file-packet.png)
 
-#### 5.2.2. Passive Byte Stream Driver
+#### 6.2.2. Passive Byte Stream Driver
 
 **Sending a command packet:** The following sequence diagram shows what
 happens when `passiveComm` sends data to `deframer`, and 
@@ -396,7 +409,7 @@ happens when `passiveComm` sends data to `deframer`, and
 
 ![Passive byte stream driver, file packet](img/passive-file-packet.png)
 
-### 5.3. Using Svc::GenericHub
+### 6.3. Using Svc::GenericHub
 
 You can use `Deframer` with an instance of
 [`Svc::GenericHub`](../../GenericHub/docs/sdd.md) to send deframed
@@ -431,7 +444,7 @@ the connection to the other hub and deallocates the buffer.
 If you don't need to transmit file packets across the hub, then you can
 omit the `hub` connections shown in this topology.
 
-## 6. Change Log
+## 7. Change Log
 
 | Date | Description |
 |---|---|

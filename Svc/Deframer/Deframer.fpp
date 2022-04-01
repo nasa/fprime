@@ -11,8 +11,8 @@ module Svc {
     @ Port for receiving frame buffers FB pushed from the byte stream driver.
     @ After using a buffer FB received on this port, Deframer deallocates it
     @ by invoking framedDeallocate.
-    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
-    @ should never both be connected._
+    @ _TODO: Make this port sync, and assert on setup that exactly one of
+    @ framedIn and framedPoll is connected._
     guarded input port framedIn: Drv.ByteStreamRecv
 
     @ Port for deallocating buffers received on framedIn.
@@ -23,14 +23,14 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Schedule in port, driven by a rate group.
-    @ _TBD: Why is this port guarded? By assumption framedIn and framedPoll
-    @ should never both be connected._
+    @ _TODO: Make this port sync, and assert on setup that exactly one of
+    @ framedIn and framedPoll is connected._
     guarded input port schedIn: Svc.Sched
 
     @ Port that polls for data from the byte stream driver.
     @ Deframer invokes this port on its schedIn cycle, if it is connected.
     @ No allocation or occurs when invoking this port.
-    @ The data transfer uses a 1024-byte pre-allocated frame buffer
+    @ The data transfer uses a pre-allocated frame buffer
     @ owned by Deframer.
     output port framedPoll: Drv.ByteStreamPoll
 

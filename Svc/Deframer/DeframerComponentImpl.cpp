@@ -63,9 +63,9 @@ void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
 }
 
 void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
-    Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
+        Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
         Drv::PollStatus status = framedPoll_out(0, buffer);
         if (status == Drv::PollStatus::POLL_OK) {
             processBuffer(buffer);
@@ -83,6 +83,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
     Fw::SerializeBufferBase& serial = data.getSerializeRepr();
     serial.setBuffLen(data.getSize());
     // Serialized packet type is explicitly an I32 (4 bytes)
+    // TODO: Deserialize FwPacketDescriptorType instead of I32
     Fw::SerializeStatus status = serial.deserialize(packet_type);
     if (status != Fw::FW_SERIALIZE_OK) {
         // In the case that the deserialize was unsuccessful we should deallocate the request
@@ -169,6 +170,8 @@ void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
                                         ? m_in_ring.get_free_size()
                                         : static_cast<NATIVE_UINT_TYPE>(remaining);
         m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
+        // TODO: Assert here that serialization succeeded
+        // Then we can remove the +1 in the loop test and the assertion at the end
         buffer_offset = buffer_offset + ser_size;
         processRing();
     }

@@ -93,7 +93,9 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
     );
     DeframingProtocol* m_protocol;
     Types::CircularBuffer m_in_ring;
+    // TODO: Make this size configurable as RING_BUFFER_SIZE
     U8 m_ring_buffer[1024];
+    // TODO: Make this size configurable as POLL_BUFFER_SIZE
     U8 m_poll_buffer[1024];
 };
 
