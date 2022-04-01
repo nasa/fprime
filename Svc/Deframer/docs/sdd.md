@@ -81,7 +81,7 @@ SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface for pushing th
 SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface for polling for byte buffers to be deframed. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
 SVC-DEFRAMER-006 | If the polling interface is connected, then `Svc::Deframer` shall poll for byte buffers on its `schedIn` port. | This requirement allows the system scheduler to drive the periodic polling. | Test
 SVC-DEFRAMER-007 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their packet data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
-SVC-DEFRAMER-008 | `Svc::Deframer` shall interpret the first four bytes of the packet data as a 32-bit signed integer holding the packet type. | 32 bits should be enough to hold any packet type. Fixing the size at 32 bits keeps the implementation simple. | Test
+SVC-DEFRAMER-008 | `Svc::Deframer` shall interpret the initial bytes of the packet data as a value of type `FwPacketDescriptorType`. | `FwPacketDescriptorType` is the type of an F Prime packet descriptor. The size of the type is configurable in the F Prime framework. | Test
 SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
 SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
 SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
@@ -225,21 +225,20 @@ The implementation of `route` takes a reference to an
 
 1. Set `deallocate = true`.
 
-1. Deserialize the first four bytes of _PB_ as an `I32` packet type.
+1. Let _n_ = `sizeof(FwPacketDescriptorType)`.
+Deserialize the first _n_ bytes of _PB_ as value of type `FwPacketDescriptorType`.
 
-1. If the deserialization succeeds, then switch on the packet type _PB_.
+1. If the deserialization succeeds, then switch on the packet type _T_.
 
-   1. If _PB_ = `FW_PACKET_COMMAND`, then send the contents
+   1. If _T_ = `FW_PACKET_COMMAND`, then send the contents
       of _PB_ as a Com buffer on `comOut`.
-      _TBD: What if FwPacketDescriptorType is not a 32-bit value?
-      Then it seems like this won't work. Do we need to translate the incoming
-      value to FwPacketDescriptorType?_
 
-   1. Otherwise if _PB_ = `FW_PACKET_FILE` and `bufferOut` is connected,
+   1. Otherwise if _T_ = `FW_PACKET_FILE` and `bufferOut` is connected,
       then
 
       1. Shift the pointer of _PB_ four bytes forward and
          reduce the size of _PB_ by four to skip the packet type.
+         This step is necessary to accommodate the `FileUplink` component.
 
       1. Send _B_ on `bufferOut`.
 
