@@ -12,6 +12,7 @@ It interprets the concatenated data of the buffers
 as a sequence of uplink frames.
 The uplink frames need not be aligned on the
 buffer boundaries, and each frame may span one or more buffers.
+`Deframer` extracts the frames from the sequence of buffers.
 For each complete frame _F_ received, `Deframer`
 validates _F_ and extracts a data packet from _F_.
 It sends the data packet to another component in the service layer, e.g., 
