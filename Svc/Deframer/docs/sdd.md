@@ -1,4 +1,4 @@
-\page SvcDeframer Deframer Component
+\page SvcDeframerComponent Svc::Deframer Component
 # Svc::Deframer Deframer Component
 
 Deframer takes a stream of bytes from ground, checks the header and footer, and then extracts message data from the stream. The extracted data usually is passed to the service layer (typically CmdDisp, FileUplink, or a GenericHub). The Deframer uses a `DeframingProtocol` for the same abstraction that the Framer uses `FramingProtocol`. Deframer is backed by a circular buffer such that incomplete messages are reassembled. It also can be hooked up in two ways: 
