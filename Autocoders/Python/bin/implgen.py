@@ -18,19 +18,14 @@ import time
 from optparse import OptionParser
 
 from fprime_ac.generators.writers import ImplCppWriter, ImplHWriter
-
 # Meta-model for Component only generation
 from fprime_ac.models import CompFactory
-
 # Parsers to read the XML
-from fprime_ac.parsers import (
-    XmlComponentParser,
-    XmlParser,
-    XmlPortsParser,
-    XmlSerializeParser,
-)
+from fprime_ac.parsers import (XmlComponentParser, XmlParser, XmlPortsParser,
+                               XmlSerializeParser)
 from fprime_ac.utils import ConfigManager, Logger
-from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
+from fprime_ac.utils.buildroot import (get_build_roots, search_for_file,
+                                       set_build_roots)
 from utils.pathmaker import setup_fprime_autocoder_path
 
 setup_fprime_autocoder_path()

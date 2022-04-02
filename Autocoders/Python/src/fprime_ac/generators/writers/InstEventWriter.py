@@ -21,10 +21,8 @@ import sys
 from getpass import getuser
 
 from fprime_ac.generators import formatters
-
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.writers import AbstractDictWriter
-
 #
 # Python extension modules and custom interfaces
 #
@@ -36,8 +34,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.events import EventHeader
-    from fprime_ac.generators.templates.events import EventBody
+    from fprime_ac.generators.templates.events import EventBody, EventHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

@@ -17,16 +17,14 @@ import os
 import sys
 from optparse import OptionParser
 
-from lxml import etree
-
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
-
 # Parsers to read the XML
 from fprime_ac.parsers import XmlParser, XmlTopologyParser
 from fprime_ac.utils import ConfigManager, TopDictGenerator
 from fprime_ac.utils.buildroot import get_build_roots, set_build_roots
 from fprime_ac.utils.version import get_fprime_version, get_project_version
+from lxml import etree
 
 # Generators to produce the code
 try:

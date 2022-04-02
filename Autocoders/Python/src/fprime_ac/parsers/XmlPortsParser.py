@@ -20,10 +20,9 @@ import logging
 import os
 import sys
 
-from lxml import etree
-
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeRngXmlValidationException
+from lxml import etree
 
 #
 # Python extension modules and custom interfaces

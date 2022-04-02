@@ -18,11 +18,9 @@ import logging
 import sys
 
 from fprime_ac.generators import formatters
-
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.models import ModelParser
-
 #
 # Python extension modules and custom interfaces
 #
@@ -34,8 +32,8 @@ from fprime_ac.utils import ConfigManager
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.topology import includes1TopologyCpp
-    from fprime_ac.generators.templates.topology import publicInstanceTopologyCpp
+    from fprime_ac.generators.templates.topology import (
+        includes1TopologyCpp, publicInstanceTopologyCpp)
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

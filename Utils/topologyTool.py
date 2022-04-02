@@ -1,7 +1,8 @@
-from optparse import OptionParser
 import os.path
-from lxml import etree
 import pickle
+from optparse import OptionParser
+
+from lxml import etree
 
 """
 This script is meant to serve as "sanity" checker for the MagicDraw generated topology XML files

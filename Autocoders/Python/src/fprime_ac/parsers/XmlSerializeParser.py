@@ -21,15 +21,12 @@ import logging
 import os
 import sys
 
-from lxml import etree
-
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import (
-    BuildRootCollisionException,
-    BuildRootMissingException,
-    locate_build_root,
-)
+from fprime_ac.utils.buildroot import (BuildRootCollisionException,
+                                       BuildRootMissingException,
+                                       locate_build_root)
 from fprime_ac.utils.exceptions import FprimeXmlException
+from lxml import etree
 
 #
 # Python extension modules and custom interfaces

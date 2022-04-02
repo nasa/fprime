@@ -17,24 +17,16 @@ import os
 import sys
 from optparse import OptionParser
 
-from fprime_ac.generators.writers import (
-    InstChannelWriter,
-    InstCommandWriter,
-    InstEventWriter,
-)
-
+from fprime_ac.generators.writers import (InstChannelWriter, InstCommandWriter,
+                                          InstEventWriter)
 # Meta-model for Component only generation
 from fprime_ac.models import CompFactory, ModelParser, TopoFactory
-
 # Parsers to read the XML
-from fprime_ac.parsers import (
-    XmlParser,
-    XmlPortsParser,
-    XmlSerializeParser,
-    XmlTopologyParser,
-)
+from fprime_ac.parsers import (XmlParser, XmlPortsParser, XmlSerializeParser,
+                               XmlTopologyParser)
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
+from fprime_ac.utils.buildroot import (get_build_roots, search_for_file,
+                                       set_build_roots)
 
 # Generators to produce the code
 try:

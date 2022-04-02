@@ -21,11 +21,9 @@ import sys
 from getpass import getuser
 
 from fprime_ac.generators import formatters
-
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.writers import AbstractDictWriter
 from fprime_ac.models import Command, Parameter
-
 #
 # Python extension modules and custom interfaces
 #
@@ -37,8 +35,8 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.commands import CommandHeader
-    from fprime_ac.generators.templates.commands import CommandBody
+    from fprime_ac.generators.templates.commands import (CommandBody,
+                                                         CommandHeader)
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

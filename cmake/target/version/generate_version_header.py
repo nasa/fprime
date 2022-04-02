@@ -17,15 +17,12 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 """
-import sys
-import os
 import argparse
+import os
+import sys
 
-from fprime_ac.utils.version import (
-    get_fprime_version,
-    get_project_version,
-    FALLBACK_VERSION,
-)
+from fprime_ac.utils.version import (FALLBACK_VERSION, get_fprime_version,
+                                     get_project_version)
 
 
 def create_version_file(fid, framework_version, project_version):

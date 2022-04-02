@@ -22,11 +22,9 @@ import sys
 from fprime_ac.models import Component, Port, Topology
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import (
-    BuildRootCollisionException,
-    BuildRootMissingException,
-    locate_build_root,
-)
+from fprime_ac.utils.buildroot import (BuildRootCollisionException,
+                                       BuildRootMissingException,
+                                       locate_build_root)
 
 # from builtins import True
 # from Canvas import Window

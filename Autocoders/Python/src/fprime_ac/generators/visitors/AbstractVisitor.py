@@ -17,10 +17,8 @@ import logging
 import os
 import sys
 
-from fprime_ac.utils.buildroot import (
-    BuildRootMissingException,
-    build_root_relative_path,
-)
+from fprime_ac.utils.buildroot import (BuildRootMissingException,
+                                       build_root_relative_path)
 
 #
 # Python extension modules and custom interfaces

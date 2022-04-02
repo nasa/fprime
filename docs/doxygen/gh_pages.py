@@ -3,14 +3,15 @@
 Script to purge a directory of files starting with _ as this does not host well with GH pages and
 thus these files need to be rewritten. This file is designed for speed in these replacements.
 """
-from __future__ import print_function, division # To work with any system python
+from __future__ import (division,  # To work with any system python
+                        print_function)
 
 import os
 import re
 import shutil
 import sys
-
 from multiprocessing import Pool
+
 
 def converter(input_data):
     """ Conversion function for thread pooling """

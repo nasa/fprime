@@ -18,11 +18,9 @@ import logging
 import sys
 
 from fprime_ac.generators import formatters
-
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
 from fprime_ac.models import ModelParser
-
 #
 # Python extension modules and custom interfaces
 #

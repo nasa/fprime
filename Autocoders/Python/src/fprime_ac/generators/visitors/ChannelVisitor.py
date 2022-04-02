@@ -22,7 +22,6 @@ from getpass import getuser
 
 from fprime_ac.generators import formatters
 from fprime_ac.generators.visitors import AbstractVisitor
-
 # from fprime_ac.utils import DiffAndRename
 #
 # Python extension modules and custom interfaces
@@ -35,8 +34,8 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.channels import ChannelHeader
-    from fprime_ac.generators.templates.channels import ChannelBody
+    from fprime_ac.generators.templates.channels import (ChannelBody,
+                                                         ChannelHeader)
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
