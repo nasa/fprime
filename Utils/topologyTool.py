@@ -84,8 +84,8 @@ def tag_object_to_string(tag_obj):
         if type(internal_item) == str:
             out += internal_item
         else:
-            out += "\n    " + tag_object_to_string(internal_item).replace(
-                "\n", "\n    "
+            out += "\n\t" + tag_object_to_string(internal_item).replace(
+                "\n", "\n\t"
             )
             final_line_break = "\n"
 
@@ -216,7 +216,7 @@ def command_index_print(xml_list):
         # Print table
         print(xml_path + "\n")
         header_list = [
-            "           Component Name          ",
+            "\t\tComponent Name\t\t",
             "Command Index",
             "Command Registration Index",
         ]
