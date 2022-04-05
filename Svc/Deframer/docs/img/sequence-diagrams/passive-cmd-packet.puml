@@ -11,21 +11,25 @@ activate rateGroup
 rateGroup -> deframer: Send schedule tick [schedIn]
 
 deframer -> passiveComm: Poll for data [framedPoll]
+passiveComm --> deframer: Return status
 
-alt Data available
+deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
+buffMgr --> deframer: Return PB
 
-  deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
-  deframer -> deframer: Deframe data into PB
-  deframer -> deframer: Copy PB into a command packet C
-  deframer ->> cmdDisp: Send C [comOut]
-  deframer -> buffMgr: Deallocate PB [bufferDeallocate]
+deframer -> deframer: Deframe data into PB
+deframer -> deframer: Copy PB into a command packet C
+deframer ->> cmdDisp: Send C [comOut]
+
+deframer -> buffMgr: Deallocate PB [bufferDeallocate]
+buffMgr --> deframer
+
+deframer --> rateGroup
 
 deactivate rateGroup
 
-  activate cmdDisp
-  cmdDisp -> deframer: Send cmd response [cmdResponseIn]
-  deactivate cmdDisp
-
-end
+activate cmdDisp
+cmdDisp -> deframer: Send cmd response [cmdResponseIn]
+deframer --> cmdDisp
+deactivate cmdDisp
 
 @enduml

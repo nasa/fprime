@@ -11,19 +11,21 @@ activate rateGroup
 rateGroup -> deframer: Send schedule tick [schedIn]
 
 deframer -> passiveComm: Poll for data [framedPoll]
+passiveComm --> deframer: Return status
 
-alt Data available
+deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
+buffMgr --> deframer: Return PB
 
-  deframer -> buffMgr: Allocate packet buffer PB [bufferAllocate]
-  deframer -> deframer: Deframe data into PB
-  deframer ->> fileUplink: Send PB [bufferOut]
+deframer -> deframer: Deframe data into PB
+deframer ->> fileUplink: Send PB [bufferOut]
+
+deframer --> rateGroup
 
 deactivate rateGroup
 
-  activate fileUplink
-  fileUplink -> buffMgr: Deallocate PB
-  deactivate fileUplink
-
-end
+activate fileUplink
+fileUplink -> buffMgr: Deallocate PB
+buffMgr --> fileUplink
+deactivate fileUplink
 
 @enduml
