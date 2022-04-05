@@ -15,7 +15,7 @@ buffer boundaries, and each frame may span one or more buffers.
 `Deframer` extracts the frames from the sequence of buffers.
 For each complete frame _F_ received, `Deframer`
 validates _F_ and extracts a data packet from _F_.
-It sends the data packet to another component in the service layer, e.g., 
+It sends the data packet to another component in the service layer, e.g.,
 an instance of [`Svc::CommandDispatcher`](../../CmdDispatcher/docs/sdd.md),
 [`Svc::FileUplink`](../../FileUplink/docs/sdd.md),
 or [`Svc::GenericHub`](../../GenericHub/docs/sdd.md).
@@ -25,7 +25,7 @@ of [`Svc::DeframingProtocol`](../../FramingProtocol/docs/sdd.md).
 This implementation specifies exactly what is
 in each frame; typically it is a frame header, a data packet, and a hash value.
 
-On receiving a buffer _FB_ containing framed data, `Deframer` 
+On receiving a buffer _FB_ containing framed data, `Deframer`
 (1) copies the data from _FB_ into a circular buffer _CB_ owned by `Deframer` and (2)
 calls the `deframe` method of the `Svc::DeframingProtocol` implementation,
 passing a reference to _CB_ as input.
@@ -74,17 +74,17 @@ Deframer supports two configurations for streaming data:
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-DEFRAMER-001 | `Svc::Deframer` shall accept a sequence of byte buffers and interpret their concatenated data as a sequence of uplink frames. | The purpose of the component is to do uplink deframing. | Test
-SVC-DEFRAMER-002 | `Svc::Deframer` shall accept byte buffers containing uplink frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Test
-SVC-DEFRAMER-003 | `Svc::Deframer` shall accept byte buffers containing uplink frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Test
-SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface for pushing the byte buffers to be deframed. | This interface supports applications in which the byte stream driver has its own thread. | Test
-SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface for polling for byte buffers to be deframed. | This interface supports the applications in which that byte stream driver does not have its own thread. | Test
-SVC-DEFRAMER-006 | If the polling interface is connected, then `Svc::Deframer` shall poll for byte buffers on its `schedIn` port. | This requirement allows the system scheduler to drive the periodic polling. | Test
-SVC-DEFRAMER-007 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their packet data. | Using the `Svc::DeframingProtocol` interface provides flexibility and ensures that the deframing protocol matches the framing protocol. | Test
+SVC-DEFRAMER-001 | `Svc::Deframer` shall accept a sequence of byte buffers and interpret their concatenated data as a sequence of uplink frames. | The purpose of the component is to do uplink deframing. | Unit test
+SVC-DEFRAMER-002 | `Svc::Deframer` shall accept byte buffers containing uplink frames that are not aligned on a buffer boundary. | For flexibility, we do not require that the frames be aligned on a buffer boundary. | Unit test
+SVC-DEFRAMER-003 | `Svc::Deframer` shall accept byte buffers containing uplink frames that span one or more buffers. | For flexibility, we do not require each frame to fit in a single buffer. | Unit test
+SVC-DEFRAMER-004 | `Svc::Deframer` shall provide a port interface that a threaded driver can use to push byte buffers to be deframed. | This interface supports applications in which the byte stream driver has its own thread. | Unit test
+SVC-DEFRAMER-005 | `Svc::Deframer` shall provide a port interface that Deframer can use to poll for byte buffers to be deframed. | This interface supports applications in which byte stream driver does not have its own thread. | Unit test
+SVC-DEFRAMER-006 | If the polling interface is connected, then `Svc::Deframer` shall poll for byte buffers on its `schedIn` port. | This requirement allows the system scheduler to drive the periodic polling. | Unit test
+SVC-DEFRAMER-007 | `Svc::Deframer` shall use an instance of `Svc::DeframingProtocol`, supplied when the component is instantiated, to validate the frames and extract their packet data. | Using the `Svc::DeframingProtocol` interface allows the same Deframer component to operate with different protocols. | Unit test
 SVC-DEFRAMER-008 | `Svc::Deframer` shall interpret the initial bytes of the packet data as a value of type `FwPacketDescriptorType`. | `FwPacketDescriptorType` is the type of an F Prime packet descriptor. The size of the type is configurable in the F Prime framework. | Test
-SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Test
-SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Test
-SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Test
+SVC-DEFRAMER-009 | `Svc::Deframer` shall extract and send packets with the following types: `Fw::ComPacket::FW_PACKET_COMMAND`, `Fw::ComPacket::FW_PACKET_FILE`. | These are the packet types used for uplink. | Unit test
+SVC-DEFRAMER-010 | `Svc::Deframer` shall send command packets and file packets on separate ports. | Command packets and file packets are typically handled by different components. | Unit test
+SVC-DEFRAMER-011 | `Svc::Deframer` shall operate nominally when its port for sending file packets is unconnected, even if it receives a frame containing a file packet. | Some applications do not use file uplink. Sending a file uplink packet to `Deframer` should not crash the application because of an unconnected port. | Unit test
 
 ## 4. Design
 
@@ -109,14 +109,14 @@ The diagram below shows the `Deframer` component.
 | `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects from a buffer manager. When Deframer invokes this port, it receives a packet buffer PB and takes ownership of it. It uses PB internally for deframing. Then one of two things happens:  1. PB contains a file packet, which Deframer sends on bufferOut. In this case ownership of PB passes to the receiver.  2. PB does not contain a file packet, or bufferOut is unconnected. In this case Deframer deallocates PB on bufferDeallocate. |
 | `output` | `bufferOut` | `Fw.BufferSend` | Port for sending file packets (case 1 above). The file packets are wrapped in Fw::Buffer objects allocated with bufferAllocate. Ownership of the Fw::Buffer passes to the receiver, which is responsible for the deallocation. |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating temporary buffers allocated with bufferAllocate (case 2 above). Deallocation occurs here when there is nothing to send on bufferOut. |
-| `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers to the command dispatcher. |
-| `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from the command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
+| `output` | `comOut` | `Fw.Com` | Port for sending command packets as Com buffers. |
+| `sync input` | `cmdResponseIn` | `Fw.CmdResponse` | Port for receiving command responses from a command dispatcher. Invoking this port does nothing. The port exists to allow the matching connection in the topology. |
 
 <a name="derived-classes"></a>
 ### 4.3. Derived Classes
 
 `Deframer` is derived from `DeframerComponentBase` as usual.
-It is also derived (via C++ multiple inheritance) from 
+It is also derived (via C++ multiple inheritance) from
 [`Svc::DeframingProtocolInterface`](../../FramingProtocol/docs/sdd.md).
 The multiple inheritance makes the `Deframer` instance into the
 instance of `Svc::DeframingProtocolInterface` that is required
@@ -164,7 +164,7 @@ To set up an instance of `Deframer`, you do the following:
 1. Call the constructor and the `init` method in the usual way
 for an F Prime passive component.
 
-1. Call the `setup` method and passing in an instance _P_ of `Svc::DeframingProtocol`.
+1. Call the `setup` method, passing in an instance _P_ of `Svc::DeframingProtocol`.
 The `setup` method does the following:
 
    1. Store a pointer to _P_ in `m_protocol`.
@@ -195,11 +195,11 @@ The `schedIn` port handler does the following:
 
 1. Construct an `Fw::Buffer` _FB_ that wraps `m_poll_buffer`.
 
-1. If `framedPoll` is connected, then 
+1. If `framedPoll` is connected, then
 
    1. Invoke `framedPollOut`, passing in _FB_, to poll for new data.
 
-   1. If new data is available, then call 
+   1. If new data is available, then call
        <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
 #### 4.6.3. cmdResponseIn
@@ -237,8 +237,8 @@ Deserialize the first _N_ bytes of _PB_ as a value of type
    1. Otherwise if _T_ = `FW_PACKET_FILE` and `bufferOut` is connected,
       then
 
-      1. Shift the pointer of _PB_ four bytes forward and
-         reduce the size of _PB_ by four to skip the packet type.
+      1. Shift the pointer of _PB_ _N_ bytes forward and
+         reduce the size of _PB_ by _N_ to skip the packet type.
          This step is necessary to accommodate the `FileUplink` component.
 
       1. Send _B_ on `bufferOut`.
@@ -271,11 +271,11 @@ It does the following:
       circular buffer `m_in_ring`.
 
       1. Let _F_ be the number of free bytes in `m_in_ring`.
-      
+
       1. If _R_ < _F_, then _C_ = _R_.
-      
+
       1. Otherwise _C_ = _F_.
-      
+
    1. Copy _C_ bytes from _FB_ starting at `buffer_offset`
       into `m_in_ring`.
 
@@ -320,7 +320,7 @@ The following topology diagrams show how to connect `Svc::Deframer`
 to a byte stream driver, a command dispatcher, and a file uplink component.
 The diagrams use the following instances:
 
-* `activeComm`: An active instance of 
+* `activeComm`: An active instance of
 [`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
 [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
@@ -332,9 +332,8 @@ The diagrams use the following instances:
 
 * `fileUplink`: An instance of [`Svc::FileUplink`](../../FileUplink/docs/sdd.md).
 
-* `passiveComm`: A passive instance of 
-[`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example,
-_TBD_.
+* `passiveComm`: A passive instance of
+[`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md).
 
 * `rateGroup`: An instance of [`Svc::ActiveRateGroup`](../../ActiveRateGroup/docs/sdd.md).
 
@@ -364,7 +363,7 @@ appropriate for your application.
 <img src="img/top/cmd.png" width=800/>
 </div>
 
-Revise the port numbers of `cmdDisp.seqCmdBuff` and 
+Revise the port numbers of `cmdDisp.seqCmdBuff` and
 `cmdDisp.compCmdStat` as appropriate for your application.
 If you model your topology in FPP, then FPP can automatically
 assign these numbers.
@@ -383,9 +382,10 @@ assign these numbers.
 The following sequence diagram shows what happens when `activeComm`
 sends data to `deframer`, and `deframer`
 decodes the data into a command packet.
-Vertical bars represent threads.
-Solid arrows represent synchronous port invocations, and open arrows
-represent asynchronous port invocations.
+Open vertical rectangles represent threads.
+Vertical dashed lines represent component code.
+Solid horizontal arrows represent synchronous port invocations, and open
+horizontal arrows represent asynchronous port invocations.
 
 ![Active byte stream driver, command packet](img/sequence-diagrams/active-cmd-packet.png)
 
@@ -398,13 +398,13 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 #### 6.2.2. Passive Byte Stream Driver
 
 **Sending a command packet:** The following sequence diagram shows what
-happens when `passiveComm` sends data to `deframer`, and 
+happens when `passiveComm` sends data to `deframer`, and
 `deframer` decodes the data into a command packet.
 
 ![Passive byte stream driver, command packet](img/sequence-diagrams/passive-cmd-packet.png)
 
 **Sending a file packet:** The following sequence diagram shows what
-happens when `passiveComm` sends data to `deframer`, and 
+happens when `passiveComm` sends data to `deframer`, and
 `Deframer` decodes the data into a file packet.
 
 ![Passive byte stream driver, file packet](img/sequence-diagrams/passive-file-packet.png)

@@ -66,11 +66,10 @@ module Svc {
     # Sending command packets and receiving command responses
     # ----------------------------------------------------------------------
 
-    @ Port for sending command packets as Com buffers to the
-    @ command dispatcher.
+    @ Port for sending command packets as Com buffers.
     output port comOut: Fw.Com
 
-    @ Port for receiving command responses from the command dispatcher.
+    @ Port for receiving command responses from a command dispatcher.
     @ Invoking this port does nothing. The port exists to allow the matching
     @ connection in the topology.
     sync input port cmdResponseIn: Fw.CmdResponse
