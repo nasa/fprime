@@ -104,7 +104,7 @@ Inheritance diagram for Svc::DeframingProtocol:</div>
  <div class="center">
   <img src="class_svc_1_1_deframing_protocol.png" usemap="#Svc::DeframingProtocol_map" alt=""/>
   <map id="Svc::DeframingProtocol_map" name="Svc::DeframingProtocol_map">
-<area href="class_svc_1_1_fprime_deframing.html" alt="Svc::FprimeDeframing" shape="rect" coords="0,56,145,80"/>
+<area href="class_svc_1_1_fprime_deframing.html" title="Implements the F Prime deframing protocol." alt="Svc::FprimeDeframing" shape="rect" coords="0,56,145,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -116,7 +116,8 @@ Public Types</h2></td></tr>
 <a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aaf684feb120fae5ba252f4189dfae7d50">DEFRAMING_INVALID_CHECKSUM</a>, 
 <a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0">DEFRAMING_MORE_NEEDED</a>, 
 <br />
-&#160;&#160;<a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea">DEFRAMING_MAX_STATUS</a>
+&#160;&#160;<a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6d2f2578505eca418bc0d9317698e94a">DEFRAMING_INVALID_FORMAT</a>, 
+<a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea">DEFRAMING_MAX_STATUS</a>
 <br />
  }</td></tr>
 <tr class="memdesc:a764b68d2dd15e389009b9c38a758741a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status of the deframing call.  <a href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741a">More...</a><br /></td></tr>
@@ -128,19 +129,19 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a94f72004ab905dfb1746f256b84ef143"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00a71e5338d4462f3b7900e2a8a6f472"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#a00a71e5338d4462f3b7900e2a8a6f472">DeframingProtocol</a> ()</td></tr>
 <tr class="separator:a00a71e5338d4462f3b7900e2a8a6f472"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac656727b2c6d3b0879ac097639cf9da8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#ac656727b2c6d3b0879ac097639cf9da8">setup</a> (<a class="el" href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a> &amp;interface)</td></tr>
+<tr class="memitem:ac656727b2c6d3b0879ac097639cf9da8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#ac656727b2c6d3b0879ac097639cf9da8">setup</a> (<a class="el" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a> &amp;interface)</td></tr>
 <tr class="separator:ac656727b2c6d3b0879ac097639cf9da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dea66ee21da29ad814e44d1fd497e5e"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741a">DeframingStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#a1dea66ee21da29ad814e44d1fd497e5e">deframe</a> (<a class="el" href="class_types_1_1_circular_buffer.html">Types::CircularBuffer</a> &amp;buffer, U32 &amp;needed)=0</td></tr>
 <tr class="separator:a1dea66ee21da29ad814e44d1fd497e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a421fb063aa32302cf8c09739daa5e52d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#a421fb063aa32302cf8c09739daa5e52d">m_interface</a></td></tr>
+<tr class="memitem:a421fb063aa32302cf8c09739daa5e52d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html#a421fb063aa32302cf8c09739daa5e52d">m_interface</a></td></tr>
 <tr class="separator:a421fb063aa32302cf8c09739daa5e52d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract base class representing a deframing protocol. </p>
-<p>This class represents the basic interface for writing a deframing protocol. This class may be subclassed to provide concrete implementations for the protocol. A <a class="el" href="class_deframing_protocol_interface.html" title="interface supplied to the deframing protocol">DeframingProtocolInterface</a> is be supplied using the <code>setup</code> call. This instance is usually the DeframingComponentImpl.</p>
+<p>This class represents the basic interface for writing a deframing protocol. This class may be subclassed to provide concrete implementations for the protocol. A <a class="el" href="class_svc_1_1_deframing_protocol_interface.html" title="interface supplied to the deframing protocol">DeframingProtocolInterface</a> is be supplied using the <code>setup</code> call. This instance is usually the DeframingComponentImpl.</p>
 <p>Implementations are expected to call <code>m_interface.route</code> to send the deframed data and may call <code>m_interface.allocate</code> to allocate new memory. </p>
 
 <p class="definition">Definition at line <a class="el" href="deframing_protocol_8hpp_source.html#l00033">33</a> of file <a class="el" href="deframing_protocol_8hpp_source.html">DeframingProtocol.hpp</a>.</p>
@@ -167,7 +168,10 @@ Protected Attributes</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0"></a>DEFRAMING_MORE_NEEDED&#160;</td><td class="fielddoc"><p>Successful deframing likely with more data </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea"></a>DEFRAMING_MAX_STATUS&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a764b68d2dd15e389009b9c38a758741aa6d2f2578505eca418bc0d9317698e94a"></a>DEFRAMING_INVALID_FORMAT&#160;</td><td class="fielddoc"><p>Invalid format </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea"></a>DEFRAMING_MAX_STATUS&#160;</td><td class="fielddoc"><p>The number of status enumerations </p>
+</td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="deframing_protocol_8hpp_source.html#l00039">39</a> of file <a class="el" href="deframing_protocol_8hpp_source.html">DeframingProtocol.hpp</a>.</p>
@@ -265,7 +269,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_svc_1_1_fprime_deframing.html#ad8dcef1c303b76087f5acaecb8b193ac">Svc::FprimeDeframing</a>.</p>
+<p>Implemented in <a class="el" href="class_svc_1_1_fprime_deframing.html#a8532c0e88927d5d9f58384f29c75d2f7">Svc::FprimeDeframing</a>.</p>
 
 </div>
 </div>
@@ -278,7 +282,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">void Svc::DeframingProtocol::setup </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a> &amp;&#160;</td>
           <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
@@ -307,7 +311,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a>* Svc::DeframingProtocol::m_interface</td>
+          <td class="memname"><a class="el" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a>* Svc::DeframingProtocol::m_interface</td>
         </tr>
       </table>
   </td>
@@ -317,7 +321,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="deframing_protocol_8hpp_source.html#l00062">62</a> of file <a class="el" href="deframing_protocol_8hpp_source.html">DeframingProtocol.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="deframing_protocol_8hpp_source.html#l00063">63</a> of file <a class="el" href="deframing_protocol_8hpp_source.html">DeframingProtocol.hpp</a>.</p>
 
 </div>
 </div>

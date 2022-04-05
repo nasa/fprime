@@ -65,7 +65,7 @@ var hierarchy =
     [ "Svc::DeframingProtocol", "class_svc_1_1_deframing_protocol.html", [
       [ "Svc::FprimeDeframing", "class_svc_1_1_fprime_deframing.html", null ]
     ] ],
-    [ "DeframingProtocolInterface", "class_deframing_protocol_interface.html", [
+    [ "Svc::DeframingProtocolInterface", "class_svc_1_1_deframing_protocol_interface.html", [
       [ "Svc::DeframerComponentImpl", "class_svc_1_1_deframer_component_impl.html", null ]
     ] ],
     [ "Os::Directory", "class_os_1_1_directory.html", null ],
@@ -93,7 +93,7 @@ var hierarchy =
     [ "Svc::FramingProtocol", "class_svc_1_1_framing_protocol.html", [
       [ "Svc::FprimeFraming", "class_svc_1_1_fprime_framing.html", null ]
     ] ],
-    [ "FramingProtocolInterface", "class_framing_protocol_interface.html", [
+    [ "Svc::FramingProtocolInterface", "class_svc_1_1_framing_protocol_interface.html", [
       [ "Svc::FramerComponentImpl", "class_svc_1_1_framer_component_impl.html", null ]
     ] ],
     [ "GenericHubComponentBase", null, [

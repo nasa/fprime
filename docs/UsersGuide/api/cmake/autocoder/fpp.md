@@ -6,6 +6,12 @@ CMake implementation of an fprime autocoder. Includes the necessary function def
 autocoder API and wraps calls to the FPP tools.
 
 
+## locate_fpp_tools:
+
+Locates the fpp tool suite and sets FPP_FOUND if the right version of the tools is found. It will look first to the
+above install location and then to the system path as a fallback.
+
+
 ## Function `is_supported`:
 
 Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named

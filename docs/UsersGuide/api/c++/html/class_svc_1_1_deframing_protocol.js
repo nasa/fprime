@@ -5,6 +5,7 @@ var class_svc_1_1_deframing_protocol =
       [ "DEFRAMING_INVALID_SIZE", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aab05d307842cc3642f85800617af057ca", null ],
       [ "DEFRAMING_INVALID_CHECKSUM", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aaf684feb120fae5ba252f4189dfae7d50", null ],
       [ "DEFRAMING_MORE_NEEDED", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6962545ca45259369c50fb04ceb387e0", null ],
+      [ "DEFRAMING_INVALID_FORMAT", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa6d2f2578505eca418bc0d9317698e94a", null ],
       [ "DEFRAMING_MAX_STATUS", "class_svc_1_1_deframing_protocol.html#a764b68d2dd15e389009b9c38a758741aa035fb6dbeae5e1001a7d1cad2fb067ea", null ]
     ] ],
     [ "~DeframingProtocol", "class_svc_1_1_deframing_protocol.html#a94f72004ab905dfb1746f256b84ef143", null ],

@@ -101,30 +101,35 @@ $(document).ready(function(){initNavTree('_deframing_protocol_interface_8hpp_sou
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// ======================================================================</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifndef DEFRAMING_PROTOCOLINTERFACE_HPP</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define DEFRAMING_PROTOCOLINTERFACE_HPP</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifndef SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="buffer_8hpp.html">Fw/Buffer/Buffer.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="time_8hpp.html">Fw/Time/Time.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_deframing_protocol_interface.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a> {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="class_deframing_protocol_interface.html#a8a42e67e31fd58909f36fcec97ea1184">   28</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_deframing_protocol_interface.html#a8a42e67e31fd58909f36fcec97ea1184">~DeframingProtocolInterface</a>(){};</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> <a class="code" href="class_deframing_protocol_interface.html#ac9963f0ce93d1343f8510a73b3e75409">allocate</a>(<span class="keyword">const</span> U32 size) = 0;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_deframing_protocol_interface.html#a81f42f25640179082027c07a4c136074">route</a>(<a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; data) = 0;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;};</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif  // DEFRAMING_PROTOCOLINTERFACE_HPP</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_svc.html">Svc</a> {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="class_svc_1_1_deframing_protocol_interface.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_svc_1_1_deframing_protocol_interface.html">DeframingProtocolInterface</a> {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_svc_1_1_deframing_protocol_interface.html#a8f1a852f17912aaa43114f541249709c">   31</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_svc_1_1_deframing_protocol_interface.html#a8f1a852f17912aaa43114f541249709c">~DeframingProtocolInterface</a>(){};</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a> <a class="code" href="class_svc_1_1_deframing_protocol_interface.html#a0120a0180e9eb67367b83d88fc5d6bfa">allocate</a>(<span class="keyword">const</span> U32 size) = 0;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_svc_1_1_deframing_protocol_interface.html#ae6f96cfce0e581f0902634e4159e27ed">route</a>(<a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; data) = 0;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif  // SVC_DEFRAMING_PROTOCOL_INTERFACE_HPP</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="aclass_svc_1_1_deframing_protocol_interface_html_ae6f96cfce0e581f0902634e4159e27ed"><div class="ttname"><a href="class_svc_1_1_deframing_protocol_interface.html#ae6f96cfce0e581f0902634e4159e27ed">Svc::DeframingProtocolInterface::route</a></div><div class="ttdeci">virtual void route(Fw::Buffer &amp;data)=0</div><div class="ttdoc">send deframed data into the system</div></div>
+<div class="ttc" id="aclass_svc_1_1_deframing_protocol_interface_html"><div class="ttname"><a href="class_svc_1_1_deframing_protocol_interface.html">Svc::DeframingProtocolInterface</a></div><div class="ttdoc">interface supplied to the deframing protocol</div><div class="ttdef"><b>Definition:</b> <a href="deframing_protocol_interface_8hpp_source.html#l00029">DeframingProtocolInterface.hpp:29</a></div></div>
 <div class="ttc" id="a_buffer_8hpp_html"><div class="ttname"><a href="buffer_8hpp.html">Buffer.hpp</a></div></div>
-<div class="ttc" id="aclass_deframing_protocol_interface_html"><div class="ttname"><a href="class_deframing_protocol_interface.html">DeframingProtocolInterface</a></div><div class="ttdoc">interface supplied to the deframing protocol</div><div class="ttdef"><b>Definition:</b> <a href="deframing_protocol_interface_8hpp_source.html#l00026">DeframingProtocolInterface.hpp:26</a></div></div>
 <div class="ttc" id="aclass_fw_1_1_buffer_html"><div class="ttname"><a href="class_fw_1_1_buffer.html">Fw::Buffer</a></div><div class="ttdef"><b>Definition:</b> <a href="buffer_8hpp_source.html#l00043">Buffer.hpp:43</a></div></div>
-<div class="ttc" id="aclass_deframing_protocol_interface_html_a8a42e67e31fd58909f36fcec97ea1184"><div class="ttname"><a href="class_deframing_protocol_interface.html#a8a42e67e31fd58909f36fcec97ea1184">DeframingProtocolInterface::~DeframingProtocolInterface</a></div><div class="ttdeci">virtual ~DeframingProtocolInterface()</div><div class="ttdef"><b>Definition:</b> <a href="deframing_protocol_interface_8hpp_source.html#l00028">DeframingProtocolInterface.hpp:28</a></div></div>
-<div class="ttc" id="aclass_deframing_protocol_interface_html_a81f42f25640179082027c07a4c136074"><div class="ttname"><a href="class_deframing_protocol_interface.html#a81f42f25640179082027c07a4c136074">DeframingProtocolInterface::route</a></div><div class="ttdeci">virtual void route(Fw::Buffer &amp;data)=0</div><div class="ttdoc">send deframed data into the system</div></div>
-<div class="ttc" id="aclass_deframing_protocol_interface_html_ac9963f0ce93d1343f8510a73b3e75409"><div class="ttname"><a href="class_deframing_protocol_interface.html#ac9963f0ce93d1343f8510a73b3e75409">DeframingProtocolInterface::allocate</a></div><div class="ttdeci">virtual Fw::Buffer allocate(const U32 size)=0</div><div class="ttdoc">called to allocate memory, typically delegating to an allocate port call</div></div>
+<div class="ttc" id="aclass_svc_1_1_deframing_protocol_interface_html_a0120a0180e9eb67367b83d88fc5d6bfa"><div class="ttname"><a href="class_svc_1_1_deframing_protocol_interface.html#a0120a0180e9eb67367b83d88fc5d6bfa">Svc::DeframingProtocolInterface::allocate</a></div><div class="ttdeci">virtual Fw::Buffer allocate(const U32 size)=0</div><div class="ttdoc">called to allocate memory, typically delegating to an allocate port call</div></div>
+<div class="ttc" id="anamespace_svc_html"><div class="ttname"><a href="namespace_svc.html">Svc</a></div><div class="ttdef"><b>Definition:</b> <a href="active_rate_group_impl_cfg_8hpp_source.html#l00018">ActiveRateGroupImplCfg.hpp:18</a></div></div>
 <div class="ttc" id="a_time_8hpp_html"><div class="ttname"><a href="time_8hpp.html">Time.hpp</a></div></div>
+<div class="ttc" id="aclass_svc_1_1_deframing_protocol_interface_html_a8f1a852f17912aaa43114f541249709c"><div class="ttname"><a href="class_svc_1_1_deframing_protocol_interface.html#a8f1a852f17912aaa43114f541249709c">Svc::DeframingProtocolInterface::~DeframingProtocolInterface</a></div><div class="ttdeci">virtual ~DeframingProtocolInterface()</div><div class="ttdef"><b>Definition:</b> <a href="deframing_protocol_interface_8hpp_source.html#l00031">DeframingProtocolInterface.hpp:31</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
