@@ -112,11 +112,11 @@ $ fprime-gds -n
 
 ### Specify GDS Addresses and Ports
 
-By default, the GDS runs on the local machine at address `0.0.0.0` and uses the following local ports:
+By default, the GDS runs on the local machine and uses the following local addresses and ports:
 
-- 5000: hosts the HTML frontend. The browser connects here.
-- 50000: the default communication interface is a port. The embedded system connects here.
-- 50050: an internal port used for hosting GDS data.
+- **127.0.0.1:5000**: hosts the HTML frontend. The browser connects here to access the GUI.
+- **0.0.0.0:50000**: the default communication interface port. The embedded system connects here.
+- **0.0.0.0:50050**: an internal port used for transporting GDS data. Communication and HTML endpoints internally connect here.
 
 If a user wishes to change the IP address and port used to allow the embedded system connection to the GDS, the user
 should specify the `--ip-address ADDRESS` and `--ip-port PORT` flag. **Note:** these options are only available when
