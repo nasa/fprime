@@ -449,4 +449,4 @@ omit the `hub` connections shown in this topology.
 | Date | Description |
 |---|---|
 | 2021-01-30 | Initial Draft |
-| 2022-04-01 | Revised |
+| 2022-04-04 | Revised |
