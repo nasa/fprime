@@ -1,0 +1,15 @@
+name: 'Setup F´'
+description: 'Setup the F´ repository and tools'
+inputs:
+  location:
+    required: true
+    default: $GITHUB_WORKSPACE
+runs:
+  using: "composite"
+  steps:
+  - run: git fetch --tags
+    shell: bash
+  - run: pip3 install setuptools_scm urllib3
+    shell: bash
+  - run: pip3 install ${{ inputs.location }}
+    shell: bash
