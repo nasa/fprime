@@ -14,23 +14,23 @@
 namespace Svc {
 
     void update_header_info(Tester::UplinkData& data, U32 garbage_index, U8 garbage_byte) {
-        const U32 full_size = FP_FRAME_HEADER_SIZE + data.size + sizeof(U32);
+        const U32 full_size = FpFrameHeader::SIZE + data.size + sizeof(U32);
         data.full_size = full_size;
         // Write token types
-        for (U32 i = 0; i < sizeof(FP_FRAME_TOKEN_TYPE); i++) {
-            data.data[i] = (FprimeFraming::START_WORD >> ((sizeof(FP_FRAME_TOKEN_TYPE) - 1 - i) * 8)) & 0xFF;
-            data.data[i + sizeof(FP_FRAME_TOKEN_TYPE)] =
-                    (data.size >> ((sizeof(FP_FRAME_TOKEN_TYPE) - 1 - i) * 8)) & 0xFF;
+        for (U32 i = 0; i < sizeof(FpFrameHeader::TokenType); i++) {
+            data.data[i] = (FpFrameHeader::START_WORD >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
+            data.data[i + sizeof(FpFrameHeader::TokenType)] =
+                    (data.size >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
         }
         // Packet type
-        data.data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 0] = (static_cast<U32>(data.type) >> 24) & 0xFF;
-        data.data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 1] = (static_cast<U32>(data.type) >> 16) & 0xFF;
-        data.data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 2] = (static_cast<U32>(data.type) >> 8) & 0xFF;
-        data.data[2 * sizeof(FP_FRAME_TOKEN_TYPE) + 3] = (static_cast<U32>(data.type) >> 0) & 0xFF;
+        data.data[2 * sizeof(FpFrameHeader::TokenType) + 0] = (static_cast<U32>(data.type) >> 24) & 0xFF;
+        data.data[2 * sizeof(FpFrameHeader::TokenType) + 1] = (static_cast<U32>(data.type) >> 16) & 0xFF;
+        data.data[2 * sizeof(FpFrameHeader::TokenType) + 2] = (static_cast<U32>(data.type) >> 8) & 0xFF;
+        data.data[2 * sizeof(FpFrameHeader::TokenType) + 3] = (static_cast<U32>(data.type) >> 0) & 0xFF;
 
         Utils::Hash hash;
         Utils::HashBuffer hashBuffer;
-        hash.update(data.data,  FP_FRAME_HEADER_SIZE + data.size);
+        hash.update(data.data,  FpFrameHeader::SIZE + data.size);
         hash.final(hashBuffer);
 
         for (U32 i = 0; i < sizeof(U32); i++) {
@@ -55,18 +55,18 @@ namespace Svc {
             Tester::UplinkData data;
             ::memset(&data, 0, sizeof(data));
             data.partial = 0;
-            data.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FP_FRAME_HEADER_SIZE - sizeof(U32) - 1);
+            data.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
             data.type = static_cast<Fw::ComPacket::ComPacketType>(
                     STest::Pick::lowerUpper(Fw::ComPacket::FW_PACKET_COMMAND, Fw::ComPacket::FW_PACKET_FILE));
             // Fill in randomized data
             U32 i = 0;
             for (i = 0; i < data.size; i++) {
-                data.data[FP_FRAME_HEADER_SIZE + i] = static_cast<U8>(STest::Pick::lowerUpper(0, 255));
+                data.data[FpFrameHeader::SIZE + i] = static_cast<U8>(STest::Pick::lowerUpper(0, 255));
             }
             // Garbage may only be set if we refreshed the data
             data.corrupted = !STest::Pick::lowerUpper(0, 9); // One part failure in 10
             // Correct header info for items
-            update_header_info(data, STest::Pick::lowerUpper(0, sizeof(U32) + FP_FRAME_HEADER_SIZE + data.size - 1),
+            update_header_info(data, STest::Pick::lowerUpper(0, sizeof(U32) + FpFrameHeader::SIZE + data.size - 1),
                                STest::Pick::lowerUpper(1, 255));
             state.m_sending.push_back(data);
         }
