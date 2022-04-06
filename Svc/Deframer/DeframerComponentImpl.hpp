@@ -10,8 +10,8 @@
 //
 // ======================================================================
 
-#ifndef Deframer_HPP
-#define Deframer_HPP
+#ifndef Svc_Deframer_HPP
+#define Svc_Deframer_HPP
 
 #include "Svc/Deframer/DeframerComponentAc.hpp"
 #include "Svc/FramingProtocol/DeframingProtocolInterface.hpp"
@@ -32,29 +32,31 @@ namespace Svc {
  * Implementation uses a circular buffer to store incoming data, which is drained one framed packet
  * at a time into buffers dispatched to the rest of the system.
  */
-class DeframerComponentImpl : public DeframerComponentBase, public DeframingProtocolInterface {
+class DeframerComponentImpl :
+  public DeframerComponentBase,
+  public DeframingProtocolInterface
+{
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct object Deframer
-    //!
-    DeframerComponentImpl(const char* const compName /*!< The component name*/
+    //! Construct Deframer instance
+    DeframerComponentImpl(
+        const char* const compName //!< The component name
     );
 
-    //! Initialize object Deframer
-    //!
-    void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    //! Initialize Deframer instance
+    void init(
+        const NATIVE_INT_TYPE instance = 0 //!< The instance number
     );
 
-    //! Destroy object Deframer
-    //!
+    //! Destroy Deframer instance
     ~DeframerComponentImpl();
 
-    //! Setup the object
-    //!
-    void setup(DeframingProtocol& protocol /*!< Deframing protocol instance*/
+    //! Set up the instance
+    void setup(
+        DeframingProtocol& protocol //!< Deframing protocol instance
     );
 
 
@@ -63,17 +65,7 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-    void route(Fw::Buffer& data);
 
-    void processRing();
-
-    void processBuffer(Fw::Buffer& buffer);
-
-    Fw::Buffer allocate(const U32 size);
-
-
-    //! Handler implementation for framedIn
-    //!
     //! Handler for input port cmdResponseIn
     void cmdResponseIn_handler(
         NATIVE_INT_TYPE portNum, //!< The port number
@@ -81,22 +73,68 @@ class DeframerComponentImpl : public DeframerComponentBase, public DeframingProt
         U32 cmdSeq, //!< The command sequence number
         const Fw::CmdResponse& response //!< The command response
     );
-    void framedIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                          Fw::Buffer& recvBuffer,  /*!< The raw bytes */
-                          const Drv::RecvStatus& recvStatus /*!< Status of the bytes */
-                          );
+
+    //! Handler implementation for framedIn
+    void framedIn_handler(
+        const NATIVE_INT_TYPE portNum, //!< The port number
+        Fw::Buffer& recvBuffer,  //!< The raw bytes
+        const Drv::RecvStatus& recvStatus //!< Status of the bytes
+    );
 
     //! Handler implementation for schedIn
-    //!
-    void schedIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                         NATIVE_UINT_TYPE context       /*!< The call order*/
+    void schedIn_handler(
+        const NATIVE_INT_TYPE portNum, //!< The port number
+        NATIVE_UINT_TYPE context //!< The call order
     );
+
+    // ----------------------------------------------------------------------
+    // Implementation of DeframingProtocolInterface
+    // ----------------------------------------------------------------------
+
+    //! The implementation of DeframingProtocolInterface::route
+    //! Send a data packet
+    void route(
+        Fw::Buffer& packetBuffer //!< The packet buffer
+    );
+
+    //! The implementation of DeframingProtocolInterface::allocate
+    //! Allocate a packet buffer
+    //! \return The packet buffer
+    Fw::Buffer allocate(
+        const U32 size //!< The number of bytes to request
+    );
+
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
+
+    //! Copy data from an incoming frame buffer into the internal
+    //! circular buffer
+    void processBuffer(
+        Fw::Buffer& buffer //!< The frame buffer
+    );
+
+    //! Process data in the circular buffer
+    void processRing();
+
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    //! The DeframingProtocol implementation
     DeframingProtocol* m_protocol;
+
+    //! The circular buffer
     Types::CircularBuffer m_in_ring;
-    // TODO: Make this size configurable as RING_BUFFER_SIZE
+
+    //! Memory for the circular buffer
+    //! TODO: Make this size configurable as RING_BUFFER_SIZE
     U8 m_ring_buffer[1024];
-    // TODO: Make this size configurable as POLL_BUFFER_SIZE
+
+    //! Memory for the polling buffer
+    //! TODO: Make this size configurable as POLL_BUFFER_SIZE
     U8 m_poll_buffer[1024];
+
 };
 
 }  // end namespace Svc
