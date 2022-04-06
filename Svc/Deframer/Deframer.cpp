@@ -80,7 +80,7 @@ void Deframer ::schedIn_handler(
 ) {
     // Check for data
     Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
-    Drv::PollStatus status = framedPoll_out(0, buffer);
+    auto status = framedPoll_out(0, buffer);
     if (status == Drv::PollStatus::POLL_OK) {
         // Data exists: process it
         processBuffer(buffer);
@@ -94,48 +94,57 @@ Fw::Buffer Deframer ::allocate(const U32 size)  {
 void Deframer ::route(Fw::Buffer& packetBuffer) {
 
     // Read the packet type from the packet buffer
-    FwPacketDescriptorType packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN;
-    Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
-    serial.setBuffLen(packetBuffer.getSize());
-    Fw::SerializeStatus status = serial.deserialize(packet_type);
+    FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    {
+        auto& serial = packetBuffer.getSerializeRepr();
+        serial.setBuffLen(packetBuffer.getSize());
+        status = serial.deserialize(packetType);
+    }
 
-    if (status != Fw::FW_SERIALIZE_OK) {
-        // Deserialize failed: deallocate the packet buffer
+    // Whethter to deallocate the packet buffer
+    bool deallocate = true;
+
+    // Process the packet
+    if (status == Fw::FW_SERIALIZE_OK) {
+        U8* packetData = packetBuffer.getData();
+        const auto packetSize = packetBuffer.getSize();
+        switch (packetType) {
+            case Fw::ComPacket::FW_PACKET_COMMAND: {
+                // Allocate a com buffer on the stack
+                Fw::ComBuffer com;
+                // Copy the contents of the packet buffer into the com buffer
+                com.setBuff(packetData, packetSize);
+                // Send the com buffer
+                comOut_out(0, com, 0);
+                break;
+            }
+            case Fw::ComPacket::FW_PACKET_FILE: {
+                // If file uplink is possible, handle file packet.
+                // Otherwise ignore.
+                if (isConnected_bufferOut_OutputPort(0)) {
+                    // Shift the packet buffer to skip the packet type
+                    // The FileUplink component does not expect the packet
+                    // type to be there.
+                    packetBuffer.setData(packetData + sizeof(packetType));
+                    packetBuffer.setSize(packetSize - sizeof(packetType));
+                    // Send the packet buffer
+                    bufferOut_out(0, packetBuffer);
+                    // Transfer ownership of the buffer to the receiver
+                    deallocate = false;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    if (deallocate) {
+        // Deallocate the packet buffer
         bufferDeallocate_out(0, packetBuffer);
-        return;
     }
 
-    // Process variable type
-    switch (packet_type) {
-        case Fw::ComPacket::FW_PACKET_COMMAND: {
-            // Copy the contents of the packet buffer into a com buffer
-            Fw::ComBuffer com;
-            com.setBuff(packetBuffer.getData(), packetBuffer.getSize());
-            // Send the com buffer
-            comOut_out(0, com, 0);
-            // Deallocate the packet buffer
-            bufferDeallocate_out(0, packetBuffer);
-            break;
-        }
-        case Fw::ComPacket::FW_PACKET_FILE: {
-            // If file uplink is possible, handle files.  Otherwise ignore.
-            if (isConnected_bufferOut_OutputPort(0)) {
-                // Shift the buffer to ignore the packet type
-                packetBuffer.setData(packetBuffer.getData() + sizeof(packet_type));
-                packetBuffer.setSize(packetBuffer.getSize() - sizeof(packet_type));
-                bufferOut_out(0, packetBuffer);
-            }
-            else {
-                // Deallocate the unused buffer
-                bufferDeallocate_out(0, packetBuffer);
-            }
-            break;
-        }
-        default:
-            // In the case that we do not know the packet type, we should deallocate the request
-            bufferDeallocate_out(0, packetBuffer);
-            break;
-    }
 }
 
 void Deframer ::processRing() {
