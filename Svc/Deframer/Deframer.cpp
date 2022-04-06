@@ -10,10 +10,10 @@
 //
 // ======================================================================
 
-#include <Svc/Deframer/Deframer.hpp>
+#include "Fw/Com/ComPacket.hpp"
+#include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
-#include <Fw/Com/ComPacket.hpp>
-#include <Fw/Logger/Logger.hpp>
+#include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {
 
@@ -24,8 +24,11 @@ namespace Svc {
 Deframer ::Deframer(const char* const compName) : 
     DeframerComponentBase(compName), 
     DeframingProtocolInterface(),
-    m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
-{}
+    m_protocol(nullptr),
+    m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
+{
+
+}
 
 void Deframer ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
@@ -34,9 +37,11 @@ void Deframer ::init(const NATIVE_INT_TYPE instance) {
 Deframer ::~Deframer() {}
 
 void Deframer ::setup(DeframingProtocol& protocol) {
+    // Check that this is the first time we are calling setup
     FW_ASSERT(m_protocol == nullptr);
+    // Assign the protocol passed in to m_protocol
     m_protocol = &protocol;
-    // Pass this as the DeframingProtocolInstance to protocol setup
+    // Pass *this as the DeframingProtocolInstance to protocol setup
     // Deframer is derived from and implements DeframingProtocolInterface
     protocol.setup(*this);
 }
@@ -46,30 +51,39 @@ void Deframer ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void Deframer ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
-                                                   FwOpcodeType opcode,
-                                                   U32 cmdSeq,
-                                                   const Fw::CmdResponse& response) {
-  // Nothing to do
+void Deframer ::cmdResponseIn_handler(
+    NATIVE_INT_TYPE portNum,
+    FwOpcodeType opcode,
+    U32 cmdSeq,
+    const Fw::CmdResponse& response
+) {
+    // Nothing to do
 }
 
-void Deframer ::framedIn_handler(const NATIVE_INT_TYPE portNum,
-                                              Fw::Buffer& recvBuffer,
-                                              const Drv::RecvStatus& recvStatus) {
+void Deframer ::framedIn_handler(
+    const NATIVE_INT_TYPE portNum,
+    Fw::Buffer& recvBuffer,
+    const Drv::RecvStatus& recvStatus
+) {
+    // Check whether there is data to process
     if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
+        // There is: process the data
         processBuffer(recvBuffer);
     }
+    // Deallocate the buffer
     framedDeallocate_out(0, recvBuffer);
 }
 
-void Deframer ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
-    // Call read poll if it is hooked up
-    if (isConnected_framedPoll_OutputPort(0)) {
-        Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
-        Drv::PollStatus status = framedPoll_out(0, buffer);
-        if (status == Drv::PollStatus::POLL_OK) {
-            processBuffer(buffer);
-        }
+void Deframer ::schedIn_handler(
+    const NATIVE_INT_TYPE portNum,
+    NATIVE_UINT_TYPE context
+) {
+    // Check for data
+    Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
+    Drv::PollStatus status = framedPoll_out(0, buffer);
+    if (status == Drv::PollStatus::POLL_OK) {
+        // Data exists: process it
+        processBuffer(buffer);
     }
 }
 
@@ -77,47 +91,49 @@ Fw::Buffer Deframer ::allocate(const U32 size)  {
     return bufferAllocate_out(0, size);
 }
 
-void Deframer ::route(Fw::Buffer& data) {
-    // Read the packet type from the data buffer
-    I32 packet_type = static_cast<I32>(Fw::ComPacket::FW_PACKET_UNKNOWN);
-    Fw::SerializeBufferBase& serial = data.getSerializeRepr();
-    serial.setBuffLen(data.getSize());
-    // Serialized packet type is explicitly an I32 (4 bytes)
-    // TODO: Deserialize FwPacketDescriptorType instead of I32
+void Deframer ::route(Fw::Buffer& packetBuffer) {
+
+    // Read the packet type from the packet buffer
+    FwPacketDescriptorType packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN;
+    Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
+    serial.setBuffLen(packetBuffer.getSize());
     Fw::SerializeStatus status = serial.deserialize(packet_type);
+
     if (status != Fw::FW_SERIALIZE_OK) {
-        // In the case that the deserialize was unsuccessful we should deallocate the request
-        bufferDeallocate_out(0, data);
+        // Deserialize failed: deallocate the packet buffer
+        bufferDeallocate_out(0, packetBuffer);
         return;
     }
 
     // Process variable type
     switch (packet_type) {
         case Fw::ComPacket::FW_PACKET_COMMAND: {
+            // Copy the contents of the packet buffer into a com buffer
             Fw::ComBuffer com;
-            com.setBuff(data.getData(), data.getSize());
+            com.setBuff(packetBuffer.getData(), packetBuffer.getSize());
+            // Send the com buffer
             comOut_out(0, com, 0);
-            // Return buffer immediately as cmdDisp will not return buffers for us. Com buffers copy, so this is safe!
-            bufferDeallocate_out(0, data);
+            // Deallocate the packet buffer
+            bufferDeallocate_out(0, packetBuffer);
             break;
         }
         case Fw::ComPacket::FW_PACKET_FILE: {
             // If file uplink is possible, handle files.  Otherwise ignore.
             if (isConnected_bufferOut_OutputPort(0)) {
                 // Shift the buffer to ignore the packet type
-                data.setData(data.getData() + sizeof(packet_type));
-                data.setSize(data.getSize() - sizeof(packet_type));
-                bufferOut_out(0, data);
+                packetBuffer.setData(packetBuffer.getData() + sizeof(packet_type));
+                packetBuffer.setSize(packetBuffer.getSize() - sizeof(packet_type));
+                bufferOut_out(0, packetBuffer);
             }
             else {
                 // Deallocate the unused buffer
-                bufferDeallocate_out(0, data);
+                bufferDeallocate_out(0, packetBuffer);
             }
             break;
         }
         default:
             // In the case that we do not know the packet type, we should deallocate the request
-            bufferDeallocate_out(0, data);
+            bufferDeallocate_out(0, packetBuffer);
             break;
     }
 }

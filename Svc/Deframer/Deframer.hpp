@@ -20,6 +20,7 @@
 #include "config/DeframerCfg.hpp"
 
 namespace Svc {
+
 /**
  * \brief Generic deframing component using DeframingProtocol implementation for actual deframing
  *
@@ -37,7 +38,9 @@ class Deframer :
   public DeframerComponentBase,
   public DeframingProtocolInterface
 {
+
   public:
+
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------
@@ -60,8 +63,8 @@ class Deframer :
         DeframingProtocol& protocol //!< Deframing protocol instance
     );
 
-
   PRIVATE:
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -78,7 +81,7 @@ class Deframer :
     //! Handler implementation for framedIn
     void framedIn_handler(
         const NATIVE_INT_TYPE portNum, //!< The port number
-        Fw::Buffer& recvBuffer,  //!< The raw bytes
+        Fw::Buffer& recvBuffer, //!< Buffer containing framed data
         const Drv::RecvStatus& recvStatus //!< Status of the bytes
     );
 
