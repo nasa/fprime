@@ -16,7 +16,7 @@
 #include <deque>
 #include <ComPacket.hpp>
 #include "GTestBase.hpp"
-#include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Svc {
@@ -117,7 +117,7 @@ class Tester : public DeframerGTestBase {
 
     //! The component under test
     //!
-    DeframerComponentImpl component;
+    Deframer component;
     Svc::FprimeDeframing protocol;
 
     std::deque<UplinkData> m_sending;

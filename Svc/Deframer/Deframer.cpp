@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  DeframerComponentImpl.cpp
+// \title  Deframer.cpp
 // \author mstarch
 // \brief  cpp file for Deframer component implementation class
 //
@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <Svc/Deframer/DeframerComponentImpl.hpp>
+#include <Svc/Deframer/Deframer.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Logger/Logger.hpp>
@@ -21,19 +21,19 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-DeframerComponentImpl ::DeframerComponentImpl(const char* const compName) : 
+Deframer ::Deframer(const char* const compName) : 
     DeframerComponentBase(compName), 
     DeframingProtocolInterface(),
     m_protocol(nullptr), m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {}
 
-void DeframerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
+void Deframer ::init(const NATIVE_INT_TYPE instance) {
     DeframerComponentBase::init(instance);
 }
 
-DeframerComponentImpl ::~DeframerComponentImpl() {}
+Deframer ::~Deframer() {}
 
-void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
+void Deframer ::setup(DeframingProtocol& protocol) {
     FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     // Pass this as the DeframingProtocolInstance to protocol setup
@@ -46,14 +46,14 @@ void DeframerComponentImpl ::setup(DeframingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void DeframerComponentImpl ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
+void Deframer ::cmdResponseIn_handler(NATIVE_INT_TYPE portNum,
                                                    FwOpcodeType opcode,
                                                    U32 cmdSeq,
                                                    const Fw::CmdResponse& response) {
   // Nothing to do
 }
 
-void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
+void Deframer ::framedIn_handler(const NATIVE_INT_TYPE portNum,
                                               Fw::Buffer& recvBuffer,
                                               const Drv::RecvStatus& recvStatus) {
     if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
@@ -62,7 +62,7 @@ void DeframerComponentImpl ::framedIn_handler(const NATIVE_INT_TYPE portNum,
     framedDeallocate_out(0, recvBuffer);
 }
 
-void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
+void Deframer ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
     // Call read poll if it is hooked up
     if (isConnected_framedPoll_OutputPort(0)) {
         Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
@@ -73,11 +73,11 @@ void DeframerComponentImpl ::schedIn_handler(const NATIVE_INT_TYPE portNum, NATI
     }
 }
 
-Fw::Buffer DeframerComponentImpl ::allocate(const U32 size)  {
+Fw::Buffer Deframer ::allocate(const U32 size)  {
     return bufferAllocate_out(0, size);
 }
 
-void DeframerComponentImpl ::route(Fw::Buffer& data) {
+void Deframer ::route(Fw::Buffer& data) {
     // Read the packet type from the data buffer
     I32 packet_type = static_cast<I32>(Fw::ComPacket::FW_PACKET_UNKNOWN);
     Fw::SerializeBufferBase& serial = data.getSerializeRepr();
@@ -122,7 +122,7 @@ void DeframerComponentImpl ::route(Fw::Buffer& data) {
     }
 }
 
-void DeframerComponentImpl ::processRing() {
+void Deframer ::processRing() {
     FW_ASSERT(m_protocol != nullptr);
     // Maximum limit to the loop as at least one byte is process per iteration unless needed > remaining size
     const U32 loop_limit = m_in_ring.get_capacity() + 1;
@@ -160,7 +160,7 @@ void DeframerComponentImpl ::processRing() {
     FW_ASSERT(i < loop_limit);
 }
 
-void DeframerComponentImpl ::processBuffer(Fw::Buffer& buffer) {
+void Deframer ::processBuffer(Fw::Buffer& buffer) {
     U32 i = 0;
     U32 buffer_offset = 0; // Max buffer size is U32
     // Note: max iteration bounded by processing 1 byte per iteration
