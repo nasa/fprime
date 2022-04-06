@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  DeframerComponentImpl.hpp
-// \author mstarch
+// \author mstarch, bocchino
 // \brief  hpp file for Deframer component implementation class
 //
 // \copyright
-// Copyright 2009-2021, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -14,9 +14,10 @@
 #define Svc_Deframer_HPP
 
 #include "Svc/Deframer/DeframerComponentAc.hpp"
+#include "Svc/FramingProtocol/DeframingProtocol.hpp"
 #include "Svc/FramingProtocol/DeframingProtocolInterface.hpp"
-#include <Svc/FramingProtocol/DeframingProtocol.hpp>
 #include "Utils/Types/CircularBuffer.hpp"
+#include "config/DeframerCfg.hpp"
 
 namespace Svc {
 /**
@@ -128,12 +129,10 @@ class DeframerComponentImpl :
     Types::CircularBuffer m_in_ring;
 
     //! Memory for the circular buffer
-    //! TODO: Make this size configurable as RING_BUFFER_SIZE
-    U8 m_ring_buffer[1024];
+    U8 m_ring_buffer[DeframerCfg::RING_BUFFER_SIZE];
 
     //! Memory for the polling buffer
-    //! TODO: Make this size configurable as POLL_BUFFER_SIZE
-    U8 m_poll_buffer[1024];
+    U8 m_poll_buffer[DeframerCfg::POLL_BUFFER_SIZE];
 
 };
 
