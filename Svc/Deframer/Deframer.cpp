@@ -95,7 +95,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
 
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
-    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    auto status = Fw::FW_SERIALIZE_OK;
     {
         auto& serial = packetBuffer.getSerializeRepr();
         serial.setBuffLen(packetBuffer.getSize());
@@ -120,8 +120,8 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 break;
             }
             case Fw::ComPacket::FW_PACKET_FILE: {
-                // If file uplink is possible, handle file packet.
-                // Otherwise ignore.
+                // If file uplink is possible, handle the file packet.
+                // Otherwise ignore it.
                 if (isConnected_bufferOut_OutputPort(0)) {
                     // Shift the packet buffer to skip the packet type
                     // The FileUplink component does not expect the packet

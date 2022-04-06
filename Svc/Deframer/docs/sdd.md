@@ -58,8 +58,12 @@ Deframer supports two configurations for streaming data:
    any ground system that sends frames to _I_.
 
 1. In any topology _T_, for any instance _I_ of `Deframer` in _T_,
-   exactly one of the poll interface of _I_ or the push interface of _I_
-   is connected.
+   at any one time, framed data arrives on the poll interface of _I_ or on
+   the push interface of _I_, but not on both concurrently.
+   The push and poll interfaces are guarded by a mutual exclusion lock,
+   so there is no concurency safety issue.
+   However, ordinarily it does not make sense to interleave framed data
+   concurrently on two different interfaces.
 
 1. Each frame received by `Deframer` contains an F Prime command packet
    or file packet _P_.
@@ -102,9 +106,9 @@ The diagram below shows the `Deframer` component.
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving frame buffers FB pushed from the byte stream driver. After using a buffer FB received on this port, Deframer deallocates it by invoking framedDeallocate. _TODO: Make this port sync, and assert on setup that exactly one of framedIn and framedPoll is connected._ |
+| `guarded input` | `framedIn` | `Drv.ByteStreamRecv` | Port for receiving frame buffers FB pushed from the byte stream driver. After using a buffer FB received on this port, Deframer deallocates it by invoking framedDeallocate.|
 | `output` | `framedDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on framedIn. |
-| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port, driven by a rate group. _TODO: Make this port sync, and assert on setup that exactly one of framedIn and framedPoll is connected._ |
+| `guarded input` | `schedIn` | `Svc.Sched` | Schedule in port, driven by a rate group.|
 | `output` | `framedPoll` | `Drv.ByteStreamPoll` | Port that polls for data from the byte stream driver. Deframer invokes this port on its schedIn cycle, if it is connected. No allocation or occurs when invoking this port. The data transfer uses a pre-allocated frame buffer owned by Deframer. |
 | `output` | `bufferAllocate` | `Fw.BufferGet` | Port for allocating Fw::Buffer objects from a buffer manager. When Deframer invokes this port, it receives a packet buffer PB and takes ownership of it. It uses PB internally for deframing. Then one of two things happens:  1. PB contains a file packet, which Deframer sends on bufferOut. In this case ownership of PB passes to the receiver.  2. PB does not contain a file packet, or bufferOut is unconnected. In this case Deframer deallocates PB on bufferDeallocate. |
 | `output` | `bufferOut` | `Fw.BufferSend` | Port for sending file packets (case 1 above). The file packets are wrapped in Fw::Buffer objects allocated with bufferAllocate. Ownership of the Fw::Buffer passes to the receiver, which is responsible for the deallocation. |
@@ -139,17 +143,13 @@ Here is a class diagram for `Deframer`:
 
 1. `m_ring_buffer`: The storage backing the circular buffer: an array of `RING_BUFFER_SIZE`
 `U8` values.
-_Implementation TODO: The ring buffer is currently hard-coded to 1024 bytes._
 
 1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `POLL_BUFFER_SIZE`
 values.
-_Implementation TODO: The poll buffer is currently hard-coded to 1024 bytes._
 
-### Header File Configuration
+### 4.5. Header File Configuration
 
 The `Deframer` header file provides the following configurable constants:
-_Implementation TODO: The implementation currently does not provide these
-configuration constants._
 
 1. `Svc::Deframer::RING_BUFFER_SIZE`: The size of the circular buffer.
 The capacity of the circular buffer must be large enough to hold a
@@ -157,7 +157,7 @@ complete frame.
 
 1. `Svc::Deframer::POLL_BUFFER_SIZE`: The size of the buffer used for polling data.
 
-### 4.5. Runtime Setup
+### 4.6. Runtime Setup
 
 To set up an instance of `Deframer`, you do the following:
 
@@ -177,9 +177,9 @@ The `setup` method does the following:
 For an example of setting up a `Deframer` instance, see the
 `uplink` instance in [`Ref/Top/instances.fpp`](../../../Ref/Top/instances.fpp).
 
-### 4.6. Port Handlers
+### 4.7. Port Handlers
 
-#### 4.6.1. framedIn
+#### 4.7.1. framedIn
 
 The `framedIn` port handler receives an `Fw::Buffer` _FB_ and a receive status _S_.
 It does the following:
@@ -189,7 +189,7 @@ It does the following:
 
 2. Deallocate _FB_ by invoking `framedDeallocate`.
 
-#### 4.6.2. schedIn
+#### 4.7.2. schedIn
 
 The `schedIn` port handler does the following:
 
@@ -202,7 +202,7 @@ The `schedIn` port handler does the following:
    1. If new data is available, then call
        <a href="#processBuffer">`processBuffer`</a>, passing in _FB_.
 
-#### 4.6.3. cmdResponseIn
+#### 4.7.3. cmdResponseIn
 
 The `cmdResponseIn` handler does nothing.
 It exists to provide the necessary symmetry in the topology
@@ -210,15 +210,15 @@ It exists to provide the necessary symmetry in the topology
 accept a matching response).
 
 <a name="dpi-impl"></a>
-### 4.7. Implementation of Svc::DeframingProtocolInterface
+### 4.8. Implementation of Svc::DeframingProtocolInterface
 
 <a name="allocate"></a>
-#### 4.7.1. allocate
+#### 4.8.1. allocate
 
 The implementation of `allocate` invokes `bufferAllocate`.
 
 <a name="route"></a>
-#### 4.7.2. route
+#### 4.8.2. route
 
 The implementation of `route` takes a reference to an
 `Fw::Buffer` _PB_ (a packet buffer) and does the following:
@@ -249,10 +249,10 @@ Deserialize the first _N_ bytes of _PB_ as a value of type
 1. If `deallocate = true`, then invoke `bufferDeallocate`
    to deallocate _PB_.
 
-### 4.8. Helper Functions
+### 4.9. Helper Functions
 
 <a name="processBuffer"></a>
-#### 4.8.1. processBuffer
+#### 4.9.1. processBuffer
 
 `processBuffer` accepts a reference to an `Fw::Buffer` _FB_
 (a frame buffer).
@@ -285,7 +285,7 @@ It does the following:
       to process the data stored in `m_in_ring`.
 
 <a name="processRing"></a>
-#### 4.8.2. processRing
+#### 4.9.2. processRing
 
 In a bounded loop, while there is data remaining in `m_in_ring`, do:
 
