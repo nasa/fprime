@@ -93,6 +93,10 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    if (size > UINT32_MAX - (FpFrameHeader::SIZE + HASH_DIGEST_LENGTH)) {
+        // size is too large to process: needed would overflow
+        return DeframingProtocol::DEFRAMING_INVALID_SIZE;
+    }
     needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
     // Check the header for correctness
     const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
