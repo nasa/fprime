@@ -108,7 +108,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
         status = serial.deserialize(packetType);
     }
 
-    // Whethter to deallocate the packet buffer
+    // Whether to deallocate the packet buffer
     bool deallocate = true;
 
     // Process the packet
