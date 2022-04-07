@@ -193,16 +193,17 @@ void Deframer ::processRing() {
 
     FW_ASSERT(m_protocol != nullptr);
 
-    // Maximum value of the loop index on exiting the loop.
-    // At least one byte is processed per iteration unless
-    // needed > remaining size
-    const U32 loopLimit = m_in_ring.get_capacity() + 1;
+    // The number of remaining bytes in the ring buffer
+    U32 remaining = 0;
+    // The protocol status
+    auto status = DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
+    // The ring buffer capacity
+    const auto ringCapacity = m_in_ring.get_capacity();
 
     // Process the ring buffer looking for at least the header
-    U32 i = 0;
-    for (i = 0; i < loopLimit; i++) {
+    for (U32 i = 0; i < ringCapacity; i++) {
         // Get the number of bytes remaining in the ring buffer
-        const U32 remaining = m_in_ring.get_allocated_size();
+        remaining = m_in_ring.get_allocated_size();
         // If there are none, we are done
         if (remaining == 0) {
             break;
@@ -212,7 +213,7 @@ void Deframer ::processRing() {
         U32 needed = 0;
         // Call the deframe method of the protocol, getting
         // needed and status
-        auto status = m_protocol->deframe(m_in_ring, needed);
+        status = m_protocol->deframe(m_in_ring, needed);
         // Deframing protocol must not consume data in the ring buffer
         FW_ASSERT(
             m_in_ring.get_allocated_size() == remaining,
@@ -224,7 +225,14 @@ void Deframer ::processRing() {
             // If deframing succeeded, protocol should set needed
             // to a non-zero value
             FW_ASSERT(needed != 0);
+            FW_ASSERT(needed <= remaining, needed, remaining);
             m_in_ring.rotate(needed);
+            FW_ASSERT(
+                m_in_ring.get_allocated_size() == remaining - needed,
+                m_in_ring.get_allocated_size(),
+                remaining,
+                needed
+            );
         }
         // More data needed
         else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
@@ -239,6 +247,11 @@ void Deframer ::processRing() {
         else {
             // Skip one byte of bad data
             m_in_ring.rotate(1);
+            FW_ASSERT(
+                m_in_ring.get_allocated_size() == remaining - 1,
+                m_in_ring.get_allocated_size(),
+                remaining
+            );
             // Log checksum errors
             if (status == DeframingProtocol::DEFRAMING_INVALID_CHECKSUM) {
                 Fw::Logger::logMsg("[ERROR] Deframing checksum validation failed\n");
@@ -246,11 +259,10 @@ void Deframer ::processRing() {
         }
     }
 
-    // In every iteration, either we break out of the loop,
-    // or we consume data from the ring buffer.
-    // Thus at most the loop should run m_in_ring.get_capacity() times.
-    // If it hits the limit, then something went horribly wrong.
-    FW_ASSERT(i < loopLimit, i);
+    // If more not needed, circular buffer should be empty
+    if (status != DeframingProtocol::DEFRAMING_MORE_NEEDED) {
+        FW_ASSERT(remaining == 0, remaining);
+    }
 
 }
 
