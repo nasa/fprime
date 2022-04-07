@@ -29,7 +29,8 @@ extraction:
             # setup the venv and install packages
             - "python3 -m venv ./fprime-venv"
             - ". ./fprime-venv/bin/activate"
-            - "pip install fprime-tools fprime-gds"
+            - "pip install urllib3 setuptools_scm"
+            - "pip install fprime-fpp fprime-tools fprime-gds"
         configure:
             command:
         before_index:

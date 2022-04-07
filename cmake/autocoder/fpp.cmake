@@ -5,9 +5,42 @@
 # autocoder API and wraps calls to the FPP tools.
 ####
 include(utilities)
-
-# Does not handle source files one-by-one, but as a complete set
+set(FPP_VERSION v1.0.1)
 set_property(GLOBAL PROPERTY FPP_HANDLES_INDIVIDUAL_SOURCES FALSE)
+
+####
+# locate_fpp_tools:
+#
+# Locates the fpp tool suite and sets FPP_FOUND if the right version of the tools is found. It will look first to the
+# above install location and then to the system path as a fallback.
+####
+function(locate_fpp_tools)
+    # Loop through each tool, looking if it was found and check the version
+    foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
+        string(TOLOWER ${TOOL} PROGRAM)
+        string(REPLACE "_" "-" PROGRAM "${PROGRAM}")
+
+        # Clear any previous version of this find and search in this order: install dir, system path
+        unset(${TOOL} CACHE)
+        find_program(${TOOL} ${PROGRAM})
+        # If the tool exists, check the version
+        if (TOOL AND FPRIME_SKIP_TOOLS_VERSION_CHECK)
+            continue()
+        elseif(TOOL)
+            set(FPP_RE_MATCH "(v[0-9]+\.[0-9]+\.[0-9]+[a-g0-9-]*)")
+            execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)
+            if (OUTPUT_TEXT MATCHES "${FPP_RE_MATCH}")
+                if (CMAKE_MATCH_1 STREQUAL "${FPP_VERSION}")
+                    continue()
+                endif()
+                message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_1} not expected version ${FPP_VERSION}")
+            endif()
+        endif()
+        set(FPP_FOUND FALSE PARENT_SCOPE)
+        return()
+    endforeach()
+    set(FPP_FOUND TRUE PARENT_SCOPE)
+endfunction(locate_fpp_tools)
 
 ####
 # Function `is_supported`:

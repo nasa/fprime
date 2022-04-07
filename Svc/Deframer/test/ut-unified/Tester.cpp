@@ -54,7 +54,7 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
         return;
     }
     for (U32 i = 0; i < data.getBuffLength(); i++) {
-        EXPECT_EQ(data.getBuffAddr()[i], check.data[i + FP_FRAME_HEADER_SIZE]);
+        EXPECT_EQ(data.getBuffAddr()[i], check.data[i + FpFrameHeader::SIZE]);
     }
     this->pushFromPortEntry_comOut(data, context);
 }
@@ -71,7 +71,7 @@ void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& 
 
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
-        ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FP_FRAME_HEADER_SIZE + sizeof(I32)]);
+        ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FpFrameHeader::SIZE + sizeof(I32)]);
     }
     // Have to clean up memory as in a normal mode, file downlink doesn't require deallocation
     delete[](fwBuffer.getData() - sizeof(I32));
