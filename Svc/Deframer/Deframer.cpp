@@ -158,13 +158,12 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
 
     const auto bufferSize = buffer.getSize();
     U8 *const bufferData = buffer.getData();
-    // Type of buffer size is U32
-    U32 bufferOffset = 0;
+    // Current offset into buffer
+    U32 offset = 0;
+    // Remaining data in buffer
+    U32 remaining = bufferSize;
 
     for (U32 i = 0; i < bufferSize; ++i) {
-        // Compute the remaining data size
-        FW_ASSERT(bufferSize >= bufferOffset, bufferSize, bufferOffset);
-        const U32 remaining = bufferSize - bufferOffset;
         // If there is no data left, exit the loop
         if (remaining == 0) {
             break;
@@ -174,18 +173,19 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
         const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
           ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
         // Serialize data into the ring buffer
-        const auto status = m_in_ring.serialize(&bufferData[bufferOffset], serSize);
+        const auto status = m_in_ring.serialize(&bufferData[offset], serSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        // Update the buffer offset
-        bufferOffset += serSize;
         // Process the data
         processRing();
+        // Update buffer offset and remaining
+        offset += serSize;
+        remaining -= serSize;
     }
 
-    // In every iteration, either we break out of theloop,
-    // or we consume one byte from the buffer.
+    // In every iteration, either remaining == 0 and we break out
+    // of the loop, or we consume at least one byte from the buffer.
     // So there should be no data left in the buffer.
-    FW_ASSERT(bufferOffset == bufferSize, bufferOffset, bufferSize);
+    FW_ASSERT(remaining == 0, remaining);
 
 }
 
