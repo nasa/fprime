@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  Deframer.cpp
-// \author mstarch
+// \author mstarch, bocchino
 // \brief  cpp file for Deframer component implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -171,7 +171,7 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
         // Compute the size of data to serialize
         const NATIVE_UINT_TYPE ringFreeSize = m_in_ring.get_free_size();
         const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
-          ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
+            ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
         // Serialize data into the ring buffer
         const auto status = m_in_ring.serialize(&bufferData[offset], serSize);
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
