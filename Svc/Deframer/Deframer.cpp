@@ -107,7 +107,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
 
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
-        U8* packetData = packetBuffer.getData();
+        U8 *const packetData = packetBuffer.getData();
         const auto packetSize = packetBuffer.getSize();
         switch (packetType) {
             case Fw::ComPacket::FW_PACKET_COMMAND: {
@@ -168,6 +168,8 @@ void Deframer ::processRing() {
         // Needed is an out-only variable
         // Initialize it to zero
         U32 needed = 0;
+        // Call the deframe method of the protocol, getting
+        // needed and status
         auto status = m_protocol->deframe(m_in_ring, needed);
         // Deframing protocol must not consume data in the ring buffer
         FW_ASSERT(
@@ -175,7 +177,7 @@ void Deframer ::processRing() {
             m_in_ring.get_allocated_size(),
             remaining
         );
-        // On successful deframing, consume data now
+        // On successful deframing, consume data from the ring buffer now
         if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
             // If deframing succeeded, protocol should set needed
             // to a non-zero value
@@ -202,32 +204,45 @@ void Deframer ::processRing() {
         }
     }
 
-    // In every iteration of the loop above, either we break out of the
-    // iteration, or we consume data from the ring buffer.
+    // In every iteration, either we break out of the loop,
+    // or we consume data from the ring buffer.
     // Thus at most the loop should run m_in_ring.get_capacity() times. If 
     // it hits the limit, then something went horribly wrong.
-    FW_ASSERT(i < loopLimit);
+    FW_ASSERT(i < loopLimit, i);
+
 }
 
 void Deframer ::processBuffer(Fw::Buffer& buffer) {
-    U32 i = 0;
-    U32 buffer_offset = 0; // Max buffer size is U32
-    // Note: max iteration bounded by processing 1 byte per iteration
-    for (i = 0; (i < (buffer.getSize() + 1)) and (buffer_offset < buffer.getSize()); i++) {
-        U32 remaining = buffer.getSize() - buffer_offset;
-        NATIVE_UINT_TYPE ser_size = (remaining >= m_in_ring.get_free_size())
-                                        ? m_in_ring.get_free_size()
-                                        : static_cast<NATIVE_UINT_TYPE>(remaining);
-        m_in_ring.serialize(buffer.getData() + buffer_offset, ser_size);
-        // TODO: Assert here that serialization succeeded
-        // Then we can remove the +1 in the loop test and the assertion at the end
-        buffer_offset = buffer_offset + ser_size;
+
+    const auto bufferSize = buffer.getSize();
+    U8 *const bufferData = buffer.getData();
+    // Max buffer size is U32
+    U32 bufferOffset = 0;
+
+    for (U32 i = 0; i < bufferSize; ++i) {
+        // If there is no data left, exit the loop
+        if (bufferOffset == bufferSize) {
+            break;
+        }
+        // Compute the size to serialize
+        const U32 remaining = bufferSize - bufferOffset;
+        const NATIVE_UINT_TYPE ringFreeSize = m_in_ring.get_free_size();
+        NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
+          ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
+        // Serialize data into the ring buffer
+        const auto status = m_in_ring.serialize(&bufferData[bufferOffset], serSize);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+        // Update the buffer offset
+        bufferOffset += serSize;
+        // Process the data
         processRing();
     }
-    // Note: this assert can trip when the processRing function failed to process data
-    // or when the circular buffer is not large enough to hold a complete message. Both
-    // are hard-failures
-    FW_ASSERT(i <= buffer.getSize(), buffer.getSize());
+
+    // In every iteration, either we break out of the
+    // loop, or we consume one byte from the buffer.
+    // So there should be no data left in the buffer.
+    FW_ASSERT(bufferOffset == bufferSize, bufferOffset, bufferSize);
+
 }
 
 }  // end namespace Svc
