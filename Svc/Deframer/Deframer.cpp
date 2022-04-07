@@ -113,6 +113,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
         U8 *const packetData = packetBuffer.getData();
         const auto packetSize = packetBuffer.getSize();
         switch (packetType) {
+            // Handle a command packet
             case Fw::ComPacket::FW_PACKET_COMMAND: {
                 // Allocate a com buffer on the stack
                 Fw::ComBuffer com;
@@ -122,6 +123,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 comOut_out(0, com, 0);
                 break;
             }
+            // Handle a file packet
             case Fw::ComPacket::FW_PACKET_FILE: {
                 // If file uplink is possible, handle the file packet.
                 // Otherwise ignore it.
@@ -138,6 +140,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 }
                 break;
             }
+            // Ignore other packet types
             default:
                 break;
         }
