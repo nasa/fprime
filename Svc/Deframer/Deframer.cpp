@@ -248,8 +248,8 @@ void Deframer ::processRing() {
 
     // In every iteration, either we break out of the loop,
     // or we consume data from the ring buffer.
-    // Thus at most the loop should run m_in_ring.get_capacity() times. If 
-    // it hits the limit, then something went horribly wrong.
+    // Thus at most the loop should run m_in_ring.get_capacity() times.
+    // If it hits the limit, then something went horribly wrong.
     FW_ASSERT(i < loopLimit, i);
 
 }
