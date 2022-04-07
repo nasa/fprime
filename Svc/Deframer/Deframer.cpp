@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <cstring>
+
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
@@ -27,7 +29,7 @@ Deframer ::Deframer(const char* const compName) :
     m_protocol(nullptr),
     m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
 {
-
+    memset(m_poll_buffer, 0, sizeof m_poll_buffer);
 }
 
 void Deframer ::init(const NATIVE_INT_TYPE instance) {
@@ -101,7 +103,8 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
     auto status = Fw::FW_SERIALIZE_OK;
     {
         auto& serial = packetBuffer.getSerializeRepr();
-        serial.setBuffLen(packetBuffer.getSize());
+        status = serial.setBuffLen(packetBuffer.getSize());
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         status = serial.deserialize(packetType);
     }
 
@@ -118,7 +121,8 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 // Allocate a com buffer on the stack
                 Fw::ComBuffer com;
                 // Copy the contents of the packet buffer into the com buffer
-                com.setBuff(packetData, packetSize);
+                status = com.setBuff(packetData, packetSize);
+                FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
                 // Send the com buffer
                 comOut_out(0, com, 0);
                 break;
