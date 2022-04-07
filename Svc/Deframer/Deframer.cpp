@@ -46,7 +46,6 @@ void Deframer ::setup(DeframingProtocol& protocol) {
     protocol.setup(*this);
 }
 
-
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -86,6 +85,10 @@ void Deframer ::schedIn_handler(
         processBuffer(buffer);
     }
 }
+
+// ---------------------------------------------------------------------- 
+// Implementation of DeframingProtocolInterface
+// ----------------------------------------------------------------------
 
 Fw::Buffer Deframer ::allocate(const U32 size)  {
     return bufferAllocate_out(0, size);
@@ -144,6 +147,45 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
         // Deallocate the packet buffer
         bufferDeallocate_out(0, packetBuffer);
     }
+
+}
+
+// ----------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------
+
+void Deframer ::processBuffer(Fw::Buffer& buffer) {
+
+    const auto bufferSize = buffer.getSize();
+    U8 *const bufferData = buffer.getData();
+    // Type of buffer size is U32
+    U32 bufferOffset = 0;
+
+    for (U32 i = 0; i < bufferSize; ++i) {
+        // Compute the remaining data size
+        FW_ASSERT(bufferSize >= bufferOffset, bufferSize, bufferOffset);
+        const U32 remaining = bufferSize - bufferOffset;
+        // If there is no data left, exit the loop
+        if (remaining == 0) {
+            break;
+        }
+        // Compute the size of data to serialize
+        const NATIVE_UINT_TYPE ringFreeSize = m_in_ring.get_free_size();
+        const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
+          ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
+        // Serialize data into the ring buffer
+        const auto status = m_in_ring.serialize(&bufferData[bufferOffset], serSize);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+        // Update the buffer offset
+        bufferOffset += serSize;
+        // Process the data
+        processRing();
+    }
+
+    // In every iteration, either we break out of theloop,
+    // or we consume one byte from the buffer.
+    // So there should be no data left in the buffer.
+    FW_ASSERT(bufferOffset == bufferSize, bufferOffset, bufferSize);
 
 }
 
@@ -209,39 +251,6 @@ void Deframer ::processRing() {
     // Thus at most the loop should run m_in_ring.get_capacity() times. If 
     // it hits the limit, then something went horribly wrong.
     FW_ASSERT(i < loopLimit, i);
-
-}
-
-void Deframer ::processBuffer(Fw::Buffer& buffer) {
-
-    const auto bufferSize = buffer.getSize();
-    U8 *const bufferData = buffer.getData();
-    // Max buffer size is U32
-    U32 bufferOffset = 0;
-
-    for (U32 i = 0; i < bufferSize; ++i) {
-        // If there is no data left, exit the loop
-        if (bufferOffset == bufferSize) {
-            break;
-        }
-        // Compute the size to serialize
-        const U32 remaining = bufferSize - bufferOffset;
-        const NATIVE_UINT_TYPE ringFreeSize = m_in_ring.get_free_size();
-        NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
-          ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
-        // Serialize data into the ring buffer
-        const auto status = m_in_ring.serialize(&bufferData[bufferOffset], serSize);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        // Update the buffer offset
-        bufferOffset += serSize;
-        // Process the data
-        processRing();
-    }
-
-    // In every iteration, either we break out of the
-    // loop, or we consume one byte from the buffer.
-    // So there should be no data left in the buffer.
-    FW_ASSERT(bufferOffset == bufferSize, bufferOffset, bufferSize);
 
 }
 
