@@ -336,6 +336,7 @@ deque
 deregistration
 deser
 Deserial
+deserializer
 deserialization
 deserialize
 deserialized
