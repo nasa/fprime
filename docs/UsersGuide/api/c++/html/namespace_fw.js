@@ -2,6 +2,7 @@ var namespace_fw =
 [
     [ "ActiveComponentBase", "class_fw_1_1_active_component_base.html", "class_fw_1_1_active_component_base" ],
     [ "ActiveComponentExitSerializableBuffer", "class_fw_1_1_active_component_exit_serializable_buffer.html", "class_fw_1_1_active_component_exit_serializable_buffer" ],
+    [ "AlignedAllocator", "class_fw_1_1_aligned_allocator.html", "class_fw_1_1_aligned_allocator" ],
     [ "AmpcsEvrLogPacket", "class_fw_1_1_ampcs_evr_log_packet.html", "class_fw_1_1_ampcs_evr_log_packet" ],
     [ "Buffer", "class_fw_1_1_buffer.html", "class_fw_1_1_buffer" ],
     [ "ByteArray", "struct_fw_1_1_byte_array.html", "struct_fw_1_1_byte_array" ],
