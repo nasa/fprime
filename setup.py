@@ -36,5 +36,5 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     python_requires=">=3.6",
-    install_requires=["fprime-tools==3.0.1", "fprime-fpp==1.0.1", "fprime-gds==3.0.1"],
+    install_requires=["fprime-tools==3.0.2", "fprime-fpp==1.0.1", "fprime-gds==3.0.1"],
 )
