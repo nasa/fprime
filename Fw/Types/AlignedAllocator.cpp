@@ -27,6 +27,9 @@ namespace Fw {
 
     void *AlignedAllocator::allocate(const NATIVE_UINT_TYPE identifier, NATIVE_UINT_TYPE &size, bool& recoverable) {
 
+        // Verify size is multiple of alignment by aligned_alloc rule
+        FW_ASSERT(size%this->m_alignment == 0,this->m_alignment,size);
+
         // don't use identifier
         // heap memory is never recoverable
         recoverable = false;

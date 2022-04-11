@@ -1169,44 +1169,44 @@ TEST(AllocatorTest,AlignedAllocatorTest) {
     // Note that these may be false positives depending on the underlying heap scheme
 
     // Test alignment 2 
-    Fw::AlignedAllocator allocator_2(2);
-    NATIVE_UINT_TYPE size = 100; // one hundred bytes
+    Fw::AlignedAllocator allocator_2(2*sizeof(void*));
+    NATIVE_UINT_TYPE size = 4*sizeof(void*); // one hundred bytes
     bool recoverable;
     void *ptr = allocator_2.allocate(10,size,recoverable);
-    ASSERT_EQ(100,size);
+    ASSERT_EQ(4*sizeof(void*),size);
     ASSERT_NE(ptr,nullptr);
     ASSERT_FALSE(recoverable);
     // verify alignment
     POINTER_CAST ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
     ASSERT_EQ(ptrVal,ptrVal&~0x1);
     // deallocate memory
-    allocator_2.deallocate(100,ptr);
+    allocator_2.deallocate(10,ptr);
 
     // Test alignment 4 
-    Fw::AlignedAllocator allocator_4(4);
-    size = 1000; // one hundred bytes
+    Fw::AlignedAllocator allocator_4(4*sizeof(void*));
+    size = 8*sizeof(void*); // one hundred bytes
     ptr = allocator_4.allocate(10,size,recoverable);
-    ASSERT_EQ(1000,size);
+    ASSERT_EQ(8*sizeof(void*),size);
     ASSERT_NE(ptr,nullptr);
     ASSERT_FALSE(recoverable);
     // verify alignment
     ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
     ASSERT_EQ(ptrVal,ptrVal&~0x3);
     // deallocate memory
-    allocator_4.deallocate(100,ptr);
+    allocator_4.deallocate(10,ptr);
 
     // Test alignment 32 
-    Fw::AlignedAllocator allocator_32(32);
-    size = 1000; // one hundred bytes
+    Fw::AlignedAllocator allocator_32(32*sizeof(void*));
+    size = 64*sizeof(void*); // one hundred bytes
     ptr = allocator_32.allocate(10,size,recoverable);
-    ASSERT_EQ(1000,size);
+    ASSERT_EQ(64*sizeof(void*),size);
     ASSERT_NE(ptr,nullptr);
     ASSERT_FALSE(recoverable);
     // verify alignment
     ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
     ASSERT_EQ(ptrVal,ptrVal&~0x1F);
     // deallocate memory
-    allocator_32.deallocate(100,ptr);
+    allocator_32.deallocate(10,ptr);
 
 }
 
