@@ -122,6 +122,7 @@ bibtex
 Bies
 bindir
 Bitfields
+bithacks
 bitmaps
 bitset
 ble
@@ -1355,6 +1356,7 @@ scons
 scp
 scrollbars
 sdd
+seander
 searchdata
 SEARCHENGINE
 segfault
