@@ -18,8 +18,11 @@ namespace Fw {
 
     AlignedAllocator::AlignedAllocator(NATIVE_UINT_TYPE alignment)
     : m_alignment(alignment) {
-        // according to man page, alignment of zero is undefined so assert
+        // according to man page, alignment of zero is undefined so assert if zero
         FW_ASSERT(alignment);
+        // assert alignment is a power of 2 based on aligned_alloc rule
+        // http://www.graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
+        FW_ASSERT((alignment & (alignment - 1))==0,alignment);
     } 
 
     AlignedAllocator::~AlignedAllocator() {
