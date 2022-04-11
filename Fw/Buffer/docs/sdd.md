@@ -65,7 +65,7 @@ of the `Fw::Buffer` and is initially empty.  Users can serialize and deserialize
 memory. 
 
 The state of `sb` persists as long as the current `Fw::Buffer` object exists as it is stored as a member. However, all
-`Fw::Buffer` constuctors intialize `sb` to an empty state including the `Fw::Buffer` copy constructor. Thus, if an
+`Fw::Buffer` constructors initialize `sb` to an empty state including the `Fw::Buffer` copy constructor. Thus, if an
 `Fw::Buffer` is sent through a port call, passed by-value to a function call, or otherwise copied, the state of the new
 buffer's `sb` member is empty.
 
