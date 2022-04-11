@@ -7,6 +7,14 @@
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+#include <Fw/Types/AlignedAllocator.hpp>
+//
+// Created by mstarch on 12/7/20.
+//
+#include <cstring>
+#include <Fw/Types/StringUtils.hpp>
+
+
 
 #include <cstdio>
 #include <cstring>
@@ -440,7 +448,8 @@ TEST(SerializationTest,Serialization1) {
     stat1 = buff.serialize(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
 
-    std::cout << "Buffer contents: " << buff << std::endl;
+    // TKC - commented out due to fprime-util choking on output
+    // std::cout << "Buffer contents: " << buff << std::endl;
 
     // Serialize second buffer and test for equality
     buff2.resetSer();
@@ -1152,6 +1161,103 @@ TEST(AllocatorTest,MallocAllocatorTest) {
     ASSERT_FALSE(recoverable);
     // deallocate memory
     allocator.deallocate(100,ptr);
+}
+
+TEST(AllocatorTest,AlignedAllocatorTest) {
+
+    // spot check some alignments, but it really depends on the underlying C library
+    // Note that these may be false positives depending on the underlying heap scheme
+
+    // Test alignment 2 
+    Fw::AlignedAllocator allocator_2(2*sizeof(void*));
+    NATIVE_UINT_TYPE size = 4*sizeof(void*); // one hundred bytes
+    bool recoverable;
+    void *ptr = allocator_2.allocate(10,size,recoverable);
+    ASSERT_EQ(4*sizeof(void*),size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    POINTER_CAST ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x1);
+    // deallocate memory
+    allocator_2.deallocate(10,ptr);
+
+    // Test alignment 4 
+    Fw::AlignedAllocator allocator_4(4*sizeof(void*));
+    size = 8*sizeof(void*); // one hundred bytes
+    ptr = allocator_4.allocate(10,size,recoverable);
+    ASSERT_EQ(8*sizeof(void*),size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x3);
+    // deallocate memory
+    allocator_4.deallocate(10,ptr);
+
+    // Test alignment 32 
+    Fw::AlignedAllocator allocator_32(32*sizeof(void*));
+    size = 64*sizeof(void*); // one hundred bytes
+    ptr = allocator_32.allocate(10,size,recoverable);
+    ASSERT_EQ(64*sizeof(void*),size);
+    ASSERT_NE(ptr,nullptr);
+    ASSERT_FALSE(recoverable);
+    // verify alignment
+    ptrVal = reinterpret_cast<POINTER_CAST>(ptr);
+    ASSERT_EQ(ptrVal,ptrVal&~0x1F);
+    // deallocate memory
+    allocator_32.deallocate(10,ptr);
+
+}
+
+TEST(Nominal, string_copy) {
+    const char* copy_string = "abc123\n";  // Length of 7
+    char buffer_out_test[10];
+    char buffer_out_truth[10];
+
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+
+    ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
+
+    // Check the outputs, both should return the input buffer
+    ASSERT_EQ(out_truth, buffer_out_truth) << "strncpy didn't return expected value";
+    ASSERT_EQ(out_test, buffer_out_test) << "string_copy didn't return expected value";
+
+    // Check string correct
+    ASSERT_STREQ(out_test, copy_string) << "Strings not equal from strncpy";
+    ASSERT_STREQ(out_test, out_truth) << "Copied strings differ from strncpy";
+
+    // Should output 0s for the remaining buffer
+    for (U32 i = ::strnlen(buffer_out_truth, sizeof(buffer_out_truth)); i < static_cast<U32>(sizeof(buffer_out_truth));
+         i++) {
+        ASSERT_EQ(buffer_out_truth[i], 0) << "strncpy didn't output 0 fill";
+        ASSERT_EQ(buffer_out_test[i], 0) << "string_copy didn't output 0 fill";
+    }
+}
+
+TEST(OffNominal, string_copy) {
+    const char* copy_string = "abc123\n";  // Length of 7
+    char buffer_out_test[sizeof(copy_string) - 1];
+    char buffer_out_truth[sizeof(copy_string) - 1];
+
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+
+    ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
+
+    // Check the outputs, both should return the input buffer
+    ASSERT_EQ(out_truth, buffer_out_truth) << "strncpy didn't return expected value";
+    ASSERT_EQ(out_test, buffer_out_test) << "string_copy didn't return expected value";
+
+    // Check string correct up to last digit
+    U32 i = 0;
+    ASSERT_STRNE(out_test, out_truth) << "Strings not equal";
+    for (i = 0; i < static_cast<U32>(sizeof(copy_string)) - 2; i++) {
+        ASSERT_EQ(out_test[i], out_truth[i]);
+    }
+    ASSERT_EQ(out_truth[i], '\n') << "strncpy did not error as expected";
+    ASSERT_EQ(out_test[i], 0) << "string_copy didn't properly null terminate";
 }
 
 int main(int argc, char **argv) {

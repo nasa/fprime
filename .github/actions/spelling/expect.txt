@@ -30,6 +30,9 @@ aeiouy
 afterstatinfo
 agg
 aheared
+alignedallocator
+AlignedAllocator
+ALIGNEDALLOCATOR
 ALLEXTERNALS
 alloc
 Alltypes
@@ -119,6 +122,7 @@ bibtex
 Bies
 bindir
 Bitfields
+bithacks
 bitmaps
 bitset
 ble
@@ -1352,6 +1356,7 @@ scons
 scp
 scrollbars
 sdd
+seander
 searchdata
 SEARCHENGINE
 segfault
