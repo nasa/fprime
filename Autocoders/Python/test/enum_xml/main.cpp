@@ -147,7 +147,7 @@ TEST(EnumXML, InvalidNegativeConstant) {
   Example::Enum1 enum1 = getEnum();
   // Get a valid negative constant
   const I32 negativeConstant = getNegativeConstant();
-  const U32 expectedLineNumber = 65;
+  const U32 expectedLineNumber = 55;
   // Turn it into a U32
   const U32 expectedArg1 = negativeConstant;
   // As a U32, the constant is not valid
@@ -163,7 +163,7 @@ TEST(EnumXML, InvalidConstant) {
   const I32 invalidConstant = 42;
   // This should cause an assertion failure
   enum1 = invalidConstant;
-  const U32 expectedLineNumber = 58;
+  const U32 expectedLineNumber = 48;
   const U32 expectedArg1 = invalidConstant;
   checkAssertionFailure(uta, expectedLineNumber, expectedArg1);
 }
