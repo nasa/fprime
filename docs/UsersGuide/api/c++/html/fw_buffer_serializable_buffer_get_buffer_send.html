@@ -94,38 +94,62 @@ Fw::Buffer Serializable / Fw::BufferGet Port / Fw::BufferSend Port</h1>
 1 Introduction</h2>
 <p>This module provides the following elements:</p>
 <ul>
-<li>A type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> representing a variable-size buffer allocated from a fixed-size store.</li>
-<li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a <a href="../../../Svc/BufferManager/docs/sdd.html"><code>BufferManager</code></a> component.</li>
+<li>A type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> representing a wrapper around a variable-size buffer. This allows for passing a reference to the allocated memory around without a copy. Typically the memory is allocated in a buffer manager or similar component but this is not required.</li>
+<li>A port <code>Fw::BufferGet</code> for requesting a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from a ../../../Svc/BufferManager/docs/sdd.md "`BufferManager`" and similar components.</li>
 <li>A port <code>Fw::BufferSend</code> for sending a buffer of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> from one component to another.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md85"></a>
 2 Design</h2>
-<p><a class="anchor" id="FwBuffer"></a> </p>
+<p>The <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> type wraps a pointer to memory and the size of that memory region. Thus, allowing users to pass the pointer and size around as a pair without incurring a copy of the data at each step. <b>Note:</b> <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is not safe to pass outside a given address space.</p>
 <h3><a class="anchor" id="autotoc_md86"></a>
 2.1 The Type Fw::Buffer</h3>
-<p><code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is a serializable class. It contains the following members:</p>
+<p><code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is a serializable class defining the following (private) fields. These fields are accessed through accessor functions.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Name </th><th class="markdownTableHeadNone">Type </th><th class="markdownTableHeadNone">Purpose  </th></tr>
+<th class="markdownTableHeadNone">Name </th><th class="markdownTableHeadNone">Type </th><th class="markdownTableHeadNone">Accessors </th><th class="markdownTableHeadNone">Purpose  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="anchor" id="managerID"></a><code>managerID</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone">The instance number of the <a href="../../../Svc/BufferManager/docs/sdd.html"><code>BufferManager</code></a> that allocated this buffer.  </td></tr>
+<td class="markdownTableBodyNone"><code>m_bufferData</code> </td><td class="markdownTableBodyNone"><code>U8*</code> </td><td class="markdownTableBodyNone"><code>getData()</code>/<code>setData()</code> </td><td class="markdownTableBodyNone">Pointer to the raw memory wrapped by this buffer  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="anchor" id="bufferID"></a><code>bufferID</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone">A <code>U32</code> value that uniquely (modulo 2^32) identifies this buffer among all buffers allocated by the buffer manager with ID <a href="#managerID"><code>managerID</code></a>. Each allocation receives a different identifier, even if the same memory is re-used for different allocations.  </td></tr>
+<td class="markdownTableBodyNone"><code>m_size</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone"><code>getSize()</code>/<code>setSize()</code> </td><td class="markdownTableBodyNone">Size of the raw memory region wrapped by this buffer  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="anchor" id="data"></a><code>data</code> </td><td class="markdownTableBodyNone"><code>U64</code> </td><td class="markdownTableBodyNone">Either zero or a pointer to the initial byte of the memory area reserved for the buffer, cast to a <code>U64</code> value so it can be serialized.  </td></tr>
+<td class="markdownTableBodyNone"><code>m_context</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone"><code>getContext()</code>/<code>setContext()</code> </td><td class="markdownTableBodyNone">Context of buffer's origin. Used to track buffers created by ../../../Svc/BufferManager/docs/sdd.md "`BufferManager`"  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>size</code> </td><td class="markdownTableBodyNone"><code>U32</code> </td><td class="markdownTableBodyNone">The size of the buffer in bytes.  </td></tr>
+<td class="markdownTableBodyNone"><code>m_serialize_repr</code> </td><td class="markdownTableBodyNone"><code><a class="el" href="class_fw_1_1_external_serialize_buffer.html">Fw::ExternalSerializeBuffer</a></code> </td><td class="markdownTableBodyNone"><code>getSerializeRepr()</code> </td><td class="markdownTableBodyNone">Interface for serialization to internal buffer  </td></tr>
 </table>
-<p>A value of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is <em>valid</em> if its <code>data</code> member is non-zero; otherwise it is <em>invalid</em>.</p>
+<p>If the size of the data is set to 0, the pointer returned by <code>getData()</code> and the the serialization interface returned by <code>getSerializeRepr()</code> are considered invalid and should not be used.</p>
+<p>The <code>getSerializeRepr()</code> function may be used to interact with the wrapped data buffer by serializing types to and from the data region.</p>
 <h3><a class="anchor" id="autotoc_md87"></a>
 2.2 The Port Fw::BufferGet</h3>
-<p>As shown in the following diagram, <code>Fw::BufferGet</code> has one argument <code>size</code> of type <code>U32</code>. It returns a value of type <a href="#FwBuffer"><code>Fw::Buffer</code></a>.</p>
+<p>As shown in the following diagram, <code>Fw::BufferGet</code> has one argument <code>size</code> of type <code>U32</code>. It returns a value of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>. The returned <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>'s size must be checked for validity before using.</p>
 <p><img src="img/BufferGetBDD.jpg" alt="`Fw::BufferGet` Diagram" title="Fw::BufferGet Port" class="inline"/></p>
 <h3><a class="anchor" id="autotoc_md88"></a>
 2.3 The Port Fw::BufferSend</h3>
 <p>As shown in the following diagram, <code>Fw::BufferSend</code> has one argument <code>fwBuffer</code> of type <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code>.</p>
-<p><img src="img/BufferSendBDD.jpg" alt="`Fw::BufferSend` Diagram" title="Fw::BufferSend Port" class="inline"/> </p>
-</div></div><!-- contents -->
+<p><img src="img/BufferSendBDD.jpg" alt="`Fw::BufferSend` Diagram" title="Fw::BufferSend Port" class="inline"/></p>
+<h2><a class="anchor" id="autotoc_md89"></a>
+3 Usage Notes</h2>
+<p>Components allocating <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects may use the <code>m_context</code> field at their discretion. This field is typically used to track the origin of the buffer for eventual allocation. When a component fails to allocate memory, it must set the <code>m_size</code> field to zero to indicate that the buffer is invalid.</p>
+<p>Receivers of <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> objects are expected to check the <code>m_size</code> field before using the buffer.</p>
+<h3><a class="anchor" id="autotoc_md90"></a>
+Serializing and Deserializing with &lt;tt&gt;Fw::Buffer&lt;/tt&gt;</h3>
+<p>Users can obtain a SerializeBuffer, <code>sb</code>, by calling <code>getSerializeRepr()</code>. This serialize buffer is backed by the memory of the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> and is initially empty. Users can serialize and deserialize through <code>sb</code> to copy to/from the backed memory.</p>
+<p>The state of <code>sb</code> persists as long as the current <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> object exists as it is stored as a member. However, all <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> constructors initialize <code>sb</code> to an empty state including the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> copy constructor. Thus, if an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> is sent through a port call, passed by-value to a function call, or otherwise copied, the state of the new buffer's <code>sb</code> member is empty.</p>
+<p><b>Serializing to <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code></b> </p><div class="fragment"><div class="line"> {c++}</div>
+<div class="line">U32 my_data = 10001;</div>
+<div class="line">U8  my_byte = 2;</div>
+<div class="line">Fw::ExternalSerializeBuffer&amp; sb = my_fw_buffer.getSerializeRepr();</div>
+<div class="line">sb.resetSer();  // Return the serialization to the beginning of the memory region</div>
+<div class="line">sb.serialize(my_data);</div>
+<div class="line">sb.serialize(my_byte);</div>
+</div><!-- fragment --><p>Since the initial state of <code>sb</code> is empty, deserialization requires setting the size of the data available for deserialization. This can be done with the <code>sb.setBuffLen()</code> method passing in the <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> size.</p>
+<p><b>Deserializing from <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code></b> </p><div class="fragment"><div class="line"> {c++}</div>
+<div class="line">U32 my_data = 0;</div>
+<div class="line">U8  my_byte = 0;</div>
+<div class="line">Fw::ExternalSerializeBuffer&amp; sb = my_fw_buffer.getSerializeRepr();</div>
+<div class="line">sb.setBuffLen(buffer.getSize());  // Set available data for deserialization to the whole memory region</div>
+<div class="line">sb.deserialize(my_data);</div>
+<div class="line">sb.deserialize(my_byte);</div>
+</div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
 <!-- start footer part -->

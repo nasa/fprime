@@ -88,14 +88,14 @@ $(document).ready(function(){initNavTree('_svc_deframer.html',''); initResizable
 <div class="title">Deframer Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md328"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md330"></a>
 Svc::Deframer Deframer Component</h1>
 <p>Deframer takes a stream of bytes from ground, checks the header and footer, and then extracts message data from the stream. The extracted data usually is passed to the service layer (typically CmdDisp, FileUplink, or a GenericHub). The Deframer uses a <code>DeframingProtocol</code> for the same abstraction that the Framer uses <code>FramingProtocol</code>. Deframer is backed by a circular buffer such that incomplete messages are reassembled. It also can be hooked up in two ways:</p><ol type="1">
 <li>Polling (for drivers without their own thread/scheduling): In this configuration Deframer will poll the driver looking for new data.</li>
 <li>Callback (for drivers with a thread/scheduling): In this configuration the driver pushes data to the Deframer.</li>
 </ol>
 <p>Note: User should hook up only one of the configurations at a time.</p>
-<h2><a class="anchor" id="autotoc_md329"></a>
+<h2><a class="anchor" id="autotoc_md331"></a>
 Design</h2>
 <ol type="1">
 <li>Deframer will accept incoming buffers.</li>
@@ -109,7 +109,7 @@ Design</h2>
 <li>If an allocate callback is made, it will delegate that allocation to the bufferAllocate call.</li>
 <li>If step three is routing to <code>Fw::Com</code>, it must pass the buffer to the <code>bufferDeallocate</code> port.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md330"></a>
+<h2><a class="anchor" id="autotoc_md332"></a>
 Usage Examples</h2>
 <p>When Deframer component receives the data from a manager component (typically a service layer such as ground uplinkComm or TcpClient) via polling or a callback, the Deframer will perform the deserialization per <code>DeframingProtocol</code> and will transfer the stream via <code>bufferOut</code> or <code>comOut</code> port to components such as <code>CmdDisp</code>, <code>FileUplink</code>, or a <code>GenericHub</code>.</p>
 <p>The following diagram is an example of Deframer usage with and <code>uplinkComm</code> component:</p>
@@ -123,10 +123,10 @@ Usage Examples</h2>
 <div class="line"> </div>
 <div class="line">uplink_obj.init(0);</div>
 <div class="line">uplink_obj.setup(deframing_obj);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md331"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md333"></a>
 Class Diagram</h2>
 <p><img src="./img/class_diagram_deframer.png" alt="classdiagram" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md332"></a>
+<h2><a class="anchor" id="autotoc_md334"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -134,7 +134,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TBD </td><td class="markdownTableBodyNone">TBD </td><td class="markdownTableBodyNone">TBD  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md333"></a>
+<h2><a class="anchor" id="autotoc_md335"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
