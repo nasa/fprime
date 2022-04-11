@@ -336,6 +336,7 @@ deque
 deregistration
 deser
 Deserial
+deserializer
 deserialization
 deserialize
 deserialized
@@ -1524,6 +1525,7 @@ synchronicity
 synopsys
 sys
 SYSFS
+sysinfo
 systemd
 tabbedwidths
 tabccitt

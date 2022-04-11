@@ -12,40 +12,15 @@
 #include <cstdio>              /* fopen() */
 #include <cstdlib>             /* scanf */
 #include <sys/vfs.h>            /* statfs() */
+#include <sys/sysinfo.h>		/* get_nprocs() */
 #include <cstring>
 #include <Os/SystemResources.hpp>
 #include <Fw/Types/Assert.hpp>
 
 namespace Os {
-    static const U32 LINUX_CPU_LINE_LIMIT = 1024; // Maximum lines to read before bailing
 
     SystemResources::SystemResourcesStatus SystemResources::getCpuCount(U32 &cpuCount) {
-        char line[512] = {0};
-        FILE *fp = nullptr;
-        U32 cpu_count = 0;
-
-        if ((fp = fopen("/proc/stat", "r")) == nullptr) {
-            return SYSTEM_RESOURCES_ERROR;
-        }
-
-        if (fgets(line, sizeof(line), fp) == nullptr) { //1st line.  Aggregate cpu line. Skip
-            fclose(fp);
-            return SYSTEM_RESOURCES_ERROR;
-        }
-
-        for (U32 i = 0; i < LINUX_CPU_LINE_LIMIT; i++) {
-            if (fgets(line, sizeof(line), fp) == nullptr) { //cpu# line
-                break;
-            }
-
-            if (!(line[0] == 'c' && line[1] == 'p' && line[2] == 'u')) {
-                break;
-            }
-            cpu_count++;
-        }
-        fclose(fp);
-        cpuCount = cpu_count;
-
+        cpuCount = get_nprocs();
         return SYSTEM_RESOURCES_OK;
     }
 
