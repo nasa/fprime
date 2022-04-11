@@ -20,16 +20,29 @@
 namespace Svc {
 
 // ----------------------------------------------------------------------
+// Static assertions
+// ----------------------------------------------------------------------
+
+static_assert(
+    DeframerCfg::POLL_BUFFER_SIZE > 0,
+    "poll buffer size must be greater than zero"
+);
+static_assert(
+    DeframerCfg::RING_BUFFER_SIZE > 0,
+    "ring buffer size must be greater than zero"
+);
+
+// ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-Deframer ::Deframer(const char* const compName) : 
-    DeframerComponentBase(compName), 
+Deframer ::Deframer(const char* const compName) :
+    DeframerComponentBase(compName),
     DeframingProtocolInterface(),
     m_protocol(nullptr),
-    m_in_ring(m_ring_buffer, sizeof(m_ring_buffer))
+    m_in_ring(m_ring_buffer, sizeof m_ring_buffer)
 {
-    memset(m_poll_buffer, 0, sizeof m_poll_buffer);
+    (void) memset(m_poll_buffer, 0, sizeof m_poll_buffer);
 }
 
 void Deframer ::init(const NATIVE_INT_TYPE instance) {
@@ -88,7 +101,7 @@ void Deframer ::schedIn_handler(
     }
 }
 
-// ---------------------------------------------------------------------- 
+// ----------------------------------------------------------------------
 // Implementation of DeframingProtocolInterface
 // ----------------------------------------------------------------------
 
@@ -122,6 +135,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 Fw::ComBuffer com;
                 // Copy the contents of the packet buffer into the com buffer
                 status = com.setBuff(packetData, packetSize);
+                // TODO: Log message instead of assert
                 FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
                 // Send the com buffer
                 comOut_out(0, com, 0);
@@ -129,7 +143,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
             }
             // Handle a file packet
             case Fw::ComPacket::FW_PACKET_FILE: {
-                // If file uplink is possible, handle the file packet.
+                // If file uplink output port is connected, handle the file packet.
                 // Otherwise ignore it.
                 if (isConnected_bufferOut_OutputPort(0)) {
                     // Shift the packet buffer to skip the packet type
@@ -181,7 +195,8 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
             ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
         // Serialize data into the ring buffer
         const auto status = m_in_ring.serialize(&bufferData[offset], serSize);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+        // If data does not fit, there is a coding error
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status, offset, serSize);
         // Process the data
         processRing();
         // Update buffer offset and remaining
@@ -243,7 +258,7 @@ void Deframer ::processRing() {
         }
         // More data needed
         else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-            // Deframing protocol should not report "more is needed" 
+            // Deframing protocol should not report "more is needed"
             // unless more is needed
             FW_ASSERT(needed > remaining, needed, remaining);
             // Break out of loop: suspend deframing until we receive
@@ -260,6 +275,7 @@ void Deframer ::processRing() {
                 remaining
             );
             // Log checksum errors
+            // This is likely a real error, not an artifact of other data corruption
             if (status == DeframingProtocol::DEFRAMING_INVALID_CHECKSUM) {
                 Fw::Logger::logMsg("[ERROR] Deframing checksum validation failed\n");
             }

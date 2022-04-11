@@ -69,7 +69,6 @@ class Deframer :
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
-
     //! Handler for input port cmdResponseIn
     void cmdResponseIn_handler(
         NATIVE_INT_TYPE portNum, //!< The port number
