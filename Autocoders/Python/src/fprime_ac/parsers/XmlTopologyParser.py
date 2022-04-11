@@ -21,11 +21,15 @@ import os
 
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import (BuildRootCollisionException,
-                                       BuildRootMissingException,
-                                       locate_build_root)
-from fprime_ac.utils.exceptions import (FprimeRngXmlValidationException,
-                                        FprimeXmlException)
+from fprime_ac.utils.buildroot import (
+    BuildRootCollisionException,
+    BuildRootMissingException,
+    locate_build_root,
+)
+from fprime_ac.utils.exceptions import (
+    FprimeRngXmlValidationException,
+    FprimeXmlException,
+)
 from lxml import etree, isoschematron
 
 # from builtins import file

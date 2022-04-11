@@ -24,12 +24,15 @@ from getpass import getuser
 from fprime_ac.generators import formatters
 from fprime_ac.generators.writers import AbstractWriter
 from fprime_ac.models import ModelParser
+
 #
 # Python extension modules and custom interfaces
 #
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.buildroot import (BuildRootMissingException,
-                                       build_root_relative_path)
+from fprime_ac.utils.buildroot import (
+    BuildRootMissingException,
+    build_root_relative_path,
+)
 
 #
 # Global logger init. below.

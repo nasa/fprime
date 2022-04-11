@@ -19,8 +19,17 @@
 import logging
 import sys
 
-from fprime_ac.models import (Arg, Channel, Command, Component, Event,
-                              InternalInterface, Parameter, Port, Serialize)
+from fprime_ac.models import (
+    Arg,
+    Channel,
+    Command,
+    Component,
+    Event,
+    InternalInterface,
+    Parameter,
+    Port,
+    Serialize,
+)
 
 # Global logger init. below.
 PRINT = logging.getLogger("output")

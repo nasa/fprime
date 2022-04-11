@@ -19,13 +19,22 @@ import sys
 from optparse import OptionParser
 
 from Cheetah.Template import Template
+
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
+
 # Parsers to read the XML
-from fprime_ac.parsers import (XmlArrayParser, XmlEnumParser,
-                               XmlSerializeParser, XmlTopologyParser)
-from fprime_ac.utils.buildroot import (get_nearest_build_root, search_for_file,
-                                       set_build_roots)
+from fprime_ac.parsers import (
+    XmlArrayParser,
+    XmlEnumParser,
+    XmlSerializeParser,
+    XmlTopologyParser,
+)
+from fprime_ac.utils.buildroot import (
+    get_nearest_build_root,
+    search_for_file,
+    set_build_roots,
+)
 from lxml import etree
 
 header_file_template = """

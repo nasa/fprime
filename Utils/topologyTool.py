@@ -85,9 +85,7 @@ def tag_object_to_string(tag_obj):
         if type(internal_item) == str:
             out += internal_item
         else:
-            out += "\n\t" + tag_object_to_string(internal_item).replace(
-                "\n", "\n\t"
-            )
+            out += "\n\t" + tag_object_to_string(internal_item).replace("\n", "\n\t")
             final_line_break = "\n"
 
     out += final_line_break + "</" + tag_obj[0] + ">"

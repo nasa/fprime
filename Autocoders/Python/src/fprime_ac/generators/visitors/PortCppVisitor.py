@@ -18,8 +18,10 @@ import logging
 import sys
 
 from fprime_ac.generators import formatters
+
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
+
 #
 # Python extension modules and custom interfaces
 #
@@ -31,11 +33,13 @@ from fprime_ac.utils import ConfigManager, TypesList
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.port import (finishPortCpp,
-                                                     includes1PortCpp,
-                                                     namespacePortCpp,
-                                                     privatePortCpp,
-                                                     publicPortCpp)
+    from fprime_ac.generators.templates.port import (
+        finishPortCpp,
+        includes1PortCpp,
+        namespacePortCpp,
+        privatePortCpp,
+        publicPortCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

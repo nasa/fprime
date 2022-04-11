@@ -19,6 +19,7 @@ from optparse import OptionParser
 
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
+
 # Parsers to read the XML
 from fprime_ac.parsers import XmlParser, XmlTopologyParser
 from fprime_ac.utils import ConfigManager, TopDictGenerator

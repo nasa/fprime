@@ -23,8 +23,10 @@ import sys
 
 from fprime_ac.parsers import XmlParser
 from fprime_ac.utils import ConfigManager
-from fprime_ac.utils.exceptions import (FprimeRngXmlValidationException,
-                                        FprimeXmlException)
+from fprime_ac.utils.exceptions import (
+    FprimeRngXmlValidationException,
+    FprimeXmlException,
+)
 from lxml import etree, isoschematron
 
 #

@@ -21,8 +21,10 @@ import sys
 from getpass import getuser
 
 from fprime_ac.generators import formatters
+
 # from fprime_ac.utils import DiffAndRename
 from fprime_ac.generators.visitors import AbstractVisitor
+
 #
 # Python extension modules and custom interfaces
 #
