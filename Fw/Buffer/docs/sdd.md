@@ -64,8 +64,10 @@ Users can obtain a SerializeBuffer, `sb`, by calling `getSerializeRepr()`. This 
 of the `Fw::Buffer` and is initially empty.  Users can serialize and deserialize through `sb` to copy to/from the backed
 memory. 
 
-The state of `sb` persists as long as the current `Fw::Buffer` object exists. If an `Fw::Buffer` is sent through a port
-call, passed by-value to a function call, or otherwise copied, the state of `sb` is reset and it is once again empty.
+The state of `sb` persists as long as the current `Fw::Buffer` object exists as it is stored as a member. However, all
+`Fw::Buffer` constuctors intialize `sb` to an empty state including the `Fw::Buffer` copy constructor. Thus, if an
+`Fw::Buffer` is sent through a port call, passed by-value to a function call, or otherwise copied, the state of the new
+buffer's `sb` member is empty.
 
 **Serializing to `Fw::Buffer`**
 ```c++
