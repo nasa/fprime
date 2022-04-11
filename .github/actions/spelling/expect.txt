@@ -1524,6 +1524,7 @@ synchronicity
 synopsys
 sys
 SYSFS
+sysinfo
 systemd
 tabbedwidths
 tabccitt
