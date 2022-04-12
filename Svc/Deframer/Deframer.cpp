@@ -40,9 +40,9 @@ Deframer ::Deframer(const char* const compName) :
     DeframerComponentBase(compName),
     DeframingProtocolInterface(),
     m_protocol(nullptr),
-    m_in_ring(m_ring_buffer, sizeof m_ring_buffer)
+    m_inRing(m_ringBuffer, sizeof m_ringBuffer)
 {
-    (void) memset(m_poll_buffer, 0, sizeof m_poll_buffer);
+    (void) memset(m_pollBuffer, 0, sizeof m_pollBuffer);
 }
 
 void Deframer ::init(const NATIVE_INT_TYPE instance) {
@@ -93,7 +93,7 @@ void Deframer ::schedIn_handler(
     NATIVE_UINT_TYPE context
 ) {
     // Check for data
-    Fw::Buffer buffer(m_poll_buffer, sizeof(m_poll_buffer));
+    Fw::Buffer buffer(m_pollBuffer, sizeof(m_pollBuffer));
     auto status = framedPoll_out(0, buffer);
     if (status == Drv::PollStatus::POLL_OK) {
         // Data exists: process it
@@ -135,10 +135,16 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 Fw::ComBuffer com;
                 // Copy the contents of the packet buffer into the com buffer
                 status = com.setBuff(packetData, packetSize);
-                // TODO: Log message instead of assert
-                FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-                // Send the com buffer
-                comOut_out(0, com, 0);
+                if (status == Fw::FW_SERIALIZE_OK) {
+                    // Send the com buffer
+                    comOut_out(0, com, 0);
+                }
+                else {
+                    Fw::Logger::logMsg(
+                        "[ERROR] Serializing com buffer failed with status %d\n",
+                        status
+                    );
+                }
                 break;
             }
             // Handle a file packet
@@ -162,6 +168,12 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
             default:
                 break;
         }
+    }
+    else {
+        Fw::Logger::logMsg(
+            "[ERROR] Deserializing packet type failed with status %d\n",
+            status
+        );
     }
 
     if (deallocate) {
@@ -190,11 +202,11 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
             break;
         }
         // Compute the size of data to serialize
-        const NATIVE_UINT_TYPE ringFreeSize = m_in_ring.get_free_size();
+        const NATIVE_UINT_TYPE ringFreeSize = m_inRing.get_free_size();
         const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
             ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
         // Serialize data into the ring buffer
-        const auto status = m_in_ring.serialize(&bufferData[offset], serSize);
+        const auto status = m_inRing.serialize(&bufferData[offset], serSize);
         // If data does not fit, there is a coding error
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status, offset, serSize);
         // Process the data
@@ -220,12 +232,12 @@ void Deframer ::processRing() {
     // The protocol status
     auto status = DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
     // The ring buffer capacity
-    const auto ringCapacity = m_in_ring.get_capacity();
+    const auto ringCapacity = m_inRing.get_capacity();
 
     // Process the ring buffer looking for at least the header
     for (U32 i = 0; i < ringCapacity; i++) {
         // Get the number of bytes remaining in the ring buffer
-        remaining = m_in_ring.get_allocated_size();
+        remaining = m_inRing.get_allocated_size();
         // If there are none, we are done
         if (remaining == 0) {
             break;
@@ -235,11 +247,11 @@ void Deframer ::processRing() {
         U32 needed = 0;
         // Call the deframe method of the protocol, getting
         // needed and status
-        status = m_protocol->deframe(m_in_ring, needed);
+        status = m_protocol->deframe(m_inRing, needed);
         // Deframing protocol must not consume data in the ring buffer
         FW_ASSERT(
-            m_in_ring.get_allocated_size() == remaining,
-            m_in_ring.get_allocated_size(),
+            m_inRing.get_allocated_size() == remaining,
+            m_inRing.get_allocated_size(),
             remaining
         );
         // On successful deframing, consume data from the ring buffer now
@@ -248,10 +260,10 @@ void Deframer ::processRing() {
             // to a non-zero value
             FW_ASSERT(needed != 0);
             FW_ASSERT(needed <= remaining, needed, remaining);
-            m_in_ring.rotate(needed);
+            m_inRing.rotate(needed);
             FW_ASSERT(
-                m_in_ring.get_allocated_size() == remaining - needed,
-                m_in_ring.get_allocated_size(),
+                m_inRing.get_allocated_size() == remaining - needed,
+                m_inRing.get_allocated_size(),
                 remaining,
                 needed
             );
@@ -268,10 +280,10 @@ void Deframer ::processRing() {
         // Error occurred
         else {
             // Skip one byte of bad data
-            m_in_ring.rotate(1);
+            m_inRing.rotate(1);
             FW_ASSERT(
-                m_in_ring.get_allocated_size() == remaining - 1,
-                m_in_ring.get_allocated_size(),
+                m_inRing.get_allocated_size() == remaining - 1,
+                m_inRing.get_allocated_size(),
                 remaining
             );
             // Log checksum errors

@@ -139,12 +139,12 @@ Here is a class diagram for `Deframer`:
 1. `m_protocol`: A pointer to the implementation of `DeframingProtocol`
    used for deframing.
 
-1. `m_in_ring`: An instance of `Types::CircularBuffer` for storing data to be deframed.
+1. `m_inRing`: An instance of `Types::CircularBuffer` for storing data to be deframed.
 
-1. `m_ring_buffer`: The storage backing the circular buffer: an array of `RING_BUFFER_SIZE`
+1. `m_ringBuffer`: The storage backing the circular buffer: an array of `RING_BUFFER_SIZE`
 `U8` values.
 
-1. `m_poll_buffer`: The buffer used for polling input: an array of 1024 `POLL_BUFFER_SIZE`
+1. `m_pollBuffer`: The buffer used for polling input: an array of 1024 `POLL_BUFFER_SIZE`
 values.
 
 ### 4.5. Header File Configuration
@@ -193,7 +193,7 @@ It does the following:
 
 The `schedIn` port handler does the following:
 
-1. Construct an `Fw::Buffer` _FB_ that wraps `m_poll_buffer`.
+1. Construct an `Fw::Buffer` _FB_ that wraps `m_pollBuffer`.
 
 1. If `framedPoll` is connected, then
 
@@ -268,43 +268,43 @@ It does the following:
       This is _R_ = _S_ - `buffer_offset`.
 
    1. Compute _C_, the number of bytes to copy from _FB_ into the
-      circular buffer `m_in_ring`.
+      circular buffer `m_inRing`.
 
-      1. Let _F_ be the number of free bytes in `m_in_ring`.
+      1. Let _F_ be the number of free bytes in `m_inRing`.
 
       1. If _R_ < _F_, then _C_ = _R_.
 
       1. Otherwise _C_ = _F_.
 
    1. Copy _C_ bytes from _FB_ starting at `buffer_offset`
-      into `m_in_ring`.
+      into `m_inRing`.
 
    1. Advance `buffer_offset` by _C_.
 
    1. Call <a href="#processRing">`processRing`</a>
-      to process the data stored in `m_in_ring`.
+      to process the data stored in `m_inRing`.
 
 <a name="processRing"></a>
 #### 4.9.2. processRing
 
-In a bounded loop, while there is data remaining in `m_in_ring`, do:
+In a bounded loop, while there is data remaining in `m_inRing`, do:
 
-1. Call the `deframe` method of `m_protocol` on `m_in_ring`.
+1. Call the `deframe` method of `m_protocol` on `m_inRing`.
    The `deframe` method calls <a href="#allocate">`allocate`</a> and
    <a href="#route">`route`</a> as necessary.
    It returns a status value _S_ and the number _N_ of bytes
    needed for successful deframing.
 
 1. If _S_ = `SUCCESS`, then _N_ represents the number of bytes
-   used in a successful deframing. Rotate `m_in_ring` by _N_ bytes (i.e.,
-   deallocate _N_ bytes from the head of `m_in_ring`).
+   used in a successful deframing. Rotate `m_inRing` by _N_ bytes (i.e.,
+   deallocate _N_ bytes from the head of `m_inRing`).
 
 1. Otherwise if _S_ = `MORE_NEEDED`, then do nothing.
    Further processing will occur on the next call, after more
-   data goes into `m_in_ring`.
+   data goes into `m_inRing`.
 
 1. Otherwise something is wrong.
-   Rotate `m_in_ring` by one byte, to skip byte by byte over
+   Rotate `m_inRing` by one byte, to skip byte by byte over
    bad data until we find a valid frame.
 
 ## 5. Ground Interface

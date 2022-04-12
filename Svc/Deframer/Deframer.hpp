@@ -128,13 +128,13 @@ class Deframer :
     DeframingProtocol* m_protocol;
 
     //! The circular buffer
-    Types::CircularBuffer m_in_ring;
+    Types::CircularBuffer m_inRing;
 
     //! Memory for the circular buffer
-    U8 m_ring_buffer[DeframerCfg::RING_BUFFER_SIZE];
+    U8 m_ringBuffer[DeframerCfg::RING_BUFFER_SIZE];
 
     //! Memory for the polling buffer
-    U8 m_poll_buffer[DeframerCfg::POLL_BUFFER_SIZE];
+    U8 m_pollBuffer[DeframerCfg::POLL_BUFFER_SIZE];
 
 };
 
