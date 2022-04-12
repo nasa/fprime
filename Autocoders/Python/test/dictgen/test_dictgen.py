@@ -13,10 +13,9 @@ import sys
 import time
 
 import pexpect
-from pexpect import EOF, TIMEOUT
-
 from fprime_ac.parsers import XmlTopologyParser
 from fprime_gds.common.loaders.xml_loader import XmlLoader
+from pexpect import EOF, TIMEOUT
 
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
 sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules

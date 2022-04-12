@@ -1,11 +1,9 @@
-import os
-import sys
 import argparse
 import difflib
-from fprime_ac.utils.buildroot import (
-    build_root_relative_path,
-    set_build_roots,
-)
+import os
+import sys
+
+from fprime_ac.utils.buildroot import build_root_relative_path, set_build_roots
 
 
 def main():

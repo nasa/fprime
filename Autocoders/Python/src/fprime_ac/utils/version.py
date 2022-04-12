@@ -2,7 +2,6 @@
 import os
 import subprocess
 
-
 FALLBACK_VERSION = "v3.0.0"  # Keep up-to-date on release tag
 
 

@@ -20,8 +20,8 @@
 # Copyright 2007, California Institute of Technology.
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
-import os
 import configparser
+import os
 
 parent = configparser.ConfigParser
 

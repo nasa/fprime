@@ -7,11 +7,11 @@ supplied. CMake is run as a command line call to the cmake system. Thus CMake mu
 
 @author mstarch
 """
-import sys
-import shutil
-import tempfile
 import select
+import shutil
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
 import pytest

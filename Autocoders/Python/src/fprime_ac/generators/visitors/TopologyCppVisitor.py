@@ -34,8 +34,10 @@ from fprime_ac.utils import ConfigManager
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.topology import includes1TopologyCpp
-    from fprime_ac.generators.templates.topology import publicTopologyCpp
+    from fprime_ac.generators.templates.topology import (
+        includes1TopologyCpp,
+        publicTopologyCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

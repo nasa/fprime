@@ -53,7 +53,9 @@ namespace Svc {
   BufferManagerComponentImpl ::
     ~BufferManagerComponentImpl()
   {
-      this->cleanup();
+      if (m_setup) {
+          this->cleanup();
+      }
   }
 
   void BufferManagerComponentImpl ::

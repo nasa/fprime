@@ -36,8 +36,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.events import EventHeader
-    from fprime_ac.generators.templates.events import EventBody
+    from fprime_ac.generators.templates.events import EventBody, EventHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
