@@ -7,8 +7,9 @@
 import platform
 import tempfile
 
-import cmake
 import settings
+
+import cmake
 
 _ = cmake.get_build(
     "REF_BUILD",

@@ -36,9 +36,11 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.serialize import SerialHeader
-    from fprime_ac.generators.templates.serialize import SerialImport
-    from fprime_ac.generators.templates.serialize import SerialBody
+    from fprime_ac.generators.templates.serialize import (
+        SerialBody,
+        SerialHeader,
+        SerialImport,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

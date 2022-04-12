@@ -15,10 +15,10 @@ comments with simple GitHub Markdown. It looks for blocks following the pattern:
 
 @author mstarch
 """
+import enum
 import os
 import re
 import sys
-import enum
 
 LINE_RE = re.compile(r"^#{1,4} ?")
 
