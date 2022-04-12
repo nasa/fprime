@@ -16,11 +16,10 @@
 #
 # Python standard modules
 #
+import configparser
 import logging
 import os
 import sys
-
-from lxml import etree, isoschematron
 
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
@@ -32,8 +31,7 @@ from fprime_ac.utils.exceptions import (
     FprimeRngXmlValidationException,
     FprimeXmlException,
 )
-
-import configparser
+from lxml import etree, isoschematron
 
 # For Python determination
 

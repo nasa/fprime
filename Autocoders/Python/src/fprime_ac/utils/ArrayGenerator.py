@@ -12,12 +12,11 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
-import sys
 import os
-from fprime_ac.parsers import XmlParser
-from fprime_ac.parsers import XmlArrayParser
-from fprime_ac.generators.templates.arrays import array_cpp
-from fprime_ac.generators.templates.arrays import array_hpp
+import sys
+
+from fprime_ac.generators.templates.arrays import array_cpp, array_hpp
+from fprime_ac.parsers import XmlArrayParser, XmlParser
 
 
 def open_file(name, type):

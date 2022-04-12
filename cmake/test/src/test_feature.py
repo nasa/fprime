@@ -6,9 +6,9 @@
 ####
 import platform
 
-import cmake
 import settings
 
+import cmake
 
 _ = cmake.get_build(
     "FEATURE_BUILD",

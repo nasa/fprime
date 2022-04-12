@@ -17,8 +17,7 @@ import sys
 from fprime_ac.parsers import XmlEnumParser, XmlParser
 
 try:
-    from fprime_ac.generators.templates.enums import enum_cpp
-    from fprime_ac.generators.templates.enums import enum_hpp
+    from fprime_ac.generators.templates.enums import enum_cpp, enum_hpp
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
