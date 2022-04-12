@@ -902,8 +902,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U8>(pt), in8);
     ASSERT_EQ(out8, in8);
 
+#if FW_SERIALIZABLE_TO_STRING
     pt.toString(str);
     ASSERT_STREQ(str.toChar(), "218 ");
+#endif
 
     // U16 Type  ==============================================================
     U16 inU16 = 34;
@@ -918,8 +920,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U16>(ptU16), inU16);
     ASSERT_EQ(outU16, inU16);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU16.toString(str);
     ASSERT_STREQ(str.toChar(), "45000 ");
+#endif
 
     // U32 Type  ==============================================================
     U32 inU32 = 89;
@@ -934,8 +938,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U32>(ptU32), inU32);
     ASSERT_EQ(outU32, inU32);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU32.toString(str);
     ASSERT_STREQ(str.toChar(), "3222111000 ");
+#endif
 
     // U64 Type  ==============================================================
     U64 inU64 = 233;
@@ -950,8 +956,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U64>(ptU64), inU64);
     ASSERT_EQ(outU64, inU64);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU64.toString(str);
     ASSERT_STREQ(str.toChar(), "555444333222111 ");
+#endif
 
     // I8 Type  ===============================================================
     I8 inI8 = 2;
@@ -966,8 +974,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I8>(ptI8), inI8);
     ASSERT_EQ(outI8, inI8);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI8.toString(str);
     ASSERT_STREQ(str.toChar(), "-3 ");
+#endif
 
     // I16 Type  ==============================================================
     I16 inI16 = 5;
@@ -982,8 +992,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I16>(ptI16), inI16);
     ASSERT_EQ(outI16, inI16);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI16.toString(str);
     ASSERT_STREQ(str.toChar(), "-7 ");
+#endif
 
     // I32 Type  ==============================================================
     I32 inI32 = 11;
@@ -998,8 +1010,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I32>(ptI32), inI32);
     ASSERT_EQ(outI32, inI32);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI32.toString(str);
     ASSERT_STREQ(str.toChar(), "-13 ");
+#endif
 
     // I64 Type  ==============================================================
     I64 inI64 = 17;
@@ -1014,8 +1028,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I64>(ptI64), inI64);
     ASSERT_EQ(outI64, inI64);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI64.toString(str);
     ASSERT_STREQ(str.toChar(), "-19 ");
+#endif
 
     // F32 Type  ==============================================================
     F32 inF32 = 23.32;

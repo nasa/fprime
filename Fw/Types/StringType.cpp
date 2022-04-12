@@ -77,7 +77,7 @@ namespace Fw {
         return !operator==(other);
     }
 
-#if FW_SERIALIZABLE_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void StringBase::toString(StringBase& text) const {
         text = *this;
     }

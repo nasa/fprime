@@ -603,7 +603,7 @@ namespace Fw {
 
     }
 
-#if FW_OBJECT_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING
 
     void PolyType::toString(StringBase& dest) const {
     	this->toString(dest,false);
