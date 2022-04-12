@@ -1826,7 +1826,7 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
-Add the followint to the top of the `Tester.cpp` file:
+Add the following to the top of the `Tester.cpp` file:
 
 ```C++
 #define CMD_SEQ 0
