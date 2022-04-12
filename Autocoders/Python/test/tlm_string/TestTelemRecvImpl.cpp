@@ -9,12 +9,7 @@
 #include <cstdio>
 #include <Fw/Tlm/TlmString.hpp>
 
-#if FW_OBJECT_NAMES == 1
 TestTelemRecvImpl::TestTelemRecvImpl(const char* name) : Tlm::TelemTesterComponentBase(name)
-#else
-TestTelemRecvImpl::TestTelemRecvImpl() :
-    Tlm::TelemTesterComponentBase()
-#endif
 {
 }
 

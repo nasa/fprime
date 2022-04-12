@@ -10,11 +10,7 @@
 
 class ATester : public Log::LogTesterGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : Log::LogTesterGTestBase("comp",10) {
-#else
-        ATester() : Log::LogTesterGTestBase(10)  {
-#endif
     }
 
   void from_Time_handler(

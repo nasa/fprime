@@ -8,11 +8,7 @@
 #include <Autocoders/Python/test/tlm1/TestTelemImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestTlmImpl::TestTlmImpl(const char* name) : Tlm::TestTlmComponentBase(name)
-#else
-TestTlmImpl::TestTlmImpl() : Tlm::TestTlmComponentBase()
-#endif
 {
 }
 

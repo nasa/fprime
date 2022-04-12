@@ -8,11 +8,7 @@
 #include <Autocoders/Python/test/param1/TestPrmImpl.hpp>
 #include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestPrmImpl::TestPrmImpl(const char* name) : Prm::TestPrmComponentBase(name)
-#else
-TestPrmImpl::TestPrmImpl() : Prm::TestPrmComponentBase()
-#endif
 {
 }
 

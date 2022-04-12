@@ -13,11 +13,7 @@
 
 class TestParamSourceImpl: public Prm::ParamTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestParamSourceImpl(const char* compName);
-#else
-        TestParamSourceImpl();
-#endif
         virtual ~TestParamSourceImpl();
         void init();
         void setPrm(Fw::ParamString& val);

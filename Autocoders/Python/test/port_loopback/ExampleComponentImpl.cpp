@@ -22,14 +22,10 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   ExampleComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     ExampleComponentImpl(
         const char *const compName
     ) :
       ExampleComponentBase(compName)
-#else
-    ExampleImpl()
-#endif
   {
 
   }
