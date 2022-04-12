@@ -24,16 +24,10 @@ namespace ${namespace} {
 
   $gtest_base ::
     ${gtest_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_cpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_cpp_params([ $param_maxHistorySize ])
-\#endif
     ) :
         ${tester_base} (
-\#if FW_OBJECT_NAMES == 1
             compName,
-\#endif
             maxHistorySize
         )
   {
