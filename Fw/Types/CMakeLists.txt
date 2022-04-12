@@ -11,6 +11,7 @@ set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/InternalInterfaceString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MallocAllocator.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/AlignedAllocator.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MemAllocator.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PolyType.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SerialBuffer.cpp"
@@ -30,11 +31,6 @@ set(UT_MOD_DEPS
   "${FPRIME_FRAMEWORK_PATH}/Os"
 )
 register_fprime_ut()
-
-set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestStringUtils.cpp"
-)
-register_fprime_ut("Fw_Types_StringUtils")
 
 # Non-test directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")
