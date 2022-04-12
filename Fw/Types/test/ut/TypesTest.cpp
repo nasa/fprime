@@ -1260,6 +1260,17 @@ TEST(OffNominal, string_copy) {
     ASSERT_EQ(out_test[i], 0) << "string_copy didn't properly null terminate";
 }
 
+TEST(Nominal, string_len) {
+    const char* test_string = "abc123";
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 50), 6);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 3), 3);
+}
+
+TEST(OffNominal, string_len_zero) {
+  const char* test_string = "abc123";
+  ASSERT_EQ(Fw::StringUtils::string_length(test_string, 0), 0);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
