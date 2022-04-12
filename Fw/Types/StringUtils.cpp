@@ -19,7 +19,7 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, U32 nu
 
 U32 Fw::StringUtils::string_length(const CHAR* source, U32 max_len) {
     U32 length = 0;
-    // For loop intentionally empty
+    FW_ASSERT(source != nullptr);
     for (length = 0; length < max_len; length++) {
         if (source[length] == '\0') {
             break;
