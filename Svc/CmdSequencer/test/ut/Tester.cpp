@@ -22,13 +22,8 @@ namespace Svc {
 
   Tester ::
     Tester(const SequenceFiles::File::Format::t format) :
-#if FW_OBJECT_NAMES == 1
       CmdSequencerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("CmdSequencer"),
-#else
-      CmdSequencerGTestBase(MAX_HISTORY_SIZE),
-      component(),
-#endif
       format(format),
       sequences(this->component)
   {

@@ -24,13 +24,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       GroundInterfaceGTestBase("Tester", MAX_HISTORY_SIZE),
       component("GroundInterface")
-#else
-      GroundInterfaceGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,
       m_buffer(nullptr),
       m_uplink_type(1),

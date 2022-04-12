@@ -24,13 +24,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       TlmPacketizerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TlmPacketizer")
-#else
-      TlmPacketizerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_timeSent(false)
   {
     this->initComponents();

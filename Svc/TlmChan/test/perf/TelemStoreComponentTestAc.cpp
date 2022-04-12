@@ -29,13 +29,8 @@ namespace Svc {
     }
 
 // protected methods
-#if FW_OBJECT_NAMES == 1
     TelemStoreComponentTesterBase::TelemStoreComponentTesterBase(const char* compName) : Fw::PassiveComponentBase(compName) {
     }
-#else
-    TelemStoreComponentTesterBase::TelemStoreComponentTesterBase() : Fw::PassiveComponentBase() {
-    }
-#endif
 
     TelemStoreComponentTesterBase::~TelemStoreComponentTesterBase(void) {
     }

@@ -30,11 +30,7 @@ namespace Svc {
         void set_setValue_OutputPort(NATIVE_INT_TYPE portNum, Svc::InputPolyPort *port);
     protected:
         // Only called by derived class
-#if FW_OBJECT_NAMES == 1
         PolyDbTesterComponentBase(const char* compName);
-#else
-        PolyDbTesterComponentBase();
-#endif
 
         virtual ~PolyDbTesterComponentBase(void);
         virtual void init(NATIVE_INT_TYPE instance = 0);

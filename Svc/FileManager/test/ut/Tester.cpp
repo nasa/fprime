@@ -28,13 +28,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       FileManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileManager")
-#else
-      FileManagerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->connectPorts();
     this->initComponents();

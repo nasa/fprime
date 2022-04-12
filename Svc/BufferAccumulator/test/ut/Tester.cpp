@@ -26,13 +26,8 @@ namespace Svc {
 
   Tester ::
     Tester(bool doAllocateQueue) :
-#if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferAccumulator"),
-#else
-      BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
-      component(),
-#endif
       doAllocateQueue(doAllocateQueue)
   {
     this->initComponents();
