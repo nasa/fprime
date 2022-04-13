@@ -61,7 +61,7 @@ Deframer supports two configurations for streaming data:
    at any one time, framed data arrives on the poll interface of _I_ or on
    the push interface of _I_, but not on both concurrently.
    The push and poll interfaces are guarded by a mutual exclusion lock,
-   so there is no concurency safety issue.
+   so there is no concurrency safety issue.
    However, ordinarily it does not make sense to interleave framed data
    concurrently on two different interfaces.
 
