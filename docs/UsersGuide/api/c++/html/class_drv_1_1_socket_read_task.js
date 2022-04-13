@@ -10,7 +10,7 @@ var class_drv_1_1_socket_read_task =
     [ "open", "class_drv_1_1_socket_read_task.html#abae0c4c62dbebd9c2e418b49c2760561", null ],
     [ "readTask", "class_drv_1_1_socket_read_task.html#a44180a0ec770f9367a424d1284babe26", null ],
     [ "sendBuffer", "class_drv_1_1_socket_read_task.html#abc94a3b38263cbc7bb5339166e547bc7", null ],
-    [ "startSocketTask", "class_drv_1_1_socket_read_task.html#a6004e6faccabedf6b3053de17ff89f6b", null ],
+    [ "startSocketTask", "class_drv_1_1_socket_read_task.html#a88d458afeabc00db74848e3d9c24d979", null ],
     [ "stopSocketTask", "class_drv_1_1_socket_read_task.html#a1dd4def263b974c02c0748514554d1b4", null ],
     [ "m_reconnect", "class_drv_1_1_socket_read_task.html#aa14b882305f03bfe606dd11427641f02", null ],
     [ "m_stop", "class_drv_1_1_socket_read_task.html#a2d4e5c23156fcba0b147a4222125edf7", null ],
