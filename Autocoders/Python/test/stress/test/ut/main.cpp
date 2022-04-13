@@ -8,11 +8,7 @@
 
 class ATester : public StressTest::TestPortGTestBase {
 public:
-#if FW_OBJECT_NAMES == 1
     ATester() : StressTest::TestPortGTestBase("comp",10) {
-#else
-        ATester() : StressTest::TestPortGTestBase(10)  {
-#endif
         }
 
         void from_aport_handler(

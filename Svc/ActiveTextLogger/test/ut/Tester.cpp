@@ -20,13 +20,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       ActiveTextLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ActiveTextLogger")
-#else
-      ActiveTextLoggerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

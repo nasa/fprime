@@ -30,13 +30,8 @@ namespace ${namespace} {
 
   Tester ::
     Tester() :
-\#if FW_OBJECT_NAMES == 1
       ${gtest_base}("Tester", MAX_HISTORY_SIZE),
       component("${name}")
-\#else
-      ${gtest_base}(MAX_HISTORY_SIZE),
-      component()
-\#endif
   {
     this->initComponents();
     this->connectPorts();

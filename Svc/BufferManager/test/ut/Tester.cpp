@@ -92,13 +92,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       BufferManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferManager")
-#else
-      BufferManagerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

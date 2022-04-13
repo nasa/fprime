@@ -30,13 +30,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       UdpReceiverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("UdpReceiver")
-#else
-      UdpReceiverGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

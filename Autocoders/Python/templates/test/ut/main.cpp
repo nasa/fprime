@@ -7,12 +7,7 @@
 
 class ATester : public ExampleComponents::ExampleGTestBase {
 public:
-#if FW_OBJECT_NAMES == 1
-    ATester() : ExampleComponents::ExampleGTestBase("comp",10) {
-#else
-        ATester() : ExampleGTestBase::ExampleGTestBase(10)  {
-#endif
-        }
+    ATester() : ExampleComponents::ExampleGTestBase("comp",10) {}
 
         void from_exampleOutput_handler(
             const NATIVE_INT_TYPE portNum, //!< The port number

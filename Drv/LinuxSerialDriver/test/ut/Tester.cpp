@@ -28,13 +28,8 @@ namespace Drv {
     Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,
            LinuxSerialDriverComponentImpl::UartFlowControl flow,
            LinuxSerialDriverComponentImpl::UartParity parity) :
-#if FW_OBJECT_NAMES == 1
     LinuxSerialDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxSerialDriver")
-#else
-  LinuxSerialDriverTesterBase(MAX_HISTORY_SIZE),
-      component()
-#endif
      ,m_numBuffers(numReadBuffers),m_bufferSize(bufferSize)
   {
     this->initComponents();

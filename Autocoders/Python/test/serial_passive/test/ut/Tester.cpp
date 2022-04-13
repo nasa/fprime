@@ -24,13 +24,8 @@ namespace TestComponents {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       TestSerialGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestSerial")
-#else
-      TestSerialGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

@@ -10,11 +10,7 @@
 
 class ATester : public AcTest::TestCommandGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : AcTest::TestCommandGTestBase("comp",10) {
-#else
-        ATester() : AcTest::TestCommandGTestBase(10)  {
-#endif
     }
 };
 

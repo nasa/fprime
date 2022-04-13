@@ -12,11 +12,7 @@
 
 class ExampleComponentImpl: public ExampleComponents::ExampleComponentComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ExampleComponentImpl(const char* compName);
-#else
-        ExampleComponentImpl();
-#endif
         void init(NATIVE_INT_TYPE queueDepth);
         virtual ~ExampleComponentImpl();
     private:
