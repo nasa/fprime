@@ -25,7 +25,8 @@ namespace Svc {
 Tester ::Tester(bool polling)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
-      m_polling(polling)
+      m_polling(polling),
+      m_in_flush(false)
   {
     this->initComponents();
     this->connectPorts();
@@ -40,10 +41,18 @@ Tester ::~Tester() {}
 
 void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Seek to any packet of uplink type
+    U32 original_size = m_receiving.size();
     while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
            (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
         m_receiving.pop_front();
     }
+    // Flushing a corrupt buffer that was corrupted into something valid
+    if (m_in_flush and m_receiving.size() == 0) {
+        return;
+    }
+    // Test harness failure, no available check data. Assert will exit this
+    // function preventing undefined behavior
+    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty after filtering down " << original_size << " elements" << std::endl;
     // Grab the front item
     UplinkData check = m_receiving.front();
     m_receiving.pop_front();
@@ -61,10 +70,16 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
 
 void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     // Seek to any packet of uplink type
+    U32 original_size = m_receiving.size();
     while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
            (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
         m_receiving.pop_front();
     }
+    // Flushing a corrupt buffer that was corrupted into something valid
+    if (m_in_flush and m_receiving.size() == 0) {
+        return;
+    }
+    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty after filtering down " << original_size << " elements" << std::endl;
     // Grab the front item
     UplinkData check = m_receiving.front();
     m_receiving.pop_front();
