@@ -2,7 +2,7 @@
 // DeframerCfg.hpp
 // Configuration settings for Deframer component
 // Author: bocchino
-// ====================================================================== 
+// ======================================================================
 
 #ifndef SVC_DEFRAMER_CFG_HPP
 #define SVC_DEFRAMER_CFG_HPP
