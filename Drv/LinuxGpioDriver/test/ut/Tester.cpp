@@ -28,13 +28,8 @@ namespace Drv {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       LinuxGpioDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("GP")
-#else
-      LinuxGpioDriverTesterBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_cycles(0)
       ,m_currCycle(0)
   {

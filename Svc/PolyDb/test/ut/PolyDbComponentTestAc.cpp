@@ -18,14 +18,8 @@ namespace Svc {
         this->m_setValue_OutputPort[portNum].addCallPort(port);
     }
 
-// protected methods
-#if FW_OBJECT_NAMES == 1
     PolyDbTesterComponentBase::PolyDbTesterComponentBase(const char* compName) : Fw::PassiveComponentBase(compName) {
     }
-#else
-    PolyDbTesterComponentBase::PolyDbTesterComponentBase() : Fw::PassiveComponentBase() {
-    }
-#endif
 
     PolyDbTesterComponentBase::~PolyDbTesterComponentBase() {
     }

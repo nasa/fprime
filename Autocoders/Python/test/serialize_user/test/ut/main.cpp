@@ -8,11 +8,7 @@
 
 class ATester : public ExampleComponents::ExampleComponentGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : ExampleComponents::ExampleComponentGTestBase("comp",10) {
-#else
-        ATester() : ExampleComponents::ExampleComponentGTestBase(10)  {
-#endif
     }
 
 

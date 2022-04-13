@@ -12,11 +12,7 @@
 
 class LogTextImpl: public Log::LogTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         LogTextImpl(const char* compName);
-#else
-        LogTextImpl();
-#endif
         virtual ~LogTextImpl();
         void init();
         void setTime(Fw::Time time);

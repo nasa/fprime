@@ -125,11 +125,7 @@ namespace ${namespace} {
       //! Construct object $gtest_base
       //!
       ${gtest_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_hpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_hpp_params([ $param_maxHistorySize ])
-\#endif
       );
 
       //! Destroy object $gtest_base

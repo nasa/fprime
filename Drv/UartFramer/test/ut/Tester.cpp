@@ -23,13 +23,8 @@ namespace Drv {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       UartFramerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("UartFramer")
-#else
-      UartFramerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
     ,m_currBuff(0)
     ,m_emptyAlloc(false)
   {

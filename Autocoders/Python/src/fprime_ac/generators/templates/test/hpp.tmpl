@@ -101,11 +101,7 @@ $emit_hpp_params([ $param_portNum ])
       //! Construct object $tester_base
       //!
       ${tester_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_hpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_hpp_params([ $param_maxHistorySize ])
-\#endif
       );
 
       //! Destroy object $tester_base
