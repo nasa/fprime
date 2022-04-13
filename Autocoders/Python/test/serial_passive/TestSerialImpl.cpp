@@ -21,14 +21,10 @@ namespace TestComponents {
   // ----------------------------------------------------------------------
 
   TestSerialImpl ::
-#if FW_OBJECT_NAMES == 1
     TestSerialImpl(
         const char *const compName
     ) :
       TestSerialComponentBase(compName)
-#else
-    TestSerialImpl()
-#endif
   {
 
   }

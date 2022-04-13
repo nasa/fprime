@@ -20,61 +20,26 @@ int main(int argc, char* argv[]) {
     Fw::SimpleObjRegistry objReg;
 #endif
 
-    TestCommand1Impl testImpl
-#if FW_OBJECT_NAMES
-    ("TestCmdImpl");
-#else
-    ;
-#endif
+    TestCommand1Impl testImpl ("TestCmdImpl");
     testImpl.init(10);
     testImpl.start();
 
-    TestCommandSourceImpl cmdSrc
-#if FW_OBJECT_NAMES
-    ("TestCmdSource");
-#else
-    ;
-#endif
+    TestCommandSourceImpl cmdSrc ("TestCmdSource");
     cmdSrc.init();
 
-    TestParamSourceImpl prmSrc
-#if FW_OBJECT_NAMES
-    ("TestPrmSrc");
-#else
-    ;
-#endif
+    TestParamSourceImpl prmSrc ("TestPrmSrc");
     prmSrc.init();
 
-    TestTelemRecvImpl tlmRecv
-#if FW_OBJECT_NAMES
-    ("TestTlmRecv");
-#else
-    ;
-#endif
+    TestTelemRecvImpl tlmRecv ("TestTlmRecv");
     tlmRecv.init();
 
-    TestTimeImpl timeSource
-#if FW_OBJECT_NAMES
-    ("TimeComp");
-#else
-    ;
-#endif
+    TestTimeImpl timeSource ("TimeComp");
     timeSource.init();
 
-    TestLogRecvImpl logRecv
-#if FW_OBJECT_NAMES
-    ("TestLogRecv");
-#else
-    ;
-#endif
+    TestLogRecvImpl logRecv ("TestLogRecv");
     logRecv.init();
 
-    TestPtSourceImpl portTest
-#if FW_OBJECT_NAMES
-    ("PortTest");
-#else
-    ;
-#endif
+    TestPtSourceImpl portTest ("PortTest");
     portTest.init();
 
 

@@ -78,7 +78,6 @@ TEST(Nominal, BasicPollUplink) {
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
-    // TODO: Enabling the random seed causes test failures
-    // STest::Random::seed();
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

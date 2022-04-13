@@ -23,13 +23,8 @@ namespace Somewhere {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       TestLogGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestLog")
-#else
-      TestLogGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

@@ -8,11 +8,7 @@
 
 class ATester : public App::PassByGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : App::PassByGTestBase("comp",10) {
-#else
-        ATester() : App::PassByGTestBase(10)  {
-#endif
     }
 };
 

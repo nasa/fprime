@@ -134,11 +134,13 @@ namespace Svc {
         }
         state.m_incoming_buffer.setSize(flush_buffer_size);
         // Flush it
+        state.m_in_flush = true;
         if (!state.m_polling) {
             state.invoke_to_framedIn(0, state.m_incoming_buffer, Drv::RecvStatus::RECV_OK);
         } else {
             state.invoke_to_schedIn(0, 0);
         }
+        state.m_in_flush = false;
 
         state.assert_from_comOut_size(__FILE__, __LINE__, expected_com_count);
         state.assert_from_bufferOut_size(__FILE__, __LINE__, expected_buf_count);
