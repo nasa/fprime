@@ -1829,7 +1829,7 @@ uses DIV instead of SUB.
 Add the following to the top of the `Tester.cpp` file:
 
 ```C++
-#define CMD_SEQ 0
+#define CMD_SEQ 42
 ```
 
 Add the following function to the "Tests" section of `Tester.cpp`:
