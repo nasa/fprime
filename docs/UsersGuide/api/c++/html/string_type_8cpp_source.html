@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('_string_type_8cpp_source.html',''); in
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">return</span> !<a class="code" href="class_fw_1_1_string_base.html#a8547c0562d2fc567b2f1891f64ae82d0">operator==</a>(other);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING || BUILD_UT</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> StringBase::toString(<a class="code" href="class_fw_1_1_string_base.html">StringBase</a>&amp; text)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        text = *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div>
