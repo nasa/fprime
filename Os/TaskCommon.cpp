@@ -44,9 +44,9 @@ namespace Os {
 
     }
 
-    Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
-        return this->start(name, routine, arg, priority, stackSize, cpuAffinity, identifier);
-    }
+    // Task::TaskStatus Task::start(const Fw::StringBase &name, NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, taskRoutine routine, void* arg, NATIVE_INT_TYPE cpuAffinity) {
+    //     return this->start(name, routine, arg, priority, stackSize, cpuAffinity, identifier);
+    // }
 
     TaskRegistry::~TaskRegistry() {
 

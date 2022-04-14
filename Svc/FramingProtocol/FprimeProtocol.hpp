@@ -22,7 +22,7 @@ namespace Svc {
   namespace FpFrameHeader {
 
     //! Token type for F Prime frame header
-    using TokenType = U32;
+    typedef U32 TokenType;
 
     enum {
       //! Header size for F Prime frame header

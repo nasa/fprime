@@ -359,5 +359,6 @@ enum TimeBase {
 // the type definitions in Fw/Types/BasicTypes available.
 
 #define nullptr 0
+#define override 
 
 #endif

@@ -51,11 +51,11 @@ namespace Fw {
     }
 #endif
 
-    void ActiveComponentBase::start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
-        this->start(static_cast<NATIVE_UINT_TYPE>(priority), static_cast<NATIVE_UINT_TYPE>(stackSize),
-                    ((cpuAffinity == -1) ? Os::Task::TASK_DEFAULT : static_cast<NATIVE_UINT_TYPE>(cpuAffinity)),
-                    static_cast<NATIVE_UINT_TYPE>(identifier));
-    }
+    // void ActiveComponentBase::start(NATIVE_INT_TYPE identifier, NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
+    //     this->start(static_cast<NATIVE_UINT_TYPE>(priority), static_cast<NATIVE_UINT_TYPE>(stackSize),
+    //                 ((cpuAffinity == -1) ? Os::Task::TASK_DEFAULT : static_cast<NATIVE_UINT_TYPE>(cpuAffinity)),
+    //                 static_cast<NATIVE_UINT_TYPE>(identifier));
+    // }
 
     void ActiveComponentBase::start(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity, NATIVE_UINT_TYPE identifier) {
         Os::TaskString taskName;

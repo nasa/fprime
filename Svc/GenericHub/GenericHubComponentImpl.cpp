@@ -16,7 +16,7 @@
 #include "Fw/Types/BasicTypes.hpp"
 
 // Required port serialization or the hub cannot work
-static_assert(FW_PORT_SERIALIZATION, "FW_PORT_SERIALIZATION must be enabled to use GenericHub");
+//static_assert(FW_PORT_SERIALIZATION, "FW_PORT_SERIALIZATION must be enabled to use GenericHub");
 
 namespace Svc {
 

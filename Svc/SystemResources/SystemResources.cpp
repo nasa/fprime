@@ -104,7 +104,7 @@ F32 SystemResources::compCpuUtil(Os::SystemResources::CpuTicks current, Os::Syst
         // Compute CPU % Utilization
         util = (static_cast<F32>(current.used - previous.used) / static_cast<F32>(current.total - previous.total)) *
                100.0f;
-        util = std::isnan(util) ? 100.0f : util;
+//        util = std::isnan(util) ? 100.0f : util;
     }
     return util;
 }
