@@ -106,6 +106,20 @@ There are two models to generating files. The simple model is to let the autocod
 simply set variables to control that call, and the general model where the implementor calls `add_custom_command`
 themselves.
 
+### Cross Platform Utilities and CMake
+
+CMake is designed to run on many different hosts. As such it provides common implementations of many operating system
+provided utilities. These are invoked through `cmake -E`. For example to touch a file use `cmake -E touch`. A full
+description of available commands are found in CMake's 
+[command line tool](https://cmake.org/cmake/help/latest/manual/cmake.1.html#run-a-command-line-tool) documentation.
+
+To run the current CMake executable (the one invoked by the user) reference it with `${CMAKE_COMMAND}`. Thus, to make a
+directory in the autocoder the following would be used:
+
+```cmake
+add_custom_command(COMMAND ${CMAKE_COMMAND} -E make_directory ...)
+```
+
 ### Simple Model
 
 This model works well when the autocoder fits the basic pattern of passing any and all inputs to a script, and produce
@@ -115,7 +129,6 @@ with a commandline invocation following the pattern:
 ```
 executable [--arg [[--arg]] input1 [input2...]
 ```
-
 
 That is, the autocoder has a single executable step, the executable and arguments come first, then the input files(s).
 Anything that breaks this pattern must use the [General Model](#General_Model).

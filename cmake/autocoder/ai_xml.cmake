@@ -21,36 +21,6 @@ function(ai_xml_is_supported AC_INPUT_FILE)
 endfunction (ai_xml_is_supported)
 
 ####
-# `get_generated_files`:
-#
-# Given a set of supported autocoder input files, this will produce a list of files that will be generated. It sets the
-# following variables in parent scope:
-#
-# - GENERATED_FILES: a list of files generated for the given input sources
-# - EXTRAS: used to publish the 'xml type' file and files to remove
-#
-# Note: although this function is only required to set `GENERATED_FILES`, the remaining information is also set as
-# setting this information now will prevent a duplicated call to the tooling.
-#
-# AC_INPUT_FILES: list of supported autocoder input files
-####
-function(ai_xml_get_generated_files AC_INPUT_FILE)
-    set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.hpp"
-                        "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Ac.cpp")
-
-
-    # Topology also builds dictionary.  If we are excluding topology autocode, it is the only generated file
-    if (XML_LOWER_TYPE STREQUAL "topologyapp" AND EXCLUDE_TOP_ACS)
-        list(APPEND EXTRAS ${GENERATED_FILES})
-        set(GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")
-    elseif(XML_LOWER_TYPE STREQUAL "topologyapp")
-        list(APPEND GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/${AC_OBJ_NAME}${XML_TYPE}Dictionary.xml")
-    endif()
-    set(EXTRAS "${EXTRAS}" PARENT_SCOPE)
-    set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
-endfunction(ai_xml_get_generated_files)
-
-####
 # Function `__ai_info`:
 #
 # A function used to detect all the needed information for an Ai.xml file. This looks for the following items:
