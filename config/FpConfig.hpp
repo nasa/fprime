@@ -358,4 +358,6 @@ enum TimeBase {
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 
+#define nullptr 0
+
 #endif

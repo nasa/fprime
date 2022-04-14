@@ -2,7 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #define __STDC_FORMAT_MACROS
-#include <cinttypes>
+#include <StandardTypes.hpp>
 
 namespace Fw {
 
@@ -610,8 +610,8 @@ namespace Fw {
     }
 
     void PolyType::toString(StringBase& dest, bool append) const {
+#if 0
         char valString[80];
-
         switch (this->m_dataType) {
             case TYPE_U8:
                 (void) snprintf(valString, sizeof(valString), "%" PRIu8 " ", this->m_val.u8Val);
@@ -670,7 +670,7 @@ namespace Fw {
         } else {
             dest = valString;
         }
-
+#endif
     }
 
 #endif
