@@ -43,6 +43,9 @@ The ecosystem of tools supporting F´ is installed as python packages available 
 associated with the F´ version just cloned can be installed using the following PIP command. Alternative
 tool installations are described in [Advanced](#Advanced).
 
+>Note: Python is used by many operating systems. To prevent problems users are encouraged to run F´ python
+>from within a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
+
 **Installing F´ Python Packages**
 
 ```
