@@ -94,7 +94,7 @@ void Deframer ::schedIn_handler(
 ) {
     // Check for data
     Fw::Buffer buffer(m_pollBuffer, sizeof(m_pollBuffer));
-    auto status = framedPoll_out(0, buffer);
+    Drv::PollStatus status = framedPoll_out(0, buffer);
     if (status == Drv::PollStatus::POLL_OK) {
         // Data exists: process it
         processBuffer(buffer);
@@ -113,9 +113,9 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
 
     // Read the packet type from the packet buffer
     FwPacketDescriptorType packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
-    auto status = Fw::FW_SERIALIZE_OK;
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
     {
-        auto& serial = packetBuffer.getSerializeRepr();
+        Fw::SerializeBufferBase& serial = packetBuffer.getSerializeRepr();
         status = serial.setBuffLen(packetBuffer.getSize());
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
         status = serial.deserialize(packetType);
@@ -127,7 +127,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
     // Process the packet
     if (status == Fw::FW_SERIALIZE_OK) {
         U8 *const packetData = packetBuffer.getData();
-        const auto packetSize = packetBuffer.getSize();
+        const U32 packetSize = packetBuffer.getSize();
         switch (packetType) {
             // Handle a command packet
             case Fw::ComPacket::FW_PACKET_COMMAND: {
@@ -149,8 +149,8 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
             }
             // Handle a file packet
             case Fw::ComPacket::FW_PACKET_FILE: {
-                // If file uplink output port is connected, handle the file packet.
-                // Otherwise ignore it.
+                // If the file uplink output port is connected,
+                // send the file packet. Otherwise take no action.
                 if (isConnected_bufferOut_OutputPort(0)) {
                     // Shift the packet buffer to skip the packet type
                     // The FileUplink component does not expect the packet
@@ -164,7 +164,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
                 }
                 break;
             }
-            // Ignore other packet types
+            // Take no action for other packet types
             default:
                 break;
         }
@@ -189,7 +189,7 @@ void Deframer ::route(Fw::Buffer& packetBuffer) {
 
 void Deframer ::processBuffer(Fw::Buffer& buffer) {
 
-    const auto bufferSize = buffer.getSize();
+    const U32 bufferSize = buffer.getSize();
     U8 *const bufferData = buffer.getData();
     // Current offset into buffer
     U32 offset = 0;
@@ -206,7 +206,8 @@ void Deframer ::processBuffer(Fw::Buffer& buffer) {
         const NATIVE_UINT_TYPE serSize = (ringFreeSize <= remaining) ?
             ringFreeSize : static_cast<NATIVE_UINT_TYPE>(remaining);
         // Serialize data into the ring buffer
-        const auto status = m_inRing.serialize(&bufferData[offset], serSize);
+        const Fw::SerializeStatus status =
+            m_inRing.serialize(&bufferData[offset], serSize);
         // If data does not fit, there is a coding error
         FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status, offset, serSize);
         // Process the data
@@ -230,9 +231,10 @@ void Deframer ::processRing() {
     // The number of remaining bytes in the ring buffer
     U32 remaining = 0;
     // The protocol status
-    auto status = DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
+    DeframingProtocol::DeframingStatus status =
+        DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
     // The ring buffer capacity
-    const auto ringCapacity = m_inRing.get_capacity();
+    const NATIVE_UINT_TYPE ringCapacity = m_inRing.get_capacity();
 
     // Process the ring buffer looking for at least the header
     for (U32 i = 0; i < ringCapacity; i++) {
