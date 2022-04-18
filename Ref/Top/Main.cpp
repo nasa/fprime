@@ -1,4 +1,7 @@
+
+#ifdef BUILD_VXWORKS
 #include <getopt.h>
+#endif
 #include <cstdlib>
 #include <ctype.h>
 
@@ -16,12 +19,6 @@ Ref::TopologyState state;
 // Enable the console logging provided by Os::Log
 Os::Log logger;
 
-volatile sig_atomic_t terminate = 0;
-
-static void sighandler(int signum) {
-    Ref::teardown(state);
-    terminate = 1;
-}
 
 void run1cycle() {
     // call interrupt to emulate a clock
@@ -39,6 +36,17 @@ void runcycles(NATIVE_INT_TYPE cycles) {
     for (NATIVE_INT_TYPE cycle = 0; cycle < cycles; cycle++) {
         run1cycle();
     }
+}
+
+#ifdef TGT_OS_TYPE_VXWORKS
+
+#else
+
+volatile sig_atomic_t terminate = 0;
+
+static void sighandler(int signum) {
+    Ref::teardown(state);
+    terminate = 1;
 }
 
 int main(int argc, char* argv[]) {
@@ -93,3 +101,5 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+#endif
