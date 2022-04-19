@@ -80,8 +80,11 @@ void Tester ::commandPacketTooLarge() {
 void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Seek to any packet of uplink type
     U32 original_size = m_receiving.size();
-    while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
-           (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
+    while (
+        (m_receiving.size() > 0) &&
+        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
+        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)
+    ) {
         m_receiving.pop_front();
     }
     // Flushing a corrupt buffer that was corrupted into something valid
