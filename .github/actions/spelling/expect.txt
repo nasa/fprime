@@ -230,6 +230,7 @@ colno
 COLORSTYLE
 colorwheel
 comlogger
+compat
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 commandline
@@ -1124,6 +1125,7 @@ outbool
 outdir
 outout
 overridable
+ovr
 ovrTrace
 packetization
 packetize
