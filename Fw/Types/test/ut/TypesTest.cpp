@@ -7,7 +7,6 @@
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
-#include <Fw/Types/AlignedAllocator.hpp>
 //
 // Created by mstarch on 12/7/20.
 //
