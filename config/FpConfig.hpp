@@ -12,6 +12,8 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 
+#include <fp_compat.hpp>
+
 // To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
 // these defaults will be overridden
 
@@ -357,8 +359,5 @@ enum TimeBase {
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
-
-#define nullptr 0
-#define override 
 
 #endif

@@ -603,14 +603,14 @@ namespace Fw {
 
     }
 
-#if FW_SERIALIZABLE_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
 
     void PolyType::toString(StringBase& dest) const {
     	this->toString(dest,false);
     }
 
     void PolyType::toString(StringBase& dest, bool append) const {
-#if 0
+
         char valString[80];
         switch (this->m_dataType) {
             case TYPE_U8:
@@ -670,7 +670,7 @@ namespace Fw {
         } else {
             dest = valString;
         }
-#endif
+
     }
 
 #endif
