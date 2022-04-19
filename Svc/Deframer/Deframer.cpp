@@ -80,7 +80,7 @@ void Deframer ::framedIn_handler(
     const Drv::RecvStatus& recvStatus
 ) {
     // Check whether there is data to process
-    if (Drv::RecvStatus::RECV_OK == recvStatus.e) {
+    if (recvStatus.e == Drv::RecvStatus::RECV_OK) {
         // There is: process the data
         processBuffer(recvBuffer);
     }
@@ -94,8 +94,8 @@ void Deframer ::schedIn_handler(
 ) {
     // Check for data
     Fw::Buffer buffer(m_pollBuffer, sizeof(m_pollBuffer));
-    Drv::PollStatus status = framedPoll_out(0, buffer);
-    if (status == Drv::PollStatus::POLL_OK) {
+    const Drv::PollStatus status = framedPoll_out(0, buffer);
+    if (status.e == Drv::PollStatus::POLL_OK) {
         // Data exists: process it
         processBuffer(buffer);
     }
