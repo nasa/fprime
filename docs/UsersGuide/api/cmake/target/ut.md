@@ -32,7 +32,7 @@ endfunction(ut_add_deployment_target)
         return()
     endif()
     message(STATUS "Adding Unit Test: ${UT_EXE_NAME}")
-    run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_ut)
+    run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/ai_ut)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
     build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 

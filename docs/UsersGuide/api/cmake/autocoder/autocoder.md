@@ -11,11 +11,10 @@ Note: autocoders need to be run by targets. See target/target.cmake.
 ## run_ac_set:
 
 Run a set of autocoder allowing back-to-back execution of a set of autocoders. SOURCES are the source files that are
-input into the autocoder filters.  Extra arguments may be an include path for an autocoder (e.g. autocoder/fpp) or can
-be INFO_ONLY to mark the next autocoder as only generating info.
+input into the autocoder filters.  Extra arguments may be an include path for an autocoder (e.g. autocoder/fpp).
 
 SOURCES: source file input list
-...: autocoder include or INFO_ONLY
+...: autocoder include
 
 
 ## run_ac:
@@ -27,7 +26,23 @@ the autocoder one input at a time, otherwise it runs the autocoder once on all i
 AUTOCODER_CMAKE: cmake file containing autocoder definition
 SOURCES: sources input to run on the autocoder
 GENERATED_SOURCES: sources created by other autocoders
-INFO_ONLY: TRUE if only information is needed, FALSE to run otherwise
+
+
+## Function `_describe_autocoder_prep`:
+
+Describes the inputs into an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Run before running the
+autocoder
+
+AUTOCODER_NAME: name of autocoder being run
+AC_INPUT_SOURCES: input files to autocoder
+
+
+## Function `_describe_autocoder_run`:
+
+Describe the results of an autocoder run. Does nothing unless CMAKE_DEBUG_OUTPUT is ON. Must have run the autocoder
+already and set the properties.
+
+AUTOCODER_NAME: name of autocoder being described
 
 
 ## _filter_sources:
@@ -41,10 +56,8 @@ OUTPUT_NAME: name of output variable to set in parent scope
 
 ## __ac_process_sources:
 
-Process sources found in SOURCES list.  If INFO_ONLY is set, then the autocoder is not setup, but rather only the
-dependency and file information is generated. Otherwise, the autocoder is setup to run on sources. Helper function.
-
+Process sources found in SOURCES list and sets up the autocoder to run on the sources by registering a rule to create
+those sources.
 SOURCES: source file list. Note: if the autocoder sets HANDLES_INDIVIDUAL_SOURCES this will be singular
-INFO_ONLY: TRUE if only information is to be generated FALSE (normal) to setup autocoding rules
 
 

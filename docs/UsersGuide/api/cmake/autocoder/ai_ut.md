@@ -2,31 +2,18 @@
 
 ## autocoder/ai-ut:
 
-Unit test support files autocoder. Only run when BUILD_TESTING is set. Otherwise it is not registered.
+Defines functions for the UT autocoder that uses AI XML inputs to generate the TesterBase and GTestBase files. This is
+built on the same shared setup as the other AI autocoders, but only run when `BUILD_TESTING` is set.
 
 
-## `is_supported`:
+## `ai_ut_is_supported`:
 
-Given a single input file, determines if that input file is processed by this autocoder. Sets the variable named
-IS_SUPPORTED in parent scope to be TRUE if the source file is an AI XML component file or FALSE otherwise. This only
-processes component ai xml files.
-
-AC_INPUT_FILE: filepath for consideration
+Required function, processes ComponentAi.xml files.
+`AC_INPUT_FILE` potential input to the autocoder
 
 
-## get_generated_files:
+## `ai_ut_setup_autocode`:
 
-This autocoder always generates TesterBase.cpp, TesterBase.hpp, and GTestBase.{c|h}pp files when INCLUDE_GTEST is set.
-Sets GENERATED_FILES in parent scope to hold this information.
-
-
-## get_dependencies:
-
-No dependencies, this function is a no-op.
-
-
-## setup_autocode:
-
-Setup the autocoder build commands. This is a required function of a given autocoder implementation.
+Required function, sets up a custom command to produce TesterBase and GTestBase files.
 
 
