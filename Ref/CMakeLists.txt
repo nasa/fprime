@@ -30,23 +30,8 @@ project(Ref VERSION 1.0.0 LANGUAGES C CXX)
 # colliding with deployment specific items.
 ##
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
-
-
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
-
 # NOTE: register custom targets between these two lines
 include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
-
-#SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++03" CACHE STRING "C++ flags." FORCE)
-
-#include("${FPRIME_PROJECT_ROOT}/fprime-vxworks/fprime-vxworks.cmake")
-
 ##
 # Section 3: Components and Topology
 #
@@ -68,16 +53,16 @@ set(MOD_DEPS ${PROJECT_NAME}/Top)
 register_fprime_deployment()
 # The following compile options will only apply to the deployment executable.
 # The extra warnings trigger in core F Prime so we don't apply them there.
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wall)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wextra)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Werror)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wall)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wextra)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Werror)
 #target_compile_options("${PROJECT_NAME}" PUBLIC -Wshadow)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wconversion)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wsign-conversion)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wformat-security)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wnon-virtual-dtor)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wold-style-cast)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Woverloaded-virtual)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wno-unused-parameter)
-#target_compile_options("${PROJECT_NAME}" PUBLIC -Wundef)
-#set_property(TARGET "${PROJECT_NAME}" PROPERTY CXX_STANDARD 11)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wconversion)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wsign-conversion)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wformat-security)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wnon-virtual-dtor)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wold-style-cast)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Woverloaded-virtual)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wno-unused-parameter)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wundef)
+set_property(TARGET "${PROJECT_NAME}" PROPERTY CXX_STANDARD 11)
