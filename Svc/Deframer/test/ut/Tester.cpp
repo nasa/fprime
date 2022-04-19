@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <cstring>
+
 #include "Tester.hpp"
 
 #define INSTANCE 0
@@ -97,6 +99,46 @@ void Tester ::test_unknown_interface() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
+void Tester ::testCommandResponse() {
+    const U32 portNum = 0;
+    const U32 opcode = 0;
+    const U32 cmdSeq = 0;
+    const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
+}
+
+void Tester ::testCommandPacketTooLarge() {
+    // Allocate a large packet buffer
+    enum {
+        BUFFER_SIZE = 2 * FW_COM_BUFFER_MAX_SIZE
+    };
+    U8 bytes[BUFFER_SIZE];
+    ::memset(bytes, 0, sizeof bytes);
+    Fw::Buffer buffer(bytes, sizeof bytes);
+    // Serialize the packet type
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType descriptorType =
+        Fw::ComPacket::FW_PACKET_COMMAND;
+    const Fw::SerializeStatus status =
+        serialRepr.serialize(descriptorType);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
+void Tester ::testPacketBufferTooSmall() {
+    // Allocate a small packet buffer
+    U8 byte = 0;
+    Fw::Buffer buffer(&byte, sizeof byte);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -133,29 +175,32 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
 // ----------------------------------------------------------------------
 
 void Tester ::connectPorts(void) {
-    // framedIn
-    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
-
-    // schedIn
-    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
-
-    // comOut
-    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
-
-    // bufferOut
-    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
-
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
 
     // bufferDeallocate
     this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
+    // bufferOut
+    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
+
+    // cmdResponseIn
+    this->connect_to_cmdResponseIn(0, this->component.get_cmdResponseIn_InputPort(0));
+
+    // comOut
+    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
+
     // framedDeallocate
     this->component.set_framedDeallocate_OutputPort(0, this->get_from_framedDeallocate(0));
 
+    // framedIn
+    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
+
     // framedPoll
     this->component.set_framedPoll_OutputPort(0, this->get_from_framedPoll(0));
+
+    // schedIn
+    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
 }
 
 void Tester ::initComponents(void) {

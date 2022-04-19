@@ -33,6 +33,18 @@ TEST(Deframer, TestUnknownInterface) {
     Svc::Tester tester;
     tester.test_unknown_interface();
 }
+TEST(Deframer, TestCommandResponse) {
+    Svc::Tester tester;
+    tester.testCommandResponse();
+}
+TEST(Deframer, TestCommandPacketTooLarge) {
+    Svc::Tester tester;
+    tester.testCommandPacketTooLarge();
+}
+TEST(Deframer, TestPacketBufferTooSmall) {
+    Svc::Tester tester;
+    tester.testPacketBufferTooSmall();
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
