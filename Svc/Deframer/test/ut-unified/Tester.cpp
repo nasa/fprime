@@ -36,6 +36,44 @@ Tester ::Tester(bool polling)
 Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
+
+void Tester ::commandResponse() {
+    const U32 portNum = 0;
+    const U32 opcode = 0;
+    const U32 cmdSeq = 0;
+    const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
+}
+
+void Tester ::commandPacketTooLarge() {
+    // Construct data for a large packet buffer
+    enum {
+        BUFFER_SIZE = 2 * FW_COM_BUFFER_MAX_SIZE
+    };
+    // Allocate with new here
+    // The bufferDeallocate handler in the test harness will call free
+    U8* bufferData = new U8[BUFFER_SIZE];
+    // Initialize all buffer bytes to zero
+    memset(bufferData, 0, BUFFER_SIZE);
+    // Construct the buffer
+    Fw::Buffer buffer(bufferData, BUFFER_SIZE);
+    // Serialize the packet type
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType descriptorType =
+        Fw::ComPacket::FW_PACKET_COMMAND;
+    const Fw::SerializeStatus status = 
+        serialRepr.serialize(descriptorType);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no command packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
+// ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 

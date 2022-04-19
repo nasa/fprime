@@ -54,13 +54,11 @@ class Tester : public DeframerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    void commandResponse() {
-        const U32 portNum = 0;
-        const U32 opcode = 0;
-        const U32 cmdSeq = 0;
-        const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
-        this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
-    }
+    //! Test invoking the command response input port
+    void commandResponse();
+
+    //! Test routing a command packet that is too large
+    void commandPacketTooLarge();
 
   private:
     // ----------------------------------------------------------------------

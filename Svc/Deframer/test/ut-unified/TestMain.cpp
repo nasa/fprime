@@ -3,13 +3,18 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <gtest/gtest.h>
-#include <Svc/GroundInterface/test/ut/GroundInterfaceRules.hpp>
-#include <STest/Scenario/Scenario.hpp>
-#include <STest/Scenario/RandomScenario.hpp>
+#include <Os/Log.hpp>
 #include <STest/Scenario/BoundedScenario.hpp>
+#include <STest/Scenario/RandomScenario.hpp>
+#include <STest/Scenario/Scenario.hpp>
+#include <Svc/GroundInterface/test/ut/GroundInterfaceRules.hpp>
+#include <gtest/gtest.h>
 
 #define STEP_COUNT 10000
+
+// Uncomment the following line to turn on OS logging
+// Os::Log logger;
+// This is off by default due to the large amount of checksum error output
 
 /**
  * A random hopper for rules. Apply STEP_COUNT times.
@@ -79,6 +84,11 @@ TEST(Nominal, BasicPollUplink) {
 TEST(Nominal, CommandResponse) {
     Svc::Tester tester(false);
     tester.commandResponse();
+}
+
+TEST(Error, CommandPacketTooLarge) {
+    Svc::Tester tester(false);
+    tester.commandPacketTooLarge();
 }
 
 int main(int argc, char **argv) {
