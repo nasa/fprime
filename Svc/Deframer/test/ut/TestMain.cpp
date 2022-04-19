@@ -25,9 +25,9 @@ TEST(Deframer, TestComInterface) {
     Svc::Tester tester;
     tester.test_com_interface();
 }
-TEST(Deframer, TestBufferInterface) {
+TEST(Deframer, TestFileInterface) {
     Svc::Tester tester;
-    tester.test_buffer_interface();
+    tester.test_file_interface();
 }
 TEST(Deframer, TestUnknownInterface) {
     Svc::Tester tester;

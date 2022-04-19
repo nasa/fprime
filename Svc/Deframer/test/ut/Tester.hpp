@@ -44,10 +44,28 @@ class Tester : public DeframerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    void test_incoming_frame(DeframingProtocol::DeframingStatus status);
+    //! Send a frame to framedIn
+    void test_incoming_frame(
+        DeframingProtocol::DeframingStatus status //!< The status that the mock deframer will return
+    );
+
+    //! Route a com packet
     void test_com_interface();
-    void test_buffer_interface();
+
+    //! Route a file packet
+    void test_file_interface();
+
+    //! Route a packet of unknown type
     void test_unknown_interface();
+
+    //! Test invoking the command response input port
+    void commandResponse();
+
+    //! Test routing a command packet that is too large
+    void commandPacketTooLarge();
+
+    //! Test a packet buffer that is too small
+    void packetBufferTooSmall();
 
   private:
     // ----------------------------------------------------------------------

@@ -40,4 +40,4 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/TestMain.cpp"
 )
 set(UT_MOD_DEPS STest)
-register_fprime_ut(Svc_Deframer_fprime_protocol)
+#register_fprime_ut(Svc_Deframer_fprime_protocol)

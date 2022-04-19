@@ -31,10 +31,11 @@ Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::Circu
 }
 
 void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packet_type) {
-    U8 chars[4];
+    const FwPacketDescriptorType descriptorType = com_packet_type;
+    U8 chars[sizeof descriptorType];
     m_interface->allocate(3042);
     Fw::Buffer buffer(chars, sizeof(chars));
-    buffer.getSerializeRepr().serialize(com_packet_type);
+    buffer.getSerializeRepr().serialize(descriptorType);
     m_interface->route(buffer);
 }
 
@@ -80,7 +81,7 @@ void Tester ::test_com_interface() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::test_buffer_interface() {
+void Tester ::test_file_interface() {
     m_mock.test_interface(Fw::ComPacket::FW_PACKET_FILE);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
