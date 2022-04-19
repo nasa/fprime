@@ -81,21 +81,6 @@ TEST(Nominal, BasicPollUplink) {
     send.apply(tester);
 }
 
-TEST(Nominal, CommandResponse) {
-    Svc::Tester tester(false);
-    tester.commandResponse();
-}
-
-TEST(Error, CommandPacketTooLarge) {
-    Svc::Tester tester(false);
-    tester.commandPacketTooLarge();
-}
-
-TEST(Error, PacketBufferTooSmall) {
-    Svc::Tester tester(false);
-    tester.packetBufferTooSmall();
-}
-
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

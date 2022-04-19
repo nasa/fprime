@@ -49,20 +49,6 @@ class Tester : public DeframerGTestBase {
     //!
     ~Tester(void);
 
-  public:
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
-
-    //! Test invoking the command response input port
-    void commandResponse();
-
-    //! Test routing a command packet that is too large
-    void commandPacketTooLarge();
-
-    //! Test a packet buffer that is too small
-    void packetBufferTooSmall();
-
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports

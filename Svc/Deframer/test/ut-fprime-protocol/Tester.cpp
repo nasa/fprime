@@ -36,46 +36,6 @@ Tester ::Tester(bool polling)
 Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
-// Tests
-// ----------------------------------------------------------------------
-
-void Tester ::commandResponse() {
-    const U32 portNum = 0;
-    const U32 opcode = 0;
-    const U32 cmdSeq = 0;
-    const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
-    this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
-}
-
-void Tester ::commandPacketTooLarge() {
-    // Allocate a large packet buffer
-    Fw::Buffer buffer =
-      allocatePacketBuffer(2 * FW_COM_BUFFER_MAX_SIZE);
-    // Serialize the packet type
-    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
-    const FwPacketDescriptorType descriptorType =
-        Fw::ComPacket::FW_PACKET_COMMAND;
-    const Fw::SerializeStatus status =
-        serialRepr.serialize(descriptorType);
-    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    // Call the route method
-    this->component.route(buffer);
-    // Assert buffer deallocated, no packet output
-    ASSERT_FROM_PORT_HISTORY_SIZE(1);
-    ASSERT_from_bufferDeallocate_SIZE(1);
-}
-
-void Tester ::packetBufferTooSmall() {
-    // Allocate a small packet buffer
-    Fw::Buffer buffer = allocatePacketBuffer(1);
-    // Call the route method
-    this->component.route(buffer);
-    // Assert buffer deallocated, no packet output
-    ASSERT_FROM_PORT_HISTORY_SIZE(1);
-    ASSERT_from_bufferDeallocate_SIZE(1);
-}
-
-// ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
@@ -203,16 +163,6 @@ void Tester ::connectPorts() {
 void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
-}
-
-Fw::Buffer Tester ::allocatePacketBuffer(U32 size) {
-    // Allocate with new here
-    // The bufferDeallocate handler in the test harness will call free
-    U8* data = new U8[size];
-    // Initialize all buffer bytes to zero
-    memset(data, 0, size);
-    // Construct and return the buffer
-    return Fw::Buffer(data, size);
 }
 
 }  // end namespace Svc

@@ -58,13 +58,13 @@ class Tester : public DeframerGTestBase {
     //! Route a packet of unknown type
     void test_unknown_interface();
 
-    //! Test invoking the command response input port
+    //! Invoke the command response input port
     void testCommandResponse();
 
-    //! Test routing a command packet that is too large
+    //! Attempt to route a command packet that is too large
     void testCommandPacketTooLarge();
 
-    //! Test a packet buffer that is too small
+    //! Attempt to route a packet buffer that is too small
     void testPacketBufferTooSmall();
 
   private:
