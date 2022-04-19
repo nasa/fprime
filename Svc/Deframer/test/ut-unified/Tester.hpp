@@ -60,6 +60,9 @@ class Tester : public DeframerGTestBase {
     //! Test routing a command packet that is too large
     void commandPacketTooLarge();
 
+    //! Test a packet buffer that is too small
+    void packetBufferTooSmall();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -109,6 +112,11 @@ class Tester : public DeframerGTestBase {
     //! Initialize components
     //!
     void initComponents();
+
+    //! Allocate a packet buffer
+    Fw::Buffer allocatePacketBuffer(
+        U32 size //!< The buffer size
+    );
 
   private:
     // ----------------------------------------------------------------------
