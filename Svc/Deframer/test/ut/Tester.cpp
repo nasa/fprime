@@ -23,9 +23,9 @@ namespace Svc {
 Tester::MockDeframer::MockDeframer(Tester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
 
 Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
-    needed = ring_buffer.get_remaining_size();
+    needed = ring_buffer.get_allocated_size();
     if (m_status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-        needed = ring_buffer.get_remaining_size() + 1; // Obey the rules
+        needed = ring_buffer.get_allocated_size() + 1; // Obey the rules
     }
     return m_status;
 }
@@ -63,11 +63,11 @@ void Tester ::test_incoming_frame(Tester::MockDeframer::DeframingStatus status) 
     invoke_to_framedIn(0, recvBuffer, recvStatus);
     // Check remaining size
     if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), buffer_size);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), buffer_size);
     } else if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), 0);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), 0);
     } else {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), 0);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), 0);
     }
     ASSERT_from_framedDeallocate(0, recvBuffer);
 }
@@ -124,8 +124,7 @@ void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
     this->pushFromPortEntry_framedPoll(pollBuffer);
-    // TODO: Return a value
-    return Drv::POLL_OK;
+    return Drv::PollStatus::POLL_OK;
 }
 
 // ----------------------------------------------------------------------
