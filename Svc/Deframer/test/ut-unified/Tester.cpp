@@ -126,17 +126,6 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
 // ----------------------------------------------------------------------
 
 void Tester ::connectPorts() {
-    // framedIn
-    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
-
-    // schedIn
-    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
-
-    // comOut
-    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
-
-    // bufferOut
-    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
 
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
@@ -144,11 +133,28 @@ void Tester ::connectPorts() {
     // bufferDeallocate
     this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
+    // bufferOut
+    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
+
+    // cmdResponseIn
+    this->connect_to_cmdResponseIn(0, this->component.get_cmdResponseIn_InputPort(0));
+
+    // comOut
+    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
+
     // framedDeallocate
     this->component.set_framedDeallocate_OutputPort(0, this->get_from_framedDeallocate(0));
 
+    // framedIn
+    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
+
     // framedPoll
     this->component.set_framedPoll_OutputPort(0, this->get_from_framedPoll(0));
+
+    // schedIn
+    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
+
+
 }
 
 void Tester ::initComponents() {

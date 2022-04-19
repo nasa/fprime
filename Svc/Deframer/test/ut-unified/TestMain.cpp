@@ -76,6 +76,11 @@ TEST(Nominal, BasicPollUplink) {
     send.apply(tester);
 }
 
+TEST(Nominal, CommandResponse) {
+    Svc::Tester tester(false);
+    tester.commandResponse();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

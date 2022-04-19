@@ -54,11 +54,13 @@ class Tester : public DeframerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    void update_header_info(U32 garbage_index, U8 garbage_byte);
-
-    void setInputParams(FpFrameHeader::TokenType size,
-                        U8* buffer,
-                        FpFrameHeader::TokenType packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
+    void commandResponse() {
+        const U32 portNum = 0;
+        const U32 opcode = 0;
+        const U32 cmdSeq = 0;
+        const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
+        this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
+    }
 
   private:
     // ----------------------------------------------------------------------
