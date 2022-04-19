@@ -35,9 +35,9 @@ register_fprime_ut()
 # implementation.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/DeframerRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-unified/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerRules.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/TestMain.cpp"
 )
 set(UT_MOD_DEPS STest)
 register_fprime_ut(Svc_Deframer_fprime_protocol)

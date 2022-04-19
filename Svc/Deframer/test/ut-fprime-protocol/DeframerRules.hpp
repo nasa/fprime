@@ -14,7 +14,7 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/StringType.hpp>
-#include <Svc/Deframer/test/ut-unified/Tester.hpp>
+#include <Svc/Deframer/test/ut-fprime-protocol/Tester.hpp>
 #include <STest/STest/Rule/Rule.hpp>
 #include <STest/STest/Pick/Pick.hpp>
 
