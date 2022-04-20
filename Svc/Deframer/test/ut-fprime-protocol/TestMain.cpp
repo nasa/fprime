@@ -3,6 +3,7 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
+#include <Fw/Test/UnitTest.hpp>
 #include <Os/Log.hpp>
 #include <STest/Scenario/BoundedScenario.hpp>
 #include <STest/Scenario/RandomScenario.hpp>
@@ -20,6 +21,7 @@
  * A random hopper for rules. Apply STEP_COUNT times.
  */
 TEST(Nominal, RandomizedDeframer) {
+    COMMENT("Send random buffers to the deframer, simulating an active driver");
     Svc::Tester tester;
 
     // Create rules, and assign them into the array
@@ -42,6 +44,7 @@ TEST(Nominal, RandomizedDeframer) {
 }
 
 TEST(Nominal, RandomizedPollingDeframer) {
+    COMMENT("Send random buffers to the deframer, simulating a passive driver");
     Svc::Tester tester(true);
 
     // Create rules, and assign them into the array
@@ -64,6 +67,7 @@ TEST(Nominal, RandomizedPollingDeframer) {
 }
 
 TEST(Nominal, BasicUplink) {
+    COMMENT("Send one buffer to the deframer, simulating an active driver");
     Svc::Tester tester(false);
     Svc::RandomizeRule setup("Randomize");
     Svc::SendAvailableRule send("Uplink Rule");
@@ -73,7 +77,8 @@ TEST(Nominal, BasicUplink) {
 }
 
 TEST(Nominal, BasicPollUplink) {
-    Svc::Tester tester(false);
+    COMMENT("Send one buffer to the deframer, simulating a passive driver");
+    Svc::Tester tester(true);
     Svc::RandomizeRule setup("Randomize");
     Svc::SendAvailableRule send("Uplink Rule");
 
@@ -82,6 +87,7 @@ TEST(Nominal, BasicPollUplink) {
 }
 
 TEST(Error, SizeTooLarge) {
+    COMMENT("Test handling of size overflow in F Prime deframing protocol");
     Svc::Tester tester(false);
     tester.sizeTooLarge();
 }

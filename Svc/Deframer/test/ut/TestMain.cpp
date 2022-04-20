@@ -55,6 +55,7 @@ TEST(Deframer, TestComInterface) {
     COMMENT("Route a com packet");
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
     Svc::Tester tester;
     tester.test_com_interface();
 }
@@ -62,6 +63,7 @@ TEST(Deframer, TestFileInterface) {
     COMMENT("Route a file packet");
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
     Svc::Tester tester;
     tester.test_file_interface();
 }
