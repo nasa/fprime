@@ -4,7 +4,7 @@
 // \brief  Random number generation
 //
 // \copyright
-// Copyright (C) 2017 California Institute of Technology.
+// Copyright (C) 2017-2022 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
@@ -77,8 +77,12 @@ namespace STest {
       U32 seedValue = 0;
       const bool seedValueOK =
         SeedValue::getFromFile("seed", seedValue);
-      if (!seedValueOK) {
+      if (seedValueOK) {
+        printf("[STest::Random] Read seed %u from file\n", seedValue);
+      }
+      else {
         seedValue = SeedValue::getFromTime();
+        printf("[STest::Random] Generated seed %u from system time\n", seedValue);
       }
       (void) SeedValue::appendToFile("seed-history", seedValue);
       SeedValue::set(seedValue);

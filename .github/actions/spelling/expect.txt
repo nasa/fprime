@@ -396,6 +396,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpi
 DPRIVATE
 DPROTECTED
 dropdown
