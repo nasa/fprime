@@ -13,7 +13,7 @@ var namespace_svc =
     [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
     [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
     [ "ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", "class_svc_1_1_console_text_logger_impl" ],
-    [ "DeframerComponentImpl", "class_svc_1_1_deframer_component_impl.html", "class_svc_1_1_deframer_component_impl" ],
+    [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
     [ "DeframingProtocol", "class_svc_1_1_deframing_protocol.html", "class_svc_1_1_deframing_protocol" ],
     [ "DeframingProtocolInterface", "class_svc_1_1_deframing_protocol_interface.html", "class_svc_1_1_deframing_protocol_interface" ],
     [ "FatalHandlerComponentImpl", "class_svc_1_1_fatal_handler_component_impl.html", "class_svc_1_1_fatal_handler_component_impl" ],

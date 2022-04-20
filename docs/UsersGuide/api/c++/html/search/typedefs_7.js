@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['health_3071',['Health',['../namespace_svc.html#a5bb83e68a0d5a63bbbbbed880a13fd09',1,'Svc']]]
+  ['i8_3067',['I8',['../basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6',1,'BasicTypes.hpp']]]
 ];

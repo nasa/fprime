@@ -88,12 +88,12 @@ $(document).ready(function(){initNavTree('_svc_framing_protocol.html',''); initR
 <div class="title">FramingProtocol </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md407"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md430"></a>
 Svc::FramingProtocol Library</h1>
-<p>The <code>FramingProtocol</code> library defines the interfaces to the framing and deframing protocols used by the <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> and <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code> components. <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> uses a framing protocol to wrap data in frames for transmission to the ground. <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code> uses a deframing protocol to extract data from frames received from the ground. The <code>FramingProtocol</code> library allows each of these components to operate with any one of several protocols. Each protocol corresponds to a different implementation of an interface provided by this library.</p>
+<p>The <code>FramingProtocol</code> library defines the interfaces to the framing and deframing protocols used by the <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> and <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> components. <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> uses a framing protocol to wrap data in frames for transmission to the ground. <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> uses a deframing protocol to extract data from frames received from the ground. The <code>FramingProtocol</code> library allows each of these components to operate with any one of several protocols. Each protocol corresponds to a different implementation of an interface provided by this library.</p>
 <p>This library implements default F' protocols that work with the F' Ground Data System (GDS). The F' protocols use the following frame format: frame header, data, hash value. A frame header consists of a four-byte start word <code>0xDEADBEEF</code> and a four byte data size. The hash value is defined by the <code><a class="el" href="class_utils_1_1_hash.html" title="A generic interface for creating and comparing hash values.">Utils::Hash</a></code> library.</p>
 <p>Users may provide new protocols by implementing the abstract classes defined in the <code>FramingProtocol</code> library.</p>
-<h2><a class="anchor" id="autotoc_md408"></a>
+<h2><a class="anchor" id="autotoc_md431"></a>
 1. Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -105,9 +105,9 @@ Svc::FramingProtocol Library</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">FramingProtocol-003 </td><td class="markdownTableBodyNone"><code><a class="el" href="class_svc_1_1_framing_protocol.html" title="abstract class representing a framing protocol">Svc::FramingProtocol</a></code> shall implement the framing and deframing protocols used by the F Prime GDS </td><td class="markdownTableBodyNone">Inspection  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md409"></a>
+<h2><a class="anchor" id="autotoc_md432"></a>
 2. Using the Interface</h2>
-<h3><a class="anchor" id="autotoc_md410"></a>
+<h3><a class="anchor" id="autotoc_md433"></a>
 2.1. Framing</h3>
 <p>To use the F' framing protocol, do the following:</p>
 <ol type="1">
@@ -133,14 +133,14 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Instantiate the <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> component, passing the instance created in step 4 to its <code>setup</code> method.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md411"></a>
+<h3><a class="anchor" id="autotoc_md434"></a>
 2.2. Deframing</h3>
 <p>To use the F' deframing protocol, do the following:</p>
 <ol type="1">
 <li>Instantiate the class <code>FprimeDeframing</code> defined in this library.</li>
 </ol>
 <ol type="1">
-<li>Instantiate the <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code> component, passing the instance created in step 1 to its <code>setup</code> method.</li>
+<li>Instantiate the <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> component, passing the instance created in step 1 to its <code>setup</code> method.</li>
 </ol>
 <p>For an example, see the definition of the instance <code>uplink</code> at <code>Ref/Top/instances.fpp</code>.</p>
 <p>To implement and use a new deframing protocol, do the following:</p>
@@ -157,11 +157,11 @@ Svc::FramingProtocol Library</h1>
 <li>Instantiate the class implemented in step 2, passing the instance created in step 3 to its <code>setup</code> method.</li>
 </ol>
 <ol type="1">
-<li>Instantiate the <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code> component, passing the instance created in step 4 to its <code>setup</code> method.</li>
+<li>Instantiate the <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> component, passing the instance created in step 4 to its <code>setup</code> method.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md412"></a>
+<h2><a class="anchor" id="autotoc_md435"></a>
 3. Implementing a Protocol</h2>
-<h3><a class="anchor" id="autotoc_md413"></a>
+<h3><a class="anchor" id="autotoc_md436"></a>
 3.1. Framing</h3>
 <p>To implement a framing protocol, do the following:</p>
 <ol type="1">
@@ -170,7 +170,7 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Use the implementation in step 1 to implement the abstract class <code>FramingProtocol</code>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md414"></a>
+<h4><a class="anchor" id="autotoc_md437"></a>
 3.1.1. Implementing &lt;tt&gt;FramingProtocolInterface&lt;/tt&gt;</h4>
 <p><code>FramingProtocolInterface</code> defines helper methods for framing data. Typically these methods are implemented by an F Prime component (e.g., <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code>), because they require port invocations. The component <code><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Svc::Framer</a></code> provides an implementation of <code>FramingProtocolInterface</code> that you can use. It does this by inheriting from <code>FramingProtocolInterface</code> and implementing its abstract methods.</p>
 <p>To implement <code>FramingProtocolInterface</code>, you must implement the following pure virtual methods:</p>
@@ -180,7 +180,7 @@ Svc::FramingProtocol Library</h1>
 <div class="line">   virtual void send(Fw::Buffer&amp; outgoing) = 0;</div>
 </div><!-- fragment --><p>The method <code>allocate</code> should accept a size in bytes and return an <code><a class="el" href="class_fw_1_1_buffer.html">Fw::Buffer</a></code> that (1) points to a memory allocation of at least that size if the allocation succeeded; or (2) has size zero if the allocation failed. A typical implementation invokes a port connected to a memory allocation component.</p>
 <p>The method <code>send</code> should send the data stored in the buffer. A typical implementation invokes an <code>Fw::BufferSend</code> port.</p>
-<h4><a class="anchor" id="autotoc_md415"></a>
+<h4><a class="anchor" id="autotoc_md438"></a>
 3.1.2. Implementing &lt;tt&gt;FramingProtocol&lt;/tt&gt;</h4>
 <p><code>FramingProtocol</code> defines the operation of framing a packet. To implement <code>FramingProtocol</code>, you must implement the following pure virtual method:</p>
 <div class="fragment"><div class="line"> {c++}</div>
@@ -202,7 +202,7 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Use <code>m_interface-&gt;send</code> to send the buffer.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md416"></a>
+<h3><a class="anchor" id="autotoc_md439"></a>
 3.2. Deframing</h3>
 <p>To implement a deframing protocol, do the following:</p>
 <ol type="1">
@@ -211,9 +211,9 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Use the implementation in step 1 to implement the abstract class <code>DeframingProtocol</code>.</li>
 </ol>
-<h4><a class="anchor" id="autotoc_md417"></a>
+<h4><a class="anchor" id="autotoc_md440"></a>
 3.2.1. Implementing &lt;tt&gt;DeframingProtocolInterface&lt;/tt&gt;</h4>
-<p><code>DeframingProtocolInterface</code> defines helper methods for deframing data. Typically these methods are implemented by an F Prime component (e.g., <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code>), because they require port invocations. The component <code><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a></code> provides an implementation of <code>DeframingProtocolInterface</code> that you can use. It does this by inheriting from <code>DeframingProtocolInterface</code> and implementing its abstract methods.</p>
+<p><code>DeframingProtocolInterface</code> defines helper methods for deframing data. Typically these methods are implemented by an F Prime component (e.g., <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code>), because they require port invocations. The component <code><a class="el" href="class_svc_1_1_deframer.html" title="Generic deframing component using DeframingProtocol implementation for actual deframing.">Svc::Deframer</a></code> provides an implementation of <code>DeframingProtocolInterface</code> that you can use. It does this by inheriting from <code>DeframingProtocolInterface</code> and implementing its abstract methods.</p>
 <p>To implement <code>DeframingProtocolInterface</code>, you must implement the following pure virtual methods:</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">virtual Fw::Buffer allocate(const U32 size) = 0;</div>
@@ -221,7 +221,7 @@ Svc::FramingProtocol Library</h1>
 <div class="line">virtual void route(Fw::Buffer&amp; data) = 0;</div>
 </div><!-- fragment --><p>The method <code>allocate</code> should allocate memory, as described in Section 3.1.1.</p>
 <p>The method <code>route</code> should send (route) the data stored in the buffer. A typical implementation invokes either an <code>Fw::Com</code> port (e.g., for sending commands) or a <code>Fw::BufferSend</code> port (e.g., for sending file packets).</p>
-<h4><a class="anchor" id="autotoc_md418"></a>
+<h4><a class="anchor" id="autotoc_md441"></a>
 3.2.2. Implementing &lt;tt&gt;DeframingProtocol&lt;/tt&gt;</h4>
 <p><code>DeframingProtocol</code> defines the operation of deframing a packet. To implement <code>DeframingProtocol</code>, you must implement the following pure virtual method:</p>
 <div class="fragment"><div class="line"> {c++}</div>
@@ -255,9 +255,9 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Return status.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md419"></a>
+<h2><a class="anchor" id="autotoc_md442"></a>
 4. Default F' Implementation</h2>
-<h3><a class="anchor" id="autotoc_md420"></a>
+<h3><a class="anchor" id="autotoc_md443"></a>
 4.1. Framing</h3>
 <p>The F Prime framing protocol operates as follows:</p>
 <ol type="1">
@@ -296,7 +296,7 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Send the buffer.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md421"></a>
+<h3><a class="anchor" id="autotoc_md444"></a>
 4.2. Deframing</h3>
 <p>The F Prime deframing protocol operates as follows:</p>
 <ol type="1">
@@ -329,13 +329,13 @@ Svc::FramingProtocol Library</h1>
 <ol type="1">
 <li>Return success status.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md422"></a>
+<h2><a class="anchor" id="autotoc_md445"></a>
 5. Class Diagrams</h2>
 <p><img src="./img/framingProtocol_impl_diagram.png" alt="FramingProtocol Impl Diagram" class="inline"/></p>
 <p>Diagram view of DeframingProtocol:</p>
 <p><img src="./img/deframingProtocol_impl_diagram.png" alt="DeframingProtocol Impl Diagram" class="inline"/></p>
 <p><em>Diagrams generated with <a href="https://github.com/CoatiSoftware/Sourcetrail">SourceTrail</a></em></p>
-<h2><a class="anchor" id="autotoc_md423"></a>
+<h2><a class="anchor" id="autotoc_md446"></a>
 6. Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

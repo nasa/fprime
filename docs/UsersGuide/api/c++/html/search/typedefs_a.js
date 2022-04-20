@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['native_5fint_5ftype_3079',['NATIVE_INT_TYPE',['../basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852',1,'BasicTypes.hpp']]],
-  ['native_5fuint_5ftype_3080',['NATIVE_UINT_TYPE',['../basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc',1,'BasicTypes.hpp']]]
+  ['openinterceptor_3076',['OpenInterceptor',['../namespace_os.html#a0bf693c4def00efef1e1f286db0b6609',1,'Os']]]
 ];

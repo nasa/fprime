@@ -97,6 +97,8 @@ $(document).ready(function(){initNavTree('namespace_svc.html',''); initResizable
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
+<tr class="memitem:namespace_svc_1_1_deframer_cfg"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc_1_1_deframer_cfg.html">DeframerCfg</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespace_svc_1_1_fp_frame_header"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc_1_1_fp_frame_header.html">FpFrameHeader</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -132,8 +134,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_console_text_logger_impl.html">ConsoleTextLoggerImpl</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer_component_impl.html">DeframerComponentImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic deframing component using <a class="el" href="class_svc_1_1_deframing_protocol.html" title="Abstract base class representing a deframing protocol.">DeframingProtocol</a> implementation for actual deframing.  <a href="class_svc_1_1_deframer_component_impl.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframer.html">Deframer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic deframing component using <a class="el" href="class_svc_1_1_deframing_protocol.html" title="Abstract base class representing a deframing protocol.">DeframingProtocol</a> implementation for actual deframing.  <a href="class_svc_1_1_deframer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_svc_1_1_deframing_protocol.html">DeframingProtocol</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class representing a deframing protocol.  <a href="class_svc_1_1_deframing_protocol.html#details">More...</a><br /></td></tr>
@@ -231,8 +233,6 @@ Typedefs</h2></td></tr>
 <tr class="separator:aad715e7900694dba0bdc7ab125f93d19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12235e3e38fb8b8d3bbc5103dde6d4b0"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc.html#a12235e3e38fb8b8d3bbc5103dde6d4b0">CmdSequencer</a> = <a class="el" href="class_svc_1_1_cmd_sequencer_component_impl.html">CmdSequencerComponentImpl</a></td></tr>
 <tr class="separator:a12235e3e38fb8b8d3bbc5103dde6d4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a7e7560fc0f54513d2758e7f6f9b71c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Deframer</a> = <a class="el" href="class_svc_1_1_deframer_component_impl.html">DeframerComponentImpl</a></td></tr>
-<tr class="separator:a0a7e7560fc0f54513d2758e7f6f9b71c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d761a572d4190b8ba0af57c5646c68d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc.html#a6d761a572d4190b8ba0af57c5646c68d">FatalHandler</a> = <a class="el" href="class_svc_1_1_fatal_handler_component_impl.html">FatalHandlerComponentImpl</a></td></tr>
 <tr class="separator:a6d761a572d4190b8ba0af57c5646c68d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83707f61258039f6bca8c266c41da508"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_svc.html#a83707f61258039f6bca8c266c41da508">Framer</a> = <a class="el" href="class_svc_1_1_framer_component_impl.html">FramerComponentImpl</a></td></tr>
@@ -395,22 +395,6 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="command_dispatcher_8hpp_source.html#l00013">13</a> of file <a class="el" href="command_dispatcher_8hpp_source.html">CommandDispatcher.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a0a7e7560fc0f54513d2758e7f6f9b71c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a7e7560fc0f54513d2758e7f6f9b71c">&#9670;&nbsp;</a></span>Deframer</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_svc.html#a0a7e7560fc0f54513d2758e7f6f9b71c">Svc::Deframer</a> = typedef <a class="el" href="class_svc_1_1_deframer_component_impl.html">DeframerComponentImpl</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="deframer_8hpp_source.html#l00013">13</a> of file <a class="el" href="deframer_8hpp_source.html">Deframer.hpp</a>.</p>
 
 </div>
 </div>

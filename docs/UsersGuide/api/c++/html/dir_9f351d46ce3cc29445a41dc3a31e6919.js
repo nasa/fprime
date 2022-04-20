@@ -4,6 +4,7 @@ var dir_9f351d46ce3cc29445a41dc3a31e6919 =
     [ "ActiveRateGroupImplCfg.hpp", "active_rate_group_impl_cfg_8hpp.html", "_active_rate_group_impl_cfg_8hpp" ],
     [ "BufferManagerComponentImplCfg.hpp", "buffer_manager_component_impl_cfg_8hpp.html", "_buffer_manager_component_impl_cfg_8hpp" ],
     [ "CommandDispatcherImplCfg.hpp", "command_dispatcher_impl_cfg_8hpp.html", "_command_dispatcher_impl_cfg_8hpp" ],
+    [ "DeframerCfg.hpp", "deframer_cfg_8hpp.html", "_deframer_cfg_8hpp" ],
     [ "FileDownlinkCfg.hpp", "file_downlink_cfg_8hpp.html", "_file_downlink_cfg_8hpp" ],
     [ "FpConfig.hpp", "fp_config_8hpp.html", "_fp_config_8hpp" ],
     [ "IpCfg.hpp", "ip_cfg_8hpp.html", "_ip_cfg_8hpp" ],
