@@ -42,10 +42,11 @@ void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packe
 }
 
 
-Tester ::Tester(void)
+Tester ::Tester(ConnectStatus::t bufferOutStatus)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
-      m_mock(*this) {
+      m_mock(*this),
+      bufferOutStatus(bufferOutStatus) {
     this->initComponents();
     this->connectPorts();
     component.setup(this->m_mock);
@@ -141,6 +142,28 @@ void Tester ::testPacketBufferTooSmall() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
+void Tester ::testBufferOutUnconnected() {
+    ASSERT_EQ(this->bufferOutStatus, ConnectStatus::UNCONNECTED);
+    enum {
+        BUFFER_SIZE = 256
+    };
+    U8 bytes[BUFFER_SIZE];
+    ::memset(bytes, 0, sizeof bytes);
+    Fw::Buffer buffer(bytes, sizeof bytes);
+    // Serialize the packet type
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType descriptorType =
+        Fw::ComPacket::FW_PACKET_FILE;
+    const Fw::SerializeStatus status =
+        serialRepr.serialize(descriptorType);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -184,7 +207,9 @@ void Tester ::connectPorts(void) {
     this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
     // bufferOut
-    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
+    if (this->bufferOutStatus == ConnectStatus::CONNECTED) {
+        this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
+    }
 
     // cmdResponseIn
     this->connect_to_cmdResponseIn(0, this->component.get_cmdResponseIn_InputPort(0));

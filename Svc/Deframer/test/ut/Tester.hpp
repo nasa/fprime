@@ -19,6 +19,19 @@
 namespace Svc {
 
 class Tester : public DeframerGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ---------------------------------------------------------------------- 
+
+    struct ConnectStatus {
+      //! Whether a port is connected
+      typedef enum {
+          CONNECTED,
+          UNCONNECTED
+      } t;
+    };
+
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -35,7 +48,7 @@ class Tester : public DeframerGTestBase {
   public:
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
 
     //! Destroy object Tester
     //!
@@ -68,6 +81,9 @@ class Tester : public DeframerGTestBase {
 
     //! Attempt to route a packet buffer that is too small
     void testPacketBufferTooSmall();
+
+    //! Route a file packet with bufferOutUnconnected
+    void testBufferOutUnconnected();
 
   private:
     // ----------------------------------------------------------------------
@@ -130,6 +146,8 @@ class Tester : public DeframerGTestBase {
 
     Fw::Buffer m_buffer;
     MockDeframer m_mock;
+    // Whether the bufferOut port is connected
+    ConnectStatus::t bufferOutStatus;
 };
 
 }  // end namespace Svc

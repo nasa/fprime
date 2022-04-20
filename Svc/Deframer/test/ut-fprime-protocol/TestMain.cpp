@@ -27,7 +27,6 @@ TEST(Nominal, BasicUplink) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester(false);
     Svc::RandomizeRule setup("Randomize");
     Svc::SendAvailableRule send("Uplink Rule");
@@ -47,7 +46,6 @@ TEST(Nominal, BasicPollUplink) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester(true);
     Svc::RandomizeRule setup("Randomize");
     Svc::SendAvailableRule send("Uplink Rule");
@@ -69,7 +67,6 @@ TEST(Nominal, RandomizedDeframer) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester;
 
     // Create rules, and assign them into the array
@@ -102,7 +99,6 @@ TEST(Nominal, RandomizedPollingDeframer) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester(true);
 
     // Create rules, and assign them into the array

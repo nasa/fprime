@@ -94,6 +94,13 @@ TEST(Deframer, TestPacketBufferTooSmall) {
     tester.testPacketBufferTooSmall();
 }
 
+TEST(Deframer, TestBufferOutUnconnected) {
+    COMMENT("Test routing a file packet when bufferOut is unconnected");
+    REQUIREMENT("SVC-DEFRAMER-011");
+    Svc::Tester tester(Svc::Tester::ConnectStatus::UNCONNECTED);
+    tester.testBufferOutUnconnected();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
