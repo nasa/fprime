@@ -17,11 +17,59 @@
 // Os::Log logger;
 // This is off by default due to the large amount of checksum error output
 
+TEST(Nominal, BasicUplink) {
+    COMMENT("Send one buffer to the deframer, simulating an active driver");
+    REQUIREMENT("SVC-DEFRAMER-001");
+    REQUIREMENT("SVC-DEFRAMER-002");
+    REQUIREMENT("SVC-DEFRAMER-003");
+    REQUIREMENT("SVC-DEFRAMER-004");
+    REQUIREMENT("SVC-DEFRAMER-007");
+    REQUIREMENT("SVC-DEFRAMER-008");
+    REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
+    REQUIREMENT("SVC-DEFRAMER-011");
+    Svc::Tester tester(false);
+    Svc::RandomizeRule setup("Randomize");
+    Svc::SendAvailableRule send("Uplink Rule");
+
+    setup.apply(tester);
+    send.apply(tester);
+}
+
+TEST(Nominal, BasicPollUplink) {
+    COMMENT("Send one buffer to the deframer, simulating a passive driver");
+    REQUIREMENT("SVC-DEFRAMER-001");
+    REQUIREMENT("SVC-DEFRAMER-002");
+    REQUIREMENT("SVC-DEFRAMER-003");
+    REQUIREMENT("SVC-DEFRAMER-005");
+    REQUIREMENT("SVC-DEFRAMER-006");
+    REQUIREMENT("SVC-DEFRAMER-007");
+    REQUIREMENT("SVC-DEFRAMER-008");
+    REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
+    REQUIREMENT("SVC-DEFRAMER-011");
+    Svc::Tester tester(true);
+    Svc::RandomizeRule setup("Randomize");
+    Svc::SendAvailableRule send("Uplink Rule");
+
+    setup.apply(tester);
+    send.apply(tester);
+}
+
 /**
  * A random hopper for rules. Apply STEP_COUNT times.
  */
 TEST(Nominal, RandomizedDeframer) {
     COMMENT("Send random buffers to the deframer, simulating an active driver");
+    REQUIREMENT("SVC-DEFRAMER-001");
+    REQUIREMENT("SVC-DEFRAMER-002");
+    REQUIREMENT("SVC-DEFRAMER-003");
+    REQUIREMENT("SVC-DEFRAMER-004");
+    REQUIREMENT("SVC-DEFRAMER-007");
+    REQUIREMENT("SVC-DEFRAMER-008");
+    REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
+    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester;
 
     // Create rules, and assign them into the array
@@ -45,6 +93,16 @@ TEST(Nominal, RandomizedDeframer) {
 
 TEST(Nominal, RandomizedPollingDeframer) {
     COMMENT("Send random buffers to the deframer, simulating a passive driver");
+    REQUIREMENT("SVC-DEFRAMER-001");
+    REQUIREMENT("SVC-DEFRAMER-002");
+    REQUIREMENT("SVC-DEFRAMER-003");
+    REQUIREMENT("SVC-DEFRAMER-005");
+    REQUIREMENT("SVC-DEFRAMER-006");
+    REQUIREMENT("SVC-DEFRAMER-007");
+    REQUIREMENT("SVC-DEFRAMER-008");
+    REQUIREMENT("SVC-DEFRAMER-009");
+    REQUIREMENT("SVC-DEFRAMER-010");
+    REQUIREMENT("SVC-DEFRAMER-011");
     Svc::Tester tester(true);
 
     // Create rules, and assign them into the array
@@ -64,26 +122,6 @@ TEST(Nominal, RandomizedPollingDeframer) {
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
-}
-
-TEST(Nominal, BasicUplink) {
-    COMMENT("Send one buffer to the deframer, simulating an active driver");
-    Svc::Tester tester(false);
-    Svc::RandomizeRule setup("Randomize");
-    Svc::SendAvailableRule send("Uplink Rule");
-
-    setup.apply(tester);
-    send.apply(tester);
-}
-
-TEST(Nominal, BasicPollUplink) {
-    COMMENT("Send one buffer to the deframer, simulating a passive driver");
-    Svc::Tester tester(true);
-    Svc::RandomizeRule setup("Randomize");
-    Svc::SendAvailableRule send("Uplink Rule");
-
-    setup.apply(tester);
-    send.apply(tester);
 }
 
 TEST(Error, SizeTooLarge) {
