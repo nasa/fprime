@@ -41,19 +41,19 @@ class SocketReadTask {
      *
      * Starts up the socket reading task and opens socket. This should be called before send calls are expected to
      * work. Will connect to the previously configured port and host. priority, stack, and cpuAffinity are provided
-     * to the Os::Task::start call. cpuAffinity defaults to -1.
+     * to the Os::Task::start call.
      *
      * \param name: name of the task
      * \param reconnect: automatically reconnect socket when closed. Default: true.
-     * \param priority: priority of the started task. See: Os::Task::start. Default: -1, not prioritized
-     * \param stack: stack size provided to the task. See: Os::Task::start. Default: -1, posix threads default
-     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: -1, don't care
+     * \param priority: priority of the started task. See: Os::Task::start. Default: TASK_DEFAULT, not prioritized
+     * \param stack: stack size provided to the task. See: Os::Task::start. Default: TASK_DEFAULT, posix threads default
+     * \param cpuAffinity: cpu affinity provided to task. See: Os::Task::start. Default: TASK_DEFAULT, don't care
      */
     void startSocketTask(const Fw::StringBase &name,
                          const bool reconnect = true,
-                         const NATIVE_INT_TYPE priority = -1,
-                         const NATIVE_INT_TYPE stack = -1,
-                         const NATIVE_INT_TYPE cpuAffinity = -1);
+                         const NATIVE_UINT_TYPE priority = Os::Task::TASK_DEFAULT,
+                         const NATIVE_UINT_TYPE stack = Os::Task::TASK_DEFAULT,
+                         const NATIVE_UINT_TYPE cpuAffinity = Os::Task::TASK_DEFAULT);
 
     /**
      * \brief open the socket for communications

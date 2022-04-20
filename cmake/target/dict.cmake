@@ -29,7 +29,7 @@ endfunction()
 ####
 function(dict_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
-    run_ac_set("${SOURCES}" INFO_ONLY autocoder/fpp INFO_ONLY autocoder/ai_xml)
+    run_ac_set("${SOURCES}" autocoder/fpp autocoder/ai_xml)
     set(DICTIONARY "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}TopologyAppDictionary.xml")
     foreach(FILE IN LISTS AC_GENERATED)
         if (FILE STREQUAL DICTIONARY)

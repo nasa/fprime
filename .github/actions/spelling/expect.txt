@@ -1778,6 +1778,7 @@ whitelist
 wiki
 wikipedia
 wildcards
+WLE
 Wno
 Wnon
 workaround
