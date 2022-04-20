@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {
 
@@ -106,7 +106,7 @@ class Tester : public DeframerGTestBase {
 
     //! The component under test
     //!
-    DeframerComponentImpl component;
+    Deframer component;
 
     Fw::Buffer m_buffer;
     MockDeframer m_mock;

@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <limits>
+
 #include "FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -93,6 +95,11 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    const U32 maxU32 = std::numeric_limits<U32>::max();
+    if (size > maxU32 - (FpFrameHeader::SIZE + HASH_DIGEST_LENGTH)) {
+        // size is too large to process: needed would overflow
+        return DeframingProtocol::DEFRAMING_INVALID_SIZE;
+    }
     needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
     // Check the header for correctness
     const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
