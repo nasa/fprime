@@ -81,6 +81,11 @@ TEST(Nominal, BasicPollUplink) {
     send.apply(tester);
 }
 
+TEST(Error, SizeTooLarge) {
+    Svc::Tester tester(false);
+    tester.sizeTooLarge();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

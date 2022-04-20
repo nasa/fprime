@@ -109,7 +109,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // Check frame size
     const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     if (frameSize > ring.get_capacity()) {
-        // Size is too large for ring buffer
+        // Frame size is too large for ring buffer
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
     }
     // Check for enough data to deserialize everything;

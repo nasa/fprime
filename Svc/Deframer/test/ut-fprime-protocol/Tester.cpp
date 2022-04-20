@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <limits>
+
 #include "Tester.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "Utils/Hash/HashBuffer.hpp"
@@ -34,6 +36,24 @@ Tester ::Tester(bool polling)
 }
 
 Tester ::~Tester() {}
+
+// ----------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------
+
+void Tester ::sizeTooLarge() {
+    U8 data[FpFrameHeader::SIZE];
+    Fw::Buffer buffer(data, sizeof data);
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    Fw::SerializeStatus status = serialRepr.serialize(FpFrameHeader::START_WORD);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    FpFrameHeader::TokenType size = std::numeric_limits<U32>::max();
+    status = serialRepr.serialize(size);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    this->component.processBuffer(buffer);
+    // Assert no output
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
 
 // ----------------------------------------------------------------------
 // Handlers for typed from ports

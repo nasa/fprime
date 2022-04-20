@@ -49,6 +49,14 @@ class Tester : public DeframerGTestBase {
     //!
     ~Tester(void);
 
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
+
+    //! Size too large for deframer
+    void sizeTooLarge();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
