@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer.hpp
-// \author janamian
+// \author janamian, bocchino
 // \brief  cpp file for Deframer test harness implementation class
 //
 // \copyright

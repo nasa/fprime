@@ -1,10 +1,10 @@
 // ======================================================================
 // \title  Tester.cpp
-// \author mstarch
+// \author mstarch, bocchino
 // \brief  cpp file for Deframer test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
