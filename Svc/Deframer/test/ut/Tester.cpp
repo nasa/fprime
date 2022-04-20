@@ -105,6 +105,7 @@ void Tester ::testCommandResponse() {
     const U32 cmdSeq = 0;
     const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
     this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 void Tester ::testCommandPacketTooLarge() {
@@ -139,6 +140,7 @@ void Tester ::testPacketBufferTooSmall() {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
