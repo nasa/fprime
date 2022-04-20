@@ -94,8 +94,11 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
 void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     // Seek to any packet of uplink type
     const U32 original_size = m_receiving.size();
-    while ((m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
-           (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)) {
+    while (
+        (m_receiving.size() > 0) &&
+        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
+        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)
+    ) {
         m_receiving.pop_front();
     }
     // Flushing a corrupt buffer that was corrupted into something valid
@@ -118,7 +121,9 @@ void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& 
 
 Fw::Buffer Tester ::from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
     this->pushFromPortEntry_bufferAllocate(size);
-    Fw::Buffer buffer(new U8[size], size);
+    U8 *const data = new U8[size];
+    memset(data, 0, size);
+    Fw::Buffer buffer(data, size);
     return buffer;
 }
 
