@@ -1,13 +1,12 @@
 // ======================================================================
-// \title  GroundInterface/test/ut/Tester.hpp
-// \author mstarch
-// \brief  hpp file for GroundInterface test harness implementation class
+// \title  Deframer/ut/ut-fprime-protocol/Tester.hpp
+// \author mstarch, bocchino
+// \brief  hpp file for Deframer test with F Prime protocol
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #ifndef TESTER_HPP
@@ -17,6 +16,7 @@
 #include <cstring>
 
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/Types/SerialBuffer.hpp"
 #include "GTestBase.hpp"
 #include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
@@ -24,192 +24,219 @@
 
 namespace Svc {
 
-class Tester : public DeframerGTestBase {
-  private:
-    friend struct RandomizeRule;
-    friend struct DownlinkRule;
-    friend struct FileDownlinkRule;
-    friend struct SendAvailableRule;
-    // ----------------------------------------------------------------------
-    // Construction and destruction
-    // ----------------------------------------------------------------------
-
-  public:
-
-    //! An uplink frame
-    class UplinkFrame {
+    class Tester : public DeframerGTestBase {
+      private:
+        friend struct RandomizeRule;
+        friend struct DownlinkRule;
+        friend struct FileDownlinkRule;
+        friend struct SendAvailableRule;
+        // ----------------------------------------------------------------------
+        // Construction and destruction
+        // ----------------------------------------------------------------------
 
       public:
 
-        // ----------------------------------------------------------------------
-        // Types
-        // ----------------------------------------------------------------------
+        //! An uplink frame
+        class UplinkFrame {
 
-        enum {
-            //! The max frame size
-            MAX_SIZE = 256
+          public:
+
+            // ----------------------------------------------------------------------
+            // Types
+            // ----------------------------------------------------------------------
+
+            enum {
+                //! The max frame size
+                MAX_SIZE = 256
+            };
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Constructor
+            // ----------------------------------------------------------------------
+
+            //! Construct an uplink frame
+            UplinkFrame(
+                Fw::ComPacket::ComPacketType packetType, //!< The packet type
+                U32 packetSize //!< The packet size
+            ) :
+                packetType(packetType),
+                packetSize(packetSize),
+                copyOffset(0),
+                valid(true)
+            {
+                ::memset(data, 0xFF, sizeof data);
+                this->updateHeader();
+                this->updateHash();
+            }
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Publilc Methods 
+            // ----------------------------------------------------------------------
+
+            //! Get the frame size
+            U32 getSize() const {
+                return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
+            }
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private Methods
+            // ----------------------------------------------------------------------
+            
+            //! Update the frame header
+            void updateHeader() {
+                Fw::SerialBuffer sb(data, sizeof data);
+                // Write start word
+                auto status = sb.serialize(FpFrameHeader::START_WORD);
+                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+                // Write the packet size
+                status = sb.serialize(packetSize);
+                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+                // Write the packet type
+                const FwPacketDescriptorType descriptorType = packetType;
+                status = sb.serialize(descriptorType);
+                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+            }
+
+            //! Update the hash value
+            void updateHash() {
+                Utils::Hash hash;
+                Utils::HashBuffer hashBuffer;
+                hash.update(data,  FpFrameHeader::SIZE + packetSize);
+                hash.final(hashBuffer);
+                const U32 hashOffset = getSize() - HASH_DIGEST_LENGTH;
+                const U8 *const hashAddr = hashBuffer.getBuffAddr();
+                memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
+            }
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Member variables
+            // ----------------------------------------------------------------------
+
+            //! The packet type
+            const Fw::ComPacket::ComPacketType packetType;
+
+            //! The packet size
+            const U32 packetSize;
+
+            //! The amount of frame data already copied out into a buffer
+            U32 copyOffset;
+
+            //! The frame data, including header, packet data, and CRC
+            U8 data[MAX_SIZE];
+
+            //! Whether the frame is valid
+            bool valid;
+
         };
 
-      public:
+        //! Construct object Tester
+        Tester(bool polling=false);
 
-        // ----------------------------------------------------------------------
-        // Constructor
-        // ----------------------------------------------------------------------
-
-        UplinkFrame() :
-            packetType(Fw::ComPacket::FW_PACKET_UNKNOWN),
-            packetSize(0),
-            copyOffset(0),
-            valid(false)
-        {
-            memset(data, 0xFF, sizeof data);
-        }
+        //! Destroy object Tester
+        ~Tester(void);
 
       public:
 
         // ----------------------------------------------------------------------
-        // Publilc Methods 
+        // Tests
         // ----------------------------------------------------------------------
 
-        //! Get the frame size
-        U32 getSize() const {
-            return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
-        }
+        //! Size too large for deframer
+        void sizeTooLarge();
 
-        void updateHeaderInfo() {
-            // Write token types
-            for (U32 i = 0; i < sizeof(FpFrameHeader::TokenType); i++) {
-                data[i] = (FpFrameHeader::START_WORD >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
-                data[i + sizeof(FpFrameHeader::TokenType)] =
-                        (packetSize >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
-            }
-            // Packet type
-            data[2 * sizeof(FpFrameHeader::TokenType) + 0] = (static_cast<U32>(packetType) >> 24) & 0xFF;
-            data[2 * sizeof(FpFrameHeader::TokenType) + 1] = (static_cast<U32>(packetType) >> 16) & 0xFF;
-            data[2 * sizeof(FpFrameHeader::TokenType) + 2] = (static_cast<U32>(packetType) >> 8) & 0xFF;
-            data[2 * sizeof(FpFrameHeader::TokenType) + 3] = (static_cast<U32>(packetType) >> 0) & 0xFF;
-
-            Utils::Hash hash;
-            Utils::HashBuffer hashBuffer;
-            hash.update(data,  FpFrameHeader::SIZE + packetSize);
-            hash.final(hashBuffer);
-
-            for (U32 i = 0; i < sizeof(U32); i++) {
-                data[i + getSize() - sizeof(U32)] = hashBuffer.getBuffAddr()[i] & 0xFF;
-            }
-        }
-
-      public:
+      private:
 
         // ----------------------------------------------------------------------
-        // Member variables
+        // Handlers for typed from ports
         // ----------------------------------------------------------------------
 
-        //! The packet type
-        Fw::ComPacket::ComPacketType packetType;
+        //! Handler for from_comOut
+        void from_comOut_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            Fw::ComBuffer& data, //!< Buffer containing packet data
+            U32 context //!< Call context value; meaning chosen by user
+        );
 
-        //! The packet size
-        U32 packetSize;
+        //! Handler for from_bufferOut
+        void from_bufferOut_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            Fw::Buffer& fwBuffer //!< The buffer
+        );
 
-        //! The amount of frame data already copied out into a buffer
-        U32 copyOffset;
+        //! Handler for from_bufferAllocate
+        Fw::Buffer from_bufferAllocate_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            U32 size //!< The size
+        );
 
-        //! The frame data, including header, packet data, and CRC
-        U8 data[MAX_SIZE];
+        //! Handler for from_bufferDeallocate
+        void from_bufferDeallocate_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            Fw::Buffer& fwBuffer //!< The buffer
+        );
 
-        //! Whether the frame is valid
-        bool valid;
+        //! Handler for from_framedDeallocate
+        //!
+        void from_framedDeallocate_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            Fw::Buffer& fwBuffer //!< The buffer
+        );
+
+        //! Handler for from_framedPoll
+        Drv::PollStatus from_framedPoll_handler(
+            const NATIVE_INT_TYPE portNum, //!< The port number
+            Fw::Buffer& pollBuffer //!< The poll buffer
+        );
+
+      private:
+        // ----------------------------------------------------------------------
+        // Helper methods
+        // ----------------------------------------------------------------------
+
+        //! Connect ports
+        void connectPorts();
+
+        //! Initialize components
+        void initComponents();
+
+        //! Allocate a packet buffer
+        Fw::Buffer allocatePacketBuffer(
+            U32 size //!< The buffer size
+        );
+
+      private:
+        // ----------------------------------------------------------------------
+        // Variables
+        // ----------------------------------------------------------------------
+
+        //! The component under test
+        Deframer component;
+
+        //! The deframing protocol
+        Svc::FprimeDeframing protocol;
+
+        //! Deque for sending frames
+        std::deque<UplinkFrame> m_sending;
+
+        //! Deque for receiving frames
+        std::deque<UplinkFrame> m_receiving;
+
+        //! Buffer to hold frames
+        Fw::Buffer m_incoming_buffer;
+
+        //! Whether we are in polling mode
+        bool m_polling;
 
     };
 
-    //! Construct object Tester
-    //!
-    Tester(bool polling=false);
-
-    //! Destroy object Tester
-    //!
-    ~Tester(void);
-
-  public:
-    // ----------------------------------------------------------------------
-    // Tests
-    // ----------------------------------------------------------------------
-
-    //! Size too large for deframer
-    void sizeTooLarge();
-
-  private:
-    // ----------------------------------------------------------------------
-    // Handlers for typed from ports
-    // ----------------------------------------------------------------------
-
-    //! Handler for from_comOut
-    //!
-    void from_comOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                             U32 context                    /*!< Call context value; meaning chosen by user*/
-    );
-
-    //! Handler for from_bufferOut
-    //!
-    void from_bufferOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                Fw::Buffer& fwBuffer);
-
-    //! Handler for from_bufferAllocate
-    //!
-    Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                           U32 size);
-
-    //! Handler for from_bufferDeallocate
-    //!
-    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
-
-    //! Handler for from_framedDeallocate
-    //!
-    void from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                       Fw::Buffer& fwBuffer);
-
-    //! Handler for from_framedPoll
-    //!
-    Drv::PollStatus from_framedPoll_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                            Fw::Buffer& pollBuffer);
-
-  private:
-    // ----------------------------------------------------------------------
-    // Helper methods
-    // ----------------------------------------------------------------------
-
-    //! Connect ports
-    //!
-    void connectPorts();
-
-    //! Initialize components
-    //!
-    void initComponents();
-
-    //! Allocate a packet buffer
-    Fw::Buffer allocatePacketBuffer(
-        U32 size //!< The buffer size
-    );
-
-  private:
-    // ----------------------------------------------------------------------
-    // Variables
-    // ----------------------------------------------------------------------
-
-    //! The component under test
-    //!
-    Deframer component;
-    Svc::FprimeDeframing protocol;
-
-    std::deque<UplinkFrame> m_sending;
-    std::deque<UplinkFrame> m_receiving;
-    Fw::Buffer m_incoming_buffer;
-    bool m_polling;
-
-};
-
-}  // end namespace Svc
+}
 
 #endif

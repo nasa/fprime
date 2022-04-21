@@ -19,12 +19,11 @@ namespace Svc {
     // Randomize
     void RandomizeRule :: action(Svc::Tester &state) {
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
-            Tester::UplinkFrame frame;
-            //frame.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
-            frame.packetSize = 100;
-            frame.packetType = Fw::ComPacket::FW_PACKET_COMMAND;
-            // Correct header info for items
-            frame.updateHeaderInfo();
+            Tester::UplinkFrame frame(
+                Fw::ComPacket::FW_PACKET_COMMAND,
+                100
+            );
+            //frame.size = STest::Pick::lowerUpper(4, sizeof(frame.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
             state.m_sending.push_back(frame);
         }
     }
