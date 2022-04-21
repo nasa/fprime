@@ -9,31 +9,6 @@
 
 namespace Svc {
 
-    void update_header_info(Tester::UplinkFrame& frame) {
-        frame.size = FpFrameHeader::SIZE + frame.packetSize + sizeof(U32);
-        // Write token types
-        for (U32 i = 0; i < sizeof(FpFrameHeader::TokenType); i++) {
-            frame.data[i] = (FpFrameHeader::START_WORD >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
-            frame.data[i + sizeof(FpFrameHeader::TokenType)] =
-                    (frame.packetSize >> ((sizeof(FpFrameHeader::TokenType) - 1 - i) * 8)) & 0xFF;
-        }
-        // Packet type
-        frame.data[2 * sizeof(FpFrameHeader::TokenType) + 0] = (static_cast<U32>(frame.packetType) >> 24) & 0xFF;
-        frame.data[2 * sizeof(FpFrameHeader::TokenType) + 1] = (static_cast<U32>(frame.packetType) >> 16) & 0xFF;
-        frame.data[2 * sizeof(FpFrameHeader::TokenType) + 2] = (static_cast<U32>(frame.packetType) >> 8) & 0xFF;
-        frame.data[2 * sizeof(FpFrameHeader::TokenType) + 3] = (static_cast<U32>(frame.packetType) >> 0) & 0xFF;
-
-        Utils::Hash hash;
-        Utils::HashBuffer hashBuffer;
-        hash.update(frame.data,  FpFrameHeader::SIZE + frame.packetSize);
-        hash.final(hashBuffer);
-
-        for (U32 i = 0; i < sizeof(U32); i++) {
-            frame.data[i + frame.size - sizeof(U32)] = hashBuffer.getBuffAddr()[i] & 0xFF;
-        }
-    }
-
-
     // Constructor
     RandomizeRule :: RandomizeRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
 
@@ -44,15 +19,13 @@ namespace Svc {
     // Randomize
     void RandomizeRule :: action(Svc::Tester &state) {
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
-            Tester::UplinkFrame data;
-            ::memset(&data, 0xFF, sizeof(data));
-            data.copyOffset = 0;
-            //data.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
-            data.packetSize = 100;
-            data.packetType = Fw::ComPacket::FW_PACKET_COMMAND;
+            Tester::UplinkFrame frame;
+            //frame.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
+            frame.packetSize = 100;
+            frame.packetType = Fw::ComPacket::FW_PACKET_COMMAND;
             // Correct header info for items
-            update_header_info(data);
-            state.m_sending.push_back(data);
+            frame.updateHeaderInfo();
+            state.m_sending.push_back(frame);
         }
     }
 
@@ -86,7 +59,7 @@ namespace Svc {
 
             // Compute the amount of data to copy
             const U32 buffAvailable = incoming_buffer_size - i;
-            const U32 frameAvailable = frame.size - frame.copyOffset;
+            const U32 frameAvailable = frame.getSize() - frame.copyOffset;
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
             // Copy the data
             state.m_incoming_buffer.getSerializeRepr().serialize(
@@ -98,7 +71,7 @@ namespace Svc {
             i += copyAmt;
 
             // If we have received the whole packet, consume it and add it to the receiving queue
-            if (frame.copyOffset == frame.size) {
+            if (frame.copyOffset == frame.getSize()) {
                 state.m_sending.pop_front();
                 state.m_receiving.push_back(frame);
                 //++expected_buf_count;
