@@ -4,6 +4,7 @@
 //! ======================================================================
 
 #include "DeframerRules.hpp"
+#include "Fw/Types/SerialBuffer.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -26,7 +27,7 @@ namespace Svc {
 
     // Constructor
     SendAvailableRule :: SendAvailableRule(const Fw::String& name) :
-      STest::Rule<Tester>(name.toChar())
+        STest::Rule<Tester>(name.toChar())
     {
 
     }
@@ -41,9 +42,9 @@ namespace Svc {
         //const U32 incoming_buffer_size = STest::Pick::lowerUpper(10, 1000);
         const U32 incoming_buffer_size = 112 + 1;
         U8* incoming_buffer = new U8[incoming_buffer_size];
-        state.m_incoming_buffer.set(incoming_buffer, incoming_buffer_size);
-        state.m_incoming_buffer.getSerializeRepr().resetSer();
-        state.m_incoming_buffer.getSerializeRepr().resetDeser();
+        state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incoming_buffer_size);
+        Fw::SerialBuffer serialBuffer(incoming_buffer, incoming_buffer_size);
+
         U32 expected_com_count = 0;
         //U32 expected_buf_count = 0;
 
@@ -58,16 +59,18 @@ namespace Svc {
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
 
             // Copy the frame data
-            state.m_incoming_buffer.getSerializeRepr().serialize(
-                frame.data + frame.copyOffset,
-                copyAmt,
-                true
+            auto status = serialBuffer.pushBytes(
+                &frame.data[frame.copyOffset],
+                copyAmt
             );
+            ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+            // Update the offsets
             frame.copyOffset += copyAmt;
             i += copyAmt;
 
-            // If we have received the whole frame, consume it and
-            // add it to the receiving queue
+            // If we have received an entire frame, move it from
+            // the sending queue to the receiving queue
             if (frame.copyOffset == frame.getSize()) {
                 state.m_sending.pop_front();
                 state.m_receiving.push_back(frame);
