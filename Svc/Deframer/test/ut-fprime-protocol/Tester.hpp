@@ -32,8 +32,10 @@ class Tester : public DeframerGTestBase {
     // ----------------------------------------------------------------------
 
   public:
-    struct UplinkData {
-        Fw::ComPacket::ComPacketType type;
+    //! An uplink frame
+    struct UplinkFrame {
+        //! The packet type
+        Fw::ComPacket::ComPacketType packetType;
         U32 size;
         U32 partial;
         U32 full_size;
@@ -122,8 +124,8 @@ class Tester : public DeframerGTestBase {
     Deframer component;
     Svc::FprimeDeframing protocol;
 
-    std::deque<UplinkData> m_sending;
-    std::deque<UplinkData> m_receiving;
+    std::deque<UplinkFrame> m_sending;
+    std::deque<UplinkFrame> m_receiving;
     Fw::Buffer m_incoming_buffer;
     bool m_polling;
 

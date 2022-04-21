@@ -62,12 +62,12 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
     // Check for available data
     ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
-    UplinkData check = m_receiving.front();
+    const auto& frame= m_receiving.front();
     m_receiving.pop_front();
 
-    ASSERT_EQ(check.type, Fw::ComPacket::FW_PACKET_COMMAND);
+    ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
     for (U32 i = 0; i < data.getBuffLength(); i++) {
-        EXPECT_EQ(data.getBuffAddr()[i], check.data[i + FpFrameHeader::SIZE]);
+        EXPECT_EQ(data.getBuffAddr()[i], frame.data[i + FpFrameHeader::SIZE]);
     }
     this->pushFromPortEntry_comOut(data, context);
 }
@@ -76,7 +76,7 @@ void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& 
     // Check for available data
     ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
-    UplinkData check = m_receiving.front();
+    UplinkFrame check = m_receiving.front();
     m_receiving.pop_front();
 
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
