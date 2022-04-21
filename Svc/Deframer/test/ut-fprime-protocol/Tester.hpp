@@ -26,12 +26,14 @@ namespace Svc {
 
     class Tester : public DeframerGTestBase {
       private:
+
         friend struct RandomizeRule;
         friend struct DownlinkRule;
         friend struct FileDownlinkRule;
         friend struct SendAvailableRule;
+
         // ----------------------------------------------------------------------
-        // Construction and destruction
+        // Types
         // ----------------------------------------------------------------------
 
       public:
@@ -74,7 +76,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Publilc Methods 
+            // Publilc methods 
             // ----------------------------------------------------------------------
 
             //! Get the frame size
@@ -82,10 +84,19 @@ namespace Svc {
                 return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
             }
 
+            //! Construct a random frame
+            static UplinkFrame random() {
+                // TODO: Randomize
+                auto packetType = Fw::ComPacket::FW_PACKET_COMMAND;
+                //frame.size = STest::Pick::lowerUpper(4, sizeof(frame.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
+                U32 size = 100;
+                return UplinkFrame(packetType, size);
+            }
+
           private:
 
             // ----------------------------------------------------------------------
-            // Private Methods
+            // Private methods
             // ----------------------------------------------------------------------
             
             //! Update the frame header
@@ -137,8 +148,14 @@ namespace Svc {
 
         };
 
+      public:
+
+        // ----------------------------------------------------------------------
+        // Construction and destruction 
+        // ----------------------------------------------------------------------
+        
         //! Construct object Tester
-        Tester(bool polling=false);
+        Tester(bool polling = false);
 
         //! Destroy object Tester
         ~Tester(void);
@@ -197,6 +214,7 @@ namespace Svc {
         );
 
       private:
+
         // ----------------------------------------------------------------------
         // Helper methods
         // ----------------------------------------------------------------------
@@ -213,6 +231,7 @@ namespace Svc {
         );
 
       private:
+
         // ----------------------------------------------------------------------
         // Variables
         // ----------------------------------------------------------------------
