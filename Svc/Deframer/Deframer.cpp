@@ -10,6 +10,7 @@
 //
 // ======================================================================
 
+#include <cstdio>
 #include <cstring>
 
 #include "Fw/Com/ComPacket.hpp"
@@ -272,6 +273,7 @@ void Deframer ::processRing() {
         }
         // More data needed
         else if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
+            printf("[Deframer] More needed\n");
             // Deframing protocol should not report "more is needed"
             // unless more is needed
             FW_ASSERT(needed > remaining, needed, remaining);
@@ -281,6 +283,7 @@ void Deframer ::processRing() {
         }
         // Error occurred
         else {
+            printf("[Deframer] Error occurred\n");
             // Skip one byte of bad data
             m_inRing.rotate(1);
             FW_ASSERT(

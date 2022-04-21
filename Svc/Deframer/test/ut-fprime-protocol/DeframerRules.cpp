@@ -53,7 +53,6 @@ namespace Svc {
             ::memset(&data, 0xFF, sizeof(data));
             data.partial = 0;
             data.size = STest::Pick::lowerUpper(4, sizeof(data.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
-            //data.type = Fw::ComPacket::FW_PACKET_COMMAND;
             data.type = Fw::ComPacket::FW_PACKET_COMMAND;
             // Correct header info for items
             update_header_info(data);

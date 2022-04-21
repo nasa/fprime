@@ -21,13 +21,13 @@ register_fprime_module()
 #### UTS ###
 
 # These tests verify the Deframer component against a mock
-# deframing protocol
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
-)
-register_fprime_ut()
+## deframing protocol
+#set(UT_SOURCE_FILES
+#  "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
+#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+#  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+#)
+#register_fprime_ut()
 
 # These tests verify the Deframer component against the
 # F Prime deframing protocol located at Svc/FramingProtocol.

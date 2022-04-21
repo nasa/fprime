@@ -14,9 +14,10 @@
 #define STEP_COUNT 10000
 
 // Uncomment the following line to turn on OS logging
-// Os::Log logger;
+Os::Log logger;
 // This is off by default due to the large amount of checksum error output
 
+#if 0
 TEST(Nominal, BasicUplink) {
     COMMENT("Send one buffer to the deframer, simulating an active driver");
     REQUIREMENT("SVC-DEFRAMER-001");
@@ -34,6 +35,7 @@ TEST(Nominal, BasicUplink) {
     setup.apply(tester);
     send.apply(tester);
 }
+#endif
 
 #if 0
 // TODO: Fix address boundary error
@@ -125,11 +127,13 @@ TEST(Nominal, RandomizedPollingDeframer) {
 }
 #endif
 
+#if 0
 TEST(Error, SizeTooLarge) {
     COMMENT("Test handling of size overflow in F Prime deframing protocol");
     Svc::Tester tester(false);
     tester.sizeTooLarge();
 }
+#endif
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
