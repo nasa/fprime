@@ -110,6 +110,9 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
     this->pushFromPortEntry_framedPoll(pollBuffer);
     U8* incoming = m_incoming_buffer.getData();
     U8* outgoing = pollBuffer.getData();
+    // TODO: Check size bound
+    // TODO: Incoming should not overrun outgoing
+    // TODO: Replace with memcpy
     for (U32 i = 0; i < m_incoming_buffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }

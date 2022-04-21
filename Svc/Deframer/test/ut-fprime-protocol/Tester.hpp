@@ -18,6 +18,7 @@
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "GTestBase.hpp"
+#include "STest/STest/Pick/Pick.hpp"
 #include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -49,7 +50,7 @@ namespace Svc {
 
             enum {
                 //! The max frame size
-                MAX_SIZE = 256
+                MAX_SIZE = DeframerCfg::POLL_BUFFER_SIZE
             };
 
           public:
@@ -68,6 +69,7 @@ namespace Svc {
                 copyOffset(0),
                 valid(true)
             {
+                // TODO: Randomize data
                 ::memset(data, 0xFF, sizeof data);
                 this->updateHeader();
                 this->updateHash();
@@ -84,13 +86,34 @@ namespace Svc {
                 return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
             }
 
+            //! Get the min packet size
+            static U32 getMinPacketSize() {
+                // Packet must hold the packet type
+                return sizeof(FwPacketDescriptorType);
+            }
+
+            //! Get the max packet size
+            static U32 getMaxCommandPacketSize() {
+                return std::min(
+                    static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
+                    getMaxFilePacketSize()
+                );
+            }
+
+            //! Get the max file size
+            static U32 getMaxFilePacketSize() {
+                return (sizeof data) - FpFrameHeader::SIZE - HASH_DIGEST_LENGTH;
+            }
+
             //! Construct a random frame
             static UplinkFrame random() {
-                // TODO: Randomize
+                // TODO: Randomize packet type
                 auto packetType = Fw::ComPacket::FW_PACKET_COMMAND;
-                //frame.size = STest::Pick::lowerUpper(4, sizeof(frame.data) - FpFrameHeader::SIZE - sizeof(U32) - 1);
-                U32 size = 100;
-                return UplinkFrame(packetType, size);
+                U32 packetSize = STest::Pick::lowerUpper(
+                    getMinPacketSize(),
+                    getMaxCommandPacketSize()
+                );
+                return UplinkFrame(packetType, packetSize);
             }
 
           private:

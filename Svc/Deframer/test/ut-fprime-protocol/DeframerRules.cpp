@@ -20,7 +20,9 @@ namespace Svc {
     // Randomize
     void RandomizeRule :: action(Svc::Tester &state) {
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
+            // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
+            // Push it on the sending list
             state.m_sending.push_back(frame);
         }
     }
@@ -32,15 +34,17 @@ namespace Svc {
 
     }
 
-    // Can always uplink
+    // Uplink if there is something to send
     bool SendAvailableRule :: precondition(const Svc::Tester &state) {
         return state.m_sending.size() > 0;
     }
 
-    // Pick a rule and uplink
+    // Uplink available frames that will fit in incoming buffer
     void SendAvailableRule :: action(Svc::Tester &state) {
-        //const U32 incoming_buffer_size = STest::Pick::lowerUpper(10, 1000);
-        const U32 incoming_buffer_size = 112 + 1;
+        const U32 incoming_buffer_size = STest::Pick::lowerUpper(
+            1,
+            DeframerCfg::POLL_BUFFER_SIZE
+        );
         U8* incoming_buffer = new U8[incoming_buffer_size];
         state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incoming_buffer_size);
         Fw::SerialBuffer serialBuffer(incoming_buffer, incoming_buffer_size);
@@ -48,7 +52,7 @@ namespace Svc {
         U32 expected_com_count = 0;
         //U32 expected_buf_count = 0;
 
-        // Loop through all available frames
+        // Loop through available frames
         U32 i = 0;
         while (state.m_sending.size() > 0 && i < incoming_buffer_size) {
             auto& frame = state.m_sending.front();

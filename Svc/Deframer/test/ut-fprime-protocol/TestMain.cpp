@@ -11,7 +11,7 @@
 #include <Svc/GroundInterface/test/ut/GroundInterfaceRules.hpp>
 #include <gtest/gtest.h>
 
-#define STEP_COUNT 10000
+#define STEP_COUNT 10
 
 // Uncomment the following line to turn on OS logging
 Os::Log logger;
