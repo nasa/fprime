@@ -112,10 +112,10 @@ void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& 
 
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
-        ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FpFrameHeader::SIZE + sizeof(I32)]);
+        ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FpFrameHeader::SIZE + sizeof(FwPacketDescriptorType)]);
     }
     // Have to clean up memory as in a normal mode, file downlink doesn't require deallocation
-    delete[](fwBuffer.getData() - sizeof(I32));
+    delete[](fwBuffer.getData() - sizeof(FwPacketDescriptorType));
     this->pushFromPortEntry_bufferOut(fwBuffer);
 }
 
