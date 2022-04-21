@@ -14,7 +14,9 @@
 #define TESTER_HPP
 
 #include <deque>
-#include <ComPacket.hpp>
+#include <cstring>
+
+#include "Fw/Com/ComPacket.hpp"
 #include "GTestBase.hpp"
 #include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
@@ -34,13 +36,47 @@ class Tester : public DeframerGTestBase {
   public:
     //! An uplink frame
     struct UplinkFrame {
+
+        // ----------------------------------------------------------------------
+        // Types
+        // ----------------------------------------------------------------------
+
+        enum {
+            //! The max frame size
+            MAX_SIZE = 256
+        };
+
+        // ----------------------------------------------------------------------
+        // Constructor
+        // ----------------------------------------------------------------------
+
+        UplinkFrame() :
+            packetType(Fw::ComPacket::FW_PACKET_UNKNOWN),
+            packetSize(0),
+            copyOffset(0),
+            size(0),
+            valid(false)
+        {
+            memset(data, 0, sizeof data);
+        }
+
+        // ----------------------------------------------------------------------
+        // Member variables
+        // ----------------------------------------------------------------------
+
         //! The packet type
         Fw::ComPacket::ComPacketType packetType;
+        //! The packet size
+        U32 packetSize;
+        //! The amount of frame data already copied out into a buffer
+        U32 copyOffset;
+        //! The frame size
         U32 size;
-        U32 partial;
-        U32 full_size;
-        bool corrupted;
-        U8 data[FW_COM_BUFFER_MAX_SIZE];
+        //! The frame data, including header, packet data, and CRC
+        U8 data[MAX_SIZE];
+        //! Whether the frame is valid
+        bool valid;
+
     };
 
     //! Construct object Tester
