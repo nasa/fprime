@@ -27,8 +27,7 @@ namespace Svc {
 Tester ::Tester(bool polling)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
-      m_polling(polling),
-      m_in_flush(false)
+      m_polling(polling)
   {
     this->initComponents();
     this->connectPorts();
@@ -60,31 +59,13 @@ void Tester ::sizeTooLarge() {
 // ----------------------------------------------------------------------
 
 void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
-    // Seek to any packet of uplink type
-    const U32 original_size = m_receiving.size();
-    while (
-        (m_receiving.size() > 0) &&
-        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
-        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)
-    ) {
-        m_receiving.pop_front();
-    }
-    // Flushing a corrupt buffer that was corrupted into something valid
-    if (m_in_flush and m_receiving.size() == 0) {
-        return;
-    }
-    // Test harness failure, no available check data. Assert will exit this
-    // function preventing undefined behavior
-    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty after filtering down " << original_size << " elements" << std::endl;
+    // Check for available data
+    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
     UplinkData check = m_receiving.front();
     m_receiving.pop_front();
 
-    // Check for file
-    EXPECT_NE(check.type, Fw::ComPacket::FW_PACKET_FILE);
-    if (check.type == Fw::ComPacket::FW_PACKET_FILE) {
-        return;
-    }
+    ASSERT_EQ(check.type, Fw::ComPacket::FW_PACKET_COMMAND);
     for (U32 i = 0; i < data.getBuffLength(); i++) {
         EXPECT_EQ(data.getBuffAddr()[i], check.data[i + FpFrameHeader::SIZE]);
     }
@@ -92,20 +73,8 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
 }
 
 void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    // Seek to any packet of uplink type
-    const U32 original_size = m_receiving.size();
-    while (
-        (m_receiving.size() > 0) &&
-        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_COMMAND) &&
-        (m_receiving.front().type != Fw::ComPacket::FW_PACKET_FILE)
-    ) {
-        m_receiving.pop_front();
-    }
-    // Flushing a corrupt buffer that was corrupted into something valid
-    if (m_in_flush and m_receiving.size() == 0) {
-        return;
-    }
-    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty after filtering down " << original_size << " elements" << std::endl;
+    // Check for available data
+    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
     UplinkData check = m_receiving.front();
     m_receiving.pop_front();
@@ -114,7 +83,7 @@ void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& 
         // File uplink strips type before outputting to FileUplink
         ASSERT_EQ(fwBuffer.getData()[i], check.data[i + FpFrameHeader::SIZE + sizeof(FwPacketDescriptorType)]);
     }
-    // Have to clean up memory as in a normal mode, file downlink doesn't require deallocation
+    // Have to clean up memory as in a normal mode, file uplink doesn't require deallocation
     delete[](fwBuffer.getData() - sizeof(FwPacketDescriptorType));
     this->pushFromPortEntry_bufferOut(fwBuffer);
 }

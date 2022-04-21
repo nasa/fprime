@@ -126,7 +126,6 @@ class Tester : public DeframerGTestBase {
     std::deque<UplinkData> m_receiving;
     Fw::Buffer m_incoming_buffer;
     bool m_polling;
-    bool m_in_flush;
 
 };
 
