@@ -265,8 +265,8 @@ namespace Svc {
         //! The deframing protocol
         Svc::FprimeDeframing protocol;
 
-        //! Deque for sending frames
-        std::deque<UplinkFrame> m_sending;
+        //! Deque for frames to send
+        std::deque<UplinkFrame> m_framesToSend;
 
         //! Deque for receiving frames
         std::deque<UplinkFrame> m_receiving;

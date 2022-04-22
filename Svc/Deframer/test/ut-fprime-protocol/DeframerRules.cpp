@@ -10,33 +10,35 @@
 
 namespace Svc {
 
-    // Constructor
-    RandomizeRule :: RandomizeRule(const Fw::String& name) : STest::Rule<Tester>(name.toChar()) {}
-
-    // Can always randomize
-    bool RandomizeRule :: precondition(const Svc::Tester &state) {
-        return true;
+    RandomizeRule :: RandomizeRule() :
+        STest::Rule<Tester>("Randomize")
+    {
+    
     }
-    // Randomize
+
+    bool RandomizeRule :: precondition(const Svc::Tester &state) {
+        return state.m_framesToSend.size() == 0;
+    }
+
     void RandomizeRule :: action(Svc::Tester &state) {
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
             // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
             // Push it on the sending list
-            state.m_sending.push_back(frame);
+            state.m_framesToSend.push_back(frame);
         }
     }
 
     // Constructor
-    SendAvailableRule :: SendAvailableRule(const Fw::String& name) :
-        STest::Rule<Tester>(name.toChar())
+    SendAvailableRule :: SendAvailableRule() :
+        STest::Rule<Tester>("Send")
     {
 
     }
 
     // Uplink if there is something to send
     bool SendAvailableRule :: precondition(const Svc::Tester &state) {
-        return state.m_sending.size() > 0;
+        return state.m_framesToSend.size() > 0;
     }
 
     // Uplink available frames that will fit in incoming buffer
@@ -54,12 +56,13 @@ namespace Svc {
 
         // Loop through available frames
         U32 i = 0;
-        while (state.m_sending.size() > 0 && i < incoming_buffer_size) {
-            auto& frame = state.m_sending.front();
+        U32 buffAvailable = incoming_buffer_size;
+        while (state.m_framesToSend.size() > 0 && i < incoming_buffer_size) {
+            auto& frame = state.m_framesToSend.front();
 
             // Compute the amount of frame data to copy
-            const U32 buffAvailable = incoming_buffer_size - i;
-            const U32 frameAvailable = frame.getSize() - frame.copyOffset;
+            const U32 frameSize = frame.getSize();
+            const U32 frameAvailable = frameSize - frame.copyOffset;
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
 
             // Copy the frame data
@@ -71,12 +74,13 @@ namespace Svc {
 
             // Update the offsets
             frame.copyOffset += copyAmt;
+            buffAvailable -= copyAmt;
             i += copyAmt;
 
             // If we have received an entire frame, move it from
             // the sending queue to the receiving queue
-            if (frame.copyOffset == frame.getSize()) {
-                state.m_sending.pop_front();
+            if (frame.copyOffset == frameSize) {
+                state.m_framesToSend.pop_front();
                 state.m_receiving.push_back(frame);
                 //++expected_buf_count;
                 ++expected_com_count;
@@ -84,7 +88,11 @@ namespace Svc {
         }
         state.m_incoming_buffer.setSize(i);
 
-        state.invoke_to_framedIn(0, state.m_incoming_buffer, Drv::RecvStatus::RECV_OK);
+        state.invoke_to_framedIn(
+            0,
+            state.m_incoming_buffer,
+            Drv::RecvStatus::RECV_OK
+        );
 
         state.assert_from_comOut_size(__FILE__, __LINE__, expected_com_count);
         //state.assert_from_bufferOut_size(__FILE__, __LINE__, expected_buf_count);

@@ -8,10 +8,10 @@
 #include <STest/Scenario/BoundedScenario.hpp>
 #include <STest/Scenario/RandomScenario.hpp>
 #include <STest/Scenario/Scenario.hpp>
-#include <Svc/GroundInterface/test/ut/GroundInterfaceRules.hpp>
+#include <Svc/Deframer/test/ut-fprime-protocol/DeframerRules.hpp>
 #include <gtest/gtest.h>
 
-#define STEP_COUNT 10
+#define STEP_COUNT 10000
 
 // Uncomment the following line to turn on OS logging
 Os::Log logger;
@@ -75,13 +75,13 @@ TEST(Nominal, RandomizedDeframer) {
     Svc::Tester tester;
 
     // Create rules, and assign them into the array
-    Svc::RandomizeRule randomize("Randomize");
-    Svc::SendAvailableRule sendup("Send");
+    Svc::RandomizeRule randomize;
+    Svc::SendAvailableRule send;
 
     // Setup a list of rules to choose from
     STest::Rule<Svc::Tester>* rules[] = {
             &randomize,
-            &sendup
+            &send
     };
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
