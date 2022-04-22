@@ -110,7 +110,7 @@ namespace Svc {
             copiedSize += copyAmt;
             ASSERT_LE(copiedSize, incomingBufferSize);
 
-            // If we have received an entire frame, then remove it from
+            // If we have sent a complete frame, then remove it from
             // the send queue
             if (frame.copyOffset == frame.getSize()) {
                 state.m_framesToSend.pop_front();
