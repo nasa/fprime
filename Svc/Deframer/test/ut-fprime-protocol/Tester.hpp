@@ -49,6 +49,13 @@ namespace Svc {
         //! An uplink frame
         class UplinkFrame {
 
+            // ----------------------------------------------------------------------
+            // Types
+            // ----------------------------------------------------------------------
+
+            //! The type of frame data
+            typedef U8 FrameData[MAX_FRAME_SIZE];
+
           public:
 
             // ----------------------------------------------------------------------
@@ -63,7 +70,10 @@ namespace Svc {
                 packetType(packetType),
                 packetSize(packetSize),
                 copyOffset(0),
-                valid(true)
+                valid(
+                    packetType == Fw::ComPacket::FW_PACKET_COMMAND ||
+                    packetType == Fw::ComPacket::FW_PACKET_FILE
+                )
             {
                 for (U32 i = 0; i < sizeof data; ++i) {
                     data[i] = STest::Pick::lowerUpper(0, 0xFF);
@@ -118,9 +128,15 @@ namespace Svc {
             //! Get the max packet size
             static U32 getMaxCommandPacketSize() {
                 return std::min(
+                    // Packet must fit into a com buffer
                     static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
                     getMaxFilePacketSize()
                 );
+            }
+
+            //! Get a constant reference to the frame data
+            const FrameData& getData() const {
+                return data;
             }
 
             //! Get the max file size
@@ -130,12 +146,26 @@ namespace Svc {
 
             //! Construct a random frame
             static UplinkFrame random() {
-                // TODO: Randomize packet type
-                auto packetType = Fw::ComPacket::FW_PACKET_COMMAND;
+                // Randomly set the packet type
+                auto packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
+                const U32 packetSelector = STest::Pick::startLength(0,3);
+                switch (packetSelector) {
+                    case 0:
+                        packetType = Fw::ComPacket::FW_PACKET_COMMAND;
+                        break;
+                    case 1:
+                        packetType = Fw::ComPacket::FW_PACKET_FILE;
+                        break;
+                    default:
+                        // Use packet type UNKNOWN
+                        break;
+                }
+                // Randomly set the packet size
                 U32 packetSize = STest::Pick::lowerUpper(
                     getMinPacketSize(),
                     getMaxCommandPacketSize()
                 );
+                // Construct and return the frame
                 return UplinkFrame(packetType, packetSize);
             }
 
@@ -148,7 +178,7 @@ namespace Svc {
             //! Update the frame header
             void updateHeader() {
                 Fw::SerialBuffer sb(data, sizeof data);
-                // Write start word
+                // Write the start word
                 auto status = sb.serialize(FpFrameHeader::START_WORD);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
                 // Write the packet size

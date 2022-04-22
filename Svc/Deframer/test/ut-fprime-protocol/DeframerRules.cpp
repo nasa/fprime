@@ -139,9 +139,9 @@ namespace Svc {
 
         // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
-        //printf("expectedComCount=%d\n", expectedComCount);
+        printf("expectedComCount=%d\n", expectedComCount);
         state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
-        //printf("expectedBuffCount=%d\n", expectedBuffCount);
+        printf("expectedBuffCount=%d\n", expectedBuffCount);
 
     }
 
