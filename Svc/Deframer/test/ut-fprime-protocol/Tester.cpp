@@ -77,8 +77,8 @@ namespace Svc {
         ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
         for (U32 i = 0; i < data.getBuffLength(); i++) {
             EXPECT_EQ(
-                data.getBuffAddr()[i],
-                frame.data[i + FpFrameHeader::SIZE]
+                (data.getBuffAddr())[i],
+                (frame.getData())[FpFrameHeader::SIZE + i]
             );
         }
         this->pushFromPortEntry_comOut(data, context);
@@ -97,9 +97,11 @@ namespace Svc {
 
         for (U32 i = 0; i < fwBuffer.getSize(); i++) {
             // Deframer strips type before sending to FileUplink
+            const U32 frameOffset =
+                FpFrameHeader::SIZE + sizeof(FwPacketDescriptorType) + i;
             ASSERT_EQ(
-                fwBuffer.getData()[i],
-                frame.data[i + FpFrameHeader::SIZE + sizeof(FwPacketDescriptorType)]
+                (fwBuffer.getData())[i],
+                (frame.getData())[frameOffset]
             );
         }
         // Buffers received on this port are owned by the receiver

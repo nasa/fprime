@@ -213,14 +213,14 @@ namespace Svc {
             //! The packet size
             const U32 packetSize;
 
-            //! The frame data, including header, packet data, and CRC
-            U8 data[MAX_FRAME_SIZE];
-
           private:
 
             // ----------------------------------------------------------------------
             // Private member variables 
             // ----------------------------------------------------------------------
+
+            //! The frame data, including header, packet data, and CRC
+            U8 data[MAX_FRAME_SIZE];
 
             //! The amount of frame data already copied out into a buffer
             U32 copyOffset;
