@@ -9,6 +9,8 @@
 #include "STest/Pick/Pick.hpp"
 #include "Utils/Hash/Hash.hpp"
 
+#define PRINTING
+
 #ifdef PRINTING
 #define PRINT(S) printf("[DeframerRules] " S "\n");
 #define PRINT_ARGS(S, ...) printf("[DeframerRules] " S "\n", __VA_ARGS__);

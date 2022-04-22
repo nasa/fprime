@@ -176,8 +176,12 @@ namespace Svc {
                     getMinPacketSize(),
                     getMaxCommandPacketSize()
                 );
-                // Construct and return the frame
-                return UplinkFrame(packetType, packetSize);
+                // Construct the frame
+                auto frame = UplinkFrame(packetType, packetSize);
+                // Randomly invalidate the frame data
+                // TODO
+                // Return the frame
+                return frame;
             }
 
           private:
