@@ -10,8 +10,10 @@
 //
 // ======================================================================
 
+#include <cstring>
 #include <limits>
 
+#include "Fw/Types/Assert.hpp"
 #include "Tester.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "Utils/Hash/HashBuffer.hpp"
@@ -32,7 +34,8 @@ Tester ::Tester(bool polling)
     this->initComponents();
     this->connectPorts();
     component.setup(protocol);
-}
+    memset(m_incomingBufferBytes, 0, sizeof m_incomingBufferBytes);
+  }
 
 Tester ::~Tester() {}
 
@@ -102,7 +105,6 @@ void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 }
 
 void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    delete[] fwBuffer.getData(); // Allocated in rules
     this->pushFromPortEntry_framedDeallocate(fwBuffer);
 }
 
@@ -110,14 +112,16 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
     this->pushFromPortEntry_framedPoll(pollBuffer);
     U8* incoming = m_incomingBuffer.getData();
     U8* outgoing = pollBuffer.getData();
-    // TODO: Check size bound
-    // TODO: Incoming should not overrun outgoing
+    FW_ASSERT(
+        pollBuffer.getSize() >= m_incomingBuffer.getSize(),
+        pollBuffer.getSize(),
+        m_incomingBuffer.getSize()
+    );
     // TODO: Replace with memcpy
     for (U32 i = 0; i < m_incomingBuffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }
     pollBuffer.setSize(m_incomingBuffer.getSize());
-    delete[] incoming;
     return Drv::PollStatus::POLL_OK;
 }
 

@@ -44,11 +44,18 @@ namespace Svc {
         // Set up the incoming buffer
         const U32 incomingBufferSize = STest::Pick::lowerUpper(
             1,
-            DeframerCfg::POLL_BUFFER_SIZE
+            sizeof state.m_incomingBufferBytes
         );
-        U8* incomingBuffer = new U8[incomingBufferSize];
-        state.m_incomingBuffer = Fw::Buffer(incomingBuffer, incomingBufferSize);
-        Fw::SerialBuffer serialBuffer(incomingBuffer, incomingBufferSize);
+        //U8* incomingBuffer = new U8[incomingBufferSize];
+        ASSERT_LE(incomingBufferSize, sizeof state.m_incomingBufferBytes);
+        state.m_incomingBuffer = Fw::Buffer(
+            state.m_incomingBufferBytes,
+            incomingBufferSize
+        );
+        Fw::SerialBuffer serialBuffer(
+            state.m_incomingBufferBytes,
+            incomingBufferSize
+        );
 
         // The expected number of com buffers emitted
         U32 expectedComCount = 0;

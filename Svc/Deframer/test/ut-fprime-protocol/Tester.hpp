@@ -279,6 +279,10 @@ namespace Svc {
         //! Deque for receiving frames
         std::deque<UplinkFrame> m_framesReceived;
 
+        //! Bytes for incoming buffer
+        //! POLL_BUFFER_SIZE is the max size that works with the polling buffer
+        U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
+
         //! Buffer to hold frames
         Fw::Buffer m_incomingBuffer;
 
