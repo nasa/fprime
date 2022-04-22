@@ -11,6 +11,10 @@
 
 namespace Svc {
 
+    // ----------------------------------------------------------------------
+    // GenerateFrames 
+    // ----------------------------------------------------------------------
+
     GenerateFrames :: GenerateFrames() :
         STest::Rule<Tester>("GenerateFrames")
     {
@@ -30,6 +34,10 @@ namespace Svc {
             state.m_framesToSend.push_back(frame);
         }
     }
+
+    // ----------------------------------------------------------------------
+    // SendBuffer 
+    // ----------------------------------------------------------------------
 
     SendBuffer :: SendBuffer() :
         STest::Rule<Tester>("SendBuffer")
@@ -131,6 +139,7 @@ namespace Svc {
         state.m_incomingBuffer.setSize(copiedSize);
 
         // Send the buffer
+        // TODO: Handle polling mode
         state.invoke_to_framedIn(
             0,
             state.m_incomingBuffer,
