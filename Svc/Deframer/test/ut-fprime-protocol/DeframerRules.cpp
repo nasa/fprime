@@ -48,17 +48,20 @@ namespace Svc {
         state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incoming_buffer_size);
         Fw::SerialBuffer serialBuffer(incoming_buffer, incoming_buffer_size);
 
-        U32 expected_com_count = 0;
-        //U32 expected_buf_count = 0;
+        U32 expectedComCount = 0;
+        U32 expectedBufCount = 0;
 
-        // Loop through available frames
-        U32 i = 0;
+        // The number of bytes copied into the buffer
+        U32 copiedSize = 0;
+        // The size of available data in the buffer
         U32 buffAvailable = incoming_buffer_size;
-        while (state.m_framesToSend.size() > 0 && i < incoming_buffer_size) {
+        // Loop through available frames
+        while (state.m_framesToSend.size() > 0 && copiedSize < incoming_buffer_size) {
             auto& frame = state.m_framesToSend.front();
 
             // Compute the amount of frame data to copy
             const U32 frameSize = frame.getSize();
+            ASSERT_GE(frameSize, frame.copyOffset);
             const U32 frameAvailable = frameSize - frame.copyOffset;
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
 
@@ -69,30 +72,44 @@ namespace Svc {
             );
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-            // Update the offsets
+            // Update the indices
             frame.copyOffset += copyAmt;
             buffAvailable -= copyAmt;
-            i += copyAmt;
+            copiedSize += copyAmt;
 
-            // If we have received an entire frame, move it from
-            // the sending queue to the receiving queue
+            // If we have received an entire frame, remove it from
+            // the sending queue
             if (frame.copyOffset == frameSize) {
                 state.m_framesToSend.pop_front();
-                state.m_receiving.push_back(frame);
-                //++expected_buf_count;
-                ++expected_com_count;
+                // If the frame is valid, push it on the receiving queue
+                if (frame.valid) {
+                    state.m_receiving.push_back(frame);
+                }
+                // If the frame contains a command packet, increment the expected
+                // com count
+                if (frame.packetType == Fw::ComPacket::FW_PACKET_COMMAND) {
+                    ++expectedComCount;
+                }
+                // If the frame contains a file packet, increment the expected
+                // buffer count
+                if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
+                    ++expectedBufCount;
+                }
             }
         }
-        state.m_incoming_buffer.setSize(i);
 
+        // Update the buffer
+        state.m_incoming_buffer.setSize(copiedSize);
+
+        // Send the buffer
         state.invoke_to_framedIn(
             0,
             state.m_incoming_buffer,
             Drv::RecvStatus::RECV_OK
         );
 
-        state.assert_from_comOut_size(__FILE__, __LINE__, expected_com_count);
-        //state.assert_from_bufferOut_size(__FILE__, __LINE__, expected_buf_count);
+        state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
+        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBufCount);
 
         state.clearHistory();
 
