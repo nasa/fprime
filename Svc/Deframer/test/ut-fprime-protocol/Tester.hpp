@@ -26,11 +26,12 @@
 namespace Svc {
 
     class Tester : public DeframerGTestBase {
-      private:
+
+        // ----------------------------------------------------------------------
+        // Friend classes 
+        // ----------------------------------------------------------------------
 
         friend struct GenerateFrames;
-        friend struct DownlinkRule;
-        friend struct FileDownlinkRule;
         friend struct SendBuffer;
 
         // ----------------------------------------------------------------------
@@ -39,19 +40,14 @@ namespace Svc {
 
       public:
 
+        enum {
+            //! The max frame size
+            //! POLL_BUFFER_SIZE is the max size that works with the polling buffer
+            MAX_FRAME_SIZE = DeframerCfg::POLL_BUFFER_SIZE
+        };
+
         //! An uplink frame
         class UplinkFrame {
-
-          public:
-
-            // ----------------------------------------------------------------------
-            // Types
-            // ----------------------------------------------------------------------
-
-            enum {
-                //! The max frame size
-                MAX_SIZE = DeframerCfg::POLL_BUFFER_SIZE
-            };
 
           public:
 
@@ -70,7 +66,7 @@ namespace Svc {
                 valid(true)
             {
                 for (U32 i = 0; i < sizeof data; ++i) {
-                    data[i] = STest::Pick::lowerUpper(0, 255);
+                    data[i] = STest::Pick::lowerUpper(0, 0xFF);
                 }
                 this->updateHeader();
                 this->updateHash();
@@ -92,6 +88,25 @@ namespace Svc {
                 const U32 frameSize = getSize();
                 FW_ASSERT(frameSize >= copyOffset, frameSize, copyOffset);
                 return frameSize - copyOffset;
+            }
+
+            //! Whether the frame is valid
+            bool isValid() const {
+                return valid;
+            }
+
+            //! Copy data from the frame, advancing the copy offset
+            void copyDataOut(
+                Fw::SerialBuffer& serialBuffer, //!< The serial buffer to copy to
+                U32 size //!< The number of bytes to copy
+            ) {
+                ASSERT_LE(copyOffset + size, getSize());
+                auto status = serialBuffer.pushBytes(
+                    &data[copyOffset],
+                    size
+                );
+                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+                copyOffset += size;
             }
 
             //! Get the min packet size
@@ -159,7 +174,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Member variables
+            // Public member variables
             // ----------------------------------------------------------------------
 
             //! The packet type
@@ -168,11 +183,17 @@ namespace Svc {
             //! The packet size
             const U32 packetSize;
 
+            //! The frame data, including header, packet data, and CRC
+            U8 data[MAX_FRAME_SIZE];
+
+          private:
+
+            // ----------------------------------------------------------------------
+            // Private member variables 
+            // ----------------------------------------------------------------------
+
             //! The amount of frame data already copied out into a buffer
             U32 copyOffset;
-
-            //! The frame data, including header, packet data, and CRC
-            U8 data[MAX_SIZE];
 
             //! Whether the frame is valid
             bool valid;
@@ -280,8 +301,7 @@ namespace Svc {
         std::deque<UplinkFrame> m_framesReceived;
 
         //! Bytes for incoming buffer
-        //! POLL_BUFFER_SIZE is the max size that works with the polling buffer
-        U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
+        U8 m_incomingBufferBytes[MAX_FRAME_SIZE];
 
         //! Buffer to hold frames
         Fw::Buffer m_incomingBuffer;

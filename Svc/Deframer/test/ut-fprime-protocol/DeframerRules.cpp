@@ -3,8 +3,9 @@
 //! @author mstarch, bocchino
 //! ======================================================================
 
+#include <cstdio>
+
 #include "DeframerRules.hpp"
-#include "Fw/Types/SerialBuffer.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -74,7 +75,12 @@ namespace Svc {
         // Fill the incoming buffer as much as possible with available frames
         for (U32 i = 0; i < incomingBufferSize; ++i) {
 
-            // Check if there is anything to send
+            // Check if there is any room left in the buffer
+            if (buffAvailable == 0) {
+                break;
+            }
+
+            // Check if there are any frames to send
             if (state.m_framesToSend.size() == 0) {
                 break;
             }
@@ -86,21 +92,8 @@ namespace Svc {
             const U32 frameAvailable = frame.getRemainingCopySize();
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
 
-            // Check if there is anything to copy
-            if (copyAmt == 0) {
-                break;
-            }
-
-            // Copy the frame data
-            auto status = serialBuffer.pushBytes(
-                &frame.data[frame.copyOffset],
-                copyAmt
-            );
-            ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-
-            // Update the copy offset
-            frame.copyOffset += copyAmt;
-            ASSERT_LE(frame.copyOffset, frame.getSize());
+            // Copy the frame data into the serial buffer
+            frame.copyDataOut(serialBuffer, copyAmt);
 
             // Update buffAvailable
             ASSERT_GE(buffAvailable, copyAmt);
@@ -110,23 +103,24 @@ namespace Svc {
             copiedSize += copyAmt;
             ASSERT_LE(copiedSize, incomingBufferSize);
 
-            // If we have sent a complete frame, then remove it from
+            // If we have copied a complete frame F, then remove it from
             // the send queue
-            if (frame.copyOffset == frame.getSize()) {
+            if (frame.getRemainingCopySize() == 0) {
                 state.m_framesToSend.pop_front();
-                // If the frame is valid, push it on the received queue
-                if (frame.valid) {
+                // If F is valid, then record it as received
+                if (frame.isValid()) {
+                    // Push F on the received queue
                     state.m_framesReceived.push_back(frame);
-                }
-                // If the frame contains a command packet, then increment the expected
-                // com count
-                if (frame.packetType == Fw::ComPacket::FW_PACKET_COMMAND) {
-                    ++expectedComCount;
-                }
-                // If the frame contains a file packet, then increment the expected
-                // buffer count
-                if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
-                    ++expectedBuffCount;
+                    // If F contains a command packet, then increment the expected
+                    // com count
+                    if (frame.packetType == Fw::ComPacket::FW_PACKET_COMMAND) {
+                        ++expectedComCount;
+                    }
+                    // If F contains a file packet, then increment the expected
+                    // buffer count
+                    if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
+                        ++expectedBuffCount;
+                    }
                 }
             }
 
@@ -145,7 +139,9 @@ namespace Svc {
 
         // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
+        //printf("expectedComCount=%d\n", expectedComCount);
         state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
+        //printf("expectedBuffCount=%d\n", expectedBuffCount);
 
     }
 
