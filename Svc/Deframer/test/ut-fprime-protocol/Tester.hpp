@@ -280,7 +280,7 @@ namespace Svc {
         std::deque<UplinkFrame> m_framesReceived;
 
         //! Buffer to hold frames
-        Fw::Buffer m_incoming_buffer;
+        Fw::Buffer m_incomingBuffer;
 
         //! Whether we are in polling mode
         bool m_polling;

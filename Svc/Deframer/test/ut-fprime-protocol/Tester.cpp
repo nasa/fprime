@@ -108,15 +108,15 @@ void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
     this->pushFromPortEntry_framedPoll(pollBuffer);
-    U8* incoming = m_incoming_buffer.getData();
+    U8* incoming = m_incomingBuffer.getData();
     U8* outgoing = pollBuffer.getData();
     // TODO: Check size bound
     // TODO: Incoming should not overrun outgoing
     // TODO: Replace with memcpy
-    for (U32 i = 0; i < m_incoming_buffer.getSize(); i++) {
+    for (U32 i = 0; i < m_incomingBuffer.getSize(); i++) {
         outgoing[i] = incoming[i];
     }
-    pollBuffer.setSize(m_incoming_buffer.getSize());
+    pollBuffer.setSize(m_incomingBuffer.getSize());
     delete[] incoming;
     return Drv::PollStatus::POLL_OK;
 }

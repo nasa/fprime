@@ -46,9 +46,9 @@ namespace Svc {
             1,
             DeframerCfg::POLL_BUFFER_SIZE
         );
-        U8* incoming_buffer = new U8[incomingBufferSize];
-        state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incomingBufferSize);
-        Fw::SerialBuffer serialBuffer(incoming_buffer, incomingBufferSize);
+        U8* incomingBuffer = new U8[incomingBufferSize];
+        state.m_incomingBuffer = Fw::Buffer(incomingBuffer, incomingBufferSize);
+        Fw::SerialBuffer serialBuffer(incomingBuffer, incomingBufferSize);
 
         // The expected number of com buffers emitted
         U32 expectedComCount = 0;
@@ -115,12 +115,12 @@ namespace Svc {
         }
 
         // Update the buffer
-        state.m_incoming_buffer.setSize(copiedSize);
+        state.m_incomingBuffer.setSize(copiedSize);
 
         // Send the buffer
         state.invoke_to_framedIn(
             0,
-            state.m_incoming_buffer,
+            state.m_incomingBuffer,
             Drv::RecvStatus::RECV_OK
         );
 
