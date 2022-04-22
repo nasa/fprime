@@ -87,6 +87,13 @@ namespace Svc {
                 return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
             }
 
+            //! Get the size of data that remains for copying
+            U32 getRemainingCopySize() {
+                const U32 frameSize = getSize();
+                FW_ASSERT(frameSize >= copyOffset, frameSize, copyOffset);
+                return frameSize - copyOffset;
+            }
+
             //! Get the min packet size
             static U32 getMinPacketSize() {
                 // Packet must hold the packet type
@@ -270,7 +277,7 @@ namespace Svc {
         std::deque<UplinkFrame> m_framesToSend;
 
         //! Deque for receiving frames
-        std::deque<UplinkFrame> m_receiving;
+        std::deque<UplinkFrame> m_framesReceived;
 
         //! Buffer to hold frames
         Fw::Buffer m_incoming_buffer;

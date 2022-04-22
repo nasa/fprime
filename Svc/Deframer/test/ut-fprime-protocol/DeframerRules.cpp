@@ -70,10 +70,8 @@ namespace Svc {
             // Get the frame from the head of the sending queue
             auto& frame = state.m_framesToSend.front();
 
-            // Compute the amount of frame data to copy
-            const U32 frameSize = frame.getSize();
-            ASSERT_GE(frameSize, frame.copyOffset);
-            const U32 frameAvailable = frameSize - frame.copyOffset;
+            // Compute the amount to copy
+            const U32 frameAvailable = frame.getRemainingCopySize();
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
 
             // Check if there is anything to copy
@@ -95,12 +93,12 @@ namespace Svc {
             copiedSize += copyAmt;
 
             // If we have received an entire frame, remove it from
-            // the sending queue
-            if (frame.copyOffset == frameSize) {
+            // the send queue
+            if (frame.copyOffset == frame.getSize()) {
                 state.m_framesToSend.pop_front();
-                // If the frame is valid, push it on the receiving queue
+                // If the frame is valid, push it on the received queue
                 if (frame.valid) {
-                    state.m_receiving.push_back(frame);
+                    state.m_framesReceived.push_back(frame);
                 }
                 // If the frame contains a command packet, increment the expected
                 // com count

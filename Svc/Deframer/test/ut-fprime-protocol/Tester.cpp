@@ -60,10 +60,10 @@ void Tester ::sizeTooLarge() {
 
 void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Check for available data
-    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
+    ASSERT_GT(m_framesReceived.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
-    const auto& frame= m_receiving.front();
-    m_receiving.pop_front();
+    const auto& frame= m_framesReceived.front();
+    m_framesReceived.pop_front();
 
     ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
     for (U32 i = 0; i < data.getBuffLength(); i++) {
@@ -74,10 +74,10 @@ void Tester ::from_comOut_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
 
 void Tester ::from_bufferOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     // Check for available data
-    ASSERT_GT(m_receiving.size(), 0) << "Check-data receiving queue empty" << std::endl;
+    ASSERT_GT(m_framesReceived.size(), 0) << "Check-data receiving queue empty" << std::endl;
     // Grab the front item
-    UplinkFrame check = m_receiving.front();
-    m_receiving.pop_front();
+    UplinkFrame check = m_framesReceived.front();
+    m_framesReceived.pop_front();
 
     for (U32 i = 0; i < fwBuffer.getSize(); i++) {
         // File uplink strips type before outputting to FileUplink
