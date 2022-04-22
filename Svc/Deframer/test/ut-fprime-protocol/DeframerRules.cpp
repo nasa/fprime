@@ -21,6 +21,7 @@ namespace Svc {
     }
 
     void GenerateFrames :: action(Svc::Tester &state) {
+        // Generate 1-100 frames
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 100); j++) {
             // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
@@ -41,17 +42,21 @@ namespace Svc {
 
     void SendBuffer :: action(Svc::Tester &state) {
 
+        // Clear history
+        state.clearHistory();
+
         // Set up the incoming buffer
         const U32 incomingBufferSize = STest::Pick::lowerUpper(
             1,
             sizeof state.m_incomingBufferBytes
         );
-        //U8* incomingBuffer = new U8[incomingBufferSize];
         ASSERT_LE(incomingBufferSize, sizeof state.m_incomingBufferBytes);
         state.m_incomingBuffer = Fw::Buffer(
             state.m_incomingBufferBytes,
             incomingBufferSize
         );
+
+        // Set up a serial buffer for data transfer
         Fw::SerialBuffer serialBuffer(
             state.m_incomingBufferBytes,
             incomingBufferSize
@@ -66,7 +71,7 @@ namespace Svc {
         // The size of available data in the buffer
         U32 buffAvailable = incomingBufferSize;
 
-        // Fill the buffer as much as possible with available frames
+        // Fill the incoming buffer as much as possible with available frames
         for (U32 i = 0; i < incomingBufferSize; ++i) {
 
             // Check if there is anything to send
@@ -99,7 +104,7 @@ namespace Svc {
             buffAvailable -= copyAmt;
             copiedSize += copyAmt;
 
-            // If we have received an entire frame, remove it from
+            // If we have received an entire frame, then remove it from
             // the send queue
             if (frame.copyOffset == frame.getSize()) {
                 state.m_framesToSend.pop_front();
@@ -107,12 +112,12 @@ namespace Svc {
                 if (frame.valid) {
                     state.m_framesReceived.push_back(frame);
                 }
-                // If the frame contains a command packet, increment the expected
+                // If the frame contains a command packet, then increment the expected
                 // com count
                 if (frame.packetType == Fw::ComPacket::FW_PACKET_COMMAND) {
                     ++expectedComCount;
                 }
-                // If the frame contains a file packet, increment the expected
+                // If the frame contains a file packet, then increment the expected
                 // buffer count
                 if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
                     ++expectedBuffCount;
@@ -134,9 +139,6 @@ namespace Svc {
         // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
         state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
-
-        // Clear history
-        state.clearHistory();
 
     }
 
