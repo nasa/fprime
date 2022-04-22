@@ -98,11 +98,17 @@ namespace Svc {
             );
             ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-            // Update the indices
+            // Update the copy offset
             frame.copyOffset += copyAmt;
+            ASSERT_LE(frame.copyOffset, frame.getSize());
+
+            // Update buffAvailable
             ASSERT_GE(buffAvailable, copyAmt);
             buffAvailable -= copyAmt;
+
+            // Update copiedSize
             copiedSize += copyAmt;
+            ASSERT_LE(copiedSize, incomingBufferSize);
 
             // If we have received an entire frame, then remove it from
             // the send queue
@@ -127,6 +133,7 @@ namespace Svc {
         }
 
         // Update the buffer
+        ASSERT_LE(copiedSize, incomingBufferSize);
         state.m_incomingBuffer.setSize(copiedSize);
 
         // Send the buffer
