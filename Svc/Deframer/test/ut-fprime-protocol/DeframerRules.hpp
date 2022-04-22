@@ -16,10 +16,10 @@
 namespace Svc {
 
     //! Generate frames to send
-    struct RandomizeRule : public STest::Rule<Tester> {
+    struct GenerateFrames : public STest::Rule<Tester> {
 
         //! Constructor
-        RandomizeRule();
+        GenerateFrames();
 
         //! Precondition
         bool precondition(const Tester& state);
@@ -29,11 +29,12 @@ namespace Svc {
 
     };
 
-    //! Send frames
-    struct SendAvailableRule : public STest::Rule<Tester> {
+    //! Pack generated frames into a buffer
+    //! Send the buffer
+    struct SendBuffer : public STest::Rule<Tester> {
 
         //! Constructor
-        SendAvailableRule();
+        SendBuffer();
 
         //! Precondition
         bool precondition(const Tester& state);

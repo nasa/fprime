@@ -28,10 +28,10 @@ namespace Svc {
     class Tester : public DeframerGTestBase {
       private:
 
-        friend struct RandomizeRule;
+        friend struct GenerateFrames;
         friend struct DownlinkRule;
         friend struct FileDownlinkRule;
-        friend struct SendAvailableRule;
+        friend struct SendBuffer;
 
         // ----------------------------------------------------------------------
         // Types

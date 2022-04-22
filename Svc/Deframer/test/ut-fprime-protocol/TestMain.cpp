@@ -29,8 +29,8 @@ TEST(Nominal, BasicUplink) {
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
     Svc::Tester tester(false);
-    Svc::RandomizeRule setup("Randomize");
-    Svc::SendAvailableRule send("Uplink Rule");
+    Svc::GenerateFrames generateFrames("Randomize");
+    Svc::SendBuffer sendBuffer("Uplink Rule");
 
     setup.apply(tester);
     send.apply(tester);
@@ -51,8 +51,8 @@ TEST(Nominal, BasicPollUplink) {
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
     Svc::Tester tester(true);
-    Svc::RandomizeRule setup("Randomize");
-    Svc::SendAvailableRule send("Uplink Rule");
+    Svc::GenerateFrames generateFrames();
+    Svc::SendBuffer sendBuffer();
 
     setup.apply(tester);
     send.apply(tester);
@@ -75,13 +75,13 @@ TEST(Nominal, RandomizedDeframer) {
     Svc::Tester tester;
 
     // Create rules, and assign them into the array
-    Svc::RandomizeRule randomize;
-    Svc::SendAvailableRule send;
+    Svc::GenerateFrames generateFrames;
+    Svc::SendBuffer sendBuffer;
 
     // Setup a list of rules to choose from
     STest::Rule<Svc::Tester>* rules[] = {
-            &randomize,
-            &send
+            &generateFrames,
+            &sendBuffer
     };
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
@@ -108,13 +108,13 @@ TEST(Nominal, RandomizedPollingDeframer) {
     Svc::Tester tester(true);
 
     // Create rules, and assign them into the array
-    Svc::RandomizeRule randomize("Randomize");
-    Svc::SendAvailableRule sendup("Send");
+    Svc::GenerateFrames generateFrames();
+    Svc::SendBuffer sendBuffer();
 
     // Setup a list of rules to choose from
     STest::Rule<Svc::Tester>* rules[] = {
-            &randomize,
-            &sendup
+            &generateFrames,
+            &sendBuffer
     };
     // Construct the random scenario and run it with the defined bounds
     STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));

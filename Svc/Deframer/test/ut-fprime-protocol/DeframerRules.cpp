@@ -10,17 +10,17 @@
 
 namespace Svc {
 
-    RandomizeRule :: RandomizeRule() :
-        STest::Rule<Tester>("Randomize")
+    GenerateFrames :: GenerateFrames() :
+        STest::Rule<Tester>("GenerateFrames")
     {
     
     }
 
-    bool RandomizeRule :: precondition(const Svc::Tester &state) {
+    bool GenerateFrames :: precondition(const Svc::Tester &state) {
         return state.m_framesToSend.size() == 0;
     }
 
-    void RandomizeRule :: action(Svc::Tester &state) {
+    void GenerateFrames :: action(Svc::Tester &state) {
         for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
             // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
@@ -29,20 +29,17 @@ namespace Svc {
         }
     }
 
-    // Constructor
-    SendAvailableRule :: SendAvailableRule() :
-        STest::Rule<Tester>("Send")
+    SendBuffer :: SendBuffer() :
+        STest::Rule<Tester>("SendBuffer")
     {
 
     }
 
-    // Uplink if there is something to send
-    bool SendAvailableRule :: precondition(const Svc::Tester &state) {
+    bool SendBuffer :: precondition(const Svc::Tester &state) {
         return state.m_framesToSend.size() > 0;
     }
 
-    // Uplink available frames that will fit in incoming buffer
-    void SendAvailableRule :: action(Svc::Tester &state) {
+    void SendBuffer :: action(Svc::Tester &state) {
         const U32 incoming_buffer_size = STest::Pick::lowerUpper(
             1,
             DeframerCfg::POLL_BUFFER_SIZE
@@ -100,4 +97,5 @@ namespace Svc {
         state.clearHistory();
 
     }
+
 };
