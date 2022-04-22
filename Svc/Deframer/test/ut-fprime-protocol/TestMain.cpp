@@ -38,7 +38,6 @@ TEST(Nominal, BasicUplink) {
 #endif
 
 #if 0
-// TODO: Fix address boundary error
 TEST(Nominal, BasicPollUplink) {
     COMMENT("Send one buffer to the deframer, simulating a passive driver");
     REQUIREMENT("SVC-DEFRAMER-001");
@@ -84,10 +83,18 @@ TEST(Nominal, RandomizedDeframer) {
             &sendBuffer
     };
     // Construct the random scenario and run it with the defined bounds
-    STest::RandomScenario<Svc::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::RandomScenario<Svc::Tester> random(
+        "Random Rules",
+        rules,
+        FW_NUM_ARRAY_ELEMENTS(rules)
+    );
 
     // Setup a bounded scenario to run rules a set number of times
-    STest::BoundedScenario<Svc::Tester> bounded("Bounded Random Rules Scenario", random, STEP_COUNT);
+    STest::BoundedScenario<Svc::Tester> bounded(
+        "Bounded Random Rules Scenario",
+        random,
+        STEP_COUNT
+    );
     // Run!
     const U32 numSteps = bounded.run(tester);
     printf("Ran %u steps.\n", numSteps);
