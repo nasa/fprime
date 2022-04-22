@@ -111,23 +111,31 @@ namespace Svc {
             copiedSize += copyAmt;
             ASSERT_LE(copiedSize, incomingBufferSize);
 
-            // If we have copied a complete frame F, then remove it from
-            // the send queue
+            // If we have copied a complete frame F, then (1) remove F from
+            // the send queue; and (2) if F is valid, then record F as
+            // received
             if (frame.getRemainingCopySize() == 0) {
                 state.m_framesToSend.pop_front();
                 // If F is valid, then record it as received
                 if (frame.isValid()) {
                     // Push F on the received queue
                     state.m_framesReceived.push_back(frame);
-                    // If F contains a command packet, then increment the expected
-                    // com count
-                    if (frame.packetType == Fw::ComPacket::FW_PACKET_COMMAND) {
-                        ++expectedComCount;
-                    }
-                    // If F contains a file packet, then increment the expected
-                    // buffer count
-                    if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
-                        ++expectedBuffCount;
+                    // Update the count of expected frames
+                    switch (frame.packetType) {
+                        case Fw::ComPacket::FW_PACKET_COMMAND:
+                            // If F contains a command packet, then increment
+                            // the expected com count
+                            ++expectedComCount;
+                            break;
+                        case Fw::ComPacket::FW_PACKET_FILE:
+                            // If F contains a file packet, then increment
+                            // the expected buffer count
+                            ++expectedBuffCount;
+                            break;
+                        default:
+                            // This should not happen for a valid frame
+                            FW_ASSERT(0);
+                            break;
                     }
                 }
             }
