@@ -9,6 +9,14 @@
 #include "STest/Pick/Pick.hpp"
 #include "Utils/Hash/Hash.hpp"
 
+#ifdef PRINTING
+#define PRINT(S) printf("[DeframerRules] " S "\n");
+#define PRINT_ARGS(S, ...) printf("[DeframerRules] " S "\n", __VA_ARGS__);
+#else
+#define PRINT(S)
+#define PRINT_ARGS(S, ...)
+#endif
+
 namespace Svc {
 
     // ----------------------------------------------------------------------
@@ -26,13 +34,19 @@ namespace Svc {
     }
 
     void GenerateFrames :: action(Svc::Tester &state) {
+        PRINT("----------------------------------------------------------------------");
+        PRINT("GenerateFrames action");
+        PRINT("----------------------------------------------------------------------");
         // Generate 1-100 frames
-        for (U32 j = 0; j < STest::Pick::lowerUpper(1, 100); j++) {
+        const U32 numFrames = STest::Pick::lowerUpper(1, 100);
+        PRINT_ARGS("Generating %d frames", numFrames)
+        for (U32 i = 0; i < numFrames; i++) {
             // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
             // Push it on the sending list
             state.m_framesToSend.push_back(frame);
         }
+        PRINT_ARGS("frameToSend.size()=%lu", state.m_framesToSend.size())
     }
 
     // ----------------------------------------------------------------------
@@ -50,6 +64,10 @@ namespace Svc {
     }
 
     void SendBuffer :: action(Svc::Tester &state) {
+
+        PRINT("----------------------------------------------------------------------");
+        PRINT("SendBufffer action");
+        PRINT("----------------------------------------------------------------------");
 
         // Clear history
         state.clearHistory();
@@ -123,11 +141,13 @@ namespace Svc {
                     // Update the count of expected frames
                     switch (frame.packetType) {
                         case Fw::ComPacket::FW_PACKET_COMMAND:
+                            PRINT("popped valid command frame")
                             // If F contains a command packet, then increment
                             // the expected com count
                             ++expectedComCount;
                             break;
                         case Fw::ComPacket::FW_PACKET_FILE:
+                            PRINT("popped valid file frame")
                             // If F contains a file packet, then increment
                             // the expected buffer count
                             ++expectedBuffCount;
@@ -138,6 +158,13 @@ namespace Svc {
                             break;
                     }
                 }
+                else {
+                    PRINT("popped invalid frame")
+                }
+                PRINT_ARGS(
+                    "frameToSend.size()=%lu",
+                    state.m_framesToSend.size()
+                )
             }
 
         }
@@ -156,9 +183,9 @@ namespace Svc {
 
         // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
-        printf("expectedComCount=%d\n", expectedComCount);
+        PRINT_ARGS("expectedComCount=%d", expectedComCount)
         state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
-        printf("expectedBuffCount=%d\n", expectedBuffCount);
+        PRINT_ARGS("expectedBuffCount=%d", expectedBuffCount)
 
     }
 
