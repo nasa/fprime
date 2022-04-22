@@ -69,8 +69,9 @@ namespace Svc {
                 copyOffset(0),
                 valid(true)
             {
-                // TODO: Randomize data
-                ::memset(data, 0xFF, sizeof data);
+                for (U32 i = 0; i < sizeof data; ++i) {
+                    data[i] = STest::Pick::lowerUpper(0, 255);
+                }
                 this->updateHeader();
                 this->updateHash();
             }

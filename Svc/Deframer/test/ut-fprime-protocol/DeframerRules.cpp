@@ -21,7 +21,7 @@ namespace Svc {
     }
 
     void GenerateFrames :: action(Svc::Tester &state) {
-        for (U32 j = 0; j < STest::Pick::lowerUpper(1, 10); j++) {
+        for (U32 j = 0; j < STest::Pick::lowerUpper(1, 100); j++) {
             // Generate a random frame
             auto frame = Tester::UplinkFrame::random();
             // Push it on the sending list
@@ -40,23 +40,34 @@ namespace Svc {
     }
 
     void SendBuffer :: action(Svc::Tester &state) {
-        const U32 incoming_buffer_size = STest::Pick::lowerUpper(
+
+        // Set up the incoming buffer
+        const U32 incomingBufferSize = STest::Pick::lowerUpper(
             1,
             DeframerCfg::POLL_BUFFER_SIZE
         );
-        U8* incoming_buffer = new U8[incoming_buffer_size];
-        state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incoming_buffer_size);
-        Fw::SerialBuffer serialBuffer(incoming_buffer, incoming_buffer_size);
+        U8* incoming_buffer = new U8[incomingBufferSize];
+        state.m_incoming_buffer = Fw::Buffer(incoming_buffer, incomingBufferSize);
+        Fw::SerialBuffer serialBuffer(incoming_buffer, incomingBufferSize);
 
+        // The expected number of com buffers emitted
         U32 expectedComCount = 0;
-        U32 expectedBufCount = 0;
-
+        // The expected number of file packet buffers emitted
+        U32 expectedBuffCount = 0;
         // The number of bytes copied into the buffer
         U32 copiedSize = 0;
         // The size of available data in the buffer
-        U32 buffAvailable = incoming_buffer_size;
-        // Loop through available frames
-        while (state.m_framesToSend.size() > 0 && copiedSize < incoming_buffer_size) {
+        U32 buffAvailable = incomingBufferSize;
+
+        // Fill the buffer as much as possible with available frames
+        for (U32 i = 0; i < incomingBufferSize; ++i) {
+
+            // Check if there is anything to send
+            if (state.m_framesToSend.size() == 0) {
+                break;
+            }
+
+            // Get the frame from the head of the sending queue
             auto& frame = state.m_framesToSend.front();
 
             // Compute the amount of frame data to copy
@@ -64,6 +75,11 @@ namespace Svc {
             ASSERT_GE(frameSize, frame.copyOffset);
             const U32 frameAvailable = frameSize - frame.copyOffset;
             const U32 copyAmt = std::min(frameAvailable, buffAvailable);
+
+            // Check if there is anything to copy
+            if (copyAmt == 0) {
+                break;
+            }
 
             // Copy the frame data
             auto status = serialBuffer.pushBytes(
@@ -74,6 +90,7 @@ namespace Svc {
 
             // Update the indices
             frame.copyOffset += copyAmt;
+            ASSERT_GE(buffAvailable, copyAmt);
             buffAvailable -= copyAmt;
             copiedSize += copyAmt;
 
@@ -93,9 +110,10 @@ namespace Svc {
                 // If the frame contains a file packet, increment the expected
                 // buffer count
                 if (frame.packetType == Fw::ComPacket::FW_PACKET_FILE) {
-                    ++expectedBufCount;
+                    ++expectedBuffCount;
                 }
             }
+
         }
 
         // Update the buffer
@@ -108,9 +126,11 @@ namespace Svc {
             Drv::RecvStatus::RECV_OK
         );
 
+        // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
-        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBufCount);
+        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
 
+        // Clear history
         state.clearHistory();
 
     }
