@@ -40,10 +40,21 @@ namespace Svc {
 
       public:
 
-        enum {
+        //! Enumerated constants
+        enum Constants {
             //! The max frame size
             //! POLL_BUFFER_SIZE is the max size that works with the polling buffer
             MAX_FRAME_SIZE = DeframerCfg::POLL_BUFFER_SIZE
+        };
+
+        //! The type of the input mode
+        struct InputMode {
+            typedef enum {
+                //! Push data from another thread
+                PUSH,
+                //! Poll for data on the schedIn thread
+                POLL
+            } t;
         };
 
         //! An uplink frame
@@ -85,7 +96,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Publilc methods 
+            // Public methods 
             // ----------------------------------------------------------------------
 
             //! Get the frame size
@@ -237,7 +248,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
         
         //! Construct object Tester
-        Tester(bool polling = false);
+        Tester(InputMode::t polling = InputMode::PUSH);
 
         //! Destroy object Tester
         ~Tester(void);
@@ -336,8 +347,8 @@ namespace Svc {
         //! Buffer to hold frames
         Fw::Buffer m_incomingBuffer;
 
-        //! Whether we are in polling mode
-        bool m_polling;
+        //! The input mode
+        InputMode::t m_inputMode;
 
     };
 

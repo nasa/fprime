@@ -27,10 +27,10 @@ namespace Svc {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    Tester ::Tester(bool polling)
+    Tester ::Tester(InputMode::t inputMode)
         : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
           component("Deframer"),
-          m_polling(polling)
+          m_inputMode(inputMode)
       {
         this->initComponents();
         this->connectPorts();
