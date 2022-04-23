@@ -129,7 +129,7 @@ namespace Svc {
     ) {
         if (frame.isValid()) {
             // Push frame F on the received queue
-            state.m_framesReceived.push_back(frame);
+            state.m_framesToReceive.push_back(frame);
             // Update the count of expected frames
             switch (frame.packetType) {
                 case Fw::ComPacket::FW_PACKET_COMMAND:

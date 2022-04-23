@@ -67,12 +67,12 @@ namespace Svc {
         Fw::ComBuffer& data,
         U32 context
     ) {
-        // Check that a received frame exists
-        ASSERT_GT(m_framesReceived.size(), 0) << 
-            "Frames received queue is empty" << std::endl;
+        // Check that a received frame is expected
+        ASSERT_GT(m_framesToReceive.size(), 0) << 
+            "Queue of frames to receive is empty" << std::endl;
         // Get the frame at the front
-        const auto& frame= m_framesReceived.front();
-        m_framesReceived.pop_front();
+        const auto& frame= m_framesToReceive.front();
+        m_framesToReceive.pop_front();
         // Check the packet type
         ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
         // Check the packet data
@@ -90,12 +90,12 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
     ) {
-        // Check that a received frame exists
-        ASSERT_GT(m_framesReceived.size(), 0) << 
-            "Frames received queue is empty" << std::endl;
+        // Check that a received frame is expected
+        ASSERT_GT(m_framesToReceive.size(), 0) << 
+            "Queue of frames to receive is empty" << std::endl;
         // Get the frame at the front
-        UplinkFrame frame = m_framesReceived.front();
-        m_framesReceived.pop_front();
+        UplinkFrame frame = m_framesToReceive.front();
+        m_framesToReceive.pop_front();
         // Check the packet type
         ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_FILE);
         // Check the packet data

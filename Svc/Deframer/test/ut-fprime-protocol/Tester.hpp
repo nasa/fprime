@@ -490,7 +490,7 @@ namespace Svc {
       private:
 
         // ----------------------------------------------------------------------
-        // Variables
+        // Private member variables
         // ----------------------------------------------------------------------
 
         //! The component under test
@@ -499,17 +499,17 @@ namespace Svc {
         //! The deframing protocol
         Svc::FprimeDeframing protocol;
 
-        //! Deque for frames to send
+        //! Deque of frames that the Tester should send to the Deframer
         std::deque<UplinkFrame> m_framesToSend;
 
-        //! Deque for receiving frames
-        std::deque<UplinkFrame> m_framesReceived;
+        //! Deque of frames that the Tester should receive from the Deframer
+        std::deque<UplinkFrame> m_framesToReceive;
 
-        //! Bytes for incoming buffer
+        //! Byte store for the incoming buffer
         //! In polling mode, the incoming buffer must fit in the poll buffer
         U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
 
-        //! Buffer to hold frames
+        //! Buffer to hold packed frame data
         Fw::Buffer m_incomingBuffer;
 
         //! The input mode
