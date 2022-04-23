@@ -59,6 +59,42 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
+    // Public instance methods 
+    // ----------------------------------------------------------------------
+    
+    void Tester ::setUpIncomingBuffer() {
+        const U32 bufferSize = STest::Pick::lowerUpper(
+            1,
+            sizeof m_incomingBufferBytes
+        );
+        ASSERT_LE(bufferSize, sizeof m_incomingBufferBytes);
+        m_incomingBuffer = Fw::Buffer(
+            m_incomingBufferBytes,
+            bufferSize
+        );
+    }
+
+    void Tester ::sendIncomingBuffer() {
+        switch (m_inputMode) {
+            case InputMode::PUSH:
+                // Push buffer to framedIn
+                invoke_to_framedIn(
+                    0,
+                    m_incomingBuffer,
+                    Drv::RecvStatus::RECV_OK
+                );
+                break;
+            case InputMode::POLL:
+                // Call schedIn handler, which polls for buffer
+                invoke_to_schedIn(0, 0);
+                break;
+            default:
+                FW_ASSERT(0);
+                break;
+        }
+    }
+
+    // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
