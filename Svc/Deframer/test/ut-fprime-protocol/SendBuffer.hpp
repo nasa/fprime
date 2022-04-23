@@ -1,45 +1,19 @@
 //! ======================================================================
-//! DeframerRules.hpp
-//! Header file for Deframer unit test rules
+//! SendBuffer.hpp
+//! Header file for SendBuffer rule
 //! @author lestarch, bocchino
 //! ======================================================================
 
-#ifndef SVC_DEFRAMER_RULES
-#define SVC_DEFRAMER_RULES
+#ifndef SVC_SEND_BUFFER_HPP
+#define SVC_SEND_BUFFER_HPP
 
 #include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/StringType.hpp"
 #include "STest/STest/Pick/Pick.hpp"
 #include "STest/STest/Rule/Rule.hpp"
-#include "Svc/Deframer/test/ut-fprime-protocol/Tester.hpp"
+#include "Tester.hpp"
 
 namespace Svc {
-
-    //! Generate frames to send
-    struct GenerateFrames : public STest::Rule<Tester> {
-
-        // ----------------------------------------------------------------------
-        // Construction 
-        // ----------------------------------------------------------------------
-
-        //! Constructor
-        GenerateFrames();
-
-        // ----------------------------------------------------------------------
-        // Public member functions 
-        // ----------------------------------------------------------------------
-
-        //! Precondition
-        bool precondition(
-            const Tester& state //!< The test state
-        );
-
-        //! Action
-        void action(
-            Tester& state //!< The test state
-        );
-
-    };
 
     //! Pack generated frames into a buffer
     //! Send the buffer

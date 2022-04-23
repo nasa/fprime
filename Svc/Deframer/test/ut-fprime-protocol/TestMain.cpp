@@ -2,14 +2,16 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Tester.hpp"
-#include <Fw/Test/UnitTest.hpp>
-#include <Os/Log.hpp>
-#include <STest/Scenario/BoundedScenario.hpp>
-#include <STest/Scenario/RandomScenario.hpp>
-#include <STest/Scenario/Scenario.hpp>
-#include <Svc/Deframer/test/ut-fprime-protocol/DeframerRules.hpp>
 #include <gtest/gtest.h>
+
+#include "Fw/Test/UnitTest.hpp"
+#include "GenerateFrames.hpp"
+#include "Os/Log.hpp"
+#include "STest/Scenario/BoundedScenario.hpp"
+#include "STest/Scenario/RandomScenario.hpp"
+#include "STest/Scenario/Scenario.hpp"
+#include "SendBuffer.hpp"
+#include "Tester.hpp"
 
 #define STEP_COUNT 10000
 
