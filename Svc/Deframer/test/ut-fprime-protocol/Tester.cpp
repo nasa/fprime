@@ -24,7 +24,7 @@
 namespace Svc {
 
     // ----------------------------------------------------------------------
-    // Construction and destruction
+    // Constructor
     // ----------------------------------------------------------------------
 
     Tester ::Tester(InputMode::t inputMode)
@@ -37,8 +37,6 @@ namespace Svc {
         component.setup(protocol);
         memset(m_incomingBufferBytes, 0, sizeof m_incomingBufferBytes);
       }
-
-    Tester ::~Tester() {}
 
     // ----------------------------------------------------------------------
     // Tests

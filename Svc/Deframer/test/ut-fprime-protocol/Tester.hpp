@@ -331,14 +331,11 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Construction and destruction 
+        // Constructor
         // ----------------------------------------------------------------------
         
-        //! Construct object Tester
+        //! Construct a Tester
         Tester(InputMode::t inputMode);
-
-        //! Destroy object Tester
-        ~Tester(void);
 
       public:
 
@@ -434,17 +431,17 @@ namespace Svc {
         //! The deframing protocol
         Svc::FprimeDeframing protocol;
 
-        //! Deque of frames that the Tester should send to the Deframer
+        //! Frames that the Tester should send to the Deframer
         std::deque<UplinkFrame> m_framesToSend;
 
-        //! Deque of frames that the Tester should receive from the Deframer
+        //! Frames that the Tester should receive from the Deframer
         std::deque<UplinkFrame> m_framesToReceive;
 
         //! Byte store for the incoming buffer
         //! In polling mode, the incoming buffer must fit in the poll buffer
         U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
 
-        //! Buffer to hold packed frame data
+        //! Packed frame data to send to the Deframer
         Fw::Buffer m_incomingBuffer;
 
         //! The input mode
