@@ -97,10 +97,13 @@ namespace Svc {
                     packetType == Fw::ComPacket::FW_PACKET_FILE
                 )
             {
+                // Fill in random data
                 for (U32 i = 0; i < sizeof data; ++i) {
                     data[i] = STest::Pick::lowerUpper(0, 0xFF);
                 }
+                // Update the frame header
                 this->updateHeader();
+                // Update the hash value
                 this->updateHash();
             }
 
@@ -163,7 +166,14 @@ namespace Svc {
 
             //! Get the max file size
             static U32 getMaxFilePacketSize() {
-                return (sizeof data) - FpFrameHeader::SIZE - HASH_DIGEST_LENGTH;
+                // The size of the parts of the frame that are outside the packet
+                const U32 nonPacketSize = FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
+                FW_ASSERT(
+                    MAX_FRAME_SIZE >= nonPacketSize,
+                    MAX_FRAME_SIZE,
+                    nonPacketSize
+                );
+                return MAX_FRAME_SIZE - nonPacketSize;
             }
 
             //! Construct a random frame
