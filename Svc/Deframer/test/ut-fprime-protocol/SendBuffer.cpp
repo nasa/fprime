@@ -1,5 +1,6 @@
 //! ======================================================================
-//! DeframerRules.cpp
+//! SendBuffer.cpp
+//! Implementation file for SendBuffer rule
 //! @author mstarch, bocchino
 //! ======================================================================
 
@@ -9,10 +10,6 @@
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
-
-    // ----------------------------------------------------------------------
-    // SendBuffer 
-    // ----------------------------------------------------------------------
 
     SendBuffer :: SendBuffer() :
         STest::Rule<Tester>("SendBuffer"),

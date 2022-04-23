@@ -35,8 +35,8 @@ register_fprime_module()
 # implementation.
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/DeframerRules.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/GenerateFrames.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/SendBuffer.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut-fprime-protocol/TestMain.cpp"
 )
