@@ -4,7 +4,8 @@
 //! \brief Print macros for deframer unit tests
 //! ======================================================================
 
-#define PRINTING
+// Uncomment the following line to turn on printing
+//#define PRINTING
 
 #ifdef PRINTING
 #include <cstdio>

@@ -16,8 +16,7 @@
 #define STEP_COUNT 10000
 
 // Uncomment the following line to turn on OS logging
-Os::Log logger;
-// This is off by default due to the large amount of checksum error output
+//Os::Log logger;
 
 // ----------------------------------------------------------------------
 // Static helper functions 
