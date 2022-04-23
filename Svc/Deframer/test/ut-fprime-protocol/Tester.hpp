@@ -44,7 +44,6 @@ namespace Svc {
         enum Constants {
             //! The maximum valid frame size
             //! Every frame must fit in the ring buffer
-            //! TODO: Allow this to be bigger, and invalid
             MAX_VALID_FRAME_SIZE = DeframerCfg::RING_BUFFER_SIZE,
             //! The offset of the start word in an F Prime protocol frame
             START_WORD_OFFSET = 0,
@@ -89,10 +88,7 @@ namespace Svc {
                 packetType(packetType),
                 packetSize(packetSize),
                 copyOffset(0),
-                valid(
-                    packetType == Fw::ComPacket::FW_PACKET_COMMAND ||
-                    packetType == Fw::ComPacket::FW_PACKET_FILE
-                )
+                valid(false)
             {
                 // Fill in random data
                 for (U32 i = 0; i < sizeof data; ++i) {
@@ -102,6 +98,19 @@ namespace Svc {
                 this->updateHeader();
                 // Update the hash value
                 this->updateHash();
+                // Check validity of packet type and size
+                if (
+                    (packetType == Fw::ComPacket::FW_PACKET_COMMAND) &&
+                    (packetSize <= getMaxValidCommandPacketSize())
+                ) {
+                    valid = true;
+                }
+                if (
+                    (packetType == Fw::ComPacket::FW_PACKET_FILE) &&
+                    (packetSize <= getMaxValidFilePacketSize())
+                ) {
+                    valid = true;
+                }
             }
 
           public:
@@ -254,34 +263,34 @@ namespace Svc {
                 memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
             }
 
-            //! Randomly invalidate a valid frame
+            //! Randomly invalidate a frame
             void randomlyInvalidate() {
-                // If frame is already invalid, we should not be here
-                ASSERT_TRUE(valid);
-                // Select out of 100 samples
-                const U32 invalidateIndex = STest::Pick::startLength(0, 100);
-                switch (invalidateIndex) {
-                    case 0: {
-                        // Invalidate the start word
-                        const FpFrameHeader::TokenType badStartWord =
-                            FpFrameHeader::START_WORD + 1;
-                        writeStartWord(badStartWord);
-                        valid = false;
-                        break;
+                if (valid) {
+                    // Select out of 100 samples
+                    const U32 invalidateIndex = STest::Pick::startLength(0, 100);
+                    switch (invalidateIndex) {
+                        case 0: {
+                            // Invalidate the start word
+                            const FpFrameHeader::TokenType badStartWord =
+                                FpFrameHeader::START_WORD + 1;
+                            writeStartWord(badStartWord);
+                            valid = false;
+                            break;
+                        }
+                        case 1:
+                            // Invalidate the packet type
+                            writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
+                            valid = false;
+                            break;
+                        case 2:
+                            // Invalidate the hash value
+                            ++data[getSize() - 1];
+                            valid = false;
+                            break;
+                        default:
+                            // Stay valid
+                            break;
                     }
-                    case 1:
-                        // Invalidate the packet type
-                        writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
-                        valid = false;
-                        break;
-                    case 2:
-                        // Invalidate the hash value
-                        ++data[getSize() - 1];
-                        valid = false;
-                        break;
-                    default:
-                        // Stay valid
-                        break;
                 }
             }
 
@@ -455,7 +464,7 @@ namespace Svc {
         std::deque<UplinkFrame> m_framesReceived;
 
         //! Bytes for incoming buffer
-        //! The incoming buffer must fit in the poll buffer
+        //! In polling mode, the incoming buffer must fit in the poll buffer
         U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
 
         //! Buffer to hold frames
