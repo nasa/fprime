@@ -9,8 +9,8 @@
 // acknowledged.
 // ======================================================================
 
-#ifndef TESTER_HPP
-#define TESTER_HPP
+#ifndef SVC_TESTER_HPP
+#define SVC_TESTER_HPP
 
 #include <deque>
 #include <cstring>
@@ -268,7 +268,7 @@ namespace Svc {
             //! If the frame is already invalid, leave it alone
             void randomlyInvalidate() {
                 if (valid) {
-                    // Out of 100 samples
+                    // Invalidation cases occur out of 100 samples
                     const U32 invalidateIndex = STest::Pick::startLength(0, 100);
                     switch (invalidateIndex) {
                         case 0: {
