@@ -32,7 +32,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         friend struct GenerateFrames;
-        friend struct SendBuffer;
+        friend class SendBuffer;
 
         // ----------------------------------------------------------------------
         // Types
@@ -339,6 +339,19 @@ namespace Svc {
         // ----------------------------------------------------------------------
         // Public instance methods 
         // ----------------------------------------------------------------------
+
+        //! Set up the incoming buffer
+        void setUpIncomingBuffer() {
+            const U32 bufferSize = STest::Pick::lowerUpper(
+                1,
+                sizeof m_incomingBufferBytes
+            );
+            ASSERT_LE(bufferSize, sizeof m_incomingBufferBytes);
+            m_incomingBuffer = Fw::Buffer(
+                m_incomingBufferBytes,
+                bufferSize
+            );
+        }
 
         //! Send the incoming buffer
         void sendIncomingBuffer() {

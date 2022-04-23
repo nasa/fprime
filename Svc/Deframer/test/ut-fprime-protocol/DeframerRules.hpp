@@ -18,8 +18,16 @@ namespace Svc {
     //! Generate frames to send
     struct GenerateFrames : public STest::Rule<Tester> {
 
+        // ----------------------------------------------------------------------
+        // Construction 
+        // ----------------------------------------------------------------------
+
         //! Constructor
         GenerateFrames();
+
+        // ----------------------------------------------------------------------
+        // Public member functions 
+        // ----------------------------------------------------------------------
 
         //! Precondition
         bool precondition(const Tester& state);
@@ -31,16 +39,57 @@ namespace Svc {
 
     //! Pack generated frames into a buffer
     //! Send the buffer
-    struct SendBuffer : public STest::Rule<Tester> {
+    class SendBuffer : public STest::Rule<Tester> {
+
+      public:
+
+        // ----------------------------------------------------------------------
+        // Construction 
+        // ----------------------------------------------------------------------
 
         //! Constructor
         SendBuffer();
+
+      public:
+
+        // ----------------------------------------------------------------------
+        // Public functions 
+        // ----------------------------------------------------------------------
 
         //! Precondition
         bool precondition(const Tester& state);
 
         //! Action
-        void action(Tester& state);
+        void action(Svc::Tester &state);
+
+      private:
+
+        // ----------------------------------------------------------------------
+        // Private helper functions 
+        // ----------------------------------------------------------------------
+
+        //! Fill the incoming buffer with frame data
+        void fillIncomingBuffer(
+            Svc::Tester &state //!< The test state
+        );
+
+        //! Record a received frame
+        void recordReceivedFrame(
+            Svc::Tester& state, //!< The test state
+            Svc::Tester::UplinkFrame& frame //!< The frame
+        );
+
+      private:
+        
+        // ----------------------------------------------------------------------
+        // Private member variables 
+        // ----------------------------------------------------------------------
+
+        //! The expected number of com buffers emitted
+        U32 expectedComCount;
+
+        //! The expected number of file packet buffers emitted
+        U32 expectedBuffCount;
 
     };
 

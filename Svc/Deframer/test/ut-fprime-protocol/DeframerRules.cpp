@@ -56,7 +56,9 @@ namespace Svc {
     // ----------------------------------------------------------------------
 
     SendBuffer :: SendBuffer() :
-        STest::Rule<Tester>("SendBuffer")
+        STest::Rule<Tester>("SendBuffer"),
+        expectedComCount(0),
+        expectedBuffCount(0)
     {
 
     }
@@ -71,19 +73,29 @@ namespace Svc {
         PRINT("SendBufffer action");
         PRINT("----------------------------------------------------------------------");
 
-        // Clear history
+        // Clear the test history
         state.clearHistory();
 
         // Set up the incoming buffer
-        const U32 incomingBufferSize = STest::Pick::lowerUpper(
-            1,
-            sizeof state.m_incomingBufferBytes
-        );
-        ASSERT_LE(incomingBufferSize, sizeof state.m_incomingBufferBytes);
-        state.m_incomingBuffer = Fw::Buffer(
-            state.m_incomingBufferBytes,
-            incomingBufferSize
-        );
+        state.setUpIncomingBuffer();
+
+        // Fill the incoming buffer with frame data
+        fillIncomingBuffer(state);
+
+        // Send the buffer
+        state.sendIncomingBuffer();
+
+        // Check the counts
+        state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
+        PRINT_ARGS("expectedComCount=%d", expectedComCount)
+        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
+        PRINT_ARGS("expectedBuffCount=%d", expectedBuffCount)
+
+    }
+
+    void SendBuffer :: fillIncomingBuffer(Svc::Tester &state) {
+
+        const U32 incomingBufferSize = state.m_incomingBuffer.getSize();
 
         // Set up a serial buffer for data transfer
         Fw::SerialBuffer serialBuffer(
@@ -91,10 +103,11 @@ namespace Svc {
             incomingBufferSize
         );
 
-        // The expected number of com buffers emitted
-        U32 expectedComCount = 0;
-        // The expected number of file packet buffers emitted
-        U32 expectedBuffCount = 0;
+        // Reset the expected com count
+        expectedComCount = 0;
+        // Reset the expected buff count
+        expectedBuffCount = 0;
+
         // The number of bytes copied into the buffer
         U32 copiedSize = 0;
         // The size of available data in the buffer
@@ -135,34 +148,10 @@ namespace Svc {
             // the send queue; and (2) if F is valid, then record F as
             // received
             if (frame.getRemainingCopySize() == 0) {
+                // Remove F from the send queue
                 state.m_framesToSend.pop_front();
                 // If F is valid, then record it as received
-                if (frame.isValid()) {
-                    // Push F on the received queue
-                    state.m_framesReceived.push_back(frame);
-                    // Update the count of expected frames
-                    switch (frame.packetType) {
-                        case Fw::ComPacket::FW_PACKET_COMMAND:
-                            PRINT("popped valid command frame")
-                            // If F contains a command packet, then increment
-                            // the expected com count
-                            ++expectedComCount;
-                            break;
-                        case Fw::ComPacket::FW_PACKET_FILE:
-                            PRINT("popped valid file frame")
-                            // If F contains a file packet, then increment
-                            // the expected buffer count
-                            ++expectedBuffCount;
-                            break;
-                        default:
-                            // This should not happen for a valid frame
-                            FW_ASSERT(0);
-                            break;
-                    }
-                }
-                else {
-                    PRINT("popped invalid frame")
-                }
+                recordReceivedFrame(state, frame);
                 PRINT_ARGS(
                     "frameToSend.size()=%lu",
                     state.m_framesToSend.size()
@@ -175,15 +164,38 @@ namespace Svc {
         ASSERT_LE(copiedSize, incomingBufferSize);
         state.m_incomingBuffer.setSize(copiedSize);
 
-        // Send the buffer
-        state.sendIncomingBuffer();
+    }
 
-        // Check the counts
-        state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);
-        PRINT_ARGS("expectedComCount=%d", expectedComCount)
-        state.assert_from_bufferOut_size(__FILE__, __LINE__, expectedBuffCount);
-        PRINT_ARGS("expectedBuffCount=%d", expectedBuffCount)
-
+    void SendBuffer :: recordReceivedFrame(
+        Svc::Tester& state,
+        Svc::Tester::UplinkFrame& frame
+    ) {
+        if (frame.isValid()) {
+            // Push F on the received queue
+            state.m_framesReceived.push_back(frame);
+            // Update the count of expected frames
+            switch (frame.packetType) {
+                case Fw::ComPacket::FW_PACKET_COMMAND:
+                    PRINT("popped valid command frame")
+                    // If F contains a command packet, then increment
+                    // the expected com count
+                    ++expectedComCount;
+                    break;
+                case Fw::ComPacket::FW_PACKET_FILE:
+                    PRINT("popped valid file frame")
+                    // If F contains a file packet, then increment
+                    // the expected buffer count
+                    ++expectedBuffCount;
+                    break;
+                default:
+                    // This should not happen for a valid frame
+                    FW_ASSERT(0);
+                    break;
+            }
+        }
+        else {
+            PRINT("popped invalid frame")
+        }
     }
 
 };
