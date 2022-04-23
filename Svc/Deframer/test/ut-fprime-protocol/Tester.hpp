@@ -97,15 +97,6 @@ namespace Svc {
             // Public instance methods 
             // ----------------------------------------------------------------------
 
-            //! Get the frame size
-            U32 getSize() const;
-
-            //! Get the size of data that remains for copying
-            U32 getRemainingCopySize() const;
-
-            //! Report whether the frame is valid
-            bool isValid() const;
-
             //! Copy data from the frame, advancing the copy offset
             void copyDataOut(
                 Fw::SerialBuffer& serialBuffer, //!< The serial buffer to copy to
@@ -115,27 +106,36 @@ namespace Svc {
             //! Get a constant reference to the frame data
             const FrameData& getData() const;
 
+            //! Get the frame size
+            U32 getSize() const;
+
+            //! Get the size of data that remains for copying
+            U32 getRemainingCopySize() const;
+
+            //! Report whether the frame is valid
+            bool isValid() const;
+
           public:
 
             // ----------------------------------------------------------------------
             // Public static methods 
             // ----------------------------------------------------------------------
 
-            //! Get the min packet size
-            static U32 getMinPacketSize();
+            //! Construct a random frame
+            static UplinkFrame random();
 
             //! Get the max packet size that will fit in the test buffer
             //! This is an invalid size for the deframer
             static U32 getInvalidPacketSize();
 
-            //! Get the max valid file packet size
-            static U32 getMaxValidFilePacketSize();
-
             //! Get the max valid command packet size
             static U32 getMaxValidCommandPacketSize();
 
-            //! Construct a random frame
-            static UplinkFrame random();
+            //! Get the max valid file packet size
+            static U32 getMaxValidFilePacketSize();
+
+            //! Get the min packet size
+            static U32 getMinPacketSize();
 
           private:
 
@@ -143,13 +143,15 @@ namespace Svc {
             // Private instance methods
             // ----------------------------------------------------------------------
             
+            //! Randomly invalidate a valid frame, or leave it alone
+            //! If the frame is already invalid, leave it alone
+            void randomlyInvalidate();
+
             //! Update the frame header
             void updateHeader();
 
-            //! Write an arbitrary start word
-            void writeStartWord(
-                FpFrameHeader::TokenType startWord //!< The start word
-            );
+            //! Update the hash value
+            void updateHash();
 
             //! Write an arbitrary packet size
             void writePacketSize(
@@ -161,41 +163,10 @@ namespace Svc {
                 FwPacketDescriptorType pt //!< The packet type
             );
 
-            //! Update the hash value
-            void updateHash();
-
-            //! Randomly invalidate a valid frame, or leave it alone
-            //! If the frame is already invalid, leave it alone
-            void randomlyInvalidate() {
-                if (valid) {
-                    // Invalidation cases occur out of 100 samples
-                    const U32 invalidateIndex = STest::Pick::startLength(0, 100);
-                    switch (invalidateIndex) {
-                        case 0: {
-                            // Invalidate the start word
-                            const FpFrameHeader::TokenType badStartWord =
-                                FpFrameHeader::START_WORD + 1;
-                            writeStartWord(badStartWord);
-                            valid = false;
-                            break;
-                        }
-                        case 1:
-                            // Invalidate the packet type
-                            writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
-                            valid = false;
-                            break;
-                        case 2:
-                            // Invalidate the hash value
-                            ++data[getSize() - 1];
-                            valid = false;
-                            break;
-                        default:
-                            // Stay valid
-                            break;
-                    }
-                }
-
-            }
+            //! Write an arbitrary start word
+            void writeStartWord(
+                FpFrameHeader::TokenType startWord //!< The start word
+            );
 
           public:
 
@@ -341,7 +312,7 @@ namespace Svc {
         //! In polling mode, the incoming buffer must fit in the poll buffer
         U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
 
-        //! Packed frame data to send to the Deframer
+        //! Serialized frame data to send to the Deframer
         Fw::Buffer m_incomingBuffer;
 
         //! The input mode
