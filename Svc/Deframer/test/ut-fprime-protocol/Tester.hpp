@@ -147,7 +147,7 @@ namespace Svc {
                 U32 size //!< The number of bytes to copy
             ) {
                 ASSERT_LE(copyOffset + size, getSize());
-                auto status = serialBuffer.pushBytes(
+                const Fw::SerializeStatus status = serialBuffer.pushBytes(
                     &data[copyOffset],
                     size
                 );
@@ -212,7 +212,8 @@ namespace Svc {
             //! Construct a random frame
             static UplinkFrame random() {
                 // Randomly set the packet type
-                auto packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
+                Fw::ComPacket::ComPacketType packetType =
+                    Fw::ComPacket::FW_PACKET_UNKNOWN;
                 const U32 packetSelector = STest::Pick::lowerUpper(0,1);
                 U32 maxValidPacketSize = 0;
                 switch (packetSelector) {
@@ -247,7 +248,7 @@ namespace Svc {
                     );
                 }
                 // Construct the frame
-                auto frame = UplinkFrame(packetType, packetSize);
+                UplinkFrame frame = UplinkFrame(packetType, packetSize);
                 // Randomly invalidate the frame, or leave it alone
                 frame.randomlyInvalidate();
                 // Return the frame
@@ -273,21 +274,21 @@ namespace Svc {
             //! Write an arbitrary start word
             void writeStartWord(FpFrameHeader::TokenType startWord) {
                 Fw::SerialBuffer sb(data, sizeof startWord);
-                const auto status = sb.serialize(startWord);
+                const Fw::SerializeStatus status = sb.serialize(startWord);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             }
 
             //! Write an arbitrary packet size
             void writePacketSize(FpFrameHeader::TokenType ps) {
                 Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
-                const auto status = sb.serialize(packetSize);
+                const Fw::SerializeStatus status = sb.serialize(packetSize);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             }
 
             //! Write an arbitrary packet type
             void writePacketType(FwPacketDescriptorType pt) {
                 Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
-                const auto status = sb.serialize(pt);
+                const Fw::SerializeStatus status = sb.serialize(pt);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             }
 

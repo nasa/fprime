@@ -84,7 +84,7 @@ namespace Svc {
             }
 
             // Get the frame from the head of the sending queue
-            auto& frame = state.m_framesToSend.front();
+            Tester::UplinkFrame& frame = state.m_framesToSend.front();
 
             // Compute the amount to copy
             const U32 frameAvailable = frame.getRemainingCopySize();

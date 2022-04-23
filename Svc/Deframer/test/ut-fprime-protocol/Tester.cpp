@@ -71,7 +71,7 @@ namespace Svc {
         ASSERT_GT(m_framesToReceive.size(), 0) << 
             "Queue of frames to receive is empty" << std::endl;
         // Get the frame at the front
-        const auto& frame= m_framesToReceive.front();
+        UplinkFrame frame = m_framesToReceive.front();
         m_framesToReceive.pop_front();
         // Check the packet type
         ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
@@ -110,6 +110,8 @@ namespace Svc {
         }
         // Buffers received on this port are owned by the receiver
         // So delete the allocation now
+        // Before deallocating, undo the deframer's adjustment of the pointer
+        // by the size of the packet type
         delete[](fwBuffer.getData() - sizeof(FwPacketDescriptorType));
         // Push the history entry
         this->pushFromPortEntry_bufferOut(fwBuffer);

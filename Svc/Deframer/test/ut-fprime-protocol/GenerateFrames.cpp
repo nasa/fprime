@@ -30,7 +30,7 @@ namespace Svc {
         PRINT_ARGS("Generating %d frames", numFrames)
         for (U32 i = 0; i < numFrames; i++) {
             // Generate a random frame
-            auto frame = Tester::UplinkFrame::random();
+            Tester::UplinkFrame frame = Tester::UplinkFrame::random();
             // Push it on the sending list
             state.m_framesToSend.push_back(frame);
         }
