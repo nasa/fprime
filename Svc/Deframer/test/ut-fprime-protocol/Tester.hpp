@@ -255,7 +255,9 @@ namespace Svc {
 
             //! Randomly invalidate a valid frame
             void randomlyInvalidate() {
+                // If frame is already invalid, we should not be here
                 ASSERT_TRUE(valid);
+                // Select out of 100 samples
                 const U32 invalidateIndex = STest::Pick::startLength(0, 100);
                 switch (invalidateIndex) {
                     case 0:
