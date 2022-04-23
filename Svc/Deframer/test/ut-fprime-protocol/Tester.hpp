@@ -69,7 +69,7 @@ namespace Svc {
             } t;
         };
 
-        //! An uplink frame
+        //! An uplink frame for testing
         class UplinkFrame {
 
             // ----------------------------------------------------------------------
@@ -140,50 +140,29 @@ namespace Svc {
           private:
 
             // ----------------------------------------------------------------------
-            // Private methods
+            // Private instance methods
             // ----------------------------------------------------------------------
             
             //! Update the frame header
-            void updateHeader() {
-                // Write the correct start word
-                writeStartWord(FpFrameHeader::START_WORD);
-                // Write the correct packet size
-                writePacketSize(packetSize);
-                // Write the correct packet type
-                writePacketType(packetType);
-            }
+            void updateHeader();
 
             //! Write an arbitrary start word
-            void writeStartWord(FpFrameHeader::TokenType startWord) {
-                Fw::SerialBuffer sb(data, sizeof startWord);
-                const Fw::SerializeStatus status = sb.serialize(startWord);
-                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-            }
+            void writeStartWord(
+                FpFrameHeader::TokenType startWord //!< The start word
+            );
 
             //! Write an arbitrary packet size
-            void writePacketSize(FpFrameHeader::TokenType ps) {
-                Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
-                const Fw::SerializeStatus status = sb.serialize(packetSize);
-                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-            }
+            void writePacketSize(
+                FpFrameHeader::TokenType ps //!< The packet size
+            );
 
             //! Write an arbitrary packet type
-            void writePacketType(FwPacketDescriptorType pt) {
-                Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
-                const Fw::SerializeStatus status = sb.serialize(pt);
-                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-            }
+            void writePacketType(
+                FwPacketDescriptorType pt //!< The packet type
+            );
 
             //! Update the hash value
-            void updateHash() {
-                Utils::Hash hash;
-                Utils::HashBuffer hashBuffer;
-                hash.update(data,  FpFrameHeader::SIZE + packetSize);
-                hash.final(hashBuffer);
-                const U32 hashOffset = getSize() - HASH_DIGEST_LENGTH;
-                const U8 *const hashAddr = hashBuffer.getBuffAddr();
-                memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
-            }
+            void updateHash();
 
             //! Randomly invalidate a valid frame, or leave it alone
             //! If the frame is already invalid, leave it alone

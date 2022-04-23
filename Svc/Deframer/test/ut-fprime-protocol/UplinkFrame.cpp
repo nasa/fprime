@@ -179,4 +179,51 @@ namespace Svc {
         return frame;
     }
 
+    // ----------------------------------------------------------------------
+    // Private instance methods
+    // ----------------------------------------------------------------------
+            
+    void Tester::UplinkFrame::updateHeader() {
+        // Write the correct start word
+        writeStartWord(FpFrameHeader::START_WORD);
+        // Write the correct packet size
+        writePacketSize(packetSize);
+        // Write the correct packet type
+        writePacketType(packetType);
+    }
+
+    void Tester::UplinkFrame::writeStartWord(
+        FpFrameHeader::TokenType startWord
+    ) {
+        Fw::SerialBuffer sb(data, sizeof startWord);
+        const Fw::SerializeStatus status = sb.serialize(startWord);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    void Tester::UplinkFrame::writePacketSize(
+        FpFrameHeader::TokenType ps
+    ) {
+        Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
+        const Fw::SerializeStatus status = sb.serialize(packetSize);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    void Tester::UplinkFrame::writePacketType(
+        FwPacketDescriptorType pt
+    ) {
+        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
+        const Fw::SerializeStatus status = sb.serialize(pt);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    void Tester::UplinkFrame::updateHash() {
+        Utils::Hash hash;
+        Utils::HashBuffer hashBuffer;
+        hash.update(data,  FpFrameHeader::SIZE + packetSize);
+        hash.final(hashBuffer);
+        const U32 hashOffset = getSize() - HASH_DIGEST_LENGTH;
+        const U8 *const hashAddr = hashBuffer.getBuffAddr();
+        memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
+    }
+
 }
