@@ -89,71 +89,37 @@ namespace Svc {
             UplinkFrame(
                 Fw::ComPacket::ComPacketType packetType, //!< The packet type
                 U32 packetSize //!< The packet size
-            ) :
-                packetType(packetType),
-                packetSize(packetSize),
-                copyOffset(0),
-                valid(false)
-            {
-                // Fill in random data
-                for (U32 i = 0; i < sizeof data; ++i) {
-                    data[i] = STest::Pick::lowerUpper(0, 0xFF);
-                }
-                // Update the frame header
-                this->updateHeader();
-                // Update the hash value
-                this->updateHash();
-                // Check validity of packet type and size
-                if (
-                    (packetType == Fw::ComPacket::FW_PACKET_COMMAND) &&
-                    (packetSize <= getMaxValidCommandPacketSize())
-                ) {
-                    valid = true;
-                }
-                if (
-                    (packetType == Fw::ComPacket::FW_PACKET_FILE) &&
-                    (packetSize <= getMaxValidFilePacketSize())
-                ) {
-                    valid = true;
-                }
-            }
+            );
 
           public:
 
             // ----------------------------------------------------------------------
-            // Public methods 
+            // Public instance methods 
             // ----------------------------------------------------------------------
 
             //! Get the frame size
-            U32 getSize() const {
-                return NON_PACKET_SIZE + packetSize;
-            }
+            U32 getSize() const;
 
             //! Get the size of data that remains for copying
-            U32 getRemainingCopySize() {
-                const U32 frameSize = getSize();
-                FW_ASSERT(frameSize >= copyOffset, frameSize, copyOffset);
-                return frameSize - copyOffset;
-            }
+            U32 getRemainingCopySize() const;
 
             //! Report whether the frame is valid
-            bool isValid() const {
-                return valid;
-            }
+            bool isValid() const;
 
             //! Copy data from the frame, advancing the copy offset
             void copyDataOut(
                 Fw::SerialBuffer& serialBuffer, //!< The serial buffer to copy to
                 U32 size //!< The number of bytes to copy
-            ) {
-                ASSERT_LE(copyOffset + size, getSize());
-                const Fw::SerializeStatus status = serialBuffer.pushBytes(
-                    &data[copyOffset],
-                    size
-                );
-                ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-                copyOffset += size;
-            }
+            );
+
+            //! Get a constant reference to the frame data
+            const FrameData& getData() const;
+
+          public:
+
+            // ----------------------------------------------------------------------
+            // Public static methods 
+            // ----------------------------------------------------------------------
 
             //! Get the min packet size
             static U32 getMinPacketSize() {
@@ -202,11 +168,6 @@ namespace Svc {
                     // Frame must fit into the ring buffer
                     getMaxValidFilePacketSize()
                 );
-            }
-
-            //! Get a constant reference to the frame data
-            const FrameData& getData() const {
-                return data;
             }
 
             //! Construct a random frame
@@ -333,6 +294,7 @@ namespace Svc {
                             break;
                     }
                 }
+
             }
 
           public:
