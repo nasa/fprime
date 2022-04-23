@@ -219,11 +219,11 @@ namespace Svc {
     void Tester::UplinkFrame::updateHash() {
         Utils::Hash hash;
         Utils::HashBuffer hashBuffer;
-        hash.update(data,  FpFrameHeader::SIZE + packetSize);
+        const U32 dataSize = FpFrameHeader::SIZE + packetSize;
+        hash.update(data,  dataSize);
         hash.final(hashBuffer);
-        const U32 hashOffset = getSize() - HASH_DIGEST_LENGTH;
         const U8 *const hashAddr = hashBuffer.getBuffAddr();
-        memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
+        memcpy(&data[dataSize], hashAddr, HASH_DIGEST_LENGTH);
     }
 
     void Tester::UplinkFrame::randomlyInvalidate() {
