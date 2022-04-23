@@ -17,9 +17,8 @@
 Os::Log logger;
 // This is off by default due to the large amount of checksum error output
 
-#if 0
-TEST(Nominal, BasicUplink) {
-    COMMENT("Send one buffer to the deframer, simulating an active driver");
+TEST(Nominal, BasicPush) {
+    COMMENT("Send one buffer to the deframer, simulating an active driver (push)");
     REQUIREMENT("SVC-DEFRAMER-001");
     REQUIREMENT("SVC-DEFRAMER-002");
     REQUIREMENT("SVC-DEFRAMER-003");
@@ -28,18 +27,17 @@ TEST(Nominal, BasicUplink) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    Svc::Tester tester(false);
-    Svc::GenerateFrames generateFrames("Randomize");
-    Svc::SendBuffer sendBuffer("Uplink Rule");
+    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
+    Svc::GenerateFrames generateFrames;
+    Svc::SendBuffer sendBuffer;
 
-    setup.apply(tester);
-    send.apply(tester);
+    generateFrames.apply(tester);
+    sendBuffer.apply(tester);
 }
-#endif
 
 #if 0
-TEST(Nominal, BasicPollUplink) {
-    COMMENT("Send one buffer to the deframer, simulating a passive driver");
+TEST(Nominal, BasicPoll) {
+    COMMENT("Send one buffer to the deframer, simulating a passive driver (poll)");
     REQUIREMENT("SVC-DEFRAMER-001");
     REQUIREMENT("SVC-DEFRAMER-002");
     REQUIREMENT("SVC-DEFRAMER-003");
@@ -58,11 +56,8 @@ TEST(Nominal, BasicPollUplink) {
 }
 #endif
 
-/**
- * A random hopper for rules. Apply STEP_COUNT times.
- */
-TEST(Nominal, RandomizedDeframer) {
-    COMMENT("Send random buffers to the deframer, simulating an active driver");
+TEST(Nominal, RandomPush) {
+    COMMENT("Send random buffers to the deframer, simulating an active driver (push)");
     REQUIREMENT("SVC-DEFRAMER-001");
     REQUIREMENT("SVC-DEFRAMER-002");
     REQUIREMENT("SVC-DEFRAMER-003");
@@ -71,7 +66,7 @@ TEST(Nominal, RandomizedDeframer) {
     REQUIREMENT("SVC-DEFRAMER-008");
     REQUIREMENT("SVC-DEFRAMER-009");
     REQUIREMENT("SVC-DEFRAMER-010");
-    Svc::Tester tester;
+    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
 
     // Create rules, and assign them into the array
     Svc::GenerateFrames generateFrames;
@@ -101,8 +96,8 @@ TEST(Nominal, RandomizedDeframer) {
 }
 
 #if 0
-TEST(Nominal, RandomizedPollingDeframer) {
-    COMMENT("Send random buffers to the deframer, simulating a passive driver");
+TEST(Nominal, RandomPoll) {
+    COMMENT("Send random buffers to the deframer, simulating a passive driver (poll)");
     REQUIREMENT("SVC-DEFRAMER-001");
     REQUIREMENT("SVC-DEFRAMER-002");
     REQUIREMENT("SVC-DEFRAMER-003");
@@ -134,13 +129,13 @@ TEST(Nominal, RandomizedPollingDeframer) {
 }
 #endif
 
-#if 0
-TEST(Error, SizeTooLarge) {
+TEST(Error, SizeOverflow) {
     COMMENT("Test handling of size overflow in F Prime deframing protocol");
-    Svc::Tester tester(false);
-    tester.sizeTooLarge();
+    Svc::Tester tester(Svc::Tester::InputMode::PUSH);
+    tester.sizeOverflow();
 }
-#endif
+
+// TODO: Add a test for size larger than ring buffer size
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

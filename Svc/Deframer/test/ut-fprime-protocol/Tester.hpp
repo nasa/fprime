@@ -320,7 +320,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
         
         //! Construct object Tester
-        Tester(InputMode::t polling = InputMode::PUSH);
+        Tester(InputMode::t inputMode);
 
         //! Destroy object Tester
         ~Tester(void);
@@ -331,8 +331,34 @@ namespace Svc {
         // Tests
         // ----------------------------------------------------------------------
 
-        //! Size too large for deframer
-        void sizeTooLarge();
+        //! Size would cause integer overflow
+        void sizeOverflow();
+
+      public:
+
+        // ----------------------------------------------------------------------
+        // Public instance methods 
+        // ----------------------------------------------------------------------
+
+        //! Send the incoming buffer
+        void sendIncomingBuffer() {
+            switch (m_inputMode) {
+                case InputMode::PUSH:
+                    invoke_to_framedIn(
+                        0,
+                        m_incomingBuffer,
+                        Drv::RecvStatus::RECV_OK
+                    );
+                    break;
+                case InputMode::POLL:
+                    // TODO
+                    FW_ASSERT(0);
+                    break;
+                default:
+                    FW_ASSERT(0);
+                    break;
+            }
+        }
 
       private:
 
@@ -381,7 +407,7 @@ namespace Svc {
       private:
 
         // ----------------------------------------------------------------------
-        // Helper methods
+        // Private helper methods
         // ----------------------------------------------------------------------
 
         //! Connect ports

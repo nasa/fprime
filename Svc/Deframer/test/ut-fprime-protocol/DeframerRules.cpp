@@ -176,12 +176,7 @@ namespace Svc {
         state.m_incomingBuffer.setSize(copiedSize);
 
         // Send the buffer
-        // TODO: Handle polling mode
-        state.invoke_to_framedIn(
-            0,
-            state.m_incomingBuffer,
-            Drv::RecvStatus::RECV_OK
-        );
+        state.sendIncomingBuffer();
 
         // Check the counts
         state.assert_from_comOut_size(__FILE__, __LINE__, expectedComCount);

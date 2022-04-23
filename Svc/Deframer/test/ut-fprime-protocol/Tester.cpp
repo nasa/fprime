@@ -44,7 +44,7 @@ namespace Svc {
     // Tests
     // ----------------------------------------------------------------------
 
-    void Tester ::sizeTooLarge() {
+    void Tester ::sizeOverflow() {
         U8 data[FpFrameHeader::SIZE];
         Fw::Buffer buffer(data, sizeof data);
         Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
