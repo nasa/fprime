@@ -42,9 +42,20 @@ namespace Svc {
 
         //! Enumerated constants
         enum Constants {
-            //! The max frame size
-            //! POLL_BUFFER_SIZE is the max size that works with the polling buffer
-            MAX_FRAME_SIZE = DeframerCfg::POLL_BUFFER_SIZE
+            //! The maximum frame size
+            //! Every frame has to fit in the ring buffer
+            //! In polling mode, every frame has to fit in the polling buffer
+            MAX_FRAME_SIZE = 
+              (DeframerCfg::POLL_BUFFER_SIZE < DeframerCfg::RING_BUFFER_SIZE) ?
+                  DeframerCfg::POLL_BUFFER_SIZE :
+                  DeframerCfg::RING_BUFFER_SIZE,
+            //! The offset of the start word in an F Prime protocol frame
+            START_WORD_OFFSET = 0,
+            //! The offset of the packet size in an F Prime protocol frame
+            PACKET_SIZE_OFFSET = START_WORD_OFFSET +
+                sizeof FpFrameHeader::START_WORD,
+            //! The offset of the packet type in an F Prime protocol frame
+            PACKET_TYPE_OFFSET = FpFrameHeader::SIZE,
         };
 
         //! The type of the input mode
@@ -111,7 +122,7 @@ namespace Svc {
                 return frameSize - copyOffset;
             }
 
-            //! Whether the frame is valid
+            //! Report whether the frame is valid
             bool isValid() const {
                 return valid;
             }
@@ -159,7 +170,7 @@ namespace Svc {
             static UplinkFrame random() {
                 // Randomly set the packet type
                 auto packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
-                const U32 packetSelector = STest::Pick::startLength(0,3);
+                const U32 packetSelector = STest::Pick::lowerUpper(0,1);
                 switch (packetSelector) {
                     case 0:
                         packetType = Fw::ComPacket::FW_PACKET_COMMAND;
@@ -168,18 +179,18 @@ namespace Svc {
                         packetType = Fw::ComPacket::FW_PACKET_FILE;
                         break;
                     default:
-                        // Use packet type UNKNOWN
+                        FW_ASSERT(0);
                         break;
                 }
                 // Randomly set the packet size
-                U32 packetSize = STest::Pick::lowerUpper(
+                const U32 packetSize = STest::Pick::lowerUpper(
                     getMinPacketSize(),
                     getMaxCommandPacketSize()
                 );
                 // Construct the frame
                 auto frame = UplinkFrame(packetType, packetSize);
-                // Randomly invalidate the frame data
-                // TODO
+                // Randomly invalidate the frame
+                frame.randomlyInvalidate();
                 // Return the frame
                 return frame;
             }
@@ -192,16 +203,32 @@ namespace Svc {
             
             //! Update the frame header
             void updateHeader() {
-                Fw::SerialBuffer sb(data, sizeof data);
-                // Write the start word
-                auto status = sb.serialize(FpFrameHeader::START_WORD);
+                // Write the correct start word
+                writeStartWord(FpFrameHeader::START_WORD);
+                // Write the correct packet size
+                writePacketSize(packetSize);
+                // Write the correct packet type
+                writePacketType(packetType);
+            }
+
+            //! Write an arbitrary start word
+            void writeStartWord(FpFrameHeader::TokenType startWord) {
+                Fw::SerialBuffer sb(data, sizeof startWord);
+                const auto status = sb.serialize(startWord);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-                // Write the packet size
-                status = sb.serialize(packetSize);
+            }
+
+            //! Write an arbitrary packet size
+            void writePacketSize(FpFrameHeader::TokenType ps) {
+                Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
+                const auto status = sb.serialize(packetSize);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-                // Write the packet type
-                const FwPacketDescriptorType descriptorType = packetType;
-                status = sb.serialize(descriptorType);
+            }
+
+            //! Write an arbitrary packet type
+            void writePacketType(FwPacketDescriptorType pt) {
+                Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
+                const auto status = sb.serialize(pt);
                 ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
             }
 
@@ -214,6 +241,27 @@ namespace Svc {
                 const U32 hashOffset = getSize() - HASH_DIGEST_LENGTH;
                 const U8 *const hashAddr = hashBuffer.getBuffAddr();
                 memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
+            }
+
+            //! Randomly invalidate a valid frame
+            void randomlyInvalidate() {
+                ASSERT_TRUE(valid);
+                const U32 invalidateIndex = STest::Pick::startLength(0, 100);
+                switch (invalidateIndex) {
+                    case 0:
+                        // Invalidate the packet type
+                        writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
+                        valid = false;
+                        break;
+                    case 1:
+                        // Invalidate the hash value
+                        ++data[getSize() - 1];
+                        valid = false;
+                        break;
+                    default:
+                        // Stay valid
+                        break;
+                }
             }
 
           public:
