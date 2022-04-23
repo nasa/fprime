@@ -1,7 +1,7 @@
 //! ======================================================================
-//! SendBuffer.cpp
-//! Implementation file for SendBuffer rule
-//! @author mstarch, bocchino
+//! \title SendBuffer.cpp
+//! \brief Implementation file for SendBuffer rule
+//! \author mstarch, bocchino
 //! ======================================================================
 
 #include "Printing.hpp"
@@ -128,7 +128,7 @@ namespace Svc {
         Svc::Tester::UplinkFrame& frame
     ) {
         if (frame.isValid()) {
-            // Push F on the received queue
+            // Push frame F on the received queue
             state.m_framesReceived.push_back(frame);
             // Update the count of expected frames
             switch (frame.packetType) {

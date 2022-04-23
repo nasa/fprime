@@ -1,7 +1,7 @@
 //! ======================================================================
-//! GenerateFrames.cpp
-//! Implementation file for GenerateFrames rule
-//! @author mstarch, bocchino
+//! \title GenerateFrames.cpp
+//! \brief Implementation file for GenerateFrames rule
+//! \author author mstarch, bocchino
 //! ======================================================================
 
 #include "GenerateFrames.hpp"

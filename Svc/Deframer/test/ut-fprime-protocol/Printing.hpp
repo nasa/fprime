@@ -1,7 +1,7 @@
 //! ======================================================================
-//! Printing.hpp
-//! Print macros for deframer unit tests
-//! @author bocchino 
+//! \title Printing.hpp
+//! \author bocchino 
+//! \brief Print macros for deframer unit tests
 //! ======================================================================
 
 #define PRINTING

@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  Tester.cpp
 // \author mstarch, bocchino
-// \brief  cpp file for Deframer test harness implementation class
+// \brief  Implementation file for Deframer test with F Prime protocol
 //
 // \copyright
 // Copyright 2009-2022, by the California Institute of Technology.

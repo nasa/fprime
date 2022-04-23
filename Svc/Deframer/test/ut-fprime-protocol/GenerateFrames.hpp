@@ -1,7 +1,7 @@
 //! ======================================================================
-//! DeframerRules.hpp
-//! Header file for GenerateFrames rule
-//! @author lestarch, bocchino
+//! \title DeframerRules.hpp
+//! \brief Header file for GenerateFrames rule
+//! \author lestarch, bocchino
 //! ======================================================================
 
 #ifndef SVC_GENERATE_FRAMES_HPP

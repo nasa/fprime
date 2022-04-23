@@ -1,7 +1,7 @@
 //! ======================================================================
-//! SendBuffer.hpp
-//! Header file for SendBuffer rule
-//! @author lestarch, bocchino
+//! \title SendBuffer.hpp
+//! \brief Header file for SendBuffer rule
+//! \author lestarch, bocchino
 //! ======================================================================
 
 #ifndef SVC_SEND_BUFFER_HPP

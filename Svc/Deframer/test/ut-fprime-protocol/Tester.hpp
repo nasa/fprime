@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  Deframer/ut/ut-fprime-protocol/Tester.hpp
+// \title  Tester.hpp
 // \author mstarch, bocchino
-// \brief  hpp file for Deframer test with F Prime protocol
+// \brief  Header file for Deframer test with F Prime protocol
 //
 // \copyright
 // Copyright 2009-2022, by the California Institute of Technology.
@@ -42,13 +42,10 @@ namespace Svc {
 
         //! Enumerated constants
         enum Constants {
-            //! The maximum frame size
-            //! Every frame has to fit in the ring buffer
-            //! In polling mode, every frame has to fit in the polling buffer
-            MAX_FRAME_SIZE = 
-              (DeframerCfg::POLL_BUFFER_SIZE < DeframerCfg::RING_BUFFER_SIZE) ?
-                  DeframerCfg::POLL_BUFFER_SIZE :
-                  DeframerCfg::RING_BUFFER_SIZE,
+            //! The maximum valid frame size
+            //! Every frame must fit in the ring buffer
+            //! TODO: Allow this to be bigger, and invalid
+            MAX_VALID_FRAME_SIZE = DeframerCfg::RING_BUFFER_SIZE,
             //! The offset of the start word in an F Prime protocol frame
             START_WORD_OFFSET = 0,
             //! The offset of the packet size in an F Prime protocol frame
@@ -76,7 +73,7 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! The type of frame data
-            typedef U8 FrameData[MAX_FRAME_SIZE];
+            typedef U8 FrameData[MAX_VALID_FRAME_SIZE];
 
           public:
 
@@ -151,11 +148,11 @@ namespace Svc {
             }
 
             //! Get the max packet size
-            static U32 getMaxCommandPacketSize() {
+            static U32 getMaxValidCommandPacketSize() {
                 return std::min(
                     // Packet must fit into a com buffer
                     static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
-                    getMaxFilePacketSize()
+                    getMaxValidFilePacketSize()
                 );
             }
 
@@ -165,15 +162,15 @@ namespace Svc {
             }
 
             //! Get the max file size
-            static U32 getMaxFilePacketSize() {
+            static U32 getMaxValidFilePacketSize() {
                 // The size of the parts of the frame that are outside the packet
                 const U32 nonPacketSize = FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
                 FW_ASSERT(
-                    MAX_FRAME_SIZE >= nonPacketSize,
-                    MAX_FRAME_SIZE,
+                    MAX_VALID_FRAME_SIZE >= nonPacketSize,
+                    MAX_VALID_FRAME_SIZE,
                     nonPacketSize
                 );
-                return MAX_FRAME_SIZE - nonPacketSize;
+                return MAX_VALID_FRAME_SIZE - nonPacketSize;
             }
 
             //! Construct a random frame
@@ -181,21 +178,25 @@ namespace Svc {
                 // Randomly set the packet type
                 auto packetType = Fw::ComPacket::FW_PACKET_UNKNOWN;
                 const U32 packetSelector = STest::Pick::lowerUpper(0,1);
+                U32 maxValidPacketSize = 0;
                 switch (packetSelector) {
                     case 0:
                         packetType = Fw::ComPacket::FW_PACKET_COMMAND;
+                        maxValidPacketSize = getMaxValidCommandPacketSize();
                         break;
                     case 1:
                         packetType = Fw::ComPacket::FW_PACKET_FILE;
+                        maxValidPacketSize = getMaxValidFilePacketSize();
                         break;
                     default:
                         FW_ASSERT(0);
                         break;
                 }
                 // Randomly set the packet size
+                // TODO: Handle invalid packets
                 const U32 packetSize = STest::Pick::lowerUpper(
                     getMinPacketSize(),
-                    getMaxCommandPacketSize()
+                    maxValidPacketSize
                 );
                 // Construct the frame
                 auto frame = UplinkFrame(packetType, packetSize);
@@ -303,7 +304,7 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! The frame data, including header, packet data, and CRC
-            U8 data[MAX_FRAME_SIZE];
+            U8 data[MAX_VALID_FRAME_SIZE];
 
             //! The amount of frame data already copied out into a buffer
             U32 copyOffset;
@@ -357,6 +358,7 @@ namespace Svc {
         void sendIncomingBuffer() {
             switch (m_inputMode) {
                 case InputMode::PUSH:
+                    // Push buffer to framedIn
                     invoke_to_framedIn(
                         0,
                         m_incomingBuffer,
@@ -364,8 +366,8 @@ namespace Svc {
                     );
                     break;
                 case InputMode::POLL:
-                    // TODO
-                    FW_ASSERT(0);
+                    // Call schedIn handler, which polls for buffer
+                    invoke_to_schedIn(0, 0);
                     break;
                 default:
                     FW_ASSERT(0);
@@ -453,7 +455,8 @@ namespace Svc {
         std::deque<UplinkFrame> m_framesReceived;
 
         //! Bytes for incoming buffer
-        U8 m_incomingBufferBytes[MAX_FRAME_SIZE];
+        //! The incoming buffer must fit in the poll buffer
+        U8 m_incomingBufferBytes[DeframerCfg::POLL_BUFFER_SIZE];
 
         //! Buffer to hold frames
         Fw::Buffer m_incomingBuffer;
