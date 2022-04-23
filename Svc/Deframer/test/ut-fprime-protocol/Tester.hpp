@@ -260,12 +260,20 @@ namespace Svc {
                 // Select out of 100 samples
                 const U32 invalidateIndex = STest::Pick::startLength(0, 100);
                 switch (invalidateIndex) {
-                    case 0:
+                    case 0: {
+                        // Invalidate the start word
+                        const FpFrameHeader::TokenType badStartWord =
+                            FpFrameHeader::START_WORD + 1;
+                        writeStartWord(badStartWord);
+                        valid = false;
+                        break;
+                    }
+                    case 1:
                         // Invalidate the packet type
                         writePacketType(Fw::ComPacket::FW_PACKET_UNKNOWN);
                         valid = false;
                         break;
-                    case 1:
+                    case 2:
                         // Invalidate the hash value
                         ++data[getSize() - 1];
                         valid = false;
