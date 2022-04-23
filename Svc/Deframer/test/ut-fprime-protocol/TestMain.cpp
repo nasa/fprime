@@ -122,8 +122,6 @@ TEST(Error, SizeOverflow) {
     tester.sizeOverflow();
 }
 
-// TODO: Add a test for size larger than ring buffer size
-
 // ----------------------------------------------------------------------
 // Main function 
 // ----------------------------------------------------------------------
