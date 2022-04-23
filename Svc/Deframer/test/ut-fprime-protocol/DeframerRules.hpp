@@ -30,10 +30,14 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Precondition
-        bool precondition(const Tester& state);
+        bool precondition(
+            const Tester& state //!< The test state
+        );
 
         //! Action
-        void action(Tester& state);
+        void action(
+            Tester& state //!< The test state
+        );
 
     };
 
@@ -57,10 +61,14 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Precondition
-        bool precondition(const Tester& state);
+        bool precondition(
+            const Tester& state //!< The test state
+        );
 
         //! Action
-        void action(Svc::Tester &state);
+        void action(
+            Svc::Tester &state //!< The test state
+        );
 
       private:
 

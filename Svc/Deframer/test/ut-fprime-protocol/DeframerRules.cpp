@@ -150,12 +150,12 @@ namespace Svc {
             if (frame.getRemainingCopySize() == 0) {
                 // Remove F from the send queue
                 state.m_framesToSend.pop_front();
-                // If F is valid, then record it as received
-                recordReceivedFrame(state, frame);
                 PRINT_ARGS(
                     "frameToSend.size()=%lu",
                     state.m_framesToSend.size()
                 )
+                // If F is valid, then record it as received
+                recordReceivedFrame(state, frame);
             }
 
         }
