@@ -53,18 +53,24 @@ namespace Svc {
     // Public instance methods 
     // ----------------------------------------------------------------------
 
-    U32 Tester::UplinkFrame::getSize() const {
-        return NON_PACKET_SIZE + packetSize;
-    }
-
     U32 Tester::UplinkFrame::getRemainingCopySize() const {
         const U32 frameSize = getSize();
         FW_ASSERT(frameSize >= copyOffset, frameSize, copyOffset);
         return frameSize - copyOffset;
     }
 
+    U32 Tester::UplinkFrame::getSize() const {
+        return NON_PACKET_SIZE + packetSize;
+    }
+
     bool Tester::UplinkFrame::isValid() const {
         return valid;
+    }
+
+    const Tester::UplinkFrame::FrameData&
+        Tester::UplinkFrame::getData() const
+    {
+        return data;
     }
 
     void Tester::UplinkFrame::copyDataOut(
@@ -80,59 +86,9 @@ namespace Svc {
         copyOffset += size;
     }
 
-    const Tester::UplinkFrame::FrameData&
-        Tester::UplinkFrame::getData() const
-    {
-        return data;
-    }
-
     // ----------------------------------------------------------------------
     // Public static methods 
     // ----------------------------------------------------------------------
-
-    U32 Tester::UplinkFrame::getMinPacketSize() {
-        // Packet must hold the packet type
-        return sizeof(FwPacketDescriptorType);
-    }
-
-    U32 Tester::UplinkFrame::getInvalidPacketSize() {
-        FW_ASSERT(
-            MAX_FRAME_SIZE >= NON_PACKET_SIZE,
-            MAX_FRAME_SIZE,
-            NON_PACKET_SIZE
-        );
-        const U32 result = MAX_FRAME_SIZE - NON_PACKET_SIZE;
-        // Make sure the size is invalid
-        FW_ASSERT(
-            result > getMaxValidCommandPacketSize(),
-            result,
-            getMaxValidCommandPacketSize()
-        );
-        FW_ASSERT(
-            result > getMaxValidFilePacketSize(),
-            result,
-            getMaxValidFilePacketSize()
-        );
-        return result;
-    }
-
-    U32 Tester::UplinkFrame::getMaxValidFilePacketSize() {
-        FW_ASSERT(
-            MAX_VALID_FRAME_SIZE >= NON_PACKET_SIZE,
-            MAX_VALID_FRAME_SIZE,
-            NON_PACKET_SIZE
-        );
-        return MAX_VALID_FRAME_SIZE - NON_PACKET_SIZE;
-    }
-
-    U32 Tester::UplinkFrame::getMaxValidCommandPacketSize() {
-        return std::min(
-            // Packet must fit into a com buffer
-            static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
-            // Frame must fit into the ring buffer
-            getMaxValidFilePacketSize()
-        );
-    }
 
     Tester::UplinkFrame Tester::UplinkFrame::random() {
         // Randomly set the packet type
@@ -179,53 +135,54 @@ namespace Svc {
         return frame;
     }
 
+    U32 Tester::UplinkFrame::getInvalidPacketSize() {
+        FW_ASSERT(
+            MAX_FRAME_SIZE >= NON_PACKET_SIZE,
+            MAX_FRAME_SIZE,
+            NON_PACKET_SIZE
+        );
+        const U32 result = MAX_FRAME_SIZE - NON_PACKET_SIZE;
+        // Make sure the size is invalid
+        FW_ASSERT(
+            result > getMaxValidCommandPacketSize(),
+            result,
+            getMaxValidCommandPacketSize()
+        );
+        FW_ASSERT(
+            result > getMaxValidFilePacketSize(),
+            result,
+            getMaxValidFilePacketSize()
+        );
+        return result;
+    }
+
+    U32 Tester::UplinkFrame::getMaxValidCommandPacketSize() {
+        return std::min(
+            // Packet must fit into a com buffer
+            static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
+            // Frame must fit into the ring buffer
+            getMaxValidFilePacketSize()
+        );
+    }
+
+    U32 Tester::UplinkFrame::getMaxValidFilePacketSize() {
+        FW_ASSERT(
+            MAX_VALID_FRAME_SIZE >= NON_PACKET_SIZE,
+            MAX_VALID_FRAME_SIZE,
+            NON_PACKET_SIZE
+        );
+        return MAX_VALID_FRAME_SIZE - NON_PACKET_SIZE;
+    }
+
+    U32 Tester::UplinkFrame::getMinPacketSize() {
+        // Packet must hold the packet type
+        return sizeof(FwPacketDescriptorType);
+    }
+
     // ----------------------------------------------------------------------
     // Private instance methods
     // ----------------------------------------------------------------------
             
-    void Tester::UplinkFrame::updateHeader() {
-        // Write the correct start word
-        writeStartWord(FpFrameHeader::START_WORD);
-        // Write the correct packet size
-        writePacketSize(packetSize);
-        // Write the correct packet type
-        writePacketType(packetType);
-    }
-
-    void Tester::UplinkFrame::writeStartWord(
-        FpFrameHeader::TokenType startWord
-    ) {
-        Fw::SerialBuffer sb(data, sizeof startWord);
-        const Fw::SerializeStatus status = sb.serialize(startWord);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    }
-
-    void Tester::UplinkFrame::writePacketSize(
-        FpFrameHeader::TokenType ps
-    ) {
-        Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
-        const Fw::SerializeStatus status = sb.serialize(packetSize);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    }
-
-    void Tester::UplinkFrame::writePacketType(
-        FwPacketDescriptorType pt
-    ) {
-        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
-        const Fw::SerializeStatus status = sb.serialize(pt);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    }
-
-    void Tester::UplinkFrame::updateHash() {
-        Utils::Hash hash;
-        Utils::HashBuffer hashBuffer;
-        const U32 dataSize = FpFrameHeader::SIZE + packetSize;
-        hash.update(data,  dataSize);
-        hash.final(hashBuffer);
-        const U8 *const hashAddr = hashBuffer.getBuffAddr();
-        memcpy(&data[dataSize], hashAddr, HASH_DIGEST_LENGTH);
-    }
-
     void Tester::UplinkFrame::randomlyInvalidate() {
         if (valid) {
             // Invalidation cases occur out of 100 samples
@@ -254,7 +211,49 @@ namespace Svc {
                     break;
             }
         }
+    }
 
+    void Tester::UplinkFrame::updateHash() {
+        Utils::Hash hash;
+        Utils::HashBuffer hashBuffer;
+        const U32 dataSize = FpFrameHeader::SIZE + packetSize;
+        hash.update(data,  dataSize);
+        hash.final(hashBuffer);
+        const U8 *const hashAddr = hashBuffer.getBuffAddr();
+        memcpy(&data[dataSize], hashAddr, HASH_DIGEST_LENGTH);
+    }
+
+    void Tester::UplinkFrame::updateHeader() {
+        // Write the correct start word
+        writeStartWord(FpFrameHeader::START_WORD);
+        // Write the correct packet size
+        writePacketSize(packetSize);
+        // Write the correct packet type
+        writePacketType(packetType);
+    }
+
+    void Tester::UplinkFrame::writePacketSize(
+        FpFrameHeader::TokenType ps
+    ) {
+        Fw::SerialBuffer sb(&data[PACKET_SIZE_OFFSET], sizeof ps);
+        const Fw::SerializeStatus status = sb.serialize(packetSize);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    void Tester::UplinkFrame::writePacketType(
+        FwPacketDescriptorType pt
+    ) {
+        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
+        const Fw::SerializeStatus status = sb.serialize(pt);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    }
+
+    void Tester::UplinkFrame::writeStartWord(
+        FpFrameHeader::TokenType startWord
+    ) {
+        Fw::SerialBuffer sb(data, sizeof startWord);
+        const Fw::SerializeStatus status = sb.serialize(startWord);
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 
 }
