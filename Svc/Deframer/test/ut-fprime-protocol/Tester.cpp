@@ -67,20 +67,22 @@ namespace Svc {
         Fw::ComBuffer& data,
         U32 context
     ) {
-        // Check for available data
+        // Check that a received frame exists
         ASSERT_GT(m_framesReceived.size(), 0) << 
             "Frames received queue is empty" << std::endl;
-        // Grab the front item
+        // Get the frame at the front
         const auto& frame= m_framesReceived.front();
         m_framesReceived.pop_front();
-
+        // Check the packet type
         ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_COMMAND);
+        // Check the packet data
         for (U32 i = 0; i < data.getBuffLength(); i++) {
             EXPECT_EQ(
                 (data.getBuffAddr())[i],
                 (frame.getData())[FpFrameHeader::SIZE + i]
             );
         }
+        // Push the history entry
         this->pushFromPortEntry_comOut(data, context);
     }
 
@@ -88,13 +90,15 @@ namespace Svc {
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer& fwBuffer
     ) {
-        // Check for available data
+        // Check that a received frame exists
         ASSERT_GT(m_framesReceived.size(), 0) << 
             "Frames received queue is empty" << std::endl;
-        // Grab the front item
+        // Get the frame at the front
         UplinkFrame frame = m_framesReceived.front();
         m_framesReceived.pop_front();
-
+        // Check the packet type
+        ASSERT_EQ(frame.packetType, Fw::ComPacket::FW_PACKET_FILE);
+        // Check the packet data
         for (U32 i = 0; i < fwBuffer.getSize(); i++) {
             // Deframer strips type before sending to FileUplink
             const U32 frameOffset =
@@ -107,6 +111,7 @@ namespace Svc {
         // Buffers received on this port are owned by the receiver
         // So delete the allocation now
         delete[](fwBuffer.getData() - sizeof(FwPacketDescriptorType));
+        // Push the history entry
         this->pushFromPortEntry_bufferOut(fwBuffer);
     }
 
@@ -142,17 +147,12 @@ namespace Svc {
     ) {
         this->pushFromPortEntry_framedPoll(pollBuffer);
         U8* incoming = m_incomingBuffer.getData();
+        const U32 size = m_incomingBuffer.getSize();
         U8* outgoing = pollBuffer.getData();
-        FW_ASSERT(
-            pollBuffer.getSize() >= m_incomingBuffer.getSize(),
-            pollBuffer.getSize(),
-            m_incomingBuffer.getSize()
-        );
-        // TODO: Replace with memcpy
-        for (U32 i = 0; i < m_incomingBuffer.getSize(); i++) {
-            outgoing[i] = incoming[i];
-        }
-        pollBuffer.setSize(m_incomingBuffer.getSize());
+        const U32 maxSize = pollBuffer.getSize();
+        FW_ASSERT(size <= maxSize, size, maxSize);
+        memcpy(outgoing, incoming, size);
+        pollBuffer.setSize(size);
         return Drv::PollStatus::POLL_OK;
     }
 
