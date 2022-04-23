@@ -43,8 +43,13 @@ namespace Svc {
         //! Enumerated constants
         enum Constants {
             //! The maximum valid frame size
-            //! Every frame must fit in the ring buffer
+            //! Every valid frame must fit in the ring buffer
             MAX_VALID_FRAME_SIZE = DeframerCfg::RING_BUFFER_SIZE,
+            //! The max frame size that will fit in the test buffer
+            //! Larger than max valid size, to test bad sizes
+            MAX_FRAME_SIZE = MAX_VALID_FRAME_SIZE + 1,
+            //! The size of the part of the frame that is outside the packet
+            NON_PACKET_SIZE = FpFrameHeader::SIZE + HASH_DIGEST_LENGTH,
             //! The offset of the start word in an F Prime protocol frame
             START_WORD_OFFSET = 0,
             //! The offset of the packet size in an F Prime protocol frame
@@ -72,7 +77,7 @@ namespace Svc {
             // ----------------------------------------------------------------------
 
             //! The type of frame data
-            typedef U8 FrameData[MAX_VALID_FRAME_SIZE];
+            typedef U8 FrameData[MAX_FRAME_SIZE];
 
           public:
 
@@ -121,7 +126,7 @@ namespace Svc {
 
             //! Get the frame size
             U32 getSize() const {
-                return FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
+                return NON_PACKET_SIZE + packetSize;
             }
 
             //! Get the size of data that remains for copying
@@ -156,11 +161,45 @@ namespace Svc {
                 return sizeof(FwPacketDescriptorType);
             }
 
-            //! Get the max packet size
+            //! Get the max packet size that will fit in the test buffer
+            //! This is an invalid size for the deframer
+            static U32 getInvalidPacketSize() {
+                FW_ASSERT(
+                    MAX_FRAME_SIZE >= NON_PACKET_SIZE,
+                    MAX_FRAME_SIZE,
+                    NON_PACKET_SIZE
+                );
+                const U32 result = MAX_FRAME_SIZE - NON_PACKET_SIZE;
+                // Make sure the size is invalid
+                FW_ASSERT(
+                    result > getMaxValidCommandPacketSize(),
+                    result,
+                    getMaxValidCommandPacketSize()
+                );
+                FW_ASSERT(
+                    result > getMaxValidFilePacketSize(),
+                    result,
+                    getMaxValidFilePacketSize()
+                );
+                return result;
+            }
+
+            //! Get the max valid file packet size
+            static U32 getMaxValidFilePacketSize() {
+                FW_ASSERT(
+                    MAX_VALID_FRAME_SIZE >= NON_PACKET_SIZE,
+                    MAX_VALID_FRAME_SIZE,
+                    NON_PACKET_SIZE
+                );
+                return MAX_VALID_FRAME_SIZE - NON_PACKET_SIZE;
+            }
+
+            //! Get the max valid command packet size
             static U32 getMaxValidCommandPacketSize() {
                 return std::min(
                     // Packet must fit into a com buffer
                     static_cast<U32>(FW_COM_BUFFER_MAX_SIZE),
+                    // Frame must fit into the ring buffer
                     getMaxValidFilePacketSize()
                 );
             }
@@ -168,18 +207,6 @@ namespace Svc {
             //! Get a constant reference to the frame data
             const FrameData& getData() const {
                 return data;
-            }
-
-            //! Get the max file size
-            static U32 getMaxValidFilePacketSize() {
-                // The size of the parts of the frame that are outside the packet
-                const U32 nonPacketSize = FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
-                FW_ASSERT(
-                    MAX_VALID_FRAME_SIZE >= nonPacketSize,
-                    MAX_VALID_FRAME_SIZE,
-                    nonPacketSize
-                );
-                return MAX_VALID_FRAME_SIZE - nonPacketSize;
             }
 
             //! Construct a random frame
@@ -202,14 +229,26 @@ namespace Svc {
                         break;
                 }
                 // Randomly set the packet size
-                // TODO: Handle invalid packets
-                const U32 packetSize = STest::Pick::lowerUpper(
-                    getMinPacketSize(),
-                    maxValidPacketSize
-                );
+                U32 packetSize = 0;
+                // Invalidate 1 in 100 packet sizes
+                const U32 invalidSizeIndex = STest::Pick::startLength(0, 100);
+                if (invalidSizeIndex == 0) {
+                    // This packet size fits in the test buffer,
+                    // but is invalid for the deframer
+                    packetSize = getInvalidPacketSize();
+                }
+                else {
+                    // Choose a valid packet size
+                    // This packet size fits in the test buffer and is
+                    // valid for the deframer
+                    packetSize = STest::Pick::lowerUpper(
+                        getMinPacketSize(),
+                        maxValidPacketSize
+                    );
+                }
                 // Construct the frame
                 auto frame = UplinkFrame(packetType, packetSize);
-                // Randomly invalidate the frame
+                // Randomly invalidate the frame, or leave it alone
                 frame.randomlyInvalidate();
                 // Return the frame
                 return frame;
@@ -263,10 +302,11 @@ namespace Svc {
                 memcpy(&data[hashOffset], hashAddr, HASH_DIGEST_LENGTH);
             }
 
-            //! Randomly invalidate a frame
+            //! Randomly invalidate a valid frame, or leave it alone
+            //! If the frame is already invalid, leave it alone
             void randomlyInvalidate() {
                 if (valid) {
-                    // Select out of 100 samples
+                    // Out of 100 samples
                     const U32 invalidateIndex = STest::Pick::startLength(0, 100);
                     switch (invalidateIndex) {
                         case 0: {
@@ -312,8 +352,10 @@ namespace Svc {
             // Private member variables 
             // ----------------------------------------------------------------------
 
-            //! The frame data, including header, packet data, and CRC
-            U8 data[MAX_VALID_FRAME_SIZE];
+            //! The frame data, including header, packet data, and hash.
+            //! The array is big enough to hold a frame larger than the
+            //! max valid frame size for the deframer.
+            U8 data[MAX_FRAME_SIZE];
 
             //! The amount of frame data already copied out into a buffer
             U32 copyOffset;
