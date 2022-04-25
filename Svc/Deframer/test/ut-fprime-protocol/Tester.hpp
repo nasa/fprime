@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  Tester.hpp
-// \author mstarch, bocchino
 // \brief  Header file for Deframer test with F Prime protocol
+// \author mstarch, bocchino
 //
 // \copyright
 // Copyright 2009-2022, by the California Institute of Technology.

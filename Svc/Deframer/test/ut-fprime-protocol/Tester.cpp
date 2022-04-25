@@ -1,13 +1,12 @@
 // ======================================================================
 // \title  Tester.cpp
-// \author mstarch, bocchino
 // \brief  Implementation file for Deframer test with F Prime protocol
+// \author mstarch, bocchino
 //
 // \copyright
 // Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-//
 // ======================================================================
 
 #include <cstring>
