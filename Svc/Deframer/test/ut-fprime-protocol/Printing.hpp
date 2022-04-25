@@ -1,7 +1,7 @@
 //! ======================================================================
 //! \title Printing.hpp
-//! \author bocchino
 //! \brief Print macros for deframer unit tests
+//! \author bocchino
 //! ======================================================================
 
 // Uncomment the following line to turn on printing
