@@ -52,7 +52,7 @@ Tester ::Tester(ConnectStatus::t bufferOutStatus)
     component.setup(this->m_mock);
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -199,7 +199,7 @@ Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, 
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
 
@@ -230,7 +230,7 @@ void Tester ::connectPorts(void) {
     this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }
