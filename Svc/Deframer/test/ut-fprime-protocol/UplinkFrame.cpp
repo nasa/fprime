@@ -243,16 +243,16 @@ namespace Svc {
     void Tester::UplinkFrame::writePacketType(
         FwPacketDescriptorType pt
     ) {
-        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof packetType);
+        Fw::SerialBuffer sb(&data[PACKET_TYPE_OFFSET], sizeof pt);
         const Fw::SerializeStatus status = sb.serialize(pt);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 
     void Tester::UplinkFrame::writeStartWord(
-        FpFrameHeader::TokenType startWord
+        FpFrameHeader::TokenType sw
     ) {
-        Fw::SerialBuffer sb(data, sizeof startWord);
-        const Fw::SerializeStatus status = sb.serialize(startWord);
+        Fw::SerialBuffer sb(data, sizeof sw);
+        const Fw::SerializeStatus status = sb.serialize(sw);
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     }
 

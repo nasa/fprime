@@ -165,7 +165,7 @@ namespace Svc {
 
             //! Write an arbitrary start word
             void writeStartWord(
-                FpFrameHeader::TokenType startWord //!< The start word
+                FpFrameHeader::TokenType sw //!< The start word
             );
 
           public:
