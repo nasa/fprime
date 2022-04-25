@@ -26,7 +26,7 @@ namespace Svc {
     void SendBuffer :: action(Svc::Tester &state) {
 
         PRINT("----------------------------------------------------------------------");
-        PRINT("SendBufffer action");
+        PRINT("SendBuffer action");
         PRINT("----------------------------------------------------------------------");
 
         // Clear the test history
