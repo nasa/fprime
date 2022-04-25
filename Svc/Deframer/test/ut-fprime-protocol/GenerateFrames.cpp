@@ -14,7 +14,7 @@ namespace Svc {
     GenerateFrames :: GenerateFrames() :
         STest::Rule<Tester>("GenerateFrames")
     {
-    
+
     }
 
     bool GenerateFrames :: precondition(const Svc::Tester &state) {

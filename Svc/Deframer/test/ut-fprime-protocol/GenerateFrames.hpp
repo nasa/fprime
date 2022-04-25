@@ -19,14 +19,14 @@ namespace Svc {
     struct GenerateFrames : public STest::Rule<Tester> {
 
         // ----------------------------------------------------------------------
-        // Construction 
+        // Construction
         // ----------------------------------------------------------------------
 
         //! Constructor
         GenerateFrames();
 
         // ----------------------------------------------------------------------
-        // Public member functions 
+        // Public member functions
         // ----------------------------------------------------------------------
 
         //! Precondition

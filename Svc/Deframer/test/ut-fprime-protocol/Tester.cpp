@@ -57,9 +57,9 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Public instance methods 
+    // Public instance methods
     // ----------------------------------------------------------------------
-    
+
     void Tester ::setUpIncomingBuffer() {
         const U32 bufferSize = STest::Pick::lowerUpper(
             1,
@@ -102,7 +102,7 @@ namespace Svc {
         U32 context
     ) {
         // Check that a received frame is expected
-        ASSERT_GT(m_framesToReceive.size(), 0) << 
+        ASSERT_GT(m_framesToReceive.size(), 0) <<
             "Queue of frames to receive is empty" << std::endl;
         // Get the frame at the front
         UplinkFrame frame = m_framesToReceive.front();
@@ -125,7 +125,7 @@ namespace Svc {
         Fw::Buffer& fwBuffer
     ) {
         // Check that a received frame is expected
-        ASSERT_GT(m_framesToReceive.size(), 0) << 
+        ASSERT_GT(m_framesToReceive.size(), 0) <<
             "Queue of frames to receive is empty" << std::endl;
         // Get the frame at the front
         UplinkFrame frame = m_framesToReceive.front();

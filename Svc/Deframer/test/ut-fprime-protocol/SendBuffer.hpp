@@ -22,7 +22,7 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Construction 
+        // Construction
         // ----------------------------------------------------------------------
 
         //! Constructor
@@ -31,7 +31,7 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Public functions 
+        // Public functions
         // ----------------------------------------------------------------------
 
         //! Precondition
@@ -47,7 +47,7 @@ namespace Svc {
       private:
 
         // ----------------------------------------------------------------------
-        // Private helper functions 
+        // Private helper functions
         // ----------------------------------------------------------------------
 
         //! Fill the incoming buffer with frame data
@@ -62,9 +62,9 @@ namespace Svc {
         );
 
       private:
-        
+
         // ----------------------------------------------------------------------
-        // Private member variables 
+        // Private member variables
         // ----------------------------------------------------------------------
 
         //! The expected number of com buffers emitted

@@ -28,7 +28,7 @@ namespace Svc {
     class Tester : public DeframerGTestBase {
 
         // ----------------------------------------------------------------------
-        // Friend classes 
+        // Friend classes
         // ----------------------------------------------------------------------
 
         friend struct GenerateFrames;
@@ -94,7 +94,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Public instance methods 
+            // Public instance methods
             // ----------------------------------------------------------------------
 
             //! Copy data from the frame, advancing the copy offset
@@ -118,7 +118,7 @@ namespace Svc {
           public:
 
             // ----------------------------------------------------------------------
-            // Public static methods 
+            // Public static methods
             // ----------------------------------------------------------------------
 
             //! Construct a random frame
@@ -142,7 +142,7 @@ namespace Svc {
             // ----------------------------------------------------------------------
             // Private instance methods
             // ----------------------------------------------------------------------
-            
+
             //! Randomly invalidate a valid frame, or leave it alone
             //! If the frame is already invalid, leave it alone
             void randomlyInvalidate();
@@ -183,7 +183,7 @@ namespace Svc {
           private:
 
             // ----------------------------------------------------------------------
-            // Private member variables 
+            // Private member variables
             // ----------------------------------------------------------------------
 
             //! The frame data, including header, packet data, and hash.
@@ -204,7 +204,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
         // Constructor
         // ----------------------------------------------------------------------
-        
+
         //! Construct a Tester
         Tester(InputMode::t inputMode);
 
@@ -220,7 +220,7 @@ namespace Svc {
       public:
 
         // ----------------------------------------------------------------------
-        // Public instance methods 
+        // Public instance methods
         // ----------------------------------------------------------------------
 
         //! Set up the incoming buffer

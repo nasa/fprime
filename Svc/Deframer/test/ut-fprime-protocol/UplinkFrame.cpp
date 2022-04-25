@@ -16,7 +16,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
-    
+
     Tester::UplinkFrame::UplinkFrame(
         Fw::ComPacket::ComPacketType packetType,
         U32 packetSize
@@ -50,7 +50,7 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Public instance methods 
+    // Public instance methods
     // ----------------------------------------------------------------------
 
     U32 Tester::UplinkFrame::getRemainingCopySize() const {
@@ -87,7 +87,7 @@ namespace Svc {
     }
 
     // ----------------------------------------------------------------------
-    // Public static methods 
+    // Public static methods
     // ----------------------------------------------------------------------
 
     Tester::UplinkFrame Tester::UplinkFrame::random() {
@@ -182,7 +182,7 @@ namespace Svc {
     // ----------------------------------------------------------------------
     // Private instance methods
     // ----------------------------------------------------------------------
-            
+
     void Tester::UplinkFrame::randomlyInvalidate() {
         if (valid) {
             // Invalidation cases occur out of 100 samples

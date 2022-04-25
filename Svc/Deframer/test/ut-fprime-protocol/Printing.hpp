@@ -1,6 +1,6 @@
 //! ======================================================================
 //! \title Printing.hpp
-//! \author bocchino 
+//! \author bocchino
 //! \brief Print macros for deframer unit tests
 //! ======================================================================
 
