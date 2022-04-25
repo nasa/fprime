@@ -105,14 +105,14 @@ namespace Svc {
             // the send queue; and (2) if F is valid, then record F as
             // received
             if (frame.getRemainingCopySize() == 0) {
+                // If F is valid, then record it as received
+                recordReceivedFrame(state, frame);
                 // Remove F from the send queue
                 state.m_framesToSend.pop_front();
                 PRINT_ARGS(
                     "frameToSend.size()=%lu",
                     state.m_framesToSend.size()
                 )
-                // If F is valid, then record it as received
-                recordReceivedFrame(state, frame);
             }
 
         }
@@ -146,7 +146,7 @@ namespace Svc {
                     break;
                 default:
                     // This should not happen for a valid frame
-                    FW_ASSERT(0);
+                    FW_ASSERT(0, frame.packetType);
                     break;
             }
         }
