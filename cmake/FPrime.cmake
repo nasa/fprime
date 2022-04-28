@@ -81,7 +81,6 @@ if (FPRIME_ENABLE_UTIL_TARGETS)
     register_fprime_target(target/impl)
     register_fprime_ut_target(target/check)
     register_fprime_ut_target(target/check_leak)
-    register_fprime_ut_target(target/coverage)
     register_fprime_ut_target(target/testimpl)
 endif()
 

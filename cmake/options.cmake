@@ -189,13 +189,6 @@ else()
 endif()
 include(CTest)
 
-# Global settings for coverage
-if (FPRIME_ENABLE_UT_COVERAGE AND BUILD_TESTING)
-    # Note: this is to prevent filenames of the form file.cpp.<extension> and instead use file.<extension> instead to appease gcov
-    set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-endif()
-
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
 # `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
