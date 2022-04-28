@@ -33,12 +33,13 @@ from fprime_ac.utils import ConfigManager
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.serialize import includes1SerialCpp
-    from fprime_ac.generators.templates.serialize import namespaceSerialCpp
-    from fprime_ac.generators.templates.serialize import publicSerialCpp
-
     # from fprime_ac.generators.templates import privateSerialCpp
-    from fprime_ac.generators.templates.serialize import finishSerialCpp
+    from fprime_ac.generators.templates.serialize import (
+        finishSerialCpp,
+        includes1SerialCpp,
+        namespaceSerialCpp,
+        publicSerialCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

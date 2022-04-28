@@ -23,13 +23,8 @@ namespace Svc {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxTimer")
-#else
-      LinuxTimerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_numCalls(0)
   {
     this->initComponents();

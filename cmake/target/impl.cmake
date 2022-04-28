@@ -35,6 +35,6 @@ endfunction()
 ####
 function(impl_add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
-    run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_impl)
+    run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/ai_impl)
     add_custom_target("${TARGET_MOD_NAME}" DEPENDS ${AC_GENERATED})
 endfunction(impl_add_module_target)

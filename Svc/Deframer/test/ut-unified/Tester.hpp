@@ -16,7 +16,7 @@
 #include <deque>
 #include <ComPacket.hpp>
 #include "GTestBase.hpp"
-#include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/Deframer/Deframer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 
 namespace Svc {
@@ -56,9 +56,9 @@ class Tester : public DeframerGTestBase {
 
     void update_header_info(U32 garbage_index, U8 garbage_byte);
 
-    void setInputParams(FP_FRAME_TOKEN_TYPE size,
+    void setInputParams(FpFrameHeader::TokenType size,
                         U8* buffer,
-                        FP_FRAME_TOKEN_TYPE packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
+                        FpFrameHeader::TokenType packet_type = Fw::ComPacket::FW_PACKET_UNKNOWN);
 
   private:
     // ----------------------------------------------------------------------
@@ -117,30 +117,15 @@ class Tester : public DeframerGTestBase {
 
     //! The component under test
     //!
-    DeframerComponentImpl component;
+    Deframer component;
     Svc::FprimeDeframing protocol;
 
     std::deque<UplinkData> m_sending;
     std::deque<UplinkData> m_receiving;
     Fw::Buffer m_incoming_buffer;
     bool m_polling;
+    bool m_in_flush;
 
-    //! Expected buffer, for checking of the interface
-    //FP_FRAME_TOKEN_TYPE m_size;
-    //FP_FRAME_TOKEN_TYPE m_packet;
-    //
-    //Fw::Buffer m_incoming_file_buffer;
-
-
-    /*U8* m_buffer;
-    U32 m_uplink_type;
-    U32 m_uplink_used;
-    U32 m_uplink_size;
-    U32 m_uplink_point;
-    bool m_garbage;
-    Fw::ComPacket::ComPacketType m_uplink_com_type;
-    // Initialize to empty list to appease valgrind
-    U8 m_uplink_data[(sizeof(FP_FRAME_TOKEN_TYPE) * 2) + sizeof(U32) + FW_COM_BUFFER_MAX_SIZE] = {};*/
 };
 
 }  // end namespace Svc

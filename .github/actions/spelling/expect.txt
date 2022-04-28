@@ -30,6 +30,9 @@ aeiouy
 afterstatinfo
 agg
 aheared
+alignedallocator
+AlignedAllocator
+ALIGNEDALLOCATOR
 ALLEXTERNALS
 alloc
 Alltypes
@@ -119,6 +122,7 @@ bibtex
 Bies
 bindir
 Bitfields
+bithacks
 bitmaps
 bitset
 ble
@@ -332,6 +336,7 @@ deque
 deregistration
 deser
 Deserial
+deserializer
 deserialization
 deserialize
 deserialized
@@ -391,6 +396,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpi
 DPRIVATE
 DPROTECTED
 dropdown
@@ -1352,6 +1358,7 @@ scons
 scp
 scrollbars
 sdd
+seander
 searchdata
 SEARCHENGINE
 segfault
@@ -1519,6 +1526,7 @@ synchronicity
 synopsys
 sys
 SYSFS
+sysinfo
 systemd
 tabbedwidths
 tabccitt
@@ -1707,6 +1715,7 @@ upl
 upto
 URI
 url
+urllib
 usb
 usec
 usecond
@@ -1769,6 +1778,7 @@ whitelist
 wiki
 wikipedia
 wildcards
+WLE
 Wno
 Wnon
 workaround

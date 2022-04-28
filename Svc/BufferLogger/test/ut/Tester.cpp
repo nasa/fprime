@@ -33,13 +33,8 @@ namespace Svc {
 
   Tester ::
     Tester(bool doInitLog) :
-#if FW_OBJECT_NAMES == 1
       BufferLoggerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferLogger")
-#else
-      BufferLoggerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     (void) system("rm -rf buf");
     (void) system("mkdir buf");

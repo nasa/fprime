@@ -35,20 +35,6 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   bool LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
-
-      /*
-       Their config:
-
-       2-wire UART on BLSP2 is accessible via /dev/ttyHS0
-       2-wire UART on BLSP9 is accessible via /dev/ttyHS3
-       4-wire UART on BLSP6 is accessible via /dev/ttyHS2
-
-       Our config:
-       tty-1 bam-2 2-wire
-       tty-2 bam-6 4-wire
-       tty-3 bam-9 4-wire
-       */
-
       // TODO remove printf
 
       NATIVE_INT_TYPE fd;

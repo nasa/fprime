@@ -10,13 +10,8 @@
 
 namespace ExampleComponents {
 
-#if FW_OBJECT_NAMES == 1
     ExampleComponentImpl::ExampleComponentImpl(const char* name) : ExampleComponentBase(name) {
     }
-#else
-    ExampleComponentImpl::ExampleComponentImpl() {
-    }
-#endif
     ExampleComponentImpl::~ExampleComponentImpl() {
     }
 

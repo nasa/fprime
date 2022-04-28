@@ -7,6 +7,13 @@
 #include <Fw/Types/InternalInterfaceString.hpp>
 #include <Fw/Types/PolyType.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
+//
+// Created by mstarch on 12/7/20.
+//
+#include <cstring>
+#include <Fw/Types/StringUtils.hpp>
+
+
 
 #include <cstdio>
 #include <cstring>
@@ -440,7 +447,8 @@ TEST(SerializationTest,Serialization1) {
     stat1 = buff.serialize(boolt1);
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat1);
 
-    std::cout << "Buffer contents: " << buff << std::endl;
+    // TKC - commented out due to fprime-util choking on output
+    // std::cout << "Buffer contents: " << buff << std::endl;
 
     // Serialize second buffer and test for equality
     buff2.resetSer();
@@ -893,8 +901,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U8>(pt), in8);
     ASSERT_EQ(out8, in8);
 
+#if FW_SERIALIZABLE_TO_STRING
     pt.toString(str);
     ASSERT_STREQ(str.toChar(), "218 ");
+#endif
 
     // U16 Type  ==============================================================
     U16 inU16 = 34;
@@ -909,8 +919,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U16>(ptU16), inU16);
     ASSERT_EQ(outU16, inU16);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU16.toString(str);
     ASSERT_STREQ(str.toChar(), "45000 ");
+#endif
 
     // U32 Type  ==============================================================
     U32 inU32 = 89;
@@ -925,8 +937,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U32>(ptU32), inU32);
     ASSERT_EQ(outU32, inU32);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU32.toString(str);
     ASSERT_STREQ(str.toChar(), "3222111000 ");
+#endif
 
     // U64 Type  ==============================================================
     U64 inU64 = 233;
@@ -941,8 +955,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<U64>(ptU64), inU64);
     ASSERT_EQ(outU64, inU64);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptU64.toString(str);
     ASSERT_STREQ(str.toChar(), "555444333222111 ");
+#endif
 
     // I8 Type  ===============================================================
     I8 inI8 = 2;
@@ -957,8 +973,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I8>(ptI8), inI8);
     ASSERT_EQ(outI8, inI8);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI8.toString(str);
     ASSERT_STREQ(str.toChar(), "-3 ");
+#endif
 
     // I16 Type  ==============================================================
     I16 inI16 = 5;
@@ -973,8 +991,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I16>(ptI16), inI16);
     ASSERT_EQ(outI16, inI16);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI16.toString(str);
     ASSERT_STREQ(str.toChar(), "-7 ");
+#endif
 
     // I32 Type  ==============================================================
     I32 inI32 = 11;
@@ -989,8 +1009,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I32>(ptI32), inI32);
     ASSERT_EQ(outI32, inI32);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI32.toString(str);
     ASSERT_STREQ(str.toChar(), "-13 ");
+#endif
 
     // I64 Type  ==============================================================
     I64 inI64 = 17;
@@ -1005,8 +1027,10 @@ TEST(TypesTest,PolyTest) {
     ASSERT_EQ(static_cast<I64>(ptI64), inI64);
     ASSERT_EQ(outI64, inI64);
 
+#if FW_SERIALIZABLE_TO_STRING
     ptI64.toString(str);
     ASSERT_STREQ(str.toChar(), "-19 ");
+#endif
 
     // F32 Type  ==============================================================
     F32 inF32 = 23.32;
@@ -1152,6 +1176,67 @@ TEST(AllocatorTest,MallocAllocatorTest) {
     ASSERT_FALSE(recoverable);
     // deallocate memory
     allocator.deallocate(100,ptr);
+}
+
+TEST(Nominal, string_copy) {
+    const char* copy_string = "abc123\n";  // Length of 7
+    char buffer_out_test[10];
+    char buffer_out_truth[10];
+
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+
+    ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
+
+    // Check the outputs, both should return the input buffer
+    ASSERT_EQ(out_truth, buffer_out_truth) << "strncpy didn't return expected value";
+    ASSERT_EQ(out_test, buffer_out_test) << "string_copy didn't return expected value";
+
+    // Check string correct
+    ASSERT_STREQ(out_test, copy_string) << "Strings not equal from strncpy";
+    ASSERT_STREQ(out_test, out_truth) << "Copied strings differ from strncpy";
+
+    // Should output 0s for the remaining buffer
+    for (U32 i = ::strnlen(buffer_out_truth, sizeof(buffer_out_truth)); i < static_cast<U32>(sizeof(buffer_out_truth));
+         i++) {
+        ASSERT_EQ(buffer_out_truth[i], 0) << "strncpy didn't output 0 fill";
+        ASSERT_EQ(buffer_out_test[i], 0) << "string_copy didn't output 0 fill";
+    }
+}
+
+TEST(OffNominal, string_copy) {
+    const char* copy_string = "abc123\n";  // Length of 7
+    char buffer_out_test[sizeof(copy_string) - 1];
+    char buffer_out_truth[sizeof(copy_string) - 1];
+
+    char* out_truth = ::strncpy(buffer_out_truth, copy_string, sizeof(buffer_out_truth));
+    char* out_test = Fw::StringUtils::string_copy(buffer_out_test, copy_string, sizeof(buffer_out_test));
+
+    ASSERT_EQ(sizeof(buffer_out_truth), sizeof(buffer_out_test)) << "Buffer size mismatch";
+
+    // Check the outputs, both should return the input buffer
+    ASSERT_EQ(out_truth, buffer_out_truth) << "strncpy didn't return expected value";
+    ASSERT_EQ(out_test, buffer_out_test) << "string_copy didn't return expected value";
+
+    // Check string correct up to last digit
+    U32 i = 0;
+    ASSERT_STRNE(out_test, out_truth) << "Strings not equal";
+    for (i = 0; i < static_cast<U32>(sizeof(copy_string)) - 2; i++) {
+        ASSERT_EQ(out_test[i], out_truth[i]);
+    }
+    ASSERT_EQ(out_truth[i], '\n') << "strncpy did not error as expected";
+    ASSERT_EQ(out_test[i], 0) << "string_copy didn't properly null terminate";
+}
+
+TEST(Nominal, string_len) {
+    const char* test_string = "abc123";
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 50), 6);
+    ASSERT_EQ(Fw::StringUtils::string_length(test_string, 3), 3);
+}
+
+TEST(OffNominal, string_len_zero) {
+  const char* test_string = "abc123";
+  ASSERT_EQ(Fw::StringUtils::string_length(test_string, 0), 0);
 }
 
 int main(int argc, char **argv) {

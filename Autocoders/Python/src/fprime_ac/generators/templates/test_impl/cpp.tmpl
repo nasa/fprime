@@ -2,12 +2,6 @@
 // \title  ${name}.hpp
 // \author $user
 // \brief  cpp file for ${name} test harness implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 \#include "Tester.hpp"
@@ -30,13 +24,8 @@ namespace ${namespace} {
 
   Tester ::
     Tester() :
-\#if FW_OBJECT_NAMES == 1
       ${gtest_base}("Tester", MAX_HISTORY_SIZE),
       component("${name}")
-\#else
-      ${gtest_base}(MAX_HISTORY_SIZE),
-      component()
-\#endif
   {
     this->initComponents();
     this->connectPorts();

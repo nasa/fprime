@@ -26,16 +26,14 @@ jobs:
           path: ./gps-tutorial
 
       # Checks-out latest version of the fprime repo
-      - name: checkout latest fprime repo
+      - name: "Checkout F´ Repository"
         uses: actions/checkout@v2
         with:
-          path: ./gps-tutorial/fprime
           fetch-depth: 0
-      - run: git fetch --tags
-
-      # Build tutorial test
-      - name: Install fprime tools
-        run: pip3 install fprime-tools fprime-gds
+          path: ./gps-tutorial/fprime
+      - uses: ./.github/actions/setup
+        with:
+          location: ./gps-tutorial/fprime
       - name: GPS Tutorial Build
         working-directory: ./gps-tutorial/GpsApp
         run: |

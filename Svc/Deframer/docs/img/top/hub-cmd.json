@@ -1,0 +1,48 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "deframer",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "comOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "hub",
+        "inputPorts" : [
+          {
+            "name" : "portIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

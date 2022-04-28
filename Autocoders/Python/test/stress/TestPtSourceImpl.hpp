@@ -12,11 +12,7 @@
 
 class TestPtSourceImpl: public StressTest::TestPortComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestPtSourceImpl(const char* compName);
-#else
-        TestPtSourceImpl();
-#endif
         virtual ~TestPtSourceImpl();
         void init();
         void aport_Test(I32 arg4, F32 arg5, U8 arg6);

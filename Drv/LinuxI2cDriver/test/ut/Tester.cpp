@@ -23,13 +23,8 @@ namespace Drv {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxI2cDriver")
-#else
-      LinuxI2cDriverGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

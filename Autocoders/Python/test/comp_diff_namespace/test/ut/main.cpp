@@ -8,11 +8,7 @@
 
 class ATester : public StressTest::Components::TestCommandGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : StressTest::Components::TestCommandGTestBase("comp",10) {
-#else
-        ATester() : StressTest::Components::TestCommandGTestBase(10)  {
-#endif
     }
 };
 

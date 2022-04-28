@@ -8,6 +8,7 @@ automatic dependencies, and registering into the build system.
 @author mstarch
 """
 from __future__ import print_function
+
 import os
 import sys
 import xml.etree.ElementTree

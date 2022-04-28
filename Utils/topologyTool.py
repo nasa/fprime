@@ -1,7 +1,8 @@
-from optparse import OptionParser
 import os.path
-from lxml import etree
 import pickle
+from optparse import OptionParser
+
+from lxml import etree
 
 """
 This script is meant to serve as "sanity" checker for the MagicDraw generated topology XML files
@@ -84,9 +85,7 @@ def tag_object_to_string(tag_obj):
         if type(internal_item) == str:
             out += internal_item
         else:
-            out += "\n    " + tag_object_to_string(internal_item).replace(
-                "\n", "\n    "
-            )
+            out += "\n\t" + tag_object_to_string(internal_item).replace("\n", "\n\t")
             final_line_break = "\n"
 
     out += final_line_break + "</" + tag_obj[0] + ">"
@@ -216,7 +215,7 @@ def command_index_print(xml_list):
         # Print table
         print(xml_path + "\n")
         header_list = [
-            "           Component Name          ",
+            "\t\tComponent Name\t\t",
             "Command Index",
             "Command Registration Index",
         ]

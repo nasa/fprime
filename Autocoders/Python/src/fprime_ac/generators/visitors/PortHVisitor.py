@@ -29,21 +29,22 @@ from fprime_ac.generators.visitors import AbstractVisitor
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import TypesList
+from fprime_ac.utils import ConfigManager, TypesList
 
 #
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.port import startPortH
-    from fprime_ac.generators.templates.port import includes1PortH
-    from fprime_ac.generators.templates.port import includes2PortH
-    from fprime_ac.generators.templates.port import namespacePortH
-    from fprime_ac.generators.templates.port import publicPortH
-    from fprime_ac.generators.templates.port import protectedPortH
-    from fprime_ac.generators.templates.port import privatePortH
-    from fprime_ac.generators.templates.port import finishPortH
+    from fprime_ac.generators.templates.port import (
+        finishPortH,
+        includes1PortH,
+        includes2PortH,
+        namespacePortH,
+        privatePortH,
+        protectedPortH,
+        publicPortH,
+        startPortH,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)

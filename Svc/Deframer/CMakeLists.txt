@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Deframer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/DeframerComponentImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Deframer.cpp"
 )
 
 set(MOD_DEPS

@@ -3,10 +3,7 @@
 // \author Auto-generated
 // \brief  cpp file for ${name} component test harness base class
 //
-// \copyright
-// Copyright 2009-2016, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// NOTE: this file was automatically generated
 //
 // ======================================================================
 
@@ -26,17 +23,9 @@ namespace ${namespace} {
 
   ${tester_base} ::
     ${tester_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_cpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_cpp_params([ $param_maxHistorySize ])
-\#endif
     ) :
-\#if FW_OBJECT_NAMES == 1
       Fw::PassiveComponentBase(compName)
-\#else
-      Fw::PassiveComponentBase()
-\#endif
   {
 #if $has_commands or $has_parameters:
     // Initialize command history

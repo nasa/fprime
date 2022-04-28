@@ -8,11 +8,7 @@
 
 class ATester : public TestCommandGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
         ATester() : TestCommandGTestBase("comp",10) {
-#else
-        ATester() : TestCommandGTestBase(10)  {
-#endif
     }
 };
 

@@ -1,0 +1,76 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "deframer",
+        "inputPorts" : [
+          {
+            "name" : "cmdResponseIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "comOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "cmdDisp",
+        "inputPorts" : [
+          {
+            "name" : "seqCmdBuff",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "compCmdStat",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}

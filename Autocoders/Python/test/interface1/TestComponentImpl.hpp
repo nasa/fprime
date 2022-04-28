@@ -12,11 +12,7 @@
 
 class TestComponentImpl: public Cmd::TestComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestComponentImpl(const char* compName);
-#else
-        TestComponentImpl();
-#endif
         virtual ~TestComponentImpl();
         void init(NATIVE_INT_TYPE queueDepth);
     protected:

@@ -1,8 +1,8 @@
 import os
-import sys
-import time
 import platform
 import subprocess
+import sys
+import time
 from enum import Enum
 
 from fprime_gds.common.pipeline.standard import StandardPipeline
