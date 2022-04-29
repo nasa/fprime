@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer.hpp
-// \author janamian
+// \author janamian, bocchino
 // \brief  cpp file for Deframer test harness implementation class
 //
 // \copyright
@@ -9,6 +9,8 @@
 // acknowledged.
 //
 // ======================================================================
+
+#include <cstring>
 
 #include "Tester.hpp"
 
@@ -23,32 +25,34 @@ namespace Svc {
 Tester::MockDeframer::MockDeframer(Tester& parent) : m_status(DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {}
 
 Tester::MockDeframer::DeframingStatus Tester::MockDeframer::deframe(Types::CircularBuffer& ring_buffer, U32& needed) {
-    needed = ring_buffer.get_remaining_size();
+    needed = ring_buffer.get_allocated_size();
     if (m_status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-        needed = ring_buffer.get_remaining_size() + 1; // Obey the rules
+        needed = ring_buffer.get_allocated_size() + 1; // Obey the rules
     }
     return m_status;
 }
 
 void Tester::MockDeframer::test_interface(Fw::ComPacket::ComPacketType com_packet_type) {
-    U8 chars[4];
+    const FwPacketDescriptorType descriptorType = com_packet_type;
+    U8 chars[sizeof descriptorType];
     m_interface->allocate(3042);
     Fw::Buffer buffer(chars, sizeof(chars));
-    buffer.getSerializeRepr().serialize(com_packet_type);
+    buffer.getSerializeRepr().serialize(descriptorType);
     m_interface->route(buffer);
 }
 
 
-Tester ::Tester(void)
+Tester ::Tester(ConnectStatus::t bufferOutStatus)
     : DeframerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Deframer"),
-      m_mock(*this) {
+      m_mock(*this),
+      bufferOutStatus(bufferOutStatus) {
     this->initComponents();
     this->connectPorts();
     component.setup(this->m_mock);
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
@@ -63,11 +67,11 @@ void Tester ::test_incoming_frame(Tester::MockDeframer::DeframingStatus status) 
     invoke_to_framedIn(0, recvBuffer, recvStatus);
     // Check remaining size
     if (status == DeframingProtocol::DEFRAMING_MORE_NEEDED) {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), buffer_size);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), buffer_size);
     } else if (status == DeframingProtocol::DEFRAMING_STATUS_SUCCESS) {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), 0);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), 0);
     } else {
-        ASSERT_EQ(component.m_in_ring.get_remaining_size(), 0);
+        ASSERT_EQ(component.m_inRing.get_allocated_size(), 0);
     }
     ASSERT_from_framedDeallocate(0, recvBuffer);
 }
@@ -80,7 +84,7 @@ void Tester ::test_com_interface() {
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
-void Tester ::test_buffer_interface() {
+void Tester ::test_file_interface() {
     m_mock.test_interface(Fw::ComPacket::FW_PACKET_FILE);
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
@@ -93,6 +97,70 @@ void Tester ::test_unknown_interface() {
     ASSERT_from_comOut_SIZE(0);
     ASSERT_from_bufferAllocate(0, 3042);
     ASSERT_from_bufferOut_SIZE(0);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
+void Tester ::testCommandResponse() {
+    const U32 portNum = 0;
+    const U32 opcode = 0;
+    const U32 cmdSeq = 0;
+    const Fw::CmdResponse cmdResp(Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(portNum, opcode, cmdSeq, cmdResp);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+void Tester ::testCommandPacketTooLarge() {
+    // Allocate a large packet buffer
+    enum {
+        BUFFER_SIZE = 2 * FW_COM_BUFFER_MAX_SIZE
+    };
+    U8 bytes[BUFFER_SIZE];
+    ::memset(bytes, 0, sizeof bytes);
+    Fw::Buffer buffer(bytes, sizeof bytes);
+    // Serialize the packet type
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType descriptorType =
+        Fw::ComPacket::FW_PACKET_COMMAND;
+    const Fw::SerializeStatus status =
+        serialRepr.serialize(descriptorType);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
+void Tester ::testPacketBufferTooSmall() {
+    // Allocate a small packet buffer
+    U8 byte = 0;
+    Fw::Buffer buffer(&byte, sizeof byte);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_bufferDeallocate_SIZE(1);
+}
+
+void Tester ::testBufferOutUnconnected() {
+    ASSERT_EQ(this->bufferOutStatus, ConnectStatus::UNCONNECTED);
+    enum {
+        BUFFER_SIZE = 256
+    };
+    U8 bytes[BUFFER_SIZE];
+    ::memset(bytes, 0, sizeof bytes);
+    Fw::Buffer buffer(bytes, sizeof bytes);
+    // Serialize the packet type
+    Fw::SerializeBufferBase& serialRepr = buffer.getSerializeRepr();
+    const FwPacketDescriptorType descriptorType =
+        Fw::ComPacket::FW_PACKET_FILE;
+    const Fw::SerializeStatus status =
+        serialRepr.serialize(descriptorType);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    // Call the route method
+    this->component.route(buffer);
+    // Assert buffer deallocated, no packet output
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_bufferDeallocate_SIZE(1);
 }
 
@@ -124,41 +192,45 @@ void Tester ::from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 Drv::PollStatus Tester ::from_framedPoll_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& pollBuffer) {
     this->pushFromPortEntry_framedPoll(pollBuffer);
-    // TODO: Return a value
-    return Drv::POLL_OK;
+    return Drv::PollStatus::POLL_OK;
 }
 
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
-    // framedIn
-    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
-
-    // schedIn
-    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
-
-    // comOut
-    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
-
-    // bufferOut
-    this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
-
+void Tester ::connectPorts() {
     // bufferAllocate
     this->component.set_bufferAllocate_OutputPort(0, this->get_from_bufferAllocate(0));
 
     // bufferDeallocate
     this->component.set_bufferDeallocate_OutputPort(0, this->get_from_bufferDeallocate(0));
 
+    // bufferOut
+    if (this->bufferOutStatus == ConnectStatus::CONNECTED) {
+        this->component.set_bufferOut_OutputPort(0, this->get_from_bufferOut(0));
+    }
+
+    // cmdResponseIn
+    this->connect_to_cmdResponseIn(0, this->component.get_cmdResponseIn_InputPort(0));
+
+    // comOut
+    this->component.set_comOut_OutputPort(0, this->get_from_comOut(0));
+
     // framedDeallocate
     this->component.set_framedDeallocate_OutputPort(0, this->get_from_framedDeallocate(0));
 
+    // framedIn
+    this->connect_to_framedIn(0, this->component.get_framedIn_InputPort(0));
+
     // framedPoll
     this->component.set_framedPoll_OutputPort(0, this->get_from_framedPoll(0));
+
+    // schedIn
+    this->connect_to_schedIn(0, this->component.get_schedIn_InputPort(0));
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
 }
