@@ -1,5 +1,4 @@
-\page SvcDeframer Deframer Component
-
+\page SvcDeframerComponent Svc::Deframer Component
 # Svc::Deframer (Passive Component)
 
 ## 1. Introduction

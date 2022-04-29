@@ -1,5 +1,5 @@
-\page DrvUdp Udp  Component
-# Drv::Udp Udp Component
+\page DrvUdp Drv::Udp Component
+# Drv::Udp UDP Component
 
 The UDP client component bridges the byte stream driver model interface to a remote UDP port to which this udp component
 sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing
