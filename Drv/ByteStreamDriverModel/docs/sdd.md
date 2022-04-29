@@ -1,5 +1,5 @@
-\page ByteStreamDriverModel Byte Stream Driver Model
-# Byte Stream Driver Model
+\page DrvByteStreamDriverModel Drv::ByteStreamDriverModel Byte Stream Driver Model
+# Drv::ByteStreamDriverModel Byte Stream Driver Model
 
 The byte stream driver is a generic model for drivers implementing a "stream of bytes" interface. Typically these
 drivers operate with an outgoing stream and an incoming stream. The outgoing stream is represented by the "send" port

@@ -1,4 +1,4 @@
-\page SvcGenericRepeater Generic Repeater Component
+\page SvcGenericRepeaterComponent Svc::GenericRepeater Component
 # Svc::GenericRepeater Generic Repeater Component
 
 The GenericRepeater component is designed to take in a port and repeat it to the output multiple times. GenericRepeater is

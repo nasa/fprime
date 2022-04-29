@@ -1,3 +1,4 @@
+\page DrvUartFramerComponent Drv::UartFramer Component
 # Drv::UartFramer UART Framer Component
 
 The UART Framer Component is used to bridge the [Framer](../../Svc/Framer/docs/sdd.md) and 

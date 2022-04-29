@@ -96,4 +96,7 @@ function make_version
 github_page_adjustment "${DOXY_OUTPUT}/html"
 make_version "${VERSIONED_OUTPUT}"
 
-
+# Copy images so they're properly referenced
+IMG_DIR="${FPRIME}/docs/UsersGuide/api/c++/html/img"
+mkdir -p "${IMG_DIR}"
+find "${FPRIME}/Fw" "${FPRIME}/Svc" "${FPRIME}/Drv" \( -name '*.jpg' -o -name '*.png' -o -name '*.svg' \) -print0 | xargs -0 cp -t "${IMG_DIR}"
