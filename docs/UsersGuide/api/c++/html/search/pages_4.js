@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['generic_20hub_20component_3514',['Generic Hub Component',['../svc_generic_hub.html',1,'']]],
-  ['generic_20repeater_20component_3515',['Generic Repeater Component',['../svc_generic_repeater.html',1,'']]]
+  ['release_203_2e0_3a_20release_20and_20migration_20notes_3517',['Release 3.0: Release and Migration Notes',['../md__c_h_a_n_g_e_l_o_g.html',1,'']]]
 ];

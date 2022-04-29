@@ -54,6 +54,5 @@ var searchData=
   ['bytearray_113',['ByteArray',['../struct_fw_1_1_byte_array.html',1,'Fw::ByteArray'],['../struct_fw_1_1_byte_array.html#aa8274e2f496b72bd8650e31c79c5912e',1,'Fw::ByteArray::ByteArray()']]],
   ['bytearray_2ehpp_114',['ByteArray.hpp',['../byte_array_8hpp.html',1,'']]],
   ['byteoffset_115',['byteOffset',['../class_fw_1_1_file_packet_1_1_data_packet.html#a387ca5e23e6f5fb1fa6c6493cdb2b330',1,'Fw::FilePacket::DataPacket']]],
-  ['bytes_116',['bytes',['../struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962',1,'Fw::ByteArray::bytes()'],['../struct_fw_1_1_const_byte_array.html#a26b04f00cd8ea2f4056f1fe5f544d759',1,'Fw::ConstByteArray::bytes()']]],
-  ['byte_20stream_20driver_20model_117',['Byte Stream Driver Model',['../byte_stream_driver_model.html',1,'']]]
+  ['bytes_116',['bytes',['../struct_fw_1_1_byte_array.html#ac9f27b8e3556dd5ac169c0b2df6d8962',1,'Fw::ByteArray::bytes()'],['../struct_fw_1_1_const_byte_array.html#a26b04f00cd8ea2f4056f1fe5f544d759',1,'Fw::ConstByteArray::bytes()']]]
 ];

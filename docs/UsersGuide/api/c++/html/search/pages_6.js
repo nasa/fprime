@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['os_20components_20ports_20and_20classes_3517',['Os Components Ports and Classes',['../os.html',1,'']]],
-  ['os_3a_3aqueue_20_28pthreads_20implementation_29_3518',['Os::Queue (Pthreads implementation)',['../os_queue.html',1,'Os']]]
+  ['utils_20classes_3551',['Utils Classes',['../utils.html',1,'']]],
+  ['utils_3a_3alockguard_20class_3552',['Utils::LockGuard Class',['../utils_lock_guard_class.html',1,'Utils']]],
+  ['utils_3a_3aratelimiter_20class_3553',['Utils::RateLimiter Class',['../utils_rate_limiter_class.html',1,'Utils']]],
+  ['utils_3a_3atokenbucket_20class_3554',['Utils::TokenBucket Class',['../utils_token_bucket_class.html',1,'Utils']]]
 ];
