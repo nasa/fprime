@@ -2,6 +2,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 namespace Fw {
+    const Time ZERO_TIME = Time();
 
     Time::Time() : m_seconds(0), m_useconds(0), m_timeBase(TB_NONE), m_timeContext(0)  {
     }
