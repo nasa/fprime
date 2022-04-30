@@ -64,7 +64,7 @@ jobs:
             sudo cp --verbose --force --recursive ~/fprime-util-generate-v2/* $(pwd)/
             sudo chown -R $USER:$GROUP $(pwd)
           else
-            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/release.clang-tidy"
+            fprime-util generate -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=$PWD/../release.clang-tidy"
             mkdir -p ~/fprime-util-generate-v2
             sudo cp --verbose --force --recursive $(pwd)/build-fprime-automatic-native/ ~/fprime-util-generate-v2/
           fi
