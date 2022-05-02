@@ -23,7 +23,7 @@ namespace Fw {
                 m_connObj(nullptr)
 #if FW_PORT_TRACING == 1
                 ,m_trace(false),
-                m_override_trace(false)
+                m_ovr_trace(false)
 #endif
     {
 
@@ -47,7 +47,7 @@ namespace Fw {
     void PortBase::trace() {
         bool do_trace = false;
 
-        if (this->m_override_trace) {
+        if (this->m_ovr_trace) {
             if (this->m_trace) {
                 do_trace = true;
             }
@@ -68,8 +68,8 @@ namespace Fw {
         PortBase::s_trace = trace;
     }
 
-    void PortBase::overrideTrace(bool override, bool trace) {
-        this->m_override_trace = override;
+    void PortBase::ovrTrace(bool ovr, bool trace) {
+        this->m_ovr_trace = ovr;
         this->m_trace = trace;
     }
 

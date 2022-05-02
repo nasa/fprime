@@ -33,8 +33,8 @@ namespace Svc {
     else {
       FW_ASSERT(maxFileSize > sizeof(0), maxFileSize); // must be a positive integer
     }
-    FW_ASSERT(strnlen(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
-      strnlen(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
+    FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
+      Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
 
     // Set the file prefix:
     Fw::StringUtils::string_copy(this->filePrefix, incomingFilePrefix, sizeof(this->filePrefix));

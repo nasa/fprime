@@ -26,7 +26,7 @@
 #define FILE_NAME_ARG const U8*
 #define FW_CASSERT(cond) \
     ((void) ((cond) ? (0) : \
-    (CAssert0(reinterpret_cast<FILE_NAME_ARG>(__FILE__), __LINE__))))
+    (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))
 #endif
 
 #ifdef __cplusplus

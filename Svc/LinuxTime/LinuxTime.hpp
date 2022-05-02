@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using LinuxTime = LinuxTimeImpl;
+  typedef LinuxTimeImpl LinuxTime;
 
 }
 
