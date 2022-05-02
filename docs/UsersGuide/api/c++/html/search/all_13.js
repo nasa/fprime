@@ -192,7 +192,7 @@ var searchData=
   ['startup_1320',['startup',['../class_drv_1_1_tcp_server_socket.html#a97473087111af78ece89236363881f18',1,'Drv::TcpServerSocket::startup()'],['../class_drv_1_1_tcp_server_component_impl.html#a24cd4772c000f1179ce37148ae3a852a',1,'Drv::TcpServerComponentImpl::startup()']]],
   ['static_1321',['STATIC',['../basic_types_8hpp.html#a10b2d890d871e1489bb02b7e70d9bdfb',1,'BasicTypes.hpp']]],
   ['static_5fmemory_5fallocation_5fsize_1322',['STATIC_MEMORY_ALLOCATION_SIZE',['../namespace_svc.html#ad27f471a5a849fa12cbd97a3cecfa625a9e9672fa96e8a1d300d3756c6d5c1e24',1,'Svc']]],
-  ['staticmemory_1323',['StaticMemory',['../namespace_svc.html#a07d34f04079a448534a3b625a019e51b',1,'Svc']]],
+  ['staticmemory_1323',['StaticMemory',['../namespace_svc.html#ae0dd31d08e2d4a55709aff6caa18ace6',1,'Svc']]],
   ['staticmemory_2ehpp_1324',['StaticMemory.hpp',['../static_memory_8hpp.html',1,'']]],
   ['staticmemorycomponentimpl_1325',['StaticMemoryComponentImpl',['../class_svc_1_1_static_memory_component_impl.html',1,'Svc::StaticMemoryComponentImpl'],['../class_svc_1_1_static_memory_component_impl.html#a183a44f2baf35c397c2ad0b91b4af238',1,'Svc::StaticMemoryComponentImpl::StaticMemoryComponentImpl()']]],
   ['staticmemorycomponentimpl_2ecpp_1326',['StaticMemoryComponentImpl.cpp',['../static_memory_component_impl_8cpp.html',1,'']]],

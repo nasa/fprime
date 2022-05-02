@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('_port_base_8cpp_source.html',''); init
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                m_connObj(nullptr)</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;#if <a class="code" href="fp_config_8hpp.html#a4d240cd9c3104802ce7768f0adc803e7">FW_PORT_TRACING</a> == 1</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                ,m_trace(false),</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                m_override_trace(false)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                m_ovr_trace(false)</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;#endif</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
@@ -137,7 +137,7 @@ $(document).ready(function(){initNavTree('_port_base_8cpp_source.html',''); init
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> PortBase::trace() {</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> do_trace = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_override_trace) {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">if</span> (this-&gt;m_ovr_trace) {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_trace) {</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                do_trace = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            }</div>
@@ -158,8 +158,8 @@ $(document).ready(function(){initNavTree('_port_base_8cpp_source.html',''); init
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        PortBase::s_trace = trace;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> PortBase::overrideTrace(<span class="keywordtype">bool</span> <span class="keyword">override</span>, <span class="keywordtype">bool</span> trace) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        this-&gt;m_override_trace = <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> PortBase::ovrTrace(<span class="keywordtype">bool</span> ovr, <span class="keywordtype">bool</span> trace) {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        this-&gt;m_ovr_trace = ovr;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        this-&gt;m_trace = trace;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>

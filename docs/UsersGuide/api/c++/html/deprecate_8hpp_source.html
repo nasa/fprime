@@ -95,14 +95,18 @@ $(document).ready(function(){initNavTree('_deprecate_8hpp_source.html',''); init
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#ifndef FW_DEPRECATE_HPP</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#define FW_DEPRECATE_HPP</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">    #define DEPRECATED(func, message) func __attribute__ ((deprecated(message)))</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">  #warning &quot;No implementation of DEPRECATED for given compiler. Please check for use of DEPRECATED() functions&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="deprecate_8hpp.html#aaf225a2b96038de3a42d61a1fa63654b">   12</a></span>&#160;<span class="preprocessor">  #define DEPRECATED(func) func</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#endif // FW_DEPRECATE_HPP</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef DEPRECATED</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">    #define DEPRECATED(func, message) func __attribute__ ((deprecated(message)))</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">  #warning &quot;No implementation of DEPRECATED for given compiler. Please check for use of DEPRECATED() functions&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="deprecate_8hpp.html#aaf225a2b96038de3a42d61a1fa63654b">   14</a></span>&#160;<span class="preprocessor">  #define DEPRECATED(func) func</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif // FW_DEPRECATE_HPP</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

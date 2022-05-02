@@ -116,7 +116,7 @@ $(document).ready(function(){initNavTree('_c_assert_8hpp_source.html',''); initR
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG const U8*</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#define FW_CASSERT(cond) \</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">    ((void) ((cond) ? (0) : \</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">    (CAssert0(reinterpret_cast&lt;FILE_NAME_ARG&gt;(__FILE__), __LINE__))))</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">    (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>

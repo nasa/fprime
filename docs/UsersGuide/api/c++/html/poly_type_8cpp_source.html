@@ -92,7 +92,7 @@ $(document).ready(function(){initNavTree('_poly_type_8cpp_source.html',''); init
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="assert_8hpp.html">Fw/Types/Assert.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="poly_type_8cpp.html#aacbb9e1f38be71e22df1584a37c56693">    4</a></span>&#160;<span class="preprocessor">#define __STDC_FORMAT_MACROS</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;cinttypes&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;StandardTypes.hpp&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_fw.html">Fw</a> {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
@@ -693,15 +693,15 @@ $(document).ready(function(){initNavTree('_poly_type_8cpp_source.html',''); init
 <div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160; </div>
 <div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;    }</div>
 <div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160; </div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING || BUILD_UT</span></div>
 <div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160; </div>
 <div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;    <span class="keywordtype">void</span> PolyType::toString(<a class="code" href="class_fw_1_1_string_base.html">StringBase</a>&amp; dest)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;        this-&gt;toString(dest,<span class="keyword">false</span>);</div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    }</div>
 <div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160; </div>
 <div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    <span class="keywordtype">void</span> PolyType::toString(StringBase&amp; dest, <span class="keywordtype">bool</span> append)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;        <span class="keywordtype">char</span> valString[80];</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160; </div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160; </div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;        <span class="keywordtype">char</span> valString[80];</div>
 <div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;        <span class="keywordflow">switch</span> (this-&gt;m_dataType) {</div>
 <div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            <span class="keywordflow">case</span> TYPE_U8:</div>
 <div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;                (void) snprintf(valString, <span class="keyword">sizeof</span>(valString), <span class="stringliteral">&quot;%&quot;</span> PRIu8 <span class="stringliteral">&quot; &quot;</span>, this-&gt;m_val.u8Val);</div>

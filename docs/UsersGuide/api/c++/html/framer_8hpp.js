@@ -1,4 +1,4 @@
 var _framer_8hpp =
 [
-    [ "Framer", "framer_8hpp.html#a83707f61258039f6bca8c266c41da508", null ]
+    [ "Framer", "framer_8hpp.html#a9d4d07bbb6950b0295030abc80b6a23c", null ]
 ];

@@ -1,4 +1,4 @@
 var _buffer_manager_8hpp =
 [
-    [ "BufferManager", "buffer_manager_8hpp.html#aeb3193997902632484c232bdc813a5f8", null ]
+    [ "BufferManager", "buffer_manager_8hpp.html#a3cd251693b4a0d77eb953f6dd9c049e9", null ]
 ];
