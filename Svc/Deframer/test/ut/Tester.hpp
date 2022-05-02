@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer/test/ut/Tester.hpp
-// \author janamian
+// \author janamian, bocchino
 // \brief  hpp file for Deframer test harness implementation class
 //
 // \copyright
@@ -14,11 +14,24 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {
 
 class Tester : public DeframerGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    struct ConnectStatus {
+      //! Whether a port is connected
+      typedef enum {
+          CONNECTED,
+          UNCONNECTED
+      } t;
+    };
+
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -26,6 +39,8 @@ class Tester : public DeframerGTestBase {
       public:
         MockDeframer(Tester& parent);
         DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
+        //! Test the implementation of DeframingProtocolInterface provided
+        //! by the Deframer component
         void test_interface(Fw::ComPacket::ComPacketType  com_type);
         DeframingStatus m_status;
     };
@@ -33,21 +48,42 @@ class Tester : public DeframerGTestBase {
   public:
     //! Construct object Tester
     //!
-    Tester(void);
+    Tester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
 
     //! Destroy object Tester
     //!
-    ~Tester(void);
+    ~Tester();
 
   public:
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
 
-    void test_incoming_frame(DeframingProtocol::DeframingStatus status);
+    //! Send a frame to framedIn
+    void test_incoming_frame(
+        DeframingProtocol::DeframingStatus status //!< The status that the mock deframer will return
+    );
+
+    //! Route a com packet
     void test_com_interface();
-    void test_buffer_interface();
+
+    //! Route a file packet
+    void test_file_interface();
+
+    //! Route a packet of unknown type
     void test_unknown_interface();
+
+    //! Invoke the command response input port
+    void testCommandResponse();
+
+    //! Attempt to route a command packet that is too large
+    void testCommandPacketTooLarge();
+
+    //! Attempt to route a packet buffer that is too small
+    void testPacketBufferTooSmall();
+
+    //! Route a file packet with bufferOutUnconnected
+    void testBufferOutUnconnected();
 
   private:
     // ----------------------------------------------------------------------
@@ -93,11 +129,11 @@ class Tester : public DeframerGTestBase {
 
     //! Connect ports
     //!
-    void connectPorts(void);
+    void connectPorts();
 
     //! Initialize components
     //!
-    void initComponents(void);
+    void initComponents();
 
   private:
     // ----------------------------------------------------------------------
@@ -106,10 +142,12 @@ class Tester : public DeframerGTestBase {
 
     //! The component under test
     //!
-    DeframerComponentImpl component;
+    Deframer component;
 
     Fw::Buffer m_buffer;
     MockDeframer m_mock;
+    // Whether the bufferOut port is connected
+    ConnectStatus::t bufferOutStatus;
 };
 
 }  // end namespace Svc

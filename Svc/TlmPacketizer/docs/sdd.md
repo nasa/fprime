@@ -1,5 +1,5 @@
-<title>TlmPacketizer Component SDD</title>
-# TlmPacketizer Component
+\page SvcTlmPacketizerComponent Svc::TlmPacketizer Component
+# Svc::TlmPacketizer Component
 
 ## 1. Introduction
 

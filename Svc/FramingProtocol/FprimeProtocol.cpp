@@ -10,6 +10,8 @@
 //
 // ======================================================================
 
+#include <limits>
+
 #include "FprimeProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -88,20 +90,26 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
         needed = FpFrameHeader::SIZE;
         return DeframingProtocol::DEFRAMING_MORE_NEEDED;
     }
-    // Peek into the header and read out values
+    // Read start value from header
     Fw::SerializeStatus status = ring.peek(start, 0);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
-    // Check the header for correctness
-    const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     if (start != FpFrameHeader::START_WORD) {
         // Start word must be valid
         return DeframingProtocol::DEFRAMING_INVALID_FORMAT;
     }
+    // Read size from header
+    status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    const U32 maxU32 = std::numeric_limits<U32>::max();
+    if (size > maxU32 - (FpFrameHeader::SIZE + HASH_DIGEST_LENGTH)) {
+        // Size is too large to process: needed would overflow
+        return DeframingProtocol::DEFRAMING_INVALID_SIZE;
+    }
+    needed = (FpFrameHeader::SIZE + size + HASH_DIGEST_LENGTH);
+    // Check frame size
+    const U32 frameSize = size + FpFrameHeader::SIZE + HASH_DIGEST_LENGTH;
     if (frameSize > ring.get_capacity()) {
-        // Frame size is too large
+        // Frame size is too large for ring buffer
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;
     }
     // Check for enough data to deserialize everything;

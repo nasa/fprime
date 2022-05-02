@@ -40,7 +40,7 @@ function(testimpl_add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
     # Try to generate dictionaries for every AC input file
     if (NOT TARGET "${TARGET_MOD_NAME}")
-        run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai_ut_impl)
+        run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/ai_ut_impl)
         add_custom_target("${TARGET_MOD_NAME}" DEPENDS ${AC_GENERATED})
     endif()
 endfunction(testimpl_add_module_target)

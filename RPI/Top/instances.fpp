@@ -8,7 +8,7 @@ module RPI {
 
     constant queueSize = 10
 
-    constant stackSize = 16 * 1024
+    constant stackSize = 64 * 1024
 
   }
 

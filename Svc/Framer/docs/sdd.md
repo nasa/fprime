@@ -1,4 +1,4 @@
-\page SvcFramer Framer  Component
+\page SvcFramerComponent Svc::Framer Component
 # Svc::Framer Framer Component
 
 The Framer component is used to frame packets for downlink. It translates between the service layer (typically TlmChan, ActiveLogger, and FileDownlink) and the driver layer (Drv), where service typically deals with F´ types and the driver layer deals in streams of bytes. Framer serializes the F´ types into a stream of bytes and adds header/footer information to ensure transmission integrity. As an argument to `setup()` function Framer accepts a reference to a `FramingProtocol` to do the actual header/data/footer serialization. Users may substitute the framing protocol without changing the F´ topology hook-ups. 

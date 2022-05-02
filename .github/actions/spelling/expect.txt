@@ -397,6 +397,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpi
 DPRIVATE
 DPROTECTED
 dropdown
@@ -1780,6 +1781,7 @@ whitelist
 wiki
 wikipedia
 wildcards
+WLE
 Wno
 Wnon
 workaround

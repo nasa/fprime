@@ -1,0 +1,83 @@
+{
+  "columns" : [
+    [
+      {
+        "instanceName" : "rateGroup",
+        "inputPorts" : [],
+        "outputPorts" : [
+          {
+            "name" : "RateGroupMemberOut",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "deframer",
+        "inputPorts" : [
+          {
+            "name" : "schedIn",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : [
+          {
+            "name" : "framedPoll",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "instanceName" : "passiveComm",
+        "inputPorts" : [
+          {
+            "name" : "poll",
+            "portNumbers" : [
+              0
+            ]
+          }
+        ],
+        "outputPorts" : []
+      }
+    ]
+  ],
+  "connections" : [
+    [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ]
+  ]
+}
