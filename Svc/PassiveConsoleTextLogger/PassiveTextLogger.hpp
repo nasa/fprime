@@ -10,7 +10,7 @@
 
 namespace Svc {
 
-  using PassiveTextLogger = ConsoleTextLoggerImpl;
+  typedef ConsoleTextLoggerImpl PassiveTextLogger;
 
 }
 

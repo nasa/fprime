@@ -38,7 +38,6 @@ class Deframer :
   public DeframerComponentBase,
   public DeframingProtocolInterface
 {
-
   public:
 
     // ----------------------------------------------------------------------
