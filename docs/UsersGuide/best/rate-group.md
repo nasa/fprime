@@ -1,7 +1,46 @@
-## Rate Groups and Timeliness
+# Rate Groups and Timeliness
 
-A rate group is a container of *run()* ports that calls ports in order.
-The list of run ports does not know which destinations are in active
-components; however, the rate group is an active component.
+Often embedded software must perform actions at a fixed rate. In a given system there are usually collections of actions
+that must run at similar rates. For example, control algorithms may run at 10Hz while telemetry collection may run at
+1Hz and background tasks may be updated at 0.1Hz. F´ provides a mechanism to trigger time based actions called "rate
+groups". A rate group contains multiple output `Sched` ports that it sends a messages to at a repeated rate. Thus
+components having an input `Sched` port can run a repeated action at this rate. Rate groups are driven by a central rate
+group driver and achieve their rates by dividing the incoming signal from the rate group driver.
 
-They are awesome, and TODO this documentation should be improved.
+![Rate Groups](./img/rate_group.png)
+
+## Rate Group Driver
+
+The rate group driver is the source of the "clock" for various other rate groups. It is usually driven off a system
+timing interrupt or some other reliable clock source. On the incoming cycle call from that source it sends a message to
+each rate group attached to it.
+
+## Active Rate Group
+
+The active rate group receives the input source signal at the system rate and divides that signal to provide a fixed
+rate for the components attached to it. It then calls each of those components at the subdivided rate. For example, if
+the rate group driver is being called at 1000Hz it will provide a repeated 1000Hz call to each active rate group. To
+achieve repeated signals at 10Hz, 1Hz, and 0.1Hz, the project would need to setup 3 rate groups diving by 100, 1000, and
+10000 respectively. These divisors are setup at active rate group instantiation time.
+
+Active rate groups run on a thread and thus there is some jitter between the system driver and the execution of the rate
+group. However, multiple active rate groups can start up in unison. A passive rate group could be created that is
+synchronous and would remove jitter at the expense of synchronous execution.
+
+### Active Rate Groups, Ordering, and Priority
+
+Active rate groups are dependent on thread priority. Typically, rate groups are the highest priority components in the
+system. This is because they are fairly low impact but start components that are of high priority and thus should be
+assigned a thread priority higher than that of its children. Faster rate groups tend to be the highest priority of the
+rate groups.
+
+The active rate group sends messages in order to each of the attached components. Thus, higher priority children tend to
+be attached to lower index `Sched` ports than lower priority children.
+
+### Passive and Active Components
+
+Passive components will run synchronously on the rate group. This has the advantage that if too many things are done on
+one clock cycle the rate group will slip. However, each child will run in sequence. Active components will receive the
+message from the active rate group but will not start until their thread becomes active. This allows children to run
+without blocking each other, however; it becomes harder to detect when too much work is scheduled on for a given cycle
+period.
