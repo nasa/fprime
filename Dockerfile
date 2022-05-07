@@ -58,4 +58,5 @@ RUN apt-get -y install libxml2 libxslt-dev
 # Copy files over and update tools
 RUN pip install --upgrade fprime-tools fprime-gds
 ENV PATH=${PATH}:~/.local/bin
+RUN git config --global --add safe.directory /usr/src
 COPY . .
