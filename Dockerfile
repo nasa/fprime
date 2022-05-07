@@ -20,7 +20,8 @@ RUN locale-gen en_US.UTF-8
 
 # Install fprime deps
 RUN apt-get update
-RUN apt-get -y install git cmake default-jre python3 python3-pip sbt scala
+RUN apt-get -y install git cmake default-jre python3 python3-pip sbt scala \
+                       libxml2 libxslt-dev
 
 # Build and compile FPP dep
 RUN git clone https://github.com/fprime-community/fpp.git fpp \
