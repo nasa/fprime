@@ -20,8 +20,7 @@ RUN locale-gen en_US.UTF-8
 
 # Install fprime deps
 RUN apt-get update
-RUN apt-get -y install git cmake default-jre python3 python3-pip sbt scala \
-                       libxml2 libxslt-dev
+RUN apt-get -y install git cmake default-jre python3 python3-pip sbt scala
 
 # Build and compile FPP dep
 RUN git clone https://github.com/fprime-community/fpp.git fpp \
@@ -53,6 +52,8 @@ ENV PATH=${PATH}:${FPP_INSTALL_DIR}
 #     && cd /usr/src
 # ENV FPV_INSTALL_DIR=/usr/src/fpv
 # ENV PATH=${PATH}:${FPV_INSTALL_DIR}
+
+RUN apt-get -y install libxml2 libxslt-dev
 
 # Copy files over and update tools
 RUN pip install --upgrade fprime-tools fprime-gds
