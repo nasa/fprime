@@ -1,10 +1,8 @@
 import os
 import platform
 import subprocess
-import sys
 import time
 from enum import Enum
-import threading
 
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.testing_fw import predicates
@@ -59,7 +57,9 @@ class TestRefAppClass(object):
                 result.get_id(), result.get_str()
             )
             print(msg)
-        self.api.assert_telemetry("sendBuffComp.SendState", value="SEND_IDLE", timeout=3)
+        self.api.assert_telemetry(
+            "sendBuffComp.SendState", value="SEND_IDLE", timeout=3
+        )
 
     def assert_command(self, command, args=[], max_delay=None, timeout=5, events=None):
         """
@@ -80,7 +80,9 @@ class TestRefAppClass(object):
             "Starting assert_command helper for {}({})".format(command, cmd_id)
         )
         events = events if events else []
-        events.append(self.api.get_event_pred("cmdDisp.OpCodeDispatched", [cmd_id, None]))
+        events.append(
+            self.api.get_event_pred("cmdDisp.OpCodeDispatched", [cmd_id, None])
+        )
         events.append(self.api.get_event_pred("cmdDisp.OpCodeCompleted", [cmd_id]))
         results = self.api.send_and_assert_event(command, args, events, timeout=timeout)
         if max_delay is not None:
@@ -140,17 +142,27 @@ class TestRefAppClass(object):
         assert self.api.get_command_test_history().size() == 1
         self.assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 2
-    
+
     def test_send_command_args(self):
         for count, value in enumerate(["Test String 1", "Some other string"], 1):
             events = self.api.get_event_pred("cmdDisp.NoOpStringReceived", [value])
-            self.assert_command("cmdDisp.CMD_NO_OP_STRING", [value, ], max_delay=0.1)
+            self.assert_command(
+                "cmdDisp.CMD_NO_OP_STRING",
+                [
+                    value,
+                ],
+                max_delay=0.1,
+            )
             assert self.api.get_command_test_history().size() == count
 
     def test_send_and_assert_no_op(self):
         length = 100
         failed = 0
-        evr_seq = ["cmdDisp.OpCodeDispatched", "cmdDisp.NoOpReceived", "cmdDisp.OpCodeCompleted"]
+        evr_seq = [
+            "cmdDisp.OpCodeDispatched",
+            "cmdDisp.NoOpReceived",
+            "cmdDisp.OpCodeCompleted",
+        ]
         any_reordered = False
         dropped = False
         for i in range(0, length):
@@ -275,6 +287,11 @@ class TestRefAppClass(object):
             self.api.assert_event_count(pred, actHI_events)
         finally:
             self.set_default_filters()
+
+    def test_signal_generation(self):
+        self.assert_command("SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"])
+        self.assert_command("SG4.SignalGen_Toggle")
+        self.assert_command("SG4.SignalGen_Toggle")
 
     def test_seqgen(self):
         """Tests the seqgen code"""
