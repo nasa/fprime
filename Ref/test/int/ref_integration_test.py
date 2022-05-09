@@ -142,6 +142,12 @@ class TestRefAppClass(object):
         assert self.api.get_command_test_history().size() == 1
         self.assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 2
+    
+    def test_send_command_args(self):
+        for count, value in enumerate(["Test String 1", "Some other string"], 1):
+            events = self.api.get_event_pred("cmdDisp.NoOpStringReceived", [value])
+            self.assert_command("cmdDisp.CMD_NO_OP_STRING", [value, ], max_delay=0.1)
+            assert self.api.get_command_test_history().size() == count
 
     def test_send_command_args(self):
         for count, value in enumerate(["Test String 1", "Some other string"], 1):
