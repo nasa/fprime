@@ -13,6 +13,7 @@ namespace Os {
 
             void lock(); //!<  lock the mutex
             void unLock(); //!<  unlock the mutex
+            void unlock() { this->unLock(); } //!<  alias for unLock to meet BasicLockable requirements
 
         private:
 
