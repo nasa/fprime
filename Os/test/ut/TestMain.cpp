@@ -14,7 +14,8 @@ extern "C" {
   void intervalTimerTest();
   void fileSystemTest();
   void validateFileTest(const char* filename);
-  void systemResourcesTest(void);
+  void systemResourcesTest();
+  void mutexBasicLockableTest();
 }
 const char* filename;
 TEST(Nominal, StartTestTask) {
@@ -55,6 +56,9 @@ TEST(Nominal, ValidateFileTest) {
 }
 TEST(Nominal, SystemResourcesTest) { 
    systemResourcesTest();
+}
+TEST(Nominal, MutexBasicLockableTest) {
+  mutexBasicLockableTest();
 }
 
 int main(int argc, char* argv[]) {
