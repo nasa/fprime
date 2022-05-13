@@ -4,7 +4,7 @@
 ## 1. Introduction
 
 The RateGroupDriver Component is used to take a single system tick and distribute it to multiple rate groups in a system. 
-It takes the input `Svc::Sched` port, then divides down the tick rate based on arguments to the constructor. 
+It takes the input `Svc::Sched` port, then divides down the tick rate based on arguments to `configure`. 
 Typically, the output ports would be connected to the asynchronous inputs of an `ActiveRateGroup`.
 
 ## 2. Requirements
@@ -38,9 +38,9 @@ Port Data Type | Name | Direction | Kind | Usage
 #### 3.2 Functional Description
 
 The Svc::RateGroupDriver component has one input port that receives a system tick. 
-The constructor has an array of integer arguments that specifies the divisors for each output port.
+The configure function has an array of integer arguments that specifies the divisors for each output port.
 
-    RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+    RateGroupDriverImpl::configure(const FW_INDEX_TYPE dividers[], const FW_SIZE_TYPE numDividers);
 
 The input rate for each output port will be divided down by the value in the `dividers[]` array corresponding to the output port number.
 

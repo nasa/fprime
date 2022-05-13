@@ -31,9 +31,11 @@ void connectPorts(Svc::RateGroupDriverImpl& impl, Svc::RateGroupDriverImplTester
 
 TEST(RateGroupDriverTest,NominalSchedule) {
 
-    NATIVE_INT_TYPE dividers[] = {1,2,3};
+    FW_INDEX_TYPE dividers[] = {1,2,3};
 
-    Svc::RateGroupDriverImpl impl("RateGroupDriverImpl",dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    Svc::RateGroupDriverImpl impl("RateGroupDriverImpl");
+
+    impl.configure(dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
 
     Svc::RateGroupDriverImplTester tester(impl);
 
