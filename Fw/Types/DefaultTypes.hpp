@@ -1,0 +1,15 @@
+
+#ifndef PLATFORM_INT_TYPE_DEFINED
+typedef int PLATFORM_INT_TYPE;
+#define PRIfwpit "d"
+#endif
+#ifndef PLATFORM_UINT_TYPE_DEFINED
+typedef unsigned int PLATFORM_UINT_TYPE;
+#define PRIfwpuit "u"
+#endif
+#ifndef PLATFORM_INDEX_TYPE_DEFINED
+typedef PLATFORM_INT_TYPE PLATFORM_INDEX_TYPE;
+#endif
+#ifndef PLATFORM_SIZE_TYPE_DEFINED
+typedef PLATFORM_INT_TYPE PLATFORM_SIZE_TYPE;
+#endif

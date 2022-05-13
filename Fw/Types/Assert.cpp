@@ -10,9 +10,9 @@
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID 0x%08X: Line: %d "
+#define fileIdFs "Assert file ID 0x%08X: Line: %" PRIfwit
 #else
-#define fileIdFs "Assert file \"%s\": Line: %d "
+#define fileIdFs "Assert file \"%s\": Line: %" PRIfwit
 #endif
 
 namespace Fw {
