@@ -147,7 +147,7 @@ namespace Svc {
     // Create filename:
     Fw::Time timestamp = getTime();
     memset(this->fileName, 0, sizeof(this->fileName));
-    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%d_%d_%06d.com",
+    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%" PRIu32 "_%" PRIu32 "_%06" PRIu32 ".com",
       this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
 
     // "A return value of size or more means that the output was truncated"
@@ -155,7 +155,7 @@ namespace Svc {
     FW_ASSERT( bytesCopied < sizeof(this->fileName) );
 
     // Create sha filename:
-    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%d_%d_%06d.com%s",
+    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%" PRIu32 "_%" PRIu32 "_%06" PRIu32 ".com%s",
       this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
     FW_ASSERT( bytesCopied < sizeof(this->hashFileName) );
 
