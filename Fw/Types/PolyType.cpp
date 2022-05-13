@@ -411,7 +411,7 @@ namespace Fw {
                     valIsEqual = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
                     return false; // for compiler
                 }
             return valIsEqual;
@@ -474,7 +474,7 @@ namespace Fw {
                     result = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
                     return false; // for compiler
             }
             return result;

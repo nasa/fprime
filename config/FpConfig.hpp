@@ -9,6 +9,9 @@
  * acknowledged.
  * <br /><br />
  */
+#include <StandardTypes.hpp> // Platform (toolchain) defined types come first
+#include <Fw/Types/DefaultTypes.hpp> // Default types fill in missing platform types
+
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 
@@ -31,6 +34,23 @@
 
 #ifndef FW_HAS_F64
 #define FW_HAS_F64                          1  //!< Architecture supports 64 bit floating point numbers
+#endif
+
+// Project configured types
+#ifndef NATIVE_INT_TYPE_DEFINED
+typedef PLATFORM_INT_TYPE NATIVE_INT_TYPE;
+#define PRIfwit PRIfwpit
+#endif
+#ifndef NATIVE_UINT_TYPE_DEFINED
+typedef PLATFORM_UINT_TYPE NATIVE_UINT_TYPE;
+#define PRIfwuit PRIfwpuit
+#endif
+
+#ifndef FW_SIZE_TYPE_DEFINED
+typedef PLATFORM_SIZE_TYPE FW_SIZE_TYPE;
+#endif
+#ifndef FW_INDEX_TYPE_DEFINED
+typedef PLATFORM_INDEX_TYPE FW_INDEX_TYPE;
 #endif
 
 // Boolean values for serialization

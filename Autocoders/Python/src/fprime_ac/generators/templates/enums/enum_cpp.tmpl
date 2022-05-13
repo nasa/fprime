@@ -52,6 +52,34 @@ namespace ${namespace} {
     return *this;
   }
 
+  ${name}& ${name} :: operator=(const t a)
+  {
+#for $item_name,$item_value,$item_comment in $items_list:
+#if not $item_value == ""
+#set $manual_values = True
+#else
+#set $manual_values = False
+#end if
+#end for
+#if $manual_values == True
+    FW_ASSERT(#slurp
+#set $value_iter = 0
+#for $item_name,$item_value,$item_comment in $items_list:
+#if $value_iter == 0
+a == $item_value#slurp
+#else
+ || a == $item_value#slurp
+#end if
+#set $value_iter = $value_iter + 1
+#end for
+, a);
+#else
+    FW_ASSERT(a >= 0 && a <= $max_value, a);
+#end if
+    this->e = a;
+    return *this;
+  }
+
   ${name}& ${name} :: operator=(const NATIVE_INT_TYPE a)
   {
 #for $item_name,$item_value,$item_comment in $items_list:

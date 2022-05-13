@@ -40,17 +40,21 @@ namespace Svc {
             //!  for use when the CycleIn port is called.
             //!
             //!  \param compName component name
-            //!  \param dividers array of integers used to divide down input tick
-            //!  \param numDividers size of dividers array
             //!
             //!  \return return value description
-            RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+            RateGroupDriverImpl(const char* compName);
 
             //!  \brief RateGroupDriverImpl initialization function
             //!
             //!  The init() function initializes the autocoded base class
 
-            void init(NATIVE_INT_TYPE instanceId = 0);
+            void init(FW_INDEX_TYPE instanceId = 0);
+
+            //!  \brief configure the rate group driver
+            //!
+            //!  \param dividers array of integers used to divide down input tick
+            //!  \param numDividers size of dividers array
+            void configure(const FW_INDEX_TYPE dividers[], const FW_SIZE_TYPE numDividers);
 
             //!  \brief RateGroupDriverImpl destructor
 
@@ -60,18 +64,18 @@ namespace Svc {
 
             //! downcall for input port
             //! NOTE: This port can execute in ISR context.
-            void CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
+            void CycleIn_handler(FW_INDEX_TYPE portNum, Svc::TimerVal& cycleStart);
 
             //! divider array
-            NATIVE_INT_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
+            FW_INDEX_TYPE m_dividers[NUM_CYCLEOUT_OUTPUT_PORTS];
 
             //! tick counter
-            NATIVE_INT_TYPE m_ticks;
+            FW_INDEX_TYPE m_ticks;
             //! rollover counter
-            NATIVE_INT_TYPE m_rollover;
+            FW_INDEX_TYPE m_rollover;
         public:
             //! Size of the divider table, provided as a constants to users passing the table in
-            static const NATIVE_UINT_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
+            static const FW_SIZE_TYPE DIVIDER_SIZE = NUM_CYCLEOUT_OUTPUT_PORTS;
     };
 
 }
