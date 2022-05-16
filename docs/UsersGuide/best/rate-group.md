@@ -21,7 +21,7 @@ A system clock source needs to be supplied to the rate group driver. This clock 
 rates of the various rate groups and drives the `CycleIn` port of the rate group driver. Most projects implement a
 clock component that translates between the system clock and the port call to rate group driver's cycle in port.
 
-The referenece application calls the cycle in port followed by a sleep for the system clock time within a while loop
+The reference application calls the cycle in port followed by a sleep for the system clock time within a while loop
 to simulate a system driven clock. 
 
 ## Active Rate Group
