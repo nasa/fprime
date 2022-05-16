@@ -164,6 +164,7 @@ namespace Ref {
         )
   {
       this->running = !this->running;
+      this->ticks = 0;
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
