@@ -19,9 +19,9 @@ message to each rate group attached to it thus starting each cycle.
 
 A system clock source needs to be supplied to the rate group driver. This clock source must run at a multiple of the
 rates of the various rate groups and drives the `CycleIn` port of the rate group driver. Most projects implement a
-clock component that translates between the system clock and the port call to rate group driver's cycle in port.
+clock component that translates between the system clock and the port call to rate group driver's `CycleIn` port.
 
-The reference application calls the cycle in port followed by a sleep for the system clock time within a while loop
+The reference application calls the `CycleIn` port followed by a sleep for the system clock time within a while loop
 to simulate a system driven clock. 
 
 ## Active Rate Group
@@ -56,6 +56,6 @@ be attached to lower index `Sched` ports than lower priority children.
 Passive components will run synchronously on the rate group. This has the advantage that if too many things are done on
 one clock cycle the rate group will slip. However, each child will run in sequence. Active components will receive the
 message from the active rate group but will not start until their thread becomes active. This allows children to run
-without blocking each other, however; it becomes harder to detect when too much work is scheduled on for a given cycle
-period.
+without blocking each other, however; it becomes harder to detect when more work is scheduled in a cycle than can be
+completed during the cycle because all work runs concurrently and competes for time across multiple threads.
 
