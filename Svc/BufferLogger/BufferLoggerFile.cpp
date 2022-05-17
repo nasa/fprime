@@ -198,7 +198,7 @@ namespace Svc {
   bool BufferLogger::File ::
     writeBytes(
         const void *const data,
-        const NATIVE_UINT_TYPE length
+        const U32 length
     )
   {
     FW_ASSERT(length > 0, length);
