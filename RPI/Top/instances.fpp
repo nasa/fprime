@@ -285,14 +285,8 @@ module RPI {
   }
 
   instance linuxTime: Svc.Time base id 1500 \
-    at "../../Svc/LinuxTime/LinuxTime.hpp" \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-    """
-
-  }
+    type "Svc::LinuxTime" \
+    at "../../Svc/LinuxTime/LinuxTime.hpp"
 
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
