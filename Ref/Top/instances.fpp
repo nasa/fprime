@@ -235,12 +235,9 @@ module Ref {
   @ Communications driver. May be swapped with other comm drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
+    type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
