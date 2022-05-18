@@ -249,12 +249,9 @@ module RPI {
   }
 
   instance comm: Drv.ByteStreamDriverModel base id 1260 \
+    type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
