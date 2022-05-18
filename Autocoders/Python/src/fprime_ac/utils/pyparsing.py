@@ -535,9 +535,7 @@ def col(loc, strg):
     """Returns current column within a string, counting newlines as line separators.
     The first column is number 1.
     """
-    return (
-        (loc < len(strg) and strg[loc] == "\n") and 1 or loc - strg.rfind("\n", 0, loc)
-    )
+    return 1 if (loc < len(strg) and strg[loc] == "\n") else loc - strg.rfind("\n", 0, loc)
 
 
 def lineno(loc, strg):
@@ -1663,11 +1661,7 @@ class QuotedString(Token):
         self.mayReturnEmpty = True
 
     def parseImpl(self, instring, loc, doActions=True):
-        result = (
-            instring[loc] == self.firstQuoteChar
-            and self.re.match(instring, loc)
-            or None
-        )
+        result = self.re.match(instring, loc) if instring[loc] == self.firstQuoteChar else None
         if not result:
             exc = self.myException
             exc.loc = loc
