@@ -6,7 +6,7 @@
 ####
 include(utilities)
 include(autocoder/helpers)
-set(FPP_VERSION v1.0.1-22-g15c06e30)
+set(FPP_VERSION v1.0.1-24-g009bb2f3)
 
 autocoder_setup_for_multiple_sources()
 ####
