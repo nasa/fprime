@@ -42,7 +42,7 @@ The Svc::RateGroupDriver component has one input port that receives a system tic
 The `configure()` function is passed an array of integer arguments that specifies the divisors for each output port. This should be called after the constructor but before any port calls are made.
 
 ```
-    RateGroupDriverImpl::configure(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
+    RateGroupDriverImpl::configure(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
 ```    
 
 The input rate for each output port will be divided down by the value in the `dividers[]` array corresponding to the output port number.
