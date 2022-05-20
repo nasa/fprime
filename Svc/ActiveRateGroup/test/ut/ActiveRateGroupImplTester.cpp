@@ -14,7 +14,7 @@
 */
 
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <ActiveRateGroupImplCfg.hpp>
+#include <ActiveRateGroupCfg.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
@@ -27,7 +27,7 @@ namespace Svc {
         ActiveRateGroupGTestBase::init();
     }
 
-    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroupImpl& inst) :
+    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst) :
             ActiveRateGroupGTestBase("testerbase",100),
             m_impl(inst),m_causeOverrun(false),m_callOrder(0) {
         this->clearPortCalls();
