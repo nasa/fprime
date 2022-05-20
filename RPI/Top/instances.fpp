@@ -28,8 +28,8 @@ module RPI {
 
     phase Fpp.ToCpp.Phases.configComponents """
     rateGroup10HzComp.configure(
-        ConfigObjects::rateGroup1Comp::context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
+        ConfigObjects::rateGroup10HzComp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup10HzComp::context)
     );
     """
 
