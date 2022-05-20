@@ -26,11 +26,10 @@ module RPI {
     NATIVE_UINT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup10HzComp(
-        FW_OPTIONAL_NAME("rateGroup10HzComp"),
-        ConfigObjects::rateGroup10HzComp::context,
-        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup10HzComp::context)
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup10HzComp.configure(
+        ConfigObjects::rateGroup1Comp::context,
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
     """
 

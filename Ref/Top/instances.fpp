@@ -31,9 +31,8 @@ module Ref {
     NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1Comp(
-        FW_OPTIONAL_NAME("rateGroup1Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1Comp.configure(
         ConfigObjects::rateGroup1Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
@@ -51,9 +50,8 @@ module Ref {
     NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup2Comp(
-        FW_OPTIONAL_NAME("rateGroup2Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup2Comp.configure(
         ConfigObjects::rateGroup2Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
@@ -71,9 +69,8 @@ module Ref {
     NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup3Comp(
-        FW_OPTIONAL_NAME("rateGroup3Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup3Comp.configure(
         ConfigObjects::rateGroup3Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
