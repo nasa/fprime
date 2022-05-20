@@ -30,16 +30,16 @@ namespace Svc {
             m_cycleSlips(0) {
     }
 
-    void ActiveRateGroup::configure( NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) {
+    void ActiveRateGroup::configure( NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts) {
         FW_ASSERT(contexts);
-        this->m_numContexts = numContexts;
-        FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
+        FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-                static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
+                FW_NUM_ARRAY_ELEMENTS(this->m_contexts),
                 this->getNum_RateGroupMemberOut_OutputPorts());
 
+        this->m_numContexts = numContexts;
         // copy context values
-        for (NATIVE_INT_TYPE entry = 0; entry < this->getNum_RateGroupMemberOut_OutputPorts(); entry++) {
+        for (NATIVE_INT_TYPE entry = 0; entry < this->m_numContexts; entry++) {
             this->m_contexts[entry] = contexts[entry];
         }
     }
