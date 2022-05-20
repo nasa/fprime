@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriverImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver.cpp"
 )
 
 register_fprime_module()
