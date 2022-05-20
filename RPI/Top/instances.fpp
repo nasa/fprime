@@ -104,12 +104,11 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1HzComp(
-        FW_OPTIONAL_NAME("rateGroup1HzComp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1HzComp.configure(
         ConfigObjects::rateGroup1HzComp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1HzComp::context)
     );
