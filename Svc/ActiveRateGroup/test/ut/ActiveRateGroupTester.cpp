@@ -14,7 +14,7 @@
 */
 
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+#include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 #include <gtest/gtest.h>
@@ -23,7 +23,7 @@
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
-void connectPorts(Svc::ActiveRateGroupImpl& impl, Svc::ActiveRateGroupImplTester& tester) {
+void connectPorts(Svc::ActiveRateGroup& impl, Svc::ActiveRateGroupImplTester& tester) {
 
     tester.connect_to_CycleIn(0,impl.get_CycleIn_InputPort(0));
 
@@ -56,7 +56,8 @@ TEST(ActiveRateGroupTest,NominalSchedule) {
             contexts[i] = i + 1;
         }
 
-        Svc::ActiveRateGroupImpl impl("ActiveRateGroupImpl",contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
+        Svc::ActiveRateGroup impl("ActiveRateGroup");
+        impl.configure(contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
 
         Svc::ActiveRateGroupImplTester tester(impl);
 
@@ -81,7 +82,8 @@ TEST(ActiveRateGroupTest,CycleOverrun) {
             contexts[i] = i + 1;
         }
 
-        Svc::ActiveRateGroupImpl impl("ActiveRateGroupImpl",contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
+        Svc::ActiveRateGroup impl("ActiveRateGroup");
+        impl.configure(contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
 
         Svc::ActiveRateGroupImplTester tester(impl);
 
@@ -103,7 +105,8 @@ TEST(ActiveRateGroupTest,PingPort) {
         contexts[i] = i + 1;
     }
 
-    Svc::ActiveRateGroupImpl impl("ActiveRateGroupImpl",contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
+    Svc::ActiveRateGroup impl("ActiveRateGroup");
+    impl.configure(contexts,FW_NUM_ARRAY_ELEMENTS(contexts));
     Svc::ActiveRateGroupImplTester tester(impl);
 
     tester.init();

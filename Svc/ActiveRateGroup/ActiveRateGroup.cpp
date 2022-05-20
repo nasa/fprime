@@ -12,22 +12,27 @@
 *
 */
 
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
-#include <ActiveRateGroupImplCfg.hpp>
+#include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
+#include <ActiveRateGroupCfg.hpp>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
 
 namespace Svc {
 
-    ActiveRateGroupImpl::ActiveRateGroupImpl(const char* compName, NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) :
+    ActiveRateGroup::ActiveRateGroup(const char* compName) :
             ActiveRateGroupComponentBase(compName),
             m_cycles(0),
             m_maxTime(0),
             m_cycleStarted(false),
+            m_numContexts(0),
             m_overrunThrottle(0),
             m_cycleSlips(0) {
+    }
+
+    void ActiveRateGroup::configure( NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts) {
         FW_ASSERT(contexts);
+        this->m_numContexts = numContexts;
         FW_ASSERT(numContexts == static_cast<NATIVE_UINT_TYPE>(this->getNum_RateGroupMemberOut_OutputPorts()),numContexts,this->getNum_RateGroupMemberOut_OutputPorts());
         FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
                 static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
@@ -39,26 +44,29 @@ namespace Svc {
         }
     }
 
-    void ActiveRateGroupImpl::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
+    void ActiveRateGroup::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance) {
         ActiveRateGroupComponentBase::init(queueDepth,instance);
     }
 
-    ActiveRateGroupImpl::~ActiveRateGroupImpl() {
+    ActiveRateGroup::~ActiveRateGroup() {
 
     }
 
-    void ActiveRateGroupImpl::preamble() {
+    void ActiveRateGroup::preamble() {
         this->log_DIAGNOSTIC_RateGroupStarted();
     }
 
-    void ActiveRateGroupImpl::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+
+        // Make sure it's been configured
+        FW_ASSERT(this->m_numContexts);
 
         TimerVal end;
 
         this->m_cycleStarted = false;
 
         // invoke any members of the rate group
-        for (NATIVE_INT_TYPE port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+        for (NATIVE_INT_TYPE port = 0; port < this->m_numContexts; port++) {
             if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
                 this->RateGroupMemberOut_out(port,this->m_contexts[port]);
             }
@@ -99,12 +107,12 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroupImpl::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
+    void ActiveRateGroup::CycleIn_preMsgHook(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
         // set flag to indicate cycle has started. Check in thread for overflow.
         this->m_cycleStarted = true;
     }
 
-    void ActiveRateGroupImpl::PingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
+    void ActiveRateGroup::PingIn_handler(NATIVE_INT_TYPE portNum, U32 key) {
         // return the key to health
         this->PingOut_out(0,key);
     }
