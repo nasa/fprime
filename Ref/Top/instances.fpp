@@ -28,7 +28,7 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
@@ -47,7 +47,7 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
@@ -66,7 +66,7 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
     phase Fpp.ToCpp.Phases.configComponents """

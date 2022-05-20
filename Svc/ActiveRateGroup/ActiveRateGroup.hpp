@@ -59,7 +59,7 @@ namespace Svc {
             //!         output port number.
             //!  \param numContexts The number of elements in the context array.
 
-            void configure(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
+            void configure(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts);
 
             //!  \brief ActiveRateGroup destructor
             //!
@@ -110,8 +110,8 @@ namespace Svc {
             U32 m_cycles; //!< cycles executed
             U32 m_maxTime; //!< maximum execution time in microseconds
             volatile bool m_cycleStarted; //!< indicate that cycle has started. Used to detect overruns.
-            NATIVE_UINT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS]; //!< Must match number of output ports
-            NATIVE_UINT_TYPE m_numContexts; //!< Number of contexts passed in by user
+            NATIVE_INT_TYPE m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS]; //!< Must match number of output ports
+            NATIVE_INT_TYPE m_numContexts; //!< Number of contexts passed in by user
             NATIVE_INT_TYPE m_overrunThrottle; //!< throttle value for overrun events
             U32 m_cycleSlips; //!< tracks number of cycle slips
     };
