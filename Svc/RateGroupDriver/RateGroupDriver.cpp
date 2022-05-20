@@ -50,6 +50,10 @@ namespace Svc {
 
     void RateGroupDriver::CycleIn_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart) {
 
+        // Make sure that the dividers have been configured:
+        // If this asserts, add the configure() call to initialization.
+        FW_ASSERT(this->m_numDividers);
+
         // Loop through each divider. For a given port, the port will be called when the divider value
         // divides evenly into the number of ticks. For example, if the divider value for a port is 4,
         // it would be called every fourth invocation of the CycleIn port.
