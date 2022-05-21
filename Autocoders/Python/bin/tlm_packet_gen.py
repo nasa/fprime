@@ -127,7 +127,7 @@ class TlmPacketParser(object):
     def __init__(self, verbose=False, dependency=None):
         self.verbose = verbose
         self.dependency = dependency
-        self.size_dict = dict()
+        self.size_dict = {}
 
     def add_type_size(self, type, size):
         PRINT.debug("Type: %s size: %d" % (type, size))
@@ -220,7 +220,7 @@ class TlmPacketParser(object):
 
         topology_model.set_instance_xml_list(xml_list)
 
-        ch_size_dict = dict()
+        ch_size_dict = {}
 
         for comp in the_parsed_topology_xml.get_instances():
             comp_name = comp.get_name()
@@ -310,7 +310,7 @@ class TlmPacketParser(object):
             id_list = list()  # check for duplicates
             ignore_name_list = list()
 
-            size_dict = dict()
+            size_dict = {}
 
             ht.num_packets = 0
             total_packet_size = 0
