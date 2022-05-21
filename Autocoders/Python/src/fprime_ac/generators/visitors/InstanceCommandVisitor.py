@@ -257,8 +257,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 for arg_obj in obj.get_args():
                     # convert XML types to Python classes
@@ -305,8 +305,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 # convert XML types to Python classes
                 (
@@ -347,8 +347,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyVisit")
                 self.__fp2[fname].close()

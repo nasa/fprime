@@ -896,7 +896,7 @@ class Formatters:
         # one argument. A one argument function is built on one line. All
         # other numbers of arguments will use multiple lines.
 
-        arg_list = list()
+        arg_list = []
         type_list = list()
 
         for arg in args:
@@ -977,7 +977,7 @@ class Formatters:
 
         fname = name.strip()
 
-        arg_list = list()
+        arg_list = []
         type_list = list()
         comment_list = list()
 
@@ -1262,7 +1262,7 @@ class Formatters:
         """
 
         type_list = list()
-        arg_list = list()
+        arg_list = []
         comment_list = list()
 
         for arg in args:
