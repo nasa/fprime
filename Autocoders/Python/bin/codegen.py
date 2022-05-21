@@ -315,12 +315,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
     if "Ai" in xml_filename:
         base = xml_filename.split("Ai")[0]
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
-        csv_instance_name = base + "_ID"
-        cmd_html_instance_name = base + "_Cmd_HTML"
-        channel_html_instance_name = base + "_Channel_HTML"
-        event_html_instance_name = base + "_Event_HTML"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
+        csv_instance_name = f"{base}_ID"
+        cmd_html_instance_name = f"{base}_Cmd_HTML"
+        channel_html_instance_name = f"{base}_Channel_HTML"
+        event_html_instance_name = f"{base}_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError

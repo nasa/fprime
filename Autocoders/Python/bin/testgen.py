@@ -87,7 +87,7 @@ def pinit():
     Initialize the option parser and return it.
     """
     usage = "usage: %prog [options] [xml_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
 
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
@@ -191,7 +191,7 @@ def generate_tests(opt, component_model):
     unitTestFiles = []
 
     if VERBOSE:
-        print("Generating test files for " + component_model.get_xml_filename())
+        print(f"Generating test files for {component_model.get_xml_filename()}")
 
     # TesterBase.hpp
     unitTestFiles.append(ComponentTestHWriter.ComponentTestHWriter())
@@ -273,7 +273,7 @@ def generate_tests(opt, component_model):
                 print("Generated TestMain.cpp")
 
     if VERBOSE:
-        print("Generated test files for " + component_model.get_xml_filename())
+        print(f"Generated test files for {component_model.get_xml_filename()}")
 
 
 def main():

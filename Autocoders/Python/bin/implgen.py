@@ -81,7 +81,7 @@ def pinit():
     Initialize the option parser and return it.
     """
     usage = "usage: %prog [options] [xml_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
 
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
@@ -167,7 +167,7 @@ def generate_impl_files(opt, component_model):
     implFiles = []
 
     if VERBOSE:
-        print("Generating impl files for " + component_model.get_xml_filename())
+        print(f"Generating impl files for {component_model.get_xml_filename()}")
 
     # ComponentImpl.cpp
     implFiles.append(ImplCppWriter.ImplCppWriter())

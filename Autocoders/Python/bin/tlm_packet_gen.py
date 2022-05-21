@@ -239,7 +239,7 @@ class TlmPacketParser(object):
             # check for channels
             if parsed_xml_dict[comp_type].get_channels() is not None:
                 for chan in parsed_xml_dict[comp_type].get_channels():
-                    channel_name = comp_name + "." + chan.get_name()
+                    channel_name = f"{comp_name}.{chan.get_name()}"
                     if self.verbose:
                         print("Processing Channel %s" % channel_name)
                     chan_type = chan.get_type()

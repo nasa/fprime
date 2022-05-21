@@ -565,7 +565,7 @@ class CsvFile:
         try:
             m_fp = open(name)
         except OSError:
-            print("Error opening " + name)
+            print(f"Error opening {name}")
             exit()
         m_reader = csv.reader(m_fp, dialect="excel")
 
