@@ -149,8 +149,8 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
 
-            c.arglist = list()
-            c.ser_import_list = list()
+            c.arglist = []
+            c.ser_import_list = []
             arg_num = 0
 
             for arg_obj in obj.get_args():
