@@ -381,7 +381,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             (mnemonic, opcodes, sync, priority, full, comment) = xxx_todo_changeme3
             if self.isAsync(sync):
                 if len(opcodes) == 1:
-                    return "CMD_" + mnemonic.upper()
+                    return f"CMD_{mnemonic.upper()}"
                 else:
                     mlist = list()
                     inst = 0
@@ -396,7 +396,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
 
         def h(xxx_todo_changeme4):
             (name, priority, full) = xxx_todo_changeme4
-            return "INT_IF_" + name.upper()
+            return f"INT_IF_{name.upper()}"
 
         self.__model_parser.getInternalInterfacesList(obj)
         interface_types = self.mapPartial(h, c.internal_interfaces)
