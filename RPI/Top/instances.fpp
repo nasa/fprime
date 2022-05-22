@@ -291,10 +291,6 @@ module RPI {
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
 
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RPITopologyDefs.cpp
-    """
-
     phase Fpp.ToCpp.Phases.stopTasks """
     linuxTimer.quit();
     """
