@@ -19,14 +19,7 @@ module Ref {
   instance blockDrv: Drv.BlockDriver base id 0x0100 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 140 \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RefTopologyDefs.cpp
-    """
-
-  }
+    priority 140
 
   instance rateGroup1Comp: Svc.ActiveRateGroup base id 0x0200 \
     queue size Default.queueSize \
