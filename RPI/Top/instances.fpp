@@ -249,12 +249,9 @@ module RPI {
   }
 
   instance comm: Drv.ByteStreamDriverModel base id 1260 \
+    type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
@@ -288,21 +285,11 @@ module RPI {
   }
 
   instance linuxTime: Svc.Time base id 1500 \
-    at "../../Svc/LinuxTime/LinuxTime.hpp" \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-    """
-
-  }
+    type "Svc::LinuxTime" \
+    at "../../Svc/LinuxTime/LinuxTime.hpp"
 
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RPITopologyDefs.cpp
-    """
 
     phase Fpp.ToCpp.Phases.stopTasks """
     linuxTimer.quit();
