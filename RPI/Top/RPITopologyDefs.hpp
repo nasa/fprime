@@ -9,9 +9,6 @@
 
 namespace RPI {
 
-  // Declare the Linux timer here so it is visible in main
-  extern Svc::LinuxTimer linuxTimer;
-
   namespace Allocation {
 
     // Malloc allocator for topology construction
