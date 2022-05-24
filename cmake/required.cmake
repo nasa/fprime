@@ -7,18 +7,22 @@
 ####
 include(autocoder/fpp)
 
-find_program(FPUTIL NAMES fprime-util)
 find_program(PYTHON NAMES python3 python)
+find_program(FPUTIL NAMES fprime-util)
 
 locate_fpp_tools()
 
+set(TO_INSTALL_MESSAGE "Install with:\n   'pip install -U \"${FPRIME_FRAMEWORK_PATH}/\"'")
+
 # Check python was found
 if (NOT FPUTIL)
-    message(FATAL_ERROR "fprime-util was not found. Please install with 'pip install fprime-tools'")
+    message(FATAL_ERROR " fprime-util was not found. ${TO_INSTALL_MESSAGE}")
 elseif (NOT PYTHON)
-    message(FATAL_ERROR "python3 was not found. Please ensure python3 is on the path.")
+    message(FATAL_ERROR " python3 was not found. Please see: https://www.python.org/downloads/")
+elseif (DEFINED FPP_ERROR_MESSAGE)
+    message(FATAL_ERROR " ${FPP_ERROR_MESSAGE}. ${TO_INSTALL_MESSAGE}")
 elseif(NOT FPP_FOUND)
-    message(FATAL_ERROR "fpp tools were not found. Please install the fpp tool suite.")
+    message(FATAL_ERROR " fpp tools not found. ${TO_INSTALL_MESSAGE}")
 endif()
 
 
