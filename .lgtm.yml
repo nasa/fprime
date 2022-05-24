@@ -29,6 +29,7 @@ extraction:
             # setup the venv and install packages
             - "python3 -m venv ./fprime-venv"
             - ". ./fprime-venv/bin/activate"
+            - "pip install -U setuptools wheel pip"
             - "wget https://github.com/sbt/sbt/releases/download/v1.6.2/sbt-1.6.2.tgz"
             - "tar -xzf sbt-1.6.2.tgz"
             - "export PATH=$PATH:$LGTM_SRC/sbt/bin"
