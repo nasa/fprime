@@ -338,7 +338,7 @@ module Ref {
     phase Fpp.ToCpp.Phases.configComponents """
     rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
-        ConfigObjects::rateGroupDriverComp::FW_NUM_ARRAY_ELEMENTS(rgDivs)
+        FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
     """
 
