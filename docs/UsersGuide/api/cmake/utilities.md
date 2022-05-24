@@ -184,6 +184,12 @@ i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
 - **Return: MODULE_NAME** (set in parent scope)
 
 
+## Function `get_expected_tool_version`:
+
+Gets the expected tool version named using VERSION_IDENTIFIER from the `versions.py` configuration
+file. This will be returned via the variable supplied in FILL_VARIABLE setting it in PARENT_SCOPE.
+
+
 ## Function `set_hash_flag`:
 
 Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
