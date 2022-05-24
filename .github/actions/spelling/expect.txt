@@ -615,12 +615,14 @@ getopt
 getoutput
 getpass
 getpid
+getppid
 getquaternion
 getroot
 getsize
 getsockname
 getstate
 getstatus
+gettempdir
 gettime
 gettimeofday
 getty
@@ -1746,6 +1748,7 @@ VFILE
 vfs
 vhd
 vhdl
+VID
 viewforum
 virt
 virtualbox

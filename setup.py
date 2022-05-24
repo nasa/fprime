@@ -16,7 +16,7 @@ with open(Path(__file__).parent / "versions.json", "r") as file_handle:
     versions = json.load(file_handle)
 versions["setup_ppid"] = os.getppid()
 
-# Save the current versioning information and parent process as a temproray file that peer-installations can reference
+# Save the current versioning information and parent process as a file that peer-installations can reference
 with open(Path(tempfile.gettempdir()) / "fprime_versions.json", "w") as file_handle:
     json.dump(versions, file_handle)
 
@@ -54,6 +54,6 @@ setup(
     install_requires=[
         f"fprime-tools=={ versions['FPRIME_TOOLS_VERSION'] }",
         f"fprime-gds=={ versions['FPRIME_GDS_VERSION'] }",
-        f"fprime-fpp @ git+https://github.com/fprime-community/fprime-fpp.git" # Always install this version from git
-    ]
+        f"fprime-fpp @ git+https://github.com/fprime-community/fprime-fpp.git",  # Always install this version from git
+    ],
 )
