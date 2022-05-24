@@ -615,12 +615,14 @@ getopt
 getoutput
 getpass
 getpid
+getppid
 getquaternion
 getroot
 getsize
 getsockname
 getstate
 getstatus
+gettempdir
 gettime
 gettimeofday
 getty
@@ -1182,6 +1184,7 @@ PORTSELECTOR
 PORTSOUT
 posix
 ppandian
+ppid
 pport
 PQueue
 Prashanth
@@ -1746,6 +1749,7 @@ VFILE
 vfs
 vhd
 vhdl
+VID
 viewforum
 virt
 virtualbox

@@ -452,6 +452,28 @@ function(get_module_name)
     set(MODULE_NAME ${TEMP_MODULE_NAME} PARENT_SCOPE)
 endfunction(get_module_name)
 
+####
+# Function `get_expected_tool_version`:
+#
+# Gets the expected tool version named using VERSION_IDENTIFIER from the `versions.py` configuration
+# file. This will be returned via the variable supplied in FILL_VARIABLE setting it in PARENT_SCOPE.
+####
+function(get_expected_tool_version VID FILL_VARIABLE)
+    find_program(PYTHON NAMES python3 python)
+    execute_process(
+        COMMAND
+          "${PYTHON}" "-c"
+          "import json\nwith open('versions.json') as fh:\n  print(json.load(fh)['${VID}'].strip(), end='')"
+        WORKING_DIRECTORY "${FPRIME_FRAMEWORK_PATH}"
+        OUTPUT_VARIABLE VERSION_TEXT
+        RESULT_VARIABLE RESULT_OUT
+    )
+    # Check result variable
+    if (NOT RESULT_OUT EQUAL 0)
+        message(FATAL_ERROR "Failed to determine tools version for: ${VERSION_IDENTIFIER}")
+    endif()
+    set("${FILL_VARIABLE}" "${VERSION_TEXT}" PARENT_SCOPE)
+endfunction(get_expected_tool_version)
 
 ####
 # Function `set_hash_flag`:
