@@ -59,3 +59,16 @@ message from the active rate group but will not start until their thread becomes
 without blocking each other, however; it becomes harder to detect when more work is scheduled in a cycle than can be
 completed during the cycle because all work runs concurrently and competes for time across multiple threads.
 
+
+## Rate Group Example: `Ref`
+
+The `Ref` application uses rate groups to drive several system components as well as the demonstration SignalGen components.
+In the `Ref` application, the `blockDrv` component is used to drive the rate group driver. That drives active rate groups
+that then drive the components.
+
+The topology connections for rate groups can be seen here:
+[Rate Group Topology](https://github.com/nasa/fprime/blob/ddcb2ec138645da34cd4c67f250b67ee8bc67b26/Ref/Top/topology.fpp#L97-L124)
+
+A sample schedule handler can be found here:
+[Sample Schedule Handler](https://github.com/nasa/fprime/blob/ddcb2ec138645da34cd4c67f250b67ee8bc67b26/Ref/SignalGen/SignalGen.cpp#L98-L140)
+
