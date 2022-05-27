@@ -381,9 +381,9 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
             (mnemonic, opcodes, sync, priority, full, comment) = xxx_todo_changeme3
             if self.isAsync(sync):
                 if len(opcodes) == 1:
-                    return "CMD_" + mnemonic.upper()
+                    return f"CMD_{mnemonic.upper()}"
                 else:
-                    mlist = list()
+                    mlist = []
                     inst = 0
                     for opcode in opcodes:
                         mlist.append("CMD_" + mnemonic.upper() + "_%d" % inst)
@@ -396,7 +396,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
 
         def h(xxx_todo_changeme4):
             (name, priority, full) = xxx_todo_changeme4
-            return "INT_IF_" + name.upper()
+            return f"INT_IF_{name.upper()}"
 
         self.__model_parser.getInternalInterfacesList(obj)
         interface_types = self.mapPartial(h, c.internal_interfaces)
@@ -442,7 +442,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         c.has_time_get = "TimeGet" in roles
 
     def initPortIncludes(self, obj, c):
-        c.port_includes = list()
+        c.port_includes = []
         for include in self.__model_parser.uniqueList(obj.get_xml_port_files()):
             c.port_includes.append(include.replace("PortAi.xml", "PortAc.hpp"))
 

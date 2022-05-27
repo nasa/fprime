@@ -239,7 +239,7 @@ class TlmPacketParser(object):
             # check for channels
             if parsed_xml_dict[comp_type].get_channels() is not None:
                 for chan in parsed_xml_dict[comp_type].get_channels():
-                    channel_name = comp_name + "." + chan.get_name()
+                    channel_name = f"{comp_name}.{chan.get_name()}"
                     if self.verbose:
                         print("Processing Channel %s" % channel_name)
                     chan_type = chan.get_type()
@@ -303,18 +303,18 @@ class TlmPacketParser(object):
             it.packet_list_namespace = list_namespace
             it.max_size = max_size
 
-            packet_list_container = list()
+            packet_list_container = []
 
-            packetized_channel_list = list()
-            it.ignore_list = list()
-            id_list = list()  # check for duplicates
-            ignore_name_list = list()
+            packetized_channel_list = []
+            it.ignore_list = []
+            id_list = []  # check for duplicates
+            ignore_name_list = []
 
             size_dict = dict()
 
             ht.num_packets = 0
             total_packet_size = 0
-            levels = list()
+            levels = []
             view_path = "./Views"
             # find the topology import
             for entry in element_tree.getroot():
@@ -354,7 +354,7 @@ class TlmPacketParser(object):
                     else:
                         id_list.append(packet_id)
 
-                    channel_list = list()
+                    channel_list = []
                     for channel in entry:
                         channel_name = channel.attrib["name"]
                         if not channel_name in channel_size_dict:

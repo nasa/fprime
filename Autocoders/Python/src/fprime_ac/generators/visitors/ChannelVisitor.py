@@ -94,7 +94,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
 
-        self.__fp = list()
+        self.__fp = []
 
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())

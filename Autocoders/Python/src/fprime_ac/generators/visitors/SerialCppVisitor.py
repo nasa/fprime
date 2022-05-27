@@ -138,7 +138,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of struct member tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for (
             name,

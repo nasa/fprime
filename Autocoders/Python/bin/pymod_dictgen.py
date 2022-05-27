@@ -75,7 +75,7 @@ def pinit():
     Initialize the option parser and return it.
     """
     usage = "usage: %prog [options] [xml_topology_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = """This script reads F' topology XML and produces GDS Python Dictionaries. They are generated into your build dir under a py_dict directory"""
 
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
