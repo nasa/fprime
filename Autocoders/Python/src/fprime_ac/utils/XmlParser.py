@@ -60,8 +60,8 @@ class Parser:
         """
 
         self.__node_stack = []
-        self.__node_end_visit_dict = dict()
-        self.__node_start_visit_dict = dict()
+        self.__node_end_visit_dict = {}
+        self.__node_start_visit_dict = {}
 
         if xml_file is None:
             self.__xml_string = None
@@ -310,7 +310,7 @@ class Parser:
         """
 
         problems = 0
-        value = dict()
+        value = {}
         invalidAttrs = []
 
         errorMsg = "Error: XML element <%s> is invalid" % (element.getName())
@@ -358,7 +358,7 @@ class Parser:
         detailed validation performed by the caller (the subclass' element validation
         methods).
         """
-        found = dict()
+        found = {}
         unexpectedChildren = []
         errMsg = "Error: The XML element <%s> is invalid" % (element.getName())
 
@@ -437,7 +437,7 @@ class Element:
         if len(attributes) > 0:
             attr = dict(attributes)
         else:
-            attr = dict()
+            attr = {}
         self.attribute = attr
         # The element's cdata
         self.cdata = ""

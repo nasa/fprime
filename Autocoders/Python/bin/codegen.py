@@ -1208,7 +1208,7 @@ def main():
 
     # Configure the logging.
     log_level = opt.logger.upper()
-    log_level_dict = dict()
+    log_level_dict = {}
 
     log_level_dict["QUIET"] = None
     log_level_dict["DEBUG"] = logging.DEBUG
