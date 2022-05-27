@@ -9,13 +9,13 @@
 #define RATEGROUPDRIVER_TEST_UT_RATEGROUPDRIVERIMPLTESTER_HPP_
 
 #include <GTestBase.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
+#include <Svc/RateGroupDriver/RateGroupDriver.hpp>
 
 namespace Svc {
 
     class RateGroupDriverImplTester: public RateGroupDriverGTestBase {
         public:
-            RateGroupDriverImplTester(Svc::RateGroupDriverImpl& inst);
+            RateGroupDriverImplTester(Svc::RateGroupDriver& inst);
             virtual ~RateGroupDriverImplTester();
 
             void init(NATIVE_INT_TYPE instance = 0);
@@ -26,7 +26,7 @@ namespace Svc {
 
             void from_CycleOut_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal& cycleStart);
 
-            Svc::RateGroupDriverImpl& m_impl;
+            Svc::RateGroupDriver& m_impl;
 
             void clearPortCalls();
 

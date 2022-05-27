@@ -303,15 +303,13 @@ module RPI {
     phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
     """
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::RateGroupDriver rateGroupDriverComp(
-        FW_OPTIONAL_NAME("rateGroupDriverComp"),
+    
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
     """
-
   }
 
   instance textLogger: Svc.PassiveTextLogger base id 1900
