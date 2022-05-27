@@ -47,7 +47,7 @@ class ConfigManager(parent):
         # the users $HOME directory.  If not found
         # then the default values from setProps are used.
         config_file_name = "ac.ini"
-        files = list()
+        files = []
         # Append other paths to look in here.
 
         # Look in next one, the home directory of the user.

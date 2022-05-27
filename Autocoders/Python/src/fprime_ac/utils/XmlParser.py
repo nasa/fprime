@@ -59,7 +59,7 @@ class Parser:
         a big string.
         """
 
-        self.__node_stack = list()
+        self.__node_stack = []
         self.__node_end_visit_dict = {}
         self.__node_start_visit_dict = {}
 
@@ -156,7 +156,7 @@ class Parser:
         if self.__xml_string is None:
             return
         else:
-            self.__node_stack = list()
+            self.__node_stack = []
 
         for token, content, loc in XML(self.__xml_string):
 
@@ -311,7 +311,7 @@ class Parser:
 
         problems = 0
         value = {}
-        invalidAttrs = list()
+        invalidAttrs = []
 
         errorMsg = "Error: XML element <%s> is invalid" % (element.getName())
 
@@ -359,7 +359,7 @@ class Parser:
         methods).
         """
         found = {}
-        unexpectedChildren = list()
+        unexpectedChildren = []
         errMsg = "Error: The XML element <%s> is invalid" % (element.getName())
 
         children = element.getElements()
@@ -482,7 +482,7 @@ class Element:
         if not name:
             return self.children
         else:
-            elements = list()
+            elements = []
             for element in self.children:
                 if element.name == name:
                     elements.append(element)

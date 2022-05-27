@@ -350,7 +350,7 @@ class GenFactory:
         """
         # Instance this list only once for all elements
         if self.__visitor_list is None:
-            self.__visitor_list = list()
+            self.__visitor_list = []
             #
             # Insert each of the code producer visitors into the list of
             # visitors. The visitor must be in the list of

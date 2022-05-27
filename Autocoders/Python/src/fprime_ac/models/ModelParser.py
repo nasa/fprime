@@ -189,7 +189,7 @@ class ModelParser:
         for port in obj.get_ports():
             name = port.get_name()
             port_namespace = port.get_namespace()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Port: %s" % name
             args = port.get_args()
             for a in args:
@@ -492,7 +492,7 @@ class ModelParser:
         args_dict = {}
         for command in obj.get_commands():
             mnemonic = command.get_mnemonic()
-            args_dict[mnemonic] = list()
+            args_dict[mnemonic] = []
             # print "Command: %s" % name
             args = command.get_args()
 
@@ -578,7 +578,7 @@ class ModelParser:
         args_dict = {}
         for event in obj.get_events():
             name = event.get_name()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Command: %s" % name
             args = event.get_args()
 
@@ -662,7 +662,7 @@ class ModelParser:
         args_dict = {}
         for internal_interface in obj.get_internal_interfaces():
             name = internal_interface.get_name()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Interface: %s" % name
             args = internal_interface.get_args()
 

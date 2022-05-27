@@ -591,7 +591,7 @@ class ParserElement:
     setDefaultWhitespaceChars = staticmethod(setDefaultWhitespaceChars)
 
     def __init__(self, savelist=False):
-        self.parseAction = list()
+        self.parseAction = []
         self.failAction = None
         # ~ self.name = "<unknown>"  # don't define self.name, let subclasses try/except upcall
         self.strRepr = None
@@ -602,7 +602,7 @@ class ParserElement:
         self.copyDefaultWhiteChars = True
         self.mayReturnEmpty = False
         self.keepTabs = False
-        self.ignoreExprs = list()
+        self.ignoreExprs = []
         self.debug = False
         self.streamlined = False
         self.mayIndexError = True
