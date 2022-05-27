@@ -85,7 +85,7 @@ $(document).ready(function(){initNavTree('_svc_rate_group_driver_component.html'
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title"><a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a> Component </div>  </div>
+<div class="title"><a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md558"></a>
@@ -100,9 +100,9 @@ Svc::RateGroupDriver Component</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Requirement </th><th class="markdownTableHeadNone">Description </th><th class="markdownTableHeadNone">Verification Method  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">RGD-001 </td><td class="markdownTableBodyNone">The '<a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a>' component shall divide a primary system tick into the needed rate groups </td><td class="markdownTableBodyNone">Unit Test  </td></tr>
+<td class="markdownTableBodyNone">RGD-001 </td><td class="markdownTableBodyNone">The '<a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a>' component shall divide a primary system tick into the needed rate groups </td><td class="markdownTableBodyNone">Unit Test  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">RCD-002 </td><td class="markdownTableBodyNone">The '<a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a>' component shall be able to run in ISR context </td><td class="markdownTableBodyNone">Inspection  </td></tr>
+<td class="markdownTableBodyNone">RCD-002 </td><td class="markdownTableBodyNone">The '<a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a>' component shall be able to run in ISR context </td><td class="markdownTableBodyNone">Inspection  </td></tr>
 </table>
 <h2><a class="anchor" id="autotoc_md561"></a>
 3. Design</h2>
@@ -110,11 +110,11 @@ Svc::RateGroupDriver Component</h1>
 3.1 Context</h3>
 <h4><a class="anchor" id="autotoc_md563"></a>
 3.1.1 Component Diagram</h4>
-<p>The <a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a> component has the following component diagram:</p>
+<p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component has the following component diagram:</p>
 <p><img src="img/RateGroupDriverBDD.jpg" alt="RateGroupDriver Diagram" title="RateGroupDriver" class="inline"/></p>
 <h4><a class="anchor" id="autotoc_md564"></a>
 3.1.2 Ports</h4>
-<p>The <a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a> component uses the following port types:</p>
+<p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component uses the following port types:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Port Data Type </th><th class="markdownTableHeadNone">Name </th><th class="markdownTableHeadNone">Direction </th><th class="markdownTableHeadNone">Kind </th><th class="markdownTableHeadNone">Usage  </th></tr>
@@ -125,8 +125,10 @@ Svc::RateGroupDriver Component</h1>
 </table>
 <h4><a class="anchor" id="autotoc_md565"></a>
 3.2 Functional Description</h4>
-<p>The <a class="el" href="namespace_svc.html#a6f816141411b4a3f89146b0b9550cfbb">Svc::RateGroupDriver</a> component has one input port that receives a system tick. The constructor has an array of integer arguments that specifies the divisors for each output port. </p><pre class="fragment">RateGroupDriverImpl(const char* compName, NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);
-</pre><p>The input rate for each output port will be divided down by the value in the <code>dividers[]</code> array corresponding to the output port number.</p>
+<p>The <a class="el" href="class_svc_1_1_rate_group_driver.html" title="Implementation class for RateGroupDriver.">Svc::RateGroupDriver</a> component has one input port that receives a system tick.</p>
+<p>The <code>configure()</code> function is passed an array of integer arguments that specifies the divisors for each output port. This should be called after the constructor but before any port calls are made. The contents of the array are copied during the call, so the array can be a temporary variable.</p>
+<div class="fragment"><div class="line">RateGroupDriverImpl::configure(NATIVE_INT_TYPE dividers[], NATIVE_INT_TYPE numDividers);</div>
+</div><!-- fragment --><p>The input rate for each output port will be divided down by the value in the <code>dividers[]</code> array corresponding to the output port number.</p>
 <p>The implementation will be ISR compliant by avoiding the following:</p>
 <ul>
 <li>Floating point calculations</li>

@@ -178,7 +178,7 @@ var hierarchy =
     [ "Os::QueueHandle", "class_os_1_1_queue_handle.html", null ],
     [ "Os::QueueRegistry", "class_os_1_1_queue_registry.html", null ],
     [ "RateGroupDriverComponentBase", null, [
-      [ "Svc::RateGroupDriverImpl", "class_svc_1_1_rate_group_driver_impl.html", null ]
+      [ "Svc::RateGroupDriver", "class_svc_1_1_rate_group_driver.html", null ]
     ] ],
     [ "Utils::RateLimiter", "class_utils_1_1_rate_limiter.html", null ],
     [ "Os::IntervalTimer::RawTime", "struct_os_1_1_interval_timer_1_1_raw_time.html", null ],

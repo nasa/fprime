@@ -33,13 +33,10 @@ var NAVTREEINDEX4 =
 "queued_component_base_8cpp_source.html":[9,0,4,4,4],
 "queued_component_base_8hpp.html":[9,0,4,4,5],
 "queued_component_base_8hpp_source.html":[9,0,4,4,5],
-"rate_group_driver_8hpp.html":[9,0,6,31,1],
-"rate_group_driver_8hpp.html#a6f816141411b4a3f89146b0b9550cfbb":[9,0,6,31,1,0],
-"rate_group_driver_8hpp_source.html":[9,0,6,31,1],
-"rate_group_driver_impl_8cpp.html":[9,0,6,31,2],
-"rate_group_driver_impl_8cpp_source.html":[9,0,6,31,2],
-"rate_group_driver_impl_8hpp.html":[9,0,6,31,3],
-"rate_group_driver_impl_8hpp_source.html":[9,0,6,31,3],
+"rate_group_driver_8cpp.html":[9,0,6,31,1],
+"rate_group_driver_8cpp_source.html":[9,0,6,31,1],
+"rate_group_driver_8hpp.html":[9,0,6,31,2],
+"rate_group_driver_8hpp_source.html":[9,0,6,31,2],
 "rate_limiter_8cpp.html":[9,0,7,7],
 "rate_limiter_8cpp_source.html":[9,0,7,7],
 "rate_limiter_8hpp.html":[9,0,7,8],
@@ -249,5 +246,8 @@ var NAVTREEINDEX4 =
 "svc_buffer_manager_component.html#autotoc_md251":[4,5,0,2,1],
 "svc_buffer_manager_component.html#autotoc_md252":[4,5,0,2,2],
 "svc_buffer_manager_component.html#autotoc_md253":[4,5,0,2,2,0],
-"svc_buffer_manager_component.html#autotoc_md254":[4,5,0,2,2,1]
+"svc_buffer_manager_component.html#autotoc_md254":[4,5,0,2,2,1],
+"svc_buffer_manager_component.html#autotoc_md255":[4,5,0,2,3],
+"svc_buffer_manager_component.html#autotoc_md256":[4,5,0,2,4],
+"svc_buffer_manager_component.html#autotoc_md257":[4,5,0,2,5]
 };
