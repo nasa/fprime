@@ -305,11 +305,7 @@ class TestRefAppClass(object):
         # First telemetry item should fill only the first slot of the history
         history = [0, 0, 0, 5]
         pair_history = [{"time": 0, "value": value} for value in history]
-        info = {
-            "type": "SQUARE",
-            "history": history,
-            "pairHistory": pair_history
-        }
+        info = {"type": "SQUARE", "history": history, "pairHistory": pair_history}
         self.assert_command("SG4.SignalGen_Toggle")
         self.api.assert_telemetry("SG4.History", history, timeout=6)
         self.api.assert_telemetry("SG4.PairHistory", pair_history, timeout=1)
