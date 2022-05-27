@@ -107,7 +107,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for (name, mtype, size, format, comment) in obj.get_members():
             typeinfo = None
@@ -227,7 +227,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = SerialBody.SerialBody()
         c.name = obj.get_name()
-        c.mem_list = list()
+        c.mem_list = []
         for (n, t, s, f, comment) in obj.get_members():
             # convert XML types to Python classes
             (

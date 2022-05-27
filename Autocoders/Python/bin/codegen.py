@@ -1145,7 +1145,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
-        # file_list = list()
+        # file_list = []
         # for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
     else:

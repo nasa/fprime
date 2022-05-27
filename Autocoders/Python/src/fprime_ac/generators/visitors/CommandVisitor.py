@@ -103,7 +103,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             # multi-instance component. If there is only
             # one instance, use the opcode directly.
             # Otherwise, it will be the opcode + instance
-            self.__fp1 = list()
+            self.__fp1 = []
 
             if len(obj.get_opcodes()) == 1:
                 pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
@@ -123,8 +123,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     DEBUG.info("Completed %s open" % pyfile)
                     self.__fp1.append(fd)
         elif type(obj) is Parameter.Parameter:
-            self.__fp1 = list()
-            self.__fp2 = list()
+            self.__fp1 = []
+            self.__fp2 = []
             # Command stem will be component name minus namespace converted to uppercase
             self.__stem = obj.get_name().upper()
 
@@ -227,8 +227,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 for arg_obj in obj.get_args():
                     # convert XML types to Python classes
@@ -262,8 +262,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 # convert XML types to Python classes
                 (
@@ -293,8 +293,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 self._writeTmpl(c, self.__fp2[inst], "commandBodyVisit")
                 self.__fp2[inst].close()

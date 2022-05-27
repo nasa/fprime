@@ -17,8 +17,8 @@ class EnumCheckResults:
         #
         #    (overrun_type, bit_length, max_value, signed)
 
-        self.overrun_details = list()
-        self.underrun_details = list()
+        self.overrun_details = []
+        self.underrun_details = []
 
         self.overruns = 0  # not enough uplink bits (error)
         self.underruns = 0  # too many uplink bits (warning)
