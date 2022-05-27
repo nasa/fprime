@@ -391,7 +391,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             (mnemonic, opcodes, sync, priority, full, comment) = xxx_todo_changeme3
             if self.isAsync(sync):
                 if len(opcodes) == 1:
-                    return "CMD_" + mnemonic.upper()
+                    return f"CMD_{mnemonic.upper()}"
                 else:
                     mlist = []
                     inst = 0
