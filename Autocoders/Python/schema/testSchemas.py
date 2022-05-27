@@ -115,7 +115,9 @@ class schema_test:
                         parsed = self.__get_parsed_relaxng(new_path)
                         root_tag = parsed.getroot().tag
                         if root_tag in list_of_root_tags:
-                            self.add_test(f"Path Added: {file}", new_path, None, parsed_xml=parsed)
+                            self.add_test(
+                                f"Path Added: {file}", new_path, None, parsed_xml=parsed
+                            )
                     except:
                         pass
 
