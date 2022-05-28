@@ -111,7 +111,7 @@ class InstanceTopologyEventsHTMLVisitor(AbstractVisitor.AbstractVisitor):
                 if len(events_list) > 0:
                     filename = "%s_events.html" % t[0]
                     # Open file for writing here...
-                    DEBUG.info("Open file: %s" % filename)
+                    DEBUG.info(f"Open file: {filename}")
                     try:
                         self.__fp_dict[name] = open(filename, "w")
                         DEBUG.info("Completed")

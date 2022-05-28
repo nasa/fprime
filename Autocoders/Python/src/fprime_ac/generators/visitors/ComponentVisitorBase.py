@@ -863,7 +863,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Open the file for writing
         """
-        DEBUG.info("Open file: %s" % filename)
+        DEBUG.info(f"Open file: {filename}")
         self.__fp = open(filename, "w")
         if self.__fp is None:
             raise Exception("Could not open file %s") % filename

@@ -105,12 +105,12 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype == "string" and array_size is not None:
                 arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"NATIVE_INT_TYPE {name}Size, "
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"NATIVE_INT_TYPE {name}Size, "
             else:
                 arg_str += "{} {}".format(mtype, name)
                 arg_str += ", "
@@ -189,7 +189,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] is None) and (e[2] is None):
-                s = "%s," % (e[0])
+                s = f"{e[0]},"
             # No value, With comment
             elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])
@@ -254,7 +254,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 sys.exit(-1)
 
         # Open file for writing here...
-        DEBUG.info("Open file: %s" % filename)
+        DEBUG.info(f"Open file: {filename}")
         self.__fp = open(filename, "w")
         if self.__fp is None:
             raise Exception("Could not open %s file.") % filename

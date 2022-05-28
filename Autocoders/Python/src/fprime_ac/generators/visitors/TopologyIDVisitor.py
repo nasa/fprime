@@ -101,19 +101,15 @@ class TopologyIDVisitor(AbstractVisitor.AbstractVisitor):
                     "assembly", "TopologyID"
                 )
                 PRINT.info(
-                    "Generating code filename: %s topology, using default XML filename prefix..."
-                    % filename
+                    f"Generating code filename: {filename} topology, using default XML filename prefix..."
                 )
             else:
-                msg = (
-                    "XML file naming format not allowed (must be XXXAppAi.xml), Filename: %s"
-                    % xml_file
-                )
+                msg = f"XML file naming format not allowed (must be XXXAppAi.xml), Filename: {xml_file}"
                 PRINT.info(msg)
                 raise ValueError(msg)
 
             # Open file for writing here...
-            DEBUG.info("Open file: %s" % filename)
+            DEBUG.info(f"Open file: {filename}")
             self.__fp = open(filename, "w")
             if self.__fp is None:
                 raise Exception("Could not open %s file.") % filename

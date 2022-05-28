@@ -79,7 +79,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("InstanceCommandVisitor:%s" % visit_str)
+        DEBUG.debug(f"InstanceCommandVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         fp.writelines(c.__str__())

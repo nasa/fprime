@@ -222,8 +222,7 @@ class InstEventWriter(AbstractDictWriter.AbstractDictWriter):
                     # check for an error
                     if format_string is None:
                         PRINT.info(
-                            "Event %s in component %s had error processing format specifier"
-                            % (c.name, c.component)
+                            f"Event {c.name} in component {c.component} had error processing format specifier"
                         )
                         sys.exit(-1)
                     else:

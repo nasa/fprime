@@ -101,12 +101,12 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype == "string" and array_size is not None:
                 arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"NATIVE_INT_TYPE {name}Size, "
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif array_size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"NATIVE_INT_TYPE {name}Size, "
             else:
                 arg_str += "{} {}".format(mtype, name)
                 arg_str += ", "
@@ -248,7 +248,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 sys.exit(-1)
 
         # Open file for writing here...
-        DEBUG.info("Open file: %s" % filename)
+        DEBUG.info(f"Open file: {filename}")
         self.__fp = open(filename, "w")
         if self.__fp is None:
             raise Exception("Could not open %s file.") % filename

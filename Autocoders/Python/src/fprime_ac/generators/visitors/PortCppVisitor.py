@@ -193,7 +193,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                 raise ValueError(msg)
 
         # Open file for writing here...
-        DEBUG.info("Open file: %s" % filename)
+        DEBUG.info(f"Open file: {filename}")
         self.__fp = open(filename, "w")
         if self.__fp is None:
             raise Exception("Could not open %s file.") % filename

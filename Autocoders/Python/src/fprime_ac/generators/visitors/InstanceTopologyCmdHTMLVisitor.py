@@ -84,7 +84,7 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("InstanceTopologyCmdHTMLVisitor:%s" % visit_str)
+        DEBUG.debug(f"InstanceTopologyCmdHTMLVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp_dict[instance].writelines(c.__str__())
@@ -110,18 +110,17 @@ class InstanceTopologyCmdHTMLVisitor(AbstractVisitor.AbstractVisitor):
                 name = t[0]
                 cmd_list = t[3].get_comp_xml().get_commands()
                 if len(cmd_list) > 0:
-                    filename = "%s_commands.html" % t[0]
+                    filename = f"{t[0]}_commands.html"
                     # Open file for writing here...
-                    DEBUG.info("Open file: %s" % filename)
+                    DEBUG.info(f"Open file: {filename}")
                     try:
                         self.__fp_dict[name] = open(filename, "w")
                         DEBUG.info("Completed")
                     except OSError:
-                        PRINT.info("Could not open %s file." % filename)
+                        PRINT.info(f"Could not open {filename} file.")
                         sys.exit(-1)
                     DEBUG.info(
-                        "Generating HTML Command Table for %s:%s component instance..."
-                        % (t[0], k)
+                        f"Generating HTML Command Table for {t[0]}:{k} component instance..."
                     )
         os.chdir("..")
 

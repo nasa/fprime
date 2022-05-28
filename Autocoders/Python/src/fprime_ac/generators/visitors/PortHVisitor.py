@@ -253,7 +253,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 raise ValueError(msg)
 
         # Open file for writing here...
-        DEBUG.info("Open file: %s" % filename)
+        DEBUG.info(f"Open file: {filename}")
         self.__fp = open(filename, "w")
         if self.__fp is None:
             raise Exception("Could not open %s file.") % filename
@@ -312,7 +312,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] is None) and (e[2] is None):
-                s = "%s," % (e[0])
+                s = f"{e[0]},"
             # No value, With comment
             elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])

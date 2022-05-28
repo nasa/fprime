@@ -95,7 +95,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
                 arg_str += "const {}& {}, ".format(mtype, name)
             elif size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"NATIVE_INT_TYPE {name}Size, "
             else:
                 arg_str += "{} {}".format(mtype, name)
                 arg_str += ", "
@@ -132,7 +132,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         for e in enum_list:
             # No value, No comment
             if (e[1] is None) and (e[2] is None):
-                s = "%s," % (e[0])
+                s = f"{e[0]},"
             # No value, With comment
             elif (e[1] is None) and (e[2] is not None):
                 s = "{},  // {}".format(e[0], e[2])
@@ -153,7 +153,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("InstanceSerializableVisitor:%s" % visit_str)
+        DEBUG.debug(f"InstanceSerializableVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
@@ -172,7 +172,7 @@ class InstanceSerializableVisitor(AbstractVisitor.AbstractVisitor):
         dict_dir = os.environ["DICT_DIR"]
 
         if namespace is None:
-            output_dir = "%s/serializable/" % (dict_dir)
+            output_dir = f"{dict_dir}/serializable/"
         else:
             output_dir = "{}/serializable/{}".format(
                 dict_dir, namespace.replace("::", "/")
