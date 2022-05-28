@@ -117,6 +117,7 @@ def generate_pymods(the_parsed_topology_xml, xml_filename, opt):
         if VERBOSE:
             print(
                 f"Generating pymods for topology {the_parsed_topology_xml.get_namespace()}::{the_parsed_topology_xml.get_name()}"
+            )
     else:
         if VERBOSE:
             print(f"Generating pymods for topology {the_parsed_topology_xml.get_name()}")
