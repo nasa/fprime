@@ -298,7 +298,7 @@ module RPI {
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 1700 \
   {
 
-    phase Fpp.ToCpp.Phases.configComponents """
+    phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
     """
     
