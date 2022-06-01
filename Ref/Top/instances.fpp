@@ -314,18 +314,12 @@ module Ref {
 
     phase Fpp.ToCpp.Phases.configComponents """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
-<<<<<<< HEAD
     """
     
     phase Fpp.ToCpp.Phases.configComponents """
     rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
-=======
-    rateGroupDriverComp.configure(
-        rgDivs,
-        FW_NUM_ARRAY_ELEMENTS(rgDivs)
->>>>>>> Updated topology to new RateGroupDriver constructor and configure() function
     );
     """
 
