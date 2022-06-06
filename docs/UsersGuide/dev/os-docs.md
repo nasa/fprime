@@ -1,9 +1,21 @@
-# Operating Abstraction Layer
+# Operating System Abstraction Layer (OSAL)
 
-The framework provides OS services abstraction classes to allow developers to write code in a more portable fashion.
-Implementations of these classes are provided for Unix variants (POSIX), and Mac OS. Additional ports can be done by
-providing additional implementations as a new OS is added. This guide will walk through the critical files in this
-layer to enable developer understanding and give an overview for individuals seeking to port to a new OS.
+The framework incorporates an OSAL providing service abstraction classes of a fictitious operating system that can perform all the operations of a real operating system.
+This layer shows the user an abstraction of the common functionality provided by all real-time operating systems (RTEMS, VxWorks, Azure ThreadX, QNX, FreeRTOS, Zephyr,...) or not (Linux, MacOS, WinCE,...). We find the following services:
+
+1. multitasking management with prioritization ;
+2. synchronization ;
+3. file management;
+4. message queues;
+5. communication; and
+6. timeout.
+
+OSAL provides each of these services by wrapping the concrete operating system entities it encapsulates in thin wrappers.
+This layer enables the development and testing of adaptable software systems that do not depend on any particular operating system, allowing development to be performed at the development workstation. It reduces the time and effort required for developers to migrate a software system from one operating system to another.
+
+Implementations of these classes are provided for Unix (POSIX) and Mac OS variants. Additional ports can be realized by
+providing additional implementations when a new operating system is added. This guide will walk through the critical files in this layer
+to allow developers to understand and provide an overview for those looking to port to a new operating system.
 
 This guide discusses the following:
 - [Tasks](#tasks)
