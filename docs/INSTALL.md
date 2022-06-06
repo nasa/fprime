@@ -49,7 +49,8 @@ tool installations are described in [Advanced](#Advanced).
 **Installing F´ Python Packages**
 
 ```
-pip install fprime/
+pip install -U setuptools wheel pip
+pip install -U -r fprime/requirements.txt
 ```
 
 > Note: the trailing slash is important as that signifies that the locally cloned F´ repository should be

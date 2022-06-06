@@ -5,21 +5,7 @@
 # A meta-package that pulls in the other fprime packages (fprime-fpp, fprime-tools, fprime-gds) into the user's
 # environment. This makes installing a tested/compatible stack of tools easy.
 ###
-import os
-import json
-import tempfile
-from pathlib import Path
 from setuptools import setup
-
-# Load the versions file and set the parent process id in preparation for resharing it
-with open(Path(__file__).parent / "versions.json", "r") as file_handle:
-    versions = json.load(file_handle)
-versions["setup_ppid"] = os.getppid()
-
-# Save the current versioning information and parent process as a file that peer-installations can reference
-with open(Path(tempfile.gettempdir()) / "fprime_versions.json", "w") as file_handle:
-    json.dump(versions, file_handle)
-
 
 setup(
     name="fprime",
@@ -51,9 +37,5 @@ setup(
     ],
     py_modules=[],
     python_requires=">=3.6",
-    install_requires=[
-        f"fprime-tools=={ versions['FPRIME_TOOLS_VERSION'] }",
-        f"fprime-gds=={ versions['FPRIME_GDS_VERSION'] }",
-        f"fprime-fpp @ git+https://github.com/fprime-community/fprime-fpp.git",  # Always install this version from git
-    ],
+    install_requires=["fprime-tools", "fprime-gds", "fprime-fpp"],
 )
