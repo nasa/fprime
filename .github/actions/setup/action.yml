@@ -11,5 +11,5 @@ runs:
     shell: bash
   - run: pip3 install setuptools_scm urllib3
     shell: bash
-  - run: pip3 install ${{ inputs.location }}
+  - run: pip3 install -r ${{ inputs.location }}/requirements.txt
     shell: bash
