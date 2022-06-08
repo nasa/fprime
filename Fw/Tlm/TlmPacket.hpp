@@ -10,6 +10,7 @@
 
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Tlm/TlmBuffer.hpp>
+#include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Time/Time.hpp>
 
 namespace Fw {
@@ -23,19 +24,21 @@ namespace Fw {
             SerializeStatus serialize(SerializeBufferBase& buffer) const; //!< serialize contents
             // Buffer containing value must be remainder of buffer
             SerializeStatus deserialize(SerializeBufferBase& buffer);
-            // setters
-            void setId(FwChanIdType id);
-            void setTlmBuffer(TlmBuffer& buffer);
-            void setTimeTag(Time& timeTag);
-            // getters
-            FwChanIdType getId();
-            Time& getTimeTag();
-            TlmBuffer& getTlmBuffer();
+            // add telemetry value
+            SerializeStatus addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer);
+            // extract telemetry value - since there are potentially multiple channel values in the packet, 
+            // the size of the entry must be known
+            SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize);
 
-        PROTECTED:
-            FwChanIdType m_id; // !< Channel id
-            Fw::Time m_timeTag; // !< time tag
-            TlmBuffer m_tlmBuffer; // !< serialized data
+            // reset serialization
+            void resetPktSer(); 
+            // reset serialization
+            void resetPktDeser(); 
+            // get buffer to send
+            Fw::ComBuffer& getBuffer();
+
+        PRIVATE:
+            ComBuffer m_tlmBuffer; // !< serialized data
     };
 
 } /* namespace Fw */
