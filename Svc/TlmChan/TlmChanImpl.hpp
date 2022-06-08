@@ -65,10 +65,6 @@ namespace Svc {
 
             U32 m_activeBuffer; // !< which buffer is active for storing telemetry
 
-            // work variables
-            Fw::ComBuffer m_comBuffer;
-            Fw::TlmPacket m_tlmPacket;
-
     };
 
 }

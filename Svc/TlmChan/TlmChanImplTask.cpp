@@ -38,20 +38,41 @@ namespace Svc {
         this->unLock();
 
         // go through each entry and send a packet if it has been updated
+        Fw::TlmPacket pkt;
 
         for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
             TlmEntry* p_entry = &this->m_tlmEntries[1-this->m_activeBuffer].buckets[entry];
             if ((p_entry->updated) && (p_entry->used)) {
-                this->m_tlmPacket.setId(p_entry->id);
-                this->m_tlmPacket.setTimeTag(p_entry->lastUpdate);
-                this->m_tlmPacket.setTlmBuffer(p_entry->buffer);
-                this->m_comBuffer.resetSer();
-                Fw::SerializeStatus stat = this->m_tlmPacket.serialize(this->m_comBuffer);
-                FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
-                p_entry->updated = false;
-                this->PktSend_out(0,this->m_comBuffer,0);
-            }
-        }
-    }
+                Fw::SerializeStatus stat = pkt.addValue(
+                    p_entry->id,
+                    p_entry->lastUpdate,
+                    p_entry->buffer
+                );
+
+                // check to see if this packet is full, if so, send it
+                if (Fw::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
+                    this->PktSend_out(0,pkt.getBuffer(),0);
+                    // reset packet for more entries
+                    pkt.resetPktSer();
+                    // add entry to new packet
+                    Fw::SerializeStatus stat = pkt.addValue(
+                        p_entry->id,
+                        p_entry->lastUpdate,
+                        p_entry->buffer
+                    );
+                    // if this doesn't work, that means packet isn't big enough for
+                    // even one channel, so assert
+                    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
+
+                // if successful, move on to the next packet
+                } else if (Fw::FW_SERIALIZE_OK == stat) {
+                    p_entry->updated = false;
+                // any other status is an assert, since it shouldn't happen
+                } else {
+                    FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(stat));
+                }
+            } // end if entry was updated
+        } // end for each entry
+    } // end run handler
 
 }
