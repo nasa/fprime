@@ -26,11 +26,15 @@ namespace Fw {
         return this->m_tlmBuffer;
     }
 
+    void TlmPacket::setBuffer(Fw::ComBuffer& buffer) {
+        this->m_tlmBuffer = buffer;
+    }
+
     SerializeStatus TlmPacket::addValue(FwChanIdType id, Time& timeTag, TlmBuffer& buffer) {
         // check to make sure there is room for all the fields
-        NATIVE_UINT_TYPE left = this->m_tlmBuffer.getBuffLeft();
+        NATIVE_UINT_TYPE left = this->m_tlmBuffer.getBuffCapacity()-this->m_tlmBuffer.getBuffLength();
         if (
-            sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength() > left
+            (sizeof(FwChanIdType) + Time::SERIALIZED_SIZE + buffer.getBuffLength()) > left
         ) {
             return SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT;
         }
@@ -77,6 +81,12 @@ namespace Fw {
 
         // telemetry buffer
         stat = this->m_tlmBuffer.deserialize(buffer.getBuffAddr(),bufferSize,true);
+        if (stat != SerializeStatus::FW_SERIALIZE_OK) {
+            return stat;
+        }
+
+        // set buffer size
+        stat = buffer.setBuffLen(bufferSize);
         if (stat != SerializeStatus::FW_SERIALIZE_OK) {
             return stat;
         }

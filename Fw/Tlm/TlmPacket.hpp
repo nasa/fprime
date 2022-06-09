@@ -36,6 +36,8 @@ namespace Fw {
             void resetPktDeser(); 
             // get buffer to send
             Fw::ComBuffer& getBuffer();
+            // set the internal buffer for deserializing
+            void setBuffer(Fw::ComBuffer& buffer);
 
         PRIVATE:
             ComBuffer m_tlmBuffer; // !< serialized data
