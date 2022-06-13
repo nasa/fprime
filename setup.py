@@ -5,11 +5,11 @@
 # A meta-package that pulls in the other fprime packages (fprime-fpp, fprime-tools, fprime-gds) into the user's
 # environment. This makes installing a tested/compatible stack of tools easy.
 ###
-import os
-import json
-import tempfile
-from pathlib import Path
-from setuptools import setup
+import os,
+import json,
+import tempfile,
+from pathlib import Path,
+from setuptools import setup,
 
 # Load the versions file and set the parent process id in preparation for resharing it
 with open(Path(__file__).parent / "versions.json", "r") as file_handle:
