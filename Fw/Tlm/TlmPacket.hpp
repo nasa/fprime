@@ -31,9 +31,9 @@ namespace Fw {
             SerializeStatus extractValue(FwChanIdType &id, Time& timeTag, TlmBuffer& buffer, NATIVE_UINT_TYPE bufferSize);
 
             // reset serialization
-            void resetPktSer(); 
+            SerializeStatus resetPktSer(); 
             // reset serialization
-            void resetPktDeser(); 
+            SerializeStatus resetPktDeser(); 
             // get buffer to send
             Fw::ComBuffer& getBuffer();
             // set the internal buffer for deserializing

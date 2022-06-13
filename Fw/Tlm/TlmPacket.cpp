@@ -18,8 +18,25 @@ namespace Fw {
     TlmPacket::~TlmPacket() {
     }
 
-    void TlmPacket::resetPktSer() {
+    SerializeStatus TlmPacket::resetPktSer() {
         this->m_tlmBuffer.resetSer();
+        // serialize descriptor
+        return this->serializeBase(this->m_tlmBuffer);
+    }
+
+    SerializeStatus TlmPacket::resetPktDeser() {
+        this->m_tlmBuffer.resetDeser();
+        // deserialize descriptor
+        Fw::SerializeStatus stat = this->deserializeBase(this->m_tlmBuffer);
+        if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
+            return stat;
+        }
+        // make sure it is a telemetry packet
+        if (this->m_type != FW_PACKET_TELEM) {
+            return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
+        }
+
+        return Fw::SerializeStatus::FW_SERIALIZE_OK;
     }
 
     Fw::ComBuffer& TlmPacket::getBuffer() {
@@ -39,7 +56,7 @@ namespace Fw {
             return SerializeStatus::FW_SERIALIZE_NO_ROOM_LEFT;
         }
 
-        // serialize items out of buffer
+        // serialize items into buffer
 
         // id
         SerializeStatus stat = this->m_tlmBuffer.serialize(id);
@@ -96,28 +113,15 @@ namespace Fw {
     }
 
     SerializeStatus TlmPacket::serialize(SerializeBufferBase& buffer) const {
-        SerializeStatus stat;
-
-        stat = serializeBase(buffer);
-        if (stat != FW_SERIALIZE_OK) {
-            return stat;
-        }
-
+        // Serialize the ComBuffer
         return buffer.serialize(this->m_tlmBuffer.getBuffAddr(),m_tlmBuffer.getBuffLength(),true);
-
     }
 
     SerializeStatus TlmPacket::deserialize(SerializeBufferBase& buffer) {
 
-        SerializeStatus stat;
-        stat = deserializeBase(buffer);
-        if (stat != FW_SERIALIZE_OK) {
-            return stat;
-        }
-
         // deserialize the channel value entry buffers
         NATIVE_UINT_TYPE size = buffer.getBuffLeft();
-        stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,true);
+        Fw::SerializeStatus stat = buffer.deserialize(this->m_tlmBuffer.getBuffAddr(),size,true);
         if (stat == FW_SERIALIZE_OK) {
             // Shouldn't fail
             stat = this->m_tlmBuffer.setBuffLen(size);

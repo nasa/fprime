@@ -12,6 +12,7 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
     Fw::Time timeIn(TB_WORKSTATION_TIME,10,11);
     U32 id = 10;
 
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.resetPktSer());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.addValue(id,timeIn,buffIn));
 
     Fw::ComBuffer comBuff = pktIn.getBuffer();
@@ -22,6 +23,7 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
     Fw::Time timeOut(TB_WORKSTATION_TIME,10,11);
 
     pktOut.setBuffer(comBuff);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
     // extract values
     id = 0;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
@@ -50,6 +52,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     static const NATIVE_UINT_TYPE NUM_ENTRIES = (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType))/SIZE_OF_ENTRY;
 
     Fw::TlmPacket pktIn;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.resetPktSer());
 
     // fill a telemetry packet
 
@@ -80,6 +83,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
     Fw::ComBuffer comBuff = pktIn.getBuffer();
     Fw::TlmPacket pktOut;
     pktOut.setBuffer(comBuff);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.resetPktDeser());
 
     // empty the packet of entries
     for (NATIVE_UINT_TYPE entry = 0; entry < NUM_ENTRIES; entry++) {
