@@ -39,6 +39,7 @@ namespace Svc {
 
         // go through each entry and send a packet if it has been updated
         Fw::TlmPacket pkt;
+        pkt.resetPktSer();
 
         for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
             TlmEntry* p_entry = &this->m_tlmEntries[1-this->m_activeBuffer].buckets[entry];
