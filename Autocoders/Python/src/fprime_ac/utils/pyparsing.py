@@ -228,7 +228,7 @@ class ParseResults:
                 self.__toklist = toklist[:]
             else:
                 self.__toklist = [toklist]
-            self.__tokdict = {}
+            self.__tokdict = dict()
 
         # this line is related to debugging the asXML bug
         # ~ asList = False

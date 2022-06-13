@@ -217,7 +217,7 @@ class GenFactory:
         Private Constructor (singleton pattern)
         """
         self.__instance = None
-        self.__configured_visitors = {}
+        self.__configured_visitors = dict()
 
     def getInstance():
         """
