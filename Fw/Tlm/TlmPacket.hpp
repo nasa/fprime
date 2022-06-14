@@ -38,9 +38,12 @@ namespace Fw {
             Fw::ComBuffer& getBuffer();
             // set the internal buffer for deserializing
             void setBuffer(Fw::ComBuffer& buffer);
+            // get the number of packets
+            NATIVE_UINT_TYPE getNumEntries();
 
         PRIVATE:
             ComBuffer m_tlmBuffer; // !< serialized data
+            NATIVE_UINT_TYPE m_numEntries; // !< number of entries stored
     };
 
 } /* namespace Fw */

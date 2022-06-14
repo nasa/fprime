@@ -65,15 +65,21 @@ namespace Svc {
                     // even one channel, so assert
                     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat,static_cast<NATIVE_INT_TYPE>(stat));
 
-                // if successful, move on to the next packet
+                // if there was still room, do nothing move on to the next channel in the packet
                 } else if (Fw::FW_SERIALIZE_OK == stat) {
-                    p_entry->updated = false;
                 // any other status is an assert, since it shouldn't happen
                 } else {
                     FW_ASSERT(0,static_cast<NATIVE_INT_TYPE>(stat));
                 }
+                // flag as updated
+                p_entry->updated = false;
             } // end if entry was updated
         } // end for each entry
+
+        // send remnant entries
+        if (pkt.getNumEntries() > 0) {
+            this->PktSend_out(0,pkt.getBuffer(),0);
+        }
     } // end run handler
 
 }
