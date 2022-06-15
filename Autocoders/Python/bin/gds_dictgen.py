@@ -207,7 +207,7 @@ def main():
         if VERBOSE:
             print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
     else:
-        if ("BUILD_ROOT" in os.environ.keys()) == False:
+        if ("BUILD_ROOT" in os.environ.keys()) is False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])

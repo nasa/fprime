@@ -88,7 +88,7 @@ class XmlSerializeParser:
         # Type ID for serialized type
         self.__type_id = None
         #
-        if os.path.isfile(xml_file) == False:
+        if os.path.isfile(xml_file) is False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
         fd = open(xml_file)

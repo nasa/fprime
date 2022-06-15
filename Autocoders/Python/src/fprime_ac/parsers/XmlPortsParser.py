@@ -62,7 +62,7 @@ class XmlPortsParser:
         self.__enum_list_items = []
         self.__modifier = None
         #
-        if os.path.isfile(xml_file) == False:
+        if os.path.isfile(xml_file) is False:
             str = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(str)
         fd = open(xml_file)

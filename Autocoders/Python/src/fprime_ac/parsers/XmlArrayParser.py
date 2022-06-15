@@ -93,7 +93,7 @@ class XmlArrayParser(object):
             "string",
         ]
 
-        if os.path.isfile(xml_file) == False:
+        if os.path.isfile(xml_file) is False:
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise IOError(stri)
         fd = open(xml_file, "r")

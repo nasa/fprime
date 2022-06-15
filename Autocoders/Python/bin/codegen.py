@@ -1192,7 +1192,7 @@ def main():
     # always exists. We are basically only checking for when the user
     # specifies an alternate working directory.
 
-    if os.path.exists(opt.work_path) == False:
+    if os.path.exists(opt.work_path) is False:
         Parser.error(f"Specified path does not exist ({opt.work_path})!")
 
     working_dir = opt.work_path
@@ -1238,9 +1238,9 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if opt.build_root_flag == True:
+    if opt.build_root_flag is True:
         # Check for BUILD_ROOT env. variable
-        if ("BUILD_ROOT" in list(os.environ.keys())) == False:
+        if ("BUILD_ROOT" in list(os.environ.keys())) is False:
             PRINT.info(
                 "ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path..."
             )
@@ -1321,7 +1321,7 @@ def main():
     # Always return to directory where we started.
     os.chdir(starting_directory)
 
-    if ERROR == True:
+    if ERROR is True:
         sys.exit(-1)
     else:
         sys.exit(0)
