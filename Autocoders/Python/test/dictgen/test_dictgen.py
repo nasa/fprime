@@ -311,15 +311,15 @@ def check_generated_files(testdir):
     # Enums
     inst1_enums = get_enums_from_comp_xml(inst1.get_comp_xml())
     inst2_enums = get_enums_from_comp_xml(inst2.get_comp_xml())
-    inst_enums = {}
-    inst_enums["compxml"] = inst1_enums["compxml"] + inst2_enums["compxml"]
-    inst_enums["imports"] = inst1_enums["imports"] + inst2_enums["imports"]
+    inst_enums = {
+        "compxml": inst1_enums["compxml"] + inst2_enums["compxml"],
+        "imports": inst1_enums["imports"] + inst2_enums["imports"],
+    }
 
     # Serializables
     inst1_serials = get_serializables_from_comp_xml(inst1.get_comp_xml())
     inst2_serials = get_serializables_from_comp_xml(inst2.get_comp_xml())
-    inst_serials = {}
-    inst_serials["imports"] = inst1_serials["imports"] + inst2_serials["imports"]
+    inst_serials = {"imports": inst1_serials["imports"] + inst2_serials["imports"]}
 
     # GDS XML Dictionary
     dict_parser = XmlLoader()

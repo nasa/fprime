@@ -126,13 +126,12 @@ def main():
     outFilepath = "/".join([opts.work_path, outFilename])
     descriptionFilename = "/".join([opts.work_path, "/dictPath.txt"])
 
-    dictionary = {}
-    dictionary[deployment] = {
+    dictionary = {deployment: {
         "events": {},
         "channels": {},
         "commands": {},
         "serializables": {},
-    }
+    }}
 
     events = dictionary[deployment]["events"]
     channels = dictionary[deployment]["channels"]
