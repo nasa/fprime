@@ -765,23 +765,24 @@ def test_dictgen():
 
         time.sleep(3)
 
-        gen_pymods = []
-        gen_pymods.append("channels/Inst1_Test_Tlm0.py")
-        gen_pymods.append("channels/Inst2_Test_Tlm0.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd0.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd1.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd2.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd3.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd0.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd1.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd2.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd3.py")
-        gen_pymods.append("events/Inst1_Test_Evr0.py")
-        gen_pymods.append("events/Inst1_Test_Evr1.py")
-        gen_pymods.append("events/Inst1_Test_Evr2.py")
-        gen_pymods.append("events/Inst2_Test_Evr0.py")
-        gen_pymods.append("events/Inst2_Test_Evr1.py")
-        gen_pymods.append("events/Inst2_Test_Evr2.py")
+        gen_pymods = [
+            "channels/Inst1_Test_Tlm0.py",
+            "channels/Inst2_Test_Tlm0.py",
+            "commands/Inst1_Test_Cmd0.py",
+            "commands/Inst1_Test_Cmd1.py",
+            "commands/Inst1_Test_Cmd2.py",
+            "commands/Inst1_Test_Cmd3.py",
+            "commands/Inst2_Test_Cmd0.py",
+            "commands/Inst2_Test_Cmd1.py",
+            "commands/Inst2_Test_Cmd2.py",
+            "commands/Inst2_Test_Cmd3.py",
+            "events/Inst1_Test_Evr0.py",
+            "events/Inst1_Test_Evr1.py",
+            "events/Inst1_Test_Evr2.py",
+            "events/Inst2_Test_Evr0.py",
+            "events/Inst2_Test_Evr1.py",
+            "events/Inst2_Test_Evr2.py",
+        ]
 
         # Test whether all generated files match expected
         compare_genfile("TestTopologyAppDictionary.xml")
