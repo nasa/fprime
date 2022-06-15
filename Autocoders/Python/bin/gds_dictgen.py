@@ -220,7 +220,7 @@ def main():
 
     xml_type = XmlParser.XmlParser(xml_filename)()
 
-    if xml_type == "assembly" or xml_type == "deployment":
+    if xml_type in ("assembly", "deployment"):
         if VERBOSE:
             print("Detected Topology XML so Generating Topology C++ Files...")
         the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)

@@ -322,7 +322,7 @@ class Packet:
         if not s.isdigit():
             self.err_msg("Illegal value for number of bits: '" + s + "'")
         bits = int(s)
-        if bits != 8 and bits != 16 and bits != 32 and bits != 64:
+        if bits not in (8, 16, 32, 64):
             self.err_msg("Illegal value for number of bits: '" + s + "'")
 
         if self.m_bit_index % bits:
@@ -361,11 +361,7 @@ class Packet:
 
         it.m_data_type = line[2].strip()
         it.m_data_type = it.m_data_type.lower()
-        if (
-            it.m_data_type != "integer"
-            and it.m_data_type != "float"
-            and it.m_data_type != "text"
-        ):
+        if it.m_data_type not in ("integer", "float", "text"):
             self.err_msg("Invalid date type: '" + it.m_data_type + "'")
 
         it.m_constant_value = line[3]
