@@ -112,11 +112,9 @@ def dumpObj(
             objdoc = attr
         elif slot == "__module__":
             objmodule = attr
-        elif isinstance(attr, types.BuiltinMethodType) or isinstance(
-            attr, MethodWrapperType
-        ):
+        elif isinstance(attr, (types.BuiltinMethodType, MethodWrapperType)):
             builtins.append(slot)
-        elif isinstance(attr, types.MethodType) or isinstance(attr, types.FunctionType):
+        elif isinstance(attr, (types.MethodType, types.FunctionType)):
             methods.append((slot, attr))
         elif isinstance(attr, type):
             classes.append((slot, attr))
