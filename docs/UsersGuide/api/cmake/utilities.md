@@ -186,7 +186,7 @@ i.e. ${BUILD_ROOT}/Svc/ActiveLogger becomes Svc_ActiveLogger
 
 ## Function `get_expected_tool_version`:
 
-Gets the expected tool version named using VERSION_IDENTIFIER from the `versions.py` configuration
+Gets the expected tool version named using version identifier VID to name the tools package
 file. This will be returned via the variable supplied in FILL_VARIABLE setting it in PARENT_SCOPE.
 
 
