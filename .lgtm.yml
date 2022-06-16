@@ -33,7 +33,7 @@ extraction:
             - "wget https://github.com/sbt/sbt/releases/download/v1.6.2/sbt-1.6.2.tgz"
             - "tar -xzf sbt-1.6.2.tgz"
             - "export PATH=$PATH:$LGTM_SRC/sbt/bin"
-            - "pip install ."
+            - "pip install -r ./requirements.txt"
         configure:
             command:
         before_index:

@@ -37,5 +37,5 @@ setup(
     ],
     py_modules=[],
     python_requires=">=3.6",
-    install_requires=["fprime-tools", "fprime-gds", "fprime-fpp"],
+    install_requires=["fprime-tools>=v3.1.0a2", "fprime-gds>=v3.1.0a2", "fprime-fpp>=v1.0.2b12"],
 )
