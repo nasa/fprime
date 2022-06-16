@@ -51,11 +51,13 @@ namespace Svc {
       const U32 packetSize = this->getPacketSize();
       this->checkPacketSize(packetSize);
       // Check the packet type
-      // TODO
+      if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
+        this->checkPacketType();
+      }
       // Check the data
-      // TODO
+      this->checkData();
       // Check the hash value
-      // TODO
+      this->checkHash(packetSize);
     }
   }
 
@@ -80,10 +82,10 @@ namespace Svc {
   void FramingTester ::
     checkPacketSize(FpFrameHeader::TokenType packetSize)
   {
-    U32 expectedPacketSize = packetSize;
-    if (this->packetType == Fw::ComPacket::FW_PACKET_UNKNOWN) {
+    U32 expectedPacketSize = this->dataSize;
+    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
       // Packet type is stored in header
-      packetSize += sizeof(SerialPacketType);
+      expectedPacketSize += sizeof(SerialPacketType);
     }
     ASSERT_EQ(packetSize, expectedPacketSize);
   }

@@ -11,6 +11,16 @@ TEST(Framing, CommandPacket) {
   tester.check();
 }
 
+TEST(Framing, FilePacket) {
+  Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_FILE);
+  tester.check();
+}
+
+TEST(Framing, UnknownPacket) {
+  Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_UNKNOWN);
+  tester.check();
+}
+
 // ----------------------------------------------------------------------
 // Main function
 // ----------------------------------------------------------------------
