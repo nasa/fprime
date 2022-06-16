@@ -12,7 +12,7 @@ find_program(FPUTIL NAMES fprime-util)
 
 locate_fpp_tools()
 
-set(TO_INSTALL_MESSAGE "Install with:\n   'pip install -U \"${FPRIME_FRAMEWORK_PATH}/\"'")
+set(TO_INSTALL_MESSAGE "Install with:\n  'pip install -r \"${FPRIME_FRAMEWORK_PATH}/requirements.txt\"'")
 
 # Check python was found
 if (NOT FPUTIL)
