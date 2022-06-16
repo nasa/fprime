@@ -455,24 +455,33 @@ endfunction(get_module_name)
 ####
 # Function `get_expected_tool_version`:
 #
-# Gets the expected tool version named using VERSION_IDENTIFIER from the `versions.py` configuration
+# Gets the expected tool version named using version identifier VID to name the tools package
 # file. This will be returned via the variable supplied in FILL_VARIABLE setting it in PARENT_SCOPE.
 ####
 function(get_expected_tool_version VID FILL_VARIABLE)
-    find_program(PYTHON NAMES python3 python)
-    execute_process(
-        COMMAND
-          "${PYTHON}" "-c"
-          "import json\nwith open('versions.json') as fh:\n  print(json.load(fh)['${VID}'].strip(), end='')"
-        WORKING_DIRECTORY "${FPRIME_FRAMEWORK_PATH}"
-        OUTPUT_VARIABLE VERSION_TEXT
-        RESULT_VARIABLE RESULT_OUT
-    )
-    # Check result variable
-    if (NOT RESULT_OUT EQUAL 0)
-        message(FATAL_ERROR "Failed to determine tools version for: ${VERSION_IDENTIFIER}")
+    find_program(TOOLS_CHECK NAMES fprime-version-check REQUIRED)
+    
+    # Try project root as a source
+    set(REQUIREMENT_FILE "${FPRIME_PROJECT_ROOT}/requirements.txt")
+    if (EXISTS "${REQUIREMENT_FILE}")
+        execute_process(COMMAND "${TOOLS_CHECK}" "${VID}" "${REQUIREMENT_FILE}" OUTPUT_VARIABLE VERSION_TEXT ERROR_VARIABLE ERRORS RESULT_VARIABLE RESULT_OUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if (CMAKE_DEBUG_OUTPUT)
+            message(STATUS "[VERSION] Could not detect version from: ${REQUIREMENT_FILE}. ${ERRORS}")
+        endif()
+        if (RESULT_OUT EQUAL 0)
+            set("${FILL_VARIABLE}" "${VERSION_TEXT}" PARENT_SCOPE)
+            return()
+        endif()
     endif()
-    set("${FILL_VARIABLE}" "${VERSION_TEXT}" PARENT_SCOPE)
+    # Fallback to requirements.txt in fprime
+    set(REQUIREMENT_FILE "${FPRIME_FRAMEWORK_PATH}/requirements.txt")
+    execute_process(COMMAND "${TOOLS_CHECK}" "${VID}" "${REQUIREMENT_FILE}" OUTPUT_VARIABLE VERSION_TEXT ERROR_VARIABLE ERRORS RESULT_VARIABLE RESULT_OUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (RESULT_OUT EQUAL 0)
+        set("${FILL_VARIABLE}" "${VERSION_TEXT}" PARENT_SCOPE)
+        return()
+    endif()
+    message(WARNING "[VERSION] Could not detect version from: ${REQUIREMENT_FILE}. ${ERRORS}. Skipping check.")
+    set("${FILL_VARIABLE}" "" PARENT_SCOPE)
 endfunction(get_expected_tool_version)
 
 ####

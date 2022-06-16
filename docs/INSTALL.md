@@ -22,7 +22,7 @@ Requirements:
 1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
 2. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
 3. CLang or GCC compiler
-4. [Python 3.7+](https://www.python.org/downloads/) and PIP
+4. [Python 3.7+](https://www.python.org/downloads/), venv, and PIP
 
 **Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
@@ -49,11 +49,9 @@ tool installations are described in [Advanced](#Advanced).
 **Installing F´ Python Packages**
 
 ```
-pip install fprime/
+pip install -U setuptools wheel pip
+pip install -U -r fprime/requirements.txt
 ```
-
-> Note: the trailing slash is important as that signifies that the locally cloned F´ repository should be
-used to determine tools version. Otherwise, the latest F´ tools configuration will be used.
 
 > Note: On some systems pip places user-installed tools in the `.local` folder.
 This results in a `fprime-util: command not found` error when trying to run
@@ -150,7 +148,7 @@ Ubuntu and possibly other Debian variants don't include the pip packages in the 
 fully functional, use these commands on Ubuntu and Debian based systems:
 
 ```
-sudo apt install git cmake default-jre python3 python3-pip
+sudo apt install git cmake default-jre python3 python3-pip python3-venv
 ```
 
 Now you should be able to run the installation without trouble.

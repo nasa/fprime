@@ -15,7 +15,7 @@ autocoder_setup_for_multiple_sources()
 # above install location and then to the system path as a fallback.
 ####
 function(locate_fpp_tools)
-    get_expected_tool_version("FPP_TOOLS_VERSION" FPP_VERSION)
+    get_expected_tool_version("fprime-fpp" FPP_VERSION)
     # Loop through each tool, looking if it was found and check the version
     foreach(TOOL FPP_DEPEND FPP_TO_XML FPP_TO_CPP FPP_LOCATE_DEFS)
         string(TOLOWER ${TOOL} PROGRAM)
@@ -31,7 +31,8 @@ function(locate_fpp_tools)
             set(FPP_RE_MATCH "(v[0-9]+\.[0-9]+\.[0-9]+[a-g0-9-]*)")
             execute_process(COMMAND ${${TOOL}} --help OUTPUT_VARIABLE OUTPUT_TEXT)
             if (OUTPUT_TEXT MATCHES "${FPP_RE_MATCH}")
-                if (CMAKE_MATCH_1 STREQUAL "${FPP_VERSION}")
+                ends_with(ENDS_WITH_EXPECTED "${CMAKE_MATCH_1}" "${FPP_VERSION}")
+                if (ENDS_WITH_EXPECTED)
                     continue()
                 endif()
                 message(STATUS "[fpp-tools] ${${TOOL}} version ${CMAKE_MATCH_1} not expected version ${FPP_VERSION}")
