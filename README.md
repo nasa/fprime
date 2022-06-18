@@ -3,6 +3,8 @@
 [![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:cpp)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
 
+[![BENGLA](https://img.shields.io/badge/Language-Bengla-red?style=for-the-badge)](README.BN.md)
+
 **F´ (F Prime)** is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on several space applications. It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/).  This website contains project information, user guides, documentation, tutorials, and more!
