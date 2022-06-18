@@ -49,7 +49,7 @@ tool installations are described in [Advanced](#Advanced).
 **Installing F´ Python Packages**
 
 ```
-pip install -U setuptools wheel pip
+pip install -U setuptools setuptools_scm wheel pip
 pip install -U -r fprime/requirements.txt
 ```
 
