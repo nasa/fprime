@@ -4,7 +4,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/nasa/fprime.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/nasa/fprime/context:python)
 
 
-[![English](https://img.shields.io/badge/Language-English-green?style=for-the-badge)](README.md) &emsp; &emsp; [![BENGLA](https://img.shields.io/badge/Language-Bengla-red?style=for-the-badge)](README.BN.md)
+[![English](https://img.shields.io/badge/Language-English-green?style=for-the-badge)](README.md) &emsp; &emsp; [![Bengali](https://img.shields.io/badge/Language-Bengali-red?style=for-the-badge)](README.BN.md)
 
 
 **F´ (F Prime)** একটি কম্পোনেন্ট-চালিত কাঠামো যা স্পেসফ্লাইট এবং অন্যান্য এমবেডেড সফ্টওয়্যার অ্যাপ্লিকেশনগুলির দ্রুত ডেভলপ এবং স্থাপনা সক্ষম করে । মূলত [জেট প্রপালশন ল্যাবরেটরি](https://www.jpl.nasa.gov/) এ বিকশিত, F' সফলভাবে বেশ কয়েকটি মহাকাশ অ্যাপ্লিকেশনে স্থাপন করা হয়েছে । এটি তৈরি করা হয়েছে কিন্তু ছোট আকারের স্পেসফ্লাইট সিস্টেম যেমন কিউবস্যাট, স্মলস্যাট এবং যন্ত্রের মধ্যে সীমাবদ্ধ নয়।
