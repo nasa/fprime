@@ -19,47 +19,28 @@ TEST(TlmChanTest,InitTest) {
     Svc::Tester tester;
 }
 
-// TEST(TlmChanTest,NominalChannelTest) {
+TEST(TlmChanTest,NominalChannelTest) {
 
-//     TEST_CASE(107.1.1,"Nominal channelized telemetry");
-//     COMMENT("Write a single channel and verify it is read back and pushed correctly.");
+    TEST_CASE(107.1.1,"Nominal channelized telemetry");
+    COMMENT("Write a single channel and verify it is read back and pushed correctly.");
 
-//     Svc::TlmChanImpl impl("TlmChanImpl");
+    Svc::Tester tester;
+    // run test
+    tester.runNominalChannel();
 
-//     impl.init(10,0);
+}
 
-//     Svc::TlmChanImplTester tester(impl);
+TEST(TlmChanTest,MultiChannelTest) {
 
-//     tester.init();
+    TEST_CASE(107.1.2,"Nominal Multi-channel channelized telemetry");
+    COMMENT("Write multiple channels and verify they are read back and pushed correctly.");
 
-//     // connect ports
-//     connectPorts(impl,tester);
+    Svc::Tester tester;
 
-//     // run test
-//     tester.runNominalChannel();
+    // run test
+    tester.runMultiChannel();
 
-// }
-
-// TEST(TlmChanTest,MultiChannelTest) {
-
-//     TEST_CASE(107.1.2,"Nominal Multi-channel channelized telemetry");
-//     COMMENT("Write multiple channels and verify they are read back and pushed correctly.");
-
-//     Svc::TlmChanImpl impl("TlmChanImpl");
-
-//     impl.init(10,0);
-
-//     Svc::TlmChanImplTester tester(impl);
-
-//     tester.init();
-
-//     // connect ports
-//     connectPorts(impl,tester);
-
-//     // run test
-//     tester.runMultiChannel();
-
-// }
+}
 
 
 // TEST(TlmChanTest,OffNominal) {
