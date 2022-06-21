@@ -6,6 +6,7 @@
 
 #include "STest/Pick/Pick.hpp"
 #include "Svc/FramingProtocol/test/ut/FramingTester.hpp"
+#include "gtest/gtest.h"
 
 namespace Svc {
 
