@@ -22,6 +22,7 @@ set(MOD_DEPS
 register_fprime_module()
 
 set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DeframingTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/FramingTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )

@@ -31,12 +31,11 @@ namespace Svc {
       enum Constants {
         //! The maximum buffer size
         MAX_BUFFER_SIZE = 1024,
-#if 0
-        //! The maximum allowed data size
+        //! The maximum allowed packet size
         MAX_DATA_SIZE = MAX_BUFFER_SIZE -
           sizeof FpFrameHeader::START_WORD -
-          sizeof(SerialPacketType) -
           HASH_DIGEST_LENGTH,
+#if 0
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
         //! The offset of the packet size in an F Prime protocol frame
@@ -93,29 +92,27 @@ namespace Svc {
 
       };
 
-#if 0
     public:
 
       // ----------------------------------------------------------------------
-      // Construction
+      // Construction and destruction
       // ----------------------------------------------------------------------
 
       //! Construct a DeframingTester
       DeframingTester(
-          Fw::ComPacket::ComPacketType packetType //!< The packet type
+          U32 cbStoreSize = MAX_BUFFER_SIZE //!< The circular buffer store size
       );
-#endif
 
-#if 0
+      //! Destroy a DeframingTester
+      ~DeframingTester();
+
     public:
 
       // ----------------------------------------------------------------------
       // Public member functions
       // ----------------------------------------------------------------------
 
-      //! Check framing
-      void check();
-#endif
+      // TODO
 
 #if 0
       // ----------------------------------------------------------------------
@@ -166,6 +163,12 @@ namespace Svc {
 
       //! Storage for the buffer
       U8 bufferStorage[MAX_BUFFER_SIZE];
+      
+      //! Storage for the circular buffer
+      U8* cbStorage;
+
+      //! The circular buffer
+      Types::CircularBuffer circularBuffer;
 
       //! The framing protocol interface
       Interface interface;

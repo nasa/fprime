@@ -10,27 +10,27 @@
 
 namespace Svc {
 
-#if 0
   // ----------------------------------------------------------------------
   // Construction
   // ----------------------------------------------------------------------
 
   DeframingTester ::
-    DeframingTester(Fw::ComPacket::ComPacketType packetType) :
-      // Pick a random data size
-      dataSize(STest::Pick::lowerUpper(1, MAX_DATA_SIZE)),
-      packetType(packetType),
+    DeframingTester(U32 cbStoreSize) :
+      cbStorage(new U8[cbStoreSize]),
+      circularBuffer(this->cbStorage, cbStoreSize), 
       interface(*this)
   {
-    FW_ASSERT(this->dataSize <= MAX_DATA_SIZE);
-    this->fprimeDeframing.setup(this->interface);
-    // Fill in random data
-    for (U32 i = 0; i < sizeof(this->data); ++i) {
-      this->data[i] = STest::Pick::lowerUpper(0, 0xFF);
-    }
     memset(this->bufferStorage, 0, sizeof this->bufferStorage);
+    memset(this->cbStorage, 0, cbStoreSize);
   }
 
+  DeframingTester ::
+    ~DeframingTester()
+  {
+    delete[](this->cbStorage);
+  }
+
+#if 0
   // ----------------------------------------------------------------------
   // Public member functions
   // ----------------------------------------------------------------------
