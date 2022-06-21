@@ -1,19 +1,20 @@
 // ======================================================================
-// \title  FramingTester.hpp
+// \title  DeframingTester.hpp
 // \author bocchino
-// \brief  hpp file for FramingTester class
+// \brief  hpp file for DeframingTester class
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
-#include "Svc/FramingProtocol/FramingProtocol.hpp"
+#include "Svc/FramingProtocol/DeframingProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
+#include "Utils/Types/CircularBuffer.hpp"
 
 namespace Svc {
 
-  //! A harness for checking framing
-  class FramingTester {
+  //! A harness for checking deframing
+  class DeframingTester {
 
     private:
 
@@ -21,13 +22,16 @@ namespace Svc {
       // Constants and types
       // ----------------------------------------------------------------------
 
+#if 0
       //! The serialized packet type
       typedef I32 SerialPacketType;
+#endif
 
       //! Constants
       enum Constants {
         //! The maximum buffer size
         MAX_BUFFER_SIZE = 1024,
+#if 0
         //! The maximum allowed data size
         MAX_DATA_SIZE = MAX_BUFFER_SIZE -
           sizeof FpFrameHeader::START_WORD -
@@ -40,21 +44,22 @@ namespace Svc {
             sizeof FpFrameHeader::START_WORD,
         //! The offset of the packet type in an F Prime protocol frame
         PACKET_TYPE_OFFSET = FpFrameHeader::SIZE,
+#endif
       };
 
-      //! The framing protocol interface
+      //! The deframing protocol interface
       class Interface :
-        public FramingProtocolInterface
+        public DeframingProtocolInterface
       {
 
         public:
 
           //! Construct an Interface
           Interface(
-              FramingTester& framingTester //!< The enclosing FramingTester
+              DeframingTester& deframingTester //!< The enclosing DeframingTester
           ) :
-            framingTester(framingTester),
-            sentBuffer(nullptr)
+            deframingTester(deframingTester),
+            routedBuffer(nullptr)
           {
 
           }
@@ -64,41 +69,44 @@ namespace Svc {
           //! Allocate the buffer
           Fw::Buffer allocate(const U32 size) {
             FW_ASSERT(size <= MAX_BUFFER_SIZE);
-            Fw::Buffer buffer(this->framingTester.bufferStorage, size);
+            Fw::Buffer buffer(this->deframingTester.bufferStorage, size);
             return buffer;
           }
 
-          //! Send the buffer
-          void send(Fw::Buffer& outgoing) {
-            this->sentBuffer = &outgoing;
+          //! Route the buffer
+          void route(Fw::Buffer& data) {
+            this->routedBuffer = &data;
           }
 
-          //! Get the sent buffer
-          Fw::Buffer *getSentBuffer() {
-            return this->sentBuffer;
+          //! Get the routed buffer
+          Fw::Buffer *getRoutedBuffer() {
+            return this->routedBuffer;
           }
 
         private:
 
-          //! The enclosing FramingTester
-          FramingTester& framingTester;
+          //! The enclosing DeframingTester
+          DeframingTester& deframingTester;
 
-          //! The sent buffer
-          Fw::Buffer *sentBuffer;
+          //! The routed buffer
+          Fw::Buffer *routedBuffer;
 
       };
 
+#if 0
     public:
 
       // ----------------------------------------------------------------------
       // Construction
       // ----------------------------------------------------------------------
 
-      //! Construct a FramingTester
-      FramingTester(
+      //! Construct a DeframingTester
+      DeframingTester(
           Fw::ComPacket::ComPacketType packetType //!< The packet type
       );
+#endif
 
+#if 0
     public:
 
       // ----------------------------------------------------------------------
@@ -107,7 +115,9 @@ namespace Svc {
 
       //! Check framing
       void check();
+#endif
 
+#if 0
       // ----------------------------------------------------------------------
       // Private member functions
       // ----------------------------------------------------------------------
@@ -135,6 +145,7 @@ namespace Svc {
       void checkHash(
           FpFrameHeader::TokenType packetSize //!< The packet size
       );
+#endif
 
     private:
 
@@ -142,6 +153,7 @@ namespace Svc {
       // Private member variables
       // ----------------------------------------------------------------------
 
+#if 0
       //! The data to frame
       U8 data[MAX_DATA_SIZE];
 
@@ -150,6 +162,7 @@ namespace Svc {
 
       //! The packet type
       Fw::ComPacket::ComPacketType packetType;
+#endif
 
       //! Storage for the buffer
       U8 bufferStorage[MAX_BUFFER_SIZE];
@@ -158,7 +171,7 @@ namespace Svc {
       Interface interface;
 
       //! The F Prime framing protocol
-      FprimeFraming fprimeFraming;
+      FprimeDeframing fprimeDeframing;
 
   };
 

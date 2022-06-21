@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
 #include "Svc/FramingProtocol/test/ut/FramingTester.hpp"
 #include "STest/Random/Random.hpp"
 
