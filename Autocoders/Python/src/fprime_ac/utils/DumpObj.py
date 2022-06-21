@@ -284,7 +284,7 @@ def prettyPrint(string, maxlen=75, split=" "):
     lines = []
     oldeol = 0
     eol = 0
-    while not (eol == -1 or eol == len(string) - 1):
+    while not eol in (-1, len(string) - 1):
         eol = string.rfind(split, oldeol, oldeol + maxlen + len(split))
         lines.append(string[oldeol:eol])
         oldeol = eol + len(split)

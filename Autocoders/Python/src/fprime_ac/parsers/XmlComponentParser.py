@@ -494,7 +494,7 @@ class XmlComponentParser:
                         f = None
                     if "update" in list(channel.attrib.keys()):
                         u = channel.attrib["update"]
-                        if u != "always" and u != "on_change":
+                        if u not in ("always", "on_change"):
                             PRINT.info(
                                 '%s: Invalid update %s in channel %s. Should be "always" or "on_change"'
                                 % (xml_file, u, n)

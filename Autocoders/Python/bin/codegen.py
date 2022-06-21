@@ -1141,7 +1141,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
             + parser.get_include_enums()
             + parser.get_include_arrays()
         )
-    elif the_type == "assembly" or the_type == "deployment":
+    elif the_type in ("assembly", "deployment"):
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
@@ -1273,7 +1273,7 @@ def main():
             the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
             generate_serializable(the_serial_xml, opt)
             dependency_parser = the_serial_xml
-        elif xml_type == "assembly" or xml_type == "deployment":
+        elif xml_type in ("assembly", "deployment"):
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
