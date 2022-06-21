@@ -64,3 +64,4 @@ jobs:
       if: always()
       run: |
           rm -rf $RUNNER_WORKSPACE
+          sudo /sbin/shutdown -r 1 # Force a shutdown for a clean slate
