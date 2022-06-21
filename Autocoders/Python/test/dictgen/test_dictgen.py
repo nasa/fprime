@@ -619,7 +619,7 @@ def compare_serials_ai_gds(topology_serials, gds_serials):
     for gds_serial in gds_serials:
         # For scope of test, only verify serial type and member names/types
         type = gds_serial.attrib["type"].split("::")
-        type = type[len(type) - 1]
+        type = type[-1]
         types.append(type)
         if not type in member_names.keys():
             member_names[type] = []
@@ -675,7 +675,7 @@ def compare_enums_ai_gds(topology_enums, gds_enums):
     for gds_enum in gds_enums:
         # For scope of test, only verify enum name and item names
         name = gds_enum.attrib["type"].split("::")
-        name = name[len(name) - 1]
+        name = name[-1]
         names.append(name)
         if not name in items.keys():
             items[name] = []
