@@ -1201,6 +1201,7 @@ PRId
 printables
 printf
 println
+prioritization
 PRIu
 prm
 PRMDB
@@ -1255,6 +1256,7 @@ QEvent
 qhelpgenerator
 QHG
 qhp
+QNX
 qsf
 qtest
 qthelpproject
