@@ -9,7 +9,6 @@
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/FramingProtocol/FramingProtocol.hpp"
 #include "Utils/Hash/Hash.hpp"
-#include "gtest/gtest.h"
 
 namespace Svc {
 
