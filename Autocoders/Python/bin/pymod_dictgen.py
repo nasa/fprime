@@ -120,7 +120,9 @@ def generate_pymods(the_parsed_topology_xml, xml_filename, opt):
             )
     else:
         if VERBOSE:
-            print(f"Generating pymods for topology {the_parsed_topology_xml.get_name()}")
+            print(
+                f"Generating pymods for topology {the_parsed_topology_xml.get_name()}"
+            )
     model = TopoFactory.TopoFactory.getInstance()
     topology_model = model.create(the_parsed_topology_xml)
 
