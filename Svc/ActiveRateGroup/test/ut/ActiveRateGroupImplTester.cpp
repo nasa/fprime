@@ -14,7 +14,7 @@
 */
 
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <ActiveRateGroupImplCfg.hpp>
+#include <ActiveRateGroupCfg.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
@@ -27,7 +27,7 @@ namespace Svc {
         ActiveRateGroupGTestBase::init();
     }
 
-    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroupImpl& inst) :
+    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst) :
             ActiveRateGroupGTestBase("testerbase",100),
             m_impl(inst),m_causeOverrun(false),m_callOrder(0) {
         this->clearPortCalls();
@@ -65,7 +65,7 @@ namespace Svc {
       this->pushFromPortEntry_PingOut(key);
     }
 
-    void ActiveRateGroupImplTester::runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance) {
+    void ActiveRateGroupImplTester::runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance) {
 
         TEST_CASE(101.1.1,"Run nominal rate group execution");
 
@@ -114,7 +114,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroupImplTester::runCycleOverrun(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance) {
+    void ActiveRateGroupImplTester::runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance) {
 
         TEST_CASE(101.2.1,"Run cycle slip scenario");
         // call the preamble
