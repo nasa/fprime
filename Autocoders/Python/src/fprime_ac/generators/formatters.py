@@ -1010,7 +1010,7 @@ class Formatters:
         new_list = []
         for line in type_args_list[:-1]:
             new_list.append(line + ",")
-        if proto is True:
+        if proto:
             new_list.append(type_args_list[-1] + ");")
         else:
             new_list.append(type_args_list[-1] + ")")
