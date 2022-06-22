@@ -24,7 +24,7 @@ except ImportError:
 
 class TestMainVisitor(TestVisitorBase.TestVisitorBase):
     """
-    A writer for generating component implementation files.
+    A visitor for generating component implementation files.
     """
 
     FILE_NAME = "TestMain.cpp"
@@ -79,7 +79,7 @@ class TestMainVisitor(TestVisitorBase.TestVisitorBase):
 
     def visit(self, obj):
         """
-        Calls all of the write methods so that full file is made
+        Calls all of the visit methods so that full file is made
         """
         self.initFilesVisit(obj)
         self.startSourceFilesVisit(obj)
