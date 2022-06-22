@@ -101,6 +101,7 @@ namespace Svc {
           cmdSeq,
           Fw::CmdResponse::OK
         );
+        return;
       }
     } else {
       this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
@@ -219,6 +220,29 @@ namespace Svc {
       );
     }
 
+    this->emitTelemetry(status);
+    this->sendCommandResponse(opCode, cmdSeq, status);
+  }
+
+  void FileManager ::
+    FileSize_cmdHandler(
+        const FwOpcodeType opCode,
+        const U32 cmdSeq,
+        const Fw::CmdStringArg& fileName
+    )
+  {
+    Fw::LogStringArg logStringFileName(fileName.toChar());
+    U64 size;
+    const Os::FileSystem::Status status =
+      Os::FileSystem::getFileSize(fileName.toChar(), size);
+    if (status != Os::FileSystem::OP_OK) {
+      this->log_WARNING_HI_FileSizeError(
+          logStringFileName,
+          status
+      );
+    } else {
+      this->log_ACTIVITY_HI_FileSizeSucceeded(logStringFileName, size);
+    }
     this->emitTelemetry(status);
     this->sendCommandResponse(opCode, cmdSeq, status);
   }

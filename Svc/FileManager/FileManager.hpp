@@ -103,6 +103,14 @@ namespace Svc {
           const Fw::CmdStringArg& target //! The name of the file to append to
       );
 
+      //! Implementation for FileSize command handler
+      //!
+      void FileSize_cmdHandler(
+          const FwOpcodeType opCode, //!< The opcode
+          const U32 cmdSeq, //!< The command sequence number
+          const Fw::CmdStringArg& fileName //!< The file to get the size of
+      );
+
       //! Handler implementation for pingIn
       //!
       void pingIn_handler(
