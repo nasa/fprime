@@ -116,17 +116,12 @@ def generate_pymods(the_parsed_topology_xml, xml_filename, opt):
     if the_parsed_topology_xml.get_namespace():
         if VERBOSE:
             print(
-                "Generating pymods for topology %s::%s"
-                % (
-                    the_parsed_topology_xml.get_namespace(),
-                    the_parsed_topology_xml.get_name(),
-                )
+                f"Generating pymods for topology {the_parsed_topology_xml.get_namespace()}::{the_parsed_topology_xml.get_name()}"
             )
     else:
         if VERBOSE:
             print(
-                "Generating pymods for topology %s"
-                % (the_parsed_topology_xml.get_name())
+                f"Generating pymods for topology {the_parsed_topology_xml.get_name()}"
             )
     model = TopoFactory.TopoFactory.getInstance()
     topology_model = model.create(the_parsed_topology_xml)
@@ -266,7 +261,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
 
     for parameter_model in component_model.get_parameters():
         if VERBOSE:
-            print("Generating parameter dict %s" % parameter_model.get_name())
+            print(f"Generating parameter dict {parameter_model.get_name()}")
         instCommandWriter.DictStartWrite(parameter_model, topology_model)
         instCommandWriter.DictHeaderWrite(parameter_model, topology_model)
         instCommandWriter.DictBodyWrite(parameter_model, topology_model)
@@ -274,7 +269,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
     # iterate through command instances
     for event_model in component_model.get_events():
         if VERBOSE:
-            print("Generating event dict %s" % event_model.get_name())
+            print(f"Generating event dict {event_model.get_name()}")
         instEventWriter.DictStartWrite(event_model, topology_model)
         instEventWriter.DictHeaderWrite(event_model, topology_model)
         instEventWriter.DictBodyWrite(event_model, topology_model)
@@ -282,7 +277,7 @@ def write_pymods_from_comp(the_parsed_component_xml, opt, topology_model):
     # iterate through command instances
     for channel_model in component_model.get_channels():
         if VERBOSE:
-            print("Generating channel dict %s" % channel_model.get_name())
+            print(f"Generating channel dict {channel_model.get_name()}")
         instChannelWriter.DictStartWrite(channel_model, topology_model)
         instChannelWriter.DictHeaderWrite(channel_model, topology_model)
         instChannelWriter.DictBodyWrite(channel_model, topology_model)
@@ -309,13 +304,13 @@ def main():
         BUILD_ROOT = os.environ["BUILD_ROOT"]
         ModelParser.BUILD_ROOT = BUILD_ROOT
         if VERBOSE:
-            print("BUILD_ROOT set to %s in environment" % BUILD_ROOT)
+            print(f"BUILD_ROOT set to {BUILD_ROOT} in environment")
 
     #
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
+        print(f"ERROR: Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
         xml_filename = args[0]
@@ -329,14 +324,14 @@ def main():
     if not opt.build_root_overwrite is None:
         set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
     else:
         if ("BUILD_ROOT" in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
 
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")

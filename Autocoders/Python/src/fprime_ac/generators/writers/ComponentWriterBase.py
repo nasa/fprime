@@ -92,8 +92,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
                 + self.config("component", self.__writer)
             )
             DEBUG.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -102,12 +101,9 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             l = len(s[0])
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
                 filename = x[0].split(s[0])[0] + self.config("component", self.__writer)
-                DEBUG.info("Generating code filename: %s..." % filename)
+                DEBUG.info(f"Generating code filename: {filename}...")
             else:
-                msg = (
-                    "XML file naming format not allowed (must be XXXComponentAi.xml), Filename: %s"
-                    % xml_file
-                )
+                msg = f"XML file naming format not allowed (must be XXXComponentAi.xml), Filename: {xml_file}"
                 PRINT.info(msg)
                 raise ValueError(msg)
         return filename
@@ -933,8 +929,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             relative_path = build_root_relative_path(path)
         except BuildRootMissingException as bre:
             PRINT.info(
-                "ERROR: BUILD_ROOT and current execution path (%s) not consistent! %s"
-                % (path, str(bre))
+                f"ERROR: BUILD_ROOT and current execution path ({path}) not consistent! {str(bre)}"
             )
             sys.exit(-1)
         DEBUG.debug("Relative path: %s", relative_path)
