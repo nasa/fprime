@@ -1217,13 +1217,6 @@ def main():
         "CRITICAL": logging.CRITICAL,
     }
 
-    log_level_dict["QUIET"] = None
-    log_level_dict["DEBUG"] = logging.DEBUG
-    log_level_dict["INFO"] = logging.INFO
-    log_level_dict["WARNING"] = logging.WARN
-    log_level_dict["ERROR"] = logging.ERROR
-    log_level_dict["CRITICAL"] = logging.CRITICAL
-
     if log_level_dict[log_level] is None:
         stdout_enable = False
     else:
