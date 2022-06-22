@@ -753,9 +753,7 @@ def generate_component(
         generator.configureVisitor(
             cpp_instance_test_impl_name, "TestImplCppVisitor", True, True
         )
-        generator.configureVisitor(
-            test_main_name, "TestMainVisitor", True, True
-        )
+        generator.configureVisitor(test_main_name, "TestMainVisitor", True, True)
     else:
         generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "ComponentCppVisitor", True, True)
