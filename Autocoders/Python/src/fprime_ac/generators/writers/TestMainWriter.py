@@ -46,8 +46,7 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
         self.initTest(obj, c)
 
         if not hasattr(self, "test_cases"):
-            self.test_cases = []
-            self.test_cases.append("toDo")
+            self.test_cases = ["toDo"]
 
         tclist = []
         for case in self.test_cases:
