@@ -176,8 +176,8 @@ class ConfigManager(parent):
         self.__prop["component"]["ComponentXML"] = "ComponentAi.xml"
         self.__prop["component"]["ComponentCpp"] = "ComponentAc.cpp"
         self.__prop["component"]["ComponentH"] = "ComponentAc.hpp"
-        self.__prop["component"]["ImplCpp"] = "ComponentImpl.cpp-template"
-        self.__prop["component"]["ImplH"] = "ComponentImpl.hpp-template"
+        self.__prop["component"]["ImplCpp"] = ".cpp-template"
+        self.__prop["component"]["ImplH"] = ".hpp-template"
 
         self.__prop["component"]["ComponentTestCpp"] = "ComponentTestAc.cpp"
         self.__prop["component"]["ComponentTestH"] = "ComponentTestAc.hpp"

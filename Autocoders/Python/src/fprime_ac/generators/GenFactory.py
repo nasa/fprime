@@ -72,6 +72,7 @@ from .visitors import (
     SerializableVisitor,
     TestImplCppVisitor,
     TestImplHVisitor,
+    TestMainVisitor,
     TopologyCppVisitor,
     TopologyHVisitor,
     TopologyIDVisitor,
@@ -148,6 +149,8 @@ class GenFactory:
                 inst = TestImplCppVisitor.TestImplCppVisitor()
             elif self.__type == "TestImplHVisitor":
                 inst = TestImplHVisitor.TestImplHVisitor()
+            elif self.__type == "TestMainVisitor":
+                inst = TestMainVisitor.TestMainVisitor()
             elif self.__type == "PortCppVisitor":
                 inst = PortCppVisitor.PortCppVisitor()
             elif self.__type == "PortHVisitor":
