@@ -1,6 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"svc_buffer_manager_component.html#autotoc_md258":[4,5,0,2,5,0],
 "svc_buffer_manager_component.html#autotoc_md259":[4,5,0,2,5,1],
 "svc_buffer_manager_component.html#autotoc_md260":[4,5,0,2,5,2],
 "svc_buffer_manager_component.html#autotoc_md261":[4,5,0,2,6],
@@ -249,5 +248,6 @@ var NAVTREEINDEX5 =
 "svc_ping_port.html#autotoc_md514":[4,21,0,1,0],
 "svc_ping_port.html#autotoc_md515":[4,21,0,1,0,0],
 "svc_ping_port.html#autotoc_md516":[4,21,0,1,0,1],
-"svc_ping_port.html#autotoc_md517":[4,21,0,2]
+"svc_ping_port.html#autotoc_md517":[4,21,0,2],
+"svc_poly_db_component.html":[4,22]
 };

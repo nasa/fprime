@@ -4,7 +4,7 @@ var hierarchy =
       [ "Svc::ActiveLoggerImpl", "class_svc_1_1_active_logger_impl.html", null ]
     ] ],
     [ "ActiveRateGroupComponentBase", null, [
-      [ "Svc::ActiveRateGroupImpl", "class_svc_1_1_active_rate_group_impl.html", null ]
+      [ "Svc::ActiveRateGroup", "class_svc_1_1_active_rate_group.html", null ]
     ] ],
     [ "ActiveTextLoggerComponentBase", null, [
       [ "Svc::ActiveTextLoggerComponentImpl", "class_svc_1_1_active_text_logger_component_impl.html", null ]

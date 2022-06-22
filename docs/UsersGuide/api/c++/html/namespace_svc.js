@@ -1,7 +1,7 @@
 var namespace_svc =
 [
     [ "ActiveLoggerImpl", "class_svc_1_1_active_logger_impl.html", "class_svc_1_1_active_logger_impl" ],
-    [ "ActiveRateGroupImpl", "class_svc_1_1_active_rate_group_impl.html", "class_svc_1_1_active_rate_group_impl" ],
+    [ "ActiveRateGroup", "class_svc_1_1_active_rate_group.html", "class_svc_1_1_active_rate_group" ],
     [ "ActiveTextLoggerComponentImpl", "class_svc_1_1_active_text_logger_component_impl.html", "class_svc_1_1_active_text_logger_component_impl" ],
     [ "AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", "class_svc_1_1_a_m_p_c_s_sequence" ],
     [ "AssertFatalAdapterComponentImpl", "class_svc_1_1_assert_fatal_adapter_component_impl.html", "class_svc_1_1_assert_fatal_adapter_component_impl" ],
