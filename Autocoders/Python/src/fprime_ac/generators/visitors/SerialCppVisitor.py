@@ -223,8 +223,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 + self.__config.get("serialize", "SerializableCpp")
             )
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()

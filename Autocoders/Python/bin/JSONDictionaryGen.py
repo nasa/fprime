@@ -73,7 +73,7 @@ def pinit():
         "--path",
         dest="work_path",
         type="string",
-        help="Switch to new working directory (def: %s)." % current_dir,
+        help=f"Switch to new working directory (def: {current_dir}).",
         action="store",
         default=current_dir,
     )
