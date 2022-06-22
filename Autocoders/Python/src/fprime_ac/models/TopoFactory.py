@@ -55,9 +55,7 @@ class TopoFactory:
         """
         self.__instance = None
         self.__config = ConfigManager.ConfigManager.getInstance()
-        self.__generate_new_IDS = (
-            True
-        )  # Work around to disable ID generation/table output in the case AcConstants.ini is used to build
+        self.__generate_new_IDS = True  # Work around to disable ID generation/table output in the case AcConstants.ini is used to build
 
         self.__table_info = [
             ["INSTANCE NAME", 5, "Name of the instance object."],
