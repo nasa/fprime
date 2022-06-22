@@ -55,7 +55,7 @@ class XmlTopologyParser:
         self.__name = None
         self.__deployment = None
         self.__comment = ""
-        if os.path.isfile(xml_file) is False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
 
@@ -215,7 +215,7 @@ class XmlTopologyParser:
                     xml_file, str(bre)
                 )
                 raise OSError(stri)
-            if os.path.exists(xml_file) == True:
+            if os.path.exists(xml_file):
                 PRINT.info("Found component XML file: %s" % xml_file)
                 xml_parsed = XmlComponentParser.XmlComponentParser(xml_file)
                 for inst in self.get_instances():

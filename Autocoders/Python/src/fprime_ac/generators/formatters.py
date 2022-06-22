@@ -65,14 +65,14 @@ class CommentFormatters:
 
         for line in line_list:
 
-            if "@code" in line and code_flag is False:
+            if "@code" in line and not code_flag:
                 leading_spaces = line.find("@code")
                 new_line_list.append(line.strip())
                 code_flag = True
-            elif "@code" in line and code_flag is True:
+            elif "@code" in line and code_flag:
                 new_line_list.append(line.strip())
                 code_flag = False
-            elif (not "@code" in line) and code_flag is True:
+            elif (not "@code" in line) and code_flag:
                 new_line_list.append(line[leading_spaces:])
             else:
                 new_line_list.append(line.strip())
@@ -206,9 +206,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace is False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace is False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -231,7 +231,7 @@ class CommentFormatters:
             comment_str += "*\n"
             comment_str += "* TYPE: THIS IS A SYNCHRONOUS INTERFACE.\n"
 
-        if check_and_send is True:
+        if check_and_send:
             comment_str += "*\n"
             comment_str += "* Note: This interface uses an IPC check and send call. The return status\n"
             comment_str += "* indicates if the message was sent, or if the message was not sent due to\n"
@@ -300,9 +300,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace is False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace is False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -538,7 +538,7 @@ class Formatters:
             if end_name != "cmd":
                 name_str = name_str + "_cmd"
         # Steve: removed, this is too verbose
-        #                if verbose is True:
+        #                if verbose:
         #                    PRINT.info("WARNING: Interface %s renamed to %s."  % (name2,name_str))
 
         # Steve: removed, this is too verbose
@@ -625,7 +625,7 @@ class Formatters:
             name = msg_type.split("AcMsg")[1]
             new_name = ""
             for c in name:
-                if c.isupper() is True:
+                if c.isupper():
                     new_name += "_" + c.lower()
                 else:
                     new_name += c
@@ -800,7 +800,7 @@ class Formatters:
         @param name: Name of the function.
         @param args: List of argument tuples.
         """
-        if self.commentInArgsPresent(args) is True:
+        if self.commentInArgsPresent(args):
             func_string = "{}{}(".format(name, 80 * " ")
         else:
             func_string = "%s( " % name
@@ -885,7 +885,7 @@ class Formatters:
         # Get the simple case out of the way.
         if len(args) == 0:
 
-            if proto is True:
+            if proto:
                 function_str = name.strip() + "();"
             else:
                 function_str = name.strip() + "() {"
@@ -926,7 +926,7 @@ class Formatters:
 
         if len(args) == 1:
 
-            if proto is True:
+            if proto:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ");"
             else:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ") {"
@@ -946,7 +946,7 @@ class Formatters:
             function_str += type_list[index].ljust(max_type_len + 2)
             function_str += arg_list[index] + ",\n"
 
-        if proto is True:
+        if proto:
             function_str += (indent + 4) * " "
             function_str += type_list[-1].ljust(max_type_len + 2)
             function_str += arg_list[-1] + ");"
@@ -986,7 +986,7 @@ class Formatters:
 
             format_func = fname + "(void)"
 
-            if proto is True:
+            if proto:
                 format_func += ";"
             else:
                 format_func += " {"
@@ -1037,7 +1037,7 @@ class Formatters:
 
         # Last line if not a prototype then no '\n' at end.
         if len(args) > 1:
-            if proto is True:
+            if proto:
                 format_func += "{}{}\n".format(pad * " ", type_args_list[-1])
             else:
                 format_func += "{}{}".format(pad * " ", type_args_list[-1])
@@ -1056,12 +1056,12 @@ class Formatters:
         @param proto: Prototype flag for non-header file use.
         """
         format_func = self.formatFun(indent, self.oneLineFun(name, args))
-        if proto is True:
+        if proto:
             format_func = format_func.replace(")", ");")
 
         line_length = 80
         # If there are arg comments add them...
-        if self.commentInArgsPresent(args) is True:
+        if self.commentInArgsPresent(args):
             format_func_list = format_func.split("\n")
             # Trim the trailing spaces from the function name.
             format_func_name = format_func_list[0].strip(" (") + "( \n"
