@@ -36,11 +36,7 @@ def format_type_item(typeItem):
         for value in values:
             valuesArr.append({"name": value[0], "value": value[1], "comment": value[2]})
 
-        typeObj = {
-            "type": description[0],
-            "name": description[1],
-            "values": valuesArr,
-        }
+        typeObj = {"type": description[0], "name": description[1], "values": valuesArr}
     else:
         typeObj = typeItem
 
@@ -126,12 +122,9 @@ def main():
     outFilepath = "/".join([opts.work_path, outFilename])
     descriptionFilename = "/".join([opts.work_path, "/dictPath.txt"])
 
-    dictionary = {deployment: {
-        "events": {},
-        "channels": {},
-        "commands": {},
-        "serializables": {},
-    }}
+    dictionary = {
+        deployment: {"events": {}, "channels": {}, "commands": {}, "serializables": {}}
+    }
 
     events = dictionary[deployment]["events"]
     channels = dictionary[deployment]["channels"]
@@ -176,11 +169,7 @@ def main():
                     }
                 )
 
-            metadata = {
-                "name": name,
-                "namespace": namespace,
-                "members": members,
-            }
+            metadata = {"name": name, "namespace": namespace, "members": members}
 
             serializables[namespace + "::" + name] = metadata
         comp_name = inst.get_name()
