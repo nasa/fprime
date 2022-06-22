@@ -20,6 +20,7 @@ async command RemoveDirectory(
 @ Remove a file
 async command RemoveFile(
                           fileName: string size 256 @< The file to remove
+                          ignoreErrors: bool @< Ignore non-existent files
                         ) \
   opcode 0x03
 

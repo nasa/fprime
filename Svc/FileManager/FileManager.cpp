@@ -80,7 +80,8 @@ namespace Svc {
     RemoveFile_cmdHandler(
         const FwOpcodeType opCode,
         const U32 cmdSeq,
-        const Fw::CmdStringArg& fileName
+        const Fw::CmdStringArg& fileName,
+        const bool ignoreErrors
     )
   {
     Fw::LogStringArg logStringFileName(fileName.toChar());
@@ -92,6 +93,15 @@ namespace Svc {
           logStringFileName,
           status
       );
+      if (ignoreErrors == true) {
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(
+          opCode,
+          cmdSeq,
+          Fw::CmdResponse::OK
+        );
+      }
     } else {
       this->log_ACTIVITY_HI_RemoveFileSucceeded(logStringFileName);
     }

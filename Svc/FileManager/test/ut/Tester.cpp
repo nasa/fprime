@@ -233,7 +233,7 @@ namespace Svc {
 #endif
 
     // Remove test_file
-    this->removeFile("test_file");
+    this->removeFile("test_file", false);
 
     // Assert success
     this->assertSuccess(
@@ -259,7 +259,7 @@ namespace Svc {
 #endif
 
     // Attempt to remove test_file (should fail)
-    this->removeFile("test_file");
+    this->removeFile("test_file", false);
 
     // Assert failure
     this->assertFailure(
@@ -530,13 +530,14 @@ namespace Svc {
   }
 
   void Tester ::
-    removeFile(const char *const fileName)
+    removeFile(const char *const fileName, bool ignoreErrors)
   {
     Fw::CmdStringArg cmdStringFile(fileName);
     this->sendCmd_RemoveFile(
         INSTANCE,
         CMD_SEQ,
-        cmdStringFile
+        cmdStringFile,
+        ignoreErrors
     );
     this->component.doDispatch();
   }

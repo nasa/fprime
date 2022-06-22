@@ -130,7 +130,8 @@ namespace Svc {
 
       //! Remove a file
       void removeFile(
-          const char *const fileName
+          const char *const fileName,
+          bool ignoreErrors
       );
 
       //! Perform a shell command
