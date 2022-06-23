@@ -94,6 +94,14 @@ namespace Svc {
       //!
       void appendFileFail();
 
+      //! File size (succeed)
+      //!
+      void fileSizeSucceed();
+
+      //! File size (fail)
+      //!
+      void fileSizeFail();
+
     private:
 
       // ----------------------------------------------------------------------

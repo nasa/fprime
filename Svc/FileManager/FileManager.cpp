@@ -232,6 +232,8 @@ namespace Svc {
     )
   {
     Fw::LogStringArg logStringFileName(fileName.toChar());
+    this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
+
     U64 size;
     const Os::FileSystem::Status status =
       Os::FileSystem::getFileSize(fileName.toChar(), size);

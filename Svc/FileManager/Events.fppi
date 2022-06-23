@@ -171,3 +171,11 @@ event FileSizeError(
   severity warning high \
   id 0x13 \
   format "Failed to get the size of file {}, returned status {}"
+
+@ Checking file size
+event FileSizeStarted(
+                       fileName: string size 256 @< The name of the file
+                     ) \
+  severity activity high \
+  id 0x14 \
+  format "Checking size of file {}..."

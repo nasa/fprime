@@ -419,6 +419,50 @@ namespace Svc {
     );
   }
 
+  void Tester ::
+    fileSizeSucceed() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // Remove testing files, if they exist
+    this->system("rm -rf file1");
+
+    this->system("echo 'file1 text' > file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+    Fw::CmdStringArg cmdStringFile("file1");
+    this->sendCmd_FileSize(
+        INSTANCE,
+        CMD_SEQ,
+        cmdStringFile
+    );
+    this->component.doDispatch();
+
+    this->assertSuccess(FileManager::OPCODE_FILESIZE, 2);
+    ASSERT_EVENTS_FileSizeSucceeded(0, "file1", 11);
+  }
+
+  void Tester ::
+    fileSizeFail() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    // Remove testing files, if they exist
+    this->system("rm -rf file1");
+#else
+    FAIL(); // Commands not implemented for this OS
+#endif
+
+    Fw::CmdStringArg cmdStringFile("file1");
+    this->sendCmd_FileSize(
+        INSTANCE,
+        CMD_SEQ,
+        cmdStringFile
+    );
+    this->component.doDispatch();
+
+    this->assertFailure(
+        FileManager::OPCODE_FILESIZE
+    );
+  }
+
   // ----------------------------------------------------------------------
   // Helper methods
   // ----------------------------------------------------------------------

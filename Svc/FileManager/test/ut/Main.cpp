@@ -69,6 +69,16 @@ TEST(Test, appendFileFail) {
   tester.appendFileFail();
 }
 
+TEST(Test, fileSizeSucceed) {
+  Svc::Tester tester;
+  tester.fileSizeSucceed();
+}
+
+TEST(Test, fileSizeFail) {
+  Svc::Tester tester;
+  tester.fileSizeFail();
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
