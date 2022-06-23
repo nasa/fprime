@@ -184,6 +184,7 @@ cgi
 changelog
 changeme
 CHANNELID
+CHANS
 chdir
 checkbox
 cheetahtemplate
@@ -235,6 +236,7 @@ COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 commandline
 commasepitem
+COMBUFFER
 commonpath
 COMPACKET
 componentaction
