@@ -123,7 +123,7 @@ class XmlPortsParser:
                         p = arg.attrib["pass_by"]
                     else:
                         p = None
-                    if t == "string" or t == "buffer":
+                    if t in ("string", "buffer"):
                         if not "size" in list(arg.attrib.keys()):
                             PRINT.info(
                                 "%s: arg %s string must specify size tag"

@@ -58,7 +58,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("ComponentVisitorBase:%s" % visit_str)
+        DEBUG.debug(f"ComponentVisitorBase:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         self.__fp.writelines(c.__str__())
@@ -81,8 +81,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                 + self.config("component", self.__visitor)
             )
             DEBUG.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -93,12 +92,9 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                 filename = x[0].split(s[0])[0] + self.config(
                     "component", self.__visitor
                 )
-                DEBUG.info("Generating code filename: %s..." % filename)
+                DEBUG.info(f"Generating code filename: {filename}...")
             else:
-                msg = (
-                    "XML file naming format not allowed (must be XXXComponentAi.xml), Filename: %s"
-                    % xml_file
-                )
+                msg = f"XML file naming format not allowed (must be XXXComponentAi.xml), Filename: {xml_file}"
                 PRINT.info(msg)
                 raise ValueError(msg)
         return filename

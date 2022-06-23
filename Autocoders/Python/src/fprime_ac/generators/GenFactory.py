@@ -72,6 +72,7 @@ from .visitors import (
     SerializableVisitor,
     TestImplCppVisitor,
     TestImplHVisitor,
+    TestMainVisitor,
     TopologyCppVisitor,
     TopologyHVisitor,
     TopologyIDVisitor,
@@ -148,6 +149,8 @@ class GenFactory:
                 inst = TestImplCppVisitor.TestImplCppVisitor()
             elif self.__type == "TestImplHVisitor":
                 inst = TestImplHVisitor.TestImplHVisitor()
+            elif self.__type == "TestMainVisitor":
+                inst = TestMainVisitor.TestMainVisitor()
             elif self.__type == "PortCppVisitor":
                 inst = PortCppVisitor.PortCppVisitor()
             elif self.__type == "PortHVisitor":
@@ -205,9 +208,7 @@ class GenFactory:
             elif self.__type == "TopologyIDVisitor":
                 inst = TopologyIDVisitor.TopologyIDVisitor()
             else:
-                s = "VisitorConfig.getInstance: unsupported visitor type (%s)" % (
-                    self.__type
-                )
+                s = f"VisitorConfig.getInstance: unsupported visitor type ({self.__type})"
                 PRINT.info(s)
                 raise ValueError(s)
             return inst
@@ -309,7 +310,7 @@ class GenFactory:
             code_section_generator = MdDocPage.MdDocPage()
 
         else:
-            print("GenFactory: unsupported code section (%s)." % (the_type))
+            print(f"GenFactory: unsupported code section ({the_type}).")
             return None
 
         self._addVisitor(code_section_generator, project_visitor_list)

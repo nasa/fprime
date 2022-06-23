@@ -311,15 +311,15 @@ def check_generated_files(testdir):
     # Enums
     inst1_enums = get_enums_from_comp_xml(inst1.get_comp_xml())
     inst2_enums = get_enums_from_comp_xml(inst2.get_comp_xml())
-    inst_enums = {}
-    inst_enums["compxml"] = inst1_enums["compxml"] + inst2_enums["compxml"]
-    inst_enums["imports"] = inst1_enums["imports"] + inst2_enums["imports"]
+    inst_enums = {
+        "compxml": inst1_enums["compxml"] + inst2_enums["compxml"],
+        "imports": inst1_enums["imports"] + inst2_enums["imports"],
+    }
 
     # Serializables
     inst1_serials = get_serializables_from_comp_xml(inst1.get_comp_xml())
     inst2_serials = get_serializables_from_comp_xml(inst2.get_comp_xml())
-    inst_serials = {}
-    inst_serials["imports"] = inst1_serials["imports"] + inst2_serials["imports"]
+    inst_serials = {"imports": inst1_serials["imports"] + inst2_serials["imports"]}
 
     # GDS XML Dictionary
     dict_parser = XmlLoader()
@@ -619,7 +619,7 @@ def compare_serials_ai_gds(topology_serials, gds_serials):
     for gds_serial in gds_serials:
         # For scope of test, only verify serial type and member names/types
         type = gds_serial.attrib["type"].split("::")
-        type = type[len(type) - 1]
+        type = type[-1]
         types.append(type)
         if not type in member_names.keys():
             member_names[type] = []
@@ -675,7 +675,7 @@ def compare_enums_ai_gds(topology_enums, gds_enums):
     for gds_enum in gds_enums:
         # For scope of test, only verify enum name and item names
         name = gds_enum.attrib["type"].split("::")
-        name = name[len(name) - 1]
+        name = name[-1]
         names.append(name)
         if not name in items.keys():
             items[name] = []
@@ -765,23 +765,24 @@ def test_dictgen():
 
         time.sleep(3)
 
-        gen_pymods = []
-        gen_pymods.append("channels/Inst1_Test_Tlm0.py")
-        gen_pymods.append("channels/Inst2_Test_Tlm0.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd0.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd1.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd2.py")
-        gen_pymods.append("commands/Inst1_Test_Cmd3.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd0.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd1.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd2.py")
-        gen_pymods.append("commands/Inst2_Test_Cmd3.py")
-        gen_pymods.append("events/Inst1_Test_Evr0.py")
-        gen_pymods.append("events/Inst1_Test_Evr1.py")
-        gen_pymods.append("events/Inst1_Test_Evr2.py")
-        gen_pymods.append("events/Inst2_Test_Evr0.py")
-        gen_pymods.append("events/Inst2_Test_Evr1.py")
-        gen_pymods.append("events/Inst2_Test_Evr2.py")
+        gen_pymods = [
+            "channels/Inst1_Test_Tlm0.py",
+            "channels/Inst2_Test_Tlm0.py",
+            "commands/Inst1_Test_Cmd0.py",
+            "commands/Inst1_Test_Cmd1.py",
+            "commands/Inst1_Test_Cmd2.py",
+            "commands/Inst1_Test_Cmd3.py",
+            "commands/Inst2_Test_Cmd0.py",
+            "commands/Inst2_Test_Cmd1.py",
+            "commands/Inst2_Test_Cmd2.py",
+            "commands/Inst2_Test_Cmd3.py",
+            "events/Inst1_Test_Evr0.py",
+            "events/Inst1_Test_Evr1.py",
+            "events/Inst1_Test_Evr2.py",
+            "events/Inst2_Test_Evr0.py",
+            "events/Inst2_Test_Evr1.py",
+            "events/Inst2_Test_Evr2.py",
+        ]
 
         # Test whether all generated files match expected
         compare_genfile("TestTopologyAppDictionary.xml")

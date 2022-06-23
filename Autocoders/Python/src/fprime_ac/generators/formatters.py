@@ -751,10 +751,7 @@ class Formatters:
         return True if an array arg is
         found, else return False.
         """
-        for arg in args:
-            if arg[3] != "":
-                return True
-        return False
+        return any(arg[3] != "" for arg in args)
 
     def commentInArgsPresent(self, args):
         """
@@ -762,10 +759,7 @@ class Formatters:
         return True if a comment for
         an arg is found, else return False.
         """
-        for arg in args:
-            if arg[2] != "":
-                return True
-        return False
+        return any(arg[2] != "" for arg in args)
 
     ##########################################
     # Methods for argument handling.
