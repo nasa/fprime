@@ -114,18 +114,17 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             #
             # Add modifier here - if any...
             if arg.get_modifier() == "pointer":
-                t = t + " *"
+                t += " *"
             elif arg.get_modifier() == "reference":
-                t = t + " &"
+                t += " &"
             elif arg.get_modifier() == "value":
-                t = t + " "
+                t += " "
             elif TypesList.isPrimitiveType(t) or isEnum:
-                t = t + " "
+                t += " "
             else:
                 t = "const " + t + " &"
 
-            arg_str += "{}{}".format(t, arg.get_name())
-            arg_str += ", "
+            arg_str += f"{t}{arg.get_name()}, "
         arg_str = arg_str.strip(", ")
         return arg_str
 
@@ -164,7 +163,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                         % (arg.get_name(), arg.get_type())
                     )
                     sys.exit(-1)
-            elif t in [
+            elif t in (
                 "U8",
                 "U16",
                 "U32",
@@ -183,15 +182,14 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "NATIVE_INT_TYPE",
                 "NATIVE_UINT_TYPE",
                 "POINTER_CAST",
-            ]:
+            ):
                 t = "sizeof(" + t + cl
             else:
                 if arg.get_modifier() == "pointer":
                     t = "sizeof(" + t + "*)"
                 else:
-                    t = t + "::SERIALIZED_SIZE"
-            arg_str += t
-            arg_str += " + "
+                    t += "::SERIALIZED_SIZE"
+            arg_str += f"{t} + "
         arg_str = arg_str.strip(" + ")
         return arg_str
 
