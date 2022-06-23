@@ -8,7 +8,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/TlmChan/TlmChanImpl.hpp"
+#include "Svc/TlmChan/TlmChan.hpp"
 
 namespace Svc
 {
@@ -36,6 +36,7 @@ namespace Svc
 
         void runNominalChannel();
         void runMultiChannel();
+        void runOffNominal();
 
     private:
         // ----------------------------------------------------------------------
@@ -88,7 +89,7 @@ namespace Svc
 
         // dump functions
         void dumpHash();
-        static void dumpTlmEntry(TlmChanImpl::TlmEntry* entry);
+        static void dumpTlmEntry(TlmChan::TlmEntry* entry);
 
 
     private:
@@ -98,7 +99,7 @@ namespace Svc
 
         //! The component under test
         //!
-        TlmChanImpl component;
+        TlmChan component;
     };
 
 } // end namespace Svc

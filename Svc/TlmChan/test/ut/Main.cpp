@@ -2,18 +2,15 @@
  * PrmDbTester.cpp
  *
  *  Created on: Mar 18, 2015
+ *  Updated: 6/22/2022
  *      Author: tcanham
  */
 
 #include <Svc/TlmChan/test/ut/Tester.hpp>
-#include <Svc/TlmChan/TlmChanImpl.hpp>
-#include <Fw/Obj/SimpleObjRegistry.hpp>
+#include <Svc/TlmChan/TlmChan.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
-#if FW_OBJECT_REGISTRATION == 1
-static Fw::SimpleObjRegistry simpleReg;
-#endif
 
 TEST(TlmChanTest,InitTest) {
     Svc::Tester tester;
@@ -43,26 +40,17 @@ TEST(TlmChanTest,MultiChannelTest) {
 }
 
 
-// TEST(TlmChanTest,OffNominal) {
+TEST(TlmChanTest,OffNominal) {
 
-//     TEST_CASE(107.2.1,"Off-nominal channelized telemetry");
-//     COMMENT("Attempt to read a channel that hasn't been written.");
+    TEST_CASE(107.2.1,"Off-nominal channelized telemetry");
+    COMMENT("Attempt to read a channel that hasn't been written.");
 
-//     Svc::TlmChanImpl impl("TlmChanImpl");
+    Svc::Tester tester;
 
-//     impl.init(10,0);
+    // run test
+    tester.runOffNominal();
 
-//     Svc::TlmChanImplTester tester(impl);
-
-//     tester.init();
-
-//     // connect ports
-//     connectPorts(impl,tester);
-
-//     // run test
-//     tester.runOffNominal();
-
-// }
+}
 
 // TEST(TlmChanTest,TooManyChannels) {
 
