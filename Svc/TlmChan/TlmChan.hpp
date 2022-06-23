@@ -15,7 +15,6 @@
 
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
 #include <TlmChanImplCfg.hpp>
-#include <Os/Mutex.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 
 namespace Svc {

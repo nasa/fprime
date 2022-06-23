@@ -10,12 +10,9 @@
  * <br /><br />
  */
 #include <Svc/TlmChan/TlmChan.hpp>
-#include <cstring>
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Com/ComBuffer.hpp>
-
-#include <cstdio>
 
 namespace Svc
 {

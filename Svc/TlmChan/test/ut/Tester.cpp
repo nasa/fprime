@@ -72,31 +72,56 @@ namespace Svc
     void Tester::runMultiChannel() {
 
 
-        FwChanIdType IDs[] = {
+        FwChanIdType ID_0[] = {
                 // Test channel IDs
                 0x1000,0x1001,0x1002,0x1003,0x1004,0x1005,0x1100,0x1101,0x1102,0x1103,0x300,0x301,0x400,0x401,0x402,0x100,0x101,0x102,0x103,0x104,0x105
         };
 
         this->clearBuffs();
         // send all updates
-        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(IDs); n++) {
-            this->sendBuff(IDs[n],n);
+        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
+            this->sendBuff(ID_0[n],n);
         }
 
-        //ASSERT_EQ(this->component.)
-
-        // dump hash table
-        //this->dumpHash();
+        ASSERT_EQ(0,this->component.m_activeBuffer);
 
         // do a run, and all the packets should be sent
         this->doRun(true);
         ASSERT_TRUE(this->m_bufferRecv);
-        ASSERT_EQ((FW_NUM_ARRAY_ELEMENTS(IDs)/CHANS_PER_COMBUFFER)+1,this->m_numBuffs);
+        ASSERT_EQ((FW_NUM_ARRAY_ELEMENTS(ID_0)/CHANS_PER_COMBUFFER)+1,this->m_numBuffs);
+        ASSERT_EQ(1,this->component.m_activeBuffer);
 
         // verify packets
-        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(IDs); n++) {
+        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(ID_0); n++) {
             //printf("#: %d\n",n);
-            this->checkBuff(n,FW_NUM_ARRAY_ELEMENTS(IDs),IDs[n],n);
+            this->checkBuff(n,FW_NUM_ARRAY_ELEMENTS(ID_0),ID_0[n],n);
+        }
+
+        // send another set
+
+        FwChanIdType ID_1[] = {
+                // Test channel IDs
+                0x5000,0x5001,0x5002,0x5003,0x5004,0x5005,0x5100,0x5101,0x5102,0x5103,0x6300,0x6301,0x6400,0x6401,0x6402,0x6100,0x6101,0x6102,0x6103,0x6104,0x6105,0x8101,0x8102,0x8103,0x8104,0x8105
+        };
+
+        this->clearBuffs();
+        // send all updates
+        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
+            this->sendBuff(ID_1[n],n);
+        }
+
+        ASSERT_EQ(1,this->component.m_activeBuffer);
+
+        // do a run, and all the packets should be sent
+        this->doRun(true);
+        ASSERT_TRUE(this->m_bufferRecv);
+        ASSERT_EQ((FW_NUM_ARRAY_ELEMENTS(ID_1)/CHANS_PER_COMBUFFER)+1,this->m_numBuffs);
+        ASSERT_EQ(0,this->component.m_activeBuffer);
+
+        // verify packets
+        for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(ID_1); n++) {
+            //printf("#: %d\n",n);
+            this->checkBuff(n,FW_NUM_ARRAY_ELEMENTS(ID_1),ID_1[n],n);
         }
 
     }
