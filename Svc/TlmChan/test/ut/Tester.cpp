@@ -83,6 +83,8 @@ namespace Svc
             this->sendBuff(IDs[n],n);
         }
 
+        //ASSERT_EQ(this->component.)
+
         // dump hash table
         //this->dumpHash();
 
@@ -99,6 +101,24 @@ namespace Svc
 
     }
 
+    void Tester::runOffNominal() {
+
+        // Ask for a packet that isn't written yet
+        Fw::TlmBuffer buff;
+        Fw::SerializeStatus stat;
+        Fw::Time timeTag;
+        U32 val = 10;
+
+        // create Telemetry item and put dummy data in to make sure it gets erased
+        buff.resetSer();
+        stat = buff.serialize(val);
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
+
+        // Read back value
+        this->invoke_to_TlmGet(0,10,timeTag,buff);
+        ASSERT_EQ(0u,buff.getBuffLength());
+
+    }
 
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -157,7 +177,6 @@ namespace Svc
 
         // Search for channel ID
         for (NATIVE_UINT_TYPE packet = 0; packet < this->m_numBuffs; packet++) {
-            printf("packet %d\n",packet);
 
             // Look at packet descriptor for current packet
             this->m_rcvdBuffer[packet].resetDeser();
@@ -168,7 +187,6 @@ namespace Svc
             ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
 
             for (NATIVE_UINT_TYPE chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
-                printf("chan %d\n",chan);
 
                 // decode channel ID
                 FwEventIdType sentId;
@@ -184,17 +202,14 @@ namespace Svc
                 U32 readVal;
                 stat = this->m_rcvdBuffer[packet].deserialize(readVal);
                 ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-                ASSERT_EQ(readVal, val);
 
                 if (chanNum == currentChan) {
                     ASSERT_EQ(id,sentId);
                     ASSERT_EQ(val,readVal);
                 }
 
-                printf("CC: %d TC: %d\n",currentChan,totalChan);
                 // quit if we are at max channel entry
                 if (currentChan == (totalChan - 1)) {
-                    printf("Quit\n");
                     break;
                 }
                 
@@ -253,7 +268,7 @@ namespace Svc
         }
     }
 
-    void Tester::dumpTlmEntry(TlmChanImpl::TlmEntry* entry) {
+    void Tester::dumpTlmEntry(TlmChan::TlmEntry* entry) {
         printf(
                 "Entry "
                 " Ptr: %p"
@@ -269,7 +284,7 @@ namespace Svc
         for (NATIVE_INT_TYPE slot = 0; slot < TLMCHAN_NUM_TLM_HASH_SLOTS; slot++) {
             printf("Slot: %d\n",slot);
             if (this->component.m_tlmEntries[0].slots[slot]) {
-                TlmChanImpl::TlmEntry* entry = component.m_tlmEntries[0].slots[slot];
+                TlmChan::TlmEntry* entry = component.m_tlmEntries[0].slots[slot];
                 for (NATIVE_INT_TYPE bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
                     dumpTlmEntry(entry);
                     if (entry->next == nullptr) {

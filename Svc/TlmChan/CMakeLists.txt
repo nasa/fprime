@@ -8,10 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TlmChan.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmChanImpl.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplGet.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplRecv.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplTask.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/TlmChan.cpp"
 )
 
 register_fprime_module()
