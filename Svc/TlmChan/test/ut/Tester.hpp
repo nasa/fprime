@@ -76,9 +76,9 @@ namespace Svc
         //!
         void initComponents();
 
-        void sendBuff(FwChanIdType id, U32 val, NATIVE_INT_TYPE instance);
+        void sendBuff(FwChanIdType id, U32 val);
         bool doRun(bool check);
-        void checkBuff(FwChanIdType id, U32 val, NATIVE_INT_TYPE instance);
+        void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
 
         // Keep a history
         NATIVE_UINT_TYPE m_numBuffs;
