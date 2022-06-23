@@ -45,13 +45,13 @@ namespace Svc
 
         this->clearBuffs();
         // send first buffer
-        this->sendBuff(27, 10, 0);
+        this->sendBuff(27, 10);
         this->doRun(true);
-        this->checkBuff(27, 10, 0);
+        this->checkBuff(0, 1, 27, 10);
 
         this->clearBuffs();
         // send again to other buffer
-        this->sendBuff(27, 10, 0);
+        this->sendBuff(27, 10);
 
         static bool tlc003 = false;
 
@@ -62,11 +62,11 @@ namespace Svc
         }
 
         this->doRun(true);
-        this->checkBuff(27, 10, 0);
+        this->checkBuff(0, 1, 27, 10);
 
         // do an update to make sure it gets updated and returned correctly
         this->clearBuffs();
-        this->sendBuff(27, 20, 0);
+        this->sendBuff(27, 20);
     }
 
     void Tester::runMultiChannel() {
@@ -80,7 +80,7 @@ namespace Svc
         this->clearBuffs();
         // send all updates
         for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(IDs); n++) {
-            this->sendBuff(IDs[n],n,0);
+            this->sendBuff(IDs[n],n);
         }
 
         // dump hash table
@@ -94,7 +94,7 @@ namespace Svc
         // verify packets
         for (NATIVE_UINT_TYPE n=0; n < FW_NUM_ARRAY_ELEMENTS(IDs); n++) {
             //printf("#: %d\n",n);
-            this->checkBuff(IDs[n],n,0);
+            this->checkBuff(n,FW_NUM_ARRAY_ELEMENTS(IDs),IDs[n],n);
         }
 
     }
@@ -140,11 +140,11 @@ namespace Svc
         return this->m_bufferRecv;
     }
 
-    void Tester::checkBuff(FwChanIdType id, U32 val, NATIVE_INT_TYPE instance) {
+    void Tester::checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val) {
         Fw::Time timeTag;
         // deserialize packet
         Fw::SerializeStatus stat;
-        bool packetFound = false;
+        bool channelFound = false;
 
         static bool tlc004 = false;
 
@@ -153,45 +153,62 @@ namespace Svc
             tlc004 = true;
         }
 
+        NATIVE_UINT_TYPE currentChan = 0;
+
         // Search for channel ID
         for (NATIVE_UINT_TYPE packet = 0; packet < this->m_numBuffs; packet++) {
-            // check for telemetry packet in ComBuffers
+            printf("packet %d\n",packet);
+
+            // Look at packet descriptor for current packet
             this->m_rcvdBuffer[packet].resetDeser();
             // first piece should be tlm packet descriptor
             FwPacketDescriptorType desc;
             stat = this->m_rcvdBuffer[packet].deserialize(desc);
             ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
             ASSERT_EQ(desc, static_cast<FwPacketDescriptorType>(Fw::ComPacket::FW_PACKET_TELEM));
-continue;            
-            // next piece should be event ID
-            FwEventIdType sentId;
-            stat = this->m_rcvdBuffer[packet].deserialize(sentId);
-            ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
 
-            // this is the packet you are looking for..
-            if (sentId != id) {
-                this->m_rcvdBuffer[packet].resetDeser();
-                continue;
+            for (NATIVE_UINT_TYPE chan = 0; chan < CHANS_PER_COMBUFFER; chan++) {
+                printf("chan %d\n",chan);
+
+                // decode channel ID
+                FwEventIdType sentId;
+                stat = this->m_rcvdBuffer[packet].deserialize(sentId);
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
+
+                // next piece is time tag
+                Fw::Time recTimeTag(TB_NONE,0,0);
+                stat = this->m_rcvdBuffer[packet].deserialize(recTimeTag);
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
+                ASSERT_TRUE(timeTag == recTimeTag);
+                // next piece is event argument
+                U32 readVal;
+                stat = this->m_rcvdBuffer[packet].deserialize(readVal);
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
+                ASSERT_EQ(readVal, val);
+
+                if (chanNum == currentChan) {
+                    ASSERT_EQ(id,sentId);
+                    ASSERT_EQ(val,readVal);
+                }
+
+                printf("CC: %d TC: %d\n",currentChan,totalChan);
+                // quit if we are at max channel entry
+                if (currentChan == (totalChan - 1)) {
+                    printf("Quit\n");
+                    break;
+                }
+                
+                currentChan++;
             }
-            packetFound = true;
-            // next piece is time tag
-            Fw::Time recTimeTag(TB_NONE,0,0);
-            stat = this->m_rcvdBuffer[packet].deserialize(recTimeTag);
-            ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-            ASSERT_TRUE(timeTag == recTimeTag);
-            // next piece is event argument
-            U32 readVal;
-            stat = this->m_rcvdBuffer[packet].deserialize(readVal);
-            ASSERT_EQ(Fw::FW_SERIALIZE_OK,stat);
-            ASSERT_EQ(readVal, val);
+
             // packet should be empty
-            ASSERT_EQ(this->m_rcvdBuffer[packet].getBuffLeft(),0u);
+            ASSERT_EQ(0,this->m_rcvdBuffer[packet].getBuffLeft());
+
         }
 
-        ASSERT_TRUE(packetFound);
     }
 
-    void Tester::sendBuff(FwChanIdType id, U32 val, NATIVE_INT_TYPE instance) {
+    void Tester::sendBuff(FwChanIdType id, U32 val) {
 
         Fw::TlmBuffer buff;
         Fw::TlmBuffer readBack;
