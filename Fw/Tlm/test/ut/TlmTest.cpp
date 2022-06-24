@@ -38,11 +38,6 @@ TEST(FwTlmTest,TlmPacketSerializeSingle) {
 
 TEST(FwTlmTest,TlmPacketSerializeFill) {
 
-    // get current size of ComBuffer in order
-    // to fully fill it
-
-    static const NATIVE_UINT_TYPE FULL_COM_BUFFER = FW_COM_BUFFER_MAX_SIZE;
-
     // compute a single entry size assuming for the test that the value of the telemetry channel
     // is a U32
     static const NATIVE_UINT_TYPE SIZE_OF_ENTRY = sizeof(FwChanIdType) + Fw::Time::SERIALIZED_SIZE + sizeof(U32);
@@ -91,7 +86,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;
         U32 id = 0;
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktIn.extractValue(id,timeOut,buffOut,sizeof(U32)));
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
         ASSERT_EQ(NUM_ENTRIES-entry,id);
         Fw::Time expTime(TB_WORKSTATION_TIME,entry+1,entry+2);
         ASSERT_EQ(expTime,timeOut);
@@ -105,7 +100,7 @@ TEST(FwTlmTest,TlmPacketSerializeFill) {
         Fw::TlmBuffer buffOut;
         Fw::Time timeOut;
         U32 id = 0;
-        ASSERT_EQ(Fw::FW_DESERIALIZE_BUFFER_EMPTY,pktIn.extractValue(id,timeOut,buffOut,sizeof(U32)));
+        ASSERT_EQ(Fw::FW_DESERIALIZE_BUFFER_EMPTY,pktOut.extractValue(id,timeOut,buffOut,sizeof(U32)));
     }
 
 }
