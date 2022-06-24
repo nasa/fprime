@@ -207,7 +207,7 @@ class Parser:
                 # requirement for parsing a second file is that it has a same
                 # named root Element.
 
-                if self.__root is not None and root_name_checked:
+                if self.__root is not None and not root_name_checked:
 
                     if self.__root.getName() == name:
 

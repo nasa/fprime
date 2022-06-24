@@ -216,7 +216,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
     #
     # LJR Added 30 July 2007 to flag missing enum definitions.
     #
-    if (typename in data):
+    if typename not in data:
         str = "ERROR: could not find ENUM type (%s)" % typename
         print(str)
         raise ValueError(str)

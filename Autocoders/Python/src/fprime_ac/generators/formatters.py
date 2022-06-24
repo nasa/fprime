@@ -1010,7 +1010,7 @@ class Formatters:
         new_list = []
         for line in type_args_list[:-1]:
             new_list.append(line + ",")
-        if proto is True:
+        if proto:
             new_list.append(type_args_list[-1] + ");")
         else:
             new_list.append(type_args_list[-1] + ")")
@@ -1339,7 +1339,7 @@ class Formatters:
         # if context_list is None:
         #    return args
 
-        if self.subThreadTest(mod_id) is True and len(context_list) > 0:
+        if self.subThreadTest(mod_id) and len(context_list) > 0:
             instance_enum = self.subThreadModuleFirstCap(mod_id) + "AcInstanceId"
             d = self.subThreadDir(mod_id)
             file = os.path.join(d, mod_id + "_ac_pub.h")
