@@ -109,7 +109,6 @@ namespace Os {
                 stat = NO_MORE_FILES;
             }
         }
-
         return stat;
     }
 
