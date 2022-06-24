@@ -166,7 +166,7 @@ def ParseTypedefEnum(typename, filename, loadfile=True):
         # reference where we need it. No loading required.
         data = filename
 
-    if (typename == "" or typename is None):
+    if typename == "" or typename is None:
         str = (
             "ERROR: utils.ParseC.ParseTypedefEnum typename argument empty (%s)"
             % typename
