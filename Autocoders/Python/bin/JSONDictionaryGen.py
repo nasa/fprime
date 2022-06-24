@@ -68,7 +68,7 @@ def pinit():
         "--path",
         dest="work_path",
         type="string",
-        help="Switch to new working directory (def: %s)." % current_dir,
+        help=f"Switch to new working directory (def: {current_dir}).",
         action="store",
         default=current_dir,
     )
@@ -121,12 +121,8 @@ def main():
     outFilepath = "/".join([opts.work_path, outFilename])
     descriptionFilename = "/".join([opts.work_path, "/dictPath.txt"])
 
-    dictionary = {}
-    dictionary[deployment] = {
-        "events": {},
-        "channels": {},
-        "commands": {},
-        "serializables": {},
+    dictionary = {
+        deployment: {"events": {}, "channels": {}, "commands": {}, "serializables": {}}
     }
 
     events = dictionary[deployment]["events"]
@@ -172,11 +168,7 @@ def main():
                     }
                 )
 
-            metadata = {
-                "name": name,
-                "namespace": namespace,
-                "members": members,
-            }
+            metadata = {"name": name, "namespace": namespace, "members": members}
 
             serializables[namespace + "::" + name] = metadata
         comp_name = inst.get_name()

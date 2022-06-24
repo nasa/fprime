@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup.cpp"
 )
 
 register_fprime_module()

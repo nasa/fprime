@@ -79,7 +79,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("CommandVisitor:%s" % visit_str)
+        DEBUG.debug(f"CommandVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         fp.writelines(c.__str__())
@@ -109,18 +109,18 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
                 fd = open(pyfile, "w")
                 if fd is None:
-                    raise Exception("Could not open %s file." % pyfile)
+                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp1.append(fd)
             else:
                 inst = 0
                 for opcode in obj.get_opcodes():
                     pyfile = "%s/%s_%d.py" % (output_dir, obj.get_mnemonic(), inst)
                     inst += 1
-                    DEBUG.info("Open file: %s" % pyfile)
+                    DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
                     if fd is None:
-                        raise Exception("Could not open %s file." % pyfile)
-                    DEBUG.info("Completed %s open" % pyfile)
+                        raise Exception(f"Could not open {pyfile} file.")
+                    DEBUG.info(f"Completed {pyfile} open")
                     self.__fp1.append(fd)
         elif type(obj) is Parameter.Parameter:
             self.__fp1 = []
@@ -135,33 +135,33 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
                 if fd is None:
-                    raise Exception("Could not open %s file." % pyfile)
+                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp1.append(fd)
 
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
                 if fd is None:
-                    raise Exception("Could not open %s file." % pyfile)
+                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp2.append(fd)
             else:
                 inst = 0
                 for opcode in obj.get_set_opcodes():
                     pyfile = "%s/%s_%d_PRM_SET.py" % (output_dir, self.__stem, inst)
-                    DEBUG.info("Open file: %s" % pyfile)
+                    DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
                     if fd is None:
-                        raise Exception("Could not open %s file." % pyfile)
+                        raise Exception(f"Could not open {pyfile} file.")
                     self.__fp1.append(fd)
-                    DEBUG.info("Completed %s open" % pyfile)
+                    DEBUG.info(f"Completed {pyfile} open")
 
                     pyfile = "%s/%s_%d_PRM_SAVE.py" % (output_dir, self.__stem, inst)
-                    DEBUG.info("Open file: %s" % pyfile)
+                    DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
                     if fd is None:
-                        raise Exception("Could not open %s file." % pyfile)
+                        raise Exception(f"Could not open {pyfile} file.")
                     self.__fp2.append(fd)
                     inst += 1
-                    DEBUG.info("Completed %s open" % pyfile)
+                    DEBUG.info(f"Completed {pyfile} open")
 
         else:
             print("Invalid type %s" % type(obj))
@@ -256,7 +256,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 if len(obj.get_set_opcodes()) > 1:
                     c.mnemonic = "%s_%d_PRM_SET" % (self.__stem, inst)
                 else:
-                    c.mnemonic = "%s_PRM_SET" % (self.__stem)
+                    c.mnemonic = f"{self.__stem}_PRM_SET"
 
                 c.opcode = opcode
                 c.description = obj.get_comment()
@@ -288,7 +288,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 if len(obj.get_save_opcodes()) > 1:
                     c.mnemonic = "%s_%d_PRM_SAVE" % (self.__stem, inst)
                 else:
-                    c.mnemonic = "%s_PRM_SAVE" % (self.__stem)
+                    c.mnemonic = f"{self.__stem}_PRM_SAVE"
                 c.opcode = opcode
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()

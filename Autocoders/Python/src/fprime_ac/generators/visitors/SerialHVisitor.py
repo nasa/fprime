@@ -229,8 +229,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 + self.__config.get("serialize", "SerializableH")
             )
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()

@@ -41,6 +41,15 @@ Port Data Type | Name | Direction | Kind | Usage
 #### 3.2 Functional Description
 
 The `Svc::ActiveRateGroup` component has one input port that is called to wake up the task to execute one cycle.  
+
+A set of context values are passed in as an array to the configure function:
+
+```
+void configure(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts);
+```
+
+A context value can be used by a component to discriminate between more than one call in the rate group.
+
 The task of the component calls the output ports in order, passing the context from the context list as the port argument. 
 
 The component sets a flag when the cycle port is invoked. At the beginning of the rate group execution, the component clears 
