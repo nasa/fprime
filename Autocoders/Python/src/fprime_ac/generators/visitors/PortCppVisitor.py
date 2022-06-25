@@ -117,10 +117,9 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
             else:
                 t = "const " + t + " &"
 
-            arg_str += "{}{}".format(t, arg.get_name())
-            arg_str += ", "
-        arg_str = arg_str.strip(", ")
-        return arg_str
+            arg_str += f"{t}{arg.get_name()}, "
+
+        return arg_str.strip(", ")
 
     def _get_args_string(self, obj):
         """
@@ -132,8 +131,8 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         for arg in args:
             arg_str += "%s" % arg.get_name()
             arg_str += ", "
-        arg_str = arg_str.strip(", ")
-        return arg_str
+            
+        return arg_str.strip(", ")
 
     def _get_args_list(self, obj):
         """
@@ -243,10 +242,11 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         @param args: the instance of the concrete element to operation on.
         """
         c = namespacePortCpp.namespacePortCpp()
-        if obj.get_namespace() is None:
-            c.namespace_list = None
-        else:
+        c.namespace_list = None
+
+        if obj.get_namespace() is not None:
             c.namespace_list = obj.get_namespace().split("::")
+       
         c.name = obj.get_type()
 
         c.arg_list = self._get_args_list(obj)
@@ -347,10 +347,10 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate ending static code within files.
         """
         c = finishPortCpp.finishPortCpp()
-        if obj.get_namespace() is None:
-            c.namespace_list = None
-        else:
+        c.namespace_list = None
+        if obj.get_namespace() is not None:
             c.namespace_list = obj.get_namespace().split("::")
+            
         c.name = obj.get_type()
         c.args_string = self._get_args_string(obj)
         c.args_proto_string = self._get_args_proto_string(obj)
