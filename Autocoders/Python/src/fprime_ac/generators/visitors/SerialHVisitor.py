@@ -56,7 +56,7 @@ except ImportError:
 PRINT = logging.getLogger("output")
 DEBUG = logging.getLogger("debug")
 
-typelist = ["U8", "I8", "U16", "I16", "U32", "I32", "U64", "I64", "F32", "F64", "bool"]
+typelist = ("U8", "I8", "U16", "I16", "U32", "I32", "U64", "I64", "F32", "F64", "bool")
 
 #
 # Module class or classes go here.
@@ -100,23 +100,22 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             default,
         ) in obj.get_members():
             if isinstance(mtype, tuple):
-                arg_str += "{} {}, ".format(mtype[0][1], name)
-            elif mtype == "string" and array_size is None:
-                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
-            elif mtype == "string" and array_size is not None:
-                arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
-                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
+                arg_str += f"{mtype[0][1]} {name}, "
+            elif mtype == "string":
+                if array_size is None:
+                    arg_str += f"const {obj.get_name()}::{name}String& {name}, "
+                elif array_size is not None:
+                    arg_str += f"const {obj.get_name()}::{name}String* {name}, "
+                    arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
-                arg_str += "const {}& {}, ".format(mtype, name)
+                arg_str += f"const {mtype}& {name}, "
             elif array_size is not None:
-                arg_str += "const {}* {}, ".format(mtype, name)
+                arg_str += f"const {mtype}* {name}, " 
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
-                arg_str += "{} {}".format(mtype, name)
-                arg_str += ", "
+                arg_str += f"{mtype} {name}, "
 
-        arg_str = arg_str.strip(", ")
-        return arg_str
+        return arg_str.strip(", ")
 
     def _get_args_string_scalar_init(self, obj):
         """
@@ -137,21 +136,21 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
             default,
         ) in obj.get_members():
             if isinstance(mtype, tuple):
-                arg_str += "{} {}, ".format(mtype[0][1], name)
+                arg_str += f"{mtype[0][1]} {name}, "
             elif mtype == "string":
-                arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+                arg_str += f"const {obj.get_name()}::{name}String& {name}, "
             elif mtype not in typelist:
-                arg_str += "const {}& {}, ".format(mtype, name)
+                arg_str += f"const {mtype}& {name}, "
             elif array_size is not None:
-                arg_str += "const {} {}, ".format(mtype, name)
+                arg_str += f"const {mtype} {name}, "
                 contains_array = True
             else:
-                arg_str += "{} {}".format(mtype, name)
-                arg_str += ", "
+                arg_str += f"{mtype} {name}, "
+                
         if not contains_array:
             return None
-        arg_str = arg_str.strip(", ")
-        return arg_str
+
+        return arg_str.strip(", ")
 
     def _get_conv_mem_list(self, obj):
         """
@@ -173,7 +172,7 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
                 mtype = mtype[0][1]
                 typeinfo = "enum"
             elif mtype == "string":
-                mtype = "{}::{}String".format(obj.get_name(), name)
+                mtype = f"{obj.get_name()}::{name}String"
                 typeinfo = "string"
             elif mtype not in typelist:
                 typeinfo = "extern"
@@ -187,18 +186,28 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         enum_list = enum_list[1]
         enum_str_list = []
         for e in enum_list:
-            # No value, No comment
-            if (e[1] is None) and (e[2] is None):
-                s = "%s," % (e[0])
-            # No value, With comment
-            elif (e[1] is None) and (e[2] is not None):
-                s = "{},  // {}".format(e[0], e[2])
-            # With value, No comment
-            elif (e[1] is not None) and (e[2] is None):
-                s = "{} = {},".format(e[0], e[1])
-            # With value and comment
-            elif (e[1] is not None) and (e[2] is not None):
-                s = "%s = %s,  // %s" % (e)
+            # Without value
+            if (e[1] is None):
+                # Without comment
+                if (e[2] is None):
+                    s = "%s," % (e[0])
+                # With comment
+                elif (e[2] is not None):
+                    s = f"{e[0]},  // {e[2]}"
+                else:
+                    pass
+            
+            # With value
+            elif (e[1] is not None):
+                # Without comment
+                if (e[2] is None):
+                    s = f"{e[0]} = {e[1]},"
+                # With comment
+                elif (e[2] is not None):
+                    s = "%s = %s,  // %s" % (e)
+                else:
+                    pass
+                
             else:
                 pass
             enum_str_list.append(s)
@@ -312,9 +321,8 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         @param args: the instance of the concrete element to operation on.
         """
         c = namespaceSerialH.namespaceSerialH()
-        if obj.get_namespace() is None:
-            c.namespace_list = None
-        else:
+        c.namespace_list = None
+        if obj.get_namespace() is not None:
             c.namespace_list = obj.get_namespace().split("::")
 
         c.enum_type_list = []
@@ -365,9 +373,9 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         """
         c = finishSerialH.finishSerialH()
         c.name = obj.get_name()
-        if obj.get_namespace() is None:
-            c.namespace_list = None
-        else:
+        c.namespace_list = None
+        if obj.get_namespace() is not None:
             c.namespace_list = obj.get_namespace().split("::")
+
         self._writeTmpl(c, "finishSourceFilesVisit")
         self.__fp.close()
