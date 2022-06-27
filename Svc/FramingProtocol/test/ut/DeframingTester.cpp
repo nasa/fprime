@@ -58,98 +58,18 @@ namespace Svc {
     }
   }
 
-#if 0
-  // ----------------------------------------------------------------------
-  // Private member functions
-  // ----------------------------------------------------------------------
-
-  FpFrameHeader::TokenType DeframingTester ::
-    getPacketSize()
-  {
-    FpFrameHeader::TokenType packetSize = 0;
-    Fw::SerialBuffer sb(
-        &this->bufferStorage[PACKET_SIZE_OFFSET],
-        sizeof packetSize
-    );
-    sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(packetSize);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    return packetSize;
-  }
-
   void DeframingTester ::
-    checkPacketSize(FpFrameHeader::TokenType packetSize)
+    serializeRandomPacket(U32 packetSize)
   {
-    U32 expectedPacketSize = this->dataSize;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      expectedPacketSize += sizeof(SerialPacketType);
-    }
-    ASSERT_EQ(packetSize, expectedPacketSize);
+    FW_ASSERT(packetSize <= MAX_PACKET_SIZE, packetSize, MAX_PACKET_SIZE);
+    // Start word
+    this->serializeTokenType(Svc::FpFrameHeader::START_WORD);
+    // Packet size
+    this->serializeTokenType(packetSize);
+    // Packet data
+    // TODO
+    // Hash value
+    // TODO
   }
-
-  void DeframingTester ::
-    checkPacketType()
-  {
-    SerialPacketType serialPacketType = 0;
-    Fw::SerialBuffer sb(
-        &this->bufferStorage[PACKET_TYPE_OFFSET],
-        sizeof serialPacketType
-    );
-    sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(serialPacketType);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    typedef Fw::ComPacket::ComPacketType PacketType;
-    const PacketType pt = static_cast<PacketType>(serialPacketType);
-    ASSERT_EQ(pt, this->packetType);
-  }
-
-  void DeframingTester ::
-    checkStartWord()
-  {
-    FpFrameHeader::TokenType startWord = 0;
-    Fw::SerialBuffer sb(
-        &this->bufferStorage[START_WORD_OFFSET],
-        sizeof startWord
-    );
-    sb.fill();
-    const Fw::SerializeStatus status = sb.deserialize(startWord);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    ASSERT_EQ(startWord, FpFrameHeader::START_WORD);
-  }
-
-  void DeframingTester ::
-    checkData()
-  {
-    U32 dataOffset = PACKET_TYPE_OFFSET;
-    if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-      // Packet type is stored in header
-      dataOffset += sizeof(SerialPacketType);
-    }
-    const I32 result = memcmp(
-        this->data,
-        &this->bufferStorage[dataOffset],
-        this->dataSize
-    );
-    ASSERT_EQ(result, 0);
-  }
-
-  void DeframingTester ::
-    checkHash(FpFrameHeader::TokenType packetSize)
-  {
-    Utils::Hash hash;
-    Utils::HashBuffer hashBuffer;
-    const U32 dataSize = FpFrameHeader::SIZE + packetSize;
-    hash.update(this->bufferStorage,  dataSize);
-    hash.final(hashBuffer);
-    const U8 *const hashAddr = hashBuffer.getBuffAddr();
-    const I32 result = memcmp(
-        &this->bufferStorage[dataSize],
-        hashAddr,
-        HASH_DIGEST_LENGTH
-    );
-    ASSERT_EQ(result, 0);
-  }
-#endif
 
 }

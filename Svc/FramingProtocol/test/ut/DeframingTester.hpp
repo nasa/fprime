@@ -22,28 +22,19 @@ namespace Svc {
       // Constants and types
       // ----------------------------------------------------------------------
 
-#if 0
-      //! The serialized packet type
-      typedef I32 SerialPacketType;
-#endif
-
       //! Constants
       enum Constants {
         //! The maximum buffer size
         MAX_BUFFER_SIZE = 1024,
         //! The maximum allowed packet size
-        MAX_DATA_SIZE = MAX_BUFFER_SIZE -
+        MAX_PACKET_SIZE = MAX_BUFFER_SIZE -
           sizeof FpFrameHeader::START_WORD -
           HASH_DIGEST_LENGTH,
-#if 0
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
         //! The offset of the packet size in an F Prime protocol frame
         PACKET_SIZE_OFFSET = START_WORD_OFFSET +
-            sizeof FpFrameHeader::START_WORD,
-        //! The offset of the packet type in an F Prime protocol frame
-        PACKET_TYPE_OFFSET = FpFrameHeader::SIZE,
-#endif
+          sizeof FpFrameHeader::START_WORD,
       };
 
       //! The deframing protocol interface
@@ -122,35 +113,10 @@ namespace Svc {
           FpFrameHeader::TokenType v //!< The value
       );
 
-#if 0
-      // ----------------------------------------------------------------------
-      // Private member functions
-      // ----------------------------------------------------------------------
-
-    private:
-
-      //! Get the packet size from the buffer
-      FpFrameHeader::TokenType getPacketSize();
-
-      //! Check the packet size in the buffer
-      void checkPacketSize(
-          FpFrameHeader::TokenType packetSize //!< The packet size
+      //! Serialize a random packet into the circular buffer
+      void serializeRandomPacket(
+          U32 packetSize //!< The packet size
       );
-
-      //! Check the packet type in the buffer
-      void checkPacketType();
-
-      //! Check the start word in the buffer
-      void checkStartWord();
-
-      //! Check the data in the buffer
-      void checkData();
-
-      //! Check the hash value in the buffer
-      void checkHash(
-          FpFrameHeader::TokenType packetSize //!< The packet size
-      );
-#endif
 
     private:
 
