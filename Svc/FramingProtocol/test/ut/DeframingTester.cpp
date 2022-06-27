@@ -150,4 +150,17 @@ namespace Svc {
     this->checkPacketData();
   }
 
+  void DeframingTester ::
+    testBadChecksum(U32 packetSize)
+  {
+    const Fw::ByteArray frame = this->constructRandomFrame(packetSize);
+    const U32 hashOffset = FpFrameHeader::SIZE + packetSize;
+    ++frame.bytes[hashOffset];
+    this->pushFrameOntoCB(frame);
+    U32 needed;
+    const Svc::DeframingProtocol::DeframingStatus status =
+      this->deframe(needed);
+    ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_INVALID_CHECKSUM);
+  }
+
 }
