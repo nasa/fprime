@@ -27,9 +27,10 @@ namespace Svc {
       enum Constants {
         //! The maximum frame size
         MAX_FRAME_SIZE = 1024,
+        //! The size of non-packet data in a frame
+        NON_PACKET_DATA_SIZE = FpFrameHeader::SIZE + HASH_DIGEST_LENGTH,
         //! The maximum allowed packet size
-        MAX_PACKET_SIZE = MAX_FRAME_SIZE -
-          FpFrameHeader::SIZE - HASH_DIGEST_LENGTH,
+        MAX_PACKET_SIZE = MAX_FRAME_SIZE - NON_PACKET_DATA_SIZE,
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
         //! The offset of the packet size in an F Prime protocol frame
@@ -48,8 +49,7 @@ namespace Svc {
           Interface(
               DeframingTester& deframingTester //!< The enclosing DeframingTester
           ) :
-            deframingTester(deframingTester),
-            routedBuffer(nullptr)
+            deframingTester(deframingTester)
           {
 
           }
@@ -65,11 +65,11 @@ namespace Svc {
 
           //! Route the buffer
           void route(Fw::Buffer& data) {
-            this->routedBuffer = &data;
+            this->routedBuffer = data;
           }
 
           //! Get the routed buffer
-          Fw::Buffer *getRoutedBuffer() {
+          Fw::Buffer getRoutedBuffer() {
             return this->routedBuffer;
           }
 
@@ -79,7 +79,7 @@ namespace Svc {
           DeframingTester& deframingTester;
 
           //! The routed buffer
-          Fw::Buffer *routedBuffer;
+          Fw::Buffer routedBuffer;
 
       };
 
@@ -124,9 +124,12 @@ namespace Svc {
           Fw::ByteArray frame //!< The frame
       );
 
-      //! Get the frame
+      //! Get the stored frame
       //! \return The frame
       Fw::ByteArray getFrame();
+
+      //! Check the packet data
+      void checkPacketData();
 
     private:
 

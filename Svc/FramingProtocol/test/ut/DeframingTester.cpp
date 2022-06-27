@@ -113,4 +113,28 @@ namespace Svc {
     return Fw::ByteArray(this->frameData, this->frameSize);
   }
 
+  void DeframingTester ::
+      checkPacketData()
+  {
+    FW_ASSERT(
+        this->frameSize <= MAX_FRAME_SIZE,
+        this->frameSize,
+        MAX_FRAME_SIZE
+    );
+    FW_ASSERT(
+        this->frameSize >= NON_PACKET_DATA_SIZE,
+        this->frameSize,
+        NON_PACKET_DATA_SIZE
+    );
+    const U32 packetSize = this->frameSize - NON_PACKET_DATA_SIZE;
+    Fw::Buffer buffer = this->interface.getRoutedBuffer();
+    ASSERT_EQ(buffer.getSize(), packetSize);
+    const int result = memcmp(
+        &this->frameData[FpFrameHeader::SIZE],
+        buffer.getData(),
+        packetSize
+    );
+    ASSERT_EQ(result, 0);
+  }
+
 }
