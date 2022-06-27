@@ -61,6 +61,7 @@ TEST(Deframing, InvalidSizeBufferOverflow) {
   const Svc::DeframingProtocol::DeframingStatus status =
     tester.deframe(needed);
   ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_INVALID_SIZE);
+  ASSERT_EQ(needed, frameSize);
 }
 
 TEST(Deframing, IncompleteFrame) {
@@ -86,7 +87,13 @@ TEST(Deframing, RandomPacketSize) {
       Svc::DeframingTester::MAX_PACKET_SIZE
   );
   const Fw::ByteArray frame = tester.constructRandomFrame(packetSize);
-  (void) frame;
+  tester.pushFrameOntoCB(frame);
+  U32 needed;
+  const Svc::DeframingProtocol::DeframingStatus status =
+    tester.deframe(needed);
+  ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_STATUS_SUCCESS);
+  ASSERT_EQ(needed, frame.size);
+  // TODO: Check packet data
 }
 
 TEST(Framing, CommandPacket) {
