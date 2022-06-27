@@ -137,6 +137,11 @@ namespace Svc {
           U32 packetSize //!< The packet size
       );
 
+      //! Test deframing with a frame containing a bad checksum
+      void testBadChecksum(
+          U32 packetSize //!< The packet size
+      );
+
     private:
 
       // ----------------------------------------------------------------------

@@ -103,6 +103,15 @@ TEST(Deframing, MaxPacketSize) {
   tester.testNominalDeframing(packetSize);
 }
 
+TEST(Deframing, BadChecksum) {
+  Svc::DeframingTester tester;
+  const U32 packetSize = STest::Pick::lowerUpper(
+      0,
+      Svc::DeframingTester::MAX_PACKET_SIZE
+  );
+  tester.testBadChecksum(packetSize);
+}
+
 TEST(Framing, CommandPacket) {
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_COMMAND);
   tester.check();
