@@ -4,9 +4,12 @@
 // \brief  cpp file for DeframingTester class
 // ======================================================================
 
+#include <cstring>
+
 #include "Fw/Types/SerialBuffer.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
+#include "Utils/Hash/Hash.hpp"
 #include "gtest/gtest.h"
 
 namespace Svc {
@@ -17,12 +20,14 @@ namespace Svc {
 
   DeframingTester ::
     DeframingTester(U32 cbStoreSize) :
+      frameSize(0),
       cbStorage(new U8[cbStoreSize]),
       circularBuffer(this->cbStorage, cbStoreSize), 
       interface(*this)
   {
     this->fprimeDeframing.setup(this->interface);
     memset(this->bufferStorage, 0, sizeof this->bufferStorage);
+    memset(this->frameData, 0, sizeof this->frameData);
     memset(this->cbStorage, 0, cbStoreSize);
   }
 
@@ -58,18 +63,58 @@ namespace Svc {
     }
   }
 
-  void DeframingTester ::
-    serializeRandomPacket(U32 packetSize)
+  Fw::ByteArray DeframingTester ::
+    constructRandomFrame(U32 packetSize)
   {
     FW_ASSERT(packetSize <= MAX_PACKET_SIZE, packetSize, MAX_PACKET_SIZE);
-    // Start word
-    this->serializeTokenType(Svc::FpFrameHeader::START_WORD);
-    // Packet size
-    this->serializeTokenType(packetSize);
-    // Packet data
+    Fw::SerialBuffer sb(this->frameData, sizeof this->frameData);
+    Fw::SerializeStatus status = Fw::FW_SERIALIZE_OK;
+    // Serialize the start word
+    status = sb.serialize(Svc::FpFrameHeader::START_WORD);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // Serialize the packet size
+    status = sb.serialize(static_cast<FpFrameHeader::TokenType>(packetSize));
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // Construct the packet data
+    for (U32 i = 0; i < packetSize; ++i) {
+      const U8 byte = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));
+      status = sb.serialize(byte);
+      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    }
+    const U32 buffLength = sb.getBuffLength();
+    const U32 dataSize = FpFrameHeader::SIZE + packetSize;
+    FW_ASSERT(buffLength == dataSize, buffLength, dataSize);
+    // Compute the hash value
+    Utils::Hash hash;
+    Utils::HashBuffer hashBuffer;
+    hash.init();
+    hash.update(&this->frameData, dataSize);
+    hash.final(hashBuffer);
+    // Copy the hash value into place
+    const U8 *const buffAddr = hashBuffer.getBuffAddr();
+    this->frameSize = dataSize + HASH_DIGEST_LENGTH;
+    FW_ASSERT(this->frameSize <= MAX_FRAME_SIZE);
+    memcpy(&this->frameData[dataSize], buffAddr, HASH_DIGEST_LENGTH);
+    // Return the byte array
+    return Fw::ByteArray(this->frameData, this->frameSize);
+  }
+
+  void DeframingTester ::
+    pushFrameOntoCB(Fw::ByteArray frame)
+  {
     // TODO
-    // Hash value
-    // TODO
+#if 0
+    // Clear the circular buffer
+    this->circularBuffer.rotate(this->circularBuffer.get_allocated_size());
+    // Serialize the hash value
+    {
+      const U8 *const buffAddr = hashBuffer.getBuffAddr();
+      const Fw::SerializeStatus status =
+        this->circularBuffer.serialize(buffAddr, HASH_DIGEST_LENGTH);
+      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    }
+#endif
+
   }
 
 }

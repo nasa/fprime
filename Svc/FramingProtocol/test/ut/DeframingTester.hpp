@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ByteArray.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
 #include "Svc/FramingProtocol/DeframingProtocol.hpp"
@@ -26,10 +27,11 @@ namespace Svc {
       enum Constants {
         //! The maximum buffer size
         MAX_BUFFER_SIZE = 1024,
+        //! The maximum frame size
+        MAX_FRAME_SIZE = MAX_BUFFER_SIZE,
         //! The maximum allowed packet size
         MAX_PACKET_SIZE = MAX_BUFFER_SIZE -
-          sizeof FpFrameHeader::START_WORD -
-          HASH_DIGEST_LENGTH,
+          FpFrameHeader::SIZE - HASH_DIGEST_LENGTH,
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
         //! The offset of the packet size in an F Prime protocol frame
@@ -113,9 +115,15 @@ namespace Svc {
           FpFrameHeader::TokenType v //!< The value
       );
 
-      //! Serialize a random packet into the circular buffer
-      void serializeRandomPacket(
+      //! Construct a random frame
+      //! \return An array pointing to frame data owned by DeframingTester.
+      Fw::ByteArray constructRandomFrame(
           U32 packetSize //!< The packet size
+      );
+
+      //! Push a frame onto the circular buffer
+      void pushFrameOntoCB(
+          Fw::ByteArray frame //!< The frame
       );
 
     private:
@@ -127,6 +135,12 @@ namespace Svc {
       //! Storage for the buffer
       U8 bufferStorage[MAX_BUFFER_SIZE];
       
+      //! The frame data
+      U8 frameData[MAX_FRAME_SIZE];
+
+      //! The frame size
+      U32 frameSize;
+
       //! Storage for the circular buffer
       U8* cbStorage;
 
