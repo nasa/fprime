@@ -82,12 +82,24 @@ TEST(Deframing, IncompleteFrame) {
   ASSERT_EQ(needed, expectedFrameSize);
 }
 
+TEST(Deframing, ZeroPacketSize) {
+  Svc::DeframingTester tester;
+  const U32 packetSize = 0;
+  tester.testNominalDeframing(packetSize);
+}
+
 TEST(Deframing, RandomPacketSize) {
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
       Svc::DeframingTester::MAX_PACKET_SIZE
   );
+  tester.testNominalDeframing(packetSize);
+}
+
+TEST(Deframing, MaxPacketSize) {
+  Svc::DeframingTester tester;
+  const U32 packetSize = Svc::DeframingTester::MAX_PACKET_SIZE;
   tester.testNominalDeframing(packetSize);
 }
 
