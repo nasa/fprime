@@ -25,12 +25,10 @@ namespace Svc {
 
       //! Constants
       enum Constants {
-        //! The maximum buffer size
-        MAX_BUFFER_SIZE = 1024,
         //! The maximum frame size
-        MAX_FRAME_SIZE = MAX_BUFFER_SIZE,
+        MAX_FRAME_SIZE = 1024,
         //! The maximum allowed packet size
-        MAX_PACKET_SIZE = MAX_BUFFER_SIZE -
+        MAX_PACKET_SIZE = MAX_FRAME_SIZE -
           FpFrameHeader::SIZE - HASH_DIGEST_LENGTH,
         //! The offset of the start word in an F Prime protocol frame
         START_WORD_OFFSET = 0,
@@ -60,7 +58,7 @@ namespace Svc {
 
           //! Allocate the buffer
           Fw::Buffer allocate(const U32 size) {
-            FW_ASSERT(size <= MAX_BUFFER_SIZE);
+            FW_ASSERT(size <= MAX_FRAME_SIZE);
             Fw::Buffer buffer(this->deframingTester.bufferStorage, size);
             return buffer;
           }
@@ -93,7 +91,7 @@ namespace Svc {
 
       //! Construct a DeframingTester
       DeframingTester(
-          U32 cbStoreSize = MAX_BUFFER_SIZE //!< The circular buffer store size
+          U32 cbStoreSize = MAX_FRAME_SIZE //!< The circular buffer store size
       );
 
       //! Destroy a DeframingTester
@@ -133,7 +131,7 @@ namespace Svc {
       // ----------------------------------------------------------------------
 
       //! Storage for the buffer
-      U8 bufferStorage[MAX_BUFFER_SIZE];
+      U8 bufferStorage[MAX_FRAME_SIZE];
       
       //! The frame data
       U8 frameData[MAX_FRAME_SIZE];
