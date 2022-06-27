@@ -131,6 +131,12 @@ namespace Svc {
       //! Check the packet data
       void checkPacketData();
 
+      //! Test nominal deframing with a valid frame containing random
+      //! packet data
+      void testNominalDeframing(
+          U32 packetSize //!< The packet size
+      );
+
     private:
 
       // ----------------------------------------------------------------------

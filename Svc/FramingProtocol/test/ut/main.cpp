@@ -72,28 +72,23 @@ TEST(Deframing, IncompleteFrame) {
   // Packet size
   tester.serializeTokenType(packetSize);
   U32 needed = 0;
+  // Deframe
   const Svc::DeframingProtocol::DeframingStatus status =
     tester.deframe(needed);
+  // Check results
   ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_MORE_NEEDED);
   const U32 expectedFrameSize =
     Svc::FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
   ASSERT_EQ(needed, expectedFrameSize);
 }
 
-TEST(Deframing, FixedPacketSize) {
+TEST(Deframing, RandomPacketSize) {
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
       Svc::DeframingTester::MAX_PACKET_SIZE
   );
-  const Fw::ByteArray frame = tester.constructRandomFrame(packetSize);
-  tester.pushFrameOntoCB(frame);
-  U32 needed;
-  const Svc::DeframingProtocol::DeframingStatus status =
-    tester.deframe(needed);
-  ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_STATUS_SUCCESS);
-  ASSERT_EQ(needed, frame.size);
-  tester.checkPacketData();
+  tester.testNominalDeframing(packetSize);
 }
 
 TEST(Framing, CommandPacket) {

@@ -137,4 +137,17 @@ namespace Svc {
     ASSERT_EQ(result, 0);
   }
 
+  void DeframingTester ::
+    testNominalDeframing(U32 packetSize)
+  {
+    const Fw::ByteArray frame = this->constructRandomFrame(packetSize);
+    this->pushFrameOntoCB(frame);
+    U32 needed;
+    const Svc::DeframingProtocol::DeframingStatus status =
+      this->deframe(needed);
+    ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_STATUS_SUCCESS);
+    ASSERT_EQ(needed, frame.size);
+    this->checkPacketData();
+  }
+
 }
