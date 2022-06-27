@@ -80,7 +80,7 @@ TEST(Deframing, IncompleteFrame) {
   ASSERT_EQ(needed, expectedFrameSize);
 }
 
-TEST(Deframing, RandomPacketSize) {
+TEST(Deframing, FixedPacketSize) {
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
@@ -93,7 +93,7 @@ TEST(Deframing, RandomPacketSize) {
     tester.deframe(needed);
   ASSERT_EQ(status, Svc::DeframingProtocol::DEFRAMING_STATUS_SUCCESS);
   ASSERT_EQ(needed, frame.size);
-  // TODO: Check packet data
+  tester.checkPacketData();
 }
 
 TEST(Framing, CommandPacket) {
