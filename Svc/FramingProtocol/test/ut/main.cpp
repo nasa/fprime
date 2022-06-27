@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
 #include "Svc/FramingProtocol/test/ut/FramingTester.hpp"
+#include "STest/Pick/Pick.hpp"
 #include "STest/Random/Random.hpp"
 
 // ----------------------------------------------------------------------
@@ -76,6 +77,16 @@ TEST(Deframing, IncompleteFrame) {
   const U32 expectedFrameSize =
     Svc::FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
   ASSERT_EQ(needed, expectedFrameSize);
+}
+
+TEST(Deframing, RandomPacketSize) {
+  Svc::DeframingTester tester;
+  const U32 packetSize = STest::Pick::lowerUpper(
+      0,
+      Svc::DeframingTester::MAX_PACKET_SIZE
+  );
+  const Fw::ByteArray frame = tester.constructRandomFrame(packetSize);
+  (void) frame;
 }
 
 TEST(Framing, CommandPacket) {

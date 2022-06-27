@@ -17,7 +17,7 @@ namespace Svc {
   //! A harness for checking deframing
   class DeframingTester {
 
-    private:
+    public:
 
       // ----------------------------------------------------------------------
       // Constants and types

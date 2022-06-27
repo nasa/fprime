@@ -30,7 +30,7 @@ namespace Svc {
         MAX_BUFFER_SIZE = 1024,
         //! The maximum allowed data size
         MAX_DATA_SIZE = MAX_BUFFER_SIZE -
-          sizeof FpFrameHeader::START_WORD -
+          FpFrameHeader::SIZE -
           sizeof(SerialPacketType) -
           HASH_DIGEST_LENGTH,
         //! The offset of the start word in an F Prime protocol frame
@@ -63,7 +63,7 @@ namespace Svc {
 
           //! Allocate the buffer
           Fw::Buffer allocate(const U32 size) {
-            FW_ASSERT(size <= MAX_BUFFER_SIZE);
+            FW_ASSERT(size <= MAX_BUFFER_SIZE, size, MAX_BUFFER_SIZE);
             Fw::Buffer buffer(this->framingTester.bufferStorage, size);
             return buffer;
           }
