@@ -107,4 +107,10 @@ namespace Svc {
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
   }
 
+  Fw::ByteArray DeframingTester ::
+    getFrame()
+  {
+    return Fw::ByteArray(this->frameData, this->frameSize);
+  }
+
 }

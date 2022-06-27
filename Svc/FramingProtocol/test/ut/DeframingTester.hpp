@@ -124,6 +124,10 @@ namespace Svc {
           Fw::ByteArray frame //!< The frame
       );
 
+      //! Get the frame
+      //! \return The frame
+      Fw::ByteArray getFrame();
+
     private:
 
       // ----------------------------------------------------------------------
