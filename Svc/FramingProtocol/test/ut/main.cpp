@@ -1,16 +1,18 @@
 #include <limits>
 
-#include "gtest/gtest.h"
-#include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
-#include "Svc/FramingProtocol/test/ut/FramingTester.hpp"
+#include "Fw/Test/UnitTest.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
+#include "Svc/FramingProtocol/test/ut/FramingTester.hpp"
+#include "gtest/gtest.h"
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
 TEST(Deframing, IncompleteHeader) {
+  COMMENT("Apply deframing to a frame with an incomplete header");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD);
@@ -21,6 +23,7 @@ TEST(Deframing, IncompleteHeader) {
 }
 
 TEST(Deframing, InvalidStartWord) {
+  COMMENT("Apply deframing to a frame with an invalid start word");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD + 1);
@@ -33,6 +36,7 @@ TEST(Deframing, InvalidStartWord) {
 }
 
 TEST(Deframing, InvalidSizeIntegerOverflow) {
+  COMMENT("Apply deframing to a frame with an invalid packet size due to integer overflow");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD);
@@ -48,6 +52,7 @@ TEST(Deframing, InvalidSizeIntegerOverflow) {
 }
 
 TEST(Deframing, InvalidSizeBufferOverflow) {
+  COMMENT("Apply deframing to a frame with an invalid packet size due to buffer overflow");
   const Svc::FpFrameHeader::TokenType packetSize = 10;
   const U32 frameSize =
     Svc::FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
@@ -65,6 +70,7 @@ TEST(Deframing, InvalidSizeBufferOverflow) {
 }
 
 TEST(Deframing, IncompleteFrame) {
+  COMMENT("Apply deframing to an incomplete frame");
   const Svc::FpFrameHeader::TokenType packetSize = 1;
   Svc::DeframingTester tester;
   // Start word
@@ -83,12 +89,14 @@ TEST(Deframing, IncompleteFrame) {
 }
 
 TEST(Deframing, ZeroPacketSize) {
+  COMMENT("Apply deframing to a valid frame with packet size zero");
   Svc::DeframingTester tester;
   const U32 packetSize = 0;
   tester.testNominalDeframing(packetSize);
 }
 
 TEST(Deframing, RandomPacketSize) {
+  COMMENT("Apply deframing to a valid frame with a random packet size");
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
@@ -98,12 +106,14 @@ TEST(Deframing, RandomPacketSize) {
 }
 
 TEST(Deframing, MaxPacketSize) {
+  COMMENT("Apply deframing to a valid frame with maximum packet size for the test buffer");
   Svc::DeframingTester tester;
   const U32 packetSize = Svc::DeframingTester::MAX_PACKET_SIZE;
   tester.testNominalDeframing(packetSize);
 }
 
 TEST(Deframing, BadChecksum) {
+  COMMENT("Apply deframing to a frame with a bad checksum");
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
@@ -113,16 +123,19 @@ TEST(Deframing, BadChecksum) {
 }
 
 TEST(Framing, CommandPacket) {
+  COMMENT("Apply framing to a command packet");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_COMMAND);
   tester.check();
 }
 
 TEST(Framing, FilePacket) {
+  COMMENT("Apply framing to a file packet");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_FILE);
   tester.check();
 }
 
 TEST(Framing, UnknownPacket) {
+  COMMENT("Apply framing to a packet of unkown type");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_UNKNOWN);
   tester.check();
 }
