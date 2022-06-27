@@ -112,7 +112,15 @@ namespace Svc {
       // Public member functions
       // ----------------------------------------------------------------------
 
-      // TODO
+      //! Call the deframe function of the deframer
+      DeframingProtocol::DeframingStatus deframe(
+          U32& needed //!< The number of bytes needed (output)
+      );
+
+      //! Serialize a value of token type into the circular buffer
+      void serializeTokenType(
+          FpFrameHeader::TokenType v //!< The value
+      );
 
 #if 0
       // ----------------------------------------------------------------------
@@ -149,17 +157,6 @@ namespace Svc {
       // ----------------------------------------------------------------------
       // Private member variables
       // ----------------------------------------------------------------------
-
-#if 0
-      //! The data to frame
-      U8 data[MAX_DATA_SIZE];
-
-      //! The data size in bytes
-      const U32 dataSize;
-
-      //! The packet type
-      Fw::ComPacket::ComPacketType packetType;
-#endif
 
       //! Storage for the buffer
       U8 bufferStorage[MAX_BUFFER_SIZE];
