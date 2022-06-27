@@ -25,7 +25,7 @@ namespace Svc
         Tester() : TlmChanGTestBase("Tester", MAX_HISTORY_SIZE),
                    component("TlmChan")
         ,m_numBuffs(0)
-        , m_bufferRecv(false)
+        ,m_bufferRecv(false)
     {
         this->initComponents();
         this->connectPorts();
@@ -189,7 +189,6 @@ namespace Svc
         Fw::Time timeTag;
         // deserialize packet
         Fw::SerializeStatus stat;
-        bool channelFound = false;
 
         static bool tlc004 = false;
 
