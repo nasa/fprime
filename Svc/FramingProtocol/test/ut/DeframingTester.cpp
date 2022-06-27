@@ -4,6 +4,7 @@
 // \brief  cpp file for DeframingTester class
 // ======================================================================
 
+#include "Fw/Types/SerialBuffer.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/FramingProtocol/test/ut/DeframingTester.hpp"
 #include "gtest/gtest.h"
@@ -20,6 +21,7 @@ namespace Svc {
       circularBuffer(this->cbStorage, cbStoreSize), 
       interface(*this)
   {
+    this->fprimeDeframing.setup(this->interface);
     memset(this->bufferStorage, 0, sizeof this->bufferStorage);
     memset(this->cbStorage, 0, cbStoreSize);
   }
@@ -30,39 +32,33 @@ namespace Svc {
     delete[](this->cbStorage);
   }
 
-#if 0
   // ----------------------------------------------------------------------
   // Public member functions
   // ----------------------------------------------------------------------
 
-  void DeframingTester ::
-    check()
+  DeframingProtocol::DeframingStatus DeframingTester ::
+    deframe(U32& needed)
   {
-    this->fprimeDeframing.frame(
-        this->data,
-        this->dataSize,
-        this->packetType
-    );
-    // Check that we received a buffer
-    Fw::Buffer *const sentBuffer = this->interface.getSentBuffer();
-    ASSERT_NE(sentBuffer, nullptr);
-    if (sentBuffer != nullptr) {
-      // Check the start word
-      this->checkStartWord();
-      // Check the packet size
-      const U32 packetSize = this->getPacketSize();
-      this->checkPacketSize(packetSize);
-      // Check the packet type
-      if (this->packetType != Fw::ComPacket::FW_PACKET_UNKNOWN) {
-        this->checkPacketType();
-      }
-      // Check the data
-      this->checkData();
-      // Check the hash value
-      this->checkHash(packetSize);
+    return this->fprimeDeframing.deframe(this->circularBuffer, needed);
+  }
+
+  void DeframingTester ::
+    serializeTokenType(FpFrameHeader::TokenType v)
+  {
+    U8 buffer[sizeof v];
+    Fw::SerialBuffer sb(buffer, sizeof buffer);
+    {
+      const Fw::SerializeStatus status = sb.serialize(v);
+      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    }
+    {
+      const Fw::SerializeStatus status =
+        this->circularBuffer.serialize(buffer, sizeof buffer);
+      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
     }
   }
 
+#if 0
   // ----------------------------------------------------------------------
   // Private member functions
   // ----------------------------------------------------------------------
