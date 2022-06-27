@@ -102,19 +102,9 @@ namespace Svc {
   void DeframingTester ::
     pushFrameOntoCB(Fw::ByteArray frame)
   {
-    // TODO
-#if 0
-    // Clear the circular buffer
-    this->circularBuffer.rotate(this->circularBuffer.get_allocated_size());
-    // Serialize the hash value
-    {
-      const U8 *const buffAddr = hashBuffer.getBuffAddr();
-      const Fw::SerializeStatus status =
-        this->circularBuffer.serialize(buffAddr, HASH_DIGEST_LENGTH);
-      FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    }
-#endif
-
+    const Fw::SerializeStatus status =
+      this->circularBuffer.serialize(frame.bytes, frame.size);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
   }
 
 }
