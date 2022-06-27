@@ -81,10 +81,6 @@ namespace Svc
         bool doRun(bool check);
         void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
 
-        // Keep a history
-        NATIVE_UINT_TYPE m_numBuffs;
-        Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
-        bool m_bufferRecv;
         void clearBuffs();
 
         // dump functions
@@ -100,6 +96,12 @@ namespace Svc
         //! The component under test
         //!
         TlmChan component;
+        // Keep a history
+        NATIVE_UINT_TYPE m_numBuffs;
+        Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
+        bool m_bufferRecv;
+
+
     };
 
 } // end namespace Svc
