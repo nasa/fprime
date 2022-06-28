@@ -150,7 +150,7 @@ class TestRefAppClass(object):
                     value,
                 ],
                 max_delay=0.1,
-                events=events
+                events=events,
             )
             assert self.api.get_command_test_history().size() == count
 
