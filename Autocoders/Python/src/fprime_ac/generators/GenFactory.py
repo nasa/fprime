@@ -361,9 +361,9 @@ class GenFactory:
             for inst in self.__configured_visitors:
                 config = self.__configured_visitors[inst]
                 # If enabled instance it and place in list
-                if config.getEnabled() == True:
+                if config.getEnabled():
                     visitor = config.Instance()
-                    if config.getGenerateCode() == False:
+                    if not config.getGenerateCode():
                         visitor.setGenerateEmptyFile()
                     self.__visitor_list.append(visitor)
         #

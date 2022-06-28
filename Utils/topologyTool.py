@@ -64,7 +64,7 @@ def recursive_xml_parse(tree_obj):
         out_obj[1].append((att, tree_obj.attrib[att]))
 
     internal_text = tree_obj.text
-    if internal_text != None:
+    if internal_text is not None:
         internal_text = internal_text.strip()
         if internal_text != "":
             out_obj[2].append(internal_text)
@@ -208,7 +208,7 @@ def command_index_print(xml_list):
 
         sorted_list.sort(
             key=lambda x: int(float(x[1]["cmdIndex"]))
-            if x[1]["cmdIndex"] != None
+            if x[1]["cmdIndex"] is not None
             else -1
         )
 
