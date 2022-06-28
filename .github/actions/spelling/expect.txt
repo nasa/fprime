@@ -1401,6 +1401,7 @@ settime
 settingsini
 settype
 setuptools
+setvalue
 setw
 sev
 sface
