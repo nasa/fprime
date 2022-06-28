@@ -111,7 +111,7 @@ def main():
     if not opts.build_root_overwrite is None:
         set_build_roots(opts.build_root_overwrite)
     else:
-        if ("BUILD_ROOT" in os.environ.keys()) is False:
+        if not ("BUILD_ROOT" in os.environ.keys()):
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])

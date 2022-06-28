@@ -296,7 +296,7 @@ def main():
     ConfigManager.ConfigManager.getInstance()
 
     # Check for BUILD_ROOT env. variable
-    if ("BUILD_ROOT" in os.environ.keys()) == False:
+    if not ("BUILD_ROOT" in os.environ.keys()):
         print("ERROR: Build root not set to root build path...")
         sys.exit(-1)
     else:
@@ -326,7 +326,7 @@ def main():
         if VERBOSE:
             print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
     else:
-        if ("BUILD_ROOT" in os.environ.keys()) == False:
+        if not ("BUILD_ROOT" in os.environ.keys()):
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])
