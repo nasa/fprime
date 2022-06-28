@@ -22,7 +22,7 @@ namespace Svc {
     DeframingTester(U32 cbStoreSize) :
       frameSize(0),
       cbStorage(new U8[cbStoreSize]),
-      circularBuffer(this->cbStorage, cbStoreSize), 
+      circularBuffer(this->cbStorage, cbStoreSize),
       interface(*this)
   {
     this->fprimeDeframing.setup(this->interface);

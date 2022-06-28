@@ -150,7 +150,7 @@ namespace Svc {
 
       //! Storage for the buffer
       U8 bufferStorage[MAX_FRAME_SIZE];
-      
+
       //! The frame data
       U8 frameData[MAX_FRAME_SIZE];
 
