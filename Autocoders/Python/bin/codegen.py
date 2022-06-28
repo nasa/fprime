@@ -315,12 +315,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
     if "Ai" in xml_filename:
         base = xml_filename.split("Ai")[0]
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
-        csv_instance_name = base + "_ID"
-        cmd_html_instance_name = base + "_Cmd_HTML"
-        channel_html_instance_name = base + "_Channel_HTML"
-        event_html_instance_name = base + "_Event_HTML"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
+        csv_instance_name = f"{base}_ID"
+        cmd_html_instance_name = f"{base}_Cmd_HTML"
+        channel_html_instance_name = f"{base}_Channel_HTML"
+        event_html_instance_name = f"{base}_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -725,6 +725,7 @@ def generate_component(
         cpp_instance_gtest_name = base + "_GTest_Cpp"
         h_instance_test_impl_name = base + "_TestImpl_H"
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
+        test_main_name = base + "_TestMain_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -752,6 +753,7 @@ def generate_component(
         generator.configureVisitor(
             cpp_instance_test_impl_name, "TestImplCppVisitor", True, True
         )
+        generator.configureVisitor(test_main_name, "TestMainVisitor", True, True)
     else:
         generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "ComponentCppVisitor", True, True)
@@ -1141,11 +1143,11 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
             + parser.get_include_enums()
             + parser.get_include_arrays()
         )
-    elif the_type == "assembly" or the_type == "deployment":
+    elif the_type in ("assembly", "deployment"):
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
-        # file_list = list()
+        # file_list = []
         # for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
     else:
@@ -1208,14 +1210,14 @@ def main():
 
     # Configure the logging.
     log_level = opt.logger.upper()
-    log_level_dict = dict()
-
-    log_level_dict["QUIET"] = None
-    log_level_dict["DEBUG"] = logging.DEBUG
-    log_level_dict["INFO"] = logging.INFO
-    log_level_dict["WARNING"] = logging.WARN
-    log_level_dict["ERROR"] = logging.ERROR
-    log_level_dict["CRITICAL"] = logging.CRITICAL
+    log_level_dict = {
+        "QUIET": None,
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARN,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
 
     if log_level_dict[log_level] is None:
         stdout_enable = False
@@ -1273,7 +1275,7 @@ def main():
             the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
             generate_serializable(the_serial_xml, opt)
             dependency_parser = the_serial_xml
-        elif xml_type == "assembly" or xml_type == "deployment":
+        elif xml_type in ("assembly", "deployment"):
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()

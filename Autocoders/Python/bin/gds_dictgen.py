@@ -61,7 +61,7 @@ def pinit():
     Initialize the option parser and return it.
     """
     usage = "usage: %prog [options] [xml_topology_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = (
         """This script reads F' topology XML and produces GDS XML Dictionaries."""
     )
@@ -94,7 +94,7 @@ def generate_xml_dict(the_parsed_topology_xml, xml_filename, opt):
     Generates GDS XML dictionary from parsed topology XML
     """
     if VERBOSE:
-        print("Topology xml type description file: %s" % xml_filename)
+        print(f"Topology xml type description file: {xml_filename}")
     model = TopoFactory.TopoFactory.getInstance()
     topology_model = model.create(the_parsed_topology_xml)
 
@@ -191,7 +191,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print("Usage: %s [options] xml_filename" % sys.argv[0])
+        print(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
         xml_filename = args[0]
@@ -205,14 +205,14 @@ def main():
     if not opt.build_root_overwrite is None:
         set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
     else:
         if ("BUILD_ROOT" in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
 
     if not "Ai" in xml_filename:
         print("ERROR: Missing Ai at end of file name...")
@@ -220,7 +220,7 @@ def main():
 
     xml_type = XmlParser.XmlParser(xml_filename)()
 
-    if xml_type == "assembly" or xml_type == "deployment":
+    if xml_type in ("assembly", "deployment"):
         if VERBOSE:
             print("Detected Topology XML so Generating Topology C++ Files...")
         the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)

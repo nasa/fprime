@@ -8,7 +8,7 @@
 \#define TESTER_HPP
 
 \#include "GTestBase.hpp"
-\#include "${include_path}/${name}ComponentImpl.hpp"
+\#include "${include_path}/${name}.hpp"
 
 #if $namespace_list != None
   #for $namespace in $namespace_list
@@ -101,7 +101,7 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
 
       //! The component under test
       //!
-      ${name}ComponentImpl component;
+      ${name} component;
 
   };
 

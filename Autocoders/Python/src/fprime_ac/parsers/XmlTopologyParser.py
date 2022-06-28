@@ -92,7 +92,7 @@ class XmlTopologyParser:
 
         for e in element_tree.iter():
             c = None
-            if e.tag == "assembly" or e.tag == "deployment":
+            if e.tag in ("assembly", "deployment"):
                 self.__is_topology_xml = True
                 if "namespace" in e.attrib:
                     self.__namespace = e.attrib["namespace"]

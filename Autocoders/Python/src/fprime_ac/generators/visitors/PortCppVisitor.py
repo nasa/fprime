@@ -139,7 +139,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for arg in obj.get_args():
             n = arg.get_name()
@@ -170,8 +170,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("port", "XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port", "PortCpp")
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()

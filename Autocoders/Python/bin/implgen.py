@@ -81,7 +81,7 @@ def pinit():
     Initialize the option parser and return it.
     """
     usage = "usage: %prog [options] [xml_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = "Testgen creates the Tester.cpp, Tester.hpp, GTestBase.cpp, GTestBase.hpp, TesterBase.cpp, and TesterBase.hpp test component."
 
     parser = OptionParser(usage, version=vers, epilog=program_longdesc)
@@ -167,7 +167,7 @@ def generate_impl_files(opt, component_model):
     implFiles = []
 
     if VERBOSE:
-        print("Generating impl files for " + component_model.get_xml_filename())
+        print(f"Generating impl files for {component_model.get_xml_filename()}")
 
     # ComponentImpl.cpp
     implFiles.append(ImplCppWriter.ImplCppWriter())
@@ -187,7 +187,7 @@ def generate_impl_files(opt, component_model):
 
         file.write(component_model)
         if VERBOSE:
-            print("Generated %s" % file.toString())
+            print(f"Generated {file.toString()}")
 
     if VERBOSE:
         print("Generated impl files for " + component_model.get_xml_filename())
@@ -217,7 +217,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print("ERROR: Usage: %s [options] xml_filename" % sys.argv[0])
+        print(f"ERROR: Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
         xml_filename = args[0]
@@ -231,14 +231,14 @@ def main():
     if not opt.build_root_overwrite is None:
         set_build_roots(opt.build_root_overwrite)
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
     else:
         if ("BUILD_ROOT" in os.environ.keys()) == False:
             print("ERROR: Build root not set to root build path...")
             sys.exit(-1)
         set_build_roots(os.environ["BUILD_ROOT"])
         if VERBOSE:
-            print("BUILD_ROOT set to %s" % ",".join(get_build_roots()))
+            print(f'BUILD_ROOT set to {",".join(get_build_roots())}')
 
     #
     # Write test component

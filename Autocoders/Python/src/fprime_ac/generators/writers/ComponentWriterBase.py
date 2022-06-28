@@ -92,8 +92,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
                 + self.config("component", self.__writer)
             )
             DEBUG.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -102,12 +101,9 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             l = len(s[0])
             if (x[0][-l:] == s[0]) & (x[1] == s[1]):
                 filename = x[0].split(s[0])[0] + self.config("component", self.__writer)
-                DEBUG.info("Generating code filename: %s..." % filename)
+                DEBUG.info(f"Generating code filename: {filename}...")
             else:
-                msg = (
-                    "XML file naming format not allowed (must be XXXComponentAi.xml), Filename: %s"
-                    % xml_file
-                )
+                msg = f"XML file naming format not allowed (must be XXXComponentAi.xml), Filename: {xml_file}"
                 PRINT.info(msg)
                 raise ValueError(msg)
         return filename
@@ -391,9 +387,9 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             (mnemonic, opcodes, sync, priority, full, comment) = xxx_todo_changeme3
             if self.isAsync(sync):
                 if len(opcodes) == 1:
-                    return "CMD_" + mnemonic.upper()
+                    return f"CMD_{mnemonic.upper()}"
                 else:
-                    mlist = list()
+                    mlist = []
                     inst = 0
                     for opcode in opcodes:
                         mlist.append("CMD_" + mnemonic.upper() + "_%d" % inst)
@@ -452,7 +448,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
         c.has_time_get = "TimeGet" in roles
 
     def initPortIncludes(self, obj, c):
-        c.port_includes = list()
+        c.port_includes = []
         for include in self.__model_parser.uniqueList(obj.get_xml_port_files()):
             include = include.replace("PortAi.xml", "PortAc.hpp")
             include = include.replace("/test/ut", "")
@@ -933,8 +929,7 @@ class ComponentWriterBase(AbstractWriter.AbstractWriter):
             relative_path = build_root_relative_path(path)
         except BuildRootMissingException as bre:
             PRINT.info(
-                "ERROR: BUILD_ROOT and current execution path (%s) not consistent! %s"
-                % (path, str(bre))
+                f"ERROR: BUILD_ROOT and current execution path ({path}) not consistent! {str(bre)}"
             )
             sys.exit(-1)
         DEBUG.debug("Relative path: %s", relative_path)

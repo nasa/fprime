@@ -1,7 +1,8 @@
 # ===============================================================================
-# NAME: TestMainWriter.py
+# NAME: TestMainVisitor.py
 #
-# DESCRIPTION: A writer for generating main.cpp files for test component toDo() test case.
+# DESCRIPTION: A visitor for generating main.cpp files for test component toDo()
+# test case.
 #
 # AUTHOR: Jordan Ishii
 # EMAIL:  jordan.ishii@jpl.nasa.gov
@@ -12,7 +13,7 @@
 # ===============================================================================
 import sys
 
-from fprime_ac.generators.writers import TestWriterBase
+from fprime_ac.generators.visitors import TestVisitorBase
 
 try:
     from fprime_ac.generators.templates.test import test_main
@@ -21,9 +22,9 @@ except ImportError:
     sys.exit(-1)
 
 
-class TestMainWriter(TestWriterBase.TestWriterBase):
+class TestMainVisitor(TestVisitorBase.TestVisitorBase):
     """
-    A writer for generating component implementation files.
+    A visitor for generating component implementation files.
     """
 
     FILE_NAME = "TestMain.cpp"
@@ -38,15 +39,16 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
     def emitCppPortParams(self, params):
         return self.emitPortParamsCpp(8, params)
 
-    def _initFilesWrite(self, obj):
+    def initFilesVisit(self, obj):
         self.openFile(self.FILE_NAME)
 
-    def _startSourceFilesWrite(self, obj):
+    def startSourceFilesVisit(self, obj):
         c = test_main.test_main()
         self.initTest(obj, c)
 
         if not hasattr(self, "test_cases"):
-            self.test_cases = ["toDo"]
+            self.test_cases = []
+            self.test_cases.append("toDo")
 
         tclist = []
         for case in self.test_cases:
@@ -57,7 +59,7 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
 
         c.test_cases = tclist
 
-        self._writeTmpl(c, "startSourceFilesWrite")
+        self._writeTmpl(c, "startSourceFilesVisit")
 
     def add_test_cases(self, test_cases):
         self.test_cases = test_cases
@@ -75,19 +77,19 @@ class TestMainWriter(TestWriterBase.TestWriterBase):
                 )
                 sys.exit(-1)
 
-    def write(self, obj):
+    def visit(self, obj):
         """
-        Calls all of the write methods so that full file is made
+        Calls all of the visit methods so that full file is made
         """
-        self._initFilesWrite(obj)
-        self._startSourceFilesWrite(obj)
-        self.includes1Write(obj)
-        self.includes2Write(obj)
-        self.namespaceWrite(obj)
-        self.publicWrite(obj)
-        self.protectedWrite(obj)
-        self.privateWrite(obj)
-        self.finishSourceFilesWrite(obj)
+        self.initFilesVisit(obj)
+        self.startSourceFilesVisit(obj)
+        self.includes1Visit(obj)
+        self.includes2Visit(obj)
+        self.namespaceVisit(obj)
+        self.publicVisit(obj)
+        self.protectedVisit(obj)
+        self.privateVisit(obj)
+        self.finishSourceFilesVisit(obj)
 
     def toString(self):
         return self.FILE_NAME

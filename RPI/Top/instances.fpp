@@ -23,12 +23,11 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { RpiDemo::RG_CONTEXT_10Hz, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup10HzComp(
-        FW_OPTIONAL_NAME("rateGroup10HzComp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup10HzComp.configure(
         ConfigObjects::rateGroup10HzComp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup10HzComp::context)
     );
@@ -105,12 +104,11 @@ module RPI {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, RpiDemo::RG_CONTEXT_1Hz, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1HzComp(
-        FW_OPTIONAL_NAME("rateGroup1HzComp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1HzComp.configure(
         ConfigObjects::rateGroup1HzComp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1HzComp::context)
     );
@@ -249,12 +247,9 @@ module RPI {
   }
 
   instance comm: Drv.ByteStreamDriverModel base id 1260 \
+    type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
@@ -288,21 +283,11 @@ module RPI {
   }
 
   instance linuxTime: Svc.Time base id 1500 \
-    at "../../Svc/LinuxTime/LinuxTime.hpp" \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-    """
-
-  }
+    type "Svc::LinuxTime" \
+    at "../../Svc/LinuxTime/LinuxTime.hpp"
 
   instance linuxTimer: Svc.LinuxTimer base id 1600 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RPITopologyDefs.cpp
-    """
 
     phase Fpp.ToCpp.Phases.stopTasks """
     linuxTimer.quit();
@@ -316,15 +301,13 @@ module RPI {
     phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 10, 0 };
     """
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::RateGroupDriver rateGroupDriverComp(
-        FW_OPTIONAL_NAME("rateGroupDriverComp"),
+    
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );
     """
-
   }
 
   instance textLogger: Svc.PassiveTextLogger base id 1900

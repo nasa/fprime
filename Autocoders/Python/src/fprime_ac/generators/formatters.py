@@ -59,7 +59,7 @@ class CommentFormatters:
         the first @code is stripped off each line.
         """
 
-        new_line_list = list()
+        new_line_list = []
 
         code_flag = False
 
@@ -140,7 +140,7 @@ class CommentFormatters:
         returned.
         """
 
-        out = list()
+        out = []
 
         width = width - indent
 
@@ -720,7 +720,7 @@ class Formatters:
         @param cmd_name_list: list of command function names.
         @return: TRUE if all command stem names are unique, else raise an exception.
         """
-        cmds = list()
+        cmds = []
 
         for c in cmd_name_list:
             cmds.append(self.opcodeStemName(id, c))
@@ -751,10 +751,7 @@ class Formatters:
         return True if an array arg is
         found, else return False.
         """
-        for arg in args:
-            if arg[3] != "":
-                return True
-        return False
+        return any(arg[3] != "" for arg in args)
 
     def commentInArgsPresent(self, args):
         """
@@ -762,10 +759,7 @@ class Formatters:
         return True if a comment for
         an arg is found, else return False.
         """
-        for arg in args:
-            if arg[2] != "":
-                return True
-        return False
+        return any(arg[2] != "" for arg in args)
 
     ##########################################
     # Methods for argument handling.
@@ -896,8 +890,8 @@ class Formatters:
         # one argument. A one argument function is built on one line. All
         # other numbers of arguments will use multiple lines.
 
-        arg_list = list()
-        type_list = list()
+        arg_list = []
+        type_list = []
 
         for arg in args:
 
@@ -977,9 +971,9 @@ class Formatters:
 
         fname = name.strip()
 
-        arg_list = list()
-        type_list = list()
-        comment_list = list()
+        arg_list = []
+        type_list = []
+        comment_list = []
 
         # Get the no argument case out of the way -- just add void argument.
         if len(args) == 0:
@@ -1007,7 +1001,7 @@ class Formatters:
 
         type_args_list = self.argStringAlign(type_list, arg_list, pad)
 
-        new_list = list()
+        new_list = []
         for line in type_args_list[:-1]:
             new_list.append(line + ",")
         if proto == True:
@@ -1216,7 +1210,7 @@ class Formatters:
         @return str_list: a list of strings with args aligned.
         """
 
-        str_list = list()
+        str_list = []
 
         if len(type_list) > 0:
 
@@ -1261,9 +1255,9 @@ class Formatters:
         @param args: list of tuple args from xml.
         """
 
-        type_list = list()
-        arg_list = list()
-        comment_list = list()
+        type_list = []
+        arg_list = []
+        comment_list = []
 
         for arg in args:
             # EGB pass by pointer: This is to allow pointers to be passed directly via IPC
@@ -1388,7 +1382,7 @@ class Formatters:
         Changes the STRING to a U8 for use as U8 array.
         Changes the SCLK to ModArgSclk struct type of U32, U16.
         """
-        new_args = list()
+        new_args = []
         for arg in args:
             id, type, comment, array_max, array_len, range_list, enum_type_list = arg[
                 0:7

@@ -104,7 +104,7 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 obj.get_component_base_name()
             ]
         except Exception:
-            if isinstance(obj, Parameter.Parameter) or isinstance(obj, Command.Command):
+            if isinstance(obj, (Parameter.Parameter, Command.Command)):
                 PRINT.info(
                     "ERROR: Could not find instance object for component "
                     + obj.get_component_base_name()
@@ -257,8 +257,8 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 for arg_obj in obj.get_args():
                     # convert XML types to Python classes
@@ -305,8 +305,8 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 # convert XML types to Python classes
                 (
@@ -347,8 +347,8 @@ class InstCommandWriter(AbstractDictWriter.AbstractDictWriter):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyWrite")
                 self.__fp2[fname].close()

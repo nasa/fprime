@@ -76,7 +76,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("ChannelVisitor:%s" % visit_str)
+        DEBUG.debug(f"ChannelVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         fp.writelines(c.__str__())

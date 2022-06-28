@@ -76,7 +76,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("ChannelVisitor:%s" % visit_str)
+        DEBUG.debug(f"ChannelVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         fp.writelines(c.__str__())
@@ -94,24 +94,24 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         if not (os.path.isdir(output_dir)):
             os.makedirs(output_dir)
 
-        self.__fp = list()
+        self.__fp = []
 
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
             if fd is None:
-                raise Exception("Could not open %s file." % pyfile)
+                raise Exception(f"Could not open {pyfile} file.")
             self.__fp.append(fd)
         else:
             inst = 0
             for id in obj.get_ids():
                 pyfile = "%s/%s_%d.py" % (output_dir, obj.get_name(), inst)
                 inst += 1
-                DEBUG.info("Open file: %s" % pyfile)
+                DEBUG.info(f"Open file: {pyfile}")
                 fd = open(pyfile, "w")
                 if fd is None:
-                    raise Exception("Could not open %s file." % pyfile)
-                DEBUG.info("Completed %s open" % pyfile)
+                    raise Exception(f"Could not open {pyfile} file.")
+                DEBUG.info(f"Completed {pyfile} open")
                 self.__fp.append(fd)
 
     def DictHeaderVisit(self, obj):

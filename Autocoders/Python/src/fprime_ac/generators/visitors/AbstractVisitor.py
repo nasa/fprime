@@ -189,8 +189,7 @@ class AbstractVisitor:
             relative_path = build_root_relative_path(path)
         except BuildRootMissingException as bre:
             PRINT.info(
-                "ERROR: BUILD_ROOT and current execution path (%s) not consistent! %s"
-                % (path, str(bre))
+                f"ERROR: BUILD_ROOT and current execution path ({path}) not consistent! {str(bre)}"
             )
             sys.exit(-1)
         DEBUG.debug("Relative path: %s", relative_path)

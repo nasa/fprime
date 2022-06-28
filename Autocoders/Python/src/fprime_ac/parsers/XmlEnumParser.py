@@ -184,7 +184,7 @@ class XmlEnumParser:
                     has_value += 1
 
         is_consistent = True
-        if not (has_value == 0 or has_value == total):
+        if not has_value in (0, total):
             is_consistent = False
 
         return is_consistent

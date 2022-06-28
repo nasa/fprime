@@ -36,11 +36,7 @@ def format_type_item(typeItem):
         for value in values:
             valuesArr.append({"name": value[0], "value": value[1], "comment": value[2]})
 
-        typeObj = {
-            "type": description[0],
-            "name": description[1],
-            "values": valuesArr,
-        }
+        typeObj = {"type": description[0], "name": description[1], "values": valuesArr}
     else:
         typeObj = typeItem
 
@@ -55,7 +51,7 @@ def pinit():
     current_dir = os.getcwd()
 
     usage = "usage: %prog [options] [xml_filename]"
-    vers = "%prog " + VERSION.id + " " + VERSION.comment
+    vers = f"%prog {VERSION.id} {VERSION.comment}"
     program_longdesc = """
         This script reads F' topology XML and produces dictionaries represented as
         JSON. These documents contain all command, evr, and channel telemetry
@@ -73,7 +69,7 @@ def pinit():
         "--path",
         dest="work_path",
         type="string",
-        help="Switch to new working directory (def: %s)." % current_dir,
+        help=f"Switch to new working directory (def: {current_dir}).",
         action="store",
         default=current_dir,
     )
@@ -126,12 +122,8 @@ def main():
     outFilepath = "/".join([opts.work_path, outFilename])
     descriptionFilename = "/".join([opts.work_path, "/dictPath.txt"])
 
-    dictionary = {}
-    dictionary[deployment] = {
-        "events": {},
-        "channels": {},
-        "commands": {},
-        "serializables": {},
+    dictionary = {
+        deployment: {"events": {}, "channels": {}, "commands": {}, "serializables": {}}
     }
 
     events = dictionary[deployment]["events"]
@@ -177,11 +169,7 @@ def main():
                     }
                 )
 
-            metadata = {
-                "name": name,
-                "namespace": namespace,
-                "members": members,
-            }
+            metadata = {"name": name, "namespace": namespace, "members": members}
 
             serializables[namespace + "::" + name] = metadata
         comp_name = inst.get_name()
