@@ -4,58 +4,64 @@ title: "F´ Installation Guide"
 ---
 
 ## Overview
+
 This installation guide is specifically designed to enable individuals and researchers to get up and
-running with F´ quickly. This guide is not intended for large teams with specific content
-management (CM) requirements.
+running with F´ quickly. Larger projects with specific requirements may need to extend this process.
 
 **Note:** see the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
 
 ## Requirements
 
 F´ depends on several items before the user should attempt to install it. These requirements are
-listed below and should be on any system the user wishes to use. Should these items not be
-available on the user's Operating System, then a Virtual Machine should be used. One option is
+listed below and the user should ensure they are installed before proceeding with this guide. Should these items not
+be available on the user's Operating System, then a Virtual Machine should be used. One option is
 [VirtualBox](https://www.virtualbox.org/).
 
 Requirements:
 
-1. Linux or Mac OS X operating system (or Windows Subsystem for Linux on Windows)
-2. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-3. CLang or GCC compiler
-4. [Python 3.7+](https://www.python.org/downloads/), venv, and PIP
+1. Linux or macOS operating system
+2. git
+3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
+4. CLang or GCC compiler
+5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
 
 **Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
-### Cloning the F´ Repository
+### Setting Up F´ Environment
 
-Installation of F´ requires cloning of the F´ core repository. This uses Git. This will bring
-down the core framework and C++ files.
-
-**Clone F´**
-
-```
-git clone https://github.com/nasa/fprime
-```
-
-### Installing F´ Python Requirements
-
-The ecosystem of tools supporting F´ is installed as python packages available via PIP. The tools
-associated with the F´ version just cloned can be installed using the following PIP command. Alternative
-tool installations are described in [Advanced](#Advanced).
+The ecosystem of tools supporting F´ is installed as python packages available via PIP. In order to install F´, the user should
+setup an environment to run these tools in.
 
 >Note: Python is used by many operating systems. To prevent problems users are encouraged to run F´ python
 >from within a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
-**Installing F´ Python Packages**
+**Setting Up a Virtual Environment**
+
+Choose a location to generate a virtual environment. This can be any path the user has read and write access to. In this guide we'll
+use the path: `$HOME/fprime-venv`
 
 ```
+python3 -m venv $HOME/fprime-venv
+source $HOME/fprime-venv/bin/activate
 pip install -U setuptools setuptools_scm wheel pip
-pip install -U -r fprime/requirements.txt
 ```
 
-> Note: On some systems pip places user-installed tools in the `.local` folder.
-This results in a `fprime-util: command not found` error when trying to run
-fprime-util. You will need to add `.local` to your `$PATH` or run as an admin.
+> Note: `source $HOME/fprime-venv/bin/activate` must be run in each new terminal where the user wishes to use the virtual environment.
+
+### Cloning the F´ Repository and Installing F´ Tools
+
+Installation of F´ requires cloning of the F´ core repository. This uses Git. This will bring down the core framework and C++ files.
+F´ ships with a `requirements.txt` file enumerating the tools F´ uses and their specific tested versions. 
+
+**Clone F´ and Install Tools**
+
+```
+git clone https://github.com/nasa/fprime
+pip install -r fprime/requirements.txt
+```
+
+>Note: When changing F´ versions make sure to re-run the `pip install -r fprime/requirements.txt` to get the tested tool versions.
+>Note: Alternative tool installations are described in [Advanced](#Advanced).
 
 ## Checking Your F´ Installation
 
@@ -92,16 +98,6 @@ knowledge of our tools and versions are often required.
 Several of F´s command-line utilities support tab completion. To enable these tools to use it, see the
 [instructions here](UsersGuide/user/autocomplete.md).
 
-
-### Installing F´ Tools Without Cloning The F´ Repository
-
-Sometimes users wish to install the F´ tools without cloning the F´ repository.  This can be accomplished by identifying
-the version of F´ being used and installing that version from PIP.  It will pull in the correct other packages.
-
-**Example**
-```
-pip install fprime==v3.1.0
-```
 
 ## Installing Individual Tools
 
@@ -141,6 +137,19 @@ pip install fprime-gds[uart-adapter]
 
 This section will add some known hints to trouble-shooting with the installation of F´. This will hopefully help users
 install things more effectively.
+
+### fprime-util: command not found
+
+If the user is using a virtual environment and receives the command not found, the problem is likely caused by the
+environment not being sourced in a new terminal. Make sure to source the environment before running:
+
+```
+source $HOME/fprime-venv/bin/activate
+```
+
+If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
+Users running without virtual environments should add this directory to the path.
+
 
 ### Ubuntu, Debian, Java and Python PIP
 
