@@ -15,26 +15,7 @@ F´ comprises several elements:
 * A growing collection of ready-to-use components
 * Testing tools for testing flight software at the unit and integration levels.
 
-## Quick Installation Guide
-
-The following utilities are prerequisites to installing F´:
-
-* [cmake](https://cmake.org/)
-* [git](https://git-scm.com/)
-* [Python](https://www.python.org/) 3.7+ with pip
-* [Java](https://openjdk.java.net/)
-
-Once these utilities are installed, you can install F´ Python dependencies. Installing dependencies in a Python virtual environment prevents issues at the system level, but installing in a virtual environment is not required.
-
-To install F´ quickly, enter:
-
-```shell
-git clone https://github.com/nasa/fprime.git
-pip install -U setuptools setuptools_scm wheel pip
-pip install -U -r fprime/requirements.txt
-```
-
-For full installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md).
+For installation instructions, including virtual environment creation and installation verification, see [INSTALL.md](./docs/INSTALL.md).
 
 ## Example Deployments
 
