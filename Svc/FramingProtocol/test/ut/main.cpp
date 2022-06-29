@@ -13,8 +13,8 @@
 
 TEST(Deframing, IncompleteHeader) {
   COMMENT("Apply deframing to a frame with an incomplete header");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD);
@@ -26,8 +26,8 @@ TEST(Deframing, IncompleteHeader) {
 
 TEST(Deframing, InvalidStartWord) {
   COMMENT("Apply deframing to a frame with an invalid start word");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD + 1);
@@ -41,8 +41,8 @@ TEST(Deframing, InvalidStartWord) {
 
 TEST(Deframing, InvalidSizeIntegerOverflow) {
   COMMENT("Apply deframing to a frame with an invalid packet size due to integer overflow");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   // Start word
   tester.serializeTokenType(Svc::FpFrameHeader::START_WORD);
@@ -59,8 +59,8 @@ TEST(Deframing, InvalidSizeIntegerOverflow) {
 
 TEST(Deframing, InvalidSizeBufferOverflow) {
   COMMENT("Apply deframing to a frame with an invalid packet size due to buffer overflow");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   const Svc::FpFrameHeader::TokenType packetSize = 10;
   const U32 frameSize =
     Svc::FpFrameHeader::SIZE + packetSize + HASH_DIGEST_LENGTH;
@@ -79,8 +79,8 @@ TEST(Deframing, InvalidSizeBufferOverflow) {
 
 TEST(Deframing, IncompleteFrame) {
   COMMENT("Apply deframing to an incomplete frame");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   const Svc::FpFrameHeader::TokenType packetSize = 1;
   Svc::DeframingTester tester;
   // Start word
@@ -100,8 +100,8 @@ TEST(Deframing, IncompleteFrame) {
 
 TEST(Deframing, ZeroPacketSize) {
   COMMENT("Apply deframing to a valid frame with packet size zero");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   const U32 packetSize = 0;
   tester.testNominalDeframing(packetSize);
@@ -109,8 +109,8 @@ TEST(Deframing, ZeroPacketSize) {
 
 TEST(Deframing, RandomPacketSize) {
   COMMENT("Apply deframing to a valid frame with a random packet size");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
@@ -121,8 +121,8 @@ TEST(Deframing, RandomPacketSize) {
 
 TEST(Deframing, MaxPacketSize) {
   COMMENT("Apply deframing to a valid frame with maximum packet size for the test buffer");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   const U32 packetSize = Svc::DeframingTester::MAX_PACKET_SIZE;
   tester.testNominalDeframing(packetSize);
@@ -130,8 +130,8 @@ TEST(Deframing, MaxPacketSize) {
 
 TEST(Deframing, BadChecksum) {
   COMMENT("Apply deframing to a frame with a bad checksum");
-  REQUIREMENT("FramingProtocol-002");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-002");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::DeframingTester tester;
   const U32 packetSize = STest::Pick::lowerUpper(
       0,
@@ -142,24 +142,24 @@ TEST(Deframing, BadChecksum) {
 
 TEST(Framing, CommandPacket) {
   COMMENT("Apply framing to a command packet");
-  REQUIREMENT("FramingProtocol-001");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-001");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_COMMAND);
   tester.check();
 }
 
 TEST(Framing, FilePacket) {
   COMMENT("Apply framing to a file packet");
-  REQUIREMENT("FramingProtocol-001");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-001");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_FILE);
   tester.check();
 }
 
 TEST(Framing, UnknownPacket) {
   COMMENT("Apply framing to a packet of unkown type");
-  REQUIREMENT("FramingProtocol-001");
-  REQUIREMENT("FramingProtocol-003");
+  REQUIREMENT("Svc-FramingProtocol-001");
+  REQUIREMENT("Svc-FramingProtocol-003");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_UNKNOWN);
   tester.check();
 }
