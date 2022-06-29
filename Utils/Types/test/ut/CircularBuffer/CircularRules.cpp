@@ -15,8 +15,8 @@
 namespace Types {
 
 
-    RandomizeRule::RandomizeRule(const Fw::String& name)
-        : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    RandomizeRule::RandomizeRule(const char *const name)
+        : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool RandomizeRule::precondition(const MockTypes::CircularState& state) {
@@ -30,8 +30,8 @@ namespace Types {
 
 
 
-    SerializeOkRule::SerializeOkRule(const Fw::String& name)
-        : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    SerializeOkRule::SerializeOkRule(const char *const name)
+        : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool SerializeOkRule::precondition(const MockTypes::CircularState& state) {
@@ -40,16 +40,18 @@ namespace Types {
 
 
     void SerializeOkRule::action(MockTypes::CircularState& state) {
+        state.checkSizes();
         Fw::SerializeStatus status = state.getTestBuffer().serialize(state.getBuffer(), state.getRandomSize());
         state.setRemainingSize(state.getRemainingSize() - state.getRandomSize());
         ASSERT_TRUE(state.addInfinite(state.getBuffer(), state.getRandomSize()));
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+        state.checkSizes();
     }
 
 
 
-    SerializeOverflowRule::SerializeOverflowRule(const Fw::String& name)
-            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    SerializeOverflowRule::SerializeOverflowRule(const char *const name)
+            : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool SerializeOverflowRule::precondition(const MockTypes::CircularState& state) {
@@ -63,12 +65,12 @@ namespace Types {
     }
 
 
-    PeekOkRule::PeekOkRule(const Fw::String& name)
-            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    PeekOkRule::PeekOkRule(const char *const name)
+            : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool PeekOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available >= sizeof(I8) + state.getPeekOffset();
         }
@@ -128,12 +130,12 @@ namespace Types {
     }
 
 
-    PeekBadRule::PeekBadRule(const Fw::String& name)
-            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    PeekBadRule::PeekBadRule(const char *const name)
+            : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool PeekBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE peek_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         if (state.getPeekType() == 0 ) {
             return peek_available < sizeof(I8) + state.getPeekOffset();
         }
@@ -174,27 +176,30 @@ namespace Types {
     }
 
 
-    RotateOkRule::RotateOkRule(const Fw::String& name)
-            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    RotateOkRule::RotateOkRule(const char *const name)
+            : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool RotateOkRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available >= state.getRandomSize();
     }
 
     void RotateOkRule::action(MockTypes::CircularState& state) {
+        state.checkSizes();
         ASSERT_EQ(state.getTestBuffer().rotate(state.getRandomSize()), Fw::FW_SERIALIZE_OK);
         ASSERT_TRUE(state.rotate(state.getRandomSize()));
+        state.setRemainingSize(state.getRemainingSize() + state.getRandomSize());
+        state.checkSizes();
     }
 
 
-    RotateBadRule::RotateBadRule(const Fw::String& name)
-            : STest::Rule<MockTypes::CircularState>(name.toChar()) {}
+    RotateBadRule::RotateBadRule(const char *const name)
+            : STest::Rule<MockTypes::CircularState>(name) {}
 
 
     bool RotateBadRule::precondition(const MockTypes::CircularState& state) {
-        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - 1 - state.getRemainingSize());
+        NATIVE_UINT_TYPE rotate_available = (MAX_BUFFER_SIZE - state.getRemainingSize());
         return rotate_available < state.getRandomSize();
     }
 

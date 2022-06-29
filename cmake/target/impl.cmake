@@ -12,14 +12,14 @@
 #
 # Does nothing. Prevents default target.
 ####
-function(add_global_target TARGET)
+function(impl_add_global_target TARGET)
 endfunction()
 ####
 # impl `add_deployment_target`:
 #
 # Does nothing. Prevents default "roll-up" target.
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(impl_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
 endfunction()
 
 ####
@@ -33,8 +33,8 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs from the CMakeList.txt setup
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
+function(impl_add_module_target MODULE TARGET SOURCE_FILES DEPENDENCIES)
     get_target_name(${TARGET} ${MODULE})
-    run_ac_set("${SOURCE_FILES}" INFO_ONLY autocoder/fpp autocoder/ai-impl)
+    run_ac_set("${SOURCE_FILES}" autocoder/fpp autocoder/ai_impl)
     add_custom_target("${TARGET_MOD_NAME}" DEPENDS ${AC_GENERATED})
-endfunction(add_module_target)
+endfunction(impl_add_module_target)

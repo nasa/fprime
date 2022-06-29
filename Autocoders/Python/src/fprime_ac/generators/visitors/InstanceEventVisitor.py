@@ -36,8 +36,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.events import EventHeader
-    from fprime_ac.generators.templates.events import EventBody
+    from fprime_ac.generators.templates.events import EventBody, EventHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -195,8 +194,8 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
 
-            c.arglist = list()
-            c.ser_import_list = list()
+            c.arglist = []
+            c.ser_import_list = []
             arg_num = 0
 
             for arg_obj in obj.get_args():

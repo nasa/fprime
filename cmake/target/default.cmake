@@ -12,7 +12,7 @@
 ####
 function(add_global_target TARGET)
     if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "Adding blank target: ${TARGET}")
+        message(STATUS "[target] Adding default global target: ${TARGET}")
     endif()
     add_custom_target(${TARGET})
 endfunction(add_global_target)
@@ -28,7 +28,7 @@ endfunction(add_global_target)
 ####
 function(add_deployment_target MODULE TARGET SOURCES DIRECT_DEPENDENCIES FULL_DEPENDENCY_LIST)
     if (CMAKE_DEBUG_OUTPUT)
-        message(STATUS "Adding deployment target: ${MODULE}_${TARGET}")
+        message(STATUS "Adding default deployment target: ${MODULE}_${TARGET}")
     endif()
     add_custom_target("${MODULE}_${TARGET}")
     foreach(DEPENDENCY IN LISTS RESULTS)
@@ -50,5 +50,7 @@ endfunction(add_deployment_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
 function(add_module_target MODULE TARGET SOURCES DEPENDENCIES)
-    message(FATAL_ERROR "${TARGET} does not implement 'add_module_target'")
+    if (CMAKE_DEBUG_OUTPUT)
+        message(STATUS "Skipping module target: ${MODULE}_${TARGET}, default performs no action.")
+    endif()
 endfunction(add_module_target)

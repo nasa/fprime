@@ -26,7 +26,7 @@ namespace Fw {
     }
 
     const CHAR* StringBase::operator+=(const CHAR* src) {
-        this->appendBuff(src, strnlen(src, this->getCapacity()));
+        this->appendBuff(src, StringUtils::string_length(src, this->getCapacity()));
         return this->toChar();
     }
 
@@ -77,7 +77,7 @@ namespace Fw {
         return !operator==(other);
     }
 
-#if FW_SERIALIZABLE_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
     void StringBase::toString(StringBase& text) const {
         text = *this;
     }
@@ -121,7 +121,7 @@ namespace Fw {
     }
 
     NATIVE_UINT_TYPE StringBase::length() const {
-        return static_cast<NATIVE_UINT_TYPE>(strnlen(this->toChar(),this->getCapacity()));
+        return static_cast<NATIVE_UINT_TYPE>(StringUtils::string_length(this->toChar(),this->getCapacity()));
     }
 
     SerializeStatus StringBase::serialize(SerializeBufferBase& buffer) const {

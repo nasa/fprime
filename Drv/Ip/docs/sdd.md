@@ -1,4 +1,4 @@
-\page DrvIp IPv4 Socket Implementations
+\page DrvIp Drv::Ip IPv4 Socket Implementations
 # Drv::Ip IPv4 Socket Implementations
 
 This package contains utility classes to help interact with standard IPv4 (Berkley) sockets. These classes implement the

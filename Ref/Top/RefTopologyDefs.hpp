@@ -8,9 +8,6 @@
 
 namespace Ref {
 
-  // Declare the block driver here so it is visible in main
-  extern Drv::BlockDriver blockDrv;
-
   namespace Allocation {
 
     // Malloc allocator for topology construction

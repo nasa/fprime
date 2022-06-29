@@ -20,10 +20,9 @@ import logging
 import os
 import sys
 
-from lxml import etree
-
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.exceptions import FprimeRngXmlValidationException
+from lxml import etree
 
 #
 # Python extension modules and custom interfaces
@@ -63,7 +62,7 @@ class XmlPortsParser:
         self.__enum_list_items = []
         self.__modifier = None
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             str = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(str)
         fd = open(xml_file)
@@ -124,7 +123,7 @@ class XmlPortsParser:
                         p = arg.attrib["pass_by"]
                     else:
                         p = None
-                    if t == "string" or t == "buffer":
+                    if t in ("string", "buffer"):
                         if not "size" in list(arg.attrib.keys()):
                             PRINT.info(
                                 "%s: arg %s string must specify size tag"

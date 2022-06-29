@@ -35,8 +35,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.channels import ChannelHeader
-    from fprime_ac.generators.templates.channels import ChannelBody
+    from fprime_ac.generators.templates.channels import ChannelBody, ChannelHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -77,7 +76,7 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
         """
         Wrapper to write tmpl to files desc.
         """
-        DEBUG.debug("ChannelVisitor:%s" % visit_str)
+        DEBUG.debug(f"ChannelVisitor:{visit_str}")
         DEBUG.debug("===================================")
         DEBUG.debug(c)
         fp.writelines(c.__str__())

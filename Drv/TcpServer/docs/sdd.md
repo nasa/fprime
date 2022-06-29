@@ -1,4 +1,4 @@
-\page DrvTcpServer Tcp Server Component
+\page DrvTcpServer Drv::TcpServer Component
 # Drv::TcpServer Tcp Server Component
 
 The TCP server component bridges the byte stream driver model interface to a remote TCP client to which this tcp server

@@ -1,5 +1,5 @@
 # Module subdirectories
-
+set(FPRIME_FRAMEWORK_MODULES Fw_Prm Fw_Cmd Fw_Log Fw_Tlm Fw_Com Fw_Time Fw_Port Fw_Types Fw_Cfg CACHE INTERNAL "Fw mods")
 # Port subdirectories
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Buffer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Com/")
@@ -19,3 +19,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FilePacket/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SerializableFile/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Test/")
+
+# Setup an interface target for Fw for efficiency
+add_library(Fw INTERFACE)
+add_dependencies(Fw ${FPRIME_FRAMEWORK_MODULES})

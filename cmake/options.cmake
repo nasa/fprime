@@ -157,11 +157,29 @@ option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
 option(FPRIME_ENABLE_TEXT_LOGGERS "Enable text loggers in build" ON)
 
 ####
-# `FPRIME_FPP_LOCS_BUILD`:
+# `FPRIME_SKIP_TOOLS_VERSION_CHECK`:
 #
-# For internal use only.  Used to setup build to generate FPP location file.  Run as a sub-build within fprime.
+# Skips version checking on fprime tools. This is an advanced option that should be used when the user knows the version
+# of their tools is appropriate and the system would otherwise detect the tool version as an incompatible version. This
+# can be used, specifically, to enable user maintained variants of standard tools.
+#
+# Note: no version checking will be done and as such version miss-matches will not be reported at all. Errors that
+# result from version incompatibilities will be up to the user to resolve.
+#
+# **Values:**
+# - ON:  skip the tool version check, enabling any tools found on the PATH to run
+# - OFF: (default) ensure that the tools found on the path have the required version before running
+#
+# e.g. `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON`
 ####
-option(FPRIME_FPP_LOCS_BUILD "Skip the tools check for older clients." OFF)
+option(FPRIME_SKIP_TOOLS_VERSION_CHECK "Skip the version checking of tools" OFF)
+
+####
+# `FPRIME_CHECK_FRAMEWORK_VERSION`:
+#
+# For internal use only.  Used to check the framework version has been updated on tags.
+####
+option(FPRIME_CHECK_FRAMEWORK_VERSION "(Internal) Check framework version when building." OFF)
 
 # Backwards compatibility, when build type=TESTING BUILD_TESTING is on
 string(TOUPPER "${CMAKE_BUILD_TYPE}" FPRIME_BUILD_TYPE)

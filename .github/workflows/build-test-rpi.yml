@@ -15,10 +15,11 @@ jobs:
   RPI:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: Install RPI Toolchain
       run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
     - name: F prime CI step
@@ -63,3 +64,4 @@ jobs:
       if: always()
       run: |
           rm -rf $RUNNER_WORKSPACE
+          sudo /sbin/shutdown -r 1 # Force a shutdown for a clean slate

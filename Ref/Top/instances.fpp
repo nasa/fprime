@@ -8,7 +8,7 @@ module Ref {
 
     constant queueSize = 10
 
-    constant stackSize = 16 * 1024
+    constant stackSize = 64 * 1024
 
   }
 
@@ -19,14 +19,7 @@ module Ref {
   instance blockDrv: Drv.BlockDriver base id 0x0100 \
     queue size Default.queueSize \
     stack size Default.stackSize \
-    priority 140 \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    // Declared in RefTopologyDefs.cpp
-    """
-
-  }
+    priority 140
 
   instance rateGroup1Comp: Svc.ActiveRateGroup base id 0x0200 \
     queue size Default.queueSize \
@@ -35,12 +28,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1Comp(
-        FW_OPTIONAL_NAME("rateGroup1Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1Comp.configure(
         ConfigObjects::rateGroup1Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
@@ -55,12 +47,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup2Comp(
-        FW_OPTIONAL_NAME("rateGroup2Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup2Comp.configure(
         ConfigObjects::rateGroup2Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
@@ -75,12 +66,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup3Comp(
-        FW_OPTIONAL_NAME("rateGroup3Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup3Comp.configure(
         ConfigObjects::rateGroup3Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
@@ -235,12 +225,9 @@ module Ref {
   @ Communications driver. May be swapped with other comm drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
   instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
+    type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Drv::TcpClient comm(FW_OPTIONAL_NAME("comm"));
-    """
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
@@ -257,6 +244,7 @@ module Ref {
         comm.configure(state.hostName, state.portNumber);
         comm.startSocketTask(
             name,
+            true,
             ConfigConstants::comm::PRIORITY,
             ConfigConstants::comm::STACK_SIZE
         );
@@ -319,24 +307,17 @@ module Ref {
   }
 
   instance linuxTime: Svc.Time base id 0x4500 \
-    at "../../Svc/LinuxTime/LinuxTime.hpp" \
-  {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::LinuxTime linuxTime(FW_OPTIONAL_NAME("linuxTime"));
-    """
-
-  }
+    type "Svc::LinuxTime" \
+    at "../../Svc/LinuxTime/LinuxTime.hpp"
 
   instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600 {
 
     phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
     """
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::RateGroupDriver rateGroupDriverComp(
-        FW_OPTIONAL_NAME("rateGroupDriverComp"),
+    
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );

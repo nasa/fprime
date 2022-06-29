@@ -21,14 +21,10 @@ namespace RPI {
   // ----------------------------------------------------------------------
 
   RpiDemoComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     RpiDemoComponentImpl(
         const char *const compName
     ) :
       RpiDemoComponentBase(compName)
-#else
-    RpiDemoImpl()
-#endif
     ,m_uartWriteBytes(0)
     ,m_uartReadBytes(0)
     ,m_spiBytes(0)

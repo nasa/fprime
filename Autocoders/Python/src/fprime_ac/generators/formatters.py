@@ -59,20 +59,20 @@ class CommentFormatters:
         the first @code is stripped off each line.
         """
 
-        new_line_list = list()
+        new_line_list = []
 
         code_flag = False
 
         for line in line_list:
 
-            if "@code" in line and code_flag == False:
+            if "@code" in line and not code_flag:
                 leading_spaces = line.find("@code")
                 new_line_list.append(line.strip())
                 code_flag = True
-            elif "@code" in line and code_flag == True:
+            elif "@code" in line and code_flag:
                 new_line_list.append(line.strip())
                 code_flag = False
-            elif (not "@code" in line) and code_flag == True:
+            elif (not "@code" in line) and code_flag:
                 new_line_list.append(line[leading_spaces:])
             else:
                 new_line_list.append(line.strip())
@@ -140,7 +140,7 @@ class CommentFormatters:
         returned.
         """
 
-        out = list()
+        out = []
 
         width = width - indent
 
@@ -206,9 +206,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -231,7 +231,7 @@ class CommentFormatters:
             comment_str += "*\n"
             comment_str += "* TYPE: THIS IS A SYNCHRONOUS INTERFACE.\n"
 
-        if check_and_send == True:
+        if check_and_send:
             comment_str += "*\n"
             comment_str += "* Note: This interface uses an IPC check and send call. The return status\n"
             comment_str += "* indicates if the message was sent, or if the message was not sent due to\n"
@@ -300,9 +300,9 @@ class CommentFormatters:
                 trimwhitespace = False
             elif "@endcode" == line.strip() or r"\endcode" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and "@code" == line.strip():
+            elif not trimwhitespace and "@code" == line.strip():
                 trimwhitespace = True
-            elif trimwhitespace == False and r"\code" == line.strip():
+            elif not trimwhitespace and r"\code" == line.strip():
                 trimwhitespace = True
 
             if started:
@@ -538,7 +538,7 @@ class Formatters:
             if end_name != "cmd":
                 name_str = name_str + "_cmd"
         # Steve: removed, this is too verbose
-        #                if verbose == True:
+        #                if verbose:
         #                    PRINT.info("WARNING: Interface %s renamed to %s."  % (name2,name_str))
 
         # Steve: removed, this is too verbose
@@ -625,7 +625,7 @@ class Formatters:
             name = msg_type.split("AcMsg")[1]
             new_name = ""
             for c in name:
-                if c.isupper() == True:
+                if c.isupper():
                     new_name += "_" + c.lower()
                 else:
                     new_name += c
@@ -720,7 +720,7 @@ class Formatters:
         @param cmd_name_list: list of command function names.
         @return: TRUE if all command stem names are unique, else raise an exception.
         """
-        cmds = list()
+        cmds = []
 
         for c in cmd_name_list:
             cmds.append(self.opcodeStemName(id, c))
@@ -751,10 +751,7 @@ class Formatters:
         return True if an array arg is
         found, else return False.
         """
-        for arg in args:
-            if arg[3] != "":
-                return True
-        return False
+        return any(arg[3] != "" for arg in args)
 
     def commentInArgsPresent(self, args):
         """
@@ -762,10 +759,7 @@ class Formatters:
         return True if a comment for
         an arg is found, else return False.
         """
-        for arg in args:
-            if arg[2] != "":
-                return True
-        return False
+        return any(arg[2] != "" for arg in args)
 
     ##########################################
     # Methods for argument handling.
@@ -800,7 +794,7 @@ class Formatters:
         @param name: Name of the function.
         @param args: List of argument tuples.
         """
-        if self.commentInArgsPresent(args) == True:
+        if self.commentInArgsPresent(args):
             func_string = "{}{}(".format(name, 80 * " ")
         else:
             func_string = "%s( " % name
@@ -885,7 +879,7 @@ class Formatters:
         # Get the simple case out of the way.
         if len(args) == 0:
 
-            if proto == True:
+            if proto:
                 function_str = name.strip() + "();"
             else:
                 function_str = name.strip() + "() {"
@@ -896,8 +890,8 @@ class Formatters:
         # one argument. A one argument function is built on one line. All
         # other numbers of arguments will use multiple lines.
 
-        arg_list = list()
-        type_list = list()
+        arg_list = []
+        type_list = []
 
         for arg in args:
 
@@ -926,7 +920,7 @@ class Formatters:
 
         if len(args) == 1:
 
-            if proto == True:
+            if proto:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ");"
             else:
                 function_str = name.strip() + "(" + a[0] + " " + a[1] + ") {"
@@ -946,7 +940,7 @@ class Formatters:
             function_str += type_list[index].ljust(max_type_len + 2)
             function_str += arg_list[index] + ",\n"
 
-        if proto == True:
+        if proto:
             function_str += (indent + 4) * " "
             function_str += type_list[-1].ljust(max_type_len + 2)
             function_str += arg_list[-1] + ");"
@@ -977,16 +971,16 @@ class Formatters:
 
         fname = name.strip()
 
-        arg_list = list()
-        type_list = list()
-        comment_list = list()
+        arg_list = []
+        type_list = []
+        comment_list = []
 
         # Get the no argument case out of the way -- just add void argument.
         if len(args) == 0:
 
             format_func = fname + "(void)"
 
-            if proto == True:
+            if proto:
                 format_func += ";"
             else:
                 format_func += " {"
@@ -1007,10 +1001,10 @@ class Formatters:
 
         type_args_list = self.argStringAlign(type_list, arg_list, pad)
 
-        new_list = list()
+        new_list = []
         for line in type_args_list[:-1]:
             new_list.append(line + ",")
-        if proto == True:
+        if proto:
             new_list.append(type_args_list[-1] + ");")
         else:
             new_list.append(type_args_list[-1] + ")")
@@ -1037,7 +1031,7 @@ class Formatters:
 
         # Last line if not a prototype then no '\n' at end.
         if len(args) > 1:
-            if proto == True:
+            if proto:
                 format_func += "{}{}\n".format(pad * " ", type_args_list[-1])
             else:
                 format_func += "{}{}".format(pad * " ", type_args_list[-1])
@@ -1056,12 +1050,12 @@ class Formatters:
         @param proto: Prototype flag for non-header file use.
         """
         format_func = self.formatFun(indent, self.oneLineFun(name, args))
-        if proto == True:
+        if proto:
             format_func = format_func.replace(")", ");")
 
         line_length = 80
         # If there are arg comments add them...
-        if self.commentInArgsPresent(args) == True:
+        if self.commentInArgsPresent(args):
             format_func_list = format_func.split("\n")
             # Trim the trailing spaces from the function name.
             format_func_name = format_func_list[0].strip(" (") + "( \n"
@@ -1216,7 +1210,7 @@ class Formatters:
         @return str_list: a list of strings with args aligned.
         """
 
-        str_list = list()
+        str_list = []
 
         if len(type_list) > 0:
 
@@ -1261,9 +1255,9 @@ class Formatters:
         @param args: list of tuple args from xml.
         """
 
-        type_list = list()
-        arg_list = list()
-        comment_list = list()
+        type_list = []
+        arg_list = []
+        comment_list = []
 
         for arg in args:
             # EGB pass by pointer: This is to allow pointers to be passed directly via IPC
@@ -1339,7 +1333,7 @@ class Formatters:
         # if context_list is None:
         #    return args
 
-        if self.subThreadTest(mod_id) == True and len(context_list) > 0:
+        if self.subThreadTest(mod_id) and len(context_list) > 0:
             instance_enum = self.subThreadModuleFirstCap(mod_id) + "AcInstanceId"
             d = self.subThreadDir(mod_id)
             file = os.path.join(d, mod_id + "_ac_pub.h")
@@ -1388,7 +1382,7 @@ class Formatters:
         Changes the STRING to a U8 for use as U8 array.
         Changes the SCLK to ModArgSclk struct type of U32, U16.
         """
-        new_args = list()
+        new_args = []
         for arg in args:
             id, type, comment, array_max, array_len, range_list, enum_type_list = arg[
                 0:7

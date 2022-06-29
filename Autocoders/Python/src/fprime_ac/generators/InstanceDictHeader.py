@@ -52,7 +52,7 @@ class InstanceDictHeader:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args, topology_model):
         """

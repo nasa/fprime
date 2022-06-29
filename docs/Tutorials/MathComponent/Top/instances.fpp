@@ -35,12 +35,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup1Comp(
-        FW_OPTIONAL_NAME("rateGroup1Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup1Comp.configure(
         ConfigObjects::rateGroup1Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup1Comp::context)
     );
@@ -55,12 +54,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup2Comp(
-        FW_OPTIONAL_NAME("rateGroup2Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup2Comp.configure(
         ConfigObjects::rateGroup2Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup2Comp::context)
     );
@@ -75,12 +73,11 @@ module Ref {
   {
 
     phase Fpp.ToCpp.Phases.configObjects """
-    NATIVE_UINT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     """
 
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::ActiveRateGroup rateGroup3Comp(
-        FW_OPTIONAL_NAME("rateGroup3Comp"),
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroup3Comp.configure(
         ConfigObjects::rateGroup3Comp::context,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroup3Comp::context)
     );
@@ -341,10 +338,9 @@ module Ref {
     phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
     """
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::RateGroupDriver rateGroupDriverComp(
-        FW_OPTIONAL_NAME("rateGroupDriverComp"),
+    
+    phase Fpp.ToCpp.Phases.configComponents """
+    rateGroupDriverComp.configure(
         ConfigObjects::rateGroupDriverComp::rgDivs,
         FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rateGroupDriverComp::rgDivs)
     );

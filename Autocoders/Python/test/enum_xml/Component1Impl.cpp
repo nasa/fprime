@@ -19,11 +19,11 @@ namespace Example {
     }
 
     void ExampleEnumImpl::ExEnumIn_handler(NATIVE_INT_TYPE portNum, const Example::Enum1& enum1, const Example::Serial1& serial1) {
-        printf("%s Invoked ExEnumIn_handler(%d, %d, %d, %d, %d);\n", this->getObjName(), portNum, static_cast<FwEnumStoreType>(enum1.e), serial1.getMember1(), serial1.getMember2(), static_cast<FwEnumStoreType>(serial1.getMember3().e));
+        printf("%s Invoked ExEnumIn_handler(%d, %d, %d, %d, %d);\n", FW_OPTIONAL_NAME(this->getObjName()), portNum, static_cast<FwEnumStoreType>(enum1.e), serial1.getMember1(), serial1.getMember2(), static_cast<FwEnumStoreType>(serial1.getMember3().e));
         this->EnumOut_out(0, enum1, serial1);
     }
 
     void ExampleEnumImpl::EnumIn_handler(NATIVE_INT_TYPE portNum, const Example::Enum1& enum1, const Example::Serial1& serial1) {
-        printf("%s Invoked EnumIn_handler(%d, %d, %d, %d, %d);\n", this->getObjName(), portNum, static_cast<FwEnumStoreType>(enum1.e), serial1.getMember1(), serial1.getMember2(), static_cast<FwEnumStoreType>(serial1.getMember3().e));
+        printf("%s Invoked EnumIn_handler(%d, %d, %d, %d, %d);\n", FW_OPTIONAL_NAME(this->getObjName()), portNum, static_cast<FwEnumStoreType>(enum1.e), serial1.getMember1(), serial1.getMember2(), static_cast<FwEnumStoreType>(serial1.getMember3().e));
     }
 };

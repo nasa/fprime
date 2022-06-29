@@ -14,7 +14,6 @@ set_property(GLOBAL PROPERTY FPRIME_MODULES)
 # variables, the path handling is setup in between.
 include(options)
 include(settings)
-include(profile/profile)
 # Sets up the build locations of the CMake system. This becomes the root of files
 # being searched for in the cmake system.
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}")
@@ -24,6 +23,7 @@ message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
 include(required)
+include(prescan) #Must come after required if tools detection is to be inherited
 include(platform/platform)
 # Include the support files that provide all the functions, utilities, and other
 # hidden items in the CMake system. Typically a user should not interact with any
@@ -61,30 +61,27 @@ endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
 include_directories("${FPRIME_CONFIG_DIR}")
 
-# Two type of builds are supported: fprime, and fprime-locs
-if (FPRIME_FPP_LOCS_BUILD)
-    register_fprime_target(target/fpp-locs)
+# To prescan, either we register the prescan target or we run the prescan CMake
+if (DEFINED FPRIME_PRESCAN)
+    register_fprime_target_helper(target/prescan FPRIME_TARGET_LIST)
 else()
-    file(REMOVE "${CMAKE_BINARY_DIR}/hashes.txt")
-    message(STATUS "[autocode/fpp] Generating fpp locator file")
-    # Using this just to get the target generation functions
-    include(target/fpp-locs)
-    generate_fpp_locs()
-    message(STATUS "[autocode/fpp] Generating fpp locator file -- DONE")
-
-    register_fprime_target(target/noop)
-    register_fprime_target(target/version)
-    register_fprime_target(target/build)
-    register_fprime_target(target/dict)
-    register_fprime_target(target/install)
-    register_fprime_ut_target(target/ut)
-
-    # fprime-util support targets
-    if (FPRIME_ENABLE_UTIL_TARGETS)
-        register_fprime_target(target/impl)
-        register_fprime_ut_target(target/check)
-        register_fprime_ut_target(target/check_leak)
-        register_fprime_ut_target(target/coverage)
-        register_fprime_ut_target(target/testimpl)
-    endif()
+    perform_prescan()
 endif()
+
+# FPP locations must come at the front of the list, then build
+register_fprime_target(target/fpp_locs)
+register_fprime_target(target/build)
+register_fprime_target(target/noop)
+register_fprime_target(target/version)
+register_fprime_target(target/dict)
+register_fprime_target(target/install)
+register_fprime_ut_target(target/ut)
+
+if (FPRIME_ENABLE_UTIL_TARGETS)
+    register_fprime_target(target/impl)
+    register_fprime_ut_target(target/check)
+    register_fprime_ut_target(target/check_leak)
+    register_fprime_ut_target(target/testimpl)
+endif()
+
+

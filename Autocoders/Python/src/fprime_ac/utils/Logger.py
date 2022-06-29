@@ -94,7 +94,7 @@ def connectDebugLogger(
     # Create handlers here
     #
     # stdout for testing
-    if stdout_enable == True:
+    if stdout_enable:
         std_output = logging.StreamHandler(sys.stdout)
         std_output.setFormatter(formatter)
         logger.addHandler(std_output)

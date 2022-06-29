@@ -15,10 +15,11 @@ jobs:
   MacOS-Framework:
     runs-on: macos-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
     # Archive the outputs
@@ -33,10 +34,11 @@ jobs:
   MacOS-Ref:
     runs-on: macos-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
     # Archive the outputs
@@ -51,10 +53,11 @@ jobs:
   MacOS-Integration:
     runs-on: macos-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: Install coreutils
       run: brew install coreutils
     - name: F prime CI step

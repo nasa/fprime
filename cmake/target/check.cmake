@@ -10,11 +10,11 @@
 #
 # - **TARGET_NAME:** target name to be generated
 ####
-function(add_global_target TARGET_NAME)
+function(check_add_global_target TARGET_NAME)
     add_custom_target(${TARGET_NAME}
             COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
             COMMAND ${CMAKE_CTEST_COMMAND})
-endfunction(add_global_target)
+endfunction(check_add_global_target)
 
 ####
 # Function `add_deployment_target`:
@@ -27,7 +27,7 @@ endfunction(add_global_target)
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 # - **FULL_DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
+function(check_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     set(ALL_UTS)
     foreach(DEPENDENCY IN LISTS FULL_DEPENDENCIES)
         get_property(DEPENDENCY_UTS TARGET "${DEPENDENCY}" PROPERTY FPRIME_UTS)
@@ -51,9 +51,11 @@ endfunction()
 # - **SOURCE_FILES:** list of source file inputs
 # - **DEPENDENCIES:** MOD_DEPS input from CMakeLists.txt
 ####
-function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
+function(check_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Protects against multiple calls to fprime_register_ut()
-    if (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
+    if (NOT BUILD_TESTING OR NOT MODULE_TYPE STREQUAL "Unit Test")
+        return()
+    elseif (NOT TARGET ${MODULE_NAME}_${TARGET_NAME})
         add_custom_target(
             "${MODULE_NAME}_${TARGET_NAME}"
             COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} find . -name "*.gcda" -delete
@@ -62,4 +64,4 @@ function(add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     endif()
     add_dependencies("${MODULE_NAME}_check" ${UT_EXE_NAME})
     add_dependencies(check ${UT_EXE_NAME})
-endfunction(add_module_target)
+endfunction(check_add_module_target)

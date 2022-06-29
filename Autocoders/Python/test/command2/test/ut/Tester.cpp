@@ -24,13 +24,8 @@ namespace AcTest {
 
   Tester ::
     Tester() :
-#if FW_OBJECT_NAMES == 1
       TestCommandGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestCommand")
-#else
-      TestCommandGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();

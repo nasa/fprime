@@ -1,16 +1,7 @@
-from lxml import etree
-
-from fprime_ac.parsers import (
-    XmlArrayParser,
-    XmlEnumParser,
-    XmlSerializeParser,
-)
-
-from fprime_ac.utils import (
-    DictTypeConverter,
-)
-
+from fprime_ac.parsers import XmlArrayParser, XmlEnumParser, XmlSerializeParser
+from fprime_ac.utils import DictTypeConverter
 from fprime_ac.utils.buildroot import search_for_file
+from lxml import etree
 
 
 class TopDictGenerator:

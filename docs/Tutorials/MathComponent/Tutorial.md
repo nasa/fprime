@@ -50,6 +50,7 @@
   * <a href="#Running-the-Ref-Deployment_Setting-Parameters">7.4. Setting Parameters</a>
   * <a href="#Running-the-Ref-Deployment_Saving-Parameters">7.5. Saving Parameters</a>
   * <a href="#Running-the-Ref-Deployment_GDS-Logs">7.6. GDS Logs</a>
+* <a href="#Conclusion">8. Conclusion</a>
 
 <a name="Introduction"></a>
 ## 1. Introduction
@@ -101,7 +102,7 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-**Git branch:** This tutorial is designed to work on the branch `release/v3.0.0`.
+**F´ Version:** This tutorial is designed to work with release `v3.0.0`.
 
 Working on this tutorial will modify some files under version control in the
 F Prime git repository.
@@ -109,8 +110,7 @@ Therefore it is a good idea to do this work on a new branch.
 For example:
 
 ```bash
-git checkout release/v3.0.0
-git checkout -b math-tutorial
+git checkout -b math-tutorial v3.0.0
 ```
 
 If you wish, you can save your work by committing to this branch.
@@ -571,7 +571,7 @@ for <a href="#types_add">`Ref/MathTypes`</a>.
 ### 4.3. Build the Stub Implementation
 
 **Run the build:**
-Go into the directory `Ref/MathTypes`.
+Go into the directory `Ref/MathSender`.
 Run the following commands:
 
 ```bash
@@ -757,19 +757,35 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-1. Run the command `fprime-util impl --ut`.
+2. Update Ref/MathSender/CMakeLists.txt:
+Go back to the directory `Ref/MathSender`.
+Add the following lines to `CMakeLists.txt`:
+
+```cmake
+# Register the unit test build
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
+)
+register_fprime_ut()
+```
+
+This code tells the build system how to build
+and run the unit tests.
+
+4. Run `fprime-util generate --ut` to generate the unit test cache.
+
+5. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-1. Move these files to the `test/ut` directory:
+6. Move these files to the `test/ut` directory:
 
-   ```bash
-   mv Tester.* test/ut
-   ```
+```bash
+mv Tester.* test/ut
+```
 
 **Create a stub main.cpp file:**
 Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create a file `main.cpp` with the
-following contents:
+In that directory, create the file `main.cpp` and add the following contents:
 
 ```c++
 #include "Tester.hpp"
@@ -785,22 +801,19 @@ This file is a stub for running tests using the
 Right now there aren't any tests to run; we will add one
 in the next section.
 
-**Update Ref/MathSender/CMakeLists.txt:**
-Go back to the directory `Ref/MathSender`.
-Add the following lines to `CMakeLists.txt`:
+7. Add the new files to the build.
 
+Open `MathSender/CMakeLists.txt` and modify the `UT_SOURCE_FILES` by adding
+your new test files:
 ```cmake
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
 )
 register_fprime_ut()
 ```
-
-This code tells the build system how to build
-and run the unit tests.
 
 **Run the build:**
 Now we can check that the unit test build is working.
@@ -1120,7 +1133,7 @@ and 10.
    This line tells the build system to make the unit test build
    depend on the `STest` build module.
 
-1. Add `#include STest/Random/Random.hpp` to `main.cpp`.
+1. Add `#include "STest/Random/Random.hpp"` to `main.cpp`.
 
 1. Add the following line to the `main` function of `main.cpp`,
    just before the return statement:
@@ -1813,6 +1826,12 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
+Add the following to the top of the `Tester.cpp` file:
+
+```C++
+#define CMD_SEQ 42
+```
+
 Add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
@@ -2017,7 +2036,7 @@ These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
 **Check for unconnected ports:**
-Run the following commands:
+Run the following commands in the `Ref/Top` directory:
 
 ```bash
 fprime-util fpp-check -u unconnected.txt
@@ -2033,14 +2052,13 @@ Those ports will include the ports for the new instances
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
-Inside the block of that definition,
-find the line
-`rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run`.
-After that line, add the line
-
+After the last entry for the `rateGroup1Comp` (rate group 1) add the line:
 ```fpp
-rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
+rateGroup1Comp.RateGroupMemberOut[5] -> mathReceiver.schedIn
 ```
+
+> You might need to change the array index 5 to be one greater than the previous
+`rateGroup1Comp` index. Otherwise you'll get a duplicate connection error.
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
@@ -2289,3 +2307,18 @@ You can also view these logs via the GDS browser interface.
 Click the Logs tab to go the Logs view.
 Select the log you wish to inspect from the drop-down menu.
 By default, there is no log selected.
+
+<a name="Conclusion"></a>
+### 8. Conclusion
+
+The Math Component tutorial has shown us how to create simple types, ports and
+components for our application using the FPP modeling language. We have learned
+how to use `fprime-util` to generate implementation stubs, the build cache, and
+unit tests. We learned how to define our topology and use tools provided by
+F´ to check and visualize the topology. Lastly, we learned how to use the
+ground system to interact with our deployment.
+
+The user is now directed back to the [Tutorials](../README.md) for further
+reading or to the [Cross-Compilation Tutorial](../CrossCompilation/Tutorial.md)
+for instructions on how to cross-compile the Ref application completed in this
+tutorial for the Raspberry Pi.

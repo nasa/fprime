@@ -17,7 +17,7 @@ ACTIVELOGGERIMPL
 ACTIVELOGGERIMPLCFG
 ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
-ACTIVERATEGROUPIMPLCFG
+ACTIVERATEGROUPCFG
 ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 actools
@@ -30,6 +30,9 @@ aeiouy
 afterstatinfo
 agg
 aheared
+alignedallocator
+AlignedAllocator
+ALIGNEDALLOCATOR
 ALLEXTERNALS
 alloc
 Alltypes
@@ -119,6 +122,7 @@ bibtex
 Bies
 bindir
 Bitfields
+bithacks
 bitmaps
 bitset
 ble
@@ -226,6 +230,7 @@ colno
 COLORSTYLE
 colorwheel
 comlogger
+compat
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 commandline
@@ -256,6 +261,8 @@ cplusplus
 CPOL
 cpos
 cpp
+cppreference
+cprogramming
 cpuset
 cpy
 CRCAMPCS
@@ -330,6 +337,7 @@ deque
 deregistration
 deser
 Deserial
+deserializer
 deserialization
 deserialize
 deserialized
@@ -361,6 +369,7 @@ dlog
 dnp
 DNs
 doall
+docblocks
 docbook
 dockerfile
 docset
@@ -388,6 +397,7 @@ doxyindexer
 doxyrules
 doxysearch
 Doxywizard
+dpi
 DPRIVATE
 DPROTECTED
 dropdown
@@ -449,6 +459,7 @@ endianness
 endif
 endl
 endloc
+endmacro
 endswith
 enduml
 ENOENT
@@ -604,12 +615,14 @@ getopt
 getoutput
 getpass
 getpid
+getppid
 getquaternion
 getroot
 getsize
 getsockname
 getstate
 getstatus
+gettempdir
 gettime
 gettimeofday
 getty
@@ -618,6 +631,7 @@ gh
 ghprb
 github
 gjslint
+glibc
 globals
 gmail
 gmtime
@@ -921,6 +935,7 @@ maxsize
 maxspew
 mccabe
 mcomment
+MCT
 mcternan
 mday
 mdbasiccomponents
@@ -1084,6 +1099,7 @@ opcodes
 opendir
 openjdk
 opengroup
+openmct
 openpyxl
 openssl
 oper
@@ -1113,6 +1129,8 @@ outbool
 outdir
 outout
 overridable
+ovr
+ovrTrace
 packetization
 packetize
 packetized
@@ -1145,6 +1163,7 @@ PINGSEND
 pinit
 pkill
 pkts
+placeholders
 plainnat
 plantuml
 plugin
@@ -1166,6 +1185,7 @@ PORTSELECTOR
 PORTSOUT
 posix
 ppandian
+ppid
 pport
 PQueue
 Prashanth
@@ -1182,6 +1202,7 @@ PRId
 printables
 printf
 println
+prioritization
 PRIu
 prm
 PRMDB
@@ -1236,6 +1257,7 @@ QEvent
 qhelpgenerator
 QHG
 qhp
+QNX
 qsf
 qtest
 qthelpproject
@@ -1345,6 +1367,7 @@ scons
 scp
 scrollbars
 sdd
+seander
 searchdata
 SEARCHENGINE
 segfault
@@ -1378,6 +1401,7 @@ settime
 settingsini
 settype
 setuptools
+setvalue
 setw
 sev
 sface
@@ -1418,6 +1442,7 @@ sometask
 somevalue
 sommercharles
 soudry
+sourced
 SOURCEDIR
 sourceforge
 Sourcetrail
@@ -1512,6 +1537,7 @@ synchronicity
 synopsys
 sys
 SYSFS
+sysinfo
 systemd
 tabbedwidths
 tabccitt
@@ -1700,6 +1726,7 @@ upl
 upto
 URI
 url
+urllib
 usb
 usec
 usecond
@@ -1727,6 +1754,7 @@ VFILE
 vfs
 vhd
 vhdl
+VID
 viewforum
 virt
 virtualbox
@@ -1762,6 +1790,7 @@ whitelist
 wiki
 wikipedia
 wildcards
+WLE
 Wno
 Wnon
 workaround

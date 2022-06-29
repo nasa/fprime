@@ -35,20 +35,6 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   bool LinuxSerialDriverComponentImpl::open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, bool block) {
-
-      /*
-       Their config:
-
-       2-wire UART on BLSP2 is accessible via /dev/ttyHS0
-       2-wire UART on BLSP9 is accessible via /dev/ttyHS3
-       4-wire UART on BLSP6 is accessible via /dev/ttyHS2
-
-       Our config:
-       tty-1 bam-2 2-wire
-       tty-2 bam-6 4-wire
-       tty-3 bam-9 4-wire
-       */
-
       // TODO remove printf
 
       NATIVE_INT_TYPE fd;
@@ -414,7 +400,7 @@ namespace Drv {
   }
 
   void LinuxSerialDriverComponentImpl ::
-    startReadThread(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE stackSize, NATIVE_INT_TYPE cpuAffinity) {
+    startReadThread(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE stackSize, NATIVE_UINT_TYPE cpuAffinity) {
 
       Os::TaskString task("SerReader");
       Os::Task::TaskStatus stat = this->m_readTask.start(task, serialReadTaskEntry, this, priority, stackSize, cpuAffinity);

@@ -12,12 +12,9 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Os
+  version
 )
 register_fprime_module()
-if (NOT FPRIME_FPP_LOCS_BUILD)
-    get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    add_dependencies(${MODULE_NAME} version)
-endif()
 ### UTs ###
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
@@ -25,6 +22,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
+get_module_name("${CMAKE_CURRENT_LIST_DIR}")
 # Implementation requires switch cascade
 if (TARGET ${MODULE_NAME}_ut_exe)
     target_compile_options(${MODULE_NAME}_ut_exe PRIVATE -Wno-implicit-fallthrough)

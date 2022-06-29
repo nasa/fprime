@@ -10,33 +10,70 @@
 //
 // ======================================================================
 
+#ifndef SVC_FPRIME_PROTOCOL_HPP
+#define SVC_FPRIME_PROTOCOL_HPP
+
 #include <Svc/FramingProtocol/FramingProtocol.hpp>
 #include <Svc/FramingProtocol/DeframingProtocol.hpp>
-#ifndef FPRIMEPROTOCOL_HPP
-#define FPRIMEPROTOCOL_HPP
-
-#define FP_FRAME_TOKEN_TYPE U32
-#define FP_FRAME_HEADER_SIZE (sizeof(FP_FRAME_TOKEN_TYPE) * 2)
 
 namespace Svc {
-/**
- * \brief class implementing the fprime serialization protocol
- */
-class FprimeFraming: public FramingProtocol {
-  public:
-    static const FP_FRAME_TOKEN_TYPE START_WORD;
-    FprimeFraming();
 
-    void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type);
-};
+  // Definitions for the F Prime frame header
+  namespace FpFrameHeader {
 
-class FprimeDeframing : public DeframingProtocol {
-  public:
-    FprimeDeframing();
+    //! Token type for F Prime frame header
+    typedef U32 TokenType;
 
-    bool validate(Types::CircularBuffer& buffer, U32 size);
+    enum {
+      //! Header size for F Prime frame header
+      SIZE = sizeof(TokenType) * 2
+    };
 
-    DeframingStatus deframe(Types::CircularBuffer& buffer, U32& needed);
-};
-};
-#endif  // FPRIMEPROTOCOL_HPP
+    //! The start word for F Prime framing
+    const TokenType START_WORD = static_cast<TokenType>(0xdeadbeef);
+
+  }
+
+  //! \brief Implements the F Prime framing protocol
+  class FprimeFraming: public FramingProtocol {
+    public:
+
+      //! Constructor
+      FprimeFraming();
+
+      //! Implements the frame method
+      void frame(
+          const U8* const data, //!< The data
+          const U32 size, //!< The data size in bytes
+          Fw::ComPacket::ComPacketType packet_type //!< The packet type
+      ) override;
+
+  };
+
+  //! \brief Implements the F Prime deframing protocol
+  class FprimeDeframing : public DeframingProtocol {
+    public:
+
+      //! Constructor
+      FprimeDeframing();
+
+      //! Validates data against the stored hash value
+      //! 1. Computes the hash value V of bytes [0,size-1] in the circular buffer
+      //! 2. Compares V against bytes [size, size + HASH_DIGEST_LENGTH - 1] of
+      //!    the circular buffer, which are expected to be the stored hash value.
+      bool validate(
+          Types::CircularBuffer& buffer, //!< The circular buffer
+          U32 size //!< The data size in bytes
+      );
+
+      //! Implements the deframe method
+      //! \return Status
+      DeframingStatus deframe(
+          Types::CircularBuffer& buffer, //!< The circular buffer
+          U32& needed //!< The number of bytes needed, updated by the caller
+      ) override;
+
+  };
+
+}
+#endif  // SVC_FPRIME_PROTOCOL_HPP

@@ -87,6 +87,11 @@ namespace MockTypes {
              */
             Types::CircularBuffer& getTestBuffer();
 
+            /**
+             * Check allocated and free sizes
+             */
+            void checkSizes() const;
+
         private:
             NATIVE_UINT_TYPE m_remaining_size;
             NATIVE_UINT_TYPE m_random_size;

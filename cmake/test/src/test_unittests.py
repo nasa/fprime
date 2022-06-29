@@ -7,14 +7,15 @@
 import platform
 import tempfile
 
-import cmake
 import settings
+
+import cmake
 
 _ = cmake.get_build(
     "UT_BUILD",
     settings.REF_APP_PATH,
     cmake_arguments={"BUILD_TESTING": "ON"},
-    make_targets=["Ref", "ut"],
+    make_targets=["Ref", "ut_exe"],
     install_directory=tempfile.mkdtemp(),
 )
 MODULES = settings.FRAMEWORK_MODULES + settings.STANDARD_MODULES

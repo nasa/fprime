@@ -15,10 +15,11 @@ jobs:
   Framework:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Framework.bash
     # Archive the outputs
@@ -33,10 +34,11 @@ jobs:
   Ref:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: F prime CI step
       run: ./ci/tests/Ref.bash
     # Archive the outputs
@@ -48,35 +50,18 @@ jobs:
         path: ci-logs.tar.gz
         retention-days: 5
 
-  RPI:
-    runs-on: ubuntu-latest
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
-    - name: Install RPI Toolchain
-      run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
-    - name: F prime CI step
-      run: ./ci/tests/RPI.bash
-    # Archive the outputs
-    - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
-      if: always()
-      with:
-        name: ci-rpi-logs
-        path: ci-logs.tar.gz
-        retention-days: 5
-
   Integration:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
-    - name: Setup Dependencies
-      run: sudo apt-get install valgrind
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
+    - name: Setup Valgrind
+      run: |
+           sudo apt-get update
+           sudo apt-get install valgrind
     - name: F prime CI step
       run: ./ci/tests/30-ints.bash
     # Archive the outputs
@@ -91,10 +76,11 @@ jobs:
   Quality:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: Setup Dependencies
       run: |
         sudo apt-get update
@@ -112,10 +98,11 @@ jobs:
   CMake:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - name: Install fprime tools
-      run: pip3 install fprime-tools fprime-gds
+    - name: "Checkout F´ Repository"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: ./.github/actions/setup
     - name: CMake Tests
       working-directory: ./cmake/test
       run: pytest

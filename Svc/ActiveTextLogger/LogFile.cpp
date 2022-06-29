@@ -10,6 +10,7 @@
 #include <limits>
 #include <cstring>
 #include <cstdio>
+#include <Fw/Types/StringUtils.hpp>
 
 
 namespace Svc {
@@ -88,7 +89,7 @@ namespace Svc {
         }
 
         // If file name is too large, return failure:
-        U32 fileNameSize = strnlen(fileName, Fw::String::STRING_SIZE);
+        U32 fileNameSize = Fw::StringUtils::string_length(fileName, Fw::String::STRING_SIZE);
         if (fileNameSize == Fw::String::STRING_SIZE) {
             return false;
         }

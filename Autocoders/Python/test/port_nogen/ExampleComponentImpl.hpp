@@ -14,11 +14,7 @@ namespace ExampleComponents {
 
     class ExampleComponentImpl: public ExampleComponentBase {
         public:
-#if FW_OBJECT_NAMES == 1
             ExampleComponentImpl(const char* name);
-#else
-            ExampleComponentImpl();
-#endif
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0);
             virtual ~ExampleComponentImpl();
         protected:

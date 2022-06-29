@@ -13,11 +13,7 @@
 
 class TestCommandSourceImpl: public Cmd::CommandTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestCommandSourceImpl(const char* compName);
-#else
-        TestCommandSourceImpl();
-#endif
         virtual ~TestCommandSourceImpl();
         void init();
         void test_TEST_CMD_1(I32 arg1, I32 arg2);

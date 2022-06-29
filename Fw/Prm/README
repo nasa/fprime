@@ -4,4 +4,3 @@ PrmPortAi.xml - XML Definition of a telemetry port. Used by the code generator w
 PrmBuffer.hpp(.cpp) - C++ definition of a telemetry buffer. The buffer holds a serialized version of the telemetry item value
 PrmString.hpp(.cpp) - C++ definition of a string telemetry type. Used by the code generator when a string telemetry type is declared.
 PrmPacket.hpp(.cpp) - C++ definition of a telemetry packet type. Derived from ComPacket and is used for sending telemetry to ground software or a test interface
-PrmModule.mdxml - MagicDraw project file that describes the parameter interface

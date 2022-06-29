@@ -16,11 +16,10 @@
 #
 # Python standard modules
 #
+import configparser
 import logging
 import os
 import sys
-
-from lxml import etree, isoschematron
 
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
@@ -32,8 +31,7 @@ from fprime_ac.utils.exceptions import (
     FprimeRngXmlValidationException,
     FprimeXmlException,
 )
-
-import configparser
+from lxml import etree, isoschematron
 
 # For Python determination
 
@@ -74,7 +72,7 @@ class XmlComponentParser:
         )
 
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
 
@@ -293,7 +291,7 @@ class XmlComponentParser:
                             sys.exit(-1)
 
                     # convert text bases to integers
-                    opcode_base_list = list()
+                    opcode_base_list = []
                     for base in opcode_bases:
                         opcode_base_list.append(int(base, base=0))
                 else:
@@ -309,7 +307,7 @@ class XmlComponentParser:
                     m = command.attrib["mnemonic"]
                     o = command.attrib["opcode"]
                     # check to see if there is a base opcode specified
-                    opcode_list = list()
+                    opcode_list = []
                     if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
@@ -429,7 +427,7 @@ class XmlComponentParser:
                             sys.exit(-1)
 
                     # convert text bases to integers
-                    telemetry_base_list = list()
+                    telemetry_base_list = []
                     for base in telemetry_bases:
                         telemetry_base_list.append(int(base, base=0))
                 else:
@@ -444,7 +442,7 @@ class XmlComponentParser:
                         sys.exit(-1)
                     i = channel.attrib["id"]
                     # check to see if there is a base id specified
-                    id_list = list()
+                    id_list = []
                     if telemetry_bases is not None:
                         # walk through opcode base list
                         for base in telemetry_base_list:
@@ -496,7 +494,7 @@ class XmlComponentParser:
                         f = None
                     if "update" in list(channel.attrib.keys()):
                         u = channel.attrib["update"]
-                        if u != "always" and u != "on_change":
+                        if u not in ("always", "on_change"):
                             PRINT.info(
                                 '%s: Invalid update %s in channel %s. Should be "always" or "on_change"'
                                 % (xml_file, u, n)
@@ -584,7 +582,7 @@ class XmlComponentParser:
                             sys.exit(-1)
 
                     # convert text bases to integers
-                    event_base_list = list()
+                    event_base_list = []
                     for base in event_bases:
                         event_base_list.append(int(base, base=0))
 
@@ -600,7 +598,7 @@ class XmlComponentParser:
                         sys.exit(-1)
                     i = event.attrib["id"]
                     # check to see if there is a base id specified
-                    id_list = list()
+                    id_list = []
                     if event_bases is not None:
                         # walk through opcode base list
                         for base in event_base_list:
@@ -736,14 +734,14 @@ class XmlComponentParser:
                             sys.exit(-1)
 
                     # convert text bases to integers
-                    parameter_base_list = list()
+                    parameter_base_list = []
                     for base in parameter_bases:
                         parameter_base_list.append(int(base, base=0))
                 else:
                     parameter_bases = None
 
                 # see if parameter command opcode base is specified
-                opcode_base_list = list()
+                opcode_base_list = []
                 if "opcode_base" in list(comp_tag.attrib.keys()):
                     opcode_base = self.__eval_var(
                         constants_file, "Component", comp_tag.attrib["opcode_base"]
@@ -775,7 +773,7 @@ class XmlComponentParser:
                         sys.exit(-1)
                     i = parameter.attrib["id"]
                     # check to see if there is a base id specified
-                    parameter_id_list = list()
+                    parameter_id_list = []
                     if parameter_bases is not None:
                         for base in parameter_base_list:
                             parameter_id_list.append("0x%X" % (int(i, base=0) + base))
@@ -786,7 +784,7 @@ class XmlComponentParser:
                     d = parameter.attrib["data_type"]
 
                     setop = parameter.attrib["set_opcode"]
-                    set_opcode_list = list()
+                    set_opcode_list = []
                     if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
@@ -795,7 +793,7 @@ class XmlComponentParser:
                         set_opcode_list.append(setop)
 
                     saveop = parameter.attrib["save_opcode"]
-                    save_opcode_list = list()
+                    save_opcode_list = []
                     if opcode_bases is not None:
                         # walk through opcode base list
                         for base in opcode_base_list:
@@ -1054,7 +1052,7 @@ class XmlComponentParser:
             ## Ports Missing: Aborting
             else:
                 for port, value in cmd_or_param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
@@ -1077,7 +1075,7 @@ class XmlComponentParser:
             ## Ports Missing: Abort
             else:
                 for port, value in param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
@@ -1642,7 +1640,7 @@ class Channel:
         self.__limits = limits
         self.__comment = comment
         # A list of unit conversions for each channel
-        self.__units = list()
+        self.__units = []
 
     def get_ids(self):
         return self.__ids

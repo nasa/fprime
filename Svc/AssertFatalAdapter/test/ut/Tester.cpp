@@ -22,14 +22,7 @@ namespace Svc {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-    Tester::Tester() :
-#if FW_OBJECT_NAMES == 1
-                    AssertFatalAdapterGTestBase("Tester", MAX_HISTORY_SIZE), component(
-                            "AssertFatalAdapter")
-#else
-    AssertFatalAdapterGTestBase(MAX_HISTORY_SIZE),
-    component()
-#endif
+    Tester::Tester() : AssertFatalAdapterGTestBase("Tester", MAX_HISTORY_SIZE), component( "AssertFatalAdapter")
     {
         this->initComponents();
         this->connectPorts();

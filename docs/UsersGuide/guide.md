@@ -53,9 +53,12 @@ This section is divided into three sub-sections:
 - F´ Best Practices: helpful patterns when developing F´ software
     - [F´ Development Process](./best/development-practice.md)
     - [Application, Manager, Driver Pattern](./best/app-man-drv.md)
+    - [Ground Interface](./best/ground-interface.md)
     - [Rate Groups and Timeliness](./best/rate-group.md)
+    - [Dynamic Memory and Buffer Management](./best/dynamic-memory.md)
     - [A Quick Look at the Hub Pattern](./best/hub-pattern.md)
     - [Documenting F´ Projects](./best/documentation.md)
+    - [Code and Style Guidelines](./dev/code-style.md)
 - F´ Ground Data System Tools (GDS)
     - [A Brief Guide to the F´ Ground Data System](./gds/gds-introduction.md)
     - [The Discerning User's Guide to the F´ GDS CLI](./gds/gds-cli.md)
@@ -77,7 +80,6 @@ This section is divided into three sub-sections:
     - [F´ On Baremetal and Multi-Core Systems](./dev/baremetal-multicore.md)
     - [Configuring an IDE for Use With F´](./dev/configure-ide.md)
     - [OS Layer Description](./dev/os-docs.md)
-    - [Magic Draw Support (Deprecated)](./dev/magicdraw.md)
 - API Documentation
     - [GDS CLI Design](./dev/gds-cli-dev.md)
     - [C++ Documentation](./api/c++/html/index.html)
