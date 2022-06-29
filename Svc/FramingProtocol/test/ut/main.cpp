@@ -157,7 +157,7 @@ TEST(Framing, FilePacket) {
 }
 
 TEST(Framing, UnknownPacket) {
-  COMMENT("Apply framing to a packet of unkown type");
+  COMMENT("Apply framing to a packet of unknown type");
   REQUIREMENT("Svc-FramingProtocol-001");
   REQUIREMENT("Svc-FramingProtocol-003");
   Svc::FramingTester tester(Fw::ComPacket::FW_PACKET_UNKNOWN);
