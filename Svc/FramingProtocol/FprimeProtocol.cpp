@@ -128,7 +128,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // That causes issues in routing; adjust size.
     FW_ASSERT(buffer.getSize() >= size);
     buffer.setSize(size);
-    ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
+    status = ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
