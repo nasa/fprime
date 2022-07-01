@@ -190,15 +190,13 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
 
             # SAVE Command header
-            inst = 0
-            for opcode in obj.get_save_opcodes():
+            for inst, opcode in enumerate(obj.get_save_opcodes()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
                 c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp2[inst], "commandHeaderVisit")
-                inst += 1
 
     def DictBodyVisit(self, obj):
         """
@@ -206,8 +204,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         @param obj: the instance of the command model to operation on.
         """
         if type(obj) is Command.Command:
-            inst = 0
-            for opcode in obj.get_opcodes():
+            for inst, opcode in enumerate(obj.get_opcodes()):
                 c = CommandBody.CommandBody()
                 # only add the suffix if there is more than one opcode per command
                 if len(obj.get_opcodes()) > 1:
@@ -239,10 +236,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     )
                 self._writeTmpl(c, self.__fp1[inst], "commandBodyVisit")
                 self.__fp1[inst].close()
-                inst += 1
         if type(obj) is Parameter.Parameter:
-            inst = 0
-            for opcode in obj.get_set_opcodes():
+            for inst, opcode in enumerate(obj.get_set_opcodes()):
                 # Set Command
                 c = CommandBody.CommandBody()
                 if len(obj.get_set_opcodes()) > 1:
@@ -271,10 +266,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.arglist.append((obj.get_name(), obj.get_comment(), type_string))
                 self._writeTmpl(c, self.__fp1[inst], "commandBodyVisit")
                 self.__fp1[inst].close()
-                inst += 1
 
-            inst = 0
-            for opcode in obj.get_save_opcodes():
+            for inst, opcode in enumerate(obj.get_save_opcodes()):
                 # Save Command
                 c = CommandBody.CommandBody()
                 if len(obj.get_save_opcodes()) > 1:
@@ -290,4 +283,3 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
 
                 self._writeTmpl(c, self.__fp2[inst], "commandBodyVisit")
                 self.__fp2[inst].close()
-                inst += 1
