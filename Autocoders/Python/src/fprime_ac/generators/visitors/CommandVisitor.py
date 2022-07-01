@@ -112,10 +112,8 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp1.append(fd)
             else:
-                inst = 0
-                for opcode in obj.get_opcodes():
+                for inst, opcode in enumerate(obj.get_opcodes()):
                     pyfile = "%s/%s_%d.py" % (output_dir, obj.get_mnemonic(), inst)
-                    inst += 1
                     DEBUG.info("Open file: %s" % pyfile)
                     fd = open(pyfile, "w")
                     if fd is None:
@@ -144,8 +142,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise Exception("Could not open %s file." % pyfile)
                 self.__fp2.append(fd)
             else:
-                inst = 0
-                for opcode in obj.get_set_opcodes():
+                for inst, opcode in enumerate(obj.get_set_opcodes()):
                     pyfile = "%s/%s_%d_PRM_SET.py" % (output_dir, self.__stem, inst)
                     DEBUG.info("Open file: %s" % pyfile)
                     fd = open(pyfile, "w")
@@ -160,7 +157,6 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     if fd is None:
                         raise Exception("Could not open %s file." % pyfile)
                     self.__fp2.append(fd)
-                    inst += 1
                     DEBUG.info("Completed %s open" % pyfile)
 
         else:
@@ -175,27 +171,23 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
         @param obj: the instance of the command model to visit.
         """
         if type(obj) is Command.Command:
-            inst = 0
-            for opcode in obj.get_opcodes():
+            for inst, opcode in enumerate(obj.get_opcodes()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
                 c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
-                inst += 1
 
         elif type(obj) is Parameter.Parameter:
             # SET Command header
-            inst = 0
-            for opcode in obj.get_set_opcodes():
+            for inst, opcode in enumerate(obj.get_set_opcodes()):
                 c = CommandHeader.CommandHeader()
                 d = datetime.datetime.now()
                 c.date = d.strftime("%A, %d %B %Y")
                 c.user = getuser()
                 c.source = obj.get_xml_filename()
                 self._writeTmpl(c, self.__fp1[inst], "commandHeaderVisit")
-                inst += 1
 
             # SAVE Command header
             inst = 0
