@@ -106,7 +106,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             self.__fp1 = []
 
             if len(obj.get_opcodes()) == 1:
-                pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
+                pyfile = f"{output_dir}/{obj.get_mnemonic()}.py"
                 fd = open(pyfile, "w")
                 if fd is None:
                     raise Exception("Could not open %s file." % pyfile)

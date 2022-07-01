@@ -435,10 +435,10 @@ class Packet:
                 print("Run or Sample Period (in hz. only): %f" % tlm_period)
 
             if self.m_freq is not None:
-                print("Packet frequency (Hz.): " + str(self.m_freq))
+                print(f"Packet frequency (Hz.): {str(self.m_freq)}")
 
             if self.m_offset is not None:
-                print("Packet offset: " + str(self.m_offset))
+                print(f"Packet offset: {str(self.m_offset)}")
 
             print(
                 "packet size in bits: "

@@ -97,7 +97,7 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         self.__fp = []
 
         if len(obj.get_ids()) == 1:
-            pyfile = "{}/{}.py".format(output_dir, obj.get_name())
+            pyfile = f"{output_dir}/{obj.get_name()}.py"
             fd = open(pyfile, "w")
             if fd is None:
                 raise Exception("Could not open %s file." % pyfile)
