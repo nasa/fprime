@@ -196,9 +196,8 @@ class InstEventWriter(AbstractDictWriter.AbstractDictWriter):
 
             c.arglist = []
             c.ser_import_list = []
-            arg_num = 0
-
-            for arg_obj in obj.get_args():
+            
+            for arg_num, arg_obj in enumerate(obj.get_args()):
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
@@ -230,6 +229,5 @@ class InstEventWriter(AbstractDictWriter.AbstractDictWriter):
                         c.format_string = format_string
 
                 c.arglist.append((n, d, type_string))
-                arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyWrite")
             self.__fp[fname].close()
