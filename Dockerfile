@@ -67,3 +67,4 @@ RUN git config --global --add safe.directory /usr/src
 =======
 >>>>>>> feat: commit build --ut build artifacts and remove test bash script dependency
 COPY . .
+RUN pip install -r "/usr/src/requirements.txt"
