@@ -388,6 +388,7 @@ horizontal arrows represent asynchronous port invocations.
 
 ```mermaid
 sequenceDiagram
+    activate activeComm
     activeComm->>buffMgr: Allocate frame buffer FB
     buffMgr-->>activeComm: Return FB
     activeComm->>activeComm: Fill FB with framed data
@@ -396,14 +397,17 @@ sequenceDiagram
     buffMgr-->>deframer: Return PB
     deframer->>deframer: Deframe FB into PB
     deframer->>deframer: Copy PB into a command packet C
-    deframer-)+cmdDisp: Send C [comOut]
+    deframer-)cmdDisp: Send C [comOut]
     deframer->>buffMgr: Deallocation PB [bufferDeallocate]
     buffMgr-->>deframer: 
     deframer->>buffMgr: Deallocation FB [framedDeallocate]
     buffMgr-->>deframer: 
     deframer-->>activeComm: 
-    cmdDisp->>-deframer: Send cmd response [cmdResponseIn]
+    deactivate  activeComm 
+    activate cmdDisp
+    cmdDisp->>deframer: Send cmd response [cmdResponseIn]
     deframer-->>cmdDisp: 
+    deactivate cmdDisp
 ```
 
 **Sending a file packet:**
