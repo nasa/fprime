@@ -410,7 +410,26 @@ sequenceDiagram
 The following sequence diagram shows what happens when `activeComm`
 sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
-![Active byte stream driver, file packet](img/sequence-diagrams/active-file-packet.png)
+```mermaid
+sequenceDiagram
+    activate activeComm
+    activeComm->>buffMgr: Allocate frame buffer FB
+    buffMgr-->>activeComm: Return FB
+    activeComm->>activeComm: Fill FB with framed data
+    activeComm->>deframer: Send FB [framedIn]
+    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
+    buffMgr-->>deframer: Return PB
+    deframer->>deframer: Deframe FB into PB
+    deframer-)fileUplink: Send PB [bufferOut]
+    deframer->>buffMgr: Deallocate FB [framedDeallocate]
+    buffMgr-->>deframer: 
+    deframer-->>activeComm: 
+    deactivate activeComm
+    activate fileUplink
+    fileUplink->>-buffMgr: Deallocate PB
+    buffMgr-->>fileUplink: 
+
+```
 
 #### 6.2.2. Passive Byte Stream Driver
 
