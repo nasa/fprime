@@ -129,7 +129,13 @@ See <a href="#dpi-impl">below</a> for a description of how `Deframer` implements
 
 Here is a class diagram for `Deframer`:
 
-![classdiagram](./img/class_diagram_deframer.png)
+```mermaid
+classDiagram
+    ObjBase <|-- PassiveComponentBase
+    PassiveComponentBase <|-- DeframerComponentBase
+    DeframerComponentBase <|-- DeframerComponentImpl
+    DeframingProtocolInterface <|-- DeframerComponentImpl
+```
 
 ### 4.4. State
 
