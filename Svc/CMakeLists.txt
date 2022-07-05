@@ -8,6 +8,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyIf/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sched/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Seq/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComPorts/")
+
 
 # Components
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveLogger/")
@@ -17,6 +19,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferManager/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLogger/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComSplitter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComQueue/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdSequencer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Deframer/")
