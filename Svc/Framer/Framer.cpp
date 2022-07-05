@@ -87,7 +87,6 @@ void Framer ::send(Fw::Buffer& outgoing) {
 }
 
 Fw::Buffer Framer ::allocate(const U32 size) {
-    this->getTime();
     return framedAllocate_out(0, size);
 }
 
