@@ -4,14 +4,14 @@
 ## 1. Introduction
 
 `Svc::Framer` is a passive component.
-It accepts data packets from the service layer components (typically 
+It accepts data packets from the service layer components, typically 
 instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
 or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
 For each packet received, it wraps the packet in a frame
 and sends the frame to a component instance in the driver layer
-(for example, [`Drv::TcpClient`](../../Drv/TcpClient/docs/sdd.md))
-for downlink.
+that performs downlink,
+for example, [`Drv::TcpClient`](../../Drv/TcpClient/docs/sdd.md)).
 
 When instantiating Framer, you must provide an implementation
 of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
@@ -20,7 +20,9 @@ in each frame; typically it is a frame header, a data packet, and a hash value.
 
 ## 2. Assumptions
 
-TODO
+1. For any deployment _D_ that uses an instance _I_ of `Framer`, the
+   deframing protocol used with _I_ matches the downlink protocol of
+   any ground system that receives frames from _I_.
 
 ## 3. Requirements
 
@@ -30,11 +32,21 @@ TODO
 
 ### 4.1. Component Diagram
 
-TODO
+The diagram below shows the `Framer` component.
+
+<div>
+<img src="img/Framer.png" width=700/>
+</div>
 
 ### 4.2. Ports
 
-TODO
+| Kind | Name | Port Type | Usage |
+|------|------|-----------|-------|
+| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets stored in statically-sized Com buffers |
+| `guarded input` | `bufferIn` | `Fw.BufferSend` | Port for receiving data packets stored in dynamically-sized managed bufers |
+| `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on bufferIn, after copying packet data to the frame buffer |
+| `output` | `framedAllocate` | `Fw.BufferGet` | Port for allocating buffers to hold framed data |
+| `output` | `framedOut` | `Drv.ByteStreamSend` | Port for sending buffers containing framed data. Ownership of the buffer passes to the receiver. |
 
 ### 4.3. State
 
