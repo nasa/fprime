@@ -1,7 +1,11 @@
 module Svc {
 
-  @ A component for framing unframed input
+  @ A component for deframing input for transmission to the ground
   passive component Framer {
+
+    # ----------------------------------------------------------------------
+    # General ports 
+    # ----------------------------------------------------------------------
 
     @ Mutexed input communication port
     guarded input port comIn: Fw.Com
@@ -17,6 +21,10 @@ module Svc {
 
     @ Framed output port
     output port framedOut: Drv.ByteStreamSend
+
+    # ----------------------------------------------------------------------
+    # Special ports 
+    # ----------------------------------------------------------------------
 
     @ Time get port
     time get port timeGet

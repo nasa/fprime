@@ -14,7 +14,7 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/Framer/FramerComponentImpl.hpp"
+#include "Svc/Framer/Framer.hpp"
 
 namespace Svc {
 
@@ -95,7 +95,7 @@ class Tester : public FramerGTestBase {
 
     //! The component under test
     //!
-    FramerComponentImpl component;
+    Framer component;
 
     Fw::Buffer m_buffer;
     MockFramer m_mock;

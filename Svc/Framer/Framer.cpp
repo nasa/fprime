@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  FramerComponentImpl.cpp
+// \title  Framer.cpp
 // \author mstarch
 // \brief  cpp file for Framer component implementation class
 //
@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <Svc/Framer/FramerComponentImpl.hpp>
+#include <Svc/Framer/Framer.hpp>
 #include "Fw/Logger/Logger.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 #include "Utils/Hash/Hash.hpp"
@@ -23,16 +23,16 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-FramerComponentImpl ::FramerComponentImpl(const char* const compName) : FramerComponentBase(compName), FramingProtocolInterface(),
+Framer ::Framer(const char* const compName) : FramerComponentBase(compName), FramingProtocolInterface(),
 m_protocol(nullptr) {}
 
-void FramerComponentImpl ::init(const NATIVE_INT_TYPE instance) {
+void Framer ::init(const NATIVE_INT_TYPE instance) {
     FramerComponentBase::init(instance);
 }
 
-FramerComponentImpl ::~FramerComponentImpl() {}
+Framer ::~Framer() {}
 
-void FramerComponentImpl ::setup(FramingProtocol& protocol) {
+void Framer ::setup(FramingProtocol& protocol) {
     FW_ASSERT(m_protocol == nullptr);
     m_protocol = &protocol;
     protocol.setup(*this);
@@ -42,18 +42,18 @@ void FramerComponentImpl ::setup(FramingProtocol& protocol) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FramerComponentImpl ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
+void Framer ::comIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     FW_ASSERT(m_protocol != nullptr);
     m_protocol->frame(data.getBuffAddr(), data.getBuffLength(), Fw::ComPacket::FW_PACKET_UNKNOWN);
 }
 
-void FramerComponentImpl ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void Framer ::bufferIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(m_protocol != nullptr);
     m_protocol->frame(fwBuffer.getData(), fwBuffer.getSize(), Fw::ComPacket::FW_PACKET_FILE);
     bufferDeallocate_out(0, fwBuffer);
 }
 
-void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
+void Framer ::send(Fw::Buffer& outgoing) {
     Drv::SendStatus sendStatus = framedOut_out(0, outgoing);
     if (sendStatus.e != Drv::SendStatus::SEND_OK) {
         // Note: if there is a data sending problem, an EVR likely wouldn't make it down. Log the issue in hopes that
@@ -62,7 +62,7 @@ void FramerComponentImpl ::send(Fw::Buffer& outgoing) {
     }
 }
 
-Fw::Buffer FramerComponentImpl ::allocate(const U32 size) {
+Fw::Buffer Framer ::allocate(const U32 size) {
     this->getTime();
     return framedAllocate_out(0, size);
 }
