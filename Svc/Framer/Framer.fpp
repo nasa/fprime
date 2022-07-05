@@ -7,19 +7,23 @@ module Svc {
     # General ports 
     # ----------------------------------------------------------------------
 
-    @ Mutexed input communication port
+    @ Port for receiving data packets stored in statically-sized
+    @ Com buffers
     guarded input port comIn: Fw.Com
 
-    @ Mutexed input Buffer send port
+    @ Port for receiving data packets stored in dynamically-sized
+    @ managed bufers
     guarded input port bufferIn: Fw.BufferSend
 
-    @ Buffer send output port
+    @ Port for deallocating buffers received on bufferIn, after
+    @ copying packet data to the frame buffer
     output port bufferDeallocate: Fw.BufferSend
 
-    @ Framed allocate output port
+    @ Port for allocating buffers to hold framed data
     output port framedAllocate: Fw.BufferGet
 
-    @ Framed output port
+    @ Port for sending buffers containing framed data. Ownership of the
+    @ buffer passes to the receiver.
     output port framedOut: Drv.ByteStreamSend
 
     # ----------------------------------------------------------------------
