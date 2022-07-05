@@ -1,10 +1,71 @@
 \page SvcFramerComponent Svc::Framer Component
-# Svc::Framer Framer Component
+# Svc::Framer (Passive Component)
 
-The Framer component is used to frame packets for downlink. It translates between the service layer (typically TlmChan, ActiveLogger, and FileDownlink) and the driver layer (Drv), where service typically deals with F´ types and the driver layer deals in streams of bytes. Framer serializes the F´ types into a stream of bytes and adds header/footer information to ensure transmission integrity. As an argument to `setup()` function Framer accepts a reference to a `FramingProtocol` to do the actual header/data/footer serialization. Users may substitute the framing protocol without changing the F´ topology hook-ups. 
+## 1. Introduction
 
-## Usage Examples
-When using Framer component, the manager component (typically a service layer or a generic hub) initiates the transfer of data by calling bufferIn port. The Framer component will perform the serialization per `FramingProtocol` and will transfer the stream via bufferOut port.
+`Svc::Framer` is a passive component.
+It accepts data packets from the service layer components (typically 
+instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
+[`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
+or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
+For each packet received, it wraps the packet in a frame
+and sends the frame to a component instance in the driver layer
+(for example, [`Drv::TcpClient`](../../Drv/TcpClient/docs/sdd.md))
+for downlink.
+
+When instantiating Framer, you must provide an implementation
+of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
+This implementation specifies exactly what is
+in each frame; typically it is a frame header, a data packet, and a hash value.
+
+## 2. Assumptions
+
+TODO
+
+## 3. Requirements
+
+TODO
+
+## 4. Design
+
+### 4.1. Component Diagram
+
+TODO
+
+### 4.2. Ports
+
+TODO
+
+### 4.3. State
+
+TODO
+
+### 4.4. Header File Configuration
+
+TODO
+
+### 4.5. Runtime Setup
+
+TODO
+
+### 4.6. Port Handlers
+
+TODO
+
+### 4.7. Helper Functions
+
+TODO
+
+## 5. Ground Interface
+
+TODO
+
+## 6. Example Uses
+
+When using Framer component, the manager component (typically a service layer 
+or a generic hub) initiates the transfer of data by calling bufferIn port. The 
+Framer component will perform the serialization per `FramingProtocol` and will 
+transfer the stream via bufferOut port.
 
 The following diagram is an example of framer usage with chanTlm and eventLogger:
 
@@ -29,17 +90,17 @@ Fw::Buffer buf; // This could be data from bufferIn port
 downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut
 ```
 
-## Class Diagram
+## 7. Class Diagram
 
 ![classdiagram](./img/class_diagram_framer.png)
 
-## Requirements
+## 8. Requirements
 
 | Name | Description | Validation |
 |---|---|---|
 | TBD | TBD | TBD |
 
-## Change Log
+## 9. Change Log
 
 | Date | Description |
 |---|---|
