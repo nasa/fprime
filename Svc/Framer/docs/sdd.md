@@ -144,10 +144,6 @@ use `Fw::Logger::logMsg` to log an error message.
 Don't send an event report in this case, because downlink is
 apparently not working.
 
-### 4.9. Helper Functions
-
-TODO
-
 ## 5. Ground Interface
 
 TODO
