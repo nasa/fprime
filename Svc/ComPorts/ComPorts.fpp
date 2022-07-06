@@ -1,21 +1,12 @@
-# module Srv {
-#
-#    @ Port that returns buffer
-#    port CommWrite(
-#                     ref comBuffer: Fw.Buffer
-#                   )
-#}
+module Svc {
 
-module Srv {
-
-    enum ComReadStatus {
-        COM_SUCCESS = 0 @< Queue is ready to receive buff
-        COM_FAIL = 1 @< Queue is full
+    enum ComSendStatus {
+        READY = 0 @< Comm is ready to receive buffer
+        FAIL = 1 @< Comm failure on last send
     }
 
-    @ Ports that store and read buffer
-    port ComRead(
-                    ref comBuffer: Fw.Buffer @< Buffer that contains data
-                    ref comStatus: ComReadStatus @< Status of queue
-                )
+    @ Port that indicates status of communication
+    port ComStatus(
+                    ref ComStatus: ComSendStatus @< Status of communication state
+    )
 }
