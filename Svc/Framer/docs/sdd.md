@@ -37,11 +37,11 @@ SVC-FRAMER-002 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, 
 
 The diagram below shows the `Framer` component.
 
-<div>
 <center>
+<div>
 <img src="img/Framer.png" width=700/>
-</center>
 </div>
+</center>
 
 ### 4.2. Ports
 
