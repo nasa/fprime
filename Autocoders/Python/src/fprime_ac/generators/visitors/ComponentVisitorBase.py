@@ -380,7 +380,7 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                     return f"CMD_{mnemonic.upper()}"
                 else:
                     return [
-                        f"CMD_{mnemonic.upper()}" + "_%d" % inst
+                        f"CMD_{mnemonic.upper()}_{inst}"
                         for inst, opcode in enumerate(opcodes)
                     ]
             else:
