@@ -404,9 +404,9 @@ sequenceDiagram
     deframer->>deframer: Deframe FB into PB
     deframer->>deframer: Copy PB into a command packet C
     deframer-)cmdDisp: Send C [comOut]
-    deframer->>buffMgr: Deallocation PB [bufferDeallocate]
+    deframer->>buffMgr: Deallocate PB [bufferDeallocate]
     buffMgr-->>deframer: 
-    deframer->>buffMgr: Deallocation FB [framedDeallocate]
+    deframer->>buffMgr: Deallocate FB [framedDeallocate]
     buffMgr-->>deframer: 
     deframer-->>activeComm: 
     deactivate  activeComm 
