@@ -25,7 +25,7 @@ module Svc {
       guarded input port comQueueIn: [ComQueueComSize] Fw.Com
 
       @ Port for receiving Fw.buffer
-      guarded input port bufQueueIn: [ComQueueBufSize] Fw.BufferSend
+      guarded input port buffQueueIn: [ComQueueBufSize] Fw.BufferSend
 
       @ Port for emitting telemetry
       async input port run: Svc.Sched
