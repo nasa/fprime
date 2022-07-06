@@ -16,7 +16,7 @@ module Svc {
     guarded input port bufferIn: Fw.BufferSend
 
     # ----------------------------------------------------------------------
-    # Allocation and deallocation of buffers 
+    # Allocation and deallocation of buffers
     # ----------------------------------------------------------------------
 
     @ Port for deallocating buffers received on bufferIn, after
@@ -27,7 +27,7 @@ module Svc {
     output port framedAllocate: Fw.BufferGet
 
     # ----------------------------------------------------------------------
-    # Sending frame data 
+    # Sending frame data
     # ----------------------------------------------------------------------
 
     @ Port for sending buffers containing framed data. Ownership of the

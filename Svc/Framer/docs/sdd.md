@@ -5,7 +5,7 @@
 
 `Svc::Framer` is a passive component.
 It is part of the F Prime data downlink path.
-It accepts data packets from service layer components, typically 
+It accepts data packets from service layer components, typically
 instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
 or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
@@ -104,9 +104,9 @@ TODO
 
 ### 6.1. Topology Diagrams
 
-When using Framer component, the manager component (typically a service layer 
-or a generic hub) initiates the transfer of data by calling bufferIn port. The 
-Framer component will perform the serialization per `FramingProtocol` and will 
+When using Framer component, the manager component (typically a service layer
+or a generic hub) initiates the transfer of data by calling bufferIn port. The
+Framer component will perform the serialization per `FramingProtocol` and will
 transfer the stream via bufferOut port.
 
 The following diagram is an example of framer usage with chanTlm and eventLogger:
