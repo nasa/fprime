@@ -27,6 +27,12 @@ constant HealthPingPorts = 25
 @ Used for broadcasting completed file downlinks
 constant FileDownCompletePorts = 1
 
+@ Used for setting the size of the communication queue
+constant ComQueueComSize = 2
+
+@ Used for setting the size of the buffer queue
+constant ComQueueBufSize = 1
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------
