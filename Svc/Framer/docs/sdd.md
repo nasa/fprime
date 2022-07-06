@@ -128,12 +128,21 @@ data address and size of _B_ and the packet type
 <a name="allocate"></a>
 #### 4.8.1. allocate
 
-TODO
+The implementation of `allocate` invokes `framedAllocate`.
 
 <a name="send"></a>
 #### 4.8.2. send
 
-TODO
+The implementation of `send` takes a reference to an `Fw::Buffer`
+_B_ representing framed data and does the following:
+
+1. Invoke `framedOut`, passing in _B_ as the argument.
+
+1. Check the return status of the invocation. 
+If the return status is not `Drv::SendStatus::SEND_OK`, then
+use `Fw::Logger::logMsg` to log an error message.
+Don't send an event report in this case, because downlink is
+apparently not working.
 
 ### 4.9. Helper Functions
 

@@ -74,7 +74,7 @@ void Framer ::bufferIn_handler(
 }
 
 void Framer ::send(Fw::Buffer& outgoing) {
-    Drv::SendStatus sendStatus = framedOut_out(0, outgoing);
+    const Drv::SendStatus sendStatus = framedOut_out(0, outgoing);
     if (sendStatus.e != Drv::SendStatus::SEND_OK) {
         // Note: if there is a data sending problem, an EVR likely wouldn't 
         // make it down. Log the issue in hopes that
