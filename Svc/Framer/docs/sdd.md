@@ -4,14 +4,14 @@
 ## 1. Introduction
 
 `Svc::Framer` is a passive component.
-It accepts data packets from the service layer components, typically 
+It is part of the F Prime data downlink path.
+It accepts data packets from service layer components, typically 
 instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
 or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
-For each packet received, it wraps the packet in a frame
-and sends the frame to a component instance in the driver layer
-that performs downlink,
-for example, [`Drv::TcpClient`](../../Drv/TcpClient/docs/sdd.md)).
+For each packet _P_ received, it wraps _P_ in a frame _F_
+and sends _F_ to a component instance that downlinks frames,
+for example, [`Drv::TcpClient`](../../Drv/TcpClient/docs/sdd.md).
 
 When instantiating Framer, you must provide an implementation
 of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
@@ -26,7 +26,10 @@ in each frame; typically it is a frame header, a data packet, and a hash value.
 
 ## 3. Requirements
 
-TODO
+Requirement | Description | Rationale | Verification Method
+----------- | ----------- | ----------| -------------------
+SVC-FRAMER-001 | `Svc::Framer` shall accept data packets stored in `Fw::Com` buffers or in `Fw::Buffer` objects. | The `Svc` components use both kinds of buffers. `Fw::Com` buffers do not require a buffer manager instance, have a fixed size, and are usually stored on the stack. `Fw::Buffer` objects require a buffer manager, are dynamically sized, and are usually stored on the heap. | Unit test
+SVC-FRAMER-002 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, supplied when the component is instantiated, to wrap packets in frames. | The purpose of `Svc::Framer` is to frame data packets. Using the `Svc::FramingProtocol` interface allows the same Framer component to operate with different protocols. | Unit test
 
 ## 4. Design
 
@@ -42,29 +45,54 @@ The diagram below shows the `Framer` component.
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets stored in statically-sized Com buffers |
-| `guarded input` | `bufferIn` | `Fw.BufferSend` | Port for receiving data packets stored in dynamically-sized managed bufers |
+| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets stored in statically-sized Fw::Com buffers |
+| `guarded input` | `bufferIn` | `Fw.BufferSend` | Port for receiving data packets stored in dynamically-sized Fw::Buffer objects |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on bufferIn, after copying packet data to the frame buffer |
 | `output` | `framedAllocate` | `Fw.BufferGet` | Port for allocating buffers to hold framed data |
 | `output` | `framedOut` | `Drv.ByteStreamSend` | Port for sending buffers containing framed data. Ownership of the buffer passes to the receiver. |
 
-### 4.3. State
+<a name="derived-classes"></a>
+### 4.3. Derived Classes
+
+`Framer` is derived from `FramerComponentBase` as usual.
+It is also derived (via C++ multiple inheritance) from
+[`Svc::FramingProtocolInterface`](../../FramingProtocol/docs/sdd.md).
+The multiple inheritance makes the `Deframer` instance into the
+instance of `Svc::FramingProtocolInterface` that is required
+to use `Svc::FramingProtocol`.
+See <a href="#fpi-impl">below</a> for a description of how `Deframer` implements
+`DeframingProtocolInterface`.
+
+Here is a class diagram for `Deframer`:
+
+```mermaid
+classDiagram
+    ObjBase <|-- PassiveComponentBase
+    PassiveComponentBase <|-- FramerComponentBase
+    FramerComponentBase <|-- Framer
+    FramingProtocolInterface <|-- Framer
+```
+
+### 4.4. State
 
 TODO
 
-### 4.4. Header File Configuration
+### 4.5. Header File Configuration
 
 TODO
 
-### 4.5. Runtime Setup
+### 4.6. Runtime Setup
 
 TODO
 
-### 4.6. Port Handlers
+### 4.7. Port Handlers
 
 TODO
 
-### 4.7. Helper Functions
+<a name="fpi-impl"></a>
+### 4.8. Implementation of Svc::DeframingProtocolInterface
+
+### 4.9. Helper Functions
 
 TODO
 
@@ -73,6 +101,8 @@ TODO
 TODO
 
 ## 6. Example Uses
+
+### 6.1. Topology Diagrams
 
 When using Framer component, the manager component (typically a service layer 
 or a generic hub) initiates the transfer of data by calling bufferIn port. The 
@@ -102,17 +132,11 @@ Fw::Buffer buf; // This could be data from bufferIn port
 downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut
 ```
 
-## 7. Class Diagram
+### 6.2. Sequence Diagrams
 
-![classdiagram](./img/class_diagram_framer.png)
+TODO
 
-## 8. Requirements
-
-| Name | Description | Validation |
-|---|---|---|
-| TBD | TBD | TBD |
-
-## 9. Change Log
+## 7. Change Log
 
 | Date | Description |
 |---|---|

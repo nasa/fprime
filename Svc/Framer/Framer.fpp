@@ -8,11 +8,11 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Port for receiving data packets stored in statically-sized
-    @ Com buffers
+    @ Fw::Com buffers
     guarded input port comIn: Fw.Com
 
     @ Port for receiving data packets stored in dynamically-sized
-    @ managed bufers
+    @ Fw::Buffer objects
     guarded input port bufferIn: Fw.BufferSend
 
     # ----------------------------------------------------------------------
