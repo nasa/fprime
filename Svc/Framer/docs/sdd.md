@@ -5,12 +5,12 @@
 
 `Svc::Framer` is a passive component.
 It is part of the standard path for F Prime data downlink.
-It accepts data packets from service layer components, typically
+It accepts data packets from service layer components, for example
 instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
 or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
 For each packet _P_ received, it wraps _P_ in a frame _F_
-and sends _F_ to a component instance that downlinks frames,
+and sends _F_ to a byte stream driver that downlinks frames,
 for example, [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
 When instantiating `Framer`, you must provide an implementation
@@ -146,11 +146,47 @@ apparently not working.
 
 ## 5. Ground Interface
 
-TODO
+None.
 
 ## 6. Example Uses
 
+<a name="top-diagrams"></a>
 ### 6.1. Topology Diagrams
+
+The following topology diagrams show how to connect `Svc::Framer`
+to telemetry database, an event filter, a file downlink component, and
+a byte stream driver.
+The diagrams use the following instances:
+
+* `comm`: An instance of
+[`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example
+[`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
+
+* `buffMgr`: An instance of [`Svc::BufferManager`](../../BufferManager/docs/sdd.md)
+
+* `fileDownlink`: An instance of [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
+
+* `framer`: An instance of `Svc::Framer`.
+
+* `chanTlm`: An instance of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
+
+* `eventLogger`: An instance of [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
+
+**Topology 1: Telemetry packets:**
+
+TODO
+
+**Topology 2: Event packets:**
+
+TODO
+
+**Topology 3: File packets:**
+
+TODO
+
+**Topology 4: Framed data:**
+
+TODO
 
 When using Framer component, the manager component (typically a service layer
 or a generic hub) initiates the transfer of data by calling bufferIn port. The
@@ -184,8 +220,13 @@ downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut
 
 TODO
 
+### 6.3. Using Svc::GenericHub
+
+TODO
+
 ## 7. Change Log
 
 | Date | Description |
 |---|---|
 | 2021-01-29 | Initial Draft |
+| 2022-07-06 | Revised |
