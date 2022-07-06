@@ -56,16 +56,6 @@ class Framer :
     //!
     ~Framer();
 
-    //! \brief Allocation callback used to request memory for the framer
-    //!
-    //! Method used by the FramingProtocol to allocate memory for the framed buffer. Framing
-    //! typically adds tokens on the beginning and end of the raw data so it must allocate new space
-    //! to place those and a copy of the data in.
-    //!
-    //! \param size: size of allocation
-    //! \return Fw::Buffer containing allocation to write into
-    Fw::Buffer allocate(const U32 size);
-
   PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
@@ -85,12 +75,24 @@ class Framer :
     );
 
     // ----------------------------------------------------------------------
-    // Helper methods
+    // Implementation of FramingProtocolInterface
     // ----------------------------------------------------------------------
 
-    //! Send helper implementation
+    //! \brief Allocation callback used to request memory for the framer
     //!
-    void send(Fw::Buffer& outgoing);
+    //! Method used by the FramingProtocol to allocate memory for the framed buffer. Framing
+    //! typically adds tokens on the beginning and end of the raw data so it must allocate new space
+    //! to place those and a copy of the data in.
+    //!
+    //! \param size: size of allocation
+    //! \return Fw::Buffer containing allocation to write into
+    Fw::Buffer allocate(const U32 size);
+
+    //! Send implementation
+    //!
+    void send(
+        Fw::Buffer& outgoing //!< The buffer to send
+    );
 
     // ----------------------------------------------------------------------
     // Member variables
