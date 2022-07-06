@@ -217,6 +217,11 @@ can handle the packets.
 <img src="img/top/framed.png" width=1000/>
 </div>
 
+`framer` allocates frame buffers from `buffMgr`.
+It sends buffers containing frames to `comm`.
+`comm` process the buffers and sends them to
+`buffMgr` for deallocation.
+
 ### 6.2. Sequence Diagrams
 
 TODO
