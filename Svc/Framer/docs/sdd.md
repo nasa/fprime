@@ -4,7 +4,7 @@
 ## 1. Introduction
 
 `Svc::Framer` is a passive component.
-It is part of the F Prime data downlink path.
+It is part of the standard path for F Prime data downlink.
 It accepts data packets from service layer components, typically
 instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
@@ -37,11 +37,9 @@ SVC-FRAMER-002 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, 
 
 The diagram below shows the `Framer` component.
 
-<center>
 <div>
 <img src="img/Framer.png" width=700/>
 </div>
-</center>
 
 ### 4.2. Ports
 
@@ -77,15 +75,34 @@ classDiagram
 
 ### 4.4. State
 
-TODO
+`Deframer` maintains the following state:
+
+1. `m_protocol`: A pointer to the implementation of `FramingProtocol`
+   used for framing.
 
 ### 4.5. Header File Configuration
 
-TODO
+None.
 
 ### 4.6. Runtime Setup
 
-TODO
+To set up an instance of `Framer`, you do the following:
+
+1. Call the constructor and the `init` method in the usual way
+for an F Prime passive component.
+
+1. Call the `setup` method, passing in an instance _P_ of `Svc::FramingProtocol`.
+The `setup` method does the following:
+
+   1. Store a pointer to _P_ in `m_protocol`.
+
+   1. Pass `*this` into the setup method for _P_.
+      As noted <a href="#derived-classes">above</a>, `*this`
+      is the instance of `Svc::FramingProtocolInterface`
+      used by _P_.
+
+For an example of setting up a `Framer` instance, see the
+`downlink` instance in [`Ref/Top/instances.fpp`](../../../Ref/Top/instances.fpp).
 
 ### 4.7. Port Handlers
 
