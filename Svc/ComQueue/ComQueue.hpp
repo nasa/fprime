@@ -11,79 +11,57 @@
 
 namespace Svc {
 
-  class ComQueue :
-    public ComQueueComponentBase
-  {
+class ComQueue : public ComQueueComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction, initialization, and destruction
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct object ComQueue
+    //!
+    ComQueue(const char* const compName /*!< The component name*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Construction, initialization, and destruction
-      // ----------------------------------------------------------------------
+    //! Initialize object ComQueue
+    //!
+    void init(const NATIVE_INT_TYPE queueDepth,  /*!< The queue depth*/
+              const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+    );
 
-      //! Construct object ComQueue
-      //!
-      ComQueue(
-          const char *const compName /*!< The component name*/
-      );
+    //! Destroy object ComQueue
+    //!
+    ~ComQueue();
 
-      //! Initialize object ComQueue
-      //!
-      void init(
-          const NATIVE_INT_TYPE queueDepth, /*!< The queue depth*/
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
-      );
+  PRIVATE:
+    // ----------------------------------------------------------------------
+    // Handler implementations for user-defined typed input ports
+    // ----------------------------------------------------------------------
 
-      //! Destroy object ComQueue
-      //!
-      ~ComQueue();
+    //! Handler implementation for bufQueueIn
+    //!
+    void bufQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                            Fw::Buffer& fwBuffer);
 
-    PRIVATE:
+    //! Handler implementation for comQueueIn
+    //!
+    void comQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                            Fw::ComBuffer& data, /*!<Buffer containing packet data*/
+                            U32 context /*!<Call context value; meaning chosen by user*/
+    );
 
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
+    //! Handler implementation for comStatusIn
+    //!
+    void comStatusIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Svc::ComSendStatus& ComStatus  /*!<Status of communication state*/
+    );
 
-      //! Handler implementation for bufQueueIn
-      //!
-      void bufQueueIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Handler implementation for run
+    //!
+    void run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                     NATIVE_UINT_TYPE context       /*!<The call order*/
+    );
+};
 
-      //! Handler implementation for comQueueIn
-      //!
-      void comQueueIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< 
-      Buffer containing packet data
-      */
-          U32 context /*!< 
-      Call context value; meaning chosen by user
-      */
-      );
-
-      //! Handler implementation for comStatusIn
-      //!
-      void comStatusIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Svc::ComSendStatus &ComStatus /*!< 
-      Status of communication state
-      */
-      );
-
-      //! Handler implementation for run
-      //!
-      void run_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< 
-      The call order
-      */
-      );
-
-
-    };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif
