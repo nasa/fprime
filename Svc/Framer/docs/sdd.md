@@ -13,7 +13,7 @@ For each packet _P_ received, it wraps _P_ in a frame _F_
 and sends _F_ to a component instance that downlinks frames,
 for example, [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
-When instantiating Framer, you must provide an implementation
+When instantiating `Framer`, you must provide an implementation
 of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
 This implementation specifies exactly what is
 in each frame; typically it is a frame header, a data packet, and a hash value.
@@ -106,10 +106,30 @@ For an example of setting up a `Framer` instance, see the
 
 ### 4.7. Port Handlers
 
+#### 4.7.1. comIn
+
+The `comIn` port handler receives an `Fw::Com` buffer _B_ and an integer
+context value.
+It calls the `frame` method of `m_protocol`, passing in the
+address and length of _B_ and the packet type
+`Fw::ComPacket::FW_PACKET_UNKNOWN`.
+
+#### 4.7.2. bufferIn
+
 TODO
 
 <a name="fpi-impl"></a>
 ### 4.8. Implementation of Svc::DeframingProtocolInterface
+
+<a name="allocate"></a>
+#### 4.8.1. allocate
+
+TODO
+
+<a name="send"></a>
+#### 4.8.2. send
+
+TODO
 
 ### 4.9. Helper Functions
 
