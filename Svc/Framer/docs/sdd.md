@@ -57,13 +57,13 @@ The diagram below shows the `Framer` component.
 `Framer` is derived from `FramerComponentBase` as usual.
 It is also derived (via C++ multiple inheritance) from
 [`Svc::FramingProtocolInterface`](../../FramingProtocol/docs/sdd.md).
-The multiple inheritance makes the `Deframer` instance into the
+The multiple inheritance makes the `Framer` instance into the
 instance of `Svc::FramingProtocolInterface` that is required
 to use `Svc::FramingProtocol`.
-See <a href="#fpi-impl">below</a> for a description of how `Deframer` implements
+See <a href="#fpi-impl">below</a> for a description of how `Framer` implements
 `DeframingProtocolInterface`.
 
-Here is a class diagram for `Deframer`:
+Here is a class diagram for `Framer`:
 
 ```mermaid
 classDiagram
@@ -75,7 +75,7 @@ classDiagram
 
 ### 4.4. State
 
-`Deframer` maintains the following state:
+`Framer` maintains the following state:
 
 1. `m_protocol`: A pointer to the implementation of `FramingProtocol`
    used for framing.
