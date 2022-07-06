@@ -195,7 +195,7 @@ The `eventLogger` instance sends event packets to the `framer` instance.
 </div>
 
 The `fileDownlink` instance sends a sequence of file packets,
-representing complete file, to the `framer` instance.
+representing a complete file, to the `framer` instance.
 The sending happens in the following sequence:
 
 1. `fileDownlink` sends a buffer _B_ containing a file packet.
@@ -219,7 +219,7 @@ can handle the packets.
 
 `framer` allocates frame buffers from `buffMgr`.
 It sends buffers containing frames to `comm`.
-`comm` process the buffers and sends them to
+`comm` processes the buffers and sends them to
 `buffMgr` for deallocation.
 
 ### 6.2. Sequence Diagrams
