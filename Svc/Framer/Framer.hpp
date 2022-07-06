@@ -1,17 +1,17 @@
 // ======================================================================
 // \title  Framer.hpp
-// \author mstarch
+// \author mstarch, bocchino
 // \brief  hpp file for Framer component implementation class
 //
 // \copyright
-// Copyright 2009-2021, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
 // ======================================================================
 
-#ifndef Framer_HPP
-#define Framer_HPP
+#ifndef Svc_Framer_HPP
+#define Svc_Framer_HPP
 
 #include "Svc/Framer/FramerComponentAc.hpp"
 #include "Svc/FramingProtocol/FramingProtocol.hpp"
@@ -28,7 +28,11 @@ namespace Svc {
  * Using this component, projects can implement and supply a fresh FramingProtocol implementation
  * without changing the reference topology.
  */
-class Framer : public FramerComponentBase, public FramingProtocolInterface {
+class Framer :
+  public FramerComponentBase,
+  public FramingProtocolInterface
+{
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -80,10 +84,19 @@ class Framer : public FramerComponentBase, public FramingProtocolInterface {
                           Fw::Buffer& fwBuffer           /*!< The buffer*/
     );
 
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
+
     //! Send helper implementation
     //!
     void send(Fw::Buffer& outgoing);
 
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    //! The FramingProtocol implementation
     FramingProtocol* m_protocol;
 };
 
