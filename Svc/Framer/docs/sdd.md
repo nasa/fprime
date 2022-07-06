@@ -154,8 +154,8 @@ None.
 ### 6.1. Topology Diagrams
 
 The following topology diagrams show how to connect `Svc::Framer`
-to telemetry database, an event filter, a file downlink component, and
-a byte stream driver.
+to a telemetry database, an event collector, a file downlink component,
+and a byte stream driver.
 The diagrams use the following instances:
 
 * `comm`: An instance of
@@ -168,9 +168,9 @@ The diagrams use the following instances:
 
 * `framer`: An instance of `Svc::Framer`.
 
-* `chanTlm`: An instance of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
+* `chanTlm`: An instance of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md).
 
-* `eventLogger`: An instance of [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md),
+* `eventLogger`: An instance of [`Svc::ActiveLogger`](../../ActiveLogger/docs/sdd.md).
 
 **Topology 1: Telemetry packets:**
 
@@ -197,10 +197,6 @@ The following diagram is an example of framer usage with chanTlm and eventLogger
 
 ![framer_example](./img/framer_example_1.png)
 
-The following diagram is an example of framer usage with a generic hub and TcpClient:
-
-![framer_example](./img/framer_example_2.png)
-
 The following is a typical example of Framer usage:
 
 ```c++
@@ -223,6 +219,10 @@ TODO
 ### 6.3. Using Svc::GenericHub
 
 TODO
+
+The following diagram is an example of framer usage with a generic hub and TcpClient:
+
+![framer_example](./img/framer_example_2.png)
 
 ## 7. Change Log
 
