@@ -1,66 +1,44 @@
+@ An enumeration of queue types
+enum QueueType { comQueue, bufQueue }
+array ComQueueDepth = [ComQueueComSize] U32
+array BuffQueueDepth = [ComQueueBufSize] U32
+
 module Svc {
 
     @ A component for managing Comm buffers on a queue
     active component ComQueue {
 
       # ----------------------------------------------------------------------
-      # Types
-      # ----------------------------------------------------------------------
-
-      @ The state enumeration of the queue
-      enum ComStatus {
-         SUCCESS = 0 @< state to empty the head of comm buffer
-         FAIL = 1 @< state to maintain status of com buffer
-      }
-
-      # ----------------------------------------------------------------------
       # General ports
       # ----------------------------------------------------------------------
 
-      @ ComQueue output port, output the head of the Com buffer
-      output port comQueueSend: [1] Fw.Com
+      @ ComQueue com output port, output the head of the Com buffer
+      output port comQueueSend: Fw.Com
+
+      @ ComQueue buffer output port, output the head of Fw.buffer
+      output port buffQueueSend: Fw.BufferSend
 
       @ Port for receiving the status signal
-      async input port comStatusIn: Fw.Com
+      async input port comStatusIn: ComStatus
 
+      @ Port for receiving Com buffer
+      guarded input port comQueueIn: [ComQueueComSize] Fw.Com
 
-      # ----------------------------------------------------------------------
-      # Internal ports
-      # ----------------------------------------------------------------------
+      @ Port for receiving Fw.buffer
+      guarded input port bufQueueIn: [ComQueueBufSize] Fw.BufferSend
 
-      @ Port that puts the Com buffer to component thread
-      internal port ComQueue(
-                            $id: FwEventIdType @< Log ID
-                            timeTag: Fw.Time @< Time Tag
-                            $severity: Fw.LogSeverity @< The severity argument
-                            args: Fw.LogBuffer @< Buffer containing serialized log entry
-                            ) \
-        priority 1 \
-        drop
+      @ Port for emitting telemetry
+      async input port run: Svc.Sched
+
       # ----------------------------------------------------------------------
       # Special ports
       # ----------------------------------------------------------------------
-
-      @ A port for receiving commands
-      command recv port cmdIn
-
-      @ A port for sending command registration requests
-      command reg port cmdRegOut
-
-      @ A port for sending command responses
-      command resp port cmdResponseOut
 
       @ Port for emitting events
       event port Log
 
       @ Port for emitting text events
       text event port LogText
-
-      @ Parameter get Queue Depth
-      param get port prmGetQueueDepth
-
-      @ Parameter set Queue Depth
-      param set port prmSetQueueDepth
 
       @ Port for getting the time
       time get port Time
@@ -69,33 +47,26 @@ module Svc {
       telemetry port Tlm
 
       # ----------------------------------------------------------------------
-      # Commands
-      # ----------------------------------------------------------------------
-
-      @ Command to release the head of Com buffer
-      async command Empty
-
-      # ----------------------------------------------------------------------
-      # Parameters
-      # ----------------------------------------------------------------------
-
-      @ Size of queue
-      param QueueDepth: U32
-
-      # ----------------------------------------------------------------------
       # Events
       # ----------------------------------------------------------------------
 
       @ Queue is full event
-      event QueueFull severity warning high \
-        format "The Queue is full" \
-        throttle 10
+      event QueueFull(
+            queueType: QueueType @< The Queue type
+            index: U32 @< index value
+       ) \
+        severity warning high \
+        format "The {} queue at index {} is full" \
+        throttle 1
 
       # ----------------------------------------------------------------------
       # Telemetry
       # ----------------------------------------------------------------------
 
-      @ Number of items in queue
-      telemetry ItemsInQueue: U32 id 0 update on change
+      @ How close the com queue is to being full
+      telemetry comQueueDepth: ComQueueDepth id 0
+
+      @ How close the buf queue is to being full
+      telemetry bufQueueDepth: BuffQueueDepth id 1
     }
 }
