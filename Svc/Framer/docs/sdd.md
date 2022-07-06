@@ -11,7 +11,7 @@ instances of [`Svc::TlmChan`](../../TlmChan/docs/sdd.md),
 or [`Svc::FileDownlink`](../../FileDownlink/docs/sdd.md).
 For each packet _P_ received, it wraps _P_ in a frame _F_
 and sends _F_ to a component instance that downlinks frames,
-for example, [`Drv::TcpClient`](../../Drv/TcpClient).
+for example, [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
 When instantiating Framer, you must provide an implementation
 of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
