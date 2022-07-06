@@ -174,43 +174,48 @@ The diagrams use the following instances:
 
 **Topology 1: Telemetry packets:**
 
-TODO
+<div>
+<img src="img/top/tlm.png" width=1000/>
+</div>
+
+The `chanTlm` instance sends telemetry packets to the `framer` instance.
 
 **Topology 2: Event packets:**
 
-TODO
+<div>
+<img src="img/top/event.png" width=1000/>
+</div>
+
+The `eventLogger` instance sends event packets to the `framer` instance.
 
 **Topology 3: File packets:**
 
-TODO
+<div>
+<img src="img/top/file.png" width=1000/>
+</div>
+
+The `fileDownlink` instance sends a sequence of file packets,
+representing complete file, to the `framer` instance.
+The sending happens in the following sequence:
+
+1. `fileDownlink` sends a buffer _B_ containing a file packet.
+
+1. `framer` receives and processes _B_.
+When it is done, it returns _B_ to `fileDownlink`.
+
+1. Upon receipt of _B_, if another file packet is available,
+`fileDownlink` sends it.
+
+Exchanging the buffer controls the rate at which
+`fileDownlink` sends file packets.
+It ensures that the rate does not exceed the rate and which `framer`
+can handle the packets.
 
 **Topology 4: Framed data:**
 
-TODO
-
-When using Framer component, the manager component (typically a service layer
-or a generic hub) initiates the transfer of data by calling bufferIn port. The
-Framer component will perform the serialization per `FramingProtocol` and will
-transfer the stream via bufferOut port.
-
-The following diagram is an example of framer usage with chanTlm and eventLogger:
-
-![framer_example](./img/framer_example_1.png)
-
-The following is a typical example of Framer usage:
-
-```c++
-Svc::FprimeFraming framing_obj; // Framing protocol obj;
-Svc::FramerComponentImpl downlink_obj("Framer"); // Framer obj
-
-downlink_obj.init(0);
-downlink_obj.setup(framing_obj);
-
-...
-
-Fw::Buffer buf; // This could be data from bufferIn port
-downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut
-```
+<div>
+<img src="img/top/framed.png" width=1000/>
+</div>
 
 ### 6.2. Sequence Diagrams
 
