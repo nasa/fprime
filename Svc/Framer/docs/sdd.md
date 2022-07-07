@@ -254,7 +254,7 @@ sequenceDiagram
     deactivate comm
 ```
 
-#### Sending an Event Packet
+#### 6.2.2. Sending an Event Packet
 
 The following diagram shows what happens when `eventLogger`
 sends an event packet to `framer`.
@@ -278,10 +278,14 @@ sequenceDiagram
 ```
 
 
-#### Sending a File Packet
+#### 6.2.3. Sending a File Packet
 
 The following diagram shows what happens when `fileDownlink`
 sends a file packet to `framer`.
+
+TODO
+
+#### 6.2.4. Downlinking Framed Data
 
 TODO
 
