@@ -251,7 +251,7 @@ sequenceDiagram
     activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
-    buffMgr-->>comm:
+    buffMgr-->>comm: 
     deactivate comm
 ```
 
@@ -275,7 +275,7 @@ sequenceDiagram
     activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
-    buffMgr-->>comm:
+    buffMgr-->>comm: 
     deactivate comm
 ```
 
