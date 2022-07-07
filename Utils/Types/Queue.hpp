@@ -47,7 +47,7 @@ class Queue {
      * Pushes a fixed-size message onto the queue. This performs a copy of the data onto the queue so the user is free
      * to dispose the message data as soon as the call returns. Note: message is required to be of the size message_size
      * as defined by the construction of the queue. Size is provided as a safety check to ensure the sent size is
-     * consistent with the expected dize of the queue.
+     * consistent with the expected size of the queue.
      *
      * This will return a non-Fw::SERIALIZE_OK status when the queue is full.
      *

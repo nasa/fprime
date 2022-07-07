@@ -1,7 +1,14 @@
+@ Used for setting the size of the communication queue
+constant ComQueueComSize = 2
+
+@ Used for setting the size of the buffer queue
+constant ComQueueBuffSize = 1
+
 @ An enumeration of queue types
-enum QueueType { comQueue, bufQueue }
+enum QueueType { comQueue, buffQueue }
+
 array ComQueueDepth = [ComQueueComSize] U32
-array BuffQueueDepth = [ComQueueBufSize] U32
+array BuffQueueDepth = [ComQueueBuffSize] U32
 
 module Svc {
 
@@ -25,7 +32,7 @@ module Svc {
       guarded input port comQueueIn: [ComQueueComSize] Fw.Com
 
       @ Port for receiving Fw.buffer
-      guarded input port buffQueueIn: [ComQueueBufSize] Fw.BufferSend
+      guarded input port buffQueueIn: [ComQueueBuffSize] Fw.BufferSend
 
       @ Port for emitting telemetry
       async input port run: Svc.Sched
@@ -67,6 +74,6 @@ module Svc {
       telemetry comQueueDepth: ComQueueDepth id 0
 
       @ How close the buf queue is to being full
-      telemetry bufQueueDepth: BuffQueueDepth id 1
+      telemetry buffQueueDepth: BuffQueueDepth id 1
     }
 }
