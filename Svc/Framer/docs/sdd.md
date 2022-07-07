@@ -224,7 +224,33 @@ It sends buffers containing frames to `comm`.
 
 ### 6.2. Sequence Diagrams
 
-TODO
+In the following diagrams, open vertical rectangles represent threads.
+Vertical dashed lines represent component code.
+Solid horizontal arrows represent synchronous port invocations, and open
+horizontal arrows represent asynchronous port invocations.
+
+#### 6.2.1. Sending a Telemetry Packet
+
+The following sequence diagram shows what happens when `chanTlm`
+sends a telemetry packet to `framer`.
+decodes the data into a command packet.
+
+```mermaid
+sequenceDiagram
+    activate chanTlm
+    chanTlm->>framer: Send telemetry packet [comIn]
+    framer->>buffMgr: Allocate frame buffer B [framedAllocate]
+    buffMgr-->>framer: Return B
+    framer-)comm: Send B [framedOut]
+    comm-->>framer:
+    framer-->>chanTlm
+    deactivate  chanTlm
+
+    activate comm
+    comm->>comm: Downlink frame
+    comm->>buffMgr: Deallocate B
+    deactivate comm
+```
 
 ### 6.3. Using Svc::GenericHub
 
