@@ -268,8 +268,8 @@ sequenceDiagram
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
     comm-->>framer: 
-    framer-->>chanTlm: 
-    deactivate chanTlm
+    framer-->>eventLogger: 
+    deactivate eventLogger
 
     activate comm
     comm->>comm: Downlink frame
