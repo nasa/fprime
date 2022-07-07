@@ -17,11 +17,13 @@ When instantiating `Framer`, you must provide an implementation
 of [`Svc::FramingProtocol`](../../FramingProtocol/docs/sdd.md).
 This implementation specifies exactly what is
 in each frame; typically it is a frame header, a data packet, and a hash value.
+You can use the standard F Prime downlink protocol implementation.
+This implementation works with the F Prime ground data system (GDS).
 
 ## 2. Assumptions
 
 1. For any deployment _D_ that uses an instance _I_ of `Framer`, the
-   deframing protocol used with _I_ matches the downlink protocol of
+   framing protocol used with _I_ matches the downlink protocol of
    any ground system that receives frames from _I_.
 
 ## 3. Requirements
@@ -62,7 +64,7 @@ The multiple inheritance makes the `Framer` instance into the
 instance of `Svc::FramingProtocolInterface` that is required
 to use `Svc::FramingProtocol`.
 See <a href="#fpi-impl">below</a> for a description of how `Framer` implements
-`DeframingProtocolInterface`.
+`FramingProtocolInterface`.
 
 Here is a class diagram for `Framer`:
 
@@ -123,7 +125,7 @@ data address and size of _B_ and the packet type
 `Fw::ComPacket::FW_PACKET_FILE`.
 
 <a name="fpi-impl"></a>
-### 4.8. Implementation of Svc::DeframingProtocolInterface
+### 4.8. Implementation of Svc::FramingProtocolInterface
 
 <a name="allocate"></a>
 #### 4.8.1. allocate
@@ -229,7 +231,11 @@ Vertical dashed lines represent component code.
 Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
-These diagrams assume that each downlink frame contains a single packet.
+These diagrams assume that, in the
+<a href="fpi-impl">implementation of `Svc::FramingProtocolInterface`</a>,
+each downlink frame contains a single packet.
+This is a common use case; for example, the F Prime standard downlink protocol
+is implemented this way.
 
 #### 6.2.1. Sending a Telemetry Packet
 
