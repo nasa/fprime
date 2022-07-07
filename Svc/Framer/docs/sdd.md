@@ -28,7 +28,7 @@ in each frame; typically it is a frame header, a data packet, and a hash value.
 
 Requirement | Description | Rationale | Verification Method
 ----------- | ----------- | ----------| -------------------
-SVC-FRAMER-001 | `Svc::Framer` shall accept data packets of unspecified type stored in `Fw::Com` buffers. | `Svc::ActiveLogger` and `Svc::ChanTlm` emit packets as `Fw::Com` buffers.| Unit test
+SVC-FRAMER-001 | `Svc::Framer` shall accept data packets of any type stored in `Fw::Com` buffers. | `Svc::ActiveLogger` and `Svc::ChanTlm` emit packets as `Fw::Com` buffers.| Unit test
 SVC-FRAMER-002 | `Svc::Framer` shall accept file packets stored in `Fw::Buffer` objects. | `Svc::FileDownlink` emits packets as `Fw::Buffer` objects. | Unit test
 SVC-FRAMER-003 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, supplied when the component is instantiated, to wrap packets in frames. | The purpose of `Svc::Framer` is to frame data packets. Using the `Svc::FramingProtocol` interface allows the same Framer component to operate with different protocols. | Unit test
 
@@ -46,7 +46,7 @@ The diagram below shows the `Framer` component.
 
 | Kind | Name | Port Type | Usage |
 |------|------|-----------|-------|
-| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets of unspecified type stored in statically-sized Fw::Com buffers |
+| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets of any type stored in statically-sized Fw::Com buffers |
 | `guarded input` | `bufferIn` | `Fw.BufferSend` | Port for receiving file packets stored in dynamically-sized Fw::Buffer objects |
 | `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on bufferIn, after copying packet data to the frame buffer |
 | `output` | `framedAllocate` | `Fw.BufferGet` | Port for allocating buffers to hold framed data |

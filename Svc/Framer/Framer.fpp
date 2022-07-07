@@ -7,8 +7,8 @@ module Svc {
     # Receiving packets
     # ----------------------------------------------------------------------
 
-    @ Port for receiving data packets of unspecified type stored in
-    @ statically-sized Fw::Com buffers
+    @ Port for receiving data packets of any type stored in statically-sized
+    @ Fw::Com buffers
     guarded input port comIn: Fw.Com
 
     @ Port for receiving file packets stored in dynamically-sized
