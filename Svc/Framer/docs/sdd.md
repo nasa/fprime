@@ -208,7 +208,7 @@ When it is done, it returns _B_ to `fileDownlink`.
 
 Exchanging the buffer controls the rate at which
 `fileDownlink` sends file packets.
-It ensures that the rate does not exceed the rate and which `framer`
+It ensures that the rate does not exceed the rate at which `framer`
 can handle the packets.
 
 **Topology 4: Framed data:**
@@ -233,7 +233,7 @@ These diagrams assume that each downlink frame contains a single packet.
 
 #### 6.2.1. Sending a Telemetry Packet
 
-The following sequence diagram shows what happens when `chanTlm`
+The following diagram shows what happens when `chanTlm`
 sends a telemetry packet to `framer`.
 
 ```mermaid
@@ -256,14 +256,31 @@ sequenceDiagram
 
 #### Sending an Event Packet
 
-The following sequence diagram shows what happens when `eventLogger`
+The following diagram shows what happens when `eventLogger`
 sends an event packet to `framer`.
 
-TODO
+```mermaid
+sequenceDiagram
+    activate eventLogger
+    eventLogger->>framer: Send event packet P [comIn]
+    framer->>buffMgr: Allocate frame buffer B [framedAllocate]
+    buffMgr-->>framer: Return B
+    framer->>framer: Frame P into B
+    framer-)comm: Send B [framedOut]
+    comm-->>framer: 
+    framer-->>chanTlm: 
+    deactivate chanTlm
+
+    activate comm
+    comm->>comm: Downlink frame
+    comm->>buffMgr: Deallocate B
+    deactivate comm
+```
+
 
 #### Sending a File Packet
 
-The following sequence diagram shows what happens when `fileDownlink`
+The following diagram shows what happens when `fileDownlink`
 sends a file packet to `framer`.
 
 TODO
