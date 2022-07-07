@@ -242,7 +242,7 @@ sequenceDiagram
     framer->>buffMgr: Allocate frame buffer B [framedAllocate]
     buffMgr-->>framer: Return B
     framer-)comm: Send B [framedOut]
-    comm-->>framer:
+    comm-->>framer 
     framer-->>chanTlm
     deactivate  chanTlm
 
