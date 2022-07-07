@@ -158,7 +158,7 @@ to a telemetry database, an event collector, a file downlink component,
 and a byte stream driver.
 The diagrams use the following instances:
 
-* `comm`: An instance of
+* `comm`: An active instance of
 [`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example
 [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
@@ -251,6 +251,7 @@ sequenceDiagram
     activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
+    buffMgr-->>comm
     deactivate comm
 ```
 
@@ -274,6 +275,7 @@ sequenceDiagram
     activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
+    buffMgr-->>comm
     deactivate comm
 ```
 
