@@ -229,11 +229,12 @@ Vertical dashed lines represent component code.
 Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
+These diagrams assume that each downlink frame contains a single packet.
+
 #### 6.2.1. Sending a Telemetry Packet
 
 The following sequence diagram shows what happens when `chanTlm`
 sends a telemetry packet to `framer`.
-decodes the data into a command packet.
 
 ```mermaid
 sequenceDiagram
@@ -252,6 +253,20 @@ sequenceDiagram
     comm->>buffMgr: Deallocate B
     deactivate comm
 ```
+
+#### Sending an Event Packet
+
+The following sequence diagram shows what happens when `eventLogger`
+sends an event packet to `framer`.
+
+TODO
+
+#### Sending a File Packet
+
+The following sequence diagram shows what happens when `fileDownlink`
+sends a file packet to `framer`.
+
+TODO
 
 ### 6.3. Using Svc::GenericHub
 
