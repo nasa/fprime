@@ -238,9 +238,10 @@ decodes the data into a command packet.
 ```mermaid
 sequenceDiagram
     activate chanTlm
-    chanTlm->>framer: Send telemetry packet [comIn]
+    chanTlm->>framer: Send telemetry packet P [comIn]
     framer->>buffMgr: Allocate frame buffer B [framedAllocate]
     buffMgr-->>framer: Return B
+    framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
     comm-->>framer: 
     framer-->>chanTlm: 
