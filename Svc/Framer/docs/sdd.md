@@ -232,7 +232,7 @@ Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
 These diagrams assume that, in the
-<a href="fpi-impl">implementation of `Svc::FramingProtocolInterface`</a>,
+<a href="#fpi-impl">implementation of `Svc::FramingProtocolInterface`</a>,
 each downlink frame contains a single packet.
 This is a common use case; for example, the F Prime standard downlink protocol
 is implemented this way.
