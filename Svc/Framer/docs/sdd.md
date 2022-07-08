@@ -308,11 +308,26 @@ sequenceDiagram
 
 ### 6.3. Using Svc::GenericHub
 
-TODO
+You can use `Framer` with an instance of
+[`Svc::GenericHub`](../../GenericHub/docs/sdd.md) to downlink 
+telemetry and event packets sent across a network connection, instead of
+sent directly from a telemetry database or event handler.
+To send and downlink packets this way, do the following:
 
-The following diagram is an example of framer usage with a generic hub and TcpClient:
+1. In the topology described <a href="#top-diagrams">above</a>,
+instead of the `chanTlm` and `eventLogger` instances, use an
+instance `hub` of type `Svc::GenericHub`.
 
-![framer_example](./img/framer_example_2.png)
+1. Replace topologies 1 and 2 with the topology shown below.
+
+<div>
+<img src="img/top/hub.png" width=1000/>
+</div>
+
+This topology diagram assumes that (for example) the hub emits
+serialized telemetry packets on port 5 of `portOut` and serialized
+event packets on port 6 of `portOut`.
+You should revise the port numbers as required for your system.
 
 ## 7. Change Log
 
