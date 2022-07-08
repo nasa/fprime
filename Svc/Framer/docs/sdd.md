@@ -271,15 +271,12 @@ sequenceDiagram
     buffMgr-->>framer: Return B
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
-    comm-->>framer: 
-    framer-->>eventLogger: 
-    deactivate eventLogger
-
-    activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
     buffMgr-->>comm: 
-    deactivate comm
+    comm-->>framer: 
+    framer-->>eventLogger: 
+    deactivate eventLogger
 ```
 
 #### 6.2.3. Sending a File Packet
