@@ -204,12 +204,12 @@ The `fileDownlink` instance sends a sequence of file packets,
 representing a complete file, to the `framer` instance.
 The sending happens in the following sequence:
 
-1. `fileDownlink` sends a buffer _B_ containing a file packet.
+1. `fileDownlink` sends a buffer _PB_ containing a file packet.
 
-1. `framer` receives and processes _B_.
-When it is done, it returns _B_ to `fileDownlink`.
+1. `framer` receives and processes _PB_.
+When it is done, it returns _PB_ to `fileDownlink`.
 
-1. Upon receipt of _B_, if another file packet is available,
+1. Upon receipt of _PB_, if another file packet is available,
 `fileDownlink` sends it.
 
 Exchanging the buffer controls the rate at which
