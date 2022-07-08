@@ -285,13 +285,29 @@ sequenceDiagram
     deactivate comm
 ```
 
-
 #### 6.2.3. Sending a File Packet
 
 The following diagram shows what happens when `fileDownlink`
 sends a file packet to `framer`.
 
-TODO
+```mermaid
+sequenceDiagram
+    activate eventLogger
+    fileDownlink->>framer: Send file packet P [bufferIn]
+    framer->>buffMgr: Allocate frame buffer B [framedAllocate]
+    buffMgr-->>framer: Return B
+    framer->>framer: Frame P into B
+    framer-)comm: Send B [framedOut]
+    comm-->>framer: 
+    framer-->>fileDownlink: 
+    deactivate fileDownlink
+
+    activate comm
+    comm->>comm: Downlink frame
+    comm->>buffMgr: Deallocate B
+    buffMgr-->>comm: 
+    deactivate comm
+```
 
 #### 6.2.4. Downlinking Framed Data
 
