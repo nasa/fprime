@@ -309,10 +309,6 @@ sequenceDiagram
     deactivate comm
 ```
 
-#### 6.2.4. Downlinking Framed Data
-
-TODO
-
 ### 6.3. Using Svc::GenericHub
 
 TODO
