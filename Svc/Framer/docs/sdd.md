@@ -87,6 +87,10 @@ classDiagram
 
 None.
 
+If an error occurs, `Framer` writes to the system log.
+The rationale is that if something is wrong with the framing, then
+downlink of events is unlikely to work.
+
 ### 4.6. Runtime Setup
 
 To set up an instance of `Framer`, you do the following:
