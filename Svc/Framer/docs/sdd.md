@@ -292,10 +292,10 @@ sequenceDiagram
     buffMgr-->>framer: Return B
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
-    comm-->>framer: 
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
     buffMgr-->>comm: 
+    comm-->>framer: 
     framer->>fileDownlink: Return PB [bufferDeallocate]
     fileDownlink-->>framer: 
     framer-->>fileDownlink: 
