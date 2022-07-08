@@ -160,7 +160,7 @@ to a telemetry database, an event collector, a file downlink component,
 and a byte stream driver.
 The diagrams use the following instances:
 
-* `comm`: An active instance of
+* `comm`: An instance of
 [`Drv::ByteStreamDriverModel`](../../../Drv/ByteStreamDriverModel/docs/sdd.md), for example
 [`Drv::TcpClient`](../../../Drv/TcpClient/docs/sdd.md).
 
@@ -250,15 +250,12 @@ sequenceDiagram
     buffMgr-->>framer: Return B
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
-    comm-->>framer: 
-    framer-->>chanTlm: 
-    deactivate chanTlm
-
-    activate comm
     comm->>comm: Downlink frame
     comm->>buffMgr: Deallocate B
     buffMgr-->>comm: 
-    deactivate comm
+    comm-->>framer: 
+    framer-->>chanTlm: 
+    deactivate chanTlm
 ```
 
 #### 6.2.2. Sending an Event Packet
