@@ -292,7 +292,7 @@ sends a file packet to `framer`.
 
 ```mermaid
 sequenceDiagram
-    activate eventLogger
+    activate fileDownlink
     fileDownlink->>framer: Send file packet P [bufferIn]
     framer->>buffMgr: Allocate frame buffer B [framedAllocate]
     buffMgr-->>framer: Return B
