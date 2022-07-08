@@ -293,16 +293,13 @@ sequenceDiagram
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
     comm-->>framer: 
+    comm->>comm: Downlink frame
+    comm->>buffMgr: Deallocate B
+    buffMgr-->>comm: 
     framer->>fileDownlink: Return PB [bufferDeallocate]
     fileDownlink-->>framer: 
     framer-->>fileDownlink: 
     deactivate fileDownlink
-
-    activate comm
-    comm->>comm: Downlink frame
-    comm->>buffMgr: Deallocate B
-    buffMgr-->>comm: 
-    deactivate comm
 ```
 
 ### 6.3. Using Svc::GenericHub
