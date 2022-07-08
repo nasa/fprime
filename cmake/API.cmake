@@ -13,6 +13,7 @@
 ####
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
+set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
 ####
 # Function `add_fprime_subdirectory`:
 #
@@ -466,6 +467,45 @@ macro(register_fprime_target_helper TARGET_FILE_PATH TARGET_LIST)
     endif()
 endmacro(register_fprime_target_helper)
 
+
+####
+# Macro `register_fprime_autocoder`:
+# 
+# Identical to the above `register_fprime_target` function
+# 
+###
+macro(register_fprime_autocoder TARGET_FILE_PATH)
+    # Normal registered targets don't run in prescan
+    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
+    if (NOT DEFINED FPRIME_PRESCAN)
+        register_fprime_autocoder_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    endif()
+endmacro(register_fprime_autocoder)
+
+
+####
+# Macro `register_fprime_autocoder_helper`:
+#
+# Helper function to do the actual registration.
+# 
+####
+macro(register_fprime_autocoder_helper TARGET_FILE_PATH TARGET_LIST)
+    include("${TARGET_FILE_PATH}")
+    # Prevent out-of-order setups
+    get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
+    if (MODULE_DETECTION_STARTED)
+        message(FATAL_ERROR "Cannot register fprime autocoder after including subdirectories or FPrime-Code.cmake'")
+    endif()
+    # Get the target list to add this target to or use default
+    set(LIST_NAME FPRIME_AUTOCODER_TARGET_LIST)
+    if (${ARGC} GREATER 1)
+        set(LIST_NAME "${ARGV1}")
+    endif()
+    get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
+    if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
+        set_property(GLOBAL APPEND PROPERTY "${LIST_NAME}" "${TARGET_FILE_PATH}")
+    endif()
+endmacro(register_fprime_autocoder_helper)
 
 #### Documentation links
 # Next Topics:
