@@ -293,12 +293,14 @@ sends a file packet to `framer`.
 ```mermaid
 sequenceDiagram
     activate fileDownlink
-    fileDownlink->>framer: Send file packet P [bufferIn]
+    fileDownlink->>framer: Send file packet buffer PB [bufferIn]
     framer->>buffMgr: Allocate frame buffer B [framedAllocate]
     buffMgr-->>framer: Return B
     framer->>framer: Frame P into B
     framer-)comm: Send B [framedOut]
     comm-->>framer: 
+    framer->>fileDownlink: Return PB [bufferDeallocate]
+    fileDownlink-->>framer: 
     framer-->>fileDownlink: 
     deactivate fileDownlink
 
