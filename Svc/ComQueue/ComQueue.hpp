@@ -7,9 +7,31 @@
 #ifndef ComQueue_HPP
 #define ComQueue_HPP
 
-#include "Svc/ComQueue/ComQueueComponentAc.hpp"
+#include <Fw/Buffer/Buffer.hpp>
+#include <Fw/Com/ComBuffer.hpp>
+#include <Svc/ComQueue/ComQueueComponentAc.hpp>
+#include <Utils/Types/Queue.hpp>
+#include "Fw/Types/MemAllocator.hpp"
+#include "Svc/ComQueue/FppConstantsAc.hpp"
 
 namespace Svc {
+
+// ----------------------------------------------------------------------
+// Types
+// ----------------------------------------------------------------------
+static const NATIVE_INT_TYPE totalSize = ComQueueComSize + ComQueueBuffSize;
+
+struct QueueData {
+    NATIVE_UINT_TYPE depth;
+    NATIVE_UINT_TYPE priority;
+    NATIVE_UINT_TYPE index;
+    NATIVE_UINT_TYPE msgSize;
+};
+
+struct QueueConfiguration {
+    NATIVE_UINT_TYPE depth;
+    NATIVE_UINT_TYPE priority;
+};
 
 class ComQueue : public ComQueueComponentBase {
   public:
@@ -19,6 +41,7 @@ class ComQueue : public ComQueueComponentBase {
 
     //! Construct object ComQueue
     //!
+    ComQueue();
     ComQueue(const char* const compName /*!< The component name*/
     );
 
@@ -32,21 +55,25 @@ class ComQueue : public ComQueueComponentBase {
     //!
     ~ComQueue();
 
-  PRIVATE:
+    void configure(QueueConfiguration queueConfig[],
+                   NATIVE_UINT_TYPE configSize,
+                   Fw::MemAllocator allocator);
+
+  private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
 
     //! Handler implementation for bufQueueIn
     //!
-    void bufQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                            Fw::Buffer& fwBuffer);
+    void buffQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::Buffer& fwBuffer);
 
     //! Handler implementation for comQueueIn
     //!
     void comQueueIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                            Fw::ComBuffer& data, /*!<Buffer containing packet data*/
-                            U32 context /*!<Call context value; meaning chosen by user*/
+                            Fw::ComBuffer& data,           /*!<Buffer containing packet data*/
+                            U32 context                    /*!<Call context value; meaning chosen by user*/
     );
 
     //! Handler implementation for comStatusIn
@@ -60,6 +87,26 @@ class ComQueue : public ComQueueComponentBase {
     void run_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
                      NATIVE_UINT_TYPE context       /*!<The call order*/
     );
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+    void retryQueue();
+    void processQueue();
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    // List of queues matched to ports
+    Types::Queue m_queues[totalSize];
+
+    // Sorted list on order of priority, will have the indexes of queues
+    QueueData m_prioritizedList[totalSize];
+
+    //
+
+    Fw::ComBuffer m_comBuffer;
+    Fw::Buffer m_buffer;
 };
 
 }  // end namespace Svc
