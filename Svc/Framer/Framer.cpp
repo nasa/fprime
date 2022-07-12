@@ -4,7 +4,7 @@
 // \brief  cpp file for Framer component implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -16,8 +16,6 @@
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
-
-
 
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
