@@ -45,4 +45,9 @@ void Queue::clear_high_water_mark() {
     m_internal.clear_high_water_mark();
 }
 
+NATIVE_UINT_TYPE Queue::getQueueSize() const {
+    return m_internal.get_allocated_size()/m_message_size;
+}
+
+
 };  // namespace Types

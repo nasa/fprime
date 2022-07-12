@@ -100,10 +100,16 @@ class ComQueue : public ComQueueComponentBase {
     // List of queues matched to ports
     Types::Queue m_queues[totalSize];
 
+    // Store combuffer and buffer
+    Fw::ComBuffer m_comBufferMessage;
+    Fw::Buffer m_bufferMessage;
+
+
     // Sorted list on order of priority, will have the indexes of queues
     QueueData m_prioritizedList[totalSize];
+    QueueData m_lastEntry;
+    bool m_needRetry;
 
-    //
 
     Fw::ComBuffer m_comBuffer;
     Fw::Buffer m_buffer;

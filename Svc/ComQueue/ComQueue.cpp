@@ -99,10 +99,15 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Svc::ComSendStatus& ComStatus) {
     switch (ComStatus.e) {
         case ComSendStatus::READY:
-            processQueue();
+            if (m_needRetry) {
+                retryQueue();
+                m_needRetry = false;
+            } else {
+                processQueue();
+            }
             break;
         case ComSendStatus::FAIL:
-            retryQueue();
+            m_needRetry = true;
             break;
         default:
             FW_ASSERT(0, ComStatus.e);
@@ -130,7 +135,14 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
+void ComQueue::retryQueue() {
 
+    if (m_lastEntry.index < ComQueueComSize){
+        this->comQueueSend_out(0,m_comBufferMessage, 0);
+    } else {
+        this->buffQueueSend_out(0,m_bufferMessage);
+    }
+}
 // We work under the assumption that the metadata in prioritized list
 // being fed into the component is already sorted
 void ComQueue::processQueue() {
@@ -148,17 +160,20 @@ void ComQueue::processQueue() {
 
         sendPriority = entry.priority;
 
+        // Store entry in order to differentiate which buffer to send out during retry
+        m_lastEntry = entry;
+
         if (entry.index < ComQueueComSize){
             queue.dequeue(reinterpret_cast<U8*>(&m_comBuffer), sizeof(m_comBuffer));
+            m_comBufferMessage = m_comBuffer;
             this->comQueueSend_out(0,m_comBuffer, 0);
         } else {
             queue.dequeue(reinterpret_cast<U8*>(&m_buffer), sizeof(m_buffer));
+            m_bufferMessage = m_buffer;
             this->buffQueueSend_out(0,m_buffer);
         }
         break;
     }
-
-    // Do we need some ASSERT/Condition before moving on to the next entry if the current entry failed
 
     // Onto the next entry after we sent the current entry
     // No need for initialization continuing from when the previous loop completed

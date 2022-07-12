@@ -82,6 +82,8 @@ class Queue {
      */
     void clear_high_water_mark();
 
+    NATIVE_UINT_TYPE getQueueSize() const;
+
   private:
     CircularBuffer m_internal;
     FwSizeType m_message_size;
