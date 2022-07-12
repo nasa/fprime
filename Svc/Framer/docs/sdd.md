@@ -325,8 +325,8 @@ instance `hub` of type `Svc::GenericHub`.
 </div>
 
 This topology diagram assumes that (for example) the hub emits
-serialized telemetry packets on port 5 of `portOut` and serialized
-event packets on port 6 of `portOut`.
+serialized telemetry packets on port 0 of `portOut` and serialized
+event packets on port 1 of `portOut`.
 You should revise the port numbers as required for your system.
 
 ## 7. Change Log
