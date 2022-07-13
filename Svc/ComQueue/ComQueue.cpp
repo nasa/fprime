@@ -76,8 +76,9 @@ void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& 
     // Enqueues the items in the combuffer onto queue set
     FW_ASSERT(portNum >= 0 && portNum < ComQueueComSize, portNum);
     Fw::SerializeStatus status = m_queues[portNum].enqueue(reinterpret_cast<const U8*>(&data), ComQueueComSize);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
         this->log_WARNING_HI_QueueFull(QueueType::comQueue, portNum);
+        m_throttle[portNum] = true;
     }
 }
 
@@ -91,8 +92,9 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     Fw::SerializeStatus status =
         m_queues[portNum + ComQueueComSize].enqueue(reinterpret_cast<const U8*>(&fwBuffer), ComQueueBuffSize);
 
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
         this->log_WARNING_HI_QueueFull(QueueType::buffQueue, portNum);
+        m_throttle[portNum] = true;
     }
 }
 
@@ -172,6 +174,7 @@ void ComQueue::processQueue() {
             m_bufferMessage = m_buffer;
             this->buffQueueSend_out(0,m_buffer);
         }
+        m_throttle[entry.index] = false; // sent message, throttle is now clear
         break;
     }
 

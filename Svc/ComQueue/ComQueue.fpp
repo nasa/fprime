@@ -64,7 +64,6 @@ module Svc {
        ) \
         severity warning high \
         format "The {} queue at index {} is full" \
-        throttle 1
 
       # ----------------------------------------------------------------------
       # Telemetry

@@ -100,19 +100,21 @@ class ComQueue : public ComQueueComponentBase {
     // List of queues matched to ports
     Types::Queue m_queues[totalSize];
 
-    // Store combuffer and buffer
-    Fw::ComBuffer m_comBufferMessage;
-    Fw::Buffer m_bufferMessage;
-
-
     // Sorted list on order of priority, will have the indexes of queues
     QueueData m_prioritizedList[totalSize];
     QueueData m_lastEntry;
-    bool m_needRetry;
 
-
+    // Store combuffer and buffer
+    Fw::ComBuffer m_comBufferMessage;
+    Fw::Buffer m_bufferMessage;
     Fw::ComBuffer m_comBuffer;
     Fw::Buffer m_buffer;
+
+    // Flag that indicates whether messages to clear messages or not
+    bool m_throttle[totalSize];
+
+    // Flag that indicates that item on buffer needs to be resent
+    bool m_needRetry;
 };
 
 }  // end namespace Svc
