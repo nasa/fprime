@@ -16,9 +16,12 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-ComQueue ::ComQueue() : ComQueueComponentBase(nullptr) {}
-
-ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName) {}
+ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName) {
+    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
+        m_throttle[i] = false;
+    }
+    m_state = WAITING;
+}
 
 void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
     ComQueueComponentBase::init(queueDepth, instance);
@@ -27,7 +30,7 @@ void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE ins
 ComQueue::~ComQueue() {}
 
 // Setup of metadata of the queues
-void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE configSize, Fw::MemAllocator allocator){
+void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE configSize, Fw::MemAllocator &allocator){
     FW_ASSERT(configSize == totalSize, configSize, totalSize);
 
     NATIVE_UINT_TYPE currentIndex = 0;
@@ -37,7 +40,7 @@ void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE conf
         for (NATIVE_UINT_TYPE j = 0; j < configSize; j++){
 
             // ensure that priority has been set properly
-            FW_ASSERT(queueConfig[j].priority < totalSize, queueConfig[j].priority, totalSize);
+            FW_ASSERT(queueConfig[j].priority < totalSize, queueConfig[j].priority, totalSize, j);
 
             if (currentPriority == queueConfig[j].priority){
 
@@ -75,10 +78,14 @@ void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE conf
 void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Enqueues the items in the combuffer onto queue set
     FW_ASSERT(portNum >= 0 && portNum < ComQueueComSize, portNum);
-    Fw::SerializeStatus status = m_queues[portNum].enqueue(reinterpret_cast<const U8*>(&data), ComQueueComSize);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
-        this->log_WARNING_HI_QueueFull(QueueType::comQueue, portNum);
-        m_throttle[portNum] = true;
+    if(m_state == READY){
+        sendComBuffer(data);
+    } else {
+        Fw::SerializeStatus status = m_queues[portNum].enqueue(reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
+        if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
+            this->log_WARNING_HI_QueueFull(QueueType::comQueue, portNum);
+            m_throttle[portNum] = true;
+        }
     }
 }
 
@@ -88,28 +95,30 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
 
     // set is offset
     FW_ASSERT((portNum + ComQueueComSize) < totalSize);
-    // use as constant
-    Fw::SerializeStatus status =
-        m_queues[portNum + ComQueueComSize].enqueue(reinterpret_cast<const U8*>(&fwBuffer), ComQueueBuffSize);
-
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
-        this->log_WARNING_HI_QueueFull(QueueType::buffQueue, portNum);
-        m_throttle[portNum] = true;
+    if (m_state == READY){
+        sendBuffer(fwBuffer);
+    } else {
+        // use as constant
+        Fw::SerializeStatus status =
+            m_queues[portNum + ComQueueComSize].enqueue(reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+        if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
+            this->log_WARNING_HI_QueueFull(QueueType::buffQueue, portNum);
+            m_throttle[portNum] = true;
+        }
     }
 }
 
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Svc::ComSendStatus& ComStatus) {
     switch (ComStatus.e) {
         case ComSendStatus::READY:
-            if (m_needRetry) {
+            if (m_state == RETRY) {
                 retryQueue();
-                m_needRetry = false;
             } else {
                 processQueue();
             }
             break;
         case ComSendStatus::FAIL:
-            m_needRetry = true;
+            m_state = RETRY;
             break;
         default:
             FW_ASSERT(0, ComStatus.e);
@@ -137,12 +146,22 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
-void ComQueue::retryQueue() {
+void ComQueue::sendComBuffer(Fw::ComBuffer &comBuffer){
+    m_comBufferMessage = comBuffer;
+    this->comQueueSend_out(0,comBuffer, 0);
+    m_state = WAITING;
+}
 
+void ComQueue::sendBuffer(Fw::Buffer &buffer){
+    m_bufferMessage = buffer;
+    this->buffQueueSend_out(0,buffer);
+    m_state = WAITING;
+}
+void ComQueue::retryQueue() {
     if (m_lastEntry.index < ComQueueComSize){
-        this->comQueueSend_out(0,m_comBufferMessage, 0);
+        sendComBuffer(m_comBufferMessage);
     } else {
-        this->buffQueueSend_out(0,m_bufferMessage);
+        sendBuffer(m_bufferMessage);
     }
 }
 // We work under the assumption that the metadata in prioritized list
@@ -150,6 +169,7 @@ void ComQueue::retryQueue() {
 void ComQueue::processQueue() {
     NATIVE_UINT_TYPE i = 0;
     NATIVE_UINT_TYPE sendPriority = 0;
+    m_state = READY;
 
     for (i = 0; i < totalSize; i++){
         QueueData& entry = m_prioritizedList[i];
@@ -166,13 +186,13 @@ void ComQueue::processQueue() {
         m_lastEntry = entry;
 
         if (entry.index < ComQueueComSize){
-            queue.dequeue(reinterpret_cast<U8*>(&m_comBuffer), sizeof(m_comBuffer));
-            m_comBufferMessage = m_comBuffer;
-            this->comQueueSend_out(0,m_comBuffer, 0);
+            Fw::ComBuffer comBuffer;
+            queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
+            sendComBuffer(comBuffer);
         } else {
-            queue.dequeue(reinterpret_cast<U8*>(&m_buffer), sizeof(m_buffer));
-            m_bufferMessage = m_buffer;
-            this->buffQueueSend_out(0,m_buffer);
+            Fw::Buffer buffer;
+            queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
+            sendBuffer(buffer);
         }
         m_throttle[entry.index] = false; // sent message, throttle is now clear
         break;

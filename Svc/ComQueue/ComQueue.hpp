@@ -33,6 +33,9 @@ struct QueueConfiguration {
     NATIVE_UINT_TYPE priority;
 };
 
+enum SendState{
+    READY, RETRY, WAITING
+};
 class ComQueue : public ComQueueComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -41,7 +44,6 @@ class ComQueue : public ComQueueComponentBase {
 
     //! Construct object ComQueue
     //!
-    ComQueue();
     ComQueue(const char* const compName /*!< The component name*/
     );
 
@@ -57,7 +59,7 @@ class ComQueue : public ComQueueComponentBase {
 
     void configure(QueueConfiguration queueConfig[],
                    NATIVE_UINT_TYPE configSize,
-                   Fw::MemAllocator allocator);
+                   Fw::MemAllocator &allocator);
 
   private:
     // ----------------------------------------------------------------------
@@ -91,6 +93,8 @@ class ComQueue : public ComQueueComponentBase {
     // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
+    void sendComBuffer(Fw::ComBuffer &comBuffer);
+    void sendBuffer(Fw::Buffer &buffer);
     void retryQueue();
     void processQueue();
     // ----------------------------------------------------------------------
@@ -107,14 +111,13 @@ class ComQueue : public ComQueueComponentBase {
     // Store combuffer and buffer
     Fw::ComBuffer m_comBufferMessage;
     Fw::Buffer m_bufferMessage;
-    Fw::ComBuffer m_comBuffer;
-    Fw::Buffer m_buffer;
 
     // Flag that indicates whether messages to clear messages or not
     bool m_throttle[totalSize];
 
-    // Flag that indicates that item on buffer needs to be resent
-    bool m_needRetry;
+    // Keeps track of the send state on whether or not to send a message
+    SendState m_state;
+
 };
 
 }  // end namespace Svc
