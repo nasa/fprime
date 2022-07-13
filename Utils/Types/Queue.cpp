@@ -19,6 +19,7 @@ void Queue::setup(U8* const storage, const FwSizeType storage_size, const FwSize
     const FwSizeType total_needed_size = depth * message_size;
     FW_ASSERT(storage_size >= total_needed_size, storage_size, depth, message_size);
     m_internal.setup(storage, total_needed_size);
+    m_message_size = message_size;
 }
 
 Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType size) {
