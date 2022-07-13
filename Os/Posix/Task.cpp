@@ -11,6 +11,9 @@
 #include <climits>
 #include <Fw/Logger/Logger.hpp>
 
+#ifdef TGT_OS_TYPE_LINUX 
+#include <features.h>
+#endif
 
 static const NATIVE_INT_TYPE SCHED_POLICY = SCHED_RR;
 
@@ -100,7 +103,7 @@ namespace Os {
 
     Task::TaskStatus set_cpu_affinity(pthread_attr_t& att, NATIVE_UINT_TYPE cpuAffinity) {
         if (cpuAffinity != Task::TASK_DEFAULT) {
-#ifdef TGT_OS_TYPE_LINUX
+#if TGT_OS_TYPE_LINUX && __GLIBC__
             cpu_set_t cpuset;
             CPU_ZERO(&cpuset);
             CPU_SET(cpuAffinity, &cpuset);
@@ -111,6 +114,8 @@ namespace Os {
                                    reinterpret_cast<POINTER_CAST>(strerror(stat)));
                 return Task::TASK_INVALID_PARAMS;
             }
+#elif TGT_OS_TYPE_LINUX
+            Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux with glibc\n");
 #else
             Fw::Logger::logMsg("[WARNING] Setting CPU affinity is only available on Linux\n");
 #endif

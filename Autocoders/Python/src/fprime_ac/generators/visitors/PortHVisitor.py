@@ -230,8 +230,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("port", "XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port", "PortH")
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()

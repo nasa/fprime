@@ -190,7 +190,7 @@ class TlmPacketParser(object):
         Generates GDS XML dictionary from parsed topology XML
         """
         if self.verbose:
-            print("Topology xml type description file: %s" % xml_filename)
+            print(f"Topology xml type description file: {xml_filename}")
         model = TopoFactory.TopoFactory.getInstance()
         topology_model = model.create(the_parsed_topology_xml, generate_list_file=False)
 
@@ -613,7 +613,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print("Usage: %s [options] xml_filename" % sys.argv[0])
+        print(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
         xml_filename = args[0]

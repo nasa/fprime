@@ -725,6 +725,7 @@ def generate_component(
         cpp_instance_gtest_name = base + "_GTest_Cpp"
         h_instance_test_impl_name = base + "_TestImpl_H"
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
+        test_main_name = base + "_TestMain_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -752,6 +753,7 @@ def generate_component(
         generator.configureVisitor(
             cpp_instance_test_impl_name, "TestImplCppVisitor", True, True
         )
+        generator.configureVisitor(test_main_name, "TestMainVisitor", True, True)
     else:
         generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "ComponentCppVisitor", True, True)
@@ -1141,7 +1143,7 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
             + parser.get_include_enums()
             + parser.get_include_arrays()
         )
-    elif the_type == "assembly" or the_type == "deployment":
+    elif the_type in ("assembly", "deployment"):
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
@@ -1192,7 +1194,7 @@ def main():
     # always exists. We are basically only checking for when the user
     # specifies an alternate working directory.
 
-    if os.path.exists(opt.work_path) == False:
+    if not os.path.exists(opt.work_path):
         Parser.error(f"Specified path does not exist ({opt.work_path})!")
 
     working_dir = opt.work_path
@@ -1208,14 +1210,14 @@ def main():
 
     # Configure the logging.
     log_level = opt.logger.upper()
-    log_level_dict = {}
-
-    log_level_dict["QUIET"] = None
-    log_level_dict["DEBUG"] = logging.DEBUG
-    log_level_dict["INFO"] = logging.INFO
-    log_level_dict["WARNING"] = logging.WARN
-    log_level_dict["ERROR"] = logging.ERROR
-    log_level_dict["CRITICAL"] = logging.CRITICAL
+    log_level_dict = {
+        "QUIET": None,
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARN,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
 
     if log_level_dict[log_level] is None:
         stdout_enable = False
@@ -1238,9 +1240,9 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if opt.build_root_flag == True:
+    if opt.build_root_flag:
         # Check for BUILD_ROOT env. variable
-        if ("BUILD_ROOT" in list(os.environ.keys())) == False:
+        if not ("BUILD_ROOT" in list(os.environ.keys())):
             PRINT.info(
                 "ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path..."
             )
@@ -1273,7 +1275,7 @@ def main():
             the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
             generate_serializable(the_serial_xml, opt)
             dependency_parser = the_serial_xml
-        elif xml_type == "assembly" or xml_type == "deployment":
+        elif xml_type in ("assembly", "deployment"):
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
@@ -1321,7 +1323,7 @@ def main():
     # Always return to directory where we started.
     os.chdir(starting_directory)
 
-    if ERROR == True:
+    if ERROR:
         sys.exit(-1)
     else:
         sys.exit(0)

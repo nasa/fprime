@@ -17,7 +17,7 @@ ACTIVELOGGERIMPL
 ACTIVELOGGERIMPLCFG
 ACTIVELOGGERIMPLTESTER
 ACTIVERATEGROUP
-ACTIVERATEGROUPIMPLCFG
+ACTIVERATEGROUPCFG
 ACTIVERATEGROUPIMPLTESTER
 ACTIVETEXTLOGGERIMPL
 actools
@@ -631,6 +631,7 @@ gh
 ghprb
 github
 gjslint
+glibc
 globals
 gmail
 gmtime
@@ -1201,6 +1202,7 @@ PRId
 printables
 printf
 println
+prioritization
 PRIu
 prm
 PRMDB
@@ -1255,6 +1257,7 @@ QEvent
 qhelpgenerator
 QHG
 qhp
+QNX
 qsf
 qtest
 qthelpproject
@@ -1398,6 +1401,7 @@ settime
 settingsini
 settype
 setuptools
+setvalue
 setw
 sev
 sface
@@ -1438,6 +1442,7 @@ sometask
 somevalue
 sommercharles
 soudry
+sourced
 SOURCEDIR
 sourceforge
 Sourcetrail

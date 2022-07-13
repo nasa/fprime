@@ -73,7 +73,7 @@ class Parser:
         Convert and return the filename as a single string.
         """
 
-        if os.path.isfile(filename) == False:
+        if not os.path.isfile(filename):
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
             raise OSError(str)
@@ -207,7 +207,7 @@ class Parser:
                 # requirement for parsing a second file is that it has a same
                 # named root Element.
 
-                if self.__root is not None and root_name_checked == False:
+                if self.__root is not None and not root_name_checked:
 
                     if self.__root.getName() == name:
 

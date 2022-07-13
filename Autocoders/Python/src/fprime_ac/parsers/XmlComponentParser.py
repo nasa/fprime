@@ -72,7 +72,7 @@ class XmlComponentParser:
         )
 
         #
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
 
@@ -494,7 +494,7 @@ class XmlComponentParser:
                         f = None
                     if "update" in list(channel.attrib.keys()):
                         u = channel.attrib["update"]
-                        if u != "always" and u != "on_change":
+                        if u not in ("always", "on_change"):
                             PRINT.info(
                                 '%s: Invalid update %s in channel %s. Should be "always" or "on_change"'
                                 % (xml_file, u, n)
@@ -1052,7 +1052,7 @@ class XmlComponentParser:
             ## Ports Missing: Aborting
             else:
                 for port, value in cmd_or_param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)
@@ -1075,7 +1075,7 @@ class XmlComponentParser:
             ## Ports Missing: Abort
             else:
                 for port, value in param.items():
-                    if value == False:
+                    if not value:
                         PRINT.info("%s port missing" % port)
                 PRINT.info("Aborting")
                 sys.exit(-1)

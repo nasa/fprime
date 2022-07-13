@@ -153,6 +153,14 @@ namespace Ref {
       this->signalPhase     = Phase;
       this->sigType = SigType;
 
+      // When the settings change, reset the history values
+      for (U32 i = 0; i < SignalSet::SIZE; i++) {
+          this->sigHistory[i] = 0.0f;
+      }
+      for (U32 i = 0; i < SignalPairSet::SIZE; i++) {
+          this->sigPairHistory[i].settime(0.0f);
+          this->sigPairHistory[i].setvalue(0.0f);
+      }
       this->log_ACTIVITY_LO_SignalGen_SettingsChanged(this->signalFrequency, this->signalAmplitude, this->signalPhase, this->sigType);
       this->tlmWrite_Type(SigType);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -164,6 +172,7 @@ namespace Ref {
         )
   {
       this->running = !this->running;
+      this->ticks = 0;
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 

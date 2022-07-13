@@ -17,19 +17,19 @@
 #define ACTIVERATEGROUP_TEST_UT_ACTIVERATEGROUPIMPLTESTER_HPP_
 
 #include <GTestBase.hpp>
-#include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
+#include <Svc/ActiveRateGroup/ActiveRateGroup.hpp>
 
 namespace Svc {
 
     class ActiveRateGroupImplTester: public ActiveRateGroupGTestBase {
         public:
-            ActiveRateGroupImplTester(Svc::ActiveRateGroupImpl& inst);
+            ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst);
             virtual ~ActiveRateGroupImplTester();
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
-            void runCycleOverrun(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
+            void runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance);
             void runPingTest();
 
         private:
@@ -43,7 +43,7 @@ namespace Svc {
               U32 key /*!< Value to return to pinger*/
             );
 
-            Svc::ActiveRateGroupImpl& m_impl;
+            Svc::ActiveRateGroup& m_impl;
 
             void clearPortCalls();
 
