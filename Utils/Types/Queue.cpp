@@ -23,7 +23,7 @@ void Queue::setup(U8* const storage, const FwSizeType storage_size, const FwSize
 }
 
 Fw::SerializeStatus Queue::enqueue(const U8* const message, const FwSizeType size) {
-    FW_ASSERT(m_message_size > 0); // Ensure initialization
+    FW_ASSERT(m_message_size > 0, m_message_size); // Ensure initialization
     FW_ASSERT(m_message_size == size, size, m_message_size); // Message size is as expected
     return m_internal.serialize(message, static_cast<NATIVE_UINT_TYPE>(m_message_size));
 }

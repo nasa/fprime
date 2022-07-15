@@ -9,21 +9,13 @@
 
 #include "GTestBase.hpp"
 #include "Svc/ComQueue/ComQueue.hpp"
+#define BUFFER_LENGTH 3u
 
 namespace Svc {
 
 class Tester : public ComQueueGTestBase {
 
   private:
-
-    // ----------------------------------------------------------------------
-    // Types
-    // ----------------------------------------------------------------------
-
-    enum class ThrottleState {
-        THROTTLED,
-        NOT_THROTTLED
-    };
 
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -45,7 +37,13 @@ class Tester : public ComQueueGTestBase {
 
     //! To do
     //!
-    void toDo();
+    void testQueueSend();
+
+    void testRetrySend();
+
+    void testPrioritySend();
+
+    void testQueueFull();
 
   private:
     // ----------------------------------------------------------------------
@@ -69,11 +67,6 @@ class Tester : public ComQueueGTestBase {
     // Helper methods
     // ----------------------------------------------------------------------
 
-    //! Retry Queue
-    void testRetryQueue();
-
-    //! Process Queue
-    void testProcessQueue();
 
     //! Connect ports
     //!

@@ -33,9 +33,7 @@ struct QueueConfiguration {
     NATIVE_UINT_TYPE priority;
 };
 
-enum SendState{
-    READY, RETRY, WAITING
-};
+enum SendState { READY, RETRY, WAITING };
 class ComQueue : public ComQueueComponentBase {
   public:
     // ----------------------------------------------------------------------
@@ -57,9 +55,7 @@ class ComQueue : public ComQueueComponentBase {
     //!
     ~ComQueue();
 
-    void configure(QueueConfiguration queueConfig[],
-                   NATIVE_UINT_TYPE configSize,
-                   Fw::MemAllocator &allocator);
+    void configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE configSize, Fw::MemAllocator& allocator);
 
   private:
     // ----------------------------------------------------------------------
@@ -93,8 +89,8 @@ class ComQueue : public ComQueueComponentBase {
     // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
-    void sendComBuffer(Fw::ComBuffer &comBuffer);
-    void sendBuffer(Fw::Buffer &buffer);
+    void sendComBuffer(Fw::ComBuffer& comBuffer);
+    void sendBuffer(Fw::Buffer& buffer);
     void retryQueue();
     void processQueue();
     // ----------------------------------------------------------------------
@@ -117,7 +113,6 @@ class ComQueue : public ComQueueComponentBase {
 
     // Keeps track of the send state on whether or not to send a message
     SendState m_state;
-
 };
 
 }  // end namespace Svc
