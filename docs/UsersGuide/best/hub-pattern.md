@@ -1,6 +1,6 @@
 # A Quick Look at the Hub Pattern
 
-The Hub pattern is a way to distribute F´ applications across some barriers. These barriers may be address-space barriers, platform barriers, or other divides.  With the hub pattern, we connect F´ ports through a serialized comm link
+The Hub pattern is a way to distribute F´ applications across some barriers. These barriers may be address-space barriers, platform barriers, or other divides. With the hub pattern, we connect F´ ports through a serialized comm link
 and then out the interface on the other side of the barrier. It is built around the hub.
 
 A hub is a component with multiple serialization input and output ports. Typed ports from a calling component are

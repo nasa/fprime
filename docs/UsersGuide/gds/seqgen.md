@@ -43,7 +43,7 @@ fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/Ref/build-artifa
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with
 the `.bin` extension.
 
-This binary file should be uploaded to the flight software.  Given limitations on file path length, it should be copied
+This binary file should be uploaded to the flight software. Given limitations on file path length, it should be copied
 to `/tmp` when running locally.
 
 ## Running The Binary Sequence
@@ -78,7 +78,7 @@ been polled from a hardware clock or system time source.
 A sequence can be built with an expected time base and said sequence will not run should the flight software report time
 system in a different time base. For example, a sequence using TB_SC_TIME (spacecraft time) could be prevented from
 running if the flight software is currently using raw processor time and has not synchronized time with a known time
-source.  Available time sources are below:
+source. The available time sources are listed below:
 
 | Timebase | Value | Explanation |
 |---|---|---|

@@ -11,7 +11,7 @@
 
 ## 1. Introduction
 
-In this section we will take our Ref topology and cross-compile it for the
+In this section, we will take our Ref topology and cross-compile it for the
 Raspberry Pi. In order to fully benefit from this tutorial, the user should
 acquire a Raspberry Pi and have the cross-compilation toolchain as described
 in [RPI](https://github.com/nasa/fprime/blob/master/RPI/README.md).
@@ -70,7 +70,7 @@ You can log into the Raspberry Pi via SSH by running:
 ssh pi@<YOUR RASPBERRY PI IP ADDRESS>
 ```
 
-Finally you can run the Ref deployment on the Raspberry Pi as follows:
+Finally, you can run the Ref deployment on the Raspberry Pi as follows:
 ```sh
 ./Ref -a <ground system ip> -p 50000
 ```

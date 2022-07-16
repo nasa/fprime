@@ -8,7 +8,7 @@ title: "F´ Installation Guide"
 This installation guide is specifically designed to enable individuals and researchers to get up and
 running with F´ quickly. Larger projects with specific requirements may need to extend this process.
 
-**Note:** see the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
+**Note:** See the troubleshooting section at the bottom for help resolving common issues found during F´ installs.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Requirements:
 4. CLang or GCC compiler
 5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
 
-**Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
+**Note:** OS-specific notes are in the [Troubleshooting](#Troubleshooting) section below.
 
 ### Setting Up F´ Environment
 

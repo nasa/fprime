@@ -353,4 +353,4 @@ optional arguments:
 ## Conclusion
 
 The user should now be able to successfully use the GDS cli to connect to a running GDS, send commands, receive events
-and telemetry, and filter the results to be manageable.  All this is done through the command line using this tool.
+and telemetry, and filter the results to be manageable. All this is done through the command line using this tool.

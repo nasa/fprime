@@ -164,7 +164,7 @@ Do the following:
 
 1. Run the command `fprime-util build`.
 
-The output should indicate that the model built without any errors.
+The output should indicate that the model was built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
 If you get stuck, you can look at the
@@ -225,7 +225,7 @@ as `MathTypes-saved`.
 A **port** is the endpoint of a connection between
 two components.
 A **port definition** is like a function signature;
-it defines the type of the data carried on a port.
+it defines the type of data carried on a port.
 
 For this tutorial, we need two port definitions:
 
@@ -257,7 +257,7 @@ This file defines the ports `MathOp` and `MathResult`.
 operation, and a second operand.
 The operands have type `F32`, which represents a 32-bit
 floating-point number.
-The operation has type `MathOp`, which is the enum type
+The operation has the type `MathOp`, which is the enum type
 we defined in the previous section.
 `MathResult` has a single formal parameter, the value of type `F32`
 returned as the result of the operation.
@@ -360,7 +360,7 @@ There are two event reports, one for receiving a command
 and one for receiving a result.
 
 1. **Telemetry:** These are **channels** that define telemetry
-points that the this component can emit.
+points that this component can emit.
 There are four telemetry channels: three for the arguments
 to the last command received and one for the last
 result received.
@@ -419,8 +419,7 @@ mv MathSenderComponentImpl.cpp-template MathSender.cpp
 mv MathSenderComponentImpl.hpp-template MathSender.hpp
 ```
 
-These commands produce a template, or stub implementation,
-of the `MathSender` implementation class.
+These commands produce a template or stub implementation of the `MathSender` implementation class.
 You will fill in this implementation class below.
 
 Now run the command `fprime-util build --jobs 4`.
@@ -498,7 +497,7 @@ The implementation code does the following:
 1. Emit telemetry and events.
 
 1. Invoke the `mathOpOut` port to request that `MathReceiver`
-perform the operation.
+performs the operation.
 
 1. Send a command response indicating success.
 The command response goes out on the special port
@@ -572,7 +571,7 @@ in three steps:
 #### Set Up the Unit Test Environment
 
 **Create the stub Tester class:**
-Do the following in directory `Ref/MathSender`:
+Do the following in the directory `Ref/MathSender`:
 
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
@@ -652,7 +651,7 @@ use this class without Google Test if desired.
 
 You can look at the header files for these generated classes
 to see what operations they provide.
-In the next sections we will provide some example uses
+In the next sections, we will provide some example uses
 of these operations.
 
 #### Write and Run One Test
@@ -834,7 +833,7 @@ and passed.
 As an exercise, try the following:
 
 1. Change the behavior of the component
-so that it does something incorrect.
+so that it does something incorrectly.
 For example, try adding one to a telemetry
 value before emitting it.
 
@@ -1024,7 +1023,7 @@ We will explain the function of these ports below.
 
 1. **Parameters:** There is one **parameter**.
 A parameter is a constant that is configurable by command.
-In this case there is one parameter `FACTOR`.
+In this case, there is one parameter `FACTOR`.
 It has the default value 1.0 until its value is changed by command.
 When doing math, the `MathReceiver` component performs the requested
 operation and then multiplies by this factor.
@@ -1039,7 +1038,7 @@ _(v1 + v2) f_.
       is updated by command.
       This event is **throttled** to a limit of three.
       That means that after the event is emitted three times
-      it will not be emitted any more, until the throttling
+      it will not be emitted anymore, until the throttling
       is cleared by command (see below).
 
    1. `OPERATION_PERFORMED`: Emitted when this component
@@ -1052,7 +1051,7 @@ _(v1 + v2) f_.
 the event throttle.
 
 1. **Telemetry:**
-There two telemetry channels: one for reporting
+There are two telemetry channels - one for reporting
 the last operation received and one for reporting
 the factor parameter.
 
@@ -1241,7 +1240,7 @@ identifier corresponding to the `FACTOR` parameter,
 then get the parameter value and emit an event report.
 
 1. Otherwise fail an assertion.
-This code should never run, because there are no other
+This code should never run because there are no other
 parameters.
 
 ### Write and Run Unit Tests
@@ -1438,7 +1437,7 @@ we wrote for the `MathSender` component.
 Notice that the method for invoking a port is different.
 Since the component is queued, we don't call `doDispatch`
 directly.
-Instead we invoke `schedIn`.
+Instead, we invoke `schedIn`.
 
 #### Write and Run Tests
 
@@ -1559,11 +1558,11 @@ On each iteration, it calls `setFactor`.
 At the end of this loop, the `FACTOR_UPDATED` event should be
 throttled.
 
-Next the test calls `setFactor` with a second argument of
+Next, the test calls `setFactor` with a second argument of
 `ThrottleState::THROTTLED`.
 This code checks that the event is throttled.
 
-Next the test sends the command `CLEAR_EVENT_THROTTLE`,
+Next, the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
@@ -1617,8 +1616,8 @@ It can also occur for very small values of `val2`.
 1. Should the error be caught in `MathSender` or `MathReceiver`?
 
 1. Suppose the design says that `MathSender` catches the error,
-and so never sends requests to `MathReceiver` to divide by zero.
-What if anything should `MathReceiver` do if it receives
+and so it never sends requests to `MathReceiver` to divide by zero.
+What should `MathReceiver` do if it receives
 a divide by zero request?
 Carry out the operation normally?
 Emit a warning?
@@ -1684,7 +1683,7 @@ instance mathReceiver: Ref.MathReceiver base id 0x2700 \
 
 This code defines an instance `mathReceiver` of
 component `MathReceiver`.
-It has base identifier 0x2700 and the default queue size.
+It has the base identifier 0x2700 and the default queue size.
 
 **More information:**
 For more information on defining component instances,
@@ -1785,7 +1784,7 @@ of the Ref topology.
 
 **Generate the layout:**
 For this step, we will use the F Prime Layout (FPL) tool.
-If FPL is not installed on your system, then install it how:
+If FPL is not installed on your system, then install it now:
 clone [this repository](https://github.com/fprime-community/fprime-layout)
 and follow the instructions.
 
@@ -1971,6 +1970,6 @@ You should see the following logs, among others:
 * `channel.log`: Telemetry points received.
 
 You can also view these logs via the GDS browser interface.
-Click the Logs tab to go the Logs view.
+Click the Logs tab to go to the Logs view.
 Select the log you wish to inspect from the drop-down menu.
 By default, there is no log selected.
