@@ -22,7 +22,7 @@ platforms.
 
 First and foremost, baremetal F´ systems should avoid using **Active Components**  at all costs because these components
 require quasi-asynchronous execution contexts in which to run. i.e. they need thread such that they can execute in
-"parallel" with each other. **Note:** if you **must** use **Active Components** you should thoroughly review the
+"parallel" with each other. **Note:** If you **must** use **Active Components** you should thoroughly review the
 [thread virtualization](#thread-virtualization) section of this document and associated technology.
 
 If your system can be entirely defined by **Passive Components** then implicitly every port **invocation** would be
@@ -38,7 +38,7 @@ driven by [rate groups](../best/rate-group.md). Designing the system this way en
 one source: the rate group driver and thus reducing the problem to supplying an execution context to the rate group
 driver at a set rate.  All calls needed will execute during a sweep through the rate groups and their derived rates.
 
-**Note:** other options exist (see [Thread Virtualization](#thread-virtualization) below).
+**Note:** Other options exist (see [Thread Virtualization](#thread-virtualization) below).
 
 Although a full discussion of supplying execution context to the rate group driver is outside the scope of this
 documentation, this author wanted to provide a few tips. First, F´ execution should be primarily derived from the main
@@ -65,7 +65,7 @@ groups.
 ## Multi-Core and Multi-Device Systems
 
 We have yet to see any issues running F´ on multi-core systems. Some users have been successful in scheduling high-priority
-components to designated cores.  In general, these systems behave just fine. **Note:** some portions of F´ use `U32`
+components to designated cores.  In general, these systems behave just fine. **Note:** Some portions of F´ use `U32`
 types so synchronize between threads. In many systems this is a safe atomic operation, however; this is not guaranteed
 in all systems. A project should use care to ensure that its system will behave as expected.  These usages are under
 review and will be corrected over time.
@@ -77,7 +77,7 @@ across these deployments to look like a single F´ deployment, users are advised
 
 ## Thread Virtualization
 
-**Note:** this is an experimental technology with respect to F´. Care to understand its implementation should be taken
+**Note:** This is an experimental technology with respect to F´. Care to understand its implementation should be taken
 before using it in a production/flight context.
 
 Some systems, even baremetal systems, require the use of **Active Components**.  Many of the `Svc` components are by

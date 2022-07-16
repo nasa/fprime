@@ -4,7 +4,7 @@ When contributing to F´ it is important to understand the style guidelines that
 provided by the team. The information in this guide may not be complete and will evolve as the project continues. When
 unclear, follow reasonable conventions for the language at hand.
 
-**Note:** these guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed.
+**Note:** These guidelines are for submissions to the F´ framework. Projects using F´ should adapt them as needed.
 
 ## F´ and Flight Software
 

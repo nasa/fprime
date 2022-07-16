@@ -40,7 +40,7 @@ Where components allow specific configuration, a `<component>Cfg.hpp` is availab
 
 AcConstants.ini is used to set the constants for the autocoded components provided by the framework. This allows
 projects to appropriately size the number of ports provided by many of the command and data handling components defined
-in the `Svc` package. **Note:** internal configurations like table sizes are set in the component-specific header as
+in the `Svc` package. **Note:** Internal configurations like table sizes are set in the component-specific header as
 these settings aren't autocoded. See: [Component Configuration](#component-configuration)
 
 These settings may need to be increased for large projects with many components, or minimized for projects with a small
@@ -110,7 +110,7 @@ Example:
 
 #### Configured Type Definitions
 
-**WARNING:** to run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
+**WARNING:** To run the system with the standard F´ GDS, these changes need to be made in the python GDS support code
 as well as here. This is non-trivial and will be fixed in future releases. Unless the project intended to modify the
 GDS code, or use an alternate GDS for all functions, these settings should be left as their defaults.
 
@@ -156,7 +156,7 @@ can produce a time tag. It lets users of the system see which clock was used whe
 
 Time contexts are another value associated with time.
 
-**WARNING:** changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
+**WARNING:** Changes to this value must be done in tandem with the F´ GDS for F´ GDS features to work. Thus most
 projects don't modify these settings just like the types defined above.
 
 ```
@@ -327,7 +327,7 @@ the macros to configure this feature.
 | FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
 | FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
 
-**Note:** smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
+**Note:** Smaller values for FW_SERIALIZATION_TYPE_ID_BYTES  means that less data storage is needed, but also
 limits the number of types that can be defined. FW_SERIALIZATION_TYPE_ID is required to have type IDs in the buffer and
 thus to introspect what type is contained in the buffer.
 

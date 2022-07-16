@@ -58,7 +58,7 @@ another autocoder, see [Autocoding Using Autocoded Inputs](#Autocoding_Using_Aut
 `<autocoder name>_is_supported` takes one argument: a source file path to a possible autocoder input. If the autocoder
 needs to process this file, `<autocoder name>_is_supported` must set `IS_SUPPORTED` to `TRUE` in `PARENT_SCOPE`
 otherwise `<autocoder name>_is_supported` must set `IS_SUPPORTED` to `FALSE` in `PARENT_SCOPE`. Since most autocoders
-determine support via suffix, `autocoder/helpers.cmake` supplies a helper macro to do that easily. **Note:** the
+determine support via suffix, `autocoder/helpers.cmake` supplies a helper macro to do that easily. **Note:** The
 autocoder must include `autocoder/helpers` to access that helper.
 
 For example, the FPP autocoder supports all files ending with the extension `.fpp` and it uses the suffix helper as
@@ -277,8 +277,7 @@ with the following caveats.
 ### 1. Always Run The Source Autocoder First
 
 This is done in the target definition when it runs autocoders. The source autocoder must be run first. This is easy to
-do as the `run_ac_set()` takes a set of autocoders to run.  **Remember:** this is done in the target definition that
-calls this autocoder.
+do as the `run_ac_set()` takes a set of autocoders to run.  **Remember**, this is done in the target definition that calls this autocoder.
 
 **Example: FPP Sources AI XML in the Build Target**
 ```cmake
@@ -289,7 +288,7 @@ function(build_add_module_target MODULE TARGET SOURCES DEPENDENCIES)
 endfunction(build_add_module_target)
 ```
 
-**Do not worry** autocoders can be run using `run_ac_set` multiple times, the actual invocation will happen once and be
+**Do not worry**, autocoders can be run using `run_ac_set` multiple times, the actual invocation will happen once and be
 shared.
 
 ### 2. Do Not Read the Autocoder Input Outside of `add_custom_command`
