@@ -87,10 +87,6 @@ classDiagram
 
 None.
 
-If an error occurs, `Framer` writes to the system log.
-The rationale is that if something is wrong with the framing, then
-downlink of events is unlikely to work.
-
 ### 4.6. Runtime Setup
 
 To set up an instance of `Framer`, you do the following:
@@ -115,15 +111,16 @@ For an example of setting up a `Framer` instance, see the
 
 #### 4.7.1. comIn
 
-The `comIn` port handler receives an `Fw::Com` buffer _B_ and an integer
-context value.
+The `comIn` port handler receive a reference to an `Fw::Com` buffer _B_
+and an integer context value.
 It calls the `frame` method of `m_protocol`, passing in the
 address and length of _B_ and the packet type
 `Fw::ComPacket::FW_PACKET_UNKNOWN`.
 
 #### 4.7.2. bufferIn
 
-The `bufferIn` port handler receives an `Fw::Buffer` object _B_.
+The `bufferIn` port handler receives a reference to an  `Fw::Buffer`
+object _B_.
 It calls the `frame` method of `m_protocol`, passing in the
 data address and size of _B_ and the packet type
 `Fw::ComPacket::FW_PACKET_FILE`.
@@ -153,6 +150,10 @@ apparently not working.
 ## 5. Ground Interface
 
 None.
+
+If an error occurs, `Framer` writes to the system log.
+The rationale is that if something is wrong with the framing, then
+downlink of events is unlikely to work.
 
 ## 6. Example Uses
 
