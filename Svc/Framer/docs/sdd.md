@@ -238,7 +238,7 @@ Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
 These diagrams assume that, in the
-<a href="runtime-setup"></a>implementation of `Svc::FramingProtocol`
+<a href="runtime-setup">implementation of `Svc::FramingProtocol`
 passed in at initialization</a>,
 each downlink frame contains a single packet.
 This is a common use case; for example, the F Prime standard downlink protocol
