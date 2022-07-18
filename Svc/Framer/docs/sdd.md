@@ -87,6 +87,7 @@ classDiagram
 
 None.
 
+<a name="runtime-setup"></a>
 ### 4.6. Runtime Setup
 
 To set up an instance of `Framer`, you do the following:
@@ -237,7 +238,8 @@ Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
 These diagrams assume that, in the
-<a href="#fpi-impl">implementation of `Svc::FramingProtocolInterface`</a>,
+<a href="runtime-setup"></a>implementation of `Svc::FramingProtocol`
+passed in at initialization</a>,
 each downlink frame contains a single packet.
 This is a common use case; for example, the F Prime standard downlink protocol
 is implemented this way.
