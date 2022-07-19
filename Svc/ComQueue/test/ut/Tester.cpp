@@ -25,6 +25,48 @@ Tester ::Tester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE), component("Co
 
 Tester ::~Tester() {}
 
+void Tester ::configure() {
+    QueueConfiguration queue[ComQueue::totalSize];
+    Fw::MallocAllocator allocator;
+
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
+        queue[i].priority = i;
+        queue[i].depth = 3;
+    }
+    component.configure(queue, ComQueue::totalSize, allocator);
+}
+
+void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
+    U8 data[BUFFER_LENGTH] = {0xde,0xad,0xbe};
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    if (queueNum < ComQueueComSize) {
+        portNum = queueNum;
+        queueType = QueueType::comQueue;
+        invoke_to_comQueueIn(portNum, comBuffer, 0);
+    } else {
+        portNum = queueNum - ComQueueComSize;
+        queueType = QueueType::buffQueue;
+        invoke_to_buffQueueIn(portNum, buffer);
+    }
+}
+
+void Tester ::emitOne() {
+    Svc::ComSendStatus state = Svc::ComSendStatus::READY;
+    invoke_to_comStatusIn(0, state);
+    component.doDispatch();
+}
+
+void Tester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex, QueueType expectedType, Fw::ComBuffer& expectedCom, Fw::Buffer& expectedBuff) {
+    emitOne();
+
+    if (expectedType == QueueType::comQueue) {
+        ASSERT_from_comQueueSend(expectedIndex, expectedCom, 0);
+    } else {
+        ASSERT_from_buffQueueSend(expectedIndex, expectedBuff);
+    }
+}
+
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
@@ -33,35 +75,22 @@ void Tester ::testQueueSend() {
     U8 data[BUFFER_LENGTH] = {0xde,0xad,0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
     Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
 
-    QueueConfiguration queue[totalSize];
-    Fw::MallocAllocator allocator;
-    Svc::ComSendStatus state = Svc::ComSendStatus::READY;
-
-    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
-        queue[i].priority = i;
-        queue[i].depth = 3;
-    }
-    component.configure(queue, totalSize, allocator);
-
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_comQueueIn_InputPorts(); portNum++){
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueComSize; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        invoke_to_comStatusIn(0, state);
-        component.doDispatch();
-        ASSERT_from_comQueueSend(0, comBuffer, 0);
+        emitOneAndCheck(0, QueueType::comQueue, comBuffer, buffer);
         clearFromPortHistory();
     }
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_buffQueueIn_InputPorts(); portNum++){
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueBuffSize; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        invoke_to_comStatusIn(0, state);
-        component.doDispatch();
-        ASSERT_from_buffQueueSend(0, buffer);
+        emitOneAndCheck(0, QueueType::buffQueue, comBuffer, buffer);
         clearFromPortHistory();
     }
 }
 
-void Tester ::testRetrySend(){
+void Tester ::testRetrySend() {
     U8 data[BUFFER_LENGTH] = {'a','b','c'};
     U8 dataGarbage[BUFFER_LENGTH] = {'c', 'd', 'e'};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
@@ -70,103 +99,88 @@ void Tester ::testRetrySend(){
     Fw::Buffer buffer(&data[0], sizeof(data));
     Fw::Buffer bufferGarbage(&dataGarbage[0], sizeof(dataGarbage));
 
-    QueueConfiguration queue[totalSize];
-    Fw::MallocAllocator allocator;
+
     Svc::ComSendStatus readyState = Svc::ComSendStatus::READY;
     Svc::ComSendStatus failState = Svc::ComSendStatus::FAIL;
 
-    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
-        queue[i].priority = i;
-        queue[i].depth = 3;
-    }
-    component.configure(queue, totalSize, allocator);
+    configure();
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_comQueueIn_InputPorts(); portNum++){
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueComSize; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
+        invoke_to_comQueueIn(portNum,  comBufferGarbage, 0); // Send in garbage to ensure the right retry
+        emitOneAndCheck(0, QueueType::comQueue, comBuffer, buffer);
 
+        // Fail and force retry
         invoke_to_comStatusIn(0, failState);
         component.doDispatch();
 
-        invoke_to_comQueueIn(portNum,  comBufferGarbage, 0);
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
+        // Retry should be original buffer
+        emitOneAndCheck(1, QueueType::comQueue, comBuffer, buffer);
 
         ASSERT_from_comQueueSend_SIZE(2);
-        ASSERT_from_comQueueSend(1, comBuffer, 0);
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
-
-        ASSERT_from_comQueueSend(0, comBuffer, 0);
+        // Now clear out the garbage in queue
+        emitOneAndCheck(2, QueueType::comQueue, comBufferGarbage, bufferGarbage);
         clearFromPortHistory();
     }
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_buffQueueIn_InputPorts(); portNum++){
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueBuffSize; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
+        invoke_to_buffQueueIn(portNum, bufferGarbage); // Send in garbage to ensure the right retry
+        emitOneAndCheck(0, QueueType::buffQueue, comBuffer, buffer);
 
+        // Fail and force retry
         invoke_to_comStatusIn(0,failState);
         component.doDispatch();
-        // verify command was sent
 
-        invoke_to_buffQueueIn(portNum, bufferGarbage);
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
+        // Retry should be original buffer
+        emitOneAndCheck(1, QueueType::buffQueue, comBuffer, buffer);
         ASSERT_from_buffQueueSend_SIZE(2);
 
-        invoke_to_comStatusIn(0, readyState);
-        component.doDispatch();
-        ASSERT_from_buffQueueSend_SIZE(3);
-        ASSERT_from_buffQueueSend(1, buffer);
-
+        // Now clear out the garbage in queue
+        emitOneAndCheck(2, QueueType::buffQueue, comBufferGarbage, bufferGarbage);
         clearFromPortHistory();
     }
 }
 
 void Tester ::testPrioritySend(){
-    U8 data[totalSize][BUFFER_LENGTH];
+    U8 data[ComQueue::totalSize][BUFFER_LENGTH];
 
-    QueueConfiguration queue[totalSize];
+    QueueConfiguration queue[ComQueue::totalSize];
     Fw::MallocAllocator allocator;
-    Svc::ComSendStatus state = Svc::ComSendStatus::READY;
 
-    U8 priorityList[totalSize];
-    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
+    U8 priorityList[ComQueue::totalSize];
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
         priorityList[i] = i;
     }
-    priorityList[totalSize - 1] = 0;
+    priorityList[ComQueue::totalSize - 1] = 0;
 
-    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
-        queue[i].priority = totalSize - i - 1;
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
+        queue[i].priority = ComQueue::totalSize - i - 1;
         queue[i].depth = 3;
-        data[i][0] = totalSize - i - 1;
+        data[i][0] = ComQueue::totalSize - i - 1;
     }
 
     // Make the last message have the same priority as the second message
-    queue[totalSize - 1].priority = 1;
-    data[totalSize - 2][0] = 0;
-    data[totalSize - 1][0] = 1;
+    queue[ComQueue::totalSize - 1].priority = 1;
+    data[ComQueue::totalSize - 2][0] = 0;
+    data[ComQueue::totalSize - 1][0] = 1;
 
-    component.configure(queue, totalSize, allocator);
+    component.configure(queue, ComQueue::totalSize, allocator);
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_comQueueIn_InputPorts(); portNum++){
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueComSize; portNum++){
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        invoke_to_comStatusIn(0, state);
     }
 
 
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_buffQueueIn_InputPorts(); portNum++){
-        Fw::Buffer buffer(&data[portNum + component.getNum_comQueueIn_InputPorts()][0], BUFFER_LENGTH);
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueBuffSize; portNum++){
+        Fw::Buffer buffer(&data[portNum + ComQueueComSize][0], BUFFER_LENGTH);
         invoke_to_buffQueueIn(portNum, buffer);
-        invoke_to_comStatusIn(0, state);
     }
 
-    for (NATIVE_INT_TYPE index = 0; index < totalSize; index++){
+    for (NATIVE_INT_TYPE index = 0; index < ComQueue::totalSize; index++){
         U8 orderKey;
-        component.doDispatch();
+        emitOne();
         ASSERT_EQ(fromPortHistory_comQueueSend->size() + fromPortHistory_buffQueueSend->size(), 1);
         if (fromPortHistory_comQueueSend->size() == 1){
             orderKey = fromPortHistory_comQueueSend->at(0).data.getBuffAddr()[0];
@@ -180,39 +194,82 @@ void Tester ::testPrioritySend(){
 }
 
 void Tester::testQueueFull(){
-    U8 data[] = {'a', 'b', 'c', 'd'};
-    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
-    Fw::Buffer buffer(&data[0], sizeof(data));
-
-
-    QueueConfiguration queue[totalSize];
+    QueueConfiguration queue[ComQueue::totalSize];
     Fw::MallocAllocator allocator;
-    Svc::ComSendStatus state = Svc::ComSendStatus::READY;
+    ComQueueDepth expectedComDepth;
+    BuffQueueDepth expectedBuffDepth;
 
-    for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++){
+    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
         queue[i].priority = i;
         queue[i].depth = 2;
-    }
 
-    component.configure(queue, totalSize, allocator);
-
-    for(NATIVE_INT_TYPE portNum = 0; portNum < component.getNum_comQueueIn_InputPorts(); portNum++){
-        // queue[portNum].depth + 1 to deliberately cause overflow
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[portNum].depth + 1; msgCount++) {
-            invoke_to_comQueueIn(portNum, comBuffer, 0);
+        // Expected depths
+        if (i < ComQueueComSize) {
+            expectedComDepth[i] = queue[i].depth;
+        } else {
+            expectedBuffDepth[i - ComQueueComSize] = queue[i].depth;
         }
-        ASSERT_EVENTS_QueueFull(portNum, QueueType::comQueue, portNum);
+
     }
 
-    for(NATIVE_INT_TYPE portNum = component.getNum_comQueueIn_InputPorts(); portNum < component.getNum_buffQueueIn_InputPorts(); portNum++){
-        // queue[portNum].depth + 1 to deliberately cause overflow
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[portNum].depth + 1; msgCount++) {
-            invoke_to_buffQueueIn(portNum, buffer);
+    component.configure(queue,ComQueue::totalSize, allocator);
+
+    for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::totalSize; queueNum++) {
+        QueueType overflow_type;
+        NATIVE_INT_TYPE portNum;
+        // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
+        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[queueNum].depth + 2; msgCount++) {
+            sendByQueueNumber(queueNum, portNum, overflow_type);
         }
-        ASSERT_EVENTS_QueueFull(portNum, QueueType::buffQueue, portNum);
-    }
+        ASSERT_EVENTS_QueueFull_SIZE(1);
+        ASSERT_EVENTS_QueueFull(0, overflow_type, portNum);
 
+        // Drain a message, and see if throttle resets
+        emitOne();
+
+        // Force another overflow by filling then deliberately overflowing the queue
+        sendByQueueNumber(queueNum, portNum, overflow_type);
+        sendByQueueNumber(queueNum, portNum, overflow_type);
+
+        ASSERT_EVENTS_QueueFull_SIZE(2);
+        ASSERT_EVENTS_QueueFull(1, overflow_type, portNum);
+
+        // Drain the queue again such that we have a clean slate before the next queue
+        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[queueNum].depth; msgCount++) {
+            emitOne();
+        }
+        clearEvents();
+    }
+    // Check max seen queue-depths
+    invoke_to_run(0, 0);
+    component.doDispatch();
+    ASSERT_TLM_comQueueDepth_SIZE(1);
+    ASSERT_TLM_buffQueueDepth_SIZE(1);
+    ASSERT_TLM_comQueueDepth(0, expectedComDepth);
+    ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
 }
+
+void Tester ::testReadyFirst() {
+    U8 data[BUFFER_LENGTH] = {0xde,0xad,0xbe};
+    Fw::ComBuffer comBuffer(&data[0], sizeof(data));
+    Fw::Buffer buffer(&data[0], sizeof(data));
+    configure();
+
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueComSize; portNum++){
+        emitOne();
+        invoke_to_comQueueIn(portNum, comBuffer, 0);
+        ASSERT_from_comQueueSend(0, comBuffer, 0);
+        clearFromPortHistory();
+    }
+
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueueBuffSize; portNum++){
+        emitOne();
+        invoke_to_buffQueueIn(portNum, buffer);
+        ASSERT_from_buffQueueSend(0, buffer);
+        clearFromPortHistory();
+    }
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

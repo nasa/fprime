@@ -2,31 +2,27 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
-#include "Svc/ComQueue/test/ut/Tester.hpp"
+#include "Tester.hpp"
 
-TEST(Nominal, Send) {
+TEST(Nominal, Initial) {
     Svc::Tester tester;
-    tester.testQueueSend();
+    tester.test_initial();
 }
 
-TEST(Nominal, Retry) {
+TEST(Nominal, BasicIo) {
     Svc::Tester tester;
-    tester.testRetrySend();
+    tester.test_basic_io();
 }
 
-TEST(Nominal, Priority) {
+
+TEST(Nominal, Fail) {
     Svc::Tester tester;
-    tester.testPrioritySend();
+    tester.test_fail();
 }
 
-TEST(Nominal, Full) {
+TEST(OffNominal, Retry) {
     Svc::Tester tester;
-    tester.testQueueFull();
-}
-
-TEST(Nominal, ReadyFirst) {
-    Svc::Tester tester;
-    tester.testReadyFirst();
+    tester.test_retry();
 }
 
 int main(int argc, char **argv) {

@@ -19,22 +19,29 @@ namespace Svc {
 // ----------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------
-static const NATIVE_INT_TYPE totalSize = ComQueueComSize + ComQueueBuffSize;
 
-struct QueueData {
-    NATIVE_UINT_TYPE depth;
-    NATIVE_UINT_TYPE priority;
-    NATIVE_UINT_TYPE index;
-    NATIVE_UINT_TYPE msgSize;
-};
-
+/**
+ * \brief configuration data for each queue managed by the com queue component 
+ */
 struct QueueConfiguration {
-    NATIVE_UINT_TYPE depth;
-    NATIVE_UINT_TYPE priority;
+    NATIVE_UINT_TYPE depth; //!< Depth of the queue 
+    NATIVE_UINT_TYPE priority; //!< Priority of the queue [0, N) where N is the number of queues
 };
 
-enum SendState { READY, RETRY, WAITING };
 class ComQueue : public ComQueueComponentBase {
+    // Internal Data types and definitions
+  public:
+    static const NATIVE_INT_TYPE totalSize = ComQueueComSize + ComQueueBuffSize;
+    struct QueueData {
+        NATIVE_UINT_TYPE depth;
+        NATIVE_UINT_TYPE priority;
+        NATIVE_UINT_TYPE index;
+        NATIVE_UINT_TYPE msgSize;
+    };
+    enum SendState { READY, RETRY, WAITING };
+
+
+
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction

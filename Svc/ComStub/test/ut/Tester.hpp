@@ -1,22 +1,18 @@
 // ======================================================================
-// \title  ComQueue/test/ut/Tester.hpp
-// \author vbai
-// \brief  hpp file for ComQueue test harness implementation class
+// \title  ComStub/test/ut/Tester.hpp
+// \author mstarch
+// \brief  hpp file for ComStub test harness implementation class
 // ======================================================================
 
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/ComQueue/ComQueue.hpp"
-#define BUFFER_LENGTH 3u
+#include "Svc/ComStub/ComStub.hpp"
 
 namespace Svc {
 
-class Tester : public ComQueueGTestBase {
-
-  private:
-
+class Tester : public ComStubGTestBase {
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -31,54 +27,57 @@ class Tester : public ComQueueGTestBase {
     ~Tester();
 
   public:
-    // ----------------------------------------------------------------------
-    // Helpers
-    // ----------------------------------------------------------------------
-    void configure();
-
-    void sendByQueueNumber(NATIVE_INT_TYPE queueNumber, NATIVE_INT_TYPE& portNum, QueueType& queueType);
-
-    void emitOne();
-
-    void emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex, QueueType expectedType, Fw::ComBuffer& expectedCom, Fw::Buffer& expectedBuff);
-
+    //! Buffer to fill with data
+    //!
+    void fill_buffer(Fw::Buffer& buffer_to_fill);
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
 
+    //! Test initial READY setup
+    //!
+    void test_initial();
 
-    void testQueueSend();
+    //! Tests the basic input and output of the component
+    //!
+    void test_basic_io();
 
-    void testRetrySend();
+    //! Tests the basic failure case for the component
+    //!
+    void test_fail();
 
-    void testPrioritySend();
-
-    void testQueueFull();
-
-    void testReadyFirst();
+    //! Tests the basic failure retry component
+    //!
+    void test_retry();
 
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Handler for from_buffQueueSend
+    //! Handler for from_comDataOut
     //!
-    void from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                    Fw::Buffer& fwBuffer);
+    void from_comDataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                 Fw::Buffer& recvBuffer,
+                                 const Drv::RecvStatus& recvStatus);
 
-    //! Handler for from_comQueueSend
+    //! Handler for from_comStatus
     //!
-    void from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                   Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
-                                   U32 context                    /*!< Call context value; meaning chosen by user*/
+    void from_comStatus_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                Svc::ComSendStatus& ComStatus  /*!<
+                             Status of communication state
+                             */
     );
+
+    //! Handler for from_drvDataOut
+    //!
+    Drv::SendStatus from_drvDataOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                            Fw::Buffer& sendBuffer);
 
   private:
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
-
 
     //! Connect ports
     //!
@@ -95,7 +94,9 @@ class Tester : public ComQueueGTestBase {
 
     //! The component under test
     //!
-    ComQueue component;
+    ComStub component;
+    Drv::SendStatus m_send_mode; //! Send mode
+    U32 m_retries;
 };
 
 }  // end namespace Svc
