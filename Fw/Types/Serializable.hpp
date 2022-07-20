@@ -39,8 +39,8 @@ namespace Fw
 #endif
 
     protected:
-        Serializable() = default;          //!< Default constructor
-        virtual ~Serializable() = default; //!< destructor
+        Serializable();          //!< Default constructor
+        virtual ~Serializable(); //!< destructor
     };
 
     class SerializeBufferBase
