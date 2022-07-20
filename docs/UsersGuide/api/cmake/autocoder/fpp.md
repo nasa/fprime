@@ -36,7 +36,7 @@ following variables in parent scope:
 - GENERATED_FILES: a list of files generated for the given input sources
 - MODULE_DEPENDENCIES: inter-module dependencies determined from the given input sources
 - FILE_DEPENDENCIES: specific file dependencies of the given input sources
-- EXTRAS: used to publish the 'imported' file dependencies of the given input files
+- FPP_IMPORTS: The fpp model dependencies, which end up being the input to the -i flag for the fpp-to-cpp and fpp-to-xml tools
 
 Note: although this function is only required to set `GENERATED_FILES`, the remaining information is also set as
 setting this information now will prevent a duplicated call to the tooling.

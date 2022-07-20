@@ -328,23 +328,40 @@ should define three functions: `add_global_target`, `add_module_target`, and `ad
 macro(register_fprime_target TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
     if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_target_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_target)
 
 
 
-## Macro `register_fprime_target_helper`:
+## Macro `register_fprime_list_helper`:
 
 Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
 
 
-## Next Topics:
- - Setting Options: [Options](Options.md) are used to vary a CMake build.
- - Adding Deployment: [Deployments](deployment.md) create fprime builds.
- - Adding Module: [Modules](module.md) register fprime Ports, Components, etc.
- - Creating Toolchains: [Toolchains](toolchain.md) setup standard CMake Cross-Compiling.
- - Adding Platforms: [Platforms](platform.md) help fprime set Cross-Compiling specific items.
- - Adding Targets: [Targets](targets.md) for help defining custom build targets
+## Macro `register_fprime_build_autocoder`:
+
+This function allows users to register custom autocoders into the build system. These autocoders will execute during
+the build process. An autocoder is defined in a CMake file and must do three things:
+1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
+2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source
+3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2.
+See: [Autocoders](dev/autocoder_integration.md).
+
+This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
+the same thing. Note: make sure the directory is on the CMake include path to use the second form.
+
+**TARGET_FILE_PATH:** include path or file path file defining above functions
+
+macro(register_fprime_build_autocoder TARGET_FILE_PATH)
+    # Normal registered targets don't run in prescan
+    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
+    if (NOT DEFINED FPRIME_PRESCAN)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    endif()
+endmacro(register_fprime_build_autocoder)
 
 
+
+## 
