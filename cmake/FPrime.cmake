@@ -71,6 +71,8 @@ endif()
 # FPP locations must come at the front of the list, then build
 register_fprime_target(target/fpp_locs)
 register_fprime_target(target/build)
+register_fprime_build_autocoder(autocoder/fpp)
+register_fprime_build_autocoder(autocoder/ai_xml)
 register_fprime_target(target/noop)
 register_fprime_target(target/version)
 register_fprime_target(target/dict)
