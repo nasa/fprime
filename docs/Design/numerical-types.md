@@ -3,16 +3,18 @@
 On physical hardware, numerical types have a size in bits. The sizes of these integers are either explicitly set by the
 programmer or implicitly set by the compiler. i.e. `uint32_t` is explicitly 32-bits whereas `int` is implicitly set by
 the compiler. Flight software practice encourages use of explicitly sized types because there are fewer mistake made when the
-programmer uses an integer of a known size. However, in-practice it is nice to also use semantic types that represent
-concepts in their system (e.g. size) and are set by the platform supporter to a known size.
+programmer uses an integer of a known size. However, in-practice it is nice to also use logical types that represent
+concepts in the system (e.g. size) and are set by the platform supporter to a known size.
 
-This document describes: fixed-width types and semantic types.
+This document describes: fixed-width types and logical types.
 
 ## Fixed Width Types
 
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen
-below. Most of these types can be turned on and off via configuration in `FpConfig.hpp`. The default configuration
-is to be enabled.
+below. Since compilers are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off
+by setting a configuration field to `0` in `FpConfig.hpp`.  These types are by default on and users must turn off types
+their compiler does not support.
+
 
 | F´ Type | Equivalent   | `FpConfig.hpp` Configuration Field |
 |---------|--------------|------------------------------------|
@@ -39,36 +41,36 @@ U32 value = 10;
 printf("My value: %" PRId32, value); // Uses string constant concatenation
 ```
 
-## F´ Semantic Integer Types Design
+## F´ Logical Integer Type Design
 
 
 Typically, in flight software we try to use fixed-sized types wherever possible as this produces consistent results
 across platforms. However, when building components for use on multiple different architectures it is nice to be able
-to use semantic integer types whose exact widths are determined by the platform and project instead of needing
+to use logical integer types whose exact widths are determined by the platform and project instead of needing
 to pick  a one-size-fits-all fixed with type. For example, representing a size as an unsigned 64-bit integer is logical
 on some systems that have 64-bit data widths, but will not compile on systems that do not define 64-bit integers at all
 (8-bit systems often lack this data size).
 
-Thus, for these semantic types the actual data size needs to be configured. This configuration needs to be available
+Thus, for these logical types the actual data size needs to be configured. This configuration needs to be available
 from two sources: a given project, and a given platform. Platforms need to set the idea size for these types, and
 projects need to be able to control these sizes when operating across multiple platforms.
 
 ### Platform Configured Types
 
-Platform developers should define the following semantic types in the `StandardTypes.hpp` header provided alongside
+Platform developers should define the following logical types in the `StandardTypes.hpp` header provided alongside
 their CMake platform and toolchain files. Each must also define a compiler directive to indicate the type was defined.
 If the type is not specified as seen through the compiler directive the `DefaultTypes.hpp` header will fill in a default
 definition. Each also defines a format specifier for use with the `printf` family of functions. Additionally, each
 defines a pair of constants of the form `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values.
 
-| Platform Semantic Type  | Compiler Directive                 | Default          | Format Specifier      | Notes                       | 
+| Platform Logical Type   | Compiler Directive                 | Default          | Format Specifier      | Notes                       | 
 |-------------------------|------------------------------------|------------------|-----------------------|-----------------------------|
 | PlatformIndexType       | PLATFORM_INDEX_TYPE_DEFINED        | PlatformIntType  | PRI_PlatformIndexType | Ports indices               | 
 | PlatformSizeType        | PLATFORM_SIZE_TYPE_DEFINED         | PlatformUIntType | PRI_PlatformSizeType  | Sizes                       |
 | PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | PlatformIntType  | PRI_PointerCastType   | Pointers stored as integers |
 | PlatformAssertArgType   | PLATFORM_ASSERT_ARG_TYPE_DEFINED   | PlatformIntType  | PRI_AssertArgType     | Argument to FW_ASSERT       |
-| PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType   | Deprecated                  |
-| PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType  | Deprecated                  |
+| PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType   | Deprecated (see note)       |
+| PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType  | Deprecated (see note)       |
 
 A complete definition of a type as a platform should supply within `StandardTypes.hpp` is shown below. Notice the type
 is defined along with a compiler directive announcing it is defined, and a format specifier.
@@ -91,7 +93,7 @@ printf("Index: %" PRI_PlatformIndexType " is the index", index); // Uses string 
 **Note:** in order for F´ to compile without warnings it is necessary that each of the platform types are elements in
 the set of integers supplied by the C standard int header. i.e. each type is an `int8_t`, `int16_t`, `int32_t`,
 `int64_t` or unsigned equivalents. On some compilers `int` and `unsigned int` are not members of that set and on those
-platforms it is imperative that all types be defined.
+platforms it is imperative that both `PlatformIntType` and `PlatformUIntType` be set to some fixed size type instead.
 
 ### Configurable Integer Types
 
@@ -99,7 +101,7 @@ Project may configure the framework types that the framework and components use 
 `FpConfig.hpp`. The default configuration uses the above platform types where applicable. `<type>_MIN` and `<type>_MAX`
 to define the minimum and maximum values.
 
-| Framework Type         | Semantic Usage             | Default               | Format Specifier     | Notes      |
+| Framework Type         | Logical Usage              | Default               | Format Specifier     | Notes      |
 |------------------------|----------------------------|-----------------------|----------------------|------------|
 | FwIndexType            | Port indices               | PlatformIndexType     | PRI_FwIndexType      |            | 
 | FwSizeType             | Sizes                      | PlatformSizeType      | PRI_FwSizeType       |            |
@@ -111,7 +113,7 @@ There is also a set of framework types that are used across F´ deployments and 
 systems. `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values. These GDS types are based on
 configurable platform independent fixed-widths as shown below:
 
-| GDS Type               | Semantic Usage             | Default               | Format Specifier           |
+| GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
 | FwBuffSizeType         | `Fw::Buffer` sizes         | U16                   | PRI_FwBuffSizeType         |
 | FwEnumStoreType        | Enumeration values         | I32                   | PRI_FwEnumStoreType        |
