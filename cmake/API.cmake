@@ -459,7 +459,7 @@ macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
     endif()
     get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
     if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-        set_property(GLOBAL APPEND PROPERTY "${LIST_NAME}" "${TARGET_FILE_PATH}")
+        set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_list_helper)
 
