@@ -165,11 +165,11 @@ function(fpp_setup_autocode AC_INPUT_FILES)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
     fpp_info("${AC_INPUT_FILES}")
-    string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_SEP_FPP "${FPRIME_BUILD_LOCATIONS}")
-    string(REGEX REPLACE ";" ","  FPP_IMPORTS_SEP "${FPP_IMPORTS}")
+    string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
+    string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
     set(IMPORTS)
-    if (FPP_IMPORTS_SEP)
-        set(IMPORTS "-i" "${FPP_IMPORTS_SEP}")
+    if (FPP_IMPORTS_COMMA_SEP)
+        set(IMPORTS "-i" "${FPP_IMPORTS_COMMA_SEP}")
     endif()
     # Separate the source files into the CPP and XML steps
     set(GENERATED_AI)
@@ -187,7 +187,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
                 COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
-                    "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
+                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP}"
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
@@ -196,7 +196,7 @@ function(fpp_setup_autocode AC_INPUT_FILES)
         add_custom_command(
                 OUTPUT  ${GENERATED_CPP}
                 COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
-                    "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
+                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR}"
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
