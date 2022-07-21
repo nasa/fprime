@@ -436,9 +436,8 @@ sequenceDiagram
     deframer-->>activeComm: 
     deactivate activeComm
     activate fileUplink
-    fileUplink->>buffMgr: Deallocate PB
+    fileUplink->>-buffMgr: Deallocate PB
     buffMgr-->>fileUplink: 
-    deactivate fileUplink
 ```
 
 #### 6.2.2. Passive Byte Stream Driver
