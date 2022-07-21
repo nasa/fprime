@@ -50,6 +50,14 @@ var NAVTREE =
       ] ],
       [ "Run Tests", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md22", null ]
     ] ],
+    [ "Design and Philosophy of F´", "md_docs__design_general.html", null ],
+    [ "F´ Numerical Types", "md_docs__design_numerical-types.html", [
+      [ "Fixed Width Types", "md_docs__design_numerical-types.html#autotoc_md25", null ],
+      [ "F´ Logical Integer Type Design", "md_docs__design_numerical-types.html#autotoc_md26", [
+        [ "Platform Configured Types", "md_docs__design_numerical-types.html#autotoc_md27", null ],
+        [ "Configurable Integer Types", "md_docs__design_numerical-types.html#autotoc_md28", null ]
+      ] ]
+    ] ],
     [ "Fw Components, Ports, and Classes", "fw.html", "_fw" ],
     [ "Os Components Ports and Classes", "os.html", "_os" ],
     [ "Svc Components, Ports, and Classes", "svc.html", "_svc" ],
@@ -102,8 +110,8 @@ var NAVTREEINDEX =
 "fp_config_8hpp.html#abcf41ba3380be978cc5a29567684f03e",
 "linux_gpio_driver_8hpp_source.html",
 "prm_db_impl_8cpp.html#a5607b42c25cba93543db62ebac53b3a7",
-"svc_buffer_manager_component.html#autotoc_md259",
-"svc_poly_db_component.html#autotoc_md518",
+"svc_buffer_manager_component.html#autotoc_md265",
+"svc_poly_db_component.html#autotoc_md524",
 "udp_receiver_component_impl_cfg_8hpp.html#a3c38a7017e619510b8fd76b09471dc16",
 "class_fw_1_1_active_component_base.html#a9626378dc15b7ac8666b73675d77c5fb",
 "class_fw_1_1_mmap_allocator.html",
@@ -111,7 +119,7 @@ var NAVTREEINDEX =
 "class_os_1_1_task.html#a54275e1d4c04ce4a9d4a0248f90a37ca",
 "class_svc_1_1_framer_component_impl.html#a59311bb2406301278863804e616a3c1e",
 "dir_8cc1465ee876f5adf053d83240187177.html",
-"namespacemembers_l.html"
+"namespacemembers_enum.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

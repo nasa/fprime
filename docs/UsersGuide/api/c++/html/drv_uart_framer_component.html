@@ -88,15 +88,15 @@ $(document).ready(function(){initNavTree('_drv_uart_framer_component.html',''); 
 <div class="title"><a class="el" href="class_drv_1_1_uart_framer.html">Drv::UartFramer</a> Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md64"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md70"></a>
 Drv::UartFramer UART Framer Component</h1>
 <p>The UART Framer Component is used to bridge the ../../Svc/Framer/docs/sdd.md "Framer" and ../../Svc/Deframer/docs/sdd.md "Deframer" components to the <a href="../LinuxSerialDriver/">Linux Serial Driver</a> component. Another UART driver could be used as long as it supports the same interfaces as the Linux Serial Driver. This allows a connection to the F Prime <a href="https://github.com/fprime-community/fprime-gds">ground system</a> via a standard UART connection. The component is defined as passive, since it acts as a pass-through and doesn't require its own thread.</p>
-<h2><a class="anchor" id="autotoc_md65"></a>
+<h2><a class="anchor" id="autotoc_md71"></a>
 Design</h2>
-<h3><a class="anchor" id="autotoc_md66"></a>
+<h3><a class="anchor" id="autotoc_md72"></a>
 Component Diagram</h3>
 <p><object type="image/svg+xml" data="img/UartFramer.svg" style="pointer-events: none;">Component Diagram</object></p>
-<h3><a class="anchor" id="autotoc_md67"></a>
+<h3><a class="anchor" id="autotoc_md73"></a>
 Port List</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -116,7 +116,7 @@ Port List</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">serialSend </td><td class="markdownTableBodyNone">Sends downlink buffers to UART driver  </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md68"></a>
+<h3><a class="anchor" id="autotoc_md74"></a>
 Initialization</h3>
 <p>During initialization, the <code>UartFramer</code> component supplies an initial set of buffers to the UART driver to act as a receive pool for received data.</p>
 <p>The initialization call is as follows:</p>
@@ -133,23 +133,23 @@ Initialization</h3>
 <p>The component invokes the <code>DeframerAllocate</code> port enough times to allocate the number of buffers in the <code>number</code> parameter, with a requested size of <code>size</code>. For each of those invocations, the buffer is passed to the UART driver for the receive pool via the <code>readBufferSend</code> port.</p>
 <p>In order for the allocation call to work, all ports should be connected before invoking <code>allocate()</code>.</p>
 <p><object type="image/svg+xml" data="img/UartFramerAllocate.svg" style="pointer-events: none;">Initial Buffer Allocation</object></p>
-<h2><a class="anchor" id="autotoc_md69"></a>
+<h2><a class="anchor" id="autotoc_md75"></a>
 Uplink</h2>
 <p>When packets arrive via the UART, the UART driver connected to <code>UartFramer</code> will get a buffer from the pool of buffers that were initially allocated and fill it with the packet data. The packets are then sent to <code>UartFramer</code> via the <code>serialRecv</code> port. The buffer is forwarded to the <code>Deframer</code> component for processing via the <code>Deframer</code> port. The <code>Deframer</code> component will deallocate it when complete. After the packet is forwarded to the <code>Deframer</code> component, another packet is allocated via the <code>DeframerAllocate</code> port and sent to the UART driver to replenish the pool of receive buffers.</p>
 <p><object type="image/svg+xml" data="img/Uplink.svg" style="pointer-events: none;">Uplink</object></p>
-<h2><a class="anchor" id="autotoc_md70"></a>
+<h2><a class="anchor" id="autotoc_md76"></a>
 Downlink</h2>
 <p>The <code>Framer</code> component allocates a packet and fills it with data. The packet gets sent to <code>UartFramer</code>, which sends it to the UART driver via the <code>serialSend</code> port. When the port call returns (see requirement #4 below), the buffer is deallocated via an invocation of the <code>FramerDeallocate</code> port.</p>
 <p><object type="image/svg+xml" data="img/Downlink.svg" style="pointer-events: none;">Downlink</object></p>
-<h2><a class="anchor" id="autotoc_md71"></a>
+<h2><a class="anchor" id="autotoc_md77"></a>
 Error handling</h2>
 <p>The <code>UartFramer</code> component converts the UART receive error status to the corresponding <code>Deframer</code> error status.</p>
 <p>If the <code>UartFramer</code> cannot allocate an additional buffer for the serial receive pool, it will issue a <code>WARNING_HI</code> event. In this case, the receive pool will permanently lose a buffer.</p>
-<h2><a class="anchor" id="autotoc_md72"></a>
+<h2><a class="anchor" id="autotoc_md78"></a>
 Interconnections</h2>
 <p>The following is a diagram of how the <code>UartFramer</code> would be connected to the <code>Framer</code> and <code>Deframer</code> and LinuxSerialDriver components in a typical topology. Note that the types are in the diagram rather than instance names which would be in the actual topology specification.</p>
 <p><object type="image/svg+xml" data="img/Topo.svg" style="pointer-events: none;">Topology Example</object></p>
-<h2><a class="anchor" id="autotoc_md73"></a>
+<h2><a class="anchor" id="autotoc_md79"></a>
 FPP examples</h2>
 <p>An example instance of the <code>LinuxSerialDriver</code> in the topology is as follows:</p>
 <div class="fragment"><div class="line">instance gndUart: Drv.LinuxSerialDriver \</div>
@@ -206,7 +206,7 @@ FPP examples</h2>
 <div class="line"> </div>
 <div class="line">  ...</div>
 </div><!-- fragment --><p>This matches the diagram above where instance names are used as opposed to type names in the diagram.</p>
-<h2><a class="anchor" id="autotoc_md74"></a>
+<h2><a class="anchor" id="autotoc_md80"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -222,13 +222,13 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">UART-FRAMER-COMP-003 </td><td class="markdownTableBodyNone">The <code>UartFramer</code> component shall allocate a buffer and pass it back to the UART for every buffer received </td><td class="markdownTableBodyNone">unit test  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md75"></a>
+<h2><a class="anchor" id="autotoc_md81"></a>
 Requirements on other components or topologies</h2>
 <p>1. Packets allocated for the UART receive pool with the <code>DeframerAllocate</code> port and sent to the UART driver are the same ones returned in the <code>serialRecv</code> port call.</p>
 <p>2. Packets sent to the <code>Deframer</code> component are returned to the same buffer pool that is connected to the <code>DeframerAllocate</code> port.</p>
 <p>3. Packets sent by the <code>Framer</code> component are allocated from the same pool as the <code>FramerDeallocate</code> port is connected to.</p>
 <p>4. The UART driver is finished with the transmit buffer after the return of the <code>serialSend</code> port invocation so it can be returned to the buffer pool.</p>
-<h2><a class="anchor" id="autotoc_md76"></a>
+<h2><a class="anchor" id="autotoc_md82"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

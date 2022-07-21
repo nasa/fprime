@@ -60,5 +60,6 @@ var searchData=
   ['drv_3a_3atcpclient_20component_291',['Drv::TcpClient Component',['../drv_tcp_client.html',1,'Drv']]],
   ['drv_3a_3atcpserver_20component_292',['Drv::TcpServer Component',['../drv_tcp_server.html',1,'Drv']]],
   ['drv_3a_3auartframer_20component_293',['Drv::UartFramer Component',['../drv_uart_framer_component.html',1,'Drv']]],
-  ['drv_3a_3audp_20component_294',['Drv::Udp Component',['../drv_udp.html',1,'Drv']]]
+  ['drv_3a_3audp_20component_294',['Drv::Udp Component',['../drv_udp.html',1,'Drv']]],
+  ['design_20and_20philosophy_20of_20f´_295',['Design and Philosophy of F´',['../md_docs__design_general.html',1,'']]]
 ];
