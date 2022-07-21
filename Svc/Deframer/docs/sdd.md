@@ -133,8 +133,8 @@ Here is a class diagram for `Deframer`:
 classDiagram
     ObjBase <|-- PassiveComponentBase
     PassiveComponentBase <|-- DeframerComponentBase
-    DeframerComponentBase <|-- Deframer
-    DeframingProtocolInterface <|-- Deframer
+    DeframerComponentBase <|-- DeframerComponentImpl
+    DeframingProtocolInterface <|-- DeframerComponentImpl
 ```
 
 ### 4.4. State
