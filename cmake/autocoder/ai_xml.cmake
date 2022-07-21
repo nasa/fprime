@@ -15,9 +15,20 @@ autocoder_setup_for_individual_sources()
 #
 # Required function, processes ComponentAi.xml files.
 # `AC_INPUT_FILE` potential input to the autocoder
+# ...: any number of arguments representing a list of previously generated files
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
-    autocoder_support_by_suffix("Ai.xml" "${AC_INPUT_FILE}")
+    ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "Ai.xml")
+    # Don't generate cpp/hpp files that have already been generated
+    if (IS_SUPPORTED)
+        string(REPLACE "Ai.xml" "Ac.cpp" CPP_FILE "${AC_INPUT_FILE}")
+        string(REPLACE "Ai.xml" "Ac.hpp" HPP_FILE "${AC_INPUT_FILE}")
+        if(("${CPP_FILE}" IN_LIST ARGN) AND ("${HPP_FILE}" IN_LIST ARGN))
+            set(IS_SUPPORTED FALSE)
+        endif()
+    endif()
+    # Note: set in PARENT_SCOPE in macro is intended. Caller **wants** to set IS_SUPPORTED in their parent's scope.
+    set(IS_SUPPORTED "${IS_SUPPORTED}" PARENT_SCOPE)
 endfunction (ai_xml_is_supported)
 
 ####
