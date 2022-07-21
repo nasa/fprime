@@ -465,24 +465,7 @@ sequenceDiagram
 happens when `passiveComm` sends data to `deframer`, and
 `Deframer` decodes the data into a file packet.
 
-```mermaid
-sequenceDiagram
-    activate rateGroup
-    rateGroup->>deframer: Send schedule tick [schedIn]
-    deframer->>passiveComm: Poll for data [framedPoll]
-    passiveComm-->>deframer: Return status
-    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
-    buffMgr-->>deframer: Return PB
-    deframer->>deframer: Deframe data into PB
-    deframer-)fileUplink: Send PB [bufferOut]
-    deframer-->>rateGroup: 
-    deactivate rateGroup
-    activate fileUplink
-    fileUplink->>buffMgr: Deallocate PB
-    buffMgr-->>fileUplink: 
-    deactivate fileUplink
-```
-
+![Passive byte stream driver, file packet](img/sequence-diagrams/passive-file-packet.png)
 
 ### 6.3. Using Svc::GenericHub
 
