@@ -36,3 +36,9 @@ constant GenericHubInputPorts = 10
 constant GenericHubOutputPorts = 10
 constant GenericHubInputBuffers = 10
 constant GenericHubOutputBuffers = 10
+
+@ Used for setting the size of the communication queue
+constant ComQueueComSize = 2
+
+@ Used for setting the size of the buffer queue
+constant ComQueueBuffSize = 1

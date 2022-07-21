@@ -1,16 +1,10 @@
-@ Used for setting the size of the communication queue
-constant ComQueueComSize = 2
-
-@ Used for setting the size of the buffer queue
-constant ComQueueBuffSize = 1
-
-@ An enumeration of queue types
-enum QueueType { comQueue, buffQueue }
-
-array ComQueueDepth = [ComQueueComSize] U32
-array BuffQueueDepth = [ComQueueBuffSize] U32
-
 module Svc {
+    @ An enumeration of queue types
+    enum QueueType { comQueue, buffQueue }
+
+    array ComQueueDepth = [ComQueueComSize] U32
+    array BuffQueueDepth = [ComQueueBuffSize] U32
+
 
     @ A component for managing Comm buffers on a queue
     active component ComQueue {

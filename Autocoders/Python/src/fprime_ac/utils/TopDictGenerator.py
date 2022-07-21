@@ -101,6 +101,7 @@ class TopDictGenerator:
             enum_file = search_for_file("Enum", enum_file)
             enum_model = XmlEnumParser.XmlEnumParser(enum_file)
             enum_elem = etree.Element("enum")
+            print(enum_model.get_namespace())
             enum_type = enum_model.get_namespace() + "::" + enum_model.get_name()
             enum_elem.attrib["type"] = enum_type
             enum_value = 0

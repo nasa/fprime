@@ -31,8 +31,10 @@ module Ref {
     instance chanTlm
     instance cmdDisp
     instance cmdSeq
-    instance comm
-    instance downlink
+    instance comDriver
+    instance comQueue
+    instance comStub
+    instance framer
     instance eventLogger
     instance fatalAdapter
     instance fatalHandler
@@ -51,7 +53,7 @@ module Ref {
     instance sendBuffComp
     instance staticMemory
     instance textLogger
-    instance uplink
+    instance deframer
     instance systemResources
 
     # ----------------------------------------------------------------------
@@ -77,17 +79,22 @@ module Ref {
     # ----------------------------------------------------------------------
 
     connections Downlink {
+      chanTlm.PktSend -> comQueue.comQueueIn[0]
+      eventLogger.PktSend -> comQueue.comQueueIn[1]
 
-      chanTlm.PktSend -> downlink.comIn
-      eventLogger.PktSend -> downlink.comIn
-      fileDownlink.bufferSendOut -> downlink.bufferIn
+      fileDownlink.bufferSendOut -> comQueue.buffQueueIn[0]
+      framer.bufferDeallocate -> fileDownlink.bufferReturn
 
-      downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
-      downlink.framedOut -> comm.send
-      downlink.bufferDeallocate -> fileDownlink.bufferReturn
+      comQueue.comQueueSend -> framer.comIn
+      comQueue.buffQueueSend -> framer.bufferIn
 
-      comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+      framer.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
+      framer.framedOut -> comStub.comDataIn
+      comDriver.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
 
+      comStub.drvDataOut -> comDriver.send
+      comDriver.ready -> comStub.drvConnected
+      comStub.comStatus -> comQueue.comStatusIn
     }
 
     connections FaultProtection {
@@ -132,23 +139,20 @@ module Ref {
       cmdSeq.comCmdOut -> cmdDisp.seqCmdBuff
       cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
     }
-
     connections Uplink {
+      comDriver.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
+      comDriver.$recv -> comStub.drvDataIn
 
-      comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
-      comm.$recv -> uplink.framedIn
-      uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
+      comStub.comDataOut -> deframer.framedIn
+      deframer.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
 
-      uplink.comOut -> cmdDisp.seqCmdBuff
-      cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+      deframer.comOut -> cmdDisp.seqCmdBuff
+      cmdDisp.seqCmdStatus -> deframer.cmdResponseIn
 
-      uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
-      uplink.bufferOut -> fileUplink.bufferSendIn
-      uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+      deframer.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
+      deframer.bufferOut -> fileUplink.bufferSendIn
+      deframer.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-
     }
-
   }
-
 }

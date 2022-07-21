@@ -83,7 +83,12 @@ module Ref {
     stack size Default.stackSize \
     priority 101
 
-  instance cmdSeq: Svc.CmdSequencer base id 0x0600 \
+  instance comQueue: Svc.ComQueue base id 0x0600 \
+      queue size Default.queueSize \
+      stack size Default.stackSize \
+      priority 100
+
+  instance cmdSeq: Svc.CmdSequencer base id 0x0700 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100 \
@@ -109,7 +114,7 @@ module Ref {
 
   }
 
-  instance fileDownlink: Svc.FileDownlink base id 0x0700 \
+  instance fileDownlink: Svc.FileDownlink base id 0x0800 \
     queue size 30 \
     stack size Default.stackSize \
     priority 100 \
@@ -135,32 +140,32 @@ module Ref {
 
   }
 
-  instance fileManager: Svc.FileManager base id 0x0800 \
+  instance fileManager: Svc.FileManager base id 0x0900 \
     queue size 30 \
     stack size Default.stackSize \
     priority 100
 
-  instance fileUplink: Svc.FileUplink base id 0x0900 \
+  instance fileUplink: Svc.FileUplink base id 0x0A00 \
     queue size 30 \
     stack size Default.stackSize \
     priority 100
 
-  instance pingRcvr: Ref.PingReceiver base id 0x0A00 \
+  instance pingRcvr: Ref.PingReceiver base id 0x0B00 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100
 
-  instance eventLogger: Svc.ActiveLogger base id 0x0B00 \
+  instance eventLogger: Svc.ActiveLogger base id 0x0C00 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 98
 
-  instance chanTlm: Svc.TlmChan base id 0x0C00 \
+  instance chanTlm: Svc.TlmChan base id 0x0D00 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 97
 
-  instance prmDb: Svc.PrmDb base id 0x0D00 \
+  instance prmDb: Svc.PrmDb base id 0x0E00 \
     queue size Default.queueSize \
     stack size Default.stackSize \
     priority 96 \
@@ -175,6 +180,8 @@ module Ref {
     """
 
   }
+
+
 
   # ----------------------------------------------------------------------
   # Queued component instances
@@ -222,9 +229,9 @@ module Ref {
   # Passive component instances
   # ----------------------------------------------------------------------
 
-  @ Communications driver. May be swapped with other comm drivers like UART
+  @ Communications driver. May be swapped with other com drivers like UART
   @ Note: Here we have TCP reliable uplink and UDP (low latency) downlink
-  instance comm: Drv.ByteStreamDriverModel base id 0x4000 \
+  instance comDriver: Drv.ByteStreamDriverModel base id 0x4000 \
     type "Drv::TcpClient" \
     at "../../Drv/TcpClient/TcpClient.hpp" \
   {
@@ -241,8 +248,8 @@ module Ref {
     if (state.hostName != nullptr && state.portNumber != 0) {
         Os::TaskString name("ReceiveTask");
         // Uplink is configured for receive so a socket task is started
-        comm.configure(state.hostName, state.portNumber);
-        comm.startSocketTask(
+        comDriver.configure(state.hostName, state.portNumber);
+        comDriver.startSocketTask(
             name,
             true,
             ConfigConstants::comm::PRIORITY,
@@ -252,29 +259,31 @@ module Ref {
     """
 
     phase Fpp.ToCpp.Phases.freeThreads """
-    comm.stopSocketTask();
-    (void) comm.joinSocketTask(nullptr);
+    comDriver.stopSocketTask();
+    (void) comDriver.joinSocketTask(nullptr);
     """
 
   }
 
-  instance downlink: Svc.Framer base id 0x4100 {
+  instance comStub: Svc.ComStub base id 0x4100
+
+  instance framer: Svc.Framer base id 0x4200 {
 
     phase Fpp.ToCpp.Phases.configObjects """
     Svc::FprimeFraming framing;
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    downlink.setup(ConfigObjects::downlink::framing);
+    framer.setup(ConfigObjects::downlink::framing);
     """
 
   }
 
-  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4200
+  instance fatalAdapter: Svc.AssertFatalAdapter base id 0x4300
 
-  instance fatalHandler: Svc.FatalHandler base id 0x4300
+  instance fatalHandler: Svc.FatalHandler base id 0x4400
 
-  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4400 {
+  instance fileUplinkBufferManager: Svc.BufferManager base id 0x4500 {
 
     phase Fpp.ToCpp.Phases.configConstants """
     enum {
@@ -306,11 +315,11 @@ module Ref {
 
   }
 
-  instance linuxTime: Svc.Time base id 0x4500 \
+  instance linuxTime: Svc.Time base id 0x4600 \
     type "Svc::LinuxTime" \
     at "../../Svc/LinuxTime/LinuxTime.hpp"
 
-  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4600 {
+  instance rateGroupDriverComp: Svc.RateGroupDriver base id 0x4700 {
 
     phase Fpp.ToCpp.Phases.configObjects """
     NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 1, 2, 4 };
@@ -325,24 +334,24 @@ module Ref {
 
   }
 
-  instance recvBuffComp: Ref.RecvBuff base id 0x4700
+  instance recvBuffComp: Ref.RecvBuff base id 0x4800
 
-  instance staticMemory: Svc.StaticMemory base id 0x4800
+  instance staticMemory: Svc.StaticMemory base id 0x4900
 
-  instance textLogger: Svc.PassiveTextLogger base id 0x4900
+  instance textLogger: Svc.PassiveTextLogger base id 0x4A00
 
-  instance uplink: Svc.Deframer base id 0x4A00 {
+  instance deframer: Svc.Deframer base id 0x4B00 {
 
     phase Fpp.ToCpp.Phases.configObjects """
     Svc::FprimeDeframing deframing;
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    uplink.setup(ConfigObjects::uplink::deframing);
+    deframer.setup(ConfigObjects::uplink::deframing);
     """
 
   }
 
-  instance systemResources: Svc.SystemResources base id 0x4B00
+  instance systemResources: Svc.SystemResources base id 0x4C00
 
 }
