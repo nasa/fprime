@@ -386,25 +386,7 @@ Vertical dashed lines represent component code.
 Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
-```mermaid
-sequenceDiagram
-    activeComm->>buffMgr: Allocate frame buffer FB
-    buffMgr-->>activeComm: Return FB
-    activeComm->>activeComm: Fill FB with framed data
-    activeComm->>deframer: Send FB[framedIn]
-    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
-    buffMgr-->>deframer: Return PB
-    deframer->>deframer: Deframe FB into PB
-    deframer->>deframer: Copy PB into a command packet C
-    deframer-)+cmdDisp: Send C [comOut]
-    deframer->>buffMgr: Deallocation PB [bufferDeallocate]
-    buffMgr-->>deframer: 
-    deframer->>buffMgr: Deallocation FB [framedDeallocate]
-    buffMgr-->>deframer: 
-    deframer-->>activeComm: 
-    cmdDisp->>-deframer: Send cmd response [cmdResponseIn]
-    deframer-->>cmdDisp: 
-```
+![Active byte stream driver, command packet](img/sequence-diagrams/active-cmd-packet.png)
 
 **Sending a file packet:**
 The following sequence diagram shows what happens when `activeComm`
