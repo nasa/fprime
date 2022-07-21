@@ -432,6 +432,7 @@ sequenceDiagram
     activate fileUplink
     fileUplink->>-buffMgr: Deallocate PB
     buffMgr-->>fileUplink: 
+
 ```
 
 #### 6.2.2. Passive Byte Stream Driver
@@ -440,26 +441,7 @@ sequenceDiagram
 happens when `passiveComm` sends data to `deframer`, and
 `deframer` decodes the data into a command packet.
 
-```mermaid
-sequenceDiagram
-    activate rateGroup
-    rateGroup->>deframer: Send schedule tick [schedIn]
-    deframer->>passiveComm: Poll for data [framedPoll]
-    passiveComm-->>deframer: Return status
-    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
-    buffMgr-->>deframer: Return PB
-    deframer->>deframer: Deframe data into PB
-    deframer->>deframer: Copy PB into a command packet C
-    deframer-)cmdDisp: Send C [comOut]
-    deframer->>buffMgr: Deallocate PB [bufferDeallocate]
-    buffMgr-->>deframer: 
-    deframer-->>rateGroup: 
-    deactivate rateGroup
-    activate cmdDisp
-    cmdDisp->>deframer: Send cmd response [cmdResponseIn]
-    deframer-->>cmdDisp: 
-    deactivate cmdDisp 
-```
+![Passive byte stream driver, command packet](img/sequence-diagrams/passive-cmd-packet.png)
 
 **Sending a file packet:** The following sequence diagram shows what
 happens when `passiveComm` sends data to `deframer`, and
