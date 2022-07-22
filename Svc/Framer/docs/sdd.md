@@ -31,7 +31,13 @@ downlink_obj.send(buf); // Send framed buffer to a port connected to bufferOut
 
 ## Class Diagram
 
-![classdiagram](./img/class_diagram_framer.png)
+```mermaid
+classDiagram
+    ObjBase <|-- PassiveComponentBase
+    PassiveComponentBase <|-- FramerComponentBase
+    FramerComponentBase <|-- Framer
+    FramingProtocolInterface <|-- Framer
+```
 
 ## Requirements
 
