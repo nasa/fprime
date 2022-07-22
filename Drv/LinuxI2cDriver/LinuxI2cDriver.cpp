@@ -31,7 +31,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   LinuxI2cDriver ::
-    LinuxI2cDriverComponentImpl(
+    LinuxI2cDriver(
         const char *const compName
     ) : LinuxI2cDriverComponentBase(compName),
         m_fd(-1)
