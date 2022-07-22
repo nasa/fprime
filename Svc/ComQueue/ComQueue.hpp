@@ -12,7 +12,6 @@
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
 #include "Fw/Types/MemAllocator.hpp"
-#include "Svc/ComQueue/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -31,6 +30,8 @@ struct QueueConfiguration {
 class ComQueue : public ComQueueComponentBase {
     // Internal Data types and definitions
   public:
+    static const NATIVE_INT_TYPE ComQueueComSize = ComQueueComponentBase::NUM_COMQUEUEIN_INPUT_PORTS;
+    static const NATIVE_INT_TYPE ComQueueBuffSize = ComQueueComponentBase::NUM_BUFFQUEUEIN_INPUT_PORTS;
     static const NATIVE_INT_TYPE totalSize = ComQueueComSize + ComQueueBuffSize;
     struct QueueData {
         NATIVE_UINT_TYPE depth;

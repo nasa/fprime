@@ -7,7 +7,7 @@ module Svc {
         # ----------------------------------------------------------------------
 
         @ Data coming in from the framing component
-        guarded input port comDataIn: Drv.ByteStreamSend
+        sync input port comDataIn: Drv.ByteStreamSend
 
         @ Status of the last radio transmission
         output port comStatus: Svc.ComStatus

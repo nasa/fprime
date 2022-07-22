@@ -86,7 +86,22 @@ module Ref {
   instance comQueue: Svc.ComQueue base id 0x0600 \
       queue size Default.queueSize \
       stack size Default.stackSize \
-      priority 100
+      priority 100 \
+  {
+    phase Fpp.ToCpp.Phases.configObjects """
+    Svc::QueueConfiguration queueConfig[] = {
+        { .depth = 200, .priority = 2}, // Channels, deep queue, low priority
+        { .depth = 100, .priority = 0}, // Events , highest-priority
+        { .depth = 100, .priority = 1} // File Downlink
+    };
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    comQueue.configure(
+        ConfigObjects::comQueue::queueConfig, FW_NUM_ARRAY_ELEMENTS(ConfigObjects::comQueue::queueConfig), Allocation::mallocator
+    );
+    """
+  }
 
   instance cmdSeq: Svc.CmdSequencer base id 0x0700 \
     queue size Default.queueSize \
@@ -252,8 +267,8 @@ module Ref {
         comDriver.startSocketTask(
             name,
             true,
-            ConfigConstants::comm::PRIORITY,
-            ConfigConstants::comm::STACK_SIZE
+            ConfigConstants::comDriver::PRIORITY,
+            ConfigConstants::comDriver::STACK_SIZE
         );
     }
     """
@@ -274,7 +289,7 @@ module Ref {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    framer.setup(ConfigObjects::downlink::framing);
+    framer.setup(ConfigObjects::framer::framing);
     """
 
   }
@@ -347,7 +362,7 @@ module Ref {
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    deframer.setup(ConfigObjects::uplink::deframing);
+    deframer.setup(ConfigObjects::deframer::deframing);
     """
 
   }
