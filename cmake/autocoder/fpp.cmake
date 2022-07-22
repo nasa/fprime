@@ -91,7 +91,7 @@ endfunction(fpp_get_framework_dependency_helper)
 # - GENERATED_FILES: a list of files generated for the given input sources
 # - MODULE_DEPENDENCIES: inter-module dependencies determined from the given input sources
 # - FILE_DEPENDENCIES: specific file dependencies of the given input sources
-# - EXTRAS: used to publish the 'imported' file dependencies of the given input files
+# - FPP_IMPORTS: The fpp model dependencies, which end up being the input to the -i flag for the fpp-to-cpp and fpp-to-xml tools
 #
 # Note: although this function is only required to set `GENERATED_FILES`, the remaining information is also set as
 # setting this information now will prevent a duplicated call to the tooling.
@@ -142,13 +142,13 @@ function(fpp_info AC_INPUT_FILES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
     # File dependencies are any files that this depends on
-    set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${STDOUT})
+    set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${INCLUDED})
 
     # Should have been inherited from previous call to `get_generated_files`
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(IMPORTED "${IMPORTED}" PARENT_SCOPE)
+    set(FPP_IMPORTS "${STDOUT}" PARENT_SCOPE)
 endfunction(fpp_info)
 
 
@@ -165,12 +165,11 @@ function(fpp_setup_autocode AC_INPUT_FILES)
         message(FATAL_ERROR "fpp tools not found, please install them onto your system path")
     endif()
     fpp_info("${AC_INPUT_FILES}")
-
-    string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_SEP_FPP "${FPRIME_BUILD_LOCATIONS}")
-    string(REGEX REPLACE ";" ","  FPP_IMPORTED_SEP "${IMPORTED}")
-    set(INCLUDES)
-    if (FPP_IMPORTED_SEP)
-        set(INCLUDES "-i" "${FPP_IMPORTED_SEP}")
+    string(REGEX REPLACE ";" ","  FPRIME_BUILD_LOCATIONS_COMMA_SEP "${FPRIME_BUILD_LOCATIONS}")
+    string(REGEX REPLACE ";" ","  FPP_IMPORTS_COMMA_SEP "${FPP_IMPORTS}")
+    set(IMPORTS)
+    if (FPP_IMPORTS_COMMA_SEP)
+        set(IMPORTS "-i" "${FPP_IMPORTS_COMMA_SEP}")
     endif()
     # Separate the source files into the CPP and XML steps
     set(GENERATED_AI)
@@ -187,18 +186,18 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     if (GENERATED_AI)
         add_custom_command(
                 OUTPUT  ${GENERATED_AI}
-                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${FILE_DEPENDENCIES}
-                    "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP}"
-                DEPENDS ${IMPORTED} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                COMMAND ${FPP_TO_XML} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
+                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP}"
+                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(
                 OUTPUT  ${GENERATED_CPP}
-                COMMAND ${REMOVAL_FILE} ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${FILE_DEPENDENCIES}
-                "-p" "${FPRIME_BUILD_LOCATIONS_SEP_FPP},${CMAKE_BINARY_DIR}"
-                DEPENDS ${IMPORTED} ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
+                COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
+                    "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR}"
+                DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
     set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} PARENT_SCOPE)
