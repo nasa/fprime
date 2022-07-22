@@ -123,7 +123,7 @@ TEST(ParameterDbTest,NominalFileLoadTest) {
 TEST(ParameterDbTest,PrmMissingExtraParamsTest) {
 
     TEST_CASE(105.2.1,"Missing and too many parameters test");
-    COMMENT("Attempt to read a non-existent parameter and write too many parameters");
+    COMMENT("Attempt to read a nonexistent parameter and write too many parameters");
 
     Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
 
