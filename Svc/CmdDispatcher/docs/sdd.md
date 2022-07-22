@@ -56,13 +56,40 @@ When the command dispatcher receives a command buffer, it decodes the opcode. It
 
 The `Svc::CmdDispatcher` component accepts command registration from other components:
 
-![Command Registration](img/CommandRegistration.jpg) 
+```mermaid
+sequenceDiagram
+    Initialization->>Component: get_ComdReg_InputPort()
+    activate Initialization
+    deactivate Initialization
+    activate Component
+    deactivate Component
+    Initialization->>Component: regCommands()
+    activate Initialization
+    activate Component
+    loop for each opcode
+        Component->>CommandDispatcher: cmdReg()
+    end
+    deactivate Initialization
+    deactivate Component
+```
 
 #### 3.3.1 Dispatch Commands
 
 The `Svc::CmdDispatcher` component dispatches commands to other components:
 
-![Command Dispatch](img/CommandDispatch.jpg) 
+```mermaid
+sequenceDiagram
+    Command Buffer Source->>CommandDispatcher: cmdBuff()
+    activate Command Buffer Source
+    activate CommandDispatcher
+    CommandDispatcher->>Component: cmdBuff()
+    activate Component
+    Component->>CommandDispatcher: comStat()
+    deactivate Component
+    CommandDispatcher->>Command Buffer Source: seqStatus()
+    deactivate CommandDispatcher
+    deactivate Command Buffer Source
+```
 
 ### 3.4 State
 
