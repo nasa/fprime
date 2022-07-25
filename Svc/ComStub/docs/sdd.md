@@ -87,7 +87,7 @@ transmission.
 | Yes      | `sync input` | `comDataIn`    | `Drv.ByteStreamSend`  | Port receiving `Fw::Buffer`s for transmission out `drvDataOut`                    |
 | Yes      | `output`     | `comStatus`    | `Svc.ComStatus`       | Port indicating ready or failed to possibly attached `Svc::ComQueue`              |
 | Yes      | `output`     | `comDataOut`   | `Drv.ByteStreamRecv`  | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
-| No       | `sync input` | `drvConnected` | `Drv.ByteStreamReady` | Port providing received `Fw::Buffers` to a potential `Svc::Deframer`              |
+| No       | `sync input` | `drvConnected` | `Drv.ByteStreamReady` | Port called when the underlying driver has connected                              |
 | No       | `sync input` | `drvDataIn`    | `Drv.ByteStreamRecv`  | Port receiving `Fw::Buffers` from underlying communications bus driver            |
 | No       | `output`     | `drvDataOut`   | `Drv.ByteStreamSend`  | Port providing received `Fw::Buffers` to the underlying communications bus driver |
 
