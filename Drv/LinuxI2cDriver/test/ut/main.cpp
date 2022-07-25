@@ -1,5 +1,5 @@
 #include <Fw/Types/StringUtils.hpp>
-#include <SystemReference/Gnc/Imu/test/ut/Tester.hpp>
+#include <Tester.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
