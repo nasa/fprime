@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  LinuxI2cDriverComponentImpl.hpp
+// \title  LinuxI2cDriver.hpp
 // \author tcanham
 // \brief  hpp file for LinuxI2cDriver component implementation class
 //
@@ -17,7 +17,7 @@
 
 namespace Drv {
 
-  class LinuxI2cDriverComponentImpl :
+  class LinuxI2cDriver :
     public LinuxI2cDriverComponentBase
   {
 
@@ -29,7 +29,7 @@ namespace Drv {
 
       //! Construct object LinuxI2cDriver
       //!
-      LinuxI2cDriverComponentImpl(const char *const compName);
+      LinuxI2cDriver(const char *const compName);
 
       //! Initialize object LinuxI2cDriver
       //!
@@ -40,7 +40,7 @@ namespace Drv {
       bool open(const char* device);
       //! Destroy object LinuxI2cDriver
       //!
-      ~LinuxI2cDriverComponentImpl();
+      ~LinuxI2cDriver();
 
     PRIVATE:
 
@@ -66,7 +66,7 @@ namespace Drv {
 
       //! Handler implementation for writeRead
       //!
-      Drv::I2cStatus  writeRead_handler(
+      I2cStatus  writeRead_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           U32 addr,
           Fw::Buffer &writeBuffer,

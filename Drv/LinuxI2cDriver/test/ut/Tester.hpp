@@ -13,8 +13,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "Drv/LinuxI2cDriver/LinuxI2cDriver.hpp"
 #include "GTestBase.hpp"
-#include "Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp"
 
 namespace Drv {
 
@@ -70,7 +70,7 @@ namespace Drv {
 
       //! The component under test
       //!
-      LinuxI2cDriverComponentImpl component;
+      LinuxI2cDriver component;
 
   };
 
