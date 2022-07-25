@@ -48,7 +48,7 @@ var searchData=
   ['_7eipcqueue_2830',['~IPCQueue',['../class_os_1_1_i_p_c_queue.html#a071925769054c2af8137b6913211d297',1,'Os::IPCQueue']]],
   ['_7eipsocket_2831',['~IpSocket',['../class_drv_1_1_ip_socket.html#a38ffb51359aa6330a04038092284c952',1,'Drv::IpSocket']]],
   ['_7elinuxgpiodrivercomponentimpl_2832',['~LinuxGpioDriverComponentImpl',['../class_drv_1_1_linux_gpio_driver_component_impl.html#a597f5d222833b99445494ceda7a0bd0e',1,'Drv::LinuxGpioDriverComponentImpl']]],
-  ['_7elinuxi2cdrivercomponentimpl_2833',['~LinuxI2cDriverComponentImpl',['../class_drv_1_1_linux_i2c_driver_component_impl.html#a285c1f7429c6a98381406905e925e48b',1,'Drv::LinuxI2cDriverComponentImpl']]],
+  ['_7elinuxi2cdriver_2833',['~LinuxI2cDriver',['../class_drv_1_1_linux_i2c_driver.html#a711d1e65e1d3b79f41ce0940e7323271',1,'Drv::LinuxI2cDriver']]],
   ['_7elinuxserialdrivercomponentimpl_2834',['~LinuxSerialDriverComponentImpl',['../class_drv_1_1_linux_serial_driver_component_impl.html#a8151aca07e233ce702a5e23f2d442cc0',1,'Drv::LinuxSerialDriverComponentImpl']]],
   ['_7elinuxspidrivercomponentimpl_2835',['~LinuxSpiDriverComponentImpl',['../class_drv_1_1_linux_spi_driver_component_impl.html#a2b05e431412a0a2f5dfd8231e4e160e5',1,'Drv::LinuxSpiDriverComponentImpl']]],
   ['_7elinuxtimeimpl_2836',['~LinuxTimeImpl',['../class_svc_1_1_linux_time_impl.html#a6c2902e5139d49e6f1e2fb8076ac2d19',1,'Svc::LinuxTimeImpl']]],

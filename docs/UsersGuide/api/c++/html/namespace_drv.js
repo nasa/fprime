@@ -4,7 +4,7 @@ var namespace_drv =
     [ "DataBuffer", "class_drv_1_1_data_buffer.html", "class_drv_1_1_data_buffer" ],
     [ "IpSocket", "class_drv_1_1_ip_socket.html", "class_drv_1_1_ip_socket" ],
     [ "LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html", "class_drv_1_1_linux_gpio_driver_component_impl" ],
-    [ "LinuxI2cDriverComponentImpl", "class_drv_1_1_linux_i2c_driver_component_impl.html", "class_drv_1_1_linux_i2c_driver_component_impl" ],
+    [ "LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", "class_drv_1_1_linux_i2c_driver" ],
     [ "LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html", "class_drv_1_1_linux_serial_driver_component_impl" ],
     [ "LinuxSpiDriverComponentImpl", "class_drv_1_1_linux_spi_driver_component_impl.html", "class_drv_1_1_linux_spi_driver_component_impl" ],
     [ "SocketReadTask", "class_drv_1_1_socket_read_task.html", "class_drv_1_1_socket_read_task" ],

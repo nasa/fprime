@@ -2,7 +2,7 @@ var searchData=
 [
   ['length_2511',['length',['../class_fw_1_1_string_base.html#abc6179981bb5a9358517e18770578eb3',1,'Fw::StringBase']]],
   ['linuxgpiodrivercomponentimpl_2512',['LinuxGpioDriverComponentImpl',['../class_drv_1_1_linux_gpio_driver_component_impl.html#a67ea492696ac53f47637a04015394d03',1,'Drv::LinuxGpioDriverComponentImpl']]],
-  ['linuxi2cdrivercomponentimpl_2513',['LinuxI2cDriverComponentImpl',['../class_drv_1_1_linux_i2c_driver_component_impl.html#a888a6ea079f757e76b19b483fb23fedf',1,'Drv::LinuxI2cDriverComponentImpl']]],
+  ['linuxi2cdriver_2513',['LinuxI2cDriver',['../class_drv_1_1_linux_i2c_driver.html#a28af29fb77761ec965260c7fc19cd411',1,'Drv::LinuxI2cDriver']]],
   ['linuxserialdrivercomponentimpl_2514',['LinuxSerialDriverComponentImpl',['../class_drv_1_1_linux_serial_driver_component_impl.html#aae56fad33ce1749277783d6f2d34464f',1,'Drv::LinuxSerialDriverComponentImpl']]],
   ['linuxspidrivercomponentimpl_2515',['LinuxSpiDriverComponentImpl',['../class_drv_1_1_linux_spi_driver_component_impl.html#a80258e3670c8d37b339d3605964edb62',1,'Drv::LinuxSpiDriverComponentImpl']]],
   ['linuxtimeimpl_2516',['LinuxTimeImpl',['../class_svc_1_1_linux_time_impl.html#a084800252af7d81467bbd1bf2e020389',1,'Svc::LinuxTimeImpl']]],

@@ -174,8 +174,12 @@ Svc::Deframer (Passive Component)</h1>
 4.3. Derived Classes</h3>
 <p><code>Deframer</code> is derived from <code>DeframerComponentBase</code> as usual. It is also derived (via C++ multiple inheritance) from ../../FramingProtocol/docs/sdd.md "`Svc::DeframingProtocolInterface`". The multiple inheritance makes the <code>Deframer</code> instance into the instance of <code><a class="el" href="class_svc_1_1_deframing_protocol_interface.html" title="interface supplied to the deframing protocol">Svc::DeframingProtocolInterface</a></code> that is required to use <code><a class="el" href="class_svc_1_1_deframing_protocol.html" title="Abstract base class representing a deframing protocol.">Svc::DeframingProtocol</a></code>. See <a href="#dpi-impl">below</a> for a description of how <code>Deframer</code> implements <code>DeframingProtocolInterface</code>.</p>
 <p>Here is a class diagram for <code>Deframer</code>:</p>
-<p><img src="./img/class_diagram_deframer.png" alt="classdiagram" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md344"></a>
+<div class="fragment"><div class="line">classDiagram</div>
+<div class="line">    ObjBase &lt;|-- PassiveComponentBase</div>
+<div class="line">    PassiveComponentBase &lt;|-- DeframerComponentBase</div>
+<div class="line">    DeframerComponentBase &lt;|-- Deframer</div>
+<div class="line">    DeframingProtocolInterface &lt;|-- Deframer</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md344"></a>
 4.4. State</h3>
 <p><code>Deframer</code> maintains the following state:</p>
 <ol type="1">
@@ -365,16 +369,84 @@ Svc::Deframer (Passive Component)</h1>
 <h4><a class="anchor" id="autotoc_md361"></a>
 6.2.1. Active Byte Stream Driver</h4>
 <p><b>Sending a command packet:</b> The following sequence diagram shows what happens when <code>activeComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a command packet. Open vertical rectangles represent threads. Vertical dashed lines represent component code. Solid horizontal arrows represent synchronous port invocations, and open horizontal arrows represent asynchronous port invocations.</p>
-<p><img src="img/sequence-diagrams/active-cmd-packet.png" alt="Active byte stream driver, command packet" class="inline"/></p>
-<p><b>Sending a file packet:</b> The following sequence diagram shows what happens when <code>activeComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a file packet.</p>
-<p><img src="img/sequence-diagrams/active-file-packet.png" alt="Active byte stream driver, file packet" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md362"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    activate activeComm</div>
+<div class="line">    activeComm-&gt;&gt;buffMgr: Allocate frame buffer FB</div>
+<div class="line">    buffMgr--&gt;&gt;activeComm: Return FB</div>
+<div class="line">    activeComm-&gt;&gt;activeComm: Fill FB with framed data</div>
+<div class="line">    activeComm-&gt;&gt;deframer: Send FB[framedIn]</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Allocate packet buffer PB [bufferAllocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: Return PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Deframe FB into PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Copy PB into a command packet C</div>
+<div class="line">    deframer-)cmdDisp: Send C [comOut]</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Deallocate PB [bufferDeallocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: </div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Deallocate FB [framedDeallocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: </div>
+<div class="line">    deframer--&gt;&gt;activeComm: </div>
+<div class="line">    deactivate  activeComm </div>
+<div class="line">    activate cmdDisp</div>
+<div class="line">    cmdDisp-&gt;&gt;deframer: Send cmd response [cmdResponseIn]</div>
+<div class="line">    deframer--&gt;&gt;cmdDisp: </div>
+<div class="line">    deactivate cmdDisp</div>
+</div><!-- fragment --><p><b>Sending a file packet:</b> The following sequence diagram shows what happens when <code>activeComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a file packet.</p>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    activate activeComm</div>
+<div class="line">    activeComm-&gt;&gt;buffMgr: Allocate frame buffer FB</div>
+<div class="line">    buffMgr--&gt;&gt;activeComm: Return FB</div>
+<div class="line">    activeComm-&gt;&gt;activeComm: Fill FB with framed data</div>
+<div class="line">    activeComm-&gt;&gt;deframer: Send FB [framedIn]</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Allocate packet buffer PB [bufferAllocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: Return PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Deframe FB into PB</div>
+<div class="line">    deframer-)fileUplink: Send PB [bufferOut]</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Deallocate FB [framedDeallocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: </div>
+<div class="line">    deframer--&gt;&gt;activeComm: </div>
+<div class="line">    deactivate activeComm</div>
+<div class="line">    activate fileUplink</div>
+<div class="line">    fileUplink-&gt;&gt;buffMgr: Deallocate PB</div>
+<div class="line">    buffMgr--&gt;&gt;fileUplink: </div>
+<div class="line">    deactivate fileUplink</div>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md362"></a>
 6.2.2. Passive Byte Stream Driver</h4>
 <p><b>Sending a command packet:</b> The following sequence diagram shows what happens when <code>passiveComm</code> sends data to <code>deframer</code>, and <code>deframer</code> decodes the data into a command packet.</p>
-<p><img src="img/sequence-diagrams/passive-cmd-packet.png" alt="Passive byte stream driver, command packet" class="inline"/></p>
-<p><b>Sending a file packet:</b> The following sequence diagram shows what happens when <code>passiveComm</code> sends data to <code>deframer</code>, and <code>Deframer</code> decodes the data into a file packet.</p>
-<p><img src="img/sequence-diagrams/passive-file-packet.png" alt="Passive byte stream driver, file packet" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md363"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    activate rateGroup</div>
+<div class="line">    rateGroup-&gt;&gt;deframer: Send schedule tick [schedIn]</div>
+<div class="line">    deframer-&gt;&gt;passiveComm: Poll for data [framedPoll]</div>
+<div class="line">    passiveComm--&gt;&gt;deframer: Return status</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Allocate packet buffer PB [bufferAllocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: Return PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Deframe data into PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Copy PB into a command packet C</div>
+<div class="line">    deframer-)cmdDisp: Send C [comOut]</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Deallocate PB [bufferDeallocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: </div>
+<div class="line">    deframer--&gt;&gt;rateGroup: </div>
+<div class="line">    deactivate rateGroup</div>
+<div class="line">    activate cmdDisp</div>
+<div class="line">    cmdDisp-&gt;&gt;deframer: Send cmd response [cmdResponseIn]</div>
+<div class="line">    deframer--&gt;&gt;cmdDisp: </div>
+<div class="line">    deactivate cmdDisp </div>
+</div><!-- fragment --><p><b>Sending a file packet:</b> The following sequence diagram shows what happens when <code>passiveComm</code> sends data to <code>deframer</code>, and <code>Deframer</code> decodes the data into a file packet.</p>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    activate rateGroup</div>
+<div class="line">    rateGroup-&gt;&gt;deframer: Send schedule tick [schedIn]</div>
+<div class="line">    deframer-&gt;&gt;passiveComm: Poll for data [framedPoll]</div>
+<div class="line">    passiveComm--&gt;&gt;deframer: Return status</div>
+<div class="line">    deframer-&gt;&gt;buffMgr: Allocate packet buffer PB [bufferAllocate]</div>
+<div class="line">    buffMgr--&gt;&gt;deframer: Return PB</div>
+<div class="line">    deframer-&gt;&gt;deframer: Deframe data into PB</div>
+<div class="line">    deframer-)fileUplink: Send PB [bufferOut]</div>
+<div class="line">    deframer--&gt;&gt;rateGroup: </div>
+<div class="line">    deactivate rateGroup</div>
+<div class="line">    activate fileUplink</div>
+<div class="line">    fileUplink-&gt;&gt;buffMgr: Deallocate PB</div>
+<div class="line">    buffMgr--&gt;&gt;fileUplink: </div>
+<div class="line">    deactivate fileUplink</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md363"></a>
 6.3. Using Svc::GenericHub</h3>
 <p>You can use <code>Deframer</code> with an instance of ../../GenericHub/docs/sdd.md "`Svc::GenericHub`" to send deframed command packets and file packets across a network connection, instead of directly to a command dispatcher or file uplink component. To send deframed packets this way, do the following:</p>
 <ol type="1">

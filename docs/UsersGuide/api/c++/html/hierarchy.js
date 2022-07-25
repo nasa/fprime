@@ -122,7 +122,7 @@ var hierarchy =
       [ "Drv::LinuxGpioDriverComponentImpl", "class_drv_1_1_linux_gpio_driver_component_impl.html", null ]
     ] ],
     [ "LinuxI2cDriverComponentBase", null, [
-      [ "Drv::LinuxI2cDriverComponentImpl", "class_drv_1_1_linux_i2c_driver_component_impl.html", null ]
+      [ "Drv::LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", null ]
     ] ],
     [ "LinuxSerialDriverComponentBase", null, [
       [ "Drv::LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html", null ]
