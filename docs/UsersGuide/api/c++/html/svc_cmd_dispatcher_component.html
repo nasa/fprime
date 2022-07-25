@@ -147,12 +147,35 @@ Svc::CmdDispatcher Component</h1>
 <h4><a class="anchor" id="autotoc_md283"></a>
 3.3.1 Command Registration</h4>
 <p>The <code>Svc::CmdDispatcher</code> component accepts command registration from other components:</p>
-<p><img src="img/CommandRegistration.jpg" alt="Command Registration" class="inline"/></p>
-<h4><a class="anchor" id="autotoc_md284"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    Initialization-&gt;&gt;Component: get_ComdReg_InputPort()</div>
+<div class="line">    activate Initialization</div>
+<div class="line">    deactivate Initialization</div>
+<div class="line">    activate Component</div>
+<div class="line">    deactivate Component</div>
+<div class="line">    Initialization-&gt;&gt;Component: regCommands()</div>
+<div class="line">    activate Initialization</div>
+<div class="line">    activate Component</div>
+<div class="line">    loop for each opcode</div>
+<div class="line">        Component-&gt;&gt;CommandDispatcher: cmdReg()</div>
+<div class="line">    end</div>
+<div class="line">    deactivate Initialization</div>
+<div class="line">    deactivate Component</div>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md284"></a>
 3.3.1 Dispatch Commands</h4>
 <p>The <code>Svc::CmdDispatcher</code> component dispatches commands to other components:</p>
-<p><img src="img/CommandDispatch.jpg" alt="Command Dispatch" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md285"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    Command Buffer Source-&gt;&gt;CommandDispatcher: cmdBuff()</div>
+<div class="line">    activate Command Buffer Source</div>
+<div class="line">    activate CommandDispatcher</div>
+<div class="line">    CommandDispatcher-&gt;&gt;Component: cmdBuff()</div>
+<div class="line">    activate Component</div>
+<div class="line">    Component-&gt;&gt;CommandDispatcher: comStat()</div>
+<div class="line">    deactivate Component</div>
+<div class="line">    CommandDispatcher-&gt;&gt;Command Buffer Source: seqStatus()</div>
+<div class="line">    deactivate CommandDispatcher</div>
+<div class="line">    deactivate Command Buffer Source</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md285"></a>
 3.4 State</h3>
 <p><code>Svc::CmdDispatcher</code> has no state machines.</p>
 <h3><a class="anchor" id="autotoc_md286"></a>
