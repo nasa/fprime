@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  LinuxI2cDriverComponentImpl.cpp
+// \title  LinuxI2cDriver.cpp
 // \author tcanham
 // \brief  cpp file for LinuxI2cDriver component implementation class
 //
@@ -10,10 +10,9 @@
 //
 // ======================================================================
 
-
-#include <Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/BasicTypes.hpp"
+#include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
 
 #define DEBUG_PRINT 0
 
@@ -23,15 +22,14 @@ namespace Drv {
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  LinuxI2cDriverComponentImpl ::
-    LinuxI2cDriverComponentImpl(
+LinuxI2cDriver ::LinuxI2cDriver(
         const char *const compName
     ) : LinuxI2cDriverComponentBase(compName)
   {
 
   }
 
-  void LinuxI2cDriverComponentImpl ::
+  void LinuxI2cDriver ::
     init(
         const NATIVE_INT_TYPE instance
     )
@@ -39,13 +37,13 @@ namespace Drv {
     LinuxI2cDriverComponentBase::init(instance);
   }
 
-  LinuxI2cDriverComponentImpl ::
-    ~LinuxI2cDriverComponentImpl()
+  LinuxI2cDriver ::
+    ~LinuxI2cDriver()
   {
 
   }
 
-  bool LinuxI2cDriverComponentImpl::open(const char* device) {
+  bool LinuxI2cDriver::open(const char* device) {
     return true;
   }
 
@@ -56,7 +54,7 @@ namespace Drv {
 
   // Note this port handler is guarded, so we can make the ioctl call
 
-  I2cStatus LinuxI2cDriverComponentImpl ::
+  I2cStatus LinuxI2cDriver ::
     write_handler(
         const NATIVE_INT_TYPE portNum,
         U32 addr,
@@ -66,7 +64,7 @@ namespace Drv {
     return I2cStatus::I2C_OK;
   }
 
-  Drv::I2cStatus LinuxI2cDriverComponentImpl ::
+  Drv::I2cStatus LinuxI2cDriver ::
     read_handler(
         const NATIVE_INT_TYPE portNum,
         U32 addr,
@@ -76,7 +74,7 @@ namespace Drv {
     return I2cStatus::I2C_OK;
   }
 
-  Drv::I2cStatus LinuxI2cDriverComponentImpl ::
+  Drv::I2cStatus LinuxI2cDriver ::
     writeRead_handler(
       const NATIVE_INT_TYPE portNum, /*!< The port number*/
       U32 addr,
