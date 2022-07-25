@@ -141,8 +141,20 @@ Svc::ActiveRateGroup Component</h1>
 <h4><a class="anchor" id="autotoc_md216"></a>
 3.3.1 Rate Group Port Call</h4>
 <p>As described in the Functional Description section, the <code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:</p>
-<p><img src="img/RateGroupCall.jpg" alt="System Tick Port Call" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md217"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    Caller-&gt;&gt;ActiveRateGroup: 1. CycleIn</div>
+<div class="line">    activate Caller</div>
+<div class="line">    activate ActiveRateGroup</div>
+<div class="line">    deactivate  ActiveRateGroup </div>
+<div class="line">    loop for each output port</div>
+<div class="line">        ActiveRateGroup-&gt;&gt;Callee: 2. RateGroupMemberOut[N]</div>
+<div class="line">        activate Callee</div>
+<div class="line">        activate  ActiveRateGroup</div>
+<div class="line">        deactivate  Callee </div>
+<div class="line">        deactivate  ActiveRateGroup </div>
+<div class="line">    end</div>
+<div class="line">    deactivate  Caller </div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md217"></a>
 3.4 State</h3>
 <p><code><a class="el" href="class_svc_1_1_active_rate_group.html" title="Executes a set of components as part of a rate group.">Svc::ActiveRateGroup</a></code> has no state machines.</p>
 <h3><a class="anchor" id="autotoc_md218"></a>
