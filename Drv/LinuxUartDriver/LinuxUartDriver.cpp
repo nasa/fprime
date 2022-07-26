@@ -239,8 +239,6 @@ bool LinuxUartDriver::open(const char* const device,
     // set input mode (non-canonical, no echo,...)
     newtio.c_lflag = 0;
 
-    // TODO if parity, then do input parity too
-    // options.c_iflag |=INPCK;
     newtio.c_iflag = INPCK;
 
     // Flush old data:
