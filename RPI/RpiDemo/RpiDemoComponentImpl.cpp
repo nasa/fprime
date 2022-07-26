@@ -54,13 +54,6 @@ namespace RPI {
   }
 
   void RpiDemoComponentImpl::preamble() {
-      // send buffers to UART driver
-      for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_RPI_UART_BUFFERS; buffer++) {
-          // assign buffers to buffer containers
-          this->m_recvBuffers[buffer].setData(this->m_uartBuffers[buffer]);
-          this->m_recvBuffers[buffer].setSize(RPI_UART_READ_BUFF_SIZE);
-          this->UartBuffers_out(0, this->m_recvBuffers[buffer]);
-      }
       // check initial state parameter
       Fw::ParamValid valid;
       RpiDemo_LedState initState = paramGet_RD_PrmLedInitState(valid);
@@ -139,12 +132,9 @@ namespace RPI {
           this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
           this->m_lastUartMsg = uMsg;
           this->m_uartReadBytes += serBuffer.getSize();
-
-          // reset buffer size
-          serBuffer.setSize(RPI_UART_READ_BUFF_SIZE);
-          // return buffer to driver
-          this->UartBuffers_out(0, serBuffer);
       }
+      // return buffer to buffer manager
+      this->UartBuffers_out(0, serBuffer);
   }
 
   // ----------------------------------------------------------------------
