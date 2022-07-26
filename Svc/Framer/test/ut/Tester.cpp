@@ -125,8 +125,6 @@ void Tester ::connectPorts() {
     // framedOut
     this->component.set_framedOut_OutputPort(0, this->get_from_framedOut(0));
 
-    // timeGet
-    this->component.set_timeGet_OutputPort(0, this->get_from_timeGet(0));
 }
 
 void Tester ::initComponents() {
