@@ -47,13 +47,7 @@ namespace Fw {
     void PortBase::trace() {
         bool do_trace = false;
 
-        if (this->m_ovr_trace) {
-            if (this->m_trace) {
-                do_trace = true;
-            }
-        } else if (PortBase::s_trace) {
-            do_trace = true;
-        }
+        do_trace = ((this->m_ovr_trace & this->m_trace) | (!(this->m_ovr_trace) & PortBase::s_trace));
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
