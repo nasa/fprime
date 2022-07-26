@@ -2,7 +2,7 @@
 # autocoder/ai-xml.cmake
 #
 # Primary Ai XML autocoder that sets up the C++ file generation. This is a implementation of the singular autocoder
-# setup of the the original CMake system. It process AI XML files and produces the autocoder output files Ac.hpp and
+# setup of the original CMake system. It process AI XML files and produces the autocoder output files Ac.hpp and
 # Ac.cpp files.
 #####
 include(utilities)

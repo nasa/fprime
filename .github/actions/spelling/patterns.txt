@@ -52,3 +52,17 @@ value="(?:[0-9a-f]{1,2} )*"
 
 # slashes after spaces are not in paths
 LaTeX \\.* \\
+
+# acceptable duplicates
+# ls directory listings
+[-bcdlpsw](?:[-r][-w][-sx]){3}\s+\d+\s+(\S+)\s+\g{-1}\s+\d+\s+
+# C types
+\s(expr|long|LONG|Time)(?:\s+\g{-1})+\s
+# javadoc / .net
+(?:[\\@](?:groupname|page|param)|(?:public|private)(?:\s+static|\s+readonly)*)\s+(\w+)\s+\g{-1}\s
+
+# Jenkins library
+GithubProjectProperty
+
+# ignore long runs of a single character:
+\b([A-Za-z])\g{-1}{3,}\b

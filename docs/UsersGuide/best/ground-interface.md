@@ -193,6 +193,6 @@ described int the ByteStreamDriverModel.  These ports are called out in the belo
 
 1. **ready**: (output) drivers call this port without arguments to signal it is ready to receive data via the send port.
 2. **send**: (input) clients call this port passing in an `Fw::Buffer` to send data.
-3. **recv**: (output) drivers operating in asynchronous mode call this port with a RecvStatus and and `Fw::Buffer` to
+3. **recv**: (output) drivers operating in asynchronous mode call this port with a RecvStatus and `Fw::Buffer` to
    provide data.
 4. **poll**: (input) drivers operating in poll mode fill an `Fw::Buffer` and return a PollStatus to provide data.
