@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  LinuxSerialDriver/test/ut/Tester.hpp
+// \title  LinuxUartDriver/test/ut/Tester.hpp
 // \author tcanham
-// \brief  hpp file for LinuxSerialDriver test harness implementation class
+// \brief  hpp file for LinuxUartDriver test harness implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -19,12 +19,12 @@ enum {
 };
 
 #include "TesterBase.hpp"
-#include "Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp"
+#include "Drv/LinuxUartDriver/LinuxUartDriver.hpp"
 
 namespace Drv {
 
   class Tester :
-    public LinuxSerialDriverTesterBase
+    public LinuxUartDriverTesterBase
   {
 
       // ----------------------------------------------------------------------
@@ -36,8 +36,8 @@ namespace Drv {
       //! Construct object Tester
       //!
       Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,
-             LinuxSerialDriverComponentImpl::UartFlowControl flow,
-             LinuxSerialDriverComponentImpl::UartParity parity);
+             LinuxUartDriver::UartFlowControl flow,
+             LinuxUartDriver::UartParity parity);
 
       //! Destroy object Tester
       //!
@@ -89,7 +89,7 @@ namespace Drv {
 
       //! The component under test
       //!
-      LinuxSerialDriverComponentImpl component;
+      LinuxUartDriver component;
 
       NATIVE_INT_TYPE m_numBuffers;
       NATIVE_INT_TYPE m_bufferSize;

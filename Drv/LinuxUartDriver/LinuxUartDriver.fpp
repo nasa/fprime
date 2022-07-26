@@ -1,22 +1,26 @@
 module Drv {
 
-  passive component LinuxSerialDriver {
+  passive component LinuxUartDriver {
 
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
 
-    sync input port readBufferSend: Fw.BufferSend
+    output port ready: Drv.ByteStreamReady
 
-    sync input port serialSend: Drv.SerialWrite
+    output port $recv: Drv.ByteStreamRecv
+
+    guarded input port send: Drv.ByteStreamSend
+
+    output port allocate: Fw.BufferGet
+
+    output port deallocate: Fw.BufferSend
 
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
 
     event port Log
-
-    output port serialRecv: Drv.SerialRead
 
     telemetry port Tlm
 

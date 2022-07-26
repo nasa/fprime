@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  LinuxSerialDriver.hpp
+// \title  LinuxUartDriver.hpp
 // \author tcanham
-// \brief  cpp file for LinuxSerialDriver test harness implementation class
+// \brief  cpp file for LinuxUartDriver test harness implementation class
 //
 // \copyright
 // Copyright 2009-2015, by the California Institute of Technology.
@@ -26,10 +26,10 @@ namespace Drv {
 
   Tester ::
     Tester(const char* const device, NATIVE_INT_TYPE numReadBuffers, NATIVE_INT_TYPE bufferSize,
-           LinuxSerialDriverComponentImpl::UartFlowControl flow,
-           LinuxSerialDriverComponentImpl::UartParity parity) :
-    LinuxSerialDriverTesterBase("Tester", MAX_HISTORY_SIZE),
-      component("LinuxSerialDriver")
+           LinuxUartDriver::UartFlowControl flow,
+           LinuxUartDriver::UartParity parity) :
+    LinuxUartDriverTesterBase("Tester", MAX_HISTORY_SIZE),
+      component("LinuxUartDriver")
      ,m_numBuffers(numReadBuffers),m_bufferSize(bufferSize)
   {
     this->initComponents();
@@ -49,7 +49,7 @@ namespace Drv {
     }
 
     // configure port
-    this->component.open(device,LinuxSerialDriverComponentImpl::BAUD_921K,flow,parity,true);
+    this->component.open(device,LinuxUartDriver::BAUD_921K,flow,parity,true);
 
     // spawn driver thread
     this->component.startReadThread();

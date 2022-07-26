@@ -4,7 +4,7 @@
 
 #include "Tester.hpp"
 #include <cstdlib>
-#include "Drv/LinuxSerialDriver/LinuxSerialDriverComponentImpl.hpp"
+#include "Drv/LinuxUartDriver/LinuxUartDriver.hpp"
 #include <unistd.h>
 
 
@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
     }
 
     Drv::Tester tester(argv[1],20,READ_BUFF_SIZE,
-                       Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-                       Drv::LinuxSerialDriverComponentImpl::PARITY_NONE);
+                       Drv::LinuxUartDriver::NO_FLOW,
+                       Drv::LinuxUartDriver::PARITY_NONE);
 
     run_simple_test(tester);
 //    run_ramping_pattern_test(tester);

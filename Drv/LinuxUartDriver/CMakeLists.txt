@@ -9,9 +9,9 @@ set(MOD_DEPS Os)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriver.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImplCommon.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/LinuxSerialDriverComponentImpl.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriverCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxUartDriver.cpp"
     )
     register_fprime_module()
 else()
