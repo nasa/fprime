@@ -13,17 +13,15 @@
 #include <unistd.h>
 #include <Drv/LinuxUartDriver/LinuxUartDriver.hpp>
 #include <Os/TaskString.hpp>
-#include <cstdlib>
-#include <ctime>
+
 #include "Fw/Types/BasicTypes.hpp"
 
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <termios.h>
 #include <cerrno>
-#include <cstdio>
 
+//#include <cstdlib>
+//#include <cstdio>
 //#define DEBUG_PRINT(x,...) printf(x,##__VA_ARGS__); fflush(stdout)
 #define DEBUG_PRINT(x, ...)
 
@@ -36,30 +34,22 @@ namespace Drv {
 bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
-                           UartParity parity,
-                           bool block) {
-    // TODO remove printf
-
-    NATIVE_INT_TYPE fd;
-    NATIVE_INT_TYPE stat;
+                           UartParity parity) {
+    FW_ASSERT(device != nullptr);
+    NATIVE_INT_TYPE fd = -1;
+    NATIVE_INT_TYPE stat = -1;
 
     this->m_device = device;
 
     DEBUG_PRINT("Opening UART device %s\n", device);
 
-    // TODO can't use O_NDELAY and block (it is same as O_NONBLOCK), so removing NDELAY for now
     /*
      The O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port. If you
      don't specify this then any input (such as keyboard abort signals and so forth) will affect your process. Programs
      like getty(1M/8) use this feature when starting the login process, but normally a user program does not want this
      behavior.
-
-     The O_NDELAY flag tells UNIX that this program doesn't care what state the DCD signal line is in - whether the
-     other end of the port is up and running. If you do not specify this flag, your process will be put to sleep until
-     the DCD signal line is the space voltage.
      */
-    fd = ::open(device, O_RDWR | O_NOCTTY);  // | O_NDELAY);
-    // fd = open(device, O_RDWR | O_NONBLOCK | O_SYNC);
+    fd = ::open(device, O_RDWR | O_NOCTTY);
 
     if (fd == -1) {
         DEBUG_PRINT("open UART device %s failed.\n", device);
@@ -103,10 +93,8 @@ bool LinuxUartDriver::open(const char* const device,
      number of characters requested will be returned. According to Antonino (see contributions), you could issue a
      fcntl(fd, F_SETFL, FNDELAY); before reading to get the same result.
      */
-    // wait for at least 1 byte for 1 second
-    // TODO VMIN should be 0 when using VTIME, and then it would give the timeout behavior Tim wants
-    cfg.c_cc[VMIN] = 0;    // TODO back to 0
-    cfg.c_cc[VTIME] = 10;  // 1 sec, TODO back to 10
+    cfg.c_cc[VMIN] = 0;
+    cfg.c_cc[VTIME] = 10;  // 1 sec timeout on no-data
 
     stat = tcsetattr(fd, TCSANOW, &cfg);
     if (-1 == stat) {
@@ -150,7 +138,6 @@ bool LinuxUartDriver::open(const char* const device,
 
     NATIVE_INT_TYPE relayRate = B0;
     switch (baud) {
-        // TODO add more as needed
         case BAUD_9600:
             relayRate = B9600;
             break;
@@ -195,7 +182,6 @@ bool LinuxUartDriver::open(const char* const device,
     }
 
     // CS8 = 8 data bits, CLOCAL = Local line, CREAD = Enable Receiver
-    // TODO PARENB for parity bit
     /*
       Even parity (7E1):
       options.c_cflag |= PARENB
@@ -292,16 +278,13 @@ LinuxUartDriver ::~LinuxUartDriver() {
 
 Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& serBuffer) {
     Drv::SendStatus status = Drv::SendStatus::SEND_OK;
-    if (this->m_fd == -1) {
+    if (this->m_fd == -1 || serBuffer.getData() == nullptr || serBuffer.getSize() == 0) {
         status = Drv::SendStatus::SEND_ERROR;
     } else {
         unsigned char *data = serBuffer.getData();
         NATIVE_INT_TYPE xferSize = serBuffer.getSize();
 
         NATIVE_INT_TYPE stat = ::write(this->m_fd, data, xferSize);
-
-        // TODO no need to delay for writes b/c the write blocks
-        // not sure if it will block until everything is transmitted, but seems to
 
         if (-1 == stat || stat != xferSize) {
           Fw::LogStringArg _arg = this->m_device;
@@ -317,20 +300,21 @@ Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw
 }
 
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
+    FW_ASSERT(ptr != nullptr);
     Drv::RecvStatus status = RecvStatus::RECV_ERROR;  // added by m.chase 03.06.2017
+    LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
 
-    LinuxUartDriver* comp = static_cast<LinuxUartDriver*>(ptr);
-
-    while (true) {
+    while (!comp->m_quitReadThread) {
         // wait for data
         int sizeRead = 0;
 
         Fw::Buffer buff = comp->allocate_out(0, Drv::UART_READ_ALLOCATION_REQUEST_SIZE);
 
-
+        // On failed allocation, error and deallocate
         if (buff.getData() == nullptr) {
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_DR_NoBuffers(_arg);
+            status = RecvStatus::RECV_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
             Os::Task::delay(50);
@@ -341,53 +325,26 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         //          (void)clock_gettime(CLOCK_REALTIME,&stime);
         //          DEBUG_PRINT("<<< Calling dsp_relay_uart_relay_read() at %d %d\n", stime.tv_sec, stime.tv_nsec);
 
-        bool waiting = true;
         int stat = 0;
 
-        while (waiting) {
-            if (comp->m_quitReadThread) {
-                return;
-            }
-
+        // Read until something is received or an error occurs. Only loop when
+        // stat == 0 as this is the timeout condition and the read should spin
+        while ((stat == 0) && !comp->m_quitReadThread) {
             stat = ::read(comp->m_fd, buff.getData(), buff.getSize());
-
-            // Good read:
-            if (stat > 0) {
-                sizeRead = stat;
-                // TODO remove
-                static int totalSizeRead = 0;
-                totalSizeRead += sizeRead;
-                // printf("<<< totalSizeRead: %d, readSize: %d\n", totalSizeRead, sizeRead);
-                // printf("<<< read size: %d\n", stat);
-            }
-
-            // check for timeout
-            if (0 == stat) {
-                if (comp->m_quitReadThread) {
-                    return;
-                }
-            } else {  // quit if other error or data
-                waiting = false;
-            }
         }
 
-        if (comp->m_quitReadThread) {
-            return;
-        }
-
-        // check stat, maybe output event
+        // On error stat (-1) must mark the read as error
+        // On normal stat (>0) pass a recv ok
+        // On timeout stat (0) and m_quitReadThread, error to return the buffer
         if (stat == -1) {
-            // TODO(mereweth) - check errno
             Fw::LogStringArg _arg = comp->m_device;
             comp->log_WARNING_HI_DR_ReadError(_arg, stat);
-            // comp->serialRecv_out(0,buff,Drv::SER_OTHER_ERR);
-        } else {
-            //              (void)clock_gettime(CLOCK_REALTIME,&stime);
-            //              DEBUG_PRINT("<!<! Sending data to RceAdapter %u at %d %d\n", buff.getsize(), stime.tv_sec,
-            //              stime.tv_nsec);
+            status = RecvStatus::RECV_ERROR;
+        } else if (stat > 0) {
             buff.setSize(sizeRead);
             status = RecvStatus::RECV_OK;  // added by m.chase 03.06.2017
-            // comp->serialRecv_out(0,buff,Drv::SER_OK);
+        } else {
+            status = RecvStatus::RECV_ERROR; // Simply to return the buffer
         }
         comp->recv_out(0, buff, status);  // added by m.chase 03.06.2017
     }

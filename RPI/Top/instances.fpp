@@ -320,8 +320,7 @@ module RPI {
       const bool status = uartDrv.open("/dev/serial0",
           Drv::LinuxUartDriver::BAUD_19200,
           Drv::LinuxUartDriver::NO_FLOW,
-          Drv::LinuxUartDriver::PARITY_NONE,
-          true
+          Drv::LinuxUartDriver::PARITY_NONE
       );
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
