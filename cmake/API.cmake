@@ -386,7 +386,7 @@ function(register_fprime_ut)
         message(FATAL_ERROR "register_fprime_ut accepts only one optional argument: test name")
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    # UT name is passed in or is the the module name with _ut_exe added
+    # UT name is passed in or is the module name with _ut_exe added
     if (${ARGC} GREATER 0)
         set(UT_NAME "${ARGV0}")
     elseif (NOT DEFINED UT_NAME)
