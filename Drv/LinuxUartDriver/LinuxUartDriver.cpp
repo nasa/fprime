@@ -291,24 +291,29 @@ LinuxUartDriver ::~LinuxUartDriver() {
 // ----------------------------------------------------------------------
 
 Drv::SendStatus LinuxUartDriver ::send_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& serBuffer) {
+    Drv::SendStatus status = Drv::SendStatus::SEND_OK;
     if (this->m_fd == -1) {
-        return Drv::SendStatus::SEND_ERROR;
+        status = Drv::SendStatus::SEND_ERROR;
+    } else {
+        unsigned char *data = serBuffer.getData();
+        NATIVE_INT_TYPE xferSize = serBuffer.getSize();
+
+        NATIVE_INT_TYPE stat = ::write(this->m_fd, data, xferSize);
+
+        // TODO no need to delay for writes b/c the write blocks
+        // not sure if it will block until everything is transmitted, but seems to
+
+        if (-1 == stat || stat != xferSize) {
+          Fw::LogStringArg _arg = this->m_device;
+          this->log_WARNING_HI_DR_WriteError(_arg, stat);
+          status = Drv::SendStatus::SEND_ERROR;
+        }
     }
-
-    unsigned char* data = serBuffer.getData();
-    NATIVE_INT_TYPE xferSize = serBuffer.getSize();
-
-    NATIVE_INT_TYPE stat = ::write(this->m_fd, data, xferSize);
-
-    // TODO no need to delay for writes b/c the write blocks
-    // not sure if it will block until everything is transmitted, but seems to
-
-    if (-1 == stat || stat != xferSize) {
-        Fw::LogStringArg _arg = this->m_device;
-        this->log_WARNING_HI_DR_WriteError(_arg, stat);
-        return Drv::SendStatus::SEND_ERROR;
+    // Deallocate when necessary
+    if (isConnected_deallocate_OutputPort(0)) {
+        deallocate_out(0, serBuffer);
     }
-    return Drv::SendStatus::SEND_OK;
+    return status;
 }
 
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {

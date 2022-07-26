@@ -122,27 +122,29 @@ namespace RPI {
     UartRead_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &serBuffer,
-        Drv::SerialReadStatus &status
+        const Drv::RecvStatus &status
     )
   {
-      // convert incoming data to string. If it is not printable, set character to '*'
-      char uMsg[serBuffer.getSize()+1];
-      char* bPtr = reinterpret_cast<char*>(serBuffer.getData());
+      if (Drv::RecvStatus::RECV_OK == status.e) {
+          // convert incoming data to string. If it is not printable, set character to '*'
+          char uMsg[serBuffer.getSize() + 1];
+          char *bPtr = reinterpret_cast<char *>(serBuffer.getData());
 
-      for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
-          uMsg[byte] = isalpha(bPtr[byte])?bPtr[byte]:'*';
+          for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
+            uMsg[byte] = isalpha(bPtr[byte]) ? bPtr[byte] : '*';
+          }
+          uMsg[sizeof(uMsg) - 1] = 0;
+
+          Fw::LogStringArg evrMsg(uMsg);
+          this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
+          this->m_lastUartMsg = uMsg;
+          this->m_uartReadBytes += serBuffer.getSize();
+
+          // reset buffer size
+          serBuffer.setSize(RPI_UART_READ_BUFF_SIZE);
+          // return buffer to driver
+          this->UartBuffers_out(0, serBuffer);
       }
-      uMsg[sizeof(uMsg)-1] = 0;
-
-      Fw::LogStringArg evrMsg(uMsg);
-      this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
-      this->m_lastUartMsg = uMsg;
-      this->m_uartReadBytes += serBuffer.getSize();
-
-      // reset buffer size
-      serBuffer.setSize(RPI_UART_READ_BUFF_SIZE);
-      // return buffer to driver
-      this->UartBuffers_out(0, serBuffer);
   }
 
   // ----------------------------------------------------------------------
@@ -159,12 +161,13 @@ namespace RPI {
       Fw::Buffer txt;
       txt.setSize(text.length());
       txt.setData(reinterpret_cast<U8*>(const_cast<char*>(text.toChar())));
-      this->UartWrite_out(0, txt);
-      this->m_uartWriteBytes += text.length();
+      Drv::SendStatus status = this->UartWrite_out(0, txt);
+      if (Drv::SendStatus::SEND_OK == status.e) {
+        this->m_uartWriteBytes += text.length();
 
-      Fw::LogStringArg arg = text;
-      this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
-
+        Fw::LogStringArg arg = text;
+        this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
+      }
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
