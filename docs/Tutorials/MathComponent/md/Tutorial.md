@@ -497,7 +497,7 @@ The implementation code does the following:
 1. Emit telemetry and events.
 
 1. Invoke the `mathOpOut` port to request that `MathReceiver`
-performs the operation.
+perform the operation.
 
 1. Send a command response indicating success.
 The command response goes out on the special port
@@ -1038,7 +1038,7 @@ _(v1 + v2) f_.
       is updated by command.
       This event is **throttled** to a limit of three.
       That means that after the event is emitted three times
-      it will not be emitted anymore, until the throttling
+      it will not be emitted any more, until the throttling
       is cleared by command (see below).
 
    1. `OPERATION_PERFORMED`: Emitted when this component
@@ -1051,7 +1051,7 @@ _(v1 + v2) f_.
 the event throttle.
 
 1. **Telemetry:**
-There are two telemetry channels - one for reporting
+There are two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
 
