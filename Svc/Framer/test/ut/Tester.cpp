@@ -4,7 +4,7 @@
 // \brief  cpp file for Framer test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -19,7 +19,11 @@ namespace Svc {
 
 Tester::MockFramer::MockFramer(Tester& parent) : m_parent(parent) {}
 
-void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type) {
+void Tester::MockFramer::frame(
+    const U8* const data,
+    const U32 size,
+    Fw::ComPacket::ComPacketType packet_type
+) {
     Fw::Buffer buffer(const_cast<U8*>(data), size);
     m_parent.check_last_buffer(buffer);
     Fw::Buffer allocated = m_interface->allocate(size);
@@ -30,8 +34,7 @@ void Tester::MockFramer::frame(const U8* const data, const U32 size, Fw::ComPack
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester()
-    :
+Tester ::Tester() :
       FramerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("Framer"),
       m_mock(*this),
@@ -98,20 +101,29 @@ void Tester ::check_last_buffer(Fw::Buffer buffer) {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
-void Tester ::from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+void Tester ::from_bufferDeallocate_handler(
+    const NATIVE_INT_TYPE portNum,
+    Fw::Buffer& fwBuffer
+) {
     this->pushFromPortEntry_bufferDeallocate(fwBuffer);
     m_returned = true;
     delete[] fwBuffer.getData();
 }
 
-Fw::Buffer Tester ::from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, U32 size) {
+Fw::Buffer Tester ::from_framedAllocate_handler(
+    const NATIVE_INT_TYPE portNum,
+    U32 size
+) {
     this->pushFromPortEntry_framedAllocate(size);
     Fw::Buffer buffer(new U8[size], size);
     m_buffer = buffer;
     return buffer;
 }
 
-Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+Drv::SendStatus Tester ::from_framedOut_handler(
+    const NATIVE_INT_TYPE portNum,
+    Fw::Buffer& sendBuffer
+) {
     this->pushFromPortEntry_framedOut(sendBuffer);
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();

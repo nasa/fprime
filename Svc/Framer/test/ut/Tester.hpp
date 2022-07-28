@@ -4,7 +4,7 @@
 // \brief  hpp file for Framer test harness implementation class
 //
 // \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
+// Copyright 2009-2022, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 //
@@ -42,8 +42,8 @@ class Tester : public FramerGTestBase {
     // Construction and destruction
     // ----------------------------------------------------------------------
 
-
   public:
+
     //! Construct object Tester
     Tester();
 
@@ -51,6 +51,7 @@ class Tester : public FramerGTestBase {
     ~Tester();
 
   public:
+
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
@@ -65,6 +66,7 @@ class Tester : public FramerGTestBase {
     void check_last_buffer(Fw::Buffer buffer);
 
   private:
+
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
@@ -88,6 +90,7 @@ class Tester : public FramerGTestBase {
     );
 
   public:
+
     // ----------------------------------------------------------------------
     // Public instance methods
     // ----------------------------------------------------------------------
@@ -96,6 +99,7 @@ class Tester : public FramerGTestBase {
     void setSendStatus(Drv::SendStatus sendStatus);
 
   private:
+
     // ----------------------------------------------------------------------
     // Private instance methods
     // ----------------------------------------------------------------------
@@ -107,6 +111,7 @@ class Tester : public FramerGTestBase {
     void initComponents();
 
   private:
+
     // ----------------------------------------------------------------------
     // Variables
     // ----------------------------------------------------------------------
