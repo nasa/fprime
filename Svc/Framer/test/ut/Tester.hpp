@@ -20,23 +20,34 @@ namespace Svc {
 
 
 class Tester : public FramerGTestBase {
+  public:
+
     // ----------------------------------------------------------------------
-    // Construction and destruction
+    // Types
     // ----------------------------------------------------------------------
+
+    //! Mock framing protocol
     class MockFramer : public FramingProtocol {
       public:
         MockFramer(Tester& parent);
-        void frame(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type);
+        void frame(
+            const U8* const data,
+            const U32 size,
+            Fw::ComPacket::ComPacketType packet_type
+        );
         Tester& m_parent;
     };
 
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+
+
   public:
     //! Construct object Tester
-    //!
     Tester();
 
     //! Destroy object Tester
-    //!
     ~Tester();
 
   public:
@@ -45,48 +56,50 @@ class Tester : public FramerGTestBase {
     // ----------------------------------------------------------------------
 
     //! Test incoming Fw::Com data to the framer
-    //!
     void test_com(U32 iterations = 1);
 
     //! Test incoming Fw::Buffer data to the framer
-    //!
     void test_buffer(U32 iterations = 1);
 
+    //! Check that buffer is equal to the last buffer allocated
     void check_last_buffer(Fw::Buffer buffer);
 
-    void check_not_freed();
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
     //! Handler for from_bufferDeallocate
-    //!
-    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                   Fw::Buffer& fwBuffer);
+    void from_bufferDeallocate_handler(
+        const NATIVE_INT_TYPE portNum, //!< The port number
+        Fw::Buffer& fwBuffer //!< The buffer
+    );
 
     //! Handler for from_framedAllocate
-    //!
-    Fw::Buffer from_framedAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                     U32 size);
+    Fw::Buffer from_framedAllocate_handler(
+        const NATIVE_INT_TYPE portNum, //!< The port number
+        U32 size //!< The size
+    );
 
     //! Handler for from_framedOut
-    //!
-    Drv::SendStatus from_framedOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                           Fw::Buffer& sendBuffer);
+    Drv::SendStatus from_framedOut_handler(
+        const NATIVE_INT_TYPE portNum, //!< The port number
+        Fw::Buffer& sendBuffer //!< The buffer containing framed data
+    );
 
   private:
     // ----------------------------------------------------------------------
-    // Helper methods
+    // Private helper methods
     // ----------------------------------------------------------------------
 
     //! Connect ports
-    //!
     void connectPorts();
 
     //! Initialize components
-    //!
     void initComponents();
+
+    //! Set the send status
+    void setSendStatus(Drv::SendStatus sendStatus);
 
   private:
     // ----------------------------------------------------------------------
@@ -94,13 +107,25 @@ class Tester : public FramerGTestBase {
     // ----------------------------------------------------------------------
 
     //! The component under test
-    //!
     Framer component;
 
+    //! Buffer for sending unframed data
     Fw::Buffer m_buffer;
+
+    //! Mock framing protocol
     MockFramer m_mock;
+
+    //! Whether framing succeeded
     bool m_framed;
+
+    //! Whether sending succeeded
+    bool m_sent;
+
+    //! Whether the frame buffer was deallocated
     bool m_returned;
+
+    //! Send status for error injection
+    Drv::SendStatus m_sendStatus;
 };
 
 }  // end namespace Svc

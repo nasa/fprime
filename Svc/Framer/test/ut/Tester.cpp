@@ -36,7 +36,9 @@ Tester ::Tester()
       component("Framer"),
       m_mock(*this),
       m_framed(false),
-      m_returned(false)
+      m_sent(false),
+      m_returned(false),
+      m_sendStatus(Drv::SendStatus::SEND_OK)
 
 {
     this->initComponents();
@@ -55,8 +57,17 @@ void Tester ::test_com(U32 iterations) {
         Fw::ComBuffer com;
         m_buffer.set(com.getBuffAddr(), com.getBuffLength());
         m_framed = false;
+        m_sent = false;
+        m_returned = false;
         invoke_to_comIn(0, com, 0);
         ASSERT_TRUE(m_framed);
+        if (m_sendStatus == Drv::SendStatus::SEND_OK) {
+          ASSERT_TRUE(m_sent);
+        }
+        else {
+          ASSERT_FALSE(m_sent);
+        }
+        ASSERT_FALSE(m_returned);
     }
 }
 
@@ -64,20 +75,23 @@ void Tester ::test_buffer(U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         Fw::Buffer buffer(new U8[3412], 3412);
         m_framed = false;
+        m_sent = false;
         m_returned = false;
         m_buffer = buffer;
         invoke_to_bufferIn(0, buffer);
         ASSERT_TRUE(m_framed);
+        if (m_sendStatus == Drv::SendStatus::SEND_OK) {
+          ASSERT_TRUE(m_sent);
+        }
+        else {
+          ASSERT_FALSE(m_sent);
+        }
         ASSERT_TRUE(m_returned);
     }
 }
 
 void Tester ::check_last_buffer(Fw::Buffer buffer) {
     ASSERT_EQ(buffer, m_buffer);
-}
-
-void Tester  ::check_not_freed() {
-    ASSERT_FALSE(m_returned);
 }
 
 // ----------------------------------------------------------------------
@@ -102,7 +116,10 @@ Drv::SendStatus Tester ::from_framedOut_handler(const NATIVE_INT_TYPE portNum, F
     this->check_last_buffer(sendBuffer);
     delete[] sendBuffer.getData();
     m_framed = true;
-    return Drv::SendStatus::SEND_OK;
+    if (m_sendStatus == Drv::SendStatus::SEND_OK) {
+      m_sent = true;
+    }
+    return m_sendStatus;
 }
 
 // ----------------------------------------------------------------------
@@ -130,6 +147,10 @@ void Tester ::connectPorts() {
 void Tester ::initComponents() {
     this->init();
     this->component.init(INSTANCE);
+}
+
+void Tester ::setSendStatus(Drv::SendStatus sendStatus) {
+  m_sendStatus = sendStatus;
 }
 
 }  // end namespace Svc
