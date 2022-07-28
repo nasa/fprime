@@ -2,15 +2,23 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
+#include "Os/Log.hpp"
 #include "Tester.hpp"
+
+// Enable the console logging provided by Os::Log
+Os::Log logger;
 
 TEST(Nominal, Com) {
     Svc::Tester tester;
+    tester.test_com();
+    tester.setSendStatus(Drv::SendStatus::SEND_ERROR);
     tester.test_com();
 }
 
 TEST(Nominal, Buffer) {
     Svc::Tester tester;
+    tester.test_buffer();
+    tester.setSendStatus(Drv::SendStatus::SEND_ERROR);
     tester.test_buffer();
 }
 

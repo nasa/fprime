@@ -87,9 +87,17 @@ class Tester : public FramerGTestBase {
         Fw::Buffer& sendBuffer //!< The buffer containing framed data
     );
 
+  public:
+    // ----------------------------------------------------------------------
+    // Public instance methods
+    // ----------------------------------------------------------------------
+
+    //! Set the send status
+    void setSendStatus(Drv::SendStatus sendStatus);
+
   private:
     // ----------------------------------------------------------------------
-    // Private helper methods
+    // Private instance methods
     // ----------------------------------------------------------------------
 
     //! Connect ports
@@ -97,9 +105,6 @@ class Tester : public FramerGTestBase {
 
     //! Initialize components
     void initComponents();
-
-    //! Set the send status
-    void setSendStatus(Drv::SendStatus sendStatus);
 
   private:
     // ----------------------------------------------------------------------
