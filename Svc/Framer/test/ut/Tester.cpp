@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Framer.hpp
-// \author mstarch
+// \author mstarch, bocchino
 // \brief  cpp file for Framer test harness implementation class
 //
 // \copyright
