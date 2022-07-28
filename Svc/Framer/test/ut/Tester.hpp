@@ -44,11 +44,11 @@ class Tester : public FramerGTestBase {
     // Tests
     // ----------------------------------------------------------------------
 
-    //! Test incoming data to the framer
+    //! Test incoming Fw::Com data to the framer
     //!
-    void test_incoming(U32 iterations = 1);
+    void test_com(U32 iterations = 1);
 
-    //! Test incoming data to the framer
+    //! Test incoming Fw::Buffer data to the framer
     //!
     void test_buffer(U32 iterations = 1);
 

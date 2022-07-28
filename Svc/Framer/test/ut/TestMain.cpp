@@ -6,7 +6,7 @@
 
 TEST(Nominal, Com) {
     Svc::Tester tester;
-    tester.test_incoming();
+    tester.test_com();
 }
 
 TEST(Nominal, Buffer) {
@@ -16,9 +16,9 @@ TEST(Nominal, Buffer) {
 
 TEST(Nominal, ManySends) {
     Svc::Tester tester;
-    tester.test_incoming(27);
+    tester.test_com(27);
     tester.test_buffer(27);
-    tester.test_incoming(31);
+    tester.test_com(31);
     tester.test_buffer(31);
 }
 

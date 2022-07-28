@@ -50,7 +50,7 @@ Tester ::~Tester() {}
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_incoming(U32 iterations) {
+void Tester ::test_com(U32 iterations) {
     for (U32 i = 0; i < iterations; i++) {
         Fw::ComBuffer com;
         m_buffer.set(com.getBuffAddr(), com.getBuffLength());
