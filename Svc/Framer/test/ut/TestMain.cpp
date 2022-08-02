@@ -23,8 +23,6 @@ TEST(Nominal, Buffer) {
     REQUIREMENT("SVC-FRAMER-003");
     Svc::Tester tester;
     tester.test_buffer();
-    tester.setSendStatus(Drv::SendStatus::SEND_ERROR);
-    tester.test_buffer();
 }
 
 TEST(Nominal, ManySends) {
