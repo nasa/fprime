@@ -130,12 +130,12 @@ void checkAssertionFailure(
   Test::UnitTestAssert::File file = Test::UnitTestAssert::fileInit;
   NATIVE_UINT_TYPE lineNo = 0;
   NATIVE_UINT_TYPE numArgs = 0;
-  AssertArg arg1 = 0;
-  AssertArg arg2 = 0;
-  AssertArg arg3 = 0;
-  AssertArg arg4 = 0;
-  AssertArg arg5 = 0;
-  AssertArg arg6 = 0;
+  FwAssertArgType arg1 = 0;
+  FwAssertArgType arg2 = 0;
+  FwAssertArgType arg3 = 0;
+  FwAssertArgType arg4 = 0;
+  FwAssertArgType arg5 = 0;
+  FwAssertArgType arg6 = 0;
   uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
   ASSERT_EQ(expectedLineNumber, lineNo);
   ASSERT_EQ(1U, numArgs);
