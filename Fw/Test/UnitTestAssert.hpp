@@ -34,24 +34,24 @@ namespace Test {
                     FILE_NAME_ARG file,
                     NATIVE_UINT_TYPE lineNo,
                     NATIVE_UINT_TYPE numArgs,
-                    AssertArg arg1,
-                    AssertArg arg2,
-                    AssertArg arg3,
-                    AssertArg arg4,
-                    AssertArg arg5,
-                    AssertArg arg6
+                    FwAssertArgType arg1,
+                    FwAssertArgType arg2,
+                    FwAssertArgType arg3,
+                    FwAssertArgType arg4,
+                    FwAssertArgType arg5,
+                    FwAssertArgType arg6
                     );
             // retrieves assertion failure values
             void retrieveAssert(
                 File& file,
                 NATIVE_UINT_TYPE& lineNo,
                 NATIVE_UINT_TYPE& numArgs,
-                AssertArg& arg1,
-                AssertArg& arg2,
-                AssertArg& arg3,
-                AssertArg& arg4,
-                AssertArg& arg5,
-                AssertArg& arg6
+                FwAssertArgType& arg1,
+                FwAssertArgType& arg2,
+                FwAssertArgType& arg3,
+                FwAssertArgType& arg4,
+                FwAssertArgType& arg5,
+                FwAssertArgType& arg6
                 ) const;
 
             // check whether assertion failure occurred
@@ -64,12 +64,12 @@ namespace Test {
             File m_file;
             NATIVE_UINT_TYPE m_lineNo;
             NATIVE_INT_TYPE m_numArgs;
-            AssertArg m_arg1;
-            AssertArg m_arg2;
-            AssertArg m_arg3;
-            AssertArg m_arg4;
-            AssertArg m_arg5;
-            AssertArg m_arg6;
+            FwAssertArgType m_arg1;
+            FwAssertArgType m_arg2;
+            FwAssertArgType m_arg3;
+            FwAssertArgType m_arg4;
+            FwAssertArgType m_arg5;
+            FwAssertArgType m_arg6;
 
             // Whether an assertion failed
             bool m_assertFailed;
