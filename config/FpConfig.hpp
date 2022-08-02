@@ -26,7 +26,7 @@ const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
 typedef PlatformAssertArgType FwAssertArgType;
 const FwAssertArgType FwAssertArgType_MIN = PlatformAssertArgType_MIN;
 const FwAssertArgType FwAssertArgType_MAX = PlatformAssertArgType_MAX;
-#define PRI_FwAssertArg PRI_PlatformFwAssertArgType
+#define PRI_FwAssertArgType PRI_PlatformAssertArgType
 
 
 typedef PlatformIntType FwNativeIntType;
