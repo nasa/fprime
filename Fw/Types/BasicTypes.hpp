@@ -67,6 +67,10 @@ typedef float   F32; //!< 32-bit floating point
   typedef double  F64; //!< 64-bit floating point
 #endif
 
+typedef PlatformIntType NATIVE_INT_TYPE;
+typedef PlatformUIntType NATIVE_UINT_TYPE;
+typedef PlatformPointerCastType POINTER_CAST;
+
   // compile-time assert
 #define COMPILE_TIME_ASSERT( condition, name )\
   do { \
