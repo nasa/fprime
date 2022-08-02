@@ -23,9 +23,9 @@ const FwSizeType FwSizeType_MIN = PlatformSizeType_MIN;
 const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
 #define PRI_FwSizeType PRI_PlatformSizeType
 
-typedef PlatformFwAssertArgType FwAssertArgType;
-const FwAssertArgType FwAssertArgType_MIN = PlatformFwAssertArgType_MIN;
-const FwAssertArgType FwAssertArgType_MAX = PlatformFwAssertArgType_MAX;
+typedef PlatformAssertArgType FwAssertArgType;
+const FwAssertArgType FwAssertArgType_MIN = PlatformAssertArgType_MIN;
+const FwAssertArgType FwAssertArgType_MAX = PlatformAssertArgType_MAX;
 #define PRI_FwAssertArg PRI_PlatformFwAssertArgType
 
 
