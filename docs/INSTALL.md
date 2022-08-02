@@ -42,7 +42,7 @@ use the path: `$HOME/fprime-venv`
 
 ```
 python3 -m venv $HOME/fprime-venv
-source $HOME/fprime-venv/bin/activate
+. $HOME/fprime-venv/bin/activate
 pip install -U setuptools setuptools_scm wheel pip
 ```
 
