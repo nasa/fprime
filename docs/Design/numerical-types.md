@@ -67,7 +67,7 @@ defines a pair of constants of the form `<type>_MIN` and `<type>_MAX` to define 
 |-------------------------|------------------------------------|------------------|-----------------------|-----------------------------|
 | PlatformIndexType       | PLATFORM_INDEX_TYPE_DEFINED        | PlatformIntType  | PRI_PlatformIndexType | Ports indices               | 
 | PlatformSizeType        | PLATFORM_SIZE_TYPE_DEFINED         | PlatformUIntType | PRI_PlatformSizeType  | Sizes                       |
-| PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | PlatformIntType  | PRI_PointerCastType   | Pointers stored as integers |
+| PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | uint64_t         | PRI_PointerCastType   | Pointers stored as integers |
 | PlatformAssertArgType   | PLATFORM_ASSERT_ARG_TYPE_DEFINED   | PlatformIntType  | PRI_AssertArgType     | Argument to FW_ASSERT       |
 | PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType   | Deprecated (see note)       |
 | PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType  | Deprecated (see note)       |
@@ -101,13 +101,11 @@ Project may configure the framework types that the framework and components use 
 `FpConfig.hpp`. The default configuration uses the above platform types where applicable. `<type>_MIN` and `<type>_MAX`
 to define the minimum and maximum values.
 
-| Framework Type         | Logical Usage              | Default               | Format Specifier     | Notes      |
-|------------------------|----------------------------|-----------------------|----------------------|------------|
-| FwIndexType            | Port indices               | PlatformIndexType     | PRI_FwIndexType      |            | 
-| FwSizeType             | Sizes                      | PlatformSizeType      | PRI_FwSizeType       |            |
-| FwAssertArg            | Arguments to asserts       | PlatformAssertArgType | PRI_FwAssertArgType  |            |
-| FwNativeIntType        | `int`                      | PlatformIntType       | PRI_FwNativeIntType  | Deprecated |
-| FwNativeUIntType       | `unsigned int`             | PlatformUIntType      | PRI_FwNativeUIntType | Deprecated |
+| Framework Type  | Logical Usage        | Default               | Format Specifier    | Notes |
+|-----------------|----------------------|-----------------------|---------------------|-------|
+| FwIndexType     | Port indices         | PlatformIndexType     | PRI_FwIndexType     |       |
+| FwSizeType      | Sizes                | PlatformSizeType      | PRI_FwSizeType      |       |
+| FwAssertArgType | Arguments to asserts | PlatformAssertArgType | PRI_FwAssertArgType |       |
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
 systems. `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values. These GDS types are based on

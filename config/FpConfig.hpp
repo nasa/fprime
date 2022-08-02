@@ -9,52 +9,90 @@
  * acknowledged.
  * <br /><br />
  */
-#include <StandardTypes.hpp> // Platform (toolchain) defined types come first
-#include <Fw/Types/DefaultTypes.hpp> // Default types fill in missing platform types
-
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
+#include <Fw/Types/BasicTypes.hpp>
 
-// To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
-// these defaults will be overridden
+typedef PlatformIndexType FwIndexType;
+const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;
+const FwIndexType FwIndexType_MAX = PlatformIndexType_MAX;
+#define PRI_FwIndexType PRI_PlatformIndexType
 
-// Available types
+typedef PlatformSizeType FwSizeType;
+const FwSizeType FwSizeType_MIN = PlatformSizeType_MIN;
+const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
+#define PRI_FwSizeType PRI_PlatformSizeType
 
-#ifndef FW_HAS_64_BIT
-#define FW_HAS_64_BIT                       1  //!< Architecture supports 64 bit integers
-#endif
+typedef PlatformFwAssertArgType FwAssertArgType;
+const FwAssertArgType FwAssertArgType_MIN = PlatformFwAssertArgType_MIN;
+const FwAssertArgType FwAssertArgType_MAX = PlatformFwAssertArgType_MAX;
+#define PRI_FwAssertArg PRI_PlatformFwAssertArgType
 
-#ifndef FW_HAS_32_BIT
-#define FW_HAS_32_BIT                       1  //!< Architecture supports 32 bit integers
-#endif
 
-#ifndef FW_HAS_16_BIT
-#define FW_HAS_16_BIT                       1  //!< Architecture supports 16 bit integers
-#endif
+typedef PlatformIntType FwNativeIntType;
+const FwNativeIntType FwNativeIntType_MIN = PlatformIntType_MIN;
+const FwNativeIntType FwNativeIntType_MAX = PlatformIntType_MAX;
+#define PRI_FwNativeIntType PRI_PlatformIntType
 
-#ifndef FW_HAS_F64
-#define FW_HAS_F64                          1  //!< Architecture supports 64 bit floating point numbers
-#endif
+typedef PlatformUIntType FwNativeUIntType;
+const FwNativeUIntType FwNativeUIntType_MIN = PlatformUIntType_MIN;
+const FwNativeUIntType FwNativeUIntType_MAX = PlatformUIntType_MAX;
+#define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-// Project configured types
-#ifndef NATIVE_INT_TYPE_DEFINED
-typedef PLATFORM_INT_TYPE NATIVE_INT_TYPE;
-#define PRIfwit PRIfwpit
-#endif
-#ifndef NATIVE_UINT_TYPE_DEFINED
-typedef PLATFORM_UINT_TYPE NATIVE_UINT_TYPE;
-#define PRIfwuit PRIfwpuit
-#endif
+typedef FwNativeIntType NATIVE_INT_TYPE;
+typedef FwNativeUIntType  NATIVE_UINT_TYPE;
 
-#ifndef FW_SIZE_TYPE_DEFINED
-typedef PLATFORM_SIZE_TYPE FW_SIZE_TYPE;
-#endif
-#ifndef FW_INDEX_TYPE_DEFINED
-typedef PLATFORM_INDEX_TYPE FW_INDEX_TYPE;
-#endif
+typedef U16 FwBuffSizeType;
+const FwBuffSizeType FwBuffSizeType_MIN = U16_MIN;
+const FwBuffSizeType FwBuffSizeType_MAX = U16_MAX;
+#define PRI_FwBuffSizeType PRI_U16
+
+typedef I32 FwEnumStoreType;
+const FwEnumStoreType FwEnumStoreType_MIN = I32_MIN;
+const FwEnumStoreType FwEnumStoreType_MAX = I32_MAX;
+#define PRI_FwEnumStoreType PRI_I32
+
+typedef U16 FwTimeBaseStoreType;
+const FwTimeBaseStoreType FwTimeBaseStoreType_MIN = U16_MIN;
+const FwTimeBaseStoreType FwTimeBaseStoreType_MAX = U16_MAX;
+#define PRI_FwTimeBaseStoreType PRI_U16
+
+typedef U8 FwTimeContextStoreType;
+const FwTimeContextStoreType FwTimeContextStoreType_MIN = U8_MIN;
+const FwTimeContextStoreType FwTimeContextStoreType_MAX = U8_MAX;
+#define PRI_FwTimeContextStoreType PRI_U8
+
+typedef U32 FwPacketDescriptorType;
+const FwPacketDescriptorType FwPacketDescriptorType_MIN = U32_MIN;
+const FwPacketDescriptorType FwPacketDescriptorType_MAX = U32_MAX;
+#define PRI_FwPacketDescriptorType PRI_U32
+
+typedef U32 FwOpcodeType;
+const FwOpcodeType FwOpcodeType_MIN = U32_MIN;
+const FwOpcodeType FwOpcodeType_MAX = U32_MAX;
+#define PRI_FwOpcodeType PRI_U32
+
+typedef U32 FwChanIdType;
+const FwChanIdType FwChanIdType_MIN = U32_MIN;
+const FwChanIdType FwChanIdType_MAX = U32_MAX;
+#define PRI_FwChanIdType PRI_U32
+
+typedef U32 FwEventIdType;
+const FwEventIdType FwEventIdType_MIN = U32_MIN;
+const FwEventIdType FwEventIdType_MAX = U32_MAX;
+#define PRI_FwEventIdType PRI_U32
+
+typedef U32 FwPrmIdType;
+const FwPrmIdType FwPrmIdType_MIN = U32_MIN;
+const FwPrmIdType FwPrmIdType_MAX = U32_MAX;
+#define PRI_FwPrmIdType PRI_U32
+
+typedef U16 FwTlmPacketizeIdType;
+const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN = U16_MIN;
+const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
+#define PRI_FwTlmPacketizeIdType PRI_U16
 
 // Boolean values for serialization
-
 #ifndef FW_SERIALIZE_TRUE_VALUE
 #define FW_SERIALIZE_TRUE_VALUE             (0xFF)  //!< Value encoded during serialization for boolean true
 #endif
@@ -63,48 +101,6 @@ typedef PLATFORM_INDEX_TYPE FW_INDEX_TYPE;
 #define FW_SERIALIZE_FALSE_VALUE             (0x00) //!< Value encoded during serialization for boolean false
 #endif
 
-#ifndef AssertArg
-#define AssertArg U32
-#endif
-
-// typedefs for various serialization items
-// *** NOTE *** Changes here MUST match GSE in order to decode the values correctly
-
-#ifndef FwPacketDescriptorType
-#define FwPacketDescriptorType U32          //!< Type representation for a packet descriptor
-#endif
-
-#ifndef FwOpcodeType
-#define FwOpcodeType U32                    //!< Type representation for a command opcode
-#endif
-
-#ifndef FwChanIdType
-#define FwChanIdType U32                    //!< Type representation for a channel id
-#endif
-
-#ifndef FwEventIdType
-#define FwEventIdType U32                   //!< Type representation for an event id
-#endif
-
-#ifndef FwPrmIdType
-#define FwPrmIdType U32                     //!< Type representation for a parameter id
-#endif
-
-#ifndef FwTlmPacketizeIdType
-#define FwTlmPacketizeIdType U16            //!< Packetized telemetry packet id
-#endif
-
-// How big the size of a buffer (or string) representation is
-#ifndef FwBuffSizeType
-#define FwBuffSizeType U16                  //!< Type representation for storing a buffer or string size
-#endif
-
-// How many bits are used to store an enumeration defined in XML during serialization.
-#ifndef FwEnumStoreType
-#define FwEnumStoreType I32                 //!< Type representation for an enumeration value
-#endif
-
-// Object facilities
 
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES

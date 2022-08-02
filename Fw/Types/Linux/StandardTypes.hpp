@@ -7,80 +7,37 @@
  * running on x86, x86_64 machines and using the standard gcc/clang compilers
  * shipped with the operating system.
  */
-// Used to define the standard intX_t and uintX_t types
+
+// Section 0: C Standard Types
+//    fprime depends on the existence of intN_t and uintN_t C standard ints and
+//    the mix/max values for those types. Platform developers must either:
+//    1. define these types and definitions
+//    2. include headers that define these types
+//
+// In addition, support for various type widths can be turned on/off with the
+// in this section to control what of the C standard types are available in the
+// system. fprime consumes this information and produces the UN, IN, and FN
+// types we see in fprime code
 #include <cstdint>
 #include <cinttypes>
 #include <limits>
 
-/**
- * DEPRECATED.
- *
- * This type is deprecated as it deals specifically with the ambiguously sized
- * "int" type.  It is used as a base definition for Linux/Darwin systems
- * but usages outside this file should be replaced with another named type found
- * below.
- */
-typedef unsigned int PlatformUIntType;
-const PlatformUIntType PlatformUIntType_MIN = std::numeric_limits<unsigned int>::min();
-const PlatformUIntType PlatformUIntType_MAX = std::numeric_limits<unsigned int>::max();
-#define PLATFORM_UINT_TYPE_DEFINED
-#define PRI_PlatformUIntType PRI_unsigned int
-
-/**
- * DEPRECATED.
- *
- * This type is deprecated as it deals specifically with the ambiguously sized
- * "int" type.  It is used as a base definition for Linux/Darwin systems
- * but usages outside this file should be replaced with another named type found
- * below.
- */
-typedef int PlatformIntType;
-const PlatformIntType PlatformIntType_MIN = std::numeric_limits<int>::min();;
-const PlatformIntType PlatformIntType_MAX = std::numeric_limits<int>::max();;
-#define PLATFORM_INT_TYPE_DEFINED
-#define PRI_PlatformIntType PRI_int
-
-/**
- * Type defined for linux/darwin for passing arguments to FW_ASSERT calls. All
- * arguments must be cast into this type and this type must be large enough to
- * hold all arguments without loss when casting.
- */
-typedef PlatformIntType PlatformAssertArgType;
-const PlatformAssertArgType PlatformAssertArgType_MIN = PlatformIntType_MIN;
-const PlatformAssertArgType PlatformAssertArgType_MAX = PlatformIntType_MAX;
-#define PLATFORM_ASSERT_ARG_TYPE_DEFINED
-#define PRI_PlatformAssertArgType PRI_PlatformIntType
-
-/**
- * Type defined for linux/darwin for dealing holding pointers cast as integers.
- */
-typedef PlatformIntType PlatformPointerCastType;
-const PlatformPointerCastType PlatformPointerCastType_MIN = PlatformIntType_MIN;
-const PlatformPointerCastType PlatformPointerCastType_MAX = PlatformIntType_MAX;
-#define PLATFORM_POINTER_CAST_TYPE_DEFINED
-#define PRI_PlatformPointerCastType PRI_PlatformIntType
+#define FW_HAS_64_BIT    1 //!< Architecture supports 64 bit integers
+#define FW_HAS_32_BIT    1 //!< Architecture supports 32 bit integers
+#define FW_HAS_16_BIT    1 //!< Architecture supports 16 bit integers
+#define FW_HAS_F64    1 //!< Architecture supports 64 bit floating point numbers
 
 
+// Section 1: Logical Types
+//    fprime requires platform implementors to define logical types for their
+//    system. The list of logical types can be found in the document:
+//    docs/Design/numerical-types.md with the names of the form "Platform*"
 
+// No custom definitions, inherit everything from DefaultTypes.hpp
 
-/**
- * Type defined for linux/darwin for dealing with sizes. Typically used for file
- * and memory sizes.
- */
-typedef PlatformUIntType PlatformSizeType;
-const PlatformSizeType PlatformSizeType_MIN = PlatformUIntType_MIN;
-const PlatformSizeType PlatformSizeType_MAX = PlatformUIntType_MAX;
-#define PLATFORM_SIZE_TYPE_DEFINED
-#define PRI_PlatformSizeType PRI_PlatformUIntType
-
-/**
- * Type defined for linux/darwin for dealing with ports indices
- */
-typedef PlatformIntType PlatformIndexType;
-const PlatformIndexType PlatformIndexType_MIN = PlatformIntType_MIN;
-const PlatformIndexType PlatformIndexType_MAX = PlatformIntType_MAX;
-#define PLATFORM_INDEX_TYPE_DEFINED
-#define PRI_PlatformIndexType PRI_PlatformIntType
-
+// Section 2: (optional) Default Types
+//    for types not explicitly, defined in section 1, platform developers can
+//    use DefaultTypes.hpp to get the defaults as described in the documentation
+#include <Fw/Types/DefaultTypes.hpp>
 
 
