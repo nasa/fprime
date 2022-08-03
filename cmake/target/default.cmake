@@ -20,7 +20,7 @@ endfunction(add_global_target)
 ####
 # `add_deployment_target`:
 #
-# The default deployment target is a target which rolls-up all dependant targets through recursion.
+# The default deployment target is a target which rolls-up all dependent targets through recursion.
 # - **MODULE:** name of the deployment module. This is usually equivalent to $PROJECT_NAME.
 # - **TARGET:** name of the top-target (e.g. dict). Use ${MODULE_NAME}_${TARGET_NAME} for a module specific target
 # - **SOURCE:** list of source file inputs from the CMakeList.txt setup

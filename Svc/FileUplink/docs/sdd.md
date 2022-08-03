@@ -137,7 +137,7 @@ then issue a *PacketOutOfOrder* warning reporting
     b. Use *writeFileDescriptor* to do the following:
 
     1. Use the method described in &sect; 4.1.2 of the
-[CCSDS File Delivery Protocol (CFDP) Recommended Standard](http://public.ccsds.org/publications/archive/727x0b4.pdf)
+[CCSDS File Delivery Protocol (CFDP) Recommended Standard](https://public.ccsds.org/Pubs/727x0b4s.pdf)
 to compute the checksum value for the file.
 
     2. Compare the value computed in the previous step against the

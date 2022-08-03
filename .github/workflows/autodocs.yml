@@ -17,6 +17,6 @@ jobs:
     - name: Setup Dependencies
       run: |
            sudo apt-get update
-           sudo apt-get install doxygen
+           sudo apt-get install -y doxygen
     - name: Autodocs
       run: .github/actions/autodoc.bash

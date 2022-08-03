@@ -104,7 +104,7 @@ swcaegitadmin</adminlist>
 export PATH=&quot;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;
 . /opt/fprime-venv/bin/activate
 echo &quot;Merging: origin/${ghprbTargetBranch} into ${ghprbActualCommit}}&quot;
-git merge origin/${ghprbTargetBranch}
+GIT_EDITOR=true git merge origin/${ghprbTargetBranch}
 if (( $? != 0 ))
 then
     echo &quot;[ERROR] Automatic merge failed.&quot; 1&gt;&amp;2

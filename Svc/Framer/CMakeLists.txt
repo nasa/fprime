@@ -8,7 +8,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Framer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FramerComponentImpl.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Framer.cpp"
 )
 
 set(MOD_DEPS
