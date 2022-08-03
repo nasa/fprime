@@ -12,7 +12,7 @@
 
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/TaskString.hpp>
 
 // TODO make proper static constants for these

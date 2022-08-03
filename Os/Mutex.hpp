@@ -1,7 +1,7 @@
 #ifndef _Mutex_hpp_
 #define _Mutex_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
 

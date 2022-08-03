@@ -15,7 +15,7 @@
 
 #include "Svc/FileManager/FileManager.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 

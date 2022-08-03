@@ -8,7 +8,7 @@
 #ifndef SVC_UDPRECEIVER_UDPRECEIVERCOMPONENTIMPLCFG_HPP_
 #define SVC_UDPRECEIVER_UDPRECEIVERCOMPONENTIMPLCFG_HPP_
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
     const static NATIVE_UINT_TYPE UDP_RECEIVER_MSG_SIZE = 256;

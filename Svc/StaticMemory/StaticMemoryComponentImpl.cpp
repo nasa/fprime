@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 namespace Svc {

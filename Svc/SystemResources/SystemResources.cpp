@@ -13,7 +13,7 @@
 #include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
 #include <version.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 

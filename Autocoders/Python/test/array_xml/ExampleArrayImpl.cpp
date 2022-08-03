@@ -1,5 +1,5 @@
 #include <Autocoders/Python/test/array_xml/ExampleArrayImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <iostream>
 #include <cstdio>

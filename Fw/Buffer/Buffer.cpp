@@ -11,7 +11,7 @@
 // ======================================================================
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 #if FW_SERIALIZABLE_TO_STRING
     #include <Fw/Types/String.hpp>

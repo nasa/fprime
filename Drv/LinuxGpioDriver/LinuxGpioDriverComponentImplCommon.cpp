@@ -12,7 +12,7 @@
 
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Drv {
 
