@@ -4,7 +4,7 @@
 #include <FpConfig.hpp>
 
 #include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Comp/PassiveComponentBase.hpp>
 #include <Fw/Port/PortBase.hpp>

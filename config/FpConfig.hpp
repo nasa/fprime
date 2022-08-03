@@ -11,7 +11,7 @@
  */
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 typedef PlatformIndexType FwIndexType;
 const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;

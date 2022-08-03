@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/GenericRepeater/GenericRepeaterComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 

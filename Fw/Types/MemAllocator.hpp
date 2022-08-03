@@ -16,7 +16,7 @@
 #ifndef TYPES_MEMALLOCATOR_HPP_
 #define TYPES_MEMALLOCATOR_HPP_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 /*!
  *

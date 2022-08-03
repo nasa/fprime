@@ -1,7 +1,7 @@
 #include <FpConfig.hpp>
 
 #include <Fw/Port/OutputPortBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Log.hpp>
 #include <cstdio>
 #include <Fw/Types/Assert.hpp>

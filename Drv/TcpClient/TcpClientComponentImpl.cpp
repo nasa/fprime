@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Drv/TcpClient/TcpClientComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 

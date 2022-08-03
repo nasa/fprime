@@ -7,7 +7,7 @@
 #ifndef EVENT_HPP
 #define EVENT_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/TaskId.hpp>
 
 namespace Os {

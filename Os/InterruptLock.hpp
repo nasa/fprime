@@ -1,7 +1,7 @@
 #ifndef _InterruptLock_hpp_
 #define _InterruptLock_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
     class InterruptLock {
