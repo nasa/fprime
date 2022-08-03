@@ -147,16 +147,16 @@ namespace Svc {
     // Create filename:
     Fw::Time timestamp = getTime();
     memset(this->fileName, 0, sizeof(this->fileName));
-    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%" PRIu32 "_%" PRIu32 "_%06" PRIu32 ".com",
-      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
+    bytesCopied = snprintf(this->fileName, sizeof(this->fileName), "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com",
+      this->filePrefix, timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds());
 
     // "A return value of size or more means that the output was truncated"
     // See here: http://linux.die.net/man/3/snprintf
     FW_ASSERT( bytesCopied < sizeof(this->fileName) );
 
     // Create sha filename:
-    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%" PRIu32 "_%" PRIu32 "_%06" PRIu32 ".com%s",
-      this->filePrefix, static_cast<U32>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
+    bytesCopied = snprintf(this->hashFileName, sizeof(this->hashFileName), "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com%s",
+      this->filePrefix, timestamp.getTimeBase(), timestamp.getSeconds(), timestamp.getUSeconds(), Utils::Hash::getFileExtensionString());
     FW_ASSERT( bytesCopied < sizeof(this->hashFileName) );
 
     Os::File::Status ret = file.open(this->fileName, Os::File::OPEN_WRITE);
