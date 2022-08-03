@@ -1,5 +1,5 @@
 @ UART open error
-event DR_OpenError(
+event OpenError(
                     device: string size 40 @< The device
                     error: I32 @< The error code
                     name: string size 40 @< error string
@@ -9,7 +9,7 @@ event DR_OpenError(
   format "Error opening UART device {}: {} {}"
 
 @ UART config error
-event DR_ConfigError(
+event ConfigError(
                       device: string size 40 @< The device
                       error: I32 @< The error code
                     ) \
@@ -18,7 +18,7 @@ event DR_ConfigError(
   format "Error configuring UART device {}: {}"
 
 @ UART write error
-event DR_WriteError(
+event WriteError(
                      device: string size 40 @< The device
                      error: I32 @< The error code
                    ) \
@@ -28,7 +28,7 @@ event DR_WriteError(
   throttle 5
 
 @ UART read error
-event DR_ReadError(
+event ReadError(
                     device: string size 40 @< The device
                     error: I32 @< The error code
                   ) \
@@ -38,7 +38,7 @@ event DR_ReadError(
   throttle 5
 
 @ UART port opened event
-event DR_PortOpened(
+event PortOpened(
                      device: string size 40 @< The device
                    ) \
   severity activity high \
@@ -46,7 +46,7 @@ event DR_PortOpened(
   format "UART Device {} configured"
 
 @ UART ran out of buffers
-event DR_NoBuffers(
+event NoBuffers(
                     device: string size 40 @< The device
                   ) \
   severity warning high \
@@ -55,7 +55,7 @@ event DR_NoBuffers(
   throttle 20
 
 @ UART ran out of buffers
-event DR_BufferTooSmall(
+event BufferTooSmall(
                          device: string size 40 @< The device
                          $size: U32 @< The provided buffer size
                          needed: U32 @< The buffer size needed

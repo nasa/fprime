@@ -548,7 +548,7 @@ gjslint
 glibc
 gmtime
 Gnc
-gnd
+Gnd
 GNUC
 gnueabihf
 google
@@ -730,7 +730,7 @@ lineroo
 lineterm
 linting
 linux
-LINUXSERIALDRIVER
+LINUXUARTDRIVER
 LINUXTIMEIMPL
 Listst
 LJR
