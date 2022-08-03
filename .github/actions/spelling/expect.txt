@@ -548,7 +548,7 @@ gjslint
 glibc
 gmtime
 Gnc
-gnd
+Gnd
 GNUC
 gnueabihf
 google
