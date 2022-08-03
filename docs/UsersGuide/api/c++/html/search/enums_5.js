@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['hubtype_3105',['HubType',['../class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6',1,'Svc::GenericHubComponentImpl']]]
+  ['mode_3082',['Mode',['../class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105',1,'Os::File']]],
+  ['msgdispatchstatus_3083',['MsgDispatchStatus',['../class_fw_1_1_queued_component_base.html#a949fc72adb06a376aef83acc97943681',1,'Fw::QueuedComponentBase']]]
 ];

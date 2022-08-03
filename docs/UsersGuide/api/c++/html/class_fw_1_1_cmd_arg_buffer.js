@@ -1,7 +1,7 @@
 var class_fw_1_1_cmd_arg_buffer =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_cmd_arg_buffer.html#a3b0f7c262260af527a14f6e7f8dec095a62cce3ad8b6587d42aaec2d2d9e8df9e", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_cmd_arg_buffer.html#a3b0f7c262260af527a14f6e7f8dec095acab6d4cad1674b7eaf306186f86426f9", null ],
+    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_cmd_arg_buffer.html#ab26342a9c83a205a765492515acdcec4a62cce3ad8b6587d42aaec2d2d9e8df9e", null ],
+    [ "SERIALIZED_SIZE", "class_fw_1_1_cmd_arg_buffer.html#ab26342a9c83a205a765492515acdcec4acab6d4cad1674b7eaf306186f86426f9", null ],
     [ "CmdArgBuffer", "class_fw_1_1_cmd_arg_buffer.html#a94e3a43259a12c5ac3351a004b3fefd7", null ],
     [ "CmdArgBuffer", "class_fw_1_1_cmd_arg_buffer.html#aea8b5531e0368820a6a1933e6fc6816e", null ],
     [ "CmdArgBuffer", "class_fw_1_1_cmd_arg_buffer.html#a5483950e5f90641c2d849e90b4c407ca", null ],

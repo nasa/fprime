@@ -107,9 +107,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_i2c_driver.html">LinuxI2cDriver</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html">LinuxSerialDriverComponentImpl</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_spi_driver_component_impl.html">LinuxSpiDriverComponentImpl</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html">LinuxUartDriver</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_socket_read_task.html">SocketReadTask</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">supports a task to read a given socket adaptation  <a href="class_drv_1_1_socket_read_task.html#details">More...</a><br /></td></tr>
@@ -126,8 +126,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_tcp_server_socket.html">TcpServerSocket</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for setting up Tcp using Berkley sockets as a server.  <a href="class_drv_1_1_tcp_server_socket.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_uart_framer.html">UartFramer</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_component_impl.html">UdpComponentImpl</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_udp_socket.html">UdpSocket</a></td></tr>
@@ -140,8 +138,6 @@ Typedefs</h2></td></tr>
 <tr class="separator:acb1ac5b7f2edea7b0f28ada10572c06b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefc6c37e8b4769c8b6dd1b4fd15fff67"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#aefc6c37e8b4769c8b6dd1b4fd15fff67">LinuxGpioDriver</a> = <a class="el" href="class_drv_1_1_linux_gpio_driver_component_impl.html">LinuxGpioDriverComponentImpl</a></td></tr>
 <tr class="separator:aefc6c37e8b4769c8b6dd1b4fd15fff67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52c6d5d0356dae923fa16f0257330390"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a52c6d5d0356dae923fa16f0257330390">LinuxSerialDriver</a> = <a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html">LinuxSerialDriverComponentImpl</a></td></tr>
-<tr class="separator:a52c6d5d0356dae923fa16f0257330390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa86eb5da99f6dc3f78c88e4af49b1ce2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#aa86eb5da99f6dc3f78c88e4af49b1ce2">LinuxSpiDriver</a> = <a class="el" href="class_drv_1_1_linux_spi_driver_component_impl.html">LinuxSpiDriverComponentImpl</a></td></tr>
 <tr class="separator:aa86eb5da99f6dc3f78c88e4af49b1ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a998506404c5fbafa50a8167b3a4772a7"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_drv_1_1_tcp_client_component_impl.html">TcpClientComponentImpl</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a998506404c5fbafa50a8167b3a4772a7">TcpClient</a></td></tr>
@@ -149,6 +145,9 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a119825044ca257142cb140c5ab3f7562"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a119825044ca257142cb140c5ab3f7562">UartDriverConfig</a> { <a class="el" href="namespace_drv.html#a119825044ca257142cb140c5ab3f7562a6799f241e1513268ed0d77cbe668241c">UART_READ_ALLOCATION_REQUEST_SIZE</a> = 1024
+ }</td></tr>
+<tr class="separator:a119825044ca257142cb140c5ab3f7562"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c85f9fab0c8763f9fec49eee9fc734d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734d">SocketIpStatus</a> { <br />
 &#160;&#160;<a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da19b1ee3b3f4f005197fa9940333f97d1">SOCK_SUCCESS</a> = 0, 
 <a class="el" href="namespace_drv.html#a1c85f9fab0c8763f9fec49eee9fc734da630dca3d3ce3f728b0ebe16f398db395">SOCK_FAILED_TO_GET_SOCKET</a> = -1, 
@@ -230,22 +229,6 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="linux_gpio_driver_8hpp_source.html#l00013">13</a> of file <a class="el" href="linux_gpio_driver_8hpp_source.html">LinuxGpioDriver.hpp</a>.</p>
-
-</div>
-</div>
-<a id="a52c6d5d0356dae923fa16f0257330390"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52c6d5d0356dae923fa16f0257330390">&#9670;&nbsp;</a></span>LinuxSerialDriver</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_drv.html#a52c6d5d0356dae923fa16f0257330390">Drv::LinuxSerialDriver</a> = typedef <a class="el" href="class_drv_1_1_linux_serial_driver_component_impl.html">LinuxSerialDriverComponentImpl</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="linux_serial_driver_8hpp_source.html#l00013">13</a> of file <a class="el" href="linux_serial_driver_8hpp_source.html">LinuxSerialDriver.hpp</a>.</p>
 
 </div>
 </div>
@@ -350,6 +333,25 @@ Functions</h2></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="linux_spi_driver_component_impl_8hpp_source.html#l00027">27</a> of file <a class="el" href="linux_spi_driver_component_impl_8hpp_source.html">LinuxSpiDriverComponentImpl.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a119825044ca257142cb140c5ab3f7562"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a119825044ca257142cb140c5ab3f7562">&#9670;&nbsp;</a></span>UartDriverConfig</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespace_drv.html#a119825044ca257142cb140c5ab3f7562">Drv::UartDriverConfig</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a119825044ca257142cb140c5ab3f7562a6799f241e1513268ed0d77cbe668241c"></a>UART_READ_ALLOCATION_REQUEST_SIZE&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_cfg_8hpp_source.html#l00012">12</a> of file <a class="el" href="linux_uart_driver_cfg_8hpp_source.html">LinuxUartDriverCfg.hpp</a>.</p>
 
 </div>
 </div>

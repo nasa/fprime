@@ -124,14 +124,14 @@ var hierarchy =
     [ "LinuxI2cDriverComponentBase", null, [
       [ "Drv::LinuxI2cDriver", "class_drv_1_1_linux_i2c_driver.html", null ]
     ] ],
-    [ "LinuxSerialDriverComponentBase", null, [
-      [ "Drv::LinuxSerialDriverComponentImpl", "class_drv_1_1_linux_serial_driver_component_impl.html", null ]
-    ] ],
     [ "LinuxSpiDriverComponentBase", null, [
       [ "Drv::LinuxSpiDriverComponentImpl", "class_drv_1_1_linux_spi_driver_component_impl.html", null ]
     ] ],
     [ "LinuxTimerComponentBase", null, [
       [ "Svc::LinuxTimerComponentImpl", "class_svc_1_1_linux_timer_component_impl.html", null ]
+    ] ],
+    [ "LinuxUartDriverComponentBase", null, [
+      [ "Drv::LinuxUartDriver", "class_drv_1_1_linux_uart_driver.html", null ]
     ] ],
     [ "Utils::LockGuard", "class_utils_1_1_lock_guard.html", null ],
     [ "Os::LocklessQueue", "class_os_1_1_lockless_queue.html", null ],
@@ -266,9 +266,6 @@ var hierarchy =
     [ "Svc::TlmPacketizerPacketList", "struct_svc_1_1_tlm_packetizer_packet_list.html", null ],
     [ "Utils::TokenBucket", "class_utils_1_1_token_bucket.html", null ],
     [ "Fw::TrapHandler", "class_fw_1_1_trap_handler.html", null ],
-    [ "UartFramerComponentBase", null, [
-      [ "Drv::UartFramer", "class_drv_1_1_uart_framer.html", null ]
-    ] ],
     [ "UdpReceiverComponentBase", null, [
       [ "Svc::UdpReceiverComponentImpl", "class_svc_1_1_udp_receiver_component_impl.html", null ]
     ] ],

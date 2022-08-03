@@ -59,30 +59,13 @@ var _drv =
         [ "Change Log", "drv_tcp_server.html#autotoc_md69", null ]
       ] ]
     ] ],
-    [ "Drv::UartFramer Component", "drv_uart_framer_component.html", [
-      [ "Drv::UartFramer UART Framer Component", "drv_uart_framer_component.html#autotoc_md70", [
-        [ "Design", "drv_uart_framer_component.html#autotoc_md71", [
-          [ "Component Diagram", "drv_uart_framer_component.html#autotoc_md72", null ],
-          [ "Port List", "drv_uart_framer_component.html#autotoc_md73", null ],
-          [ "Initialization", "drv_uart_framer_component.html#autotoc_md74", null ]
-        ] ],
-        [ "Uplink", "drv_uart_framer_component.html#autotoc_md75", null ],
-        [ "Downlink", "drv_uart_framer_component.html#autotoc_md76", null ],
-        [ "Error handling", "drv_uart_framer_component.html#autotoc_md77", null ],
-        [ "Interconnections", "drv_uart_framer_component.html#autotoc_md78", null ],
-        [ "FPP examples", "drv_uart_framer_component.html#autotoc_md79", null ],
-        [ "Requirements", "drv_uart_framer_component.html#autotoc_md80", null ],
-        [ "Requirements on other components or topologies", "drv_uart_framer_component.html#autotoc_md81", null ],
-        [ "Change Log", "drv_uart_framer_component.html#autotoc_md82", null ]
-      ] ]
-    ] ],
     [ "Drv::Udp Component", "drv_udp.html", [
-      [ "Drv::Udp UDP Component", "drv_udp.html#autotoc_md83", [
-        [ "Design", "drv_udp.html#autotoc_md84", null ],
-        [ "Usage", "drv_udp.html#autotoc_md85", null ],
-        [ "Class Diagram", "drv_udp.html#autotoc_md86", null ],
-        [ "Requirements", "drv_udp.html#autotoc_md87", null ],
-        [ "Change Log", "drv_udp.html#autotoc_md88", null ]
+      [ "Drv::Udp UDP Component", "drv_udp.html#autotoc_md70", [
+        [ "Design", "drv_udp.html#autotoc_md71", null ],
+        [ "Usage", "drv_udp.html#autotoc_md72", null ],
+        [ "Class Diagram", "drv_udp.html#autotoc_md73", null ],
+        [ "Requirements", "drv_udp.html#autotoc_md74", null ],
+        [ "Change Log", "drv_udp.html#autotoc_md75", null ]
       ] ]
     ] ]
 ];

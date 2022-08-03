@@ -1,7 +1,7 @@
 var class_fw_1_1_poly_type =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_poly_type.html#aa20b11040b589e05f66eb87afddf8261afd2cfe7f603a1746142bed09823302af", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_poly_type.html#aa20b11040b589e05f66eb87afddf8261a334a591ffeb346e9941dc3ad0a94cecd", null ],
+    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_poly_type.html#a331e94bdd1847f4de353d6044df66494afd2cfe7f603a1746142bed09823302af", null ],
+    [ "SERIALIZED_SIZE", "class_fw_1_1_poly_type.html#a331e94bdd1847f4de353d6044df66494a334a591ffeb346e9941dc3ad0a94cecd", null ],
     [ "PolyType", "class_fw_1_1_poly_type.html#a82b457efb9b5450d2d840737819dce2a", null ],
     [ "PolyType", "class_fw_1_1_poly_type.html#a16eec4f6766287dd7fec423b763c536e", null ],
     [ "PolyType", "class_fw_1_1_poly_type.html#ae7f314708bfd3b495d9ecb69eb45e919", null ],

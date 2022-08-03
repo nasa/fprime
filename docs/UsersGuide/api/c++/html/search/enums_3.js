@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['flow_5fcontrol_3103',['FLOW_CONTROL',['../class_drv_1_1_linux_serial_driver_component_impl.html#a2ba16e50af2df9aa1c9190b1e34ebeb9',1,'Drv::LinuxSerialDriverComponentImpl']]]
+  ['hubtype_3080',['HubType',['../class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6',1,'Svc::GenericHubComponentImpl']]]
 ];
