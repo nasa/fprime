@@ -75,7 +75,7 @@ namespace RPI {
       void UartRead_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           Fw::Buffer &serBuffer, /*!< Buffer containing data*/
-          Drv::SerialReadStatus &status /*!< Status of read*/
+          const Drv::RecvStatus &status /*!< Status of read*/
       ) override;
 
     PRIVATE:
