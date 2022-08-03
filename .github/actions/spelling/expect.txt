@@ -644,6 +644,7 @@ instrlen
 integertypename
 intlimits
 ints
+Inttype
 inttype
 invisi
 ioc
