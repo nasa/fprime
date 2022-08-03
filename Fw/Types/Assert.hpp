@@ -2,7 +2,7 @@
 #define FW_ASSERT_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 #define FW_ASSERT(...)

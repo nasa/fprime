@@ -13,7 +13,7 @@
 #ifndef FW_OBJ_BASE_HPP
 #define FW_OBJ_BASE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <FpConfig.hpp>
 
 namespace Fw {

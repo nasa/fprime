@@ -12,7 +12,7 @@
 #ifndef BUFFER_HPP_
 #define BUFFER_HPP_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #if FW_SERIALIZABLE_TO_STRING
     #include <Fw/Types/StringType.hpp>

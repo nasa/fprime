@@ -1,7 +1,7 @@
 #ifndef FW_TLM_STRING_TYPE_HPP
 #define FW_TLM_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <FpConfig.hpp>
 #include <Fw/Cfg/SerIds.hpp>

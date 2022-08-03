@@ -1,4 +1,4 @@
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/IntervalTimer.hpp>
 #include <Os/InterruptLock.hpp>

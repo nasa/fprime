@@ -1,7 +1,7 @@
 #ifndef FW_TRAP_HPP
 #define FW_TRAP_HPP
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
     /**

@@ -1,5 +1,5 @@
 #include <Svc/RateGroupDriver/RateGroupDriver.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <cstring>
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
