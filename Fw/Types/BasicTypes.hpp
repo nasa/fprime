@@ -13,7 +13,7 @@
 #ifndef FW_BASIC_TYPES_HPP
 #define FW_BASIC_TYPES_HPP
 
-#include <StandardTypes.hpp>
+#include <PlatformTypes.hpp>
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus

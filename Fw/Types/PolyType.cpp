@@ -2,7 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #define __STDC_FORMAT_MACROS
-#include <StandardTypes.hpp>
 
 namespace Fw {
 
