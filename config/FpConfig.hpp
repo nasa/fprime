@@ -11,7 +11,7 @@
  */
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
-#include <FpConfig.hpp>
+#include <Fw/Types/BasicTypes.hpp>
 
 typedef PlatformIndexType FwIndexType;
 const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;
@@ -39,58 +39,64 @@ const FwNativeUIntType FwNativeUIntType_MIN = PlatformUIntType_MIN;
 const FwNativeUIntType FwNativeUIntType_MAX = PlatformUIntType_MAX;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
-typedef FwNativeIntType NATIVE_INT_TYPE;
-typedef FwNativeUIntType  NATIVE_UINT_TYPE;
-
 typedef U16 FwBuffSizeType;
 const FwBuffSizeType FwBuffSizeType_MIN = U16_MIN;
 const FwBuffSizeType FwBuffSizeType_MAX = U16_MAX;
-#define PRI_FwBuffSizeType PRI_U16
+#define PRI_FwBuffSizeType PRIu16
 
 typedef I32 FwEnumStoreType;
 const FwEnumStoreType FwEnumStoreType_MIN = I32_MIN;
 const FwEnumStoreType FwEnumStoreType_MAX = I32_MAX;
-#define PRI_FwEnumStoreType PRI_I32
+#define PRI_FwEnumStoreType PRId32
+
+// Define enumeration for Time base types
+enum TimeBase {
+    TB_NONE, //!< No time base has been established
+    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
+    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
+    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
+};
+#define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 
 typedef U16 FwTimeBaseStoreType;
 const FwTimeBaseStoreType FwTimeBaseStoreType_MIN = U16_MIN;
 const FwTimeBaseStoreType FwTimeBaseStoreType_MAX = U16_MAX;
-#define PRI_FwTimeBaseStoreType PRI_U16
+#define PRI_FwTimeBaseStoreType PRIu16
 
 typedef U8 FwTimeContextStoreType;
 const FwTimeContextStoreType FwTimeContextStoreType_MIN = U8_MIN;
 const FwTimeContextStoreType FwTimeContextStoreType_MAX = U8_MAX;
-#define PRI_FwTimeContextStoreType PRI_U8
+#define PRI_FwTimeContextStoreType PRIu8
 
 typedef U32 FwPacketDescriptorType;
 const FwPacketDescriptorType FwPacketDescriptorType_MIN = U32_MIN;
 const FwPacketDescriptorType FwPacketDescriptorType_MAX = U32_MAX;
-#define PRI_FwPacketDescriptorType PRI_U32
+#define PRI_FwPacketDescriptorType PRIu32
 
 typedef U32 FwOpcodeType;
 const FwOpcodeType FwOpcodeType_MIN = U32_MIN;
 const FwOpcodeType FwOpcodeType_MAX = U32_MAX;
-#define PRI_FwOpcodeType PRI_U32
+#define PRI_FwOpcodeType PRIu32
 
 typedef U32 FwChanIdType;
 const FwChanIdType FwChanIdType_MIN = U32_MIN;
 const FwChanIdType FwChanIdType_MAX = U32_MAX;
-#define PRI_FwChanIdType PRI_U32
+#define PRI_FwChanIdType PRIu32
 
 typedef U32 FwEventIdType;
 const FwEventIdType FwEventIdType_MIN = U32_MIN;
 const FwEventIdType FwEventIdType_MAX = U32_MAX;
-#define PRI_FwEventIdType PRI_U32
+#define PRI_FwEventIdType PRIu32
 
 typedef U32 FwPrmIdType;
 const FwPrmIdType FwPrmIdType_MIN = U32_MIN;
 const FwPrmIdType FwPrmIdType_MAX = U32_MAX;
-#define PRI_FwPrmIdType PRI_U32
+#define PRI_FwPrmIdType PRIu32
 
 typedef U16 FwTlmPacketizeIdType;
 const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN = U16_MIN;
 const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
-#define PRI_FwTlmPacketizeIdType PRI_U16
+#define PRI_FwTlmPacketizeIdType PRIu16
 
 // Boolean values for serialization
 #ifndef FW_SERIALIZE_TRUE_VALUE
@@ -334,24 +340,6 @@ const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
 #ifndef FW_AMPCS_COMPATIBLE
 #define FW_AMPCS_COMPATIBLE            0   //!< Whether or not JPL AMPCS ground system support is enabled.
-#endif
-
-// Define enumeration for Time base types
-enum TimeBase {
-    TB_NONE, //!< No time base has been established
-    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
-    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
-    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
-};
-
-// How many bits are used to store the time base
-#ifndef FwTimeBaseStoreType
-#define FwTimeBaseStoreType U16                 //!< Storage conversion for time base in scripts/ground interface
-#endif
-
-#ifndef FwTimeContextStoreType
-#define FwTimeContextStoreType U8                 //!< Storage conversion for time context in scripts/ground interface
-#define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 #endif
 
 // These settings configure whether or not the timebase and context values for the Fw::Time
