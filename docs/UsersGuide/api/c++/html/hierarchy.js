@@ -88,13 +88,13 @@ var hierarchy =
       [ "Svc::FileUplink", "class_svc_1_1_file_uplink.html", null ]
     ] ],
     [ "FramerComponentBase", null, [
-      [ "Svc::FramerComponentImpl", "class_svc_1_1_framer_component_impl.html", null ]
+      [ "Svc::Framer", "class_svc_1_1_framer.html", null ]
     ] ],
     [ "Svc::FramingProtocol", "class_svc_1_1_framing_protocol.html", [
       [ "Svc::FprimeFraming", "class_svc_1_1_fprime_framing.html", null ]
     ] ],
     [ "Svc::FramingProtocolInterface", "class_svc_1_1_framing_protocol_interface.html", [
-      [ "Svc::FramerComponentImpl", "class_svc_1_1_framer_component_impl.html", null ]
+      [ "Svc::Framer", "class_svc_1_1_framer.html", null ]
     ] ],
     [ "GenericHubComponentBase", null, [
       [ "Svc::GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html", null ]

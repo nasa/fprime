@@ -121,7 +121,7 @@ Checks if a given dependency should be supplied to the linker only. These will n
 but will be supplied as link libraries. These tokens are of several types:
 
 1. Linker flags: starts with -l
-2. Existing Files: accounts for pre-existing libraries shared and otherwise
+2. Existing Files: accounts for preexisting libraries shared and otherwise
 
 OUTPUT_VAR: variable to set in PARENT_SCOPE to TRUE/FALSE
 TOKEN: token to check if "linker only"

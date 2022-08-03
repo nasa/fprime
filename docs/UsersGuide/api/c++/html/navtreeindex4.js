@@ -1,8 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"prm_db_impl_8cpp.html#a5607b42c25cba93543db62ebac53b3a7":[11,0,6,30,2,0],
-"prm_db_impl_8cpp.html#ae32ed15852da9573a1f1b3fe5580e939":[11,0,6,30,2,1],
-"prm_db_impl_8cpp_source.html":[11,0,6,30,2],
 "prm_db_impl_8hpp.html":[11,0,6,30,3],
 "prm_db_impl_8hpp_source.html":[11,0,6,30,3],
 "prm_db_impl_cfg_8hpp.html":[11,0,1,10],
@@ -249,5 +246,8 @@ var NAVTREEINDEX4 =
 "svc_buffer_manager_component.html#autotoc_md261":[6,5,0,2,3],
 "svc_buffer_manager_component.html#autotoc_md262":[6,5,0,2,4],
 "svc_buffer_manager_component.html#autotoc_md263":[6,5,0,2,5],
-"svc_buffer_manager_component.html#autotoc_md264":[6,5,0,2,5,0]
+"svc_buffer_manager_component.html#autotoc_md264":[6,5,0,2,5,0],
+"svc_buffer_manager_component.html#autotoc_md265":[6,5,0,2,5,1],
+"svc_buffer_manager_component.html#autotoc_md266":[6,5,0,2,5,2],
+"svc_buffer_manager_component.html#autotoc_md267":[6,5,0,2,6]
 };

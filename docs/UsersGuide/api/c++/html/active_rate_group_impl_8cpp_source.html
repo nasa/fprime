@@ -176,7 +176,7 @@ $(document).ready(function(){initNavTree('_active_rate_group_impl_8cpp_source.ht
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                this-&gt;log_WARNING_HI_RateGroupCycleSlip(this-&gt;m_cycles);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                this-&gt;m_overrunThrottle++;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="comment">// update cycle cycle slips</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="comment">// update cycle slips</span></div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            this-&gt;tlmWrite_RgCycleSlips(this-&gt;m_cycleSlips);</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        } <span class="keywordflow">else</span> { <span class="comment">// if cycle is okay start decrementing throttle value</span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keywordflow">if</span> (this-&gt;m_overrunThrottle &gt; 0) {</div>

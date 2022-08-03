@@ -179,7 +179,7 @@ Svc::FileUplink Component</h1>
 </pre> then issue a <em>PacketOutOfOrder</em> warning reporting <em>lastSequenceIndex</em> and <em>I</em>. <pre class="fragment">b. Use *writeFileDescriptor* to do the following:
 
 1. Use the method described in &amp;sect; 4.1.2 of the
-</pre> <a href="http://public.ccsds.org/publications/archive/727x0b4.pdf">CCSDS File Delivery Protocol (CFDP) Recommended Standard</a> to compute the checksum value for the file. <pre class="fragment">2. Compare the value computed in the previous step against the
+</pre> <a href="https://public.ccsds.org/Pubs/727x0b4s.pdf">CCSDS File Delivery Protocol (CFDP) Recommended Standard</a> to compute the checksum value for the file. <pre class="fragment">2. Compare the value computed in the previous step against the
 </pre> checksum value in the packet. If the two values are different, then issue a <em>BadChecksum</em> warning. <pre class="fragment">c. Close the file.
 </pre></li>
 <li>Otherwise issue an <em>InvalidReceiveMode</em> warning.</li>

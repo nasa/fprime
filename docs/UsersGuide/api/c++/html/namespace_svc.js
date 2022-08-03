@@ -22,7 +22,7 @@ var namespace_svc =
     [ "FileUplink", "class_svc_1_1_file_uplink.html", "class_svc_1_1_file_uplink" ],
     [ "FprimeDeframing", "class_svc_1_1_fprime_deframing.html", "class_svc_1_1_fprime_deframing" ],
     [ "FprimeFraming", "class_svc_1_1_fprime_framing.html", "class_svc_1_1_fprime_framing" ],
-    [ "FramerComponentImpl", "class_svc_1_1_framer_component_impl.html", "class_svc_1_1_framer_component_impl" ],
+    [ "Framer", "class_svc_1_1_framer.html", "class_svc_1_1_framer" ],
     [ "FramingProtocol", "class_svc_1_1_framing_protocol.html", "class_svc_1_1_framing_protocol" ],
     [ "FramingProtocolInterface", "class_svc_1_1_framing_protocol_interface.html", "class_svc_1_1_framing_protocol_interface" ],
     [ "GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html", "class_svc_1_1_generic_hub_component_impl" ],

@@ -193,8 +193,17 @@ Svc::BufferManager</h1>
 <li>The sending component fills <em>B</em> with data and sends it to the receiving component.</li>
 <li>The receiving component uses the data in <em>B</em>. When done, it sends <em>B</em> back to the <a href="#bufferSendIn"><code>bufferSendIn</code></a> port of <code>BufferManager</code> for deallocation.</li>
 </ol>
-<p><img src="img/SendingABuffer.jpg" alt="`BufferManager` Sending a Buffer" title="SequenceDiagram" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md268"></a>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    Sending Component-&gt;&gt;BufferManager: Request buffer</div>
+<div class="line">    activate Sending Component</div>
+<div class="line">    activate BufferManager</div>
+<div class="line">    Sending Component-&gt;&gt;Receiving Component: Send buffer</div>
+<div class="line">    activate Receiving Component</div>
+<div class="line">    deactivate Sending Component</div>
+<div class="line">    Receiving Component-&gt;&gt;BufferManager: Send buffer</div>
+<div class="line">    deactivate BufferManager</div>
+<div class="line">    deactivate Receiving Component</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md268"></a>
 3.8 Assertions</h3>
 <p><code>BufferManager</code> will assert under the following conditions:</p>
 <ul>
