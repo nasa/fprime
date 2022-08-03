@@ -1,7 +1,7 @@
 /**
- * \brief StandardTypes.hpp for Linux/Darwin systems
+ * \brief PlatformTypes.hpp for Linux/Darwin systems
  *
- * StandardTypes.hpp is typically published by platform developers to define
+ * PlatformTypes.hpp is typically published by platform developers to define
  * the standard available arithmetic types for use in fprime. This standard
  * types header is designed to support standard Linux/Darwin distributions
  * running on x86, x86_64 machines and using the standard gcc/clang compilers
