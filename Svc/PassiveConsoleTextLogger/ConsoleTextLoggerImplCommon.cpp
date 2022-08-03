@@ -43,8 +43,8 @@ namespace Svc {
                 severityString = "SEVERITY ERROR";
                 break;
         }
-        Fw::Logger::logMsg("EVENT: (%d) (%d:%d,%d) %s: %s\n",
-                id, timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(),
-                reinterpret_cast<POINTER_CAST>(severityString), reinterpret_cast<POINTER_CAST>(text.toChar()));
+        Fw::Logger::logMsg("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+                id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
+                reinterpret_cast<PlatformPointerCastType>(severityString), reinterpret_cast<PlatformPointerCastType>(text.toChar()));
     }
 }
