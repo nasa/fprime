@@ -376,7 +376,7 @@ assign these numbers.
 **Topology 3: Buffers containing packet data:**
 
 <div>
-<img src="img/top/file.png" width=1000/>
+<img src="img/top/deframer-file.png" width=1000/>
 </div>
 
 ### 6.2. Sequence Diagrams

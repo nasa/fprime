@@ -199,7 +199,7 @@ The `eventLogger` instance sends event packets to the `framer` instance.
 **Topology 3: File packets:**
 
 <div>
-<img src="img/top/file.png" width=1000/>
+<img src="img/top/framer-file.png" width=1000/>
 </div>
 
 The `fileDownlink` instance sends a sequence of file packets,
