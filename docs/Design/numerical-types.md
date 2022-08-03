@@ -29,7 +29,7 @@ their compiler does not support.
 | F32     | float        | n/a                                |
 | F64     | double       | FW_HAS_F64                         |
 
-Platform developers should include `stdint.h` or equivalent in their `StandardTypes.hpp` file provided alongside their
+Platform developers should include `stdint.h` or equivalent in their `PlatformTypes.hpp` file provided alongside their
 platform. If for some reason that header does not exist or does not define all types, then developers must define all
 "Equivalent" definitions above.
 
@@ -57,7 +57,7 @@ projects need to be able to control these sizes when operating across multiple p
 
 ### Platform Configured Types
 
-Platform developers should define the following logical types in the `StandardTypes.hpp` header provided alongside
+Platform developers should define the following logical types in the `PlatformTypes.hpp` header provided alongside
 their CMake platform and toolchain files. Each must also define a compiler directive to indicate the type was defined.
 If the type is not specified as seen through the compiler directive the `DefaultTypes.hpp` header will fill in a default
 definition. Each also defines a format specifier for use with the `printf` family of functions. Additionally, each
@@ -72,7 +72,7 @@ defines a pair of constants of the form `<type>_MIN` and `<type>_MAX` to define 
 | PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType   | Deprecated (see note)       |
 | PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType  | Deprecated (see note)       |
 
-A complete definition of a type as a platform should supply within `StandardTypes.hpp` is shown below. Notice the type
+A complete definition of a type as a platform should supply within `PlatformTypes.hpp` is shown below. Notice the type
 is defined along with a compiler directive announcing it is defined, and a format specifier.
 
 ```c++

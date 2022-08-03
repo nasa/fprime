@@ -2,7 +2,7 @@
  * \brief DefaultTypes.hpp provides fallback defaults for the platform types
  *
  * This fill contains default implementations for types typically defined in
- * StandardTypes.hpp. These default implementations are based on x86_64 Linux
+ * PlatformTypes.hpp. These default implementations are based on x86_64 Linux
  * but are often appropriate for most systems
  */
 #include <limits>
@@ -55,9 +55,9 @@ const PlatformSizeType PlatformSizeType_MAX = PlatformUIntType_MAX;
 * Default implementation for pointers stored as integers
 */
 #ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED
-typedef uint64_t PlatformPointerCastType;
-const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint64_t>::min();;
-const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint64_t>::max();;;
+typedef uintptr_t PlatformPointerCastType;
+const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uintptr_t>::min();
+const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uintptr_t>::max();
 #define PLATFORM_POINTER_CAST_TYPE_DEFINED
 #define PRI_PlatformPointerCastType PRIx64
 #endif
