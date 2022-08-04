@@ -76,15 +76,15 @@ void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE conf
 void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Enqueues the items in the combuffer onto queue set
     FW_ASSERT(portNum >= 0 && portNum < ComQueueComSize, portNum);
+    Fw::SerializeStatus status =
+        m_queues[portNum].enqueue(reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
+        this->log_WARNING_HI_QueueFull(QueueType::comQueue, portNum);
+        m_throttle[portNum] = true;
+    }
+    // If already ready, processes for the purposes of sending
     if (m_state == READY) {
-        sendComBuffer(data);
-    } else {
-        Fw::SerializeStatus status =
-            m_queues[portNum].enqueue(reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
-        if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[portNum]) {
-            this->log_WARNING_HI_QueueFull(QueueType::comQueue, portNum);
-            m_throttle[portNum] = true;
-        }
+        processQueue();
     }
 }
 
@@ -92,19 +92,17 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     const NATIVE_INT_TYPE queueNum = portNum + ComQueueComSize;
     // Enqueues the items in buff onto the queue set
     FW_ASSERT(portNum >= 0 && portNum < ComQueueBuffSize, portNum);
-
-    // set is offset
     FW_ASSERT(queueNum < totalSize);
+    // use as constant
+    Fw::SerializeStatus status =
+        m_queues[queueNum].enqueue(reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[queueNum]) {
+        this->log_WARNING_HI_QueueFull(QueueType::buffQueue, portNum);
+        m_throttle[queueNum] = true;
+    }
+    // If already ready, processes for the purposes of sending
     if (m_state == READY) {
-        sendBuffer(fwBuffer);
-    } else {
-        // use as constant
-        Fw::SerializeStatus status =
-            m_queues[queueNum].enqueue(reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
-        if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[queueNum]) {
-            this->log_WARNING_HI_QueueFull(QueueType::buffQueue, portNum);
-            m_throttle[queueNum] = true;
-        }
+        processQueue();
     }
 }
 
@@ -129,7 +127,6 @@ void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Svc::ComSendSt
 void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
     ComQueueDepth comQueueDepth;
     BuffQueueDepth buffQueueDepth;
-
     for (NATIVE_INT_TYPE i = 0; i < comQueueDepth.SIZE; i++) {
         comQueueDepth[i] = m_queues[i].get_high_water_mark();
         m_queues[i].clear_high_water_mark();
@@ -147,12 +144,14 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
 // Private helper methods
 // ----------------------------------------------------------------------
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
+    FW_ASSERT(m_state != WAITING);
     m_comBufferMessage = comBuffer;
     this->comQueueSend_out(0, comBuffer, 0);
     m_state = WAITING;
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
+    FW_ASSERT(m_state != WAITING);
     m_bufferMessage = buffer;
     this->buffQueueSend_out(0, buffer);
     m_state = WAITING;

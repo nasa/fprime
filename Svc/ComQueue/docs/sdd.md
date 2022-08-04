@@ -56,8 +56,8 @@ The diagram below shows the `ComQueue` component.
 | `output`        | `buffQueueSend` | `Fw.BufferSend` | Port that sends out buffers on READY status.                   |
 | `async input`   | `comStatusIn`   | `ComStatus`     | Port that takes in status signal from communication interface. |
 | `async input`   | `run`           | `Fw.Com`        | Schedule in port, driven by a rate group.                      |
-| `guarded input` | `comQueueIn`    | `Fw.BufferSend` | Ports that receives buffer data types.                         |
-| `guarded input` | `buffQueueIn`   | `Svc.Sched`     | Port that receives com buffer data types.                      |
+| `async input` | `comQueueIn`    | `Fw.BufferSend` | Ports that receives buffer data types.                         |
+| `async input` | `buffQueueIn`   | `Svc.Sched`     | Port that receives com buffer data types.                      |
 
 ### 4.3. State
 `ComQueue` maintains the following state:
@@ -94,7 +94,11 @@ The `buffQueueIn` port handler receives an `Fw::Buffer` data type and a port num
 It does the following:
 1. Ensures that the port number is between zero and the value of the buffer size 
 2. Enqueue the buffer onto the `m_queues` instance 
-3. Returns a warning if `m_queues` is full 
+3. Returns a warning if `m_queues` is full
+
+In the case where the component is already in `READY` state, this will process the
+queue immediately after enqueueing.
+
 
 #### 4.6.2 comQueueIn
 The `comQueueIn` port handler receives an `Fw::ComBuffer` data type and a port number. 
@@ -102,6 +106,9 @@ It does the following:
 1. Ensures that the port number is between zero and the value of the com buffer size
 2. Enqueue the com buffer onto the `m_queues` instance
 3. Returns a warning if `m_queues` is full
+
+In the case where the component is already in `READY` state, this will process the
+queue immediately after enqueueing.
 
 #### 4.6.3 comStatusIn
 The `comStatusIn` port handler receives an `Svc::ComSendStatus` and it does the following:
