@@ -37,7 +37,7 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     );
 
     //! Configure UART parameters
-    enum UartBaudRate { BAUD_9600, BAUD_19200, BAUD_38400, BAUD_57600, BAUD_115K, BAUD_230K, BAUD_460K, BAUD_921K };
+    enum UartBaudRate { BAUD_9600=9600, BAUD_19200=19200, BAUD_38400=38400, BAUD_57600=57600, BAUD_115K=115200, BAUD_230K=230400, BAUD_460K=460800, BAUD_921K=921600};
 
     enum UartFlowControl { NO_FLOW, HW_FLOW };
 
