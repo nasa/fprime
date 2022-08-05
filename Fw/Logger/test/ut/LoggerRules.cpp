@@ -153,19 +153,19 @@ namespace LoggerRules {
                 truth.check(nullptr);
                 break;
             case 7:
-                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
+                Fw::Logger::logMsg("Seven arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6]);
                 truth.check(nullptr);
                 break;
             case 8:
-                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
+                Fw::Logger::logMsg("Eight arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7]);
                 truth.check(nullptr);
                 break;
             case 9:
-                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
+                Fw::Logger::logMsg("Nine arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8]);
                 truth.check(nullptr);
                 break;
             case 10:
-                Fw::Logger::logMsg("Six arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
+                Fw::Logger::logMsg("Ten arg: %lu", ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9]);
                 truth.check(nullptr);
                 break;
             default:
