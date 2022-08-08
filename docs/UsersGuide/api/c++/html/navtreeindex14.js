@@ -1,9 +1,5 @@
 var NAVTREEINDEX14 =
 {
-"namespacemembers_vars.html":[9,1,2],
-"namespacemembers_w.html":[9,1,0,19],
-"namespacemembers_z.html":[9,1,0,20],
-"namespaces.html":[9,0],
 "pages.html":[],
 "sha_8h.html":[11,0,7,1,1,0],
 "sha_8h.html#a04bb32cdae505b6eecc6b1b016e6c99b":[11,0,7,1,1,0,38],

@@ -104,15 +104,15 @@ Inheritance diagram for Drv::LinuxUartDriver:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:aa675e55d3006081b077da7d552ad7f5a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a">UartBaudRate</a> { <br />
-&#160;&#160;<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa83816dddeb17888c6f6ea8f84a4d1fa3">BAUD_9600</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa6553a63fd691828ffcca03153f08bf68">BAUD_19200</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa2c9f8fd9d2ed67e4131a6de0fec10f20">BAUD_38400</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa694042e865f15fd3ff1c459956dd6af9">BAUD_57600</a>, 
+&#160;&#160;<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa83816dddeb17888c6f6ea8f84a4d1fa3">BAUD_9600</a> =9600, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa6553a63fd691828ffcca03153f08bf68">BAUD_19200</a> =19200, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa2c9f8fd9d2ed67e4131a6de0fec10f20">BAUD_38400</a> =38400, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa694042e865f15fd3ff1c459956dd6af9">BAUD_57600</a> =57600, 
 <br />
-&#160;&#160;<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa12acd915afc961de160a2ab85f8ade0b">BAUD_115K</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aae79b753a35d2d014689e80561a7b39fe">BAUD_230K</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aaee3589fcbea763cef268aa14b6b7e9a3">BAUD_460K</a>, 
-<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa0395a60d0413a4830ac0654456700c9e">BAUD_921K</a>
+&#160;&#160;<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa12acd915afc961de160a2ab85f8ade0b">BAUD_115K</a> =115200, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aae79b753a35d2d014689e80561a7b39fe">BAUD_230K</a> =230400, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aaee3589fcbea763cef268aa14b6b7e9a3">BAUD_460K</a> =460800, 
+<a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5aa0395a60d0413a4830ac0654456700c9e">BAUD_921K</a> =921600
 <br />
  }</td></tr>
 <tr class="memdesc:aa675e55d3006081b077da7d552ad7f5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure UART parameters.  <a href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a">More...</a><br /></td></tr>
@@ -133,8 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a60e3de03022220a789048a852a9972aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79f927992c95978a05fccff022fabc5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a79f927992c95978a05fccff022fabc5b">init</a> (const <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> instance=0)</td></tr>
 <tr class="separator:a79f927992c95978a05fccff022fabc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2aaf15af674e0f8e67f4147ba9765437"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a2aaf15af674e0f8e67f4147ba9765437">open</a> (const char *const device, <a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a">UartBaudRate</a> baud, <a class="el" href="class_drv_1_1_linux_uart_driver.html#a0fba14f12df587cc24548e441a4c4d00">UartFlowControl</a> fc, <a class="el" href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601af">UartParity</a> parity)</td></tr>
-<tr class="separator:a2aaf15af674e0f8e67f4147ba9765437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a244a7d081a0bf1019784a00738467842"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a244a7d081a0bf1019784a00738467842">open</a> (const char *const device, <a class="el" href="class_drv_1_1_linux_uart_driver.html#aa675e55d3006081b077da7d552ad7f5a">UartBaudRate</a> baud, <a class="el" href="class_drv_1_1_linux_uart_driver.html#a0fba14f12df587cc24548e441a4c4d00">UartFlowControl</a> fc, <a class="el" href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601af">UartParity</a> parity, <a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a> allocationSize)</td></tr>
+<tr class="separator:a244a7d081a0bf1019784a00738467842"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0309c295728c8c37562bd3112706b18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#af0309c295728c8c37562bd3112706b18">startReadThread</a> (<a class="el" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> priority=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> stackSize=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>, <a class="el" href="basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc">NATIVE_UINT_TYPE</a> cpuAffinity=<a class="el" href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a>)</td></tr>
 <tr class="separator:af0309c295728c8c37562bd3112706b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11267c2c96cd891099b18f1e054b6277"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277">quitReadThread</a> ()</td></tr>
@@ -145,7 +145,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00023">23</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00022">22</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="aa675e55d3006081b077da7d552ad7f5a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa675e55d3006081b077da7d552ad7f5a">&#9670;&nbsp;</a></span>UartBaudRate</h2>
@@ -171,7 +171,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="aa675e55d3006081b077da7d552ad7f5aa0395a60d0413a4830ac0654456700c9e"></a>BAUD_921K&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00040">40</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00039">39</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
 
 </div>
 </div>
@@ -191,7 +191,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a0fba14f12df587cc24548e441a4c4d00ad009e359db8962895d8c0cfdd24afd26"></a>HW_FLOW&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00042">42</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00041">41</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
 
 </div>
 </div>
@@ -212,7 +212,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="afbe7f500cb4360c9130987a836a601afac884302ac9fffb601f99673c1a49535d"></a>PARITY_EVEN&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00044">44</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8hpp_source.html#l00043">43</a> of file <a class="el" href="linux_uart_driver_8hpp_source.html">LinuxUartDriver.hpp</a>.</p>
 
 </div>
 </div>
@@ -260,7 +260,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Destroy object <a class="el" href="class_drv_1_1_linux_uart_driver.html">LinuxUartDriver</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00273">273</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00275">275</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
 
 </div>
 </div>
@@ -292,8 +292,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2aaf15af674e0f8e67f4147ba9765437"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aaf15af674e0f8e67f4147ba9765437">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a244a7d081a0bf1019784a00738467842"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a244a7d081a0bf1019784a00738467842">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -320,7 +320,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601af">UartParity</a>&#160;</td>
-          <td class="paramname"><em>parity</em>&#160;</td>
+          <td class="paramname"><em>parity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852">NATIVE_INT_TYPE</a>&#160;</td>
+          <td class="paramname"><em>allocationSize</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -351,7 +357,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Quit thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00368">368</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00367">367</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
 
 </div>
 </div>
@@ -388,7 +394,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>start the serial poll thread. buffSize is the max receive buffer size </p>
 
-<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00359">359</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="linux_uart_driver_8cpp_source.html#l00358">358</a> of file <a class="el" href="linux_uart_driver_8cpp_source.html">LinuxUartDriver.cpp</a>.</p>
 
 </div>
 </div>
