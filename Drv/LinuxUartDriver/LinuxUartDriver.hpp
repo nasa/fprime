@@ -14,7 +14,6 @@
 #define LinuxUartDriver_HPP
 
 #include <Drv/LinuxUartDriver/LinuxUartDriverComponentAc.hpp>
-#include <LinuxUartDriverCfg.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Task.hpp>
 
@@ -37,14 +36,14 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     );
 
     //! Configure UART parameters
-    enum UartBaudRate { BAUD_9600, BAUD_19200, BAUD_38400, BAUD_57600, BAUD_115K, BAUD_230K, BAUD_460K, BAUD_921K };
+    enum UartBaudRate { BAUD_9600=9600, BAUD_19200=19200, BAUD_38400=38400, BAUD_57600=57600, BAUD_115K=115200, BAUD_230K=230400, BAUD_460K=460800, BAUD_921K=921600};
 
     enum UartFlowControl { NO_FLOW, HW_FLOW };
 
     enum UartParity { PARITY_NONE, PARITY_ODD, PARITY_EVEN };
 
     // Open device with specified baud and flow control.
-    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity);
+    bool open(const char* const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, NATIVE_INT_TYPE allocationSize);
 
     //! start the serial poll thread.
     //! buffSize is the max receive buffer size
@@ -72,6 +71,7 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
 
 
     NATIVE_INT_TYPE m_fd;  //!< file descriptor returned for I/O device
+    NATIVE_INT_TYPE m_allocationSize; //!< size of allocation request to memory manager
     const char* m_device;  //!< original device path
 
     //! This method will be called by the new thread to wait for input on the serial port.
