@@ -1,5 +1,5 @@
-#include "FppTest/test/array/StringArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/StringArrayAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/StringUtils.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
@@ -13,7 +13,7 @@ protected:
 
         char buf[80];
         for (U32 i = 0; i < String::SIZE; i++) {
-            setString(buf, sizeof(buf));
+            FppTest::Utils::setString(buf, sizeof(buf));
             testVals[i] = buf;
             serializedSize += Fw::StringUtils::string_length(buf, sizeof(buf));
         }

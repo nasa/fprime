@@ -1,5 +1,5 @@
-#include "FppTest/test/array/Uint32ArrayArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/Uint32ArrayArrayAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/SerialBuffer.hpp"
 
@@ -11,7 +11,7 @@ protected:
         Uint32 a;
         for (int i = 0; i < Uint32Array::SIZE; i++) {
             for (int j = 0; j < Uint32::SIZE; j++) {
-                a[j] = getU32();
+                a[j] = FppTest::Utils::getU32();
             }
             testVals[i] = a;
         }

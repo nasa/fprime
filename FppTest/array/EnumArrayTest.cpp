@@ -1,5 +1,4 @@
-#include "FppTest/test/array/EnumArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/EnumArrayAc.hpp"
 
 #include "STest/Pick/Pick.hpp"
 #include "Fw/Types/SerialBuffer.hpp"

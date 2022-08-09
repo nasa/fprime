@@ -1,18 +1,18 @@
-#include "FppTest/test/array/FormatBoolArrayAc.hpp"
-#include "FppTest/test/array/FormatU8ArrayAc.hpp"
-#include "FppTest/test/array/FormatU16DecArrayAc.hpp"
-#include "FppTest/test/array/FormatU32OctArrayAc.hpp"
-#include "FppTest/test/array/FormatU64HexArrayAc.hpp"
-#include "FppTest/test/array/FormatI8ArrayAc.hpp"
-#include "FppTest/test/array/FormatI16DecArrayAc.hpp"
-#include "FppTest/test/array/FormatI32OctArrayAc.hpp"
-#include "FppTest/test/array/FormatI64HexArrayAc.hpp"
-#include "FppTest/test/array/FormatF32eArrayAc.hpp"
-#include "FppTest/test/array/FormatF32fArrayAc.hpp"
-#include "FppTest/test/array/FormatF64gArrayAc.hpp"
-#include "FppTest/test/array/FormatStringArrayAc.hpp"
-#include "FppTest/test/array/FormatCharArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/FormatBoolArrayAc.hpp"
+#include "FppTest/array/FormatU8ArrayAc.hpp"
+#include "FppTest/array/FormatU16DecArrayAc.hpp"
+#include "FppTest/array/FormatU32OctArrayAc.hpp"
+#include "FppTest/array/FormatU64HexArrayAc.hpp"
+#include "FppTest/array/FormatI8ArrayAc.hpp"
+#include "FppTest/array/FormatI16DecArrayAc.hpp"
+#include "FppTest/array/FormatI32OctArrayAc.hpp"
+#include "FppTest/array/FormatI64HexArrayAc.hpp"
+#include "FppTest/array/FormatF32eArrayAc.hpp"
+#include "FppTest/array/FormatF32fArrayAc.hpp"
+#include "FppTest/array/FormatF64gArrayAc.hpp"
+#include "FppTest/array/FormatStringArrayAc.hpp"
+#include "FppTest/array/FormatCharArrayAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "gtest/gtest.h"
 
@@ -233,7 +233,7 @@ TEST_F(FormatTest, String) {
     FormatString::StringSize80 testVals[FormatString::SIZE];
     char buf[80];
     for (int i = 0; i < FormatString::SIZE; i++) {
-        setString(buf, sizeof(buf));
+        FppTest::Utils::setString(buf, sizeof(buf));
         testVals[i] = buf;   
     }
 
@@ -252,7 +252,8 @@ TEST_F(FormatTest, String) {
 }
 
 TEST_F(FormatTest, Char) {
-    U8 testVals[FormatChar::SIZE] = {getU8(), getU8(), getU8()};
+    U8 testVals[FormatChar::SIZE] = 
+        {FppTest::Utils::getU8(), FppTest::Utils::getU8(), FppTest::Utils::getU8()};
     FormatChar a(testVals);
 
     buf1 << a;

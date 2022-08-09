@@ -1,9 +1,9 @@
-#include "FppTest/test/enum/ImplicitEnumAc.hpp"
-#include "FppTest/test/enum/ExplicitEnumAc.hpp"
-#include "FppTest/test/enum/DefaultEnumAc.hpp"
-#include "FppTest/test/enum/IntervalEnumAc.hpp"
-#include "FppTest/test/enum/SerializeTypeU8EnumAc.hpp"
-#include "FppTest/test/enum/SerializeTypeU64EnumAc.hpp"
+#include "FppTest/enum/ImplicitEnumAc.hpp"
+#include "FppTest/enum/ExplicitEnumAc.hpp"
+#include "FppTest/enum/DefaultEnumAc.hpp"
+#include "FppTest/enum/IntervalEnumAc.hpp"
+#include "FppTest/enum/SerializeTypeU8EnumAc.hpp"
+#include "FppTest/enum/SerializeTypeU64EnumAc.hpp"
 
 #include "Fw/Types/SerialBuffer.hpp"
 

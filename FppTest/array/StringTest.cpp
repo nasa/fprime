@@ -1,6 +1,6 @@
-#include "FppTest/test/array/StringArrayAc.hpp"
-#include "FppTest/test/array/String100ArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/StringArrayAc.hpp"
+#include "FppTest/array/String100ArrayAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
@@ -12,11 +12,11 @@
 class StringTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        setString(src80, sizeof(src80));
-        setString(src100, sizeof(src100));
+        FppTest::Utils::setString(src80, sizeof(src80));
+        FppTest::Utils::setString(src100, sizeof(src100));
 
         char fwStrBuf[Fw::String::STRING_SIZE];
-        setString(fwStrBuf, sizeof(fwStrBuf));
+        FppTest::Utils::setString(fwStrBuf, sizeof(fwStrBuf));
         fwStr = fwStrBuf;
 
         // Truncate fwStr for comparison

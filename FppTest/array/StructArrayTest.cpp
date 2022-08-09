@@ -1,5 +1,5 @@
-#include "FppTest/test/array/StructArrayAc.hpp"
-#include "FppTest/test/utils/utils.hpp"
+#include "FppTest/array/StructArrayAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/SerialBuffer.hpp"
 
@@ -11,9 +11,9 @@ protected:
         U32 a[3];
         for (int i = 0; i < Struct::SIZE; i++) {
             for (int j = 0; j < 3; j++) {
-                a[j] = getU32();
+                a[j] = FppTest::Utils::getU32();
             }
-            testVals[i].set(getU32(), a);
+            testVals[i].set(FppTest::Utils::getU32(), a);
         }
     }
 
