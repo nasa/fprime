@@ -7,9 +7,9 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/array.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/enum.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/format.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/string.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/struct.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/format.fpp"
 )
 register_fprime_module()
 
@@ -21,11 +21,7 @@ set(UT_MOD_DEPS
 
 # List all .cpp files as UT_SOURCE_FILES. Only the UT build is allowed.
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/StringArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ArrayArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/EnumArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/StructArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/StringTest.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ArrayTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FormatTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../utils/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"

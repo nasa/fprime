@@ -19,6 +19,7 @@
 #include <sstream>
 #include <limits>
 
+// Tests FPP format strings
 class FormatTest : public ::testing::Test {
 protected:
     void SetUp() override {
