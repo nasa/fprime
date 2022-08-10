@@ -10,229 +10,229 @@
 #include "STest/Pick/Pick.hpp"
 #include "gtest/gtest.h"
 
-#include <sstream>
 #include <limits>
 
-// Returns a valid value for Implicit enum
-Implicit::T getValidValue() {
-    return static_cast<Implicit::T>(STest::Pick::startLength(
-        Implicit::T::A, 
-        Implicit::NUM_CONSTANTS
+// Get the default value of an enum
+template <typename EnumType>
+typename EnumType::T getDefaultValue() {
+    return EnumType::A;
+}
+
+template<>
+Default::T getDefaultValue<Default>() {
+    return Default::C;
+}
+
+// Get a valid value of an enum
+template <typename EnumType>
+typename EnumType::T getValidValue() {
+    U32 val = STest::Pick::startLength(0, EnumType::NUM_CONSTANTS);
+
+    switch (val) {
+        case 0: return EnumType::A;
+        case 1: return EnumType::B;
+        default: return EnumType::C;
+    }
+}
+
+template<>
+Interval::T getValidValue<Interval>() {
+    U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS);
+
+    switch (val) {
+        case 0: return Interval::A;
+        case 1: return Interval::B;
+        case 2: return Interval::C;
+        case 3: return Interval::D;
+        case 4: return Interval::E;
+        case 5: return Interval::F;
+        default: return Interval::G;
+    }
+}
+
+// Get an invalid value of an enum
+template <typename EnumType>
+typename EnumType::T getInvalidValue() {
+    U32 sign = STest::Pick::lowerUpper(0, 1);
+
+    switch (sign) {
+        case 0:
+            return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
+                EnumType::B + 1,
+                EnumType::C - 1
+            ));
+        default:
+            return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
+                0,
+                EnumType::A - 1
+            ) * (-1));
+    }
+}
+
+template<>
+Implicit::T getInvalidValue<Implicit>() {
+    return static_cast<Implicit::T>(STest::Pick::lowerUpper(
+        Implicit::C + 1, 
+        std::numeric_limits<Implicit::SerialType>::max()
     ));
 }
 
-// Returns an invalid value for Implicit enum
-Implicit::T getInvalidValue() {
-    return static_cast<Implicit::T>(STest::Pick::startLength(
-        Implicit::T::C + 1, 
-        std::numeric_limits<I32>::max() - Implicit::NUM_CONSTANTS
+template<>
+Interval::T getInvalidValue<Interval>() {
+    return static_cast<Interval::T>(STest::Pick::lowerUpper(
+        Interval::G + 1,
+        std::numeric_limits<Interval::SerialType>::max()
     ));
 }
 
-TEST(EnumTest, Default) {
-    Implicit implicitEnum;
-    Explicit explicitEnum;
-    Default defaultEnum;
-    Interval intervalEnum;
-    SerializeTypeU8 typeU8Enum;
-    SerializeTypeU64 typeU64Enum;
+template<>
+SerializeTypeU8::T getInvalidValue<SerializeTypeU8>() {
+    return static_cast<SerializeTypeU8::T>(STest::Pick::lowerUpper(
+        SerializeTypeU8::C + 1,
+        SerializeTypeU8::A - 1
+    ));
+}
 
-    // SERIALIZED_SIZE
-    ASSERT_EQ(Implicit::SERIALIZED_SIZE, sizeof(I32));
-    ASSERT_EQ(Explicit::SERIALIZED_SIZE, sizeof(I32));
-    ASSERT_EQ(Default::SERIALIZED_SIZE, sizeof(I32));
-    ASSERT_EQ(Interval::SERIALIZED_SIZE, sizeof(I32));
-    ASSERT_EQ(SerializeTypeU8::SERIALIZED_SIZE, sizeof(U8));
-    ASSERT_EQ(SerializeTypeU64::SERIALIZED_SIZE, sizeof(U64));
+template<>
+SerializeTypeU64::T getInvalidValue<SerializeTypeU64>() {
+    return static_cast<SerializeTypeU64::T>(STest::Pick::lowerUpper(
+        SerializeTypeU64::B + 1,
+        SerializeTypeU64::A - 1
+    ));
+}
+
+// Test core enum interface
+template <typename EnumType>
+class EnumTest : public ::testing::Test {};
+
+// Specify type parameters for this test suite
+using EnumTypes = ::testing::Types<
+    Implicit, 
+    Explicit, 
+    Default,
+    Interval, 
+    SerializeTypeU8,
+    SerializeTypeU64
+>;
+TYPED_TEST_SUITE(EnumTest, EnumTypes);
+
+// Test enum constants and default construction
+TYPED_TEST(EnumTest, Default) {
+    TypeParam e;
+
+    // Constants
+    ASSERT_EQ(
+        TypeParam::SERIALIZED_SIZE, 
+        sizeof(typename TypeParam::SerialType)
+    );
 
     // Default constructor
-    ASSERT_EQ(implicitEnum.e, Implicit::T::A);
-    ASSERT_EQ(explicitEnum.e, Explicit::T::A);
-    ASSERT_EQ(defaultEnum.e, Default::T::D);
-    ASSERT_EQ(intervalEnum.e, Interval::T::A);
-    ASSERT_EQ(typeU8Enum.e, SerializeTypeU8::T::A);
-    ASSERT_EQ(typeU64Enum.e, SerializeTypeU64::T::A);
+    ASSERT_EQ(e.e, getDefaultValue<TypeParam>());
 }
 
-TEST(EnumTest, Constructors) {
-    Implicit::T validVal = getValidValue();
+// Test enum constructors
+TYPED_TEST(EnumTest, Constructors) {
+    typename TypeParam::T validVal = getValidValue<TypeParam>();
 
     // Raw enum value constructor
-    Implicit implicitEnum2(validVal);
-    ASSERT_EQ(implicitEnum2.e, validVal);
+    TypeParam e1(validVal);
+    ASSERT_EQ(e1.e, validVal);
 
     // Copy constructor
-    Implicit implicitEnum3(implicitEnum2);
-    ASSERT_EQ(implicitEnum3.e, validVal);
+    TypeParam e2(e1);
+    ASSERT_EQ(e2.e, validVal);
 }
 
-TEST(EnumTest, AssignmentOp) {
-    Implicit implicitEnum1;
-    Implicit implicitEnum2;
+// Test enum assignment operator
+TYPED_TEST(EnumTest, AssignmentOp) {
+    TypeParam e1;
+    TypeParam e2;
 
-    Implicit::T validVal = getValidValue();
+    typename TypeParam::T validVal = getValidValue<TypeParam>();
 
     // Raw enum value assignment
-    implicitEnum1 = validVal;
-    ASSERT_EQ(implicitEnum1.e, validVal);
+    e1 = validVal;
+    ASSERT_EQ(e1.e, validVal);
     
     // Object assignment
-    implicitEnum2 = implicitEnum1;
-    ASSERT_EQ(implicitEnum2.e, validVal);
+    e2 = e1;
+    ASSERT_EQ(e2.e, validVal);
 }
 
-TEST(EnumTest, EqualityOp) {
+// Test enum equality and inequality operator
+TYPED_TEST(EnumTest, EqualityOp) {
     // Initialize two distinct valid values
-    Implicit::T validVal1 = getValidValue();
-    Implicit::T validVal2 = getValidValue();
+    typename TypeParam::T validVal1 = getValidValue<TypeParam>();
+    typename TypeParam::T validVal2 = getValidValue<TypeParam>();
     while (validVal1 == validVal2) {
-        validVal2 = getValidValue();
+        validVal2 = getValidValue<TypeParam>();
     }
 
-    Implicit implicitEnum1;
-    Implicit implicitEnum2;
-    Implicit implicitEnum3(validVal1);
-    Implicit implicitEnum4(validVal2);
+    TypeParam e1;
+    TypeParam e2;
+    TypeParam e3(validVal1);
+    TypeParam e4(validVal2);
 
     // operator==
-    ASSERT_TRUE(implicitEnum3 == validVal1);
-    ASSERT_TRUE(implicitEnum4 == validVal2);
-    ASSERT_FALSE(implicitEnum3 == validVal2);
-    ASSERT_FALSE(implicitEnum4 == validVal1);
+    ASSERT_TRUE(e3 == validVal1);
+    ASSERT_TRUE(e4 == validVal2);
+    ASSERT_FALSE(e3 == validVal2);
+    ASSERT_FALSE(e4 == validVal1);
 
-    ASSERT_TRUE(implicitEnum1 == implicitEnum2);
-    ASSERT_FALSE(implicitEnum3 == implicitEnum4);
+    ASSERT_TRUE(e1 == e2);
+    ASSERT_FALSE(e3 == e4);
 
     // operator!=
-    ASSERT_TRUE(implicitEnum3 != validVal2);
-    ASSERT_TRUE(implicitEnum4 != validVal1);
-    ASSERT_FALSE(implicitEnum3 != validVal1);
-    ASSERT_FALSE(implicitEnum4 != validVal2);
+    ASSERT_TRUE(e3 != validVal2);
+    ASSERT_TRUE(e4 != validVal1);
+    ASSERT_FALSE(e3 != validVal1);
+    ASSERT_FALSE(e4 != validVal2);
 
-    ASSERT_TRUE(implicitEnum3 != implicitEnum4);
-    ASSERT_FALSE(implicitEnum1 != implicitEnum2);
+    ASSERT_TRUE(e3 != e4);
+    ASSERT_FALSE(e1 != e2);
 }
 
-TEST(EnumTest, StringFunctions) {
-    Implicit implicitEnum;
-
-    Implicit::T validVal = getValidValue();
-    Implicit::T invalidVal = getInvalidValue();
-
-    std::stringstream buf1;
-    std::stringstream buf2;
-
-    implicitEnum = validVal;
-    buf1 << implicitEnum;
-    switch (validVal) {
-        case Implicit::T::A:
-            ASSERT_STREQ(
-                buf1.str().c_str(), 
-                "A (0)"
-            );
-            break;
-        case Implicit::T::B:
-            ASSERT_STREQ(
-                buf1.str().c_str(), 
-                "B (1)"
-            );
-            break;
-        case Implicit::T::C:
-            ASSERT_STREQ(
-                buf1.str().c_str(), 
-                "C (2)"
-            );
-            break;
-    }
-
-    implicitEnum = invalidVal;
-    buf2 << implicitEnum;
-    std::string str = "[invalid] (" + std::to_string(invalidVal) + ")";
-    ASSERT_STREQ(
-        buf2.str().c_str(),
-        str.c_str()
-    );
-}
-
-TEST(EnumTest, IsValidFunction) {
-    Implicit validEnum = getValidValue();
-    Implicit invalidEnum = getInvalidValue();
+// Test enum isValid() function
+TYPED_TEST(EnumTest, IsValidFunction) {
+    TypeParam validEnum = getValidValue<TypeParam>();
+    TypeParam invalidEnum = getInvalidValue<TypeParam>();
 
     ASSERT_TRUE(validEnum.isValid());
     ASSERT_FALSE(invalidEnum.isValid());
-
-    // Test boundary values
-    Interval e = static_cast<Interval::T>(-1);
-    ASSERT_FALSE(e.isValid());
-    e = static_cast<Interval::T>(0);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(1);
-    ASSERT_FALSE(e.isValid());
-    e = static_cast<Interval::T>(2);
-    ASSERT_FALSE(e.isValid());
-    e = static_cast<Interval::T>(3);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(5);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(6);
-    ASSERT_FALSE(e.isValid());
-    e = static_cast<Interval::T>(10);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(99);
-    ASSERT_FALSE(e.isValid());
-    e = static_cast<Interval::T>(100);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(101);
-    ASSERT_TRUE(e.isValid());
-    e = static_cast<Interval::T>(102);
-    ASSERT_FALSE(e.isValid());
 }
 
-TEST(EnumTest, Serialization) {
-    Implicit enumI32;
-    SerializeTypeU8 enumU8;
-    SerializeTypeU64 enumU64;
+// Test enum serialization and deserialization
+TYPED_TEST(EnumTest, Serialization) {
+    TypeParam validEnum = getValidValue<TypeParam>();
+    TypeParam invalidEnum = getInvalidValue<TypeParam>();
 
     // Copy of enums to test after serialization
-    Implicit enumI32Copy = enumI32;
-    SerializeTypeU8 enumU8Copy = enumU8;
-    SerializeTypeU64 enumU64Copy = enumU64;
+    TypeParam validEnumCopy = validEnum;
+    TypeParam invalidEnumCopy = invalidEnum;
 
-    Fw::SerializeStatus status1;
-    Fw::SerializeStatus status2;
-    Fw::SerializeStatus status3;
-    U8 data1[Implicit::SERIALIZED_SIZE];
-    U8 data2[SerializeTypeU8::SERIALIZED_SIZE];
-    U8 data3[SerializeTypeU64::SERIALIZED_SIZE];
-    Fw::SerialBuffer buf1(data1, sizeof(data1));
-    Fw::SerialBuffer buf2(data2, sizeof(data2));
-    Fw::SerialBuffer buf3(data3, sizeof(data3));
+    Fw::SerializeStatus status;
+    U8 data[TypeParam::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer buf(data, sizeof(data));
 
     // Serialize the enums
-    status1 = buf1.serialize(enumI32);
-    status2 = buf2.serialize(enumU8);
-    status3 = buf3.serialize(enumU64);
+    status = buf.serialize(validEnum);
 
-    ASSERT_EQ(status1, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(status2, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(status3, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(buf.getBuffLength(), sizeof(typename TypeParam::SerialType));
 
-    ASSERT_EQ(buf1.getBuffLength(), sizeof(I32));
-    ASSERT_EQ(buf2.getBuffLength(), sizeof(U8));
-    ASSERT_EQ(buf3.getBuffLength(), sizeof(U64));
+    status = buf.serialize(invalidEnum);
+
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(buf.getBuffLength(), sizeof(typename TypeParam::SerialType) * 2);
 
     // Deserialize the enums
-    status1 = buf1.deserialize(enumI32Copy);
-    status2 = buf2.deserialize(enumU8Copy);
-    status3 = buf3.deserialize(enumU64Copy);
+    status = buf.deserialize(validEnumCopy);
 
-    ASSERT_EQ(status1, Fw::FW_SERIALIZE_OK);
-    // Value of enumU8 is too large to fit in a U8
-    ASSERT_EQ(status2, Fw::FW_DESERIALIZE_FORMAT_ERROR);
-    ASSERT_EQ(status3, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(validEnumCopy, validEnum);
 
-    ASSERT_EQ(enumI32, enumI32Copy);
-    // Value of enumU8 is too large to fit in a U8
-    ASSERT_NE(enumU8, enumU8Copy);
-    ASSERT_EQ(enumU64, enumU64Copy);
+    status = buf.deserialize(invalidEnumCopy);
+
+    ASSERT_EQ(status, Fw::FW_DESERIALIZE_FORMAT_ERROR);
+    ASSERT_EQ(invalidEnumCopy, invalidEnum);
 }
