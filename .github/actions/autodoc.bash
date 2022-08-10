@@ -11,7 +11,7 @@ git config --local user.name "nasa-fprime[bot]"
 git fetch "${REMOTE}" release/documentation
 git fetch "${REMOTE}" devel
 git checkout release/documentation
-git merge "${REMOTE}"/devel
+GIT_EDITOR=true git merge "${REMOTE}"/devel
 ${GITHUB_WORKSPACE}/docs/doxygen/generate_docs.bash
 git add -Af "${GITHUB_WORKSPACE}/docs"
 

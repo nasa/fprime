@@ -65,7 +65,8 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     hash.init();
     for (U32 i = 0; i < size; i++) {
         char byte;
-        ring.peek(byte, i);
+        const Fw::SerializeStatus status = ring.peek(byte, i);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         hash.update(&byte, 1);
     }
     hash.final(hashBuffer);
@@ -73,7 +74,8 @@ bool FprimeDeframing::validate(Types::CircularBuffer& ring, U32 size) {
     for (U32 i = 0; i < HASH_DIGEST_LENGTH; i++) {
         char calc = static_cast<char>(hashBuffer.getBuffAddr()[i]);
         char sent = 0;
-        ring.peek(sent, size + i);
+        const Fw::SerializeStatus status = ring.peek(sent, size + i);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
         if (calc != sent) {
             return false;
         }
@@ -126,7 +128,8 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // That causes issues in routing; adjust size.
     FW_ASSERT(buffer.getSize() >= size);
     buffer.setSize(size);
-    ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
+    status = ring.peek(buffer.getData(), size, FpFrameHeader::SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     m_interface->route(buffer);
     return DeframingProtocol::DEFRAMING_STATUS_SUCCESS;
 }

@@ -63,7 +63,22 @@ event, and increase the cycle slip counters.
 
 As described in the Functional Description section, the `Svc::ActiveRateGroup` component accepts calls to the CycleIn and invokes the RateGroupMemberOut ports:
 
-![System Tick Port Call](img/RateGroupCall.jpg) 
+```mermaid
+sequenceDiagram
+    Caller->>ActiveRateGroup: 1. CycleIn
+    activate Caller
+    activate ActiveRateGroup
+    deactivate  ActiveRateGroup 
+    loop for each output port
+        ActiveRateGroup->>Callee: 2. RateGroupMemberOut[N]
+        activate Callee
+        activate  ActiveRateGroup
+        deactivate  Callee 
+        deactivate  ActiveRateGroup 
+    end
+    deactivate  Caller 
+```
+
 
 ### 3.4 State
 

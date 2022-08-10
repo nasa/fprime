@@ -103,14 +103,10 @@ class CommentFormatters:
         Returns -1 if everything is a newline
         """
 
-        count = 0
-
-        for item in line_list:
+        for count, item in enumerate(line_list):
             item = item.strip()
             if item != "":
                 return count
-            count += 1
-
         return -1
 
     def _getEndsExcludingNewlines(self, line_list):
@@ -1078,15 +1074,13 @@ class Formatters:
                 cpos = apos + type_max + 1
 
             # place args and comments and put together the string.
-            i = 0
             func_arg_list = []
-            for a in format_func_list[1:]:
+            for i, a in enumerate(format_func_list[1:]):
                 pad = (cpos - (apos + len(a.strip()))) * " "
                 str = (
                     apad + a.strip() + pad + comment_list[i] + "\n"
                 )  #  + pad + comment_list[i]
                 func_arg_list.append(str)
-                i += 1
             #
             # print 'Last arg: ',func_arg_list[-1].replace(') ',');')
             # TODO: add switch so a ; is inserted - end of last arg after ).
@@ -1216,11 +1210,9 @@ class Formatters:
 
             max_type_length = max(list(map(len, type_list)))
 
-            i = 0
-            for type in type_list:
+            for i, type in enumerate(type_list):
                 pad = (max_type_length + pad_spaces) - len(type)
                 str = type + pad * " " + arg_list[i]
-                i += 1
                 str_list.append(str)
 
         return str_list

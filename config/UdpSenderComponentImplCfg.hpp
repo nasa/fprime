@@ -8,6 +8,8 @@
 #ifndef SVC_UDPSENDER_UDPSENDERCOMPONENTIMPLCFG_HPP_
 #define SVC_UDPSENDER_UDPSENDERCOMPONENTIMPLCFG_HPP_
 
+#include "Fw/Types/BasicTypes.hpp"
+
 namespace Svc {
     static const NATIVE_UINT_TYPE UDP_SENDER_MSG_SIZE = 256;
 }

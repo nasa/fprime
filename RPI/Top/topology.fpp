@@ -35,6 +35,7 @@ module RPI {
     instance textLogger
     instance uartDrv
     instance uplink
+    instance uartBufferManager
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -121,9 +122,10 @@ module RPI {
     }
 
     connections UART {
-      rpiDemo.UartBuffers -> uartDrv.readBufferSend
-      rpiDemo.UartWrite -> uartDrv.serialSend
-      uartDrv.serialRecv -> rpiDemo.UartRead
+      rpiDemo.UartBuffers -> uartBufferManager.bufferSendIn
+      rpiDemo.UartWrite -> uartDrv.send
+      uartDrv.$recv -> rpiDemo.UartRead
+      uartDrv.allocate -> uartBufferManager.bufferGetCallee
     }
 
     connections Uplink {

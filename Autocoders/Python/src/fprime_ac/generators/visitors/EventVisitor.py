@@ -121,23 +121,20 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
         Defined to generate header for  event python class.
         @param obj: the instance of the event model to operation on.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = EventHeader.EventHeader()
             d = datetime.datetime.now()
             c.date = d.strftime("%A, %d %B %Y")
             c.user = getuser()
             c.source = obj.get_xml_filename()
             self._writeTmpl(c, self.__fp[inst], "eventHeaderVisit")
-            inst += 1
 
     def DictBodyVisit(self, obj):
         """
         Defined to generate the body of the  Python event class
         @param obj: the instance of the event model to operation on.
         """
-        inst = 0
-        for id in obj.get_ids():
+        for inst, id in enumerate(obj.get_ids()):
             c = EventBody.EventBody()
             if len(obj.get_ids()) > 1:
                 c.name = obj.get_name() + "_%d" % inst
@@ -151,9 +148,7 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
 
             c.arglist = []
             c.ser_import_list = []
-            arg_num = 0
-
-            for arg_obj in obj.get_args():
+            for arg_num, arg_obj in enumerate(obj.get_args()):
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
@@ -185,7 +180,5 @@ class EventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string = format_string
 
                 c.arglist.append((n, d, type_string))
-                arg_num += 1
             self._writeTmpl(c, self.__fp[inst], "eventBodyVisit")
             self.__fp[inst].close()
-            inst += 1

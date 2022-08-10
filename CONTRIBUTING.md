@@ -125,7 +125,7 @@ Large submissions are difficult to review. Incredibly large pull requests can be
 to be broken up. Try to keep submissions small, focus on one issue or change in a pull request, and avoid lots of minor
 changes across many files.
 
-Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced Github
+Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced GitHub
 tools this can increase the effort required to review a submission. Be careful with the changes you are submitting.
 
 ## Run Tests

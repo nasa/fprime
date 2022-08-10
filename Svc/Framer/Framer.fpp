@@ -1,25 +1,38 @@
 module Svc {
 
-  @ A component for framing unframed input
+  @ A component for framing input for transmission to the ground
   passive component Framer {
 
-    @ Mutexed input communication port
+    # ----------------------------------------------------------------------
+    # Receiving packets
+    # ----------------------------------------------------------------------
+
+    @ Port for receiving data packets of any type stored in statically-sized
+    @ Fw::Com buffers
     guarded input port comIn: Fw.Com
 
-    @ Mutexed input Buffer send port
+    @ Port for receiving file packets stored in dynamically-sized
+    @ Fw::Buffer objects
     guarded input port bufferIn: Fw.BufferSend
 
-    @ Buffer send output port
+    # ----------------------------------------------------------------------
+    # Allocation and deallocation of buffers
+    # ----------------------------------------------------------------------
+
+    @ Port for deallocating buffers received on bufferIn, after
+    @ copying packet data to the frame buffer
     output port bufferDeallocate: Fw.BufferSend
 
-    @ Framed allocate output port
+    @ Port for allocating buffers to hold framed data
     output port framedAllocate: Fw.BufferGet
 
-    @ Framed output port
-    output port framedOut: Drv.ByteStreamSend
+    # ----------------------------------------------------------------------
+    # Sending frame data
+    # ----------------------------------------------------------------------
 
-    @ Time get port
-    time get port timeGet
+    @ Port for sending buffers containing framed data. Ownership of the
+    @ buffer passes to the receiver.
+    output port framedOut: Drv.ByteStreamSend
 
   }
 
