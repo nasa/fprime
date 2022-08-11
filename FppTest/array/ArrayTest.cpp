@@ -89,9 +89,25 @@ template <typename ArrayType>
 class ArrayTest : public ::testing::Test {
 protected:
     void SetUp() override {
+        setDefaultVals<ArrayType>(defaultVals);
+
         setTestVals<ArrayType>(testVals);
+        while (valsAreEqual()) {
+            setTestVals<ArrayType>(testVals);
+        }
     };
 
+    bool valsAreEqual() {
+        for (int i = 0; i < ArrayType::SIZE; i++) {
+            if (defaultVals[i] != testVals[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    typename ArrayType::ElementType defaultVals[ArrayType::SIZE];
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
@@ -108,9 +124,6 @@ TYPED_TEST_SUITE(ArrayTest, ArrayTypes);
 TYPED_TEST(ArrayTest, Default) {
     TypeParam a;
 
-    typename TypeParam::ElementType defaultVals[TypeParam::SIZE];
-    setDefaultVals<TypeParam>(defaultVals);
-
     // Constants
     ASSERT_EQ(TypeParam::SIZE, 3);
     ASSERT_EQ(
@@ -120,7 +133,7 @@ TYPED_TEST(ArrayTest, Default) {
 
     // Default constructor
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
-        ASSERT_EQ(a[i], defaultVals[i]);
+        ASSERT_EQ(a[i], this->defaultVals[i]);
     }
 }
 
@@ -209,9 +222,12 @@ TYPED_TEST(ArrayTest, EqualityOp) {
 // Test array serialization and deserialization
 TYPED_TEST(ArrayTest, Serialization) {
     TypeParam a(this->testVals);
-    TypeParam aCopy = a;
 
+    U32 serializedSize = getSerializedSize<TypeParam>(this->testVals);
     Fw::SerializeStatus status;
+
+    // Test successful serialization
+    TypeParam aCopy;
     U8 data[TypeParam::SERIALIZED_SIZE];
     Fw::SerialBuffer buf(data, sizeof(data));
 
@@ -221,7 +237,7 @@ TYPED_TEST(ArrayTest, Serialization) {
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(
         buf.getBuffLength(), 
-        getSerializedSize<TypeParam>(this->testVals)
+        serializedSize        
     );
 
     // Deserialize
@@ -229,6 +245,25 @@ TYPED_TEST(ArrayTest, Serialization) {
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(a, aCopy);
+
+    // Test unsuccessful serialization
+    TypeParam aCopy2;
+    U8 data2[serializedSize-1];
+    Fw::SerialBuffer buf2(data2, sizeof(data2));
+
+    // Serialize
+    status = buf2.serialize(a);
+    
+    ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
+    ASSERT_NE(
+        buf2.getBuffLength(), 
+        serializedSize        
+    );
+
+    // Deserialize
+    status = buf2.deserialize(aCopy2);
+
+    ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
 }
 
 // Test array toString() and ostream operator functions

@@ -10,15 +10,15 @@ namespace FppTest {
     
         U8 getU8() {
             return static_cast<U8>(STest::Pick::lowerUpper(
-                std::numeric_limits<U8>::min(),
+                1,
                 std::numeric_limits<U8>::max()
             ));
         }
 
         U32 getU32() {
             return STest::Pick::lowerUpper(
-                std::numeric_limits<U32>::min(),
-                std::numeric_limits<U32>::max()
+                1,
+                std::numeric_limits<U8>::max()
             );
         }
 
@@ -27,7 +27,7 @@ namespace FppTest {
         }
 
         void setString(char* buf, U32 size) {
-            U32 length = STest::Pick::lowerUpper(0, size);
+            U32 length = STest::Pick::lowerUpper(1, size);
 
             if (length == 0) {
                 buf[0] = 0;

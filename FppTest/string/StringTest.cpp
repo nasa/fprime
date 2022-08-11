@@ -35,9 +35,8 @@ class StringTest : public ::testing::Test {
 protected:
     void SetUp() override {
         size = getSize<StringType>();
-        src = new char[size];
 
-        FppTest::Utils::setString(src, sizeof(src));
+        FppTest::Utils::setString(src, size);
 
         char fwStrBuf1[Fw::String::STRING_SIZE];
         FppTest::Utils::setString(fwStrBuf1, sizeof(fwStrBuf1));
@@ -49,12 +48,8 @@ protected:
         fwSubstr = fwStrBuf2;
     }
 
-    void TearDown() override {
-        delete[] src;
-    }
-
     U32 size;
-    char* src;
+    char src[StringType::SERIALIZED_SIZE];
 
     Fw::String fwStr;
     Fw::String fwSubstr;
