@@ -11,7 +11,6 @@
  */
 
 #include <FpConfig.hpp>
-#include <FpConfig.hpp>
 
 // Check that command/telemetry strings are not larger than an argument buffer
 
