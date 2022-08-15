@@ -63,14 +63,14 @@ If the type is not specified as seen through the compiler directive the `Default
 definition. Each also defines a format specifier for use with the `printf` family of functions. Additionally, each
 defines a pair of constants of the form `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values.
 
-| Platform Logical Type   | Compiler Directive                 | Default          | Format Specifier      | Notes                       | 
-|-------------------------|------------------------------------|------------------|-----------------------|-----------------------------|
-| PlatformIndexType       | PLATFORM_INDEX_TYPE_DEFINED        | PlatformIntType  | PRI_PlatformIndexType | Ports indices               | 
-| PlatformSizeType        | PLATFORM_SIZE_TYPE_DEFINED         | PlatformUIntType | PRI_PlatformSizeType  | Sizes                       |
-| PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | uint64_t         | PRI_PointerCastType   | Pointers stored as integers |
-| PlatformAssertArgType   | PLATFORM_ASSERT_ARG_TYPE_DEFINED   | PlatformIntType  | PRI_AssertArgType     | Argument to FW_ASSERT       |
-| PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType   | Deprecated (see note)       |
-| PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType  | Deprecated (see note)       |
+| Platform Logical Type   | Compiler Directive                 | Default          | Format Specifier            | Notes                       | 
+|-------------------------|------------------------------------|------------------|-----------------------------|-----------------------------|
+| PlatformIndexType       | PLATFORM_INDEX_TYPE_DEFINED        | PlatformIntType  | PRI_PlatformIndexType       | Ports indices               | 
+| PlatformSizeType        | PLATFORM_SIZE_TYPE_DEFINED         | PlatformUIntType | PRI_PlatformSizeType        | Sizes                       |
+| PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | uint64_t         | PRI_PlatformPointerCastType | Pointers stored as integers |
+| PlatformAssertArgType   | PLATFORM_ASSERT_ARG_TYPE_DEFINED   | PlatformIntType  | PRI_PlatformAssertArgType   | Argument to FW_ASSERT       |
+| PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType         | Deprecated (see note)       |
+| PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType        | Deprecated (see note)       |
 
 A complete definition of a type as a platform should supply within `PlatformTypes.hpp` is shown below. Notice the type
 is defined along with a compiler directive announcing it is defined, and a format specifier.
