@@ -3,7 +3,6 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
-#include <FpConfig.hpp>
 
 namespace Os {
 

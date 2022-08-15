@@ -4,7 +4,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
-#include <FpConfig.hpp>
 
 namespace Fw {
 

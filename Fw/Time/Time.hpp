@@ -4,7 +4,6 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <FpConfig.hpp>
 
 namespace Fw {
     class Time: public Serializable {
