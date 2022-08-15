@@ -23,7 +23,7 @@ namespace FppTest {
         }
 
         char getChar() {
-            return static_cast<char>(STest::Pick::lowerUpper(1, 255));
+            return static_cast<char>(STest::Pick::lowerUpper(1, 127));
         }
 
         void setString(char* buf, U32 size) {
