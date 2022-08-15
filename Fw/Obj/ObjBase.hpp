@@ -14,7 +14,6 @@
 #define FW_OBJ_BASE_HPP
 
 #include <FpConfig.hpp>
-#include <FpConfig.hpp>
 
 namespace Fw {
 

@@ -21,7 +21,6 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
-#include <FpConfig.hpp>
 
 #if FW_OBJECT_REGISTRATION == 1
 

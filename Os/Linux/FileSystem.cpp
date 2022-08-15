@@ -1,5 +1,4 @@
 #include <FpConfig.hpp>
-#include <FpConfig.hpp>
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>

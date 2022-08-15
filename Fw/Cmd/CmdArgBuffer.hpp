@@ -14,7 +14,6 @@
 
 #include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <FpConfig.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
 namespace Fw {
