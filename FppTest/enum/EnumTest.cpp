@@ -51,6 +51,9 @@ Interval::T getValidValue<Interval>() {
 }
 
 // Get an invalid value of an enum
+// Assumptions:
+//   - EnumType::A is the smallest constant
+//   - EnumType::C is the largest constant
 template <typename EnumType>
 typename EnumType::T getInvalidValue() {
     U32 sign = STest::Pick::lowerUpper(0, 1);
@@ -58,13 +61,13 @@ typename EnumType::T getInvalidValue() {
     switch (sign) {
         case 0:
             return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                EnumType::B + 1,
-                EnumType::C - 1
+                EnumType::C + 1,
+                std::numeric_limits<typename EnumType::SerialType>::max()
             ));
         default:
             return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                0,
-                EnumType::A - 1
+                (EnumType::A - 1) * (-1),
+                std::numeric_limits<typename EnumType::SerialType>::max()
             ) * (-1));
     }
 }
