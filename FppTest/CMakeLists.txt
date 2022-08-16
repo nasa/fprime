@@ -15,7 +15,6 @@ if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/enum/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/array/")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/string/")
 endif()
 
 set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/enum/main.cpp")

@@ -1,6 +1,6 @@
-#include "FppTest/string/StringArrayArrayAc.hpp"
-#include "FppTest/string/String100ArrayArrayAc.hpp"
-#include "FppTest/string/StringStructSerializableAc.hpp"
+#ifndef FPP_TEST_STRING_TEST_HPP
+#define FPP_TEST_STRING_TEST_HPP
+
 #include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/String.hpp"
@@ -14,23 +14,8 @@ U32 getSize() {
     return 80;
 }
 
-template<>
-U32 getSize<String100Array::StringSize100>() {
-    return 100;
-}
-
-template<>
-U32 getSize<StringStruct::StringSize50>() {
-    return 50;
-}
-
-template<>
-U32 getSize<StringStruct::StringSize60>() {
-    return 60;
-}
-
 // Test a nested string class
-template <typename StringType>
+template <class StringType>
 class StringTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -55,18 +40,10 @@ protected:
     Fw::String fwSubstr;
 };
 
-// Specify type parameters for this test suite
-using StringTypes = ::testing::Types<
-    StringArray::StringSize80,
-    String100Array::StringSize100,
-    StringStruct::StringSize80,
-    StringStruct::StringSize50,
-    StringStruct::StringSize60
->;
-TYPED_TEST_SUITE(StringTest, StringTypes);
+TYPED_TEST_SUITE_P(StringTest);
 
 // Test string capacity and default constructor
-TYPED_TEST(StringTest, Default) {
+TYPED_TEST_P(StringTest, Default) {
     TypeParam str;
 
     // Capacity
@@ -83,7 +60,7 @@ TYPED_TEST(StringTest, Default) {
 }
 
 // Test string constructors
-TYPED_TEST(StringTest, Constructors) {
+TYPED_TEST_P(StringTest, Constructors) {
     // Char array constructor
     TypeParam str1(this->src);
     ASSERT_STREQ(str1.toChar(), this->src);
@@ -98,7 +75,7 @@ TYPED_TEST(StringTest, Constructors) {
 }
 
 // Test string assignment operator
-TYPED_TEST(StringTest, AssignmentOp) {
+TYPED_TEST_P(StringTest, AssignmentOp) {
     TypeParam str1;
     TypeParam str2;
     TypeParam str3;
@@ -123,3 +100,12 @@ TYPED_TEST(StringTest, AssignmentOp) {
     str3 = this->fwStr;
     ASSERT_STREQ(str3.toChar(), this->fwSubstr.toChar());
 }
+
+// Register all test patterns
+REGISTER_TYPED_TEST_SUITE_P(StringTest,
+    Default,
+    Constructors,
+    AssignmentOp
+);
+
+#endif
