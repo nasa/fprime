@@ -1,4 +1,4 @@
-# FppTest/test/string
+# FppTest/string
 
 This directory contains unit tests for the FPP code generator.
 
