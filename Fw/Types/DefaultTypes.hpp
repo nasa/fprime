@@ -52,17 +52,6 @@ const PlatformSizeType PlatformSizeType_MAX = PlatformUIntType_MAX;
 #endif
 
 /**
-* Default implementation for pointers stored as integers
-*/
-#ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED
-typedef uint64_t PlatformPointerCastType;
-const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint64_t>::min();
-const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint64_t>::max();
-#define PLATFORM_POINTER_CAST_TYPE_DEFINED
-#define PRI_PlatformPointerCastType PRIx64
-#endif
-
-/**
 * Default implementation for argument to fw_assert
 */
 #ifndef PLATFORM_ASSERT_ARG_TYPE_DEFINED
@@ -73,3 +62,37 @@ const PlatformAssertArgType PlatformAssertArgType_MAX = PlatformIntType_MAX;
 #define PRI_PlatformAssertArgType PRI_PlatformIntType
 #endif
 
+
+/**
+* Default implementation for pointers stored as integers
+*/
+#ifndef PLATFORM_POINTER_CAST_TYPE_DEFINED
+  // Check for __SIZEOF_POINTER__ or cause error
+  #ifndef __SIZEOF_POINTER__
+    #error "Compiler does not support __SIZEOF_POINTER__, cannot use default for PlatformPointerCastType"
+  #endif
+
+  // Pointer sizes are determined by size of compiler
+  #if __SIZEOF_POINTER__ == 8
+    typedef uint64_t PlatformPointerCastType;
+    const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint64_t>::min();
+    const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint64_t>::max();
+    #define PRI_PlatformPointerCastType PRIx64
+  #elif __SIZEOF_POINTER__ == 4
+    typedef uint32_t PlatformPointerCastType;
+    const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint32_t>::min();
+    const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint32_t>::max();
+    #define PRI_PlatformPointerCastType PRIx32
+  #elif __SIZEOF_POINTER__ == 2
+    typedef uint16_t PlatformPointerCastType;
+    const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint16_t>::min();
+    const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint16_t>::max();
+    #define PRI_PlatformPointerCastType PRIx16
+  #else
+    typedef uint8_t PlatformPointerCastType;
+    const PlatformPointerCastType PlatformPointerCastType_MIN = std::numeric_limits<uint8_t>::min();
+    const PlatformPointerCastType PlatformPointerCastType_MAX = std::numeric_limits<uint8_t>::max();
+    #define PRI_PlatformPointerCastType PRIx8
+  #endif
+  #define PLATFORM_POINTER_CAST_TYPE_DEFINED
+#endif

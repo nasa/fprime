@@ -8,6 +8,8 @@ concepts in the system (e.g. size) and are set by the platform supporter to a kn
 
 This document describes: fixed-width types and logical types.
 
+**Note:** these definitions, as described below, require compiler optimization in order to remove duplicate link symbols.
+
 ## Fixed Width Types
 
 In F´, fixed width types map to the standard definitions either in the C standard or in the `stdint.h` header as seen
