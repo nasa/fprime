@@ -76,7 +76,9 @@ namespace Drv {
     )
   {
       // Make sure file has been opened
-      FW_ASSERT(-1 != this->m_fd);
+      if (-1 == this->m_fd) {
+          return I2cStatus::I2C_OPEN_ERR;
+      }
 
 #if DEBUG_PRINT
       Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
@@ -115,7 +117,9 @@ namespace Drv {
     )
   {
       // Make sure file has been opened
-      FW_ASSERT(-1 != this->m_fd);
+      if (-1 == this->m_fd) {
+          return I2cStatus::I2C_OPEN_ERR;
+      }
 
 #if DEBUG_PRINT
       Fw::Logger::logMsg("I2c addr: 0x%02X\n",addr);
@@ -157,6 +161,9 @@ namespace Drv {
   ){
 
     // Make sure file has been opened
+    if (-1 == this->m_fd) {
+        return I2cStatus::I2C_OPEN_ERR;
+    }
     FW_ASSERT(-1 != this->m_fd);
 
     // make sure they are not null pointers
@@ -195,7 +202,7 @@ namespace Drv {
         Fw::Logger::logMsg("Status: %d Errno: %d\n", stat, errno);
       #endif
       //Because we're using ioctl to perform the transaction we dont know exactly the type of error that occurred
-      return Drv::I2cStatus::I2C_OTHER_ERR;
+      return I2cStatus::I2C_OTHER_ERR;
     }
 
 #if DEBUG_PRINT
