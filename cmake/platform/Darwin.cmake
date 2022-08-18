@@ -20,4 +20,4 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
 endif()
 
 # Add linux include path which is compatible with Darwin for PlatformTypes.hpp
-set(FPRIME_PLATFORM_TYPES "${FPRIME_FRAMEWORK_PATH}/cmake/platform/types")
+include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")

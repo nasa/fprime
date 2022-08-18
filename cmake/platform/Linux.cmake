@@ -15,5 +15,5 @@ add_definitions(-DTGT_OS_TYPE_LINUX)
 set(FPRIME_USE_POSIX ON)
 
 # Add Linux specific headers into the system
-set(FPRIME_PLATFORM_TYPES "${FPRIME_FRAMEWORK_PATH}/cmake/platform/types")
+include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")
 
