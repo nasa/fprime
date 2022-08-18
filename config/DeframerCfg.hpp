@@ -7,7 +7,7 @@
 #ifndef SVC_DEFRAMER_CFG_HPP
 #define SVC_DEFRAMER_CFG_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Svc {
     namespace DeframerCfg {

@@ -12,7 +12,7 @@
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <cassert>
@@ -24,12 +24,12 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
             CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
@@ -72,12 +72,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
       if (m_compPtr) {
@@ -108,12 +108,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
 

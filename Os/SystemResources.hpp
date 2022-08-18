@@ -12,7 +12,7 @@
 #ifndef _SystemResources_hpp_
 #define _SystemResources_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
 namespace SystemResources {

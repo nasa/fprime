@@ -1,9 +1,8 @@
 #ifndef OS_QUEUE_STRING_TYPE_HPP
 #define OS_QUEUE_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/StringType.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Types/StringType.hpp>
 
 namespace Os {
 

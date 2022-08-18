@@ -6,8 +6,9 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
+
+set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/InternalInterfaceString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MallocAllocator.cpp"

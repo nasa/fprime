@@ -10,9 +10,9 @@
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID 0x%08X: Line: %d "
+#define fileIdFs "Assert file ID 0x%08X: Line: %" PRI_FwAssertArgType
 #else
-#define fileIdFs "Assert file \"%s\": Line: %d "
+#define fileIdFs "Assert file \"%s\": Line: %" PRI_FwAssertArgType
 #endif
 
 namespace Fw {
@@ -26,12 +26,12 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
             CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             ) {
@@ -82,12 +82,12 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6
          )
     {
         CHAR destBuffer[FW_ASSERT_DFL_MSG_LEN];
@@ -149,7 +149,7 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1) {
+            FwAssertArgType arg1) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
@@ -174,8 +174,8 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2) {
+            FwAssertArgType arg1,
+            FwAssertArgType arg2) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
@@ -199,9 +199,9 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3) {
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
@@ -225,10 +225,10 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4) {
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
@@ -252,11 +252,11 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5) {
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
@@ -280,12 +280,12 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6) {
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6) {
         if (nullptr == s_assertHook) {
             CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(

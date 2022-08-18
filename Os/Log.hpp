@@ -6,7 +6,7 @@
 #ifndef _Log_hpp_
 #define _Log_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
 
 namespace Os {

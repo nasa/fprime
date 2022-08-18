@@ -3,7 +3,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <cstdio>
-
+#include <FpConfig.hpp>
 #ifdef BUILD_UT
 #include <iomanip>
 #include <Fw/Types/String.hpp>
