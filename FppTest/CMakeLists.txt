@@ -17,5 +17,11 @@ if (BUILD_TESTING AND NOT __FPRIME_NO_UT_GEN__)
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/struct/")
 endif()
 
-set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/enum/main.cpp")
-set(MOD_DEPS ${PROJECT_NAME}/utils)
+set(SOURCE_FILES "source.cpp")
+set(MOD_DEPS
+    ${PROJECT_NAME}/enum
+    ${PROJECT_NAME}/array
+    ${PROJECT_NAME}/struct
+)
+
+register_fprime_deployment()
