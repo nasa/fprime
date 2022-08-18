@@ -2,7 +2,6 @@
 #define _File_hpp_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 
 namespace Os {
 

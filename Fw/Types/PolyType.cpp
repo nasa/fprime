@@ -2,7 +2,6 @@
 #include <Fw/Types/Assert.hpp>
 #include <cstdio>
 #define __STDC_FORMAT_MACROS
-#include <StandardTypes.hpp>
 
 namespace Fw {
 
@@ -411,7 +410,7 @@ namespace Fw {
                     valIsEqual = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<FwAssertArgType>(this->m_dataType));
                     return false; // for compiler
                 }
             return valIsEqual;
@@ -474,7 +473,7 @@ namespace Fw {
                     result = false;
                     break;
                 default:
-                    FW_ASSERT(0,static_cast<AssertArg>(this->m_dataType));
+                    FW_ASSERT(0,static_cast<FwAssertArgType>(this->m_dataType));
                     return false; // for compiler
             }
             return result;

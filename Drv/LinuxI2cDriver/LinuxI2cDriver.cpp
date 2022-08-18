@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Drv/LinuxI2cDriver/LinuxI2cDriver.hpp>
 #include <Fw/Logger/Logger.hpp>
 

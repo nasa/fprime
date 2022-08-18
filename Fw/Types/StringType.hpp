@@ -13,7 +13,7 @@
 #ifndef FW_STRING_TYPE_HPP
 #define FW_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #ifdef BUILD_UT
 #include <iostream>

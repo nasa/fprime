@@ -19,5 +19,5 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
 
-# Add linux include path which is compatible with Darwin for StandardTypes.hpp
-include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+# Add linux include path which is compatible with Darwin for PlatformTypes.hpp
+include_directories(SYSTEM "${CMAKE_CURRENT_LIST_DIR}/types")

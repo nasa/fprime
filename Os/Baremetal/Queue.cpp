@@ -5,7 +5,7 @@
 //         safety is implemented as this intended for baremetal devices.
 //         Based on Os/Pthreads/Queue.cpp from @dinkel
 // ======================================================================
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Pthreads/BufferQueue.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Queue.hpp>

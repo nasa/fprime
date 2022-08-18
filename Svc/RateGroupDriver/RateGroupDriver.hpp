@@ -19,7 +19,7 @@
 #define SVC_RATEGROUPDRIVER_HPP
 
 #include <Svc/RateGroupDriver/RateGroupDriverComponentAc.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Svc {
 

@@ -1,5 +1,5 @@
 #include <Ref/RecvBuffApp/RecvBuffComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Log.hpp>
 #include <Fw/Types/Assert.hpp>
 

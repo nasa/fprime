@@ -1,8 +1,6 @@
 #include <FpConfig.hpp>
-
 #include <Fw/Port/InputPortBase.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <cstdio>
 
 namespace Fw {

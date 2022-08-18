@@ -12,7 +12,7 @@
 
 #include <Svc/Framer/Framer.hpp>
 #include "Fw/Logger/Logger.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
