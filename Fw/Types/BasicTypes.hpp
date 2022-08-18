@@ -1,7 +1,7 @@
 /**
  * \file
  * \author T. Canham
- * \brief Declares ISF basic types
+ * \brief Declares fprime basic types
  *
  * \copyright
  * Copyright 2009-2016, by the California Institute of Technology.
@@ -29,37 +29,19 @@ typedef uint8_t         U8; //!< 8-bit unsigned integer
 typedef U8              BYTE; //!< byte type
 typedef char CHAR;
 
-extern const int8_t I8_MIN;
-extern const int8_t I8_MAX;
-
-extern const uint8_t U8_MIN;
-extern const uint8_t U8_MAX;
-
 #if FW_HAS_16_BIT
     typedef int16_t        I16; //!< 16-bit signed integer
     typedef uint16_t       U16; //!< 16-bit unsigned integer
-    extern const I16 I16_MIN;
-    extern const I16 I16_MAX;
-    extern const U16 U16_MIN;
-    extern const U16 U16_MAX;
 #endif
 
 #if FW_HAS_32_BIT
   typedef uint32_t       U32; //!< 32-bit signed integer
   typedef int32_t        I32; //!< 32-bit unsigned integer
-  extern const I32 I32_MIN;
-  extern const I32 I32_MAX;
-  extern const U32 U32_MIN;
-  extern const U32 U32_MAX;
 #endif
 
 #if FW_HAS_64_BIT
   typedef int64_t        I64; //!< 64-bit signed integer
   typedef uint64_t       U64; //!< 64-bit unsigned integer
-  extern const I64 I64_MIN;
-  extern const I64 I64_MAX;
-  extern const U64 U64_MIN;
-  extern const U64 U64_MAX;
 #endif
 
 typedef float   F32; //!< 32-bit floating point
@@ -100,5 +82,34 @@ typedef PlatformPointerCastType POINTER_CAST;
 } // extern "C"
 
 #endif // __cplusplus
+
+/**
+ * BasicLimits:
+ *
+ * Limits for the fprime provided types. Implemented as a class with static
+ * constants to ensure that storage is not allocated although the definitions
+ * exist.
+ */
+struct BasicLimits : PlatformLimits {
+    static const int8_t I8_MIN = INT8_MIN;
+    static const int8_t I8_MAX = INT8_MAX;
+    static const uint8_t U8_MIN = 0;
+    static const uint8_t U8_MAX = UINT8_MAX;
+
+    static const I16 I16_MIN = INT16_MIN;
+    static const I16 I16_MAX = INT16_MAX;
+    static const U16 U16_MIN = 0;
+    static const U16 U16_MAX = UINT16_MAX;
+
+    static const I32 I32_MIN = INT32_MIN;
+    static const I32 I32_MAX = INT32_MAX;
+    static const U32 U32_MIN = 0;
+    static const U32 U32_MAX = UINT32_MAX;
+
+    static const I64 I64_MIN = INT64_MIN;
+    static const I64 I64_MAX = INT64_MAX;
+    static const U64 U64_MIN = 0;
+    static const U64 U64_MAX = UINT64_MAX;
+};
 
 #endif

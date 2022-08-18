@@ -6,16 +6,8 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-get_filename_component(PLATFORM_NAME "${CMAKE_TOOLCHAIN_FILE}" NAME)
-if (NOT DEFINED FPRIME_PLATFORM_TYPES)
-    message(FATAL_ERROR "Platform '${CMAKE_SYSTEM_NAME}.cmake' must define FPRIME_PLATFORM_TYPES")
-elseif (NOT EXISTS "${FPRIME_PLATFORM_TYPES}/PlatformTypes.cpp" OR NOT EXISTS "${FPRIME_PLATFORM_TYPES}/PlatformTypes.hpp")
-    message(FATAL_ERROR "Platform '${CMAKE_SYSTEM_NAME}.cmake' must define PlatformTypes.cpp and PlatformTypes.hpp in ${FPRIME_PLATFORM_TYPES}")
-endif()
 
 set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
-  "${FPRIME_CONFIG_DIR}/FpConfig.cpp"
-  "${FPRIME_PLATFORM_TYPES}/PlatformTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Assert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/BasicTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/String.cpp"
