@@ -124,4 +124,3 @@ struct PlatformLimits {
         #error "Unsupported pointer size"
     #endif
 };
-#endif
