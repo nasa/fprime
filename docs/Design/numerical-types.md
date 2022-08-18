@@ -41,6 +41,8 @@ U32 value = 10;
 printf("My value: %" PRId32, value); // Uses string constant concatenation
 ```
 
+Minimum and maximum limits are provided by `FpLimits` of the form `FpLimits::<type>_MIN` and `FpLimits::<type>_MAX`.
+
 ## F´ Logical Integer Type Design
 
 
@@ -57,37 +59,45 @@ projects need to be able to control these sizes when operating across multiple p
 
 ### Platform Configured Types
 
-Platform developers should define the following logical types in the `PlatformTypes.hpp` header provided alongside
-their CMake platform and toolchain files. Each must also define a compiler directive to indicate the type was defined.
-If the type is not specified as seen through the compiler directive the `DefaultTypes.hpp` header will fill in a default
-definition. Each also defines a format specifier for use with the `printf` family of functions. Additionally, each
-defines a pair of constants of the form `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values.
+Platform developers must define the following logical types in the `PlatformTypes.hpp` header provided alongside
+their CMake platform and toolchain files. Each type also defines a format specifier for use with the `printf` family of
+functions. Additionally, each defines a pair of static constants of the form `<type>_MIN` and `<type>_MAX` as limits to
+the range of these values. All limits must be defined as public static constants or public static constant expressions
+within a struct called `PlatformLimits`. For simplicity, structs are used to ensure all definitions are public.
 
-| Platform Logical Type   | Compiler Directive                 | Default          | Format Specifier            | Notes                       | 
-|-------------------------|------------------------------------|------------------|-----------------------------|-----------------------------|
-| PlatformIndexType       | PLATFORM_INDEX_TYPE_DEFINED        | PlatformIntType  | PRI_PlatformIndexType       | Ports indices               | 
-| PlatformSizeType        | PLATFORM_SIZE_TYPE_DEFINED         | PlatformUIntType | PRI_PlatformSizeType        | Sizes                       |
-| PlatformPointerCastType | PLATFORM_POINTER_CAST_TYPE_DEFINED | uint64_t         | PRI_PlatformPointerCastType | Pointers stored as integers |
-| PlatformAssertArgType   | PLATFORM_ASSERT_ARG_TYPE_DEFINED   | PlatformIntType  | PRI_PlatformAssertArgType   | Argument to FW_ASSERT       |
-| PlatformIntType         | PLATFORM_INT_TYPE_DEFINED          | int              | PRI_PlatformIntType         | Deprecated (see note)       |
-| PlatformUIntType        | PLATFORM_UINT_TYPE_DEFINED         | unsigned int     | PRI_PlatformUIntType        | Deprecated (see note)       |
+| Platform Logical Type   | Format Specifier            | Notes                       | 
+|-------------------------|-----------------------------|-----------------------------|
+| PlatformIndexType       | PRI_PlatformIndexType       | Ports indices               | 
+| PlatformSizeType        | PRI_PlatformSizeType        | Sizes                       |
+| PlatformPointerCastType | PRI_PlatformPointerCastType | Pointers stored as integers |
+| PlatformAssertArgType   | PRI_PlatformAssertArgType   | Argument to FW_ASSERT       |
+| PlatformIntType         | PRI_PlatformIntType         | Deprecated (see note)       |
+| PlatformUIntType        | PRI_PlatformUIntType        | Deprecated (see note)       |
 
-A complete definition of a type as a platform should supply within `PlatformTypes.hpp` is shown below. Notice the type
-is defined along with a compiler directive announcing it is defined, and a format specifier.
+A complete definition of each type for a given platform must be supplied within `PlatformTypes.hpp` as shown in the
+example below. Notice the type is defined along with a format specifier and static constants are set in the
+`PlatformLimits` struct.
 
 ```c++
 typedef int32_t PlatformIndexType;
-const PlatformIndexType PlatformIndexType_MIN = 0;
-const PlatformIndexType PlatformIndexType_MAX = INT32_MAX;
-#define PLATFORM_INDEX_TYPE_DEFINED
 #define PRI_PlatformIndexType PRId32
+...
+
+struct PlatformLimits {
+    ...
+    static const PlatformIndexType PlatformIndexType_MIN = 0;
+    static const PlatformIndexType PlatformIndexType_MAX = INT32_MAX;
+    ...
+};
 ```
 
-In order to print these types, developers can use the following example as a basis:
+In order to print these types, developers can use the following example as a basis for using the PRI_* macros. This
+example also shows the use of the type's minimum limit.
 
 ```c++
 PlatformIndexType index = 3;
-printf("Index: %" PRI_PlatformIndexType " is the index", index); // Uses string constant concatenation
+// Print the above index type, and the minimum value supported by the same type
+printf("Index %" PRI_PlatformIndexType " is bound by %" PRI_PlatformIndexType, index, FpLimits::PlatformIndexType_MIN);
 ```
 
 **Note:** in order for F´ to compile without warnings it is necessary that each of the platform types are elements in
@@ -95,11 +105,18 @@ the set of integers supplied by the C standard int header. i.e. each type is an 
 `int64_t` or unsigned equivalents. On some compilers `int` and `unsigned int` are not members of that set and on those
 platforms it is imperative that both `PlatformIntType` and `PlatformUIntType` be set to some fixed size type instead.
 
+Additionally, types are defined as public static const expressions within a struct for two reasons. First, it allows the
+use of strongly typed constants without allocating storage for the constant nor requiring compiler optimization to
+remove storage. Second, it allows inheritance such that all constants from `PlatformLimits`, `BasicLimits`, and
+`FpLimits` (described below) are available through `FpLimits`. This implementation implies that one should never take
+the address of one of these constants.
+
 ### Configurable Integer Types
 
 Project may configure the framework types that the framework and components use for implementation through
-`FpConfig.hpp`. The default configuration uses the above platform types where applicable. `<type>_MIN` and `<type>_MAX`
-to define the minimum and maximum values.
+`FpConfig.hpp`. The default configuration as supplied with F´uses the above platform types where applicable.
+`<type>_MIN` and `<type>_MAX` limit constants are to be defined publicly within the `FpLimits` struct. The `FpLimits`
+struct inherit from `BasicLimits` using private inheritance as shown in the example at the bottom of this section.
 
 | Framework Type  | Logical Usage        | Default               | Format Specifier    | Notes |
 |-----------------|----------------------|-----------------------|---------------------|-------|
@@ -108,8 +125,7 @@ to define the minimum and maximum values.
 | FwAssertArgType | Arguments to asserts | PlatformAssertArgType | PRI_FwAssertArgType |       |
 
 There is also a set of framework types that are used across F´ deployments and specifically interact with ground data
-systems. `<type>_MIN` and `<type>_MAX` to define the minimum and maximum values. These GDS types are based on
-configurable platform independent fixed-widths as shown below:
+systems. These GDS types have defaults based on configurable platform independent fixed-widths as shown below:
 
 | GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
@@ -124,11 +140,18 @@ configurable platform independent fixed-widths as shown below:
 | FwPrmIdType            | F´ parameter ids           | U32                   | PRI_FwPrmIdType            |
 | FwTlmPacketizeIdType   | F´ telemetry packet ids    | U16                   | PRI_FwTlmPacketizeIdType   |
 
-A complete definition of a framework/GDS type in `FpConfig.hpp` would look like:
+All defaults can be overridden via project specific configuration supplying a custom `FpConfig.hpp`. A complete
+definition of a framework/GDS type in `FpConfig.hpp` would look like:
 
 ```c++
+#include <BasicTypes.hpp>
+...
 typedef uint32_t FwSizeType;
-const FwSizeType PlatformIndexType_MIN = 0;
-const FwSizeType PlatformIndexType_MAX = UINT32_MAX;
 #define PRI_FwSizeType PRIu32
+...
+
+struct FpLimits : BasicLimits {
+    const FwSizeType PlatformIndexType_MIN = 0;
+    const FwSizeType PlatformIndexType_MAX = UINT32_MAX;
+};
 ```

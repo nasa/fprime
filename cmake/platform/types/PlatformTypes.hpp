@@ -11,14 +11,14 @@
  * type. Implementors must define these constants in a C++ struct for two
  * reasons:
  *
- *   1. static constants in structs do not incure storage when referred to
+ *   1. static constants in structs do not incur storage when referred to
  *      in a static context without the need for optimization in gcc
  *
- *   2. static contants in structs can be inherited via private inheritance
+ *   2. static constants in structs can be inherited via private inheritance
  *      allowing the definitions to be available to descendant functions
  *
  * In C++ fprime code, users may then refer to FpLimits::PlatformIntType_MIN
- * without refering to this header directly.
+ * without referring to this header directly.
  */
 #include <limits>
 
