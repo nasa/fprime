@@ -14,39 +14,25 @@
 #include <Fw/Types/BasicTypes.hpp>
 
 typedef PlatformIndexType FwIndexType;
-extern const FwIndexType FwIndexType_MIN;
-extern const FwIndexType FwIndexType_MAX;
 #define PRI_FwIndexType PRI_PlatformIndexType
 
 typedef PlatformSizeType FwSizeType;
-extern const FwSizeType FwSizeType_MIN;
-extern const FwSizeType FwSizeType_MAX;
 #define PRI_FwSizeType PRI_PlatformSizeType
 
 typedef PlatformAssertArgType FwAssertArgType;
-extern const FwAssertArgType FwAssertArgType_MIN;
-extern const FwAssertArgType FwAssertArgType_MAX;
 #define PRI_FwAssertArgType PRI_PlatformAssertArgType
 
 
 typedef PlatformIntType FwNativeIntType;
-extern const FwNativeIntType FwNativeIntType_MIN;
-extern const FwNativeIntType FwNativeIntType_MAX;
 #define PRI_FwNativeIntType PRI_PlatformIntType
 
 typedef PlatformUIntType FwNativeUIntType;
-extern const FwNativeUIntType FwNativeUIntType_MIN;
-extern const FwNativeUIntType FwNativeUIntType_MAX;
 #define PRI_FwNativeUIntType PRI_PlatformUIntType
 
 typedef U16 FwBuffSizeType;
-extern const FwBuffSizeType FwBuffSizeType_MIN;
-extern const FwBuffSizeType FwBuffSizeType_MAX;
 #define PRI_FwBuffSizeType PRIu16
 
 typedef I32 FwEnumStoreType;
-extern const FwEnumStoreType FwEnumStoreType_MIN;
-extern const FwEnumStoreType FwEnumStoreType_MAX;
 #define PRI_FwEnumStoreType PRId32
 
 // Define enumeration for Time base types
@@ -59,44 +45,70 @@ enum TimeBase {
 #define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 
 typedef U16 FwTimeBaseStoreType;
-extern const FwTimeBaseStoreType FwTimeBaseStoreType_MIN;
-extern const FwTimeBaseStoreType FwTimeBaseStoreType_MAX;
 #define PRI_FwTimeBaseStoreType PRIu16
 
 typedef U8 FwTimeContextStoreType;
-extern const FwTimeContextStoreType FwTimeContextStoreType_MIN;
-extern const FwTimeContextStoreType FwTimeContextStoreType_MAX;
 #define PRI_FwTimeContextStoreType PRIu8
 
 typedef U32 FwPacketDescriptorType;
-extern const FwPacketDescriptorType FwPacketDescriptorType_MIN;
-extern const FwPacketDescriptorType FwPacketDescriptorType_MAX;
 #define PRI_FwPacketDescriptorType PRIu32
 
 typedef U32 FwOpcodeType;
-extern const FwOpcodeType FwOpcodeType_MIN;
-extern const FwOpcodeType FwOpcodeType_MAX;
 #define PRI_FwOpcodeType PRIu32
 
 typedef U32 FwChanIdType;
-extern const FwChanIdType FwChanIdType_MIN;
-extern const FwChanIdType FwChanIdType_MAX;
 #define PRI_FwChanIdType PRIu32
 
 typedef U32 FwEventIdType;
-extern const FwEventIdType FwEventIdType_MIN;
-extern const FwEventIdType FwEventIdType_MAX;
 #define PRI_FwEventIdType PRIu32
 
 typedef U32 FwPrmIdType;
-extern const FwPrmIdType FwPrmIdType_MIN;
-extern const FwPrmIdType FwPrmIdType_MAX;
 #define PRI_FwPrmIdType PRIu32
 
 typedef U16 FwTlmPacketizeIdType;
-extern const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN;
-extern const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX;
 #define PRI_FwTlmPacketizeIdType PRIu16
+
+/**
+ * FpLimits:
+ *
+ * Sets the limit constants for the types defined int this file. Constants are
+ * defined as `static const` to ensure that storage is not allocated. This class
+ * inherits from BasicLimits and transitively from PlatformLimits such that it
+ * includes the limits included within those files.
+ *
+ **/
+struct FpLimits : BasicLimits {
+    static const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;
+    static const FwIndexType FwIndexType_MAX = PlatformIndexType_MAX;
+    static const FwSizeType FwSizeType_MIN = PlatformSizeType_MIN;
+    static const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
+    static const FwAssertArgType FwAssertArgType_MIN = PlatformAssertArgType_MIN;
+    static const FwAssertArgType FwAssertArgType_MAX = PlatformAssertArgType_MAX;
+    static const FwNativeIntType FwNativeIntType_MIN = PlatformIntType_MIN;
+    static const FwNativeIntType FwNativeIntType_MAX = PlatformIntType_MAX;
+    static const FwNativeUIntType FwNativeUIntType_MIN = PlatformUIntType_MIN;
+    static const FwNativeUIntType FwNativeUIntType_MAX = PlatformUIntType_MAX;
+    static const FwBuffSizeType FwBuffSizeType_MIN = U16_MIN;
+    static const FwBuffSizeType FwBuffSizeType_MAX = U16_MAX;
+    static const FwEnumStoreType FwEnumStoreType_MIN = I32_MIN;
+    static const FwEnumStoreType FwEnumStoreType_MAX = I32_MAX;
+    static const FwTimeBaseStoreType FwTimeBaseStoreType_MIN = U16_MIN;
+    static const FwTimeBaseStoreType FwTimeBaseStoreType_MAX = U16_MAX;
+    static const FwTimeContextStoreType FwTimeContextStoreType_MIN = U8_MIN;
+    static const FwTimeContextStoreType FwTimeContextStoreType_MAX = U8_MAX;
+    static const FwPacketDescriptorType FwPacketDescriptorType_MIN = U32_MIN;
+    static const FwPacketDescriptorType FwPacketDescriptorType_MAX = U32_MAX;
+    static const FwOpcodeType FwOpcodeType_MIN = U32_MIN;
+    static const FwOpcodeType FwOpcodeType_MAX = U32_MAX;
+    static const FwChanIdType FwChanIdType_MIN = U32_MIN;
+    static const FwChanIdType FwChanIdType_MAX = U32_MAX;
+    static const FwEventIdType FwEventIdType_MIN = U32_MIN;
+    static const FwEventIdType FwEventIdType_MAX = U32_MAX;
+    static const FwPrmIdType FwPrmIdType_MIN = U32_MIN;
+    static const FwPrmIdType FwPrmIdType_MAX = U32_MAX;
+    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN = U16_MIN;
+    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
+};
 
 // Boolean values for serialization
 #ifndef FW_SERIALIZE_TRUE_VALUE
