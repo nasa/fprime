@@ -20,6 +20,8 @@
  * In C++ fprime code, users may then refer to FpLimits::PlatformIntType_MIN
  * without referring to this header directly.
  */
+#ifndef PLATFORM_TYPES_HPP_
+#define PLATFORM_TYPES_HPP_
 #include <limits>
 
 // Section 0: C Standard Types
@@ -124,3 +126,4 @@ struct PlatformLimits {
         #error "Unsupported pointer size"
     #endif
 };
+#endif //PLATFORM_TYPES_HPP_
