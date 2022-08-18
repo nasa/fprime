@@ -1,5 +1,6 @@
 var _basic_types_8hpp =
 [
+    [ "BasicLimits", "struct_basic_limits.html", "struct_basic_limits" ],
     [ "COMPILE_TIME_ASSERT", "basic_types_8hpp.html#affc34a2fa1cd575344eea3ad4aec821e", null ],
     [ "FW_MAX", "basic_types_8hpp.html#aae5698409ce19abe28359c39840e39d0", null ],
     [ "FW_MIN", "basic_types_8hpp.html#aa15003c81ae77d50e6806f6c7d7f7cc3", null ],
@@ -9,7 +10,8 @@ var _basic_types_8hpp =
     [ "CHAR", "basic_types_8hpp.html#aebb9e13210d88d43e32e735ada43a425", null ],
     [ "F32", "basic_types_8hpp.html#a841d3674577a1e86afdc2f4845f46c4b", null ],
     [ "I8", "basic_types_8hpp.html#a33c92dd47950aa8c1d6df7e1c163e5a6", null ],
-    [ "NATIVE_INT_TYPE", "basic_types_8hpp.html#ae2c29dc7dc30247eb4144d3d058d1852", null ],
-    [ "NATIVE_UINT_TYPE", "basic_types_8hpp.html#a8102cd7c96c1a0e32032119f14c1c4bc", null ],
+    [ "NATIVE_INT_TYPE", "basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416", null ],
+    [ "NATIVE_UINT_TYPE", "basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1", null ],
+    [ "POINTER_CAST", "basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a", null ],
     [ "U8", "basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73", null ]
 ];

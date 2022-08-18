@@ -4,7 +4,7 @@
 
 This file acts as a template for the fprime platform files used by the CMake system.
 These files specify build flags, compiler directives, and must specify an include
-directory for system includes like "StandardTypes.hpp".
+directory for system includes like "PlatformTypes.hpp".
 
 Follow all the steps in this template to create a platform file. Ensure
 to remove the platform-failsafe (step 1) and fill in all <SOMETHING> tags.
@@ -30,7 +30,7 @@ will be used. e.g. when building on Linux, the platform file "Linux.cmake" will 
 F prime platform files are used to set F prime specific settings. This allows the user to control
 some aspects of the F prime build at the top-level. This means setting global include directories
 compiler definitions for the platform, threading libraries, etc. The bare-minimum platform file
-should specify an include directory for "StandardTypes.hpp" and a threading library if using
+should specify an include directory for "PlatformTypes.hpp" and a threading library if using
 active components with OS supported threads. This can be done with the following lines:
 
 ```

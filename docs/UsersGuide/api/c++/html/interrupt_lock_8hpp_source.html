@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('_interrupt_lock_8hpp_source.html','');
 <a href="interrupt_lock_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef _InterruptLock_hpp_</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define _InterruptLock_hpp_</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="basic_types_8hpp.html">Fw/Types/BasicTypes.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="fp_config_8hpp.html">FpConfig.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_os.html">Os</a> {</div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="class_os_1_1_interrupt_lock.html">    7</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_os_1_1_interrupt_lock.html">InterruptLock</a> {</div>
@@ -103,22 +103,23 @@ $(document).ready(function(){initNavTree('_interrupt_lock_8hpp_source.html','');
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_os_1_1_interrupt_lock.html#abc3bebe442d543d2b011c43218d17fd2">lock</a>(); </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_os_1_1_interrupt_lock.html#aba20b0465e2ac1c250b7f6c320542f80">unLock</a>(); </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            POINTER_CAST <a class="code" href="class_os_1_1_interrupt_lock.html#a9e8ad3ce9cf34b6171186df2cf8b1c76">getKey</a>(); </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            <a class="code" href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a> <a class="code" href="class_os_1_1_interrupt_lock.html#a9e8ad3ce9cf34b6171186df2cf8b1c76">getKey</a>(); </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            POINTER_CAST m_key; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <a class="code" href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a> m_key; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    };</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00007">File.cpp:7</a></div></div>
+<div class="ttc" id="anamespace_os_html"><div class="ttname"><a href="namespace_os.html">Os</a></div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_file_8cpp_source.html#l00006">File.cpp:6</a></div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html_a9e8ad3ce9cf34b6171186df2cf8b1c76"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html#a9e8ad3ce9cf34b6171186df2cf8b1c76">Os::InterruptLock::getKey</a></div><div class="ttdeci">POINTER_CAST getKey()</div><div class="ttdoc">get the key, if used</div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html">Os::InterruptLock</a></div><div class="ttdef"><b>Definition:</b> <a href="interrupt_lock_8hpp_source.html#l00007">InterruptLock.hpp:7</a></div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html_a26d6f50e5163a1459c156151ecf559d7"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html#a26d6f50e5163a1459c156151ecf559d7">Os::InterruptLock::InterruptLock</a></div><div class="ttdeci">InterruptLock()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="interrupt_lock_8cpp_source.html#l00007">InterruptLock.cpp:7</a></div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html_abc3bebe442d543d2b011c43218d17fd2"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html#abc3bebe442d543d2b011c43218d17fd2">Os::InterruptLock::lock</a></div><div class="ttdeci">void lock()</div><div class="ttdoc">lock interrupts</div><div class="ttdef"><b>Definition:</b> <a href="interrupt_lock_8cpp_source.html#l00010">InterruptLock.cpp:10</a></div></div>
-<div class="ttc" id="a_basic_types_8hpp_html"><div class="ttname"><a href="basic_types_8hpp.html">BasicTypes.hpp</a></div><div class="ttdoc">Declares ISF basic types.</div></div>
+<div class="ttc" id="a_basic_types_8hpp_html_a035941db31b3adde2c636142bf5cf74a"><div class="ttname"><a href="basic_types_8hpp.html#a035941db31b3adde2c636142bf5cf74a">POINTER_CAST</a></div><div class="ttdeci">PlatformPointerCastType POINTER_CAST</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00054">BasicTypes.hpp:54</a></div></div>
+<div class="ttc" id="a_fp_config_8hpp_html"><div class="ttname"><a href="fp_config_8hpp.html">FpConfig.hpp</a></div><div class="ttdoc">ISF configuration file.</div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html_afcb403d4f12bf3b99e60ef3bd08bfd41"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html#afcb403d4f12bf3b99e60ef3bd08bfd41">Os::InterruptLock::~InterruptLock</a></div><div class="ttdeci">virtual ~InterruptLock()</div><div class="ttdoc">destructor</div><div class="ttdef"><b>Definition:</b> <a href="interrupt_lock_8cpp_source.html#l00008">InterruptLock.cpp:8</a></div></div>
 <div class="ttc" id="aclass_os_1_1_interrupt_lock_html_aba20b0465e2ac1c250b7f6c320542f80"><div class="ttname"><a href="class_os_1_1_interrupt_lock.html#aba20b0465e2ac1c250b7f6c320542f80">Os::InterruptLock::unLock</a></div><div class="ttdeci">void unLock()</div><div class="ttdoc">unlock interrupts</div><div class="ttdef"><b>Definition:</b> <a href="interrupt_lock_8cpp_source.html#l00014">InterruptLock.cpp:14</a></div></div>
 <!-- start footer part -->

@@ -7,6 +7,8 @@ var annotated_dup =
     [ "Svc", "namespace_svc.html", "namespace_svc" ],
     [ "Types", "namespace_types.html", "namespace_types" ],
     [ "Utils", "namespace_utils.html", "namespace_utils" ],
+    [ "BasicLimits", "struct_basic_limits.html", "struct_basic_limits" ],
+    [ "FpLimits", "struct_fp_limits.html", "struct_fp_limits" ],
     [ "SHA256state_st", "struct_s_h_a256state__st.html", "struct_s_h_a256state__st" ],
     [ "SHA512state_st", "struct_s_h_a512state__st.html", "struct_s_h_a512state__st" ],
     [ "SHAstate_st", "struct_s_h_astate__st.html", "struct_s_h_astate__st" ]

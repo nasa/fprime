@@ -165,6 +165,11 @@ var hierarchy =
     ] ],
     [ "Fw::FilePacket::PathName", "class_fw_1_1_file_packet_1_1_path_name.html", null ],
     [ "Svc::HealthImpl::PingEntry", "struct_svc_1_1_health_impl_1_1_ping_entry.html", null ],
+    [ "PlatformLimits", null, [
+      [ "BasicLimits", "struct_basic_limits.html", [
+        [ "FpLimits", "struct_fp_limits.html", null ]
+      ] ]
+    ] ],
     [ "PolyDbComponentBase", null, [
       [ "Svc::PolyDbImpl", "class_svc_1_1_poly_db_impl.html", null ]
     ] ],
