@@ -13,10 +13,17 @@
 // Populate an array with enum values
 template <typename EnumType>
 void setEnumValArray(typename EnumType::T (&a)[EnumType::NUM_CONSTANTS+1]) {
-    a[0] = EnumType::A;
-    a[1] = EnumType::B;
-    a[2] = EnumType::C;
-    a[3] = static_cast<typename EnumType::T>(11);
+    for (int i = 0; i < EnumType::NUM_CONSTANTS + 1; i++) {
+        a[i] = static_cast<typename EnumType::T>(i);
+    }
+}
+
+template<>
+void setEnumValArray<Explicit>(Explicit::T (&a)[Explicit::NUM_CONSTANTS+1]) {
+    a[0] = Explicit::A;
+    a[1] = Explicit::B;
+    a[2] = Explicit::C;
+    a[3] = static_cast<Explicit::T>(11);
 }
 
 template<>
@@ -34,17 +41,19 @@ void setEnumValArray<Interval>(Interval::T (&a)[Interval::NUM_CONSTANTS+1]) {
 // Populate an array with strings representing enum values
 template <typename EnumType>
 void setEnumStrArray(std::string (&a)[EnumType::NUM_CONSTANTS+1]) {
-    a[0] = "A (-1952875139)";
-    a[1] = "B (2)";
-    a[2] = "C (2000999333)";
-    a[3] = "[invalid] (11)";
-}
-
-template <>
-void setEnumStrArray<Implicit>(std::string (&a)[Implicit::NUM_CONSTANTS+1]) {
     a[0] = "A (0)";
     a[1] = "B (1)";
     a[2] = "C (2)";
+    a[3] = "D (3)";
+    a[4] = "E (4)";
+    a[5] = "[invalid] (5)";
+}
+
+template<>
+void setEnumStrArray<Explicit>(std::string (&a)[Explicit::NUM_CONSTANTS+1]) {
+    a[0] = "A (-1952875139)";
+    a[1] = "B (2)";
+    a[2] = "C (2000999333)";
     a[3] = "[invalid] (11)";
 }
 
@@ -58,22 +67,6 @@ void setEnumStrArray<Interval>(std::string (&a)[Interval::NUM_CONSTANTS+1]) {
     a[5] = "F (100)";
     a[6] = "G (101)";
     a[7] = "[invalid] (11)";
-}
-
-template <>
-void setEnumStrArray<SerializeTypeU8>(std::string (&a)[SerializeTypeU8::NUM_CONSTANTS+1]) {
-    a[0] = "A (255)";
-    a[1] = "B (2)";
-    a[2] = "C (20)";
-    a[3] = "[invalid] (11)";
-}
-
-template <>
-void setEnumStrArray<SerializeTypeU64>(std::string (&a)[SerializeTypeU64::NUM_CONSTANTS+1]) {
-    a[0] = "A (1952875139)";
-    a[1] = "B (2)";
-    a[2] = "C (2000999333)";
-    a[3] = "[invalid] (11)";
 }
 
 // Test enum string functions

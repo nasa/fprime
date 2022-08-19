@@ -1,8 +1,5 @@
-#include "FppTest/array/EnumArrayAc.hpp"
-#include "FppTest/array/StringArrayAc.hpp"
-#include "FppTest/array/StructArrayAc.hpp"
-#include "FppTest/array/Uint32ArrayArrayAc.hpp"
-#include "FppTest/utils/Utils.hpp"
+#ifndef FPP_TEST_ARRAY_TEST_HPP
+#define FPP_TEST_ARRAY_TEST_HPP
 
 #include "Fw/Types/SerialBuffer.hpp"
 
@@ -15,73 +12,18 @@
 template <typename ArrayType>
 void setDefaultVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {}
 
-template <>
-void setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
-    a[0] = E::A;
-    a[1] = E::B;
-    a[2] = E::C;
-}
-
 // Set test values for an array type
 template <typename ArrayType>
 void setTestVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
-        
-template<>
-void setTestVals<Enum>(E (&a)[Enum::SIZE]) {
-    for (int i = 0; i < Enum::SIZE; i++) {
-        a[i] = static_cast<E::T>(STest::Pick::startLength(
-            E::T::A,
-            E::NUM_CONSTANTS
-        ));
-    }
-}
 
-template<>
-void setTestVals<String>(String::StringSize80 (&a)[String::SIZE]) {
-    char buf[80];
-    for (U32 i = 0; i < String::SIZE; i++) {
-        FppTest::Utils::setString(buf, sizeof(buf));
-        a[i] = buf;
-    }
-}
-
-template<>
-void setTestVals<Struct>(S (&a)[Struct::SIZE]) {
-    U32 b[3];
-    for (int i = 0; i < Struct::SIZE; i++) {
-        for (int j = 0; j < 3; j++) {
-            b[j] = FppTest::Utils::getU32();
-        }
-        a[i].set(FppTest::Utils::getU32(), b);
-    }
-}
-
-template<>
-void setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
-    Uint32 b;
-    for (int i = 0; i < Uint32Array::SIZE; i++) {
-        for (int j = 0; j < Uint32::SIZE; j++) {
-            b[j] = FppTest::Utils::getU32();
-        }
-        a[i] = b;
-    }
-}
+template <typename ArrayType>
+ArrayType getMultiElementConstructedArray
+    (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
 
 // Get the serialized size of an array
 template <typename ArrayType>
 U32 getSerializedSize(typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {
     return ArrayType::SERIALIZED_SIZE;
-}
-
-template <>
-U32 getSerializedSize<String>(String::StringSize80 (&a)[String::SIZE]) {
-    U32 serializedSize = 0;
-
-    for (int i = 0; i < String::SIZE; i++) {
-        serializedSize += a[i].length() + sizeof(FwBuffSizeType);   
-    }
-
-    return serializedSize;
 }
 
 // Test an array class
@@ -92,9 +34,7 @@ protected:
         setDefaultVals<ArrayType>(defaultVals);
 
         setTestVals<ArrayType>(testVals);
-        while (valsAreEqual()) {
-            setTestVals<ArrayType>(testVals);
-        }
+        ASSERT_FALSE(valsAreEqual());
     };
 
     bool valsAreEqual() {
@@ -111,17 +51,10 @@ protected:
     typename ArrayType::ElementType testVals[ArrayType::SIZE];
 };
 
-// Specify type parameters for this test suite
-using ArrayTypes = ::testing::Types<
-    Enum,
-    String,
-    Struct,
-    Uint32Array
->;
-TYPED_TEST_SUITE(ArrayTest, ArrayTypes);
+TYPED_TEST_SUITE_P(ArrayTest);
 
 // Test array constants and default constructor
-TYPED_TEST(ArrayTest, Default) {
+TYPED_TEST_P(ArrayTest, Default) {
     TypeParam a;
 
     // Constants
@@ -138,7 +71,7 @@ TYPED_TEST(ArrayTest, Default) {
 }
 
 // Test array constructors
-TYPED_TEST(ArrayTest, Constructors) {
+TYPED_TEST_P(ArrayTest, Constructors) {
     // Array constructor
     TypeParam a1(this->testVals);
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
@@ -152,7 +85,7 @@ TYPED_TEST(ArrayTest, Constructors) {
     }
 
     // Multiple element constructor
-    TypeParam a3(this->testVals[0], this->testVals[1], this->testVals[2]);
+    TypeParam a3 = getMultiElementConstructedArray<TypeParam>(this->testVals);
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
         ASSERT_EQ(a3[i], this->testVals[i]);
     }
@@ -165,7 +98,7 @@ TYPED_TEST(ArrayTest, Constructors) {
 }
 
 // Test array subscript operator
-TYPED_TEST(ArrayTest, SubscriptOp) {
+TYPED_TEST_P(ArrayTest, SubscriptOp) {
     TypeParam a;
 
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
@@ -175,7 +108,7 @@ TYPED_TEST(ArrayTest, SubscriptOp) {
 }
 
 // Test array assignment operator
-TYPED_TEST(ArrayTest, AssignmentOp) {
+TYPED_TEST_P(ArrayTest, AssignmentOp) {
     TypeParam a1, a2;
 
     // Array assignment
@@ -202,7 +135,7 @@ TYPED_TEST(ArrayTest, AssignmentOp) {
 }
 
 // Test array equality and inequality operators
-TYPED_TEST(ArrayTest, EqualityOp) {
+TYPED_TEST_P(ArrayTest, EqualityOp) {
     TypeParam a1, a2;
 
     ASSERT_TRUE(a1 == a2);
@@ -220,7 +153,7 @@ TYPED_TEST(ArrayTest, EqualityOp) {
 }
 
 // Test array serialization and deserialization
-TYPED_TEST(ArrayTest, Serialization) {
+TYPED_TEST_P(ArrayTest, Serialization) {
     TypeParam a(this->testVals);
 
     U32 serializedSize = getSerializedSize<TypeParam>(this->testVals);
@@ -267,7 +200,7 @@ TYPED_TEST(ArrayTest, Serialization) {
 }
 
 // Test array toString() and ostream operator functions
-TYPED_TEST(ArrayTest, ToString) {
+TYPED_TEST_P(ArrayTest, ToString) {
     TypeParam a(this->testVals);
     std::stringstream buf1, buf2;
 
@@ -284,3 +217,16 @@ TYPED_TEST(ArrayTest, ToString) {
         buf2.str().c_str()
     );
 }
+
+// Register all test patterns
+REGISTER_TYPED_TEST_SUITE_P(ArrayTest,
+    Default,
+    Constructors,
+    SubscriptOp,
+    AssignmentOp,
+    EqualityOp,
+    Serialization,
+    ToString
+);
+
+#endif

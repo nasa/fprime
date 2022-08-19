@@ -21,7 +21,6 @@ set(UT_MOD_DEPS
 
 # List all .cpp files as UT_SOURCE_FILES. Only the UT build is allowed.
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/ArrayTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/FormatTest.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/../utils/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/main.cpp"

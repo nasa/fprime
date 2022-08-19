@@ -1,9 +1,5 @@
-#include "FppTest/enum/ImplicitEnumAc.hpp"
-#include "FppTest/enum/ExplicitEnumAc.hpp"
-#include "FppTest/enum/DefaultEnumAc.hpp"
-#include "FppTest/enum/IntervalEnumAc.hpp"
-#include "FppTest/enum/SerializeTypeU8EnumAc.hpp"
-#include "FppTest/enum/SerializeTypeU64EnumAc.hpp"
+#ifndef FPP_TEST_ENUM_TEST_HPP
+#define FPP_TEST_ENUM_TEST_HPP
 
 #include "Fw/Types/SerialBuffer.hpp"
 
@@ -15,112 +11,56 @@
 // Get the default value of an enum
 template <typename EnumType>
 typename EnumType::T getDefaultValue() {
-    return EnumType::A;
-}
-
-template<>
-Default::T getDefaultValue<Default>() {
-    return Default::C;
+    return static_cast<typename EnumType::T>(0);
 }
 
 // Get a valid value of an enum
 template <typename EnumType>
 typename EnumType::T getValidValue() {
-    U32 val = STest::Pick::startLength(0, EnumType::NUM_CONSTANTS);
+    U32 val = STest::Pick::startLength(
+        0, 
+        static_cast<U32>(EnumType::NUM_CONSTANTS - 1)
+    );
 
-    switch (val) {
-        case 0: return EnumType::A;
-        case 1: return EnumType::B;
-        default: return EnumType::C;
-    }
-}
-
-template<>
-Interval::T getValidValue<Interval>() {
-    U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS);
-
-    switch (val) {
-        case 0: return Interval::A;
-        case 1: return Interval::B;
-        case 2: return Interval::C;
-        case 3: return Interval::D;
-        case 4: return Interval::E;
-        case 5: return Interval::F;
-        default: return Interval::G;
-    }
+    return static_cast<typename EnumType::T>(val);
 }
 
 // Get an invalid value of an enum
-// Assumptions:
-//   - EnumType::A is the smallest constant
-//   - EnumType::C is the largest constant
 template <typename EnumType>
 typename EnumType::T getInvalidValue() {
-    U32 sign = STest::Pick::lowerUpper(0, 1);
+    U8 sign;
+    if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
+        sign = STest::Pick::lowerUpper(0, 1);
+    } else {
+        sign = 0;
+    }
 
     switch (sign) {
         case 0:
             return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                EnumType::C + 1,
-                std::numeric_limits<typename EnumType::SerialType>::max()
+                static_cast<U32>(EnumType::NUM_CONSTANTS),
+                static_cast<U32>(
+                    std::numeric_limits<typename EnumType::SerialType>::max()
+                )
             ));
         default:
             return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                (EnumType::A - 1) * (-1),
-                std::numeric_limits<typename EnumType::SerialType>::max()
+                1,
+                static_cast<U32>((-1) *
+                    (std::numeric_limits<typename EnumType::SerialType>::min() + 1)
+                )
             ) * (-1));
     }
-}
-
-template<>
-Implicit::T getInvalidValue<Implicit>() {
-    return static_cast<Implicit::T>(STest::Pick::lowerUpper(
-        Implicit::C + 1, 
-        std::numeric_limits<Implicit::SerialType>::max()
-    ));
-}
-
-template<>
-Interval::T getInvalidValue<Interval>() {
-    return static_cast<Interval::T>(STest::Pick::lowerUpper(
-        Interval::G + 1,
-        std::numeric_limits<Interval::SerialType>::max()
-    ));
-}
-
-template<>
-SerializeTypeU8::T getInvalidValue<SerializeTypeU8>() {
-    return static_cast<SerializeTypeU8::T>(STest::Pick::lowerUpper(
-        SerializeTypeU8::C + 1,
-        SerializeTypeU8::A - 1
-    ));
-}
-
-template<>
-SerializeTypeU64::T getInvalidValue<SerializeTypeU64>() {
-    return static_cast<SerializeTypeU64::T>(STest::Pick::lowerUpper(
-        SerializeTypeU64::B + 1,
-        SerializeTypeU64::A - 1
-    ));
 }
 
 // Test core enum interface
 template <typename EnumType>
 class EnumTest : public ::testing::Test {};
 
-// Specify type parameters for this test suite
-using EnumTypes = ::testing::Types<
-    Implicit, 
-    Explicit, 
-    Default,
-    Interval, 
-    SerializeTypeU8,
-    SerializeTypeU64
->;
-TYPED_TEST_SUITE(EnumTest, EnumTypes);
+TYPED_TEST_SUITE_P(EnumTest);
 
 // Test enum constants and default construction
-TYPED_TEST(EnumTest, Default) {
+TYPED_TEST_P(EnumTest, Default) {
     TypeParam e;
 
     // Constants
@@ -134,7 +74,7 @@ TYPED_TEST(EnumTest, Default) {
 }
 
 // Test enum constructors
-TYPED_TEST(EnumTest, Constructors) {
+TYPED_TEST_P(EnumTest, Constructors) {
     typename TypeParam::T validVal = getValidValue<TypeParam>();
 
     // Raw enum value constructor
@@ -147,7 +87,7 @@ TYPED_TEST(EnumTest, Constructors) {
 }
 
 // Test enum assignment operator
-TYPED_TEST(EnumTest, AssignmentOp) {
+TYPED_TEST_P(EnumTest, AssignmentOp) {
     TypeParam e1;
     TypeParam e2;
 
@@ -163,7 +103,7 @@ TYPED_TEST(EnumTest, AssignmentOp) {
 }
 
 // Test enum equality and inequality operator
-TYPED_TEST(EnumTest, EqualityOp) {
+TYPED_TEST_P(EnumTest, EqualityOp) {
     // Initialize two distinct valid values
     typename TypeParam::T validVal1 = getValidValue<TypeParam>();
     typename TypeParam::T validVal2 = getValidValue<TypeParam>();
@@ -196,7 +136,7 @@ TYPED_TEST(EnumTest, EqualityOp) {
 }
 
 // Test enum isValid() function
-TYPED_TEST(EnumTest, IsValidFunction) {
+TYPED_TEST_P(EnumTest, IsValidFunction) {
     TypeParam validEnum = getValidValue<TypeParam>();
     TypeParam invalidEnum = getInvalidValue<TypeParam>();
 
@@ -205,13 +145,13 @@ TYPED_TEST(EnumTest, IsValidFunction) {
 }
 
 // Test enum serialization and deserialization
-TYPED_TEST(EnumTest, Serialization) {
+TYPED_TEST_P(EnumTest, Serialization) {
     TypeParam validEnum = getValidValue<TypeParam>();
     TypeParam invalidEnum = getInvalidValue<TypeParam>();
 
     // Copy of enums to test after serialization
-    TypeParam validEnumCopy = validEnum;
-    TypeParam invalidEnumCopy = invalidEnum;
+    TypeParam validEnumCopy;
+    TypeParam invalidEnumCopy;
 
     Fw::SerializeStatus status;
     U8 data[TypeParam::SERIALIZED_SIZE * 2];
@@ -237,5 +177,16 @@ TYPED_TEST(EnumTest, Serialization) {
     status = buf.deserialize(invalidEnumCopy);
 
     ASSERT_EQ(status, Fw::FW_DESERIALIZE_FORMAT_ERROR);
-    ASSERT_EQ(invalidEnumCopy, invalidEnum);
 }
+
+// Register all test patterns
+REGISTER_TYPED_TEST_SUITE_P(EnumTest,
+    Default,
+    Constructors,
+    AssignmentOp,
+    EqualityOp,
+    IsValidFunction,
+    Serialization
+);
+
+#endif

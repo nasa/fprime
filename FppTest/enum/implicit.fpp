@@ -3,4 +3,6 @@ enum Implicit {
   A, @< Member A
   B,
   C,
+  D,
+  E,
 }
