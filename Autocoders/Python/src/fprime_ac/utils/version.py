@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-FALLBACK_VERSION = "v3.1.0"  # Keep up-to-date on release tag
+FALLBACK_VERSION = "v3.1.1"  # Keep up-to-date on release tag
 
 
 def get_version_str(working_dir, fallback=FALLBACK_VERSION):
