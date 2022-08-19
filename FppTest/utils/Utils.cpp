@@ -34,13 +34,13 @@ namespace FppTest {
                 return;
             }
 
-            for (int i = 0; i < length - 1; i++) {
+            for (U32 i = 0; i < length - 1; i++) {
                 buf[i] = getChar();
             }
 
             buf[length-1] = 0;
         }
         
-    } // Utils
+    } // namespace Utils
 
-} // FppTest
+} // namespace FppTest

@@ -20,7 +20,7 @@ using ArrayTestImplementations = ::testing::Types<
 >;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ArrayTest, ArrayTestImplementations);
 
-// Define specializations for default values
+// Specializations for default values
 template <>
 void FppTest::Array::setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
     a[0] = E::A;
@@ -28,17 +28,15 @@ void FppTest::Array::setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
     a[2] = E::C;
 }
 
-// Define specialization for test values
+// Specialization for test values
 template<>
 void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
-    while (a[0] != E::A) {
-        a[0] = static_cast<E::T>(STest::Pick::startLength(
-            E::B,
-            E::NUM_CONSTANTS - 1
-        ));
-    }
+    a[0] = static_cast<E::T>(STest::Pick::startLength(
+        E::B,
+        E::NUM_CONSTANTS - 1
+    ));
 
-    for (int i = 1; i < Enum::SIZE; i++) {
+    for (U32 i = 1; i < Enum::SIZE; i++) {
         a[i] = static_cast<E::T>(STest::Pick::startLength(
             E::A,
             E::NUM_CONSTANTS - 1
@@ -59,8 +57,8 @@ void FppTest::Array::setTestVals<String>
 template<>
 void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
     U32 b[3];
-    for (int i = 0; i < Struct::SIZE; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (U32 i = 0; i < Struct::SIZE; i++) {
+        for (U32 j = 0; j < 3; j++) {
             b[j] = FppTest::Utils::getU32();
         }
         a[i].set(FppTest::Utils::getU32(), b);
@@ -70,15 +68,15 @@ void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
 template<>
 void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     Uint32 b;
-    for (int i = 0; i < Uint32Array::SIZE; i++) {
-        for (int j = 0; j < Uint32::SIZE; j++) {
+    for (U32 i = 0; i < Uint32Array::SIZE; i++) {
+        for (U32 j = 0; j < Uint32::SIZE; j++) {
             b[j] = FppTest::Utils::getU32();
         }
         a[i] = b;
     }
 }
 
-// Define specializations for multi element constructor
+// Specializations for multi element constructor
 template<>
 Enum FppTest::Array::getMultiElementConstructedArray<Enum>
     (E (&a)[Enum::SIZE]) {
@@ -103,13 +101,13 @@ Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>
     return Uint32Array(a[0], a[1], a[2]);
 }
 
-// Define specializations for serialized size
+// Specializations for serialized size
 template <>
 U32 FppTest::Array::getSerializedSize<::String>
     (::String::StringSize80 (&a)[::String::SIZE]) {
     U32 serializedSize = 0;
 
-    for (int i = 0; i < ::String::SIZE; i++) {
+    for (U32 i = 0; i < ::String::SIZE; i++) {
         serializedSize += a[i].length() + sizeof(FwBuffSizeType);   
     }
 

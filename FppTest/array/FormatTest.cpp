@@ -34,7 +34,7 @@ TEST_F(FormatTest, Bool) {
     FormatBool a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatBool::SIZE; i++) {
+    for (U32 i = 0; i < FormatBool::SIZE; i++) {
         buf2 << "a " << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -50,7 +50,7 @@ TEST_F(FormatTest, U8) {
     FormatU8 a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatU8::SIZE; i++) {
+    for (U32 i = 0; i < FormatU8::SIZE; i++) {
         buf2 << "a " << (U16) testVals[i] << " b ";
     }
     buf2 << "]";
@@ -66,7 +66,7 @@ TEST_F(FormatTest, U16Dec) {
     FormatU16Dec a(testVals);
     
     buf1 << a;
-    for (int i = 0; i < FormatU16Dec::SIZE; i++) {
+    for (U32 i = 0; i < FormatU16Dec::SIZE; i++) {
         buf2 << "a " << std::dec << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -82,7 +82,7 @@ TEST_F(FormatTest, U32Oct) {
     FormatU32Oct a(testVals);
     
     buf1 << a;
-    for (int i = 0; i < FormatU32Oct::SIZE; i++) {
+    for (U32 i = 0; i < FormatU32Oct::SIZE; i++) {
         buf2 << "a " << std::oct << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -99,7 +99,7 @@ TEST_F(FormatTest, U64Hex) {
     FormatU64Hex a(testVals);
     
     buf1 << a;
-    for (int i = 0; i < FormatU64Hex::SIZE; i++) {
+    for (U32 i = 0; i < FormatU64Hex::SIZE; i++) {
         buf2 << "a " << std::hex << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -116,7 +116,7 @@ TEST_F(FormatTest, I8) {
     FormatI8 a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatI8::SIZE; i++) {
+    for (U32 i = 0; i < FormatI8::SIZE; i++) {
         buf2 << "a " << (I16) testVals[i] << " b ";
     }
     buf2 << "]";
@@ -133,7 +133,7 @@ TEST_F(FormatTest, I16Dec) {
     FormatI16Dec a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatI16Dec::SIZE; i++) {
+    for (U32 i = 0; i < FormatI16Dec::SIZE; i++) {
         buf2 << "a " << std::dec << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -150,7 +150,7 @@ TEST_F(FormatTest, I32Oct) {
     FormatI32Oct a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatI32Oct::SIZE; i++) {
+    for (U32 i = 0; i < FormatI32Oct::SIZE; i++) {
         buf2 << "a " << std::oct << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -168,7 +168,7 @@ TEST_F(FormatTest, I64Hex) {
     FormatI64Hex a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatI64Hex::SIZE; i++) {
+    for (U32 i = 0; i < FormatI64Hex::SIZE; i++) {
         buf2 << "a " << std::hex << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -185,7 +185,7 @@ TEST_F(FormatTest, F32E) {
     FormatF32e a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatF32e::SIZE; i++) {
+    for (U32 i = 0; i < FormatF32e::SIZE; i++) {
         buf2 << "a " << std::setprecision(1) << std::scientific << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -202,7 +202,7 @@ TEST_F(FormatTest, F32F) {
     FormatF32f a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatF32f::SIZE; i++) {
+    for (U32 i = 0; i < FormatF32f::SIZE; i++) {
         buf2 << "a " << std::setprecision(2) << std::fixed << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -219,7 +219,7 @@ TEST_F(FormatTest, F64G) {
     FormatF64g a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatF64g::SIZE; i++) {
+    for (U32 i = 0; i < FormatF64g::SIZE; i++) {
         buf2 << "a " << std::setprecision(3) << testVals[i] << " b ";
     }
     buf2 << "]";
@@ -233,7 +233,7 @@ TEST_F(FormatTest, F64G) {
 TEST_F(FormatTest, String) {
     FormatString::StringSize80 testVals[FormatString::SIZE];
     char buf[80];
-    for (int i = 0; i < FormatString::SIZE; i++) {
+    for (U32 i = 0; i < FormatString::SIZE; i++) {
         FppTest::Utils::setString(buf, sizeof(buf));
         testVals[i] = buf;   
     }
@@ -241,7 +241,7 @@ TEST_F(FormatTest, String) {
     FormatString a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatString::SIZE; i++) {
+    for (U32 i = 0; i < FormatString::SIZE; i++) {
         buf2 << "% " << testVals[i].toChar() << " ";
     }
     buf2 << "]";
@@ -258,7 +258,7 @@ TEST_F(FormatTest, Char) {
     FormatChar a(testVals);
 
     buf1 << a;
-    for (int i = 0; i < FormatChar::SIZE; i++) {
+    for (U32 i = 0; i < FormatChar::SIZE; i++) {
         buf2 << "a " << testVals[i] << " b ";
     }
     buf2 << "]";

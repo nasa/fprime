@@ -49,7 +49,7 @@ protected:
     };
 
     bool valsAreEqual() {
-        for (int i = 0; i < ArrayType::SIZE; i++) {
+        for (U32 i = 0; i < ArrayType::SIZE; i++) {
             if (defaultVals[i] != testVals[i]) {
                 return false;
             }

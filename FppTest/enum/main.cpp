@@ -23,7 +23,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
                                EnumTest, 
                                EnumTestImplementations);
 
-// Define default value specializations
+// Specializations for default value
 template<>
 Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
     return Explicit::A;
@@ -34,7 +34,7 @@ Default::T FppTest::Enum::getDefaultValue<Default>() {
     return Default::C;
 }
 
-// Define valid value specializations
+// Specializations for valid value
 template<>
 Explicit::T FppTest::Enum::getValidValue<Explicit>() {
     U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS - 1);
@@ -61,7 +61,7 @@ Interval::T FppTest::Enum::getValidValue<Interval>() {
     }
 }
 
-// Define invalid value specializations
+// Specializations for invalid value
 template <>
 Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
     U32 sign = STest::Pick::lowerUpper(0, 1);

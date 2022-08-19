@@ -17,8 +17,8 @@ namespace FppTest {
         // Populates buf with a random nonempty string of random length with max length size
         void setString(char *buf, U32 size);
             
-    } // Utils
+    } // namespace Utils
 
-} // FppTest
+} // namespace FppTest
 
 #endif

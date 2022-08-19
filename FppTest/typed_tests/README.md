@@ -125,7 +125,7 @@ returns the default string size of 80.
   U32 FppTest::String::getSize();
   ```
 
-# Example
+## Example
 
 For example, to use the `ArrayTest` suite with array types `U32Array`, an array
 of three U32 values, and `F32Array`, an array of four F32 values:

@@ -32,17 +32,15 @@ namespace FppTest {
         // Get an invalid value of an enum
         template <typename EnumType>
         typename EnumType::T getInvalidValue() {
-            U8 sign;
+            U8 sign = 0;
             if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
                 sign = STest::Pick::lowerUpper(0, 1);
-            } else {
-                sign = 0;
             }
 
             switch (sign) {
                 case 0:
                     return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                        static_cast<U32>(EnumType::NUM_CONSTANTS),
+                        EnumType::NUM_CONSTANTS,
                         static_cast<U32>(
                             std::numeric_limits<typename EnumType::SerialType>::max()
                         )

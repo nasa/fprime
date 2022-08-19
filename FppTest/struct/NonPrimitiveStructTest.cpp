@@ -24,7 +24,7 @@ protected:
             ));
         } while (testEnum == StructEnum::C);
 
-        for (int i = 0; i < StructArray::SIZE; i++) {
+        for (U32 i = 0; i < StructArray::SIZE; i++) {
             testArray[i] = FppTest::Utils::getU32();
         }
 
@@ -35,11 +35,11 @@ protected:
             static_cast<F64>(FppTest::Utils::getU32())
         );
 
-        for (int i = 0; i < 3; i++) {
+        for (U32 i = 0; i < 3; i++) {
             testU32Arr[0] = FppTest::Utils::getU32();
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (U32 i = 0; i < 3; i++) {
             testStructArr[i].set(
                 true,
                 FppTest::Utils::getU32(),
@@ -55,10 +55,10 @@ protected:
         ASSERT_EQ(s.getmArray(), testArray);
         ASSERT_EQ(s.getmStruct(), testStruct);
 
-        for (int i = 0; i < 3; i++) {
+        for (U32 i = 0; i < 3; i++) {
             ASSERT_EQ(s.getmU32Arr()[i], testU32Arr[i]);
         }
-        for (int i = 0; i < 3; i++) {
+        for (U32 i = 0; i < 3; i++) {
             ASSERT_EQ(s.getmStructArr()[i], testStructArr[i]);
         }
     }
@@ -110,10 +110,10 @@ TEST_F(NonPrimitiveStructTest, Default) {
     ASSERT_EQ(s.getmArray(), defaultArray);
     ASSERT_EQ(s.getmStruct(), defaultStruct1);
 
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s.getmU32Arr()[i], 0);
     }
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s.getmStructArr()[i], defaultStruct2);
     }
 }
@@ -134,10 +134,10 @@ TEST_F(NonPrimitiveStructTest, Constructors) {
     ASSERT_EQ(s2.getmArray(), testArray);
     ASSERT_EQ(s2.getmStruct(), testStruct);
 
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s2.getmU32Arr()[i], testU32Arr[0]);
     }
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s2.getmStructArr()[i], testStructArr[0]);
     }
 
@@ -233,12 +233,12 @@ TEST_F(NonPrimitiveStructTest, GetterSetterFunctions) {
     ASSERT_EQ(s2.getmStruct(), testStruct);
 
     s2.setmU32Arr(testU32Arr);
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s2.getmU32Arr()[i], testU32Arr[i]);
     }
 
     s2.setmStructArr(testStructArr);
-    for (int i = 0; i < 3; i++) {
+    for (U32 i = 0; i < 3; i++) {
         ASSERT_EQ(s2.getmStructArr()[i], testStructArr[i]);
     }
 

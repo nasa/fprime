@@ -36,7 +36,7 @@ TYPED_TEST(ArrayToStringTest, ToString) {
     buf1 << a;
 
     buf2 << "[ ";
-    for (int i = 0; i < TypeParam::SIZE; i++) {
+    for (U32 i = 0; i < TypeParam::SIZE; i++) {
         buf2 << this->testVals[i] << " ";    
     }
     buf2 << "]";

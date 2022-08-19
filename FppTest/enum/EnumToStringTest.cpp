@@ -15,7 +15,7 @@ namespace FppTest {
     // Populate an array with enum values
     template <typename EnumType>
     void setEnumValArray(typename EnumType::T (&a)[EnumType::NUM_CONSTANTS+1]) {
-        for (int i = 0; i < EnumType::NUM_CONSTANTS + 1; i++) {
+        for (U32 i = 0; i < EnumType::NUM_CONSTANTS + 1; i++) {
             a[i] = static_cast<typename EnumType::T>(i);
         }
     }
@@ -102,7 +102,7 @@ TYPED_TEST_SUITE(EnumToStringTest, EnumTypes);
 
 // Test enum toString() and ostream operator functions
 TYPED_TEST(EnumToStringTest, ToString) {
-    for (int i = 0; i < TypeParam::NUM_CONSTANTS + 1; i++) {
+    for (U32 i = 0; i < TypeParam::NUM_CONSTANTS + 1; i++) {
         this->e = this->vals[i];
         this->buf << this->e;
 
