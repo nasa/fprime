@@ -1,4 +1,5 @@
 #include "FppTest/struct/PrimitiveSerializableAc.hpp"
+#include "FppTest/utils/Utils.hpp"
 
 #include "Fw/Types/SerialBuffer.hpp"
 #include "Fw/Types/StringUtils.hpp"
@@ -13,9 +14,9 @@ class PrimitiveStructTest : public ::testing::Test {
 protected:
     void SetUp() override {
         testBool = true;
-        testU32 = STest::Pick::any();
-        testI16 = static_cast<I16>(STest::Pick::any());
-        testF64 = static_cast<F64>(STest::Pick::any());
+        testU32 = FppTest::Utils::getU32();
+        testI16 = static_cast<I16>(FppTest::Utils::getU32());
+        testF64 = static_cast<F64>(FppTest::Utils::getU32());
     }
 
     void assertStructMembers(const Primitive& s) {

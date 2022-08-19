@@ -17,12 +17,10 @@ protected:
         FppTest::Utils::setString(buf, sizeof(buf));
         testString = buf;
 
-        do {
-            testEnum = static_cast<StructEnum::T>(STest::Pick::startLength(
-               StructEnum::A,
-               StructEnum::NUM_CONSTANTS
-            ));
-        } while (testEnum == StructEnum::C);
+        testEnum = static_cast<StructEnum::T>(STest::Pick::startLength(
+           StructEnum::A,
+           StructEnum::B
+        ));
 
         for (U32 i = 0; i < StructArray::SIZE; i++) {
             testArray[i] = FppTest::Utils::getU32();
