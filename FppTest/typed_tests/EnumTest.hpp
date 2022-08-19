@@ -8,50 +8,58 @@
 
 #include <limits>
 
-// Get the default value of an enum
-template <typename EnumType>
-typename EnumType::T getDefaultValue() {
-    return static_cast<typename EnumType::T>(0);
-}
+namespace FppTest {
 
-// Get a valid value of an enum
-template <typename EnumType>
-typename EnumType::T getValidValue() {
-    U32 val = STest::Pick::startLength(
-        0, 
-        static_cast<U32>(EnumType::NUM_CONSTANTS - 1)
-    );
+    namespace Enum {
 
-    return static_cast<typename EnumType::T>(val);
-}
+        // Get the default value of an enum
+        template <typename EnumType>
+        typename EnumType::T getDefaultValue() {
+            return static_cast<typename EnumType::T>(0);
+        }
 
-// Get an invalid value of an enum
-template <typename EnumType>
-typename EnumType::T getInvalidValue() {
-    U8 sign;
-    if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
-        sign = STest::Pick::lowerUpper(0, 1);
-    } else {
-        sign = 0;
-    }
+        // Get a valid value of an enum
+        template <typename EnumType>
+        typename EnumType::T getValidValue() {
+            U32 val = STest::Pick::startLength(
+                0, 
+                static_cast<U32>(EnumType::NUM_CONSTANTS - 1)
+            );
 
-    switch (sign) {
-        case 0:
-            return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                static_cast<U32>(EnumType::NUM_CONSTANTS),
-                static_cast<U32>(
-                    std::numeric_limits<typename EnumType::SerialType>::max()
-                )
-            ));
-        default:
-            return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
-                1,
-                static_cast<U32>((-1) *
-                    (std::numeric_limits<typename EnumType::SerialType>::min() + 1)
-                )
-            ) * (-1));
-    }
-}
+            return static_cast<typename EnumType::T>(val);
+        }
+
+        // Get an invalid value of an enum
+        template <typename EnumType>
+        typename EnumType::T getInvalidValue() {
+            U8 sign;
+            if (std::numeric_limits<typename EnumType::SerialType>::min() < 0) {
+                sign = STest::Pick::lowerUpper(0, 1);
+            } else {
+                sign = 0;
+            }
+
+            switch (sign) {
+                case 0:
+                    return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
+                        static_cast<U32>(EnumType::NUM_CONSTANTS),
+                        static_cast<U32>(
+                            std::numeric_limits<typename EnumType::SerialType>::max()
+                        )
+                    ));
+                default:
+                    return static_cast<typename EnumType::T>(STest::Pick::lowerUpper(
+                        1,
+                        static_cast<U32>((-1) *
+                            (std::numeric_limits<typename EnumType::SerialType>::min() + 1)
+                        )
+                    ) * (-1));
+            }
+        }
+
+    } // namespace Enum
+
+} // namespace FppTest
 
 // Test core enum interface
 template <typename EnumType>
@@ -70,12 +78,12 @@ TYPED_TEST_P(EnumTest, Default) {
     );
 
     // Default constructor
-    ASSERT_EQ(e.e, getDefaultValue<TypeParam>());
+    ASSERT_EQ(e.e, FppTest::Enum::getDefaultValue<TypeParam>());
 }
 
 // Test enum constructors
 TYPED_TEST_P(EnumTest, Constructors) {
-    typename TypeParam::T validVal = getValidValue<TypeParam>();
+    typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
 
     // Raw enum value constructor
     TypeParam e1(validVal);
@@ -91,7 +99,7 @@ TYPED_TEST_P(EnumTest, AssignmentOp) {
     TypeParam e1;
     TypeParam e2;
 
-    typename TypeParam::T validVal = getValidValue<TypeParam>();
+    typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
 
     // Raw enum value assignment
     e1 = validVal;
@@ -105,10 +113,10 @@ TYPED_TEST_P(EnumTest, AssignmentOp) {
 // Test enum equality and inequality operator
 TYPED_TEST_P(EnumTest, EqualityOp) {
     // Initialize two distinct valid values
-    typename TypeParam::T validVal1 = getValidValue<TypeParam>();
-    typename TypeParam::T validVal2 = getValidValue<TypeParam>();
+    typename TypeParam::T validVal1 = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::T validVal2 = FppTest::Enum::getValidValue<TypeParam>();
     while (validVal1 == validVal2) {
-        validVal2 = getValidValue<TypeParam>();
+        validVal2 = FppTest::Enum::getValidValue<TypeParam>();
     }
 
     TypeParam e1;
@@ -137,8 +145,8 @@ TYPED_TEST_P(EnumTest, EqualityOp) {
 
 // Test enum isValid() function
 TYPED_TEST_P(EnumTest, IsValidFunction) {
-    TypeParam validEnum = getValidValue<TypeParam>();
-    TypeParam invalidEnum = getInvalidValue<TypeParam>();
+    TypeParam validEnum = FppTest::Enum::getValidValue<TypeParam>();
+    TypeParam invalidEnum = FppTest::Enum::getInvalidValue<TypeParam>();
 
     ASSERT_TRUE(validEnum.isValid());
     ASSERT_FALSE(invalidEnum.isValid());
@@ -146,8 +154,8 @@ TYPED_TEST_P(EnumTest, IsValidFunction) {
 
 // Test enum serialization and deserialization
 TYPED_TEST_P(EnumTest, Serialization) {
-    TypeParam validEnum = getValidValue<TypeParam>();
-    TypeParam invalidEnum = getInvalidValue<TypeParam>();
+    TypeParam validEnum = FppTest::Enum::getValidValue<TypeParam>();
+    TypeParam invalidEnum = FppTest::Enum::getInvalidValue<TypeParam>();
 
     // Copy of enums to test after serialization
     TypeParam validEnumCopy;

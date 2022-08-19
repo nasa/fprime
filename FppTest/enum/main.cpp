@@ -25,18 +25,18 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 
 // Define default value specializations
 template<>
-Explicit::T getDefaultValue<Explicit>() {
+Explicit::T FppTest::Enum::getDefaultValue<Explicit>() {
     return Explicit::A;
 }
 
 template<>
-Default::T getDefaultValue<Default>() {
+Default::T FppTest::Enum::getDefaultValue<Default>() {
     return Default::C;
 }
 
 // Define valid value specializations
 template<>
-Explicit::T getValidValue<Explicit>() {
+Explicit::T FppTest::Enum::getValidValue<Explicit>() {
     U32 val = STest::Pick::startLength(0, Explicit::NUM_CONSTANTS - 1);
 
     switch (val) {
@@ -47,7 +47,7 @@ Explicit::T getValidValue<Explicit>() {
 }
 
 template<>
-Interval::T getValidValue<Interval>() {
+Interval::T FppTest::Enum::getValidValue<Interval>() {
     U32 val = STest::Pick::startLength(0, Interval::NUM_CONSTANTS - 1);
 
     switch (val) {
@@ -63,7 +63,7 @@ Interval::T getValidValue<Interval>() {
 
 // Define invalid value specializations
 template <>
-Explicit::T getInvalidValue<Explicit>() {
+Explicit::T FppTest::Enum::getInvalidValue<Explicit>() {
     U32 sign = STest::Pick::lowerUpper(0, 1);
 
     switch (sign) {
@@ -81,7 +81,7 @@ Explicit::T getInvalidValue<Explicit>() {
 }
 
 template<>
-Interval::T getInvalidValue<Interval>() {
+Interval::T FppTest::Enum::getInvalidValue<Interval>() {
     return static_cast<Interval::T>(STest::Pick::lowerUpper(
         Interval::G + 1,
         std::numeric_limits<Interval::SerialType>::max()

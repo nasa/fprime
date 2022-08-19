@@ -8,32 +8,43 @@
 
 #include <sstream>
 
-// Set default values for an array type
-template <typename ArrayType>
-void setDefaultVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {}
+namespace FppTest {
 
-// Set test values for an array type
-template <typename ArrayType>
-void setTestVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+    namespace Array {
 
-template <typename ArrayType>
-ArrayType getMultiElementConstructedArray
-    (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+        // Set default values for an array type
+        template <typename ArrayType>
+        void setDefaultVals
+            (typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {}
 
-// Get the serialized size of an array
-template <typename ArrayType>
-U32 getSerializedSize(typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {
-    return ArrayType::SERIALIZED_SIZE;
-}
+        // Set test values for an array type
+        template <typename ArrayType>
+        void setTestVals
+            (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+
+        template <typename ArrayType>
+        ArrayType getMultiElementConstructedArray
+            (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+
+        // Get the serialized size of an array
+        template <typename ArrayType>
+        U32 getSerializedSize
+            (typename ArrayType::ElementType (&a)[ArrayType::SIZE]) {
+            return ArrayType::SERIALIZED_SIZE;
+        }
+
+    } // namespace Array
+
+} // namespace FppTest
 
 // Test an array class
 template <typename ArrayType>
 class ArrayTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        setDefaultVals<ArrayType>(defaultVals);
+        FppTest::Array::setDefaultVals<ArrayType>(defaultVals);
 
-        setTestVals<ArrayType>(testVals);
+        FppTest::Array::setTestVals<ArrayType>(testVals);
         ASSERT_FALSE(valsAreEqual());
     };
 
@@ -85,7 +96,8 @@ TYPED_TEST_P(ArrayTest, Constructors) {
     }
 
     // Multiple element constructor
-    TypeParam a3 = getMultiElementConstructedArray<TypeParam>(this->testVals);
+    TypeParam a3 = FppTest::Array::getMultiElementConstructedArray<TypeParam>
+        (this->testVals);
     for (U32 i = 0; i < TypeParam::SIZE; i++) {
         ASSERT_EQ(a3[i], this->testVals[i]);
     }
@@ -156,7 +168,8 @@ TYPED_TEST_P(ArrayTest, EqualityOp) {
 TYPED_TEST_P(ArrayTest, Serialization) {
     TypeParam a(this->testVals);
 
-    U32 serializedSize = getSerializedSize<TypeParam>(this->testVals);
+    U32 serializedSize = 
+        FppTest::Array::getSerializedSize<TypeParam>(this->testVals);
     Fw::SerializeStatus status;
 
     // Test successful serialization
@@ -199,25 +212,6 @@ TYPED_TEST_P(ArrayTest, Serialization) {
     ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
 }
 
-// Test array toString() and ostream operator functions
-TYPED_TEST_P(ArrayTest, ToString) {
-    TypeParam a(this->testVals);
-    std::stringstream buf1, buf2;
-
-    buf1 << a;
-
-    buf2 << "[ ";
-    for (int i = 0; i < TypeParam::SIZE; i++) {
-        buf2 << this->testVals[i] << " ";    
-    }
-    buf2 << "]";
-
-    ASSERT_STREQ(
-        buf1.str().c_str(),
-        buf2.str().c_str()
-    );
-}
-
 // Register all test patterns
 REGISTER_TYPED_TEST_SUITE_P(ArrayTest,
     Default,
@@ -225,8 +219,7 @@ REGISTER_TYPED_TEST_SUITE_P(ArrayTest,
     SubscriptOp,
     AssignmentOp,
     EqualityOp,
-    Serialization,
-    ToString
+    Serialization
 );
 
 #endif

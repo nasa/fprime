@@ -24,24 +24,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(InstanceName,
                                TestTypes);
 ```
 
-For example, to instantiate the `ArrayTest` suite with array types `ArrayType1`
-and `ArrayType2`:
+## Implementing Specializations
 
-```c++
-#include "FppTest/typed_tests/ArrayTest.hpp"
-
-using ArrayTypes = ::testing::Types<
-    ArrayType1,
-    ArrayType2
->;
-INSTANTIATE_TYPED_TEST_SUITE_P(ExampleInstance, 
-                               ArrayTest, 
-                               ArrayTypes);
-```
-
-## Defining Specializations
-
-In addition to instantiating the test suite, you may also need to define some
+In addition to instantiating the test suite, you may also need to implement some
 explicit specializations for template functions if the behavior of your class
 differs from the provided default implementation.
 
@@ -53,7 +38,7 @@ implementation returns 0.
   ```c++
   // Function signature
   template <typename EnumType>
-  typename EnumType::T getDefaultValue();
+  typename EnumType::T FppTest::Enum::getDefaultValue();
   ```
 
 - `getValidValue()`: Returns a random valid enum value. The default implementation
@@ -63,7 +48,7 @@ a value in the interval `[0, EnumType::NUM_CONSTANTS-1]`.
   ```c++
   // Function signature
   template <typename EnumType>
-  typename EnumType::T getValidValue();
+  typename EnumType::T FppTest::Enum::getValidValue();
   ```
 
 - `getInvalidValue()`: Returns an random invalid enum value. The default
@@ -76,7 +61,7 @@ and maximum values of the serial representation type, respectively.
   ```c++
   // Function signature
   template <typename EnumType>
-  typename EnumType::T getInvalidValue();
+  typename EnumType::T FppTest::Enum::getInvalidValue();
   ```
 
 ### `ArrayTest` Suite
@@ -90,7 +75,8 @@ In addition, these test values must be different from the default values.
   ```c++
   // Function signature
   template <typename ArrayType>
-  void setTestVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+  void FppTest::Array::setTestVals
+      (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
   ```
 
 - `getMultiElementConstructedArray()`: Returns an array constructed using its
@@ -100,19 +86,21 @@ function must be implemented for your array type!
   ```c++
   // Function signature
   template <typename ArrayType>
-  ArrayType getMultiElementConstructedArray
+  ArrayType FppTest::Array::getMultiElementConstructedArray
       (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
   ```
 
 The following functions may or may not need to be implemented:
 
 - `setDefaultVals()`: Sets the default values for an array. The default
-implementation is empty (i.e. either zero-initialized or default-initialized).
+implementation is empty (i.e. the values are either zero-initialized or 
+default-initialized).
 
   ```c++
   // Function signature
   template <typename ArrayType>
-  void setDefaultVals(typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+  void FppTest::Array::setDefaultVals
+      (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
   ```
 
 - `getSerializedSize()`: Returns the serialized size of an array. The default
@@ -122,7 +110,8 @@ this function will need to be implemented for arrays containing string values.
   ```c++
   // Function signature
   template <typename ArrayType>
-  U32 getSerializedSize(typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
+  U32 FppTest::Array::getSerializedSize
+      (typename ArrayType::ElementType (&a)[ArrayType::SIZE]);
   ```
 
 ### `StringTest` Suite
@@ -133,5 +122,54 @@ returns the default string size of 80.
   ```c++
   // Function signature
   template <typename StringType>
-  U32 getSize();
+  U32 FppTest::String::getSize();
   ```
+
+# Example
+
+For example, to use the `ArrayTest` suite with array types `U32Array`, an array
+of three U32 values, and `F32Array`, an array of four F32 values:
+
+```c++
+#include "FppTest/typed_tests/ArrayTest.hpp"
+
+// Instantiate the test suite with a list of types
+using ArrayTypes = ::testing::Types<
+    U32Array,
+    F32Array
+>;
+INSTANTIATE_TYPED_TEST_SUITE_P(ExampleInstance, 
+                               ArrayTest, 
+                               ArrayTypes);
+
+// Explicit specializations for setTestVals()
+template <>
+void FppTest::Array::setTestVals<U32Array>
+    (U32Array::ElementType (&a)[U32Array::SIZE]) {
+    for (U32 i = 0; i < U32Array::SIZE; i++) {
+        a[i] = i;
+    }
+}
+
+template <>
+void FppTest::Array::setTestVals<F32Array>
+    (F32Array::ElementType (&a)[F32Array::SIZE]) {
+    for (U32 i = 0; i < F32Array::SIZE; i++) {
+        a[i] = static_cast<F32>(i);
+    }
+}
+
+// Explicit specializations for getMultiElementConstructedArray()
+template<>
+U32Array FppTest::Array::getMultiElementConstructedArray<U32Array>
+    (U32Array::ElementType (&a)[U32Array::SIZE]) {
+    return U32Array(a[0], a[1], a[2]);
+}
+
+template<>
+F32Array FppTest::Array::getMultiElementConstructedArray<F32Array>
+    (F32Array::ElementType (&a)[F32Array::SIZE]) {
+    return F32Array(a[0], a[1], a[2], a[3]);
+}
+```
+

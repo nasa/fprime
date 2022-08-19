@@ -22,7 +22,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, ArrayTest, ArrayTestImplementations);
 
 // Define specializations for default values
 template <>
-void setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
+void FppTest::Array::setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
     a[0] = E::A;
     a[1] = E::B;
     a[2] = E::C;
@@ -30,7 +30,7 @@ void setDefaultVals<Enum>(E (&a)[Enum::SIZE]) {
 
 // Define specialization for test values
 template<>
-void setTestVals<Enum>(E (&a)[Enum::SIZE]) {
+void FppTest::Array::setTestVals<Enum>(E (&a)[Enum::SIZE]) {
     while (a[0] != E::A) {
         a[0] = static_cast<E::T>(STest::Pick::startLength(
             E::B,
@@ -47,16 +47,17 @@ void setTestVals<Enum>(E (&a)[Enum::SIZE]) {
 }
 
 template<>
-void setTestVals<String>(String::StringSize80 (&a)[String::SIZE]) {
+void FppTest::Array::setTestVals<String>
+    (::String::StringSize80 (&a)[::String::SIZE]) {
     char buf[80];
-    for (U32 i = 0; i < String::SIZE; i++) {
+    for (U32 i = 0; i < ::String::SIZE; i++) {
         FppTest::Utils::setString(buf, sizeof(buf));
         a[i] = buf;
     }
 }
 
 template<>
-void setTestVals<Struct>(S (&a)[Struct::SIZE]) {
+void FppTest::Array::setTestVals<Struct>(S (&a)[Struct::SIZE]) {
     U32 b[3];
     for (int i = 0; i < Struct::SIZE; i++) {
         for (int j = 0; j < 3; j++) {
@@ -67,7 +68,7 @@ void setTestVals<Struct>(S (&a)[Struct::SIZE]) {
 }
 
 template<>
-void setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
+void FppTest::Array::setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
     Uint32 b;
     for (int i = 0; i < Uint32Array::SIZE; i++) {
         for (int j = 0; j < Uint32::SIZE; j++) {
@@ -79,33 +80,36 @@ void setTestVals<Uint32Array>(Uint32 (&a)[Uint32Array::SIZE]) {
 
 // Define specializations for multi element constructor
 template<>
-Enum getMultiElementConstructedArray<Enum>(E (&a)[Enum::SIZE]) {
+Enum FppTest::Array::getMultiElementConstructedArray<Enum>
+    (E (&a)[Enum::SIZE]) {
     return Enum(a[0], a[1], a[2]);
 }
 
 template<>
-String getMultiElementConstructedArray<String>
-    (String::StringSize80 (&a)[String::SIZE]) {
-    return String(a[0], a[1], a[2]);
+::String FppTest::Array::getMultiElementConstructedArray<::String>
+    (::String::StringSize80 (&a)[::String::SIZE]) {
+        return ::String(a[0], a[1], a[2]);
 }
 
 template<>
-Struct getMultiElementConstructedArray<Struct>(S (&a)[Struct::SIZE]) {
+Struct FppTest::Array::getMultiElementConstructedArray<Struct>
+    (S (&a)[Struct::SIZE]) {
     return Struct(a[0], a[1], a[2]);
 }
 
 template<>
-Uint32Array getMultiElementConstructedArray<Uint32Array>
+Uint32Array FppTest::Array::getMultiElementConstructedArray<Uint32Array>
     (Uint32 (&a)[Uint32Array::SIZE]) {
     return Uint32Array(a[0], a[1], a[2]);
 }
 
 // Define specializations for serialized size
 template <>
-U32 getSerializedSize<String>(String::StringSize80 (&a)[String::SIZE]) {
+U32 FppTest::Array::getSerializedSize<::String>
+    (::String::StringSize80 (&a)[::String::SIZE]) {
     U32 serializedSize = 0;
 
-    for (int i = 0; i < String::SIZE; i++) {
+    for (int i = 0; i < ::String::SIZE; i++) {
         serializedSize += a[i].length() + sizeof(FwBuffSizeType);   
     }
 
@@ -120,7 +124,7 @@ using StringTestImplementations = ::testing::Types<
 INSTANTIATE_TYPED_TEST_SUITE_P(Array, StringTest, StringTestImplementations);
 
 template<>
-U32 getSize<String100::StringSize100>() {
+U32 FppTest::String::getSize<String100::StringSize100>() {
     return 100;
 }
 

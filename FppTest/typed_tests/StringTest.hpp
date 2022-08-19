@@ -8,18 +8,26 @@
 
 #include "gtest/gtest.h"
 
-// Get the size of a string type
-template <typename StringType>
-U32 getSize() {
-    return 80;
-}
+namespace FppTest {
+
+    namespace String {
+
+        // Get the size of a string type
+        template <typename StringType>
+        U32 getSize() {
+            return 80;
+        }
+
+    } // namespace String
+
+} // namespace FppTest
 
 // Test a nested string class
 template <class StringType>
 class StringTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        size = getSize<StringType>();
+        size = FppTest::String::getSize<StringType>();
 
         FppTest::Utils::setString(src, size);
 

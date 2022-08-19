@@ -2,6 +2,7 @@
 
 This directory contains unit tests for the FPP enum code generator.
 
+* EnumToStringTest: Tests enum toString() and ostream operator functions
 * IsValidTest: Additional tests for isValid() function with boundary values
 
 To use this directory, you must have installed F Prime, and you must be inside 
