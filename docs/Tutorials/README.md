@@ -6,7 +6,7 @@ title: "F´ Tutorials"
 These tutorials will walk the user from a basic getting-started guide through designing a full system for use with F´. This will help new
 users to learn F´ and walk through the most basic steps in developing an F´ application.
 
-## Tutorials Index
+<h1 align="center">Tutorials Index</h1> 
 
 0. [GettingStarted](GettingStarted/Tutorial.md)
 1. [MathComponent](MathComponent/Tutorial.md)
