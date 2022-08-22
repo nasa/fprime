@@ -312,6 +312,7 @@ databinding
 datastore
 datetime
 dawbarton
+db
 DBUILD
 DCMAKE
 DDDTHH
@@ -1004,6 +1005,7 @@ mstring
 MTIME
 mtype
 mul
+multiarch
 multiline
 multioptionals
 multirequired
@@ -1081,7 +1083,9 @@ numargs
 nums
 nxt
 objclass
+objcopy
 objdoc
+objdump
 objmodule
 objs
 oclc
