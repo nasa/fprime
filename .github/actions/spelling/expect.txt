@@ -513,6 +513,7 @@ gcc
 gcda
 gcgandhi
 gcov
+gdb
 gdiplus
 gencode
 genfile
