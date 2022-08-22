@@ -14,15 +14,15 @@ set(CMAKE_SYSTEM_PROCESSOR  arm)
 set(CMAKE_SYSTEM_VERSION    1)
 
 # Set the GNU ARM toolchain
-set(CMAKE_AR            arm-linux-gnueabihf-ar)
+find_program(CMAKE_AR NAMES arm-linux-gnueabihf-ar PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 find_program(CMAKE_C_COMPILER NAMES arm-linux-gnueabihf-gcc PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 find_program(CMAKE_CXX_COMPILER NAMES arm-linux-gnueabihf-g++ PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 message(STATUS "[arm-linux] C Compiler: ${CMAKE_C_COMPILER}")
 message(STATUS "[arm-linux] CXX Compiler: ${CMAKE_CXX_COMPILER}")
-set(CMAKE_ASM_COMPILER  arm-linux-gnueabihf-as)
-set(CMAKE_OBJCOPY       arm-linux-gnueabihf-objcopy)
-set(CMAKE_OBJDUMP       arm-linux-gnueabihf-objdump)
-set(CMAKE_C_GDB         gdb-multiarch)
+find_program(CMAKE_ASM_COMPILER NAMES arm-linux-gnueabihf-as PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
+find_program(CMAKE_OBJCOPY NAMES arm-linux-gnueabihf-objcopy PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
+find_program(CMAKE_OBJDUMP NAMES arm-linux-gnueabihf-objdump PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
+find_program(CMAKE_C_GDB NAMES gdb-multiarch PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 
 # Configure the find commands for finding the toolchain
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
