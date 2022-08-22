@@ -63,7 +63,7 @@ impl_file_template = """
 \#include <${output_header}>
 
 \#include <FpConfig.hpp>
-\#include <Fw/Types/BasicTypes.hpp>
+\#include <FpConfig.hpp>
 \#include <Fw/Time/Time.hpp>
 
 // Verify packets not too large for ComBuffer

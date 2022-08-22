@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/command2/TestCommandComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace AcTest {
 

@@ -13,7 +13,7 @@
 #ifndef OS_PTHREADS_BUFFER_QUEUE_HPP
 #define OS_PTHREADS_BUFFER_QUEUE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 // This is a generic buffer queue interface. 
 namespace Os {

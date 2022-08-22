@@ -5,7 +5,7 @@
 #include <iostream>
 #endif
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Fw {
 

@@ -129,7 +129,13 @@ See <a href="#dpi-impl">below</a> for a description of how `Deframer` implements
 
 Here is a class diagram for `Deframer`:
 
-![classdiagram](./img/class_diagram_deframer.png)
+```mermaid
+classDiagram
+    ObjBase <|-- PassiveComponentBase
+    PassiveComponentBase <|-- DeframerComponentBase
+    DeframerComponentBase <|-- Deframer
+    DeframingProtocolInterface <|-- Deframer
+```
 
 ### 4.4. State
 
@@ -370,7 +376,7 @@ assign these numbers.
 **Topology 3: Buffers containing packet data:**
 
 <div>
-<img src="img/top/file.png" width=1000/>
+<img src="img/top/deframer-file.png" width=1000/>
 </div>
 
 ### 6.2. Sequence Diagrams
@@ -386,13 +392,54 @@ Vertical dashed lines represent component code.
 Solid horizontal arrows represent synchronous port invocations, and open
 horizontal arrows represent asynchronous port invocations.
 
-![Active byte stream driver, command packet](img/sequence-diagrams/active-cmd-packet.png)
+```mermaid
+sequenceDiagram
+    activate activeComm
+    activeComm->>buffMgr: Allocate frame buffer FB
+    buffMgr-->>activeComm: Return FB
+    activeComm->>activeComm: Fill FB with framed data
+    activeComm->>deframer: Send FB[framedIn]
+    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
+    buffMgr-->>deframer: Return PB
+    deframer->>deframer: Deframe FB into PB
+    deframer->>deframer: Copy PB into a command packet C
+    deframer-)cmdDisp: Send C [comOut]
+    deframer->>buffMgr: Deallocate PB [bufferDeallocate]
+    buffMgr-->>deframer: 
+    deframer->>buffMgr: Deallocate FB [framedDeallocate]
+    buffMgr-->>deframer: 
+    deframer-->>activeComm: 
+    deactivate  activeComm 
+    activate cmdDisp
+    cmdDisp->>deframer: Send cmd response [cmdResponseIn]
+    deframer-->>cmdDisp: 
+    deactivate cmdDisp
+```
 
 **Sending a file packet:**
 The following sequence diagram shows what happens when `activeComm`
 sends data to `deframer`, and `deframer` decodes the data into a file packet.
 
-![Active byte stream driver, file packet](img/sequence-diagrams/active-file-packet.png)
+```mermaid
+sequenceDiagram
+    activate activeComm
+    activeComm->>buffMgr: Allocate frame buffer FB
+    buffMgr-->>activeComm: Return FB
+    activeComm->>activeComm: Fill FB with framed data
+    activeComm->>deframer: Send FB [framedIn]
+    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
+    buffMgr-->>deframer: Return PB
+    deframer->>deframer: Deframe FB into PB
+    deframer-)fileUplink: Send PB [bufferOut]
+    deframer->>buffMgr: Deallocate FB [framedDeallocate]
+    buffMgr-->>deframer: 
+    deframer-->>activeComm: 
+    deactivate activeComm
+    activate fileUplink
+    fileUplink->>buffMgr: Deallocate PB
+    buffMgr-->>fileUplink: 
+    deactivate fileUplink
+```
 
 #### 6.2.2. Passive Byte Stream Driver
 
@@ -400,13 +447,49 @@ sends data to `deframer`, and `deframer` decodes the data into a file packet.
 happens when `passiveComm` sends data to `deframer`, and
 `deframer` decodes the data into a command packet.
 
-![Passive byte stream driver, command packet](img/sequence-diagrams/passive-cmd-packet.png)
+```mermaid
+sequenceDiagram
+    activate rateGroup
+    rateGroup->>deframer: Send schedule tick [schedIn]
+    deframer->>passiveComm: Poll for data [framedPoll]
+    passiveComm-->>deframer: Return status
+    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
+    buffMgr-->>deframer: Return PB
+    deframer->>deframer: Deframe data into PB
+    deframer->>deframer: Copy PB into a command packet C
+    deframer-)cmdDisp: Send C [comOut]
+    deframer->>buffMgr: Deallocate PB [bufferDeallocate]
+    buffMgr-->>deframer: 
+    deframer-->>rateGroup: 
+    deactivate rateGroup
+    activate cmdDisp
+    cmdDisp->>deframer: Send cmd response [cmdResponseIn]
+    deframer-->>cmdDisp: 
+    deactivate cmdDisp 
+```
 
 **Sending a file packet:** The following sequence diagram shows what
 happens when `passiveComm` sends data to `deframer`, and
 `Deframer` decodes the data into a file packet.
 
-![Passive byte stream driver, file packet](img/sequence-diagrams/passive-file-packet.png)
+```mermaid
+sequenceDiagram
+    activate rateGroup
+    rateGroup->>deframer: Send schedule tick [schedIn]
+    deframer->>passiveComm: Poll for data [framedPoll]
+    passiveComm-->>deframer: Return status
+    deframer->>buffMgr: Allocate packet buffer PB [bufferAllocate]
+    buffMgr-->>deframer: Return PB
+    deframer->>deframer: Deframe data into PB
+    deframer-)fileUplink: Send PB [bufferOut]
+    deframer-->>rateGroup: 
+    deactivate rateGroup
+    activate fileUplink
+    fileUplink->>buffMgr: Deallocate PB
+    buffMgr-->>fileUplink: 
+    deactivate fileUplink
+```
+
 
 ### 6.3. Using Svc::GenericHub
 

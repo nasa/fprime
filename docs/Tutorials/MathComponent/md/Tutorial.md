@@ -714,7 +714,7 @@ void Tester ::
 
     // Verify operation request on mathOpOut
 
-    // verify that that one output port was invoked overall
+    // verify that one output port was invoked overall
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     // verify that the math operation port was invoked once
     ASSERT_from_mathOpOut_SIZE(1);

@@ -12,7 +12,7 @@
 #include <cstring>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <sys/time.h>
 

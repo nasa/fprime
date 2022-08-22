@@ -11,7 +11,7 @@
  */
 #include <Svc/TlmChan/TlmChanImpl.hpp>
 #include <cstring>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Com/ComBuffer.hpp>
 

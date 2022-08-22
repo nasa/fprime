@@ -11,30 +11,106 @@
  */
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
+#include <Fw/Types/BasicTypes.hpp>
 
-// To enable various facilities, set the below to 0 or 1. If it is set in compiler flags,
-// these defaults will be overridden
+typedef PlatformIndexType FwIndexType;
+#define PRI_FwIndexType PRI_PlatformIndexType
 
-// Available types
+typedef PlatformSizeType FwSizeType;
+#define PRI_FwSizeType PRI_PlatformSizeType
 
-#ifndef FW_HAS_64_BIT
-#define FW_HAS_64_BIT                       1  //!< Architecture supports 64 bit integers
-#endif
+typedef PlatformAssertArgType FwAssertArgType;
+#define PRI_FwAssertArgType PRI_PlatformAssertArgType
 
-#ifndef FW_HAS_32_BIT
-#define FW_HAS_32_BIT                       1  //!< Architecture supports 32 bit integers
-#endif
 
-#ifndef FW_HAS_16_BIT
-#define FW_HAS_16_BIT                       1  //!< Architecture supports 16 bit integers
-#endif
+typedef PlatformIntType FwNativeIntType;
+#define PRI_FwNativeIntType PRI_PlatformIntType
 
-#ifndef FW_HAS_F64
-#define FW_HAS_F64                          1  //!< Architecture supports 64 bit floating point numbers
-#endif
+typedef PlatformUIntType FwNativeUIntType;
+#define PRI_FwNativeUIntType PRI_PlatformUIntType
+
+typedef U16 FwBuffSizeType;
+#define PRI_FwBuffSizeType PRIu16
+
+typedef I32 FwEnumStoreType;
+#define PRI_FwEnumStoreType PRId32
+
+// Define enumeration for Time base types
+enum TimeBase {
+    TB_NONE, //!< No time base has been established
+    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
+    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
+    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
+};
+#define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
+
+typedef U16 FwTimeBaseStoreType;
+#define PRI_FwTimeBaseStoreType PRIu16
+
+typedef U8 FwTimeContextStoreType;
+#define PRI_FwTimeContextStoreType PRIu8
+
+typedef U32 FwPacketDescriptorType;
+#define PRI_FwPacketDescriptorType PRIu32
+
+typedef U32 FwOpcodeType;
+#define PRI_FwOpcodeType PRIu32
+
+typedef U32 FwChanIdType;
+#define PRI_FwChanIdType PRIu32
+
+typedef U32 FwEventIdType;
+#define PRI_FwEventIdType PRIu32
+
+typedef U32 FwPrmIdType;
+#define PRI_FwPrmIdType PRIu32
+
+typedef U16 FwTlmPacketizeIdType;
+#define PRI_FwTlmPacketizeIdType PRIu16
+
+/**
+ * FpLimits:
+ *
+ * Sets the limit constants for the types defined int this file. Constants are
+ * defined as `static const` to ensure that storage is not allocated. This class
+ * inherits from BasicLimits and transitively from PlatformLimits such that it
+ * includes the limits included within those files.
+ *
+ **/
+struct FpLimits : BasicLimits {
+    static const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;
+    static const FwIndexType FwIndexType_MAX = PlatformIndexType_MAX;
+    static const FwSizeType FwSizeType_MIN = PlatformSizeType_MIN;
+    static const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
+    static const FwAssertArgType FwAssertArgType_MIN = PlatformAssertArgType_MIN;
+    static const FwAssertArgType FwAssertArgType_MAX = PlatformAssertArgType_MAX;
+    static const FwNativeIntType FwNativeIntType_MIN = PlatformIntType_MIN;
+    static const FwNativeIntType FwNativeIntType_MAX = PlatformIntType_MAX;
+    static const FwNativeUIntType FwNativeUIntType_MIN = PlatformUIntType_MIN;
+    static const FwNativeUIntType FwNativeUIntType_MAX = PlatformUIntType_MAX;
+    static const FwBuffSizeType FwBuffSizeType_MIN = U16_MIN;
+    static const FwBuffSizeType FwBuffSizeType_MAX = U16_MAX;
+    static const FwEnumStoreType FwEnumStoreType_MIN = I32_MIN;
+    static const FwEnumStoreType FwEnumStoreType_MAX = I32_MAX;
+    static const FwTimeBaseStoreType FwTimeBaseStoreType_MIN = U16_MIN;
+    static const FwTimeBaseStoreType FwTimeBaseStoreType_MAX = U16_MAX;
+    static const FwTimeContextStoreType FwTimeContextStoreType_MIN = U8_MIN;
+    static const FwTimeContextStoreType FwTimeContextStoreType_MAX = U8_MAX;
+    static const FwPacketDescriptorType FwPacketDescriptorType_MIN = U32_MIN;
+    static const FwPacketDescriptorType FwPacketDescriptorType_MAX = U32_MAX;
+    static const FwOpcodeType FwOpcodeType_MIN = U32_MIN;
+    static const FwOpcodeType FwOpcodeType_MAX = U32_MAX;
+    static const FwChanIdType FwChanIdType_MIN = U32_MIN;
+    static const FwChanIdType FwChanIdType_MAX = U32_MAX;
+    static const FwEventIdType FwEventIdType_MIN = U32_MIN;
+    static const FwEventIdType FwEventIdType_MAX = U32_MAX;
+    static const FwPrmIdType FwPrmIdType_MIN = U32_MIN;
+    static const FwPrmIdType FwPrmIdType_MAX = U32_MAX;
+    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN = U16_MIN;
+    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
+};
 
 // Boolean values for serialization
-
 #ifndef FW_SERIALIZE_TRUE_VALUE
 #define FW_SERIALIZE_TRUE_VALUE             (0xFF)  //!< Value encoded during serialization for boolean true
 #endif
@@ -43,48 +119,6 @@
 #define FW_SERIALIZE_FALSE_VALUE             (0x00) //!< Value encoded during serialization for boolean false
 #endif
 
-#ifndef AssertArg
-#define AssertArg U32
-#endif
-
-// typedefs for various serialization items
-// *** NOTE *** Changes here MUST match GSE in order to decode the values correctly
-
-#ifndef FwPacketDescriptorType
-#define FwPacketDescriptorType U32          //!< Type representation for a packet descriptor
-#endif
-
-#ifndef FwOpcodeType
-#define FwOpcodeType U32                    //!< Type representation for a command opcode
-#endif
-
-#ifndef FwChanIdType
-#define FwChanIdType U32                    //!< Type representation for a channel id
-#endif
-
-#ifndef FwEventIdType
-#define FwEventIdType U32                   //!< Type representation for an event id
-#endif
-
-#ifndef FwPrmIdType
-#define FwPrmIdType U32                     //!< Type representation for a parameter id
-#endif
-
-#ifndef FwTlmPacketizeIdType
-#define FwTlmPacketizeIdType U16            //!< Packetized telemetry packet id
-#endif
-
-// How big the size of a buffer (or string) representation is
-#ifndef FwBuffSizeType
-#define FwBuffSizeType U16                  //!< Type representation for storing a buffer or string size
-#endif
-
-// How many bits are used to store an enumeration defined in XML during serialization.
-#ifndef FwEnumStoreType
-#define FwEnumStoreType I32                 //!< Type representation for an enumeration value
-#endif
-
-// Object facilities
 
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
@@ -318,24 +352,6 @@
 // Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility
 #ifndef FW_AMPCS_COMPATIBLE
 #define FW_AMPCS_COMPATIBLE            0   //!< Whether or not JPL AMPCS ground system support is enabled.
-#endif
-
-// Define enumeration for Time base types
-enum TimeBase {
-    TB_NONE, //!< No time base has been established
-    TB_PROC_TIME, //!< Indicates time is processor cycle time. Not tied to external time
-    TB_WORKSTATION_TIME, //!< Time as reported on workstation where software is running. For testing.
-    TB_DONT_CARE = 0xFFFF //!< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed
-};
-
-// How many bits are used to store the time base
-#ifndef FwTimeBaseStoreType
-#define FwTimeBaseStoreType U16                 //!< Storage conversion for time base in scripts/ground interface
-#endif
-
-#ifndef FwTimeContextStoreType
-#define FwTimeContextStoreType U8                 //!< Storage conversion for time context in scripts/ground interface
-#define FW_CONTEXT_DONT_CARE 0xFF                 //!< Don't care value for time contexts in sequences
 #endif
 
 // These settings configure whether or not the timebase and context values for the Fw::Time

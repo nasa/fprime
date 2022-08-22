@@ -18,7 +18,6 @@
 #define TYPES_CIRCULAR_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 //#define CIRCULAR_DEBUG

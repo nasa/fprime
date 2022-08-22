@@ -26,7 +26,7 @@ TEST(PassByTest, OK) {
     Example::AllTypes async_args(true);
     Example::AllTypes sync_args(false);
 
-    // Invoke sync and async ports and pass pass arguments
+    // Invoke sync and async ports and pass arguments
     inst1.get_AsyncPort_InputPort(0)->invoke(
         &async_args.arg1,
         async_args.arg2,

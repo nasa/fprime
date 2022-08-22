@@ -379,12 +379,10 @@ class ComponentVisitorBase(AbstractVisitor.AbstractVisitor):
                 if len(opcodes) == 1:
                     return f"CMD_{mnemonic.upper()}"
                 else:
-                    mlist = []
-                    inst = 0
-                    for opcode in opcodes:
-                        mlist.append("CMD_" + mnemonic.upper() + "_%d" % inst)
-                        inst += 1
-                    return mlist
+                    return [
+                        f"CMD_{mnemonic.upper()}_{inst}"
+                        for inst, opcode in enumerate(opcodes)
+                    ]
             else:
                 return None
 
