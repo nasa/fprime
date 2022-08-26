@@ -25,10 +25,10 @@ def test_schematron():
     try:
 
         # cd into test directory to find test files (code/test/schematron can only find files this way)
-        testdir = build_root / "Autocoders" / "Python" /  "test" /  "schematron" / "xml"
+        testdir = build_root / "Autocoders" / "Python" / "test" / "schematron" / "xml"
         os.chdir(testdir)
 
-        bindir = build_dir / "Autocoders" / "Python" / "bin"
+        bindir = build_root / "Autocoders" / "Python" / "bin"
 
         # Autocode enum XML
         p_enum = pexpect.spawn(
