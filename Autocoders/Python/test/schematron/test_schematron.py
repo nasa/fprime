@@ -5,7 +5,7 @@ Checks that the schematron RNG schema files for topology, component, and diction
 
 @author jishii
 """
-
+from pathlib import Path
 import os
 import shutil
 import sys
@@ -13,8 +13,9 @@ import sys
 import pexpect
 from pexpect import EOF, TIMEOUT
 
-sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Fw", "Python", "src"))
-sys.path.append(os.path.join(os.environ["BUILD_ROOT"], "Gds", "src"))  # Add GDS modules
+build_root = Path(os.environ["BUILD_ROOT"])
+sys.path.append(build_root / "Fw" / "Python" / "src")
+sys.path.append(build_root / "Gds" / "src")  # Add GDS modules
 
 
 def test_schematron():
@@ -24,21 +25,14 @@ def test_schematron():
     try:
 
         # cd into test directory to find test files (code/test/schematron can only find files this way)
-        testdir = os.path.join(
-            os.environ["BUILD_ROOT"],
-            "Autocoders",
-            "Python",
-            "test",
-            "schematron",
-            "xml",
-        )
+        testdir = build_root / "Autocoders" / "Python" /  "test" /  "schematron" / "xml"
         os.chdir(testdir)
 
-        bindir = os.path.join(os.environ["BUILD_ROOT"], "Autocoders", "Python", "bin")
+        bindir = build_dir / "Autocoders" / "Python" / "bin"
 
         # Autocode enum XML
         p_enum = pexpect.spawn(
-            "python " + os.path.join(bindir, "codegen.py") + " -v Enum1EnumAi.xml"
+            "python " + str(bindir / "codegen.py") + " -v Enum1EnumAi.xml"
         )
         p_enum.expect("(?=.*Enum1 Schematron).*")
         print("Enum autocoded for test cases")
@@ -52,7 +46,7 @@ def test_schematron():
 
         # Successful test case
         p_test1 = pexpect.spawn(
-            "python " + os.path.join(bindir, "codegen.py") + " -v TestTopologyAppAi.xml"
+            "python " + str(bindir / "codegen.py") + " -v TestTopologyAppAi.xml"
         )
         p_test1.expect(
             "(?=.*Found component XML file)(?=.*Parsing Component TestComponent)(?!.*ERROR)(?!.*is not valid according to schematron).*",
@@ -63,7 +57,7 @@ def test_schematron():
         # Active component without an async port
         p_test2 = pexpect.spawn(
             "python "
-            + os.path.join(bindir, "codegen.py")
+            + str(bindir / "codegen.py")
             + " -v Test2TopologyAppAi.xml"
         )
         p_test2.expect(
@@ -77,7 +71,7 @@ def test_schematron():
         # Topology with 2 instances of the same ID
         p_test3 = pexpect.spawn(
             "python "
-            + os.path.join(bindir, "codegen.py")
+            + str(bindir / "codegen.py")
             + " -v BrokenTopologyAppAi.xml"
         )
         p_test3.expect("(?=.*top_uniqueness_schematron.rng)(?!.*ERROR).*", timeout=5)
@@ -91,12 +85,12 @@ def test_schematron():
             # Broken imported dict
             print(
                 "python "
-                + os.path.join(bindir, "codegen.py")
+                + str(bindir / "codegen.py")
                 + " -v Test{}DictComponentAi.xml".format(type)
             )
             p_test_dict = pexpect.spawn(
                 "python "
-                + os.path.join(bindir, "codegen.py")
+                + str(bindir / "codegen.py")
                 + " -v Test{}DictComponentAi.xml".format(type)
             )
             if type == "Cmd":
@@ -129,7 +123,7 @@ def test_schematron():
             # Broken component xml
             p_test_dict = pexpect.spawn(
                 "python "
-                + os.path.join(bindir, "codegen.py")
+                + str(bindir / "codegen.py")
                 + " -v Test{}ComponentAi.xml".format(type)
             )
             p_test_dict.expect(
