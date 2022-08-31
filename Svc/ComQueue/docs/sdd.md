@@ -145,10 +145,5 @@ buffer amd com buffer data, do:
    3. Compare the entry index with the value of the size of the queue that contains com buffer data.
       1. If it is less than the size value, then invoke the sendComBuffer function.
       2. If it is greater than the size value, then invoke the sendBuffer function. 
-   4. Break out of the loop, but enter a new loop that starts at the next entry and linearly swap the remaining 
-items in the prioritized list. 
-## 5. Change Log
-
-| Date       | Description |
-|------------|---|
-| 2022-07-12 | Initial Draft |
+   4. Break out of the loop, but enter a new loop that starts at the next entry and linearly swap the remaining items in
+the prioritized list. 

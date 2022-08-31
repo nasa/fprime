@@ -117,9 +117,3 @@ This port receives the connected signal from the driver and responds with exactl
 
 The `drvDataIn` handler receives data read from the driver and supplies it out the `comDataOut` port. It usually is
 connected to the `Svc::Deframer` component
-
-## 5. Change Log
-
-| Date       | Description   |
-|------------|---------------|
-| 2022-07-22 | Initial Draft |
