@@ -30,6 +30,10 @@ class Tester : public ComQueueGTestBase {
     //!
     ~Tester();
 
+    //! Dispatch all component messages
+    //!
+    void dispatchAll();
+
   public:
     // ----------------------------------------------------------------------
     // Helpers
