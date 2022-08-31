@@ -120,6 +120,7 @@ buf
 BUFFERALLOCATE
 BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
+BUFFQUEUEIN
 buffsize
 BUGLIST
 bugprone
@@ -195,6 +196,7 @@ codegen
 colno
 COLORSTYLE
 colorwheel
+combuffer
 comlogger
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
@@ -203,6 +205,10 @@ commasepitem
 commonpath
 COMPACKET
 COMPONENTTESTERIMPL
+COMQUEUE
+COMQUEUEIN
+COMSTUB
+COMXBEE
 COMSPLITTER
 Concat
 config
@@ -410,6 +416,7 @@ ENOENT
 ENOSPC
 ENOTDIR
 ENOTEMPTY
+enqueueing
 ENQUEUEX
 entrypoint
 enum
@@ -1516,6 +1523,7 @@ valgrind
 validator
 vals
 valud
+vbai
 venv
 VERSIONED
 versioning
@@ -1578,6 +1586,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+XBee
 xcode
 xdf
 xdffe

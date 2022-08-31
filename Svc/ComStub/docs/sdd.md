@@ -77,7 +77,7 @@ flowchart LR
 
 ### 4.1. Ports
 
-`ComQueue` has the following ports.  The first three ports are required for the interface, the second three are optional
+`ComStub` has the following ports.  The first three ports are required for the interface, the second three are optional
 if the communication implementation attaches to an F´ driver for the device interface. i.e. a communication component
 may directly interact with device hardware, or it may pass through send and receive buffers to a UART for actual
 transmission.

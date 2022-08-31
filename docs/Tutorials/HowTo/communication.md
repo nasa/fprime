@@ -114,7 +114,7 @@ In addition, most communication components build on top of an underlying driver.
 often needed.
 
 The example component uses [`Drv::LinuxUartDriver`](), which implements the [`Drv::ByteStreamDriverModel`]() interface.
-It also included the `Svc::ComStub` ports, a rate group port, and standard F´ ports for events, channels, and telemtry.
+It also included the `Svc::ComStub` ports, a rate group port, and standard F´ ports for events, channels, and telemetry.
 Thus, our radio component is required to have the following ports:
 
 

@@ -35,7 +35,7 @@ void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE conf
 
     NATIVE_UINT_TYPE currentIndex = 0;
 
-    // Note: Priority should range from 0 to totalsize
+    // Note: Priority should range from 0 to totalSize
     for (NATIVE_UINT_TYPE currentPriority = 0; currentPriority < totalSize; currentPriority++) {
         for (NATIVE_UINT_TYPE j = 0; j < configSize; j++) {
             // ensure that priority has been set properly
