@@ -31,6 +31,10 @@ namespace Os {
 
             WatchdogStatus cancel(); //!< cancel timer
 
+            void* getParameter(); //!< Getter for parameter
+
+            WatchdogCb getCallback(); //!< Getter for function callback pointer
+
 
         private:
 
