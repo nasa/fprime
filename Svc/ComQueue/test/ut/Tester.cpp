@@ -8,6 +8,7 @@
 #include "Fw/Types/MallocAllocator.hpp"
 using namespace std;
 
+Fw::MallocAllocator mallocAllocator;
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 100
 #define QUEUE_DEPTH 100
@@ -34,13 +35,11 @@ void Tester ::dispatchAll() {
 
 void Tester ::configure() {
     ComQueue::QueueConfigurationTable configurationTable;
-    Fw::MallocAllocator allocator;
-
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
         configurationTable.entries[i].priority = i;
         configurationTable.entries[i].depth = 3;
     }
-    component.configure(configurationTable, allocator);
+    component.configure(configurationTable, 0, mallocAllocator);
 }
 
 void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
@@ -153,7 +152,6 @@ void Tester ::testPrioritySend(){
     U8 data[ComQueue::totalSize][BUFFER_LENGTH];
 
     ComQueue::QueueConfigurationTable configurationTable;
-    Fw::MallocAllocator allocator;
 
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
         configurationTable.entries[i].priority = ComQueue::totalSize - i - 1;
@@ -166,7 +164,7 @@ void Tester ::testPrioritySend(){
     data[ComQueue::totalSize - 2][0] = 0;
     data[ComQueue::totalSize - 1][0] = 1;
 
-    component.configure(configurationTable, allocator);
+    component.configure(configurationTable, 0, mallocAllocator);
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::ComQueueComSize; portNum++){
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
@@ -196,7 +194,6 @@ void Tester ::testPrioritySend(){
 
 void Tester::testQueueFull(){
     ComQueue::QueueConfigurationTable configurationTable;
-    Fw::MallocAllocator allocator;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
@@ -213,7 +210,7 @@ void Tester::testQueueFull(){
 
     }
 
-    component.configure(configurationTable, allocator);
+    component.configure(configurationTable, 0, mallocAllocator);
 
     for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::totalSize; queueNum++) {
         QueueType overflow_type;

@@ -35,9 +35,7 @@ void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE ins
 
 ComQueue::~ComQueue() {
     if (m_allocator != nullptr && m_allocation != nullptr) {
-        for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
-            m_allocator->deallocate(m_allocationId, m_allocation);
-        }
+        m_allocator->deallocate(m_allocationId, m_allocation);
     }
 }
 
