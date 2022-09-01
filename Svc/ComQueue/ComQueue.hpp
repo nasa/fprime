@@ -19,13 +19,6 @@ namespace Svc {
 // Types
 // ----------------------------------------------------------------------
 
-/**
- * \brief configuration data for each queue managed by the com queue component 
- */
-struct QueueConfiguration {
-    NATIVE_UINT_TYPE depth; //!< Depth of the queue 
-    NATIVE_UINT_TYPE priority; //!< Priority of the queue [0, N) where N is the number of queues
-};
 
 class ComQueue : public ComQueueComponentBase {
     // Internal Data types and definitions
@@ -40,6 +33,24 @@ class ComQueue : public ComQueueComponentBase {
         NATIVE_UINT_TYPE msgSize;
     };
     enum SendState { READY, RETRY, WAITING };
+
+    /**
+     * \brief configuration data for each queue managed by the com queue component
+     */
+    struct QueueConfigurationEntry {
+        NATIVE_UINT_TYPE depth; //!< Depth of the queue
+        NATIVE_UINT_TYPE priority; //!< Priority of the queue [0, N) where N is the number of queues
+    };
+
+    /**
+     * \brief configuration table for all queues
+     */
+    struct QueueConfigurationTable {
+        QueueConfigurationEntry entries[totalSize];
+        // Low-priority constructor
+        QueueConfigurationTable();
+    };
+
 
 
 
@@ -63,7 +74,7 @@ class ComQueue : public ComQueueComponentBase {
     //!
     ~ComQueue();
 
-    void configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE configSize, Fw::MemAllocator& allocator);
+    void configure(QueueConfigurationTable queueConfig, Fw::MemAllocator& allocator);
 
   private:
     // ----------------------------------------------------------------------

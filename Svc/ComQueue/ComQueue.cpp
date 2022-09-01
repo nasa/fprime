@@ -16,6 +16,13 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
+ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
+    for (NATIVE_UINT_TYPE i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->entries); i++) {
+        this->entries[i].priority = 0;
+        this->entries[i].depth = 0;
+    }
+}
+
 ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName) {
     for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
         m_throttle[i] = false;
@@ -30,23 +37,22 @@ void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE ins
 ComQueue::~ComQueue() {}
 
 // Setup of metadata of the queues
-void ComQueue::configure(QueueConfiguration queueConfig[], NATIVE_UINT_TYPE configSize, Fw::MemAllocator& allocator) {
-    FW_ASSERT(configSize == totalSize, configSize, totalSize);
-
+void ComQueue::configure(QueueConfigurationTable queueConfig, Fw::MemAllocator& allocator) {
     NATIVE_UINT_TYPE currentIndex = 0;
 
     // Note: Priority should range from 0 to totalSize
     for (NATIVE_UINT_TYPE currentPriority = 0; currentPriority < totalSize; currentPriority++) {
-        for (NATIVE_UINT_TYPE j = 0; j < configSize; j++) {
+        for (NATIVE_UINT_TYPE j = 0; j < FW_NUM_ARRAY_ELEMENTS(queueConfig.entries); j++) {
+            FW_ASSERT(queueConfig.entries[j].depth > 0, queueConfig.entries[j].depth, j); // Valid depth
             // ensure that priority has been set properly
-            FW_ASSERT(queueConfig[j].priority < totalSize, queueConfig[j].priority, totalSize, j);
+            FW_ASSERT(queueConfig.entries[j].priority < totalSize, queueConfig.entries[j].priority, totalSize, j);
 
-            if (currentPriority == queueConfig[j].priority) {
+            if (currentPriority == queueConfig.entries[j].priority) {
                 // Writing to the memory location of prioritized list
                 // entry points to prioritized list at i
                 QueueData& entry = m_prioritizedList[currentIndex];
-                entry.priority = queueConfig[j].priority;
-                entry.depth = queueConfig[j].depth;
+                entry.priority = queueConfig.entries[j].priority;
+                entry.depth = queueConfig.entries[j].depth;
                 entry.index = j;
                 entry.msgSize = (j < ComQueueComSize) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
                 currentIndex++;

@@ -33,14 +33,14 @@ void Tester ::dispatchAll() {
 
 
 void Tester ::configure() {
-    QueueConfiguration queue[ComQueue::totalSize];
+    ComQueue::QueueConfigurationTable configurationTable;
     Fw::MallocAllocator allocator;
 
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
-        queue[i].priority = i;
-        queue[i].depth = 3;
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 3;
     }
-    component.configure(queue, ComQueue::totalSize, allocator);
+    component.configure(configurationTable, allocator);
 }
 
 void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portNum, QueueType& queueType) {
@@ -152,27 +152,21 @@ void Tester ::testRetrySend() {
 void Tester ::testPrioritySend(){
     U8 data[ComQueue::totalSize][BUFFER_LENGTH];
 
-    QueueConfiguration queue[ComQueue::totalSize];
+    ComQueue::QueueConfigurationTable configurationTable;
     Fw::MallocAllocator allocator;
 
-    U8 priorityList[ComQueue::totalSize];
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
-        priorityList[i] = i;
-    }
-    priorityList[ComQueue::totalSize - 1] = 0;
-
-    for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
-        queue[i].priority = ComQueue::totalSize - i - 1;
-        queue[i].depth = 3;
+        configurationTable.entries[i].priority = ComQueue::totalSize - i - 1;
+        configurationTable.entries[i].depth = 3;
         data[i][0] = ComQueue::totalSize - i - 1;
     }
 
     // Make the last message have the same priority as the second message
-    queue[ComQueue::totalSize - 1].priority = 1;
+    configurationTable.entries[ComQueue::totalSize - 1].priority = 1;
     data[ComQueue::totalSize - 2][0] = 0;
     data[ComQueue::totalSize - 1][0] = 1;
 
-    component.configure(queue, ComQueue::totalSize, allocator);
+    component.configure(configurationTable, allocator);
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::ComQueueComSize; portNum++){
         Fw::ComBuffer comBuffer(&data[portNum][0], BUFFER_LENGTH);
@@ -201,31 +195,31 @@ void Tester ::testPrioritySend(){
 }
 
 void Tester::testQueueFull(){
-    QueueConfiguration queue[ComQueue::totalSize];
+    ComQueue::QueueConfigurationTable configurationTable;
     Fw::MallocAllocator allocator;
     ComQueueDepth expectedComDepth;
     BuffQueueDepth expectedBuffDepth;
 
     for (NATIVE_UINT_TYPE i = 0; i < ComQueue::totalSize; i++){
-        queue[i].priority = i;
-        queue[i].depth = 2;
+        configurationTable.entries[i].priority = i;
+        configurationTable.entries[i].depth = 2;
 
         // Expected depths
         if (i < ComQueue::ComQueueComSize) {
-            expectedComDepth[i] = queue[i].depth;
+            expectedComDepth[i] = configurationTable.entries[i].depth;
         } else {
-            expectedBuffDepth[i - ComQueue::ComQueueComSize] = queue[i].depth;
+            expectedBuffDepth[i - ComQueue::ComQueueComSize] = configurationTable.entries[i].depth;
         }
 
     }
 
-    component.configure(queue,ComQueue::totalSize, allocator);
+    component.configure(configurationTable, allocator);
 
     for(NATIVE_INT_TYPE queueNum = 0; queueNum < ComQueue::totalSize; queueNum++) {
         QueueType overflow_type;
         NATIVE_INT_TYPE portNum;
         // queue[portNum].depth + 2 to deliberately cause overflow and check throttle of exactly 1
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[queueNum].depth + 2; msgCount++) {
+        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth + 2; msgCount++) {
             sendByQueueNumber(queueNum, portNum, overflow_type);
             dispatchAll();
         }
@@ -244,7 +238,7 @@ void Tester::testQueueFull(){
         ASSERT_EVENTS_QueueFull(1, overflow_type, portNum);
 
         // Drain the queue again such that we have a clean slate before the next queue
-        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < queue[queueNum].depth; msgCount++) {
+        for (NATIVE_UINT_TYPE msgCount = 0; msgCount < configurationTable.entries[queueNum].depth; msgCount++) {
             emitOne();
         }
         clearEvents();

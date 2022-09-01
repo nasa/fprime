@@ -5,11 +5,8 @@ module Ref {
   # ----------------------------------------------------------------------
 
   module Default {
-
     constant queueSize = 10
-
     constant stackSize = 64 * 1024
-
   }
 
   # ----------------------------------------------------------------------
@@ -84,22 +81,22 @@ module Ref {
     priority 101
 
   instance comQueue: Svc.ComQueue base id 0x0600 \
-      queue size Default.queueSize \
+      queue size 200 \
       stack size Default.stackSize \
       priority 100 \
   {
     phase Fpp.ToCpp.Phases.configObjects """
-    Svc::QueueConfiguration queueConfig[] = {
-        { .depth = 200, .priority = 2}, // Channels, deep queue, low priority
-        { .depth = 100, .priority = 0}, // Events , highest-priority
-        { .depth = 100, .priority = 1} // File Downlink
-    };
+    Svc::ComQueue::QueueConfigurationTable configurationTable;
     """
 
     phase Fpp.ToCpp.Phases.configComponents """
-    comQueue.configure(
-        ConfigObjects::comQueue::queueConfig, FW_NUM_ARRAY_ELEMENTS(ConfigObjects::comQueue::queueConfig), Allocation::mallocator
-    );
+    // Channels, deep queue, low priority
+    ConfigObjects::comQueue::configurationTable.entries[0] = {.depth = 500, .priority = 2};
+    // Events , highest-priority
+    ConfigObjects::comQueue::configurationTable.entries[1] = {.depth = 100, .priority = 0};
+    // File Downlink
+    ConfigObjects::comQueue::configurationTable.entries[2] = {.depth = 100, .priority = 1};
+    comQueue.configure(ConfigObjects::comQueue::configurationTable, Allocation::mallocator);
     """
   }
 
