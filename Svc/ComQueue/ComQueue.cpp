@@ -23,22 +23,30 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
     }
 }
 
-ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName) {
+ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName), m_state(WAITING), m_allocator(nullptr), m_allocation(nullptr) {
     for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
         m_throttle[i] = false;
     }
-    m_state = WAITING;
 }
 
 void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
     ComQueueComponentBase::init(queueDepth, instance);
 }
 
-ComQueue::~ComQueue() {}
+ComQueue::~ComQueue() {
+    if (m_allocator != nullptr && m_allocation != nullptr) {
+        for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
+            m_allocator->deallocate(m_allocationId, m_allocation);
+        }
+    }
+}
 
 // Setup of metadata of the queues
-void ComQueue::configure(QueueConfigurationTable queueConfig, Fw::MemAllocator& allocator) {
+void ComQueue::configure(QueueConfigurationTable queueConfig, NATIVE_UINT_TYPE allocationId, Fw::MemAllocator& allocator) {
     NATIVE_UINT_TYPE currentIndex = 0;
+    NATIVE_UINT_TYPE totalAllocation = 0;
+    m_allocator = &allocator;
+    m_allocationId = allocationId;
 
     // Note: Priority should range from 0 to totalSize
     for (NATIVE_UINT_TYPE currentPriority = 0; currentPriority < totalSize; currentPriority++) {
@@ -55,25 +63,29 @@ void ComQueue::configure(QueueConfigurationTable queueConfig, Fw::MemAllocator& 
                 entry.depth = queueConfig.entries[j].depth;
                 entry.index = j;
                 entry.msgSize = (j < ComQueueComSize) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
+                totalAllocation += entry.depth * entry.msgSize;
                 currentIndex++;
             }
         }
     }
+    // Allocate a single chunk of memory from the memory allocator, without caring about memory recovery
+    bool recoverable = false;
+    m_allocation = m_allocator->allocate(m_allocationId, totalAllocation, recoverable);
+    NATIVE_UINT_TYPE allocationOffset = 0;
 
     // After loop: Prioritized list should contain the all the data we want to work with
     // Ensure that every entry in the prioritized list is initialized
     for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
         NATIVE_UINT_TYPE allocationSize = m_prioritizedList[i].depth * m_prioritizedList[i].msgSize;
-
-        // We do not care if it is recoverable since the buffers are user provided
-        bool recoverable = false;
-        void* ptr = allocator.allocate(i, allocationSize, recoverable);
-
         //  ensures that we have enough memory to work with
         FW_ASSERT(allocationSize >= (m_prioritizedList[i].depth * m_prioritizedList[i].msgSize));
-        m_queues[m_prioritizedList[i].index].setup(reinterpret_cast<U8*>(ptr), allocationSize, m_prioritizedList[i].depth,
-                          m_prioritizedList[i].msgSize);
+        m_queues[m_prioritizedList[i].index].setup(reinterpret_cast<U8*>(m_allocation) + allocationOffset,
+                                                   allocationSize,
+                                                   m_prioritizedList[i].depth,
+                                                   m_prioritizedList[i].msgSize);
+        allocationOffset += allocationSize;
     }
+    FW_ASSERT(allocationOffset == totalAllocation, allocationOffset, totalAllocation);
 }
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports

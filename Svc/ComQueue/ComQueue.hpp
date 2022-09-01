@@ -74,7 +74,7 @@ class ComQueue : public ComQueueComponentBase {
     //!
     ~ComQueue();
 
-    void configure(QueueConfigurationTable queueConfig, Fw::MemAllocator& allocator);
+    void configure(QueueConfigurationTable queueConfig, NATIVE_UINT_TYPE allocationId, Fw::MemAllocator& allocator);
 
   private:
     // ----------------------------------------------------------------------
@@ -132,6 +132,11 @@ class ComQueue : public ComQueueComponentBase {
 
     // Keeps track of the send state on whether or not to send a message
     SendState m_state;
+
+    // Allocator used to acquire memory
+    NATIVE_UINT_TYPE m_allocationId;
+    Fw::MemAllocator* m_allocator;
+    void* m_allocation;
 };
 
 }  // end namespace Svc

@@ -96,7 +96,8 @@ module Ref {
     ConfigObjects::comQueue::configurationTable.entries[1] = {.depth = 100, .priority = 0};
     // File Downlink
     ConfigObjects::comQueue::configurationTable.entries[2] = {.depth = 100, .priority = 1};
-    comQueue.configure(ConfigObjects::comQueue::configurationTable, Allocation::mallocator);
+    // Allocation identifier is 0 as the MallocAllocator discards it
+    comQueue.configure(ConfigObjects::comQueue::configurationTable, 0, Allocation::mallocator);
     """
   }
 
