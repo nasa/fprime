@@ -29,11 +29,13 @@ ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName
     }
 }
 
+ComQueue ::~ComQueue() {}
+
 void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE instance) {
     ComQueueComponentBase::init(queueDepth, instance);
 }
 
-ComQueue::~ComQueue() {
+void ComQueue ::cleanup() {
     if (m_allocator != nullptr && m_allocation != nullptr) {
         m_allocator->deallocate(m_allocationId, m_allocation);
     }

@@ -94,6 +94,7 @@ void Tester ::testQueueSend() {
         emitOneAndCheck(0, QueueType::buffQueue, comBuffer, buffer);
         clearFromPortHistory();
     }
+    component.cleanup();
 }
 
 void Tester ::testRetrySend() {
@@ -146,6 +147,7 @@ void Tester ::testRetrySend() {
         emitOneAndCheck(2, QueueType::buffQueue, comBufferGarbage, bufferGarbage);
         clearFromPortHistory();
     }
+    component.cleanup();
 }
 
 void Tester ::testPrioritySend(){
@@ -189,6 +191,7 @@ void Tester ::testPrioritySend(){
         ASSERT_EQ(orderKey, index);
         clearFromPortHistory();
     }
+    component.cleanup();
 
 }
 
@@ -247,6 +250,7 @@ void Tester::testQueueFull(){
     ASSERT_TLM_buffQueueDepth_SIZE(1);
     ASSERT_TLM_comQueueDepth(0, expectedComDepth);
     ASSERT_TLM_buffQueueDepth(0, expectedBuffDepth);
+    component.cleanup();
 }
 
 void Tester ::testReadyFirst() {
@@ -270,6 +274,7 @@ void Tester ::testReadyFirst() {
         ASSERT_from_buffQueueSend(0, buffer);
         clearFromPortHistory();
     }
+    component.cleanup();
 }
 
 // ----------------------------------------------------------------------

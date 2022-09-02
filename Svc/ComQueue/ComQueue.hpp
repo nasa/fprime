@@ -74,8 +74,13 @@ class ComQueue : public ComQueueComponentBase {
     //!
     ~ComQueue();
 
+    //! Configure this component
+    //
     void configure(QueueConfigurationTable queueConfig, NATIVE_UINT_TYPE allocationId, Fw::MemAllocator& allocator);
 
+    //! Cleanup the com stub
+    //
+    void cleanup();
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports

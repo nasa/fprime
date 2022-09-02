@@ -99,6 +99,10 @@ module Ref {
     // Allocation identifier is 0 as the MallocAllocator discards it
     comQueue.configure(ConfigObjects::comQueue::configurationTable, 0, Allocation::mallocator);
     """
+    
+    phase Fpp.ToCpp.Phases.tearDownComponents """
+    comQueue.cleanup();
+    """
   }
 
   instance cmdSeq: Svc.CmdSequencer base id 0x0700 \
