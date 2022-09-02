@@ -49,6 +49,8 @@ class ComStub : public ComStubComponentBase {
     //! Handler implementation for drvDataIn
     //!
     void drvDataIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/ Fw::Buffer &recvBuffer, const Drv::RecvStatus &recvStatus);
+
+    bool m_readyNeeded; //!< Stores if a ready signal is needed on connection
 };
 
 }  // end namespace Svc

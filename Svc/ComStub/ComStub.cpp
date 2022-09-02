@@ -14,7 +14,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-ComStub ::ComStub(const char* const compName) : ComStubComponentBase(compName) {}
+ComStub ::ComStub(const char* const compName) : ComStubComponentBase(compName), m_readyNeeded(true) {}
 
 void ComStub ::init(const NATIVE_INT_TYPE instance) {
     ComStubComponentBase::init(instance);
@@ -27,12 +27,14 @@ ComStub ::~ComStub() {}
 // ----------------------------------------------------------------------
 
 Drv::SendStatus ComStub ::comDataIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& sendBuffer) {
+    FW_ASSERT(!m_readyNeeded); // A message should never get here if a ready is needed
     Drv::SendStatus driverStatus = Drv::SendStatus::SEND_RETRY;
     for (NATIVE_UINT_TYPE i = 0; driverStatus == Drv::SendStatus::SEND_RETRY && i < retryLimit; i++) {
         driverStatus = drvDataOut_out(0, sendBuffer);
     }
     FW_ASSERT(driverStatus != Drv::SendStatus::SEND_RETRY); // If it is still in retry state, there is no good answer
     Svc::ComSendStatus radioReady = (driverStatus.e == Drv::SendStatus::SEND_OK) ? Svc::ComSendStatus::READY : Svc::ComSendStatus::FAIL;
+    m_readyNeeded = driverStatus.e != Drv::SendStatus::SEND_OK;
     if (isConnected_comStatus_OutputPort(0)) {
         comStatus_out(0, radioReady);
     }
@@ -42,7 +44,8 @@ Drv::SendStatus ComStub ::comDataIn_handler(const NATIVE_INT_TYPE portNum, Fw::B
 
 void ComStub ::drvConnected_handler(const NATIVE_INT_TYPE portNum) {
     Svc::ComSendStatus radioReady = Svc::ComSendStatus::READY;
-    if (isConnected_comStatus_OutputPort(0)) {
+    if (isConnected_comStatus_OutputPort(0) && m_readyNeeded) {
+        m_readyNeeded = false;
         comStatus_out(0, radioReady);
     }
 }
