@@ -47,9 +47,11 @@ void Tester ::test_initial() {
     invoke_to_drvConnected(0);
     ASSERT_from_comStatus_SIZE(1);
     ASSERT_from_comStatus(0, com_send_status);
+    this->fromPortHistory_comStatus->clear();
 }
 
 void Tester ::test_basic_io() {
+    this->test_initial();
     Fw::Buffer buffer(storage[0], sizeof(storage[0]));
     Svc::ComSendStatus com_send_status = Svc::ComSendStatus::READY;
     this->fill_buffer(buffer);
@@ -68,6 +70,7 @@ void Tester ::test_basic_io() {
 }
 
 void Tester ::test_fail() {
+    this->test_initial();
     Fw::Buffer buffer(storage[0], sizeof(storage[0]));
     this->fill_buffer(buffer);
     Svc::ComSendStatus com_send_status = Svc::ComSendStatus::FAIL;
@@ -88,6 +91,7 @@ void Tester ::test_fail() {
 }
 
 void Tester ::test_retry() {
+    this->test_initial();
     Fw::Buffer buffers[RETRIES];
     Svc::ComSendStatus com_send_status = Svc::ComSendStatus::READY;
     m_send_mode = Drv::SendStatus::SEND_RETRY;
