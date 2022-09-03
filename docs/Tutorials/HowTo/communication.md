@@ -44,6 +44,14 @@ capture:
 2. Events, telemetry, and commands
 3. Component behavior
 
+When developing a communications component whose purpose is to replace the `Svc::ComStub` component and work alongside
+the `Svc::ComQueue` component, the component must meet the following requirements:
+
+1. Sending `Svc::ComStatus::Ready` must be done once when communication is initially ready.
+2. `Svc::ComStatus::Ready` may be sent once and only once for each send buffer received. If a `Svc::ComStatus::Fail` is
+sent instead then only one `Svc::ComStatus::Ready` may follow up when communication is restored.
+3. The communications component must include at-least the ports defined in [Svc::ComStub](TODO).
+
 The example requirements are shown below. These are:
 
 | Requirement ID | Description                                                                              |
@@ -51,8 +59,8 @@ The example requirements are shown below. These are:
 | COMXBEE-1      | The component shall indicate when the radio has connected via an `ACTIVITY_LO` event     |
 | COMXBEE-2      | The component shall produce telemetry for bytes sent and received upon a rate group call |
 | COMXBEE-3      | The component shall send data via XBee 3's UART interface                                |
-| COMXBEE-4      | The component shall integrate with `Svc::Framer`, `Svc::Deframer`, and `Svc::ComStub`    |
-| COMXBEE-5      | The component shall command XBee 3 via the AT command-mode                               |
+| COMXBEE-4      | The component shall integrate with `Svc::Framer`, `Svc::Deframer`, and `Svc::ComQueue`   |
+| COMXBEE-5      | The component shall command XBee 3 via the AT command-mode supporting NI and ED commands |
 
 Here, we capture several events, channels, and commands. In addition, we capture the F´ interface requirements for
 interfacing with standard uplink and downlink components, and the driver interface requirements for speaking to
@@ -116,6 +124,8 @@ often needed.
 The example component uses [`Drv::LinuxUartDriver`](), which implements the [`Drv::ByteStreamDriverModel`]() interface.
 It also included the `Svc::ComStub` ports, a rate group port, and standard F´ ports for events, channels, and telemetry.
 Thus, our radio component is required to have the following ports:
+
+One specific requirement of the port design is that 
 
 
 | Kind          | Name           | Port Type             | Usage                                                       |
