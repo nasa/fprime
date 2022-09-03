@@ -368,4 +368,8 @@ void LinuxUartDriver ::quitReadThread() {
     this->m_quitReadThread = true;
 }
 
+Os::Task::TaskStatus LinuxUartDriver ::join(void** value_ptr) {
+    return m_readTask.join(value_ptr);
+}
+
 }  // end namespace Drv
