@@ -1,8 +1,0 @@
-version: '2'
-services:
-  fprime:
-    image: fprime
-    command: sleep infinity
-    build: .
-    volumes:
-      - ./:/usr/src/
