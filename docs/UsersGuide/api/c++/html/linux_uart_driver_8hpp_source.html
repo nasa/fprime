@@ -136,32 +136,34 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8hpp_source.html','
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277">quitReadThread</a>();</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814">~LinuxUartDriver</a>();</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  PRIVATE:</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    Drv::SendStatus send_handler(<a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                                 <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; serBuffer);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_fd;  </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_allocationSize; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* m_device;  </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> serialReadTaskEntry(<span class="keywordtype">void</span>* ptr);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a> <a class="code" href="class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f">join</a>(<span class="keywordtype">void</span>** value_ptr);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="class_drv_1_1_linux_uart_driver.html#a823e807b3ec996fd56037a2f0a32e814">~LinuxUartDriver</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  PRIVATE:</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// Handler implementations for user-defined typed input ports</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">// ----------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    Drv::SendStatus send_handler(<a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> portNum, </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                 <a class="code" href="class_fw_1_1_buffer.html">Fw::Buffer</a>&amp; serBuffer);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_fd;  </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <a class="code" href="basic_types_8hpp.html#a424190609c8e1ad106ae33173cf29416">NATIVE_INT_TYPE</a> m_allocationSize; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* m_device;  </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="class_os_1_1_task.html">Os::Task</a> m_readTask;  </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> serialReadTaskEntry(<span class="keywordtype">void</span>* ptr);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">bool</span> m_quitReadThread;  </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;};</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="class_os_1_1_task.html">Os::Task</a> m_readTask;  </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;}  <span class="comment">// end namespace Drv</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">bool</span> m_quitReadThread;  </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;};</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}  <span class="comment">// end namespace Drv</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_a11267c2c96cd891099b18f1e054b6277"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#a11267c2c96cd891099b18f1e054b6277">Drv::LinuxUartDriver::quitReadThread</a></div><div class="ttdeci">void quitReadThread()</div><div class="ttdoc">Quit thread.</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00367">LinuxUartDriver.cpp:367</a></div></div>
@@ -183,7 +185,9 @@ $(document).ready(function(){initNavTree('_linux_uart_driver_8hpp_source.html','
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_a60e3de03022220a789048a852a9972aa"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#a60e3de03022220a789048a852a9972aa">Drv::LinuxUartDriver::LinuxUartDriver</a></div><div class="ttdeci">LinuxUartDriver(const char *const compName)</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00034">LinuxUartDriver.cpp:34</a></div></div>
 <div class="ttc" id="aclass_os_1_1_task_html_a5b35420ba0071c894814ca2441ee7632"><div class="ttname"><a href="class_os_1_1_task.html#a5b35420ba0071c894814ca2441ee7632">Os::Task::TASK_DEFAULT</a></div><div class="ttdeci">static const NATIVE_UINT_TYPE TASK_DEFAULT</div><div class="ttdef"><b>Definition:</b> <a href="task_8hpp_source.html#l00017">Task.hpp:17</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_a79f927992c95978a05fccff022fabc5b"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#a79f927992c95978a05fccff022fabc5b">Drv::LinuxUartDriver::init</a></div><div class="ttdeci">void init(const NATIVE_INT_TYPE instance=0)</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00038">LinuxUartDriver.cpp:38</a></div></div>
+<div class="ttc" id="aclass_os_1_1_task_html_aa1922f0444b26ffce3526353e291af8f"><div class="ttname"><a href="class_os_1_1_task.html#aa1922f0444b26ffce3526353e291af8f">Os::Task::TaskStatus</a></div><div class="ttdeci">TaskStatus</div><div class="ttdef"><b>Definition:</b> <a href="task_8hpp_source.html#l00018">Task.hpp:18</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_afbe7f500cb4360c9130987a836a601afa6df518c93f02783b30dbb31172aaf554"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#afbe7f500cb4360c9130987a836a601afa6df518c93f02783b30dbb31172aaf554">Drv::LinuxUartDriver::PARITY_NONE</a></div><div class="ttdeci">@ PARITY_NONE</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8hpp_source.html#l00043">LinuxUartDriver.hpp:43</a></div></div>
+<div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_aa0b23ab08df1356b4815598b036a596f"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#aa0b23ab08df1356b4815598b036a596f">Drv::LinuxUartDriver::join</a></div><div class="ttdeci">Os::Task::TaskStatus join(void **value_ptr)</div><div class="ttdoc">Join thread.</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00371">LinuxUartDriver.cpp:371</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_a244a7d081a0bf1019784a00738467842"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#a244a7d081a0bf1019784a00738467842">Drv::LinuxUartDriver::open</a></div><div class="ttdeci">bool open(const char *const device, UartBaudRate baud, UartFlowControl fc, UartParity parity, NATIVE_INT_TYPE allocationSize)</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8cpp_source.html#l00042">LinuxUartDriver.cpp:42</a></div></div>
 <div class="ttc" id="aclass_drv_1_1_linux_uart_driver_html_a0fba14f12df587cc24548e441a4c4d00ad009e359db8962895d8c0cfdd24afd26"><div class="ttname"><a href="class_drv_1_1_linux_uart_driver.html#a0fba14f12df587cc24548e441a4c4d00ad009e359db8962895d8c0cfdd24afd26">Drv::LinuxUartDriver::HW_FLOW</a></div><div class="ttdeci">@ HW_FLOW</div><div class="ttdef"><b>Definition:</b> <a href="linux_uart_driver_8hpp_source.html#l00041">LinuxUartDriver.hpp:41</a></div></div>
 <div class="ttc" id="a_basic_types_8hpp_html_afd4ff7b0d16e9d3d3c4af8617e630ad1"><div class="ttname"><a href="basic_types_8hpp.html#afd4ff7b0d16e9d3d3c4af8617e630ad1">NATIVE_UINT_TYPE</a></div><div class="ttdeci">PlatformUIntType NATIVE_UINT_TYPE</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00053">BasicTypes.hpp:53</a></div></div>
