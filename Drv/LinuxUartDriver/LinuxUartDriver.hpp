@@ -55,6 +55,9 @@ class LinuxUartDriver : public LinuxUartDriverComponentBase {
     //! Quit thread
     void quitReadThread();
 
+    //! Join thread
+    Os::Task::TaskStatus join(void** value_ptr);
+
     //! Destroy object LinuxUartDriver
     //!
     ~LinuxUartDriver();
