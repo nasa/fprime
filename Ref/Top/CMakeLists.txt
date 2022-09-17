@@ -12,10 +12,10 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
   Fw/Logger
-  Svc/LinuxTime
+  # Svc/LinuxTime
   # Communication Implementations
-  Drv/Udp
-  Drv/TcpClient
+  # Drv/Udp
+  # Drv/TcpClient
 )
 
 register_fprime_module()
