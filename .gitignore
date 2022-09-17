@@ -47,6 +47,7 @@ coverity.out
 *-template
 
 logs
+.log
 
 test_harness/.autotools
 core
