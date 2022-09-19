@@ -42,18 +42,3 @@ jobs:
           cspell:html/html.txt
           cspell:fullstack/fullstack.txt
         check_extra_dictionaries: ''
-
-  comment:
-    name: Report
-    runs-on: ubuntu-latest
-    needs: spelling
-    permissions:
-      contents: write
-      pull-requests: write
-    if: (success() || failure()) && needs.spelling.outputs.followup
-    steps:
-    - name: comment
-      uses: check-spelling/check-spelling@v0.0.20
-      with:
-        checkout: true
-        task: ${{ needs.spelling.outputs.followup }}
