@@ -192,7 +192,7 @@ function(_filter_sources OUTPUT_NAME GENERATED_SOURCES)
     # Loop over the list and check
     foreach (SOURCE_LIST IN LISTS ARGN)
         foreach(SOURCE IN LISTS SOURCE_LIST)
-            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}" ${GENERATED_SOURCES})
+            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}" "${GENERATED_SOURCES}")
             if (IS_SUPPORTED)
                 list(APPEND OUTPUT_LIST "${SOURCE}")
             endif()

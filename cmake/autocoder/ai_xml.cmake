@@ -19,11 +19,16 @@ autocoder_setup_for_individual_sources()
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
     ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "Ai.xml")
+    set(PREVIOUSLY_GENERATED)
+    if (ARGC GREATER_EQUAL 2)
+        set(PREVIOUSLY_GENERATED ${ARGV2})
+    endif()
+
     # Don't generate cpp/hpp files that have already been generated
     if (IS_SUPPORTED)
         string(REPLACE "Ai.xml" "Ac.cpp" CPP_FILE "${AC_INPUT_FILE}")
         string(REPLACE "Ai.xml" "Ac.hpp" HPP_FILE "${AC_INPUT_FILE}")
-        if(("${CPP_FILE}" IN_LIST ARGN) AND ("${HPP_FILE}" IN_LIST ARGN))
+	if(("${CPP_FILE}" IN_LIST PREVIOUSLY_GENERATED) AND ("${HPP_FILE}" IN_LIST PREVIOUSLY_GENERATED))
             set(IS_SUPPORTED FALSE)
         endif()
     endif()
