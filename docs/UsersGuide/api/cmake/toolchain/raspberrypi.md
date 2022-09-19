@@ -2,15 +2,10 @@
 
 ## Raspberry PI Toolchain
 
-A toolchain file for the raspberrypi. This toolchain can be used to build against the raspberry pi embedded Linux
-target. In order to use this toolchain, the raspberry pi build tools should be cloned onto a Linux build host. These
-tools are available at: [https://github.com/raspberrypi/tools](https://github.com/raspberrypi/tools)
-
-Typically these tools are cloned to `/opt/rpi/`.  If they are cloned elsewhere, the user must set the environment
-variable `RPI_TOOLCHAIN_DIR` to the full path to the `arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf` directory before
-running CMake or `fprime-util generate`.
-
-e.g. should the user install the tools in ``/home/user1` then the environment variable might be set using
-`export RPI_TOOLCHAIN_DIR=/home/user/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/`
+This is a toolchain for the Raspberry Pi. This toolchain can be used ot build
+against the Raspberry Pi embedded Linux target. In order to use this toolchain,
+the Raspberry Pi cross-compiler should be installed on a Linux host. These
+tools are installable as follows:
+  sudo apt install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf  gdb-multiarch
 
 

@@ -51,6 +51,7 @@ Filters sources down to the ones supported by the active autocoder. It is an err
 including an autocoder's CMake file and thus setting the active autocoder. Helper function.
 
 OUTPUT_NAME: name of output variable to set in parent scope
+GENERATED_SOURCES: sources created by other autocoders
 ...: any number of arguments containing lists of sources
 
 

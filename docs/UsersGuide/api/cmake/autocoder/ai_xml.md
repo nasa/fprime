@@ -11,6 +11,7 @@ Ac.cpp files.
 
 Required function, processes ComponentAi.xml files.
 `AC_INPUT_FILE` potential input to the autocoder
+...: any number of arguments representing a list of previously generated files
 
 
 ## Function `__ai_info`:
