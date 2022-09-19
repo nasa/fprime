@@ -264,6 +264,7 @@ DASSERT
 databinding
 datastore
 dawbarton
+db
 DBUILD
 DCMAKE
 DDDTHH
@@ -512,6 +513,7 @@ gcc
 gcda
 gcgandhi
 gcov
+gdb
 gdiplus
 gencode
 genfile
@@ -829,6 +831,7 @@ mstat
 mstring
 mtype
 mul
+multiarch
 multioptionals
 multirequired
 multline
@@ -891,7 +894,9 @@ numargs
 nums
 nxt
 objclass
+objcopy
 objdoc
+objdump
 objmodule
 objs
 oclc
