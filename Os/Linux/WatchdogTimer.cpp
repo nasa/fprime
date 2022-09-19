@@ -1,4 +1,5 @@
 #include <Os/WatchdogTimer.hpp>
+#include <Fw/Types/Assert.hpp>
 
 namespace Os {
 
@@ -24,6 +25,11 @@ namespace Os {
 
     WatchdogTimer::WatchdogStatus WatchdogTimer::cancel() {
         return WATCHDOG_CANCEL_ERROR;
+    }
+
+    void WatchdogTimer::expire() {
+        FW_ASSERT(m_cb != nullptr);
+        m_cb(m_parameter);
     }
 
 }
