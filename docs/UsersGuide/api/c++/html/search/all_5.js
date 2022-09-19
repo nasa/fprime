@@ -23,5 +23,6 @@ var searchData=
   ['events_2ecpp_315',['Events.cpp',['../events_8cpp.html',1,'']]],
   ['exit_316',['exit',['../class_fw_1_1_active_component_base.html#a9626378dc15b7ac8666b73675d77c5fb',1,'Fw::ActiveComponentBase']]],
   ['exitthread_317',['exitThread',['../class_drv_1_1_linux_gpio_driver_component_impl.html#a23bf94cd4b673a1aaf5fca79ec236dce',1,'Drv::LinuxGpioDriverComponentImpl']]],
-  ['externalserializebuffer_318',['ExternalSerializeBuffer',['../class_fw_1_1_external_serialize_buffer.html',1,'Fw::ExternalSerializeBuffer'],['../class_fw_1_1_external_serialize_buffer.html#a78bcd3827929cb50a19ff25edd52569a',1,'Fw::ExternalSerializeBuffer::ExternalSerializeBuffer(U8 *buffPtr, NATIVE_UINT_TYPE size)'],['../class_fw_1_1_external_serialize_buffer.html#aa1065cda0158398485f4c12225c6e39e',1,'Fw::ExternalSerializeBuffer::ExternalSerializeBuffer()']]]
+  ['expire_318',['expire',['../class_os_1_1_watchdog_timer.html#af8d334b7e7891fb47a408e27ab7b04ee',1,'Os::WatchdogTimer']]],
+  ['externalserializebuffer_319',['ExternalSerializeBuffer',['../class_fw_1_1_external_serialize_buffer.html',1,'Fw::ExternalSerializeBuffer'],['../class_fw_1_1_external_serialize_buffer.html#a78bcd3827929cb50a19ff25edd52569a',1,'Fw::ExternalSerializeBuffer::ExternalSerializeBuffer(U8 *buffPtr, NATIVE_UINT_TYPE size)'],['../class_fw_1_1_external_serialize_buffer.html#aa1065cda0158398485f4c12225c6e39e',1,'Fw::ExternalSerializeBuffer::ExternalSerializeBuffer()']]]
 ];

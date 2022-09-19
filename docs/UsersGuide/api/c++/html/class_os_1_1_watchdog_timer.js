@@ -10,6 +10,7 @@ var class_os_1_1_watchdog_timer =
     [ "WatchdogTimer", "class_os_1_1_watchdog_timer.html#a11ddc580f355a69ea3024938d666dee7", null ],
     [ "~WatchdogTimer", "class_os_1_1_watchdog_timer.html#aeea58bde696926e5f2be326bcf112b6a", null ],
     [ "cancel", "class_os_1_1_watchdog_timer.html#acf830c9bc69fd88db6e6a5723a6e5b61", null ],
+    [ "expire", "class_os_1_1_watchdog_timer.html#af8d334b7e7891fb47a408e27ab7b04ee", null ],
     [ "restart", "class_os_1_1_watchdog_timer.html#aba9587ff73a684cb7ebc750bef254703", null ],
     [ "startMs", "class_os_1_1_watchdog_timer.html#a674cfeb3b2a8458dbc1544081f701717", null ],
     [ "startTicks", "class_os_1_1_watchdog_timer.html#a76455a778126e2626bf37d0980e5206e", null ]
