@@ -99,8 +99,6 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
         if len(obj.get_ids()) == 1:
             pyfile = "{}/{}.py".format(output_dir, obj.get_name())
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception(f"Could not open {pyfile} file.")
             self.__fp.append(fd)
         else:
             inst = 0
@@ -109,8 +107,6 @@ class ChannelVisitor(AbstractVisitor.AbstractVisitor):
                 inst += 1
                 DEBUG.info(f"Open file: {pyfile}")
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception(f"Could not open {pyfile} file.")
                 DEBUG.info(f"Completed {pyfile} open")
                 self.__fp.append(fd)
 
