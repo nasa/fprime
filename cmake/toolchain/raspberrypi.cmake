@@ -22,7 +22,6 @@ message(STATUS "[arm-linux] CXX Compiler: ${CMAKE_CXX_COMPILER}")
 find_program(CMAKE_ASM_COMPILER NAMES arm-linux-gnueabihf-as PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 find_program(CMAKE_OBJCOPY NAMES arm-linux-gnueabihf-objcopy PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 find_program(CMAKE_OBJDUMP NAMES arm-linux-gnueabihf-objdump PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
-find_program(CMAKE_C_GDB NAMES gdb-multiarch PATHS ENV RPI_TOOLCHAIN_DIR PATH_SUFFIXES bin REQUIRED)
 
 # Configure the find commands for finding the toolchain
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
