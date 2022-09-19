@@ -55,7 +55,7 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
     plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
     # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
-    _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
+    _filter_sources(AC_INPUT_SOURCES "${GENERATED_SOURCES}" "${AC_INPUT_SOURCES}")
 
     # Break early if there are no sources, no need to autocode nothing
     if (NOT AC_INPUT_SOURCES)
@@ -184,14 +184,15 @@ endfunction()
 # including an autocoder's CMake file and thus setting the active autocoder. Helper function.
 #
 # OUTPUT_NAME: name of output variable to set in parent scope
+# GENERATED_SOURCES: sources created by other autocoders
 # ...: any number of arguments containing lists of sources
 ####
-function(_filter_sources OUTPUT_NAME)
+function(_filter_sources OUTPUT_NAME GENERATED_SOURCES)
     set(OUTPUT_LIST)
     # Loop over the list and check
     foreach (SOURCE_LIST IN LISTS ARGN)
         foreach(SOURCE IN LISTS SOURCE_LIST)
-            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}")
+            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}" "${GENERATED_SOURCES}")
             if (IS_SUPPORTED)
                 list(APPEND OUTPUT_LIST "${SOURCE}")
             endif()
