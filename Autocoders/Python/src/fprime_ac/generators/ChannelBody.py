@@ -79,7 +79,7 @@ class ChannelBody:
             DEBUG.error(
                 "ChannelBody.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "ChannelBody.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class ChannelBody:
             DEBUG.error(
                 "ChannelBody.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "ChannelBody.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

@@ -79,7 +79,7 @@ class HtmlStartPage:
             DEBUG.error(
                 "HtmlStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "HtmlStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class HtmlStartPage:
             DEBUG.error(
                 "HtmlStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "HtmlStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 
