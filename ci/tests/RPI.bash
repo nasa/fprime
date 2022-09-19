@@ -21,7 +21,7 @@ export FPUTIL_DEPLOYS="${FPRIME_DIR}/RPI"
 echo -e "${BLUE}Starting CI test ${FPUTIL_DEPLOYS} RPI${NOCOLOR}"
 
 export CMAKE_EXTRA_SETTINGS=""
-if [ ! -d "/opt/rpi/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf" ]
+if [ ! -d "/usr/arm-linux-gnueabihf" ]
 then
     warn_and_cont "RPI tools not installed, refusing to test."
     continue
