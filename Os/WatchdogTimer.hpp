@@ -31,6 +31,7 @@ namespace Os {
 
             WatchdogStatus cancel(); //!< cancel timer
 
+            void expire(); //!< Invoke the callback function with m_parameter
 
         private:
 
