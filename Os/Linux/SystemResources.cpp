@@ -9,10 +9,8 @@
 // acknowledged.
 //
 // ======================================================================
-#include <cstdio>              /* fopen() */
-#include <cstdlib>             /* scanf */
-#include <sys/vfs.h>            /* statfs() */
-#include <sys/sysinfo.h>		/* get_nprocs() */
+#include <cstdio>
+#include <sys/sysinfo.h>
 #include <cstring>
 #include <Os/SystemResources.hpp>
 #include <Fw/Types/Assert.hpp>
