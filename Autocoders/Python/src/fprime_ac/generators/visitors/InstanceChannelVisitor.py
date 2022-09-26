@@ -125,8 +125,6 @@ class InstanceChannelVisitor(AbstractVisitor.AbstractVisitor):
             pyfile = "{}/{}.py".format(output_dir, fname)
             DEBUG.info("Open file: {}".format(pyfile))
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info("Completed {} open".format(pyfile))
             self.__fp[fname] = fd
 

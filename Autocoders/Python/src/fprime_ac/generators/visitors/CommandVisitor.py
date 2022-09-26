@@ -108,16 +108,12 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             if len(obj.get_opcodes()) == 1:
                 pyfile = "{}/{}.py".format(output_dir, obj.get_mnemonic())
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp1.append(fd)
             else:
                 for inst, opcode in enumerate(obj.get_opcodes()):
                     pyfile = "%s/%s_%d.py" % (output_dir, obj.get_mnemonic(), inst)
                     DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
-                    if fd is None:
-                        raise Exception(f"Could not open {pyfile} file.")
                     DEBUG.info(f"Completed {pyfile} open")
                     self.__fp1.append(fd)
         elif type(obj) is Parameter.Parameter:
@@ -132,30 +128,22 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
                     raise ValueError("set/save opcode quantities do not match!")
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp1.append(fd)
 
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception(f"Could not open {pyfile} file.")
                 self.__fp2.append(fd)
             else:
                 for inst, opcode in enumerate(obj.get_set_opcodes()):
                     pyfile = "%s/%s_%d_PRM_SET.py" % (output_dir, self.__stem, inst)
                     DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
-                    if fd is None:
-                        raise Exception(f"Could not open {pyfile} file.")
                     self.__fp1.append(fd)
                     DEBUG.info(f"Completed {pyfile} open")
 
                     pyfile = "%s/%s_%d_PRM_SAVE.py" % (output_dir, self.__stem, inst)
                     DEBUG.info(f"Open file: {pyfile}")
                     fd = open(pyfile, "w")
-                    if fd is None:
-                        raise Exception(f"Could not open {pyfile} file.")
                     self.__fp2.append(fd)
                     DEBUG.info(f"Completed {pyfile} open")
 
