@@ -83,7 +83,7 @@ int main(int argc, char* argv[])  {
 	// Construct the topology here.
 	constructArchitecture();
 	// Ask for input to huey or duey here.
-	char in[80];
+	char in[80] = {};
 	U32 cmd;
 	Fw::String *str;
 	char str2[80];
