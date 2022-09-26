@@ -56,9 +56,7 @@ def test_schematron():
 
         # Active component without an async port
         p_test2 = pexpect.spawn(
-            "python "
-            + str(bindir / "codegen.py")
-            + " -v Test2TopologyAppAi.xml"
+            "python " + str(bindir / "codegen.py") + " -v Test2TopologyAppAi.xml"
         )
         p_test2.expect(
             "(?=.*Found component XML file)(?=.*active_comp_schematron.rng)(?!.*ERROR).*",
@@ -70,9 +68,7 @@ def test_schematron():
 
         # Topology with 2 instances of the same ID
         p_test3 = pexpect.spawn(
-            "python "
-            + str(bindir / "codegen.py")
-            + " -v BrokenTopologyAppAi.xml"
+            "python " + str(bindir / "codegen.py") + " -v BrokenTopologyAppAi.xml"
         )
         p_test3.expect("(?=.*top_uniqueness_schematron.rng)(?!.*ERROR).*", timeout=5)
         print(
