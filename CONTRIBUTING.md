@@ -24,6 +24,13 @@ Specific Ways to Contribute:
 
 Feel free to contribute any way that suits your skills and enjoy.
 
+
+> **Note:** many contributors change the F´ [Autocoder Python](https://github.com/nasa/fprime/tree/master/Autocoders).
+> This code is being actively replaced by FPP. Thus we will no longer accept changes to this code unless it is a
+> security or critical bug fix that is done in the most minimal fashion.
+>
+> We do love Python fixes, please consider contributing to `fprime-tools` and `fprime-gds`!
+
 ## Where to Start
 
 First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a
