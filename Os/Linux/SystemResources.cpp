@@ -9,10 +9,8 @@
 // acknowledged.
 //
 // ======================================================================
-#include <cstdio>              /* fopen() */
-#include <cstdlib>             /* scanf */
-#include <sys/vfs.h>            /* statfs() */
-#include <sys/sysinfo.h>		/* get_nprocs() */
+#include <cstdio>
+#include <sys/sysinfo.h>
 #include <cstring>
 #include <Os/SystemResources.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -82,31 +80,17 @@ namespace Os {
     }
 
     SystemResources::SystemResourcesStatus SystemResources::getMemUtil(MemUtil &memory_util) {
-        FILE *fp = nullptr;
-        NATIVE_INT_TYPE total = 0;
-        NATIVE_INT_TYPE free = 0;
-        // Fallbacks
-        memory_util.total = 1;
-        memory_util.used = 1;
 
-        fp = fopen("/proc/meminfo", "r");
-        if (fp == nullptr) {
+        struct sysinfo memory_info;
+        sysinfo(&memory_info);
+        
+        if (memory_info.totalram < memory_info.freeram) {
             return SYSTEM_RESOURCES_ERROR;
         }
-        // No string concerns as strings discarded
-        if (fscanf(fp, "%*s %d %*s", &total) != 1 ||  /* 1st line is MemTotal */
-            fscanf(fp, "%*s %d", &free) != 1) {   /* 2nd line is MemFree */
-            fclose(fp);
-            return SYSTEM_RESOURCES_ERROR;
-        }
-        fclose(fp);
 
-        // Check results
-        if (total < 0 or free < 0 or total < free) {
-            return SYSTEM_RESOURCES_ERROR;
-        }
-        memory_util.total = static_cast<U64>(total) * 1024; // KB to Bytes
-        memory_util.used = static_cast<U64>(total - free) * 1024;
+        memory_util.total = static_cast<U64>(memory_info.totalram * memory_info.mem_unit); 
+        memory_util.used = static_cast<U64>((memory_info.totalram - memory_info.freeram) * memory_info.mem_unit);
+
         return SYSTEM_RESOURCES_OK;
     }
 }
