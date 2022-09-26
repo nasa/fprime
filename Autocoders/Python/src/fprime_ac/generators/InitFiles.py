@@ -80,7 +80,7 @@ class InitFiles:
             DEBUG.error(
                 "InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InitFiles.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -95,7 +95,7 @@ class InitFiles:
             DEBUG.error(
                 "InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InitFiles.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

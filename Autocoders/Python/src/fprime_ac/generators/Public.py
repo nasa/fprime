@@ -79,7 +79,7 @@ class Public:
             DEBUG.error(
                 "Public.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Public.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class Public:
             DEBUG.error(
                 "Public.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Public.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

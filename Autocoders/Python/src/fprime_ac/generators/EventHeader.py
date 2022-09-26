@@ -79,7 +79,7 @@ class EventHeader:
             DEBUG.error(
                 "EventHeader.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "EventHeader.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class EventHeader:
             DEBUG.error(
                 "EventHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "EventHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

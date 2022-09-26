@@ -129,7 +129,7 @@ class CommandVisitor(AbstractVisitor.AbstractVisitor):
             if len(obj.get_set_opcodes()) == 1:
                 # set/save opcode numbers had better match
                 if len(obj.get_set_opcodes()) != len(obj.get_save_opcodes()):
-                    raise Exception("set/save opcode quantities do not match!")
+                    raise ValueError("set/save opcode quantities do not match!")
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, self.__stem)
                 fd = open(pyfile, "w")
                 if fd is None:

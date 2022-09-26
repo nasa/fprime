@@ -67,7 +67,7 @@ class AbstractVisitor:
         Defined to generate files for generated code products.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.initFilesVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -75,7 +75,7 @@ class AbstractVisitor:
         """
         Defined to generate starting static code within files.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.startSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -85,7 +85,7 @@ class AbstractVisitor:
         Usually used for the base classes but also for Port types
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.includesVisit1() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -95,7 +95,7 @@ class AbstractVisitor:
         Usually used for data type includes and system includes.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.includesVisit2() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -105,7 +105,7 @@ class AbstractVisitor:
         Also any pre-condition code is generated.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.namespaceVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -114,7 +114,7 @@ class AbstractVisitor:
         Defined to generate public stuff within a class.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.publicVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -123,7 +123,7 @@ class AbstractVisitor:
         Defined to generate protected stuff within a class.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.protectedVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -132,7 +132,7 @@ class AbstractVisitor:
         Defined to generate private stuff within a class.
         @param args: the instance of the concrete element to operation on.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.privateVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -140,7 +140,7 @@ class AbstractVisitor:
         """
         Defined to generate ending static code within files.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# AbstractVisitor.endSourceFilesVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -148,7 +148,7 @@ class AbstractVisitor:
         """
         Defined to generate start of command Python class.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# DictStartVisit.startCommandVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -156,7 +156,7 @@ class AbstractVisitor:
         """
         Defined to generate header for Python command class.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# DictStartVisit.commandHeaderVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 
@@ -164,7 +164,7 @@ class AbstractVisitor:
         """
         Defined to generate body for Python command class.
         """
-        raise Exception(
+        raise NotImplementedError(
             "# DictStartVisit.commandBodyVisit() - Implementation Error: you must supply your own concrete implementation."
         )
 

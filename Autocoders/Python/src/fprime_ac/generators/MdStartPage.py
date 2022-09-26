@@ -79,7 +79,7 @@ class MdStartPage:
             DEBUG.error(
                 "MDStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "MdStartPage.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class MdStartPage:
             DEBUG.error(
                 "MdStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "MdStartPage.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 
