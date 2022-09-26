@@ -79,7 +79,7 @@ class CommandHeader:
             DEBUG.error(
                 "CommandHeader.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "CommandHeader.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class CommandHeader:
             DEBUG.error(
                 "CommandHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "CommandHeader.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

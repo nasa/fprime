@@ -179,7 +179,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.name = fname
 
             if len(obj.get_ids()) > 1:
-                raise Exception(
+                raise ValueError(
                     "There is more than one event id when creating dictionaries. Check xml of {} or see if multiple explicit IDs exist in the AcConstants.ini file".format(
                         fname
                     )
