@@ -493,6 +493,7 @@ fprofile
 fptr
 fputil
 fpv
+freeram
 Fregoso
 frontend
 frox
@@ -1401,6 +1402,7 @@ TOTALFF
 TOTALISFLOGEVENTMSG
 TOTALISFTELMMSG
 TOTALQUEUEFULL
+totalram
 TOUPPER
 transcoding
 treeview
