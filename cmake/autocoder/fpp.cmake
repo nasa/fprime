@@ -54,7 +54,7 @@ endfunction(locate_fpp_tools)
 # `AC_INPUT_FILE` potential input to the autocoder
 ####
 function(fpp_is_supported AC_INPUT_FILE)
-    autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}")
+    autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}" TRUE)
 endfunction(fpp_is_supported)
 
 ####
@@ -151,7 +151,6 @@ function(fpp_info AC_INPUT_FILES)
     set(FPP_IMPORTS "${STDOUT}" PARENT_SCOPE)
 endfunction(fpp_info)
 
-
 ####
 # Function `fpp_setup_autocode`:
 #
@@ -194,13 +193,14 @@ function(fpp_setup_autocode AC_INPUT_FILES)
     # Add in steps for CPP generation
     if (GENERATED_CPP)
         add_custom_command(
-                OUTPUT  ${GENERATED_CPP}
+                OUTPUT ${GENERATED_CPP}
                 COMMAND ${FPP_TO_CPP} "-d" "${CMAKE_CURRENT_BINARY_DIR}" ${IMPORTS} ${AC_INPUT_FILES}
                     "-p" "${FPRIME_BUILD_LOCATIONS_COMMA_SEP},${CMAKE_BINARY_DIR}"
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
-    set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP} PARENT_SCOPE)
+    set(AUTOCODER_GENERATED ${GENERATED_AI} ${GENERATED_CPP})
+    set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
     set(AUTOCODER_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
 endfunction(fpp_setup_autocode)
 

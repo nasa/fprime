@@ -186,7 +186,7 @@ endfunction(ends_with)
 ####
 function(init_variables)
     foreach (VARIABLE IN LISTS ARGN)
-        set(${VARIABLE} PARENT_SCOPE)
+        set(${VARIABLE} "" PARENT_SCOPE)
     endforeach()
 endfunction(init_variables)
 
