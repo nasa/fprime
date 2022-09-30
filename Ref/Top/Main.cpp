@@ -1,15 +1,10 @@
 #include <unistd.h>
-#include <getopt.h>
-#include <cstdlib>
-#include <ctype.h>
-#include <stdint.h>
+#include <signal.h>
 #include "Ref.hpp"
+
 void print_usage(const char* app) {
     (void) printf("Usage: ./%s [options]\n-p\tport_number\n-a\thostname/IP address\n",app);
 }
-
-#include <signal.h>
-#include <cstdio>
 
 volatile sig_atomic_t terminate = 0;
 
