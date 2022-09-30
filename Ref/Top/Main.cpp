@@ -27,10 +27,8 @@ void runcycles(int cycles) {
 
 int main(int argc, char* argv[]) {
     uint32_t port_number = 0; // Invalid port number forced
-    int option;
-    char *hostname;
-    option = 0;
-    hostname = nullptr;
+    int option = 0;
+    char *hostname = nullptr;
 
     while ((option = getopt(argc, argv, "hp:a:")) != -1){
         switch(option) {
@@ -63,7 +61,7 @@ int main(int argc, char* argv[]) {
     int cycle = 0;
 
     while (!terminate) {
-//        (void) printf("Cycle %d\n",cycle);
+        // (void) printf("Cycle %d\n",cycle);
         runcycles(1);
         cycle++;
     }
