@@ -28,7 +28,7 @@ function(ai_xml_is_supported AC_INPUT_FILE)
     if (IS_SUPPORTED)
         string(REPLACE "Ai.xml" "Ac.cpp" CPP_FILE "${AC_INPUT_FILE}")
         string(REPLACE "Ai.xml" "Ac.hpp" HPP_FILE "${AC_INPUT_FILE}")
-	    if(("${CPP_FILE}" IN_LIST PREVIOUSLY_GENERATED) AND ("${HPP_FILE}" IN_LIST PREVIOUSLY_GENERATED))
+        if(("${CPP_FILE}" IN_LIST PREVIOUSLY_GENERATED) AND ("${HPP_FILE}" IN_LIST PREVIOUSLY_GENERATED))
             set(IS_SUPPORTED FALSE)
         endif()
 
