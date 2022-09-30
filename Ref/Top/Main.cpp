@@ -17,11 +17,13 @@ void runcycles(int cycles) {
     if (cycles == -1) {
         while (true) {
             Ref::run_one_cycle();
+            sleep(1); //1Hz
         }
     }
 
     for (int cycle = 0; cycle < cycles; cycle++) {
         Ref::run_one_cycle();
+        sleep(1); //1Hz
     }
 }
 

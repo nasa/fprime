@@ -16,6 +16,5 @@ namespace Ref {
     }
     void run_one_cycle() {
         Ref::blockDrv.callIsr();
-        Os::Task::delay(1000); //1Hz
     }
 }
