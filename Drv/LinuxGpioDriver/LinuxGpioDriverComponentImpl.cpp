@@ -251,7 +251,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioRead_handler(
         const NATIVE_INT_TYPE portNum,
-        bool &state
+        Fw::Logic &state
     )
   {
       FW_ASSERT(this->m_fd != -1);
@@ -262,7 +262,7 @@ namespace Drv {
           this->log_WARNING_HI_GP_ReadError(this->m_gpio,stat);
           return;
       } else {
-          state = val?true:false;
+          state = val ? Fw::Logic::HIGH : Fw::Logic::LOW;
       }
 
   }
@@ -270,14 +270,14 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
-        bool state
+        Fw::Logic state
     )
   {
       FW_ASSERT(this->m_fd != -1);
 
       NATIVE_INT_TYPE stat;
 
-      stat = gpio_set_value(this->m_fd,state?1:0);
+      stat = gpio_set_value(this->m_fd,(state == Fw::Logic::HIGH) ? 1 : 0);
 
       if (0 != stat) {
           this->log_WARNING_HI_GP_WriteError(this->m_gpio,stat);
