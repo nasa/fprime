@@ -91,7 +91,7 @@ endfunction(<autocoder name>_is_supported )
 
 Should an autocoder need to indicate that a given input file will cause inter-target dependency changes (i.e. CMake
 re-generation must be performed) then the function `requires_regeneration(<INPUT_FILE>)` must be called. This can be
-done directly or by providing `TRUE` as an optional third argument to `fpp_is_supported`.  Both ways are shown below.
+done directly or by providing `TRUE` as an optional third argument to `autocoder_support_by_suffix`.  Both ways are shown below.
 
 ```cmake
 ...
