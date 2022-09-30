@@ -26,7 +26,7 @@ void runcycles(int cycles) {
 }
 
 int main(int argc, char* argv[]) {
-    uint32_t port_number = 0; // Invalid port number forced
+    unsigned int port_number = 0; // Invalid port number forced
     int option = 0;
     char *hostname = nullptr;
 

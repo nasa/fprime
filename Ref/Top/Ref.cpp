@@ -7,10 +7,9 @@ Ref::TopologyState state;
 Os::Log logger;
 
 namespace Ref {
-    void Initialize(const char *hostname, uint32_t port_number) {
-        state = Ref::TopologyState(hostname, port_number);
+    void Initialize(const char *hostname, unsigned int port_number) {
+        state = Ref::TopologyState(hostname, static_cast<U32>(port_number));
         Ref::setup(state);
-        
     }
     void Deinitialize() {
 
