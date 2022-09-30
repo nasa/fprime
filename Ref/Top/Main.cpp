@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
                 return 0;
                 break;
             case 'p':
-                port_number = static_cast<uint32_t>(atoi(optarg));
+                port_number = static_cast<unsigned int>(atoi(optarg));
                 break;
             case 'a':
                 hostname = optarg;
