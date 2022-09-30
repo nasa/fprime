@@ -12,7 +12,7 @@ namespace Ref {
         Ref::setup(state);
     }
     void Deinitialize() {
-
+        Ref::teardown(state);
     }
     void run_one_cycle() {
         Ref::blockDrv.callIsr();
