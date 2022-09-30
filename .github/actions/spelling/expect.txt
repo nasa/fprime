@@ -286,6 +286,7 @@ deframe
 deframed
 deframer
 deframing
+Deinitialize
 delchars
 delitem
 deployables
