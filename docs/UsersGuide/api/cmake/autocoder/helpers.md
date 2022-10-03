@@ -18,6 +18,14 @@ of the caller.
 
 **SUFFIX**: suffix to support
 **AC_INPUT_FILE**: file to check with suffix
+**REQUIRE_CMAKE_RESCAN:** (optional) this file should trigger a cmake rescan. Default: false
+
+
+## Function `requires_regeneration`:
+
+Called by the autocoder when a source file needs to setup CMake to reconfigure when the source file changes.
+
+`AC_INPUT_FILE`: file to mark as tracked
 
 
 ## Function `_set_autocoder_name`:

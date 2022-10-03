@@ -98,7 +98,7 @@ $(document).ready(function(){initNavTree('_assert_8hpp_source.html',''); initRes
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#else // ASSERT is defined</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG NATIVE_UINT_TYPE</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#define FILE_NAME_ARG U32</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#define FW_ASSERT(cond, ...) \</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">    ((void) ((cond) ? (0) : \</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">    (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))</span></div>
