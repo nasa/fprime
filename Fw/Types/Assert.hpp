@@ -8,7 +8,7 @@
 #else // ASSERT is defined
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define FILE_NAME_ARG NATIVE_UINT_TYPE
+#define FILE_NAME_ARG U32
 #define FW_ASSERT(cond, ...) \
     ((void) ((cond) ? (0) : \
     (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
