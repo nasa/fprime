@@ -77,7 +77,7 @@ namespace Drv {
       //!
       void gpioWrite_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Logic state
+          const Fw::Logic& state
       );
 
       //! keep GPIO ID

@@ -270,7 +270,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
-        Fw::Logic state
+        const Fw::Logic& state
     )
   {
       FW_ASSERT(this->m_fd != -1);
