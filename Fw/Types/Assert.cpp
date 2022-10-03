@@ -10,9 +10,9 @@
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID 0x%08X: Line: %" PRI_FwAssertArgType " "
+#define fileIdFs "Assert file ID 0x%08" PRIx32 ": Line: %" PRI_PlatformUIntType
 #else
-#define fileIdFs "Assert file \"%s\": Line: %" PRI_FwAssertArgType " "
+#define fileIdFs "Assert file \"%s\": Line: %" PRI_PlatformUIntType
 #endif
 
 namespace Fw {
@@ -38,31 +38,72 @@ namespace Fw {
 
         switch (numArgs) {
             case 0:
-                (void)snprintf(destBuffer,buffSize,fileIdFs,file,lineNo);
+                (void) snprintf(destBuffer, buffSize, fileIdFs, file, lineNo);
                 break;
             case 1:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d",file,lineNo,
-                        arg1);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1
+                );
                 break;
             case 2:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d %d",file,lineNo,
-                        arg1,arg2);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2
+                );
                 break;
             case 3:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d %d %d",file,lineNo,
-                        arg1,arg2,arg3);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3
+                );
                 break;
             case 4:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4);
                 break;
             case 5:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d %d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4,arg5);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4, arg5
+                );
                 break;
             case 6:
-                (void)snprintf(destBuffer,buffSize,fileIdFs "%d %d %d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4,arg5,arg6);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs "%" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4, arg5, arg6
+                );
                 break;
             default: // in an assert already, what can we do?
                 break;
