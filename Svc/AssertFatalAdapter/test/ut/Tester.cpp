@@ -43,7 +43,7 @@ namespace Svc {
         char file[80 + 1]; // Limit to 80  characters in the port call
         Fw::String fileString;
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-        fileString.format("0x%08X", ASSERT_FILE_ID);
+        fileString.format("0x%08" PRIX32, ASSERT_FILE_ID);
 #else
         fileString = __FILE__;
 #endif
