@@ -98,7 +98,7 @@ namespace RPI {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           RpiDemo_GpioOutNum output, /*!< Output GPIO*/
-          RpiDemo_GpioVal value /*!< GPIO value*/
+          Fw::Logic value /*!< GPIO value*/
       ) override;
 
       //! Implementation for RD_GetGpio command handler
@@ -142,7 +142,7 @@ namespace RPI {
       U32 m_uartReadBytes;
       U32 m_spiBytes;
       Fw::TlmString m_lastUartMsg;
-      RpiDemo_GpioVal m_currLedVal;
+      Fw::Logic m_currLedVal;
       // serial buffers
       Fw::Buffer m_recvBuffers[NUM_RPI_UART_BUFFERS];
       BYTE m_uartBuffers[NUM_RPI_UART_BUFFERS][RPI_UART_READ_BUFF_SIZE];
