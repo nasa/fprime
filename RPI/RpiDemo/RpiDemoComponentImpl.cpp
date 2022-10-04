@@ -28,7 +28,7 @@ namespace RPI {
     ,m_uartWriteBytes(0)
     ,m_uartReadBytes(0)
     ,m_spiBytes(0)
-    ,m_currLedVal(RpiDemo_GpioVal::CLEAR)
+    ,m_currLedVal(Fw::Logic::LOW)
     ,m_ledOn(true)
     ,m_ledDivider(10) // start at 1Hz
     ,m_1HzTicks(0)
@@ -99,9 +99,9 @@ namespace RPI {
           case RG_CONTEXT_10Hz:
               // Toggle LED value
               if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
-                  this->GpioWrite_out(2, (this->m_currLedVal == RpiDemo_GpioVal::SET));
-                  this->m_currLedVal = (this->m_currLedVal == RpiDemo_GpioVal::SET) ?
-                    RpiDemo_GpioVal::CLEAR : RpiDemo_GpioVal::SET;
+                  this->GpioWrite_out(2, this->m_currLedVal);
+                  this->m_currLedVal = (this->m_currLedVal == Fw::Logic::HIGH) ?
+                    Fw::Logic::LOW : Fw::Logic::HIGH;
               }
               break;
           default:
@@ -166,7 +166,7 @@ namespace RPI {
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         RpiDemo_GpioOutNum output, /*!< Output GPIO*/
-        RpiDemo_GpioVal value
+        Fw::Logic value
     )
   {
       NATIVE_INT_TYPE port;
@@ -188,7 +188,7 @@ namespace RPI {
               return;
       }
       // set value of GPIO
-      this->GpioWrite_out(port, (RpiDemo_GpioVal::SET == value.e));
+      this->GpioWrite_out(port, value);
       this->log_ACTIVITY_HI_RD_GpioSetVal(output.e, value);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
@@ -215,12 +215,9 @@ namespace RPI {
               return;
       }
       // get value of GPIO input
-      bool val;
+      Fw::Logic val;
       this->GpioRead_out(port, val);
-      this->log_ACTIVITY_HI_RD_GpioGetVal(
-          input.e,
-          val ? RpiDemo_GpioVal::SET : RpiDemo_GpioVal::CLEAR
-      );
+      this->log_ACTIVITY_HI_RD_GpioGetVal(input.e, val);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 

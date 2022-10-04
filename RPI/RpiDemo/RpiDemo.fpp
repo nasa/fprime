@@ -17,11 +17,6 @@ module RPI {
       PIN_24 = 1
     }
 
-    enum GpioVal {
-      CLEAR = 0
-      SET = 1
-    }
-
     enum LedState {
       BLINKING = 0
       OFF = 1
@@ -108,7 +103,7 @@ module RPI {
     @ Sets a GPIO port value
     async command RD_SetGpio(
                               $output: GpioOutNum @< Output GPIO
-                              value: GpioVal @< GPIO value
+                              value: Fw.Logic @< GPIO value
                             ) \
       opcode 3
 
@@ -147,7 +142,7 @@ module RPI {
     @ GPIO set
     event RD_GpioSetVal(
                          $output: U32 @< The output number
-                         value: GpioVal @< GPIO value
+                         value: Fw.Logic @< GPIO value
                        ) \
       severity activity high \
       id 2 \
@@ -156,7 +151,7 @@ module RPI {
     @ GPIO get
     event RD_GpioGetVal(
                          $output: U32 @< The output number
-                         value: GpioVal @< GPIO value
+                         value: Fw.Logic @< GPIO value
                        ) \
       severity activity high \
       id 3 \
