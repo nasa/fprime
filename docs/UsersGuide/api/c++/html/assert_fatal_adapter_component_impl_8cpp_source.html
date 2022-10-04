@@ -209,7 +209,7 @@ $(document).ready(function(){initNavTree('_assert_fatal_adapter_component_impl_8
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT</span></div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> fileArg;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      fileArg.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<span class="stringliteral">&quot;0x%08X&quot;</span>,file);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      fileArg.<a class="code" href="class_fw_1_1_string_base.html#a754ea496ffd09190aff70240ae66eb1a">format</a>(<span class="stringliteral">&quot;0x%08&quot;</span> PRIX32,file);</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#else</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <a class="code" href="class_fw_1_1_log_string_arg.html">Fw::LogStringArg</a> fileArg(file);</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#endif</span></div>
