@@ -795,7 +795,11 @@ void AssertTest() {
 
         private:
 
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+            FILE_NAME_ARG m_file = 0;
+#else
             FILE_NAME_ARG m_file = nullptr;
+#endif
             NATIVE_UINT_TYPE m_lineNo = 0;
             NATIVE_UINT_TYPE m_numArgs = 0;
             FwAssertArgType m_arg1 = 0;
