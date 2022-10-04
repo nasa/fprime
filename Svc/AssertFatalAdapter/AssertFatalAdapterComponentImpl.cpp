@@ -119,7 +119,7 @@ namespace Svc {
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
       Fw::LogStringArg fileArg;
-      fileArg.format("0x%08X",file);
+      fileArg.format("0x%08" PRIX32,file);
 #else
       Fw::LogStringArg fileArg(file);
 #endif
