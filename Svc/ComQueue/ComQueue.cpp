@@ -23,6 +23,8 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
 
 ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
+      m_lastIndex(0),
+      m_bufferRetry(0, 0,0),
       m_state(WAITING),
       m_allocationId(-1),
       m_allocator(nullptr),
@@ -250,6 +252,14 @@ void ComQueue::processQueue() {
     FwIndexType sendPriority = 0;
     // Check that we are in the appropriate state
     FW_ASSERT(m_state == READY);
+
+    // Clean-up retry buffer when sending something new
+    m_lock.lock();
+    if (m_bufferMessage.getData() != nullptr) {
+        retryDeallocate_out(0, m_bufferMessage);
+        m_bufferMessage = Fw::Buffer(0, 0, 0);
+    }
+    m_lock.unLock();
 
     // Walk all the queues in priority order. Send the first message that is available in priority order. No balancing
     // is done within this loop.
