@@ -12,6 +12,7 @@
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
 #include "Fw/Types/MemAllocator.hpp"
+#include "Os/Mutex.hpp"
 
 namespace Svc {
 
@@ -81,7 +82,7 @@ class ComQueue : public ComQueueComponentBase {
     //! Cleanup the com stub
     //
     void cleanup();
-  private:
+  PRIVATE:
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------
@@ -110,6 +111,12 @@ class ComQueue : public ComQueueComponentBase {
                      NATIVE_UINT_TYPE context       /*!<The call order*/
     );
 
+    //! Handler implementation for retryReturn
+    //!
+    void retryReturn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::Buffer &fwBuffer
+    );
+
     // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
@@ -120,6 +127,8 @@ class ComQueue : public ComQueueComponentBase {
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
+
+    Os::Mutex m_lock;
 
     // List of queues matched to ports
     Types::Queue m_queues[totalSize];

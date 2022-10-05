@@ -23,7 +23,7 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
     }
 }
 
-ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName), m_state(WAITING), m_allocator(nullptr), m_allocation(nullptr) {
+ComQueue ::ComQueue(const char* const compName) : ComQueueComponentBase(compName), m_state(WAITING), m_allocator(nullptr), m_allocation(nullptr), m_bufferMessage(0, 0,0) {
     for (NATIVE_UINT_TYPE i = 0; i < totalSize; i++) {
         m_throttle[i] = false;
     }
@@ -158,6 +158,13 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
 
+void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer &fwBuffer) {
+    m_lock.lock();
+    m_bufferMessage = fwBuffer;
+    m_lock.unLock();
+}
+
+
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
@@ -170,15 +177,23 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
     FW_ASSERT(m_state != WAITING);
-    m_bufferMessage = buffer;
+    m_lock.lock();
+    m_bufferMessage = Fw::Buffer(0, 0, 0);
+    m_lock.unLock();
     this->buffQueueSend_out(0, buffer);
     m_state = WAITING;
 }
 void ComQueue::retryQueue() {
     if (m_lastEntry.index < ComQueueComSize) {
         sendComBuffer(m_comBufferMessage);
-    } else {
-        sendBuffer(m_bufferMessage);
+    }
+    else {
+        // Ensure the retry buffer has been returned
+        m_lock.lock();
+        FW_ASSERT(m_bufferMessage.getData() != nullptr);
+        Fw::Buffer retry_temp = m_bufferMessage;
+        m_lock.unLock();
+        sendBuffer(retry_temp);
     }
 }
 // We work under the assumption that the metadata in prioritized list
@@ -188,6 +203,15 @@ void ComQueue::processQueue() {
     NATIVE_UINT_TYPE sendPriority = 0;
     m_state = READY;
 
+    // Clean-up retry buffer when sending something new
+    m_lock.lock();
+    if (m_bufferMessage.getData() != nullptr) {
+        retryDeallocate_out(0, m_bufferMessage);
+        m_bufferMessage = Fw::Buffer(0, 0, 0);
+    }
+    m_lock.unLock();
+
+    // Look for the next item to send
     for (i = 0; i < totalSize; i++) {
         QueueData& entry = m_prioritizedList[i];
         Types::Queue& queue = m_queues[entry.index];
