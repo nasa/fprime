@@ -3,10 +3,10 @@ module Svc {
     enum QueueType { COM_QUEUE, BUFFER_QUEUE }
 
     @ Array of queue depths for Fw::Com types
-    array ComQueueDepth = [COM_PORT_COUNT] U32
+    array ComQueueDepth = [ComQueueComPorts] U32
     
     @ Array of queue depths for Fw::Buffer types
-    array BuffQueueDepth = [BUFFER_PORT_COUNT] U32
+    array BuffQueueDepth = [ComQueueBufferPorts] U32
 
 
     @ Component used to queue buffer types
@@ -26,10 +26,10 @@ module Svc {
       async input port comStatusIn: Fw.SuccessCondition
 
       @ Port array for receiving Fw::ComBuffers
-      async input port comQueueIn: [COM_PORT_COUNT] Fw.Com
+      async input port comQueueIn: [ComQueueComPorts] Fw.Com
 
       @ Port array for receiving Fw::Buffers
-      async input port buffQueueIn: [BUFFER_PORT_COUNT] Fw.BufferSend
+      async input port buffQueueIn: [ComQueueBufferPorts] Fw.BufferSend
 
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched

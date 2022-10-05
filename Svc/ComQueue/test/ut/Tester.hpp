@@ -14,9 +14,7 @@
 namespace Svc {
 
 class Tester : public ComQueueGTestBase {
-
   private:
-
     // ----------------------------------------------------------------------
     // Construction and destruction
     // ----------------------------------------------------------------------
@@ -44,12 +42,14 @@ class Tester : public ComQueueGTestBase {
 
     void emitOne();
 
-    void emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex, QueueType expectedType, Fw::ComBuffer& expectedCom, Fw::Buffer& expectedBuff);
+    void emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
+                         QueueType expectedType,
+                         Fw::ComBuffer& expectedCom,
+                         Fw::Buffer& expectedBuff);
 
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
-
 
     void testQueueSend();
 
@@ -78,11 +78,15 @@ class Tester : public ComQueueGTestBase {
                                    U32 context                    /*!< Call context value; meaning chosen by user*/
     );
 
+    //! Handler for from_retryDeallocate
+    //!
+    void from_retryDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                      Fw::Buffer& fwBuffer);
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
     // ----------------------------------------------------------------------
-
 
     //! Connect ports
     //!
@@ -100,6 +104,8 @@ class Tester : public ComQueueGTestBase {
     //! The component under test
     //!
     ComQueue component;
+
+    U32 m_retry_delta;
 };
 
 }  // end namespace Svc

@@ -201,10 +201,12 @@ void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     // Enqueue the given message onto the matching queue. When no space is available then emit the queue overflow event,
     // set the appropriate throttle, and move on. Will assert if passed a message for a depth 0 queue.
     const FwSizeType expectedSize = (queueType == QueueType::COM_QUEUE) ? sizeof(Fw::ComBuffer) : sizeof(Fw::Buffer);
+    const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
     FW_ASSERT(expectedSize == size, size, expectedSize);
+    FW_ASSERT(portNum >= 0, portNum);
     Fw::SerializeStatus status = m_queues[queueNum].enqueue(data, size);
     if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[queueNum]) {
-        log_WARNING_HI_QueueOverflow(queueType, queueNum);
+        log_WARNING_HI_QueueOverflow(queueType, portNum);
         m_throttle[queueNum] = true;
     }
     // When the component is already in READY state process the queue to send out the next available message immediately
@@ -255,9 +257,9 @@ void ComQueue::processQueue() {
 
     // Clean-up retry buffer when sending something new
     m_lock.lock();
-    if (m_bufferMessage.getData() != nullptr) {
-        retryDeallocate_out(0, m_bufferMessage);
-        m_bufferMessage = Fw::Buffer(0, 0, 0);
+    if (m_bufferRetry.getData() != nullptr) {
+        retryDeallocate_out(0, m_bufferRetry);
+        m_bufferRetry = Fw::Buffer(0, 0, 0);
     }
     m_lock.unLock();
 
