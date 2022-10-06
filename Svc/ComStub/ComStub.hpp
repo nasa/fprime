@@ -4,8 +4,8 @@
 // \brief  hpp file for ComStub component implementation class
 // ======================================================================
 
-#ifndef ComStub_HPP
-#define ComStub_HPP
+#ifndef Svc_ComStub_HPP
+#define Svc_ComStub_HPP
 
 #include "Svc/ComStub/ComStubComponentAc.hpp"
 
