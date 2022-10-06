@@ -9,7 +9,7 @@ to work with F´ communication components. Projects and users may choose to repl
 implementation (i.e. a component managing a specific radio) once ready. As long as any communication implementation
 implements the communication adapter interface it can drop in and work with the standard F´ uplink and downlink setup.
 
-`Svc::ComStub` delegates to a `Drv.ByteStreamDriver` in order to send and receive data through the driver inteface.
+`Svc::ComStub` delegates to a `Drv.ByteStreamDriver` in order to send and receive data through the driver interface.
 
 ## 2. Assumptions
 
@@ -29,60 +29,28 @@ tcp.
 | SVC-COMSTUB-005 | `Svc::ComStub` shall pass-through `Fw::Buffer` from a  `Drv::ByteStreamRead` on `Drv::ByteStreamSend` success               | A Comm interface must receive `Fw::Buffer`s from a driver   | Unit Test           | 
 
 ## 4. Design
-The diagram below shows the `Svc::ComStub` port interface. Any communications interface implementing or extending this
-port interface can be used alongside the other F´ communication components (`Svc::Framer`, `Svc::Deframer`,
-`Svc::ComQueue`). This interface is described below.
+
+The diagram below shows the `Svc::ComStub` port interface. `Svc::ComStub` is a basic *Communication Adapter* and can be
+used alongside the other F´ communication components (`Svc::Framer`, `Svc::Deframer`, `Svc::ComQueue`). 
 
 **Svc::ComStub Uplink and Downlink Interface**
-```mermaid
-graph LR
-    subgraph Svc::Framer
-        framedOut
-    end
-    subgraph Svc::Deframer
-        framedIn
-    end
-    subgraph Svc::ComStub
-        comDataIn
-        comStatus
-        comDataOut
-    end
-    subgraph Svc::ComQueue
-        status
-    end
-    framedOut -->comDataIn
-    comDataOut -->framedIn
-    comStatus -->status        
-```
 
-`Svc::ComStub`'s specific implementation delegates to a `Drv::ByteStreamDriverModel` as a way to transmit data and
-receive data. Other communication implementations may follow-suite.
-
-```mermaid
-flowchart LR
-    subgraph Drv::ByteStreamDriverModel
-        send
-        recv
-        ready
-    end
-    subgraph Svc::ComStub
-        drvDataOut
-        drvDataIn
-        drvConnected
-    end
-    drvDataOut ---->send
-    recv ----->drvDataIn
-    ready ----->drvConnected
-```
+![`Svc::ComStub` as Communication Adatper](./img/com-adapter.png)
 
 
+`Svc::ComStub` implements the
+[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) by
+delegation to a `Drv::ByteStreamDriverModel` as a way to transmit data and receive data. Other communication
+adapter implementations may follow-suite.
+
+![`Svc::ComStub` to `Drv::ByteStreamDriverModel`](./img/byte-stream.png)
 
 ### 4.1. Ports
 
 `ComStub` has the following ports.  The first three ports are required for the communication adapter interface, the
 second three are because the implementation delegates to a `Drv.ByteStreamDriverModel`. Only the communication adapter
-interfaces are required for components that replace this one, however; a `Drv.ByteStreamDriverModel` may still be
-interfaced with.
+interfaces ports are required for replacements to `Svc::ComStub`, however; a `Drv.ByteStreamDriverModel` ports may still
+be useful
 
 **Communication Adapter Interface Ports**
 
@@ -104,8 +72,8 @@ interfaced with.
 ### 4.2. State, Configuration, and Runtime Setup
 
 `Svc::ComStub` has only stores a boolean `m_reinitialize` indicating when it should send `Fw::Success::SUCCESS` in
-response to a driver reconnection event. This is to implement the failure resolution protocol of a
-[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html).
+response to a driver reconnection event. This is to implement the  Communication Adapter Protocol of a
+[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#Communication_Adapter_Protocol).
 
 ### 4.3. Port Handlers
 
