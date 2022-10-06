@@ -35,7 +35,7 @@ used alongside the other F´ communication components (`Svc::Framer`, `Svc::Defr
 
 **Svc::ComStub Uplink and Downlink Interface**
 
-![`Svc::ComStub` as Communication Adatper](./img/com-adapter.png)
+![`Svc::ComStub` as Communication Adapter](./img/com-adapter.png)
 
 
 `Svc::ComStub` implements the

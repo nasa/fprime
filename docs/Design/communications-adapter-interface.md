@@ -2,7 +2,7 @@
 
 Any communication component (e.g. a radio component) that is intended for use with the standard F´ uplink and downlink
 stack should implement the *Communication Adapter Interface*. This interface specifies both the ports and protocols used
-to interoperate with the standard F´ uplink and downlink components.
+to operate with the standard F´ uplink and downlink components.
 
 Implementors of this interface are referred to as *Communication Adapters*.
 
