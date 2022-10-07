@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('md_docs__design_numerical-types.html',
 <div class="contents">
 <div class="textblock"><p>On physical hardware, numerical types have a size in bits. The sizes of these integers are either explicitly set by the programmer or implicitly set by the compiler. i.e. <code>uint32_t</code> is explicitly 32-bits whereas <code>int</code> is implicitly set by the compiler. Flight software practice encourages use of explicitly sized types because there are fewer mistake made when the programmer uses an integer of a known size. However, in-practice it is nice to also use logical types that represent concepts in the system (e.g. size) and are set by the platform supporter to a known size.</p>
 <p>This document describes: fixed-width types and logical types.</p>
-<h1><a class="anchor" id="autotoc_md25"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 Fixed Width Types</h1>
 <p>In F´, fixed width types map to the standard definitions either in the C standard or in the <code>stdint.h</code> header as seen below. Since compilers are not guaranteed to support all types (e.g. 64bits integers) these types can be turned off by setting a configuration field to <code>0</code> in <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code>. These types are by default on and users must turn off types their compiler does not support.</p>
 <table class="markdownTable">
@@ -123,11 +123,11 @@ Fixed Width Types</h1>
 <div class="line">U32 value = 10;</div>
 <div class="line">printf(&quot;My value: %&quot; PRId32, value); // Uses string constant concatenation</div>
 </div><!-- fragment --><p>Minimum and maximum limits are provided by <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> of the form <code><a class="el" href="struct_fp_limits.html">FpLimits</a>::&lt;type&gt;_MIN</code> and <code><a class="el" href="struct_fp_limits.html">FpLimits</a>::&lt;type&gt;_MAX</code>.</p>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 F´ Logical Integer Type Design</h1>
 <p>Typically, in flight software we try to use fixed-sized types wherever possible as this produces consistent results across platforms. However, when building components for use on multiple different architectures it is nice to be able to use logical integer types whose exact widths are determined by the platform and project instead of needing to pick a one-size-fits-all fixed with type. For example, representing a size as an unsigned 64-bit integer is logical on some systems that have 64-bit data widths, but will not compile on systems that do not define 64-bit integers at all (8-bit systems often lack this data size).</p>
 <p>Thus, for these logical types the actual data size needs to be configured. This configuration needs to be available from two sources: a given project, and a given platform. Platforms need to set the idea size for these types, and projects need to be able to control these sizes when operating across multiple platforms.</p>
-<h2><a class="anchor" id="autotoc_md27"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 Platform Configured Types</h2>
 <p>Platform developers must define the following logical types in the <code>PlatformTypes.hpp</code> header provided alongside their CMake platform and toolchain files. Each type also defines a format specifier for use with the <code>printf</code> family of functions. Additionally, each defines a pair of static constants of the form <code>&lt;type&gt;_MIN</code> and <code>&lt;type&gt;_MAX</code> as limits to the range of these values. All limits must be defined as public static constants or public static constant expressions within a struct called <code>PlatformLimits</code>. For simplicity, structs are used to ensure all definitions are public.</p>
 <table class="markdownTable">
@@ -165,7 +165,7 @@ Platform Configured Types</h2>
 <div class="line">printf(&quot;Index %&quot; PRI_PlatformIndexType &quot; is bound by %&quot; PRI_PlatformIndexType, index, FpLimits::PlatformIndexType_MIN);</div>
 </div><!-- fragment --><p><b>Note:</b> in order for F´ to compile without warnings it is necessary that each of the platform types are elements in the set of integers supplied by the C standard int header. i.e. each type is an <code>int8_t</code>, <code>int16_t</code>, <code>int32_t</code>, <code>int64_t</code> or unsigned equivalents. On some compilers <code>int</code> and <code>unsigned int</code> are not members of that set and on those platforms it is imperative that both <code>PlatformIntType</code> and <code>PlatformUIntType</code> be set to some fixed size type instead.</p>
 <p>Additionally, types are defined as public static const expressions within a struct for two reasons. First, it allows the use of strongly typed constants without allocating storage for the constant nor requiring compiler optimization to remove storage. Second, it allows inheritance such that all constants from <code>PlatformLimits</code>, <code><a class="el" href="struct_basic_limits.html">BasicLimits</a></code>, and <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> (described below) are available through <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code>. This implementation implies that one should never take the address of one of these constants.</p>
-<h2><a class="anchor" id="autotoc_md28"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 Configurable Integer Types</h2>
 <p>Project may configure the framework types that the framework and components use for implementation through <code><a class="el" href="fp_config_8hpp.html" title="ISF configuration file.">FpConfig.hpp</a></code>. The default configuration as supplied with F´uses the above platform types where applicable. <code>&lt;type&gt;_MIN</code> and <code>&lt;type&gt;_MAX</code> limit constants are to be defined publicly within the <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> struct. The <code><a class="el" href="struct_fp_limits.html">FpLimits</a></code> struct inherit from <code><a class="el" href="struct_basic_limits.html">BasicLimits</a></code> using private inheritance as shown in the example at the bottom of this section.</p>
 <table class="markdownTable">

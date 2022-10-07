@@ -54,6 +54,9 @@ var hierarchy =
     [ "ComSplitterComponentBase", null, [
       [ "Svc::ComSplitter", "class_svc_1_1_com_splitter.html", null ]
     ] ],
+    [ "ComStubComponentBase", null, [
+      [ "Svc::ComStub", "class_svc_1_1_com_stub.html", null ]
+    ] ],
     [ "Svc::AMPCSSequence::SequenceHeader::Constants", "struct_svc_1_1_a_m_p_c_s_sequence_1_1_sequence_header_1_1_constants.html", null ],
     [ "Fw::ConstByteArray", "struct_fw_1_1_const_byte_array.html", null ],
     [ "Os::SystemResources::CpuTicks", "struct_os_1_1_system_resources_1_1_cpu_ticks.html", null ],

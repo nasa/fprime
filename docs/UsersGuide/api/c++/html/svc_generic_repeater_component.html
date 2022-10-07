@@ -88,22 +88,22 @@ $(document).ready(function(){initNavTree('_svc_generic_repeater_component.html',
 <div class="title">Svc::GenericRepeater Component </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md466"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md484"></a>
 Svc::GenericRepeater Generic Repeater Component</h1>
 <p>The GenericRepeater component is designed to take in a port and repeat it to the output multiple times. GenericRepeater is typically used to take in <code><a class="el" href="class_fw_1_1_com_buffer.html">Fw::ComBuffer</a></code> and log the buffer to a file and send it to the ground interface.</p>
-<h2><a class="anchor" id="autotoc_md467"></a>
+<h2><a class="anchor" id="autotoc_md485"></a>
 Design</h2>
 <p>The generic component has an input port and an array of output ports that receive the repeated calls. A typical logging use case is shown below.</p>
 <p><img src="./img/repeater.png" alt="Generic Repeater" class="inline"/></p>
-<h2><a class="anchor" id="autotoc_md468"></a>
+<h2><a class="anchor" id="autotoc_md486"></a>
 Configuration</h2>
 <p>Generic repeater maximum output ports are configured using <code>AcConstants.ini</code> as shown below:</p>
 <div class="fragment"><div class="line">GenericRepeaterOutputPorts = 2</div>
 </div><!-- fragment --><p>Here the repeater will bifurcate the incoming port calls.</p>
-<h2><a class="anchor" id="autotoc_md469"></a>
+<h2><a class="anchor" id="autotoc_md487"></a>
 Idiosyncrasies</h2>
 <p>The generic repeater does not copy data, and thus reference port calls will not clone references. Care should be taken when passing pointers and references through the repeater. Special care must be taken with items that need to be deallocated, like <code><a class="el" href="namespace_svc.html#a3cd251693b4a0d77eb953f6dd9c049e9">Svc::BufferManager</a></code> allocations.</p>
-<h2><a class="anchor" id="autotoc_md470"></a>
+<h2><a class="anchor" id="autotoc_md488"></a>
 Requirements</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -111,7 +111,7 @@ Requirements</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">GENREP-001 </td><td class="markdownTableBodyNone">The generic repeater shall repeat calls from input to output </td><td class="markdownTableBodyNone">unit test  </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md471"></a>
+<h2><a class="anchor" id="autotoc_md489"></a>
 Change Log</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">

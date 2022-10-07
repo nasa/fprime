@@ -12,6 +12,7 @@ var namespace_svc =
     [ "ComLogger", "class_svc_1_1_com_logger.html", "class_svc_1_1_com_logger" ],
     [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
     [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
+    [ "ComStub", "class_svc_1_1_com_stub.html", "class_svc_1_1_com_stub" ],
     [ "ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", "class_svc_1_1_console_text_logger_impl" ],
     [ "Deframer", "class_svc_1_1_deframer.html", "class_svc_1_1_deframer" ],
     [ "DeframingProtocol", "class_svc_1_1_deframing_protocol.html", "class_svc_1_1_deframing_protocol" ],

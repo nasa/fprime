@@ -11,6 +11,7 @@ var dir_5a5011284398685ffa1265751a46ea1a =
     [ "CmdSequencer", "dir_b55416741c5ac0835b3ce2fcec8cef6a.html", "dir_b55416741c5ac0835b3ce2fcec8cef6a" ],
     [ "ComLogger", "dir_358ab4ffee99de3bc9049879a48a303e.html", "dir_358ab4ffee99de3bc9049879a48a303e" ],
     [ "ComSplitter", "dir_8eb8812a177cc4e83d7d03c3c3297cc3.html", "dir_8eb8812a177cc4e83d7d03c3c3297cc3" ],
+    [ "ComStub", "dir_f58bf93cc90ceb1ba30160466b7eed76.html", "dir_f58bf93cc90ceb1ba30160466b7eed76" ],
     [ "Cycle", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a.html", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a" ],
     [ "Deframer", "dir_e2b8f136aa4f813f77c4a101b8abb988.html", "dir_e2b8f136aa4f813f77c4a101b8abb988" ],
     [ "Fatal", "dir_9e0c62751d3da6701df6efbbe9468fad.html", "dir_9e0c62751d3da6701df6efbbe9468fad" ],

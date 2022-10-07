@@ -50,12 +50,21 @@ var NAVTREE =
       ] ],
       [ "Run Tests", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md22", null ]
     ] ],
+    [ "Communication Adapter Interface", "md_docs__design_communications-adapter-interface.html", [
+      [ "Ports", "md_docs__design_communications-adapter-interface.html#autotoc_md24", [
+        [ "comDataIn Description", "md_docs__design_communications-adapter-interface.html#autotoc_md25", null ],
+        [ "comDataOut Description", "md_docs__design_communications-adapter-interface.html#autotoc_md26", null ],
+        [ "comStatus Description", "md_docs__design_communications-adapter-interface.html#autotoc_md27", null ]
+      ] ],
+      [ "Communication Adapter Protocol", "md_docs__design_communications-adapter-interface.html#autotoc_md28", null ]
+    ] ],
     [ "Design and Philosophy of F´", "md_docs__design_general.html", null ],
+    [ "F´ Memory Management", "md_docs__design_memory.html", null ],
     [ "F´ Numerical Types", "md_docs__design_numerical-types.html", [
-      [ "Fixed Width Types", "md_docs__design_numerical-types.html#autotoc_md25", null ],
-      [ "F´ Logical Integer Type Design", "md_docs__design_numerical-types.html#autotoc_md26", [
-        [ "Platform Configured Types", "md_docs__design_numerical-types.html#autotoc_md27", null ],
-        [ "Configurable Integer Types", "md_docs__design_numerical-types.html#autotoc_md28", null ]
+      [ "Fixed Width Types", "md_docs__design_numerical-types.html#autotoc_md32", null ],
+      [ "F´ Logical Integer Type Design", "md_docs__design_numerical-types.html#autotoc_md33", [
+        [ "Platform Configured Types", "md_docs__design_numerical-types.html#autotoc_md34", null ],
+        [ "Configurable Integer Types", "md_docs__design_numerical-types.html#autotoc_md35", null ]
       ] ]
     ] ],
     [ "Fw Components, Ports, and Classes", "fw.html", "_fw" ],
@@ -63,6 +72,22 @@ var NAVTREE =
     [ "Svc Components, Ports, and Classes", "svc.html", "_svc" ],
     [ "Drv Components and Classes", "drv.html", "_drv" ],
     [ "Utils Classes", "utils.html", "_utils" ],
+    [ "Svc::ComStub Component", "svc_com_stub_component.html", [
+      [ "Svc::ComStub (Passive Component)", "svc_com_stub_component.html#autotoc_md329", [
+        [ "1. Introduction", "svc_com_stub_component.html#autotoc_md330", null ],
+        [ "2. Assumptions", "svc_com_stub_component.html#autotoc_md331", null ],
+        [ "3. Requirements", "svc_com_stub_component.html#autotoc_md332", null ],
+        [ "4. Design", "svc_com_stub_component.html#autotoc_md333", [
+          [ "4.1. Ports", "svc_com_stub_component.html#autotoc_md334", null ],
+          [ "4.2. State, Configuration, and Runtime Setup", "svc_com_stub_component.html#autotoc_md335", null ],
+          [ "4.3. Port Handlers", "svc_com_stub_component.html#autotoc_md336", [
+            [ "4.3.1 comDataIn", "svc_com_stub_component.html#autotoc_md337", null ],
+            [ "4.3.1 drvConnected", "svc_com_stub_component.html#autotoc_md338", null ],
+            [ "4.3.1 drvDataIn", "svc_com_stub_component.html#autotoc_md339", null ]
+          ] ]
+        ] ]
+      ] ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -106,21 +131,21 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a_m_p_c_s_sequence_8cpp.html",
-"default_types_8hpp.html#a0d5749f9cd7bdca743d9393939e69251",
-"fp_config_8hpp.html#a48d947818ef0ebb372be0bf57d98c376",
-"ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da26054082faf7d1c58303a778dc24adae",
-"posix_2_task_8cpp.html#a4ee8359e96d6555acca4f046dd66ef70",
-"svc_assert_fatal_adapter_component.html#autotoc_md234",
-"svc_health_component.html#autotoc_md496",
-"tlm_packetizer_component_impl_cfg_8hpp.html#a11ca74bd00da6f5f3779fe980110f79e",
-"class_drv_1_1_udp_component_impl.html#a29d7bd4bfb7ad0b9571a9ebbb1a825a0",
-"class_fw_1_1_log_string_arg.html#a5eb0d0ef9db3f8242535b0244c6d11f9",
-"class_fw_1_1_time.html#a84869d06d1fdfb1050ff43da9c95abecaf75a4bea358b1d514ae00d6d2f6cac70",
-"class_os_1_1_queue_registry.html",
-"class_svc_1_1_file_downlink.html#a4c66fd5207cabb4f13799a1fddf13f06",
-"dir_618d7795118739559b27356cd2668752.html",
-"namespace_os_1_1_system_resources.html",
-"struct_svc_1_1_tlm_packetizer_packet.html#a5cec827177e68c7622455680958e39e5"
+"data_packet_8cpp.html",
+"fp_config_8hpp.html#a3cf649086b37430f3aa561942a64f431",
+"ip_socket_8hpp.html#a1c85f9fab0c8763f9fec49eee9fc734da0c3be5209dd674e3621275d43214ce0c",
+"posix_2_task_8cpp.html",
+"svc_assert_fatal_adapter_component.html#autotoc_md237",
+"svc_health_component.html#autotoc_md498",
+"tlm_chan_impl_cfg_8hpp_source.html",
+"class_drv_1_1_tcp_server_component_impl.html#a80c6a6e567de36e625730c1281e23944",
+"class_fw_1_1_log_packet.html#abb35b77691d8be6d677609121c424da7",
+"class_fw_1_1_time.html#a0e2af1ad4bfba65405d2e6ea03988a6e",
+"class_os_1_1_queue_handle.html#a1ac4eaffe9a7a1f550c5515ed47f23e2",
+"class_svc_1_1_deframing_protocol.html#a1dea66ee21da29ad814e44d1fd497e5e",
+"dir_3f839fc6fe510b79095da990397c1766.html",
+"md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md17",
+"struct_svc_1_1_buffer_manager_component_impl_1_1_buffer_bin.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
