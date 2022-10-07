@@ -66,4 +66,9 @@ module Fw {
     FAILED @< Failed state
   }
 
+  @ Success/Failure
+  enum Success {
+      FAILURE @< Representing failure
+      SUCCESS @< Representing success
+  }
 }
