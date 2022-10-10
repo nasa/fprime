@@ -7,7 +7,7 @@
 #ifndef _TaskLock_hpp_
 #define _TaskLock_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Os {
     class TaskLock {

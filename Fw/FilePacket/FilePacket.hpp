@@ -15,7 +15,7 @@
 
 #include <CFDP/Checksum/Checksum.hpp>
 #include <Fw/Buffer/Buffer.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/Serializable.hpp>
 

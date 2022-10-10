@@ -21,7 +21,7 @@ jobs:
         fetch-depth: 0
     - uses: ./.github/actions/setup
     - name: Install RPI Toolchain
-      run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
+      run: sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
     - name: F prime CI step
       run: ./ci/tests/RPI.bash
     - name: Copy Tests

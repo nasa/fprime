@@ -89,6 +89,27 @@ function(<autocoder name>_is_supported AC_INPUT_FILE)
 endfunction(<autocoder name>_is_supported )
 ```
 
+Should an autocoder need to indicate that a given input file will cause inter-target dependency changes (i.e. CMake
+re-generation must be performed) then the function `requires_regeneration(<INPUT_FILE>)` must be called. This can be
+done directly or by providing `TRUE` as an optional third argument to `autocoder_support_by_suffix`.  Both ways are shown below.
+
+```cmake
+...
+include(autocoder/helpers)
+...
+function(<autocoder name>_is_supported AC_INPUT_FILE)
+    requires_regeneration("${AC_INPUT_FILE}")
+endfunction(<autocoder name>_is_supported )
+```
+```cmake
+...
+include(autocoder/helpers)
+...
+function(<autocoder name>_is_supported AC_INPUT_FILE)
+    autocoder_support_by_suffix(".fpp" "${AC_INPUT_FILE}" TRUE)
+endfunction(<autocoder name>_is_supported )
+```
+
 ## Implement `<autocoder name>_setup_autocode AC_INPUT_FILES)`
 
 Implementing `<autocoder name>_setup_autocode AC_INPUT_FILES)` should setup the autocoder for generating files. It will

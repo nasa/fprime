@@ -9,7 +9,7 @@
 // acknowledged.
 
 #include <Svc/TlmPacketizer/TlmPacketizer.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Com/ComPacket.hpp>
 
 namespace Svc {

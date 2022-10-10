@@ -12,7 +12,7 @@
 
 #include <Drv/Ip/TcpClientSocket.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 #ifdef TGT_OS_TYPE_VXWORKS
     #include <socket.h>

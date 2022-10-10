@@ -79,7 +79,7 @@ class MdDocPage:
             DEBUG.error(
                 "MdDoc.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "MdDoc.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class MdDocPage:
             DEBUG.error(
                 "MdDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "MdDoc.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

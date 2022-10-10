@@ -14,7 +14,7 @@
 
 #include <Svc/ActiveRateGroup/ActiveRateGroupImpl.hpp>
 #include <ActiveRateGroupImplCfg.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/Log.hpp>
 
@@ -86,7 +86,7 @@ namespace Svc {
                 this->log_WARNING_HI_RateGroupCycleSlip(this->m_cycles);
                 this->m_overrunThrottle++;
             }
-            // update cycle cycle slips
+            // update cycle slips
             this->tlmWrite_RgCycleSlips(this->m_cycleSlips);
         } else { // if cycle is okay start decrementing throttle value
             if (this->m_overrunThrottle > 0) {

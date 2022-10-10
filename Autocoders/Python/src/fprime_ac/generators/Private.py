@@ -79,7 +79,7 @@ class Private:
             DEBUG.error(
                 "Private.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Private.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class Private:
             DEBUG.error(
                 "Private.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Private.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

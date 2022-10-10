@@ -10,8 +10,9 @@
 //
 // ======================================================================
 
-#include "Tester.hpp"
+#include "Fw/Types/String.hpp"
 #include "Fw/Types/StringUtils.hpp"
+#include "Tester.hpp"
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -40,7 +41,13 @@ namespace Svc {
 
         U32 lineNo;
         char file[80 + 1]; // Limit to 80  characters in the port call
-        (void) Fw::StringUtils::string_copy(file, __FILE__, sizeof(file));
+        Fw::String fileString;
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+        fileString.format("0x%08" PRIX32, ASSERT_FILE_ID);
+#else
+        fileString = __FILE__;
+#endif
+        (void) Fw::StringUtils::string_copy(file, fileString.toChar(), sizeof(file));
 
         // FW_ASSERT_0
 
@@ -85,9 +92,17 @@ namespace Svc {
         ASSERT_EVENTS_AF_ASSERT_6(0,file,lineNo,1,2,3,4,5,6);
 
         // Test unexpected assert
-        this->component.reportAssert("foo",1000,10,1,2,3,4,5,6);
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+        U32 unexpectedFile = 0xF00;
+        const char *const unexpectedFileArg = "0x00000F00";
+#else
+        const char *const unexpectedFile = "foo";
+        const char *const unexpectedFileArg = unexpectedFile;
+#endif
+
+        this->component.reportAssert(unexpectedFile,1000,10,1,2,3,4,5,6);
         ASSERT_EVENTS_AF_UNEXPECTED_ASSERT_SIZE(1);
-        ASSERT_EVENTS_AF_UNEXPECTED_ASSERT(0,"foo",1000,10);
+        ASSERT_EVENTS_AF_UNEXPECTED_ASSERT(0,unexpectedFileArg,1000,10);
 
     }
 

@@ -79,7 +79,7 @@ class Includes2:
             DEBUG.error(
                 "Includes2.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Includes2.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class Includes2:
             DEBUG.error(
                 "Includes2.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Includes2.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

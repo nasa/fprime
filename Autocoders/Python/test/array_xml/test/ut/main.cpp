@@ -9,7 +9,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Fw/Types/Assert.hpp>
 

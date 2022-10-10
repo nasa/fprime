@@ -2,9 +2,7 @@
 #define FW_OUTPUT_PORT_BASE_HPP
 
 #include <FpConfig.hpp>
-
 #include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Port/InputPortBase.hpp>
 

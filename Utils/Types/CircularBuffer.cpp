@@ -12,7 +12,7 @@
  *  Revised March 2022
  *      Author: bocchino
  */
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 

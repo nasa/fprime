@@ -1,7 +1,7 @@
 #ifndef TEST_STRING_TYPE_HPP
 #define TEST_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 

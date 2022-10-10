@@ -61,9 +61,10 @@ endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
 include_directories("${FPRIME_CONFIG_DIR}")
 
-# To prescan, either we register the prescan target or we run the prescan CMake
+# To prescan,register target process around safety check
 if (DEFINED FPRIME_PRESCAN)
-    register_fprime_target_helper(target/prescan FPRIME_TARGET_LIST)
+    register_fprime_list_helper(target/prescan FPRIME_TARGET_LIST)
+    setup_global_target(target/prescan)
 else()
     perform_prescan()
 endif()
@@ -71,6 +72,8 @@ endif()
 # FPP locations must come at the front of the list, then build
 register_fprime_target(target/fpp_locs)
 register_fprime_target(target/build)
+register_fprime_build_autocoder(autocoder/fpp)
+register_fprime_build_autocoder(autocoder/ai_xml)
 register_fprime_target(target/noop)
 register_fprime_target(target/version)
 register_fprime_target(target/dict)

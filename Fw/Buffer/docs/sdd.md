@@ -30,7 +30,7 @@ Name | Type | Accessors | Purpose
 `m_context`    | `U32` | `getContext()`/`setContext()` | Context of buffer's origin. Used to track buffers created by [`BufferManager`](../../../Svc/BufferManager/docs/sdd.md)
 `m_serialize_repr` | `Fw::ExternalSerializeBuffer` | `getSerializeRepr()` | Interface for serialization to internal buffer
 
-If the size of the data is set to 0, the pointer returned by `getData()` and the the serialization interface returned by
+If the size of the data is set to 0, the pointer returned by `getData()` and the serialization interface returned by
 `getSerializeRepr()` are considered invalid and should not be used.
 
 The `getSerializeRepr()` function may be used to interact with the wrapped data buffer by serializing types to and from

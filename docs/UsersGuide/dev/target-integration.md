@@ -11,7 +11,7 @@ globally. Module targets run on every module defining the `<target>_register_fpr
 targets run on deployments defined with the `<target>_register_fprime_deployment` calls, and global targets run once.
 
 Targets are CMake files that define three functions, one for each level, and are described below. The filename of this
-CMake without the `.cmake` extension is determines the`<target>` name. e.g. `utility.cmake` will define the `utility`
+CMake without the `.cmake` extension determines the`<target>` name. e.g. `utility.cmake` will define the `utility`
 target.
 
 Targets stages are defined in the following order:

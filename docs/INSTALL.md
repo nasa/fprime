@@ -22,7 +22,7 @@ Requirements:
 1. Linux or macOS operating system
 2. git
 3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-4. CLang or GCC compiler
+4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
 
 **Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
@@ -42,11 +42,11 @@ use the path: `$HOME/fprime-venv`
 
 ```
 python3 -m venv $HOME/fprime-venv
-source $HOME/fprime-venv/bin/activate
+. $HOME/fprime-venv/bin/activate
 pip install -U setuptools setuptools_scm wheel pip
 ```
 
-> Note: `source $HOME/fprime-venv/bin/activate` must be run in each new terminal where the user wishes to use the virtual environment.
+> Note: `. $HOME/fprime-venv/bin/activate` must be run in each new terminal where the user wishes to use the virtual environment.
 
 ### Cloning the F´ Repository and Installing F´ Tools
 
@@ -144,7 +144,7 @@ If the user is using a virtual environment and receives the command not found, t
 environment not being sourced in a new terminal. Make sure to source the environment before running:
 
 ```
-source $HOME/fprime-venv/bin/activate
+. $HOME/fprime-venv/bin/activate
 ```
 
 If installing without a virtual environment, PIP occasionally uses `$HOME/.local/bin` as a place to install user tools.
