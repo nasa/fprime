@@ -12,6 +12,7 @@
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
 #include "Fw/Types/MemAllocator.hpp"
+#include "Os/Mutex.hpp"
 
 namespace Svc {
 
@@ -151,6 +152,12 @@ class ComQueue : public ComQueueComponentBase {
                      NATIVE_UINT_TYPE context       /*!<The call order*/
     );
 
+    //! Handler implementation for retryReturn
+    //!
+    void retryReturn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::Buffer &fwBuffer
+    );
+
     // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
@@ -184,6 +191,7 @@ class ComQueue : public ComQueueComponentBase {
     // Member variables
     // ----------------------------------------------------------------------
 
+    Os::Mutex m_lock;
     Types::Queue m_queues[TOTAL_PORT_COUNT];  //!< Stores queued data waiting for transmission
 
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata

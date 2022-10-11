@@ -48,11 +48,11 @@ void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portN
     Fw::Buffer buffer(&data[0], sizeof(data));
     if (queueNum < ComQueue::COM_PORT_COUNT) {
         portNum = queueNum;
-        queueType = QueueType::comQueue;
+        queueType = QueueType::COM_QUEUE;
         invoke_to_comQueueIn(portNum, comBuffer, 0);
     } else {
         portNum = queueNum - ComQueue::COM_PORT_COUNT;
-        queueType = QueueType::buffQueue;
+        queueType = QueueType::BUFFER_QUEUE;
         invoke_to_buffQueueIn(portNum, buffer);
     }
 }
@@ -66,7 +66,7 @@ void Tester ::emitOne() {
 void Tester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex, QueueType expectedType, Fw::ComBuffer& expectedCom, Fw::Buffer& expectedBuff) {
     emitOne();
 
-    if (expectedType == QueueType::comQueue) {
+    if (expectedType == QueueType::COM_QUEUE) {
         ASSERT_from_comQueueSend(expectedIndex, expectedCom, 0);
     } else {
         ASSERT_from_buffQueueSend(expectedIndex, expectedBuff);
@@ -85,13 +85,13 @@ void Tester ::testQueueSend() {
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        emitOneAndCheck(0, QueueType::comQueue, comBuffer, buffer);
+        emitOneAndCheck(0, QueueType::COM_QUEUE, comBuffer, buffer);
         clearFromPortHistory();
     }
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        emitOneAndCheck(0, QueueType::buffQueue, comBuffer, buffer);
+        emitOneAndCheck(0, QueueType::BUFFER_QUEUE, comBuffer, buffer);
         clearFromPortHistory();
     }
     component.cleanup();
@@ -115,36 +115,36 @@ void Tester ::testRetrySend() {
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
         invoke_to_comQueueIn(portNum,  comBufferGarbage, 0); // Send in garbage to ensure the right retry
-        emitOneAndCheck(0, QueueType::comQueue, comBuffer, buffer);
+        emitOneAndCheck(0, QueueType::COM_QUEUE, comBuffer, buffer);
 
         // Fail and force retry
         invoke_to_comStatusIn(0, failState);
         component.doDispatch();
 
         // Retry should be original buffer
-        emitOneAndCheck(1, QueueType::comQueue, comBuffer, buffer);
+        emitOneAndCheck(1, QueueType::COM_QUEUE, comBuffer, buffer);
 
         ASSERT_from_comQueueSend_SIZE(2);
         // Now clear out the garbage in queue
-        emitOneAndCheck(2, QueueType::comQueue, comBufferGarbage, bufferGarbage);
+        emitOneAndCheck(2, QueueType::COM_QUEUE, comBufferGarbage, bufferGarbage);
         clearFromPortHistory();
     }
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
         invoke_to_buffQueueIn(portNum, bufferGarbage); // Send in garbage to ensure the right retry
-        emitOneAndCheck(0, QueueType::buffQueue, comBuffer, buffer);
+        emitOneAndCheck(0, QueueType::BUFFER_QUEUE, comBuffer, buffer);
 
         // Fail and force retry
         invoke_to_comStatusIn(0,failState);
         component.doDispatch();
 
         // Retry should be original buffer
-        emitOneAndCheck(1, QueueType::buffQueue, comBuffer, buffer);
+        emitOneAndCheck(1, QueueType::BUFFER_QUEUE, comBuffer, buffer);
         ASSERT_from_buffQueueSend_SIZE(2);
 
         // Now clear out the garbage in queue
-        emitOneAndCheck(2, QueueType::buffQueue, comBufferGarbage, bufferGarbage);
+        emitOneAndCheck(2, QueueType::BUFFER_QUEUE, comBufferGarbage, bufferGarbage);
         clearFromPortHistory();
     }
     component.cleanup();

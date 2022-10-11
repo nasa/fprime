@@ -34,6 +34,9 @@ module Svc {
       @ Port for scheduling telemetry output
       async input port run: Svc.Sched
 
+      @ Port for receiving Fw.Buffers back for retry
+      sync input port retryReturn: Fw.BufferSend
+
       # ----------------------------------------------------------------------
       # Special ports
       # ----------------------------------------------------------------------

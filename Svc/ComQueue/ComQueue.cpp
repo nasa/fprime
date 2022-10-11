@@ -101,7 +101,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         // Get current queue's allocation size and safety check the values
         FwSizeType allocationSize = m_prioritizedList[i].depth * m_prioritizedList[i].msgSize;
-        FW_ASSERT(m_prioritizedList[i].index < FW_NUM_ARRAY_ELEMENTS(m_queues), m_prioritizedList[i].index);
+        FW_ASSERT(m_prioritizedList[i].index < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_queues)), m_prioritizedList[i].index);
         FW_ASSERT((allocationSize + allocationOffset) <= totalAllocation, allocationSize, allocationOffset,
                   totalAllocation);
 
@@ -123,7 +123,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Ensure that the port number of comQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, portNum);
-    enqueue(portNum, QueueType::comQueue, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
+    enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
 void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
@@ -184,6 +184,13 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
 
+void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer &fwBuffer) {
+    m_lock.lock();
+    m_bufferRetry = fwBuffer;
+    m_lock.unLock();
+}
+
+
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
@@ -213,7 +220,10 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
     FW_ASSERT(m_state == READY);
-    m_bufferRetry = buffer;
+    m_lock.lock();
+    // Buffer ownership transferred to downstream component. Clear local reference.
+    m_bufferRetry = Fw::Buffer(0, 0, 0);
+    m_lock.unLock();
     this->buffQueueSend_out(0, buffer);
     m_state = WAITING;
 }
@@ -222,11 +232,16 @@ void ComQueue::retryQueue() {
     // Check that we are in the appropriate state
     FW_ASSERT(m_state == READY);
 
-    //
+    // Retry the last message based on type
     if (m_lastIndex < COM_PORT_COUNT) {
         sendComBuffer(m_comRetry);
     } else {
-        sendBuffer(m_bufferRetry);
+        // Ensure the retry buffer ownership has been returned before resending it.
+        m_lock.lock();
+        FW_ASSERT(m_bufferRetry.getData() != nullptr);
+        Fw::Buffer retry_temp = m_bufferRetry;
+        m_lock.unLock();
+        sendBuffer(retry_temp);
     }
 }
 
