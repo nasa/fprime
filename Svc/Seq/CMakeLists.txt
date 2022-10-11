@@ -10,4 +10,8 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Seq.fpp"
 )
 
+set(MOD_DEPS
+    Fw/Port
+)
+
 register_fprime_module()
