@@ -52,7 +52,7 @@ typedef int PlatformIntType;
 #define PRI_PlatformIntType "d"
 
 typedef unsigned int PlatformUIntType;
-#define PRI_PlatformUIntType "ud"
+#define PRI_PlatformUIntType "u"
 
 typedef PlatformIntType PlatformIndexType;
 #define PRI_PlatformIndexType PRI_PlatformIntType
