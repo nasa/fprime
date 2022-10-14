@@ -36,7 +36,7 @@ namespace Os {
 			return OTHER_ERROR;
 		} // end copyFile
 
-		Status getFileSize(const char* path, U64& size) {
+		Status getFileSize(const char* path, FwSizeType& size) {
 			return OTHER_ERROR;
 		} // end getFileSize
 

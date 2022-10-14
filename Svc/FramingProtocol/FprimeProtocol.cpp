@@ -9,10 +9,8 @@
 // acknowledged.
 //
 // ======================================================================
-
-#include <limits>
-
 #include "FprimeProtocol.hpp"
+#include "FpConfig.hpp"
 #include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
@@ -102,7 +100,7 @@ DeframingProtocol::DeframingStatus FprimeDeframing::deframe(Types::CircularBuffe
     // Read size from header
     status = ring.peek(size, sizeof(FpFrameHeader::TokenType));
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-    const U32 maxU32 = std::numeric_limits<U32>::max();
+    const U32 maxU32 = FpLimits::U32_MAX;
     if (size > maxU32 - (FpFrameHeader::SIZE + HASH_DIGEST_LENGTH)) {
         // Size is too large to process: needed would overflow
         return DeframingProtocol::DEFRAMING_INVALID_SIZE;

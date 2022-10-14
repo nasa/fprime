@@ -18,7 +18,7 @@ namespace Os {
 
         // Get the file size:
         FileSystem::Status fs_status;
-        U64 fileSize = 0;
+        FwSizeType fileSize = 0;
         fs_status = FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         if( FileSystem::OP_OK != fs_status ) {
             return File::BAD_SIZE;
