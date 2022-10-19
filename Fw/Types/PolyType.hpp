@@ -92,7 +92,7 @@ namespace Fw {
             PolyType(const PolyType &original); //!< copy constructor
             virtual ~PolyType(); //!< destructor
 
-#if FW_SERIALIZABLE_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
             void toString(StringBase& dest, bool append) const; //!< get string representation
             void toString(StringBase& dest) const; //!< get string representation
 #endif
