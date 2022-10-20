@@ -105,6 +105,7 @@ class Tester : public ComQueueGTestBase {
     //!
     ComQueue component;
 
+    //! Difference between the retry count and the port output count
     U32 m_retry_delta;
 };
 

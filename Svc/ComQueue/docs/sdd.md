@@ -3,77 +3,73 @@
 
 ## 1. Introduction
 
-`Svc::ComQueue` is an  F´ active component that ensures that data continues to be collected
-when the communication interface is not ready. As the communication interface is being set up, 
-the component takes incoming Fw.Buffer, and Fw.Com data types and combines the two into an 
-array implementation queue. When a ready signal of type ComStatus is received, the component will dequeue 
-an item on their respective outport type based on the highest priority to be sent down. Priority
-values are configured by the user. If items on the queue share the same priority value, items 
-will be dispatched in a round-robin manner. Items will not be dispatched again until another ready signal is received. 
-`Svc::ComQueue` has three different types of states: FAIL, RETRY and READY. In the context of a FAIL state where data was 
-not successfully sent out on the output port, the FAIL state automatically transitions into a 
-RETRY state where when a ready signal is received again, the data that failed to be received earlier
-gets sent out again until a ready signal is received. 
+`Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and
+forwarded when a `Fw::Success::SUCCESS` signal is received in order of priority. Messages that result in a
+`Fw::Success::FAILURE` signal are stored and retried on the first following `Fw::Success::SUCCESS` signal.
 
+`Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by
+passing in a configuration table at initialization. Queued messages from the highest priority source port are serviced
+first and a round-robin algorithm is used to balance between ports of shared priority.
+
+`Svc::ComQueue` is designed to follow the
+[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html).
 
 ## 2. Assumptions
 
-1. On the first run of the component, ComStatus is set to READY by default. 
-2. Incoming data being received by the component is already sorted based on high to low priority level.
-3. Data is considered to be successfully sent until a FAIL signal is received. 
-4. A status signal will always be provided from a communication interface. 
+1. Incoming buffers to a given port are in priority order
+2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal was received
+3. The system includes a downstream
+ [communications adapter](https://nasa.github.io/fprime/Design/communication-adapter-interface.html)
+
 
 ## 3. Requirements
 
 
-| Requirement      | Description                                                                                                                                                                      | Rationale                                                                                                                                                  | Verification Method |
-|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
-| SVC-COMQUEUE-001 | SVC::COMQUEUE shall queue up `Fw:Buffer` and `Fw:ComBuffer` types and output                                                                                                     | The purpose of the component is to ensure that no data gets dropped whenever the communication interface is not ready                                      | Unit Test           |
-| SVC-COMQUEUE-002 | SVC::COMQUEUE shall output exactly one `Fw:Buffer` or `Fw:ComBuffer` messages on a received READY signal                                                                         | Purpose of this component is to act as a radio throttle                                                                                                    | Unit Test           |
-| SVC-COMQUEUE-003 | SVC::COMQUEUE shall retry sending the current message if a FAIL signal was received.                                                                                             | Ensures that no messages get dropped                                                                                                                       | Unit Test           |
-| SVC-COMQUEUE-004 | SVC::COMQUEUE shall accept data with the type `Fw::ComBuffer` and `Fw::Buffer` on multiple ports. The number of ports per type can be an arbitrary value of n and m respectively | These are the data types used for downlink.                                                                                                                | Inspection          |
-| SVC-COMQUEUE-005 | SVC::COMQUEUE shall have a separate queue for each buffer and com buffer port                                                                                                    | The separate queue enables the interface to differentiate priority levels between buffer and com buffer                                                    | Unit Test           | 
-| SVC-COMQUEUE-006 | SVC::COMQUEUE shall send `Fw:Buffer` and `Fw:ComBuffer` data on separate ports                                                                                                   | `Fw:Buffer` and `Fw:ComBuffer` data are typically handled by different components                                                                          | Unit test           |
-| SVC-COMQUEUE-007 | SVC::COMQUEUE shall keep track of the queue depth of all queue messages for `Fw:Buffer` and `Fw:ComBuffer` queues                                                                | Helps keep track on how close the queue is to being full                                                                                                   | Unit Test           | 
-| SVC-COMQUEUE-008 | SVC::COMQUEUE shall stop accepting `Fw:Buffer` and `Fw:ComBuffer` messages when the associated queue is full                                                                     | Allows the processing of backlog that may have build up during the downlink process                                                                        | Unit Test           | 
-| SVC-COMQUEUE-009 | SVC::COMQUEUE shall process `Fw:Buffer` and `Fw:ComBuffer` messages on the queue based on priority levels                                                                        | Allows flexibility on how the data should be collected and prioritized                                                                                     | Unit Test           | 
-| SVC-COMQUEUE-010 | SVC::COMQUEUE shall implement a round robin logic if the queue share the same priority level                                                                                     | Ensure that data that share priority levels will get sent out at a equal rate                                                                              | Unit Test           |
-| SVC-COMQUEUE-011 | SVC::COMQUEUE shall keep track and throttle QUEUE_FULL events per queue                                                                                                          | Ensures that a throttle occurs per queue and that if one queue overflows it does not prevent another queue from indicating that it has an overflow as well | Unit test           | 
+| Requirement      | Description                                                                                                                            | Rationale                                                               | Verification Method |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
+| SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw:Buffer` and `Fw:ComBuffer` received on incoming ports.                                                 | The purpose of the queue is to store messages.                          | Unit Test           |
+| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw:Buffer` or `Fw:ComBuffer` message on a received `Fw::Success::SUCCESS` signal  .          | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
+| SVC-COMQUEUE-003 | `Svc::ComQueue` shall retry sending the last sent message on the first `Fw::Success::SUCCESS` signal following `Fw::Success::FAILURE`. | In the case of failure messages shall not be lost.                      | Unit Test           |
+| SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                            | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
+| SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw:Buffer` and `Fw:ComBuffer` message in response to `Fw::Success::SUCCESS`.  | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
+| SVC-COMQUEUE-006 | `Svc::ComQueue` shall periodically telemeter the number of queued messages per-port in response to a `run` port invocation.            | `Svc::ComQueue` should provide useful telemetry.                        | Unit Test           | 
+| SVC-COMQUEUE-007 | `Svc::ComQueue` shall emit a queue overflow event for a given port when the configured depth is exceeded. Messages shall be discarded. | `Svc::ComQueue` needs to indicate off-nominal events.                   | Unit Test           | 
+| SVC-COMQUEUE-008 | `Svc::ComQueue` shall implement a round robin approach to balance between ports of the same priority.                                  | Allows projects to balance between a set of queues of similar priority. | Unit Test           |
+| SVC-COMQUEUE-009 | `Svc::ComQueue` shall keep track and throttle queue overflow events per port.                                                          | Prevents a flood of queue overflow events.                              | Unit test           | 
 
 ## 4. Design
-The diagram below shows the `ComQueue` component.
+The diagram below shows the `Svc::ComQueue` component.
 
-<div>
-<img src="img/ComQueue.png" width=700/>
-</div>
+![Svc::ComQueue](./img/ComQueue.png)
 
 ### 4.2. Ports
-`ComQueue` has the following ports:
+`Svc::ComQueue` has the following ports:
 
-| Kind            | Name            | Port Type       | Usage                                                          |
-|-----------------|-----------------|-----------------|----------------------------------------------------------------|
-| `output`        | `comQueueSend`  | `Fw.Com`        | Port that sends out com buffers on READY status.               |
-| `output`        | `buffQueueSend` | `Fw.BufferSend` | Port that sends out buffers on READY status.                   |
-| `async input`   | `comStatusIn`   | `ComStatus`     | Port that takes in status signal from communication interface. |
-| `async input`   | `run`           | `Fw.Com`        | Schedule in port, driven by a rate group.                      |
-| `async input` | `comQueueIn`    | `Fw.BufferSend` | Ports that receives buffer data types.                         |
-| `async input` | `buffQueueIn`   | `Svc.Sched`     | Port that receives com buffer data types.                      |
+| Kind          | Name              | Port Type             | Usage                                                   |
+|---------------|-------------------|-----------------------|---------------------------------------------------------|
+| `output`      | `comQueueSend`    | `Fw.Com`              | Send prioritized message of `Fw::ComBuffer` type.       |
+| `output`      | `buffQueueSend`   | `Fw.BufferSend`       | Send prioritized message of `Fw::Buffer` type.          |
+| `async input` | `comStatusIn`     | `Fw.Success`          | Receive the status result of last message.              |
+| `async input` | `run`             | `Svc.Sched`           | Emit periodic telemetry.                                |
+| `async input` | `comQueueIn`      | `Fw.Com` Array        | Receive and queue `Fw::ComBuffer` type messages.        |
+| `async input` | `buffQueueIn`     | `Fw.BufferSend` Array | Receive and queue `Fw::Buffer` type messages.           |
+| `sync input`  | `retryReturn`     | `Fw.Buffersend`       | Returns `Fw.Buffer` for retry in-lieu of deallocation.  | 
+| `output`      | `retryDeallocate` | `Fw.Buffersend`       | Deallocate `Fw.Buffer` when no longer needed for retry. |
 
 ### 4.3. State
-`ComQueue` maintains the following state:
-1. `m_queues`: An instance of `Types::Queue` for storing com Buffers and buffers based on port numbers.
-2. `m_comBufferMessage`: An instance of `Fw::ComBuffer` for storing com buffer data to be dispatched
-3. `m_bufferMessage`: An instance of `Fw::Buffer` for storing buffer data to be dispatched
-4. `m_prioritizedList`: An instance of `QueueMetadata` that stores the priority ordered com buffers and buffers.
-5. `m_lastEntry`: An instance of `QueueMetadata` that stores the last entry point of prioritized list before the data was sent. 
-6. `m_state`: An instance of `SendState` that indicates the state of the send status 
-7. `m_throttle`: An array of flags that indicates if a message has been throttled or not
+`Svc::ComQueue` maintains the following state:
+1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
+2. `m_comRetry`: An instance of `Fw::ComBuffer` storing the last sent `Fw::ComBuffer` message.
+3. `m_bufferRetry`: An instance of `Fw::Buffer` for storing the last sent `Fw::Buffer` message.
+4. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
+5. `m_lastIndex`: Incoming port index of last sent message.
+6. `m_state`: An instance of `Svc::ComQueue::SendState` representing the state of the component.
+7. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
 
 ### 4.4. Model Configuration
-`ComQueue` has the following constants, initialized at component instantiation time:
-1. `Svc::ComQueue::ComQueueComSize`: Size of queue that contains com buffer data. 
-2. `Svc::ComQueue::ComQueueBuffSize` Size of queue that contains buffer data.
-3. `Svc::ComQueue::TOTAL_PORT_COUNT`: Combined size of `Svc::ComQueue::ComQueueComSize` and `Svc::ComQueue::ComQueueBuffSize`.
+`Svc::ComQueue` has the following constants, that are configured in `AcConstants.fpp`:
+1. `ComQueueComPorts`: number of ports of `Fw.Com` type in the `comQueueIn` port array.
+2. `ComQueueBufferPorts` number of ports of `Fw.BufferSend` type in the `buffQueueIn` port array.
 
 ### 4.5. Runtime Setup
 To set up an instance of `ComQueue`, the following needs to be done: 

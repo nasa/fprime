@@ -63,10 +63,10 @@ void Tester ::emitOne() {
     dispatchAll();
     U32 deallocated = fromPortHistory_retryDeallocate->size();
     // Check deallocations automatically when there aren't spurious retries
-    ASSERT_EQ(previously_sent - m_retry_delta, deallocated);
-    if (m_retry_delta == 0) {
+    ASSERT_EQ(previously_sent - this->m_retry_delta, deallocated);
+    if (this->m_retry_delta == 0) {
         for (U32 index = 0; index < deallocated; index++) {
-            ASSERT_EQ(fromPortHistory_buffQueueSend->at(index - m_retry_delta).fwBuffer,
+            ASSERT_EQ(fromPortHistory_buffQueueSend->at(index - this->m_retry_delta).fwBuffer,
                       fromPortHistory_retryDeallocate->at(index).fwBuffer);
         }
     }
@@ -128,9 +128,11 @@ void Tester ::testRetrySend() {
         invoke_to_comQueueIn(portNum, comBufferGarbage, 0);  // Send in garbage to ensure the right retry
         emitOneAndCheck(0, QueueType::COM_QUEUE, comBuffer, buffer);
 
-        // Fail and force retry
-        invoke_to_comStatusIn(0, failState);
-        component.doDispatch();
+        // Fail and force retry. Should be resilient to number of failures >= 1.
+        for (NATIVE_INT_TYPE j = 0; j < (portNum + 1); j++) {
+            invoke_to_comStatusIn(0, failState);
+            component.doDispatch();
+        }
 
         // Retry should be original buffer
         emitOneAndCheck(1, QueueType::COM_QUEUE, comBuffer, buffer);
@@ -146,12 +148,13 @@ void Tester ::testRetrySend() {
         invoke_to_buffQueueIn(portNum, bufferGarbage); // Send in garbage to ensure the right retry
         emitOneAndCheck(0, QueueType::BUFFER_QUEUE, comBuffer, buffer);
 
-        // Fail and force retry
-        invoke_to_comStatusIn(0, failState);
-        component.doDispatch();
+        // Fail and force retry. Should be resilient to number of failures >= 1.
+        for (NATIVE_INT_TYPE j = 0; j < (portNum + 1); j++) {
+            invoke_to_comStatusIn(0, failState);
+            component.doDispatch();
+        }
 
-        // Retry should be original buffer
-        m_retry_delta += 1;
+        this->m_retry_delta += 1;
         emitOneAndCheck(1, QueueType::BUFFER_QUEUE, comBuffer, buffer);
         ASSERT_from_buffQueueSend_SIZE(2 + (portNum * 3));
         ASSERT_from_retryDeallocate_SIZE(portNum * 2);

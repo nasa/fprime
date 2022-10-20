@@ -43,8 +43,8 @@ void ComQueue ::init(const NATIVE_INT_TYPE queueDepth, const NATIVE_INT_TYPE ins
 
 void ComQueue ::cleanup() {
     // Deallocate memory ignoring error conditions
-    if (m_allocator != nullptr && m_allocation != nullptr) {
-        m_allocator->deallocate(m_allocationId, m_allocation);
+    if ((this->m_allocator != nullptr) && (this->m_allocation != nullptr)) {
+        this->m_allocator->deallocate(this->m_allocationId, this->m_allocation);
     }
 }
 
@@ -80,7 +80,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
                 // Set up the queue metadata object in order to track priority, depth, index into the queue list of the
                 // backing queue object, and message size. Both index and message size are calculated where priority and
                 // depth are copied from the configuration object.
-                QueueMetadata& entry = m_prioritizedList[currentPriorityIndex];
+                QueueMetadata& entry = this->m_prioritizedList[currentPriorityIndex];
                 entry.priority = queueConfig.entries[entryIndex].priority;
                 entry.depth = queueConfig.entries[entryIndex].depth;
                 entry.index = entryIndex;
@@ -94,7 +94,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     }
     // Allocate a single chunk of memory from the memory allocator. Memory recover is neither needed nor used.
     bool recoverable = false;
-    m_allocation = m_allocator->allocate(m_allocationId, totalAllocation, recoverable);
+    this->m_allocation = this->m_allocator->allocate(this->m_allocationId, totalAllocation, recoverable);
 
     // Each of the backing queue objects must be supplied memory to store the queued messages. These data regions are
     // sub-portions of the total allocated data. This memory is passed out by looping through each queue in prioritized
@@ -102,16 +102,16 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
     FwSizeType allocationOffset = 0;
     for (FwIndexType i = 0; i < TOTAL_PORT_COUNT; i++) {
         // Get current queue's allocation size and safety check the values
-        FwSizeType allocationSize = m_prioritizedList[i].depth * m_prioritizedList[i].msgSize;
-        FW_ASSERT(m_prioritizedList[i].index < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(m_queues)), m_prioritizedList[i].index);
+        FwSizeType allocationSize = this->m_prioritizedList[i].depth * this->m_prioritizedList[i].msgSize;
+        FW_ASSERT(this->m_prioritizedList[i].index < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_queues)), this->m_prioritizedList[i].index);
         FW_ASSERT((allocationSize + allocationOffset) <= totalAllocation, allocationSize, allocationOffset,
                   totalAllocation);
 
         // Setup queue's memory allocation, depth, and message size. Setup is skipped for a depth 0 queue
         if (allocationSize > 0) {
-            m_queues[m_prioritizedList[i].index].setup(reinterpret_cast<U8*>(m_allocation) + allocationOffset,
-                                                       allocationSize, m_prioritizedList[i].depth,
-                                                       m_prioritizedList[i].msgSize);
+            this->m_queues[this->m_prioritizedList[i].index].setup(reinterpret_cast<U8*>(this->m_allocation) + allocationOffset,
+                                                       allocationSize, this->m_prioritizedList[i].depth,
+                                                             this->m_prioritizedList[i].msgSize);
         }
         allocationOffset += allocationSize;
     }
@@ -125,7 +125,7 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 void ComQueue::comQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     // Ensure that the port number of comQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < COM_PORT_COUNT, portNum);
-    enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
+    this->enqueue(portNum, QueueType::COM_QUEUE, reinterpret_cast<const U8*>(&data), sizeof(Fw::ComBuffer));
 }
 
 void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
@@ -133,37 +133,37 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
     // Ensure that the port number of buffQueueIn is consistent with the expectation
     FW_ASSERT(portNum >= 0 && portNum < BUFFER_PORT_COUNT, portNum);
     FW_ASSERT(queueNum < TOTAL_PORT_COUNT);
-    enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
+    this->enqueue(queueNum, QueueType::BUFFER_QUEUE, reinterpret_cast<const U8*>(&fwBuffer), sizeof(Fw::Buffer));
 }
 
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
-    switch (m_state) {
+    switch (this->m_state) {
         // On success, a message should be retried. On failure, the component remains in retry state.
         case RETRY:
             if (condition.e == Fw::Success::SUCCESS) {
-                m_state = READY;
-                retryQueue();
+                this->m_state = READY;
+                this->retryQueue();
                 // A retry must retry a message and thus WAITING state is expected
-                FW_ASSERT(m_state == WAITING, m_state);
+                FW_ASSERT(this->m_state == WAITING, this->m_state);
             } else {
-                m_state = RETRY;
+                this->m_state = RETRY;
             }
             break;
         // On success, the queue should be processed. On failure, the message should be waiting to RETRY.
         case WAITING:
             if (condition.e == Fw::Success::SUCCESS) {
-                m_state = READY;
-                processQueue();
+                this->m_state = READY;
+                this->processQueue();
                 // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
-                FW_ASSERT((m_state == WAITING || m_state == READY), m_state);
+                FW_ASSERT((this->m_state == WAITING ||this->m_state == READY), this->m_state);
             } else {
-                m_state = RETRY;
+                this->m_state = RETRY;
             }
             break;
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
         // one of the WAITING or RETRY states.
         default:
-            FW_ASSERT(0, m_state);
+            FW_ASSERT(0, this->m_state);
             break;
     }
 }
@@ -172,24 +172,24 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
     for (FwSizeType i = 0; i < comQueueDepth.SIZE; i++) {
-        comQueueDepth[i] = m_queues[i].get_high_water_mark();
-        m_queues[i].clear_high_water_mark();
+        comQueueDepth[i] = this->m_queues[i].get_high_water_mark();
+        this->m_queues[i].clear_high_water_mark();
     }
     this->tlmWrite_comQueueDepth(comQueueDepth);
 
     // Downlink the high-water marks for the Fw::Buffer array types
     BuffQueueDepth buffQueueDepth;
     for (FwSizeType i = 0; i < buffQueueDepth.SIZE; i++) {
-        buffQueueDepth[i] = m_queues[i + COM_PORT_COUNT].get_high_water_mark();
-        m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
+        buffQueueDepth[i] = this->m_queues[i + COM_PORT_COUNT].get_high_water_mark();
+        this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
     }
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
 
 void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer &fwBuffer) {
-    m_lock.lock();
-    m_bufferRetry = fwBuffer;
-    m_lock.unLock();
+    this->m_lock.lock();
+    this->m_bufferRetry = fwBuffer;
+    this->m_lock.unLock();
 }
 
 
@@ -204,48 +204,48 @@ void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
     const FwIndexType portNum = queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT);
     FW_ASSERT(expectedSize == size, size, expectedSize);
     FW_ASSERT(portNum >= 0, portNum);
-    Fw::SerializeStatus status = m_queues[queueNum].enqueue(data, size);
-    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !m_throttle[queueNum]) {
-        log_WARNING_HI_QueueOverflow(queueType, portNum);
-        m_throttle[queueNum] = true;
+    Fw::SerializeStatus status = this->m_queues[queueNum].enqueue(data, size);
+    if (status == Fw::FW_SERIALIZE_NO_ROOM_LEFT && !this->m_throttle[queueNum]) {
+        this->log_WARNING_HI_QueueOverflow(queueType, portNum);
+        this->m_throttle[queueNum] = true;
     }
     // When the component is already in READY state process the queue to send out the next available message immediately
-    if (m_state == READY) {
-        processQueue();
+    if (this->m_state == READY) {
+        this->processQueue();
     }
 }
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
-    FW_ASSERT(m_state == READY);
-    m_comRetry = comBuffer;
+    FW_ASSERT(this->m_state == READY);
+    this->m_comRetry = comBuffer;
     this->comQueueSend_out(0, comBuffer, 0);
-    m_state = WAITING;
+    this->m_state = WAITING;
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
-    FW_ASSERT(m_state == READY);
-    m_lock.lock();
+    FW_ASSERT(this->m_state == READY);
+    this->m_lock.lock();
     // Buffer ownership transferred to downstream component. Clear local reference.
-    m_bufferRetry = Fw::Buffer(0, 0, 0);
-    m_lock.unLock();
+    this->m_bufferRetry = Fw::Buffer(0, 0, 0);
+    this->m_lock.unLock();
     this->buffQueueSend_out(0, buffer);
-    m_state = WAITING;
+    this->m_state = WAITING;
 }
 
 void ComQueue::retryQueue() {
     // Check that we are in the appropriate state
-    FW_ASSERT(m_state == READY);
+    FW_ASSERT(this->m_state == READY);
 
     // Retry the last message based on type
-    if (m_lastIndex < COM_PORT_COUNT) {
-        sendComBuffer(m_comRetry);
+    if (this->m_lastIndex < COM_PORT_COUNT) {
+        this->sendComBuffer(this->m_comRetry);
     } else {
         // Ensure the retry buffer ownership has been returned before resending it.
-        m_lock.lock();
-        FW_ASSERT(m_bufferRetry.getData() != nullptr);
-        Fw::Buffer retry_temp = m_bufferRetry;
-        m_lock.unLock();
-        sendBuffer(retry_temp);
+        this->m_lock.lock();
+        FW_ASSERT(this->m_bufferRetry.getData() != nullptr);
+        Fw::Buffer retry_temp = this->m_bufferRetry;
+        this->m_lock.unLock();
+        this->sendBuffer(retry_temp);
     }
 }
 
@@ -253,21 +253,21 @@ void ComQueue::processQueue() {
     FwIndexType priorityIndex = 0;
     FwIndexType sendPriority = 0;
     // Check that we are in the appropriate state
-    FW_ASSERT(m_state == READY);
+    FW_ASSERT(this->m_state == READY);
 
     // Clean-up retry buffer when sending something new
-    m_lock.lock();
-    if (m_bufferRetry.getData() != nullptr) {
-        retryDeallocate_out(0, m_bufferRetry);
-        m_bufferRetry = Fw::Buffer(0, 0, 0);
+    this->m_lock.lock();
+    if (this->m_bufferRetry.getData() != nullptr) {
+        this->retryDeallocate_out(0, this->m_bufferRetry);
+        this->m_bufferRetry = Fw::Buffer(0, 0, 0);
     }
-    m_lock.unLock();
+    this->m_lock.unLock();
 
     // Walk all the queues in priority order. Send the first message that is available in priority order. No balancing
     // is done within this loop.
     for (priorityIndex = 0; priorityIndex < TOTAL_PORT_COUNT; priorityIndex++) {
-        QueueMetadata& entry = m_prioritizedList[priorityIndex];
-        Types::Queue& queue = m_queues[entry.index];
+        QueueMetadata& entry = this->m_prioritizedList[priorityIndex];
+        Types::Queue& queue = this->m_queues[entry.index];
 
         // Continue onto next prioritized queue if there is no items in the current queue
         if (queue.getQueueSize() == 0) {
@@ -278,16 +278,16 @@ void ComQueue::processQueue() {
         if (entry.index < COM_PORT_COUNT) {
             Fw::ComBuffer comBuffer;
             queue.dequeue(reinterpret_cast<U8*>(&comBuffer), sizeof(comBuffer));
-            sendComBuffer(comBuffer);
+            this->sendComBuffer(comBuffer);
         } else {
             Fw::Buffer buffer;
             queue.dequeue(reinterpret_cast<U8*>(&buffer), sizeof(buffer));
-            sendBuffer(buffer);
+            this->sendBuffer(buffer);
         }
 
         // Update the throttle and the index that was just sent
-        m_throttle[entry.index] = false;
-        m_lastIndex = priorityIndex;
+        this->m_throttle[entry.index] = false;
+        this->m_lastIndex = priorityIndex;
 
         // Priority used in the next loop
         sendPriority = entry.priority;
@@ -298,12 +298,12 @@ void ComQueue::processQueue() {
     // share the same priority, rotate those entries such that the currently dispatched queue is last and the rest are
     // shifted up by one. This effectively round-robins the queues of the same priority.
     for (priorityIndex++;
-         priorityIndex < TOTAL_PORT_COUNT && (m_prioritizedList[priorityIndex].priority == sendPriority);
+         priorityIndex < TOTAL_PORT_COUNT && (this->m_prioritizedList[priorityIndex].priority == sendPriority);
          priorityIndex++) {
         // Swap the previous entry with this one.
-        QueueMetadata temp = m_prioritizedList[priorityIndex];
-        m_prioritizedList[priorityIndex] = m_prioritizedList[priorityIndex - 1];
-        m_prioritizedList[priorityIndex - 1] = temp;
+        QueueMetadata temp = this->m_prioritizedList[priorityIndex];
+        this->m_prioritizedList[priorityIndex] = this->m_prioritizedList[priorityIndex - 1];
+        this->m_prioritizedList[priorityIndex - 1] = temp;
     }
 }
 }  // end namespace Svc

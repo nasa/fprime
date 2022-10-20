@@ -37,7 +37,6 @@ module Svc {
       @ Port for receiving Fw.Buffers back for retry
       sync input port retryReturn: Fw.BufferSend
 
-
       @ Port for deallocating Fw.Buffers after potential retry
       output port retryDeallocate: Fw.BufferSend
 
