@@ -256,8 +256,6 @@ class SerialHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

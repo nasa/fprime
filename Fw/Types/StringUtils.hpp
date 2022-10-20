@@ -1,6 +1,6 @@
 #ifndef FW_STRINGUTILS_HPP
 #define FW_STRINGUTILS_HPP
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Fw {
 namespace StringUtils {

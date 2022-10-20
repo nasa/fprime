@@ -1,7 +1,7 @@
 #ifndef _LOCKLESS_QUEUE_H_
 #define _LOCKLESS_QUEUE_H_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/Queue.hpp>
 #ifndef BUILD_DARWIN // Allow compiling
 #include <mqueue.h>

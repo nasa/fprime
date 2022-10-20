@@ -2,7 +2,6 @@
 #define _FileSystem_hpp_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/String.hpp>
 
 #define FILE_SYSTEM_CHUNK_SIZE (256u)

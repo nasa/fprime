@@ -32,7 +32,7 @@ namespace Drv {
 // ----------------------------------------------------------------------
 
 LinuxUartDriver ::LinuxUartDriver(const char* const compName)
-    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_device("NOT_EXIST"), m_quitReadThread(false) {
+    : LinuxUartDriverComponentBase(compName), m_fd(-1), m_allocationSize(-1),  m_device("NOT_EXIST"), m_quitReadThread(false) {
 }
 
 void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
@@ -42,10 +42,12 @@ void LinuxUartDriver ::init(const NATIVE_INT_TYPE instance) {
 bool LinuxUartDriver::open(const char* const device,
                            UartBaudRate baud,
                            UartFlowControl fc,
-                           UartParity parity) {
+                           UartParity parity,
+                           NATIVE_INT_TYPE allocationSize) {
     FW_ASSERT(device != nullptr);
     NATIVE_INT_TYPE fd = -1;
     NATIVE_INT_TYPE stat = -1;
+    this->m_allocationSize = allocationSize;
 
     this->m_device = device;
 
@@ -309,12 +311,8 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
     Drv::RecvStatus status = RecvStatus::RECV_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
-
     while (!comp->m_quitReadThread) {
-        // wait for data
-        int sizeRead = 0;
-
-        Fw::Buffer buff = comp->allocate_out(0, Drv::UART_READ_ALLOCATION_REQUEST_SIZE);
+        Fw::Buffer buff = comp->allocate_out(0, comp->m_allocationSize);
 
         // On failed allocation, error and deallocate
         if (buff.getData() == nullptr) {
@@ -338,6 +336,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         while ((stat == 0) && !comp->m_quitReadThread) {
             stat = ::read(comp->m_fd, buff.getData(), buff.getSize());
         }
+        buff.setSize(0);
 
         // On error stat (-1) must mark the read as error
         // On normal stat (>0) pass a recv ok
@@ -347,7 +346,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             comp->log_WARNING_HI_ReadError(_arg, stat);
             status = RecvStatus::RECV_ERROR;
         } else if (stat > 0) {
-            buff.setSize(sizeRead);
+            buff.setSize(stat);
             status = RecvStatus::RECV_OK;  // added by m.chase 03.06.2017
         } else {
             status = RecvStatus::RECV_ERROR; // Simply to return the buffer
@@ -367,6 +366,10 @@ void LinuxUartDriver ::startReadThread(NATIVE_UINT_TYPE priority,
 
 void LinuxUartDriver ::quitReadThread() {
     this->m_quitReadThread = true;
+}
+
+Os::Task::TaskStatus LinuxUartDriver ::join(void** value_ptr) {
+    return m_readTask.join(value_ptr);
 }
 
 }  // end namespace Drv

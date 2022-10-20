@@ -12,7 +12,7 @@
 
 #include <Drv/Udp/UdpComponentImpl.hpp>
 #include <IpCfg.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 

@@ -19,7 +19,7 @@
 #ifndef FPRIME_GROUNDINTERFACERULES_HPP
 #define FPRIME_GROUNDINTERFACERULES_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/String.hpp>
 #include <Utils/Types/test/ut/CircularBuffer/CircularState.hpp>
 #include <STest/STest/Rule/Rule.hpp>

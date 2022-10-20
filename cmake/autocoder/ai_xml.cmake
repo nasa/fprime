@@ -19,12 +19,22 @@ autocoder_setup_for_individual_sources()
 ####
 function(ai_xml_is_supported AC_INPUT_FILE)
     ends_with(IS_SUPPORTED "${AC_INPUT_FILE}" "Ai.xml")
+    set(PREVIOUSLY_GENERATED)
+    if (ARGC GREATER_EQUAL 2)
+        set(PREVIOUSLY_GENERATED ${ARGV2})
+    endif()
+
     # Don't generate cpp/hpp files that have already been generated
     if (IS_SUPPORTED)
         string(REPLACE "Ai.xml" "Ac.cpp" CPP_FILE "${AC_INPUT_FILE}")
         string(REPLACE "Ai.xml" "Ac.hpp" HPP_FILE "${AC_INPUT_FILE}")
-        if(("${CPP_FILE}" IN_LIST ARGN) AND ("${HPP_FILE}" IN_LIST ARGN))
+        if(("${CPP_FILE}" IN_LIST PREVIOUSLY_GENERATED) AND ("${HPP_FILE}" IN_LIST PREVIOUSLY_GENERATED))
             set(IS_SUPPORTED FALSE)
+        endif()
+
+        # If this Ai.xml file was not a generated product, then mark it as requiring a rebuild
+        if (NOT "${AC_INPUT_FILE}" IN_LIST PREVIOUSLY_GENERATED)
+            requires_regeneration("${AC_INPUT_FILE}")
         endif()
     endif()
     # Note: set in PARENT_SCOPE in macro is intended. Caller **wants** to set IS_SUPPORTED in their parent's scope.
@@ -55,7 +65,6 @@ macro(__ai_info XML_PATH MODULE_NAME)
         # Run the parser and capture the output. If an error occurs, that fatals CMake as we cannot continue
         set(MODULE_NAME_NO_SUFFIX "${MODULE_NAME}")
         set(PARSER_PATH "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/ai-parser/ai_parser.py")
-        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PARSER_PATH}")
         execute_process(
                 COMMAND "${PYTHON}" "${PARSER_PATH}" "${XML_PATH}" "${MODULE_NAME_NO_SUFFIX}" "${FPRIME_CLOSEST_BUILD_ROOT}"
                 RESULT_VARIABLE ERR_RETURN

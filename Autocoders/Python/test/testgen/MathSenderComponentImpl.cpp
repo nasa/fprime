@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/testgen/MathSenderComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Ref {
 

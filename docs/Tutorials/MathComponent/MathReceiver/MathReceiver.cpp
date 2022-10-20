@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Ref/MathReceiver/MathReceiver.hpp"
 
 namespace Ref {

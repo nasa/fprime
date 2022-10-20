@@ -22,7 +22,7 @@ Requirements:
 1. Linux or macOS operating system
 2. git
 3. [CMake 3.16](https://cmake.org/download/) or newer. CLI tool must be available on the system path.
-4. CLang or GCC compiler
+4. CLang or GNU C and C++ compilers (e.g. gcc and g++)
 5. [Python 3.7+](https://www.python.org/downloads/), virtual environments, and PIP
 
 **Note:** operating system specific notes are in the [Troubleshooting](#Troubleshooting) section below.
@@ -179,3 +179,22 @@ Many operating systems offer python PIP packages through their package manager (
 recommend avoiding those packages, but rather installing from PIP in a virtual environment. The reason for this is that
 the version of the python package from the OS may not be the required version that the python project depends on. Thus,
 users may choose to install F´ into a virtual environment. This is outside the scope of this document.
+
+### SSL Error with Python 3.6+ on macOS
+
+The version of openSSL bundled with Python 3.6+ requires access to macOS's root certificates. If the following error is 
+encountered while installing fprime: 
+
+```
+Failed find expected download: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get 
+local issuer certificate
+```
+
+Then run the following command in a macOS terminal to install necessary certificates: 
+
+```
+cd /Applications/Python\ 3.X/
+./Install\ Certificates.command
+```
+
+After running above command, re-try installing fprime.  

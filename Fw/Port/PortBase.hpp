@@ -2,7 +2,7 @@
 #define FW_PORT_BASE_HPP
 
 #include <Fw/Obj/ObjBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 #if FW_PORT_TRACING == 1

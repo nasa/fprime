@@ -7,7 +7,7 @@
 
 #include <Svc/PolyDb/PolyDbImpl.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 namespace Svc {
     PolyDbImpl::PolyDbImpl(const char* name) : PolyDbComponentBase(name) {

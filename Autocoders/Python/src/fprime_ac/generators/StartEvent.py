@@ -79,7 +79,7 @@ class StartEvent:
             DEBUG.error(
                 "StartEvent.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "StartEvent.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class StartEvent:
             DEBUG.error(
                 "StartEvent.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "StartEvent.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

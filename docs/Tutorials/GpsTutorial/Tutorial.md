@@ -460,7 +460,7 @@ is not to demonstrate how to write each line of code, the steps above are called
 // ======================================================================
 
 #include <GpsApp/Gps/GpsComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Logger/Logger.hpp"
 
 #include <cstring>
