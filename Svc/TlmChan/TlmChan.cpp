@@ -169,9 +169,8 @@ void TlmChan::Run_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
                 // if this doesn't work, that means packet isn't big enough for
                 // even one channel, so assert
                 FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
-
-                // if there was still room, do nothing move on to the next channel in the packet
             } else if (Fw::FW_SERIALIZE_OK == stat) {
+                // if there was still room, do nothing move on to the next channel in the packet
             } else  // any other status is an assert, since it shouldn't happen
             {
                 FW_ASSERT(0, static_cast<NATIVE_INT_TYPE>(stat));
