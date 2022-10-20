@@ -10,100 +10,92 @@
 #include "GTestBase.hpp"
 #include "Svc/TlmChan/TlmChan.hpp"
 
-namespace Svc
-{
+namespace Svc {
 
-    class Tester : public TlmChanGTestBase
-    {
+class Tester : public TlmChanGTestBase {
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
 
-        // ----------------------------------------------------------------------
-        // Construction and destruction
-        // ----------------------------------------------------------------------
+  public:
+    //! Construct object Tester
+    //!
+    Tester();
 
-    public:
-        //! Construct object Tester
-        //!
-        Tester();
+    //! Destroy object Tester
+    //!
+    ~Tester();
 
-        //! Destroy object Tester
-        //!
-        ~Tester();
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-    public:
-        // ----------------------------------------------------------------------
-        // Tests
-        // ----------------------------------------------------------------------
+    void runNominalChannel();
+    void runMultiChannel();
+    void runOffNominal();
 
-        void runNominalChannel();
-        void runMultiChannel();
-        void runOffNominal();
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-    private:
-        // ----------------------------------------------------------------------
-        // Handlers for typed from ports
-        // ----------------------------------------------------------------------
+    //! Handler for from_PktSend
+    //!
+    void from_PktSend_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              Fw::ComBuffer& data,           /*!<
+                                    Buffer containing packet data
+                                    */
+                              U32 context                    /*!<
+                                             Call context value; meaning chosen by user
+                                             */
+    );
 
-        //! Handler for from_PktSend
-        //!
-        void from_PktSend_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
-            Fw::ComBuffer &data,           /*!<
-                  Buffer containing packet data
-                  */
-            U32 context                    /*!<
-                           Call context value; meaning chosen by user
-                           */
-        );
+    //! Handler for from_pingOut
+    //!
+    void from_pingOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                              U32 key                        /*!<
+                                                 Value to return to pinger
+                                                 */
+    );
 
-        //! Handler for from_pingOut
-        //!
-        void from_pingOut_handler(
-            const NATIVE_INT_TYPE portNum, /*!< The port number*/
-            U32 key                        /*!<
-                               Value to return to pinger
-                               */
-        );
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-    private:
-        // ----------------------------------------------------------------------
-        // Helper methods
-        // ----------------------------------------------------------------------
+    //! Connect ports
+    //!
+    void connectPorts();
 
-        //! Connect ports
-        //!
-        void connectPorts();
+    //! Initialize components
+    //!
+    void initComponents();
 
-        //! Initialize components
-        //!
-        void initComponents();
+    void sendBuff(FwChanIdType id, U32 val);
+    bool doRun(bool check);
+    void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
 
-        void sendBuff(FwChanIdType id, U32 val);
-        bool doRun(bool check);
-        void checkBuff(NATIVE_UINT_TYPE chanNum, NATIVE_UINT_TYPE totalChan, FwChanIdType id, U32 val);
+    void clearBuffs();
 
-        void clearBuffs();
+    // dump functions
+    void dumpHash();
+    static void dumpTlmEntry(TlmChan::TlmEntry* entry);
 
-        // dump functions
-        void dumpHash();
-        static void dumpTlmEntry(TlmChan::TlmEntry* entry);
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
 
+    //! The component under test
+    //!
+    TlmChan component;
+    // Keep a history
+    NATIVE_UINT_TYPE m_numBuffs;
+    Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
+    bool m_bufferRecv;
+};
 
-    private:
-        // ----------------------------------------------------------------------
-        // Variables
-        // ----------------------------------------------------------------------
-
-        //! The component under test
-        //!
-        TlmChan component;
-        // Keep a history
-        NATIVE_UINT_TYPE m_numBuffs;
-        Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
-        bool m_bufferRecv;
-
-
-    };
-
-} // end namespace Svc
+}  // end namespace Svc
 
 #endif

@@ -6,50 +6,42 @@
  *      Author: tcanham
  */
 
-#include <Svc/TlmChan/test/ut/Tester.hpp>
-#include <Svc/TlmChan/TlmChan.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
+#include <Svc/TlmChan/TlmChan.hpp>
+#include <Svc/TlmChan/test/ut/Tester.hpp>
 
-
-TEST(TlmChanTest,InitTest) {
+TEST(TlmChanTest, InitTest) {
     Svc::Tester tester;
 }
 
-TEST(TlmChanTest,NominalChannelTest) {
-
-    TEST_CASE(107.1.1,"Nominal channelized telemetry");
+TEST(TlmChanTest, NominalChannelTest) {
+    TEST_CASE(107.1.1, "Nominal channelized telemetry");
     COMMENT("Write a single channel and verify it is read back and pushed correctly.");
 
     Svc::Tester tester;
     // run test
     tester.runNominalChannel();
-
 }
 
-TEST(TlmChanTest,MultiChannelTest) {
-
-    TEST_CASE(107.1.2,"Nominal Multi-channel channelized telemetry");
+TEST(TlmChanTest, MultiChannelTest) {
+    TEST_CASE(107.1.2, "Nominal Multi-channel channelized telemetry");
     COMMENT("Write multiple channels and verify they are read back and pushed correctly.");
 
     Svc::Tester tester;
 
     // run test
     tester.runMultiChannel();
-
 }
 
-
-TEST(TlmChanTest,OffNominal) {
-
-    TEST_CASE(107.2.1,"Off-nominal channelized telemetry");
+TEST(TlmChanTest, OffNominal) {
+    TEST_CASE(107.2.1, "Off-nominal channelized telemetry");
     COMMENT("Attempt to read a channel that hasn't been written.");
 
     Svc::Tester tester;
 
     // run test
     tester.runOffNominal();
-
 }
 
 // TEST(TlmChanTest,TooManyChannels) {
@@ -72,8 +64,6 @@ TEST(TlmChanTest,OffNominal) {
 
 // }
 
-
-
 #ifndef TGT_OS_TYPE_VXWORKS
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
@@ -81,4 +71,3 @@ int main(int argc, char* argv[]) {
 }
 
 #endif
-

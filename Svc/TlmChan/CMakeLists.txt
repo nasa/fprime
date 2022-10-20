@@ -13,7 +13,6 @@ set(SOURCE_FILES
 
 register_fprime_module()
 
-
 ### UTs ###
 set(UT_SOURCE_FILES
   "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChan.fpp"
