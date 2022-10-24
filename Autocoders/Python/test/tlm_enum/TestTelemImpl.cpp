@@ -6,26 +6,22 @@
  */
 
 #include <Autocoders/Python/test/tlm_enum/TestTelemImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestTlmImpl::TestTlmImpl(const char* name) : Tlm::TestTlmComponentBase(name)
-#else
-TestTlmImpl::TestTlmImpl() : Tlm::TestTlmComponentBase()
-#endif
 {
 }
 
 TestTlmImpl::~TestTlmImpl() {
 }
 
-void TestTlmImpl::init(void) {
+void TestTlmImpl::init() {
     Tlm::TestTlmComponentBase::init();
 }
 
 void TestTlmImpl::genTlm(I32 val) {
     printf("Writing value %d to telemetry.\n",val);
-    SomeEnum argVal = (SomeEnum) val;
+    SomeEnum argVal = static_cast<SomeEnum>(val);
     this->tlmWrite_somechan(argVal);
 }
 

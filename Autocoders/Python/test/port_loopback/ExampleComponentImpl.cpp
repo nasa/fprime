@@ -12,8 +12,8 @@
 
 
 #include <Autocoders/Python/test/port_loopback/ExampleComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
-#include <stdio.h>
+#include <FpConfig.hpp>
+#include <cstdio>
 
 namespace ExampleComponents {
 
@@ -22,14 +22,10 @@ namespace ExampleComponents {
   // ----------------------------------------------------------------------
 
   ExampleComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     ExampleComponentImpl(
         const char *const compName
     ) :
       ExampleComponentBase(compName)
-#else
-    ExampleImpl(void)
-#endif
   {
 
   }
@@ -43,7 +39,7 @@ namespace ExampleComponents {
   }
 
   ExampleComponentImpl ::
-    ~ExampleComponentImpl(void)
+    ~ExampleComponentImpl()
   {
 
   }
@@ -57,7 +53,7 @@ namespace ExampleComponents {
         const NATIVE_INT_TYPE portNum,
         I32 arg1,
         AnotherExample::SomeEnum arg2,
-        AnotherExample::arg6String arg6
+        const AnotherExample::arg6String& arg6
     )
   {
     printf("%d %d %s\n",arg1,arg2,arg6.toChar());

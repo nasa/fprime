@@ -14,7 +14,7 @@
 */
 
 #include <Svc/ActiveRateGroup/test/ut/ActiveRateGroupImplTester.hpp>
-#include <ActiveRateGroupImplCfg.hpp>
+#include <ActiveRateGroupCfg.hpp>
 #include <gtest/gtest.h>
 #include <Fw/Test/UnitTest.hpp>
 
@@ -27,13 +27,13 @@ namespace Svc {
         ActiveRateGroupGTestBase::init();
     }
 
-    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroupImpl& inst) :
+    ActiveRateGroupImplTester::ActiveRateGroupImplTester(Svc::ActiveRateGroup& inst) :
             ActiveRateGroupGTestBase("testerbase",100),
             m_impl(inst),m_causeOverrun(false),m_callOrder(0) {
         this->clearPortCalls();
     }
 
-    void ActiveRateGroupImplTester::clearPortCalls(void) {
+    void ActiveRateGroupImplTester::clearPortCalls() {
         memset(this->m_callLog,0,sizeof(this->m_callLog));
         this->m_callOrder = 0;
     }
@@ -43,7 +43,7 @@ namespace Svc {
     }
 
     void ActiveRateGroupImplTester::from_RateGroupMemberOut_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) {
-        ASSERT_TRUE(portNum < (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort));
+        ASSERT_TRUE(portNum < static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(m_impl.m_RateGroupMemberOut_OutputPort)));
         this->m_callLog[portNum].portCalled = true;
         this->m_callLog[portNum].contextVal = context;
         this->m_callLog[portNum].order = this->m_callOrder++;
@@ -65,7 +65,7 @@ namespace Svc {
       this->pushFromPortEntry_PingOut(key);
     }
 
-    void ActiveRateGroupImplTester::runNominal(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance) {
+    void ActiveRateGroupImplTester::runNominal(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance) {
 
         TEST_CASE(101.1.1,"Run nominal rate group execution");
 
@@ -97,7 +97,7 @@ namespace Svc {
         // check calls
         REQUIREMENT("ARG-002");
         for (NATIVE_UINT_TYPE portNum = 0; portNum <
-        (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+        static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
             ASSERT_TRUE(this->m_callLog[portNum].portCalled);
             ASSERT_EQ(this->m_callLog[portNum].contextVal,contexts[portNum]);
             ASSERT_EQ(this->m_callLog[portNum].order,portNum);
@@ -114,7 +114,7 @@ namespace Svc {
 
     }
 
-    void ActiveRateGroupImplTester::runCycleOverrun(NATIVE_UINT_TYPE contexts[], NATIVE_UINT_TYPE numContexts, NATIVE_INT_TYPE instance) {
+    void ActiveRateGroupImplTester::runCycleOverrun(NATIVE_INT_TYPE contexts[], NATIVE_INT_TYPE numContexts, NATIVE_INT_TYPE instance) {
 
         TEST_CASE(101.2.1,"Run cycle slip scenario");
         // call the preamble
@@ -150,17 +150,17 @@ namespace Svc {
             // verify cycle started flag is still set
             ASSERT_TRUE(this->m_impl.m_cycleStarted);
             // verify cycle count
-            ASSERT_EQ(this->m_impl.m_cycles,(U32)cycle+1);
+            ASSERT_EQ(this->m_impl.m_cycles,static_cast<U32>(cycle)+1);
 
             // check calls
-            for (NATIVE_INT_TYPE portNum = 0; portNum <
-            (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+            for (NATIVE_UINT_TYPE portNum = 0; portNum <
+            static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
                 ASSERT_TRUE(this->m_callLog[portNum].portCalled == true);
             }
             REQUIREMENT("ARG-004");
             // verify overrun event
             ASSERT_EVENTS_RateGroupCycleSlip_SIZE(1);
-            ASSERT_EVENTS_RateGroupCycleSlip(0,(U32)cycle);
+            ASSERT_EVENTS_RateGroupCycleSlip(0,static_cast<U32>(cycle));
 
             // verify cycle slip counter is counting up
             ASSERT_EQ(this->m_impl.m_overrunThrottle,cycle+1);
@@ -172,7 +172,7 @@ namespace Svc {
                 ASSERT_TLM_SIZE(1);
             }
             ASSERT_TLM_RgCycleSlips_SIZE(1);
-            ASSERT_TLM_RgCycleSlips(0,(U32)(cycle+1));
+            ASSERT_TLM_RgCycleSlips(0,static_cast<U32>(cycle)+1);
 
         }
 
@@ -197,10 +197,10 @@ namespace Svc {
         // verify cycle started flag is still set
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // verify cycle count
-        ASSERT_EQ(this->m_impl.m_cycles,(U32)ACTIVE_RATE_GROUP_OVERRUN_THROTTLE+1);
+        ASSERT_EQ(this->m_impl.m_cycles, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE)+1);
         // check calls
-        for (NATIVE_INT_TYPE portNum = 0; portNum <
-        (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+        for (NATIVE_UINT_TYPE portNum = 0; portNum <
+        static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
             ASSERT_TRUE(this->m_callLog[portNum].portCalled == true);
         }
         // verify overrun event is NOT sent since throttled
@@ -218,7 +218,7 @@ namespace Svc {
             ASSERT_TLM_SIZE(1);
         }
         ASSERT_TLM_RgCycleSlips_SIZE(1);
-        ASSERT_TLM_RgCycleSlips(0,(U32)(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE+1));
+        ASSERT_TLM_RgCycleSlips(0, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE)+1);
 
         // A good cycle should count down the throttle value
 
@@ -241,10 +241,10 @@ namespace Svc {
         // verify cycle started flag is not set
         ASSERT_FALSE(this->m_impl.m_cycleStarted);
         // verify cycle count
-        ASSERT_EQ(this->m_impl.m_cycles,(U32)ACTIVE_RATE_GROUP_OVERRUN_THROTTLE+2);
+        ASSERT_EQ(this->m_impl.m_cycles,static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE)+2);
         // check calls
-        for (NATIVE_INT_TYPE portNum = 0; portNum <
-        (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+        for (NATIVE_UINT_TYPE portNum = 0; portNum <
+        static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
             ASSERT_TRUE(this->m_callLog[portNum].portCalled == true);
         }
 
@@ -279,10 +279,10 @@ namespace Svc {
         // verify cycle started flag is still set
         ASSERT_TRUE(this->m_impl.m_cycleStarted);
         // verify cycle count
-        ASSERT_EQ(this->m_impl.m_cycles,(U32)ACTIVE_RATE_GROUP_OVERRUN_THROTTLE+3);
+        ASSERT_EQ(this->m_impl.m_cycles,static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE)+3);
         // check calls
-        for (NATIVE_INT_TYPE portNum = 0; portNum <
-        (NATIVE_INT_TYPE)FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort); portNum++) {
+        for (NATIVE_UINT_TYPE portNum = 0; portNum <
+        static_cast<NATIVE_UINT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_impl.m_RateGroupMemberOut_OutputPort)); portNum++) {
             ASSERT_TRUE(this->m_callLog[portNum].portCalled == true);
         }
         // verify overrun event is sent
@@ -299,11 +299,11 @@ namespace Svc {
             ASSERT_TLM_SIZE(1);
         }
         ASSERT_TLM_RgCycleSlips_SIZE(1);
-        ASSERT_TLM_RgCycleSlips(0,(U32)(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE+2));
+        ASSERT_TLM_RgCycleSlips(0, static_cast<U32>(ACTIVE_RATE_GROUP_OVERRUN_THROTTLE)+2);
 
     }
 
-    void ActiveRateGroupImplTester::runPingTest(void) {
+    void ActiveRateGroupImplTester::runPingTest() {
         // invoke ping port
         this->invoke_to_PingIn(0,0x123);
         // dispatch message
@@ -311,7 +311,7 @@ namespace Svc {
         // look for return port call
         ASSERT_FROM_PORT_HISTORY_SIZE(1);
         // look for key
-        ASSERT_from_PingOut(0,(U32)0x123);
+        ASSERT_from_PingOut(0, 0x123);
 
     }
 

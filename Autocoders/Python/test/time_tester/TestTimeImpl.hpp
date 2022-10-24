@@ -12,13 +12,9 @@
 
 class TestTimeImpl: public Time::TimeTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestTimeImpl(const char* compName);
-#else
-        TestTimeImpl();
-#endif
         virtual ~TestTimeImpl();
-        void init(void);
+        void init();
         void setTime(Fw::Time time);
     protected:
         void timeGetPort_handler(

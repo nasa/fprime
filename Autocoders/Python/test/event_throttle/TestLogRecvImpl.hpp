@@ -12,13 +12,9 @@
 
 class TestLogRecvImpl: public LogTextImpl {
     public:
-#if FW_OBJECT_NAMES == 1
         TestLogRecvImpl(const char* compName);
-#else
-        TestLogRecvImpl();
-#endif
         virtual ~TestLogRecvImpl();
-        void init(void);
+        void init();
     protected:
         void logRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
     private:

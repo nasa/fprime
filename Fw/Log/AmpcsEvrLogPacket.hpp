@@ -12,7 +12,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Fw/Log/LogBuffer.hpp>
 #include <Fw/Time/Time.hpp>
-#include <string.h>
+#include <cstring>
 
 #define AMPCS_EVR_TASK_NAME_LEN 6
 
@@ -33,11 +33,11 @@ namespace Fw {
             void setCatSeqNum(U32 catSeqNum);
             void setLogBuffer(LogBuffer& buffer);
 
-            const U8* getTaskName(void) const;
-            U32 getId(void) const;
-            U32 getOverSeqNum(void) const;
-            U32 getCatSeqNum(void) const;
-            LogBuffer& getLogBuffer(void);
+            const U8* getTaskName() const;
+            U32 getId() const;
+            U32 getOverSeqNum() const;
+            U32 getCatSeqNum() const;
+            LogBuffer& getLogBuffer();
 
         protected:
             U8 m_taskName[AMPCS_EVR_TASK_NAME_LEN];

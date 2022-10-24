@@ -27,14 +27,9 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       LinuxGpioDriverTesterBase("Tester", MAX_HISTORY_SIZE),
       component("GP")
-#else
-      LinuxGpioDriverTesterBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_cycles(0)
       ,m_currCycle(0)
   {
@@ -43,7 +38,7 @@ namespace Drv {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -69,7 +64,7 @@ namespace Drv {
 
       // delay waiting for cycles to complete
       NATIVE_INT_TYPE maxCycles = 10;
-      while (1) {
+      while (true) {
           Os::Task::delay(500);
           bool state;
           //this->invoke_to_gpioRead(0,state);
@@ -152,7 +147,7 @@ namespace Drv {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
       // gpioRead
@@ -196,7 +191,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

@@ -21,14 +21,14 @@ namespace Svc {
 
             void init(NATIVE_INT_TYPE instance = 0);
 
-            void runEventNominal(void);
-            void runFilterEventNominal(void);
-            void runFilterIdNominal(void);
-            void runFilterDump(void);
-            void runFilterInvalidCommands(void);
-            void runEventFatal(void);
-            void runFileDump(void);
-            void runFileDumpErrors(void);
+            void runEventNominal();
+            void runFilterEventNominal();
+            void runFilterIdNominal();
+            void runFilterDump();
+            void runFilterInvalidCommands();
+            void runEventFatal();
+            void runFileDump();
+            void runFileDumpErrors();
 
         private:
 
@@ -76,7 +76,7 @@ namespace Svc {
 
             void textLogIn(const FwEventIdType id, //!< The event ID
                       Fw::Time& timeTag, //!< The time
-                      const Fw::TextLogSeverity severity, //!< The severity
+                      const Fw::LogSeverity severity, //!< The severity
                       const Fw::TextLogString& text //!< The event string
                       );
 

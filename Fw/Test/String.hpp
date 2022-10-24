@@ -1,7 +1,7 @@
 #ifndef TEST_STRING_TYPE_HPP
 #define TEST_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
@@ -19,14 +19,14 @@ namespace Test {
             String(const char* src); //!< char* source constructor
             String(const StringBase& src); //!< other string constructor
             String(const String& src); //!< String string constructor
-            String(void); //!< default constructor
+            String(); //!< default constructor
             String& operator=(const String& other); //!< assignment operator
             String& operator=(const StringBase& other); //!< other string assignment operator
             String& operator=(const char* other); //!< char* assignment operator
-            ~String(void); //!< destructor
+            ~String(); //!< destructor
 
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE getCapacity(void) const ; //!< return buffer size
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE getCapacity() const ; //!< return buffer size
 
         private:
 

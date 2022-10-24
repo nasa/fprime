@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Deframer/test/ut/Tester.hpp
-// \author janamian
+// \author janamian, bocchino
 // \brief  hpp file for Deframer test harness implementation class
 //
 // \copyright
@@ -14,121 +14,142 @@
 #define TESTER_HPP
 
 #include "GTestBase.hpp"
-#include "Svc/Deframer/DeframerComponentImpl.hpp"
+#include "Svc/Deframer/Deframer.hpp"
 
 namespace Svc {
 
-  class Tester :
-    public DeframerGTestBase
-  {
-      // ----------------------------------------------------------------------
-      // Construction and destruction
-      // ----------------------------------------------------------------------
-      class MockDeframer : public DeframingProtocol {
-        public:
-          MockDeframer(Tester& parent);
-          DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
-          Tester& m_parent;
-      };
+class Tester : public DeframerGTestBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
-    public:
+    struct ConnectStatus {
+      //! Whether a port is connected
+      typedef enum {
+          CONNECTED,
+          UNCONNECTED
+      } t;
+    };
 
-      //! Construct object Tester
-      //!
-      Tester(void);
+    // ----------------------------------------------------------------------
+    // Construction and destruction
+    // ----------------------------------------------------------------------
+    class MockDeframer : public DeframingProtocol {
+      public:
+        MockDeframer(Tester& parent);
+        DeframingStatus deframe(Types::CircularBuffer& ring_buffer, U32& needed);
+        //! Test the implementation of DeframingProtocolInterface provided
+        //! by the Deframer component
+        void test_interface(Fw::ComPacket::ComPacketType  com_type);
+        DeframingStatus m_status;
+    };
 
-      //! Destroy object Tester
-      //!
-      ~Tester(void);
+  public:
+    //! Construct object Tester
+    //!
+    Tester(ConnectStatus::t bufferOutStatus = ConnectStatus::CONNECTED);
 
-    public:
+    //! Destroy object Tester
+    //!
+    ~Tester();
 
-      // ----------------------------------------------------------------------
-      // Tests
-      // ----------------------------------------------------------------------
+  public:
+    // ----------------------------------------------------------------------
+    // Tests
+    // ----------------------------------------------------------------------
 
-      void test_incoming_frame(U32 buffer_size, U32 expected_size);
-      void test_route(Fw::ComPacket::ComPacketType packet_type);
-    private:
+    //! Send a frame to framedIn
+    void test_incoming_frame(
+        DeframingProtocol::DeframingStatus status //!< The status that the mock deframer will return
+    );
 
-      // ----------------------------------------------------------------------
-      // Handlers for typed from ports
-      // ----------------------------------------------------------------------
+    //! Route a com packet
+    void test_com_interface();
 
-      //! Handler for from_comOut
-      //!
-      void from_comOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::ComBuffer &data, /*!< Buffer containing packet data*/
-          U32 context /*!< Call context value; meaning chosen by user*/
-      );
+    //! Route a file packet
+    void test_file_interface();
 
-      //! Handler for from_bufferOut
-      //!
-      void from_bufferOut_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Route a packet of unknown type
+    void test_unknown_interface();
 
-      //! Handler for from_bufferAllocate
-      //!
-      Fw::Buffer from_bufferAllocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          U32 size 
-      );
+    //! Invoke the command response input port
+    void testCommandResponse();
 
-      //! Handler for from_bufferDeallocate
-      //!
-      void from_bufferDeallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Attempt to route a command packet that is too large
+    void testCommandPacketTooLarge();
 
-      //! Handler for from_framedDeallocate
-      //!
-      void from_framedDeallocate_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
-      );
+    //! Attempt to route a packet buffer that is too small
+    void testPacketBufferTooSmall();
 
-      //! Handler for from_framedPoll
-      //!
-      Drv::PollStatus from_framedPoll_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &pollBuffer 
-      );
+    //! Route a file packet with bufferOutUnconnected
+    void testBufferOutUnconnected();
 
-    private:
+  private:
+    // ----------------------------------------------------------------------
+    // Handlers for typed from ports
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Helper methods
-      // ----------------------------------------------------------------------
+    //! Handler for from_comOut
+    //!
+    void from_comOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::ComBuffer& data,           /*!< Buffer containing packet data*/
+                             U32 context                    /*!< Call context value; meaning chosen by user*/
+    );
 
-      //! Connect ports
-      //!
-      void connectPorts(void);
+    //! Handler for from_bufferOut
+    //!
+    void from_bufferOut_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                Fw::Buffer& fwBuffer);
 
-      //! Initialize components
-      //!
-      void initComponents(void);
+    //! Handler for from_bufferAllocate
+    //!
+    Fw::Buffer from_bufferAllocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                           U32 size);
 
-    private:
+    //! Handler for from_bufferDeallocate
+    //!
+    void from_bufferDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                       Fw::Buffer& fwBuffer);
 
-      // ----------------------------------------------------------------------
-      // Variables
-      // ----------------------------------------------------------------------
+    //! Handler for from_framedDeallocate
+    //!
+    void from_framedDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                       Fw::Buffer& fwBuffer);
 
-      //! The component under test
-      //!
-      DeframerComponentImpl component;
+    //! Handler for from_framedPoll
+    //!
+    Drv::PollStatus from_framedPoll_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                                            Fw::Buffer& pollBuffer);
 
-      Fw::Buffer m_buffer;
-      MockDeframer m_mock;
-      DeframingProtocol::DeframingStatus m_status;
-      U32 m_remaining_size;
-      bool m_has_port_out;
-  };
+  private:
+    // ----------------------------------------------------------------------
+    // Helper methods
+    // ----------------------------------------------------------------------
 
-} // end namespace Svc
+    //! Connect ports
+    //!
+    void connectPorts();
+
+    //! Initialize components
+    //!
+    void initComponents();
+
+  private:
+    // ----------------------------------------------------------------------
+    // Variables
+    // ----------------------------------------------------------------------
+
+    //! The component under test
+    //!
+    Deframer component;
+
+    Fw::Buffer m_buffer;
+    MockDeframer m_mock;
+    // Whether the bufferOut port is connected
+    ConnectStatus::t bufferOutStatus;
+};
+
+}  // end namespace Svc
 
 #endif

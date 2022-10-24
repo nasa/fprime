@@ -6,7 +6,7 @@
 The `Svc::TlmChan` Component is used to store telemetry values written by other components. The values are stored in serialized form. 
 The data is stored as a set of telemetry channels in a table. 
 The data can be individually read back or periodically pushed to another component for transporting out of the system. 
-`Svc::TlmChan` is a implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
+`Svc::TlmChan` is an implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
 
 ## 2. Requirements
 
@@ -44,7 +44,7 @@ Port Data Type | Name | Direction | Kind | Usage
 
 The `Svc::TlmChan` component has an input port `TlmRecv` that receives channel updates from other components in the system. These calls from the other components are made by the component implementation classes, but the generated code in the base classes takes the type specific channel value and serializes it, then makes the call to the output port. The `Svc::TlmChan` component can then store the channel value as generic data. The channel values are stored in an internal double-buffered table, and a flag is set when a new value is written to the channel entry.
 
-When a request is made for a non-existent channel, the call will return with an empty buffer in the Fw::TlmBuffer value argument. This is to cover the case where a channel is defined in the system, but has not been written yet. If the channel has not ever been defined, there is no way to programmatically determine that from the TlmGet port call. 
+When a request is made for a nonexistent channel, the call will return with an empty buffer in the Fw::TlmBuffer value argument. This is to cover the case where a channel is defined in the system, but has not been written yet. If the channel has not ever been defined, there is no way to programmatically determine that from the TlmGet port call. 
 
 The implementation uses a hashing function that is tuned in the configuration file `TlmChanImplCfg.hpp`. See section 3.5 for description.
 
@@ -58,7 +58,7 @@ This diagram shows the scenario where telemetry packets are generated for an ext
 
 #### 3.3.2 Telemetry Database Option
 
-This diagram shows the scenario where telemetry packets are stored an retrieved as a database:
+This diagram shows the scenario where telemetry packets are stored and retrieved as a database:
 
 ![External User Scenario](img/DatabaseScenario.jpg) 
 

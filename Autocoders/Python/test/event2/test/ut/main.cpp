@@ -8,11 +8,7 @@
 
 class ATester : public Cmd::TestCommandGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
-        ATester(void) : Cmd::TestCommandGTestBase("comp",10) {
-#else
-        ATester(void) : Cmd::TestCommandGTestBase(10)  {
-#endif
+        ATester() : Cmd::TestCommandGTestBase("comp",10) {
     }
 };
 

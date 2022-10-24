@@ -30,16 +30,16 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Test logging of data from bufferSendIn
-        void BufferSendIn(void);
+        void BufferSendIn();
 
         //! Test close file command
-        void CloseFile(void);
+        void CloseFile();
 
         //! Test logging of data from comIn
-        void ComIn(void);
+        void ComIn();
 
         //! Test logging on/off capability
-        void OnOff(void);
+        void OnOff();
 
     };
 

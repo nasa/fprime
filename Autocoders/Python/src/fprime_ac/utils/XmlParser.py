@@ -59,9 +59,9 @@ class Parser:
         a big string.
         """
 
-        self.__node_stack = list()
-        self.__node_end_visit_dict = dict()
-        self.__node_start_visit_dict = dict()
+        self.__node_stack = []
+        self.__node_end_visit_dict = {}
+        self.__node_start_visit_dict = {}
 
         if xml_file is None:
             self.__xml_string = None
@@ -73,7 +73,7 @@ class Parser:
         Convert and return the filename as a single string.
         """
 
-        if os.path.isfile(filename) == False:
+        if not os.path.isfile(filename):
             str = "ERROR: Could not find specified XML file %s." % filename
             PRINT.info(str)
             raise OSError(str)
@@ -156,7 +156,7 @@ class Parser:
         if self.__xml_string is None:
             return
         else:
-            self.__node_stack = list()
+            self.__node_stack = []
 
         for token, content, loc in XML(self.__xml_string):
 
@@ -207,7 +207,7 @@ class Parser:
                 # requirement for parsing a second file is that it has a same
                 # named root Element.
 
-                if self.__root is not None and root_name_checked == False:
+                if self.__root is not None and not root_name_checked:
 
                     if self.__root.getName() == name:
 
@@ -310,8 +310,8 @@ class Parser:
         """
 
         problems = 0
-        value = dict()
-        invalidAttrs = list()
+        value = {}
+        invalidAttrs = []
 
         errorMsg = "Error: XML element <%s> is invalid" % (element.getName())
 
@@ -358,8 +358,8 @@ class Parser:
         detailed validation performed by the caller (the subclass' element validation
         methods).
         """
-        found = dict()
-        unexpectedChildren = list()
+        found = {}
+        unexpectedChildren = []
         errMsg = "Error: The XML element <%s> is invalid" % (element.getName())
 
         children = element.getElements()
@@ -437,7 +437,7 @@ class Element:
         if len(attributes) > 0:
             attr = dict(attributes)
         else:
-            attr = dict()
+            attr = {}
         self.attribute = attr
         # The element's cdata
         self.cdata = ""
@@ -482,7 +482,7 @@ class Element:
         if not name:
             return self.children
         else:
-            elements = list()
+            elements = []
             for element in self.children:
                 if element.name == name:
                     elements.append(element)

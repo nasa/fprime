@@ -2,7 +2,6 @@
 #define _Directory_hpp_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 
 namespace Os {
 
@@ -24,15 +23,15 @@ namespace Os {
             Directory(); //!<  Constructor
             virtual ~Directory(); //!<  Destructor. Will close directory if still open
             Status open(const char* dirName); //!<  open directory. Directory must already exist
-            bool isOpen(void); //!< check if file descriptor is open or not.
+            bool isOpen(); //!< check if file descriptor is open or not.
             Status rewind(); //!<  rewind directory stream to the beginning
 
             Status read(char * fileNameBuffer, U32 bufSize); //!< get next filename from directory
             Status read(char * fileNameBuffer, U32 bufSize, I64& inode); //!< get next filename and inode from directory
-            void close(void); //!<  close directory
+            void close(); //!<  close directory
 
-            NATIVE_INT_TYPE getLastError(void); //!< read back last error code (typically errno)
-            const char* getLastErrorString(void); //!< get a string of the last error (typically from strerror)
+            NATIVE_INT_TYPE getLastError(); //!< read back last error code (typically errno)
+            const char* getLastErrorString(); //!< get a string of the last error (typically from strerror)
 
         private:
 

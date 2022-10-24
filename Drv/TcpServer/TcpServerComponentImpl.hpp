@@ -17,7 +17,7 @@
 #include <Drv/Ip/IpSocket.hpp>
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Drv/Ip/TcpServerSocket.hpp>
-#include "Drv/ByteStreamDriverModel/ByteStreamDriverComponentAc.hpp"
+#include "Drv/ByteStreamDriverModel/ByteStreamDriverModelComponentAc.hpp"
 
 namespace Drv {
 
@@ -43,7 +43,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
     /**
      * \brief Destroy the component
      */
-    ~TcpServerComponentImpl(void);
+    ~TcpServerComponentImpl();
 
     // ----------------------------------------------------------------------
     // Helper methods to start and stop socket
@@ -53,7 +53,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
      * \brief Configures the TcpClient settings but does not open the connection
      *
      * The TcpClientComponent needs to connect to a remote TCP server. This call configures the hostname, port and
-     * send timeouts for that socket connection. This call should be preformed on system startup before recv or send
+     * send timeouts for that socket connection. This call should be performed on system startup before recv or send
      * are called. Note: hostname must be a dot-notation IP address of the form "x.x.x.x". DNS translation is left up
      * to the user.
      *
@@ -106,7 +106,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
     /**
      * \brief returns a buffer to fill with data
      *
-     * Gets a reference to the a buffer to fill with data. This allows the component to determine how to provide a
+     * Gets a reference to a buffer to fill with data. This allows the component to determine how to provide a
      * buffer and the socket read task just fills said buffer.
      *
      * \return Fw::Buffer to fill with data
@@ -114,7 +114,7 @@ class TcpServerComponentImpl : public ByteStreamDriverModelComponentBase, public
     Fw::Buffer getBuffer();
 
     /**
-     * \brief sends a buffer to filled with data
+     * \brief sends a buffer to be filled with data
      *
      * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
      * component how to send back the buffer. Ignores buffers with error status error.

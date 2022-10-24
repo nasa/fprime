@@ -112,11 +112,11 @@ $ fprime-gds -n
 
 ### Specify GDS Addresses and Ports
 
-By default, the GDS runs on the local machine at address `0.0.0.0` and uses the following local ports:
+By default, the GDS runs on the local machine and uses the following local addresses and ports:
 
-- 5000: hosts the HTML frontend. The browser connects here.
-- 50000: the default communication interface is a port. The embedded system connects here.
-- 50050: an internal port used for hosting GDS data.
+- **127.0.0.1:5000**: hosts the HTML frontend. The browser connects here to access the GUI.
+- **0.0.0.0:50000**: the default communication interface port. The embedded system connects here.
+- **0.0.0.0:50050**: an internal port used for transporting GDS data. Communication and HTML endpoints internally connect here.
 
 If a user wishes to change the IP address and port used to allow the embedded system connection to the GDS, the user
 should specify the `--ip-address ADDRESS` and `--ip-port PORT` flag. **Note:** these options are only available when
@@ -167,7 +167,7 @@ optional arguments:
   -d DEPLOY, --deployment DEPLOY
                         Deployment directory for detecting dict, app, and
                         logging. [default: /Users/mstarch]
-  -l LOGS, --logs LOGS  Logging directory. Created if non-existent. Default:
+  -l LOGS, --logs LOGS  Logging directory. Created if nonexistent. Default:
                         deployment directory.
   --log-directly        Logging directory is used directly, no extra dated
                         directories created.
@@ -198,7 +198,7 @@ general, the available tabs are listed across the top and each view can be selec
 ![Launched Browser Window](../media/gds_gui_commanding.png)
 
 Across the top of the screen is a series of tabs: "Commanding", "Events", etc. Each of those tabs represent a piece of
-the GDS's functionality. Each view opens when when you click on it. Next, we'll go through each tab's functions in more
+the GDS's functionality. Each view opens when you click on it. Next, we'll go through each tab's functions in more
 detail in upcoming sections.
 
 To the right of those tabs is a "New Window" button. If you want to open a new GUI window to view multiple tabs at once
@@ -259,7 +259,7 @@ Each event is color-coded based on its "Event Severity;" there are 7 different k
 Just like the "Command History" table, these items can all be filtered and sorted based on the column headers.
 Additionally, a "Clear" button will clear the table thus making the monitoring of new events easier. There is special
 support for COMMAND event types, which will replace the opcode with the command mnemonic to help the user.  The opcode
-can be found by hovering over the the mnemonic and a tooltip will appear.
+can be found by hovering over the mnemonic and a tooltip will appear.
 
 ### Channels
 
@@ -287,7 +287,7 @@ Just like the other tables, you can sort or filter these channel items.
 The uplink tab allows users to upload files to the embedded system. This is dependent on the usage of the FileUplink
 components and a file system implementation. The uplink process has two steps: staging and uplink. First the user
 browses for files to uplink to the system.  This submits the files to a working set and allows them to curate that set
-before committing to a uplink.  Finally the user should press the "Submit Uplink" button to upload the files to the GDS,
+before committing to an uplink.  Finally the user should press the "Submit Uplink" button to upload the files to the GDS,
 add them to the outgoing queue, and start the uplink.  Uplink progress can be monitored and the queue can be paused to
 temporarily stop the uplink. Files are limited to no more than 32Mb.
 

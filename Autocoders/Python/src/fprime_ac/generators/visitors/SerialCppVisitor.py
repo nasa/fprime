@@ -33,12 +33,13 @@ from fprime_ac.utils import ConfigManager
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.serialize import includes1SerialCpp
-    from fprime_ac.generators.templates.serialize import namespaceSerialCpp
-    from fprime_ac.generators.templates.serialize import publicSerialCpp
-
     # from fprime_ac.generators.templates import privateSerialCpp
-    from fprime_ac.generators.templates.serialize import finishSerialCpp
+    from fprime_ac.generators.templates.serialize import (
+        finishSerialCpp,
+        includes1SerialCpp,
+        namespaceSerialCpp,
+        publicSerialCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -85,14 +86,25 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         for use in templates that generate prototypes.
         """
         arg_str = ""
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (
+            name,
+            mtype,
+            array_size,
+            size,
+            format,
+            comment,
+            default,
+        ) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
-            elif mtype == "string":
+            elif mtype == "string" and array_size is None:
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
+            elif mtype == "string" and array_size is not None:
+                arg_str += "const {}::{}String* {}, ".format(obj.get_name(), name, name)
+                arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size is not None:
+            elif array_size is not None:
                 arg_str += "const {}* {}, ".format(mtype, name)
                 arg_str += "NATIVE_INT_TYPE %sSize, " % (name)
             else:
@@ -110,7 +122,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         args = obj.get_members()
         arg_str = ""
         for arg in args:
-            if arg[2] is not None and arg[1] != "string":
+            if arg[2] is not None:
                 arg_str += prefix + "%s" % arg[0]
                 arg_str += ", "
                 arg_str += "%s" % arg[2]
@@ -126,9 +138,17 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of struct member tuples
         """
-        arg_list = list()
+        arg_list = []
 
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (
+            name,
+            mtype,
+            array_size,
+            size,
+            format,
+            comment,
+            default,
+        ) in obj.get_members():
             typeinfo = None
             if isinstance(mtype, tuple):
                 mtype = mtype[0][1]
@@ -139,7 +159,9 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
             elif mtype not in typelist:
                 typeinfo = "extern"
 
-            arg_list.append((name, mtype, size, format, comment, default, typeinfo))
+            arg_list.append(
+                (name, mtype, array_size, size, format, comment, default, typeinfo)
+            )
         return arg_list
 
     def _get_args_proto_string_scalar_init(self, obj):
@@ -151,14 +173,22 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         arg_str = ""
         contains_array = False
-        for (name, mtype, size, format, comment, default) in obj.get_members():
+        for (
+            name,
+            mtype,
+            array_size,
+            size,
+            format,
+            comment,
+            default,
+        ) in obj.get_members():
             if isinstance(mtype, tuple):
                 arg_str += "{} {}, ".format(mtype[0][1], name)
             elif mtype == "string":
                 arg_str += "const {}::{}String& {}, ".format(obj.get_name(), name, name)
             elif mtype not in typelist:
                 arg_str += "const {}& {}, ".format(mtype, name)
-            elif size is not None:
+            elif array_size is not None:
                 arg_str += "const {} {}, ".format(mtype, name)
                 contains_array = True
             else:
@@ -193,8 +223,7 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
                 + self.__config.get("serialize", "SerializableCpp")
             )
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -221,8 +250,6 @@ class SerialCppVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

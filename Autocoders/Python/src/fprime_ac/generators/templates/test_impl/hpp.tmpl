@@ -2,19 +2,13 @@
 // \title  ${name}/test/ut/Tester.hpp
 // \author $user
 // \brief  hpp file for ${name} test harness implementation class
-//
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
-//
 // ======================================================================
 
 \#ifndef TESTER_HPP
 \#define TESTER_HPP
 
 \#include "GTestBase.hpp"
-\#include "${include_path}/${name}ComponentImpl.hpp"
+\#include "${include_path}/${name}.hpp"
 
 #if $namespace_list != None
   #for $namespace in $namespace_list
@@ -34,11 +28,11 @@ namespace ${namespace} {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -48,7 +42,7 @@ namespace ${namespace} {
 
       //! To do
       //!
-      void toDo(void);
+      void toDo();
 
 #if len($typed_user_output_ports) > 0:
     private:
@@ -93,11 +87,11 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
@@ -107,7 +101,7 @@ $emit_port_params([ $param_portNum ] + $port_params[$instance])
 
       //! The component under test
       //!
-      ${name}ComponentImpl component;
+      ${name} component;
 
   };
 

@@ -1,5 +1,5 @@
-\page DrvUdp Udp  Component
-# Drv::Udp Udp Component
+\page DrvUdp Drv::Udp Component
+# Drv::Udp UDP Component
 
 The UDP client component bridges the byte stream driver model interface to a remote UDP port to which this udp component
 sends/receives bytes. It implements the callback formation (shown below) using a thread to receive data and producing
@@ -53,19 +53,19 @@ bool constructApp(bool dump, U32 port_number, char* hostname) {
     ...
     comm.init(0);
     ...
-    if (hostname != NULL && port_number != 0) {
+    if (hostname != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         comm.configureSend(hostname, port_number);
         comm.configureRecv(hostname, port_number);
         // Needed for receiving only, remove if not configuring to receive
-        comm.startSocketTask(name, TASK_PRIORITY, TASK_STACK_SIZE);
+        comm.startSocketTask(name);
     }
 }
 
-void exitTasks(void) {
+void exitTasks() {
     ...
     comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
+    (void) comm.joinSocketTask(nullptr);
 }
 ```
 ## Class Diagram

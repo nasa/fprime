@@ -7,7 +7,7 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/TlmChanComponentAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/TlmChan.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmChanImpl.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplGet.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplRecv.cpp"
@@ -19,7 +19,7 @@ register_fprime_module()
 
 ### UTs ###
 set(UT_SOURCE_FILES
-  "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChanComponentAi.xml"
+  "${FPRIME_FRAMEWORK_PATH}/Svc/TlmChan/TlmChan.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanTester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanImplTester.cpp"
 )

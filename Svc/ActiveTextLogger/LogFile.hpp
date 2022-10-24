@@ -63,7 +63,7 @@ namespace Svc {
         // The max size of the text log file:
         U32 m_maxFileSize;
 
-        // True if there is currently a open file to write text logs to:
+        // True if there is currently an open file to write text logs to:
         bool m_openFile;
 
         // Current size of the file:

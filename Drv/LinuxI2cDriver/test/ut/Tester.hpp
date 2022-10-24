@@ -13,8 +13,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "Drv/LinuxI2cDriver/LinuxI2cDriver.hpp"
 #include "GTestBase.hpp"
-#include "Drv/LinuxI2cDriver/LinuxI2cDriverComponentImpl.hpp"
 
 namespace Drv {
 
@@ -30,11 +30,11 @@ namespace Drv {
 
       //! Construct object Tester
       //!
-      Tester(void);
+      Tester();
 
       //! Destroy object Tester
       //!
-      ~Tester(void);
+      ~Tester();
 
     public:
 
@@ -56,11 +56,11 @@ namespace Drv {
 
       //! Connect ports
       //!
-      void connectPorts(void);
+      void connectPorts();
 
       //! Initialize components
       //!
-      void initComponents(void);
+      void initComponents();
 
     private:
 
@@ -70,7 +70,7 @@ namespace Drv {
 
       //! The component under test
       //!
-      LinuxI2cDriverComponentImpl component;
+      LinuxI2cDriver component;
 
   };
 

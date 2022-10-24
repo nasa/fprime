@@ -1,8 +1,9 @@
+#include <Fw/Types/StringUtils.hpp>
 #include <Tester.hpp>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 TEST(TestNominal,Nominal) {
 
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
                 addr = strtoul(optarg,0,0);
                 break;
             case 'd':
-                strcpy(device,optarg);
+                Fw::StringUtils::string_copy(device, optarg, sizeof(device));
                 break;
             default:
                 printf("test_ut %s\n",argv[0],help);

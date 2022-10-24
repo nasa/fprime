@@ -83,7 +83,7 @@ When `BufferManager` receives a request for a buffer of size *s* on
 When `BufferManager` receives notification of a free buffer on
 [*bufferSendIn*](#bufferSendIn), it carries out the following steps:
 
-1. Check to see if it an empty buffer. If so, issue a WARNING_LO event and return.
+1. Check to see if it is an empty buffer. If so, issue a WARNING_LO event and return.
 2. Extract the manager ID and buffer ID from the context member of the `Fw::Buffer` instance.
 3. If they are valid, use the buffer ID to find the allocated buffer.
 4. Clear the "allocated" flag to make the buffer available again.
@@ -106,7 +106,18 @@ component.
 3. The receiving component uses the data in *B*. When done, it sends *B* back
 to the [`bufferSendIn`](#bufferSendIn) port of `BufferManager` for deallocation.
 
-![`BufferManager` Sending a Buffer](img/SendingABuffer.jpg "SequenceDiagram")
+```mermaid
+sequenceDiagram
+    Sending Component->>BufferManager: Request buffer
+    activate Sending Component
+    activate BufferManager
+    Sending Component->>Receiving Component: Send buffer
+    activate Receiving Component
+    deactivate Sending Component
+    Receiving Component->>BufferManager: Send buffer
+    deactivate BufferManager
+    deactivate Receiving Component
+```
 
 ### 3.8 Assertions
 

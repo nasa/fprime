@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<interface name="SerialWrite" namespace="Drv">
-  <include_header>Fw/Buffer/Buffer.hpp</include_header>
-    <args>
-        <arg name="serBuffer" type="Fw::Buffer" pass_by="reference">
-        </arg>
-    </args>
-</interface>

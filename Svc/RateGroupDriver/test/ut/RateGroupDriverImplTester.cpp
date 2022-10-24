@@ -19,13 +19,13 @@ namespace Svc {
         RateGroupDriverGTestBase::init();
     }
 
-    RateGroupDriverImplTester::RateGroupDriverImplTester(Svc::RateGroupDriverImpl& inst) :
+    RateGroupDriverImplTester::RateGroupDriverImplTester(Svc::RateGroupDriver& inst) :
         RateGroupDriverGTestBase("testerbase",100),
             m_impl(inst) {
         this->clearPortCalls();
     }
 
-    void RateGroupDriverImplTester::clearPortCalls(void) {
+    void RateGroupDriverImplTester::clearPortCalls() {
         memset(this->m_portCalls,0,sizeof(this->m_portCalls));
     }
 

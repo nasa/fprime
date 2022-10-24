@@ -37,8 +37,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.commands import CommandHeader
-    from fprime_ac.generators.templates.commands import CommandBody
+    from fprime_ac.generators.templates.commands import CommandBody, CommandHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -105,7 +104,7 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 obj.get_component_base_name()
             ]
         except Exception:
-            if isinstance(obj, Parameter.Parameter) or isinstance(obj, Command.Command):
+            if isinstance(obj, (Parameter.Parameter, Command.Command)):
                 PRINT.info(
                     "ERROR: Could not find instance object for component "
                     + obj.get_component_base_name()
@@ -139,8 +138,6 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 DEBUG.info("Completed {} open".format(pyfile))
                 self.__fp1[fname] = fd
 
@@ -165,16 +162,12 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 pyfile = "{}/{}_PRM_SET.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp1[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
 
                 pyfile = "{}/{}_PRM_SAVE.py".format(output_dir, fname)
                 DEBUG.info("Open file: {}".format(pyfile))
                 fd = open(pyfile, "w")
-                if fd is None:
-                    raise Exception("Could not open {} file.".format(pyfile))
                 self.__fp2[fname] = fd
                 DEBUG.info("Completed {} open".format(pyfile))
 
@@ -258,8 +251,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 for arg_obj in obj.get_args():
                     # convert XML types to Python classes
@@ -306,8 +299,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 # convert XML types to Python classes
                 (
@@ -348,8 +341,8 @@ class InstanceCommandVisitor(AbstractVisitor.AbstractVisitor):
                 c.description = obj.get_comment()
                 c.component = obj.get_component_name()
 
-                c.arglist = list()
-                c.ser_import_list = list()
+                c.arglist = []
+                c.ser_import_list = []
 
                 self._writeTmpl(c, self.__fp2[fname], "commandBodyVisit")
                 self.__fp2[fname].close()

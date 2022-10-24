@@ -24,20 +24,20 @@ namespace Svc {
                     ); //!< initialization function
         PROTECTED:
         PRIVATE:
-            void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::LogSeverity severity, Fw::LogBuffer &args);
-            void loqQueue_internalInterfaceHandler(FwEventIdType id, Fw::Time &timeTag, QueueLogSeverity severity, Fw::LogBuffer &args);
+            void LogRecv_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::LogBuffer &args);
+            void loqQueue_internalInterfaceHandler(FwEventIdType id, const Fw::Time &timeTag, const Fw::LogSeverity& severity, const Fw::LogBuffer &args);
 
             void SET_EVENT_FILTER_cmdHandler(
                     FwOpcodeType opCode,
                     U32 cmdSeq,
-                    EventLevel FilterLevel,
-                    FilterEnabled FilterEnable);
+                    ActiveLogger_FilterSeverity filterLevel,
+                    ActiveLogger_Enabled filterEnabled);
 
             void SET_ID_FILTER_cmdHandler(
                     FwOpcodeType opCode, //!< The opcode
                     U32 cmdSeq, //!< The command sequence number
                     U32 ID,
-                    IdFilterEnabled IdFilterEnable //!< ID filter state
+                    ActiveLogger_Enabled idFilterEnabled //!< ID filter state
                 );
 
             void DUMP_FILTER_STATE_cmdHandler(
@@ -54,8 +54,8 @@ namespace Svc {
 
             // Filter state
             struct t_filterState {
-                FilterEnabled enabled; //<! filter is enabled
-            } m_filterState[EventLevel_MAX];
+                ActiveLogger_Enabled enabled; //<! filter is enabled
+            } m_filterState[ActiveLogger_FilterSeverity::NUM_CONSTANTS];
 
             // Working members
             Fw::LogPacket m_logPacket; //!< packet buffer for assembling log packets

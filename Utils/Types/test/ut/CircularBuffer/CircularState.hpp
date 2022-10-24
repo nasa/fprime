@@ -7,7 +7,7 @@
  * @author mstarch
  */
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
 #ifndef FPRIME_CIRCULARSTATE_HPP
@@ -86,6 +86,11 @@ namespace MockTypes {
              * @return in-test circular buffer
              */
             Types::CircularBuffer& getTestBuffer();
+
+            /**
+             * Check allocated and free sizes
+             */
+            void checkSizes() const;
 
         private:
             NATIVE_UINT_TYPE m_remaining_size;

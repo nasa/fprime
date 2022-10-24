@@ -14,8 +14,6 @@ import time
 import traceback
 from optparse import OptionParser
 
-from lxml import etree
-
 # Meta-model for Component only generation
 from fprime_ac.models import CompFactory, PortFactory, Serialize, TopoFactory
 
@@ -35,7 +33,8 @@ from fprime_ac.utils import (
     TopDictGenerator,
 )
 from fprime_ac.utils.buildroot import get_build_roots, search_for_file, set_build_roots
-from fprime_ac.utils.version import get_fprime_version
+from fprime_ac.utils.version import get_fprime_version, get_project_version
+from lxml import etree
 
 # Generators to produce the code
 try:
@@ -316,12 +315,12 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
 
     if "Ai" in xml_filename:
         base = xml_filename.split("Ai")[0]
-        h_instance_name = base + "_H"
-        cpp_instance_name = base + "_Cpp"
-        csv_instance_name = base + "_ID"
-        cmd_html_instance_name = base + "_Cmd_HTML"
-        channel_html_instance_name = base + "_Channel_HTML"
-        event_html_instance_name = base + "_Event_HTML"
+        h_instance_name = f"{base}_H"
+        cpp_instance_name = f"{base}_Cpp"
+        csv_instance_name = f"{base}_ID"
+        cmd_html_instance_name = f"{base}_Cmd_HTML"
+        channel_html_instance_name = f"{base}_Channel_HTML"
+        event_html_instance_name = f"{base}_Event_HTML"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -405,7 +404,8 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
         if opt.xml_topology_dict:
             topology_dict = etree.Element("dictionary")
             topology_dict.attrib["topology"] = the_parsed_topology_xml.get_name()
-            topology_dict.attrib["framework_version"] = get_fprime_version()
+            topology_dict.attrib["framework_version"] = get_fprime_version().lstrip("v")
+            topology_dict.attrib["project_version"] = get_project_version().lstrip("v")
 
             top_dict_gen = TopDictGenerator.TopDictGenerator(
                 parsed_xml_dict, PRINT.debug
@@ -413,7 +413,7 @@ def generate_topology(the_parsed_topology_xml, xml_filename, opt):
             for comp in the_parsed_topology_xml.get_instances():
                 comp_type = comp.get_type()
                 comp_name = comp.get_name()
-                comp_id = int(comp.get_base_id())
+                comp_id = int(comp.get_base_id(), 0)
                 PRINT.debug(f"Processing {comp_name} [{comp_type}] ({hex(comp_id)})")
 
                 top_dict_gen.set_current_comp(comp)
@@ -725,6 +725,7 @@ def generate_component(
         cpp_instance_gtest_name = base + "_GTest_Cpp"
         h_instance_test_impl_name = base + "_TestImpl_H"
         cpp_instance_test_impl_name = base + "_TestImpl_Cpp"
+        test_main_name = base + "_TestMain_Cpp"
     else:
         PRINT.info("Missing Ai at end of file name...")
         raise OSError
@@ -752,6 +753,7 @@ def generate_component(
         generator.configureVisitor(
             cpp_instance_test_impl_name, "TestImplCppVisitor", True, True
         )
+        generator.configureVisitor(test_main_name, "TestMainVisitor", True, True)
     else:
         generator.configureVisitor(h_instance_name, "ComponentHVisitor", True, True)
         generator.configureVisitor(cpp_instance_name, "ComponentCppVisitor", True, True)
@@ -1141,11 +1143,11 @@ def generate_dependency_file(filename, target_file, subst_path, parser, the_type
             + parser.get_include_enums()
             + parser.get_include_arrays()
         )
-    elif the_type == "assembly" or the_type == "deployment":
+    elif the_type in ("assembly", "deployment"):
         # get list of dependency files from XML/header file list
         file_list_tmp = list(parser.get_comp_type_file_header_dict().keys())
         file_list = file_list_tmp
-        # file_list = list()
+        # file_list = []
         # for f in file_list_tmp:
         #    file_list.append(f.replace("Ai.xml","Ac.hpp"))
     else:
@@ -1192,7 +1194,7 @@ def main():
     # always exists. We are basically only checking for when the user
     # specifies an alternate working directory.
 
-    if os.path.exists(opt.work_path) == False:
+    if not os.path.exists(opt.work_path):
         Parser.error(f"Specified path does not exist ({opt.work_path})!")
 
     working_dir = opt.work_path
@@ -1208,14 +1210,14 @@ def main():
 
     # Configure the logging.
     log_level = opt.logger.upper()
-    log_level_dict = dict()
-
-    log_level_dict["QUIET"] = None
-    log_level_dict["DEBUG"] = logging.DEBUG
-    log_level_dict["INFO"] = logging.INFO
-    log_level_dict["WARNING"] = logging.WARN
-    log_level_dict["ERROR"] = logging.ERROR
-    log_level_dict["CRITICAL"] = logging.CRITICAL
+    log_level_dict = {
+        "QUIET": None,
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARN,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
 
     if log_level_dict[log_level] is None:
         stdout_enable = False
@@ -1238,9 +1240,9 @@ def main():
     #
     # Check for BUILD_ROOT variable for XML port searches
     #
-    if opt.build_root_flag == True:
+    if opt.build_root_flag:
         # Check for BUILD_ROOT env. variable
-        if ("BUILD_ROOT" in list(os.environ.keys())) == False:
+        if not ("BUILD_ROOT" in list(os.environ.keys())):
             PRINT.info(
                 "ERROR: The -b command option requires that BUILD_ROOT environmental variable be set to root build path..."
             )
@@ -1273,7 +1275,7 @@ def main():
             the_serial_xml = XmlSerializeParser.XmlSerializeParser(xml_filename)
             generate_serializable(the_serial_xml, opt)
             dependency_parser = the_serial_xml
-        elif xml_type == "assembly" or xml_type == "deployment":
+        elif xml_type in ("assembly", "deployment"):
             DEBUG.info("Detected Topology XML so Generating Topology C++ Files...")
             the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xml_filename)
             DEPLOYMENT = the_parsed_topology_xml.get_deployment()
@@ -1321,7 +1323,7 @@ def main():
     # Always return to directory where we started.
     os.chdir(starting_directory)
 
-    if ERROR == True:
+    if ERROR:
         sys.exit(-1)
     else:
         sys.exit(0)

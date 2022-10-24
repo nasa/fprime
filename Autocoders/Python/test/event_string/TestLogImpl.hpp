@@ -12,13 +12,9 @@
 
 class TestLogImpl: public Somewhere::TestLogComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestLogImpl(const char* compName);
-#else
-        TestLogImpl();
-#endif
         virtual ~TestLogImpl();
-        void init(void);
+        void init();
         void sendEvent(I32 arg1, Fw::LogStringArg& arg2, U8 arg3);
     protected:
         void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);

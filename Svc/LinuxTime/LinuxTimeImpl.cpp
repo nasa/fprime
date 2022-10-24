@@ -7,7 +7,7 @@
 
 #include <Svc/LinuxTime/LinuxTimeImpl.hpp>
 #include <Fw/Time/Time.hpp>
-#include <time.h>
+#include <ctime>
 
 namespace Svc {
 

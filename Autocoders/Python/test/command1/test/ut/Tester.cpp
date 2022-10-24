@@ -22,21 +22,16 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       Test1GTestBase("Tester", MAX_HISTORY_SIZE),
       component("Test1")
-#else
-      Test1GTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -46,7 +41,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    toDo(void)
+    toDo()
   {
     // TODO
   }
@@ -56,7 +51,7 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // aport
@@ -86,7 +81,7 @@ namespace Cmd {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

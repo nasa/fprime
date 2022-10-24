@@ -6,21 +6,16 @@
  */
 
 #include <Autocoders/Python/test/stress/TestPrmSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestParamSourceImpl::TestParamSourceImpl(const char* name) : Prm::ParamTesterComponentBase(name)
-#else
-TestParamSourceImpl::TestParamSourceImpl() :
-        Prm::ParamTesterComponentBase()
-#endif
 {
 }
 
 TestParamSourceImpl::~TestParamSourceImpl() {
 }
 
-void TestParamSourceImpl::init(void) {
+void TestParamSourceImpl::init() {
     Prm::ParamTesterComponentBase::init();
 }
 
@@ -32,7 +27,7 @@ void TestParamSourceImpl::setPrm(U32 val) {
 
 Fw::ParamValid TestParamSourceImpl::paramGetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {
     val = this->m_prm;
-    return Fw::PARAM_VALID;
+    return Fw::ParamValid::VALID;
 }
 
 void TestParamSourceImpl::paramSetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val) {

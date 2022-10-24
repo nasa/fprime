@@ -19,12 +19,12 @@ Installation guides for CMake can be found here: [https://cmake.org/install/](ht
 A Basic CMake tutorial can be found here: [https://cmake.org/cmake/help/latest/guide/tutorial/index.html](https://cmake.org/cmake/help/latest/guide/tutorial/index.html).
 Although fprime tries to simplify CMake usage for fprime specific tasks, an understanding of basic CMake is useful.
 
-## Getting Started Using with and F`
+## Getting Started with CMake and F´
 
 CMake as a system auto-generates OS-specific make files for building F´. Once these file are
 generated, standard make tools can be run to perform the compiling, assembling, linking etc. In other words, CMake is a
 high-level build system that defers to low-level build systems to build.  It generates the inputs to these low-level
-systems in a straight forward way.
+systems in a straightforward way.
 
 fprime sets up CMake in such a way that adding a module (component, port, deployment) is easy and automatically takes
 advantage of the autocoding capabilities of fprime. To add new modules to the CMake system, users need to perform the
@@ -36,7 +36,7 @@ following steps:
    `add_fprime_subdirectory`.
 
 Each of these steps are described in detail below. Further usage documentation on the functions used to perform these
-steps can be found in: [API](./cmake-api.md). This document will explains the usage of core F´ CMake functions.
+steps can be found in: [API](./cmake-api.md). This document will explain the usage of core F´ CMake functions.
 
 Further discussion regarding transition from the former make system can be found here:
 [Migration.md](Migration.md)

@@ -13,7 +13,6 @@
 #define FW_COM_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
@@ -30,11 +29,11 @@ namespace Fw {
             ComBuffer();
             ComBuffer(const ComBuffer& other);
             virtual ~ComBuffer();
-            const ComBuffer& operator=(const ComBuffer& other);
+            ComBuffer& operator=(const ComBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         private:
             U8 m_bufferData[FW_COM_BUFFER_MAX_SIZE]; // packet data buffer

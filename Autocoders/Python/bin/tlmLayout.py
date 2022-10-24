@@ -220,7 +220,7 @@ class Packet:
             self.err_msg("Missing parameter(s) for identifier")
 
         self.m_name = line[1].strip()
-        if not len(self.m_name):
+        if not self.m_name:
             self.err_msg("Name cannot be blank")
 
         if len(self.m_name.split()) > 1:
@@ -254,7 +254,7 @@ class Packet:
             self.err_msg("Missing parameter(s) for item")
 
         it.m_name = line[1].strip()
-        if not len(it.m_name):
+        if not it.m_name:
             self.err_msg("Name cannot be blank")
 
         if len(it.m_name.split()) > 1:
@@ -322,7 +322,7 @@ class Packet:
         if not s.isdigit():
             self.err_msg("Illegal value for number of bits: '" + s + "'")
         bits = int(s)
-        if bits != 8 and bits != 16 and bits != 32 and bits != 64:
+        if bits not in (8, 16, 32, 64):
             self.err_msg("Illegal value for number of bits: '" + s + "'")
 
         if self.m_bit_index % bits:
@@ -353,7 +353,7 @@ class Packet:
         it.m_is_constant = True
 
         it.m_name = line[1].strip()
-        if not len(it.m_name):
+        if not it.m_name:
             self.err_msg("Name cannot be blank")
 
         if len(it.m_name.split()) > 1:
@@ -361,11 +361,7 @@ class Packet:
 
         it.m_data_type = line[2].strip()
         it.m_data_type = it.m_data_type.lower()
-        if (
-            it.m_data_type != "integer"
-            and it.m_data_type != "float"
-            and it.m_data_type != "text"
-        ):
+        if it.m_data_type not in ("integer", "float", "text"):
             self.err_msg("Invalid date type: '" + it.m_data_type + "'")
 
         it.m_constant_value = line[3]
@@ -412,7 +408,7 @@ class Packet:
         global tlm_period
         global verbose
 
-        if not len(self.m_header_list) and not len(self.m_item_list):
+        if not self.m_header_list and not self.m_item_list:
             return
 
         self.m_bytes = (self.m_bit_index + 7) / 8
@@ -476,9 +472,7 @@ class Packet:
             print("")
 
             print("Number of items in packet item list: ", len(self.m_item_list))
-            i = 0
-            for item in self.m_item_list:
-                i += 1
+            for i, item in enumerate(self.m_item_list, start=1):
                 print("Item # ", i)
                 print("\tis_reserve:     ", item.m_is_reserve)
                 print("\tis_constant:    ", item.m_is_constant)
@@ -529,7 +523,7 @@ class CsvLine:
 
         global tlm_input_line_num
 
-        if not len(line):
+        if not line:
             return
 
         nonblank = False
@@ -565,7 +559,7 @@ class CsvFile:
         try:
             m_fp = open(name)
         except OSError:
-            print("Error opening " + name)
+            print(f"Error opening {name}")
             exit()
         m_reader = csv.reader(m_fp, dialect="excel")
 

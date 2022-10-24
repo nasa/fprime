@@ -29,20 +29,22 @@ from fprime_ac.generators.visitors import AbstractVisitor
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import ConfigManager, TypesList
 
 #
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.port import startPortH
-    from fprime_ac.generators.templates.port import includes1PortH
-    from fprime_ac.generators.templates.port import includes2PortH
-    from fprime_ac.generators.templates.port import namespacePortH
-    from fprime_ac.generators.templates.port import publicPortH
-    from fprime_ac.generators.templates.port import protectedPortH
-    from fprime_ac.generators.templates.port import privatePortH
-    from fprime_ac.generators.templates.port import finishPortH
+    from fprime_ac.generators.templates.port import (
+        finishPortH,
+        includes1PortH,
+        includes2PortH,
+        namespacePortH,
+        privatePortH,
+        protectedPortH,
+        publicPortH,
+        startPortH,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -89,11 +91,13 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = ""
         for arg in args:
             t = arg.get_type()
+            isEnum = False
             #
             # Grab enum type here...
             if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     t = t[0][1]
+                    isEnum = True
                 else:
                     PRINT.info(
                         "ERROR: Ill formed enumeration type...(name: %s, type: %s"
@@ -113,8 +117,12 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 t = t + " *"
             elif arg.get_modifier() == "reference":
                 t = t + " &"
-            else:
+            elif arg.get_modifier() == "value":
                 t = t + " "
+            elif TypesList.isPrimitiveType(t) or isEnum:
+                t = t + " "
+            else:
+                t = "const " + t + " &"
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
@@ -178,7 +186,10 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
             ]:
                 t = "sizeof(" + t + cl
             else:
-                t = t + "::SERIALIZED_SIZE"
+                if arg.get_modifier() == "pointer":
+                    t = "sizeof(" + t + "*)"
+                else:
+                    t = t + "::SERIALIZED_SIZE"
             arg_str += t
             arg_str += " + "
         arg_str = arg_str.strip(" + ")
@@ -188,7 +199,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for arg in obj.get_args():
             n = arg.get_name()
@@ -219,8 +230,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("port", "XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port", "PortH")
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -245,8 +255,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):

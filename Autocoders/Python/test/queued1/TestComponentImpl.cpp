@@ -6,15 +6,11 @@
  */
 
 #include <Autocoders/Python/test/queued1/TestComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
 namespace SvcTest {
 
-#if FW_OBJECT_NAMES == 1
     TestComponentImpl::TestComponentImpl(const char* compName) : TestComponentBase(compName) {
-#else
-    TestComponentImpl::TestComponentImpl() {
-#endif
 
     }
 

@@ -52,7 +52,7 @@ class Protected:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args):
         """
@@ -79,7 +79,7 @@ class Protected:
             DEBUG.error(
                 "Protected.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Protected.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class Protected:
             DEBUG.error(
                 "Protected.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "Protected.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

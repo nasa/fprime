@@ -14,7 +14,7 @@
 #include <Fw/Logger/test/ut/LoggerRules.hpp>
 #include <gtest/gtest.h>
 
-#include <stdio.h>
+#include <cstdio>
 
 #define STEP_COUNT 10000
 
@@ -59,13 +59,13 @@ TEST(LoggerTests, BassicGoodLogger) {
     log.apply(logger);
 }
 /**
- * Test that null-logging works function works.
+ * Test that null-logging function works.
  */
 TEST(LoggerTests, BassicBadLogger) {
     // Basic discard logging
     MockLogging::FakeLogger logger;
-    Fw::Logger::registerLogger(NULL);
-    logger.s_current = NULL;
+    Fw::Logger::registerLogger(nullptr);
+    logger.s_current = nullptr;
     LoggerRules::LogBad log("Log Discarded");
     log.apply(logger);
 }
@@ -89,5 +89,6 @@ TEST(LoggerTests, BassicRegLogger) {
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

@@ -30,11 +30,7 @@ namespace Ref {
       //! Construct object MathSender
       //!
       MathSenderComponentImpl(
-#if FW_OBJECT_NAMES == 1
           const char *const compName /*!< The component name*/
-#else
-          void
-#endif
       );
 
       //! Initialize object MathSender
@@ -46,7 +42,7 @@ namespace Ref {
 
       //! Destroy object MathSender
       //!
-      ~MathSenderComponentImpl(void);
+      ~MathSenderComponentImpl();
 
     PRIVATE:
 

@@ -13,7 +13,7 @@
 #include <Drv/Ip/SocketReadTask.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <errno.h>
+#include <cerrno>
 
 #define MAXIMUM_SIZE 0x7FFFFFFF
 
@@ -24,15 +24,15 @@ SocketReadTask::SocketReadTask() : m_stop(false) {}
 SocketReadTask::~SocketReadTask() {}
 
 void SocketReadTask::startSocketTask(const Fw::StringBase &name,
-                                     const NATIVE_INT_TYPE priority,
-                                     const NATIVE_INT_TYPE stack,
                                      const bool reconnect,
-                                     const NATIVE_INT_TYPE cpuAffinity) {
+                                     const NATIVE_UINT_TYPE priority,
+                                     const NATIVE_UINT_TYPE stack,
+                                     const NATIVE_UINT_TYPE cpuAffinity) {
     FW_ASSERT(not m_task.isStarted());  // It is a coding error to start this task multiple times
     FW_ASSERT(not this->m_stop);        // It is a coding error to stop the thread before it is started
     m_reconnect = reconnect;
-    // Note: the first step is for the IP socket to open the the port
-    Os::Task::TaskStatus stat = m_task.start(name, 0, priority, stack, SocketReadTask::readTask, this, cpuAffinity);
+    // Note: the first step is for the IP socket to open the port
+    Os::Task::TaskStatus stat = m_task.start(name, SocketReadTask::readTask, this, priority, stack, cpuAffinity);
     FW_ASSERT(Os::Task::TASK_OK == stat, static_cast<NATIVE_INT_TYPE>(stat));
 }
 

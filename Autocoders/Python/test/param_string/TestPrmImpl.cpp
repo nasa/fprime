@@ -6,20 +6,16 @@
  */
 
 #include <Autocoders/Python/test/param_string/TestPrmImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestPrmImpl::TestPrmImpl(const char* name) : Prm::TestPrmComponentBase(name)
-#else
-TestPrmImpl::TestPrmImpl() : Prm::TestPrmComponentBase()
-#endif
 {
 }
 
 TestPrmImpl::~TestPrmImpl() {
 }
 
-void TestPrmImpl::init(void) {
+void TestPrmImpl::init() {
     Prm::TestPrmComponentBase::init();
 }
 
@@ -27,9 +23,9 @@ void TestPrmImpl::aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 
 
 }
 
-void TestPrmImpl::printParam(void) {
-    Fw::ParamValid valid = Fw::PARAM_INVALID;
+void TestPrmImpl::printParam() {
+    Fw::ParamValid valid = Fw::ParamValid::INVALID;
     const Fw::ParamString& prmRef = this->paramGet_stringparam(valid);
 
-    printf("Parameter is: \"%s\" %s\n",prmRef.toChar(),valid==Fw::PARAM_VALID?"VALID":"INVALID");
+    printf("Parameter is: \"%s\" %s\n",prmRef.toChar(),valid==Fw::ParamValid::VALID?"VALID":"INVALID");
 }

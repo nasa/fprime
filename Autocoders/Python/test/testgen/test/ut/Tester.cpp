@@ -11,21 +11,16 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       MathSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("MathSender")
-#else
-      MathSenderGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -34,13 +29,13 @@ namespace Ref {
   // Tests
   // ----------------------------------------------------------------------
   void Tester ::
-    testAddCommand(void)
+    testAddCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::ADD);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);
@@ -65,7 +60,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -88,13 +83,13 @@ namespace Ref {
   }
 
   void Tester ::
-    testSubCommand(void)
+    testSubCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::SUBTRACT);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);
@@ -119,7 +114,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -142,13 +137,13 @@ namespace Ref {
   }
 
   void Tester ::
-    testMultCommand(void)
+    testMultCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::MULTIPLY);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);
@@ -173,7 +168,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -196,13 +191,13 @@ namespace Ref {
   }
 
   void Tester ::
-    testDivCommand(void)
+    testDivCommand()
   {
       // send MS_DO_MATH command
       this->sendCmd_MS_DO_MATH(0,10,1.0,2.0,MathSenderComponentBase::DIVIDE);
       // retrieve the message from the message queue and dispatch the command to the handler
       this->component.doDispatch();
-      // verify that that only one output port was called
+      // verify that only one output port was called
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was only called once
       ASSERT_from_mathOut_SIZE(1);
@@ -227,7 +222,7 @@ namespace Ref {
       // verify command response was sent
       ASSERT_CMD_RESPONSE_SIZE(1);
       // verify the command response was correct as expected
-      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::COMMAND_OK);
+      ASSERT_CMD_RESPONSE(0,MathSenderComponentBase::OPCODE_MS_DO_MATH,10,Fw::CmdResponse::OK);
 
       // reset all telemetry and port history
       this->clearHistory();
@@ -249,7 +244,7 @@ namespace Ref {
       ASSERT_EVENTS_MS_RESULT(0,10.0);
   }
   void Tester ::
-    toDo(void)
+    toDo()
   {
     // TODO
   }
@@ -274,7 +269,7 @@ namespace Ref {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // mathIn
@@ -333,7 +328,7 @@ namespace Ref {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

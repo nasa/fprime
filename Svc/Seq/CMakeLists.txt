@@ -7,8 +7,11 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CmdSeqInPortAi.xml"
-  "${CMAKE_CURRENT_LIST_DIR}/CmdSeqCancelPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Seq.fpp"
+)
+
+set(MOD_DEPS
+    Fw/Port
 )
 
 register_fprime_module()

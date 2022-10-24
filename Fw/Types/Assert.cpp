@@ -1,26 +1,24 @@
 #include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <taskLib.h>
-#endif
+#define FW_ASSERT_DFL_MSG_LEN 256
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
 #else
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define fileIdFs "Assert file ID 0x%08X: Line: %d "
+#define fileIdFs "Assert file ID 0x%08" PRIx32 ": Line: %" PRI_PlatformUIntType
 #else
-#define fileIdFs "Assert file \"%s\": Line: %d "
+#define fileIdFs "Assert file \"%s\": Line: %" PRI_PlatformUIntType
 #endif
 
 namespace Fw {
 
-    void defaultPrintAssert(const I8* msg) {
-        (void)fprintf(stderr,"%s\n",reinterpret_cast<const char*>(msg));
+    void defaultPrintAssert(const CHAR* msg) {
+        (void)fprintf(stderr,"%s\n", msg);
     }
 
     void defaultReportAssert
@@ -28,43 +26,84 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
-            I8* destBuffer,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
+            CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             ) {
 
         switch (numArgs) {
             case 0:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs,file,lineNo);
+                (void) snprintf(destBuffer, buffSize, fileIdFs, file, lineNo);
                 break;
             case 1:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d",file,lineNo,
-                        arg1);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1
+                );
                 break;
             case 2:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d %d",file,lineNo,
-                        arg1,arg2);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2
+                );
                 break;
             case 3:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d %d %d",file,lineNo,
-                        arg1,arg2,arg3);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3
+                );
                 break;
             case 4:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4);
                 break;
             case 5:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d %d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4,arg5);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4, arg5
+                );
                 break;
             case 6:
-                (void)snprintf((char*)destBuffer,buffSize,fileIdFs "%d %d %d %d %d %d",file,lineNo,
-                        arg1,arg2,arg3,arg4,arg5,arg6);
+                (void) snprintf(
+                    destBuffer,
+                    buffSize,
+                    fileIdFs " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType
+                      " %" PRI_FwAssertArgType " %" PRI_FwAssertArgType,
+                    file,
+                    lineNo,
+                    arg1, arg2, arg3, arg4, arg5, arg6
+                );
                 break;
             default: // in an assert already, what can we do?
                 break;
@@ -75,7 +114,7 @@ namespace Fw {
 
     }
 
-    void AssertHook::printAssert(const I8* msg) {
+    void AssertHook::printAssert(const CHAR* msg) {
         defaultPrintAssert(msg);
     }
 
@@ -84,15 +123,15 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6
-         ) 
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6
+         )
     {
-        I8 destBuffer[256];
+        CHAR destBuffer[FW_ASSERT_DFL_MSG_LEN];
         defaultReportAssert
         (
             file,
@@ -111,13 +150,13 @@ namespace Fw {
         this->printAssert(destBuffer);
     }
 
-    void AssertHook::doAssert(void) {
+    void AssertHook::doAssert() {
         assert(0);
     }
 
-    STATIC AssertHook* s_assertHook = NULL;
+    STATIC AssertHook* s_assertHook = nullptr;
 
-    void AssertHook::registerHook(void) {
+    void AssertHook::registerHook() {
         this->previousHook = s_assertHook;
         s_assertHook = this;
     }
@@ -127,8 +166,8 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -151,9 +190,9 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -176,10 +215,10 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1,
+            FwAssertArgType arg2) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -201,11 +240,11 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -227,12 +266,12 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -254,13 +293,13 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -282,14 +321,14 @@ namespace Fw {
     }
 
     NATIVE_INT_TYPE SwAssert(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6) {
-        if (NULL == s_assertHook) {
-            I8 assertMsg[256];
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6) {
+        if (nullptr == s_assertHook) {
+            CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
             defaultReportAssert(
                 file,
                 lineNo,
@@ -317,8 +356,8 @@ extern "C" {
 }
 
 NATIVE_INT_TYPE CAssert0(FILE_NAME_ARG file, NATIVE_UINT_TYPE lineNo) {
-    if (NULL == Fw::s_assertHook) {
-        I8 assertMsg[256];
+    if (nullptr == Fw::s_assertHook) {
+        CHAR assertMsg[FW_ASSERT_DFL_MSG_LEN];
         Fw::defaultReportAssert(
             file,
             lineNo,

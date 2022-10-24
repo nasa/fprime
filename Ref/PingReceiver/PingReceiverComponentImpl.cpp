@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  PingReceiverImpl.cpp
 // \author tim
 // \brief  cpp file for PingReceiver component implementation class
@@ -7,20 +7,20 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Ref/PingReceiver/PingReceiverComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Ref {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
-  PingReceiverComponentImpl :: 
+  PingReceiverComponentImpl ::
     PingReceiverComponentImpl(
         const char *const compName
     ) : PingReceiverComponentBase(compName), m_inhibitPings(false), m_pingsRecvd(0)
@@ -32,13 +32,13 @@ namespace Ref {
     init(
         const NATIVE_INT_TYPE queueDepth,
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     PingReceiverComponentBase::init(queueDepth, instance);
   }
 
   PingReceiverComponentImpl ::
-    ~PingReceiverComponentImpl(void)
+    ~PingReceiverComponentImpl()
   {
 
   }
@@ -65,7 +65,7 @@ namespace Ref {
           U32 cmdSeq /*!< The command sequence number*/
       ) {
       this->m_inhibitPings = true;
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Ref

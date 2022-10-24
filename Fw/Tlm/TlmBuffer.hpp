@@ -12,7 +12,6 @@
 #define FW_TLM_BUFFER_HPP
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
@@ -30,11 +29,11 @@ namespace Fw {
             TlmBuffer();
             TlmBuffer(const TlmBuffer& other);
             virtual ~TlmBuffer();
-            const TlmBuffer& operator=(const TlmBuffer& other);
+            TlmBuffer& operator=(const TlmBuffer& other);
 
-            NATIVE_UINT_TYPE getBuffCapacity(void) const; // !< returns capacity, not current size, of buffer
-            U8* getBuffAddr(void);
-            const U8* getBuffAddr(void) const;
+            NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
+            U8* getBuffAddr();
+            const U8* getBuffAddr() const;
 
         PRIVATE:
             U8 m_bufferData[FW_TLM_BUFFER_MAX_SIZE]; // command argument buffer

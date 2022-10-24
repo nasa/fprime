@@ -8,18 +8,14 @@
 
 class ATester : public ExampleComponents::ExampleGTestBase {
 public:
-#if FW_OBJECT_NAMES == 1
-    ATester(void) : ExampleComponents::ExampleGTestBase("comp",10) {
-#else
-        ATester(void) : ExampleComponents::ExampleGTestBase(10)  {
-#endif
+    ATester() : ExampleComponents::ExampleGTestBase("comp",10) {
         }
 
         void from_exampleOutput_handler(
                 const NATIVE_INT_TYPE portNum, //!< The port number
                 I32 arg1, //!< A built-in type argument
                 AnotherExample::SomeEnum arg2, //!< The ENUM argument
-                AnotherExample::arg6String arg6
+                const AnotherExample::arg6String& arg6
         );
     };
 
@@ -27,7 +23,7 @@ public:
             const NATIVE_INT_TYPE portNum, //!< The port number
             I32 arg1, //!< A built-in type argument
             AnotherExample::SomeEnum arg2, //!< The ENUM argument
-            AnotherExample::arg6String arg6
+            const AnotherExample::arg6String& arg6
     ) {
 
     }

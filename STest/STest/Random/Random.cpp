@@ -1,16 +1,16 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Random.cpp
 // \author bocchino
 // \brief  Random number generation
 //
 // \copyright
-// Copyright (C) 2017 California Institute of Technology.
+// Copyright (C) 2017-2022 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
-#include <assert.h>
-#include <time.h>
+#include <cassert>
+#include <ctime>
 
 #include "STest/Random/Random.hpp"
 
@@ -24,9 +24,9 @@ namespace STest {
 
     namespace SeedValue {
 
-      U32 getFromTime(void) {
+      U32 getFromTime() {
         struct timeval tv;
-        (void) gettimeofday(&tv, NULL);
+        (void) gettimeofday(&tv, nullptr);
         return tv.tv_usec;
       }
 
@@ -36,7 +36,7 @@ namespace STest {
       ) {
         bool result = true;
         FILE *fp = fopen(fileName, "r");
-        if (fp != NULL) {
+        if (fp != nullptr) {
           result = (fscanf(fp, "%u", &value) == 1);
           (void) fclose(fp);
         }
@@ -56,10 +56,10 @@ namespace STest {
       ) {
         bool result = true;
         FILE *fp = fopen(fileName, "a");
-        if (fp != NULL) {
+        if (fp != nullptr) {
           int status = fprintf(
-              fp, 
-              "%u\n", 
+              fp,
+              "%u\n",
               seedValue
           );
           result = (status > 0);
@@ -73,17 +73,21 @@ namespace STest {
 
     }
 
-    void seed(void) {
+    void seed() {
       U32 seedValue = 0;
-      const bool seedValueOK = 
+      const bool seedValueOK =
         SeedValue::getFromFile("seed", seedValue);
-      if (!seedValueOK) {
+      if (seedValueOK) {
+        printf("[STest::Random] Read seed %u from file\n", seedValue);
+      }
+      else {
         seedValue = SeedValue::getFromTime();
+        printf("[STest::Random] Generated seed %u from system time\n", seedValue);
       }
       (void) SeedValue::appendToFile("seed-history", seedValue);
       SeedValue::set(seedValue);
     }
-     
+
     U32 startLength(
         const U32 start,
         const U32 length
@@ -105,7 +109,7 @@ namespace STest {
       return lower + offset;
     }
 
-    double inUnitInterval(void) {
+    double inUnitInterval() {
       const U32 randInt = bsd_random();
       const F64 ratio = static_cast<F64>(randInt) / MAX_VALUE;
       return ratio;

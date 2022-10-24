@@ -1,15 +1,8 @@
 import os
-import sys
-import time
 import platform
 import subprocess
+import time
 from enum import Enum
-
-filename = os.path.dirname(__file__)
-gdsName = os.path.join(filename, "../../../Gds/src")
-fprimeName = os.path.join(filename, "../../../Fw/Python/src")
-sys.path.insert(0, gdsName)
-sys.path.insert(0, fprimeName)
 
 from fprime_gds.common.pipeline.standard import StandardPipeline
 from fprime_gds.common.testing_fw import predicates
@@ -21,26 +14,37 @@ from fprime_gds.common.utils.event_severity import EventSeverity
 class TestRefAppClass(object):
     @classmethod
     def setup_class(cls):
-        cls.pipeline = StandardPipeline()
-        config = ConfigManager()
-        filename = os.path.dirname(__file__)
-        path = os.path.join(
-            filename,
-            "../../build-artifacts/{}/dict/RefTopologyAppDictionary.xml".format(
-                platform.system()
-            ),
-        )
-        cls.pipeline.setup(config, path, "/tmp")
-        cls.pipeline.connect("127.0.0.1", 50050)
-        logpath = os.path.join(filename, "./logs")
-        cls.api = IntegrationTestAPI(cls.pipeline, logpath)
-        cls.case_list = []  # TODO find a better way to do this.
-        cls.dictionary = path
+        try:
+            cls.pipeline = StandardPipeline()
+            config = ConfigManager()
+            filename = os.path.dirname(__file__)
+            path = os.path.join(
+                filename,
+                "../../build-artifacts/{}/dict/RefTopologyAppDictionary.xml".format(
+                    platform.system()
+                ),
+            )
+            logpath = os.path.join(filename, "./logs")
+            cls.pipeline.setup(config, path, "/tmp")
+            cls.api = IntegrationTestAPI(cls.pipeline, logpath)
+            cls.case_list = []  # TODO find a better way to do this.
+            cls.dictionary = path
+            cls.pipeline.connect("tcp://127.0.0.1:50050")
+        except Exception as exc:
+            print(f"[WARNING] Exception in setup: {exc}")
+            cls.teardown_class()
+            raise
 
     @classmethod
     def teardown_class(cls):
-        cls.pipeline.disconnect()
-        cls.api.teardown()
+        try:
+            cls.api.teardown()
+        except Exception as exc:
+            print(f"[WARNING] Exception in API teardown: {exc}")
+        try:
+            cls.pipeline.disconnect()
+        except Exception as exc:
+            print(f"[WARNING] Exception in pipeline teardown: {exc}")
 
     def setup_method(self, method):
         self.case_list.append(method.__name__)
@@ -53,8 +57,11 @@ class TestRefAppClass(object):
                 result.get_id(), result.get_str()
             )
             print(msg)
+        self.api.assert_telemetry(
+            "sendBuffComp.SendState", value="SEND_IDLE", timeout=3
+        )
 
-    def assert_command(self, command, args=[], max_delay=None, timeout=5):
+    def assert_command(self, command, args=[], max_delay=None, timeout=5, events=None):
         """
         This helper will send a command and verify that the command was dispatched and completed
         within the F' deployment. This helper can retroactively check that the delay between
@@ -72,9 +79,9 @@ class TestRefAppClass(object):
         self.api.log(
             "Starting assert_command helper for {}({})".format(command, cmd_id)
         )
-        events = []
-        events.append(self.api.get_event_pred("OpCodeDispatched", [cmd_id, None]))
-        events.append(self.api.get_event_pred("OpCodeCompleted", [cmd_id]))
+        dispatch = [self.api.get_event_pred("cmdDisp.OpCodeDispatched", [cmd_id, None])]
+        complete = [self.api.get_event_pred("cmdDisp.OpCodeCompleted", [cmd_id])]
+        events = dispatch + (events if events else []) + complete
         results = self.api.send_and_assert_event(command, args, events, timeout=timeout)
         if max_delay is not None:
             delay = results[1].get_time() - results[0].get_time()
@@ -111,7 +118,7 @@ class TestRefAppClass(object):
         try:
             self.api.send_command(
                 "eventLogger.SET_EVENT_FILTER",
-                ["FILTER_" + severity, "FILTER_" + enabled],
+                [severity, enabled],
             )
             return True
         except AssertionError:
@@ -134,10 +141,27 @@ class TestRefAppClass(object):
         self.assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
         assert self.api.get_command_test_history().size() == 2
 
+    def test_send_command_args(self):
+        for count, value in enumerate(["Test String 1", "Some other string"], 1):
+            events = [self.api.get_event_pred("cmdDisp.NoOpStringReceived", [value])]
+            self.assert_command(
+                "cmdDisp.CMD_NO_OP_STRING",
+                [
+                    value,
+                ],
+                max_delay=0.1,
+                events=events,
+            )
+            assert self.api.get_command_test_history().size() == count
+
     def test_send_and_assert_no_op(self):
         length = 100
         failed = 0
-        evr_seq = ["OpCodeDispatched", "NoOpReceived", "OpCodeCompleted"]
+        evr_seq = [
+            "cmdDisp.OpCodeDispatched",
+            "cmdDisp.NoOpReceived",
+            "cmdDisp.OpCodeCompleted",
+        ]
         any_reordered = False
         dropped = False
         for i in range(0, length):
@@ -187,7 +211,7 @@ class TestRefAppClass(object):
         length = 60
         count_pred = predicates.greater_than(length - 1)
         results = self.api.await_telemetry_count(
-            count_pred, "BD_Cycles", timeout=length
+            count_pred, "blockDrv.BD_Cycles", timeout=length
         )
         last = None
         reordered = False
@@ -228,7 +252,7 @@ class TestRefAppClass(object):
             "Expected >= {} updates".format(length - 1),
             True,
         )
-        self.api.assert_telemetry_count(0, "RgCycleSlips")
+        self.api.assert_telemetry_count(0, "rateGroup1Comp.RgCycleSlips")
         assert case, "Expected all checks to pass (ascending, reordering). See log."
 
     def test_active_logger_filter(self):
@@ -263,6 +287,18 @@ class TestRefAppClass(object):
         finally:
             self.set_default_filters()
 
+    def test_signal_generation(self):
+        self.assert_command("SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"])
+        # First telemetry item should fill only the first slot of the history
+        history = [0, 0, 0, 5]
+        pair_history = [{"time": 0, "value": value} for value in history]
+        info = {"type": "SQUARE", "history": history, "pairHistory": pair_history}
+        self.assert_command("SG4.SignalGen_Toggle")
+        self.api.assert_telemetry("SG4.History", history, timeout=6)
+        self.api.assert_telemetry("SG4.PairHistory", pair_history, timeout=1)
+        self.api.assert_telemetry("SG4.Info", info, timeout=1)
+        self.assert_command("SG4.SignalGen_Toggle")
+
     def test_seqgen(self):
         """Tests the seqgen code"""
         sequence = os.path.join(os.path.dirname(__file__), "test_seq.seq")
@@ -279,5 +315,5 @@ class TestRefAppClass(object):
             == 0
         ), "Failed to run fprime-seqgen"
         self.assert_command(
-            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "SEQ_BLOCK"], max_delay=5
+            "cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
         )

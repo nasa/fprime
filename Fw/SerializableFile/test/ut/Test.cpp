@@ -2,9 +2,9 @@
 // Main.cpp 
 // ----------------------------------------------------------------------
 
-#include <string.h>
-#include <stdio.h>
-#include <Fw/Types/BasicTypes.hpp>
+#include <cstring>
+#include <cstdio>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Fw/SerializableFile/SerializableFile.hpp>

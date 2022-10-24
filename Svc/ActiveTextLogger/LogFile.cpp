@@ -8,8 +8,9 @@
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
 #include <limits>
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
+#include <Fw/Types/StringUtils.hpp>
 
 
 namespace Svc {
@@ -39,14 +40,14 @@ namespace Svc {
     bool LogFile::write_to_log(const char *const buf, const U32 size)
     {
 
-        FW_ASSERT(buf != NULL);
+        FW_ASSERT(buf != nullptr);
 
         bool status = true;
 
         // Print to file if there is one, and given a valid size:
         if (this->m_openFile && size > 0) {
 
-            // Make sure we wont exceed the maximum size:
+            // Make sure we won't exceed the maximum size:
             // Note: second condition in if statement is true if there is overflow
             // in the addition below
             U32 projectedSize = this->m_currentFileSize + size;
@@ -57,7 +58,7 @@ namespace Svc {
                 this->m_openFile = false;
                 this->m_file.close();
             }
-            // Wont exceed max size, so write to file:
+            // Won't exceed max size, so write to file:
             else {
 
                 NATIVE_INT_TYPE writeSize = static_cast<NATIVE_INT_TYPE>(size);
@@ -79,7 +80,7 @@ namespace Svc {
 
     bool LogFile::set_log_file(const char* fileName, const U32 maxSize, const U32 maxBackups)
     {
-        FW_ASSERT(fileName != NULL);
+        FW_ASSERT(fileName != nullptr);
 
         // If there is already a previously open file then close it:
         if (this->m_openFile) {
@@ -88,7 +89,7 @@ namespace Svc {
         }
 
         // If file name is too large, return failure:
-        U32 fileNameSize = strnlen(fileName, Fw::String::STRING_SIZE);
+        U32 fileNameSize = Fw::StringUtils::string_length(fileName, Fw::String::STRING_SIZE);
         if (fileNameSize == Fw::String::STRING_SIZE) {
             return false;
         }
@@ -118,7 +119,7 @@ namespace Svc {
             }
 
             NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::String::STRING_SIZE,
-                                            "%s%d",fileName,suffix);
+                                            "%s%" PRIu32,fileName,suffix);
 
             // If there was error, then just fail:
             if (stat <= 0) {

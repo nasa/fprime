@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  ComSplitter.hpp
 // \author gcgandhi
 // \brief  cpp file for ComSplitter test harness implementation class
@@ -7,7 +7,7 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -17,35 +17,30 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       ComSplitterGTestBase("Tester", MAX_HISTORY_SIZE),
       component("ComSplitter")
-#else
-      ComSplitterGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-  test_nominal(void)
+  test_nominal()
   {
       U8 d[4] = {0xde,0xad,0xbe,0xef};
       for(U8 i = 0; i < 3; i++){
@@ -96,11 +91,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // comIn
@@ -113,7 +108,7 @@ namespace Svc {
     // comOut
     for (NATIVE_INT_TYPE i = 0; i < 3; ++i) {
       this->component.set_comOut_OutputPort(
-          i, 
+          i,
           this->get_from_comOut(i)
       );
     }
@@ -121,7 +116,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

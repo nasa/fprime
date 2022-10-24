@@ -14,16 +14,12 @@ namespace ExampleComponents {
 
     class ExampleComponentImpl: public ExampleComponentBase {
         public:
-#if FW_OBJECT_NAMES == 1
             ExampleComponentImpl(const char* name);
-#else
-            ExampleComponentImpl();
-#endif
             void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance = 0);
             virtual ~ExampleComponentImpl();
         protected:
         private:
-            void exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, ANameSpace::mytype arg2, U8 arg3, Example3::ExampleSerializable arg4, AnotherExample::SomeEnum arg5);
+            void exampleInput_handler(NATIVE_INT_TYPE portNum, I32 arg1, const ANameSpace::mytype& arg2, U8 arg3, const Example3::ExampleSerializable& arg4, AnotherExample::SomeEnum arg5);
             void TEST_CMD_1_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, ExampleComponentBase::CmdEnum arg2, const Fw::CmdStringArg& arg3);
             void TEST_CMD_2_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I32 arg1, F32 arg2);
 

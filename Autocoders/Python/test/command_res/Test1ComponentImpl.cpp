@@ -12,7 +12,7 @@
 
 
 #include <Autocoders/Python/test/command_res/Test1ComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Cmd {
 
@@ -21,14 +21,10 @@ namespace Cmd {
   // ----------------------------------------------------------------------
 
   Test1ComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     Test1ComponentImpl(
         const char *const compName
     ) :
       Test1ComponentBase(compName)
-#else
-    Test1Impl(void)
-#endif
   {
 
   }
@@ -43,7 +39,7 @@ namespace Cmd {
   }
 
   Test1ComponentImpl ::
-    ~Test1ComponentImpl(void)
+    ~Test1ComponentImpl()
   {
 
   }
@@ -76,7 +72,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
   void Test1ComponentImpl ::
@@ -88,7 +84,7 @@ namespace Cmd {
         U8 arg3
     )
   {
-      this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+      this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
   }
 
 } // end namespace Cmd

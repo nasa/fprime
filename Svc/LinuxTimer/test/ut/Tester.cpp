@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  LinuxTimer.hpp
 // \author tim
 // \brief  cpp file for LinuxTimer test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -18,18 +18,13 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxTimer")
-#else
-      LinuxTimerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_numCalls(0)
   {
     this->initComponents();
@@ -37,17 +32,17 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-      runCycles(void)
+      runCycles()
   {
     this->m_numCalls = 5;
     this->component.startTimer(1000);
@@ -71,16 +66,16 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // CycleOut
     this->component.set_CycleOut_OutputPort(
-        0, 
+        0,
         this->get_from_CycleOut(0)
     );
 
@@ -90,7 +85,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

@@ -19,7 +19,7 @@
 # project definition.
 ##
 project(RPI C CXX)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.13)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." CACHE PATH "Root path of F prime project" FORCE)
 
@@ -55,3 +55,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RpiDemo/")
 
 # Add Topology subdirectory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
+
+set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
+set(MOD_DEPS ${PROJECT_NAME}/Top)
+
+register_fprime_deployment()

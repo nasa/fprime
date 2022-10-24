@@ -6,7 +6,7 @@
 #ifndef _Log_hpp_
 #define _Log_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
 
 namespace Os {
@@ -26,11 +26,11 @@ namespace Os {
              * \param a1: first argument. (Default: 0)
              * \param a2: second argument. (Default: 0)
              * \param a3: third argument. (Default: 0)
-             * \param a4: forth argument. (Default: 0)
+             * \param a4: fourth argument. (Default: 0)
              * \param a5: fifth argument. (Default: 0)
              * \param a6: sixth argument. (Default: 0)
              * \param a7: seventh argument. (Default: 0)
-             * \param a8: eight argument. (Default: 0)
+             * \param a8: eighth argument. (Default: 0)
              * \param a9: ninth argument. (Default: 0)
              */
             void log(

@@ -13,29 +13,25 @@
 #include "gtest/gtest.h"
 
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 using namespace std;
 
-// Component instance pointers
-Example::ExampleEnumImpl* inst1 = 0;
-Example::ExampleEnumImpl* inst2 = 0;
+// Instantiate the inst1 and inst2 components
+Example::ExampleEnumImpl inst1("inst1");
+Example::ExampleEnumImpl inst2("inst2");
 
-void constructArchitecture(void) {
-
-    // Instantiate the inst1 and inst2
-    inst1   = new Example::ExampleEnumImpl("inst1");
-    inst2   = new Example::ExampleEnumImpl("inst2");
+void constructArchitecture() {
 
     // Connect inst1 to inst2
-    inst1->set_EnumOut_OutputPort(0, inst2->get_EnumIn_InputPort(0));
+    inst1.set_EnumOut_OutputPort(0, inst2.get_EnumIn_InputPort(0));
 
     // Connect inst2 to inst1
-    inst2->set_EnumOut_OutputPort(0, inst1->get_EnumIn_InputPort(0));
+    inst2.set_EnumOut_OutputPort(0, inst1.get_EnumIn_InputPort(0));
 
     // Instantiate components
-    inst1->init(100);
-    inst2->init(100);
+    inst1.init(100);
+    inst2.init(100);
 
 }
 
@@ -134,12 +130,12 @@ void checkAssertionFailure(
   Test::UnitTestAssert::File file = Test::UnitTestAssert::fileInit;
   NATIVE_UINT_TYPE lineNo = 0;
   NATIVE_UINT_TYPE numArgs = 0;
-  AssertArg arg1 = 0;
-  AssertArg arg2 = 0;
-  AssertArg arg3 = 0;
-  AssertArg arg4 = 0;
-  AssertArg arg5 = 0;
-  AssertArg arg6 = 0;
+  FwAssertArgType arg1 = 0;
+  FwAssertArgType arg2 = 0;
+  FwAssertArgType arg3 = 0;
+  FwAssertArgType arg4 = 0;
+  FwAssertArgType arg5 = 0;
+  FwAssertArgType arg6 = 0;
   uta.retrieveAssert(file, lineNo, numArgs, arg1, arg2, arg3, arg4, arg5, arg6);
   ASSERT_EQ(expectedLineNumber, lineNo);
   ASSERT_EQ(1U, numArgs);
@@ -151,7 +147,7 @@ TEST(EnumXML, InvalidNegativeConstant) {
   Example::Enum1 enum1 = getEnum();
   // Get a valid negative constant
   const I32 negativeConstant = getNegativeConstant();
-  const U32 expectedLineNumber = 65;
+  const U32 expectedLineNumber = 61;
   // Turn it into a U32
   const U32 expectedArg1 = negativeConstant;
   // As a U32, the constant is not valid
@@ -167,7 +163,7 @@ TEST(EnumXML, InvalidConstant) {
   const I32 invalidConstant = 42;
   // This should cause an assertion failure
   enum1 = invalidConstant;
-  const U32 expectedLineNumber = 58;
+  const U32 expectedLineNumber = 54;
   const U32 expectedArg1 = invalidConstant;
   checkAssertionFailure(uta, expectedLineNumber, expectedArg1);
 }
@@ -273,16 +269,16 @@ TEST(EnumXML, OK) {
 
     // Invoke ports to test enum usage
     cout << "Invoking inst1..." << endl;
-    inst1->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
-    inst1->doDispatch();
-    inst1->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
-    inst1->doDispatch();
+    inst1.get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
+    inst1.doDispatch();
+    inst1.get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
+    inst1.doDispatch();
 
     cout << "Invoking inst2..." << endl;
-    inst2->get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
-    inst2->doDispatch();
-    inst2->get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
-    inst2->doDispatch();
+    inst2.get_ExEnumIn_InputPort(0)->invoke(enum1, serial1);
+    inst2.doDispatch();
+    inst2.get_ExEnumIn_InputPort(0)->invoke(enum2, serial1);
+    inst2.doDispatch();
 
     cout << "Invoked ports" << endl;
 }
@@ -294,12 +290,6 @@ int main(int argc, char* argv[]) {
     constructArchitecture();
 
     int status = RUN_ALL_TESTS();
-
-    cout << "Deleting components..." << endl;
-    delete inst1;
-    delete inst2;
-
-    cout << "Completed..." << endl;
 
     return status;
 }

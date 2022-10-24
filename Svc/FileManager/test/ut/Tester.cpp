@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  Tester.cpp
 // \author bocchino
 // \brief  cpp file for FileManager test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include <fstream>
 
@@ -23,35 +23,30 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       FileManagerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("FileManager")
-#else
-      FileManagerGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->connectPorts();
     this->initComponents();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
-    createDirectorySucceed(void) 
+    createDirectorySucceed()
   {
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -82,7 +77,7 @@ namespace Svc {
   }
 
   void Tester ::
-    createDirectoryFail(void) 
+    createDirectoryFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Create test_dir
@@ -101,15 +96,15 @@ namespace Svc {
     );
     ASSERT_EVENTS_SIZE(2);  // Starting event + Error
     ASSERT_EVENTS_DirectoryCreateError(
-        0, 
-        "test_dir", 
+        0,
+        "test_dir",
         Os::FileSystem::ALREADY_EXISTS
     );
 
   }
 
   void Tester ::
-    moveFileSucceed(void) 
+    moveFileSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1 and file2, if they exist
@@ -143,7 +138,7 @@ namespace Svc {
   }
 
   void Tester ::
-    moveFileFail(void) 
+    moveFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove file1, if it exists
@@ -170,7 +165,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeDirectorySucceed(void) 
+    removeDirectorySucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
@@ -199,7 +194,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeDirectoryFail(void) 
+    removeDirectoryFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir, if it exists
@@ -225,7 +220,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeFileSucceed(void) 
+    removeFileSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
@@ -254,7 +249,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeFileFail(void) 
+    removeFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
@@ -280,7 +275,7 @@ namespace Svc {
   }
 
   void Tester ::
-    shellCommandSucceed(void) 
+    shellCommandSucceed()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
@@ -309,7 +304,7 @@ namespace Svc {
   }
 
   void Tester ::
-    shellCommandFail(void) 
+    shellCommandFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_file, if it exists
@@ -339,7 +334,7 @@ namespace Svc {
   }
 
   void Tester ::
-    appendFileSucceed_newFile(void) 
+    appendFileSucceed_newFile()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -368,7 +363,7 @@ namespace Svc {
   }
 
   void Tester ::
-    appendFileSucceed_existingFile(void) 
+    appendFileSucceed_existingFile()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -399,7 +394,7 @@ namespace Svc {
   }
 
   void Tester ::
-    appendFileFail(void) 
+    appendFileFail()
   {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -425,11 +420,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // cmdIn
@@ -440,44 +435,44 @@ namespace Svc {
 
     // timeCaller
     this->component.set_timeCaller_OutputPort(
-        0, 
+        0,
         this->get_from_timeCaller(0)
     );
 
     // tlmOut
     this->component.set_tlmOut_OutputPort(
-        0, 
+        0,
         this->get_from_tlmOut(0)
     );
 
     // cmdResponseOut
     this->component.set_cmdResponseOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdResponseOut(0)
     );
 
     // eventOut
     this->component.set_eventOut_OutputPort(
-        0, 
+        0,
         this->get_from_eventOut(0)
     );
 
     // cmdRegOut
     this->component.set_cmdRegOut_OutputPort(
-        0, 
+        0,
         this->get_from_cmdRegOut(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -494,7 +489,7 @@ namespace Svc {
   }
 
   void Tester ::
-    createDirectory(const char *const dirName) 
+    createDirectory(const char *const dirName)
   {
     Fw::CmdStringArg cmdStringDir(dirName);
     this->sendCmd_CreateDirectory(
@@ -509,7 +504,7 @@ namespace Svc {
     moveFile(
         const char *const sourceFileName,
         const char *const destFileName
-    ) 
+    )
   {
     Fw::CmdStringArg cmdStringSource(sourceFileName);
     Fw::CmdStringArg cmdStringDest(destFileName);
@@ -523,7 +518,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeDirectory(const char *const dirName) 
+    removeDirectory(const char *const dirName)
   {
     Fw::CmdStringArg cmdStringDir(dirName);
     this->sendCmd_RemoveDirectory(
@@ -535,7 +530,7 @@ namespace Svc {
   }
 
   void Tester ::
-    removeFile(const char *const fileName) 
+    removeFile(const char *const fileName)
   {
     Fw::CmdStringArg cmdStringFile(fileName);
     this->sendCmd_RemoveFile(
@@ -550,7 +545,7 @@ namespace Svc {
     shellCommand(
         const char *const command,
         const char *const logFileName
-    ) 
+    )
   {
     Fw::CmdStringArg cmdStringCommand(command);
     Fw::CmdStringArg cmdStringLogFile(logFileName);
@@ -588,10 +583,10 @@ namespace Svc {
   {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(
-        0, 
+        0,
         opcode,
         CMD_SEQ,
-        Fw::COMMAND_OK
+        Fw::CmdResponse::OK
     );
 
     ASSERT_EVENTS_SIZE(eventSize);
@@ -623,10 +618,10 @@ namespace Svc {
   {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(
-        0, 
+        0,
         opcode,
         CMD_SEQ,
-        Fw::COMMAND_EXECUTION_ERROR
+        Fw::CmdResponse::EXECUTION_ERROR
     );
 
     ASSERT_EVENTS_SIZE(2);  // Starting event + Error

@@ -6,13 +6,9 @@
  */
 
 #include <Autocoders/Python/test/command_multi_inst/TestCommand1Impl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestCommand1Impl::TestCommand1Impl(const char* name) : Test1ComponentBase(name)
-#else
-TestCommand1Impl::TestCommand1Impl()
-#endif
 {
     // TODO Auto-generated constructor stub
 
@@ -39,7 +35,7 @@ void TestCommand1Impl::TEST_CMD_1_cmdHandler(
         SomeEnum arg4 /*!< The ENUM argument*/
     ) {
 	printf("Got command args: %d %f %d %d\n", arg1, arg2, arg3, arg4 );
-	this->cmdResponse_out(opCode,cmdSeq,Fw::COMMAND_OK);
+	this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
 }
 
 void TestCommand1Impl::TEST_CMD_2_cmdHandler(

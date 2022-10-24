@@ -6,13 +6,9 @@
  */
 
 #include <Autocoders/Python/test/event_throttle/TestLogImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestLogImpl::TestLogImpl(const char* name) : Somewhere::TestLogComponentBase(name)
-#else
-TestLogImpl::TestLogImpl() : Somewhere::TestLogComponentBase()
-#endif
 {
 }
 
@@ -33,7 +29,7 @@ void TestLogImpl::sendEvent(I32 arg1, F32 arg2, U8 arg3) {
     this->log_DIAGNOSTIC_SomeEvent(arg1,arg2,arg3);
 }
 
-void TestLogImpl::resetEvent(void) {
+void TestLogImpl::resetEvent() {
     this->log_DIAGNOSTIC_SomeEvent_ThrottleClear();
 }
 

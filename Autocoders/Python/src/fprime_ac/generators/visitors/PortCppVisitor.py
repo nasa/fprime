@@ -27,17 +27,19 @@ from fprime_ac.generators.visitors import AbstractVisitor
 #
 # from Cheetah import Template
 # from fprime_ac.utils import version
-from fprime_ac.utils import ConfigManager
+from fprime_ac.utils import ConfigManager, TypesList
 
 #
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.port import includes1PortCpp
-    from fprime_ac.generators.templates.port import namespacePortCpp
-    from fprime_ac.generators.templates.port import publicPortCpp
-    from fprime_ac.generators.templates.port import privatePortCpp
-    from fprime_ac.generators.templates.port import finishPortCpp
+    from fprime_ac.generators.templates.port import (
+        finishPortCpp,
+        includes1PortCpp,
+        namespacePortCpp,
+        privatePortCpp,
+        publicPortCpp,
+    )
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -83,11 +85,13 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         arg_str = ""
         for arg in args:
             t = arg.get_type()
+            isEnum = False
             #
             # Grab enum type here...
             if isinstance(t, tuple):
                 if t[0][0].upper() == "ENUM":
                     t = t[0][1]
+                    isEnum = True
                 else:
                     PRINT.info(
                         "ERROR: Ill formed enumeration type...(name: %s, type: %s"
@@ -108,8 +112,10 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
                 t = t + " *"
             elif arg.get_modifier() == "reference":
                 t = t + " &"
-            else:
+            elif TypesList.isPrimitiveType(t) or isEnum:
                 t = t + " "
+            else:
+                t = "const " + t + " &"
 
             arg_str += "{}{}".format(t, arg.get_name())
             arg_str += ", "
@@ -133,7 +139,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         """
         Return a list of port argument tuples
         """
-        arg_list = list()
+        arg_list = []
 
         for arg in obj.get_args():
             n = arg.get_name()
@@ -164,8 +170,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         if self.__config.get("port", "XMLDefaultFileName") == "True":
             filename = obj.get_type() + self.__config.get("port", "PortCpp")
             PRINT.info(
-                "Generating code filename: %s, using XML namespace and name attributes..."
-                % filename
+                f"Generating code filename: {filename}, using XML namespace and name attributes..."
             )
         else:
             xml_file = obj.get_xml_filename()
@@ -190,8 +195,6 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         # Open file for writing here...
         DEBUG.info("Open file: %s" % filename)
         self.__fp = open(filename, "w")
-        if self.__fp is None:
-            raise Exception("Could not open %s file.") % filename
         DEBUG.info("Completed")
 
     def startSourceFilesVisit(self, obj):
@@ -304,7 +307,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c = privatePortCpp.privatePortCpp()
         c.name = obj.get_type()
         tmp = [(a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()]
-        # Make a enum marker list here for template to use...
+        # Make an enum marker list here for template to use...
         c.enum_marker = []
         for i in tmp:
             if isinstance(i[1], tuple):
@@ -352,7 +355,7 @@ class PortCppVisitor(AbstractVisitor.AbstractVisitor):
         c.args = [
             (a.get_name(), a.get_type(), a.get_modifier()) for a in obj.get_args()
         ]
-        # Make a enum marker list here for template to use...
+        # Make an enum marker list here for template to use...
         c.enum_marker = []
         for i in c.args:
             if isinstance(i[1], tuple):

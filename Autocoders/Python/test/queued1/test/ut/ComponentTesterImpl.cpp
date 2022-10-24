@@ -9,22 +9,18 @@
 
 namespace SvcTest {
 
-#if FW_OBJECT_NAMES == 1
     ComponentTesterImpl::ComponentTesterImpl(const char* compName) : TestTesterComponentBase(compName) {
-#else
-    ComponentTesterImpl::ComponentTesterImpl() {
-#endif
 
     }
 
     ComponentTesterImpl::~ComponentTesterImpl() {
     }
 
-    void ComponentTesterImpl::init(void) {
+    void ComponentTesterImpl::init() {
         TestTesterComponentBase::init();
     }
 
-    void ComponentTesterImpl::runTest(void) {
+    void ComponentTesterImpl::runTest() {
         printf("Invoking aport2\n");
         this->aport2_out(0, 1, 2.3, true);
         printf("Invoking aport\n");

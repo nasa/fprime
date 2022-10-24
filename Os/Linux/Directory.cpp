@@ -1,5 +1,4 @@
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Os/Directory.hpp>
 #include <Fw/Types/Assert.hpp>
 
@@ -10,7 +9,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <string.h>
+#include <cstring>
 
 namespace Os {
 
@@ -27,7 +26,7 @@ namespace Os {
 
         DIR* dir = ::opendir(dirName);
 
-        if (dir == NULL) {
+        if (dir == nullptr) {
             this->m_lastError = errno;
             switch (errno) {
                 case ENOENT:
@@ -60,7 +59,7 @@ namespace Os {
         Status stat = OP_OK;
         DIR* dir = reinterpret_cast<DIR*>(this->m_dir);
 
-        // no errors defined 
+        // no errors defined
         ::rewinddir(dir);
 
         return stat;
@@ -88,8 +87,8 @@ namespace Os {
         // Set errno to 0 so we know why we exited readdir
         errno = 0;
 
-        struct dirent *direntData = NULL;
-        while ((direntData = ::readdir(dir)) != NULL) {
+        struct dirent *direntData = nullptr;
+        while ((direntData = ::readdir(dir)) != nullptr) {
             // Skip hidden files
             if (direntData->d_name[0] != '.') {
                 strncpy(fileNameBuffer, direntData->d_name, bufSize);
@@ -98,7 +97,7 @@ namespace Os {
             }
         }
 
-        if (direntData == NULL) {
+        if (direntData == nullptr) {
             // loop ended because readdir failed, did it error or did we run out of files?
             if(errno != 0) {
                 // Only error from readdir is EBADF
@@ -113,11 +112,11 @@ namespace Os {
         return stat;
     }
 
-    bool Directory::isOpen(void) {
+    bool Directory::isOpen() {
         return this->m_dir > 0;
     }
 
-    void Directory::close(void) {
+    void Directory::close() {
         if (this->isOpen()) {
             DIR* dir = reinterpret_cast<DIR*>(this->m_dir);
             (void)::closedir(dir);
@@ -125,11 +124,11 @@ namespace Os {
         this->m_dir = 0;
     }
 
-    NATIVE_INT_TYPE Directory::getLastError(void) {
+    NATIVE_INT_TYPE Directory::getLastError() {
         return this->m_lastError;
     }
 
-    const char* Directory::getLastErrorString(void) {
+    const char* Directory::getLastErrorString() {
         return strerror(this->m_lastError);
     }
 

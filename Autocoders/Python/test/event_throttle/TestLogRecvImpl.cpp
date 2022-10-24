@@ -6,14 +6,9 @@
  */
 
 #include <Autocoders/Python/test/event_throttle/TestLogRecvImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestLogRecvImpl::TestLogRecvImpl(const char* name) : LogTextImpl(name)
-#else
-TestLogRecvImpl::TestLogRecvImpl() :
-    LogTextImpl()
-#endif
 {
 }
 
@@ -35,7 +30,7 @@ void TestLogRecvImpl::logRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType
 
 }
 
-void TestLogRecvImpl::init(void) {
+void TestLogRecvImpl::init() {
     LogTextImpl::init();
 }
 

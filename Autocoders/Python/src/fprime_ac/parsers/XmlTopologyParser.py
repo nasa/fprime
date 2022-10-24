@@ -19,8 +19,6 @@
 import logging
 import os
 
-from lxml import etree, isoschematron
-
 from fprime_ac.parsers import XmlComponentParser
 from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
@@ -32,6 +30,7 @@ from fprime_ac.utils.exceptions import (
     FprimeRngXmlValidationException,
     FprimeXmlException,
 )
+from lxml import etree, isoschematron
 
 # from builtins import file
 #
@@ -56,7 +55,7 @@ class XmlTopologyParser:
         self.__name = None
         self.__deployment = None
         self.__comment = ""
-        if os.path.isfile(xml_file) == False:
+        if not os.path.isfile(xml_file):
             stri = "ERROR: Could not find specified XML file %s." % xml_file
             raise OSError(stri)
 
@@ -93,7 +92,7 @@ class XmlTopologyParser:
 
         for e in element_tree.iter():
             c = None
-            if e.tag == "assembly" or e.tag == "deployment":
+            if e.tag in ("assembly", "deployment"):
                 self.__is_topology_xml = True
                 if "namespace" in e.attrib:
                     self.__namespace = e.attrib["namespace"]
@@ -122,7 +121,7 @@ class XmlTopologyParser:
                         self.__prepend_instance_name = True
                 #
                 # The deployment attribute added so that instance
-                # dictionaries are install in the correct place.
+                # dictionaries are installed in the correct place.
                 #
                 if "deployment" in e.attrib:
                     self.__deployment = e.attrib["deployment"]
@@ -216,7 +215,7 @@ class XmlTopologyParser:
                     xml_file, str(bre)
                 )
                 raise OSError(stri)
-            if os.path.exists(xml_file) == True:
+            if os.path.exists(xml_file):
                 PRINT.info("Found component XML file: %s" % xml_file)
                 xml_parsed = XmlComponentParser.XmlComponentParser(xml_file)
                 for inst in self.get_instances():
@@ -516,28 +515,3 @@ class Instance:
 
     def get_dict_short_name(self):
         return self.__dict_short_name
-
-
-if __name__ == "__main__":
-
-    xmlfile = "../../test/app1a/DuckAppAi.xml"
-
-    print("Topology XML parse test (%s)" % xmlfile)
-
-    xml_topology_parser = XmlTopologyParser(xmlfile)
-    instances = xml_topology_parser.get_instances()
-    connections = xml_topology_parser.get_connections()
-
-    print("Topology XML: %s" % xml_topology_parser.is_topology())
-    print("Namespace: %s" % xml_topology_parser.get_namespace())
-    print("Comment: %s" % xml_topology_parser.get_comment())
-
-    print("Instances:")
-    for x in instances:
-        print("Name: {}, Type: {}".format(x.get_name(), x.get_type()))
-    print("Connections:")
-    for c in connections:
-        print("Name: {}, Type: {}".format(c.get_name(), c.get_type()))
-        print("Source: Component is %s, Port is %s, Port Type is %s" % (c.get_source()))
-        print("Target: Component is %s, Port is %s, Port Type is %s" % (c.get_target()))
-        print("Comment: %s" % c.get_comment())

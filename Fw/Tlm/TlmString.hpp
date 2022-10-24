@@ -1,9 +1,8 @@
 #ifndef FW_TLM_STRING_TYPE_HPP
 #define FW_TLM_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/StringType.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
 namespace Fw {
@@ -16,31 +15,25 @@ namespace Fw {
                 SERIALIZED_SIZE = FW_TLM_STRING_MAX_SIZE + sizeof(FwBuffSizeType) // size of buffer + storage of size word
             };
 
-            TlmString(const char* src);
-            TlmString(const StringBase& src);
-            TlmString(const TlmString& src);
-            TlmString(void);
-            ~TlmString(void);
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE length(void) const;
-            void setMaxSerialize(NATIVE_UINT_TYPE size); // limit amount serialized
+            TlmString();
+            TlmString(const TlmString& src); //!< TlmString string constructor
+            TlmString(const StringBase& src); //!< other string constructor
+            TlmString(const char* src); //!< char* source constructor
+            TlmString& operator=(const TlmString& other); //!< assignment operator
+            TlmString& operator=(const StringBase& other); //!< other string assignment operator
+            TlmString& operator=(const char* other); //!< char* assignment operator
+            ~TlmString();
 
-            const TlmString& operator=(const TlmString& other); //!< equal operator for other strings
+            const char* toChar() const override;
+            NATIVE_UINT_TYPE getCapacity() const override;
 
-            SerializeStatus serialize(SerializeBufferBase& buffer) const;
-            SerializeStatus deserialize(SerializeBufferBase& buffer);
+            SerializeStatus serialize(SerializeBufferBase& buffer) const override; //!< serialization function
+            SerializeStatus serialize(SerializeBufferBase& buffer, NATIVE_UINT_TYPE maxLen) const override; //!< serialization function
+            SerializeStatus deserialize(SerializeBufferBase& buffer) override; //!< deserialization function
 
-#if FW_SERIALIZABLE_TO_STRING
-            void toString(StringBase& text) const;
-#endif
-        PRIVATE:
-            NATIVE_UINT_TYPE getCapacity(void) const ;
-            void terminate(NATIVE_UINT_TYPE size); //!< terminate the string
-
+        private:
             char m_buf[FW_TLM_STRING_MAX_SIZE];
-            NATIVE_UINT_TYPE m_maxSer;
     };
-
 }
 
 #endif

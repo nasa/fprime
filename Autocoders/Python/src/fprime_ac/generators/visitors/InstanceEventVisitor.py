@@ -36,8 +36,7 @@ from fprime_ac.utils import ConfigManager, DictTypeConverter
 # Import precompiled templates here
 #
 try:
-    from fprime_ac.generators.templates.events import EventHeader
-    from fprime_ac.generators.templates.events import EventBody
+    from fprime_ac.generators.templates.events import EventBody, EventHeader
 except ImportError:
     print("ERROR: must generate python templates first.")
     sys.exit(-1)
@@ -128,8 +127,6 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             pyfile = "{}/{}.py".format(output_dir, fname)
             DEBUG.info("Open file: {}".format(pyfile))
             fd = open(pyfile, "w")
-            if fd is None:
-                raise Exception("Could not open {} file.".format(pyfile))
             DEBUG.info("Completed {} open".format(pyfile))
             self.__fp[fname] = fd
 
@@ -180,7 +177,7 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.name = fname
 
             if len(obj.get_ids()) > 1:
-                raise Exception(
+                raise ValueError(
                     "There is more than one event id when creating dictionaries. Check xml of {} or see if multiple explicit IDs exist in the AcConstants.ini file".format(
                         fname
                     )
@@ -195,11 +192,9 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
             c.description = obj.get_comment()
             c.component = obj.get_component_name()
 
-            c.arglist = list()
-            c.ser_import_list = list()
-            arg_num = 0
-
-            for arg_obj in obj.get_args():
+            c.arglist = []
+            c.ser_import_list = []
+            for arg_num, arg_obj in enumerate(obj.get_args()):
                 n = arg_obj.get_name()
                 t = arg_obj.get_type()
                 s = arg_obj.get_size()
@@ -231,6 +226,5 @@ class InstanceEventVisitor(AbstractVisitor.AbstractVisitor):
                         c.format_string = format_string
 
                 c.arglist.append((n, d, type_string))
-                arg_num += 1
             self._writeTmpl(c, self.__fp[fname], "eventBodyVisit")
             self.__fp[fname].close()

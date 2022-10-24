@@ -7,7 +7,11 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PingPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Ping.fpp"
+)
+
+set(MOD_DEPS
+    Fw/Port    
 )
 
 register_fprime_module()

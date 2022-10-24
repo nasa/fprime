@@ -147,8 +147,6 @@ namespace Svc {
 
       TlmEntry* findBucket(FwChanIdType id);
 
-      NATIVE_UINT_TYPE m_runCount; //!< for testing
-
       NATIVE_UINT_TYPE m_startLevel; //!< initial level for sending packets
       NATIVE_UINT_TYPE m_maxLevel; //!< maximum level in all packets
 

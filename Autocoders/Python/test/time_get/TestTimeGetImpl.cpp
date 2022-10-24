@@ -5,7 +5,7 @@
  *      Author: tcanham
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include "TestTimeGetImpl.hpp"
 
 TimeGetTesterImpl::TimeGetTesterImpl(const char* name) : TimeGet::TimeGetTesterComponentBase(name)
@@ -15,7 +15,7 @@ TimeGetTesterImpl::TimeGetTesterImpl(const char* name) : TimeGet::TimeGetTesterC
 TimeGetTesterImpl::~TimeGetTesterImpl() {
 }
 
-void TimeGetTesterImpl::init(void) {
+void TimeGetTesterImpl::init() {
     TimeGet::TimeGetTesterComponentBase::init();
 }
 

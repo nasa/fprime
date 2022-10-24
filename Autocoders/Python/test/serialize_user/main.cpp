@@ -16,15 +16,10 @@ int main(int argc, char* argv[]) {
     objReg.dump();
 #endif
 
-    ExampleComponentImpl comp
-#if FW_OBJECT_NAMES
-    ("ExComp");
-#else
-    ;
-#endif
+    ExampleComponentImpl comp("ExComp");
 
     comp.init(10);
-    comp.start(10, 10 * 1024, 100);
+    comp.start();
 
     AnotherExample::InputExamplePort* port = comp.get_exampleInput_InputPort(0);
 

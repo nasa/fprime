@@ -6,14 +6,9 @@
  */
 
 #include <Autocoders/Python/test/time_tester/TestTimeImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestTimeImpl::TestTimeImpl(const char* name) : Time::TimeTesterComponentBase(name)
-#else
-TestTimeImpl::TestTimeImpl() :
-Time::TimeTesterComponentBase()
-#endif
 {
 }
 
@@ -27,7 +22,7 @@ void TestTimeImpl::timeGetPort_handler(
     time = this->m_time;
 }
 
-void TestTimeImpl::init(void) {
+void TestTimeImpl::init() {
     Time::TimeTesterComponentBase::init();
 }
 

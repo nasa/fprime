@@ -6,7 +6,7 @@
 #
 ####
 set(SOURCE_FILES
-	"${CMAKE_CURRENT_LIST_DIR}/SpiReadWritePortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/SpiDriverPorts.fpp"
 )
 
 register_fprime_module()

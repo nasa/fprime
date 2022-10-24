@@ -7,10 +7,11 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/CyclePortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/Cycle.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/TimerVal.cpp"
 )
 set(MOD_DEPS
     Os
+    Fw/Port
 )
 register_fprime_module()

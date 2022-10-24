@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  UdpSender.hpp
 // \author tcanham
 // \brief  cpp file for UdpSender test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -19,18 +19,13 @@
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       UdpSenderGTestBase("Tester", MAX_HISTORY_SIZE),
       component("UdpSender")
-#else
-      UdpSenderGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
       ,m_recvFd(-1)
   {
     this->initComponents();
@@ -38,13 +33,13 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
     close(this->m_recvFd);
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -72,7 +67,7 @@ namespace Svc {
     this->clearEvents();
     // send a buffer
     Svc::UdpSenderComponentImpl::UdpSerialBuffer buff;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buff.serialize((U32)(10)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,buff.serialize(static_cast<U32>(10)));
 
     this->invoke_to_PortsIn(1,buff);
     this->component.doDispatch();
@@ -108,11 +103,11 @@ namespace Svc {
   }
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // Sched
@@ -123,25 +118,25 @@ namespace Svc {
 
     // Tlm
     this->component.set_Tlm_OutputPort(
-        0, 
+        0,
         this->get_from_Tlm(0)
     );
 
     // Time
     this->component.set_Time_OutputPort(
-        0, 
+        0,
         this->get_from_Time(0)
     );
 
     // Log
     this->component.set_Log_OutputPort(
-        0, 
+        0,
         this->get_from_Log(0)
     );
 
     // LogText
     this->component.set_LogText_OutputPort(
-        0, 
+        0,
         this->get_from_LogText(0)
     );
 
@@ -162,7 +157,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(
@@ -172,7 +167,7 @@ namespace Svc {
 
   void Tester::textLogIn(const FwEventIdType id, //!< The event ID
           Fw::Time& timeTag, //!< The time
-          const Fw::TextLogSeverity severity, //!< The severity
+          const Fw::LogSeverity severity, //!< The severity
           const Fw::TextLogString& text //!< The event string
           ) {
       TextLogEntry e = { id, timeTag, severity, text };
@@ -188,7 +183,7 @@ namespace Svc {
       EXPECT_NE(-1,this->m_recvFd);
 
       // zero out the structure
-      memset((char *) &saddr, 0, sizeof(saddr));
+      memset(&saddr, 0, sizeof(saddr));
 
       saddr.sin_family = AF_INET;
       saddr.sin_port = htons(atoi(port));

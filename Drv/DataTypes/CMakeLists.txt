@@ -6,8 +6,12 @@
 #
 ####
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/DataBufferPortAi.xml"
+  "${CMAKE_CURRENT_LIST_DIR}/DataTypes.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/DataBuffer.cpp"
+)
+
+set(MOD_DEPS
+    Fw/Port
 )
 
 register_fprime_module()

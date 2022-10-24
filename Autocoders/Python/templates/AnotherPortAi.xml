@@ -19,7 +19,7 @@
             <comment>The ENUM argument</comment>
         </arg>
     </args>
-    <return type="ENUM" pass_by="value">
+    <return type="ENUM">
         <enum name="AnotherEnum">
             <item name="MEMB1"/>
             <item name="MEMB2" value="12" />

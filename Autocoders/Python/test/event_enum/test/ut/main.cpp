@@ -8,11 +8,7 @@
 
 class ATester : public Somewhere::TestLogGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
-        ATester(void) : Somewhere::TestLogGTestBase("comp",10) {
-#else
-        ATester(void) : Somewhere::TestLogGTestBase(10)  {
-#endif
+        ATester() : Somewhere::TestLogGTestBase("comp",10) {
     }
 };
 

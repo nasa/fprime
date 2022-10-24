@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/MallocAllocator.hpp"
 
 #define INSTANCE 0
@@ -26,13 +26,8 @@ namespace Svc {
 
   Tester ::
     Tester(bool doAllocateQueue) :
-#if FW_OBJECT_NAMES == 1
       BufferAccumulatorGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferAccumulator"),
-#else
-      BufferAccumulatorGTestBase(MAX_HISTORY_SIZE),
-      component(),
-#endif
       doAllocateQueue(doAllocateQueue)
   {
     this->initComponents();
@@ -45,7 +40,7 @@ namespace Svc {
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
     if (this->doAllocateQueue) {
       Fw::MallocAllocator buffAccumMallocator;
@@ -58,7 +53,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    AccumNoAllocate(void)
+    AccumNoAllocate()
   {
     // TODO (mereweth) - make something sensible happen when no-one sets us up
   }
@@ -99,7 +94,7 @@ namespace Svc {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // bufferSendInFill
@@ -188,7 +183,7 @@ namespace Svc {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

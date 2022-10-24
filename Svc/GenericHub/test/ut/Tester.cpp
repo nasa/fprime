@@ -22,7 +22,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester(void)
+Tester ::Tester()
     : GenericHubGTestBase("Tester", MAX_HISTORY_SIZE),
       componentIn("GenericHubIn"),
       componentOut("GenericHubOut"),
@@ -36,13 +36,13 @@ Tester ::Tester(void)
     this->connectPorts();
 }
 
-Tester ::~Tester(void) {}
+Tester ::~Tester() {}
 
 // ----------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::test_in_out(void) {
+void Tester ::test_in_out() {
     U32 max = std::min(this->componentIn.getNum_portIn_InputPorts(), this->componentOut.getNum_portOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_comm(i);
@@ -51,7 +51,7 @@ void Tester ::test_in_out(void) {
     }
 }
 
-void Tester ::test_buffer_io(void) {
+void Tester ::test_buffer_io() {
     U32 max = std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; i++) {
         send_random_buffer(i);
@@ -60,7 +60,7 @@ void Tester ::test_buffer_io(void) {
     }
 }
 
-void Tester ::test_random_io(void) {
+void Tester ::test_random_io() {
     for (U32 i = 0; i < 10000; i++) {
         U32 choice = STest::Pick::lowerUpper(0, 1);
         if (choice) {
@@ -182,7 +182,7 @@ void Tester ::from_dataInDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::B
 // Helper methods
 // ----------------------------------------------------------------------
 
-void Tester ::connectPorts(void) {
+void Tester ::connectPorts() {
     // buffersIn
     U32 max = std::min(this->componentIn.getNum_buffersIn_InputPorts(), this->componentOut.getNum_buffersOut_OutputPorts());
     for (U32 i = 0; i < max; ++i) {
@@ -226,7 +226,7 @@ void Tester ::connectPorts(void) {
     }
 }
 
-void Tester ::initComponents(void) {
+void Tester ::initComponents() {
     this->init();
     this->componentIn.init(INSTANCE);
     this->componentOut.init(INSTANCE + 1);

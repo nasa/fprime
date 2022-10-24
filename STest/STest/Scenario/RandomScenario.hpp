@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  RandomScenario.hpp
 // \author bocchino
 // \brief  Apply rules in a random sequence
@@ -7,7 +7,7 @@
 // Copyright (C) 2017 California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// ====================================================================== 
+// ======================================================================
 
 #ifndef STest_RandomScenario_HPP
 #define STest_RandomScenario_HPP
@@ -25,7 +25,7 @@ namespace STest {
     public:
 
       // ----------------------------------------------------------------------
-      // Constructors and destructors 
+      // Constructors and destructors
       // ----------------------------------------------------------------------
 
       //! Construct a RandomScenario from an array of rules
@@ -36,21 +36,21 @@ namespace STest {
       ) :
         InterleavedScenario<State>(name, new Scenario<State>*[size], size)
       {
-        assert(this->scenarioArray != NULL);
+        assert(this->scenarioArray != nullptr);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < size; ++i) {
           scenarios[i] = new RepeatedRuleScenario<State>(*rules[i]);
         }
       }
 
       //! Destroy a RandomScenario
-      ~RandomScenario(void) {
-        assert(this->scenarioArray != NULL);
+      ~RandomScenario() {
+        assert(this->scenarioArray != nullptr);
         Scenario<State>** scenarios = this->scenarioArray->getScenarios();
-        assert(scenarios != NULL);
+        assert(scenarios != nullptr);
         for (U32 i = 0; i < this->scenarioArray->size; ++i) {
-          assert(scenarios[i] != NULL);
+          assert(scenarios[i] != nullptr);
           delete scenarios[i];
         }
         delete[] scenarios;

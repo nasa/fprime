@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  AssertFatalAdapterImpl.cpp
 // \author tcanham
 // \brief  cpp file for AssertFatalAdapter component implementation class
@@ -7,16 +7,16 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
 namespace Fw {
     void defaultReportAssert
@@ -24,13 +24,13 @@ namespace Fw {
             FILE_NAME_ARG file,
             NATIVE_UINT_TYPE lineNo,
             NATIVE_UINT_TYPE numArgs,
-            AssertArg arg1,
-            AssertArg arg2,
-            AssertArg arg3,
-            AssertArg arg4,
-            AssertArg arg5,
-            AssertArg arg6,
-            I8* destBuffer,
+            FwAssertArgType arg1,
+            FwAssertArgType arg2,
+            FwAssertArgType arg3,
+            FwAssertArgType arg4,
+            FwAssertArgType arg5,
+            FwAssertArgType arg6,
+            CHAR* destBuffer,
             NATIVE_INT_TYPE buffSize
             );
 
@@ -39,7 +39,7 @@ namespace Fw {
 namespace Svc {
 
   // ----------------------------------------------------------------------
-  // Construction, initialization, and destruction 
+  // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
 
   AssertFatalAdapterComponentImpl ::
@@ -57,13 +57,13 @@ namespace Svc {
   void AssertFatalAdapterComponentImpl ::
     init(
         const NATIVE_INT_TYPE instance
-    ) 
+    )
   {
     AssertFatalAdapterComponentBase::init(instance);
   }
 
   AssertFatalAdapterComponentImpl ::
-    ~AssertFatalAdapterComponentImpl(void)
+    ~AssertFatalAdapterComponentImpl()
   {
 
   }
@@ -72,12 +72,12 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
       if (m_compPtr) {
@@ -94,13 +94,13 @@ namespace Svc {
       this->m_compPtr = compPtr;
   }
 
-  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(0) {
+  AssertFatalAdapterComponentImpl::AssertFatalAdapter::AssertFatalAdapter() : m_compPtr(nullptr) {
   }
 
   AssertFatalAdapterComponentImpl::AssertFatalAdapter::~AssertFatalAdapter() {
   }
 
-  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert(void) {
+  void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert() {
       // do nothing since there will be a FATAL
   }
 
@@ -108,25 +108,27 @@ namespace Svc {
           FILE_NAME_ARG file,
           NATIVE_UINT_TYPE lineNo,
           NATIVE_UINT_TYPE numArgs,
-          AssertArg arg1,
-          AssertArg arg2,
-          AssertArg arg3,
-          AssertArg arg4,
-          AssertArg arg5,
-          AssertArg arg6
+          FwAssertArgType arg1,
+          FwAssertArgType arg2,
+          FwAssertArgType arg3,
+          FwAssertArgType arg4,
+          FwAssertArgType arg5,
+          FwAssertArgType arg6
           ) {
 
 
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
       Fw::LogStringArg fileArg;
-      fileArg.format("0x%08X",file);
+      fileArg.format("0x%08" PRIX32,file);
 #else
-      Fw::LogStringArg fileArg((const char*)file);
+      Fw::LogStringArg fileArg(file);
 #endif
 
-      I8 msg[FW_ASSERT_TEXT_SIZE] = {0};
+      CHAR msg[FW_ASSERT_TEXT_SIZE] = {0};
       Fw::defaultReportAssert(file,lineNo,numArgs,arg1,arg2,arg3,arg4,arg5,arg6,msg,sizeof(msg));
-      fprintf(stderr, "%s\n",(const char*)msg);
+      // fprintf(stderr... allocates large buffers on stack as stderr is unbuffered by the OS
+      // and this can conflict with the traditionally smaller stack sizes.
+      printf("%s\n", msg);
 
       switch (numArgs) {
           case 0:

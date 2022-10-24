@@ -3,10 +3,7 @@
 // \author Auto-generated
 // \brief  cpp file for ${name} component Google Test harness base class
 //
-// \copyright
-// Copyright 2009-2015, by the California Institute of Technology.
-// ALL RIGHTS RESERVED.  United States Government Sponsorship
-// acknowledged.
+// NOTE: this file was automatically generated
 //
 // ======================================================================
 
@@ -24,16 +21,10 @@ namespace ${namespace} {
 
   $gtest_base ::
     ${gtest_base}(
-\#if FW_OBJECT_NAMES == 1
 $emit_cpp_params([ $param_compName, $param_maxHistorySize ])
-\#else
-$emit_cpp_params([ $param_maxHistorySize ])
-\#endif
     ) :
         ${tester_base} (
-\#if FW_OBJECT_NAMES == 1
             compName,
-\#endif
             maxHistorySize
         )
   {
@@ -41,7 +32,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
   }
 
   $gtest_base ::
-    ~${gtest_base}(void)
+    ~${gtest_base}()
   {
 
   }
@@ -56,7 +47,7 @@ $emit_cpp_params([ $param_maxHistorySize ])
 $emit_cpp_params($params_assert_size)
     ) const
   {
-    ASSERT_EQ((unsigned long) size, this->cmdResponseHistory->size())
+    ASSERT_EQ(size, this->cmdResponseHistory->size())
       $failure_message
       $LTLT "  Value:    Size of command response history\n"
       $LTLT "  Expected: " $LTLT size $LTLT "\n"

@@ -34,11 +34,7 @@ namespace Svc {
         Fw::InputComPort* get_pktSend_InputPort(NATIVE_INT_TYPE portNum);
     protected:
         // Only called by derived class
-#if FW_OBJECT_NAMES == 1
         TelemStoreComponentTesterBase(const char* compName);
-#else
-        TelemStoreComponentTesterBase();
-#endif
 
         virtual ~TelemStoreComponentTesterBase(void);
         virtual void init(NATIVE_INT_TYPE instance = 0);

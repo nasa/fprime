@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <FpConfig.hpp>
 // The following header will need to be modified when test code is moved
 // If the component tester is regenerated, this will need to be modified again.
@@ -9,25 +9,19 @@
 namespace Svc {
 // public methods
     void PolyDbTesterComponentBase::set_getValue_OutputPort(NATIVE_INT_TYPE portNum, Svc::InputPolyPort* port) {
-        FW_ASSERT(portNum < this->getNum_getValue_OutputPorts());        
+        FW_ASSERT(portNum < this->getNum_getValue_OutputPorts());
         this->m_getValue_OutputPort[portNum].addCallPort(port);
     }
 
     void PolyDbTesterComponentBase::set_setValue_OutputPort(NATIVE_INT_TYPE portNum, Svc::InputPolyPort* port) {
-        FW_ASSERT(portNum < this->getNum_setValue_OutputPorts());        
+        FW_ASSERT(portNum < this->getNum_setValue_OutputPorts());
         this->m_setValue_OutputPort[portNum].addCallPort(port);
     }
 
-// protected methods
-#if FW_OBJECT_NAMES == 1
     PolyDbTesterComponentBase::PolyDbTesterComponentBase(const char* compName) : Fw::PassiveComponentBase(compName) {
     }
-#else
-    PolyDbTesterComponentBase::PolyDbTesterComponentBase() : Fw::PassiveComponentBase() {
-    }
-#endif
 
-    PolyDbTesterComponentBase::~PolyDbTesterComponentBase(void) {
+    PolyDbTesterComponentBase::~PolyDbTesterComponentBase() {
     }
 
     void PolyDbTesterComponentBase::init(NATIVE_INT_TYPE instance) {
@@ -40,22 +34,22 @@ namespace Svc {
         // Set output ports
         for (NATIVE_INT_TYPE port = 0; port < this->getNum_getValue_OutputPorts(); port++) {
             this->m_getValue_OutputPort[port].init();
-#if FW_OBJECT_NAMES == 1     
+#if FW_OBJECT_NAMES == 1
             char portName[120];
             snprintf(portName, sizeof(portName), "%s_getValue_OutputPort[%d]", this->m_objName, port);
             this->m_getValue_OutputPort[port].setObjName(portName);
-#endif      
+#endif
         }
-                
+
         for (NATIVE_INT_TYPE port = 0; port < this->getNum_setValue_OutputPorts(); port++) {
             this->m_setValue_OutputPort[port].init();
-#if FW_OBJECT_NAMES == 1     
+#if FW_OBJECT_NAMES == 1
             char portName[120];
             snprintf(portName, sizeof(portName), "%s_setValue_OutputPort[%d]", this->m_objName, port);
             this->m_setValue_OutputPort[port].setObjName(portName);
-#endif      
+#endif
         }
-                
+
 
 
 	}
@@ -71,11 +65,11 @@ namespace Svc {
         this->m_setValue_OutputPort[portNum].invoke(entry, status, time, val);
     }
 
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts(void) {
-        return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_getValue_OutputPort);
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_getValue_OutputPorts() {
+        return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_getValue_OutputPort));
     }
-    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts(void) {
-        return (NATIVE_INT_TYPE) FW_NUM_ARRAY_ELEMENTS(this->m_setValue_OutputPort);
+    NATIVE_INT_TYPE PolyDbTesterComponentBase::getNum_setValue_OutputPorts() {
+        return static_cast<NATIVE_INT_TYPE>(FW_NUM_ARRAY_ELEMENTS(this->m_setValue_OutputPort));
     }
     bool PolyDbTesterComponentBase::isConnected_getValue_OutputPort(NATIVE_INT_TYPE portNum) {
          FW_ASSERT(portNum < this->getNum_getValue_OutputPorts(),portNum);

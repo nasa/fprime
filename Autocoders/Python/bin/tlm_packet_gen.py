@@ -13,33 +13,29 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 
+import logging
 import os
 import sys
-import logging
-
 from optparse import OptionParser
 
-from fprime_ac.models import ModelParser
-from fprime_ac.utils import ConfigManager
-from fprime_ac.utils import DictTypeConverter
+from Cheetah.Template import Template
 
 # Meta-model for Component only generation
 from fprime_ac.models import TopoFactory
-from fprime_ac.parsers import XmlSerializeParser
-from fprime_ac.parsers import XmlEnumParser
-from fprime_ac.parsers import XmlArrayParser
 
 # Parsers to read the XML
-from fprime_ac.parsers import XmlParser
-from fprime_ac.parsers import XmlTopologyParser
-
-from lxml import etree
-from Cheetah.Template import Template
+from fprime_ac.parsers import (
+    XmlArrayParser,
+    XmlEnumParser,
+    XmlSerializeParser,
+    XmlTopologyParser,
+)
 from fprime_ac.utils.buildroot import (
+    get_nearest_build_root,
     search_for_file,
     set_build_roots,
-    get_nearest_build_root,
 )
+from lxml import etree
 
 header_file_template = """
 
@@ -67,7 +63,7 @@ impl_file_template = """
 \#include <${output_header}>
 
 \#include <FpConfig.hpp>
-\#include <Fw/Types/BasicTypes.hpp>
+\#include <FpConfig.hpp>
 \#include <Fw/Time/Time.hpp>
 
 // Verify packets not too large for ComBuffer
@@ -84,10 +80,10 @@ namespace ${packet_list_namespace} {
   #for $channel_id,$channel_size,$channel_name in $channel_list:
       {$channel_id, $channel_size}, // $channel_name
   #end for
-  };    
+  };
 
   static const Svc::TlmPacketizerPacket ${packet} = { ${packet}List, $id, $level, FW_NUM_ARRAY_ELEMENTS(${packet}List) };
-  
+
 #end for
 
 
@@ -100,13 +96,13 @@ namespace ${packet_list_namespace} {
       $len($packet_list)
   };
 
-  
+
   static const Svc::TlmPacketizerChannelEntry ignoreList[] = {
 #for $channel_id,$channel_name in $ignore_list:
       {$channel_id, 0}, // $channel_name
 #end for
-  };    
-  
+  };
+
   const Svc::TlmPacketizerPacket ${packet_list_name}Ignore = { ignoreList, 0, 0, FW_NUM_ARRAY_ELEMENTS(ignoreList) };
 
 } // end namespace ${packet_list_namespace}
@@ -131,7 +127,7 @@ class TlmPacketParser(object):
     def __init__(self, verbose=False, dependency=None):
         self.verbose = verbose
         self.dependency = dependency
-        self.size_dict = dict()
+        self.size_dict = {}
 
     def add_type_size(self, type, size):
         PRINT.debug("Type: %s size: %d" % (type, size))
@@ -194,7 +190,7 @@ class TlmPacketParser(object):
         Generates GDS XML dictionary from parsed topology XML
         """
         if self.verbose:
-            print("Topology xml type description file: %s" % xml_filename)
+            print(f"Topology xml type description file: {xml_filename}")
         model = TopoFactory.TopoFactory.getInstance()
         topology_model = model.create(the_parsed_topology_xml, generate_list_file=False)
 
@@ -224,7 +220,7 @@ class TlmPacketParser(object):
 
         topology_model.set_instance_xml_list(xml_list)
 
-        ch_size_dict = dict()
+        ch_size_dict = {}
 
         for comp in the_parsed_topology_xml.get_instances():
             comp_name = comp.get_name()
@@ -243,7 +239,7 @@ class TlmPacketParser(object):
             # check for channels
             if parsed_xml_dict[comp_type].get_channels() is not None:
                 for chan in parsed_xml_dict[comp_type].get_channels():
-                    channel_name = comp_name + "." + chan.get_name()
+                    channel_name = f"{comp_name}.{chan.get_name()}"
                     if self.verbose:
                         print("Processing Channel %s" % channel_name)
                     chan_type = chan.get_type()
@@ -307,18 +303,18 @@ class TlmPacketParser(object):
             it.packet_list_namespace = list_namespace
             it.max_size = max_size
 
-            packet_list_container = list()
+            packet_list_container = []
 
-            packetized_channel_list = list()
-            it.ignore_list = list()
-            id_list = list()  # check for duplicates
-            ignore_name_list = list()
+            packetized_channel_list = []
+            it.ignore_list = []
+            id_list = []  # check for duplicates
+            ignore_name_list = []
 
-            size_dict = dict()
+            size_dict = {}
 
             ht.num_packets = 0
             total_packet_size = 0
-            levels = list()
+            levels = []
             view_path = "./Views"
             # find the topology import
             for entry in element_tree.getroot():
@@ -358,7 +354,7 @@ class TlmPacketParser(object):
                     else:
                         id_list.append(packet_id)
 
-                    channel_list = list()
+                    channel_list = []
                     for channel in entry:
                         channel_name = channel.attrib["name"]
                         if not channel_name in channel_size_dict:
@@ -568,8 +564,6 @@ def pinit():
     Initialize the option parser and return it.
     """
 
-    current_dir = os.getcwd()
-
     usage = "usage: %prog [options] [xml_topology_filename]"
 
     parser = OptionParser(usage)
@@ -619,7 +613,7 @@ def main():
     #  Parse the input Topology XML filename
     #
     if len(args) == 0:
-        print("Usage: %s [options] xml_filename" % sys.argv[0])
+        print(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
         xml_filename = args[0]

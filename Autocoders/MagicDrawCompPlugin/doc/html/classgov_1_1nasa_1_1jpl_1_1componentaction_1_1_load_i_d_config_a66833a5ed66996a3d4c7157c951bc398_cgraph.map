@@ -1,5 +1,0 @@
-<map id="gov.nasa.jpl.componentaction.LoadIDConfig.validateAndProcessConfig" name="gov.nasa.jpl.componentaction.LoadIDConfig.validateAndProcessConfig">
-<area shape="rect" id="node2" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_utils.html#a08b5e726790c7cb8fdbd93b92926f556" title="gov.nasa.jpl.componentaction.\lUtils.notifyWarning" alt="" coords="334,5,535,43"/>
-<area shape="rect" id="node4" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_load_i_d_config_1_1config_item.html#a56b0f04d87985eadd41f0df6c49fb2cf" title="gov.nasa.jpl.componentaction.\lLoadIDConfig.configItem.configItem" alt="" coords="318,67,551,106"/>
-<area shape="rect" id="node3" href="$classgov_1_1nasa_1_1jpl_1_1componentaction_1_1_utils.html#ab7b1c86d038143968c34d104d0d73caf" title="gov.nasa.jpl.componentaction.\lUtils.printToAll" alt="" coords="600,5,800,43"/>
-</map>

@@ -1,9 +1,8 @@
 #ifndef FW_PRM_STRING_TYPE_HPP
 #define FW_PRM_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
-#include <Fw/Types/StringType.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
 namespace Fw {
@@ -19,14 +18,14 @@ namespace Fw {
             ParamString(const char* src);
             ParamString(const StringBase& src);
             ParamString(const ParamString& src);
-            ParamString(void);
+            ParamString();
             ParamString& operator=(const ParamString& other);
             ParamString& operator=(const StringBase& other);
             ParamString& operator=(const char* other);
-            ~ParamString(void);
+            ~ParamString();
 
-            const char* toChar(void) const;
-            NATIVE_UINT_TYPE getCapacity(void) const;
+            const char* toChar() const;
+            NATIVE_UINT_TYPE getCapacity() const;
 
         private:
 

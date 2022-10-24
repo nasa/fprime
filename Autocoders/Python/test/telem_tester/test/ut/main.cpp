@@ -10,11 +10,7 @@
 
 class ATester : public Tlm::TelemTesterTesterBase {
     public:
-#if FW_OBJECT_NAMES == 1
-        ATester(void) : Tlm::TelemTesterTesterBase("comp",10) {
-#else
-        ATester(void) : Tlm::TelemTesterTesterBase(10)  {
-#endif
+        ATester() : Tlm::TelemTesterTesterBase("comp",10) {
     }
 
 };

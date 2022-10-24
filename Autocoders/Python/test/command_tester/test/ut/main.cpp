@@ -10,11 +10,7 @@
 
 class ATester : public Cmd::CommandTesterGTestBase {
     public:
-#if FW_OBJECT_NAMES == 1
-        ATester(void) : Cmd::CommandTesterGTestBase("comp",10) {
-#else
-        ATester(void) : Cmd::CommandTesterGTestBase(10)  {
-#endif
+        ATester() : Cmd::CommandTesterGTestBase("comp",10) {
     }
 
     void from_cmdSendPort_handler(

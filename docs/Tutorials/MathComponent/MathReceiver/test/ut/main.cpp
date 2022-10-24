@@ -1,35 +1,37 @@
 // ----------------------------------------------------------------------
-// Main.cpp 
+// Main.cpp
 // ----------------------------------------------------------------------
 
+#include "STest/Random/Random.hpp"
 #include "Tester.hpp"
 
-TEST(Nominal, AddOperationTest) {
+TEST(Nominal, Add) {
     Ref::Tester tester;
-    tester.testAddCommand();
+    tester.testAdd();
 }
 
-TEST(Nominal, SubOperationTest) {
+TEST(Nominal, Sub) {
     Ref::Tester tester;
-    tester.testSubCommand();
+    tester.testSub();
 }
 
-TEST(Nominal, MultOperationTest) {
+TEST(Nominal, Mul) {
     Ref::Tester tester;
-    tester.testMultCommand();
+    tester.testMul();
 }
 
-TEST(Nominal, DivideOperationTest) {
+TEST(Nominal, Div) {
     Ref::Tester tester;
-    tester.testDivCommand();
+    tester.testDiv();
 }
 
-TEST(Nominal, ThrottleTest) {
+TEST(Nominal, Throttle) {
     Ref::Tester tester;
     tester.testThrottle();
 }
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  STest::Random::seed();
   return RUN_ALL_TESTS();
 }

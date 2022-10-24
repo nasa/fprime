@@ -1,5 +1,5 @@
-\page SvcStaticMemory Static Memory Component
-# Svc::StaticMemory Static Memory Component
+\page SvcStaticMemoryComponent Svc::StaticMemory Component
+# Svc::StaticMemory Component
 
 The StaticMemory component is a drop in replacement for Svc::BufferManager that allocates memory out of a static pool of
 memory. This allows for allocations of known sizes and usage patterns to avoid extra dynamic memory complexity at the
@@ -25,7 +25,7 @@ StaticMemoryAllocations = 4
 The size of each memory segment is set in `StaticMemoryConfig.hpp` as shown below.
 
 ```c++
-        STATIC_MEMORY_ALLOCATION_SIZE = 2048
+STATIC_MEMORY_ALLOCATION_SIZE = 2048
 ```
 
 This means the total memory used is `StaticMemoryAllocations` * `STATIC_MEMORY_ALLOCATION_SIZE` bytes. 

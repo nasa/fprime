@@ -12,7 +12,7 @@
 
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Drv {
 
@@ -23,7 +23,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioRead_handler(
         const NATIVE_INT_TYPE portNum,
-        bool &state
+        Fw::Logic &state
     )
   {
     // TODO
@@ -32,7 +32,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
-        bool state
+        const Fw::Logic& state
     )
   {
     // TODO
@@ -44,17 +44,17 @@ namespace Drv {
   }
 
   Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-    startIntTask(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE cpuAffinity) {
+    startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE cpuAffinity) {
      return Os::Task::TASK_OK;
    }
 
   LinuxGpioDriverComponentImpl ::
-    ~LinuxGpioDriverComponentImpl(void)
+    ~LinuxGpioDriverComponentImpl()
   {
 
   }
 
   void LinuxGpioDriverComponentImpl ::
-    exitThread(void) {
+    exitThread() {
   }
 } // end namespace Drv

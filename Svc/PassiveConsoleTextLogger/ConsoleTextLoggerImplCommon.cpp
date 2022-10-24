@@ -1,5 +1,5 @@
 #include <Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Logger/Logger.hpp>
 
@@ -9,42 +9,42 @@ namespace Svc {
         PassiveTextLoggerComponentBase(compName) {
     }
 
-    void ConsoleTextLoggerImpl::init(void) {
-        PassiveTextLoggerComponentBase::init();
+    void ConsoleTextLoggerImpl::init(NATIVE_INT_TYPE instanceId) {
+        PassiveTextLoggerComponentBase::init(instanceId);
     }
 
-    ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl(void) {}
+    ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
-    void ConsoleTextLoggerImpl::TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::TextLogSeverity severity, Fw::TextLogString &text) {
+    void ConsoleTextLoggerImpl::TextLogger_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity& severity, Fw::TextLogString &text) {
         const char *severityString = "UNKNOWN";
-        switch (severity) {
-            case Fw::TEXT_LOG_FATAL:
+        switch (severity.e) {
+            case Fw::LogSeverity::FATAL:
                 severityString = "FATAL";
                 break;
-            case Fw::TEXT_LOG_WARNING_HI:
+            case Fw::LogSeverity::WARNING_HI:
                 severityString = "WARNING_HI";
                 break;
-            case Fw::TEXT_LOG_WARNING_LO:
+            case Fw::LogSeverity::WARNING_LO:
                 severityString = "WARNING_LO";
                 break;
-            case Fw::TEXT_LOG_COMMAND:
+            case Fw::LogSeverity::COMMAND:
                 severityString = "COMMAND";
                 break;
-            case Fw::TEXT_LOG_ACTIVITY_HI:
+            case Fw::LogSeverity::ACTIVITY_HI:
                 severityString = "ACTIVITY_HI";
                 break;
-            case Fw::TEXT_LOG_ACTIVITY_LO:
+            case Fw::LogSeverity::ACTIVITY_LO:
                 severityString = "ACTIVITY_LO";
                 break;
-            case Fw::TEXT_LOG_DIAGNOSTIC:
+            case Fw::LogSeverity::DIAGNOSTIC:
                 severityString = "DIAGNOSTIC";
                 break;
             default:
                 severityString = "SEVERITY ERROR";
                 break;
         }
-        Fw::Logger::logMsg("EVENT: (%d) (%d:%d,%d) %s: %s\n",
-                id, timeTag.getTimeBase(), timeTag.getSeconds(), timeTag.getUSeconds(),
-                reinterpret_cast<POINTER_CAST>(severityString), reinterpret_cast<POINTER_CAST>(text.toChar()));
+        Fw::Logger::logMsg("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
+                id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(), timeTag.getUSeconds(),
+                reinterpret_cast<PlatformPointerCastType>(severityString), reinterpret_cast<PlatformPointerCastType>(text.toChar()));
     }
 }

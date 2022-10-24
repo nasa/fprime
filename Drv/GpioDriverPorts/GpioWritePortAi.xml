@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<interface name="GpioWrite" namespace="Drv">
-    <args>
-        <arg name="state" type="bool" pass_by="value">
-        </arg>
-    </args>
-</interface>

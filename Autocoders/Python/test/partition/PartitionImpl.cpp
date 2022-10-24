@@ -1,7 +1,7 @@
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
-#include <Fw/Types/FwBasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 
@@ -11,7 +11,7 @@ namespace Partition {
 
 		}
 
-		PartitionImpl::~PartitionImpl(void) {
+		PartitionImpl::~PartitionImpl() {
 
 		}
 

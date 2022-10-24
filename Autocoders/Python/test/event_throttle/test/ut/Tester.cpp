@@ -22,21 +22,16 @@ namespace Somewhere {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       TestLogGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestLog")
-#else
-      TestLogGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -45,7 +40,7 @@ namespace Somewhere {
   // Tests
   // ----------------------------------------------------------------------
 
-  void Tester::doEventThrottleTest(void) {
+  void Tester::doEventThrottleTest() {
       // should send up to EVENTID_SOMEEVENT_THROTTLE events
       for (NATIVE_UINT_TYPE call = 0; call < TestLogComponentBase::EVENTID_SOMEEVENT_THROTTLE; call++) {
           this->component.sendEvent(1, 2.0, 3);
@@ -82,7 +77,7 @@ namespace Somewhere {
   void Tester::textLogIn(
                   const FwEventIdType id, //!< The event ID
                   Fw::Time& timeTag, //!< The time
-                  const Fw::TextLogSeverity severity, //!< The severity
+                  const Fw::LogSeverity severity, //!< The severity
                   const Fw::TextLogString& text //!< The event string
               ) {
       TextLogEntry e = { id, timeTag, severity, text };
@@ -95,7 +90,7 @@ namespace Somewhere {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // aport
@@ -125,7 +120,7 @@ namespace Somewhere {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

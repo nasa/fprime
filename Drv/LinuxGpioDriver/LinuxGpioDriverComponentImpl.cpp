@@ -12,17 +12,17 @@
 
 
 #include <Drv/LinuxGpioDriver/LinuxGpioDriverComponentImpl.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/TaskString.hpp>
 
 // TODO make proper static constants for these
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define MAX_BUF 64
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -61,7 +61,7 @@ namespace Drv {
 	 * necessary filesystem changes after exporting
 	 */
 	usleep(100 * 1000);
-	
+
         return 0;
     }
 
@@ -92,7 +92,7 @@ namespace Drv {
 	 * necessary filesystem changes after unexporting
 	 */
 	usleep(100 * 1000);
-	
+
         return 0;
     }
 
@@ -134,7 +134,7 @@ namespace Drv {
 
         FW_ASSERT(fd != -1);
 
-        // TODO make value a enum or check its value
+        // TODO make value an enum or check its value
 
         const char *val = value ? "1" : "0";
         const int len = 1;
@@ -187,7 +187,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        FW_ASSERT(edge != NULL);
+        FW_ASSERT(edge != nullptr);
         // TODO check that edge has correct values of "none", "rising", or "falling"
 
         len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
@@ -251,7 +251,7 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioRead_handler(
         const NATIVE_INT_TYPE portNum,
-        bool &state
+        Fw::Logic &state
     )
   {
       FW_ASSERT(this->m_fd != -1);
@@ -262,7 +262,7 @@ namespace Drv {
           this->log_WARNING_HI_GP_ReadError(this->m_gpio,stat);
           return;
       } else {
-          state = val?true:false;
+          state = val ? Fw::Logic::HIGH : Fw::Logic::LOW;
       }
 
   }
@@ -270,14 +270,14 @@ namespace Drv {
   void LinuxGpioDriverComponentImpl ::
     gpioWrite_handler(
         const NATIVE_INT_TYPE portNum,
-        bool state
+        const Fw::Logic& state
     )
   {
       FW_ASSERT(this->m_fd != -1);
 
       NATIVE_INT_TYPE stat;
 
-      stat = gpio_set_value(this->m_fd,state?1:0);
+      stat = gpio_set_value(this->m_fd,(state == Fw::Logic::HIGH) ? 1 : 0);
 
       if (0 != stat) {
           this->log_WARNING_HI_GP_WriteError(this->m_gpio,stat);
@@ -325,7 +325,7 @@ namespace Drv {
     intTaskEntry(void * ptr) {
 
     FW_ASSERT(ptr);
-    LinuxGpioDriverComponentImpl* compPtr = (LinuxGpioDriverComponentImpl*) ptr;
+    LinuxGpioDriverComponentImpl* compPtr = static_cast<LinuxGpioDriverComponentImpl*>(ptr);
     FW_ASSERT(compPtr->m_fd != -1);
 
     // start GPIO interrupt
@@ -342,7 +342,7 @@ namespace Drv {
         NATIVE_INT_TYPE nfds = 1;
         NATIVE_INT_TYPE timeout = 10000; // Timeout of 10 seconds
 
-        memset((void*)fdset, 0, sizeof(fdset));
+        memset(fdset, 0, sizeof(fdset));
 
         fdset[0].fd = compPtr->m_fd;
         fdset[0].events = POLLPRI;
@@ -350,7 +350,7 @@ namespace Drv {
 
         /*
         * According to this link, poll will always have POLLERR set for the sys/class/gpio subsystem
-        * so cant check for it to look for error:
+        * so can't check for it to look for error:
         * http://stackoverflow.com/questions/27411013/poll-returns-both-pollpri-pollerr
         */
         if (stat < 0) {
@@ -397,10 +397,10 @@ namespace Drv {
   }
 
   Os::Task::TaskStatus LinuxGpioDriverComponentImpl ::
-  startIntTask(NATIVE_INT_TYPE priority, NATIVE_INT_TYPE cpuAffinity) {
+  startIntTask(NATIVE_UINT_TYPE priority, NATIVE_UINT_TYPE cpuAffinity) {
       Os::TaskString name;
       name.format("GPINT_%s",this->getObjName()); // The task name can only be 16 chars including null
-      Os::Task::TaskStatus stat = this->m_intTask.start(name,0,priority,20*1024,LinuxGpioDriverComponentImpl::intTaskEntry,this,cpuAffinity);
+      Os::Task::TaskStatus stat = this->m_intTask.start(name, LinuxGpioDriverComponentImpl::intTaskEntry, this, priority, Os::Task::TASK_DEFAULT, cpuAffinity);
 
       if (stat != Os::Task::TASK_OK) {
           DEBUG_PRINT("Task start error: %d\n",stat);
@@ -411,14 +411,14 @@ namespace Drv {
   }
 
   void LinuxGpioDriverComponentImpl ::
-    exitThread(void) {
+    exitThread() {
       this->m_quitThread = true;
   }
 
 
 
   LinuxGpioDriverComponentImpl ::
-    ~LinuxGpioDriverComponentImpl(void)
+    ~LinuxGpioDriverComponentImpl()
   {
       if (this->m_fd != -1) {
           DEBUG_PRINT("Closing GPIO %d fd %d\n",this->m_gpio, this->m_fd);

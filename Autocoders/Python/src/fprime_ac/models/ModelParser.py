@@ -155,7 +155,7 @@ class ModelParser:
         Return a dict of return type strings, keyed by port name.
         If no return type it is 'void '.   Append modifiers to return types.
         """
-        ret_dict = dict()
+        ret_dict = {}
         for port in obj.get_ports():
             name = port.get_name()
             ret_tuple = port.get_return()
@@ -184,12 +184,12 @@ class ModelParser:
         Return a dict of list of args, keyed by port name
         (e.g. arg_dict['Port name'] => [(name,type,comment), (name,type,comment), ...]
         """
-        args_dict = dict()
+        args_dict = {}
         comp_namespace = obj.get_namespace()
         for port in obj.get_ports():
             name = port.get_name()
             port_namespace = port.get_namespace()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Port: %s" % name
             args = port.get_args()
             for a in args:
@@ -198,13 +198,20 @@ class ModelParser:
                 m = a.get_modifier()
                 e = None
                 #
-                # Store modifier as language symbol
+                # Pass port scalar and specified arguments as specified
+                # and port non-specified non-scalar arguments by const reference
+                isEnum = isinstance(t, tuple) and t[0][0].upper() == "ENUM"
+                isConstReference = False
+
                 if m == "pointer":
                     m = "*"
                 elif m == "reference":
                     m = "&"
-                else:
+                elif TypesList.isPrimitiveType(t) or isEnum:
                     m = ""
+                else:
+                    isConstReference = True
+                    m = "&"
 
                 if t == "string":
                     t = n + "String"
@@ -230,7 +237,10 @@ class ModelParser:
                 #    c = ""
                 #    m = "&"
                 # print "Name %s : Type %s" % (n,t)
-                args_dict[name].append((n, t, c, m, e))
+                non_const_arg_type = t
+                if isConstReference:
+                    t = "const " + t
+                args_dict[name].append((n, t, c, m, e, non_const_arg_type))
         return args_dict
 
     def getPortArgsPrototypeStringDict(self, obj):
@@ -239,7 +249,7 @@ class ModelParser:
         (.e.g. arg_dict['Port name'] => "type1 name1, type2, name2 ..."
         """
         d = self.getPortArgsDict(obj)
-        d2 = dict()
+        d2 = {}
         for l in d:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}{}".format(x[1], x[3], x[0]) for x in d[l]])
@@ -253,7 +263,7 @@ class ModelParser:
         (.e.g. arg_dict['Port name'] => "name1, name2 ..."
         """
         d = self.getPortArgsDict(obj)
-        d2 = dict()
+        d2 = {}
         for l in d:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["%s" % x[0] for x in d[l]])
@@ -266,7 +276,7 @@ class ModelParser:
         Return a dict of list of args, keyed by port type name (in all CAPS)
         (e.g. msg_type_arg_dict['Msg type name'] => [(name,type,comment),(name,type,comment),...]
         """
-        msg_type_arg_dict = dict()
+        msg_type_arg_dict = {}
         port_instance_name_list = self.getPortsList(obj)
         args_dict = self.getPortArgsDict(obj)
         #
@@ -286,7 +296,7 @@ class ModelParser:
             port_types.append(p.get_type())
         port_types = self.uniqueList(port_types)
         # Build a dictionary of namespaces keyed on port type here...
-        port_namespace_dict = dict()
+        port_namespace_dict = {}
         for p in port_types:
             for p2 in obj.get_ports():
                 if p == p2.get_type():
@@ -479,10 +489,10 @@ class ModelParser:
         Return a dict of list of args, keyed by command mnemonic
         (e.g. arg_dict['mnemonic'] => [(name,type,comment), (name,type,comment), ...]
         """
-        args_dict = dict()
+        args_dict = {}
         for command in obj.get_commands():
             mnemonic = command.get_mnemonic()
-            args_dict[mnemonic] = list()
+            args_dict[mnemonic] = []
             # print "Command: %s" % name
             args = command.get_args()
 
@@ -523,7 +533,7 @@ class ModelParser:
         (.e.g. arg_dict['mnemonic'] => "type1 name1, type2, name2 ..."
         """
         d = self.getCommandArgsDict(obj, True)
-        d2 = dict()
+        d2 = {}
         for l in d:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
@@ -565,10 +575,10 @@ class ModelParser:
         Return a dict of list of args, keyed by name mnemonic
         (e.g. arg_dict['name'] => [(name,type,comment), (name,type,comment), ...]
         """
-        args_dict = dict()
+        args_dict = {}
         for event in obj.get_events():
             name = event.get_name()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Command: %s" % name
             args = event.get_args()
 
@@ -586,7 +596,7 @@ class ModelParser:
                         sys.exit(-1)
                     typeinfo = "enum"
                 elif t == "string":
-                    t = "Fw::LogStringArg&"
+                    t = "const Fw::LogStringArg&"
                     typeinfo = "string"
                 elif t not in TypesList.types_list:
                     typeinfo = "user"
@@ -609,12 +619,13 @@ class ModelParser:
         (.e.g. arg_dict['mnemonic'] => "type1 name1, type2, name2 ..."
         """
         d = self.getEventArgsDict(obj)
-        d2 = dict()
+        d2 = {}
         for l in d:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
             else:
-                d2[l] = "void"
+                # If event has no arguments parameter string should be empty
+                d2[l] = ""
         return d2
 
     def getInternalInterfacesList(self, obj):
@@ -635,7 +646,7 @@ class ModelParser:
         (.e.g. arg_dict['name'] => "type1 name1, type2, name2 ..."
         """
         d = self.getInternalInterfaceArgsDict(obj, True)
-        d2 = dict()
+        d2 = {}
         for l in d:
             if len(d[l]) > 0:
                 d2[l] = ", ".join(["{} {}".format(x[1], x[0]) for x in d[l]])
@@ -648,10 +659,10 @@ class ModelParser:
         Return a dict of list of args, keyed by internal interface name
         (e.g. arg_dict['name'] => [(name,type,comment), (name,type,comment), ...]
         """
-        args_dict = dict()
+        args_dict = {}
         for internal_interface in obj.get_internal_interfaces():
             name = internal_interface.get_name()
-            args_dict[name] = list()
+            args_dict[name] = []
             # print "Interface: %s" % name
             args = internal_interface.get_args()
 
@@ -680,7 +691,7 @@ class ModelParser:
                     pass
                 else:
                     if from_proto:
-                        t = "%s&" % t
+                        t = "const %s&" % t
                     typeinfo = "user"
                 c = a.get_comment()
                 args_dict[name].append((n, t, c, typeinfo))

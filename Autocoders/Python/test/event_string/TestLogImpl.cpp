@@ -6,20 +6,16 @@
  */
 
 #include <Autocoders/Python/test/event_string/TestLogImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestLogImpl::TestLogImpl(const char* name) : Somewhere::TestLogComponentBase(name)
-#else
-TestLogImpl::TestLogImpl() : Somewhere::TestLogComponentBase()
-#endif
 {
 }
 
 TestLogImpl::~TestLogImpl() {
 }
 
-void TestLogImpl::init(void) {
+void TestLogImpl::init() {
     Somewhere::TestLogComponentBase::init();
 }
 

@@ -1,7 +1,7 @@
 #ifndef FW_EIGHTY_CHAR_STRING_TYPE_HPP
 #define FW_EIGHTY_CHAR_STRING_TYPE_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Cfg/SerIds.hpp>
 
@@ -19,14 +19,14 @@ namespace Fw {
             EightyCharString(const char* src); //!< char* source constructor
             EightyCharString(const StringBase& src); //!< other string constructor
             EightyCharString(const EightyCharString& src); //!< EightyCharString string constructor
-            EightyCharString(void); //!< default constructor
+            EightyCharString(); //!< default constructor
             EightyCharString& operator=(const EightyCharString& other); //!< assignment operator
             EightyCharString& operator=(const StringBase& other); //!< other string assignment operator
             EightyCharString& operator=(const char* other); //!< char* assignment operator
-            ~EightyCharString(void); //!< destructor
+            ~EightyCharString(); //!< destructor
 
-            const char* toChar(void) const; //!< gets char buffer
-            NATIVE_UINT_TYPE getCapacity(void) const; //!< return buffer size
+            const char* toChar() const; //!< gets char buffer
+            NATIVE_UINT_TYPE getCapacity() const; //!< return buffer size
 
         private:
 

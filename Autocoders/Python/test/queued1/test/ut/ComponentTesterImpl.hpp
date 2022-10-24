@@ -15,14 +15,10 @@ namespace SvcTest {
 
     class ComponentTesterImpl: public AQueuedTest::TestTesterComponentBase {
         public:
-#if FW_OBJECT_NAMES == 1
             ComponentTesterImpl(const char* compName);
-#else
-            ComponentTesterImpl();
-#endif
             virtual ~ComponentTesterImpl();
-            void init(void);
-            void runTest(void);
+            void init();
+            void runTest();
         private:
     };
 

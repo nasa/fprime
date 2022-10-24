@@ -1,4 +1,4 @@
-// ====================================================================== 
+// ======================================================================
 // \title  LinuxI2cDriver.hpp
 // \author tcanham
 // \brief  cpp file for LinuxI2cDriver test harness implementation class
@@ -7,8 +7,8 @@
 // Copyright 2009-2015, by the California Institute of Technology.
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
-// 
-// ====================================================================== 
+//
+// ======================================================================
 
 #include "Tester.hpp"
 
@@ -18,38 +18,33 @@
 namespace Drv {
 
   // ----------------------------------------------------------------------
-  // Construction and destruction 
+  // Construction and destruction
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) : 
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       LinuxI2cDriverGTestBase("Tester", MAX_HISTORY_SIZE),
       component("LinuxI2cDriver")
-#else
-      LinuxI2cDriverGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void) 
+    ~Tester()
   {
-    
+
   }
 
   // ----------------------------------------------------------------------
-  // Tests 
+  // Tests
   // ----------------------------------------------------------------------
 
   void Tester ::
     sendData(U32 addr, U8* data, NATIVE_INT_TYPE size)
   {
       Fw::Buffer dataBuff;
-      dataBuff.setdata((U64)data);
+      dataBuff.setdata(static_cast<POINTER_CAST>(data));
       dataBuff.setsize(size);
       this->invoke_to_write(0,addr,dataBuff);
   }
@@ -60,11 +55,11 @@ namespace Drv {
 
 
   // ----------------------------------------------------------------------
-  // Helper methods 
+  // Helper methods
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void) 
+    connectPorts()
   {
 
     // write
@@ -79,7 +74,7 @@ namespace Drv {
   }
 
   void Tester ::
-    initComponents(void) 
+    initComponents()
   {
     this->init();
     this->component.init(

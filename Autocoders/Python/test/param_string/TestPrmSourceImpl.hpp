@@ -13,13 +13,9 @@
 
 class TestParamSourceImpl: public Prm::ParamTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestParamSourceImpl(const char* compName);
-#else
-        TestParamSourceImpl();
-#endif
         virtual ~TestParamSourceImpl();
-        void init(void);
+        void init();
         void setPrm(Fw::ParamString& val);
     protected:
         Fw::ParamValid paramGetPort_handler(NATIVE_INT_TYPE portNum, FwPrmIdType id, Fw::ParamBuffer &val);

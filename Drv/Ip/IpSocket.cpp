@@ -9,11 +9,12 @@
 // acknowledged.
 //
 // ======================================================================
-#include <string.h>
+#include <cstring>
 #include <Drv/Ip/IpSocket.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <sys/time.h>
 
 // This implementation has primarily implemented to isolate
 // the socket interface from the F' Fw::Buffer class.
@@ -32,11 +33,11 @@
     #include <taskLib.h>
     #include <sysLib.h>
     #include <errnoLib.h>
-    #include <string.h>
+    #include <cstring>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
 #include <sys/socket.h>
 #include <unistd.h>
-#include <errno.h>
+#include <cerrno>
 #include <arpa/inet.h>
 #else
 #error OS not supported for IP Socket Communications
@@ -69,7 +70,7 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
     timeout.tv_sec = this->m_timeoutSeconds;
     timeout.tv_usec = this->m_timeoutMicroseconds;
     // set socket write to timeout after 1 sec
-    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout, sizeof(timeout)) < 0) {
+    if (setsockopt(socketFd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(&timeout), sizeof(timeout)) < 0) {
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 #endif
@@ -77,8 +78,8 @@ SocketIpStatus IpSocket::setupTimeouts(NATIVE_INT_TYPE socketFd) {
 }
 
 SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
-    FW_ASSERT(address != NULL);
-    FW_ASSERT(ip4 != NULL);
+    FW_ASSERT(address != nullptr);
+    FW_ASSERT(ip4 != nullptr);
     // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
     NATIVE_INT_TYPE ip = inet_addr(address);
@@ -97,7 +98,7 @@ SocketIpStatus IpSocket::addressToIp4(const char* address, void* ip4) {
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isOpened(void) {
+bool IpSocket::isOpened() {
     bool is_open = false;
     m_lock.lock();
     is_open = m_open;
@@ -105,7 +106,7 @@ bool IpSocket::isOpened(void) {
     return is_open;
 }
 
-void IpSocket::close(void) {
+void IpSocket::close() {
     m_lock.lock();
     if (this->m_fd != -1) {
         (void)::shutdown(this->m_fd, SHUT_RDWR);
@@ -116,7 +117,7 @@ void IpSocket::close(void) {
     m_lock.unLock();
 }
 
-SocketIpStatus IpSocket::open(void) {
+SocketIpStatus IpSocket::open() {
     NATIVE_INT_TYPE fd = -1;
     SocketIpStatus status = SOCK_SUCCESS;
     FW_ASSERT(m_fd == -1 and not m_open); // Ensure we are not opening an opened socket

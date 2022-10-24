@@ -13,15 +13,11 @@
 
 class TestPrmImpl: public Prm::TestPrmComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         TestPrmImpl(const char* compName);
-#else
-        TestPrmImpl();
-#endif
         void genTlm(U32 val);
         virtual ~TestPrmImpl();
-        void init(void);
-        void printParam(void);
+        void init();
+        void printParam();
     protected:
         void aport_handler(NATIVE_INT_TYPE portNum, I32 arg4, F32 arg5, U8 arg6);
 };

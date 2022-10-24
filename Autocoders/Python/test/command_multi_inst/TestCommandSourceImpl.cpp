@@ -6,14 +6,9 @@
  */
 
 #include <Autocoders/Python/test/command1/TestCommandSourceImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestCommandSourceImpl::TestCommandSourceImpl(const char* name) : Cmd::CommandTesterComponentBase(name)
-#else
-TestCommandSourceImpl::TestCommandSourceImpl() :
-        Cmd::CommandTesterComponentBase()
-#endif
 {
     // TODO Auto-generated constructor stub
 
@@ -25,7 +20,7 @@ TestCommandSourceImpl::~TestCommandSourceImpl() {
 
 void TestCommandSourceImpl::cmdStatusPort_handler(
         NATIVE_INT_TYPE portNum, FwOpcodeType opCode, U32 cmdSeq,
-        Fw::CommandResponse response) {
+        const Fw::CmdResponse& response) {
     this->printStatus(response);
 }
 
@@ -33,29 +28,29 @@ void TestCommandSourceImpl::cmdRegPort_handler(NATIVE_INT_TYPE portNum, FwOpcode
     printf("Received registration for opcode %d\n",opCode);
 }
 
-void TestCommandSourceImpl::init(void) {
+void TestCommandSourceImpl::init() {
     Cmd::CommandTesterComponentBase::init();
 }
 
-void TestCommandSourceImpl::printStatus(Fw::CommandResponse response) {
-    switch (response) {
-        case Fw::COMMAND_OK:
+void TestCommandSourceImpl::printStatus(Fw::CmdResponse response) {
+    switch (response.e) {
+        case Fw::CmdResponse::OK:
             printf("COMMAND OK\n");
             break;
-        case Fw::COMMAND_INVALID_OPCODE:
+        case Fw::CmdResponse::INVALID_OPCODE:
             printf("INVALID OPCODE\n");
             break;
-        case Fw::COMMAND_VALIDATION_ERROR:
+        case Fw::CmdResponse::VALIDATION_ERROR:
             printf("VALIDATION ERROR\n");
             break;
-        case Fw::COMMAND_FORMAT_ERROR:
+        case Fw::CmdResponse::FORMAT_ERROR:
             printf("FORMAT ERROR\n");
             break;
-        case Fw::COMMAND_EXECUTION_ERROR:
+        case Fw::CmdResponse::EXECUTION_ERROR:
             printf("EXECUTION ERROR\n");
             break;
         default:
-            printf("Unknown status %d\n", response);
+            printf("Unknown status %d\n", response.e);
             break;
     }
 }

@@ -52,7 +52,7 @@ class InstanceDictHeader:
         """
         Constructor.
         """
-        self.__visitor_list = list()
+        self.__visitor_list = []
 
     def __call__(self, args, topology_model):
         """
@@ -79,7 +79,7 @@ class InstanceDictHeader:
             DEBUG.error(
                 "InstanceDictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictHeaderVisit.accept() - the given visitor is not a subclass of AbstractVisitor!"
             )
 
@@ -94,7 +94,7 @@ class InstanceDictHeader:
             DEBUG.error(
                 "InstanceDictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
-            raise Exception(
+            raise TypeError(
                 "InstanceDictHeaderVisit.addVisitor(v) - the given visitor is not a subclass of AbstractVisitor!"
             )
 

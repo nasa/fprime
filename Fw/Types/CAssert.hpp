@@ -9,7 +9,6 @@
 #define FWCASSERT_HPP_
 
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
 
@@ -26,7 +25,7 @@
 #define FILE_NAME_ARG const U8*
 #define FW_CASSERT(cond) \
     ((void) ((cond) ? (0) : \
-    (CAssert0((U8*)__FILE__, __LINE__))))
+    (CAssert0((FILE_NAME_ARG)(__FILE__), __LINE__))))
 #endif
 
 #ifdef __cplusplus

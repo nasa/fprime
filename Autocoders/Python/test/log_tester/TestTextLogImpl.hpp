@@ -12,16 +12,12 @@
 
 class LogTextImpl: public Log::LogTesterComponentBase {
     public:
-#if FW_OBJECT_NAMES == 1
         LogTextImpl(const char* compName);
-#else
-        LogTextImpl();
-#endif
         virtual ~LogTextImpl();
-        void init(void);
+        void init();
         void setTime(Fw::Time time);
     protected:
-        void textLogRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, Fw::TextLogSeverity severity, Fw::TextLogString &text);
+        void textLogRecvPort_handler(NATIVE_INT_TYPE portNum, FwEventIdType id, Fw::Time &timeTag, const Fw::LogSeverity &severity, Fw::TextLogString &text);
     private:
 };
 

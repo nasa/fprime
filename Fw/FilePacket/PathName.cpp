@@ -10,23 +10,24 @@
 //
 // ======================================================================
 
-#include <string.h>
+#include <cstring>
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 
 namespace Fw {
 
   void FilePacket::PathName ::
     initialize(const char *const value)
   {
-    const U8 length = static_cast<U8>(::strnlen(value, MAX_LENGTH));
+    const U8 length = static_cast<U8>(StringUtils::string_length(value, MAX_LENGTH));
     this->length = length;
     this->value = value;
   }
 
   U32 FilePacket::PathName ::
-    bufferSize(void) const
+    bufferSize() const
   {
     return sizeof(this->length) + this->length;
   }

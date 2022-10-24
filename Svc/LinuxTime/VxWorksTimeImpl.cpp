@@ -7,14 +7,9 @@
 
 #include <Svc/LinuxTime/LinuxTimeImpl.hpp>
 #include <Fw/Time/Time.hpp>
-#include <time.h>
+#include <ctime>
 namespace Svc {
-
-    #if FW_OBJECT_NAMES == 1
     LinuxTimeImpl::LinuxTimeImpl(const char* name) : TimeComponentBase(name)
-    #else
-    LinuxTimeImpl::LinuxTimeImpl()
-    #endif
     {
     }
 

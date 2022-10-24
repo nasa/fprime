@@ -2,7 +2,7 @@
 #define EXAMPLE_TYPE_HPP
 
 // A hand-coded serializable
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Autocoders/Python/test/serialize_user/SomeStruct.hpp>
 #if FW_SERIALIZABLE_TO_STRING
@@ -19,11 +19,11 @@ namespace ANameSpace {
             SERIALIZED_SIZE = sizeof(SomeUserStruct) + sizeof(I32)
         };
 
-        UserSerializer(void); // Default constructor
+        UserSerializer(); // Default constructor
         UserSerializer(const SomeUserStruct* src); // copy constructor
         UserSerializer(const SomeUserStruct& src); // copy constructor
         UserSerializer(SomeUserStruct arg); // constructor with arguments
-        const SomeUserStruct& operator=(const SomeUserStruct& src); // Equal operator
+        SomeUserStruct& operator=(const SomeUserStruct& src); // Equal operator
 
         void setVal(const SomeUserStruct& arg); // set values
 

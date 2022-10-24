@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <Svc/StaticMemory/StaticMemoryComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/Assert.hpp"
 
 namespace Svc {
@@ -31,7 +31,7 @@ void StaticMemoryComponentImpl ::init(const NATIVE_INT_TYPE instance) {
     StaticMemoryComponentBase::init(instance);
 }
 
-StaticMemoryComponentImpl ::~StaticMemoryComponentImpl(void) {}
+StaticMemoryComponentImpl ::~StaticMemoryComponentImpl() {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports

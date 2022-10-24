@@ -30,7 +30,7 @@ namespace Svc {
         // ----------------------------------------------------------------------
 
         //! Queue full
-        void QueueFull(void);
+        void QueueFull();
 
     };
 

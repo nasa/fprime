@@ -20,8 +20,8 @@ import logging
 import sys
 
 from fprime_ac.models import Component, Port, Topology
-from fprime_ac.parsers import XmlComponentParser, XmlTopologyParser
-from fprime_ac.utils import ConfigManager, Logger
+from fprime_ac.parsers import XmlComponentParser
+from fprime_ac.utils import ConfigManager
 from fprime_ac.utils.buildroot import (
     BuildRootCollisionException,
     BuildRootMissingException,
@@ -57,39 +57,30 @@ class TopoFactory:
         self.__config = ConfigManager.ConfigManager.getInstance()
         self.__generate_new_IDS = True  # Work around to disable ID generation/table output in the case AcConstants.ini is used to build
 
-        self.__table_info = (
-            []
-        )  # ["COLUMN NAME" , <INT OF SPACE PADDING AROUND NAME> , "DESCRIPTION"]
-        self.__table_info.append(["INSTANCE NAME", 5, "Name of the instance object."])
-        self.__table_info.append(["BASE ID (HEX)", 0, "Base ID set for the instance."])
-        self.__table_info.append(
+        self.__table_info = [
+            ["INSTANCE NAME", 5, "Name of the instance object."],
+            ["BASE ID (HEX)", 0, "Base ID set for the instance."],
             [
                 "REQUESTED WINDOW SIZE",
                 0,
                 "Specified by either the 'base_id_range' attribute in the instance tag or by finding the max of the 'base_id_range' attribute in the topology tag and the largest internal ID of the instance.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "DIFFERENCED ID WINDOW SIZE",
                 0,
                 "Calculated by subtracting the current base ID from the next base ID.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "LARGEST COMPONENT INTERNAL ID",
                 0,
                 "The largest ID found in the events, channels, and commands of the instance.",
-            ]
-        )
-        self.__table_info.append(
+            ],
             [
                 "MAX AMOUNT OF IDS",
                 0,
                 "The largest amount of items from either events, channels, or commands.",
-            ]
-        )
+            ],
+        ]
 
     def set_generate_ID(self, value):
         """
@@ -126,8 +117,7 @@ class TopoFactory:
                 file_path = locate_build_root(comp_xml_path)
             except (BuildRootMissingException, BuildRootCollisionException) as bre:
                 stri = "ERROR: Could not find XML file {}. {}".format(
-                    comp_xml_path,
-                    str(bre),
+                    comp_xml_path, str(bre)
                 )
                 raise OSError(stri)
             processedXML = XmlComponentParser.XmlComponentParser(file_path)
@@ -637,15 +627,15 @@ class TopoFactory:
         if inst.get_base_id() is None:
             b = None
         else:
-            if id > abs(int(inst.get_base_id())):
-                b = abs(int(inst.get_base_id())) + id
+            if id > abs(int(inst.get_base_id(), 0)):
+                b = abs(int(inst.get_base_id(), 0)) + id
                 PRINT.info(
                     "WARNING: {} instance adding instance supplied base ID to the topology supplied base ID (New ID is {}) because instance supplied base ID is smaller than the topology supplied base ID.".format(
                         n, b
                     )
                 )
             else:
-                b = abs(int(inst.get_base_id()))
+                b = abs(int(inst.get_base_id(), 0))
             PRINT.info("WARNING: %s instance resetting base id to %d" % (n, b))
         #
         # set window size or override it on instance basis
@@ -662,7 +652,7 @@ class TopoFactory:
         """
 
         if inst.get_base_id_window() is not None:
-            w = abs(int(inst.get_base_id_window()))
+            w = abs(int(inst.get_base_id_window(), 0))
             PRINT.info(
                 "{} instance resetting base id window range to instance specified size ({})".format(
                     n, w
@@ -702,50 +692,3 @@ class TopoFactory:
             component_calculated_window_range,
             self.__compute_component_ID_amount(comp),
         ]
-
-
-def main():
-    # Configures output only to stdout.
-    Logger.connectOutputLogger(None)
-
-    xmlfile = "../../test/app1a/DuckAppAi.xml"
-
-    print("Topology XML parse test (%s)" % xmlfile)
-    #
-    # Basic usage of this factory to create the component meta-model
-    #
-    the_parsed_topology_xml = XmlTopologyParser.XmlTopologyParser(xmlfile)
-    top = TopoFactory().create(the_parsed_topology_xml)
-    #
-    # End of usage and comp is the instance of model to be used.
-    #
-    print("Topology: %s" % top)
-    print("Namespace: %s" % top.get_namespace())
-    print("Comment: %s" % top.get_comment())
-    print()
-    for component in top.get_comp_list():
-        print("Component")
-        print("    Namespace: " + component.get_namespace())
-        print("    Name: " + component.get_name())
-        print("    Type: " + component.get_kind())
-        if component.get_comment() is not None:
-            print("    Comment: " + component.get_comment())
-        print("    Output Ports:")
-        for port in component.get_ports():
-            print("        Name: " + port.get_name())
-            print("        Port Type: " + port.get_type())
-            print("        Direction: " + port.get_direction())
-            if port.get_sync() is not None:
-                print("        Sync: " + port.get_sync())
-            if port.get_comment() is not None:
-                print("        Comment: " + port.get_comment())
-            print("        Target Component: " + port.get_target_comp())
-            print("        Target Port: " + port.get_target_port())
-            print("        Target Type: " + port.get_target_type())
-            print("        Target Direction:" + port.get_target_direction())
-            print()
-        print()
-
-
-if __name__ == "__main__":
-    main()

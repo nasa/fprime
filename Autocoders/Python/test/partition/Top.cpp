@@ -10,7 +10,7 @@
 
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 #include <Autocoders/Python/test/partition/DuckDuckImpl.hpp>
 #include <Autocoders/Python/test/partition/PartitionImpl.hpp>
@@ -29,12 +29,12 @@ Partition::PartitionImpl *partitionComp_ptr = 0;
 
 
 extern "C" {
-	void dumparch(void);
+	void dumparch();
 	void dumpobj(const char* objName);
 }
 
 
-void dumparch(void) {
+void dumparch() {
 	simpleRegPtr->dump();
 }
 
@@ -43,7 +43,7 @@ void dumpobj(const char* objName) {
 }
 
 
-void constructArchitecture(void) {
+void constructArchitecture() {
 
 	Fw::PortBase::setTrace(true);
 
@@ -66,8 +66,8 @@ void constructArchitecture(void) {
 	partitionComp_ptr->getoutputPort2SerializeOutputPort()->registerSerialPort(hueyComp_ptr->getinputPort3Msg3InputPort());
 
 	// Active component startup
-	// start(identifier, stack size, priority)
-	hueyComp_ptr->start(0, 10 * 1024, 100);
+	// start()
+	hueyComp_ptr->start();
 
 	dumparch();
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])  {
 	// Construct the topology here.
 	constructArchitecture();
 	// Ask for input to huey or duey here.
-	char in[80];
+	char in[80] = {};
 	U32 cmd;
 	Fw::String *str;
 	char str2[80];

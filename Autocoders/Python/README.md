@@ -12,13 +12,13 @@ Takes a topology XML file as input and generates all the configuration files nec
 Takes a topology XML file as input and produces a JSON dictionary with naming convention "Deployment" + Dictionary.json. The JSON dictionary is generated within the directory where JSONDictionaryGen was run, but this can be overridden by inputting a new output directory in -p/--path.
 
 ### testgen.py
-Testgen generates a test component in the same way that codegen does. It takes a component XML file as input and generates Tester.cpp/hpp, TesterBase.cpp/hpp, GTestBase.cpp/hpp, and a TestMain.cpp. TestMain.cpp and Tester.cpp/hpp won't be overwritten if they already exists. Rather, one should use command line option -m/--maincpp to overwrite TestMain.cpp and -f/--force_tester to overwrite Tester.cpp and Tester.hpp. Testgen supports absolute paths to inputted files, so you are able to call testgen on any file and the test component will be generated in the directory that testgen was called from.
+Testgen generates a test component in the same way that codegen does. It takes a component XML file as input and generates Tester.cpp/hpp, TesterBase.cpp/hpp, GTestBase.cpp/hpp, and a TestMain.cpp. TestMain.cpp and Tester.cpp/hpp won't be overwritten if they already exist. Rather, one should use command line option -m/--maincpp to overwrite TestMain.cpp and -f/--force_tester to overwrite Tester.cpp and Tester.hpp. Testgen supports absolute paths to inputted files, so you are able to call testgen on any file and the test component will be generated in the directory that testgen was called from.
 
 ### gds_dictgen.py
 GDS Dictgen is a tool for generating GDS XML Dictionaries that are named *TopologyAppDictionary.xml. The tool takes topology XML as input, and the generated dictionary contains all enums, serializables, commands, events, channels, and parameters present within the topology. GDS Dictgen supports absolute paths to inputted files, so you are able to call GDS dictgen on any file and the dictionary will be generated in the directory that GDS dictgen was called from.
 
 ### pymod_dictgen.py
-Pymod Dictgen is a tool for generation python modules for the GDS. The tool takes topology XML as input, and it generates command, event, channel, and parameter python modules within their own respective directories. The output path can be changed with command line option -o/--dict_dir. Pymod dictgen supports absolute paths to inputted files, so you are able to call testgen on any file and the directories will be generated in the directory that pymod dictgen was called from.
+Pymod Dictgen is a tool for generating python modules for the GDS. The tool takes topology XML as input, and it generates command, event, channel, and parameter python modules within their own respective directories. The output path can be changed with command line option -o/--dict_dir. Pymod dictgen supports absolute paths to inputted files, so you are able to call testgen on any file and the directories will be generated in the directory that pymod dictgen was called from.
 
 ### implgen.py
 Implgen is a tool that takes in component XML and generates ComponentImpl.cpp/hpp files. It is formatted in a very similar way to testgen.py. It generates the Impl files within whatever directory it was ran, and it has its own pytest in Autocoders/Python/test/implgen. Implgen also allows for absolute paths.
@@ -38,7 +38,7 @@ Directory containing telemetry packet / layout documentation. It also contains a
 Directory containing all autocoder RelaxNG and Schematron XML schemas. Schemas are found within the default directory. The sample_XML_files directory contains sample XML files for the schemas that are run using the testSchemas.py test. These sample XML files were made for the RelaxNG schemas, but they have not been updated for the schematron schemas, so they may not work with them. 
 
 ### src/
-Directory containing all python code for the autocoder tools. Codegen uses the visitor pattern to generate its output files, and the generators for the visitor pattern are found in generators while the visitors are found in generators/visitors. The directory generators/writers contain the modules that perform serial writes for the testgen and dictgen tools. They are alternatives to the visitors, but currently there are only writers for the test component and dictionary files. Generators/templates contains all the cheetah templates required to run the autocoder. In a fresh repo, these should be built either by making F Prime, making the autocoder unit tests, or manually running cheetah compile within the templates directory. The parsers directory contains all the custom autocoder XML parser modules that the autocoder uses to create models from raw F Prime XML. Lastly, utils/cosmos contains the modules used by the cosmosgen tool. There is a readme file within this directory that explains what all of this code does.
+Directory containing all python code for the autocoder tools. Codegen uses the visitor pattern to generate its output files, and the generators for the visitor pattern are found in generators while the visitors are found in generators/visitors. Generators/templates contains all the cheetah templates required to run the autocoder. In a fresh repo, these should be built either by making F Prime, making the autocoder unit tests, or manually running cheetah compile within the templates directory. The parsers directory contains all the custom autocoder XML parser modules that the autocoder uses to create models from raw F Prime XML. Lastly, utils/cosmos contains the modules used by the cosmosgen tool. There is a readme file within this directory that explains what all of this code does.
 
 #### src/generators/
 | File | Description |
@@ -135,7 +135,7 @@ Cmake file that is present in all parts of directory tree to be built by cmake. 
 
 ### Requirements
 
-The Autocoder's requirements are covered by installing the F´ software package. This is is covered by the install document 
+The Autocoder's requirements are covered by installing the F´ software package. This is covered by the install document 
 found at: [INSTALL.md](../../INSTALL.md).
 
 ## Schematron

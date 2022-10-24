@@ -7,4 +7,3 @@ The PrmDb component can be commanded to save the updated values to a file.
 PrmDbComponentAi.xml - XML definition for parameter database component
 PrmDbImpl.hpp(.cpp) - Implementation of parameter database component
 PrmDbImplCfg.hpp - Configuration for parameter database
-PrmDbModule.mdxml - MagicDraw project file that describes the parameter database component

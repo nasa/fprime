@@ -1,7 +1,8 @@
 #include <Fw/Port/PortBase.hpp>
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Logger/Logger.hpp>
-#include <stdio.h>
+#include <cstdio>
+#include "Fw/Types/Assert.hpp"
 
 #if FW_PORT_TRACING
 void setConnTrace(bool trace) {
@@ -18,35 +19,35 @@ namespace Fw {
 
     PortBase::PortBase()
                 :
-                Fw::ObjBase(0),
-                m_connObj(0)
-#if FW_PORT_TRACING == 1     
+                Fw::ObjBase(nullptr),
+                m_connObj(nullptr)
+#if FW_PORT_TRACING == 1
                 ,m_trace(false),
-                m_override_trace(false)
-#endif                
+                m_ovr_trace(false)
+#endif
     {
-        
-    }
-    
-    PortBase::~PortBase(void) {
-        
-    }
-    
-    void PortBase::init(void) {
-        ObjBase::init();
-        
-    }
-    
-    bool PortBase::isConnected(void) {
-        return m_connObj == 0?false:true;
+
     }
 
-#if FW_PORT_TRACING == 1    
-    
-    void PortBase::trace(void) {
+    PortBase::~PortBase() {
+
+    }
+
+    void PortBase::init() {
+        ObjBase::init();
+
+    }
+
+    bool PortBase::isConnected() {
+        return m_connObj == nullptr?false:true;
+    }
+
+#if FW_PORT_TRACING == 1
+
+    void PortBase::trace() {
         bool do_trace = false;
 
-        if (this->m_override_trace) {
+        if (this->m_ovr_trace) {
             if (this->m_trace) {
                 do_trace = true;
             }
@@ -56,9 +57,9 @@ namespace Fw {
 
         if (do_trace) {
 #if FW_OBJECT_NAMES == 1
-            Fw::Logger::logMsg("Trace: %s\n", (POINTER_CAST)this->m_objName, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %s\n", reinterpret_cast<POINTER_CAST>(this->m_objName), 0, 0, 0, 0, 0);
 #else
-            Fw::Logger::logMsg("Trace: %p\n", (POINTER_CAST)this, 0, 0, 0, 0, 0);
+            Fw::Logger::logMsg("Trace: %p\n", reinterpret_cast<POINTER_CAST>(this), 0, 0, 0, 0, 0);
 #endif
         }
     }
@@ -67,24 +68,25 @@ namespace Fw {
         PortBase::s_trace = trace;
     }
 
-    void PortBase::overrideTrace(bool override, bool trace) {
-        this->m_override_trace = override;
+    void PortBase::ovrTrace(bool ovr, bool trace) {
+        this->m_ovr_trace = ovr;
         this->m_trace = trace;
     }
 
 #endif // FW_PORT_TRACING
-    
+
 #if FW_OBJECT_NAMES == 1
 #if FW_OBJECT_TO_STRING == 1
     void PortBase::toString(char* buffer, NATIVE_INT_TYPE size) {
-        (void)snprintf(buffer, size, "Port: %s %s->(%s)", this->m_objName, this->m_connObj ? "C" : "NC",
-                        this->m_connObj ? this->m_connObj->getObjName() : "None");
-        // NULL terminate
-        buffer[size-1] = 0;
+        FW_ASSERT(size > 0);
+        if (snprintf(buffer, size, "Port: %s %s->(%s)", this->m_objName, this->m_connObj ? "C" : "NC",
+                     this->m_connObj ? this->m_connObj->getObjName() : "None") < 0) {
+            buffer[0] = 0;
+        }
     }
 #endif // FW_OBJECT_TO_STRING
 #endif // FW_OBJECT_NAMES
-    
-    
+
+
 }
 

@@ -6,13 +6,9 @@
  */
 
 #include <Autocoders/Python/test/interface1/TestComponentImpl.hpp>
-#include <stdio.h>
+#include <cstdio>
 
-#if FW_OBJECT_NAMES == 1
 TestComponentImpl::TestComponentImpl(const char* name) : TestComponentBase(name)
-#else
-TestComponentImpl::TestComponentImpl() : TestComponentBase()
-#endif
 {
     // TODO Auto-generated constructor stub
 
@@ -30,7 +26,7 @@ void TestComponentImpl::test_internalInterfaceHandler(I32 arg1, F32 arg2, U8 arg
 
 }
 
-void TestComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, ANameSpace::UserSerializer& arg4) {
+void TestComponentImpl::test2_internalInterfaceHandler(I32 arg1, SomeEnum arg2, const Fw::InternalInterfaceString& arg3, const ANameSpace::UserSerializer& arg4) {
 
 }
 

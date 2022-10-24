@@ -23,21 +23,16 @@ namespace AcTest {
   // ----------------------------------------------------------------------
 
   Tester ::
-    Tester(void) :
-#if FW_OBJECT_NAMES == 1
+    Tester() :
       TestCommandGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TestCommand")
-#else
-      TestCommandGTestBase(MAX_HISTORY_SIZE),
-      component()
-#endif
   {
     this->initComponents();
     this->connectPorts();
   }
 
   Tester ::
-    ~Tester(void)
+    ~Tester()
   {
 
   }
@@ -47,7 +42,7 @@ namespace AcTest {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    msgTest(void)
+    msgTest()
   {
       for (NATIVE_UINT_TYPE iter=0; iter <= QUEUE_DEPTH; iter++) {
         this->sendCmd_TEST_CMD_1(
@@ -65,7 +60,7 @@ namespace AcTest {
   // ----------------------------------------------------------------------
 
   void Tester ::
-    connectPorts(void)
+    connectPorts()
   {
 
     // aport
@@ -95,7 +90,7 @@ namespace AcTest {
   }
 
   void Tester ::
-    initComponents(void)
+    initComponents()
   {
     this->init();
     this->component.init(

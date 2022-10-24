@@ -6,7 +6,7 @@
  */
 
 #include <Svc/RateGroupDriver/test/ut/RateGroupDriverImplTester.hpp>
-#include <Svc/RateGroupDriver/RateGroupDriverImpl.hpp>
+#include <Svc/RateGroupDriver/RateGroupDriver.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 
 #include <gtest/gtest.h>
@@ -15,7 +15,7 @@
 static Fw::SimpleObjRegistry simpleReg;
 #endif
 
-void connectPorts(Svc::RateGroupDriverImpl& impl, Svc::RateGroupDriverImplTester& tester) {
+void connectPorts(Svc::RateGroupDriver& impl, Svc::RateGroupDriverImplTester& tester) {
 
     impl.set_CycleOut_OutputPort(0,tester.get_from_CycleOut(0));
     impl.set_CycleOut_OutputPort(1,tester.get_from_CycleOut(1));
@@ -33,7 +33,8 @@ TEST(RateGroupDriverTest,NominalSchedule) {
 
     NATIVE_INT_TYPE dividers[] = {1,2,3};
 
-    Svc::RateGroupDriverImpl impl("RateGroupDriverImpl",dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
+    Svc::RateGroupDriver impl("RateGroupDriver");
+    impl.configure(dividers,FW_NUM_ARRAY_ELEMENTS(dividers));
 
     Svc::RateGroupDriverImplTester tester(impl);
 

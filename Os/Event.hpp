@@ -7,7 +7,7 @@
 #ifndef EVENT_HPP
 #define EVENT_HPP
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Os/TaskId.hpp>
 
 namespace Os {
@@ -29,7 +29,7 @@ namespace Os {
             static I32 send(const TaskId& tid, const U32 events);
             static I32 receive(const U32 events, const U8 options,
                                const I32 timeout, U32* eventsReceived);
-            static I32 clear(void);
+            static I32 clear();
     };
 }
 
