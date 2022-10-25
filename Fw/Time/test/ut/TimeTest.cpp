@@ -58,7 +58,7 @@ TEST(TimeTestNominal,MathTest) {
     ASSERT_EQ(time3.m_seconds,3000);
     ASSERT_EQ(time3.m_useconds,1000);
 
-    // Rollover subtract
+    // Rollover subtraction
     time1.set(1,999999);
     time2.set(2,000001);
     time3 = Fw::Time::sub(time2,time1);
