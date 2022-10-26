@@ -206,6 +206,7 @@ cntx
 cobj
 CODEFILE
 codegen
+codeql
 colno
 COLORSTYLE
 colorwheel
