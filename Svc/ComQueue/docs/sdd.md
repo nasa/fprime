@@ -93,7 +93,7 @@ It does the following:
 3. Returns a warning if `m_queues` is full
 
 In the case where the component is already in `READY` state, this will process the
-queue immediately after enqueueing.
+queue immediately after the buffer is added to the queue.
 
 
 #### 4.6.2 comQueueIn
@@ -104,7 +104,7 @@ It does the following:
 3. Returns a warning if `m_queues` is full
 
 In the case where the component is already in `READY` state, this will process the
-queue immediately after enqueueing.
+queue immediately after the buffer is added to the queue.
 
 #### 4.6.3 comStatusIn
 The `comStatusIn` port handler receives an `Svc::ComSendStatus` and it does the following:

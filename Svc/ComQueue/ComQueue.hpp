@@ -39,7 +39,7 @@ class ComQueue : public ComQueueComponentBase {
      * any message sent to it will overflow.
      *
      * Priority is an integer between 0 (inclusive) and TOTAL_PORT_COUNT (exclusive). Queues with lower priority values
-     * will be serviced first. Priorities may be repeated and queues sharing priorities will be serviced in a balanaced
+     * will be serviced first. Priorities may be repeated and queues sharing priorities will be serviced in a balanced
      * manner.
      */
     struct QueueConfigurationEntry {
@@ -59,7 +59,7 @@ class ComQueue : public ComQueueComponentBase {
     struct QueueConfigurationTable {
         QueueConfigurationEntry entries[TOTAL_PORT_COUNT];
         /**
-         * \breif constructs a basic un-prioritized table with depth 0
+         * \brief constructs a basic un-prioritized table with depth 0
          */
         QueueConfigurationTable();
     };

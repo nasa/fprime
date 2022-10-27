@@ -24,7 +24,7 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
 ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
       m_lastIndex(0),
-      m_bufferRetry(0, 0,0),
+      m_bufferRetry(nullptr, 0,0),
       m_state(WAITING),
       m_allocationId(-1),
       m_allocator(nullptr),
@@ -72,7 +72,6 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
         // priority value
         for (NATIVE_UINT_TYPE entryIndex = 0; entryIndex < FW_NUM_ARRAY_ELEMENTS(queueConfig.entries); entryIndex++) {
             // Check for valid configuration entry
-            FW_ASSERT(queueConfig.entries[entryIndex].depth >= 0, queueConfig.entries[entryIndex].depth, entryIndex);
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
                       queueConfig.entries[entryIndex].priority, TOTAL_PORT_COUNT, entryIndex);
 
@@ -226,7 +225,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer) {
     FW_ASSERT(this->m_state == READY);
     this->m_lock.lock();
     // Buffer ownership transferred to downstream component. Clear local reference.
-    this->m_bufferRetry = Fw::Buffer(0, 0, 0);
+    this->m_bufferRetry = Fw::Buffer(nullptr, 0, 0);
     this->m_lock.unLock();
     this->buffQueueSend_out(0, buffer);
     this->m_state = WAITING;
@@ -259,7 +258,7 @@ void ComQueue::processQueue() {
     this->m_lock.lock();
     if (this->m_bufferRetry.getData() != nullptr) {
         this->retryDeallocate_out(0, this->m_bufferRetry);
-        this->m_bufferRetry = Fw::Buffer(0, 0, 0);
+        this->m_bufferRetry = Fw::Buffer(nullptr, 0, 0);
     }
     this->m_lock.unLock();
 
