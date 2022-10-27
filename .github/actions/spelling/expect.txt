@@ -149,6 +149,7 @@ cdn
 cerrno
 cface
 CFDP
+cff
 cflag
 cfsetispeed
 cfsetospeed
