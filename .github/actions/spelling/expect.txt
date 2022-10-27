@@ -546,6 +546,7 @@ gethostname
 getinput
 getitem
 getline
+getm
 getopt
 getoutput
 getpid
@@ -755,8 +756,8 @@ lineroo
 lineterm
 linting
 linux
-LINUXUARTDRIVER
 LINUXTIMEIMPL
+LINUXUARTDRIVER
 Listst
 LJR
 lkml
@@ -1197,7 +1198,9 @@ SETFL
 setinheritsched
 setitem
 SETLOGGING
+setm
 setop
+setprecision
 setprotocol
 setquaternion
 setschedparam
@@ -1270,6 +1273,7 @@ ssh
 ssize
 SSL
 sss
+sstream
 Ssymbols
 stacklevel
 stackoverflow
@@ -1301,6 +1305,7 @@ stringchan
 stringified
 Stringpacket
 stringparam
+stringstream
 STRINGUTILS
 strlen
 strncat
@@ -1460,8 +1465,8 @@ tts
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
