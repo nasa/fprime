@@ -5,7 +5,7 @@ name: "JPL Coding Standard Scan"
 
 on:
   push:
-    branches: [ "master", "develop", "jpl-coding-standard" ]
+    branches: [ "master", "develop", "workflow/jpl-coding-standard" ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "master", "develop" ]
