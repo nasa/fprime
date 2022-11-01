@@ -119,7 +119,7 @@ class ComQueue : public ComQueueComponentBase {
                    Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
     );
 
-    //! Cleanup the com stub
+    //! Deallocate resources and cleanup ComQueue
     //!
     void cleanup();
 

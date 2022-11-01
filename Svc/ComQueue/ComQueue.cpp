@@ -187,6 +187,8 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
 
 void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer &fwBuffer) {
     this->m_lock.lock();
+    // Make sure the retry buffer is unset before clobbering it
+    FW_ASSERT(this->m_bufferRetry.getData() == nullptr);
     this->m_bufferRetry = fwBuffer;
     this->m_lock.unLock();
 }
@@ -222,11 +224,9 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
+    // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
+    FW_ASSERT(this->m_bufferRetry.getData() == nullptr);
     FW_ASSERT(this->m_state == READY);
-    this->m_lock.lock();
-    // Buffer ownership transferred to downstream component. Clear local reference.
-    this->m_bufferRetry = Fw::Buffer(nullptr, 0, 0);
-    this->m_lock.unLock();
     this->buffQueueSend_out(0, buffer);
     this->m_state = WAITING;
 }
@@ -243,6 +243,8 @@ void ComQueue::retryQueue() {
         this->m_lock.lock();
         FW_ASSERT(this->m_bufferRetry.getData() != nullptr);
         Fw::Buffer retry_temp = this->m_bufferRetry;
+        // Buffer ownership transferred to downstream component via local retry_temp. Clear local reference.
+        this->m_bufferRetry = Fw::Buffer(nullptr, 0, 0);
         this->m_lock.unLock();
         this->sendBuffer(retry_temp);
     }
