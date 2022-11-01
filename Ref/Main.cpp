@@ -17,9 +17,6 @@
 // Used for printf functions
 #include <cstdlib>
 
-// Object for communicating state to the reference topology
-//Ref::TopologyState inputs;
-
 /**
  * \brief print commandline help message
  *
@@ -28,7 +25,7 @@
  * @param app: name of application
  */
 void print_usage(const char* app) {
-    (void) printf("Usage: ./%s [options]\n-a\thostname/IP address\n-p\tport_number\n",app);
+    (void)printf("Usage: ./%s [options]\n-a\thostname/IP address\n-p\tport_number\n", app);
 }
 
 /**
@@ -56,11 +53,11 @@ static void signalHandler(int signum) {
 int main(int argc, char* argv[]) {
     U32 port_number = 0;
     I32 option = 0;
-    char *hostname = nullptr;
+    char* hostname = nullptr;
 
     // Loop while reading the getopt supplied options
-    while ((option = getopt(argc, argv, "hp:a:")) != -1){
-        switch(option) {
+    while ((option = getopt(argc, argv, "hp:a:")) != -1) {
+        switch (option) {
             // Handle the -a argument for address/hostname
             case 'a':
                 hostname = optarg;
@@ -87,12 +84,12 @@ int main(int argc, char* argv[]) {
     // Setup program shutdown via Ctrl-C
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
-    (void) printf("Hit Ctrl-C to quit\n");
+    (void)printf("Hit Ctrl-C to quit\n");
 
     // Setup, cycle, and teardown topology
     Ref::setupTopology(inputs);
-    Ref::startSimulatedCycle(1000); // Program loop cycling rate groups at 1Hz
+    Ref::startSimulatedCycle(1000);  // Program loop cycling rate groups at 1Hz
     Ref::teardownTopology(inputs);
-    (void) printf("Exiting...\n");
+    (void)printf("Exiting...\n");
     return 0;
 }

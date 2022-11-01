@@ -12,9 +12,9 @@
 #include <Ref/Top/RefTopologyAc.hpp>
 
 // Necessary project-specified types
-#include <Svc/FramingProtocol/FprimeProtocol.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <Os/Log.hpp>
+#include <Svc/FramingProtocol/FprimeProtocol.hpp>
 
 // Used for 1Hz synthetic cycling
 #include <Os/Mutex.hpp>
@@ -24,7 +24,6 @@ using namespace Ref;
 
 // Instantiate a system logger that will handle Fw::Logger::logMsg calls
 Os::Log logger;
-
 
 // The reference topology uses a malloc-based allocator for components that need to allocate memory during the
 // initialization phase.
@@ -40,9 +39,9 @@ NATIVE_INT_TYPE rateGroupDivisors[Svc::RateGroupDriver::DIVIDER_SIZE] = {1, 2, 4
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
-NATIVE_INT_TYPE rateGroup1Context[Svc::ActiveRateGroup::CHILD_COUNT_MAX] = {};
-NATIVE_INT_TYPE rateGroup2Context[Svc::ActiveRateGroup::CHILD_COUNT_MAX] = {};
-NATIVE_INT_TYPE rateGroup3Context[Svc::ActiveRateGroup::CHILD_COUNT_MAX] = {};
+NATIVE_INT_TYPE rateGroup1Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+NATIVE_INT_TYPE rateGroup2Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
+NATIVE_INT_TYPE rateGroup3Context[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX] = {};
 
 // A number of constants are needed for construction of the topology. These are specified here.
 enum TopologyConstants {
@@ -89,7 +88,7 @@ void configureTopology() {
     // Rate group driver needs a divisor list
     rateGroupDriverComp.configure(rateGroupDivisors, FW_NUM_ARRAY_ELEMENTS(rateGroupDivisors));
 
-    // Rate groups require context arrays
+    // Rate groups require context arrays. Empty for Reference example.
     rateGroup1Comp.configure(rateGroup1Context, FW_NUM_ARRAY_ELEMENTS(rateGroup1Context));
     rateGroup2Comp.configure(rateGroup2Context, FW_NUM_ARRAY_ELEMENTS(rateGroup2Context));
     rateGroup3Comp.configure(rateGroup3Context, FW_NUM_ARRAY_ELEMENTS(rateGroup3Context));
@@ -182,4 +181,4 @@ void teardownTopology(const TopologyState& state) {
     cmdSeq.deallocateBuffer(mallocator);
     fileUplinkBufferManager.cleanup();
 }
-};
+};  // namespace Ref
