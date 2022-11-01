@@ -32,7 +32,7 @@ void print_usage(const char* app) {
 }
 
 /**
- * \breif shutdown topology cycling on signal
+ * \brief shutdown topology cycling on signal
  *
  * The reference topology allows for a simulated cycling of the rate groups. This simulated cycling needs to be stopped
  * in order for the program to shutdown. This is done via handling signals such that it is performed via Ctrl-C
@@ -49,9 +49,9 @@ static void signalHandler(int signum) {
  * This F´ program is designed to run in standard environments (e.g. Linux/macOs running on a laptop). Thus it uses
  * command line inputs to specify how to connect.
  *
- * @param argc
- * @param argv
- * @return
+ * @param argc: argument count supplied to program
+ * @param argv: argument values supplied to program
+ * @return: 0 on success, something else on failure
  */
 int main(int argc, char* argv[]) {
     U32 port_number = 0;
