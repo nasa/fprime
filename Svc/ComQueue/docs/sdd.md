@@ -83,7 +83,7 @@ The `Svc::ComQueue` component runs the following state machine. It has three sta
 
 The state machine will transition between states when a status is received and will transition from `READY` when a new
 buffer is received. `FAILURE` statuses transition into the `RETRY` state whereas a `SUCCESS` status will either send a
-buffer and transition to `WAITING` or will have no buffers to send transitioning into `READY` state. In `WAITING` and
+buffer and transition to `WAITING` or will have no buffers to send and transition into `READY` state. In `WAITING` and
 `RETRY` states buffers are queued for future sending.
 
 ![`Svc::ComQueue` Functional State Machine](./img/state-machine.png)
