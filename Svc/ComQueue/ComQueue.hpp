@@ -197,7 +197,7 @@ class ComQueue : public ComQueueComponentBase {
     FwIndexType m_lastIndex;                            //!< Index of last serviced queue
 
     Fw::ComBuffer m_comRetry;  //!< Retry storage for Fw::ComBuffer
-    Fw::Buffer m_bufferRetry;  //!< Retry storage for Fw::Buffer
+    Fw::Buffer m_previouslySentBuffer;  //!< Retry storage for Fw::Buffer
 
     bool m_throttle[TOTAL_PORT_COUNT];  //!< Per-queue EVR throttles
 

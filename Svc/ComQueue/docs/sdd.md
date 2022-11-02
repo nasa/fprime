@@ -65,7 +65,7 @@ The diagram below shows the `Svc::ComQueue` component.
 `Svc::ComQueue` maintains the following state:
 1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
 2. `m_comRetry`: An instance of `Fw::ComBuffer` storing the last sent `Fw::ComBuffer` message.
-3. `m_bufferRetry`: An instance of `Fw::Buffer` for storing the last sent `Fw::Buffer` message.
+3. `m_previouslySentBuffer`: An instance of `Fw::Buffer` for storing the last sent `Fw::Buffer` message.
 4. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
 5. `m_lastIndex`: Incoming port index of last sent message.
 6. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
