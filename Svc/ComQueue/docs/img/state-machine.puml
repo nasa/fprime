@@ -1,15 +1,29 @@
 @startuml
+' If/choice check states for handling statuses
 state status_check <<choice>>
+state retry_status_check <<choice>>
+' If/choice check for queue availability
 state queue_check <<choice>>
-state WAITING: Buffer Received / Queue Buffer
-state RETRY: Buffer Received / Queue Buffer
-[*] --> WAITING
-WAITING --> status_check: Status In
-status_check -> queue_check: [SUCCESS]
+
+' State definitions to capture self transitions
+state WAITING: Buffer Received / Queue Buffer\nBuffer Returned / Set Retry Buffer
+state RETRY: Buffer Received / Queue Buffer\nBuffer Returned / Set Retry Buffer
+
+[*] -down-> WAITING
+' Status In transitions
+WAITING -down-> status_check: Status In
+RETRY -left-> retry_status_check: Status In
+
+retry_status_check -left-> WAITING: [SUCCESS] / Send Retry Buffer
+retry_status_check -right-> RETRY: [FAILURE]
+
+
+status_check -left-> queue_check: [SUCCESS]
 status_check -up-> RETRY: [FAILURE]
+
 queue_check -up-> WAITING: [Buffer Queued] / Send Buffer
-queue_check -> READY: [No Buffer Queued]
+queue_check -left-> READY: [No Buffer Queued]
 READY -up-> WAITING: Buffer Received / Send Buffer
-RETRY -> status_check: Status In
+
 @enduml
 

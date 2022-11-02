@@ -187,6 +187,7 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
 }
 
 void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
+    FW_ASSERT(fwBuffer.getData() != nullptr);
     this->m_lock.lock();
     // Make sure the retry buffer is unset before clobbering it
     FW_ASSERT(this->m_previouslySentBuffer.getData() == nullptr);
