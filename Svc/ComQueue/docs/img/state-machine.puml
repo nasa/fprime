@@ -1,0 +1,15 @@
+@startuml
+state status_check <<choice>>
+state queue_check <<choice>>
+state WAITING: Buffer Received / Queue Buffer
+state RETRY: Buffer Received / Queue Buffer
+[*] --> WAITING
+WAITING --> status_check: Status In
+status_check -> queue_check: [SUCCESS]
+status_check -up-> RETRY: [FAILURE]
+queue_check -up-> WAITING: [Buffer Queued] / Send Buffer
+queue_check -> READY: [No Buffer Queued]
+READY -up-> WAITING: Buffer Received / Send Buffer
+RETRY -> status_check: Status In
+@enduml
+
