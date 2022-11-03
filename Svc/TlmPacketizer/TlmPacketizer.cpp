@@ -212,6 +212,7 @@ namespace Svc {
         Fw::TlmBuffer &val
     )
   {
+
       FW_ASSERT(this->m_configured);
       // get hash value for id
       NATIVE_UINT_TYPE index = this->doHash(id);
@@ -306,6 +307,7 @@ namespace Svc {
                       [sizeof(FwPacketDescriptorType)+ sizeof(FwTlmPacketizeIdType)],Fw::Time::SERIALIZED_SIZE);
               Fw::SerializeStatus stat = buff.serialize(this->m_sendBuffers[pkt].latestTime);
               FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
+
               this->PktSend_out(0,this->m_sendBuffers[pkt].buffer,0);
           }
       }

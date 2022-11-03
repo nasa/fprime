@@ -29,6 +29,7 @@ module Ref {
     instance SG5
     instance blockDrv
     instance chanTlm
+    instance pktTlm
     instance cmdDisp
     instance cmdSeq
     instance comm
@@ -64,7 +65,10 @@ module Ref {
 
     param connections instance prmDb
 
-    telemetry connections instance chanTlm
+    # If using telemetry channel component, comment in
+    # telemetry connections instance chanTlm
+    # If using telemetry packetizer component, comment in
+    telemetry connections instance pktTlm
 
     text event connections instance textLogger
 
@@ -78,7 +82,8 @@ module Ref {
 
     connections Downlink {
 
-      chanTlm.PktSend -> downlink.comIn
+      pktTlm.PktSend-> downlink.comIn
+      #chanTlm.PktSend -> downlink.comIn
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
 
@@ -103,7 +108,8 @@ module Ref {
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
       rateGroup1Comp.RateGroupMemberOut[0] -> SG1.schedIn
       rateGroup1Comp.RateGroupMemberOut[1] -> SG2.schedIn
-      rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
+      #rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
+      rateGroup1Comp.RateGroupMemberOut[2] -> pktTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
 

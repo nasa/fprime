@@ -5,6 +5,7 @@
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Ref/Top/FppConstantsAc.hpp"
 #include "Svc/FramingProtocol/FprimeProtocol.hpp"
+#include "Ref/Top/RefPacketsAc.hpp"
 
 namespace Ref {
 
@@ -40,6 +41,7 @@ namespace Ref {
   namespace PingEntries {
     namespace blockDrv { enum { WARN = 3, FATAL = 5 }; }
     namespace chanTlm { enum { WARN = 3, FATAL = 5 }; }
+    namespace pktTlm { enum { WARN = 3, FATAL = 5 }; }
     namespace cmdDisp { enum { WARN = 3, FATAL = 5 }; }
     namespace cmdSeq { enum { WARN = 3, FATAL = 5 }; }
     namespace eventLogger { enum { WARN = 3, FATAL = 5 }; }

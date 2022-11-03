@@ -176,6 +176,16 @@ module Ref {
 
   }
 
+  instance pktTlm: Svc.TlmPacketizer base id 0x0E00 \
+    queue size Default.queueSize \
+    stack size Default.stackSize \
+    priority 97 \
+  {
+    phase Fpp.ToCpp.Phases.configComponents """
+    pktTlm.setPacketList(RefPacketsPkts,RefPacketsIgnore,1);
+    """
+  }
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------
