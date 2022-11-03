@@ -8,8 +8,8 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
-#ifndef REF_TOPOLOGY_HPP
-#define REF_TOPOLOGY_HPP
+#ifndef REF_REFTOPOLOGY_HPP
+#define REF_REFTOPOLOGY_HPP
 // Included for access to Ref::TopologyState and Ref::ConfigObjects::pingEntries. These definitions are required by the
 // autocoder, but are also used in this hand-coded topology.
 #include <Ref/Top/RefTopologyDefs.hpp>

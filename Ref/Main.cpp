@@ -9,7 +9,7 @@
 // acknowledged.
 // ======================================================================
 // Used to access topology functions
-#include <Ref/Top/Topology.hpp>
+#include <Ref/Top/RefTopology.hpp>
 // Used for signal handling shutdown
 #include <signal.h>
 // Used for command line argument processing
