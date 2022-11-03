@@ -13,3 +13,10 @@ runs:
     shell: bash
   - run: pip3 install -r ${{ inputs.location }}/requirements.txt
     shell: bash
+  - run: which fprime-util
+    shell: bash
+  - run: which fprime-gds
+    shell: bash
+  - run: which fpp-check
+    shell: bash
+    
