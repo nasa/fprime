@@ -9,9 +9,9 @@ TEST(Nominal, Send) {
     tester.testQueueSend();
 }
 
-TEST(Nominal, Retry) {
+TEST(Nominal, Pause) {
     Svc::Tester tester;
-    tester.testRetrySend();
+    tester.testQueuePause();
 }
 
 TEST(Nominal, Priority) {

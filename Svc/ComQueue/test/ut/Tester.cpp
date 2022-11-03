@@ -19,7 +19,7 @@ namespace Svc {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Tester ::Tester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE), component("ComQueue"), m_retry_delta(0) {
+Tester ::Tester() : ComQueueGTestBase("Tester", MAX_HISTORY_SIZE), component("ComQueue") {
     this->initComponents();
     this->connectPorts();
 }
@@ -58,18 +58,8 @@ void Tester ::sendByQueueNumber(NATIVE_INT_TYPE queueNum, NATIVE_INT_TYPE& portN
 
 void Tester ::emitOne() {
     Fw::Success state = Fw::Success::SUCCESS;
-    U32 previously_sent = fromPortHistory_buffQueueSend->size();
     invoke_to_comStatusIn(0, state);
     dispatchAll();
-    U32 deallocated = fromPortHistory_retryDeallocate->size();
-    // Check deallocations automatically when there aren't spurious retries
-    ASSERT_EQ(previously_sent - this->m_retry_delta, deallocated);
-    if (this->m_retry_delta == 0) {
-        for (U32 index = 0; index < deallocated; index++) {
-            ASSERT_EQ(fromPortHistory_buffQueueSend->at(index - this->m_retry_delta).fwBuffer,
-                      fromPortHistory_retryDeallocate->at(index).fwBuffer);
-        }
-    }
 }
 
 void Tester ::emitOneAndCheck(NATIVE_UINT_TYPE expectedIndex,
@@ -109,59 +99,31 @@ void Tester ::testQueueSend() {
     component.cleanup();
 }
 
-void Tester ::testRetrySend() {
-    U8 data[BUFFER_LENGTH] = {'a', 'b', 'c'};
-    U8 dataGarbage[BUFFER_LENGTH] = {'c', 'd', 'e'};
+void Tester ::testQueuePause() {
+    U8 data[BUFFER_LENGTH] = {0xde, 0xad, 0xbe};
     Fw::ComBuffer comBuffer(&data[0], sizeof(data));
-    Fw::ComBuffer comBufferGarbage(&dataGarbage[0], sizeof(dataGarbage));
-
     Fw::Buffer buffer(&data[0], sizeof(data));
-    Fw::Buffer bufferGarbage(&dataGarbage[0], sizeof(dataGarbage));
-
-    Fw::Success readyState = Fw::Success::SUCCESS;
-    Fw::Success failState = Fw::Success::FAILURE;
-
     configure();
 
-    for (NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++) {
+    for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::COM_PORT_COUNT; portNum++){
         invoke_to_comQueueIn(portNum, comBuffer, 0);
-        invoke_to_comQueueIn(portNum, comBufferGarbage, 0);  // Send in garbage to ensure the right retry
-        emitOneAndCheck(0, QueueType::COM_QUEUE, comBuffer, buffer);
-
-        // Fail and force retry. Should be resilient to number of failures >= 1.
-        for (NATIVE_INT_TYPE j = 0; j < (portNum + 1); j++) {
-            invoke_to_comStatusIn(0, failState);
-            component.doDispatch();
-        }
-
-        // Retry should be original buffer
-        emitOneAndCheck(1, QueueType::COM_QUEUE, comBuffer, buffer);
-
-        ASSERT_from_comQueueSend_SIZE(2 + portNum * 3);
-        // Now clear out the garbage in queue
-        emitOneAndCheck(2, QueueType::COM_QUEUE, comBufferGarbage, bufferGarbage);
+        // Send a bunch of failures
+        Fw::Success state = Fw::Success::FAILURE;
+        invoke_to_comStatusIn(0, state);
+        invoke_to_comStatusIn(0, state);
+        invoke_to_comStatusIn(0, state);
+        emitOneAndCheck(portNum, QueueType::COM_QUEUE, comBuffer, buffer);
     }
     clearFromPortHistory();
 
     for(NATIVE_INT_TYPE portNum = 0; portNum < ComQueue::BUFFER_PORT_COUNT; portNum++){
         invoke_to_buffQueueIn(portNum, buffer);
-        invoke_to_buffQueueIn(portNum, bufferGarbage); // Send in garbage to ensure the right retry
-        emitOneAndCheck(0, QueueType::BUFFER_QUEUE, comBuffer, buffer);
-
-        // Fail and force retry. Should be resilient to number of failures >= 1.
-        for (NATIVE_INT_TYPE j = 0; j < (portNum + 1); j++) {
-            invoke_to_comStatusIn(0, failState);
-            component.doDispatch();
-        }
-
-        this->m_retry_delta += 1;
-        emitOneAndCheck(1, QueueType::BUFFER_QUEUE, comBuffer, buffer);
-        ASSERT_from_buffQueueSend_SIZE(2 + (portNum * 3));
-        ASSERT_from_retryDeallocate_SIZE(portNum * 2);
-        // Now clear out the garbage in queue
-        emitOneAndCheck(2, QueueType::BUFFER_QUEUE, comBufferGarbage, bufferGarbage);
-        ASSERT_EQ(fromPortHistory_buffQueueSend->at(portNum * 3).fwBuffer, fromPortHistory_retryDeallocate->at(portNum * 2).fwBuffer);
-        ASSERT_from_retryDeallocate_SIZE(1 + (portNum * 2));
+        // Send a bunch of failures
+        Fw::Success state = Fw::Success::FAILURE;
+        invoke_to_comStatusIn(0, state);
+        invoke_to_comStatusIn(0, state);
+        invoke_to_comStatusIn(0, state);
+        emitOneAndCheck(portNum, QueueType::BUFFER_QUEUE, comBuffer, buffer);
     }
     clearFromPortHistory();
     component.cleanup();
@@ -196,7 +158,6 @@ void Tester ::testPrioritySend() {
     }
 
     // Check that nothing has yet been sent
-    ASSERT_from_retryDeallocate_SIZE(0);
     ASSERT_from_buffQueueSend_SIZE(0);
     ASSERT_from_comQueueSend_SIZE(0);
 
@@ -312,15 +273,10 @@ void Tester ::testReadyFirst() {
 
 void Tester ::from_buffQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
     this->pushFromPortEntry_buffQueueSend(fwBuffer);
-    invoke_to_retryReturn(0, fwBuffer);
 }
 
 void Tester ::from_comQueueSend_handler(const NATIVE_INT_TYPE portNum, Fw::ComBuffer& data, U32 context) {
     this->pushFromPortEntry_comQueueSend(data, context);
-}
-
-void Tester ::from_retryDeallocate_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    this->pushFromPortEntry_retryDeallocate(fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -340,9 +296,6 @@ void Tester ::connectPorts() {
 
     // comStatusIn
     this->connect_to_comStatusIn(0, this->component.get_comStatusIn_InputPort(0));
-
-    // retryReturn
-    this->connect_to_retryReturn(0, this->component.get_retryReturn_InputPort(0));
 
     // run
     this->connect_to_run(0, this->component.get_run_InputPort(0));
@@ -364,9 +317,6 @@ void Tester ::connectPorts() {
 
     // comQueueSend
     this->component.set_comQueueSend_OutputPort(0, this->get_from_comQueueSend(0));
-
-    // retryDeallocate
-    this->component.set_retryDeallocate_OutputPort(0, this->get_from_retryDeallocate(0));
 }
 
 void Tester ::initComponents() {

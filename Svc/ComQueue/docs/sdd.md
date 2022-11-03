@@ -4,8 +4,8 @@
 ## 1. Introduction
 
 `Svc::ComQueue` is an  F´ active component that functions as a priority queue of buffer types. Messages are dequeued and
-forwarded when a `Fw::Success::SUCCESS` signal is received in order of priority. Messages that result in a
-`Fw::Success::FAILURE` signal are stored and retried on the first following `Fw::Success::SUCCESS` signal.
+forwarded when a `Fw::Success::SUCCESS` signal is received in order of priority. `Fw::Success::FAILURE` signals result
+in the queues being paused until a following `Fw::Success::SUCCESS` signal.
 
 `Svc::ComQueue` is configured with a queue depth and queue priority for each incoming `Fw::Com` and `Fw::Buffer` port by
 passing in a configuration table at initialization. Queued messages from the highest priority source port are serviced
@@ -18,7 +18,8 @@ first and a round-robin algorithm is used to balance between ports of shared pri
 
 1. Incoming buffers to a given port are in priority order
 2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal was received
-3. The system includes a downstream
+3. The com adapter is responsible for any retransmission of failed data
+4. The system includes a downstream
  [communications adapter](https://nasa.github.io/fprime/Design/communications-adapter-interface.html)
 
 
@@ -28,8 +29,8 @@ first and a round-robin algorithm is used to balance between ports of shared pri
 | Requirement      | Description                                                                                                                             | Rationale                                                               | Verification Method |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|---------------------|
 | SVC-COMQUEUE-001 | `Svc::ComQueue` shall queue `Fw::Buffer` and `Fw::ComBuffer` received on incoming ports.                                                | The purpose of the queue is to store messages.                          | Unit Test           |
-| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` or `Fw::ComBuffer` message on a received `Fw::Success::SUCCESS` signal  .         | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
-| SVC-COMQUEUE-003 | `Svc::ComQueue` shall retry sending the last sent message on the first `Fw::Success::SUCCESS` signal following `Fw::Success::FAILURE`.  | In the case of failure messages shall not be lost.                      | Unit Test           |
+| SVC-COMQUEUE-002 | `Svc::ComQueue` shall output exactly one `Fw::Buffer` or `Fw::ComBuffer` message on a received `Fw::Success::SUCCESS` signal.           | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit Test           |
+| SVC-COMQUEUE-003 | `Svc::ComQueue` shall pause sending  on the  `Fw::Success::FAILURE` and restart on the next `Fw::Success::SUCCESS` signal.              | `Svc::ComQueue` should not sent to a failing communication adapter.     | Unit Test           |
 | SVC-COMQUEUE-004 | `Svc::ComQueue` shall have a configurable number of `Fw::Com` and `Fw::Buffer` input ports.                                             | `Svc::ComQueue` should be adaptable for a number of projects.           | Inspection          |
 | SVC-COMQUEUE-005 | `Svc::ComQueue` shall select and send the next priority `Fw::Buffer` and `Fw::ComBuffer` message in response to `Fw::Success::SUCCESS`. | `Svc::ComQueue` obeys the communication adapter interface protocol.     | Unit test           |
 | SVC-COMQUEUE-006 | `Svc::ComQueue` shall periodically telemeter the number of queued messages per-port in response to a `run` port invocation.             | `Svc::ComQueue` should provide useful telemetry.                        | Unit Test           | 
@@ -53,8 +54,6 @@ The diagram below shows the `Svc::ComQueue` component.
 | `async input` | `comQueueIn`      | `[ComQueueComPorts] Fw.Com`           | Port array for receiving Fw::ComBuffers                |
 | `async input` | `buffQueueIn`     | `[ComQueueBufferPorts] Fw.BufferSend` | Port array for receiving Fw::Buffers                   |
 | `async input` | `run`             | `Svc.Sched`                           | Port for scheduling telemetry output                   |
-| `sync input`  | `retryReturn`     | `Fw.BufferSend`                       | Port for receiving Fw.Buffers back for retry           |
-| `output`      | `retryDeallocate` | `Fw.BufferSend`                       | Port for deallocating Fw.Buffers after potential retry |
 | `event`       | `Log`             | `Fw.Log`                              | Port for emitting events                               |
 | `text event`  | `LogText`         | `Fw.LogText`                          | Port for emitting text events                          |
 | `time get`    | `Time`            | `Fw.Time`                             | Port for getting the time                              |
@@ -64,27 +63,23 @@ The diagram below shows the `Svc::ComQueue` component.
 ### 4.2. State
 `Svc::ComQueue` maintains the following state:
 1. `m_queues`: An array of `Types::Queue` used to queue per-port messages.
-2. `m_comRetry`: An instance of `Fw::ComBuffer` storing the last sent `Fw::ComBuffer` message.
-3. `m_previouslySentBuffer`: An instance of `Fw::Buffer` for storing the last sent `Fw::Buffer` message.
-4. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
-5. `m_lastIndex`: Incoming port index of last sent message.
-6. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
-7. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
+2. `m_prioritizedList`: An instance of `Svc::ComQueue::QueueMetadata` storing the priority-order queue metadata.
+3. `m_state`: Instance of `Svc::ComQueue::SendState` representing the state of the component. See: 4.3.1 State Machine
+4. `m_throttle`: An array of flags that throttle the per-port queue overflow messages.
 
 ### 4.2.1 State Machine
 
 The `Svc::ComQueue` component runs the following state machine. It has three states:
 
-| State   | Description                                                                                            |
-|---------|--------------------------------------------------------------------------------------------------------|
-| WAITING | `Svc::ComQueue` is waiting on status from downstream components, and will attempt to send a new buffer |
-| RETRY   | `Svc::ComQueue` is waiting on status from downstream components, but will retry the previous buffer    |
-| READY   | `Svc::ComQueue` had no queued buffers and will send the next buffer received                           |
+| State   | Description                                                                                   |
+|---------|-----------------------------------------------------------------------------------------------|
+| WAITING | `Svc::ComQueue` is waiting on `SUCCESS` before attempting to send an available buffer         |
+| READY   | `Svc::ComQueue` had no queued buffers and will send the next buffer immediately when received |
 
 The state machine will transition between states when a status is received and will transition from `READY` when a new
-buffer is received. `FAILURE` statuses transition into the `RETRY` state whereas a `SUCCESS` status will either send a
-buffer and transition to `WAITING` or will have no buffers to send and transition into `READY` state. In `WAITING` and
-`RETRY` states buffers are queued for future sending.
+buffer is received. `FAILURE` statuses keep the `Svc::ComQueue` in `WAITING` state whereas a `SUCCESS` status will
+either send a buffer and transition to `WAITING` or will have no buffers to send and will transition into `READY` state.
+Buffers are queued when in `WAITING` state.
 
 ![`Svc::ComQueue` Functional State Machine](./img/state-machine.png)
 
@@ -136,11 +131,6 @@ The `run` port handler does the following:
 1. Report the high-water mark for each queue since last `run` invocation via telemetry
 2. Clear each queue's high-water mark
 
-#### 4.5.5 retryReturn
-The `retryReturn` port accepts and stores returned `Fw::Buffer` messages for the purposes of retry. When the downstream
-component (e.g. Framer) has finished with the previously sent `Fw::Buffer` it is returned to `Svc::ComQueue` via this
-port. 
-
 ### 4.6 Telemetry
 
 | Name           | Type               | Description                                               |
@@ -154,49 +144,15 @@ port.
 |----------------|---------------------------------------------------------------------------------|
 | QueueOverflow  | WARNING_HI event triggered when a queue can no longer hold the incoming message |
 
-### 4.8 Dynamic Buffer Handling
+### 4.8 Helper Functions
 
-`Svc::ComQueue` must handle the ownership of incoming `Fw::Buffer` and ensure these are deallocated. This is complicated
-as these buffers need to be retained for the purposes of retrying the transmission after a `FAILURE` status is received.
-The buffer management is shown in the sequence diagram below.
-
-The key features of this management are:
-1. When transmitting a buffer, ownership transferred to the downstream component (typically `Svc::Framer`)
-2. Ownership of the buffer must be returned to `Svc::ComQueue` before that buffer may be used for retrying
-3. Since `Svc::ComQueue` receives returned buffers, it must ensure these buffers are deallocated after all retries
-
-> Note: this diagram contains typical downstream work done by `Svc::Framer` and other standard components for larger
-> context.
-
-**`Svc::ComQueue` Dynamic Buffer Handling Sequence**
-```mermaid
-sequenceDiagram
-    loop Status == FAILURE
-        Svc.ComQueue->>Svc.Framer: Send Unframed Message (buffQueueSend)
-        Svc.Framer->>Buffer Management: Allocate for Framed Message
-        Buffer Management-->>Svc.Framer: 
-        Svc.Framer-->>Svc.Framer: Frame Message
-        Svc.Framer->>Svc.ComQueue: Return Unframed Message (retryReturn)
-        Svc.Framer->>Communication Adapter: Send Framed Message
-        Communication Adapter->>Buffer Management: Deallocate Framed Message
-        Communication Adapter->>Svc.ComQueue: Report Status (comStatusIn)
-    end
-    Svc.ComQueue->>Buffer Management: Deallocate Unframed Message (retryDeallocate)
-```
-
-### 4.9 Helper Functions
-
-#### 4.9.1 sendComBuffer
+#### 4.8.1 sendComBuffer
 Stores the com buffer message, sends the com buffer message on the output port, and then sets the send state to waiting.
 
-#### 4.9.2 sendBuffer
+#### 4.8.2 sendBuffer
 Stores the buffer message, sends the buffer message on the output port, and then sets the send state to waiting.
 
-#### 4.9.3 retryQueue
-Depending on the size of the last entry that is a type `QueueMetadata`, com buffer data
-or buffer data will be sent out again. 
-
-#### 4.9.4 processQueue
+#### 4.8.3 processQueue
 In a bounded loop that is constrained by the total size of the queue that contains both 
 buffer and com buffer data, do:
 

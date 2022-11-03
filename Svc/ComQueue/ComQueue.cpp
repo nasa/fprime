@@ -23,8 +23,6 @@ ComQueue ::QueueConfigurationTable ::QueueConfigurationTable() {
 
 ComQueue ::ComQueue(const char* const compName)
     : ComQueueComponentBase(compName),
-      m_lastIndex(0),
-      m_previouslySentBuffer(nullptr, 0, 0),
       m_state(WAITING),
       m_allocationId(-1),
       m_allocator(nullptr),
@@ -138,18 +136,7 @@ void ComQueue::buffQueueIn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fw
 
 void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& condition) {
     switch (this->m_state) {
-        // On success, a message should be retried. On failure, the component remains in retry state.
-        case RETRY:
-            if (condition.e == Fw::Success::SUCCESS) {
-                this->m_state = READY;
-                this->retryQueue();
-                // A retry must retry a message and thus WAITING state is expected
-                FW_ASSERT(this->m_state == WAITING, this->m_state);
-            } else {
-                this->m_state = RETRY;
-            }
-            break;
-        // On success, the queue should be processed. On failure, the message should be waiting to RETRY.
+        // On success, the queue should be processed. On failure, the component should still wait.
         case WAITING:
             if (condition.e == Fw::Success::SUCCESS) {
                 this->m_state = READY;
@@ -157,7 +144,7 @@ void ComQueue::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& c
                 // A message may or may not be sent. Thus, READY or WAITING are acceptable final states.
                 FW_ASSERT((this->m_state == WAITING || this->m_state == READY), this->m_state);
             } else {
-                this->m_state = RETRY;
+                this->m_state = WAITING;
             }
             break;
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
@@ -186,15 +173,6 @@ void ComQueue::run_handler(const NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE conte
     this->tlmWrite_buffQueueDepth(buffQueueDepth);
 }
 
-void ComQueue::retryReturn_handler(const NATIVE_INT_TYPE portNum, Fw::Buffer& fwBuffer) {
-    FW_ASSERT(fwBuffer.getData() != nullptr);
-    this->m_lock.lock();
-    // Make sure the retry buffer is unset before clobbering it
-    FW_ASSERT(this->m_previouslySentBuffer.getData() == nullptr);
-    this->m_previouslySentBuffer = fwBuffer;
-    this->m_lock.unLock();
-}
-
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
@@ -219,36 +197,15 @@ void ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
 
 void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer) {
     FW_ASSERT(this->m_state == READY);
-    this->m_comRetry = comBuffer;
     this->comQueueSend_out(0, comBuffer, 0);
     this->m_state = WAITING;
 }
 
 void ComQueue::sendBuffer(Fw::Buffer& buffer) {
     // Retry buffer expected to be cleared as we are either transferring ownership or have already deallocated it.
-    FW_ASSERT(this->m_previouslySentBuffer.getData() == nullptr);
     FW_ASSERT(this->m_state == READY);
     this->buffQueueSend_out(0, buffer);
     this->m_state = WAITING;
-}
-
-void ComQueue::retryQueue() {
-    // Check that we are in the appropriate state
-    FW_ASSERT(this->m_state == READY);
-
-    // Retry the last message based on type
-    if (this->m_lastIndex < COM_PORT_COUNT) {
-        this->sendComBuffer(this->m_comRetry);
-    } else {
-        // Ensure the retry buffer ownership has been returned before resending it.
-        this->m_lock.lock();
-        FW_ASSERT(this->m_previouslySentBuffer.getData() != nullptr);
-        Fw::Buffer retry_temp = this->m_previouslySentBuffer;
-        // Buffer ownership transferred to downstream component via local retry_temp. Clear local reference.
-        this->m_previouslySentBuffer = Fw::Buffer(nullptr, 0, 0);
-        this->m_lock.unLock();
-        this->sendBuffer(retry_temp);
-    }
 }
 
 void ComQueue::processQueue() {
@@ -256,14 +213,6 @@ void ComQueue::processQueue() {
     FwIndexType sendPriority = 0;
     // Check that we are in the appropriate state
     FW_ASSERT(this->m_state == READY);
-
-    // Clean-up retry buffer when sending something new
-    this->m_lock.lock();
-    if (this->m_previouslySentBuffer.getData() != nullptr) {
-        this->retryDeallocate_out(0, this->m_previouslySentBuffer);
-        this->m_previouslySentBuffer = Fw::Buffer(nullptr, 0, 0);
-    }
-    this->m_lock.unLock();
 
     // Walk all the queues in priority order. Send the first message that is available in priority order. No balancing
     // is done within this loop.
@@ -289,7 +238,6 @@ void ComQueue::processQueue() {
 
         // Update the throttle and the index that was just sent
         this->m_throttle[entry.index] = false;
-        this->m_lastIndex = priorityIndex;
 
         // Priority used in the next loop
         sendPriority = entry.priority;

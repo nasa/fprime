@@ -53,7 +53,7 @@ class Tester : public ComQueueGTestBase {
 
     void testQueueSend();
 
-    void testRetrySend();
+    void testQueuePause();
 
     void testPrioritySend();
 
@@ -78,11 +78,6 @@ class Tester : public ComQueueGTestBase {
                                    U32 context                    /*!< Call context value; meaning chosen by user*/
     );
 
-    //! Handler for from_retryDeallocate
-    //!
-    void from_retryDeallocate_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                                      Fw::Buffer& fwBuffer);
-
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -104,9 +99,6 @@ class Tester : public ComQueueGTestBase {
     //! The component under test
     //!
     ComQueue component;
-
-    //! Difference between the retry count and the port output count
-    U32 m_retry_delta;
 };
 
 }  // end namespace Svc

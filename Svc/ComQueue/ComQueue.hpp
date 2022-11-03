@@ -86,7 +86,6 @@ class ComQueue : public ComQueueComponentBase {
      */
     enum SendState {
         READY,   //!< Component is ready to send next priority message
-        RETRY,   //!< Component should retry the last sent message
         WAITING  //!< Component is waiting for status of the last sent message
     };
 
@@ -152,11 +151,6 @@ class ComQueue : public ComQueueComponentBase {
                      NATIVE_UINT_TYPE context       /*!<The call order*/
     );
 
-    //! Handler implementation for retryReturn
-    //!
-    void retryReturn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                             Fw::Buffer& fwBuffer);
-
     // ----------------------------------------------------------------------
     // Helper Functions
     // ----------------------------------------------------------------------
@@ -179,28 +173,15 @@ class ComQueue : public ComQueueComponentBase {
     void sendBuffer(Fw::Buffer& buffer  //!< Reference to buffer to send
     );
 
-    //! Retry sending a previous message
-    //!
-    void retryQueue();
-
     //! Process the queues to select the next priority message
     //!
     void processQueue();
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
-
-    Os::Mutex m_lock;
     Types::Queue m_queues[TOTAL_PORT_COUNT];  //!< Stores queued data waiting for transmission
-
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
-    FwIndexType m_lastIndex;                            //!< Index of last serviced queue
-
-    Fw::ComBuffer m_comRetry;  //!< Retry storage for Fw::ComBuffer
-    Fw::Buffer m_previouslySentBuffer;  //!< Retry storage for Fw::Buffer
-
     bool m_throttle[TOTAL_PORT_COUNT];  //!< Per-queue EVR throttles
-
     SendState m_state;  //!< State of the component
 
     // Storage for Fw::MemAllocator properties
