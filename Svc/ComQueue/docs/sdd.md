@@ -69,7 +69,7 @@ The diagram below shows the `Svc::ComQueue` component.
 
 ### 4.2.1 State Machine
 
-The `Svc::ComQueue` component runs the following state machine. It has three states:
+The `Svc::ComQueue` component runs the following state machine. It has two states:
 
 | State   | Description                                                                                   |
 |---------|-----------------------------------------------------------------------------------------------|
