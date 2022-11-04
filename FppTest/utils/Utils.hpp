@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  Utils.hpp
+// \author T. Chieu
+// \brief  hpp file for Utils class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #ifndef FPP_TEST_UTILS_HPP
 #define FPP_TEST_UTILS_HPP
 

@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  PrimitiveStructTest.cpp
+// \author T. Chieu
+// \brief  cpp file for PrimitiveStructTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/struct/PrimitiveSerializableAc.hpp"
 #include "FppTest/utils/Utils.hpp"
 

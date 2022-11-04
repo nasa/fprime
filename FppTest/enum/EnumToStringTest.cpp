@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  EnumToStringTest.cpp
+// \author T. Chieu
+// \brief  cpp file for EnumToStringTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/enum/ImplicitEnumAc.hpp"
 #include "FppTest/enum/ExplicitEnumAc.hpp"
 #include "FppTest/enum/DefaultEnumAc.hpp"

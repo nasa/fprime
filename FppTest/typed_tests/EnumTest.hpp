@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  EnumTest.hpp
+// \author T. Chieu
+// \brief  hpp file for EnumTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #ifndef FPP_TEST_ENUM_TEST_HPP
 #define FPP_TEST_ENUM_TEST_HPP
 

@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  FormatTest.cpp
+// \author T. Chieu
+// \brief  cpp file for FormatTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/array/FormatBoolArrayAc.hpp"
 #include "FppTest/array/FormatU8ArrayAc.hpp"
 #include "FppTest/array/FormatU16DecArrayAc.hpp"

@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  Utils.cpp
+// \author T. Chieu
+// \brief  cpp file for Utils class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "STest/Pick/Pick.hpp"
 
 #include <string>

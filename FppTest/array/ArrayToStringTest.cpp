@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  ArrayToStringTest.cpp
+// \author T. Chieu
+// \brief  cpp file for ArrayToStringTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/array/EnumArrayAc.hpp"
 #include "FppTest/array/StringArrayAc.hpp"
 #include "FppTest/array/StructArrayAc.hpp"

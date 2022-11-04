@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  StringTest.hpp
+// \author T. Chieu
+// \brief  hpp file for StringTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #ifndef FPP_TEST_STRING_TEST_HPP
 #define FPP_TEST_STRING_TEST_HPP
 

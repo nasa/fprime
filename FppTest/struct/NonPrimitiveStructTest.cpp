@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  NonPrimitiveStructTest.cpp
+// \author T. Chieu
+// \brief  cpp file for NonPrimitiveStructTest class
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "FppTest/struct/NonPrimitiveSerializableAc.hpp"
 #include "FppTest/utils/Utils.hpp"
 
