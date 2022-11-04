@@ -74,6 +74,11 @@ class Framer :
                           Fw::Buffer& fwBuffer           /*!< The buffer*/
     );
 
+    //! Handler implementation for comStatusIn
+    //!
+    void comStatusIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
+                             Fw::Success& condition/*!< The condition*/);
+
     // ----------------------------------------------------------------------
     // Implementation of FramingProtocolInterface
     // ----------------------------------------------------------------------
@@ -95,11 +100,22 @@ class Framer :
     );
 
     // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
+
+    //! \brief helper function to handle framing of the raw data
+    //!
+    void handle_framing(const U8* const data, const U32 size, Fw::ComPacket::ComPacketType packet_type);
+
+    // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
 
     //! The FramingProtocol implementation
     FramingProtocol* m_protocol;
+
+    //! Flag determining if at least one frame was sent during framing
+    bool m_frame_sent;
 };
 
 }  // end namespace Svc
