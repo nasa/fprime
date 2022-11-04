@@ -28,11 +28,7 @@ namespace Svc {
  * Using this component, projects can implement and supply a fresh FramingProtocol implementation
  * without changing the reference topology.
  */
-class Framer :
-  public FramerComponentBase,
-  public FramingProtocolInterface
-{
-
+class Framer : public FramerComponentBase, public FramingProtocolInterface {
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -77,7 +73,7 @@ class Framer :
     //! Handler implementation for comStatusIn
     //!
     void comStatusIn_handler(const NATIVE_INT_TYPE portNum, /*!< The port number*/
-                             Fw::Success& condition/*!< The condition*/);
+                             Fw::Success& condition /*!< The condition*/);
 
     // ----------------------------------------------------------------------
     // Implementation of FramingProtocolInterface
@@ -95,8 +91,7 @@ class Framer :
 
     //! Send implementation
     //!
-    void send(
-        Fw::Buffer& outgoing //!< The buffer to send
+    void send(Fw::Buffer& outgoing  //!< The buffer to send
     );
 
     // ----------------------------------------------------------------------
