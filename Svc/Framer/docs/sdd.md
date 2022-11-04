@@ -20,6 +20,12 @@ in each frame; typically it is a frame header, a data packet, and a hash value.
 You can use the standard F Prime downlink protocol implementation.
 This implementation works with the F Prime ground data system (GDS).
 
+`Svc::Framer` is designed to act alongside instances of the
+[communication adapter interface](https://nasa.github.io/fprime/Design/communications-adapter-interface.html) and thus
+forwards statuses from any downstream communication adapter. In order to not violate this interface protocol,
+`Svc::Framer` will emit a success status anytime a buffer is received but no framed packet is sent (e.g. in the case of
+aggregated packets).
+
 ## 2. Assumptions
 
 1. For any deployment _D_ that uses an instance _I_ of `Framer`, the
@@ -28,11 +34,13 @@ This implementation works with the F Prime ground data system (GDS).
 
 ## 3. Requirements
 
-Requirement | Description | Rationale | Verification Method
------------ | ----------- | ----------| -------------------
-SVC-FRAMER-001 | `Svc::Framer` shall accept data packets of any type stored in `Fw::Com` buffers. | `Svc::ActiveLogger` and `Svc::ChanTlm` emit packets as `Fw::Com` buffers.| Unit test
-SVC-FRAMER-002 | `Svc::Framer` shall accept file packets stored in `Fw::Buffer` objects. | `Svc::FileDownlink` emits packets as `Fw::Buffer` objects. | Unit test
-SVC-FRAMER-003 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, supplied when the component is instantiated, to wrap packets in frames. | The purpose of `Svc::Framer` is to frame data packets. Using the `Svc::FramingProtocol` interface allows the same Framer component to operate with different protocols. | Unit test
+| Requirement      | Description                                                                                                                            | Rationale                                                                                                                                                               | Verification Method |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| SVC-FRAMER-001   | `Svc::Framer` shall accept data packets of any type stored in `Fw::Com` buffers.                                                       | `Svc::ActiveLogger` and `Svc::ChanTlm` emit packets as `Fw::Com` buffers.                                                                                               | Unit test           |
+| SVC-FRAMER-002   | `Svc::Framer` shall accept file packets stored in `Fw::Buffer` objects.                                                                | `Svc::FileDownlink` emits packets as `Fw::Buffer` objects.                                                                                                              | Unit test           |
+| SVC-FRAMER-003   | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, supplied when the component is instantiated, to wrap packets in frames. | The purpose of `Svc::Framer` is to frame data packets. Using the `Svc::FramingProtocol` interface allows the same Framer component to operate with different protocols. | Unit test           |
+| SVC-FRAMER-004   | `Svc::Framer` shall emit a status of `Fw::Success::SUCCESS`  when no framed packets were sent sent in response to incoming buffer.     | When `Svc::Framer` does not emit any packets it must not violate the Communication Adapter interface protocol.                                                          | Unit Test           |
+| SVC-FRAMER-005   | `Svc::Framer` shall forward `Fw::Success` status messages received                                                                     | `Svc::Framer` must not violate the Communication Adapter interface protocol.                                                                                            | Unit Test           |
 
 ## 4. Design
 
@@ -40,19 +48,19 @@ SVC-FRAMER-003 | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, 
 
 The diagram below shows the `Framer` component.
 
-<div>
-<img src="img/Framer.png" width=700/>
-</div>
+![Framer Component](./img/Framer.png)
 
 ### 4.2. Ports
 
-| Kind | Name | Port Type | Usage |
-|------|------|-----------|-------|
-| `guarded input` | `comIn` | `Fw.Com` | Port for receiving data packets of any type stored in statically-sized Fw::Com buffers |
-| `guarded input` | `bufferIn` | `Fw.BufferSend` | Port for receiving file packets stored in dynamically-sized Fw::Buffer objects |
-| `output` | `bufferDeallocate` | `Fw.BufferSend` | Port for deallocating buffers received on bufferIn, after copying packet data to the frame buffer |
-| `output` | `framedAllocate` | `Fw.BufferGet` | Port for allocating buffers to hold framed data |
-| `output` | `framedOut` | `Drv.ByteStreamSend` | Port for sending buffers containing framed data. Ownership of the buffer passes to the receiver. |
+| Kind            | Name               | Port Type             | Usage                                                                                             |
+|-----------------|--------------------|-----------------------|---------------------------------------------------------------------------------------------------|
+| `guarded input` | `comIn`            | `Fw.Com`              | Port for receiving data packets of any type stored in statically-sized Fw::Com buffers            |
+| `guarded input` | `bufferIn`         | `Fw.BufferSend`       | Port for receiving file packets stored in dynamically-sized Fw::Buffer objects                    |
+| `guarded input` | `comStatusIn`      | `Fw.SuccessCondition` | Port for receiving status of last send for implementing communication adapter interface protocol  |
+| `output`        | `bufferDeallocate` | `Fw.BufferSend`       | Port for deallocating buffers received on bufferIn, after copying packet data to the frame buffer |
+| `output`        | `framedAllocate`   | `Fw.BufferGet`        | Port for allocating buffers to hold framed data                                                   |
+| `output`        | `framedOut`        | `Drv.ByteStreamSend`  | Port for sending buffers containing framed data. Ownership of the buffer passes to the receiver.  |
+| `output`        | `comStatusOut`     | `Fw.SuccessCondition` | Port for sending communication adapter interface protocol status messages                         |
 
 <a name="derived-classes"></a>
 ### 4.3. Derived Classes
@@ -125,6 +133,10 @@ object _B_.
 It calls the `frame` method of `m_protocol`, passing in the
 data address and size of _B_ and the packet type
 `Fw::ComPacket::FW_PACKET_FILE`.
+
+#### 4.7.2. comStatusIn
+
+The `comStatusIn` port handler receives com status messages and forwards them out `comStatusOut`.
 
 <a name="fpi-impl"></a>
 ### 4.8. Implementation of Svc::FramingProtocolInterface
@@ -309,9 +321,3 @@ sequenceDiagram
     deactivate fileDownlink
 ```
 
-## 7. Change Log
-
-| Date | Description |
-|---|---|
-| 2021-01-29 | Initial Draft |
-| 2022-07-18 | Revised |
