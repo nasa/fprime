@@ -1,0 +1,20 @@
+@startuml
+' If/choice check states for handling statuses
+state status_check <<choice>>
+' If/choice check for queue availability
+state queue_check <<choice>>
+
+' State definitions to capture self transitions
+state WAITING: Buffer Received / Queue Buffer
+
+[*] -down-> WAITING
+' Status In transitions
+WAITING -down-> status_check: Status In
+status_check -right-> queue_check: [SUCCESS]
+status_check -up-> WAITING: [FAILURE]
+
+queue_check -up-> WAITING: [Buffer Queued] / Send Buffer
+queue_check -right-> READY: [No Buffer Queued]
+READY -up-> WAITING: Buffer Received / Send Buffer
+@enduml
+
