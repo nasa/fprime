@@ -102,15 +102,14 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-**F´ Version:** This tutorial is designed to work with release `v3.0.0`.
-
-Working on this tutorial will modify some files under version control in the
-F Prime git repository.
+**Version control:**
+Working on this tutorial will modify some files under version control
+in the F Prime git repository.
 Therefore it is a good idea to do this work on a new branch.
 For example:
 
 ```bash
-git checkout -b math-tutorial v3.0.0
+git checkout -b math-tutorial
 ```
 
 If you wish, you can save your work by committing to this branch.
