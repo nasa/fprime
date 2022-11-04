@@ -11,6 +11,7 @@ var namespace_svc =
     [ "CmdSequencerComponentImpl", "class_svc_1_1_cmd_sequencer_component_impl.html", "class_svc_1_1_cmd_sequencer_component_impl" ],
     [ "ComLogger", "class_svc_1_1_com_logger.html", "class_svc_1_1_com_logger" ],
     [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
+    [ "ComQueue", "class_svc_1_1_com_queue.html", "class_svc_1_1_com_queue" ],
     [ "ComSplitter", "class_svc_1_1_com_splitter.html", "class_svc_1_1_com_splitter" ],
     [ "ComStub", "class_svc_1_1_com_stub.html", "class_svc_1_1_com_stub" ],
     [ "ConsoleTextLoggerImpl", "class_svc_1_1_console_text_logger_impl.html", "class_svc_1_1_console_text_logger_impl" ],

@@ -10,5 +10,5 @@ var dir_30cfc134b577cd702e1c8791e7064e55 =
       [ "FIFOQueue", "struct_os_1_1_f_i_f_o_queue.html", "struct_os_1_1_f_i_f_o_queue" ]
     ] ],
     [ "PriorityBufferQueue.cpp", "priority_buffer_queue_8cpp.html", "_priority_buffer_queue_8cpp" ],
-    [ "Queue.cpp", "pthreads_2_queue_8cpp.html", "_pthreads_2_queue_8cpp" ]
+    [ "Queue.cpp", "os_2_pthreads_2_queue_8cpp.html", "_os_2_pthreads_2_queue_8cpp" ]
 ];

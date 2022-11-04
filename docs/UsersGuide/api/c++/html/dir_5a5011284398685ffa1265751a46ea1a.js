@@ -10,6 +10,7 @@ var dir_5a5011284398685ffa1265751a46ea1a =
     [ "CmdDispatcher", "dir_1f2f6445687fcd31f78dfb803c39b206.html", "dir_1f2f6445687fcd31f78dfb803c39b206" ],
     [ "CmdSequencer", "dir_b55416741c5ac0835b3ce2fcec8cef6a.html", "dir_b55416741c5ac0835b3ce2fcec8cef6a" ],
     [ "ComLogger", "dir_358ab4ffee99de3bc9049879a48a303e.html", "dir_358ab4ffee99de3bc9049879a48a303e" ],
+    [ "ComQueue", "dir_030a83b156791018bec4789d212e5b02.html", "dir_030a83b156791018bec4789d212e5b02" ],
     [ "ComSplitter", "dir_8eb8812a177cc4e83d7d03c3c3297cc3.html", "dir_8eb8812a177cc4e83d7d03c3c3297cc3" ],
     [ "ComStub", "dir_f58bf93cc90ceb1ba30160466b7eed76.html", "dir_f58bf93cc90ceb1ba30160466b7eed76" ],
     [ "Cycle", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a.html", "dir_ba3a0a70d0b1d8e58390a1e7ab8dc15a" ],

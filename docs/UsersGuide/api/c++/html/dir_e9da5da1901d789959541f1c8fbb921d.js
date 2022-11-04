@@ -45,7 +45,7 @@ var dir_e9da5da1901d789959541f1c8fbb921d =
     [ "Mutex.hpp", "mutex_8hpp.html", [
       [ "Mutex", "class_os_1_1_mutex.html", "class_os_1_1_mutex" ]
     ] ],
-    [ "Queue.hpp", "queue_8hpp.html", [
+    [ "Queue.hpp", "os_2_queue_8hpp.html", [
       [ "Queue", "class_os_1_1_queue.html", "class_os_1_1_queue" ],
       [ "QueueRegistry", "class_os_1_1_queue_registry.html", "class_os_1_1_queue_registry" ]
     ] ],

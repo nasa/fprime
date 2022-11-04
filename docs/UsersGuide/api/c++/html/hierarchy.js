@@ -51,6 +51,9 @@ var hierarchy =
     [ "CommandDispatcherComponentBase", null, [
       [ "Svc::CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", null ]
     ] ],
+    [ "ComQueueComponentBase", null, [
+      [ "Svc::ComQueue", "class_svc_1_1_com_queue.html", null ]
+    ] ],
     [ "ComSplitterComponentBase", null, [
       [ "Svc::ComSplitter", "class_svc_1_1_com_splitter.html", null ]
     ] ],
@@ -180,9 +183,12 @@ var hierarchy =
     [ "PrmDbComponentBase", null, [
       [ "Svc::PrmDbImpl", "class_svc_1_1_prm_db_impl.html", null ]
     ] ],
+    [ "Types::Queue", "class_types_1_1_queue.html", null ],
     [ "Os::Queue", "class_os_1_1_queue.html", [
       [ "Os::IPCQueue", "class_os_1_1_i_p_c_queue.html", null ]
     ] ],
+    [ "Svc::ComQueue::QueueConfigurationEntry", "struct_svc_1_1_com_queue_1_1_queue_configuration_entry.html", null ],
+    [ "Svc::ComQueue::QueueConfigurationTable", "struct_svc_1_1_com_queue_1_1_queue_configuration_table.html", null ],
     [ "Os::QueueHandle", "class_os_1_1_queue_handle.html", null ],
     [ "Os::QueueRegistry", "class_os_1_1_queue_registry.html", null ],
     [ "RateGroupDriverComponentBase", null, [
