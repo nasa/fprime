@@ -85,7 +85,7 @@ transmissions. This is done with the `comStatus` port. A communication status is
 | Fw::Success::SUCCESS | *Communication adapter* transmission succeeded  and is ready for more data.       |
 | Fw::Success::FAILURE | Last transmission failed; *communication adapter* is unable to receive more data. |
 
-> * Fw::Success::SUCCESS may also indicate a connection/reconnection success when data flow must be initiated.
+* Fw::Success::SUCCESS may also indicate a connection/reconnection success when data flow must be initiated.
 
 A *Communication Adapter* shall emit either Fw::Success::SUCCESS or Fw::Success::FAILURE via the `comStatus` port once
 for each call received on `comDataIn`. Additionally, a *Communication Adapter* shall emit Fw::Success::SUCCESS once at
