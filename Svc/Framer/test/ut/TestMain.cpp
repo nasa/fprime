@@ -41,7 +41,7 @@ TEST(Nominal, StatusPassThrough) {
     COMMENT("Ensure status pass-through");
     REQUIREMENT("SVC-FRAMER-004");
     Svc::Tester tester;
-    tester.test_status_passthrough();
+    tester.test_status_pass_through();
 }
 
 TEST(Nominal, NoSendStatus) {

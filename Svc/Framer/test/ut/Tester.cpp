@@ -90,7 +90,7 @@ void Tester ::test_buffer(U32 iterations) {
     }
 }
 
-void Tester ::test_status_passthrough() {
+void Tester ::test_status_pass_through() {
     // Check not always success
     Fw::Success status = Fw::Success::FAILURE;
     invoke_to_comStatusIn(0, status);
@@ -117,8 +117,8 @@ void Tester ::test_no_send_status() {
     ASSERT_from_comStatusOut(0, status);
     clearFromPortHistory();
 
-    // Make sure it still does passthrough
-    test_status_passthrough();
+    // Make sure it still does pass-through
+    test_status_pass_through();
 }
 
 void Tester ::check_last_buffer(Fw::Buffer buffer) {

@@ -64,7 +64,7 @@ class Tester : public FramerGTestBase {
     void test_buffer(U32 iterations = 1);
 
     //! Tests statuses pass-through
-    void test_status_passthrough();
+    void test_status_pass_through();
 
     //! Tests statuses on no-send
     void test_no_send_status();
