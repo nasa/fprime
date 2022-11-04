@@ -533,6 +533,8 @@ namespace Fw {
             case TYPE_I64:
                 stat = buffer.serialize(this->m_val.i64Val);
                 break;
+#endif
+#if FW_HAS_F64
             case TYPE_F64:
                 stat = buffer.serialize(this->m_val.f64Val);
                 break;
@@ -586,6 +588,8 @@ namespace Fw {
                     return buffer.deserialize(this->m_val.u64Val);
                 case TYPE_I64:
                     return buffer.deserialize(this->m_val.i64Val);
+#endif
+#if FW_HAS_F64
                 case TYPE_F64:
                     return buffer.deserialize(this->m_val.f64Val);
 #endif
