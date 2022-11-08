@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['queue_1139',['Queue',['../class_types_1_1_queue.html',1,'Types::Queue'],['../class_os_1_1_queue.html',1,'Os::Queue'],['../class_os_1_1_queue.html#a24a8cc8e4f283f981e5eb3941d266b51',1,'Os::Queue::Queue()'],['../class_types_1_1_queue.html#abb998d4d68d644461a7517043a441da5',1,'Types::Queue::Queue()'],['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle::queue()']]],
+  ['queue_1139',['Queue',['../class_types_1_1_queue.html',1,'Types::Queue'],['../class_os_1_1_queue.html',1,'Os::Queue'],['../class_os_1_1_queue_handle.html#aaec4cf27f8641c474164f96e22434033',1,'Os::QueueHandle::queue()'],['../class_os_1_1_queue.html#a24a8cc8e4f283f981e5eb3941d266b51',1,'Os::Queue::Queue()'],['../class_types_1_1_queue.html#abb998d4d68d644461a7517043a441da5',1,'Types::Queue::Queue()']]],
   ['queue_2ecpp_1140',['Queue.cpp',['../os_2_baremetal_2_queue_8cpp.html',1,'(Global Namespace)'],['../os_2_posix_2_queue_8cpp.html',1,'(Global Namespace)'],['../os_2_pthreads_2_queue_8cpp.html',1,'(Global Namespace)'],['../utils_2_types_2_queue_8cpp.html',1,'(Global Namespace)']]],
   ['queue_2ehpp_1141',['Queue.hpp',['../os_2_queue_8hpp.html',1,'(Global Namespace)'],['../utils_2_types_2_queue_8hpp.html',1,'(Global Namespace)']]],
   ['queue_5fblocking_1142',['QUEUE_BLOCKING',['../class_os_1_1_queue.html#a766caf06bbcd37473e630d0d2aa4d1ffada38de06220fe8a97d99347ff23e18c2',1,'Os::Queue']]],
