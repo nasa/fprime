@@ -215,6 +215,7 @@ config
 configparser
 configs
 configurability
+constexpr
 cookiecutter
 cooldown
 coor
@@ -660,6 +661,7 @@ initfiles
 inits
 initstate
 inkscape
+inlined
 inode
 INOUT
 INPCK
@@ -874,6 +876,7 @@ mycompany
 myfile
 myproject
 mytype
+namespaced
 nano
 nanosleep
 nargs
@@ -1123,6 +1126,8 @@ reder
 refactor
 refactoring
 refspec
+REFTOPOLOGY
+REFTOPOLOGYDEFS
 regexp
 regexs
 relaxng
