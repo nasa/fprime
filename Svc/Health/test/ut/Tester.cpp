@@ -675,7 +675,7 @@ namespace Svc {
       this->dispatchAll();
 
       ASSERT_CMD_RESPONSE_SIZE(1);
-      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::VALIDATION_ERROR);
+      ASSERT_CMD_RESPONSE(0,HealthComponentBase::OPCODE_HLTH_PING_ENABLE,0,Fw::CmdResponse::FORMAT_ERROR);
 
       //send command with bad ping entry
       sendCmd_HLTH_PING_ENABLE(0,0,"notask",Fw::Enabled::ENABLED);
