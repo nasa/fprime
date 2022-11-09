@@ -63,7 +63,7 @@ function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPE
         )
         # Setup the hash file for our sources
         foreach(SRC_FILE IN LISTS MODULE_SOURCES)
-            set_hash_flag("${SRC_FILE}")
+            set_assert_flags("${SRC_FILE}")
         endforeach()
     endif()
     # Includes the source, so that the Ac files can include source headers
