@@ -15,7 +15,7 @@
 # NOTE: **ensure** that list properties are added by hand in the actual call. Otherwise they are expanded and break
 # the call below.
 set(NEEDED_PROPERTIES
-    FPRIME_CONFIG_DIR
+    FPRIME_CONFIG_DIRECTORY
     FPRIME_AC_CONSTANTS_FILE
     FPRIME_ENVIRONMENT_FILE
     FPRIME_SETTINGS_FILE

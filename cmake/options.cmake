@@ -191,7 +191,7 @@ include(CTest)
 
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
+# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIRECTORY`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -222,6 +222,9 @@ include(CTest)
 # These files are used for settings in fprime-util. If supplied (typically only by fprime-util) then
 # they will be added as dependencies into the build system.
 ####
+include("settings/ini")
+ini_to_cache()
+
 get_filename_component(DETECTED_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 if (DEFINED FPRIME_FRAMEWORK_PATH)
      get_filename_component(FPRIME_FRAMEWORK_PATH "${FPRIME_FRAMEWORK_PATH}" ABSOLUTE)
@@ -265,13 +268,14 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
-# Override the AC constants file when specified
-if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
-endif()
 
 # Settings for F config directory
-if (NOT DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
+if (NOT DEFINED FPRIME_CONFIG_DIRECTORY)
+    set(FPRIME_CONFIG_DIRECTORY "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
-set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
+set(FPRIME_CONFIG_DIRECTORY "${FPRIME_CONFIG_DIRECTORY}" CACHE PATH "F prime configuration header directory" FORCE)
+
+# Override the AC constants file when specified
+if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIRECTORY}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
+endif()

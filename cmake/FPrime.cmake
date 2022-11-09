@@ -20,7 +20,7 @@ set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
-message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
+message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIRECTORY}")
 
 include(required)
 include(prescan) #Must come after required if tools detection is to be inherited
@@ -59,7 +59,7 @@ foreach (LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
     include_directories("${LIBRARY_DIR}")
 endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
-include_directories("${FPRIME_CONFIG_DIR}")
+include_directories("${FPRIME_CONFIG_DIRECTORY}")
 
 # To prescan,register target process around safety check
 if (DEFINED FPRIME_PRESCAN)

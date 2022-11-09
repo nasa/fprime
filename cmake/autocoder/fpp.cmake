@@ -227,7 +227,7 @@ function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
         # only definitions useful to other modules. This assumption holds as of v3.0.0, but should this assumption break
         # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
         # CMakeLists.txt in that directory that sets up the aforementioned known module and associated target.
-        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
+        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIRECTORY}/.*")
             continue() # Skip adding to module list
         endif()
         list(APPEND OUTPUT_DATA "${MODULE_NAME}")
