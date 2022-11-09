@@ -489,7 +489,7 @@ endfunction(get_expected_tool_version)
 #
 # Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
 # hashes.txt. This allows for asserts on file ID not string. Also adds the -DASSERT_RELATIVE_PATH
-# flag for handling relative path asseerts.
+# flag for handling relative path asserts.
 ####
 function(set_assert_flags SRC)
     get_filename_component(FPRIME_CLOSEST_BUILD_ROOT_ABS "${FPRIME_CLOSEST_BUILD_ROOT}" ABSOLUTE)
