@@ -165,12 +165,6 @@ namespace Svc {
             return;
         }
 
-        // check enable value
-        if (enable != Fw::Enabled::DISABLED && enable != Fw::Enabled::ENABLED) {
-            this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::VALIDATION_ERROR);
-            return;
-        }
-
         this->m_pingTrackerEntries[entryIndex].enabled = enable.e;
         Fw::Enabled isEnabled(Fw::Enabled::DISABLED);
         if (enable == Fw::Enabled::ENABLED) {
