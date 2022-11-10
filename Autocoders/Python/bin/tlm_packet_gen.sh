@@ -3,7 +3,7 @@
 script_dir=$(dirname $0)
 
 # $0 = this script
-# $1 = packetfile
+# $1 = packet file
 # $2 = deployment build cache (ex. Ref/build-fprime-automatic-native)
 
 export PYTHONPATH=$script_dir/../src
