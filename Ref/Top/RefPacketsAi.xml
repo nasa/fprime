@@ -19,7 +19,7 @@
         <channel name="fileDownlink.FilesSent"/>
         <channel name="fileDownlink.PacketsSent"/>
         <channel name="fileManager.CommandsExecuted"/>
-        <channel name="pktTlm.SendLevel"/>
+        <channel name="tlmSend.SendLevel"/>
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">

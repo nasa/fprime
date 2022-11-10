@@ -33,7 +33,7 @@ namespace Ref {
       {1792, 4}, // fileDownlink.FilesSent
       {1793, 4}, // fileDownlink.PacketsSent
       {2048, 4}, // fileManager.CommandsExecuted
-      {3584, 4}, // pktTlm.SendLevel
+      {3584, 4}, // tlmSend.SendLevel
   };
 
   static const Svc::TlmPacketizerPacket CDH = { CDHList, 1, 1, FW_NUM_ARRAY_ELEMENTS(CDHList) };

@@ -116,6 +116,7 @@ DEBUG = logging.getLogger("debug")
 
 PACKET_VIEW_DIR = "./Packet-Views"
 
+
 class TlmPacketParseValueError(ValueError):
     pass
 
@@ -137,8 +138,8 @@ class TlmPacketParser(object):
     def get_type_size(self, type_name, size):
 
         # switch based on type
-        if type_name == "string":  
-            return int(size) + 2 # plus 2 to store the string length
+        if type_name == "string":
+            return int(size) + 2  # plus 2 to store the string length
         elif type_name == "I8":
             return 1
         elif type_name == "I16":
@@ -163,28 +164,6 @@ class TlmPacketParser(object):
             return 1
         else:
             return None
-
-    #    def search_for_file(self,file_type, file_path):
-    #        '''
-    #        Searches for a given included port or serializable by looking in three places:
-    #        - The specified BUILD_ROOT
-    #        - The F Prime core
-    #        - The exact specified path
-    #        @param file_type: type of file searched for
-    #        @param file_path: path to look for based on offset
-    #        @return: full path of file
-    #        '''
-    #        core = os.environ.get("FPRIME_CORE_DIR", BUILD_ROOT)
-    #        for possible in [BUILD_ROOT, core, None]:
-    #            if not possible is None:
-    #                checker = os.path.join(possible, file_path)
-    #            else:
-    #                checker = file_path
-    #            if os.path.exists(checker):
-    #                DEBUG.debug("%s xml type description file: %s" % (file_type,file_path))
-    #                return checker
-    #        else:
-    #            return None
 
     def generate_channel_size_dict(self, the_parsed_topology_xml, xml_filename):
         """
@@ -225,7 +204,7 @@ class TlmPacketParser(object):
 
         for comp in the_parsed_topology_xml.get_instances():
             comp_name = comp.get_name()
-            comp_id = int(comp.get_base_id(),0)
+            comp_id = int(comp.get_base_id(), 0)
             comp_type = comp.get_type()
             if self.verbose:
                 PRINT.debug("Processing %s" % comp_name)
@@ -248,8 +227,8 @@ class TlmPacketParser(object):
                     if type(chan_type) == type(tuple()):
                         chan_size = 4
                     # if channel type is string
-#                    elif chan_type == "string":
-#                        chan_size = int(chan.get_size()) + 2 # FIXME: buffer size storage size magic number - needs to be turned into a constant
+                    #                    elif chan_type == "string":
+                    #                        chan_size = int(chan.get_size()) + 2 # FIXME: buffer size storage size magic number - needs to be turned into a constant
                     # if channel is serializable
                     elif chan_type in self.size_dict:
                         chan_size = self.size_dict[chan_type]
@@ -432,7 +411,7 @@ class TlmPacketParser(object):
             "Ai", ""
         )
         nearest_build_root = get_nearest_build_root(xml_filename)
-        file_dir = os.path.relpath(os.path.dirname(xml_filename),nearest_build_root)
+        file_dir = os.path.relpath(os.path.dirname(xml_filename), nearest_build_root)
 
         missing_channels = False
 
@@ -506,7 +485,7 @@ class TlmPacketParser(object):
                 member_size,
                 member_format_specifier,
                 member_comment,
-                _
+                _,
             ) in serializable_model.get_members():
                 # if enumeration
                 if type(member_type) == type(tuple()):
@@ -524,7 +503,7 @@ class TlmPacketParser(object):
                     )
                     sys.exit(-1)
                 serializable_size += type_size
-                if (member_array_size != None):
+                if member_array_size != None:
                     serializable_size *= member_array_size
             self.add_type_size(serializable_type, serializable_size)
             if self.verbose:
