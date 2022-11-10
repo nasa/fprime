@@ -455,6 +455,7 @@ fadvise
 FAKELOGGER
 fallocate
 fallthrough
+fbuild
 fcheck
 fclose
 fcntl
