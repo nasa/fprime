@@ -41,7 +41,7 @@ namespace Ref {
   namespace PingEntries {
     namespace blockDrv { enum { WARN = 3, FATAL = 5 }; }
     namespace chanTlm { enum { WARN = 3, FATAL = 5 }; }
-    namespace pktTlm { enum { WARN = 3, FATAL = 5 }; }
+    namespace tlmSend { enum { WARN = 3, FATAL = 5 }; }
     namespace cmdDisp { enum { WARN = 3, FATAL = 5 }; }
     namespace cmdSeq { enum { WARN = 3, FATAL = 5 }; }
     namespace eventLogger { enum { WARN = 3, FATAL = 5 }; }

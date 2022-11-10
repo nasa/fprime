@@ -431,10 +431,8 @@ class TlmPacketParser(object):
         output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace(
             "Ai", ""
         )
-#        file_dir = os.path.dirname(xml_filename).replace(
-#            get_nearest_build_root(xml_filename) + os.sep, ""
-#        )
-        file_dir = os.path.dirname(xml_filename)
+        nearest_build_root = get_nearest_build_root(xml_filename)
+        file_dir = os.path.relpath(os.path.dirname(xml_filename),nearest_build_root)
 
         missing_channels = False
 
@@ -624,7 +622,7 @@ def main():
         print(f"Usage: {sys.argv[0]} [options] xml_filename")
         return
     elif len(args) == 1:
-        xml_filename = args[0]
+        xml_filename = os.path.abspath(args[0])
     else:
         print("ERROR: Too many filenames, should only have one")
         return
