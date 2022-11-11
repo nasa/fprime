@@ -21,10 +21,9 @@ You can use the standard F Prime downlink protocol implementation.
 This implementation works with the F Prime ground data system (GDS).
 
 `Svc::Framer` is designed to act alongside instances of the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communications-adapter-interface.html) and thus
-forwards statuses from any downstream communication adapter. In order to not violate this interface protocol,
-`Svc::Framer` will emit a success status anytime a buffer is received but no framed packet is sent (e.g. in the case of
-aggregated packets).
+[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html). In order
+to work well with communication adapters, `Svc::Framer` implements the framer status
+[protocol](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#framer-status-protocol).
 
 ## 2. Assumptions
 
@@ -39,8 +38,8 @@ aggregated packets).
 | SVC-FRAMER-001   | `Svc::Framer` shall accept data packets of any type stored in `Fw::Com` buffers.                                                       | `Svc::ActiveLogger` and `Svc::ChanTlm` emit packets as `Fw::Com` buffers.                                                                                               | Unit test           |
 | SVC-FRAMER-002   | `Svc::Framer` shall accept file packets stored in `Fw::Buffer` objects.                                                                | `Svc::FileDownlink` emits packets as `Fw::Buffer` objects.                                                                                                              | Unit test           |
 | SVC-FRAMER-003   | `Svc::Framer` shall use an instance of `Svc::FramingProtocol`, supplied when the component is instantiated, to wrap packets in frames. | The purpose of `Svc::Framer` is to frame data packets. Using the `Svc::FramingProtocol` interface allows the same Framer component to operate with different protocols. | Unit test           |
-| SVC-FRAMER-004   | `Svc::Framer` shall emit a status of `Fw::Success::SUCCESS`  when no framed packets were sent in response to incoming buffer.          | When `Svc::Framer` does not emit any packets it must not violate the Communication Adapter interface protocol.                                                          | Unit Test           |
-| SVC-FRAMER-005   | `Svc::Framer` shall forward `Fw::Success` status messages received                                                                     | `Svc::Framer` must not violate the Communication Adapter interface protocol.                                                                                            | Unit Test           |
+| SVC-FRAMER-004   | `Svc::Framer` shall emit a status of `Fw::Success::SUCCESS`  when no framed packets were sent in response to incoming buffer.          | `Svc::Framer` implements the framer status protocol.                                                                                                                    | Unit Test           |
+| SVC-FRAMER-005   | `Svc::Framer` shall forward `Fw::Success` status messages received                                                                     | `Svc::Framer` implements the framer status protocol.                                                                                                                    | Unit Test           |
 
 ## 4. Design
 

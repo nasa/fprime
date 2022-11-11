@@ -72,6 +72,7 @@ void Framer ::comStatusIn_handler(const NATIVE_INT_TYPE portNum, Fw::Success& co
 // ----------------------------------------------------------------------
 
 void Framer ::send(Fw::Buffer& outgoing) {
+    FW_ASSERT(!this->m_frame_sent); // Prevent multiple sends per-packet
     const Drv::SendStatus sendStatus = this->framedOut_out(0, outgoing);
     if (sendStatus.e != Drv::SendStatus::SEND_OK) {
         // Note: if there is a data sending problem, an EVR likely wouldn't
@@ -79,7 +80,7 @@ void Framer ::send(Fw::Buffer& outgoing) {
         // someone will see it.
         Fw::Logger::logMsg("[ERROR] Failed to send framed data: %d\n", sendStatus.e);
     }
-    this->m_frame_sent = true;  // At least one frame was sent
+    this->m_frame_sent = true;  // A frame was sent
 }
 
 Fw::Buffer Framer ::allocate(const U32 size) {

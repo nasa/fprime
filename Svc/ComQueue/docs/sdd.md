@@ -11,16 +11,18 @@ in the queues being paused until a following `Fw::Success::SUCCESS` signal.
 passing in a configuration table at initialization. Queued messages from the highest priority source port are serviced
 first and a round-robin algorithm is used to balance between ports of shared priority.
 
-`Svc::ComQueue` is designed to follow the
-[communication adapter interface](https://nasa.github.io/fprime/Design/communications-adapter-interface.html).
+`Svc::ComQueue` is designed to act alongside instances of the
+[communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) and
+implements the communication queue
+[protocol](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#commuincation-queue-protocol).
 
 ## 2. Assumptions
 
 1. Incoming buffers to a given port are in priority order
 2. Data is considered to be successfully sent when a `Fw::Success::SUCCESS` signal was received
 3. The com adapter is responsible for any retransmission of failed data
-4. The system includes a downstream
- [communications adapter](https://nasa.github.io/fprime/Design/communications-adapter-interface.html)
+4. The system includes downstream components implementing the
+ [communications adapter](https://nasa.github.io/fprime/Design/communication-adapter-interface.html)
 
 
 ## 3. Requirements
