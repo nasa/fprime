@@ -48,7 +48,7 @@ This port carries a status of `Fw::Success::SUCCESS` or `Fw::Success::FAILURE` t
 
 ## Communication Queue Protocol
 
-`Svc::ComQueue` queus messages until the communication adapter is ready to receive these messages. For each
+`Svc::ComQueue` queues messages until the communication adapter is ready to receive these messages. For each
 Fw::Success::SUCCESS message received, `Svc::ComQueue` will emit one message. `Svc::ComQueue` will not emit messages
 at any other time. This implies several things:
 
@@ -93,4 +93,4 @@ startup to indicate communication is initially ready and once after each Fw::Suc
 communication has been restored. By emitting Fw::Success::SUCCESS after any failure, the communication adapter ensures
 that each received message eventually results in a Fw::Success::SUCCESS.
 
-> It is imperative that *Communication Adapters* implement the `comStatus` protocol correctly. 
+> It is imperative that *Communication Adapters* implement the `comStatus` protocol correctly.

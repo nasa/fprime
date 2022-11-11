@@ -14,7 +14,7 @@ first and a round-robin algorithm is used to balance between ports of shared pri
 `Svc::ComQueue` is designed to act alongside instances of the
 [communication adapter interface](https://nasa.github.io/fprime/Design/communication-adapter-interface.html) and
 implements the communication queue
-[protocol](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#commuincation-queue-protocol).
+[protocol](https://nasa.github.io/fprime/Design/communication-adapter-interface.html#communication-queue-protocol).
 
 ## 2. Assumptions
 
@@ -164,4 +164,4 @@ buffer and com buffer data, do:
       1. If it is less than the size value, then invoke the sendComBuffer function.
       2. If it is greater than the size value, then invoke the sendBuffer function. 
    4. Break out of the loop, but enter a new loop that starts at the next entry and linearly swap the remaining items in
-the prioritized list. 
+the prioritized list.
