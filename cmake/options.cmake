@@ -16,6 +16,9 @@
 # the `-D` option there.
 #
 ####
+include("settings/ini")
+ini_to_cache()
+
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`
@@ -222,9 +225,6 @@ include(CTest)
 # These files are used for settings in fprime-util. If supplied (typically only by fprime-util) then
 # they will be added as dependencies into the build system.
 ####
-include("settings/ini")
-ini_to_cache()
-
 get_filename_component(DETECTED_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 if (DEFINED FPRIME_FRAMEWORK_PATH)
      get_filename_component(FPRIME_FRAMEWORK_PATH "${FPRIME_FRAMEWORK_PATH}" ABSOLUTE)

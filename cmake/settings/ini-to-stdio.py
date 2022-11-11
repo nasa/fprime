@@ -1,14 +1,47 @@
+""" ini-to-stdio.py:
+
+Loads fprime style ini files into a format CMake can process.
+"""
 import argparse
 import sys
+from functools import partial
 
 from pathlib import Path
+from typing import List
+
 from fprime.fbuild.settings import IniSettings
 
+
+def print_setting(setting: str, value: str = "", ending: str = ";"):
+    """Print a setting for CMake
+
+    Prints a setting for CMake using the format 'SETTING=VALUE;' producing a CMake list of settings.
+
+    Args:
+         setting: name of setting in cmake
+         value: value to provide to cmake
+         ending: ending of the print line
+    """
+    value = str(value).replace(";", "\\;")
+    print(f"{setting}={value}", end=ending)
+
+
+def print_list_settings(items: List[str]):
+    """Print a list of settings of form SETTING=VALUE"""
+    for item in items:
+        splits = item.strip().split("=")
+        if splits[0] != "":
+            print_setting(*splits)
+
+
 CMAKE_NEEDED_SETTINGS = {
-    "framework_path",
-    "library_locations",
-    "project_root",
-    "config_directory",
+    "framework_path": partial(print_setting, "FPRIME_FRAMEWORK_PATH"),
+    "project_root": partial(print_setting, "FPRIME_PROJECT_ROOT"),
+    "config_directory": partial(print_setting, "FPRIME_CONFIG_DIRECTORY"),
+    "library_locations": lambda value: print_setting(
+        "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
+    ),
+    "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
 }
 
 
@@ -32,7 +65,7 @@ def main():
         args_ns.settings, str(args_ns.toolchain.stem), True
     )
 
-    for setting in CMAKE_NEEDED_SETTINGS:
+    for setting, handler in CMAKE_NEEDED_SETTINGS.items():
         setting_value = loaded_settings[setting]
         ut_setting_value = loaded_settings_ut[setting]
 
@@ -40,9 +73,9 @@ def main():
             setting_value == ut_setting_value
         ), f"CMake can only parse unittest independent settings"
         output = loaded_settings[setting]
-        print(
-            f"{setting}|{':'.join([str(item) for item in output]) if isinstance(output, list) else output}"
-        )
+        handler(output)
+    # Print the last setting with no ending to prevent null-entry at list end
+    print_setting("FPRIME_SETTINGS_FILE", args_ns.settings, ending="")
     return 0
 
 
@@ -51,4 +84,5 @@ if __name__ == "__main__":
         sys.exit(main())
     except Exception as exc:
         print(f"{exc}", file=sys.stderr)
+        raise
     sys.exit(1)

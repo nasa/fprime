@@ -1,12 +1,27 @@
+####
+# ini.cmake:
+#
+# This file loads settings from INI files. In cases where these settings are supplied via fprime-util, the settings are
+# checked for discrepancy. This allows the cmake system to detect when it should be regenerated and has not been. In the
+# case that the settings were not supplied, it sets them.
+####
+include_guard()
+
+# Necessary global variables
 set(SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 find_program(PYTHON NAMES python3 python) #This happens before required
 
+####
+# init_to_cache:
+#
+# Uses a python script to load INI files. These items are set into the CMake cache.
+####
 function(ini_to_cache)
     set(CALCULATED_INI "${CMAKE_SOURCE_DIR}/settings.ini")
 
     # Check if settings.ini is defined and is not what is expected
     if (DEFINED FPRIME_SETTINGS_FILE AND NOT FPRIME_SETTINGS_FILE STREQUAL "${CALCULATED_INI}")
-        message(FATAL_ERROR "Expected settings.ini not equal to calculated. '${FPRIME_SETTINGS_FILE}' != '${CALCULATED_INI}'")
+        message(FATAL_ERROR "Provided settings.ini '${FPRIME_SETTINGS_FILE}' not expected file '${CALCULATED_INI}'")
     endif()
     # Execute the process
     execute_process(COMMAND ${PYTHON}
@@ -17,13 +32,10 @@ function(ini_to_cache)
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-    # Turn output into a list of lines, escaping possible ;
-    STRING(REGEX REPLACE ";" "\\\\;" INI_OUTPUT "${INI_OUTPUT}")
-    STRING(REGEX REPLACE "\n" ";" INI_OUTPUT "${INI_OUTPUT}")
-
     # Process line-by-line
     foreach(LINE IN LISTS INI_OUTPUT)
-        STRING(REGEX REPLACE "\\|" ";" LINE "${LINE}")
+        STRING(REPLACE ";" "\\;" LINE "${LINE}")
+        STRING(REPLACE "=" ";" LINE "${LINE}")
         list(GET LINE 0 SETTING)
         list(LENGTH LINE ELEMENTS)
         if (ELEMENTS GREATER 1)
@@ -31,16 +43,21 @@ function(ini_to_cache)
         else()
             set(VALUE "")
         endif()
-        string(TOUPPER "${SETTING}" SETTING)
-        STRING(REGEX REPLACE ":" ";" VALUE "${VALUE}")
-
-        set(SETTING_VARIABLE_NAME "FPRIME_${SETTING}")
 
         # If not defined, load the setting into the cache. Otherwise check for discrepancies.
-        if (NOT DEFINED ${SETTING_VARIABLE_NAME})
-            set(${SETTING_VARIABLE_NAME} "${VALUE}" CACHE INTERNAL "")
-        elseif(NOT "${VALUE}" STREQUAL "${${SETTING_VARIABLE_NAME}}")
-            message(FATAL_ERROR "settings.ini values changed. Please regenerate cache. ${SETTING_VARIABLE_NAME} changed from |${${SETTING_VARIABLE_NAME}}| to |${VALUE}|")
+        if (NOT DEFINED ${SETTING})
+            # Print value when debugging
+            if (CMAKE_DEBUG_OUTPUT)
+                message(STATUS "${SETTING} read from settings.ini as '${VALUE}'")
+            endif()
+            set(${SETTING}_ORIGINAL "${VALUE}" CACHE INTERNAL "Original value of ${SETTING} from settings.ini")
+            set(${SETTING} "${VALUE}" CACHE INTERNAL "")
+        elseif(DEFINED ${SETTING}_ORIGINAL AND NOT "${VALUE}" STREQUAL "${${SETTING}_ORIGINAL}")
+            # Print some extra output to help debug
+            if (CMAKE_DEBUG_OUTPUT)
+                message(WARNING "${SETTING} changed from '${${SETTING}_ORIGINAL}' to '${VALUE}'")
+            endif()
+            message(FATAL_ERROR "settings.ini field changed. Please regenerate.")
         endif()
     endforeach()
 endfunction(ini_to_cache)
