@@ -44,7 +44,7 @@ function(ini_to_cache)
             set(VALUE "")
         endif()
 
-        # If not defined, load the setting into the cache. Otherwise check for discrepancies.
+        # If not defined, load the setting into the cache.
         if (NOT DEFINED ${SETTING})
             # Print value when debugging
             if (CMAKE_DEBUG_OUTPUT)
@@ -52,6 +52,7 @@ function(ini_to_cache)
             endif()
             set(${SETTING}_ORIGINAL "${VALUE}" CACHE INTERNAL "Original value of ${SETTING} from settings.ini")
             set(${SETTING} "${VALUE}" CACHE INTERNAL "")
+        # If setting was originally loaded, here, from settings.ini, then check it did not change
         elseif(DEFINED ${SETTING}_ORIGINAL AND NOT "${VALUE}" STREQUAL "${${SETTING}_ORIGINAL}")
             # Print some extra output to help debug
             if (CMAKE_DEBUG_OUTPUT)
