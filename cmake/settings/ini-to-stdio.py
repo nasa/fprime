@@ -37,13 +37,14 @@ def print_list_settings(items: List[str]):
 CMAKE_NEEDED_SETTINGS = {
     "framework_path": partial(print_setting, "FPRIME_FRAMEWORK_PATH"),
     "project_root": partial(print_setting, "FPRIME_PROJECT_ROOT"),
-    "config_directory": partial(print_setting, "FPRIME_CONFIG_DIRECTORY"),
+    "config_directory": partial(print_setting, "FPRIME_CONFIG_DIR"),
     "library_locations": lambda value: print_setting(
         "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
     ),
     "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
     "ac_constants": partial(print_setting, "FPRIME_AC_CONSTANTS_FILE"),
-    "install_destination": partial(print_setting, "FPRIME_INSTALL_DEST"),
+    # Sets two settings from install dest: fprime and cmake settings
+    "install_destination": partial(print_setting, "CMAKE_INSTALL_PREFIX"),
 }
 
 

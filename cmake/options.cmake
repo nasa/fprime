@@ -16,6 +16,13 @@
 # the `-D` option there.
 #
 ####
+
+# Remap changed settings
+# Set the install directory for the package
+if (DEFINED FPRIME_INSTALL_DEST)
+    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
+endif()
+
 include("settings/ini")
 ini_to_cache()
 
@@ -194,7 +201,7 @@ include(CTest)
 
 ####
 # Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
-# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIRECTORY`:
+# `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 #
 # Note: these settings are supplied by `fprime-util` and need not be provided unless running CMake directly or through
 # any way bypassing that utility (e.g. inside your beloved IDE).
@@ -269,18 +276,13 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
 
-# Backwards compatibility fix FPRIME_CONFIG_DIR -> FPRIME_CONFIG_DIRECTORY
-if (DEFINED FPRIME_CONFIG_DIR)
-    set(FPRIME_CONFIG_DIRECTORY "${FPRIME_CONFIG_DIR}")
-endif()
-
 # Settings for F config directory
-if (NOT DEFINED FPRIME_CONFIG_DIRECTORY)
-    set(FPRIME_CONFIG_DIRECTORY "${FPRIME_FRAMEWORK_PATH}/config/")
+if (NOT DEFINED FPRIME_CONFIG_DIR)
+    set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
-set(FPRIME_CONFIG_DIRECTORY "${FPRIME_CONFIG_DIRECTORY}" CACHE PATH "F prime configuration header directory" FORCE)
+set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
 
 # Override the AC constants file when specified
 if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIRECTORY}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
 endif()
