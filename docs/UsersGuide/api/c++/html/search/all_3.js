@@ -59,7 +59,7 @@ var searchData=
   ['commanddispatcherimpl_2ecpp_183',['CommandDispatcherImpl.cpp',['../command_dispatcher_impl_8cpp.html',1,'']]],
   ['commanddispatcherimpl_2ehpp_184',['CommandDispatcherImpl.hpp',['../command_dispatcher_impl_8hpp.html',1,'']]],
   ['commanddispatcherimplcfg_2ehpp_185',['CommandDispatcherImplCfg.hpp',['../command_dispatcher_impl_cfg_8hpp.html',1,'']]],
-  ['communications_2dadapter_2dinterface_2emd_186',['communications-adapter-interface.md',['../communications-adapter-interface_8md.html',1,'']]],
+  ['communication_2dadapter_2dinterface_2emd_186',['communication-adapter-interface.md',['../communication-adapter-interface_8md.html',1,'']]],
   ['compacket_187',['ComPacket',['../class_fw_1_1_com_packet.html',1,'Fw::ComPacket'],['../class_fw_1_1_com_packet.html#a91b3ebf6e92a469cf5c6ec1a3572ff7f',1,'Fw::ComPacket::ComPacket()']]],
   ['compacket_2ecpp_188',['ComPacket.cpp',['../com_packet_8cpp.html',1,'']]],
   ['compacket_2ehpp_189',['ComPacket.hpp',['../com_packet_8hpp.html',1,'']]],
@@ -129,5 +129,5 @@ var searchData=
   ['createqueue_253',['createQueue',['../class_fw_1_1_queued_component_base.html#a1a7fac3d50b52aec1c9179e6f0885eb9',1,'Fw::QueuedComponentBase']]],
   ['createvalidation_254',['createValidation',['../namespace_os_1_1_validate_file.html#a8174613e8d564cd35491f134daa0464e',1,'Os::ValidateFile::createValidation(const char *fileName, const char *hash, Utils::HashBuffer &amp;hashBuffer)'],['../namespace_os_1_1_validate_file.html#a56a150d3f0b755e4e383cdf8c843735d',1,'Os::ValidateFile::createValidation(const char *fileName, const char *hashFileName)']]],
   ['contributing_20guidelines_255',['Contributing Guidelines',['../md__c_o_n_t_r_i_b_u_t_i_n_g.html',1,'']]],
-  ['communication_20adapter_20interface_256',['Communication Adapter Interface',['../md_docs__design_communications-adapter-interface.html',1,'']]]
+  ['communication_20adapter_20interface_256',['Communication Adapter Interface',['../md_docs__design_communication-adapter-interface.html',1,'']]]
 ];

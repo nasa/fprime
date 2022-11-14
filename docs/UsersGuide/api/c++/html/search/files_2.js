@@ -24,7 +24,7 @@ var searchData=
   ['commanddispatcherimpl_2ecpp_2154',['CommandDispatcherImpl.cpp',['../command_dispatcher_impl_8cpp.html',1,'']]],
   ['commanddispatcherimpl_2ehpp_2155',['CommandDispatcherImpl.hpp',['../command_dispatcher_impl_8hpp.html',1,'']]],
   ['commanddispatcherimplcfg_2ehpp_2156',['CommandDispatcherImplCfg.hpp',['../command_dispatcher_impl_cfg_8hpp.html',1,'']]],
-  ['communications_2dadapter_2dinterface_2emd_2157',['communications-adapter-interface.md',['../communications-adapter-interface_8md.html',1,'']]],
+  ['communication_2dadapter_2dinterface_2emd_2157',['communication-adapter-interface.md',['../communication-adapter-interface_8md.html',1,'']]],
   ['compacket_2ecpp_2158',['ComPacket.cpp',['../com_packet_8cpp.html',1,'']]],
   ['compacket_2ehpp_2159',['ComPacket.hpp',['../com_packet_8hpp.html',1,'']]],
   ['comqueue_2ecpp_2160',['ComQueue.cpp',['../com_queue_8cpp.html',1,'']]],
