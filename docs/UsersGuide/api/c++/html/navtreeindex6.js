@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"svc_fatal_port.html#autotoc_md398":[8,10,0,2],
 "svc_file_downlink_component.html":[8,11],
 "svc_file_downlink_component.html#autotoc_md415":[8,11,0],
 "svc_file_downlink_component.html#autotoc_md416":[8,11,0,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "svc_tlm_chan_component.html#autotoc_md642":[8,28,0,2,0],
 "svc_tlm_chan_component.html#autotoc_md643":[8,28,0,2,0,0],
 "svc_tlm_chan_component.html#autotoc_md644":[8,28,0,2,0,1],
-"svc_tlm_chan_component.html#autotoc_md645":[8,28,0,2,0,2],
-"svc_tlm_chan_component.html#autotoc_md646":[8,28,0,2,1]
+"svc_tlm_chan_component.html#autotoc_md645":[8,28,0,2,0,2]
 };

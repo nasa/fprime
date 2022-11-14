@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"os_2_baremetal_2_system_resources_8cpp_source.html":[15,0,6,0,6],
 "os_2_linux_2_file_8cpp.html":[15,0,6,1,1],
 "os_2_linux_2_file_8cpp.html#a9e21a2a88f554186e2b2380b00eab944":[15,0,6,1,1,0],
 "os_2_linux_2_file_8cpp_source.html":[15,0,6,1,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "string_8hpp.html":[15,0,5,15,25],
 "string_8hpp_source.html":[15,0,5,15,25],
 "string_test_8hpp.html":[15,0,4,3,2],
-"string_test_8hpp.html#a1479fc0e946ce742a967206ea707d9b8":[15,0,4,3,2,5],
-"string_test_8hpp.html#a25c454aab16c8359686764c23dd9693f":[15,0,4,3,2,2]
+"string_test_8hpp.html#a1479fc0e946ce742a967206ea707d9b8":[15,0,4,3,2,5]
 };

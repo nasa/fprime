@@ -190,10 +190,11 @@ Gets the expected tool version named using version identifier VID to name the to
 file. This will be returned via the variable supplied in FILL_VARIABLE setting it in PARENT_SCOPE.
 
 
-## Function `set_hash_flag`:
+## Function `set_assert_flags`:
 
 Adds a -DASSERT_FILE_ID=(First 8 digits of MD5) to each source file, and records the output in
-hashes.txt. This allows for asserts on file ID not string.
+hashes.txt. This allows for asserts on file ID not string. Also adds the -DASSERT_RELATIVE_PATH
+flag for handling relative path asserts.
 
 
 ## Function `print_property`:

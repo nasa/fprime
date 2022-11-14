@@ -260,192 +260,191 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp_source.html',''); init
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor"> #endif</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment">// Turn asserts on or off</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a0f497279a0504f6bfeb21bb1b6a779c5">  194</a></span>&#160;<span class="preprocessor">#define FW_NO_ASSERT                        1   </span></div>
-<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a0bbd505e3c8f5690021d764eae94721f">  195</a></span>&#160;<span class="preprocessor">#define FW_FILEID_ASSERT                    2   </span></div>
-<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a6089e13ed014522486459da04b26b167">  196</a></span>&#160;<span class="preprocessor">#define FW_FILENAME_ASSERT                  3   </span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="comment">// Set assertion form. Options:</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">//   1. FW_NO_ASSERT: assertions are compiled out</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="comment">//   2. FW_FILEID_ASSERT: asserts report a file CRC and line number</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="comment">//   3. FW_FILENAME_ASSERT: asserts report a file path (__FILE__) and line number</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;<span class="comment">//   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number</span></div>
 <div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a92863d37e945ed5469ac704c7da6d805">  197</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_DFL_MSG_LEN               256 </span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="preprocessor"></span> </div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="preprocessor">#ifndef FW_ASSERT_LEVEL</span></div>
-<div class="line"><a name="l00200"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a2355a84bf81d78e537d3ed5b146ca3bd">  200</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT </span></div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">// Define max length of assert string</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="preprocessor">#ifndef FW_ASSERT_TEXT_SIZE</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a48d947818ef0ebb372be0bf57d98c376">  205</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_TEXT_SIZE                 120  </span></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment">// Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="comment">// The size of the object name stored in the object base class. Larger names will be truncated.</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="preprocessor">#if FW_OBJECT_NAMES</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af81ccbdb473a2c02890d5a055e60d62c">  213</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_NAME_MAX_SIZE                80  </span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="preprocessor"> #endif</span></div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="comment">// When querying an object as to an object-specific description, this specifies the size of the buffer to store the description.</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="preprocessor">#if FW_OBJECT_TO_STRING</span></div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_TO_STRING_BUFFER_SIZE</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ab76d78f5e5c9d1e629aebc743cc1181f">  220</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_TO_STRING_BUFFER_SIZE        255  </span></div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="preprocessor"> #endif</span></div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="preprocessor">#if FW_OBJECT_REGISTRATION</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">// For the simple object registry provided with the framework, this specifies how many objects the registry will store.</span></div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_SIMPLE_REG_ENTRIES</span></div>
-<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a17883cf4a18601e144b58aad2946ed6c">  227</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_SIMPLE_REG_ENTRIES           500  </span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="preprocessor"> #endif</span></div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment">// When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should be &gt;= FW_OBJ_NAME_MAX_SIZE.</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE</span></div>
-<div class="line"><a name="l00231"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a15039612a531e1f616a68e604eaeb814">  231</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  </span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="preprocessor"> #endif</span></div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="preprocessor">#if FW_QUEUE_REGISTRATION</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">// For the simple queue registry provided with the framework, this specifies how many queues the registry will store.</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="preprocessor"> #ifndef FW_QUEUE_SIMPLE_QUEUE_ENTRIES</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a17fcf18884f8bb3b2e73c77a7bee0ca6">  238</a></span>&#160;<span class="preprocessor"> #define FW_QUEUE_SIMPLE_QUEUE_ENTRIES           100  </span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="preprocessor"> #endif</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;<span class="preprocessor">#ifndef FW_ASSERT_LEVEL</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a2355a84bf81d78e537d3ed5b146ca3bd">  199</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT </span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;<span class="comment">// Define max length of assert string</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="preprocessor">#ifndef FW_ASSERT_TEXT_SIZE</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a48d947818ef0ebb372be0bf57d98c376">  204</a></span>&#160;<span class="preprocessor">#define FW_ASSERT_TEXT_SIZE                 120  </span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">// Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment">// The size of the object name stored in the object base class. Larger names will be truncated.</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="preprocessor">#if FW_OBJECT_NAMES</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_NAME_MAX_SIZE</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af81ccbdb473a2c02890d5a055e60d62c">  212</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_NAME_MAX_SIZE                80  </span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="preprocessor"> #endif</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;<span class="comment">// When querying an object as to an object-specific description, this specifies the size of the buffer to store the description.</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="preprocessor">#if FW_OBJECT_TO_STRING</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_TO_STRING_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ab76d78f5e5c9d1e629aebc743cc1181f">  219</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_TO_STRING_BUFFER_SIZE        255  </span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="preprocessor"> #endif</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="preprocessor">#if FW_OBJECT_REGISTRATION</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment">// For the simple object registry provided with the framework, this specifies how many objects the registry will store.</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_SIMPLE_REG_ENTRIES</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a17883cf4a18601e144b58aad2946ed6c">  226</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_SIMPLE_REG_ENTRIES           500  </span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="preprocessor"> #endif</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">// When dumping the contents of the registry, this specifies the size of the buffer used to store object names. Should be &gt;= FW_OBJ_NAME_MAX_SIZE.</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="preprocessor"> #ifndef FW_OBJ_SIMPLE_REG_BUFF_SIZE</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a15039612a531e1f616a68e604eaeb814">  230</a></span>&#160;<span class="preprocessor"> #define FW_OBJ_SIMPLE_REG_BUFF_SIZE         255  </span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor"> #endif</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="preprocessor">#if FW_QUEUE_REGISTRATION</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment">// For the simple queue registry provided with the framework, this specifies how many queues the registry will store.</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="preprocessor"> #ifndef FW_QUEUE_SIMPLE_QUEUE_ENTRIES</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a17fcf18884f8bb3b2e73c77a7bee0ca6">  237</a></span>&#160;<span class="preprocessor"> #define FW_QUEUE_SIMPLE_QUEUE_ENTRIES           100  </span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="preprocessor"> #endif</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">// Specifies the size of the string holding the queue name for queues</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="preprocessor">#ifndef FW_QUEUE_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aeca480c2a7c2d15beec606e82bf16bac">  245</a></span>&#160;<span class="preprocessor">#define FW_QUEUE_NAME_MAX_SIZE               80   </span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">// Specifies the size of the string holding the task name for active components and tasks</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="preprocessor">#ifndef FW_TASK_NAME_MAX_SIZE</span></div>
-<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a390c1bdc0f093c7bf814558336ff0c57">  250</a></span>&#160;<span class="preprocessor">#define FW_TASK_NAME_MAX_SIZE               80    </span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">// Specifies the size of the buffer that contains a communications packet.</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="preprocessor">#ifndef FW_COM_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">  255</a></span>&#160;<span class="preprocessor">#define FW_COM_BUFFER_MAX_SIZE               128   </span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized command arguments.</span></div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="preprocessor">#ifndef FW_CMD_ARG_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ae8defc303dce09190ad20a3ca955b655">  261</a></span>&#160;<span class="preprocessor">#define FW_CMD_ARG_BUFFER_MAX_SIZE           (FW_COM_BUFFER_MAX_SIZE - sizeof(FwOpcodeType) - sizeof(FwPacketDescriptorType))</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">// Specifies the maximum size of a string in a command argument</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="preprocessor">#ifndef FW_CMD_STRING_MAX_SIZE</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a4f6c08f814db2ba18146b75075e8bbc3">  266</a></span>&#160;<span class="preprocessor">#define FW_CMD_STRING_MAX_SIZE           40   </span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">// Normally when a command is deserialized, the handler checks to see if there are any leftover</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">// bytes in the buffer. If there are, it assumes that the command was corrupted somehow since</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">// the serialized size should match the serialized size of the argument list. In some cases,</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">// command buffers are padded so the data can be larger than the serialized size of the command.</span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">// Setting the below to zero will disable the check at the cost of not detecting commands that</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">// are too large.</span></div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="preprocessor">#ifndef FW_CMD_CHECK_RESIDUAL</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af83eb73a0e506bb7f934f5f51e542ce4">  276</a></span>&#160;<span class="preprocessor">#define FW_CMD_CHECK_RESIDUAL               1 </span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized log arguments.</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="preprocessor">#ifndef FW_LOG_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a3234753745347df82e7181690b7fb599">  281</a></span>&#160;<span class="preprocessor">#define FW_LOG_BUFFER_MAX_SIZE               (FW_COM_BUFFER_MAX_SIZE - sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))</span></div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment">// Specifies the maximum size of a string in a log event</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="preprocessor">#ifndef FW_LOG_STRING_MAX_SIZE</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac1f697eb23831390faddb9543835771b">  286</a></span>&#160;<span class="preprocessor">#define FW_LOG_STRING_MAX_SIZE           100   </span></div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized telemetry value.</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="preprocessor">#ifndef FW_TLM_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a8bd9da9ec5572eb59b656afada2bc437">  291</a></span>&#160;<span class="preprocessor">#define FW_TLM_BUFFER_MAX_SIZE               (FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">// Specifies the maximum size of a string in a telemetry channel</span></div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="preprocessor">#ifndef FW_TLM_STRING_MAX_SIZE</span></div>
-<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a639e2b664eb57a3df15c19af7c0a019a">  296</a></span>&#160;<span class="preprocessor">#define FW_TLM_STRING_MAX_SIZE           40  </span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized parameter value.</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="preprocessor">#ifndef FW_PARAM_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a646de284e93e26fa69fe8ec637f92bfc">  301</a></span>&#160;<span class="preprocessor">#define FW_PARAM_BUFFER_MAX_SIZE             (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPrmIdType) - sizeof(FwPacketDescriptorType))</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment">// Specifies the maximum size of a string in a parameter</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="preprocessor">#ifndef FW_PARAM_STRING_MAX_SIZE</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#abcf41ba3380be978cc5a29567684f03e">  306</a></span>&#160;<span class="preprocessor">#define FW_PARAM_STRING_MAX_SIZE           40  </span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">// Specifies the maximum size of a file upload chunk</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="preprocessor">#ifndef FW_FILE_BUFFER_MAX_SIZE</span></div>
-<div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a5e5a6fa26b27df73000a4f8813740c68">  311</a></span>&#160;<span class="preprocessor">#define FW_FILE_BUFFER_MAX_SIZE             255   </span></div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">// Specifies the maximum size of a string in an interface call</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="preprocessor">#ifndef FW_INTERNAL_INTERFACE_STRING_MAX_SIZE</span></div>
-<div class="line"><a name="l00316"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af198e9f35163fd1e985db0762ff09037">  316</a></span>&#160;<span class="preprocessor">#define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE           256   </span></div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">// enables text logging of events as well as data logging. Adds a second logging port for text output.</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="preprocessor">#ifndef FW_ENABLE_TEXT_LOGGING</span></div>
-<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a9e8d829fb8392c52f5239208d21054bf">  321</a></span>&#160;<span class="preprocessor">#define FW_ENABLE_TEXT_LOGGING               1    </span></div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; <span class="comment">// Define the size of the text log string buffer. Should be large enough for format string and arguments</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="preprocessor">#ifndef FW_LOG_TEXT_BUFFER_SIZE</span></div>
-<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aeca95c3a52516a6cf6fcc58fd38d71e3">  326</a></span>&#160;<span class="preprocessor">#define FW_LOG_TEXT_BUFFER_SIZE              256   </span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">// Define if serializables have toString() method. Turning off will save code space and</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="comment">// string constants. Must be enabled if text logging enabled</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="preprocessor">#ifndef FW_SERIALIZABLE_TO_STRING</span></div>
-<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a3fe3b0ed2dc804ccef3ce0e57754db79">  332</a></span>&#160;<span class="preprocessor">#define FW_SERIALIZABLE_TO_STRING           1    </span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;<span class="preprocessor">#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</span></div>
-<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">  337</a></span>&#160;<span class="preprocessor">#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255   </span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">// Specifies the size of the string holding the queue name for queues</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="preprocessor">#ifndef FW_QUEUE_NAME_MAX_SIZE</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aeca480c2a7c2d15beec606e82bf16bac">  244</a></span>&#160;<span class="preprocessor">#define FW_QUEUE_NAME_MAX_SIZE               80   </span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">// Specifies the size of the string holding the task name for active components and tasks</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#ifndef FW_TASK_NAME_MAX_SIZE</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a390c1bdc0f093c7bf814558336ff0c57">  249</a></span>&#160;<span class="preprocessor">#define FW_TASK_NAME_MAX_SIZE               80    </span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment">// Specifies the size of the buffer that contains a communications packet.</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="preprocessor">#ifndef FW_COM_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac4bd2d1af8a64105ed2eb6e61c823a1a">  254</a></span>&#160;<span class="preprocessor">#define FW_COM_BUFFER_MAX_SIZE               128   </span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized command arguments.</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="preprocessor">#ifndef FW_CMD_ARG_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ae8defc303dce09190ad20a3ca955b655">  260</a></span>&#160;<span class="preprocessor">#define FW_CMD_ARG_BUFFER_MAX_SIZE           (FW_COM_BUFFER_MAX_SIZE - sizeof(FwOpcodeType) - sizeof(FwPacketDescriptorType))</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">// Specifies the maximum size of a string in a command argument</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#ifndef FW_CMD_STRING_MAX_SIZE</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a4f6c08f814db2ba18146b75075e8bbc3">  265</a></span>&#160;<span class="preprocessor">#define FW_CMD_STRING_MAX_SIZE           40   </span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">// Normally when a command is deserialized, the handler checks to see if there are any leftover</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">// bytes in the buffer. If there are, it assumes that the command was corrupted somehow since</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">// the serialized size should match the serialized size of the argument list. In some cases,</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">// command buffers are padded so the data can be larger than the serialized size of the command.</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">// Setting the below to zero will disable the check at the cost of not detecting commands that</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">// are too large.</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="preprocessor">#ifndef FW_CMD_CHECK_RESIDUAL</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af83eb73a0e506bb7f934f5f51e542ce4">  275</a></span>&#160;<span class="preprocessor">#define FW_CMD_CHECK_RESIDUAL               1 </span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized log arguments.</span></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="preprocessor">#ifndef FW_LOG_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a3234753745347df82e7181690b7fb599">  280</a></span>&#160;<span class="preprocessor">#define FW_LOG_BUFFER_MAX_SIZE               (FW_COM_BUFFER_MAX_SIZE - sizeof(FwEventIdType) - sizeof(FwPacketDescriptorType))</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="comment">// Specifies the maximum size of a string in a log event</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="preprocessor">#ifndef FW_LOG_STRING_MAX_SIZE</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac1f697eb23831390faddb9543835771b">  285</a></span>&#160;<span class="preprocessor">#define FW_LOG_STRING_MAX_SIZE           100   </span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized telemetry value.</span></div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="preprocessor">#ifndef FW_TLM_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a8bd9da9ec5572eb59b656afada2bc437">  290</a></span>&#160;<span class="preprocessor">#define FW_TLM_BUFFER_MAX_SIZE               (FW_COM_BUFFER_MAX_SIZE - sizeof(FwChanIdType) - sizeof(FwPacketDescriptorType))</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment">// Specifies the maximum size of a string in a telemetry channel</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="preprocessor">#ifndef FW_TLM_STRING_MAX_SIZE</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a639e2b664eb57a3df15c19af7c0a019a">  295</a></span>&#160;<span class="preprocessor">#define FW_TLM_STRING_MAX_SIZE           40  </span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">// Specifies the size of the buffer that contains the serialized parameter value.</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="preprocessor">#ifndef FW_PARAM_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a646de284e93e26fa69fe8ec637f92bfc">  300</a></span>&#160;<span class="preprocessor">#define FW_PARAM_BUFFER_MAX_SIZE             (FW_COM_BUFFER_MAX_SIZE - sizeof(FwPrmIdType) - sizeof(FwPacketDescriptorType))</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="comment">// Specifies the maximum size of a string in a parameter</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="preprocessor">#ifndef FW_PARAM_STRING_MAX_SIZE</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#abcf41ba3380be978cc5a29567684f03e">  305</a></span>&#160;<span class="preprocessor">#define FW_PARAM_STRING_MAX_SIZE           40  </span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">// Specifies the maximum size of a file upload chunk</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="preprocessor">#ifndef FW_FILE_BUFFER_MAX_SIZE</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a5e5a6fa26b27df73000a4f8813740c68">  310</a></span>&#160;<span class="preprocessor">#define FW_FILE_BUFFER_MAX_SIZE             255   </span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">// Specifies the maximum size of a string in an interface call</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="preprocessor">#ifndef FW_INTERNAL_INTERFACE_STRING_MAX_SIZE</span></div>
+<div class="line"><a name="l00315"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#af198e9f35163fd1e985db0762ff09037">  315</a></span>&#160;<span class="preprocessor">#define FW_INTERNAL_INTERFACE_STRING_MAX_SIZE           256   </span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">// enables text logging of events as well as data logging. Adds a second logging port for text output.</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="preprocessor">#ifndef FW_ENABLE_TEXT_LOGGING</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a9e8d829fb8392c52f5239208d21054bf">  320</a></span>&#160;<span class="preprocessor">#define FW_ENABLE_TEXT_LOGGING               1    </span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; <span class="comment">// Define the size of the text log string buffer. Should be large enough for format string and arguments</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="preprocessor">#ifndef FW_LOG_TEXT_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aeca95c3a52516a6cf6fcc58fd38d71e3">  325</a></span>&#160;<span class="preprocessor">#define FW_LOG_TEXT_BUFFER_SIZE              256   </span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;<span class="comment">// Define if serializables have toString() method. Turning off will save code space and</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">// string constants. Must be enabled if text logging enabled</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="preprocessor">#ifndef FW_SERIALIZABLE_TO_STRING</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a3fe3b0ed2dc804ccef3ce0e57754db79">  331</a></span>&#160;<span class="preprocessor">#define FW_SERIALIZABLE_TO_STRING           1    </span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="preprocessor">#if FW_SERIALIZABLE_TO_STRING</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="preprocessor">#ifndef FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a5f2f25bc6afd009587553a1e0565294c">  336</a></span>&#160;<span class="preprocessor">#define FW_SERIALIZABLE_TO_STRING_BUFFER_SIZE 255   </span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">// Define if arrays have toString() method.</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="preprocessor">#ifndef FW_ARRAY_TO_STRING</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a2a77bfe246d3b84e371788fbb3c1a8c7">  343</a></span>&#160;<span class="preprocessor">#define FW_ARRAY_TO_STRING                  1   </span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="preprocessor">#if FW_ARRAY_TO_STRING</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="preprocessor">#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac38642e68bbe5a71d94ab8fbfc7972e4">  348</a></span>&#160;<span class="preprocessor">#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  </span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">// Define if arrays have toString() method.</span></div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="preprocessor">#ifndef FW_ARRAY_TO_STRING</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a2a77bfe246d3b84e371788fbb3c1a8c7">  342</a></span>&#160;<span class="preprocessor">#define FW_ARRAY_TO_STRING                  1   </span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160; </div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="preprocessor">#if FW_ARRAY_TO_STRING</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="preprocessor">#ifndef FW_ARRAY_TO_STRING_BUFFER_SIZE</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#ac38642e68bbe5a71d94ab8fbfc7972e4">  347</a></span>&#160;<span class="preprocessor">#define FW_ARRAY_TO_STRING_BUFFER_SIZE 256  </span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">// Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="preprocessor">#ifndef FW_AMPCS_COMPATIBLE</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a0b27aabc04bf11f630b20e441a37759b">  354</a></span>&#160;<span class="preprocessor">#define FW_AMPCS_COMPATIBLE            0   </span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">// These settings configure whether or not the timebase and context values for the Fw::Time</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">// class are used. Some systems may not use or need those fields</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160; </div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="preprocessor">#ifndef FW_USE_TIME_BASE</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#abf812f967779c2af11f4729609503862">  361</a></span>&#160;<span class="preprocessor">#define FW_USE_TIME_BASE                1 </span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="preprocessor">#ifndef FW_USE_TIME_CONTEXT</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aa10cb7bfb6cb98e72cacffe5160375da">  365</a></span>&#160;<span class="preprocessor">#define FW_USE_TIME_CONTEXT             1 </span></div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">//These defines used for the FilepathCharString type</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="preprocessor">#ifndef FW_FIXED_LENGTH_STRING_SIZE</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a44ddaed88a42bd904b544827a0a1c1e7">  371</a></span>&#160;<span class="preprocessor">#define FW_FIXED_LENGTH_STRING_SIZE   256 </span></div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160; </div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160; </div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">// Some settings to enable AMPCS compatibility. This breaks regular ISF GUI compatibility</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="preprocessor">#ifndef FW_AMPCS_COMPATIBLE</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a0b27aabc04bf11f630b20e441a37759b">  353</a></span>&#160;<span class="preprocessor">#define FW_AMPCS_COMPATIBLE            0   </span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment">// These settings configure whether or not the timebase and context values for the Fw::Time</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">// class are used. Some systems may not use or need those fields</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="preprocessor">#ifndef FW_USE_TIME_BASE</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#abf812f967779c2af11f4729609503862">  360</a></span>&#160;<span class="preprocessor">#define FW_USE_TIME_BASE                1 </span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="preprocessor">#ifndef FW_USE_TIME_CONTEXT</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#aa10cb7bfb6cb98e72cacffe5160375da">  364</a></span>&#160;<span class="preprocessor">#define FW_USE_TIME_CONTEXT             1 </span></div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">//These defines used for the FilepathCharString type</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="preprocessor">#ifndef FW_FIXED_LENGTH_STRING_SIZE</span></div>
+<div class="line"><a name="l00370"></a><span class="lineno"><a class="line" href="fp_config_8hpp.html#a44ddaed88a42bd904b544827a0a1c1e7">  370</a></span>&#160;<span class="preprocessor">#define FW_FIXED_LENGTH_STRING_SIZE   256 </span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="comment">// *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;<span class="comment">// the type definitions in Fw/Types/BasicTypes available.</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160; </div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="astruct_fp_limits_html_a8276cdd4187dceb34d586429bb2b201d"><div class="ttname"><a href="struct_fp_limits.html#a8276cdd4187dceb34d586429bb2b201d">FpLimits::FwTimeContextStoreType_MIN</a></div><div class="ttdeci">static const FwTimeContextStoreType FwTimeContextStoreType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00097">FpConfig.hpp:97</a></div></div>
@@ -456,7 +455,7 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp_source.html',''); init
 <div class="ttc" id="a_default_types_8hpp_html_a45ae2bb211d747bffcf4d3071ecdceef"><div class="ttname"><a href="default_types_8hpp.html#a45ae2bb211d747bffcf4d3071ecdceef">PlatformUIntType</a></div><div class="ttdeci">unsigned int PlatformUIntType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00025">DefaultTypes.hpp:25</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a972d58ba7cd62291671f24b7b955c033"><div class="ttname"><a href="struct_fp_limits.html#a972d58ba7cd62291671f24b7b955c033">FpLimits::FwNativeUIntType_MIN</a></div><div class="ttdeci">static const FwNativeUIntType FwNativeUIntType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00089">FpConfig.hpp:89</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a2d078f269f4c29e1d54fc49a5c2cd601"><div class="ttname"><a href="fp_config_8hpp.html#a2d078f269f4c29e1d54fc49a5c2cd601">FwChanIdType</a></div><div class="ttdeci">U32 FwChanIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00059">FpConfig.hpp:59</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a4fc19d1f81037298c4f1d3aee8e0abaf"><div class="ttname"><a href="struct_basic_limits.html#a4fc19d1f81037298c4f1d3aee8e0abaf">BasicLimits::U32_MIN</a></div><div class="ttdeci">static const U32 U32_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00106">BasicTypes.hpp:106</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a4fc19d1f81037298c4f1d3aee8e0abaf"><div class="ttname"><a href="struct_basic_limits.html#a4fc19d1f81037298c4f1d3aee8e0abaf">BasicLimits::U32_MIN</a></div><div class="ttdeci">static const U32 U32_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00111">BasicTypes.hpp:111</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_aab45877626a938b6127e809c4560727c"><div class="ttname"><a href="struct_fp_limits.html#aab45877626a938b6127e809c4560727c">FpLimits::FwTlmPacketizeIdType_MIN</a></div><div class="ttdeci">static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00109">FpConfig.hpp:109</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_af489a69235add27b678bdf7e6d837667"><div class="ttname"><a href="fp_config_8hpp.html#af489a69235add27b678bdf7e6d837667">FwBuffSizeType</a></div><div class="ttdeci">U16 FwBuffSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00032">FpConfig.hpp:32</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ae380706b9f47eeb8419ba9c6bf40f7ba"><div class="ttname"><a href="struct_fp_limits.html#ae380706b9f47eeb8419ba9c6bf40f7ba">FpLimits::FwAssertArgType_MAX</a></div><div class="ttdeci">static const FwAssertArgType FwAssertArgType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00086">FpConfig.hpp:86</a></div></div>
@@ -465,23 +464,23 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp_source.html',''); init
 <div class="ttc" id="astruct_fp_limits_html_ab1806f7af5b92b4030cb219cc0493efa"><div class="ttname"><a href="struct_fp_limits.html#ab1806f7af5b92b4030cb219cc0493efa">FpLimits::FwEnumStoreType_MIN</a></div><div class="ttdeci">static const FwEnumStoreType FwEnumStoreType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00093">FpConfig.hpp:93</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a3cf649086b37430f3aa561942a64f431"><div class="ttname"><a href="fp_config_8hpp.html#a3cf649086b37430f3aa561942a64f431">FwEventIdType</a></div><div class="ttdeci">U32 FwEventIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00062">FpConfig.hpp:62</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_ab2dfa39b926e2681177429ddc08f71b9"><div class="ttname"><a href="default_types_8hpp.html#ab2dfa39b926e2681177429ddc08f71b9">PlatformSizeType_MAX</a></div><div class="ttdeci">const PlatformSizeType PlatformSizeType_MAX</div></div>
-<div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00028">BasicTypes.hpp:28</a></div></div>
+<div class="ttc" id="a_basic_types_8hpp_html_aa63ef7b996d5487ce35a5a66601f3e73"><div class="ttname"><a href="basic_types_8hpp.html#aa63ef7b996d5487ce35a5a66601f3e73">U8</a></div><div class="ttdeci">uint8_t U8</div><div class="ttdoc">8-bit unsigned integer</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00033">BasicTypes.hpp:33</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a010a00650fb5274595ddba8b03a0d17faad20439337171453957a14c47bc408ba"><div class="ttname"><a href="fp_config_8hpp.html#a010a00650fb5274595ddba8b03a0d17faad20439337171453957a14c47bc408ba">TB_PROC_TIME</a></div><div class="ttdeci">@ TB_PROC_TIME</div><div class="ttdoc">Indicates time is processor cycle time. Not tied to external time.</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00041">FpConfig.hpp:41</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html"><div class="ttname"><a href="struct_fp_limits.html">FpLimits</a></div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00080">FpConfig.hpp:80</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a19b72400858a9bc93d18b1fc34401699"><div class="ttname"><a href="struct_fp_limits.html#a19b72400858a9bc93d18b1fc34401699">FpLimits::FwOpcodeType_MAX</a></div><div class="ttdeci">static const FwOpcodeType FwOpcodeType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00102">FpConfig.hpp:102</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_acea88316be5362a526c4c7471c873ffe"><div class="ttname"><a href="struct_fp_limits.html#acea88316be5362a526c4c7471c873ffe">FpLimits::FwTimeBaseStoreType_MAX</a></div><div class="ttdeci">static const FwTimeBaseStoreType FwTimeBaseStoreType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00096">FpConfig.hpp:96</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_aef859c2d347c962247763a0213d67922"><div class="ttname"><a href="struct_fp_limits.html#aef859c2d347c962247763a0213d67922">FpLimits::FwAssertArgType_MIN</a></div><div class="ttdeci">static const FwAssertArgType FwAssertArgType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00085">FpConfig.hpp:85</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a1624879ca7235da02c93533a2fd0cb3e"><div class="ttname"><a href="default_types_8hpp.html#a1624879ca7235da02c93533a2fd0cb3e">PlatformIndexType_MIN</a></div><div class="ttdeci">const PlatformIndexType PlatformIndexType_MIN</div></div>
-<div class="ttc" id="astruct_basic_limits_html_a21229a0f87e0402c205f426e8476f40f"><div class="ttname"><a href="struct_basic_limits.html#a21229a0f87e0402c205f426e8476f40f">BasicLimits::I32_MAX</a></div><div class="ttdeci">static const I32 I32_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00105">BasicTypes.hpp:105</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a21229a0f87e0402c205f426e8476f40f"><div class="ttname"><a href="struct_basic_limits.html#a21229a0f87e0402c205f426e8476f40f">BasicLimits::I32_MAX</a></div><div class="ttdeci">static const I32 I32_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00110">BasicTypes.hpp:110</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a4b95a7783d9bf72d986d80c5b975bd46"><div class="ttname"><a href="struct_fp_limits.html#a4b95a7783d9bf72d986d80c5b975bd46">FpLimits::FwTimeContextStoreType_MAX</a></div><div class="ttdeci">static const FwTimeContextStoreType FwTimeContextStoreType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00098">FpConfig.hpp:98</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_ab3d442cdb490f3110b6cdd8de2ca4809"><div class="ttname"><a href="struct_basic_limits.html#ab3d442cdb490f3110b6cdd8de2ca4809">BasicLimits::U16_MAX</a></div><div class="ttdeci">static const U16 U16_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00102">BasicTypes.hpp:102</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a828aee1751b7a69e2496ca9542b07696"><div class="ttname"><a href="struct_basic_limits.html#a828aee1751b7a69e2496ca9542b07696">BasicLimits::U8_MAX</a></div><div class="ttdeci">static const uint8_t U8_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00097">BasicTypes.hpp:97</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_ab3d442cdb490f3110b6cdd8de2ca4809"><div class="ttname"><a href="struct_basic_limits.html#ab3d442cdb490f3110b6cdd8de2ca4809">BasicLimits::U16_MAX</a></div><div class="ttdeci">static const U16 U16_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00107">BasicTypes.hpp:107</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a828aee1751b7a69e2496ca9542b07696"><div class="ttname"><a href="struct_basic_limits.html#a828aee1751b7a69e2496ca9542b07696">BasicLimits::U8_MAX</a></div><div class="ttdeci">static const uint8_t U8_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00102">BasicTypes.hpp:102</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a010a00650fb5274595ddba8b03a0d17f"><div class="ttname"><a href="fp_config_8hpp.html#a010a00650fb5274595ddba8b03a0d17f">TimeBase</a></div><div class="ttdeci">TimeBase</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00039">FpConfig.hpp:39</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ad52b3c2718e0aac87c1983fdd2c4ea3c"><div class="ttname"><a href="struct_fp_limits.html#ad52b3c2718e0aac87c1983fdd2c4ea3c">FpLimits::FwPacketDescriptorType_MIN</a></div><div class="ttdeci">static const FwPacketDescriptorType FwPacketDescriptorType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00099">FpConfig.hpp:99</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ae38ca633612771bc0696e765717fb763"><div class="ttname"><a href="struct_fp_limits.html#ae38ca633612771bc0696e765717fb763">FpLimits::FwPrmIdType_MIN</a></div><div class="ttdeci">static const FwPrmIdType FwPrmIdType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00107">FpConfig.hpp:107</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a2f8688930d2dbc9e45ddaca180a4ebe3"><div class="ttname"><a href="default_types_8hpp.html#a2f8688930d2dbc9e45ddaca180a4ebe3">PlatformIndexType</a></div><div class="ttdeci">PlatformIntType PlatformIndexType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00036">DefaultTypes.hpp:36</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_af15c29832325b81b0ad8c442b8e8d8c8"><div class="ttname"><a href="default_types_8hpp.html#af15c29832325b81b0ad8c442b8e8d8c8">PlatformAssertArgType</a></div><div class="ttdeci">PlatformIntType PlatformAssertArgType</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00058">DefaultTypes.hpp:58</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a5743609b13433650382d571ef8b54cbe"><div class="ttname"><a href="struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe">BasicLimits::U8_MIN</a></div><div class="ttdeci">static const uint8_t U8_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00096">BasicTypes.hpp:96</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a5743609b13433650382d571ef8b54cbe"><div class="ttname"><a href="struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe">BasicLimits::U8_MIN</a></div><div class="ttdeci">static const uint8_t U8_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00101">BasicTypes.hpp:101</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ab99292f466cfd6853233e19cceb8545f"><div class="ttname"><a href="struct_fp_limits.html#ab99292f466cfd6853233e19cceb8545f">FpLimits::FwIndexType_MAX</a></div><div class="ttdeci">static const FwIndexType FwIndexType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00082">FpConfig.hpp:82</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_ad3309f130c439d0d01cddc98aa1e1a1f"><div class="ttname"><a href="default_types_8hpp.html#ad3309f130c439d0d01cddc98aa1e1a1f">PlatformSizeType_MIN</a></div><div class="ttdeci">const PlatformSizeType PlatformSizeType_MIN</div></div>
 <div class="ttc" id="astruct_fp_limits_html_afd1fa7784f9f24dbb00db66be8897721"><div class="ttname"><a href="struct_fp_limits.html#afd1fa7784f9f24dbb00db66be8897721">FpLimits::FwIndexType_MIN</a></div><div class="ttdeci">static const FwIndexType FwIndexType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00081">FpConfig.hpp:81</a></div></div>
@@ -492,22 +491,22 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp_source.html',''); init
 <div class="ttc" id="astruct_fp_limits_html_a0c31060b7a778cd8dca8780e861eca3a"><div class="ttname"><a href="struct_fp_limits.html#a0c31060b7a778cd8dca8780e861eca3a">FpLimits::FwBuffSizeType_MAX</a></div><div class="ttdeci">static const FwBuffSizeType FwBuffSizeType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00092">FpConfig.hpp:92</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a8d550cc282ac085eca991f23ab9ca646"><div class="ttname"><a href="fp_config_8hpp.html#a8d550cc282ac085eca991f23ab9ca646">FwOpcodeType</a></div><div class="ttdeci">U32 FwOpcodeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00056">FpConfig.hpp:56</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a03d3ca63bb7506ee4d423cc0a4b98505"><div class="ttname"><a href="default_types_8hpp.html#a03d3ca63bb7506ee4d423cc0a4b98505">PlatformUIntType_MAX</a></div><div class="ttdeci">const PlatformUIntType PlatformUIntType_MAX</div></div>
-<div class="ttc" id="astruct_basic_limits_html_a9ea0a90fdc55808722768ab550c05373"><div class="ttname"><a href="struct_basic_limits.html#a9ea0a90fdc55808722768ab550c05373">BasicLimits::I32_MIN</a></div><div class="ttdeci">static const I32 I32_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00104">BasicTypes.hpp:104</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a9ea0a90fdc55808722768ab550c05373"><div class="ttname"><a href="struct_basic_limits.html#a9ea0a90fdc55808722768ab550c05373">BasicLimits::I32_MIN</a></div><div class="ttdeci">static const I32 I32_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00109">BasicTypes.hpp:109</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ab4f35e03ed17087fe6f0e0441fa2aee4"><div class="ttname"><a href="struct_fp_limits.html#ab4f35e03ed17087fe6f0e0441fa2aee4">FpLimits::FwEventIdType_MAX</a></div><div class="ttdeci">static const FwEventIdType FwEventIdType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00106">FpConfig.hpp:106</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html"><div class="ttname"><a href="struct_basic_limits.html">BasicLimits</a></div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00093">BasicTypes.hpp:93</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html"><div class="ttname"><a href="struct_basic_limits.html">BasicLimits</a></div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00098">BasicTypes.hpp:98</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a7e0107cb8195ff607431a9182569066c"><div class="ttname"><a href="fp_config_8hpp.html#a7e0107cb8195ff607431a9182569066c">FwTlmPacketizeIdType</a></div><div class="ttdeci">U16 FwTlmPacketizeIdType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00068">FpConfig.hpp:68</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_abae54f5e49731a7b258469961a3b64ce"><div class="ttname"><a href="default_types_8hpp.html#abae54f5e49731a7b258469961a3b64ce">PlatformUIntType_MIN</a></div><div class="ttdeci">const PlatformUIntType PlatformUIntType_MIN</div></div>
 <div class="ttc" id="astruct_fp_limits_html_a60c769b31137cb65f5003019a253136a"><div class="ttname"><a href="struct_fp_limits.html#a60c769b31137cb65f5003019a253136a">FpLimits::FwNativeUIntType_MAX</a></div><div class="ttdeci">static const FwNativeUIntType FwNativeUIntType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00090">FpConfig.hpp:90</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a4b2eb2ee32c08f09214f3023747d9409"><div class="ttname"><a href="struct_fp_limits.html#a4b2eb2ee32c08f09214f3023747d9409">FpLimits::FwSizeType_MIN</a></div><div class="ttdeci">static const FwSizeType FwSizeType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00083">FpConfig.hpp:83</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a750d1166712a588ce8d2ee0be075bc04"><div class="ttname"><a href="struct_fp_limits.html#a750d1166712a588ce8d2ee0be075bc04">FpLimits::FwSizeType_MAX</a></div><div class="ttdeci">static const FwSizeType FwSizeType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00084">FpConfig.hpp:84</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a44f3b9a78821e8ca4cbf8ae05c85872a"><div class="ttname"><a href="struct_basic_limits.html#a44f3b9a78821e8ca4cbf8ae05c85872a">BasicLimits::U16_MIN</a></div><div class="ttdeci">static const U16 U16_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00101">BasicTypes.hpp:101</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a44f3b9a78821e8ca4cbf8ae05c85872a"><div class="ttname"><a href="struct_basic_limits.html#a44f3b9a78821e8ca4cbf8ae05c85872a">BasicLimits::U16_MIN</a></div><div class="ttdeci">static const U16 U16_MIN</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00106">BasicTypes.hpp:106</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a138d4a68825dba3ac5b27e72691e8a58"><div class="ttname"><a href="fp_config_8hpp.html#a138d4a68825dba3ac5b27e72691e8a58">FwNativeIntType</a></div><div class="ttdeci">PlatformIntType FwNativeIntType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00026">FpConfig.hpp:26</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ab7b7ed2854eebab15fb4539b05d73d44"><div class="ttname"><a href="struct_fp_limits.html#ab7b7ed2854eebab15fb4539b05d73d44">FpLimits::FwPrmIdType_MAX</a></div><div class="ttdeci">static const FwPrmIdType FwPrmIdType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00108">FpConfig.hpp:108</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_aa391f83769e614b1dbb60c5549c7cc30"><div class="ttname"><a href="struct_fp_limits.html#aa391f83769e614b1dbb60c5549c7cc30">FpLimits::FwTimeBaseStoreType_MIN</a></div><div class="ttdeci">static const FwTimeBaseStoreType FwTimeBaseStoreType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00095">FpConfig.hpp:95</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_a1208470c4a7ebf347c95aa8e4635a66b"><div class="ttname"><a href="struct_fp_limits.html#a1208470c4a7ebf347c95aa8e4635a66b">FpLimits::FwChanIdType_MAX</a></div><div class="ttdeci">static const FwChanIdType FwChanIdType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00104">FpConfig.hpp:104</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a3748bb1ba081ac3ed76fe40fef6d5f73"><div class="ttname"><a href="default_types_8hpp.html#a3748bb1ba081ac3ed76fe40fef6d5f73">PlatformIntType_MIN</a></div><div class="ttdeci">const PlatformIntType PlatformIntType_MIN</div></div>
 <div class="ttc" id="astruct_fp_limits_html_aad7082415e48dc9e64cc0f3353655000"><div class="ttname"><a href="struct_fp_limits.html#aad7082415e48dc9e64cc0f3353655000">FpLimits::FwEnumStoreType_MAX</a></div><div class="ttdeci">static const FwEnumStoreType FwEnumStoreType_MAX</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00094">FpConfig.hpp:94</a></div></div>
-<div class="ttc" id="astruct_basic_limits_html_a2e59d0299bc1e13459c019c90bc434f9"><div class="ttname"><a href="struct_basic_limits.html#a2e59d0299bc1e13459c019c90bc434f9">BasicLimits::U32_MAX</a></div><div class="ttdeci">static const U32 U32_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00107">BasicTypes.hpp:107</a></div></div>
+<div class="ttc" id="astruct_basic_limits_html_a2e59d0299bc1e13459c019c90bc434f9"><div class="ttname"><a href="struct_basic_limits.html#a2e59d0299bc1e13459c019c90bc434f9">BasicLimits::U32_MAX</a></div><div class="ttdeci">static const U32 U32_MAX</div><div class="ttdef"><b>Definition:</b> <a href="basic_types_8hpp_source.html#l00112">BasicTypes.hpp:112</a></div></div>
 <div class="ttc" id="a_fp_config_8hpp_html_a8ec34593f864b0de263573da6e9b58c4"><div class="ttname"><a href="fp_config_8hpp.html#a8ec34593f864b0de263573da6e9b58c4">FwTimeContextStoreType</a></div><div class="ttdeci">U8 FwTimeContextStoreType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00050">FpConfig.hpp:50</a></div></div>
 <div class="ttc" id="a_default_types_8hpp_html_a91fc2f44a48512d19599964e74e2a0e5"><div class="ttname"><a href="default_types_8hpp.html#a91fc2f44a48512d19599964e74e2a0e5">PlatformIntType</a></div><div class="ttdeci">int PlatformIntType</div><div class="ttdoc">DefaultTypes.hpp provides fallback defaults for the platform types.</div><div class="ttdef"><b>Definition:</b> <a href="default_types_8hpp_source.html#l00013">DefaultTypes.hpp:13</a></div></div>
 <div class="ttc" id="astruct_fp_limits_html_ae1e7bbbacc5f3105cc3e4bfa2d54d933"><div class="ttname"><a href="struct_fp_limits.html#ae1e7bbbacc5f3105cc3e4bfa2d54d933">FpLimits::FwOpcodeType_MIN</a></div><div class="ttdeci">static const FwOpcodeType FwOpcodeType_MIN</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00101">FpConfig.hpp:101</a></div></div>
