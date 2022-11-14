@@ -79,8 +79,8 @@ def main():
             handler(output)
         except KeyError as key_error:
             print(
-                f"[ERROR] Failed to load settings.ini field {key_error}. Update fprime-util.",
-                file=sys.stderr,
+                f"[WARNING] Failed to load settings.ini field {key_error}. Update fprime-util.",
+                end=";"
             )
     # Print the last setting with no ending to prevent null-entry at list end
     print_setting("FPRIME_SETTINGS_FILE", args_ns.settings, ending="")
