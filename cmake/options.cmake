@@ -16,13 +16,10 @@
 # the `-D` option there.
 #
 ####
-
 # Remap changed settings
-# Set the install directory for the package
 if (DEFINED FPRIME_INSTALL_DEST)
     set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
 endif()
-
 include("settings/ini")
 ini_to_cache()
 

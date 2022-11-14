@@ -48,6 +48,10 @@ function(ini_to_cache)
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
+    # Unset the CMAKE_INSTALL_PREFIX as we override it
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
+        unset(CMAKE_INSTALL_PREFIX CACHE)
+    endif()
     # Process line-by-line
     foreach(LINE IN LISTS INI_OUTPUT)
         # Skip malformed lines
@@ -69,7 +73,6 @@ function(ini_to_cache)
         # - <setting>_INI_: original setting, but was loaded from settings.ini
         # - <setting>_CLI_: original setting, but was passed in via CLI
         # These are used to detect changes and alert the user.
-
         # If the setting is undefined, then we must load it from the INI file and set the proper value.
         if (NOT DEFINED "${SETTING}")
             # Print source of setting when debugging
