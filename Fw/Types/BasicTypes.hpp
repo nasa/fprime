@@ -23,6 +23,11 @@ extern "C" {
   #error Unsupported compiler!
 #endif
 
+#define FW_NO_ASSERT                        1   //!< Asserts turned off
+#define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
+#define FW_FILENAME_ASSERT                  3   //!< Uses the file path in the assert - image stores filenames
+#define FW_RELATIVE_PATH_ASSERT             4   //!< Uses a relative file path (within fprime/fprime library) for assert. - requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
+
 /*----------------------------------------------------------------------------*/
 typedef int8_t          I8; //!< 8-bit signed integer
 typedef uint8_t         U8; //!< 8-bit unsigned integer
