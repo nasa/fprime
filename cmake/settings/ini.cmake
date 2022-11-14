@@ -12,6 +12,22 @@ set(SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 find_program(PYTHON NAMES python3 python) #This happens before required
 
 ####
+# FPRIME_UTIL_CRITICAL_LIST:
+#
+# This is a list of critical settings that are passed in from fprime-util. If these settings change in `settings.ini`
+# they need to result in a WARNING to let the user know that had fprime-util be run, it now needs to be rerun.
+####
+set(FPRIME_UTIL_CRITICAL_LIST
+    "FPRIME_FRAMEWORK_PATH"
+    "FPRIME_LIBRARY_LOCATIONS"
+    "FPRIME_PROJECT_ROOT"
+    "FPRIME_ENVIRONMENT_FILE"
+    "FPRIME_AC_CONSTANTS_FILE"
+    "FPRIME_CONFIG_DIR"
+    "FPRIME_INSTALL_DEST"
+)
+
+####
 # init_to_cache:
 #
 # Uses a python script to load INI files. These items are set into the CMake cache.
@@ -44,21 +60,46 @@ function(ini_to_cache)
             set(VALUE "")
         endif()
 
-        # If not defined, load the setting into the cache.
-        if (NOT DEFINED ${SETTING})
-            # Print value when debugging
+        # Here we set several cache variables:
+        # - <setting>_INI_: original setting, but was loaded from settings.ini
+        # - <setting>_CLI_: original setting, but was passed in via CLI
+        # These are used to detect changes and alert the user.
+
+        # If the setting is undefined, then we must load it from the INI file and set the proper value.
+        if (NOT DEFINED "${SETTING}")
+            # Print source of setting when debugging
             if (CMAKE_DEBUG_OUTPUT)
                 message(STATUS "${SETTING} read from settings.ini as '${VALUE}'")
             endif()
-            set(${SETTING}_ORIGINAL "${VALUE}" CACHE INTERNAL "Original value of ${SETTING} from settings.ini")
-            set(${SETTING} "${VALUE}" CACHE INTERNAL "")
-        # If setting was originally loaded, here, from settings.ini, then check it did not change
-        elseif(DEFINED ${SETTING}_ORIGINAL AND NOT "${VALUE}" STREQUAL "${${SETTING}_ORIGINAL}")
-            # Print some extra output to help debug
-            if (CMAKE_DEBUG_OUTPUT)
-                message(WARNING "${SETTING} changed from '${${SETTING}_ORIGINAL}' to '${VALUE}'")
+            set("${SETTING}_INI_" "${VALUE}" CACHE INTERNAL "Original value of ${SETTING} from settings.ini")
+            set("${SETTING}" "${VALUE}" CACHE INTERNAL "")
+        # If setting was originally loaded, here, from settings.ini. We should check that it is correctly re-set.
+        elseif(DEFINED "${SETTING}_INI_")
+            # Changed INI files are are hard-failure as it is difficult to know how/when to regenerate
+            if(NOT "${VALUE}" STREQUAL "${${SETTING}_INI_}")
+                # Print some extra output to help debug
+                if (CMAKE_DEBUG_OUTPUT)
+                    message(WARNING "${SETTING} changed from '${${SETTING}_INI_}' to '${VALUE}'")
+                endif()
+                message(FATAL_ERROR "settings.ini field changed. Please regenerate.")
             endif()
-            message(FATAL_ERROR "settings.ini field changed. Please regenerate.")
+        # If setting was passed in on CLI
+        elseif(DEFINED "${SETTING}_CLI_")
+            # Changed INI files are are hard-failure as it is difficult to know how/when to regenerate
+            if(NOT "${VALUE}" STREQUAL "${${SETTING}_CLI_}" AND SETTING IN_LIST FPRIME_UTIL_CRITICAL_LIST)
+                # Print some extra output to help debug
+                if (CMAKE_DEBUG_OUTPUT)
+                    message(WARNING "${SETTING} changed from '${${SETTING}_CLI_}' to '${VALUE}'")
+                endif()
+                message(WARNING "settings.ini field changed. This likely means fprime-util generate should be run.")
+            endif()
+        # Setting defined, but none of the check-values are set. This it is the first run, with items frin CLI.
+        else()
+            # Print source of setting when debugging
+            if (CMAKE_DEBUG_OUTPUT)
+                message(STATUS "${SETTING} read from CLI as '${${SETTING}}'")
+            endif()
+            set("${SETTING}_CLI_" "${${SETTING}}" CACHE INTERNAL "Original value of ${SETTING} from CLI")
         endif()
     endforeach()
 endfunction(ini_to_cache)

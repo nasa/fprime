@@ -42,6 +42,8 @@ CMAKE_NEEDED_SETTINGS = {
         "FPRIME_LIBRARY_LOCATIONS", ";".join(str(item) for item in value)
     ),
     "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
+    "ac_constants": partial(print_setting, "FPRIME_AC_CONSTANTS_FILE"),
+    "install_destination": partial(print_setting, "FPRIME_INSTALL_DEST"),
 }
 
 
@@ -66,14 +68,20 @@ def main():
     )
 
     for setting, handler in CMAKE_NEEDED_SETTINGS.items():
-        setting_value = loaded_settings[setting]
-        ut_setting_value = loaded_settings_ut[setting]
+        try:
+            setting_value = loaded_settings[setting]
+            ut_setting_value = loaded_settings_ut[setting]
 
-        assert (
-            setting_value == ut_setting_value
-        ), f"CMake can only parse unittest independent settings"
-        output = loaded_settings[setting]
-        handler(output)
+            assert (
+                setting_value == ut_setting_value
+            ), f"CMake can only parse unittest independent settings"
+            output = loaded_settings[setting]
+            handler(output)
+        except KeyError as key_error:
+            print(
+                f"[ERROR] Failed to load settings.ini field {key_error}. Update fprime-util.",
+                file=sys.stderr,
+            )
     # Print the last setting with no ending to prevent null-entry at list end
     print_setting("FPRIME_SETTINGS_FILE", args_ns.settings, ending="")
     return 0

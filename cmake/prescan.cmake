@@ -26,6 +26,11 @@ set(EXCLUDED_CACHE_VARIABLES
     CMAKE_SKIP_INSTALL_ALL_DEPENDENCY
     FIND_PACKAGE_MESSAGE_DETAILS_Threads
 )
+set(TYPES_DISALLOWED_LIST
+    INTERNAL
+    STATIC
+    UNINITIALIZED
+)
 # Directory in-which to build the prescan directory
 set(PRESCAN_DIR "${CMAKE_BINARY_DIR}/prescan")
 
@@ -43,10 +48,15 @@ function(_get_call_properties)
     set(CALL_PROPS)
     get_cmake_property(CACHE_VARS CACHE_VARIABLES)
     foreach (PROPERTY IN LISTS CACHE_VARS)
+        get_property(CACHE_TYPE CACHE "${PROPERTY}" PROPERTY TYPE)
         # Exclude listed properties and empty properties
         if ("${PROPERTY}" IN_LIST EXCLUDED_CACHE_VARIABLES)
             continue()
+        # Exclude empty values
         elseif("${${PROPERTY}}" STREQUAL "")
+            continue()
+        # Exclude internal cache values
+        elseif("${CACHE_TYPE}" IN_LIST TYPES_DISALLOWED_LIST)
             continue()
         endif()
         # Add escaping for list type variables
