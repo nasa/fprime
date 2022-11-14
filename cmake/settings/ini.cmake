@@ -80,7 +80,7 @@ function(ini_to_cache)
             set("${SETTING}" "${VALUE}" CACHE INTERNAL "")
         # If setting was originally loaded, here, from settings.ini. We should check that it is correctly re-set.
         elseif(DEFINED "${SETTING}_INI_")
-            # Changed INI files are are hard-failure as it is difficult to know how/when to regenerate
+            # Changed INI files are hard-failure as it is difficult to know how/when to regenerate
             if(NOT "${VALUE}" STREQUAL "${${SETTING}_INI_}")
                 # Print some extra output to help debug
                 if (CMAKE_DEBUG_OUTPUT)
@@ -90,7 +90,7 @@ function(ini_to_cache)
             endif()
         # If setting was passed in on CLI
         elseif(DEFINED "${SETTING}_CLI_")
-            # Changed INI files are are hard-failure as it is difficult to know how/when to regenerate
+            # Changed INI files are hard-failure as it is difficult to know how/when to regenerate
             if(NOT "${VALUE}" STREQUAL "${${SETTING}_CLI_}" AND SETTING IN_LIST FPRIME_UTIL_CRITICAL_LIST)
                 # Print some extra output to help debug
                 if (CMAKE_DEBUG_OUTPUT)
@@ -98,7 +98,7 @@ function(ini_to_cache)
                 endif()
                 message(WARNING "settings.ini field changed. This likely means fprime-util generate should be run.")
             endif()
-        # Setting defined, but none of the check-values are set. This it is the first run, with items frin CLI.
+        # Setting defined, but none of the check-values are set. This it is the first run, with items from CLI.
         else()
             # Print source of setting when debugging
             if (CMAKE_DEBUG_OUTPUT)

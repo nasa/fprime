@@ -276,6 +276,7 @@ daringfireball
 Daruwala
 DASSERT
 databinding
+DATAROOTDIR
 datastore
 dawbarton
 db
@@ -573,6 +574,7 @@ github
 gjslint
 glibc
 globals
+gmock
 gmtime
 Gnc
 Gnd
@@ -658,6 +660,7 @@ importables
 INADDR
 iname
 inbool
+INCLUDEDIR
 inet
 inin
 initfiles
@@ -755,6 +758,8 @@ lhash
 libc
 libclang
 libcrc
+LIBDIR
+LIBEXECDIR
 libgtest
 libiconv
 LIBLOC
@@ -774,6 +779,7 @@ lld
 llvm
 loadfile
 localhost
+LOCALSTATEDIR
 LOCKGUARDTESTER
 locs
 LOGASSERT
@@ -944,6 +950,7 @@ odo
 oflag
 okidocki
 oldeol
+OLDINCLUDEDIR
 OMG
 onchange
 onlinepubs
@@ -1180,6 +1187,7 @@ saxutils
 sbb
 SBF
 sbin
+SBINDIR
 sbt
 scanf
 sched
@@ -1232,6 +1240,7 @@ sface
 sfregoso
 sgl
 SGN
+SHAREDSTATEDIR
 SHELLCOMMAND
 Shenker
 showinitializer
@@ -1344,6 +1353,7 @@ swcaegitadmin
 SYMLINKS
 synchronicity
 synopsys
+SYSCONFDIR
 SYSFS
 sysinfo
 systemd
