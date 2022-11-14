@@ -673,6 +673,7 @@ instantiator
 instring
 instrlen
 integertypename
+interoperate
 intlimits
 ints
 Inttype

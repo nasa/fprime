@@ -34,6 +34,17 @@ module Svc {
     @ buffer passes to the receiver.
     output port framedOut: Drv.ByteStreamSend
 
+    # ----------------------------------------------------------------------
+    # Handling of of ready signals
+    # ----------------------------------------------------------------------
+
+    @ Port receiving the general status from the downstream component
+    @ indicating it is ready or not-ready for more input
+    guarded input port comStatusIn: Fw.SuccessCondition
+
+    @ Port receiving indicating the status of framer for receiving more data
+    output port comStatusOut: Fw.SuccessCondition
+
   }
 
 }
