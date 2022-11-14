@@ -50,6 +50,10 @@ function(ini_to_cache)
 
     # Process line-by-line
     foreach(LINE IN LISTS INI_OUTPUT)
+        # Skip malformed lines
+        if (NOT LINE MATCHES "^[A-Za-z0-9_]+=")
+            continue()
+        endif()
         STRING(REPLACE ";" "\\;" LINE "${LINE}")
         STRING(REPLACE "=" ";" LINE "${LINE}")
         list(GET LINE 0 SETTING)
