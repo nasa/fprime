@@ -211,6 +211,7 @@ COMQUEUE
 COMQUEUEIN
 COMSPLITTER
 COMSTUB
+COMXBEE
 Concat
 config
 configparser
@@ -1597,6 +1598,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+XBee
 xcode
 xdf
 xdffe
