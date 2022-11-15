@@ -154,11 +154,9 @@ Communication Adapter Protocol</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Fw::Success::FAILURE </td><td class="markdownTableBodyNone">Last transmission failed; <em>communication adapter</em> is unable to receive more data.  </td></tr>
 </table>
-<blockquote class="doxtable">
 <ul>
-<li>Fw::Success::SUCCESS may also indicate a connection/reconnection success when data flow must be initiated. </li>
+<li>Fw::Success::SUCCESS may also indicate a connection/reconnection success when data flow must be initiated.</li>
 </ul>
-</blockquote>
 <p>A <em>Communication Adapter</em> shall emit either Fw::Success::SUCCESS or Fw::Success::FAILURE via the <code>comStatus</code> port once for each call received on <code>comDataIn</code>. Additionally, a <em>Communication Adapter</em> shall emit Fw::Success::SUCCESS once at startup to indicate communication is initially ready and once after each Fw::Success::FAILURE event to indicate that communication has been restored. By emitting Fw::Success::SUCCESS after any failure, the communication adapter ensures that each received message eventually results in a Fw::Success::SUCCESS.</p>
 <blockquote class="doxtable">
 <p>It is imperative that <em>Communication Adapters</em> implement the <code>comStatus</code> protocol correctly. </p>

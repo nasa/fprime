@@ -123,7 +123,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="mem_allocator_8hpp_source.html#l00044">44</a> of file <a class="el" href="mem_allocator_8hpp_source.html">MemAllocator.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mem_allocator_8hpp_source.html#l00046">46</a> of file <a class="el" href="mem_allocator_8hpp_source.html">MemAllocator.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae0e7128330b2854e0c6bf7653f87a14f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae0e7128330b2854e0c6bf7653f87a14f">&#9670;&nbsp;</a></span>MemAllocator()</h2>
@@ -223,7 +223,7 @@ Protected Member Functions</h2></td></tr>
 <p>Allocate memory. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">identifier</td><td>the memory segment identifier (if needed) </td></tr>
+    <tr><td class="paramname">identifier</td><td>the memory segment identifier, each identifier is to be used in once single allocation </td></tr>
     <tr><td class="paramname">size</td><td>the requested size - changed to actual if different </td></tr>
     <tr><td class="paramname">recoverable</td><td>- flag to indicate the memory could be recoverable </td></tr>
   </table>
@@ -272,7 +272,7 @@ Protected Member Functions</h2></td></tr>
 <p>Deallocate memory. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">identifier</td><td>the memory segment identifier (if needed) </td></tr>
+    <tr><td class="paramname">identifier</td><td>the memory segment identifier, each identifier is to be used in once single allocation </td></tr>
     <tr><td class="paramname">ptr</td><td>the pointer to memory returned by <a class="el" href="class_fw_1_1_mem_allocator.html#aa03b3a36290c0f438bc3ed4574dc2a5e" title="Allocate memory.">allocate()</a> </td></tr>
   </table>
   </dd>
