@@ -145,6 +145,62 @@ e.g. `-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON`
 For internal use only.  Used to check the framework version has been updated on tags.
 
 
+## `ENABLE_SANITIZER_ADDRESS:`
+
+Enables Google's AddressSanitizer. AddressSanitizer is a memory error detector for C/C++.
+More information: https://github.com/google/sanitizers/wiki/AddressSanitizer
+Practically, this adds the -fsanitizers=address flag to both the compiler and linker for the whole build.
+
+**Values:**
+- ON: enables AddressSanitizer.
+- OFF: (default) does not enable AddressSanitizer.
+
+e.g. `-DENABLE_SANITIZER_ADDRESS=ON`
+
+
+## `ENABLE_SANITIZER_LEAK:`
+
+Enables Google's LeakSanitizer. LeakSanitizer is a memory leak detector which is integrated into AddressSanitizer.
+More information: https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer
+Practically, this adds the -fsanitizers=leak flag to both the compiler and linker for the whole build.
+
+Note: LeakSanitizer is not available on macOS. Use AddressSanitizer instead.
+
+**Values:**
+- ON: enables LeakSanitizer.
+- OFF: (default) does not enable LeakSanitizer.
+
+e.g. `-DENABLE_SANITIZER_LEAK=ON`
+
+
+## `ENABLE_SANITIZER_UNDEFINED_BEHAVIOR:`
+
+Enables Google's UndefinedBehaviorSanitizer. UndefinedBehaviorSanitizer is an undefined behavior detector.
+More information: https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+Practically, this adds the -fsanitizers=undefined flag to both the compiler and linker for the whole build.
+
+**Values:**
+- ON: enables UndefinedBehaviorSanitizer.
+- OFF: (default) does not enable UndefinedBehaviorSanitizer.
+
+e.g. `-DENABLE_SANITIZER_UNDEFINED_BEHAVIOR=ON`
+
+
+## `ENABLE_SANITIZER_THREAD:`
+
+Enables Google's ThreadSanitizer. ThreadSanitizer is a tool that detects data races.
+More information: https://clang.llvm.org/docs/ThreadSanitizer.html
+Practically, this adds the -fsanitizers=thread flag to both the compiler and linker for the whole build.
+
+Note: ThreadSanitizer does not work with Address or Leak sanitizer enabled
+
+**Values:**
+- ON: enables ThreadSanitizer.
+- OFF: (default) does not enable ThreadSanitizer.
+
+e.g. `-DENABLE_SANITIZER_THREAD=ON`
+
+
 ## Locations `FPRIME_FRAMEWORK_PATH`, `FPRIME_PROJECT_ROOT`, `FPRIME_LIBRARY_LOCATIONS`
 `FPRIME_AC_CONSTANTS_FILE`, and `FPRIME_CONFIG_DIR`:
 
