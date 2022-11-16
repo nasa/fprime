@@ -10,6 +10,7 @@
 // ======================================================================
 // Provides access to autocoded functions
 #include <Ref/Top/RefTopologyAc.hpp>
+#include <Ref/Top/RefPacketsAc.hpp>
 
 // Necessary project-specified types
 #include <Fw/Types/MallocAllocator.hpp>
@@ -60,7 +61,7 @@ enum TopologyConstants {
 // Ping entries are autocoded, however; this code is not properly exported. Thus, it is copied here.
 Svc::Health::PingEntry pingEntries[] = {
     {PingEntries::blockDrv::WARN, PingEntries::blockDrv::FATAL, "blockDrv"},
-    {PingEntries::chanTlm::WARN, PingEntries::chanTlm::FATAL, "chanTlm"},
+    {PingEntries::tlmSend::WARN, PingEntries::tlmSend::FATAL, "chanTlm"},
     {PingEntries::cmdDisp::WARN, PingEntries::cmdDisp::FATAL, "cmdDisp"},
     {PingEntries::cmdSeq::WARN, PingEntries::cmdSeq::FATAL, "cmdSeq"},
     {PingEntries::eventLogger::WARN, PingEntries::eventLogger::FATAL, "eventLogger"},
@@ -114,6 +115,9 @@ void configureTopology() {
     // Framer and Deframer components need to be passed a protocol handler
     downlink.setup(framing);
     uplink.setup(deframing);
+
+    // Comment out is using TlmChan
+    tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref

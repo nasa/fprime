@@ -64,7 +64,6 @@ module Ref {
 
     param connections instance prmDb
 
-    # see instances.fpp to select between TlmChan and TlmPacketizer
     telemetry connections instance tlmSend
 
     text event connections instance textLogger
@@ -79,7 +78,7 @@ module Ref {
 
     connections Downlink {
 
-      tlmSend.PktSend-> downlink.comIn
+      tlmSend.PktSend -> downlink.comIn
       eventLogger.PktSend -> downlink.comIn
       fileDownlink.bufferSendOut -> downlink.bufferIn
 

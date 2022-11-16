@@ -258,11 +258,6 @@ class TlmPacketParser(object):
         if not os.path.isfile(xml_filename):
             raise TlmPacketParseIOError("File %s does not exist!" % xml_filename)
 
-        if not "PacketsAi" in xml_filename:
-            raise IOError(
-                "ERROR: Missing PacketsAi at end of file name %s" % xml_filename
-            )
-
         fd = open(xml_filename, "r")
         xml_parser = etree.XMLParser(remove_comments=True)
         element_tree = etree.parse(fd, parser=xml_parser)
@@ -407,9 +402,7 @@ class TlmPacketParser(object):
                 "Invalid xml type %s" % element_tree.getroot().tag
             )
 
-        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0].replace(
-            "Ai", ""
-        )
+        output_file_base = os.path.splitext(os.path.basename(xml_filename))[0]
         nearest_build_root = get_nearest_build_root(xml_filename)
         file_dir = os.path.relpath(os.path.dirname(xml_filename), nearest_build_root)
 
