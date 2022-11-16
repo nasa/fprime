@@ -297,6 +297,7 @@ deframer
 deframing
 delchars
 delitem
+DENABLE
 deployables
 DEPRECATEDLIST
 deps
@@ -519,6 +520,7 @@ frontend
 frox
 frsize
 fsanitize
+fsanitizers
 fscanf
 fstream
 fstrength
@@ -1174,6 +1176,7 @@ rxor
 saddr
 Saikiran
 Sanchit
+sanitizers
 sats
 savelist
 saveop
@@ -1488,6 +1491,7 @@ typeslist
 typetoken
 tzinfo
 uart
+UBSAN
 ubuntu
 ucf
 Uchenik
