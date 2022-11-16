@@ -120,6 +120,7 @@ buf
 BUFFERALLOCATE
 BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
+BUFFQUEUEIN
 buffsize
 BUGLIST
 bugprone
@@ -159,6 +160,7 @@ changeme
 CHANNELID
 chdir
 cheetahtemplate
+Chieu
 CHK
 CHNG
 chr
@@ -205,13 +207,17 @@ commasepitem
 commonpath
 COMPACKET
 COMPONENTTESTERIMPL
+COMQUEUE
+COMQUEUEIN
 COMSPLITTER
 COMSTUB
+COMXBEE
 Concat
 config
 configparser
 configs
 configurability
+constexpr
 cookiecutter
 cooldown
 coor
@@ -548,6 +554,7 @@ gethostname
 getinput
 getitem
 getline
+getm
 getopt
 getoutput
 getpid
@@ -657,6 +664,7 @@ initfiles
 inits
 initstate
 inkscape
+inlined
 inode
 INOUT
 INPCK
@@ -666,6 +674,7 @@ instantiator
 instring
 instrlen
 integertypename
+interoperate
 intlimits
 ints
 Inttype
@@ -757,8 +766,8 @@ lineroo
 lineterm
 linting
 linux
-LINUXUARTDRIVER
 LINUXTIMEIMPL
+LINUXUARTDRIVER
 Listst
 LJR
 lkml
@@ -871,6 +880,7 @@ mycompany
 myfile
 myproject
 mytype
+namespaced
 nano
 nanosleep
 nargs
@@ -1120,6 +1130,8 @@ reder
 refactor
 refactoring
 refspec
+REFTOPOLOGY
+REFTOPOLOGYDEFS
 regexp
 regexs
 relaxng
@@ -1199,7 +1211,9 @@ SETFL
 setinheritsched
 setitem
 SETLOGGING
+setm
 setop
+setprecision
 setprotocol
 setquaternion
 setschedparam
@@ -1272,6 +1286,7 @@ ssh
 ssize
 SSL
 sss
+sstream
 Ssymbols
 stacklevel
 stackoverflow
@@ -1303,6 +1318,7 @@ stringchan
 stringified
 Stringpacket
 stringparam
+stringstream
 STRINGUTILS
 strlen
 strncat
@@ -1462,8 +1478,8 @@ tts
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
@@ -1519,6 +1535,7 @@ valgrind
 validator
 vals
 valud
+vbai
 venv
 VERSIONED
 versioning
@@ -1581,6 +1598,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+XBee
 xcode
 xdf
 xdffe

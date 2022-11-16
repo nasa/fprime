@@ -8,8 +8,7 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/instances.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/topology.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RefTopologyDefs.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RefPacketsAc.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RefTopology.cpp"
 )
 set(MOD_DEPS
   Fw/Logger
