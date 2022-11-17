@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="Example" kind="active" namespace="ExampleComponents">
+    <import_port_type>Autocoders/Python/test/noargport/SomePortAi.xml</import_port_type>
+    <import_port_type>Autocoders/Python/test/noargport/NoArgPortAi.xml</import_port_type>
+    <comment>An example component</comment>
+    <ports>
+        <port name="noArgPort" data_type="ExampleComponents::NoArgs" kind="sync_input">
+        </port>
+        <port name="asyncNoArgPort" data_type="ExampleComponents::NoArgs" kind="async_input">
+        </port>
+        <port name="guardedNoArgPort" data_type="ExampleComponents::NoArgs" kind="guarded_input">
+        </port>
+        <port name="exampleInput" data_type="APortCollection::Some" kind="sync_input">
+            <comment>
+            Example input port
+            </comment>
+        </port>
+    </ports>
+</component>
