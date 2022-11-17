@@ -69,8 +69,12 @@ endfunction(fpp_is_supported)
 ####
 function(fpp_get_framework_dependency_helper MODULE_NAME FRAMEWORK)
     # Subset the framework dependencies, or where possible use the Fw interface target
-    if (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
+    if (MODULE_NAME STREQUAL "config")
+        # config has no automatic dependencies
+    elseif (NOT DEFINED FPRIME_FRAMEWORK_MODULES)
         message(FATAL_ERROR "Fw/CMakeLists.txt not included in deployment")
+    elseif (MODULE_NAME STREQUAL Fw_Cfg)
+        # Skip Fw_Cfg as it is the root dependency 
     elseif (NOT TARGET Fw OR MODULE_NAME IN_LIST FPRIME_FRAMEWORK_MODULES)
         list(APPEND FRAMEWORK ${FPRIME_FRAMEWORK_MODULES})
         list(FIND FRAMEWORK "${MODULE_NAME}" START_INDEX)
