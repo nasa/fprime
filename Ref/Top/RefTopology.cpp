@@ -116,7 +116,7 @@ void configureTopology() {
     downlink.setup(framing);
     uplink.setup(deframing);
 
-    // Comment out is using TlmChan
+    // Note: Comment out is using Svc:TlmChan
     tlmSend.setPacketList(RefPacketsPkts, RefPacketsIgnore, 1);
 }
 
