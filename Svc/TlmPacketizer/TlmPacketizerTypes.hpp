@@ -14,7 +14,7 @@
 #define SVC_TLMPACKETIZER_TLMPACKETIZERTYPES_HPP_
 
 #include <FpConfig.hpp>
-#include <Svc/TlmPacketizer/TlmPacketizerComponentImplCfg.hpp>
+#include <TlmPacketizerCfg.hpp>
 
 namespace Svc {
 

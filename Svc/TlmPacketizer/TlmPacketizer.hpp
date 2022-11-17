@@ -13,8 +13,8 @@
 
 #include "Os/Mutex.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerComponentAc.hpp"
-#include "Svc/TlmPacketizer/TlmPacketizerComponentImplCfg.hpp"
 #include "Svc/TlmPacketizer/TlmPacketizerTypes.hpp"
+#include "TlmPacketizerCfg.hpp"
 
 namespace Svc {
 
