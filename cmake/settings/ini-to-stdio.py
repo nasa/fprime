@@ -11,6 +11,7 @@ from typing import List
 
 from fprime.fbuild.settings import IniSettings
 
+
 def print_setting(setting: str, value: str = "", ending: str = ";"):
     """Print a setting for CMake
 
