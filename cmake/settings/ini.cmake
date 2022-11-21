@@ -28,7 +28,7 @@ set(FPRIME_UTIL_CRITICAL_LIST
 )
 
 ####
-# init_to_cache:
+# ini_to_cache:
 #
 # Uses a python script to load INI files. These items are set into the CMake cache.
 ####
