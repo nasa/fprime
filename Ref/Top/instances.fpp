@@ -72,15 +72,15 @@ module Ref {
   # depending on which form of telemetry downlink
   # you wish to use
 
-  #   instance tlmSend: Svc.TlmChan base id 0x0C00 \
-  #     queue size Default.QUEUE_SIZE \
-  #     stack size Default.STACK_SIZE \
-  #     priority 97
-
-  instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
+  instance tlmSend: Svc.TlmChan base id 0x0C00 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 97
+
+  #instance tlmSend: Svc.TlmPacketizer base id 0x0C00 \
+  #    queue size Default.QUEUE_SIZE \
+  #    stack size Default.STACK_SIZE \
+  #    priority 97
 
   instance prmDb: Svc.PrmDb base id 0x0D00 \
     queue size Default.QUEUE_SIZE \
