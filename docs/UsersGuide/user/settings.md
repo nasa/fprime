@@ -49,7 +49,7 @@ These settings include:
 
 ### Platform Sections
 
-Some settings may be overriden for specific platforms using specific platform sections. These sections
+Some settings may be overridden for specific platforms using specific platform sections. These sections
 have the same name as the platform and may set the following settings:
 
 1. `config_directory`
