@@ -11,7 +11,6 @@ from typing import List
 
 from fprime.fbuild.settings import IniSettings
 
-
 def print_setting(setting: str, value: str = "", ending: str = ";"):
     """Print a setting for CMake
 
@@ -93,5 +92,4 @@ if __name__ == "__main__":
         sys.exit(main())
     except Exception as exc:
         print(f"{exc}", file=sys.stderr)
-        raise
     sys.exit(1)

@@ -46,7 +46,12 @@ function(ini_to_cache)
         ${CMAKE_TOOLCHAIN_FILE}
         OUTPUT_VARIABLE INI_OUTPUT
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE RESULT_CODE
     )
+    # Check result code
+    if (NOT RESULT_CODE EQUAL 0)
+        message(FATAL_ERROR "Failed to process settings.ini file: ${CALCULATED_INI}")
+    endif()
 
     # Unset the CMAKE_INSTALL_PREFIX as we override it
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
