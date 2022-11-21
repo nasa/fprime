@@ -19,7 +19,8 @@
         <channel name="fileDownlink.FilesSent"/>
         <channel name="fileDownlink.PacketsSent"/>
         <channel name="fileManager.CommandsExecuted"/>
-        <channel name="tlmSend.SendLevel"/>
+        <!-- Uncomment to use Svc::TlmPacketizer -->
+        <!--channel name="tlmSend.SendLevel"/-->
     </packet>
 
     <packet name="CDHErrors" id="2" level="1">
