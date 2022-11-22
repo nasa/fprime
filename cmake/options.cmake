@@ -16,6 +16,13 @@
 # the `-D` option there.
 #
 ####
+# Remap changed settings
+if (DEFINED FPRIME_INSTALL_DEST)
+    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
+endif()
+include("settings/ini")
+ini_to_cache()
+
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`
@@ -329,13 +336,14 @@ if (DEFINED FPRIME_ENVIRONMENT_FILE)
     set(FPRIME_ENVIRONMENT_FILE "${FPRIME_ENVIRONMENT_FILE}" CACHE PATH "F prime environment file" FORCE)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${FPRIME_ENVIRONMENT_FILE}")
 endif()
-# Override the AC constants file when specified
-if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
-    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_FRAMEWORK_PATH}/config/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
-endif()
 
 # Settings for F config directory
 if (NOT DEFINED FPRIME_CONFIG_DIR)
     set(FPRIME_CONFIG_DIR "${FPRIME_FRAMEWORK_PATH}/config/")
 endif()
 set(FPRIME_CONFIG_DIR "${FPRIME_CONFIG_DIR}" CACHE PATH "F prime configuration header directory" FORCE)
+
+# Override the AC constants file when specified
+if (NOT DEFINED FPRIME_AC_CONSTANTS_FILE)
+    set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini" CACHE PATH "F prime AC constants.ini file" FORCE)
+endif()
