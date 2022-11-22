@@ -34,12 +34,6 @@ include(autocoder/autocoder)
 include(target/target)
 include(API)
 
-# Set the install directory for the package
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
-elseif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
-    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build-artifacts CACHE PATH "Install dir" FORCE)
-endif()
 message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 
 # Setup the global include directories
