@@ -141,8 +141,14 @@ function(fpp_info AC_INPUT_FILES)
         message(FATAL_ERROR)
     endif()
 
-    # Module dependencies are: detected "direct" + framework dependencies
-    fpp_to_modules("${DIRECT_DEPENDENCIES}" "${AC_INPUT_FILES}" MODULE_DEPENDENCIES)
+    # Module dependencies are: detected "direct" + framework dependencies - "included" files
+    set(FILTERED_DIRECT_DEPENDENCIES)
+    foreach(ITEM IN LISTS DIRECT_DEPENDENCIES)
+        if (NOT ITEM IN_LIST INCLUDED)
+            list(APPEND FILTERED_DIRECT_DEPENDENCIES "${ITEM}")
+        endif()
+    endforeach()
+    fpp_to_modules("${FILTERED_DIRECT_DEPENDENCIES}" MODULE_DEPENDENCIES)
     list(APPEND MODULE_DEPENDENCIES ${FRAMEWORK})
     list(REMOVE_DUPLICATES MODULE_DEPENDENCIES)
     # File dependencies are any files that this depends on
@@ -214,24 +220,18 @@ endfunction(fpp_setup_autocode)
 # Helper function. Converts a list of files and a list of autocoder inputs into a list of module names.
 #
 # FILE_LIST: list of files
-# AC_INPUT_FILES: list of autocoder input files
 # OUTPUT_VAR: output variable to set with result
 ####
-function(fpp_to_modules FILE_LIST AC_INPUT_FILES OUTPUT_VAR)
+function(fpp_to_modules FILE_LIST OUTPUT_VAR)
     init_variables(OUTPUT_DATA)
     get_module_name("${CMAKE_CURRENT_SOURCE_DIR}")
     set(CURRENT_MODULE "${MODULE_NAME}")
-    foreach(INCLUDE IN LISTS AC_INPUT_FILES FILE_LIST)
+    foreach(INCLUDE IN LISTS FILE_LIST)
         get_module_name(${INCLUDE})
-        # Here we are adding a module to the modules list if all three of the following are true:
+        # Here we are adding a module to the modules list if all two of the following are true:
         #  1. Not present already (deduplication)
         #  2. Not the current module directory as learned by the path to the autocoder inputs
-        #  3. Not a child of the fprime configuration directory
-        # NOTE: item 3 is build on the assumption that configuration .fpp files do not require autocode, but maintain
-        # only definitions useful to other modules. This assumption holds as of v3.0.0, but should this assumption break
-        # remove the check here, return a known module name (e.g. 'config') for this directory, and place a
-        # CMakeLists.txt in that directory that sets up the aforementioned known module and associated target.
-        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME OR INCLUDE MATCHES "${FPRIME_CONFIG_DIR}/.*")
+        if ("${MODULE_NAME}" IN_LIST OUTPUT_DATA OR CURRENT_MODULE STREQUAL MODULE_NAME)
             continue() # Skip adding to module list
         endif()
         list(APPEND OUTPUT_DATA "${MODULE_NAME}")
