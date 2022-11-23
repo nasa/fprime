@@ -22,7 +22,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_LEAK)
         if(APPLE) 
-            message(WARNING "Leak sanitizer not supported on macOS.")
+            message(STATUS "[WARNING] Leak sanitizer is not supported on macOS")
         else()
             list(APPEND SANITIZERS "leak")
         endif()
@@ -30,7 +30,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_THREAD)
         if("address" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
-            message(WARNING "Thread sanitizer does not work with Address or Leak sanitizer enabled")
+            message(STATUS "[WARNING] Thread sanitizer does not work with Address or Leak sanitizer enabled")
         else()
             list(APPEND SANITIZERS "thread")
         endif()
