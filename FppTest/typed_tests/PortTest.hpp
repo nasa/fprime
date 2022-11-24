@@ -15,35 +15,25 @@
 
 #include "Tester.hpp"
 
-#include "STest/Pick/Pick.hpp"
 #include "gtest/gtest.h"
 
-namespace FppTest {
-    
-    namespace Port {
-
-        template <typename T1, typename T2>
-        struct PortType {
-            typedef T1 InputPortType;
-            typedef T2 ReturnType;
-        }
-
-        template <typename T1>
-        struct PortType {
-            typedef T1 InputPortType;
-        }
-
-    } // namespace Port
-
-} // namespace FppTest
-
 template <typename PortType>
-class PortTest : public :;testing::TestP{};
+class PortTest : public ::testing::Test {};
 
-TYPED_TEST(PortTest, Invoke) {
+TYPED_TEST_SUITE_P(PortTest);
+
+TYPED_TEST_P(PortTest, TypedPort) {
     Tester tester;
+    TypeParam port;
 
-    tester.invoke<TypeParam>();
+    tester.invoke(0, port);
+
+    tester.check_history(0, port);
 }
+
+// Register all test patterns
+REGISTER_TYPED_TEST_SUITE_P(PortTest,
+    TypedPort
+);
 
 #endif

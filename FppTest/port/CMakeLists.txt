@@ -3,8 +3,8 @@
 # SOURCE_FILES: Handcoded C++ source files)
 
 set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/no_args_port.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/some_port.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Example.cpp"
 )
@@ -21,14 +21,20 @@ set_target_properties(
   EXCLUDE_FROM_ALL TRUE
 )
 
+# Declare dependencies on test modules
+set(UT_MOD_DEPS
+  Fw/Test
+  STest
+)
+
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/no_args_port.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/some_port.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Tester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TestMain.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
 

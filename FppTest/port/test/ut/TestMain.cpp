@@ -3,13 +3,21 @@
 // ----------------------------------------------------------------------
 
 #include "FppTest/port/NoArgsPortAc.hpp"
-#include "FppTest/port/ReturnU32PortAc.hpp"
-#include "FppTest/typed_tests/PortTest.hpp"
+#include "FppTest/port/PrimitiveArgsPortAc.hpp"
+#include "FppTest/port/NoArgsReturnPortAc.hpp"
+#include "FppTest/port/PrimitiveReturnPortAc.hpp"
+
 #include "Tester.hpp"
+#include "FppTest/port/PortStructs.hpp"
+#include "FppTest/typed_tests/PortTest.hpp"
+
+#include "gtest/gtest.h"
 
 using PortTestImplementations = ::testing::Types<
-    NoArgsPort,
-    ReturnU32Port
+    FppTest::Port::NoArgsPort,
+    FppTest::Port::PrimitiveArgsPort,
+    FppTest::Port::NoArgsReturnPort,
+    FppTest::Port::PrimitiveReturnPort
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,

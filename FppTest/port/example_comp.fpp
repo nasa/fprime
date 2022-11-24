@@ -5,8 +5,16 @@ passive component Example {
   
   output port noArgsOut: NoArgs
   
-  sync input port returnU32In: ReturnU32
+  sync input port primitiveArgsIn: PrimitiveArgs
   
-  output port returnU32Out: ReturnU32
+  output port primitiveArgsOut: PrimitiveArgs
+
+  sync input port noArgsReturnIn: NoArgsReturn
+
+  output port noArgsReturnOut: NoArgsReturn
+  
+  sync input port primitiveReturnIn: PrimitiveReturn
+  
+  output port primitiveReturnOut: PrimitiveReturn
 
 }

@@ -23,7 +23,7 @@ set(MOD_DEPS
     ${PROJECT_NAME}/enum
     ${PROJECT_NAME}/array
     ${PROJECT_NAME}/struct
-    ${PROJECT_NAME}/port/no_arg
+    ${PROJECT_NAME}/port
 )
 
 register_fprime_deployment()
