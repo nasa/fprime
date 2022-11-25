@@ -49,14 +49,14 @@ jobs:
       - name: Convert cppcheck results to Markdown & Integrate them in the workflow summary
         run: xsltproc .github/scripts/cppcheck-xml2text.xslt cppcheck_err.xml | tee $GITHUB_STEP_SUMMARY cppcheck_err.txt
 
-      - name: Upload SARIF results
+      - name: Upload SARIF file to GitHub Code Scanning Alerts
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ github.workspace }}/cppcheck_err.sarif
           checkout_path: ${{ github.workspace }}/source
           category: "cppcheck"
 
-      - name: Archive static analysis artifacts
+      - name: Archive static analysis artifacts to download and view
         uses: actions/upload-artifact@v3
         with:
           name: cppcheck-errors
