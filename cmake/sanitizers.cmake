@@ -11,7 +11,7 @@
 #
 # Note: <file_prefix> is a prefix to which the sanitizer will add a unique ID to generate a unique filename.
 # If a relative path is specified, this will be relative to the component's folder **in the build cache** 
-# if using fprime-util check, OR relative to the current directory if runnning a single executable.
+# if using fprime-util check, OR relative to the current directory if running a single executable.
 ####
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
