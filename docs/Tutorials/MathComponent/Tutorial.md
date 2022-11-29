@@ -764,6 +764,7 @@ Add the following lines to `CMakeLists.txt`:
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
 ```
 
@@ -797,6 +798,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
 ```
 
@@ -1833,7 +1835,7 @@ void Tester ::
     this->setFactor(factor, ThrottleState::THROTTLED);
 
     // send the command to clear the throttle
-    this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
+    this->sendCmd_CLEAR_EVENT_THROTTLE(TEST_INSTANCE_ID, CMD_SEQ);
     // invoke scheduler port to dispatch message
     const U32 context = STest::Pick::any();
     this->invoke_to_schedIn(0, context);

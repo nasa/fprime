@@ -16,6 +16,13 @@
 #include "GTestBase.hpp"
 #include "Ref/MathSender/MathSender.hpp"
 
+// Maximum size of histories storing events, telemetry, and port outputs
+#define MAX_HISTORY_SIZE 10
+// Instance ID supplied to the component instance under test
+#define TEST_INSTANCE_ID 0
+// Queue depth supplied to component instance under test
+#define TEST_INSTANCE_QUEUE_DEPTH 10
+
 namespace Ref {
 
   class Tester :
