@@ -16,6 +16,9 @@
 #include "GTestBase.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 
+// Maximum size of histories
+#define MAX_HISTORY_SIZE 10
+
 namespace Ref {
 
   class Tester :
