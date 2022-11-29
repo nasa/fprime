@@ -18,9 +18,9 @@ namespace Svc {
 Tester ::Tester()
     : BufferRepeaterGTestBase("Tester", MAX_HISTORY_SIZE),
       component("BufferRepeater"),
+      m_port_index_history(MAX_HISTORY_SIZE),
       m_initial_buffer(),
-      m_failure(false),
-      m_port_index_history(MAX_HISTORY_SIZE) {
+      m_failure(false) {
     this->initComponents();
     this->connectPorts();
 }
