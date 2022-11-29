@@ -4,9 +4,14 @@
 # Enables sanitizers in the build settings when requested by the user with -DENABLE_SANITIZER_<...>=ON.
 #
 # Sanitizers, by default, output their logs to stderr. To redirect the output to files instead, use the 
-# `log_path` option from the sanitizer <SAN>_OPTION environment variable at runtime. For example, with UBSAN:
-# >>> UBSAN_OPTIONS="log_path=/path/to/output_dir" fprime-util check   (or a single executable file).
-# If a relative path is specified, this will be relative to the test main function's file **in the build cache**.
+# `log_path` option from the sanitizer <SAN>_OPTIONS environment variable at runtime. For example, with UBSAN:
+# >>> UBSAN_OPTIONS="log_path=/path/to/output_dir/file_prefix" fprime-util check
+# or
+# >>> UBSAN_OPTIONS="log_path=/path/to/output_dir/file_prefix" ./path/to/executable
+#
+# Note: <file_prefix> is a prefix to which the sanitizer will add a unique ID to generate a unique filename.
+# If a relative path is specified, this will be relative to the component's folder **in the build cache** 
+# if using fprime-util check, OR relative to the current directory if running a single executable.
 ####
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
@@ -22,7 +27,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_LEAK)
         if(APPLE) 
-            message(WARNING "Leak sanitizer not supported on macOS.")
+            message(STATUS "[WARNING] Leak sanitizer is not supported on macOS")
         else()
             list(APPEND SANITIZERS "leak")
         endif()
@@ -30,7 +35,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clan
 
     if(ENABLE_SANITIZER_THREAD)
         if("address" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
-            message(WARNING "Thread sanitizer does not work with Address or Leak sanitizer enabled")
+            message(STATUS "[WARNING] Thread sanitizer does not work with Address or Leak sanitizer enabled")
         else()
             list(APPEND SANITIZERS "thread")
         endif()
