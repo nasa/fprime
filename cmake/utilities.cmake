@@ -385,6 +385,22 @@ function (read_from_lines CONTENT)
     endforeach()
 endfunction()
 
+####
+# Function `full_path_from_build_relative_path`:
+#
+# Creates a full path from the shortened build-relative path.
+# -**SHORT_PATH:** build relative path
+# Return: full path from relative path
+####
+function(full_path_from_build_relative_path SHORT_PATH OUTPUT_VARIABLE)
+    foreach(FPRIME_LOCATION IN LISTS FPRIME_BUILD_LOCATIONS)
+        if (EXISTS "${FPRIME_LOCATION}/${SHORT_PATH}")
+            set("${OUTPUT_VARIABLE}" "${FPRIME_LOCATION}/${SHORT_PATH}" PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+    set("${OUTPUT_VARIABLE}" "" PARENT_SCOPE)
+endfunction(full_path_from_build_relative_path)
 
 ####
 # Function `get_nearest_build_root`:

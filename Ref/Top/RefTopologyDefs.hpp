@@ -56,7 +56,7 @@ namespace PingEntries {
 namespace blockDrv {
 enum { WARN = 3, FATAL = 5 };
 }
-namespace chanTlm {
+namespace tlmSend {
 enum { WARN = 3, FATAL = 5 };
 }
 namespace cmdDisp {
