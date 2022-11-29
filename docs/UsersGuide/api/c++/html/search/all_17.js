@@ -15,6 +15,6 @@ var searchData=
   ['write_1771',['write',['../class_os_1_1_file.html#a7f348c4ba574a59f4e2c1d8d626b1c5a',1,'Os::File']]],
   ['write_5fto_5flog_1772',['write_to_log',['../struct_svc_1_1_log_file.html#a97b580912dc7d4c1392d4cb3e5872c21',1,'Svc::LogFile']]],
   ['writehash_1773',['writeHash',['../namespace_os.html#ac8ca2101117d8aff1fe5774f94d1a8d7',1,'Os']]],
-  ['writeinterceptor_1774',['writeInterceptor',['../namespace_os.html#a0cf45aa980f019bd85c20ac1964726ad',1,'Os::writeInterceptor()'],['../namespace_os.html#ac8f5f15bef5303b609dc43465de4afdd',1,'Os::WriteInterceptor()']]],
+  ['writeinterceptor_1774',['WriteInterceptor',['../namespace_os.html#ac8f5f15bef5303b609dc43465de4afdd',1,'Os::WriteInterceptor()'],['../namespace_os.html#a0cf45aa980f019bd85c20ac1964726ad',1,'Os::writeInterceptor()']]],
   ['writeinterceptorptr_1775',['writeInterceptorPtr',['../namespace_os.html#ab9d64dfcc41ef253aa775e3381b65f86',1,'Os']]]
 ];

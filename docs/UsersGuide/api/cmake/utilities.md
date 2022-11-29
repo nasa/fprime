@@ -161,6 +161,13 @@ Reads a set of variables from a newline delimited test base. This will read each
 based on the number of arguments passed in.
 
 
+## Function `full_path_from_build_relative_path`:
+
+Creates a full path from the shortened build-relative path.
+-**SHORT_PATH:** build relative path
+Return: full path from relative path
+
+
 ## Function `get_nearest_build_root`:
 
 Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.

@@ -41,7 +41,7 @@ var searchData=
   ['tlmpacketizer_2ecpp_2444',['TlmPacketizer.cpp',['../tlm_packetizer_8cpp.html',1,'']]],
   ['tlmpacketizer_2ehpp_2445',['TlmPacketizer.hpp',['../tlm_packetizer_8hpp.html',1,'']]],
   ['tlmpacketizer_2emd_2446',['TlmPacketizer.md',['../tlm_packetizer_8md.html',1,'']]],
-  ['tlmpacketizercomponentimplcfg_2ehpp_2447',['TlmPacketizerComponentImplCfg.hpp',['../tlm_packetizer_component_impl_cfg_8hpp.html',1,'']]],
+  ['tlmpacketizercfg_2ehpp_2447',['TlmPacketizerCfg.hpp',['../tlm_packetizer_cfg_8hpp.html',1,'']]],
   ['tlmpacketizertypes_2ehpp_2448',['TlmPacketizerTypes.hpp',['../tlm_packetizer_types_8hpp.html',1,'']]],
   ['tlmstring_2ecpp_2449',['TlmString.cpp',['../tlm_string_8cpp.html',1,'']]],
   ['tlmstring_2ehpp_2450',['TlmString.hpp',['../tlm_string_8hpp.html',1,'']]],
