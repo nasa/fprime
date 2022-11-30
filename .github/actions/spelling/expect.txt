@@ -232,6 +232,9 @@ Cpkt
 cplusplus
 CPOL
 cpos
+Cppcheck
+cppcheck
+CPPCHECK
 cppreference
 cprogramming
 cpuset
@@ -270,6 +273,7 @@ culates
 curdir
 curmsgs
 cuz
+ctu
 cwd
 CYCLEOUT
 cygwin
@@ -880,6 +884,7 @@ multiarch
 multioptionals
 multirequired
 multline
+multitool
 munmap
 mutex
 mutexattr
@@ -935,6 +940,7 @@ NOTYPE
 Nowicki
 npm
 nproc
+npx
 NSHUFF
 NSPACES
 nukenewlines
@@ -1351,6 +1357,7 @@ subpage
 subseconds
 subtargets
 sudo
+suppr
 SVCLOGFILE
 SVCLOGFILEL
 svipc
@@ -1627,6 +1634,7 @@ xon
 xor
 XPath
 xsh
+xsltproc
 xxxx
 XYZZY
 yacc
