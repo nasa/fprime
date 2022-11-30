@@ -12,6 +12,6 @@
 <xsl:for-each select="results//error">| <xsl:value-of select="@severity"/> | <xsl:value-of select="location/@file"/>:<xsl:value-of select="location/@line"/> | <xsl:value-of select="@id"/> | <xsl:value-of select="@msg"/> |
 </xsl:for-each>
 </xsl:if>
-**<xsl:value-of select="count(//error)"/> error(s) reported**
+**<xsl:value-of select="count(//error[@severity='error'])"/> error(s) reported**
 </xsl:template>
 </xsl:stylesheet>
