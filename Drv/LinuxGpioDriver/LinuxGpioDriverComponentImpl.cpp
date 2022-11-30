@@ -49,7 +49,7 @@ namespace Drv {
         }
 
         // TODO check value of len
-        len = snprintf(buf, sizeof(buf), "%d", gpio);
+        len = snprintf(buf, sizeof(buf), "%u", gpio);
         if(write(fd, buf, len) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/export error!\n");
@@ -80,7 +80,7 @@ namespace Drv {
         }
 
         // TODO check value of len
-        len = snprintf(buf, sizeof(buf), "%d", gpio);
+        len = snprintf(buf, sizeof(buf), "%u", gpio);
         if(write(fd, buf, len) != len) {
             (void) close(fd);
             DEBUG_PRINT("gpio/unexport error!\n");
@@ -104,7 +104,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%d/direction", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%u/direction", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_WRONLY);
@@ -190,7 +190,7 @@ namespace Drv {
         FW_ASSERT(edge != nullptr);
         // TODO check that edge has correct values of "none", "rising", or "falling"
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%u/edge", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_WRONLY);
@@ -219,7 +219,7 @@ namespace Drv {
         int fd, len;
         char buf[MAX_BUF];
 
-        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
+        len = snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%u/value", gpio);
         FW_ASSERT(len > 0, len);
 
         fd = open(buf, O_RDWR | O_NONBLOCK );
