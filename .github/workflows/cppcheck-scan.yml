@@ -61,6 +61,8 @@ jobs:
         with:
           name: cppcheck-errors
           path: ./*cppcheck_err.*
-
+      
+      # Make the whole step fail if there is an error detected by cppcheck. By default, Github Actions enables the set -e.
+      # See https://stackoverflow.com/questions/73066461/github-actions-why-an-intermediate-command-failure-in-shell-script-would-cause.
       - name: Check for reported errors
         run: tail -n 1 cppcheck_err.txt | grep -q '^\*\*0 error(s) reported\*\*$'
