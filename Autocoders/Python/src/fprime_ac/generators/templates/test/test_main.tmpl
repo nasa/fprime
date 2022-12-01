@@ -6,7 +6,11 @@
 
 #for $test_name, $method_name in $test_cases
 TEST(Nominal, ${test_name}) {
-    Ref::Tester tester;
+    #if $namespace_list != None
+    #echo "::".join($namespace_list)#::Tester tester;
+    #else
+    Tester tester;
+    #end if
     tester.${method_name}();
 }
 #end for
