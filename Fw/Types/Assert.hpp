@@ -4,19 +4,25 @@
 #include <FpConfig.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT
-#define FW_ASSERT(...)
+    #define FW_ASSERT(...)
 #else // ASSERT is defined
 
+
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
-#define FILE_NAME_ARG U32
-#define FW_ASSERT(cond, ...) \
-    ((void) ((cond) ? (0) : \
-    (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
+    #define FILE_NAME_ARG U32
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(ASSERT_FILE_ID, __LINE__, ##__VA_ARGS__))))
+#elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT
+    #define FILE_NAME_ARG const CHAR*
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(ASSERT_RELATIVE_PATH, __LINE__, ##__VA_ARGS__))))
 #else
-#define FILE_NAME_ARG const CHAR*
-#define FW_ASSERT(cond, ...) \
-    ((void) ((cond) ? (0) : \
-    (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
+    #define FILE_NAME_ARG const CHAR*
+    #define FW_ASSERT(cond, ...) \
+        ((void) ((cond) ? (0) : \
+        (Fw::SwAssert(__FILE__, __LINE__, ##__VA_ARGS__))))
 #endif
 
 // F' Assertion functions can technically return even though the intention is for the assertion to terminate the program.
@@ -81,8 +87,6 @@ namespace Fw {
             // the previous assert hook
             AssertHook *previousHook;
     };
-
-
 }
 #endif // if ASSERT is defined
 

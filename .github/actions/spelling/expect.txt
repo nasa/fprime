@@ -120,6 +120,7 @@ buf
 BUFFERALLOCATE
 BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
+BUFFQUEUEIN
 buffsize
 BUGLIST
 bugprone
@@ -149,6 +150,7 @@ cdn
 cerrno
 cface
 CFDP
+cff
 cflag
 cfsetispeed
 cfsetospeed
@@ -159,6 +161,7 @@ CHANNELID
 CHANS
 chdir
 cheetahtemplate
+Chieu
 CHK
 CHNG
 chr
@@ -193,6 +196,7 @@ cntx
 cobj
 CODEFILE
 codegen
+codeql
 colno
 COLORSTYLE
 colorwheel
@@ -205,13 +209,17 @@ COMBUFFER
 commonpath
 COMPACKET
 COMPONENTTESTERIMPL
+COMQUEUE
+COMQUEUEIN
 COMSPLITTER
 COMSTUB
+COMXBEE
 Concat
 config
 configparser
 configs
 configurability
+constexpr
 cookiecutter
 cooldown
 coor
@@ -271,6 +279,7 @@ daringfireball
 Daruwala
 DASSERT
 databinding
+DATAROOTDIR
 datastore
 dawbarton
 db
@@ -291,6 +300,7 @@ deframer
 deframing
 delchars
 delitem
+DENABLE
 deployables
 DEPRECATEDLIST
 deps
@@ -450,6 +460,7 @@ fadvise
 FAKELOGGER
 fallocate
 fallthrough
+fbuild
 fcheck
 fclose
 fcntl
@@ -513,6 +524,7 @@ frontend
 frox
 frsize
 fsanitize
+fsanitizers
 fscanf
 fstream
 fstrength
@@ -548,6 +560,7 @@ gethostname
 getinput
 getitem
 getline
+getm
 getopt
 getoutput
 getpid
@@ -566,6 +579,7 @@ github
 gjslint
 glibc
 globals
+gmock
 gmtime
 Gnc
 Gnd
@@ -651,12 +665,14 @@ importables
 INADDR
 iname
 inbool
+INCLUDEDIR
 inet
 inin
 initfiles
 inits
 initstate
 inkscape
+inlined
 inode
 INOUT
 INPCK
@@ -666,6 +682,7 @@ instantiator
 instring
 instrlen
 integertypename
+interoperate
 intlimits
 ints
 Inttype
@@ -747,6 +764,8 @@ lhash
 libc
 libclang
 libcrc
+LIBDIR
+LIBEXECDIR
 libgtest
 libiconv
 LIBLOC
@@ -757,8 +776,8 @@ lineroo
 lineterm
 linting
 linux
-LINUXUARTDRIVER
 LINUXTIMEIMPL
+LINUXUARTDRIVER
 Listst
 LJR
 lkml
@@ -766,6 +785,7 @@ lld
 llvm
 loadfile
 localhost
+LOCALSTATEDIR
 LOCKGUARDTESTER
 locs
 LOGASSERT
@@ -871,6 +891,7 @@ mycompany
 myfile
 myproject
 mytype
+namespaced
 nano
 nanosleep
 nargs
@@ -935,6 +956,7 @@ odo
 oflag
 okidocki
 oldeol
+OLDINCLUDEDIR
 OMG
 onchange
 onlinepubs
@@ -1120,6 +1142,8 @@ reder
 refactor
 refactoring
 refspec
+REFTOPOLOGY
+REFTOPOLOGYDEFS
 regexp
 regexs
 relaxng
@@ -1162,6 +1186,7 @@ rxor
 saddr
 Saikiran
 Sanchit
+sanitizers
 sats
 savelist
 saveop
@@ -1169,6 +1194,7 @@ saxutils
 sbb
 SBF
 sbin
+SBINDIR
 sbt
 scanf
 sched
@@ -1199,7 +1225,9 @@ SETFL
 setinheritsched
 setitem
 SETLOGGING
+setm
 setop
+setprecision
 setprotocol
 setquaternion
 setschedparam
@@ -1219,6 +1247,7 @@ sface
 sfregoso
 sgl
 SGN
+SHAREDSTATEDIR
 SHELLCOMMAND
 Shenker
 showinitializer
@@ -1272,6 +1301,7 @@ ssh
 ssize
 SSL
 sss
+sstream
 Ssymbols
 stacklevel
 stackoverflow
@@ -1303,6 +1333,7 @@ stringchan
 stringified
 Stringpacket
 stringparam
+stringstream
 STRINGUTILS
 strlen
 strncat
@@ -1329,6 +1360,7 @@ swcaegitadmin
 SYMLINKS
 synchronicity
 synopsys
+SYSCONFDIR
 SYSFS
 sysinfo
 systemd
@@ -1462,8 +1494,8 @@ tts
 ttype
 Tuszynski
 TXD
-typedef'ed
 typedef
+typedef'ed
 typeid
 typeinfo
 typelist
@@ -1472,6 +1504,7 @@ typeslist
 typetoken
 tzinfo
 uart
+UBSAN
 ubuntu
 ucf
 Uchenik
@@ -1519,6 +1552,7 @@ valgrind
 validator
 vals
 valud
+vbai
 venv
 VERSIONED
 versioning
@@ -1581,6 +1615,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+XBee
 xcode
 xdf
 xdffe
