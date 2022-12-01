@@ -23,7 +23,7 @@ The `Fw::TlmBuffer` class contains a buffer that holds the serialized value of a
 
 ##### 2.1.2.2 Fw::ComPacket 
 
-The `Fw::TlmPacket` class is a packet class derived from [`Fw::ComPacket`](../../Com/docs/sdd.html) that provides methods for encoding a telemetry packet. It contains an internal `Fw:ComBuffer` that holds serialized channel values.
+The `Fw::TlmPacket` class is a packet class derived from [`Fw::ComPacket`](../../Com/docs/sdd.md) that provides methods for encoding a telemetry packet. It contains an internal `Fw:ComBuffer` that holds serialized channel values.
 
 To fill a packet with telemetry values, do the following.
 
