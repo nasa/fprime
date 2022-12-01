@@ -49,7 +49,7 @@ TEST(LoggerTests, RandomLoggerTests) {
 /**
  * Test that the most basic logging function works.
  */
-TEST(LoggerTests, BassicGoodLogger) {
+TEST(LoggerTests, BasicGoodLogger) {
     // Setup and register logger
     MockLogging::FakeLogger logger;
     Fw::Logger::registerLogger(&logger);
@@ -61,7 +61,7 @@ TEST(LoggerTests, BassicGoodLogger) {
 /**
  * Test that null-logging function works.
  */
-TEST(LoggerTests, BassicBadLogger) {
+TEST(LoggerTests, BasicBadLogger) {
     // Basic discard logging
     MockLogging::FakeLogger logger;
     Fw::Logger::registerLogger(nullptr);
@@ -73,7 +73,7 @@ TEST(LoggerTests, BassicBadLogger) {
 /**
  * Test that registration works. Multiple times, as contains randomness.
  */
-TEST(LoggerTests, BassicRegLogger) {
+TEST(LoggerTests, BasicRegLogger) {
     // Basic discard logging
     MockLogging::FakeLogger logger;
     LoggerRules::Register reg("Register");
