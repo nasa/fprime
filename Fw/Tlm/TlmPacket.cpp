@@ -29,11 +29,14 @@ namespace Fw {
     SerializeStatus TlmPacket::resetPktDeser() {
         this->m_tlmBuffer.resetDeser();
         // deserialize descriptor
+        // The function deserializeBase inherited from ComPacket deserializes a
+        // value of type FwPacketDescriptorType from this->m_tlmBuffer and stores it
+        // into this->m_type.
         Fw::SerializeStatus stat = this->deserializeBase(this->m_tlmBuffer);
         if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             return stat;
         }
-        // make sure it is a telemetry packet
+        // make sure that this->m_tlmBuffer stores a telemetry packet
         if (this->m_type != FW_PACKET_TELEM) {
             return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
         }
