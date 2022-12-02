@@ -23,6 +23,8 @@ namespace Fw {
         // reset packet count
         this->m_numEntries = 0;
         // serialize descriptor
+        // The function serializeBase inherited from ComPacket converts this->m_type
+        // to type FwPacketDescriptorType and serializes the result into this->m_tlmBuffer.
         return this->serializeBase(this->m_tlmBuffer);
     }
 
