@@ -232,9 +232,7 @@ Cpkt
 cplusplus
 CPOL
 cpos
-Cppcheck
 cppcheck
-CPPCHECK
 cppreference
 cprogramming
 cpuset
