@@ -2,11 +2,10 @@ name: "Cpplint Scan"
 
 on:
   push:
-    branches:
-      - "**"
+    branches: [master, devel]
   pull_request:
-    branches:
-      - "**"
+    # The branches below must be a subset of the branches above
+    branches: [master, devel]
 
 jobs:
   cppcheck:
