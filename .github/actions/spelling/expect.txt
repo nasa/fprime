@@ -232,6 +232,8 @@ Cpkt
 cplusplus
 CPOL
 cpos
+cppcheckxml
+cpplint
 cppreference
 cprogramming
 cpuset
@@ -1107,6 +1109,7 @@ qsf
 qtest
 qthelpproject
 quatchan
+quoteattr
 RAbrack
 radd
 RAII
