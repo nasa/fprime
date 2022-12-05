@@ -25,7 +25,7 @@ Each port call received on `portIn` is repeated to each connected `portOut` port
 
 ## 3.1 Ports
 
-`Svc::ComQueue` has the following ports:
+`Svc::BufferRepeater` has the following ports:
 
 | Kind         | Name         | Port Type                                   | Usage                                 |
 |--------------|--------------|---------------------------------------------|---------------------------------------|
