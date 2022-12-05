@@ -9,4 +9,10 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/FileDownlinkPorts.fpp"
 )
+
+set(MOD_DEPS
+    Fw/Types
+    Fw/Port
+)
+
 register_fprime_module()

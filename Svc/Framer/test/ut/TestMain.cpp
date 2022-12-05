@@ -37,6 +37,20 @@ TEST(Nominal, ManySends) {
     tester.test_buffer(31);
 }
 
+TEST(Nominal, StatusPassThrough) {
+    COMMENT("Ensure status pass-through");
+    REQUIREMENT("SVC-FRAMER-004");
+    Svc::Tester tester;
+    tester.test_status_pass_through();
+}
+
+TEST(Nominal, NoSendStatus) {
+    COMMENT("Ensure status on no-send");
+    REQUIREMENT("SVC-FRAMER-003");
+    Svc::Tester tester;
+    tester.test_no_send_status();
+}
+
 TEST(SendError, Buffer) {
     COMMENT("Send one Fw::Buffer to the framer (send error)");
     REQUIREMENT("SVC-FRAMER-002");
@@ -55,7 +69,7 @@ TEST(SendError, Com) {
     tester.test_com();
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

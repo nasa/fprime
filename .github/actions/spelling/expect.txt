@@ -122,6 +122,7 @@ buf
 BUFFERALLOCATE
 BUFFERMANAGERCOMPONENTIMPLCFG
 BUFFERMGR
+BUFFQUEUEIN
 buffsize
 BUGLIST
 bugprone
@@ -151,6 +152,7 @@ cdn
 cerrno
 cface
 CFDP
+cff
 cflag
 cfsetispeed
 cfsetospeed
@@ -160,6 +162,7 @@ changeme
 CHANNELID
 chdir
 cheetahtemplate
+Chieu
 CHK
 CHNG
 chr
@@ -194,6 +197,7 @@ cntx
 cobj
 CODEFILE
 codegen
+codeql
 colno
 COLORSTYLE
 colorwheel
@@ -205,12 +209,17 @@ commasepitem
 commonpath
 COMPACKET
 COMPONENTTESTERIMPL
+COMQUEUE
+COMQUEUEIN
 COMSPLITTER
+COMSTUB
+COMXBEE
 Concat
 config
 configparser
 configs
 configurability
+constexpr
 cookiecutter
 cooldown
 coor
@@ -270,6 +279,7 @@ daringfireball
 Daruwala
 DASSERT
 databinding
+DATAROOTDIR
 datastore
 dawbarton
 DBUILD
@@ -289,6 +299,7 @@ deframer
 deframing
 delchars
 delitem
+DENABLE
 deployables
 DEPRECATEDLIST
 deps
@@ -448,6 +459,7 @@ fadvise
 FAKELOGGER
 fallocate
 fallthrough
+fbuild
 fcheck
 fclose
 fcntl
@@ -504,11 +516,13 @@ fprofile
 fptr
 fputil
 fpv
+freeram
 Fregoso
 frontend
 frox
 frsize
 fsanitize
+fsanitizers
 fscanf
 fstream
 fstrength
@@ -544,6 +558,7 @@ gethostname
 getinput
 getitem
 getline
+getm
 getopt
 getoutput
 getpid
@@ -562,6 +577,7 @@ github
 gjslint
 glibc
 globals
+gmock
 gmtime
 Gnc
 Gnd
@@ -647,13 +663,16 @@ importables
 INADDR
 iname
 inbool
+INCLUDEDIR
 inet
 inin
 initfiles
 inits
 initstate
 inkscape
+inlined
 inode
+INOUT
 INPCK
 Inputline
 installable
@@ -661,6 +680,7 @@ instantiator
 instring
 instrlen
 integertypename
+interoperate
 intlimits
 ints
 Inttype
@@ -742,6 +762,8 @@ lhash
 libc
 libclang
 libcrc
+LIBDIR
+LIBEXECDIR
 libgtest
 libiconv
 LIBLOC
@@ -761,6 +783,7 @@ lld
 llvm
 loadfile
 localhost
+LOCALSTATEDIR
 LOCKGUARDTESTER
 locs
 LOGASSERT
@@ -866,6 +889,7 @@ mycompany
 myfile
 myproject
 mytype
+namespaced
 nano
 nanosleep
 nargs
@@ -929,6 +953,7 @@ odo
 oflag
 okidocki
 oldeol
+OLDINCLUDEDIR
 OMG
 onchange
 onlinepubs
@@ -1118,6 +1143,8 @@ reder
 refactor
 refactoring
 refspec
+REFTOPOLOGY
+REFTOPOLOGYDEFS
 regexp
 regexs
 relaxng
@@ -1159,6 +1186,7 @@ rxor
 saddr
 Saikiran
 Sanchit
+sanitizers
 sats
 savelist
 saveop
@@ -1166,6 +1194,7 @@ saxutils
 sbb
 SBF
 sbin
+SBINDIR
 sbt
 scanf
 sched
@@ -1197,7 +1226,9 @@ SETFL
 setinheritsched
 setitem
 SETLOGGING
+setm
 setop
+setprecision
 setprotocol
 setquaternion
 setschedparam
@@ -1217,6 +1248,7 @@ sface
 sfregoso
 sgl
 SGN
+SHAREDSTATEDIR
 SHELLCOMMAND
 Shenker
 showinitializer
@@ -1271,6 +1303,7 @@ ssh
 ssize
 SSL
 sss
+sstream
 Ssymbols
 stacklevel
 stackoverflow
@@ -1302,6 +1335,7 @@ stringchan
 stringified
 Stringpacket
 stringparam
+stringstream
 STRINGUTILS
 strlen
 strncat
@@ -1329,6 +1363,7 @@ swcaegitadmin
 SYMLINKS
 synchronicity
 synopsys
+SYSCONFDIR
 SYSFS
 sysinfo
 systemd
@@ -1448,6 +1483,7 @@ TOTALFF
 TOTALISFLOGEVENTMSG
 TOTALISFTELMMSG
 TOTALQUEUEFULL
+totalram
 TOUPPER
 transcoding
 treeview
@@ -1469,6 +1505,7 @@ typeslist
 typetoken
 tzinfo
 uart
+UBSAN
 ubuntu
 ucf
 Uchenik
@@ -1517,6 +1554,7 @@ valgrind
 validator
 vals
 valud
+vbai
 venv
 VERSIONED
 versioning
@@ -1578,6 +1616,7 @@ Xabcdefx
 xapian
 xargs
 Xcode
+XBee
 xcode
 xdf
 xdffe

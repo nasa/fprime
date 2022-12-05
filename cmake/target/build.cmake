@@ -54,16 +54,18 @@ function(build_setup_build_module MODULE SOURCES GENERATED EXCLUDED_SOURCES DEPE
 
     get_target_property(MODULE_SOURCES "${MODULE}" SOURCES)
     list(REMOVE_ITEM MODULE_SOURCES "${EMPTY}")
-    set_target_properties(
-            ${MODULE}
-            PROPERTIES
-            SOURCES "${MODULE_SOURCES}"
-    )
-    # Setup the hash file for our sources
-    foreach(SRC_FILE IN LISTS MODULE_SOURCES)
-        set_hash_flag("${SRC_FILE}")
-    endforeach()
-
+    # Only update module sources if the list is not empty. Otherwise we keep empty.c as the only source.
+    if (NOT "${MODULE_SOURCES}" STREQUAL "")
+        set_target_properties(
+                ${MODULE}
+                PROPERTIES
+                SOURCES "${MODULE_SOURCES}"
+        )
+        # Setup the hash file for our sources
+        foreach(SRC_FILE IN LISTS MODULE_SOURCES)
+            set_assert_flags("${SRC_FILE}")
+        endforeach()
+    endif()
     # Includes the source, so that the Ac files can include source headers
     target_include_directories("${MODULE}" PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

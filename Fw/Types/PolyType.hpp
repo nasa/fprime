@@ -92,7 +92,7 @@ namespace Fw {
             PolyType(const PolyType &original); //!< copy constructor
             virtual ~PolyType(); //!< destructor
 
-#if FW_SERIALIZABLE_TO_STRING
+#if FW_SERIALIZABLE_TO_STRING || BUILD_UT
             void toString(StringBase& dest, bool append) const; //!< get string representation
             void toString(StringBase& dest) const; //!< get string representation
 #endif
@@ -113,14 +113,22 @@ namespace Fw {
                 TYPE_NOTYPE, // !< No type stored yet
                 TYPE_U8, // !< U8 type stored
                 TYPE_I8, // !< I8 type stored
+#if FW_HAS_16_BIT
                 TYPE_U16, // !< U16 type stored
                 TYPE_I16, // !< I16 type stored
+#endif
+#if FW_HAS_32_BIT
                 TYPE_U32, // !< U32 type stored
                 TYPE_I32, // !< I32 type stored
+#endif
+#if FW_HAS_64_BIT
                 TYPE_U64, // !< U64 type stored
                 TYPE_I64, // !< I64 type stored
+#endif
                 TYPE_F32, // !< F32 type stored
+#if FW_HAS_F64
                 TYPE_F64, // !< F64 type stored
+#endif
                 TYPE_BOOL, // !< bool type stored
                 TYPE_PTR // !< pointer type stored
             } Type;

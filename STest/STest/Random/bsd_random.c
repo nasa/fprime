@@ -284,7 +284,7 @@ bsd_initstate(seed, arg_state, n)
 		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
 	if (n < BREAK_0) {
 		(void)fprintf(stderr,
-		    "random: not enough state (%ld bytes); ignored.\n", n);
+		    "random: not enough state (%zd bytes); ignored.\n", n);
 		return(0);
 	}
 	if (n < BREAK_1) {

@@ -7,6 +7,7 @@
 ####
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/CircularBuffer.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Queue.cpp"
 )
 set(MOD_DEPS
   "Fw/Types"

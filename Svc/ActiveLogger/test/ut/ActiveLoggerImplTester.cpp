@@ -173,7 +173,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         this->clearHistory();
         reportFilterLevel = FilterSeverity::WARNING_HI;
@@ -184,7 +184,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         FilterSeverity eventLevel;
         this->clearHistory();
@@ -196,7 +196,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
 
         this->clearHistory();
@@ -209,7 +209,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_EVENT_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
 
     }
@@ -374,7 +374,7 @@ namespace Svc {
                 0,
                 ActiveLoggerImpl::OPCODE_SET_ID_FILTER,
                 cmdSeq,
-                Fw::CmdResponse::VALIDATION_ERROR
+                Fw::CmdResponse::FORMAT_ERROR
                 );
         ASSERT_EVENTS_SIZE(0);
 

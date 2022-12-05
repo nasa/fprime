@@ -12,5 +12,6 @@ set(SOURCE_FILES
 )
 set(MOD_DEPS
     Os
+    Fw/Port
 )
 register_fprime_module()

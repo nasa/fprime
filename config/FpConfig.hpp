@@ -189,13 +189,12 @@ struct FpLimits : BasicLimits {
  #endif
 #endif
 
-// Turn asserts on or off
-
-#define FW_NO_ASSERT                        1   //!< Asserts turned off
-#define FW_FILEID_ASSERT                    2   //!< File ID used - requires -DASSERT_FILE_ID=somevalue to be set on the compile command line
-#define FW_FILENAME_ASSERT                  3   //!< Uses the file name in the assert - image stores filenames
+// Set assertion form. Options:
+//   1. FW_NO_ASSERT: assertions are compiled out
+//   2. FW_FILEID_ASSERT: asserts report a file CRC and line number
+//   3. FW_FILENAME_ASSERT: asserts report a file path (__FILE__) and line number
+//   4. FW_RELATIVE_PATH_ASSERT: asserts report a relative path within F´ or F´ library and line number
 #define FW_ASSERT_DFL_MSG_LEN               256 //!< Maximum assert message length when using the default assert handler
-
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL                     FW_FILENAME_ASSERT //!< Defines the type of assert used
 #endif
