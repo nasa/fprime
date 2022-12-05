@@ -1,7 +1,5 @@
 var class_fw_1_1_tlm_string =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_tlm_string.html#a90fc92d942306e8f6e6229ab1250bfd7a4bb2aea1e21f79a13db906d27c5861e6", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_tlm_string.html#a90fc92d942306e8f6e6229ab1250bfd7a28b09f09f699318b2a9c5ff99500f900", null ],
     [ "TlmString", "class_fw_1_1_tlm_string.html#a86f713b294ca60aa8999291923b19a87", null ],
     [ "TlmString", "class_fw_1_1_tlm_string.html#a216c606a7d5d7dced5fb6ffefeb5683d", null ],
     [ "TlmString", "class_fw_1_1_tlm_string.html#aabed685d1b1440fbd551cee76b6bae1b", null ],

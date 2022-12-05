@@ -1,24 +1,26 @@
 /*
-@licstart  The following is the entire license notice for the
-JavaScript code in this file.
+ @licstart  The following is the entire license notice for the JavaScript code in this file.
 
-Copyright (C) 1997-2019 by Dimitri van Heesch
+ The MIT License (MIT)
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of version 2 of the GNU General Public License as published by
-the Free Software Foundation
+ Copyright (C) 1997-2020 by Dimitri van Heesch
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ and associated documentation files (the "Software"), to deal in the Software without restriction,
+ including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ The above copyright notice and this permission notice shall be included in all copies or
+ substantial portions of the Software.
 
-@licend  The above is the entire license notice
-for the JavaScript code in this file
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ @licend  The above is the entire license notice for the JavaScript code in this file
 */
 var NAVTREE =
 [
@@ -50,23 +52,23 @@ var NAVTREE =
       ] ],
       [ "Run Tests", "md__c_o_n_t_r_i_b_u_t_i_n_g.html#autotoc_md22", null ]
     ] ],
-    [ "Communication Adapter Interface", "md_docs__design_communication-adapter-interface.html", [
-      [ "Ports", "md_docs__design_communication-adapter-interface.html#autotoc_md24", [
-        [ "comDataIn Description", "md_docs__design_communication-adapter-interface.html#autotoc_md25", null ],
-        [ "comDataOut Description", "md_docs__design_communication-adapter-interface.html#autotoc_md26", null ],
-        [ "comStatus Description", "md_docs__design_communication-adapter-interface.html#autotoc_md27", null ]
+    [ "Communication Adapter Interface", "md_docs__design_communication_adapter_interface.html", [
+      [ "Ports", "md_docs__design_communication_adapter_interface.html#autotoc_md24", [
+        [ "comDataIn Description", "md_docs__design_communication_adapter_interface.html#autotoc_md25", null ],
+        [ "comDataOut Description", "md_docs__design_communication_adapter_interface.html#autotoc_md26", null ],
+        [ "comStatus Description", "md_docs__design_communication_adapter_interface.html#autotoc_md27", null ]
       ] ],
-      [ "Communication Queue Protocol", "md_docs__design_communication-adapter-interface.html#autotoc_md28", null ],
-      [ "Framer Status Protocol", "md_docs__design_communication-adapter-interface.html#autotoc_md29", null ],
-      [ "Communication Adapter Protocol", "md_docs__design_communication-adapter-interface.html#autotoc_md30", null ]
+      [ "Communication Queue Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md28", null ],
+      [ "Framer Status Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md29", null ],
+      [ "Communication Adapter Protocol", "md_docs__design_communication_adapter_interface.html#autotoc_md30", null ]
     ] ],
     [ "Design and Philosophy of F´", "md_docs__design_general.html", null ],
     [ "F´ Memory Management", "md_docs__design_memory.html", null ],
-    [ "F´ Numerical Types", "md_docs__design_numerical-types.html", [
-      [ "Fixed Width Types", "md_docs__design_numerical-types.html#autotoc_md34", null ],
-      [ "F´ Logical Integer Type Design", "md_docs__design_numerical-types.html#autotoc_md35", [
-        [ "Platform Configured Types", "md_docs__design_numerical-types.html#autotoc_md36", null ],
-        [ "Configurable Integer Types", "md_docs__design_numerical-types.html#autotoc_md37", null ]
+    [ "F´ Numerical Types", "md_docs__design_numerical_types.html", [
+      [ "Fixed Width Types", "md_docs__design_numerical_types.html#autotoc_md34", null ],
+      [ "F´ Logical Integer Type Design", "md_docs__design_numerical_types.html#autotoc_md35", [
+        [ "Platform Configured Types", "md_docs__design_numerical_types.html#autotoc_md36", null ],
+        [ "Configurable Integer Types", "md_docs__design_numerical_types.html#autotoc_md37", null ]
       ] ]
     ] ],
     [ "Fw Components, Ports, and Classes", "fw.html", "_fw" ],
@@ -160,22 +162,22 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "a_m_p_c_s_sequence_8cpp.html",
-"command_dispatcher_impl_8cpp_source.html",
-"file_system_8hpp.html#a8bcd5b75e145d2e7f77d68eec9b5ca9fa85227fe14c5fafd1a62eb7362609b1b9",
-"health_8hpp.html#ad3bf1cfb57fb596d097ad9a3401e56bb",
-"os_2_baremetal_2_system_resources_8cpp_source.html",
-"string_test_8hpp.html#a25c454aab16c8359686764c23dd9693f",
-"svc_fatal_port.html#autotoc_md398",
-"svc_tlm_chan_component.html#autotoc_md646",
-"watchdog_timer_8hpp_source.html",
-"class_fw_1_1_cmd_arg_buffer.html#a07f36bc6cba18a558679b2e21e5374d3",
-"class_fw_1_1_poly_type.html#a28d0bc8cfaa8a98e6b00f761c6e6ab3f",
-"class_os_1_1_bare_queue_handle.html#a8c4461fc7d5e2ca549bdb855734b0ca4",
-"class_os_1_1_task_runner.html#a985909f0552d3d05a19cada599d2e230",
-"class_svc_1_1_generic_hub_component_impl.html",
-"dir_7f3fb2ee489c6d64749bf8334065550d.html",
-"md_docs__design_communication-adapter-interface.html#autotoc_md25",
-"struct_svc_1_1_a_m_p_c_s_sequence_1_1_record_1_1_time_flag.html#a40c964186445846486142e653ecc359faacfb3242efd34455597140dd1d886f5d"
+"console_text_logger_impl_8hpp_source.html",
+"file_system_8hpp.html#aef0e542bc6a12590a0ac50784739bd91",
+"i_p_c_queue_8cpp.html#a689291deb9e6bab0b8a359c1429b7932",
+"os_2_posix_2_queue_8cpp.html",
+"svc_active_logger_component.html#autotoc_md187",
+"svc_file_uplink_component.html#autotoc_md449",
+"svc_watch_dog_port.html#autotoc_md681",
+"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5",
+"class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a89bc97f02f96b31614df715ff6e36eb0",
+"class_fw_1_1_serializable_file.html#a5f04d8113d943cbb949f693060a310ee",
+"class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105afb791cd4ea04f97e6d3a402574bc9489",
+"class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74",
+"class_svc_1_1_tlm_chan_impl.html#a7f8fef903c395a76101843b6ddf60d21",
+"enum_2main_8cpp.html#a10eed89e837a1379b65f28f84ad8f904",
+"namespace_fw.html#aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874",
+"struct_2main_8cpp.html#a056a7fb2098c0f31c19457c966aa2630"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

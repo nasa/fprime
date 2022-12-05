@@ -1,7 +1,5 @@
 var class_fw_1_1_buffer =
 [
-    [ "SERIALIZED_SIZE", "class_fw_1_1_buffer.html#afec32858223c28b7dc394e2c227515c9a37cc5ade75d8d45c9990a791801a4a98", null ],
-    [ "NO_CONTEXT", "class_fw_1_1_buffer.html#afec32858223c28b7dc394e2c227515c9a1bd558434e0c4edbb7ff4f2946a614fb", null ],
     [ "Buffer", "class_fw_1_1_buffer.html#a5f6d817dac7754febbc0c2c28cfdacda", null ],
     [ "Buffer", "class_fw_1_1_buffer.html#a8589707e4402dca068cf70e59ca6704e", null ],
     [ "Buffer", "class_fw_1_1_buffer.html#a2a6194ca3b301e88fc9abda00cade295", null ],

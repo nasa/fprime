@@ -15,7 +15,7 @@ var class_fw_1_1_serialize_buffer_base =
     [ "deserializeSkip", "class_fw_1_1_serialize_buffer_base.html#a697cf0a61fe96f9e0879c11a6aee7ace", null ],
     [ "getBuffAddr", "class_fw_1_1_serialize_buffer_base.html#acd6ea18045472e9090ec8823185cb676", null ],
     [ "getBuffAddr", "class_fw_1_1_serialize_buffer_base.html#a0b5e0fdec08aa08e7eedd2e9bde10b7a", null ],
-    [ "getBuffAddrLeft", "class_fw_1_1_serialize_buffer_base.html#a6087f5e97e6b0d6dc3e87ef5e76f6fce", null ],
+    [ "getBuffAddrLeft", "class_fw_1_1_serialize_buffer_base.html#a3017f10c3e22181fc87bf1f91289a7dc", null ],
     [ "getBuffAddrSer", "class_fw_1_1_serialize_buffer_base.html#abbd429b2525f836154658ec87644ee20", null ],
     [ "getBuffCapacity", "class_fw_1_1_serialize_buffer_base.html#a966c54a3cde52d98f5887d809f66b431", null ],
     [ "getBuffLeft", "class_fw_1_1_serialize_buffer_base.html#a0ac97f14ca0138929890ebd8ceb40105", null ],

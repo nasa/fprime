@@ -8,5 +8,5 @@ var class_svc_1_1_generic_hub_component_impl =
     [ "GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html#a337d44d3b58139de9388823c92d5ba5e", null ],
     [ "~GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html#ae54b83408d35f5b5fc11ad491502aaad", null ],
     [ "init", "class_svc_1_1_generic_hub_component_impl.html#a4883a2e54020fe3e814a45e0feca7616", null ],
-    [ "GENERIC_HUB_DATA_SIZE", "class_svc_1_1_generic_hub_component_impl.html#aca67f41f58021dae15c61222c737f4c7", null ]
+    [ "GENERIC_HUB_DATA_SIZE", "class_svc_1_1_generic_hub_component_impl.html#a731e57c8e4c3341480cabb23567a38e8", null ]
 ];

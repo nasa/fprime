@@ -1,7 +1,5 @@
 var class_fw_1_1_cmd_string_arg =
 [
-    [ "SERIALIZED_TYPE_ID", "class_fw_1_1_cmd_string_arg.html#a34007799b9b2b6d24aea7159a19e4629acc76fdb25e676772835ad0df450ff83c", null ],
-    [ "SERIALIZED_SIZE", "class_fw_1_1_cmd_string_arg.html#a34007799b9b2b6d24aea7159a19e4629a373690ebe4e6de005cd92ae4cd5cd931", null ],
     [ "CmdStringArg", "class_fw_1_1_cmd_string_arg.html#ab01b0e7343a4efdf39491aa15378851b", null ],
     [ "CmdStringArg", "class_fw_1_1_cmd_string_arg.html#ae19ef1f7e637aa52adf394520a8b61e1", null ],
     [ "CmdStringArg", "class_fw_1_1_cmd_string_arg.html#ad4db24f055270b36d250ab7b31c16909", null ],
