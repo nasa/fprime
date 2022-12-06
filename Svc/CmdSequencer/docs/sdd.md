@@ -43,7 +43,7 @@ pingIn|Svc::Ping|async input|Input ping call
 pingOut|Svc::Ping|output|Reply for ping
 schedIn|Svc::Sched|async input|Scheduler input - timed commands will be checked
 comCmdOut|Fw::Com|output|Sends command buffers for each command in sequence
-cmdResponseIn|Fw::CmdResponse|asyc input|Received status of last dispatched command
+cmdResponseIn|Fw::CmdResponse|async input|Received status of last dispatched command
 seqRunIn|Svc::CmdSeqIn|async input|Receives requests for running sequences from other components
 seqDone|Fw::CmdResponse|output|outputs status of sequence run; meant to be used with `seqRunIn`
 

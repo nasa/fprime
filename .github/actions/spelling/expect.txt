@@ -77,6 +77,7 @@ autocoders
 autocoding
 autocompletion
 autodoc
+autodocs
 Autodocumentation
 autogen
 Autogenerate
@@ -105,6 +106,7 @@ bitmaps
 bitset
 ble
 blog
+blogs
 BLSPSERIALDRIVERCOMPONENTIMPLCFG
 bocchino
 bodychars
@@ -280,7 +282,6 @@ databinding
 DATAROOTDIR
 datastore
 dawbarton
-db
 DBUILD
 DCMAKE
 DDDTHH
@@ -462,7 +463,6 @@ fbuild
 fcheck
 fclose
 fcntl
-fd
 fds
 fdset
 featuredarticles
@@ -860,7 +860,6 @@ mname
 modbus
 MOSI
 MOVEFILE
-mq
 mqd
 mqueue
 Mrf
@@ -883,6 +882,7 @@ multline
 munmap
 mutex
 mutexattr
+Mutexed
 mutexes
 mval
 mycompany
@@ -905,7 +905,6 @@ newself
 newstring
 newtio
 nfds
-Nh
 Nicolich
 ninjaaron
 NMEA
@@ -1020,12 +1019,15 @@ pkts
 plainnat
 plantuml
 plugin
+plugins
 pname
 png
 PNGs
+POLLERR
 pollerr
 pollfd
 POLLIN
+POLLPRI
 pollpri
 POLYDB
 POLYDBCOMP
@@ -1080,6 +1082,7 @@ ptmcg
 pton
 ptr
 ptype
+puml
 punc
 pushd
 pwd
@@ -1166,7 +1169,6 @@ riverbankcomputing
 Rizvi
 rootdir
 ror
-rp
 rpaetz
 rpi
 RPIDEMO
@@ -1204,6 +1206,7 @@ scons
 scp
 scrollbars
 sdd
+SDFLIGHT
 searchdata
 SEARCHENGINE
 segfault
@@ -1293,6 +1296,7 @@ srand
 srandom
 srange
 src
+SRCS
 sre
 sscanf
 ssh
@@ -1344,6 +1348,7 @@ strtol
 strtoul
 subdir
 subfolder
+subfolders
 subgrouping
 subhist
 subhistory
@@ -1437,7 +1442,6 @@ timothycanham
 tions
 tjh
 TKC
-tl
 tlc
 tlist
 tlm
@@ -1487,7 +1491,6 @@ trimwhitespace
 trinomials
 TRUNC
 truncstring
-tt
 tts
 ttype
 Tuszynski
@@ -1529,6 +1532,7 @@ unistd
 Unithem
 unittest
 UNITTESTASSERT
+unittests
 unprintables
 unsubscribe
 upcalls
@@ -1567,7 +1571,6 @@ virtualization
 virtualized
 vla
 vlist
-vm
 VMIN
 vmstat
 vsnprintf
@@ -1600,7 +1603,6 @@ WORKDIR
 workflow
 worklist
 Woverloaded
-wp
 writelines
 WRONLY
 wrs
@@ -1613,6 +1615,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+Xcode
 XBee
 xcode
 xdf
