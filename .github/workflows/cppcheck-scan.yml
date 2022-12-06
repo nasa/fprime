@@ -1,0 +1,68 @@
+# Adapted from https://github.com/nasa/cFS/blob/c36aa2c1df0fb47a3838577908af3d0d0ab0ef54/.github/workflows/static-analysis.yml
+name: "Cppcheck Scan"
+
+on:
+  push:
+    branches: [ master, devel ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master, devel ]
+
+
+jobs:
+  cppcheck:
+    name: Cppcheck
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - name: Install cppcheck
+        run: sudo apt-get install cppcheck xsltproc -y
+
+      - name: Install sarif tool
+        run: npm install @microsoft/sarif-multitool
+
+      # With a CMake-based project, we get the list of files by setting up a build with CMAKE_EXPORT_COMPILE_COMMANDS=ON and
+      # referencing the compile_commands.json file produced by the tool.  This will capture the correct include paths and
+      # compile definitions based on how the source is actually compiled. See https://cppcheck.sourceforge.io/manual.html
+      - name: Generate & build F´
+        run: |
+          fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
+          echo CPPCHECK_OPTS=--project="$GITHUB_WORKSPACE/build-fprime-automatic-native/compile_commands.json" >> $GITHUB_ENV
+
+      - name: Run cppcheck
+        run: cppcheck --force --relative-paths=$(pwd) --inline-suppr --std=c++11 -j "$(nproc || printf '%s\n' 1)" --max-ctu-depth=16 --enable=warning,performance,portability --suppress=variableScope --inconclusive --xml $CPPCHECK_OPTS 2> cppcheck_err.xml
+
+      - name: Convert cppcheck results to SARIF
+        run: npx "@microsoft/sarif-multitool" convert "cppcheck_err.xml" --tool "CppCheck" --output "cppcheck_err.sarif" --force
+
+      - name: Convert cppcheck results to Markdown & Integrate them in the workflow summary
+        run: xsltproc .github/scripts/cppcheck-xml2text.xslt cppcheck_err.xml | tee $GITHUB_STEP_SUMMARY cppcheck_err.txt
+
+      - name: Upload SARIF file to GitHub Code Scanning Alerts
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{ github.workspace }}/cppcheck_err.sarif
+          checkout_path: ${{ github.workspace }}/source
+          category: "cppcheck"
+
+      - name: Archive static analysis artifacts to download and view
+        uses: actions/upload-artifact@v3
+        with:
+          name: cppcheck-errors
+          path: ./*cppcheck_err.*
+      
+      # Make the whole step fail if there is an error detected by cppcheck. By default, GitHub Actions enables the set -e.
+      # See https://stackoverflow.com/questions/73066461/github-actions-why-an-intermediate-command-failure-in-shell-script-would-cause.
+      - name: Check for reported errors
+        run: tail -n 1 cppcheck_err.txt | grep -q '^\*\*0 error(s) reported\*\*$'
