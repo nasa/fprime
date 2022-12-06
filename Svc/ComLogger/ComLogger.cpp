@@ -31,7 +31,7 @@ namespace Svc {
       FW_ASSERT(maxFileSize > sizeof(U16), maxFileSize); // must be a positive integer greater than buffer length size
     }
     else {
-      FW_ASSERT(maxFileSize > sizeof(0), maxFileSize); // must be a positive integer
+      FW_ASSERT(maxFileSize > 0, maxFileSize); // must be a positive integer
     }
     FW_ASSERT(Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)) < sizeof(this->filePrefix),
       Fw::StringUtils::string_length(incomingFilePrefix, sizeof(this->filePrefix)), sizeof(this->filePrefix)); // ensure that file prefix is not too big
