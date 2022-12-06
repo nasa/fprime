@@ -4,7 +4,7 @@
         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
 
-    <!-- This is a common filefor both interface_schem and internal_interface_schema. These two were originally merged into this file, but had to be split as a work around to keep the same definitions but not validate component files that had the interface tag in it. -->
+    <!-- This is a common file for both interface_schem and internal_interface_schema. These two were originally merged into this file, but had to be split as a workaround to keep the same definitions but not validate component files that had the interface tag in it. -->
 
     <include href="common_elements.rng"/>
 
