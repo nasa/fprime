@@ -773,6 +773,7 @@ libiconv
 LIBLOC
 lic
 lindent
+linelength
 lineno
 lineroo
 lineterm
