@@ -12,6 +12,7 @@
 #ifndef _FW_CONFIG_HPP_
 #define _FW_CONFIG_HPP_
 #include <Fw/Types/BasicTypes.hpp>
+#include <limits>
 
 typedef PlatformIndexType FwIndexType;
 #define PRI_FwIndexType PRI_PlatformIndexType
