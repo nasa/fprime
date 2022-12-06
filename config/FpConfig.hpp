@@ -77,37 +77,25 @@ typedef U16 FwTlmPacketizeIdType;
  * includes the limits included within those files.
  *
  **/
+#define FP_CONFIG_NUMERIC_LIMITS(T) \
+  static const T T##_MIN = std::numeric_limits<T>::min(); \
+  static const T T##_MAX = std::numeric_limits<T>::max();
 struct FpLimits : BasicLimits {
-    static const FwIndexType FwIndexType_MIN = PlatformIndexType_MIN;
-    static const FwIndexType FwIndexType_MAX = PlatformIndexType_MAX;
-    static const FwSizeType FwSizeType_MIN = PlatformSizeType_MIN;
-    static const FwSizeType FwSizeType_MAX = PlatformSizeType_MAX;
-    static const FwAssertArgType FwAssertArgType_MIN = PlatformAssertArgType_MIN;
-    static const FwAssertArgType FwAssertArgType_MAX = PlatformAssertArgType_MAX;
-    static const FwNativeIntType FwNativeIntType_MIN = PlatformIntType_MIN;
-    static const FwNativeIntType FwNativeIntType_MAX = PlatformIntType_MAX;
-    static const FwNativeUIntType FwNativeUIntType_MIN = PlatformUIntType_MIN;
-    static const FwNativeUIntType FwNativeUIntType_MAX = PlatformUIntType_MAX;
-    static const FwBuffSizeType FwBuffSizeType_MIN = U16_MIN;
-    static const FwBuffSizeType FwBuffSizeType_MAX = U16_MAX;
-    static const FwEnumStoreType FwEnumStoreType_MIN = I32_MIN;
-    static const FwEnumStoreType FwEnumStoreType_MAX = I32_MAX;
-    static const FwTimeBaseStoreType FwTimeBaseStoreType_MIN = U16_MIN;
-    static const FwTimeBaseStoreType FwTimeBaseStoreType_MAX = U16_MAX;
-    static const FwTimeContextStoreType FwTimeContextStoreType_MIN = U8_MIN;
-    static const FwTimeContextStoreType FwTimeContextStoreType_MAX = U8_MAX;
-    static const FwPacketDescriptorType FwPacketDescriptorType_MIN = U32_MIN;
-    static const FwPacketDescriptorType FwPacketDescriptorType_MAX = U32_MAX;
-    static const FwOpcodeType FwOpcodeType_MIN = U32_MIN;
-    static const FwOpcodeType FwOpcodeType_MAX = U32_MAX;
-    static const FwChanIdType FwChanIdType_MIN = U32_MIN;
-    static const FwChanIdType FwChanIdType_MAX = U32_MAX;
-    static const FwEventIdType FwEventIdType_MIN = U32_MIN;
-    static const FwEventIdType FwEventIdType_MAX = U32_MAX;
-    static const FwPrmIdType FwPrmIdType_MIN = U32_MIN;
-    static const FwPrmIdType FwPrmIdType_MAX = U32_MAX;
-    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MIN = U16_MIN;
-    static const FwTlmPacketizeIdType FwTlmPacketizeIdType_MAX = U16_MAX;
+    FP_CONFIG_NUMERIC_LIMITS(FwAssertArgType)
+    FP_CONFIG_NUMERIC_LIMITS(FwBuffSizeType)
+    FP_CONFIG_NUMERIC_LIMITS(FwChanIdType)
+    FP_CONFIG_NUMERIC_LIMITS(FwEnumStoreType)
+    FP_CONFIG_NUMERIC_LIMITS(FwEventIdType)
+    FP_CONFIG_NUMERIC_LIMITS(FwIndexType)
+    FP_CONFIG_NUMERIC_LIMITS(FwNativeIntType)
+    FP_CONFIG_NUMERIC_LIMITS(FwNativeUIntType)
+    FP_CONFIG_NUMERIC_LIMITS(FwOpcodeType)
+    FP_CONFIG_NUMERIC_LIMITS(FwPacketDescriptorType)
+    FP_CONFIG_NUMERIC_LIMITS(FwPrmIdType)
+    FP_CONFIG_NUMERIC_LIMITS(FwSizeType)
+    FP_CONFIG_NUMERIC_LIMITS(FwTimeBaseStoreType)
+    FP_CONFIG_NUMERIC_LIMITS(FwTimeContextStoreType)
+    FP_CONFIG_NUMERIC_LIMITS(FwTlmPacketizeIdType)
 };
 
 // Boolean values for serialization
