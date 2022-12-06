@@ -8,7 +8,7 @@
 #include "FppTest/port/PrimitiveReturnPortAc.hpp"
 
 #include "Tester.hpp"
-#include "FppTest/port/PortStructs.hpp"
+#include "FppTest/port/PortTypes.hpp"
 #include "FppTest/typed_tests/PortTest.hpp"
 
 #include "gtest/gtest.h"

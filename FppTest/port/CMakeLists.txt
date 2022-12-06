@@ -3,6 +3,7 @@
 # SOURCE_FILES: Handcoded C++ source files)
 
 set(SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
@@ -30,6 +31,7 @@ set(UT_MOD_DEPS
 # Add unit test directory
 # UT_SOURCE_FILES: Sources for unit test
 set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"

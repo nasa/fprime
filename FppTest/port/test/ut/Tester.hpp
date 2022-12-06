@@ -9,7 +9,7 @@
 
 #include "GTestBase.hpp"
 #include "FppTest/port/Example.hpp"
-#include "FppTest/port/PortStructs.hpp"
+#include "FppTest/port/PortTypes.hpp"
 
   class Tester :
     public ExampleGTestBase
