@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_${port_name}[%d]",
+          "%s_${port_name}[%" PRI_FwIndexType "]",
           this->m_objName,
           _port
       );
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       snprintf(
           _portName,
           sizeof(_portName),
-          "%s_to_${instance}[%d]",
+          "%s_to_${instance}[%" PRI_FwIndexType "]",
           this->m_objName,
           _port
       );
@@ -861,7 +861,7 @@ $emit_cpp_params([ $param_instance, $param_cmdSeq ] + $get_command_params($mnemo
         const Fw::SerializeStatus _status = val.deserialize(arg);
     #end if
         if (_status != Fw::FW_SERIALIZE_OK) {
-          printf("Error deserializing ${tlm_name}: %d\n", _status);
+          printf("Error deserializing ${tlm_name}: %" PRI_FwChanIdType "\n", _status);
           return;
         }
     #if $typeinfo == "enum":
@@ -1114,7 +1114,7 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
 
     fprintf(
         file,
-        "EVENT: (%d) (%d:%d,%d) %s: %s\n",
+        "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
         e.id,
         const_cast<TextLogEntry&>(e).timeTag.getTimeBase(),
         const_cast<TextLogEntry&>(e).timeTag.getSeconds(),

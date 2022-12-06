@@ -447,7 +447,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_InputPort[%d]",
+          "%s_${instance}_InputPort[%" PRI_FwIndexType "]",
           this->m_objName,
           port
       );
@@ -474,7 +474,7 @@ namespace ${namespace} {
       (void) snprintf(
           portName,
           sizeof(portName),
-          "%s_${instance}_OutputPort[%d]",
+          "%s_${instance}_OutputPort[%" PRI_FwIndexType "]",
           this->m_objName,
           port
       );
