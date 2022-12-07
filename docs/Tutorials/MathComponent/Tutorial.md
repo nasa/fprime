@@ -102,6 +102,7 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
+
 **Version control:**
 Working on this tutorial will modify some files under version control
 in the F Prime git repository.
@@ -756,7 +757,7 @@ Do the following in directory `Ref/MathSender`:
 1. Run `mkdir -p test/ut` to create the directory where
 the unit tests will reside.
 
-2. Update Ref/MathSender/CMakeLists.txt:
+1. Update Ref/MathSender/CMakeLists.txt:
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -768,19 +769,19 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 ```
 
-This code tells the build system how to build
-and run the unit tests.
+**Run the build:**
+Now we can check that the unit test build is working.
 
-4. Run `fprime-util generate --ut` to generate the unit test cache.
+1. Run `fprime-util generate --ut` to generate the unit test cache.
 
-5. Run the command `fprime-util impl --ut`.
+1. Run the command `fprime-util impl --ut`.
 It should generate files `Tester.cpp` and `Tester.hpp`.
 
-6. Move these files to the `test/ut` directory:
+1. Move these files to the `test/ut` directory:
 
-```bash
-mv Tester.* test/ut
-```
+   ```bash
+   mv Tester.* test/ut
+   ```
 
 **Create a stub main.cpp file:**
 Now go to the directory `Ref/MathSender/test/ut`.
@@ -800,16 +801,16 @@ This file is a stub for running tests using the
 Right now there aren't any tests to run; we will add one
 in the next section.
 
-7. Add the new files to the build.
+**Update Ref/MathSender/CMakeLists.txt:**
+Open `MathSender/CMakeLists.txt` and update the definition of
+`UT_SOURCE_FILES` by adding your new test files:
 
-Open `MathSender/CMakeLists.txt` and modify the `UT_SOURCE_FILES` by adding
-your new test files:
 ```cmake
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
 register_fprime_ut()
 ```
@@ -1825,12 +1826,6 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
-Add the following to the top of the `Tester.cpp` file:
-
-```C++
-#define CMD_SEQ 42
-```
-
 Add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
@@ -2051,13 +2046,12 @@ Those ports will include the ports for the new instances
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
-After the last entry for the `rateGroup1Comp` (rate group 1) add the line:
-```fpp
-rateGroup1Comp.RateGroupMemberOut[5] -> mathReceiver.schedIn
-```
+After the last entry for the `rateGroup1Comp` (rate group 1) add
+the following line:
 
-> You might need to change the array index 5 to be one greater than the previous
-`rateGroup1Comp` index. Otherwise you'll get a duplicate connection error.
+```fpp
+rateGroup1Comp.RateGroupMemberOut -> mathReceiver.schedIn
+```
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
@@ -2308,7 +2302,7 @@ Select the log you wish to inspect from the drop-down menu.
 By default, there is no log selected.
 
 <a name="Conclusion"></a>
-### 8. Conclusion
+## 8. Conclusion
 
 The Math Component tutorial has shown us how to create simple types, ports and
 components for our application using the FPP modeling language. We have learned
