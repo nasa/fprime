@@ -1736,8 +1736,7 @@ This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
 
 **Re-run the check for unconnected ports:**
-When this capability exists, you will be able to see
-that `mathReceiver.schedIn` is now connected
+You should see that `mathReceiver.schedIn` is now connected
 (it no longer appears in the list).
 
 **Add the Math connections:**
