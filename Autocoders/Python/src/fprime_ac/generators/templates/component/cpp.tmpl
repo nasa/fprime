@@ -430,8 +430,8 @@ namespace ${namespace} {
 #for $instance, $type, $sync, $priority, $full, $role, $max_num in $input_ports:
     // Connect input port $instance
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_InputPorts();
+        FwIndexType port = 0;
+        port < static_cast<FwIndexType>(this->getNum_${instance}_InputPorts());
         port++
     ) {
 
@@ -463,8 +463,8 @@ namespace ${namespace} {
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE port = 0;
-        port < this->getNum_${instance}_OutputPorts();
+        FwIndexType port = 0;
+        port < static_cast<FwIndexType>(this->getNum_${instance}_OutputPorts());
         port++
     ) {
       this->m_${instance}_OutputPort[port].init();

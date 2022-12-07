@@ -121,8 +121,8 @@ $emit_cpp_params([ $param_instance ])
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_from_${instance}();
+        FwIndexType _port = 0;
+        _port < static_cast<FwIndexType>(this->getNum_from_${instance}());
         ++_port
     ) {
 
@@ -157,8 +157,8 @@ $emit_cpp_params([ $param_instance ])
     // Initialize output port $instance
 
     for (
-        NATIVE_INT_TYPE _port = 0;
-        _port < this->getNum_to_${instance}();
+        FwIndexType _port = 0;
+        _port < static_cast<FwIndexType>(this->getNum_to_${instance}());
         ++_port
     ) {
       this->m_to_${instance}[_port].init();
