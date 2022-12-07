@@ -615,8 +615,11 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 ```
 
-**Run the build:**
-Now we can check that the unit test build is working.
+**Generate the unit test stub:**
+We will now generate a stub implementation of the unit tests.
+This stub contains all the boilerplate necessary to write and
+run unit tests against the `MathSender` component.
+In a later step, we will fill in the stub with tests.
 
 1. If you have not yet run `fprime-util generate --ut`,
 then do so now.
