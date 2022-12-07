@@ -408,14 +408,14 @@ After the second command, the build system should
 run for a bit.
 At the end there should be two new files
 in the directory:
-`MathSenderComponentImpl.cpp-template` and
-`MathSenderComponentImpl.hpp-template`.
+`MathSender.cpp-template` and
+`MathSender.hpp-template`.
 
 Run the following commands:
 
 ```bash
-mv MathSenderComponentImpl.cpp-template MathSender.cpp
-mv MathSenderComponentImpl.hpp-template MathSender.hpp
+mv MathSender.cpp-template MathSender.cpp
+mv MathSender.hpp-template MathSender.hpp
 ```
 
 These commands produce a template, or stub implementation,
@@ -594,31 +594,13 @@ Now we can check that the unit test build is working.
 1. Run `fprime-util generate --ut` to generate the unit test cache.
 
 1. Run the command `fprime-util impl --ut`.
-It should generate files `Tester.cpp` and `Tester.hpp`.
+It should generate files `Tester.cpp`, `Tester.hpp`, and `TestMain.cpp`.
 
 1. Move these files to the `test/ut` directory:
 
    ```bash
-   mv Tester.* test/ut
+   mv Tester.* TestMain.cpp test/ut
    ```
-
-**Create a stub main.cpp file:**
-Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create the file `main.cpp` and add the following contents:
-
-```c++
-#include "Tester.hpp"
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-```
-
-This file is a stub for running tests using the
-[Google Test framework](https://github.com/google/googletest).
-Right now there aren't any tests to run; we will add one
-in the next section.
 
 **Update Ref/MathSender/CMakeLists.txt:**
 Open `MathSender/CMakeLists.txt` and update the definition of
@@ -1249,7 +1231,7 @@ of the function.
 Here we do the following:
 
 1. If the parameter identifier is `PARAMID_FACTOR` (the parameter
-identifier corresponding to the `FACTOR` parameter,
+identifier corresponding to the `FACTOR` parameter),
 then get the parameter value and emit an event report.
 
 1. Otherwise fail an assertion.
@@ -1665,8 +1647,8 @@ add the following lines:
 
 ```fpp
 instance mathSender: Ref.MathSender base id 0xE00 \
-  queue size Default.queueSize \
-  stack size Default.stackSize \
+  queue size Default.QUEUE_SIZE \
+  stack size Default.STACK_SIZE \
   priority 100
 ```
 
@@ -1691,7 +1673,7 @@ add the following lines:
 
 ```fpp
 instance mathReceiver: Ref.MathReceiver base id 0x2700 \
-  queue size Default.queueSize
+  queue size Default.QUEUE_SIZE
 ```
 
 This code defines an instance `mathReceiver` of
