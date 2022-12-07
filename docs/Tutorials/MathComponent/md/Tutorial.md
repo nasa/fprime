@@ -51,7 +51,6 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-
 **Version control:**
 Working on this tutorial will modify some files under version control
 in the F Prime git repository.
