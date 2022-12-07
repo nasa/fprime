@@ -571,12 +571,11 @@ in three steps:
 #### Set Up the Unit Test Environment
 
 **Create the stub Tester class:**
-Do the following in directory `Ref/MathSender`:
-
-1. Run `mkdir -p test/ut` to create the directory where
+In the directory `Ref/MathSender`, run `mkdir -p test/ut`.
+This will create the directory where
 the unit tests will reside.
 
-1. Update Ref/MathSender/CMakeLists.txt:
+**Update Ref/MathSender/CMakeLists.txt:**
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
