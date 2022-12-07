@@ -854,8 +854,7 @@ the tests pass.
 Add a test for exercising the scenario in which the `MathReceiver`
 component sends a result back to `MathSender`.
 
-1. Add the following function signature in the "Tests"
-   section of to `Tester.hpp`:
+1. Add the following function signature in the "Tests" section of `Tester.hpp`:
 
    ```c++
    //! Test receipt of a result
