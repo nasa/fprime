@@ -593,10 +593,12 @@ This stub contains all the boilerplate necessary to write and
 run unit tests against the `MathSender` component.
 In a later step, we will fill in the stub with tests.
 
-1. Run `fprime-util generate --ut` to generate the unit test cache.
+1. If you have not yet run `fprime-util generate --ut`,
+   then do so now. This step generates the CMake build cache for the unit
+   tests.
 
 1. Run the command `fprime-util impl --ut`.
-It should generate files `Tester.cpp`, `Tester.hpp`, and `TestMain.cpp`.
+   It should generate files `Tester.cpp`, `Tester.hpp`, and `TestMain.cpp`.
 
 1. Move these files to the `test/ut` directory:
 
