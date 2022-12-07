@@ -811,8 +811,8 @@ tests.
 Everything should build without errors.
 
 **Inspect the generated code:**
-The generated code is located at
-`Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
+The unit test build generates some code to support unit testing.
+The code is located at `Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
 This directory contains two auto-generated classes:
 
 1. `MathSenderGTestBase`: This is the direct base
