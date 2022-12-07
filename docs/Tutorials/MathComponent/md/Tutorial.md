@@ -1510,7 +1510,13 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
-Add the following function to the "Tests" section of `Tester.cpp`:
+Add the following constant definition to the top of the `Tester.cpp` file:
+
+```C++
+#define CMD_SEQ 42
+```
+
+Then add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
 void Tester ::
