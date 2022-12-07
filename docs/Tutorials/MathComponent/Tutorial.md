@@ -768,8 +768,11 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 ```
 
-**Run the build:**
-Now we can check that the unit test build is working.
+**Generate the unit test stub:**
+We will now generate a stub implementation of the unit tests.
+This stub contains all the boilerplate necessary to write and
+run unit tests against the `MathSender` component.
+In a later step, we will fill in the stub with tests.
 
 1. Run `fprime-util generate --ut` to generate the unit test cache.
 
@@ -796,18 +799,9 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 ```
 
-**Generate the unit test stub:**
-We will now generate a stub implementation of the unit tests.
-This stub contains all the boilerplate necessary to write and
-run unit tests against the `MathSender` component.
-In a later step, we will fill in the stub with tests.
-
-1. If you have not yet run `fprime-util generate --ut`,
-then do so now.
-This step generates the CMake build cache for the unit
-tests.
-
-1. Run `fprime-util build --ut`.
+**Run the build:**
+Now we can check that the unit test build is working.
+Run `fprime-util build --ut`.
 Everything should build without errors.
 
 **Inspect the generated code:**
