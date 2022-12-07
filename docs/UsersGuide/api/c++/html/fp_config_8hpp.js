@@ -1,6 +1,7 @@
 var _fp_config_8hpp =
 [
-    [ "FpLimits", "struct_fp_limits.html", "struct_fp_limits" ],
+    [ "FpLimits", "struct_fp_limits.html", null ],
+    [ "FP_CONFIG_NUMERIC_LIMITS", "fp_config_8hpp.html#a9b962fe672cb5e83db3ec4692d41997c", null ],
     [ "FW_AMPCS_COMPATIBLE", "fp_config_8hpp.html#a0b27aabc04bf11f630b20e441a37759b", null ],
     [ "FW_ARRAY_TO_STRING", "fp_config_8hpp.html#a2a77bfe246d3b84e371788fbb3c1a8c7", null ],
     [ "FW_ARRAY_TO_STRING_BUFFER_SIZE", "fp_config_8hpp.html#ac38642e68bbe5a71d94ab8fbfc7972e4", null ],

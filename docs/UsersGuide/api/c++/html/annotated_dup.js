@@ -166,7 +166,7 @@ var annotated_dup =
     [ "EnumTest", "class_enum_test.html", null ],
     [ "EnumToStringTest", "class_enum_to_string_test.html", "class_enum_to_string_test" ],
     [ "FormatTest", "class_format_test.html", "class_format_test" ],
-    [ "FpLimits", "struct_fp_limits.html", "struct_fp_limits" ],
+    [ "FpLimits", "struct_fp_limits.html", null ],
     [ "NonPrimitiveStructTest", "class_non_primitive_struct_test.html", "class_non_primitive_struct_test" ],
     [ "PrimitiveStructTest", "class_primitive_struct_test.html", "class_primitive_struct_test" ],
     [ "SHA256state_st", "struct_s_h_a256state__st.html", "struct_s_h_a256state__st" ],

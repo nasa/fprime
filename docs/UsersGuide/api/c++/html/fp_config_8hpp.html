@@ -97,6 +97,7 @@ $(document).ready(function(){initNavTree('_fp_config_8hpp.html',''); initResizab
 <p>ISF configuration file.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="basic_types_8hpp_source.html">Fw/Types/BasicTypes.hpp</a>&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 </div>
 <p><a href="fp_config_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -140,6 +141,8 @@ Macros</h2></td></tr>
 <tr class="separator:aa0b31d4b4d1bad23dec2917ca74d0ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b264f66f16cc2e6bff021091b2a8ae2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8hpp.html#a4b264f66f16cc2e6bff021091b2a8ae2">PRI_FwTlmPacketizeIdType</a>&#160;&#160;&#160;PRIu16</td></tr>
 <tr class="separator:a4b264f66f16cc2e6bff021091b2a8ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b962fe672cb5e83db3ec4692d41997c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8hpp.html#a9b962fe672cb5e83db3ec4692d41997c">FP_CONFIG_NUMERIC_LIMITS</a>(T)</td></tr>
+<tr class="separator:a9b962fe672cb5e83db3ec4692d41997c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d56182509bdcb6dd60b2d5316eb3b78"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fp_config_8hpp.html#a2d56182509bdcb6dd60b2d5316eb3b78">FW_SERIALIZE_TRUE_VALUE</a>&#160;&#160;&#160;(0xFF)</td></tr>
 <tr class="memdesc:a2d56182509bdcb6dd60b2d5316eb3b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value encoded during serialization for boolean true.  <a href="fp_config_8hpp.html#a2d56182509bdcb6dd60b2d5316eb3b78">More...</a><br /></td></tr>
 <tr class="separator:a2d56182509bdcb6dd60b2d5316eb3b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -316,6 +319,31 @@ Enumerations</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a9b962fe672cb5e83db3ec4692d41997c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b962fe672cb5e83db3ec4692d41997c">&#9670;&nbsp;</a></span>FP_CONFIG_NUMERIC_LIMITS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FP_CONFIG_NUMERIC_LIMITS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">T</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keyword">static</span> <span class="keyword">const</span> T T##_MIN = <a class="code" href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">std::numeric_limits&lt;T&gt;::min</a>(); \</div>
+<div class="line">  static <span class="keyword">const</span> T T##_MAX = std::numeric_limits&lt;T&gt;::max();</div>
+<div class="ttc" id="a_checksum_8cpp_html_a32f984d99c3f2df28c300b5111d2735c"><div class="ttname"><a href="checksum_8cpp.html#a32f984d99c3f2df28c300b5111d2735c">min</a></div><div class="ttdeci">static U32 min(const U32 a, const U32 b)</div><div class="ttdef"><b>Definition:</b> <a href="checksum_8cpp_source.html#l00016">Checksum.cpp:16</a></div></div>
+</div><!-- fragment --><p><a class="el" href="struct_fp_limits.html">FpLimits</a>:</p>
+<p>Sets the limit constants for the types defined int this file. Constants are defined as <code>static const</code> to ensure that storage is not allocated. This class inherits from <a class="el" href="struct_basic_limits.html">BasicLimits</a> and transitively from PlatformLimits such that it includes the limits included within those files. </p>
+
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00081">81</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a0b27aabc04bf11f630b20e441a37759b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0b27aabc04bf11f630b20e441a37759b">&#9670;&nbsp;</a></span>FW_AMPCS_COMPATIBLE</h2>
 
@@ -330,7 +358,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not JPL AMPCS ground system support is enabled. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00353">353</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00342">342</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -348,7 +376,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates if autocoded arrays have toString() methods. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00342">342</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00331">331</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -366,7 +394,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of string to store toString() string output. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00347">347</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00336">336</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -384,7 +412,7 @@ Enumerations</h2></td></tr>
 
 <p>Maximum assert message length when using the default assert handler. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00197">197</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00186">186</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -402,7 +430,7 @@ Enumerations</h2></td></tr>
 
 <p>Defines the type of assert used. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00199">199</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00188">188</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -420,7 +448,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of string used to store assert description. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00204">204</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00193">193</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -438,7 +466,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether or not a baremetal scheduler should be used. Alternatively the <a class="el" href="namespace_os.html">Os</a> scheduler is used. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00157">157</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00146">146</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -454,7 +482,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00260">260</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00249">249</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -472,7 +500,7 @@ Enumerations</h2></td></tr>
 
 <p>Check for leftover command bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00275">275</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00264">264</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -490,7 +518,7 @@ Enumerations</h2></td></tr>
 
 <p>Max character size of command string arguments. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00265">265</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00254">254</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -508,7 +536,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of Fw::Com buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00254">254</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00243">243</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -526,7 +554,7 @@ Enumerations</h2></td></tr>
 
 <p>Don't care value for time contexts in sequences. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00045">45</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00046">46</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -544,7 +572,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether text logging is turned on. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00320">320</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00309">309</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -562,7 +590,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of file buffer (i.e. chunk of file) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00310">310</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00299">299</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +608,7 @@ Enumerations</h2></td></tr>
 
 <p>Character array size for the filepath character type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00370">370</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00359">359</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -598,7 +626,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of interface string parameter type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00315">315</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00304">304</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -614,7 +642,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00280">280</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00269">269</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -632,7 +660,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of log string parameter type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00285">285</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00274">274</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -650,7 +678,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of string for text log message. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00325">325</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00314">314</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -668,7 +696,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of object name (if object names enabled). AC Limits to 80, truncation occurs above 80. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00212">212</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00201">201</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -686,7 +714,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of object registry dump string. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00230">230</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00219">219</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -704,7 +732,7 @@ Enumerations</h2></td></tr>
 
 <p>Number of objects stored in simple object registry. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00226">226</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00215">215</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -722,7 +750,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of string storing toString() text. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00219">219</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00208">208</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -740,7 +768,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether or not object names are stored (more memory, can be used for tracking objects) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00125">125</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00114">114</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -758,7 +786,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether or not objects can register themselves (more code, more object tracking) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00149">149</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00138">138</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -776,7 +804,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether or not generated objects have toString() methods to dump internals (more code) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00140">140</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00129">129</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -796,7 +824,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00131">131</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00120">120</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -812,7 +840,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00300">300</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00289">289</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -830,7 +858,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of parameter string type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00305">305</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00294">294</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -848,7 +876,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether there is code in ports to serialize the call (more code, but ability to serialize calls for multi-note systems) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00169">169</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00158">158</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -866,7 +894,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether port calls are traced (more code, more visibility into execution) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00164">164</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00153">153</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -884,7 +912,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of message queue name. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00244">244</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00233">233</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -902,7 +930,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates whether or not queue registration is used. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00153">153</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00142">142</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -920,7 +948,7 @@ Enumerations</h2></td></tr>
 
 <p>Number of queues stored in simple queue registry. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00237">237</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00226">226</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -938,7 +966,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates if autocoded serializables have toString() methods. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00331">331</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00320">320</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -956,7 +984,7 @@ Enumerations</h2></td></tr>
 
 <p>Size of string to store toString() string output. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00336">336</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00325">325</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -974,7 +1002,7 @@ Enumerations</h2></td></tr>
 
 <p>Indicates if type id is stored when type is serialized. (More storage, but more type safety) </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00181">181</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00170">170</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -992,7 +1020,7 @@ Enumerations</h2></td></tr>
 
 <p>Value encoded during serialization for boolean false. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00119">119</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00108">108</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1010,7 +1038,7 @@ Enumerations</h2></td></tr>
 
 <p>Value encoded during serialization for boolean true. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00115">115</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00104">104</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1056,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of task name. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00249">249</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00238">238</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1044,7 +1072,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00290">290</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00279">279</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1062,7 +1090,7 @@ Enumerations</h2></td></tr>
 
 <p>Max size of channelized telemetry string type. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00295">295</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00284">284</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1080,7 +1108,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not to use the time base. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00360">360</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00349">349</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1098,7 +1126,7 @@ Enumerations</h2></td></tr>
 
 <p>Whether or not to serialize the time context. </p>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00364">364</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00353">353</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1114,7 +1142,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00023">23</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00024">24</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1130,7 +1158,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00033">33</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00034">34</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1146,7 +1174,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00060">60</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00061">61</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1162,7 +1190,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00036">36</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00037">37</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1178,7 +1206,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00063">63</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00064">64</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1194,7 +1222,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00017">17</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00018">18</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1210,7 +1238,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00027">27</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00028">28</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1226,7 +1254,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00030">30</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00031">31</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1242,7 +1270,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00057">57</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00058">58</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1258,7 +1286,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00054">54</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00055">55</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1274,7 +1302,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00066">66</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00067">67</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1290,7 +1318,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00020">20</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00021">21</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1306,7 +1334,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00048">48</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00049">49</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1322,7 +1350,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00051">51</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00052">52</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1338,7 +1366,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00069">69</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00070">70</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1355,7 +1383,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00022">22</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00023">23</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1371,7 +1399,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00032">32</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00033">33</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1387,7 +1415,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00059">59</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00060">60</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1403,7 +1431,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00035">35</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00036">36</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1419,7 +1447,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00062">62</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00063">63</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1435,7 +1463,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00016">16</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00017">17</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1451,7 +1479,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00026">26</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00027">27</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1467,7 +1495,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00029">29</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00030">30</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1483,7 +1511,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00056">56</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00057">57</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1499,7 +1527,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00053">53</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00054">54</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1515,7 +1543,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00065">65</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00066">66</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1531,7 +1559,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00019">19</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00020">20</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1547,7 +1575,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00047">47</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00048">48</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1563,7 +1591,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00050">50</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00051">51</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1579,7 +1607,7 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00068">68</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00069">69</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>
@@ -1606,7 +1634,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00039">39</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fp_config_8hpp_source.html#l00040">40</a> of file <a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>.</p>
 
 </div>
 </div>

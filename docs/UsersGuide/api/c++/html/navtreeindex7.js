@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"svc_watch_dog_port.html#autotoc_md680":[8,31,0,1,0,1],
 "svc_watch_dog_port.html#autotoc_md681":[8,31,0,2],
 "task_8hpp.html":[15,0,6,31],
 "task_8hpp_source.html":[15,0,6,31],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "class_drv_1_1_block_driver_impl.html#a0285ec71c3fd27f8385fe24683a8e41a":[14,0,1,0,2],
 "class_drv_1_1_block_driver_impl.html#a0c193be609891ed95f5168a617d9c64c":[14,0,1,0,1],
 "class_drv_1_1_block_driver_impl.html#a3fccddcab1d8689aac26c72c43cd1151":[14,0,1,0,0],
-"class_drv_1_1_block_driver_impl.html#a5cfd8456153c78833e333a0575f37f9d":[14,0,1,0,3],
-"class_drv_1_1_data_buffer.html":[14,0,1,1]
+"class_drv_1_1_block_driver_impl.html#a5cfd8456153c78833e333a0575f37f9d":[14,0,1,0,3]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX12 =
 {
+"class_svc_1_1_buffer_accumulator.html":[14,0,4,5],
 "class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74":[14,0,4,5,2],
 "class_svc_1_1_buffer_accumulator.html#a2280eba690a664ed3028131f41dffe05":[14,0,4,5,3],
 "class_svc_1_1_buffer_accumulator.html#ac71af9e662c99c5e311bc26d96ff215a":[14,0,4,5,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX12 =
 "class_svc_1_1_timer_val.html#ac8a66c4d36c9a773c6c128e6d9669df9":[14,0,4,15,4],
 "class_svc_1_1_timer_val.html#afa078df23c3662b0691689215c4cf463":[14,0,4,15,3],
 "class_svc_1_1_tlm_chan_impl.html":[14,0,4,40],
-"class_svc_1_1_tlm_chan_impl.html#a28804b31d0818e24b9bbe8ea77aed26d":[14,0,4,40,4],
-"class_svc_1_1_tlm_chan_impl.html#a41c8da3fadf16c10248cc765c04be26d":[14,0,4,40,0]
+"class_svc_1_1_tlm_chan_impl.html#a28804b31d0818e24b9bbe8ea77aed26d":[14,0,4,40,4]
 };

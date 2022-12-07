@@ -137,7 +137,7 @@ var NAVTREE =
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
-        [ "Variables", "functions_vars.html", "functions_vars" ],
+        [ "Variables", "functions_vars.html", null ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Enumerator", "functions_eval.html", null ],
@@ -164,20 +164,20 @@ var NAVTREEINDEX =
 "a_m_p_c_s_sequence_8cpp.html",
 "console_text_logger_impl_8hpp_source.html",
 "file_system_8hpp.html#aef0e542bc6a12590a0ac50784739bd91",
-"i_p_c_queue_8cpp.html#a689291deb9e6bab0b8a359c1429b7932",
-"os_2_posix_2_queue_8cpp.html",
-"svc_active_logger_component.html#autotoc_md187",
-"svc_file_uplink_component.html#autotoc_md449",
-"svc_watch_dog_port.html#autotoc_md681",
-"class_drv_1_1_data_buffer.html#a110c6407ab545d600387b8f973d8c7a5",
-"class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a89bc97f02f96b31614df715ff6e36eb0",
-"class_fw_1_1_serializable_file.html#a5f04d8113d943cbb949f693060a310ee",
-"class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105afb791cd4ea04f97e6d3a402574bc9489",
-"class_svc_1_1_buffer_accumulator.html#a16be0726f4574705ce2290e6a1ff4b74",
-"class_svc_1_1_tlm_chan_impl.html#a7f8fef903c395a76101843b6ddf60d21",
-"enum_2main_8cpp.html#a10eed89e837a1379b65f28f84ad8f904",
-"namespace_fw.html#aa232625e63c0c60a1fced2933334fc32aad4b2c76b207502b423c84e40e518874",
-"struct_2main_8cpp.html#a056a7fb2098c0f31c19457c966aa2630"
+"i_p_c_queue_8cpp.html",
+"os_2_mac_os_2_system_resources_8cpp_source.html",
+"svc_active_logger_component.html#autotoc_md186",
+"svc_file_uplink_component.html#autotoc_md448",
+"svc_watch_dog_port.html#autotoc_md680",
+"class_drv_1_1_data_buffer.html",
+"class_fw_1_1_com_packet.html#a715f7261d313574f50a43b12914db425a72f39225b887e43644e65d18b6e90fde",
+"class_fw_1_1_serializable_file.html#a4d737e2247488be373eb23933ef54717",
+"class_os_1_1_file.html#aa167c5af184fd73d6937ee4154696105add42a8f7f16b019111a578af042802d1",
+"class_svc_1_1_buffer_accumulator.html",
+"class_svc_1_1_tlm_chan_impl.html#a41c8da3fadf16c10248cc765c04be26d",
+"enum_2main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97",
+"namespace_os.html#a3a61563f155763119352f0e2c1a7420a",
+"struct_basic_limits.html#aaa0436930aaf61a8bc31ab2eaf08a143"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

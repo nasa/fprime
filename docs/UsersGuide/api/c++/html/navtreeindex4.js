@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"os_2_mac_os_2_system_resources_8cpp_source.html":[15,0,6,2,1],
 "os_2_posix_2_queue_8cpp.html":[15,0,6,3,4],
 "os_2_posix_2_queue_8cpp_source.html":[15,0,6,3,4],
 "os_2_pthreads_2_queue_8cpp.html":[15,0,6,4,6],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md293":[8,0,0,1,4],
 "svc_active_logger_component.html":[8,1],
 "svc_active_logger_component.html#autotoc_md184":[8,1,0],
-"svc_active_logger_component.html#autotoc_md185":[8,1,0,0],
-"svc_active_logger_component.html#autotoc_md186":[8,1,0,1]
+"svc_active_logger_component.html#autotoc_md185":[8,1,0,0]
 };
