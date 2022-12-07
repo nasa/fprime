@@ -121,8 +121,8 @@ $emit_cpp_params([ $param_instance ])
 \#if FW_ENABLE_TEXT_LOGGING == 1
   #end if
     for (
-        FwIndexType _port = 0;
-        _port < static_cast<FwIndexType>(this->getNum_from_${instance}());
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_from_${instance}());
         ++_port
     ) {
 
@@ -139,7 +139,7 @@ $emit_cpp_params([ $param_instance ])
       (void) snprintf(
           _portName,
           sizeof(_portName),
-          "%s_${port_name}[%" PRI_FwIndexType "]",
+          "%s_${port_name}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
@@ -157,8 +157,8 @@ $emit_cpp_params([ $param_instance ])
     // Initialize output port $instance
 
     for (
-        FwIndexType _port = 0;
-        _port < static_cast<FwIndexType>(this->getNum_to_${instance}());
+        PlatformIntType _port = 0;
+        _port < static_cast<PlatformIntType>(this->getNum_to_${instance}());
         ++_port
     ) {
       this->m_to_${instance}[_port].init();
@@ -168,7 +168,7 @@ $emit_cpp_params([ $param_instance ])
       snprintf(
           _portName,
           sizeof(_portName),
-          "%s_to_${instance}[%" PRI_FwIndexType "]",
+          "%s_to_${instance}[%" PRI_PlatformIntType "]",
           this->m_objName,
           _port
       );
