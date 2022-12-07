@@ -196,20 +196,6 @@
           str100RefString &str100Ref 
       );
 
-      //! Handler implementation for stringReturnIn
-      //!
-      string stringReturnIn_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const str80String &str80, /*!< 
-      A string of size 80
-      */
-          str80RefString &str80Ref, 
-          const str100String &str100, /*!< 
-      A string of size 100
-      */
-          str100RefString &str100Ref 
-      );
-
       //! Handler implementation for structArgsIn
       //!
       void structArgsIn_handler(

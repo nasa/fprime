@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Example/test/ut/Tester.hpp
-// \author tiffany
+// \author tchieu
 // \brief  hpp file for Example test harness implementation class
 // ======================================================================
 
@@ -14,7 +14,6 @@
   class Tester :
     public ExampleGTestBase
   {
-
 
       // ----------------------------------------------------------------------
       // Construction and destruction
@@ -96,6 +95,54 @@
       // Handlers for typed from ports
       // ----------------------------------------------------------------------
 
+      //! Handler for from_arrayArgsOut
+      //!
+      void from_arrayArgsOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortArray &a, /*!< 
+      An array
+      */
+          PortArray &aRef /*!< 
+      An array ref
+      */
+      );
+
+      //! Handler for from_arrayReturnOut
+      //!
+      PortArray from_arrayReturnOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortArray &a, /*!< 
+      An array
+      */
+          PortArray &aRef /*!< 
+      An array ref
+      */
+      );
+
+      //! Handler for from_enumArgsOut
+      //!
+      void from_enumArgsOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortEnum &e, /*!< 
+      An enum
+      */
+          PortEnum &eRef /*!< 
+      An enum ref
+      */
+      );
+
+      //! Handler for from_enumReturnOut
+      //!
+      PortEnum from_enumReturnOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortEnum &e, /*!< 
+      An enum
+      */
+          PortEnum &eRef /*!< 
+      An enum ref
+      */
+      );
+
       //! Handler for from_noArgsOut
       //!
       void from_noArgsOut_handler(
@@ -130,6 +177,57 @@
           F32 &f32Ref, 
           bool b, 
           bool &bRef 
+      );
+
+      //! Handler for from_stringArgsOut
+      //!
+      void from_stringArgsOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const str80String &str80, /*!< 
+      A string of size 80
+      */
+          str80RefString &str80Ref, 
+          const str100String &str100, /*!< 
+      A string of size 100
+      */
+          str100RefString &str100Ref 
+      );
+
+      //! Handler for from_structArgsOut
+      //!
+      void from_structArgsOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortStruct &s, /*!< 
+      A struct
+      */
+          PortStruct &sRef /*!< 
+      A struct ref
+      */
+      );
+
+      //! Handler for from_structReturnOut
+      //!
+      PortStruct from_structReturnOut_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          const PortStruct &s, /*!< 
+      A struct
+      */
+          PortStruct &sRef /*!< 
+      A struct ref
+      */
+      );
+
+    private:
+
+      // ----------------------------------------------------------------------
+      // Handlers for serial from ports
+      // ----------------------------------------------------------------------
+
+      //! Handler for from_serialOut
+      //!
+      void from_serialOut_handler(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 
     private:

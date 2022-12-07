@@ -211,24 +211,6 @@
     // TODO
   }
 
-  string Example ::
-    stringReturnIn_handler(
-        const NATIVE_INT_TYPE portNum,
-        const str80String &str80,
-        str80RefString &str80Ref,
-        const str100String &str100,
-        str100RefString &str100Ref
-    )
-  {
-    return this->stringReturnOut_out(
-      portNum,
-      str80,
-      str80Ref,
-      str100,
-      str100Ref
-    );
-  }
-
   void Example ::
     structArgsIn_handler(
         const NATIVE_INT_TYPE portNum,

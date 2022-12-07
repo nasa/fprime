@@ -37,9 +37,9 @@ passive component Example {
   
   output port primitiveReturnOut: PrimitiveReturn
 
-  sync input port stringReturnIn: StringReturn
-  
-  output port stringReturnOut: StringReturn
+#  sync input port stringReturnIn: StringReturn
+#  
+#  output port stringReturnOut: StringReturn
 
   sync input port enumReturnIn: EnumReturn
 
