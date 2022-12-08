@@ -1117,8 +1117,8 @@ $emit_cpp_params([ $param_const_timeTag, $param_val ])
         "EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
         e.id,
         static_cast<FwTimeBaseStoreType>(e.timeTag.getTimeBase()),
-        const_cast<TextLogEntry&>(e).timeTag.getSeconds(),
-        const_cast<TextLogEntry&>(e).timeTag.getUSeconds(),
+        e.timeTag.getSeconds(),
+        e.timeTag.getUSeconds(),
         severityString,
         e.text.toChar()
     );
