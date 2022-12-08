@@ -73,6 +73,8 @@ passive component Example {
 
   sync input port serialToNoArgs: serial
 
+  sync input port serialToPrimitiveArgs: serial
+
   sync input port serialToStringArgs: serial
 
   sync input port serialToEnumArgs: serial

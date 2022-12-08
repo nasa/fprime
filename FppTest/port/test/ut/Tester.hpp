@@ -57,12 +57,47 @@
 
       void invoke(
           NATIVE_INT_TYPE portNum,
+          FppTest::Port::StringArgsPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::EnumArgsPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::ArrayArgsPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::StructArgsPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
           FppTest::Port::NoArgsReturnPort& port
       );
 
       void invoke(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::PrimitiveReturnPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::EnumReturnPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::ArrayReturnPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::StructReturnPort& port
       );
 
       // ----------------------------------------------------------------------
@@ -81,6 +116,26 @@
 
       void check_history(
           NATIVE_INT_TYPE portNum,
+          FppTest::Port::StringArgsPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::EnumArgsPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::ArrayArgsPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::StructArgsPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
           FppTest::Port::NoArgsReturnPort& port
       );
       
@@ -88,6 +143,55 @@
           NATIVE_INT_TYPE portNum,
           FppTest::Port::PrimitiveReturnPort& port
       );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::EnumReturnPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::ArrayReturnPort& port
+      );
+
+      void check_history(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::StructReturnPort& port
+      );
+
+    // ----------------------------------------------------------------------
+    // Invoke serial input ports
+    // ----------------------------------------------------------------------
+    
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::NoArgsPort& port
+    );
+
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::PrimitiveArgsPort& port
+    );
+
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StringArgsPort& port
+    );
+
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumArgsPort& port
+    );
+
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayArgsPort& port
+    );
+
+    void invoke_from_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructArgsPort& port
+    );
 
     private:
 
@@ -257,6 +361,9 @@
       // Values returned by typed output ports
       FppTest::Port::BoolReturn noArgsReturnVal;
       FppTest::Port::PrimitiveReturn primitiveReturnVal;
+      FppTest::Port::EnumReturn enumReturnVal;
+      FppTest::Port::ArrayReturn arrayReturnVal;
+      FppTest::Port::StructReturn structReturnVal;
 
   };
 

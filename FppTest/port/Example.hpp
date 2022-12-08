@@ -259,6 +259,13 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
       );
 
+      //! Handler implementation for serialToPrimitiveArgs
+      //!
+      void serialToPrimitiveArgs_handler(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+      );
+
       //! Handler implementation for serialToSerial
       //!
       void serialToSerial_handler(

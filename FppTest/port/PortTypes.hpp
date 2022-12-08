@@ -1,7 +1,10 @@
 #ifndef FPP_TEST_PORT_STRUCTS_HPP
 #define FPP_TEST_PORT_STRUCTS_HPP
 
-#include "STest/Pick/Pick.hpp"
+#include "FppTest/port/PortEnumEnumAc.hpp"
+#include "FppTest/port/PortArrayArrayAc.hpp"
+#include "FppTest/port/PortStructSerializableAc.hpp"
+#include "FppTest/port/StringArgsPortAc.hpp"
 
 namespace FppTest {
 
@@ -21,14 +24,7 @@ namespace FppTest {
     // ----------------------------------------------------------------------
 
     struct PrimitiveArgs {
-      PrimitiveArgs() {
-        u32 = STest::Pick::any();
-        u32Ref = STest::Pick::any();
-        f32 = static_cast<F32>(STest::Pick::any());
-        f32Ref = static_cast<F32>(STest::Pick::any());
-        b = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-        bRef = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-      }
+      PrimitiveArgs();
 
       U32 u32;
       U32 u32Ref;
@@ -38,25 +34,77 @@ namespace FppTest {
       bool bRef;
     };
 
+    struct StringArgs {
+      StringArgs();
+
+      StringArgsPortStrings::StringSize80 str80;
+      StringArgsPortStrings::StringSize80 str80Ref;
+      StringArgsPortStrings::StringSize100 str100;
+      StringArgsPortStrings::StringSize100 str100Ref;
+    };
+
+    struct EnumArgs {
+      EnumArgs();
+
+      PortEnum e;
+      PortEnum eRef;
+    };
+
+    struct ArrayArgs {
+      ArrayArgs();
+
+      PortArray a;
+      PortArray aRef;
+    };
+
+    struct StructArgs {
+      StructArgs();
+
+      PortStruct s;
+      PortStruct sRef;
+    };
+
     // ----------------------------------------------------------------------
     // Return types
     // ----------------------------------------------------------------------
 
     struct BoolReturn {
-      BoolReturn() {
-        val = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
-      }
+      BoolReturn();
 
       bool val;
     };
 
     struct PrimitiveReturn {
-      PrimitiveReturn() {
-        val = STest::Pick::any();
-      }
+      PrimitiveReturn();
 
       U32 val;
     };
+
+    struct EnumReturn {
+      EnumReturn();
+
+      PortEnum val;
+    };
+
+    struct ArrayReturn {
+      ArrayReturn();
+
+      PortArray val;
+    };
+
+    struct StructReturn {
+      StructReturn();
+
+      PortStruct val;
+    };
+
+    // ----------------------------------------------------------------------
+    // Helper functions
+    // ----------------------------------------------------------------------
+    
+    PortEnum getRandomPortEnum();
+    PortArray getRandomPortArray();
+    PortStruct getRandomPortStruct();
 
     // ----------------------------------------------------------------------
     // Typedefs
@@ -64,9 +112,16 @@ namespace FppTest {
 
     typedef PortType<Empty, Empty> NoArgsPort;
     typedef PortType<PrimitiveArgs, Empty> PrimitiveArgsPort;
+    typedef PortType<StringArgs, Empty> StringArgsPort;
+    typedef PortType<EnumArgs, Empty> EnumArgsPort;
+    typedef PortType<ArrayArgs, Empty> ArrayArgsPort;
+    typedef PortType<StructArgs, Empty> StructArgsPort;
 
     typedef PortType<Empty, BoolReturn> NoArgsReturnPort;
     typedef PortType<PrimitiveArgs, PrimitiveReturn> PrimitiveReturnPort;
+    typedef PortType<EnumArgs, EnumReturn> EnumReturnPort;
+    typedef PortType<ArrayArgs, ArrayReturn> ArrayReturnPort;
+    typedef PortType<StructArgs, StructReturn> StructReturnPort;
 
   } // namespace Port
 

@@ -17,23 +17,48 @@
 
 #include "gtest/gtest.h"
 
+// Typed port tests
 template <typename PortType>
-class PortTest : public ::testing::Test {};
-
-TYPED_TEST_SUITE_P(PortTest);
-
-TYPED_TEST_P(PortTest, TypedPort) {
+class TypedPortTest : public ::testing::Test {
+protected:
     Tester tester;
-    TypeParam port;
+    PortType port;
+};
 
-    tester.invoke(0, port);
+TYPED_TEST_SUITE_P(TypedPortTest);
 
-    tester.check_history(0, port);
+TYPED_TEST_P(TypedPortTest, TypedPort) {
+    this->tester.invoke(0, this->port);
+    this->tester.check_history(0, this->port);
 }
 
-// Register all test patterns
-REGISTER_TYPED_TEST_SUITE_P(PortTest,
+REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
     TypedPort
+);
+
+// Serial port tests
+template <typename PortType>
+class SerialPortTest : public ::testing::Test {
+protected:
+    Tester tester;
+    PortType port;
+};
+
+TYPED_TEST_SUITE_P(SerialPortTest);
+
+TYPED_TEST_P(SerialPortTest, SerialToTypedTest) {
+//    this->tester.invoke_serial(0, this->port);
+//    this->tester.check_history_serial(0, this->port);
+}
+
+TYPED_TEST_P(SerialPortTest, TypedToSerialTest) {
+    this->tester.invoke_from_serial(0, this->port);
+    this->tester.check_history(0, this->port);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
+    SerialToTypedTest,
+    TypedToSerialTest
 );
 
 #endif

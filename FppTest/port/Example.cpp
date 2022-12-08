@@ -4,9 +4,10 @@
 // \brief  cpp file for Example component implementation class
 // ======================================================================
 
+#include "Fw/Types/SerialBuffer.hpp"
 
-#include <FppTest/port/Example.hpp>
-#include <FpConfig.hpp>
+#include "FppTest/port/Example.hpp"
+#include "FpConfig.hpp"
 
 
   // ----------------------------------------------------------------------
@@ -56,7 +57,13 @@
         PortArray &aRef
     )
   {
-    // TODO
+    U8 data[PortArray::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(a);
+    buf.serialize(aRef);
+
+    this->serialOut_out(portNum, buf);
   }
 
   PortArray Example ::
@@ -251,7 +258,12 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    PortArray a, aRef;
+
+    Buffer.deserialize(a);
+    Buffer.deserialize(aRef);
+
+    this->arrayArgsOut_out(portNum, a, aRef);
   }
 
   void Example ::
@@ -260,7 +272,12 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    PortEnum e, eRef;
+
+    Buffer.deserialize(e);
+    Buffer.deserialize(eRef);
+
+    this->enumArgsOut_out(portNum, e, eRef);
   }
 
   void Example ::
@@ -269,7 +286,35 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->noArgsOut_out(portNum);
+  }
+
+  void Example ::
+    serialToPrimitiveArgs_handler(
+        NATIVE_INT_TYPE portNum, /*!< The port number*/
+        Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
+    )
+  {
+    U32 u32, u32Ref;
+    F32 f32, f32Ref;
+    bool b, bRef;
+
+    Buffer.deserialize(u32);
+    Buffer.deserialize(u32Ref);
+    Buffer.deserialize(f32);
+    Buffer.deserialize(f32Ref);
+    Buffer.deserialize(b);
+    Buffer.deserialize(bRef);
+
+    this->primitiveArgsOut_out(
+      portNum,
+      u32,
+      u32Ref,
+      f32,
+      f32Ref,
+      b,
+      bRef
+    );
   }
 
   void Example ::
@@ -287,7 +332,15 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    StringArgsPortStrings::StringSize80 str80, str80Ref;
+    StringArgsPortStrings::StringSize100 str100, str100Ref;
+
+    Buffer.deserialize(str80);
+    Buffer.deserialize(str80Ref);
+    Buffer.deserialize(str100);
+    Buffer.deserialize(str100Ref);
+
+    this->stringArgsOut_out(portNum, str80, str80Ref, str100, str100Ref);
   }
 
   void Example ::
@@ -296,6 +349,11 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    PortStruct s, sRef;
+
+    Buffer.deserialize(s);
+    Buffer.deserialize(sRef);
+
+    this->structArgsOut_out(portNum, s, sRef);
   }
 

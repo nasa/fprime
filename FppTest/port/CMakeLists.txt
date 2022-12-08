@@ -35,6 +35,8 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PortTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )

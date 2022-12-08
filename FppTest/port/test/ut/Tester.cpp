@@ -4,6 +4,8 @@
 // \brief  cpp file for Example test harness implementation class
 // ======================================================================
 
+#include "Fw/Types/SerialBuffer.hpp"
+
 #include "Tester.hpp"
 
 #define INSTANCE 0
@@ -72,6 +74,60 @@
   void Tester ::
     invoke(
         NATIVE_INT_TYPE portNum,
+        FppTest::Port::StringArgsPort& port
+    ) 
+  {
+    this->invoke_to_stringArgsIn(
+      portNum,
+      port.args.str80,
+      port.args.str80Ref,
+      port.args.str100,
+      port.args.str100Ref
+    );
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumArgsPort& port
+    ) 
+  {
+    this->invoke_to_enumArgsIn(
+      portNum, 
+      port.args.e, 
+      port.args.eRef
+    );
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayArgsPort& port
+    ) 
+  {
+    this->invoke_to_arrayArgsIn(
+      portNum, 
+      port.args.a, 
+      port.args.aRef
+    );
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructArgsPort& port
+    ) 
+  {
+    this->invoke_to_structArgsIn(
+      portNum, 
+      port.args.s, 
+      port.args.sRef
+    );
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
         FppTest::Port::NoArgsReturnPort& port
     ) 
   {
@@ -97,6 +153,51 @@
     );
 
     ASSERT_EQ(returnVal, this->primitiveReturnVal.val);
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumReturnPort& port
+    ) 
+  {
+    PortEnum returnVal = this->invoke_to_enumReturnIn(
+      portNum,
+      port.args.e,
+      port.args.eRef
+    );
+
+    ASSERT_EQ(returnVal, this->enumReturnVal.val);
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayReturnPort& port
+    ) 
+  {
+    PortArray returnVal = this->invoke_to_arrayReturnIn(
+      portNum,
+      port.args.a,
+      port.args.aRef
+    );
+
+    ASSERT_EQ(returnVal, this->arrayReturnVal.val);
+  }
+
+  void Tester ::
+    invoke(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructReturnPort& port
+    ) 
+  {
+    PortStruct returnVal = this->invoke_to_structReturnIn(
+      portNum,
+      port.args.s,
+      port.args.sRef
+    );
+
+    ASSERT_EQ(returnVal, this->structReturnVal.val);
   }
 
   // ----------------------------------------------------------------------
@@ -135,6 +236,68 @@
   void Tester ::
     check_history(
         NATIVE_INT_TYPE portNum,
+        FppTest::Port::StringArgsPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_stringArgsOut_SIZE(1);
+    ASSERT_from_stringArgsOut(
+      portNum, 
+      port.args.str80,
+      port.args.str80Ref,
+      port.args.str100,
+      port.args.str100Ref
+    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumArgsPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_enumArgsOut_SIZE(1);
+//    ASSERT_from_enumArgsOut(
+//      portNum, 
+//      port.args.e,
+//      port.args.eRef
+//    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayArgsPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_arrayArgsOut_SIZE(1);
+    ASSERT_from_arrayArgsOut(
+      portNum, 
+      port.args.a,
+      port.args.aRef
+    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructArgsPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_structArgsOut_SIZE(1);
+    ASSERT_from_structArgsOut(
+      portNum, 
+      port.args.s,
+      port.args.sRef
+    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
         FppTest::Port::NoArgsReturnPort& port
     ) 
   {
@@ -161,6 +324,151 @@
     );
   }
 
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumReturnPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_enumReturnOut_SIZE(1);
+//    ASSERT_from_enumReturnOut(
+//      portNum, 
+//      port.args.e,
+//      port.args.eRef
+//    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayReturnPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_arrayReturnOut_SIZE(1);
+    ASSERT_from_arrayReturnOut(
+      portNum, 
+      port.args.a,
+      port.args.aRef
+    );
+  }
+
+  void Tester ::
+    check_history(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructReturnPort& port
+    ) 
+  {
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_from_structReturnOut_SIZE(1);
+    ASSERT_from_structReturnOut(
+      portNum, 
+      port.args.s,
+      port.args.sRef
+    );
+  }
+
+  // ----------------------------------------------------------------------
+  // Invoke serial input ports
+  // ----------------------------------------------------------------------
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::NoArgsPort& port
+    )
+  {
+    U8 data[0];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    this->invoke_to_serialToNoArgs(portNum, buf);
+  }
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::PrimitiveArgsPort& port
+    )
+  {
+    U8 data[sizeof(FppTest::Port::PrimitiveArgs) * 6];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(port.args.u32);
+    buf.serialize(port.args.u32Ref);
+    buf.serialize(port.args.f32);
+    buf.serialize(port.args.f32Ref);
+    buf.serialize(port.args.b);
+    buf.serialize(port.args.bRef);
+
+    this->invoke_to_serialToPrimitiveArgs(portNum, buf);
+  }
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::StringArgsPort& port
+    )
+  {
+    U8 data[
+      StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2 + 
+      StringArgsPortStrings::StringSize100::SERIALIZED_SIZE * 2
+    ];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(port.args.str80);
+    buf.serialize(port.args.str80Ref);
+    buf.serialize(port.args.str100);
+    buf.serialize(port.args.str100Ref);
+
+    this->invoke_to_serialToStringArgs(portNum, buf);
+  }
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::EnumArgsPort& port
+    )
+  {
+    U8 data[PortEnum::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(port.args.e);
+    buf.serialize(port.args.eRef);
+
+    this->invoke_to_serialToEnumArgs(portNum, buf);
+  }
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::ArrayArgsPort& port
+    )
+  {
+    U8 data[PortArray::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(port.args.a);
+    buf.serialize(port.args.aRef);
+
+    this->invoke_to_serialToArrayArgs(portNum, buf);
+  }
+    
+  void Tester ::
+    invoke_from_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::StructArgsPort& port
+    )
+  {
+    U8 data[PortStruct::SERIALIZED_SIZE * 2];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    buf.serialize(port.args.s);
+    buf.serialize(port.args.sRef);
+
+    this->invoke_to_serialToStructArgs(portNum, buf);
+  }
+
   // ----------------------------------------------------------------------
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
@@ -183,7 +491,8 @@
     )
   {
     this->pushFromPortEntry_arrayReturnOut(a, aRef);
-    // TODO: Return a value
+
+    return this->arrayReturnVal.val;
   }
 
   void Tester ::
@@ -204,7 +513,8 @@
     )
   {
     this->pushFromPortEntry_enumReturnOut(e, eRef);
-    // TODO: Return a value
+
+    return this->enumReturnVal.val;
   }
 
   void Tester ::
@@ -285,7 +595,8 @@
     )
   {
     this->pushFromPortEntry_structReturnOut(s, sRef);
-    // TODO: Return a value
+
+    return this->structReturnVal.val;
   }
 
   // ----------------------------------------------------------------------
@@ -298,7 +609,6 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
   }
 
   // ----------------------------------------------------------------------
@@ -506,6 +816,12 @@
     this->connect_to_serialToNoArgs(
         0,
         this->component.get_serialToNoArgs_InputPort(0)
+    );
+
+    // serialToPrimitiveArgs
+    this->connect_to_serialToPrimitiveArgs(
+        0,
+        this->component.get_serialToPrimitiveArgs_InputPort(0)
     );
 
     // serialToSerial
