@@ -1,88 +1,62 @@
 @ An example component
 passive component Example {
 
-  # Typed ports with no return types
+  # Typed input ports with no return types
 
-  sync input port noArgsIn: NoArgs
+  sync input port noArgsIn: [2] NoArgs
   
-  output port noArgsOut: NoArgs
+  sync input port primitiveArgsIn: [2] PrimitiveArgs
   
-  sync input port primitiveArgsIn: PrimitiveArgs
+  sync input port stringArgsIn: [2] StringArgs
   
-  output port primitiveArgsOut: PrimitiveArgs
+  sync input port enumArgsIn: [2] EnumArgs
 
-  sync input port stringArgsIn: StringArgs
+  sync input port arrayArgsIn: [2] ArrayArgs
+
+  sync input port structArgsIn: [2] StructArgs
+
+  # Typed output ports with no return types
+
+  output port noArgsOut: [2] NoArgs
   
-  output port stringArgsOut: StringArgs
+  output port primitiveArgsOut: [2] PrimitiveArgs
 
-  sync input port enumArgsIn: EnumArgs
+  output port stringArgsOut: [2] StringArgs
 
-  output port enumArgsOut: EnumArgs
+  output port enumArgsOut: [2] EnumArgs
 
-  sync input port arrayArgsIn: ArrayArgs
+  output port arrayArgsOut: [2] ArrayArgs
 
-  output port arrayArgsOut: ArrayArgs
+  output port structArgsOut: [2] StructArgs
 
-  sync input port structArgsIn: StructArgs
-
-  output port structArgsOut: StructArgs
-
-  # Typed ports with return types
+  # Typed input ports with return types
 
   sync input port noArgsReturnIn: NoArgsReturn
 
-  output port noArgsReturnOut: NoArgsReturn
-  
   sync input port primitiveReturnIn: PrimitiveReturn
   
-  output port primitiveReturnOut: PrimitiveReturn
-
-#  sync input port stringReturnIn: StringReturn
-#  
-#  output port stringReturnOut: StringReturn
-
   sync input port enumReturnIn: EnumReturn
-
-  output port enumReturnOut: EnumReturn
 
   sync input port arrayReturnIn: ArrayReturn
 
-  output port arrayReturnOut: ArrayReturn
-
   sync input port structReturnIn: StructReturn
+
+  # Typed output ports with return types
+
+  output port noArgsReturnOut: NoArgsReturn
+  
+  output port primitiveReturnOut: PrimitiveReturn
+
+  output port enumReturnOut: EnumReturn
+
+  output port arrayReturnOut: ArrayReturn
 
   output port structReturnOut: StructReturn
 
-  # Typed ports for testing with serial ports
-
-  sync input port noArgsToSerial: NoArgs
-
-  sync input port primitiveArgsToSerial: PrimitiveArgs
-
-  sync input port stringArgsToSerial: StringArgs
-
-  sync input port enumArgsToSerial: EnumArgs
-
-  sync input port arrayArgsToSerial: ArrayArgs
-
-  sync input port structArgsToSerial: StructArgs
-
   # Serial ports
 
-  sync input port serialToSerial: serial
+  sync input port serialIn: [7] serial
 
-  sync input port serialToNoArgs: serial
-
-  sync input port serialToPrimitiveArgs: serial
-
-  sync input port serialToStringArgs: serial
-
-  sync input port serialToEnumArgs: serial
-
-  sync input port serialToArrayArgs: serial
-
-  sync input port serialToStructArgs: serial
-
-  output port serialOut: serial
+  output port serialOut: [7] serial
 
 }

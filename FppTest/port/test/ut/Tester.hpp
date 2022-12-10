@@ -7,9 +7,13 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include "Fw/Types/SerialBuffer.hpp"
+
 #include "GTestBase.hpp"
 #include "FppTest/port/Example.hpp"
-#include "FppTest/port/PortTypes.hpp"
+#include "PortTypes.hpp"
+#include "FppTest/port/TypedPortIndexEnumAc.hpp"
+#include "FppTest/port/SerialPortIndexEnumAc.hpp"
 
   class Tester :
     public ExampleGTestBase
@@ -158,40 +162,6 @@
           NATIVE_INT_TYPE portNum,
           FppTest::Port::StructReturnPort& port
       );
-
-    // ----------------------------------------------------------------------
-    // Invoke serial input ports
-    // ----------------------------------------------------------------------
-    
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::NoArgsPort& port
-    );
-
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::PrimitiveArgsPort& port
-    );
-
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::StringArgsPort& port
-    );
-
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::EnumArgsPort& port
-    );
-
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::ArrayArgsPort& port
-    );
-
-    void invoke_from_serial(
-        NATIVE_INT_TYPE portNum,
-        FppTest::Port::StructArgsPort& port
-    );
 
     private:
 

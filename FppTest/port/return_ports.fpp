@@ -11,6 +11,8 @@ port PrimitiveReturn(
   ref bRef: bool
 ) -> U32
 
+# Commented out because of bug in Python component autocoder
+# Will be tested with the FPP component autocoder
 # @ A port returning a string type
 # port StringReturn(
 #   str80: string @< A string of size 80

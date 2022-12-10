@@ -6,6 +6,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/Example.cpp"
 )
@@ -34,6 +35,7 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/no_return_ports.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/return_ports.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/port_index_enums.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/example_comp.fpp"
   "${CMAKE_CURRENT_LIST_DIR}/../utils/Utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/PortTypes.cpp"
