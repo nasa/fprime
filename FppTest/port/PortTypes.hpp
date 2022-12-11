@@ -1,10 +1,26 @@
+// ======================================================================
+// \title  PortTypes.hpp
+// \author T. Chieu
+// \brief  hpp file for port types
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #ifndef FPP_TEST_PORT_STRUCTS_HPP
 #define FPP_TEST_PORT_STRUCTS_HPP
+
+#include "Fw/Types/SerialBuffer.hpp"
 
 #include "FppTest/port/PortEnumEnumAc.hpp"
 #include "FppTest/port/PortArrayArrayAc.hpp"
 #include "FppTest/port/PortStructSerializableAc.hpp"
 #include "FppTest/port/StringArgsPortAc.hpp"
+
+#define SERIAL_ARGS_BUFFER_CAPACITY 256
 
 namespace FppTest {
 
@@ -64,6 +80,13 @@ namespace FppTest {
       PortStruct sRef;
     };
 
+    struct SerialArgs {
+      SerialArgs();
+
+      U8 data[SERIAL_ARGS_BUFFER_CAPACITY];
+      Fw::SerialBuffer buf;
+    };
+
     // ----------------------------------------------------------------------
     // Return types
     // ----------------------------------------------------------------------
@@ -116,6 +139,7 @@ namespace FppTest {
     typedef PortType<EnumArgs, Empty> EnumArgsPort;
     typedef PortType<ArrayArgs, Empty> ArrayArgsPort;
     typedef PortType<StructArgs, Empty> StructArgsPort;
+    typedef PortType<SerialArgs, Empty> SerialArgsPort;
 
     typedef PortType<Empty, BoolReturn> NoArgsReturnPort;
     typedef PortType<PrimitiveArgs, PrimitiveReturn> PrimitiveReturnPort;

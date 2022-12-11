@@ -46,7 +46,7 @@
     public:
 
       // ----------------------------------------------------------------------
-      // Invoke typed input ports
+      // Invoke input ports
       // ----------------------------------------------------------------------
 
       void invoke(
@@ -77,6 +77,11 @@
       void invoke(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::StructArgsPort& port
+      );
+
+      void invoke(
+          NATIVE_INT_TYPE portNum,
+          FppTest::Port::SerialArgsPort& port
       );
 
       void invoke(
@@ -161,6 +166,34 @@
       void check_history(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::StructReturnPort& port
+      );
+
+      // ----------------------------------------------------------------------
+      // Check serial output ports
+      // ----------------------------------------------------------------------
+
+      void check_serial(
+          FppTest::Port::PrimitiveArgsPort& port
+      );
+
+      void check_serial(
+          FppTest::Port::StringArgsPort& port
+      );
+
+      void check_serial(
+          FppTest::Port::EnumArgsPort& port
+      );
+
+      void check_serial(
+          FppTest::Port::ArrayArgsPort& port
+      );
+
+      void check_serial(
+          FppTest::Port::StructArgsPort& port
+      );
+
+      void check_serial(
+          FppTest::Port::SerialArgsPort& port
       );
 
     private:
@@ -334,6 +367,24 @@
       FppTest::Port::EnumReturn enumReturnVal;
       FppTest::Port::ArrayReturn arrayReturnVal;
       FppTest::Port::StructReturn structReturnVal;
+
+      // Buffers from serial output ports;
+      U8 primitiveData[sizeof(FppTest::Port::PrimitiveArgs)];
+      U8 stringData[
+        StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2 + 
+        StringArgsPortStrings::StringSize100::SERIALIZED_SIZE * 2
+      ];
+      U8 enumData[PortEnum::SERIALIZED_SIZE * 2];
+      U8 arrayData[PortArray::SERIALIZED_SIZE * 2];
+      U8 structData[PortStruct::SERIALIZED_SIZE * 2];
+      U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
+
+      Fw::SerialBuffer primitiveBuf;
+      Fw::SerialBuffer stringBuf;
+      Fw::SerialBuffer enumBuf;
+      Fw::SerialBuffer arrayBuf;
+      Fw::SerialBuffer structBuf;
+      Fw::SerialBuffer serialBuf;
 
   };
 

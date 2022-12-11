@@ -1,3 +1,15 @@
+// ======================================================================
+// \title  PortTypes.cpp
+// \author T. Chieu
+// \brief  cpp file for port types
+//
+// \copyright
+// Copyright (C) 2009-2022 California Institute of Technology.
+// ALL RIGHTS RESERVED.  United States Government Sponsorship
+// acknowledged.
+//
+// ======================================================================
+
 #include "PortTypes.hpp"
 
 #include "STest/Pick/Pick.hpp"
@@ -50,6 +62,14 @@ namespace FppTest {
     StructArgs::StructArgs() {
       s = getRandomPortStruct();
       sRef = getRandomPortStruct();
+    }
+
+    SerialArgs::SerialArgs() : buf(data, sizeof(data)) {
+      U32 len = STest::Pick::lowerUpper(1, SERIAL_ARGS_BUFFER_CAPACITY);
+
+      for (U32 i = 0; i < len; i++) {
+        data[i] = Utils::getU8();
+      }
     }
 
     // ----------------------------------------------------------------------

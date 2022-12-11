@@ -17,7 +17,13 @@
   Tester ::
     Tester() :
       ExampleGTestBase("Tester", MAX_HISTORY_SIZE),
-      component("Example")
+      component("Example"),
+      primitiveBuf(primitiveData, sizeof(primitiveData)),
+      stringBuf(stringData, sizeof(stringData)),
+      enumBuf(enumData, sizeof(enumData)),
+      arrayBuf(arrayData, sizeof(arrayData)),
+      structBuf(structData, sizeof(structData)),
+      serialBuf(serialData, sizeof(serialData))
   {
     this->initComponents();
     this->connectPorts();
@@ -40,7 +46,7 @@
   }
 
   // ----------------------------------------------------------------------
-  // Invoke typed input ports
+  // Invoke input ports
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -103,33 +109,11 @@
         FppTest::Port::ArrayArgsPort& port
     ) 
   {
-    switch (portNum) {
-      case TypedPortIndex::TYPED:
-        this->invoke_to_arrayArgsIn(
-          portNum, 
-          port.args.a, 
-          port.args.aRef
-        );
-        break;
-
-      case TypedPortIndex::SERIAL: {
-        U8 data[PortArray::SERIALIZED_SIZE * 2];
-        Fw::SerialBuffer buf(data, sizeof(data));
-        Fw::SerializeStatus status;
-
-        status = buf.serialize(port.args.a);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-
-        status = buf.serialize(port.args.aRef);
-        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-        
-        this->invoke_to_serialIn(
-          SerialPortIndex::ARRAY,
-          buf
-        );
-        break;
-      }
-    }
+    this->invoke_to_arrayArgsIn(
+      portNum, 
+      port.args.a, 
+      port.args.aRef
+    );
   }
 
   void Tester ::
@@ -142,6 +126,18 @@
       portNum, 
       port.args.s, 
       port.args.sRef
+    );
+  }
+
+  void Tester :: 
+    invoke(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::SerialArgsPort& port
+    )
+  {
+    this->invoke_to_serialIn(
+      portNum,
+      port.args.buf
     );
   }
 
@@ -390,6 +386,135 @@
   }
 
   // ----------------------------------------------------------------------
+  // Check serial output ports
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::PrimitiveArgsPort& port
+    )
+  {
+    Fw::SerializeStatus status;
+    U32 u32, u32Ref;
+    F32 f32, f32Ref;
+    bool b, bRef;
+
+    status = this->primitiveBuf.deserialize(u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->primitiveBuf.deserialize(u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->primitiveBuf.deserialize(f32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->primitiveBuf.deserialize(f32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->primitiveBuf.deserialize(b);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->primitiveBuf.deserialize(bRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(u32, port.args.u32);
+    ASSERT_EQ(u32Ref, port.args.u32Ref);
+    ASSERT_EQ(f32, port.args.f32);
+    ASSERT_EQ(f32Ref, port.args.f32Ref);
+    ASSERT_EQ(b, port.args.b);
+    ASSERT_EQ(bRef, port.args.bRef);
+  }
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::StringArgsPort& port
+    )
+  {
+    Fw::SerializeStatus status;
+    StringArgsPortStrings::StringSize80 str80, str80Ref;
+    StringArgsPortStrings::StringSize100 str100, str100Ref;
+
+    status = this->stringBuf.deserialize(str80);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->stringBuf.deserialize(str80Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->stringBuf.deserialize(str100);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->stringBuf.deserialize(str100Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(str80, port.args.str80);
+    ASSERT_EQ(str80Ref, port.args.str80Ref);
+    ASSERT_EQ(str100, port.args.str100);
+    ASSERT_EQ(str100Ref, port.args.str100Ref);
+  }
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::EnumArgsPort& port
+    )
+  {
+    Fw::SerializeStatus status;
+    PortEnum e, eRef;
+
+    status = this->enumBuf.deserialize(e);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->enumBuf.deserialize(eRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(e, port.args.e);
+    ASSERT_EQ(eRef, port.args.eRef);
+  }
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::ArrayArgsPort& port
+    )
+  {
+    Fw::SerializeStatus status;
+    PortArray a, aRef;
+
+    status = this->arrayBuf.deserialize(a);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->arrayBuf.deserialize(aRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(a, port.args.a);
+    ASSERT_EQ(aRef, port.args.aRef);
+  }
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::StructArgsPort& port
+    )
+  {
+    Fw::SerializeStatus status;
+    PortStruct s, sRef;
+
+    status = this->structBuf.deserialize(s);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = this->structBuf.deserialize(sRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    ASSERT_EQ(s, port.args.s);
+    ASSERT_EQ(sRef, port.args.sRef);
+  }
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::SerialArgsPort& port
+    )
+  {
+    ASSERT_EQ(this->serialBuf, port.args.buf);
+  }
+
+  // ----------------------------------------------------------------------
   // Handlers for typed from ports
   // ----------------------------------------------------------------------
 
@@ -529,7 +654,53 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    Fw::SerializeStatus status;
+
+    switch (portNum) {
+      case SerialPortIndex::PRIMITIVE:
+        status = Buffer.copyRaw(
+          this->primitiveBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRING:
+        status = Buffer.copyRaw(
+          this->stringBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ENUM:
+        status = Buffer.copyRaw(
+          this->enumBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::ARRAY:
+        status = Buffer.copyRaw(
+          this->arrayBuf, 
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::STRUCT:
+        status = Buffer.copyRaw(
+          this->structBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+
+      case SerialPortIndex::SERIAL:
+        status = Buffer.copyRaw(
+          this->serialBuf,
+          Buffer.getBuffCapacity()
+        );
+        break;
+    }
+
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
   }
 
   // ----------------------------------------------------------------------
@@ -569,12 +740,10 @@
     );
 
     // noArgsIn
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->connect_to_noArgsIn(
-          i,
-          this->component.get_noArgsIn_InputPort(i)
-      );
-    }
+    this->connect_to_noArgsIn(
+        0,
+        this->component.get_noArgsIn_InputPort(0)
+    );
 
     // noArgsReturnIn
     this->connect_to_noArgsReturnIn(
@@ -631,12 +800,10 @@
     );
 
     // enumArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_enumArgsOut_OutputPort(
-          i,
-          this->get_from_enumArgsOut(i)
-      );
-    }
+    this->component.set_enumArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_enumArgsOut(TypedPortIndex::TYPED)
+    );
 
     // enumReturnOut
     this->component.set_enumReturnOut_OutputPort(
@@ -645,12 +812,10 @@
     );
 
     // noArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_noArgsOut_OutputPort(
-          i,
-          this->get_from_noArgsOut(i)
-      );
-    }
+    this->component.set_noArgsOut_OutputPort(
+        0,
+        this->get_from_noArgsOut(0)
+    );
 
     // noArgsReturnOut
     this->component.set_noArgsReturnOut_OutputPort(
@@ -659,12 +824,10 @@
     );
 
     // primitiveArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_primitiveArgsOut_OutputPort(
-          i,
-          this->get_from_primitiveArgsOut(i)
-      );
-    }
+    this->component.set_primitiveArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_primitiveArgsOut(TypedPortIndex::TYPED)
+    );
 
     // primitiveReturnOut
     this->component.set_primitiveReturnOut_OutputPort(
@@ -673,20 +836,16 @@
     );
 
     // stringArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_stringArgsOut_OutputPort(
-          i,
-          this->get_from_stringArgsOut(i)
-      );
-    }
+    this->component.set_stringArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_stringArgsOut(TypedPortIndex::TYPED)
+    );
 
     // structArgsOut
-    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
-      this->component.set_structArgsOut_OutputPort(
-          i,
-          this->get_from_structArgsOut(i)
-      );
-    }
+    this->component.set_structArgsOut_OutputPort(
+        TypedPortIndex::TYPED,
+        this->get_from_structArgsOut(TypedPortIndex::TYPED)
+    );
 
     // structReturnOut
     this->component.set_structReturnOut_OutputPort(
@@ -698,28 +857,43 @@
   // ----------------------------------------------------------------------
   // Connect serial output ports
   // ----------------------------------------------------------------------
-    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
-      this->component.set_serialOut_OutputPort(
-          i,
-          this->get_from_serialOut(i)
-      );
-    }
+    this->component.set_primitiveArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::PRIMITIVE)
+    );
+
+    this->component.set_stringArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::STRING)
+    );
+
+    this->component.set_enumArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::ENUM)
+    );
+
+    this->component.set_arrayArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::ARRAY)
+    );
+
+    this->component.set_structArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::STRUCT)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::SERIAL)
+    );
 
 
   // ----------------------------------------------------------------------
   // Connect serial input ports
   // ----------------------------------------------------------------------
-    // serialIn
-    // for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
-    //   this->connect_to_serialIn(
-    //       i,
-    //       this->component.get_serialIn_InputPort(i)
-    //   );
-    // }
-
-    this->component.set_arrayArgsOut_OutputPort(
-      TypedPortIndex::SERIAL,
-      this->get_from_serialOut(SerialPortIndex::ARRAY)
+    this->connect_to_serialIn(
+        TypedPortIndex::SERIAL,
+        this->component.get_serialIn_InputPort(TypedPortIndex::SERIAL)
     );
 
   }

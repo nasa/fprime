@@ -1,6 +1,6 @@
-# Default module cmake file
-# AUTOCODER_INPUT_FILES: Contains all Autocoder input files
-# SOURCE_FILES: Handcoded C++ source files)
+# ====================================================================== 
+# CMakeLists.txt
+# ====================================================================== 
 
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/fpp_types.fpp"
@@ -43,5 +43,3 @@ set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
 )
 register_fprime_ut()
-
-

@@ -47,19 +47,13 @@ protected:
 
 TYPED_TEST_SUITE_P(SerialPortTest);
 
-TYPED_TEST_P(SerialPortTest, SerialToTypedTest) {
-//    this->tester.invoke(TypedPortIndex::SERIAL, this->port);
-//    this->tester.check_history(TypedPortIndex::SERIAL, this->port);
-}
-
-TYPED_TEST_P(SerialPortTest, TypedToSerialTest) {
-//    this->tester.invoke_serial_in(0, this->port);
-//    this->tester.check_history(0, this->port);
+TYPED_TEST_P(SerialPortTest, ToSerialTest) {
+    this->tester.invoke(TypedPortIndex::SERIAL, this->port);
+    this->tester.check_serial(this->port);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
-    SerialToTypedTest,
-    TypedToSerialTest
+    ToSerialTest
 );
 
 #endif
