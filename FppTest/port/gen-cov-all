@@ -1,0 +1,9 @@
+#!/bin/sh
+
+for file in `ls *Ac.gcno`
+do
+  base=`basename $file .gcno`
+  cmd="./gen-cov $base"
+  echo $cmd
+  $cmd
+done
