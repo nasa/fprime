@@ -77,6 +77,7 @@ autocoders
 autocoding
 autocompletion
 autodoc
+autodocs
 Autodocumentation
 autogen
 Autogenerate
@@ -105,6 +106,7 @@ bitmaps
 bitset
 ble
 blog
+blogs
 BLSPSERIALDRIVERCOMPONENTIMPLCFG
 bocchino
 bodychars
@@ -232,6 +234,7 @@ Cpkt
 cplusplus
 CPOL
 cpos
+cppcheck
 cppreference
 cprogramming
 cpuset
@@ -270,6 +273,7 @@ culates
 curdir
 curmsgs
 cuz
+ctu
 cwd
 CYCLEOUT
 cygwin
@@ -277,9 +281,9 @@ daringfireball
 Daruwala
 DASSERT
 databinding
+DATAROOTDIR
 datastore
 dawbarton
-db
 DBUILD
 DCMAKE
 DDDTHH
@@ -297,6 +301,7 @@ deframer
 deframing
 delchars
 delitem
+DENABLE
 deployables
 DEPRECATEDLIST
 deps
@@ -456,10 +461,10 @@ fadvise
 FAKELOGGER
 fallocate
 fallthrough
+fbuild
 fcheck
 fclose
 fcntl
-fd
 fds
 fdset
 featuredarticles
@@ -519,6 +524,7 @@ frontend
 frox
 frsize
 fsanitize
+fsanitizers
 fscanf
 fstream
 fstrength
@@ -573,6 +579,7 @@ github
 gjslint
 glibc
 globals
+gmock
 gmtime
 Gnc
 Gnd
@@ -658,6 +665,7 @@ importables
 INADDR
 iname
 inbool
+INCLUDEDIR
 inet
 inin
 initfiles
@@ -756,6 +764,8 @@ lhash
 libc
 libclang
 libcrc
+LIBDIR
+LIBEXECDIR
 libgtest
 libiconv
 LIBLOC
@@ -775,6 +785,7 @@ lld
 llvm
 loadfile
 localhost
+LOCALSTATEDIR
 LOCKGUARDTESTER
 locs
 LOGASSERT
@@ -851,7 +862,6 @@ mname
 modbus
 MOSI
 MOVEFILE
-mq
 mqd
 mqueue
 Mrf
@@ -871,9 +881,11 @@ multiarch
 multioptionals
 multirequired
 multline
+multitool
 munmap
 mutex
 mutexattr
+Mutexed
 mutexes
 mval
 mycompany
@@ -896,7 +908,6 @@ newself
 newstring
 newtio
 nfds
-Nh
 Nicolich
 ninjaaron
 NMEA
@@ -926,6 +937,7 @@ NOTYPE
 Nowicki
 npm
 nproc
+npx
 NSHUFF
 NSPACES
 nukenewlines
@@ -945,6 +957,7 @@ odo
 oflag
 okidocki
 oldeol
+OLDINCLUDEDIR
 OMG
 onchange
 onlinepubs
@@ -1010,12 +1023,15 @@ pkts
 plainnat
 plantuml
 plugin
+plugins
 pname
 png
 PNGs
+POLLERR
 pollerr
 pollfd
 POLLIN
+POLLPRI
 pollpri
 POLYDB
 POLYDBCOMP
@@ -1070,6 +1086,7 @@ ptmcg
 pton
 ptr
 ptype
+puml
 punc
 pushd
 pwd
@@ -1156,7 +1173,6 @@ riverbankcomputing
 Rizvi
 rootdir
 ror
-rp
 rpaetz
 rpi
 RPIDEMO
@@ -1174,6 +1190,7 @@ rxor
 saddr
 Saikiran
 Sanchit
+sanitizers
 sats
 savelist
 saveop
@@ -1181,6 +1198,7 @@ saxutils
 sbb
 SBF
 sbin
+SBINDIR
 sbt
 scanf
 sched
@@ -1192,6 +1210,7 @@ scons
 scp
 scrollbars
 sdd
+SDFLIGHT
 searchdata
 SEARCHENGINE
 segfault
@@ -1233,6 +1252,7 @@ sface
 sfregoso
 sgl
 SGN
+SHAREDSTATEDIR
 SHELLCOMMAND
 Shenker
 showinitializer
@@ -1280,6 +1300,7 @@ srand
 srandom
 srange
 src
+SRCS
 sre
 sscanf
 ssh
@@ -1331,6 +1352,7 @@ strtol
 strtoul
 subdir
 subfolder
+subfolders
 subgrouping
 subhist
 subhistory
@@ -1338,6 +1360,7 @@ subpage
 subseconds
 subtargets
 sudo
+suppr
 SVCLOGFILE
 SVCLOGFILEL
 svipc
@@ -1345,6 +1368,7 @@ swcaegitadmin
 SYMLINKS
 synchronicity
 synopsys
+SYSCONFDIR
 SYSFS
 sysinfo
 systemd
@@ -1423,7 +1447,6 @@ timothycanham
 tions
 tjh
 TKC
-tl
 tlc
 tlist
 tlm
@@ -1473,7 +1496,6 @@ trimwhitespace
 trinomials
 TRUNC
 truncstring
-tt
 tts
 ttype
 Tuszynski
@@ -1488,6 +1510,7 @@ typeslist
 typetoken
 tzinfo
 uart
+UBSAN
 ubuntu
 ucf
 Uchenik
@@ -1514,6 +1537,7 @@ unistd
 Unithem
 unittest
 UNITTESTASSERT
+unittests
 unprintables
 unsubscribe
 upcalls
@@ -1552,7 +1576,6 @@ virtualization
 virtualized
 vla
 vlist
-vm
 VMIN
 vmstat
 vsnprintf
@@ -1585,7 +1608,6 @@ WORKDIR
 workflow
 worklist
 Woverloaded
-wp
 writelines
 WRONLY
 wrs
@@ -1598,6 +1620,7 @@ wxgui
 Xabcdefx
 xapian
 xargs
+Xcode
 XBee
 xcode
 xdf
@@ -1612,6 +1635,7 @@ xon
 xor
 XPath
 xsh
+xsltproc
 xxxx
 XYZZY
 yacc

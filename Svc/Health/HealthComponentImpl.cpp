@@ -200,7 +200,7 @@ namespace Svc {
         this->cmdResponse_out(opCode,cmdSeq,Fw::CmdResponse::OK);
     }
 
-    NATIVE_INT_TYPE HealthImpl::findEntry(Fw::CmdStringArg entry) {
+    NATIVE_INT_TYPE HealthImpl::findEntry(const Fw::CmdStringArg& entry) {
 
         // walk through entries
         for (NATIVE_UINT_TYPE tableEntry = 0; tableEntry < NUM_PINGSEND_OUTPUT_PORTS; tableEntry++) {
