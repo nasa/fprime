@@ -190,7 +190,7 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "FwTlmPacketizeIdType",
                 "NATIVE_INT_TYPE",
                 "NATIVE_UINT_TYPE",
-                "POINTER_CAST"
+                "POINTER_CAST",
             ]:
                 t = "sizeof(" + t + cl
             else:

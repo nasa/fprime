@@ -30,7 +30,7 @@ port_types_list = [
     "FwTlmPacketizeIdType",
     "NATIVE_INT_TYPE",
     "NATIVE_UINT_TYPE",
-    "POINTER_CAST"
+    "POINTER_CAST",
 ]
 
 
