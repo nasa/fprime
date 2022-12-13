@@ -178,8 +178,6 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "bool",
                 "FwBuffSizeType",
                 "FwChanIdType",
-                "FwDpBuffSizeType",
-                "FwDpIdType",
                 "FwEnumStoreType",
                 "FwEventIdType",
                 "FwIndexType",
