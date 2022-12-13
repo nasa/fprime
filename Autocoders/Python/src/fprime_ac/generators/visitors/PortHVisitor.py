@@ -176,13 +176,23 @@ class PortHVisitor(AbstractVisitor.AbstractVisitor):
                 "F32",
                 "F64",
                 "bool",
-                "FwOpcodeType",
+                "FwBuffSizeType",
                 "FwChanIdType",
+                "FwDpBuffSizeType",
+                "FwDpIdType",
+                "FwEnumStoreType",
                 "FwEventIdType",
+                "FwIndexType",
+                "FwOpcodeType",
+                "FwPacketDescriptorType",
                 "FwPrmIdType",
+                "FwSizeType",
+                "FwTimeBaseStoreType",
+                "FwTimeContextStoreType",
+                "FwTlmPacketizeIdType",
                 "NATIVE_INT_TYPE",
                 "NATIVE_UINT_TYPE",
-                "POINTER_CAST",
+                "POINTER_CAST"
             ]:
                 t = "sizeof(" + t + cl
             else:
