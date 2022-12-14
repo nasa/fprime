@@ -62,8 +62,8 @@ namespace FppTest {
     struct EnumArgs {
       EnumArgs();
 
-      PortEnum e;
-      PortEnum eRef;
+      PortEnum en;
+      PortEnum enRef;
     };
 
     struct ArrayArgs {

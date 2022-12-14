@@ -50,8 +50,8 @@ namespace FppTest {
     }
 
     EnumArgs::EnumArgs() {
-      e = getRandomPortEnum();
-      eRef = getRandomPortEnum();
+      en = getRandomPortEnum();
+      enRef = getRandomPortEnum();
     }
 
     ArrayArgs::ArrayArgs() {
@@ -102,10 +102,14 @@ namespace FppTest {
     // ----------------------------------------------------------------------
 
     PortEnum getRandomPortEnum() {
-      return static_cast<PortEnum::T>(STest::Pick::lowerUpper(
+      PortEnum e;
+
+      e = static_cast<PortEnum::T>(STest::Pick::lowerUpper(
         0,
         PortEnum::NUM_CONSTANTS - 1
       ));
+
+      return e;
     }
 
     PortArray getRandomPortArray() {

@@ -12,6 +12,12 @@
 #include "GTestBase.hpp"
 #include "FppTest/port/Example.hpp"
 #include "PortTypes.hpp"
+
+#include "FppTest/port/PrimitiveArgsPortAc.hpp"
+#include "FppTest/port/StringArgsPortAc.hpp"
+#include "FppTest/port/EnumArgsPortAc.hpp"
+#include "FppTest/port/ArrayArgsPortAc.hpp"
+#include "FppTest/port/StructArgsPortAc.hpp"
 #include "FppTest/port/TypedPortIndexEnumAc.hpp"
 #include "FppTest/port/SerialPortIndexEnumAc.hpp"
 
@@ -173,6 +179,10 @@
       // ----------------------------------------------------------------------
 
       void check_serial(
+          FppTest::Port::NoArgsPort& port
+      );
+
+      void check_serial(
           FppTest::Port::PrimitiveArgsPort& port
       );
 
@@ -230,10 +240,10 @@
       //!
       void from_enumArgsOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &e, /*!< 
+          const PortEnum &en, /*!< 
       An enum
       */
-          PortEnum &eRef /*!< 
+          PortEnum &enRef /*!< 
       An enum ref
       */
       );
@@ -242,10 +252,10 @@
       //!
       PortEnum from_enumReturnOut_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          const PortEnum &e, /*!< 
+          const PortEnum &en, /*!< 
       An enum
       */
-          PortEnum &eRef /*!< 
+          PortEnum &enRef /*!< 
       An enum ref
       */
       );
@@ -369,14 +379,11 @@
       FppTest::Port::StructReturn structReturnVal;
 
       // Buffers from serial output ports;
-      U8 primitiveData[sizeof(FppTest::Port::PrimitiveArgs)];
-      U8 stringData[
-        StringArgsPortStrings::StringSize80::SERIALIZED_SIZE * 2 + 
-        StringArgsPortStrings::StringSize100::SERIALIZED_SIZE * 2
-      ];
-      U8 enumData[PortEnum::SERIALIZED_SIZE * 2];
-      U8 arrayData[PortArray::SERIALIZED_SIZE * 2];
-      U8 structData[PortStruct::SERIALIZED_SIZE * 2];
+      U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
+      U8 stringData[InputStringArgsPort::SERIALIZED_SIZE]; 
+      U8 enumData[InputEnumArgsPort::SERIALIZED_SIZE]; 
+      U8 arrayData[InputArrayArgsPort::SERIALIZED_SIZE];
+      U8 structData[InputStructArgsPort::SERIALIZED_SIZE];
       U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
 
       Fw::SerialBuffer primitiveBuf;

@@ -23,8 +23,8 @@ port PrimitiveReturn(
 
 @ A port returning an enum type
 port EnumReturn(
-  e: PortEnum @< An enum
-  ref eRef: PortEnum @< An enum ref
+  en: PortEnum @< An enum
+  ref enRef: PortEnum @< An enum ref
 ) -> PortEnum
 
 @ A port returning an array type

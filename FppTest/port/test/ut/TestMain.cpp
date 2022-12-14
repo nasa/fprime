@@ -29,6 +29,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,
 
 // Serial port tests
 using SerialPortTestImplementations = ::testing::Types<
+    FppTest::Port::NoArgsPort,
     FppTest::Port::PrimitiveArgsPort,
     FppTest::Port::StringArgsPort,
     FppTest::Port::EnumArgsPort,

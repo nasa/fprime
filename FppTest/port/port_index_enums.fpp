@@ -4,6 +4,7 @@ enum TypedPortIndex {
 }
 
 enum SerialPortIndex {
+  NO_ARGS
   PRIMITIVE
   STRING
   ENUM

@@ -3,7 +3,7 @@ passive component Example {
 
   # Typed input ports with no return types
 
-  sync input port noArgsIn: NoArgs
+  sync input port noArgsIn: [2] NoArgs
   
   sync input port primitiveArgsIn: [2] PrimitiveArgs
   
@@ -17,7 +17,7 @@ passive component Example {
 
   # Typed output ports with no return types
 
-  output port noArgsOut: NoArgs
+  output port noArgsOut: [2] NoArgs
   
   output port primitiveArgsOut: [2] PrimitiveArgs
 
@@ -57,6 +57,6 @@ passive component Example {
 
   sync input port serialIn: [2] serial
 
-  output port serialOut: [6] serial
+  output port serialOut: [7] serial
 
 }

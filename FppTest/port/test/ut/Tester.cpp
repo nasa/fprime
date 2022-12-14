@@ -98,8 +98,8 @@
   {
     this->invoke_to_enumArgsIn(
       portNum, 
-      port.args.e, 
-      port.args.eRef
+      port.args.en, 
+      port.args.enRef
     );
   }
 
@@ -179,8 +179,8 @@
   {
     PortEnum returnVal = this->invoke_to_enumReturnIn(
       portNum,
-      port.args.e,
-      port.args.eRef
+      port.args.en,
+      port.args.enRef
     );
 
     ASSERT_EQ(returnVal, this->enumReturnVal.val);
@@ -274,11 +274,11 @@
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumArgsOut_SIZE(1);
-//    ASSERT_from_enumArgsOut(
-//      portNum, 
-//      port.args.e,
-//      port.args.eRef
-//    );
+    ASSERT_from_enumArgsOut(
+      portNum, 
+      port.args.en,
+      port.args.enRef
+    );
   }
 
   void Tester ::
@@ -348,11 +348,11 @@
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumReturnOut_SIZE(1);
-//    ASSERT_from_enumReturnOut(
-//      portNum, 
-//      port.args.e,
-//      port.args.eRef
-//    );
+    ASSERT_from_enumReturnOut(
+      portNum, 
+      port.args.en,
+      port.args.enRef
+    );
   }
 
   void Tester ::
@@ -388,6 +388,13 @@
   // ----------------------------------------------------------------------
   // Check serial output ports
   // ----------------------------------------------------------------------
+
+  void Tester ::
+    check_serial(
+      FppTest::Port::NoArgsPort& port
+    )
+  {
+  }
 
   void Tester ::
     check_serial(
@@ -458,16 +465,16 @@
     )
   {
     Fw::SerializeStatus status;
-    PortEnum e, eRef;
+    PortEnum en, enRef;
 
-    status = this->enumBuf.deserialize(e);
+    status = this->enumBuf.deserialize(en);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    status = this->enumBuf.deserialize(eRef);
+    status = this->enumBuf.deserialize(enRef);
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
 
-    ASSERT_EQ(e, port.args.e);
-    ASSERT_EQ(eRef, port.args.eRef);
+    ASSERT_EQ(en, port.args.en);
+    ASSERT_EQ(enRef, port.args.enRef);
   }
 
   void Tester ::
@@ -543,21 +550,21 @@
   void Tester ::
     from_enumArgsOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &e,
-        PortEnum &eRef
+        const PortEnum &en,
+        PortEnum &enRef
     )
   {
-    this->pushFromPortEntry_enumArgsOut(e, eRef);
+    this->pushFromPortEntry_enumArgsOut(en, enRef);
   }
 
   PortEnum Tester ::
     from_enumReturnOut_handler(
         const NATIVE_INT_TYPE portNum,
-        const PortEnum &e,
-        PortEnum &eRef
+        const PortEnum &en,
+        PortEnum &enRef
     )
   {
-    this->pushFromPortEntry_enumReturnOut(e, eRef);
+    this->pushFromPortEntry_enumReturnOut(en, enRef);
 
     return this->enumReturnVal.val;
   }
@@ -657,6 +664,10 @@
     Fw::SerializeStatus status;
 
     switch (portNum) {
+      case SerialPortIndex::NO_ARGS:
+        status = Fw::FW_SERIALIZE_OK;
+        break;
+
       case SerialPortIndex::PRIMITIVE:
         status = Buffer.copyRaw(
           this->primitiveBuf,
@@ -740,10 +751,12 @@
     );
 
     // noArgsIn
-    this->connect_to_noArgsIn(
-        0,
-        this->component.get_noArgsIn_InputPort(0)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 2; ++i) {
+      this->connect_to_noArgsIn(
+          i,
+          this->component.get_noArgsIn_InputPort(i)
+      );
+    }
 
     // noArgsReturnIn
     this->connect_to_noArgsReturnIn(
@@ -813,8 +826,8 @@
 
     // noArgsOut
     this->component.set_noArgsOut_OutputPort(
-        0,
-        this->get_from_noArgsOut(0)
+        TypedPortIndex::TYPED,
+        this->get_from_noArgsOut(TypedPortIndex::TYPED)
     );
 
     // noArgsReturnOut
@@ -857,6 +870,11 @@
   // ----------------------------------------------------------------------
   // Connect serial output ports
   // ----------------------------------------------------------------------
+    this->component.set_noArgsOut_OutputPort(
+      TypedPortIndex::SERIAL,
+      this->get_from_serialOut(SerialPortIndex::NO_ARGS)
+    );
+
     this->component.set_primitiveArgsOut_OutputPort(
       TypedPortIndex::SERIAL,
       this->get_from_serialOut(SerialPortIndex::PRIMITIVE)

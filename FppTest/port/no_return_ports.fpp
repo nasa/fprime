@@ -21,8 +21,8 @@ port StringArgs(
 
 @ A port with enum arguments
 port EnumArgs(
-  e: PortEnum @< An enum
-  ref eRef: PortEnum @< An enum ref
+  en: PortEnum @< An enum
+  ref enRef: PortEnum @< An enum ref
 )
 
 @ A port with array arguments
