@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ ! -d "coverage/" ]
+then
+  mkdir coverage
+fi
+
+gcovr -r .. --html-details -f '(.*)PortAc\.cpp$' -o coverage/coverage.html .
