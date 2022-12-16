@@ -15,5 +15,5 @@ Here are the projects and programs identified applying the F' code
 | Lunar Flashlight CubeSat | Technology Demonstration, CubeSat/SmallSat | ? | NASA/JPL | ? | ? | Dec. 11, 2022 |Ongoing | [Mission](https://www.jpl.nasa.gov/missions/lunar-flashlight) - Target: Moon |
 | Near Earth Asteroid Scout CubeSat | Technology Demonstration, CubeSat/SmallSat | ? | NASA/JPL | ? | ? | Nov. 16, 2022 | Ongoing | [Mission](https://www.jpl.nasa.gov/missions/near-earth-asteroid-scout-neascout) - Target: Asteroids and Comets |
 | OWLS (Ocean Worlds Life Surveyor instrument) | Instrument | ? | NASA/JPL | ? | ? | ? | ? | [Mission](https://ml.jpl.nasa.gov/projects/owls/owls.html) |
-| CADRE (Cooperative Autonomous Distributed Robotic Explorers) | Robot | ? | NASA/JPL | ? | ? | ? | ? | [Mission](https://www.nasa.gov/directorates/spacetech/game_changing_development/projects/CADRE) | xxxxxxxxxxxxxx |
+| CADRE (Cooperative Autonomous Distributed Robotic Explorers) | Robot | ? | NASA/JPL | ? | ? | ? | ? | [Mission](https://www.nasa.gov/directorates/spacetech/game_changing_development/projects/CADRE) |
 | COLDArm (Cold Operable Lunar Deployable Arm) | Robotic arm | ? | NASA/JPL | ? | ? | ? | ? | [Mission](https://www.nasa.gov/feature/cold-operable-lunar-deployable-arm-coldarm/) |
