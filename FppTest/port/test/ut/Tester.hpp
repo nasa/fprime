@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Tester.hpp
-// \author tchieu
+// \author T. Chieu
 // \brief  hpp file for Example test harness implementation class
 // ======================================================================
 

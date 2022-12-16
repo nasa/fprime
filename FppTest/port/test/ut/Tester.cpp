@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Tester.cpp
-// \author tchieu
+// \author T. Chieu
 // \brief  cpp file for Example test harness implementation class
 // ======================================================================
 

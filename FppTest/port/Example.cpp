@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Example.cpp
-// \author tchieu
+// \author T. Chieu
 // \brief  cpp file for Example component implementation class
 // ======================================================================
 

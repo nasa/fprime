@@ -1,6 +1,6 @@
 // ======================================================================
 // \title  Example.hpp
-// \author tchieu
+// \author T. Chieu
 // \brief  hpp file for Example component implementation class
 // ======================================================================
 
