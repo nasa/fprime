@@ -34,8 +34,8 @@ using SerialPortTestImplementations = ::testing::Types<
     FppTest::Port::StringArgsPort,
     FppTest::Port::EnumArgsPort,
     FppTest::Port::ArrayArgsPort,
-    FppTest::Port::StructArgsPort,
-    FppTest::Port::SerialArgsPort
+    FppTest::Port::StructArgsPort
+//    FppTest::Port::SerialArgsPort
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest,

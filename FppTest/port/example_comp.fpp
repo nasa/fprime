@@ -55,7 +55,7 @@ passive component Example {
 
   # Serial ports
 
-  sync input port serialIn: [2] serial
+  sync input port serialIn: [7] serial
 
   output port serialOut: [7] serial
 

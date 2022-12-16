@@ -30,7 +30,7 @@ TYPED_TEST_SUITE_P(TypedPortTest);
 
 TYPED_TEST_P(TypedPortTest, TypedPort) {
     this->tester.invoke(TypedPortIndex::TYPED, this->port);
-    this->tester.check_history(TypedPortIndex::TYPED, this->port);
+    this->tester.check_history(this->port);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(TypedPortTest,
@@ -52,8 +52,14 @@ TYPED_TEST_P(SerialPortTest, ToSerialTest) {
     this->tester.check_serial(this->port);
 }
 
+TYPED_TEST_P(SerialPortTest, FromSerialTest) {
+    this->tester.invoke_serial(TypedPortIndex::SERIAL, this->port);
+    this->tester.check_history(this->port);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(SerialPortTest,
-    ToSerialTest
+    ToSerialTest,
+    FromSerialTest
 );
 
 #endif

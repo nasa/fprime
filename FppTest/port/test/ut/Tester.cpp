@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Example.hpp
+// \title  Tester.cpp
 // \author tchieu
 // \brief  cpp file for Example test harness implementation class
 // ======================================================================
@@ -46,7 +46,7 @@
   }
 
   // ----------------------------------------------------------------------
-  // Invoke input ports
+  // Invoke typed input ports
   // ----------------------------------------------------------------------
 
   void Tester ::
@@ -217,12 +217,170 @@
   }
 
   // ----------------------------------------------------------------------
+  // Invoke serial input ports
+  // ----------------------------------------------------------------------
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::NoArgsPort& port
+    ) 
+  {
+    U8 data[0];
+    Fw::SerialBuffer buf(data, sizeof(data));
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::NO_ARGS,
+      buf
+    );
+  }
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::PrimitiveArgsPort& port
+    ) 
+  {
+    U8 data[InputPrimitiveArgsPort::SERIALIZED_SIZE];
+    Fw::SerialBuffer buf(data, sizeof(data));
+    Fw::SerializeStatus status;
+
+    status = buf.serialize(port.args.u32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.u32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.f32);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.f32Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.b);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.bRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::PRIMITIVE,
+      buf
+    );
+  }
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StringArgsPort& port
+    ) 
+  {
+    U8 data[InputStringArgsPort::SERIALIZED_SIZE];
+    Fw::SerialBuffer buf(data, sizeof(data));
+    Fw::SerializeStatus status;
+
+    status = buf.serialize(port.args.str80);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.str80Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.str100);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.str100Ref);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRING,
+      buf
+    );
+  }
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::EnumArgsPort& port
+    ) 
+  {
+    U8 data[InputEnumArgsPort::SERIALIZED_SIZE];
+    Fw::SerialBuffer buf(data, sizeof(data));
+    Fw::SerializeStatus status;
+
+    status = buf.serialize(port.args.en);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.enRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ENUM,
+      buf
+    );
+  }
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::ArrayArgsPort& port
+    ) 
+  {
+    U8 data[InputArrayArgsPort::SERIALIZED_SIZE];
+    Fw::SerialBuffer buf(data, sizeof(data));
+    Fw::SerializeStatus status;
+
+    status = buf.serialize(port.args.a);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.aRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::ARRAY,
+      buf
+    );
+  }
+
+  void Tester ::
+    invoke_serial(
+        NATIVE_INT_TYPE portNum,
+        FppTest::Port::StructArgsPort& port
+    ) 
+  {
+    U8 data[InputStructArgsPort::SERIALIZED_SIZE];
+    Fw::SerialBuffer buf(data, sizeof(data));
+    Fw::SerializeStatus status;
+
+    status = buf.serialize(port.args.s);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    status = buf.serialize(port.args.sRef);
+    ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
+
+    this->invoke_to_serialIn(
+      SerialPortIndex::STRUCT,
+      buf
+    );
+  }
+
+  void Tester :: 
+    invoke_serial(
+      NATIVE_INT_TYPE portNum,
+      FppTest::Port::SerialArgsPort& port
+    )
+  {
+    this->invoke_to_serialIn(
+      portNum,
+      port.args.buf
+    );
+  }
+
+  // ----------------------------------------------------------------------
   // Check history of typed output ports
   // ----------------------------------------------------------------------
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::NoArgsPort& port
     ) 
   {
@@ -232,14 +390,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::PrimitiveArgsPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_primitiveArgsOut_SIZE(1);
     ASSERT_from_primitiveArgsOut(
-      portNum, 
+      0, 
       port.args.u32, 
       port.args.u32Ref, 
       port.args.f32,
@@ -251,14 +408,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::StringArgsPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_stringArgsOut_SIZE(1);
     ASSERT_from_stringArgsOut(
-      portNum, 
+      0, 
       port.args.str80,
       port.args.str80Ref,
       port.args.str100,
@@ -268,14 +424,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::EnumArgsPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumArgsOut_SIZE(1);
     ASSERT_from_enumArgsOut(
-      portNum, 
+      0, 
       port.args.en,
       port.args.enRef
     );
@@ -283,14 +438,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::ArrayArgsPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_arrayArgsOut_SIZE(1);
     ASSERT_from_arrayArgsOut(
-      portNum, 
+      0, 
       port.args.a,
       port.args.aRef
     );
@@ -298,14 +452,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::StructArgsPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_structArgsOut_SIZE(1);
     ASSERT_from_structArgsOut(
-      portNum, 
+      0, 
       port.args.s,
       port.args.sRef
     );
@@ -313,7 +466,6 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::NoArgsReturnPort& port
     ) 
   {
@@ -323,14 +475,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::PrimitiveReturnPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_primitiveReturnOut_SIZE(1);
     ASSERT_from_primitiveReturnOut(
-      portNum, 
+      0, 
       port.args.u32, 
       port.args.u32Ref, 
       port.args.f32,
@@ -342,14 +493,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::EnumReturnPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_enumReturnOut_SIZE(1);
     ASSERT_from_enumReturnOut(
-      portNum, 
+      0, 
       port.args.en,
       port.args.enRef
     );
@@ -357,14 +507,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::ArrayReturnPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_arrayReturnOut_SIZE(1);
     ASSERT_from_arrayReturnOut(
-      portNum, 
+      0, 
       port.args.a,
       port.args.aRef
     );
@@ -372,14 +521,13 @@
 
   void Tester ::
     check_history(
-        NATIVE_INT_TYPE portNum,
         FppTest::Port::StructReturnPort& port
     ) 
   {
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     ASSERT_from_structReturnOut_SIZE(1);
     ASSERT_from_structReturnOut(
-      portNum, 
+      0, 
       port.args.s,
       port.args.sRef
     );
@@ -901,6 +1049,36 @@
     );
 
     this->component.set_serialOut_OutputPort(
+      SerialPortIndex::NO_ARGS,
+      this->get_from_noArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::PRIMITIVE,
+      this->get_from_primitiveArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::STRING,
+      this->get_from_stringArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::ENUM,
+      this->get_from_enumArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::ARRAY,
+      this->get_from_arrayArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
+      SerialPortIndex::STRUCT,
+      this->get_from_structArgsOut(TypedPortIndex::SERIAL)
+    );
+
+    this->component.set_serialOut_OutputPort(
       SerialPortIndex::SERIAL,
       this->get_from_serialOut(SerialPortIndex::SERIAL)
     );
@@ -909,10 +1087,12 @@
   // ----------------------------------------------------------------------
   // Connect serial input ports
   // ----------------------------------------------------------------------
-    this->connect_to_serialIn(
-        TypedPortIndex::SERIAL,
-        this->component.get_serialIn_InputPort(TypedPortIndex::SERIAL)
-    );
+    for (NATIVE_INT_TYPE i = 0; i < 7; ++i) {
+      this->connect_to_serialIn(
+          i,
+          this->component.get_serialIn_InputPort(i)
+      );
+    }
 
   }
 

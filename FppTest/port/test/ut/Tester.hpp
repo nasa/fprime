@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  Example/test/ut/Tester.hpp
+// \title  Tester.hpp
 // \author tchieu
 // \brief  hpp file for Example test harness implementation class
 // ======================================================================
@@ -52,7 +52,7 @@
     public:
 
       // ----------------------------------------------------------------------
-      // Invoke input ports
+      // Invoke typed input ports
       // ----------------------------------------------------------------------
 
       void invoke(
@@ -116,61 +116,89 @@
       );
 
       // ----------------------------------------------------------------------
-      // Check history of typed output ports
+      // Invoke serial input ports
       // ----------------------------------------------------------------------
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::NoArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::PrimitiveArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::StringArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::EnumArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::ArrayArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
           FppTest::Port::StructArgsPort& port
       );
 
-      void check_history(
+      void invoke_serial(
           NATIVE_INT_TYPE portNum,
+          FppTest::Port::SerialArgsPort& port
+      );
+
+      // ----------------------------------------------------------------------
+      // Check history of typed output ports
+      // ----------------------------------------------------------------------
+
+      void check_history(
+          FppTest::Port::NoArgsPort& port
+      );
+
+      void check_history(
+          FppTest::Port::PrimitiveArgsPort& port
+      );
+
+      void check_history(
+          FppTest::Port::StringArgsPort& port
+      );
+
+      void check_history(
+          FppTest::Port::EnumArgsPort& port
+      );
+
+      void check_history(
+          FppTest::Port::ArrayArgsPort& port
+      );
+
+      void check_history(
+          FppTest::Port::StructArgsPort& port
+      );
+
+      void check_history(
           FppTest::Port::NoArgsReturnPort& port
       );
       
       void check_history(
-          NATIVE_INT_TYPE portNum,
           FppTest::Port::PrimitiveReturnPort& port
       );
 
       void check_history(
-          NATIVE_INT_TYPE portNum,
           FppTest::Port::EnumReturnPort& port
       );
 
       void check_history(
-          NATIVE_INT_TYPE portNum,
           FppTest::Port::ArrayReturnPort& port
       );
 
       void check_history(
-          NATIVE_INT_TYPE portNum,
           FppTest::Port::StructReturnPort& port
       );
 

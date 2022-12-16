@@ -187,6 +187,6 @@
         Fw::SerializeBufferBase &Buffer /*!< The serialization buffer*/
     )
   {
-    // TODO
+    this->serialOut_out(portNum, Buffer);
   }
 
