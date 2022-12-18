@@ -6,7 +6,7 @@ layout: default
 Here are the projects and programs identified applying the F´ code:
 
 
-|**_Project/Program_**| **_Type_** | **_SW Class (A to F)_** | **_NASA Center / Company_** | **_OS_** | **_HW Platform_** | **_Launch Date_**| **_Enf of Mission_** | **_Note_**| 
+|**_Project/Program_**| **_Type_** | **_SW Class (A to F)_** | **_NASA Center / Company_** | **_OS_** | **_HW Platform_** | **_Launch Date_**| **_End of Mission_** | **_Note_**| 
 |:---|:---|:---|:---|:---|:---|:---|:---|:---| 
 | ISS-RapidScat (International Space Station Rapid Scatterometer) | Instrument | ? | NASA/JPL | ? | ? |  Sep. 21, 2014 | Nov. 18, 2018 | [Mission](https://www.jpl.nasa.gov/missions/international-space-station-rapid-scatterometer-iss-rapidscat) - Target: Earth |
 | ASTERIA (Arcsecond Space Telescope Enabling Research in Astrophysics) | Technology Demonstration, CubeSat/SmallSat | ? | NASA/JPL | ? | ? | Aug. 14, 2017 | End of Feb. 2020 | [Mission](https://www.jpl.nasa.gov/missions/arcsecond-space-telescope-enabling-research-in-astrophysics-asteria) - Target: Exoplanets |

@@ -46,6 +46,7 @@ aps
 apxs
 AQuat
 AQueued
+arcsecond
 arduino
 argc
 argcomplete
@@ -198,6 +199,7 @@ cobj
 CODEFILE
 codegen
 codeql
+coldarm
 colno
 COLORSTYLE
 colorwheel
@@ -452,6 +454,7 @@ EXAMPLECOMPONENTIMPL
 excinfo
 executables
 exitcode
+exoplanets
 expandtabs
 expr
 exprtokens
@@ -713,6 +716,7 @@ isnan
 isoschematron
 isr
 ISREG
+iss
 isspace
 isupper
 ITAR
@@ -901,6 +905,7 @@ nbits
 ncsl
 NDELAY
 ndiffs
+neascout
 Netscape
 newloc
 newroot
@@ -1113,12 +1118,14 @@ QNX
 qsf
 qtest
 qthelpproject
+qualcomm
 quatchan
 RAbrack
 radd
 RAII
 Ramanan
 randtbl
+rapidscat
 raspberrypi
 raspi
 RATEGROUPDRIVER
@@ -1201,6 +1208,7 @@ sbin
 SBINDIR
 sbt
 scanf
+scatterometer
 sched
 schem
 schematron
@@ -1289,6 +1297,7 @@ SOURCEDIR
 sourceforge
 Sourcetrail
 sourcing
+spacetech
 sparc
 SPHINXBUILD
 SPHINXOPTS
