@@ -454,7 +454,7 @@ EXAMPLECOMPONENTIMPL
 excinfo
 executables
 exitcode
-exoplanets
+Exoplanets
 expandtabs
 expr
 exprtokens
@@ -1118,7 +1118,7 @@ QNX
 qsf
 qtest
 qthelpproject
-qualcomm
+Qualcomm
 quatchan
 RAbrack
 radd
