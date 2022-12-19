@@ -36,6 +36,7 @@ void BufferRepeater ::configure(BufferRepeater::BufferRepeaterFailureOption allo
 bool BufferRepeater ::check_allocation(FwIndexType index,
                                        const Fw::Buffer& new_allocation,
                                        const Fw::Buffer& incoming_buffer) {
+    FW_ASSERT(index < NUM_PORTOUT_OUTPUT_PORTS, index);
     bool is_valid = (new_allocation.getData() != nullptr) && (new_allocation.getSize() >= incoming_buffer.getSize());
 
     // Respond to invalid buffer allocation
@@ -72,6 +73,7 @@ void BufferRepeater ::portIn_handler(NATIVE_INT_TYPE portNum, /*!< The port numb
             if (this->check_allocation(i, new_allocation, buffer)) {
                 // Clone the data and send it
                 ::memcpy(new_allocation.getData(), buffer.getData(), buffer.getSize());
+                new_allocation.setSize(buffer.getSize());
                 this->portOut_out(i, new_allocation);
             }
         }
