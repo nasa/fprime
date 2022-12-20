@@ -16,14 +16,13 @@
 #include "GTestBase.hpp"
 #include "Ref/SignalGen/SignalGen.hpp"
 
-// Maximum size of histories
-#define MAX_HISTORY_SIZE 10
-
 namespace Ref {
 
   class Tester :
     public SignalGenGTestBase
   {
+      // Maximum size of histories storing events, telemetry, and port outputs
+      static const NATIVE_INT_TYPE MAX_HISTORY_SIZE = 10;
 
       // ----------------------------------------------------------------------
       // Construction and destruction

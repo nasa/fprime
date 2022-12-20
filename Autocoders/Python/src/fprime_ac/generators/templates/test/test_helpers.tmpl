@@ -1,5 +1,5 @@
 // ======================================================================
-// \title  $name/test/ut/TesterBase.cpp
+// \title  $name/test/ut/TesterHelpers.cpp
 // \author Auto-generated
 // \brief  cpp file for ${name} component test harness base class
 //
@@ -7,15 +7,6 @@
 //
 // ======================================================================
 \#include "Tester.hpp"
-
-\#ifndef TEST_INSTANCE_ID
-\#define TEST_INSTANCE_ID 0
-\#endif
-#if $kind != "passive":
-\#ifndef TEST_INSTANCE_QUEUE_DEPTH
-\#define TEST_INSTANCE_QUEUE_DEPTH 10
-\#endif
-#end if
 
 #if $namespace_list != None
  #for $namespace in $namespace_list
@@ -122,9 +113,9 @@ namespace ${namespace} {
     this->init();
     this->component.init(
 #if $kind == "passive"
-        TEST_INSTANCE_ID
+        Tester::TEST_INSTANCE_ID
 #else
-        TEST_INSTANCE_QUEUE_DEPTH, TEST_INSTANCE_ID
+        Tester::TEST_INSTANCE_QUEUE_DEPTH, Tester::TEST_INSTANCE_ID
 #end if
     );
   }
