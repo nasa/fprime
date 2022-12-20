@@ -32,6 +32,9 @@ var hierarchy =
       [ "Svc::BufferManagerComponentImpl", "class_svc_1_1_buffer_manager_component_impl.html", null ]
     ] ],
     [ "Os::BufferQueue", "class_os_1_1_buffer_queue.html", null ],
+    [ "BufferRepeaterComponentBase", null, [
+      [ "Svc::BufferRepeater", "class_svc_1_1_buffer_repeater.html", null ]
+    ] ],
     [ "Fw::ByteArray", "struct_fw_1_1_byte_array.html", null ],
     [ "ByteStreamDriverModelComponentBase", null, [
       [ "Drv::TcpClientComponentImpl", "class_drv_1_1_tcp_client_component_impl.html", null ],

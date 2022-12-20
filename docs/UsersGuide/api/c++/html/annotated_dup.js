@@ -109,6 +109,7 @@ var annotated_dup =
       [ "BufferAccumulator", "class_svc_1_1_buffer_accumulator.html", "class_svc_1_1_buffer_accumulator" ],
       [ "BufferLogger", "class_svc_1_1_buffer_logger.html", "class_svc_1_1_buffer_logger" ],
       [ "BufferManagerComponentImpl", "class_svc_1_1_buffer_manager_component_impl.html", "class_svc_1_1_buffer_manager_component_impl" ],
+      [ "BufferRepeater", "class_svc_1_1_buffer_repeater.html", "class_svc_1_1_buffer_repeater" ],
       [ "CommandDispatcherImpl", "class_svc_1_1_command_dispatcher_impl.html", "class_svc_1_1_command_dispatcher_impl" ],
       [ "CmdSequencerComponentImpl", "class_svc_1_1_cmd_sequencer_component_impl.html", "class_svc_1_1_cmd_sequencer_component_impl" ],
       [ "AMPCSSequence", "class_svc_1_1_a_m_p_c_s_sequence.html", "class_svc_1_1_a_m_p_c_s_sequence" ],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ipcfg_3454',['IpCfg',['../ip_cfg_8hpp.html#a71b2b0b2f0742bd012e1a8e16ee1ee74',1,'IpCfg.hpp']]]
+  ['hubtype_3470',['HubType',['../class_svc_1_1_generic_hub_component_impl.html#a2f14cbcfad4f033ab94bddfff9e144d6',1,'Svc::GenericHubComponentImpl']]]
 ];
