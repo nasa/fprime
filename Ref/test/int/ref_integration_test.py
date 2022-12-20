@@ -21,16 +21,14 @@ FilterSeverity = Enum(
 
 
 def test_is_streaming(fprime_test_api):
-    """ Test flight software is streaming
+    """Test flight software is streaming
 
     Tests that the flight software is streaming by looking for 5 telemetry items in 10 seconds. Additionally,
     "sendBuffComp.SendState" is verified to be SEND_IDLE.
     """
     results = fprime_test_api.assert_telemetry_count(5, timeout=10)
     for result in results:
-        msg = "received channel {} update: {}".format(
-            result.get_id(), result.get_str()
-        )
+        msg = "received channel {} update: {}".format(result.get_id(), result.get_str())
         print(msg)
     fprime_test_api.assert_telemetry(
         "sendBuffComp.SendState", value="SEND_IDLE", timeout=3
@@ -38,7 +36,7 @@ def test_is_streaming(fprime_test_api):
 
 
 def set_event_filter(fprime_test_api, severity, enabled):
-    """ Send command to set event filter
+    """Send command to set event filter
 
     This helper will send a command that updates the given severity filter on the ActiveLogger
     Component in the Ref App.
@@ -67,7 +65,7 @@ def set_event_filter(fprime_test_api, severity, enabled):
 
 
 def set_default_filters(fprime_test_api):
-    """ Set the default (initial) event filters """
+    """Set the default (initial) event filters"""
     set_event_filter(fprime_test_api, "COMMAND", True)
     set_event_filter(fprime_test_api, "ACTIVITY_LO", True)
     set_event_filter(fprime_test_api, "ACTIVITY_HI", True)
@@ -77,18 +75,18 @@ def set_default_filters(fprime_test_api):
 
 
 def test_send_command(fprime_test_api):
-    """ Test that commands may be sent
+    """Test that commands may be sent
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of NO-OP commands.
     """
-    fprime_test_api.send_and_assert_command( "cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 1
-    fprime_test_api.send_and_assert_command( "cmdDisp.CMD_NO_OP", max_delay=0.1)
+    fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP", max_delay=0.1)
     assert fprime_test_api.get_command_test_history().size() == 2
 
 
 def test_send_command_args(fprime_test_api):
-    """ Test that commands may be sent with arguments
+    """Test that commands may be sent with arguments
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of NO-OP string commands.
     """
@@ -106,7 +104,7 @@ def test_send_command_args(fprime_test_api):
 
 
 def test_send_and_assert_no_op(fprime_test_api):
-    """ Test that commands may be sent in-order
+    """Test that commands may be sent in-order
 
     Tests command send, dispatch, and receipt using send_and_assert command with NO-OP commands. Repeats the series of
     commands 100 times and looks for no re-ordering nor drops.
@@ -165,7 +163,7 @@ def test_send_and_assert_no_op(fprime_test_api):
 
 
 def test_bd_cycles_ascending(fprime_test_api):
-    """ Test in-order block driver updates """
+    """Test in-order block driver updates"""
     length = 60
     count_pred = predicates.greater_than(length - 1)
     results = fprime_test_api.await_telemetry_count(
@@ -200,7 +198,9 @@ def test_bd_cycles_ascending(fprime_test_api):
         last = result
 
     case = True
-    case &= fprime_test_api.test_assert(ascending, "Expected all updates to ascend.", True)
+    case &= fprime_test_api.test_assert(
+        ascending, "Expected all updates to ascend.", True
+    )
     case &= fprime_test_api.test_assert(
         not reordered, "Expected no updates to be dropped.", True
     )
@@ -215,18 +215,20 @@ def test_bd_cycles_ascending(fprime_test_api):
 
 
 def test_active_logger_filter(fprime_test_api):
-    """ Test active logger event filtering """
+    """Test active logger event filtering"""
     set_default_filters(fprime_test_api)
     try:
         cmd_events = fprime_test_api.get_event_pred(severity=EventSeverity.COMMAND)
-        actHI_events = fprime_test_api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
+        actHI_events = fprime_test_api.get_event_pred(
+            severity=EventSeverity.ACTIVITY_HI
+        )
         pred = predicates.greater_than(0)
         zero = predicates.equal_to(0)
         # Drain time for dispatch events
         time.sleep(10)
 
-        fprime_test_api.send_and_assert_command( "cmdDisp.CMD_NO_OP")
-        fprime_test_api.send_and_assert_command( "cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
+        fprime_test_api.send_and_assert_command("cmdDisp.CMD_NO_OP")
 
         time.sleep(0.5)
 
@@ -249,8 +251,10 @@ def test_active_logger_filter(fprime_test_api):
 
 
 def test_signal_generation(fprime_test_api):
-    """ Tests the behavior of signal gen component """
-    fprime_test_api.send_and_assert_command( "SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"])
+    """Tests the behavior of signal gen component"""
+    fprime_test_api.send_and_assert_command(
+        "SG4.SignalGen_Settings", [1, 5, 0, "SQUARE"]
+    )
     # First telemetry item should fill only the first slot of the history
     history = [0, 0, 0, 5]
     pair_history = [{"time": 0, "value": value} for value in history]
@@ -259,11 +263,11 @@ def test_signal_generation(fprime_test_api):
     fprime_test_api.assert_telemetry("SG4.History", history, timeout=6)
     fprime_test_api.assert_telemetry("SG4.PairHistory", pair_history, timeout=1)
     fprime_test_api.assert_telemetry("SG4.Info", info, timeout=1)
-    fprime_test_api.send_and_assert_command( "SG4.SignalGen_Toggle")
+    fprime_test_api.send_and_assert_command("SG4.SignalGen_Toggle")
 
 
 def test_seqgen(fprime_test_api):
-    """ Tests the seqgen can be dispatched (requires localhost testing) """
+    """Tests the seqgen can be dispatched (requires localhost testing)"""
     sequence = Path(__file__).parent / "test_seq.seq"
     assert (
         subprocess.run(
