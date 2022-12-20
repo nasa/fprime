@@ -15,9 +15,6 @@ constant CmdDispatcherComponentCommandPorts = 30
 @ Used for uplink/sequencer buffer/response ports
 constant CmdDispatcherSequencePorts = 5
 
-@ Outputs from the generic repeater
-constant GenericRepeaterOutputPorts = 2
-
 @ Number of static memory allocations
 constant StaticMemoryAllocations = 4
 
