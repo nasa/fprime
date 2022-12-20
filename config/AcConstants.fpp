@@ -33,6 +33,9 @@ constant ComQueueComPorts = 2
 @ Used for number of Fw::Buffer type ports supported by Svc::ComQueue
 constant ComQueueBufferPorts = 1
 
+@ Used for maximum number of connected buffer repeater consumers
+constant BufferRepeaterOutputPorts = 10
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------
