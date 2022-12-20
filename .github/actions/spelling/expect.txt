@@ -85,6 +85,8 @@ autogenerator
 AUTOLINK
 autoload
 automodule
+autosort
+autoupdate
 AYYYY
 backend
 backslashreplace
@@ -162,6 +164,7 @@ changeme
 CHANNELID
 chdir
 cheetahtemplate
+cheshirekow
 Chieu
 CHK
 CHNG
@@ -607,6 +610,7 @@ Guire
 handcoded
 hardtoaccess
 hashlib
+hashrulers
 hashvalue
 Heade
 HEADERSIZE
@@ -637,6 +641,7 @@ htons
 huey
 Huynh
 HVisitor
+hwrap
 hxx
 hyperlink
 hyperlinks
@@ -1003,6 +1008,7 @@ Pandian
 PARAMDOC
 params
 PARENB
+parg
 PARODD
 parseable
 pathlib
