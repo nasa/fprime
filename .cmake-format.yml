@@ -1,0 +1,51 @@
+# https://github.com/cheshirekow/cmake_format
+format:
+  line_width: 120
+  tab_size: 2
+  line_ending: unix
+  bullet_char: '*'
+  enum_char: .
+  separate_ctrl_name_with_space: false
+  separate_fn_name_with_space: false
+  dangle_parens: false
+
+  # If the trailing parenthesis must be 'dangled' on its on
+  # 'line, then align it to this reference: `prefix`: the start'
+  # 'of the statement,  `prefix-indent`: the start of the'
+  # 'statement, plus one indentation  level, `child`: align to'
+  # the column of the arguments
+  dangle_align: prefix
+
+  # If an argument group contains more than this many sub-groups
+  # (parg or kwarg groups) then force it to a vertical layout.
+  max_subgroups_hwrap: 2
+  # If a positional argument group contains more than this many
+  # arguments, then force it to a vertical layout.
+  max_pargs_hwrap: 3
+  # If a cmdline positional group consumes more than this many
+  # lines without nesting, then invalidate the layout (and nest)
+  max_rows_cmdline: 2
+
+  # Format command names consistently as 'lower' or 'upper' case
+  command_case: canonical
+  # Format keywords consistently as 'lower' or 'upper' case
+  # unchanged is valid too
+  keyword_case: 'upper'
+
+  # A list of command names which should always be wrapped
+  always_wrap: []
+
+  # If true, the argument lists which are known to be sortable
+  # will be sorted lexicographically
+  enable_sort: true
+
+  # If true, the parsers may infer whether or not an argument
+  # list is sortable (without annotation).
+  autosort: false
+
+markup:
+  canonicalize_hashrulers: false
+  enable_markup: false
+
+lint:
+  max_statements: 100
