@@ -1,3 +1,17 @@
+# To use:
+#
+#     pre-commit run -a
+#
+# Or:
+#
+#     pre-commit install  # (runs every time you commit in git)
+#
+# To update this file:
+#
+#     pre-commit autoupdate
+#
+# See https://github.com/pre-commit/pre-commit
+
 repos:
     -   repo: https://github.com/psf/black
         rev: 19.3b0
@@ -9,3 +23,11 @@ repos:
             name: Format Python Code (black) in Gds/
             files: '^Gds/'
             exclude: '^Gds/src/fprime_gds/wxgui/'
+    # CMake formatting
+    -   repo: https://github.com/cheshirekow/cmake-format-precommit
+        rev: v0.6.13
+        hooks:
+        -   id: cmake-format
+            additional_dependencies: [pyyaml]
+            types: [file]
+            files: (\.cmake|CMakeLists.txt)(.in)?$
