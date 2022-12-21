@@ -327,6 +327,7 @@ dicts
 dictvalue
 difflib
 diffs
+digitalcommons
 diles
 dinkel
 dirent
@@ -1277,6 +1278,7 @@ SIZ
 sizeof
 sloc
 Smath
+smallsat
 SNDTIMEO
 snprintf
 sockaddr
@@ -1578,6 +1580,7 @@ vfs
 vhd
 vhdl
 VID
+viewcontent
 viewforum
 virt
 virtualbox
