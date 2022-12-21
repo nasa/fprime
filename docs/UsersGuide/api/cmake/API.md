@@ -262,7 +262,7 @@ management and fprime autocoding capabilities. This requires three variables def
 unit test name, autocoding and source inputs for the unit test, and (optionally) any
 non-standard link dependencies.
 
-**Note:** This is ONLY run when the build type is TESTING. Unit testing is restricted to this build type as fprime
+**Note:** This is ONLY run when the BUILD_TESTING is enabled. Unit testing is restricted to this build type as fprime
           sets additional flags when building for unit tests.
 
 Required variables (defined in calling scope):
@@ -296,6 +296,11 @@ set(UT_MOD_DEPS
     -lpthread)
 ```
  **Note:** this is typically called after any other register calls in the module.
+
+- **UT_AUTO_HELPERS:** (optional) When set ON, a test helper file will be generated that auto-codes the connect ports
+  and init components methods. This removes the maintenance overhead for these functions. ON additionally adds test
+  source directories to the include path for the unit test target. When set to OFF, this helper file will be created
+  when generating implementation templates allowing users to modify these files. Default: OFF
 
 ### Unit-Test Example ###
 

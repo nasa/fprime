@@ -25,6 +25,23 @@ endfunction(ut_add_deployment_target)
 
 
 
+## function(ut_setup_unit_test_include_directories UT_EXE_NAME SOURCE_FILES)
+    set(UT_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}")
+    # When running with auto-helpers, we need to include the .hpp directories as things are imported without path
+    # e.g. "#include <Tester.hpp>" and there is no guarantee for the location of these files
+    if (DEFINED UT_AUTO_HELPERS AND UT_AUTO_HELPERS)
+        foreach(SOURCE_FILE IN LISTS SOURCE_FILES)
+            get_filename_component(SOURCE_EXT "${SOURCE_FILE}" LAST_EXT)
+            get_filename_component(SOURCE_DIR "${SOURCE_FILE}" DIRECTORY)
+            if (SOURCE_EXT STREQUAL ".cpp" AND NOT SOURCE_DIR IN_LIST UT_INCLUDE_DIRECTORIES)
+                list(APPEND UT_INCLUDE_DIRECTORIES "${SOURCE_DIR}")
+            endif()
+        endforeach()
+    endif()
+    target_include_directories("${UT_EXE_NAME}" PRIVATE ${UT_INCLUDE_DIRECTORIES})
+endfunction(ut_setup_unit_test_include_directories)
+
+
 
 ## function(ut_add_module_target MODULE_NAME TARGET_NAME SOURCE_FILES DEPENDENCIES)
     # Protects against multiple calls to fprime_register_ut()
@@ -36,7 +53,7 @@ endfunction(ut_add_deployment_target)
     resolve_dependencies(RESOLVED gtest_main ${DEPENDENCIES} ${AC_DEPENDENCIES})
     build_setup_build_module("${UT_EXE_NAME}" "${SOURCE_FILES}" "${AC_GENERATED}" "${AC_SOURCES}" "${RESOLVED}")
 
-    target_include_directories("${UT_EXE_NAME}" PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+    ut_setup_unit_test_include_directories("${UT_EXE_NAME}" "${SOURCE_FILES}")
     add_test(NAME ${UT_EXE_NAME} COMMAND ${UT_EXE_NAME})
 
     # Create a module-level target if not already done
