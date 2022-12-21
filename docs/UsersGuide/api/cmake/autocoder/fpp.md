@@ -57,7 +57,6 @@ AC_INPUT_FILES: list of supported autocoder input files
 Helper function. Converts a list of files and a list of autocoder inputs into a list of module names.
 
 FILE_LIST: list of files
-AC_INPUT_FILES: list of autocoder input files
 OUTPUT_VAR: output variable to set with result
 
 
