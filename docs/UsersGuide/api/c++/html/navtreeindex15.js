@@ -1,5 +1,7 @@
 var NAVTREEINDEX15 =
 {
+"namespace_os.html#a0840df4b7f40767a6f67c85902c202fb":[14,0,4,47],
+"namespace_os.html#a0bb29b9a8a688829d18a4a963c712f91":[14,0,4,55],
 "namespace_os.html#a0bf693c4def00efef1e1f286db0b6609":[14,0,4,31],
 "namespace_os.html#a0c3ae59006fcadfd7539b327f66cb053":[14,0,4,36],
 "namespace_os.html#a0cf45aa980f019bd85c20ac1964726ad":[14,0,4,78],
@@ -247,7 +249,5 @@ var NAVTREEINDEX15 =
 "struct_2main_8cpp_source.html":[16,0,4,2,0],
 "struct_basic_limits.html":[15,0,9],
 "struct_basic_limits.html#a21229a0f87e0402c205f426e8476f40f":[15,0,9,2],
-"struct_basic_limits.html#a2e59d0299bc1e13459c019c90bc434f9":[15,0,9,10],
-"struct_basic_limits.html#a3dd29b94db4a2e2fdc602c7750f6ad26":[15,0,9,4],
-"struct_basic_limits.html#a44f3b9a78821e8ca4cbf8ae05c85872a":[15,0,9,9]
+"struct_basic_limits.html#a2e59d0299bc1e13459c019c90bc434f9":[15,0,9,10]
 };

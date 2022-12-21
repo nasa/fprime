@@ -1,5 +1,7 @@
 var NAVTREEINDEX16 =
 {
+"struct_basic_limits.html#a3dd29b94db4a2e2fdc602c7750f6ad26":[15,0,9,4],
+"struct_basic_limits.html#a44f3b9a78821e8ca4cbf8ae05c85872a":[15,0,9,9],
 "struct_basic_limits.html#a4f4bbe3fd2d028bd683496b6c8c7e7c1":[15,0,9,0],
 "struct_basic_limits.html#a4fc19d1f81037298c4f1d3aee8e0abaf":[15,0,9,11],
 "struct_basic_limits.html#a5743609b13433650382d571ef8b54cbe":[15,0,9,15],

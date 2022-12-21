@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"svc_file_manager_component.html#autotoc_md446":[8,12,0,5],
+"svc_file_manager_component.html#autotoc_md447":[8,12,0,6],
 "svc_file_uplink_component.html":[8,13],
 "svc_file_uplink_component.html#autotoc_md448":[8,13,0],
 "svc_file_uplink_component.html#autotoc_md449":[8,13,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "svc_tlm_packetizer_component_dictionary.html#autotoc_md675":[8,29,0,1],
 "svc_tlm_packetizer_component_dictionary.html#autotoc_md676":[8,29,0,2],
 "svc_watch_dog_port.html":[8,30],
-"svc_watch_dog_port.html#autotoc_md677":[8,30,0],
-"svc_watch_dog_port.html#autotoc_md678":[8,30,0,0],
-"svc_watch_dog_port.html#autotoc_md679":[8,30,0,1]
+"svc_watch_dog_port.html#autotoc_md677":[8,30,0]
 };

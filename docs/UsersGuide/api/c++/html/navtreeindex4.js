@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"os_2_mac_os_2_system_resources_8cpp.html#a0840df4b7f40767a6f67c85902c202fb":[16,0,6,2,1,1],
+"os_2_mac_os_2_system_resources_8cpp.html#abfdc758506a18a310eaf4d7d5182bf51":[16,0,6,2,1,0],
 "os_2_mac_os_2_system_resources_8cpp_source.html":[16,0,6,2,1],
 "os_2_posix_2_queue_8cpp.html":[16,0,6,3,4],
 "os_2_posix_2_queue_8cpp_source.html":[16,0,6,3,4],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md299":[8,0,0,1,2],
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md300":[8,0,0,1,3],
 "svc_a_m_p_c_s_sequence_class.html#autotoc_md301":[8,0,0,1,4],
-"svc_active_logger_component.html":[8,1],
-"svc_active_logger_component.html#autotoc_md184":[8,1,0],
-"svc_active_logger_component.html#autotoc_md185":[8,1,0,0]
+"svc_active_logger_component.html":[8,1]
 };
