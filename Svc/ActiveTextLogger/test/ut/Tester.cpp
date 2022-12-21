@@ -103,7 +103,7 @@ namespace Svc {
           if (stream1) {
               std::cout << "readLine: " << buf << std::endl;
               char textStr[512];
-              sprintf(textStr,
+              snprintf(textStr, sizeof(textStr),
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
@@ -144,7 +144,7 @@ namespace Svc {
               // Verify new printed line
               else {
                   char textStr[512];
-                  sprintf(textStr,
+                  snprintf(textStr, sizeof(textStr),
                           "EVENT: (%d) (%d:%d,%d) %s: %s",
                            id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
                   ASSERT_EQ(0,strcmp(textStr,buf));
@@ -206,7 +206,7 @@ namespace Svc {
           if (stream1) {
               std::cout << "readLine: " << buf << std::endl;
               char textStr[512];
-              sprintf(textStr,
+              snprintf(textStr, sizeof(textStr),
                       "EVENT: (%d) (%d:%d,%d) %s: %s",
                        id,timeTag.getTimeBase(),timeTag.getSeconds(),timeTag.getUSeconds(),severityString,text.toChar());
               ASSERT_EQ(0,strcmp(textStr,buf));
@@ -316,7 +316,7 @@ namespace Svc {
 
           stat = this->component.set_log_file(baseName,50);
 
-          sprintf(baseNameWithSuffix,"%s%d",baseName,i);
+          snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
           ASSERT_TRUE(stat);
           ASSERT_TRUE(this->component.m_log_file.m_openFile);
           ASSERT_EQ(0,strcmp(baseNameWithSuffix,this->component.m_log_file.m_fileName.toChar()));
@@ -327,7 +327,7 @@ namespace Svc {
       // Create 11th which will fail and re-use the original:
       stat = this->component.set_log_file(baseName,50);
 
-      sprintf(baseNameWithSuffix,"%s%d",baseName,i);
+      snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
       ASSERT_TRUE(stat);
       ASSERT_TRUE(this->component.m_log_file.m_openFile);
       printf("<< %s %s\n",baseName,this->component.m_log_file.m_fileName.toChar());
@@ -341,7 +341,7 @@ namespace Svc {
       remove(longFileNameDup);
       remove(baseName);
       for (i = 0; i < 10; ++i) {
-          sprintf(baseNameWithSuffix,"%s%d",baseName,i);
+          snprintf(baseNameWithSuffix, sizeof(baseNameWithSuffix), "%s%d",baseName,i);
           remove(baseNameWithSuffix);
       }
 
