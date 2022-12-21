@@ -38,7 +38,6 @@ var namespace_svc =
     [ "FramingProtocol", "class_svc_1_1_framing_protocol.html", "class_svc_1_1_framing_protocol" ],
     [ "FramingProtocolInterface", "class_svc_1_1_framing_protocol_interface.html", "class_svc_1_1_framing_protocol_interface" ],
     [ "GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html", "class_svc_1_1_generic_hub_component_impl" ],
-    [ "GenericRepeaterComponentImpl", "class_svc_1_1_generic_repeater_component_impl.html", "class_svc_1_1_generic_repeater_component_impl" ],
     [ "GroundInterfaceComponentImpl", "class_svc_1_1_ground_interface_component_impl.html", "class_svc_1_1_ground_interface_component_impl" ],
     [ "HealthImpl", "class_svc_1_1_health_impl.html", "class_svc_1_1_health_impl" ],
     [ "LinuxTimeImpl", "class_svc_1_1_linux_time_impl.html", "class_svc_1_1_linux_time_impl" ],

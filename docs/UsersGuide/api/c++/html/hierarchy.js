@@ -108,9 +108,6 @@ var hierarchy =
     [ "GenericHubComponentBase", null, [
       [ "Svc::GenericHubComponentImpl", "class_svc_1_1_generic_hub_component_impl.html", null ]
     ] ],
-    [ "GenericRepeaterComponentBase", null, [
-      [ "Svc::GenericRepeaterComponentImpl", "class_svc_1_1_generic_repeater_component_impl.html", null ]
-    ] ],
     [ "GroundInterfaceComponentBase", null, [
       [ "Svc::GroundInterfaceComponentImpl", "class_svc_1_1_ground_interface_component_impl.html", null ]
     ] ],

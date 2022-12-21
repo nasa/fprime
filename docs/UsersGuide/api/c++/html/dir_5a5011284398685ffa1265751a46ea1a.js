@@ -24,7 +24,6 @@ var dir_5a5011284398685ffa1265751a46ea1a =
     [ "Framer", "dir_a6658980c49ebd229dcf8171e01f5869.html", "dir_a6658980c49ebd229dcf8171e01f5869" ],
     [ "FramingProtocol", "dir_38fb30749794eba79ffbbabe203380e2.html", "dir_38fb30749794eba79ffbbabe203380e2" ],
     [ "GenericHub", "dir_6112f4bafc9e33bd0271e488a9393a96.html", "dir_6112f4bafc9e33bd0271e488a9393a96" ],
-    [ "GenericRepeater", "dir_5fd36f57789a02fd8a586b50ffefae58.html", "dir_5fd36f57789a02fd8a586b50ffefae58" ],
     [ "GroundInterface", "dir_fd8af13e3574a02a6e7adc88ac9e3eee.html", "dir_fd8af13e3574a02a6e7adc88ac9e3eee" ],
     [ "Health", "dir_11c27010ebb97cca3c93d304de3bf456.html", "dir_11c27010ebb97cca3c93d304de3bf456" ],
     [ "LinuxTime", "dir_9518d90373ba43334c6fc572874d7caf.html", "dir_9518d90373ba43334c6fc572874d7caf" ],
