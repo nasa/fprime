@@ -80,7 +80,7 @@ namespace Svc {
     getFileSize(const Fw::CmdStringArg& seqFileName)
   {
     bool status = true;
-    U64 fileSize;
+    FwSizeType fileSize;
     this->setFileName(seqFileName);
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);

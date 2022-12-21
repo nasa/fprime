@@ -26,7 +26,7 @@ namespace Utils {
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
     NATIVE_INT_TYPE remaining_bytes;
-    U64 filesize;
+    FwSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
     Os::File::Status stat;
@@ -154,7 +154,7 @@ namespace Utils {
     NATIVE_INT_TYPE i;
     NATIVE_INT_TYPE blocks;
     NATIVE_INT_TYPE remaining_bytes;
-    U64 filesize;
+    FwSizeType filesize;
     Os::File f;
     Os::FileSystem::Status fs_stat;
     Os::File::Status stat;

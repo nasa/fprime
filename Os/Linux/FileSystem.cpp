@@ -330,14 +330,14 @@ namespace Os {
 		 * @param destination File to copy data to
 		 * @param size The number of bytes to copy
 		 */
-		Status copyFileData(File source, File destination, U64 size) {
+		Status copyFileData(File source, File destination, FwSizeType size) {
 			U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
 			File::Status file_status;
 
 			// Set loop limit
-			const U64 copyLoopLimit = (size/FILE_SYSTEM_CHUNK_SIZE) + 2;
+			const FwSizeType copyLoopLimit = (size/FILE_SYSTEM_CHUNK_SIZE) + 2;
 
-			U64 loopCounter = 0;
+			FwSizeType loopCounter = 0;
 			NATIVE_INT_TYPE chunkSize;
 			while(loopCounter < copyLoopLimit) {
 				chunkSize = FILE_SYSTEM_CHUNK_SIZE;
@@ -366,7 +366,7 @@ namespace Os {
 			FileSystem::Status fs_status;
 			File::Status file_status;
 
-			U64 fileSize = 0;
+			FwSizeType fileSize = 0;
 
 			File source;
 			File destination;
@@ -403,7 +403,7 @@ namespace Os {
 		Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
 			FileSystem::Status fs_status;
 			File::Status file_status;
-			U64 fileSize = 0;
+			FwSizeType fileSize = 0;
 
 			File source;
 			File destination;
@@ -445,7 +445,7 @@ namespace Os {
 			return fs_status;
 		} // end appendFile
 
-		Status getFileSize(const char* path, U64& size) {
+		Status getFileSize(const char* path, FwSizeType& size) {
 
 			Status fileStat = OP_OK;
 			struct stat fileStatStruct;
@@ -489,7 +489,7 @@ namespace Os {
 			return stat;
 		} // end changeWorkingDirectory
 
-		Status getFreeSpace(const char* path, U64& totalBytes, U64& freeBytes) {
+		Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) {
 			Status stat = OP_OK;
 
 			struct statvfs fsStat;
@@ -514,8 +514,8 @@ namespace Os {
 				return stat;
 			}
 
-			totalBytes = static_cast<U64>(fsStat.f_blocks) * static_cast<U64>(fsStat.f_frsize);
-			freeBytes = static_cast<U64>(fsStat.f_bfree) * static_cast<U64>(fsStat.f_frsize);
+			totalBytes = static_cast<FwSizeType>(fsStat.f_blocks) * static_cast<FwSizeType>(fsStat.f_frsize);
+			freeBytes = static_cast<FwSizeType>(fsStat.f_bfree) * static_cast<FwSizeType>(fsStat.f_frsize);
 			return stat;
 		}
 
@@ -525,7 +525,7 @@ namespace Os {
 			DIR * dirPtr = nullptr;
 			struct dirent *direntData = nullptr;
 			U32 limitCount;
-			const U64 loopLimit = std::numeric_limits<U32>::max();
+			const FwSizeType loopLimit = std::numeric_limits<U32>::max();
 
 			fileCount = 0;
 			if((dirPtr = ::opendir(directory)) == nullptr) {

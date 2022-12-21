@@ -136,7 +136,7 @@ namespace Svc {
 
         // Make sure the file size is smaller or equal to the limit:
         Os::FileSystem::Status fsStat;
-        U64 fileSize = 0;
+        FwSizeType fileSize = 0;
         fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
         ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);
@@ -259,7 +259,7 @@ namespace Svc {
 
         // Make sure the file size is smaller or equal to the limit:
         Os::FileSystem::Status fsStat;
-        U64 fileSize = 0;
+        FwSizeType fileSize = 0;
         fsStat = Os::FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
         ASSERT_EQ(fsStat, Os::FileSystem::OP_OK);
         ASSERT_LE(fileSize, MAX_BYTES_PER_FILE);

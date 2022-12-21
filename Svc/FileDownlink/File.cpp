@@ -33,7 +33,7 @@ namespace Svc {
     this->destName = destLogStringArg;
 
     // Set size
-    U64 size;
+    FwSizeType size;
     const Os::FileSystem::Status status = 
       Os::FileSystem::getFileSize(sourceFileName, size);
     if (status != Os::FileSystem::OP_OK)

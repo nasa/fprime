@@ -88,8 +88,8 @@ namespace Os {
             return SYSTEM_RESOURCES_ERROR;
         }
 
-        memory_util.total = static_cast<U64>(memory_info.totalram * memory_info.mem_unit); 
-        memory_util.used = static_cast<U64>((memory_info.totalram - memory_info.freeram) * memory_info.mem_unit);
+        memory_util.total = static_cast<FwSizeType>(memory_info.totalram * memory_info.mem_unit); 
+        memory_util.used = static_cast<FwSizeType>((memory_info.totalram - memory_info.freeram) * memory_info.mem_unit);
 
         return SYSTEM_RESOURCES_OK;
     }
