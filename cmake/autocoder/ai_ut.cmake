@@ -31,13 +31,24 @@ endfunction (ai_ut_is_supported)
 # Required function, sets up a custom command to produce TesterBase and GTestBase files.
 ####
 function(ai_ut_setup_autocode AC_INPUT_FILE)
-    set(REMOVAL_LIST "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp ${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp ${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
-    set(AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.hpp")
+    set(REMOVALS "${CMAKE_CURRENT_BINARY_DIR}/Tester.hpp"
+                 "${CMAKE_CURRENT_BINARY_DIR}/Tester.cpp"
+                 "${CMAKE_CURRENT_BINARY_DIR}/TestMain.cpp")
+    set(AUTOCODER_GENERATED
+        "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.cpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/TesterBase.hpp")
+
     # GTest flag handling
     if (INCLUDE_GTEST)
         list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
     else()
-        set(REMOVAL_LIST "${REMOVAL_LIST} ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp ${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
+        list(APPEND REMOVALS "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.cpp" "${CMAKE_CURRENT_BINARY_DIR}/GTestBase.hpp")
+    endif()
+    # Extra test helpers file
+    if (DEFINED UT_AUTO_HELPERS AND UT_AUTO_HELPERS)
+        list(APPEND AUTOCODER_GENERATED "${CMAKE_CURRENT_BINARY_DIR}/TesterHelpers.cpp")
+    else()
+        list(APPEND REMOVALS "${CMAKE_CURRENT_BINARY_DIR}/TesterHelpers.cpp")
     endif()
 
     # Get the shared setup for all AI autocoders
@@ -46,7 +57,7 @@ function(ai_ut_setup_autocode AC_INPUT_FILE)
     add_custom_command(
         OUTPUT ${AUTOCODER_GENERATED}
         COMMAND ${AI_BASE_SCRIPT} -u "${AC_INPUT_FILE}"
-        COMMAND ${CMAKE_COMMAND} -E remove ${REMOVAL_LIST}
+        COMMAND ${CMAKE_COMMAND} -E remove ${REMOVALS}
         DEPENDS "${AC_INPUT_FILE}" "${CODEGEN_TARGET}"
     )
     set(AUTOCODER_GENERATED "${AUTOCODER_GENERATED}" PARENT_SCOPE)
