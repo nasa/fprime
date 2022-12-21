@@ -144,7 +144,7 @@ namespace Ref {
 
       // Verify operation request on mathOpOut
 
-      // verify that that one output port was invoked overall
+      // verify that one output port was invoked overall
       ASSERT_FROM_PORT_HISTORY_SIZE(1);
       // verify that the math operation port was invoked once
       ASSERT_from_mathOpOut_SIZE(1);
@@ -174,74 +174,4 @@ namespace Ref {
       ASSERT_EVENTS_COMMAND_RECV(0, val1, op, val2);
 
  }
-
-  void Tester ::
-    connectPorts()
-  {
-
-    // mathResultIn
-    this->connect_to_mathResultIn(
-        0,
-        this->component.get_mathResultIn_InputPort(0)
-    );
-
-    // cmdIn
-    this->connect_to_cmdIn(
-        0,
-        this->component.get_cmdIn_InputPort(0)
-    );
-
-    // mathOpOut
-    this->component.set_mathOpOut_OutputPort(
-        0,
-        this->get_from_mathOpOut(0)
-    );
-
-    // cmdResponseOut
-    this->component.set_cmdResponseOut_OutputPort(
-        0,
-        this->get_from_cmdResponseOut(0)
-    );
-
-    // cmdRegOut
-    this->component.set_cmdRegOut_OutputPort(
-        0,
-        this->get_from_cmdRegOut(0)
-    );
-
-    // tlmOut
-    this->component.set_tlmOut_OutputPort(
-        0,
-        this->get_from_tlmOut(0)
-    );
-
-    // timeGetOut
-    this->component.set_timeGetOut_OutputPort(
-        0,
-        this->get_from_timeGetOut(0)
-    );
-
-    // eventOut
-    this->component.set_eventOut_OutputPort(
-        0,
-        this->get_from_eventOut(0)
-    );
-
-    // textEventOut
-    this->component.set_textEventOut_OutputPort(
-        0,
-        this->get_from_textEventOut(0)
-    );
-
-  }
-
-  void Tester ::
-    initComponents()
-  {
-    this->init();
-    this->component.init(
-        QUEUE_DEPTH, INSTANCE
-    );
-  }
-
 } // end namespace Ref

@@ -1,1 +1,0 @@
-function appease_lgtm() {}

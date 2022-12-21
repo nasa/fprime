@@ -24,6 +24,15 @@ Specific Ways to Contribute:
 
 Feel free to contribute any way that suits your skills and enjoy.
 
+
+> **Note:** [F´ Autocoder Python](https://github.com/nasa/fprime/tree/master/Autocoders) is being actively replaced
+> by [FPP](https://github.com/fprime-community/fpp). Thus we will no longer accept changes to this code except for
+> security and critical bug fixes done in the most minimal fashion.
+>
+> We do love Python fixes, please consider contributing to
+> [fprime-tools](https://github.com/fprime-community/fprime-tools) or
+> [fprime-gds](https://github.com/fprime-community/fprime-gds)
+
 ## Where to Start
 
 First, contributors should build some understanding of F´. Read through the documentation, try a tutorial, or run a
@@ -125,7 +134,7 @@ Large submissions are difficult to review. Incredibly large pull requests can be
 to be broken up. Try to keep submissions small, focus on one issue or change in a pull request, and avoid lots of minor
 changes across many files.
 
-Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced Github
+Keep in mind that editors that fix whitespace automatically can cause many small changes. Even with advanced GitHub
 tools this can increase the effort required to review a submission. Be careful with the changes you are submitting.
 
 ## Run Tests

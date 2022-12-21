@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include <RPI/RpiDemo/RpiDemoComponentImpl.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include <ctype.h>
 
 namespace RPI {
@@ -28,7 +28,7 @@ namespace RPI {
     ,m_uartWriteBytes(0)
     ,m_uartReadBytes(0)
     ,m_spiBytes(0)
-    ,m_currLedVal(RpiDemo_GpioVal::CLEAR)
+    ,m_currLedVal(Fw::Logic::LOW)
     ,m_ledOn(true)
     ,m_ledDivider(10) // start at 1Hz
     ,m_1HzTicks(0)
@@ -54,13 +54,6 @@ namespace RPI {
   }
 
   void RpiDemoComponentImpl::preamble() {
-      // send buffers to UART driver
-      for (NATIVE_INT_TYPE buffer = 0; buffer < NUM_RPI_UART_BUFFERS; buffer++) {
-          // assign buffers to buffer containers
-          this->m_recvBuffers[buffer].setData(this->m_uartBuffers[buffer]);
-          this->m_recvBuffers[buffer].setSize(RPI_UART_READ_BUFF_SIZE);
-          this->UartBuffers_out(0, this->m_recvBuffers[buffer]);
-      }
       // check initial state parameter
       Fw::ParamValid valid;
       RpiDemo_LedState initState = paramGet_RD_PrmLedInitState(valid);
@@ -106,9 +99,9 @@ namespace RPI {
           case RG_CONTEXT_10Hz:
               // Toggle LED value
               if ( (this->m_10HzTicks++%this->m_ledDivider == 0) and this->m_ledOn) {
-                  this->GpioWrite_out(2, (this->m_currLedVal == RpiDemo_GpioVal::SET));
-                  this->m_currLedVal = (this->m_currLedVal == RpiDemo_GpioVal::SET) ?
-                    RpiDemo_GpioVal::CLEAR : RpiDemo_GpioVal::SET;
+                  this->GpioWrite_out(2, this->m_currLedVal);
+                  this->m_currLedVal = (this->m_currLedVal == Fw::Logic::HIGH) ?
+                    Fw::Logic::LOW : Fw::Logic::HIGH;
               }
               break;
           default:
@@ -122,26 +115,25 @@ namespace RPI {
     UartRead_handler(
         const NATIVE_INT_TYPE portNum,
         Fw::Buffer &serBuffer,
-        Drv::SerialReadStatus &status
+        const Drv::RecvStatus &status
     )
   {
-      // convert incoming data to string. If it is not printable, set character to '*'
-      char uMsg[serBuffer.getSize()+1];
-      char* bPtr = reinterpret_cast<char*>(serBuffer.getData());
+      if (Drv::RecvStatus::RECV_OK == status.e) {
+          // convert incoming data to string. If it is not printable, set character to '*'
+          char uMsg[serBuffer.getSize() + 1];
+          char *bPtr = reinterpret_cast<char *>(serBuffer.getData());
 
-      for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
-          uMsg[byte] = isalpha(bPtr[byte])?bPtr[byte]:'*';
+          for (NATIVE_UINT_TYPE byte = 0; byte < serBuffer.getSize(); byte++) {
+            uMsg[byte] = isalpha(bPtr[byte]) ? bPtr[byte] : '*';
+          }
+          uMsg[sizeof(uMsg) - 1] = 0;
+
+          Fw::LogStringArg evrMsg(uMsg);
+          this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
+          this->m_lastUartMsg = uMsg;
+          this->m_uartReadBytes += serBuffer.getSize();
       }
-      uMsg[sizeof(uMsg)-1] = 0;
-
-      Fw::LogStringArg evrMsg(uMsg);
-      this->log_ACTIVITY_HI_RD_UartMsgIn(evrMsg);
-      this->m_lastUartMsg = uMsg;
-      this->m_uartReadBytes += serBuffer.getSize();
-
-      // reset buffer size
-      serBuffer.setSize(RPI_UART_READ_BUFF_SIZE);
-      // return buffer to driver
+      // return buffer to buffer manager
       this->UartBuffers_out(0, serBuffer);
   }
 
@@ -159,12 +151,13 @@ namespace RPI {
       Fw::Buffer txt;
       txt.setSize(text.length());
       txt.setData(reinterpret_cast<U8*>(const_cast<char*>(text.toChar())));
-      this->UartWrite_out(0, txt);
-      this->m_uartWriteBytes += text.length();
+      Drv::SendStatus status = this->UartWrite_out(0, txt);
+      if (Drv::SendStatus::SEND_OK == status.e) {
+        this->m_uartWriteBytes += text.length();
 
-      Fw::LogStringArg arg = text;
-      this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
-
+        Fw::LogStringArg arg = text;
+        this->log_ACTIVITY_HI_RD_UartMsgOut(arg);
+      }
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 
@@ -173,7 +166,7 @@ namespace RPI {
         const FwOpcodeType opCode,
         const U32 cmdSeq,
         RpiDemo_GpioOutNum output, /*!< Output GPIO*/
-        RpiDemo_GpioVal value
+        Fw::Logic value
     )
   {
       NATIVE_INT_TYPE port;
@@ -195,7 +188,7 @@ namespace RPI {
               return;
       }
       // set value of GPIO
-      this->GpioWrite_out(port, (RpiDemo_GpioVal::SET == value.e));
+      this->GpioWrite_out(port, value);
       this->log_ACTIVITY_HI_RD_GpioSetVal(output.e, value);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
@@ -222,12 +215,9 @@ namespace RPI {
               return;
       }
       // get value of GPIO input
-      bool val;
+      Fw::Logic val;
       this->GpioRead_out(port, val);
-      this->log_ACTIVITY_HI_RD_GpioGetVal(
-          input.e,
-          val ? RpiDemo_GpioVal::SET : RpiDemo_GpioVal::CLEAR
-      );
+      this->log_ACTIVITY_HI_RD_GpioGetVal(input.e, val);
       this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   }
 

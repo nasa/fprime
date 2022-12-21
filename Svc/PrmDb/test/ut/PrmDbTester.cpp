@@ -44,10 +44,10 @@ TEST(ParameterDbTest,NominalPopulateTest) {
     TEST_CASE(105.1.1,"Nominal populate test");
     COMMENT("Write values to the parameter database and verify that they were written correctly");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
-
+    impl.configure("TestFile.prm");
     Svc::PrmDbImplTester tester(impl);
 
     tester.init();
@@ -65,9 +65,10 @@ TEST(ParameterDbTest,NominalFileSaveTest) {
     TEST_CASE(105.1.2,"Nominal file save test");
     COMMENT("Write values to the parameter database and save them to a file.");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
+    impl.configure("TestFile.prm");
 
     Svc::PrmDbImplTester tester(impl);
 
@@ -86,9 +87,10 @@ TEST(ParameterDbTest,NominalFileLoadTest) {
     TEST_CASE(105.1.3,"Nominal file load test");
     COMMENT("Read values from the created file and verify they are correct.");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
+    impl.configure("TestFile.prm");
 
     Svc::PrmDbImplTester tester(impl);
 
@@ -104,7 +106,7 @@ TEST(ParameterDbTest,NominalFileLoadTest) {
 
 //TEST(ParameterDbTest,RefPrmFile) {
 //
-//    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+//    Svc::PrmDbImpl impl("PrmDbImpl");
 //
 //    impl.init(10);
 //
@@ -123,11 +125,12 @@ TEST(ParameterDbTest,NominalFileLoadTest) {
 TEST(ParameterDbTest,PrmMissingExtraParamsTest) {
 
     TEST_CASE(105.2.1,"Missing and too many parameters test");
-    COMMENT("Attempt to read a non-existent parameter and write too many parameters");
+    COMMENT("Attempt to read a nonexistent parameter and write too many parameters");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
+    impl.configure("TestFile.prm");
 
     Svc::PrmDbImplTester tester(impl);
 
@@ -146,9 +149,10 @@ TEST(ParameterDbTest,PrmFileReadError) {
     TEST_CASE(105.2.2,"File read errors");
     COMMENT("Induce errors at various stages of reading the file");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
+    impl.configure("TestFile.prm");
 
     Svc::PrmDbImplTester tester(impl);
 
@@ -167,9 +171,10 @@ TEST(ParameterDbTest,PrmFileWriteError) {
     TEST_CASE(105.2.3,"File write errors");
     COMMENT("Induce errors at various stages of writing the file");
 
-    Svc::PrmDbImpl impl("PrmDbImpl","TestFile.prm");
+    Svc::PrmDbImpl impl("PrmDbImpl");
 
     impl.init(10,0);
+    impl.configure("TestFile.prm");
 
     Svc::PrmDbImplTester tester(impl);
 

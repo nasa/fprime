@@ -19,7 +19,7 @@
 
 namespace Drv {
 
-SocketReadTask::SocketReadTask() : m_stop(false) {}
+SocketReadTask::SocketReadTask() : m_reconnect(false), m_stop(false) {}
 
 SocketReadTask::~SocketReadTask() {}
 

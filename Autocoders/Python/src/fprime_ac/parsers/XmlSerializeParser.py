@@ -320,6 +320,6 @@ class XmlSerializeParser:
 
     def get_members(self):
         """
-        Returns a list of member (name, type, optional size, optional format, optional comment) needed.
+        Returns a list of member (name, type, optional array size, optional size, optional format, optional comment) needed.
         """
         return self.__members

@@ -13,6 +13,7 @@
 ####
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
+set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
 ####
 # Function `add_fprime_subdirectory`:
 #
@@ -325,7 +326,7 @@ endfunction(register_fprime_deployment)
 # unit test name, autocoding and source inputs for the unit test, and (optionally) any
 # non-standard link dependencies.
 #
-# **Note:** This is ONLY run when the build type is TESTING. Unit testing is restricted to this build type as fprime
+# **Note:** This is ONLY run when the BUILD_TESTING is enabled. Unit testing is restricted to this build type as fprime
 #           sets additional flags when building for unit tests.
 #
 # Required variables (defined in calling scope):
@@ -360,6 +361,11 @@ endfunction(register_fprime_deployment)
 # ```
 #  **Note:** this is typically called after any other register calls in the module.
 #
+# - **UT_AUTO_HELPERS:** (optional) When set ON, a test helper file will be generated that auto-codes the connect ports
+#   and init components methods. This removes the maintenance overhead for these functions. ON additionally adds test
+#   source directories to the include path for the unit test target. When set to OFF, this helper file will be created
+#   when generating implementation templates allowing users to modify these files. Default: OFF
+#
 # ### Unit-Test Example ###
 #
 # A standard unit test defines only UT_SOURCES. These sources have the test cpp files and the module
@@ -385,7 +391,7 @@ function(register_fprime_ut)
         message(FATAL_ERROR "register_fprime_ut accepts only one optional argument: test name")
     endif()
     get_module_name(${CMAKE_CURRENT_LIST_DIR})
-    # UT name is passed in or is the the module name with _ut_exe added
+    # UT name is passed in or is the module name with _ut_exe added
     if (${ARGC} GREATER 0)
         set(UT_NAME "${ARGV0}")
     elseif (NOT DEFINED UT_NAME)
@@ -423,7 +429,8 @@ endfunction(register_fprime_ut)
 macro(register_fprime_target TARGET_FILE_PATH)
     # Normal registered targets don't run in prescan
     if (NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_target_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_TARGET_LIST)
+        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_target)
 
@@ -438,34 +445,52 @@ endmacro(register_fprime_target)
 macro(register_fprime_ut_target TARGET_FILE_PATH)
     # UT targets only allowed when testing
     if (BUILD_TESTING AND NOT DEFINED FPRIME_PRESCAN)
-        register_fprime_target_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_UT_TARGET_LIST)
+        setup_global_target("${TARGET_FILE_PATH}")
     endif()
 endmacro(register_fprime_ut_target)
 
 ####
-# Macro `register_fprime_target_helper`:
+# Macro `register_fprime_list_helper`:
 #
 # Helper function to do the actual registration. Also used to side-load prescan to bypass the not-on-prescan check.
 ####
-macro(register_fprime_target_helper TARGET_FILE_PATH TARGET_LIST)
+macro(register_fprime_list_helper TARGET_FILE_PATH TARGET_LIST)
     include("${TARGET_FILE_PATH}")
     # Prevent out-of-order setups
     get_property(MODULE_DETECTION_STARTED GLOBAL PROPERTY MODULE_DETECTION SET)
     if (MODULE_DETECTION_STARTED)
         message(FATAL_ERROR "Cannot register fprime target after including subdirectories or FPrime-Code.cmake'")
     endif()
-    # Get the target list to add this target to or use default
-    set(LIST_NAME FPRIME_TARGET_LIST)
-    if (${ARGC} GREATER 1)
-        set(LIST_NAME "${ARGV1}")
-    endif()
     get_property(TARGETS GLOBAL PROPERTY "${TARGET_LIST}")
     if (NOT TARGET_FILE_PATH IN_LIST TARGETS)
-        set_property(GLOBAL APPEND PROPERTY "${LIST_NAME}" "${TARGET_FILE_PATH}")
-        setup_global_target("${TARGET_FILE_PATH}")
+        set_property(GLOBAL APPEND PROPERTY "${TARGET_LIST}" "${TARGET_FILE_PATH}")
     endif()
-endmacro(register_fprime_target_helper)
+endmacro(register_fprime_list_helper)
 
+
+####
+# Macro `register_fprime_build_autocoder`:
+# 
+# This function allows users to register custom autocoders into the build system. These autocoders will execute during
+# the build process. An autocoder is defined in a CMake file and must do three things:
+# 1. Call one of `autocoder_setup_for_individual_sources()` or `autocoder_setup_for_multiple_sources()` from file scope
+# 2. Implement `<autocoder name>_is_supported(AC_POSSIBLE_INPUT_FILE)` returning true the autocoder processes given source 
+# 3. Implement `<autocoder name>_setup_autocode AC_INPUT_FILE)` to run the autocoder on files filter by item 2. 
+# See: [Autocoders](dev/autocoder_integration.md).
+#
+# This function takes in either a file path to a CMake file defining an autocoder target, or an short include path that accomplishes
+# the same thing. Note: make sure the directory is on the CMake include path to use the second form.
+#
+# **TARGET_FILE_PATH:** include path or file path file defining above functions
+###
+macro(register_fprime_build_autocoder TARGET_FILE_PATH)
+    # Normal registered targets don't run in prescan
+    message(STATUS "Registering custom autocoder: ${TARGET_FILE_PATH}")
+    if (NOT DEFINED FPRIME_PRESCAN)
+        register_fprime_list_helper("${TARGET_FILE_PATH}" FPRIME_AUTOCODER_TARGET_LIST)
+    endif()
+endmacro(register_fprime_build_autocoder)
 
 #### Documentation links
 # Next Topics:

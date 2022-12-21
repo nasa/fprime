@@ -1,5 +1,4 @@
 #include <FpConfig.hpp>
-#include <Fw/Types/BasicTypes.hpp>
 #include <Os/FileSystem.hpp>
 #include <Os/File.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -48,5 +47,11 @@ namespace Os {
 		Status getFileCount (const char* directory, U32& fileCount) {
 			return OTHER_ERROR;
 		} //end getFileCount
+        Status appendFile(const char* originPath, const char* destPath, bool createMissingDest) {
+            return OTHER_ERROR;
+        }
+        Status getFreeSpace(const char* path, U64& totalBytes, U64& freeBytes) {
+            return OTHER_ERROR;
+        }
 	} // end FileSystem namespace
 } // end Os namespace

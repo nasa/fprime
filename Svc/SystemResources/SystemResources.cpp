@@ -13,7 +13,7 @@
 #include <cmath>  //isnan()
 #include <Svc/SystemResources/SystemResources.hpp>
 #include <version.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Svc {
 
@@ -39,10 +39,6 @@ SystemResources ::SystemResources(const char* const compName)
     }
 
     m_cpu_count = (m_cpu_count >= CPU_COUNT) ? CPU_COUNT : m_cpu_count;
-}
-
-void SystemResources ::init(const NATIVE_INT_TYPE instance) {
-    SystemResourcesComponentBase::init(instance);
 
     m_cpu_tlm_functions[0] = &Svc::SystemResources::tlmWrite_CPU_00;
     m_cpu_tlm_functions[1] = &Svc::SystemResources::tlmWrite_CPU_01;
@@ -60,6 +56,10 @@ void SystemResources ::init(const NATIVE_INT_TYPE instance) {
     m_cpu_tlm_functions[13] = &Svc::SystemResources::tlmWrite_CPU_13;
     m_cpu_tlm_functions[14] = &Svc::SystemResources::tlmWrite_CPU_14;
     m_cpu_tlm_functions[15] = &Svc::SystemResources::tlmWrite_CPU_15;
+}
+
+void SystemResources ::init(const NATIVE_INT_TYPE instance) {
+    SystemResourcesComponentBase::init(instance);
 }
 
 SystemResources ::~SystemResources() {}

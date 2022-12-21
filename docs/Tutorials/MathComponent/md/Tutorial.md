@@ -51,15 +51,13 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-**Git branch:** This tutorial is designed to work on the branch `release/v3.0.0`.
-
-Working on this tutorial will modify some files under version control in the
-F Prime git repository.
+**Version control:**
+Working on this tutorial will modify some files under version control
+in the F Prime git repository.
 Therefore it is a good idea to do this work on a new branch.
 For example:
 
 ```bash
-git checkout release/v3.0.0
 git checkout -b math-tutorial
 ```
 
@@ -164,7 +162,7 @@ Do the following:
 
 1. Run the command `fprime-util build`.
 
-The output should indicate that the model was built without any errors.
+The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
 either by deciphering the error output, or by going over the steps again.
 If you get stuck, you can look at the
@@ -225,7 +223,7 @@ as `MathTypes-saved`.
 A **port** is the endpoint of a connection between
 two components.
 A **port definition** is like a function signature;
-it defines the type of data carried on a port.
+it defines the type of the data carried on a port.
 
 For this tutorial, we need two port definitions:
 
@@ -257,7 +255,7 @@ This file defines the ports `MathOp` and `MathResult`.
 operation, and a second operand.
 The operands have type `F32`, which represents a 32-bit
 floating-point number.
-The operation has the type `MathOp`, which is the enum type
+The operation has type `MathOp`, which is the enum type
 we defined in the previous section.
 `MathResult` has a single formal parameter, the value of type `F32`
 returned as the result of the operation.
@@ -360,7 +358,7 @@ There are two event reports, one for receiving a command
 and one for receiving a result.
 
 1. **Telemetry:** These are **channels** that define telemetry
-points that this component can emit.
+points that the this component can emit.
 There are four telemetry channels: three for the arguments
 to the last command received and one for the last
 result received.
@@ -394,7 +392,7 @@ for <a href="#types_add">`Ref/MathTypes`</a>.
 ### Build the Stub Implementation
 
 **Run the build:**
-Go into the directory `Ref/MathTypes`.
+Go into the directory `Ref/MathSender`.
 Run the following commands:
 
 ```bash
@@ -409,17 +407,18 @@ After the second command, the build system should
 run for a bit.
 At the end there should be two new files
 in the directory:
-`MathSenderComponentImpl.cpp-template` and
-`MathSenderComponentImpl.hpp-template`.
+`MathSender.cpp-template` and
+`MathSender.hpp-template`.
 
 Run the following commands:
 
 ```bash
-mv MathSenderComponentImpl.cpp-template MathSender.cpp
-mv MathSenderComponentImpl.hpp-template MathSender.hpp
+mv MathSender.cpp-template MathSender.cpp
+mv MathSender.hpp-template MathSender.hpp
 ```
 
-These commands produce a template or stub implementation of the `MathSender` implementation class.
+These commands produce a template, or stub implementation,
+of the `MathSender` implementation class.
 You will fill in this implementation class below.
 
 Now run the command `fprime-util build --jobs 4`.
@@ -571,42 +570,44 @@ in three steps:
 #### Set Up the Unit Test Environment
 
 **Create the stub Tester class:**
-Do the following in the directory `Ref/MathSender`:
-
-1. Run `mkdir -p test/ut` to create the directory where
+In the directory `Ref/MathSender`, run `mkdir -p test/ut`.
+This will create the directory where
 the unit tests will reside.
-
-1. Run the command `fprime-util impl --ut`.
-It should generate files `Tester.cpp` and `Tester.hpp`.
-
-1. Move these files to the `test/ut` directory:
-
-   ```bash
-   mv Tester.* test/ut
-   ```
-
-**Create a stub main.cpp file:**
-Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create a file `main.cpp` with the
-following contents:
-
-```c++
-#include "Tester.hpp"
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-```
-
-This file is a stub for running tests using the
-[Google Test framework](https://github.com/google/googletest).
-Right now there aren't any tests to run; we will add one
-in the next section.
 
 **Update Ref/MathSender/CMakeLists.txt:**
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
+
+```cmake
+# Register the unit test build
+set(UT_SOURCE_FILES
+  "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
+)
+register_fprime_ut()
+```
+
+**Generate the unit test stub:**
+We will now generate a stub implementation of the unit tests.
+This stub contains all the boilerplate necessary to write and
+run unit tests against the `MathSender` component.
+In a later step, we will fill in the stub with tests.
+
+1. If you have not yet run `fprime-util generate --ut`,
+   then do so now. This step generates the CMake build cache for the unit
+   tests.
+
+1. Run the command `fprime-util impl --ut`.
+   It should generate files `Tester.cpp`, `Tester.hpp`, and `TestMain.cpp`.
+
+1. Move these files to the `test/ut` directory:
+
+   ```bash
+   mv Tester.* TestMain.cpp test/ut
+   ```
+
+**Update Ref/MathSender/CMakeLists.txt:**
+Open `MathSender/CMakeLists.txt` and update the definition of
+`UT_SOURCE_FILES` by adding your new test files:
 
 ```cmake
 # Register the unit test build
@@ -618,23 +619,14 @@ set(UT_SOURCE_FILES
 register_fprime_ut()
 ```
 
-This code tells the build system how to build
-and run the unit tests.
-
 **Run the build:**
 Now we can check that the unit test build is working.
-
-1. If you have not yet run `fprime-util generate --ut`,
-then do so now.
-This step generates the CMake build cache for the unit
-tests.
-
-1. Run `fprime-util build --ut`.
+Run `fprime-util build --ut`.
 Everything should build without errors.
 
 **Inspect the generated code:**
-The generated code is located at
-`Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
+The unit test build generates some code to support unit testing.
+The code is located at `Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
 This directory contains two auto-generated classes:
 
 1. `MathSenderGTestBase`: This is the direct base
@@ -651,7 +643,7 @@ use this class without Google Test if desired.
 
 You can look at the header files for these generated classes
 to see what operations they provide.
-In the next sections, we will provide some example uses
+In the next sections we will provide some example uses
 of these operations.
 
 #### Write and Run One Test
@@ -713,7 +705,7 @@ void Tester ::
 
     // Verify operation request on mathOpOut
 
-    // verify that that one output port was invoked overall
+    // verify that one output port was invoked overall
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     // verify that the math operation port was invoked once
     ASSERT_from_mathOpOut_SIZE(1);
@@ -833,7 +825,7 @@ and passed.
 As an exercise, try the following:
 
 1. Change the behavior of the component
-so that it does something incorrectly.
+so that it does something incorrect.
 For example, try adding one to a telemetry
 value before emitting it.
 
@@ -857,8 +849,7 @@ the tests pass.
 Add a test for exercising the scenario in which the `MathReceiver`
 component sends a result back to `MathSender`.
 
-1. Add the following function signature in the "Tests"
-   section of to `Tester.hpp`:
+1. Add the following function signature in the "Tests" section of `Tester.hpp`:
 
    ```c++
    //! Test receipt of a result
@@ -936,7 +927,7 @@ and 10.
    This line tells the build system to make the unit test build
    depend on the `STest` build module.
 
-1. Add `#include STest/Random/Random.hpp` to `main.cpp`.
+1. Add `#include "STest/Random/Random.hpp"` to `main.cpp`.
 
 1. Add the following line to the `main` function of `main.cpp`,
    just before the return statement:
@@ -1023,7 +1014,7 @@ We will explain the function of these ports below.
 
 1. **Parameters:** There is one **parameter**.
 A parameter is a constant that is configurable by command.
-In this case, there is one parameter `FACTOR`.
+In this case there is one parameter `FACTOR`.
 It has the default value 1.0 until its value is changed by command.
 When doing math, the `MathReceiver` component performs the requested
 operation and then multiplies by this factor.
@@ -1051,7 +1042,7 @@ _(v1 + v2) f_.
 the event throttle.
 
 1. **Telemetry:**
-There are two telemetry channels: one for reporting
+There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
 
@@ -1236,11 +1227,11 @@ of the function.
 Here we do the following:
 
 1. If the parameter identifier is `PARAMID_FACTOR` (the parameter
-identifier corresponding to the `FACTOR` parameter,
+identifier corresponding to the `FACTOR` parameter),
 then get the parameter value and emit an event report.
 
 1. Otherwise fail an assertion.
-This code should never run because there are no other
+This code should never run, because there are no other
 parameters.
 
 ### Write and Run Unit Tests
@@ -1437,7 +1428,7 @@ we wrote for the `MathSender` component.
 Notice that the method for invoking a port is different.
 Since the component is queued, we don't call `doDispatch`
 directly.
-Instead, we invoke `schedIn`.
+Instead we invoke `schedIn`.
 
 #### Write and Run Tests
 
@@ -1514,7 +1505,13 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
-Add the following function to the "Tests" section of `Tester.cpp`:
+Add the following constant definition to the top of the `Tester.cpp` file:
+
+```C++
+#define CMD_SEQ 42
+```
+
+Then add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
 void Tester ::
@@ -1558,11 +1555,11 @@ On each iteration, it calls `setFactor`.
 At the end of this loop, the `FACTOR_UPDATED` event should be
 throttled.
 
-Next, the test calls `setFactor` with a second argument of
+Next the test calls `setFactor` with a second argument of
 `ThrottleState::THROTTLED`.
 This code checks that the event is throttled.
 
-Next, the test sends the command `CLEAR_EVENT_THROTTLE`,
+Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
@@ -1616,8 +1613,8 @@ It can also occur for very small values of `val2`.
 1. Should the error be caught in `MathSender` or `MathReceiver`?
 
 1. Suppose the design says that `MathSender` catches the error,
-and so it never sends requests to `MathReceiver` to divide by zero.
-What should `MathReceiver` do if it receives
+and so never sends requests to `MathReceiver` to divide by zero.
+What if anything should `MathReceiver` do if it receives
 a divide by zero request?
 Carry out the operation normally?
 Emit a warning?
@@ -1652,8 +1649,8 @@ add the following lines:
 
 ```fpp
 instance mathSender: Ref.MathSender base id 0xE00 \
-  queue size Default.queueSize \
-  stack size Default.stackSize \
+  queue size Default.QUEUE_SIZE \
+  stack size Default.STACK_SIZE \
   priority 100
 ```
 
@@ -1678,12 +1675,12 @@ add the following lines:
 
 ```fpp
 instance mathReceiver: Ref.MathReceiver base id 0x2700 \
-  queue size Default.queueSize
+  queue size Default.QUEUE_SIZE
 ```
 
 This code defines an instance `mathReceiver` of
 component `MathReceiver`.
-It has the base identifier 0x2700 and the default queue size.
+It has base identifier 0x2700 and the default queue size.
 
 **More information:**
 For more information on defining component instances,
@@ -1711,7 +1708,7 @@ These lines add the `mathSender` and `mathReceiver`
 instances to the topology.
 
 **Check for unconnected ports:**
-Run the following commands:
+Run the following commands in the `Ref/Top` directory:
 
 ```bash
 fprime-util fpp-check -u unconnected.txt
@@ -1727,21 +1724,18 @@ Those ports will include the ports for the new instances
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
-Inside the block of that definition,
-find the line
-`rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run`.
-After that line, add the line
+After the last entry for the `rateGroup1Comp` (rate group 1) add
+the following line:
 
 ```fpp
-rateGroup1Comp.RateGroupMemberOut[4] -> mathReceiver.schedIn
+rateGroup1Comp.RateGroupMemberOut -> mathReceiver.schedIn
 ```
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
 
 **Re-run the check for unconnected ports:**
-When this capability exists, you will be able to see
-that `mathReceiver.schedIn` is now connected
+You should see that `mathReceiver.schedIn` is now connected
 (it no longer appears in the list).
 
 **Add the Math connections:**
@@ -1784,7 +1778,7 @@ of the Ref topology.
 
 **Generate the layout:**
 For this step, we will use the F Prime Layout (FPL) tool.
-If FPL is not installed on your system, then install it now:
+If FPL is not installed on your system, then install it how:
 clone [this repository](https://github.com/fprime-community/fprime-layout)
 and follow the instructions.
 
@@ -1970,6 +1964,20 @@ You should see the following logs, among others:
 * `channel.log`: Telemetry points received.
 
 You can also view these logs via the GDS browser interface.
-Click the Logs tab to go to the Logs view.
+Click the Logs tab to go the Logs view.
 Select the log you wish to inspect from the drop-down menu.
 By default, there is no log selected.
+
+## Conclusion
+
+The Math Component tutorial has shown us how to create simple types, ports and
+components for our application using the FPP modeling language. We have learned
+how to use `fprime-util` to generate implementation stubs, the build cache, and
+unit tests. We learned how to define our topology and use tools provided by
+F´ to check and visualize the topology. Lastly, we learned how to use the
+ground system to interact with our deployment.
+
+The user is now directed back to the [Tutorials](../README.md) for further
+reading or to the [Cross-Compilation Tutorial](../CrossCompilation/Tutorial.md)
+for instructions on how to cross-compile the Ref application completed in this
+tutorial for the Raspberry Pi.

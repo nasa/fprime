@@ -102,15 +102,14 @@ in the [F Prime git repository](https://github.com/nasa/fprime).
 You may also wish to work through the Getting Started tutorial at
 `docs/GettingStarted/Tutorial.md`.
 
-**F´ Version:** This tutorial is designed to work with release `v3.0.0`.
-
-Working on this tutorial will modify some files under version control in the
-F Prime git repository.
+**Version control:**
+Working on this tutorial will modify some files under version control
+in the F Prime git repository.
 Therefore it is a good idea to do this work on a new branch.
 For example:
 
 ```bash
-git checkout -b math-tutorial v3.0.0
+git checkout -b math-tutorial
 ```
 
 If you wish, you can save your work by committing to this branch.
@@ -228,9 +227,9 @@ Do the following:
 
 1. Run the command `fprime-util build`.
 
-The output should indicate that the model was built without any errors.
+The output should indicate that the model built without any errors.
 If not, try to identify and correct what is wrong,
-either by deciphering the error output or by going over the steps again.
+either by deciphering the error output, or by going over the steps again.
 If you get stuck, you can look at the
 <a href="#types_ref">reference implementation</a>.
 
@@ -291,7 +290,7 @@ as `MathTypes-saved`.
 A **port** is the endpoint of a connection between
 two components.
 A **port definition** is like a function signature;
-it defines the type of data carried on a port.
+it defines the type of the data carried on a port.
 
 For this tutorial, we need two port definitions:
 
@@ -586,17 +585,18 @@ After the second command, the build system should
 run for a bit.
 At the end there should be two new files
 in the directory:
-`MathSenderComponentImpl.cpp-template` and
-`MathSenderComponentImpl.hpp-template`.
+`MathSender.cpp-template` and
+`MathSender.hpp-template`.
 
 Run the following commands:
 
 ```bash
-mv MathSenderComponentImpl.cpp-template MathSender.cpp
-mv MathSenderComponentImpl.hpp-template MathSender.hpp
+mv MathSender.cpp-template MathSender.cpp
+mv MathSender.hpp-template MathSender.hpp
 ```
 
-These commands produce a template or stub implementation of the `MathSender` implementation class.
+These commands produce a template, or stub implementation,
+of the `MathSender` implementation class.
 You will fill in this implementation class below.
 
 Now run the command `fprime-util build --jobs 4`.
@@ -751,12 +751,11 @@ in three steps:
 #### 4.5.1. Set Up the Unit Test Environment
 
 **Create the stub Tester class:**
-Do the following in the directory `Ref/MathSender`:
-
-1. Run `mkdir -p test/ut` to create the directory where
+In the directory `Ref/MathSender`, run `mkdir -p test/ut`.
+This will create the directory where
 the unit tests will reside.
 
-2. Update Ref/MathSender/CMakeLists.txt:
+**Update Ref/MathSender/CMakeLists.txt:**
 Go back to the directory `Ref/MathSender`.
 Add the following lines to `CMakeLists.txt`:
 
@@ -765,69 +764,52 @@ Add the following lines to `CMakeLists.txt`:
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
 ```
 
-This code tells the build system how to build
-and run the unit tests.
+**Generate the unit test stub:**
+We will now generate a stub implementation of the unit tests.
+This stub contains all the boilerplate necessary to write and
+run unit tests against the `MathSender` component.
+In a later step, we will fill in the stub with tests.
 
-4. Run `fprime-util generate --ut` to generate the unit test cache.
+1. If you have not yet run `fprime-util generate --ut`,
+   then do so now. This step generates the CMake build cache for the unit
+   tests.
 
-5. Run the command `fprime-util impl --ut`.
-It should generate files `Tester.cpp` and `Tester.hpp`.
+1. Run the command `fprime-util impl --ut`.
+   It should generate files `Tester.cpp`, `Tester.hpp`, and `TestMain.cpp`.
 
-6. Move these files to the `test/ut` directory:
+1. Move these files to the `test/ut` directory:
 
-```bash
-mv Tester.* test/ut
-```
+   ```bash
+   mv Tester.* TestMain.cpp test/ut
+   ```
 
-**Create a stub main.cpp file:**
-Now go to the directory `Ref/MathSender/test/ut`.
-In that directory, create the file `main.cpp` and add the following contents:
+**Update Ref/MathSender/CMakeLists.txt:**
+Open `MathSender/CMakeLists.txt` and update the definition of
+`UT_SOURCE_FILES` by adding your new test files:
 
-```c++
-#include "Tester.hpp"
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-```
-
-This file is a stub for running tests using the
-[Google Test framework](https://github.com/google/googletest).
-Right now there aren't any tests to run; we will add one
-in the next section.
-
-7. Add the new files to the build.
-
-Open `MathSender/CMakeLists.txt` and modify the `UT_SOURCE_FILES` by adding
-your new test files:
 ```cmake
 # Register the unit test build
 set(UT_SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/MathSender.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
 )
+set(UT_AUTO_HELPERS ON)
 register_fprime_ut()
 ```
 
 **Run the build:**
 Now we can check that the unit test build is working.
-
-1. If you have not yet run `fprime-util generate --ut`,
-then do so now.
-This step generates the CMake build cache for the unit
-tests.
-
-1. Run `fprime-util build --ut`.
+Run `fprime-util build --ut`.
 Everything should build without errors.
 
 **Inspect the generated code:**
-The generated code is located at
-`Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
+The unit test build generates some code to support unit testing.
+The code is located at `Ref/build-fprime-automatic-native-ut/Ref/MathSender`.
 This directory contains two auto-generated classes:
 
 1. `MathSenderGTestBase`: This is the direct base
@@ -907,7 +889,7 @@ void Tester ::
 
     // Verify operation request on mathOpOut
 
-    // verify that that one output port was invoked overall
+    // verify that one output port was invoked overall
     ASSERT_FROM_PORT_HISTORY_SIZE(1);
     // verify that the math operation port was invoked once
     ASSERT_from_mathOpOut_SIZE(1);
@@ -965,12 +947,12 @@ There are a couple of pitfalls to watch out for with this pattern:
 the work won't get dispatched.
 Likely this will cause a unit test failure.
 
-1. If you call `doDispatch` without putting work in the queue,
+1. If you call `doDispatch` without putting work on the queue,
 the unit test will block until you kill the process (e.g.,
 with control-C).
 
 **Write a test function:**
-Next, we will write a test function that calls
+Next we will write a test function that calls
 `testDoMath` to test an `ADD` operation.
 In `Tester.hpp`, add the following line in the
 section entitled "Tests":
@@ -1027,7 +1009,7 @@ and passed.
 As an exercise, try the following:
 
 1. Change the behavior of the component
-so that it does something incorrectly.
+so that it does something incorrect.
 For example, try adding one to a telemetry
 value before emitting it.
 
@@ -1040,7 +1022,7 @@ value before emitting it.
 Try to follow the pattern given in the previous
 section to add three more tests, one each
 for operations `SUB`, `MUL`, and `DIV`.
-Most of the work should be done by the helper
+Most of the work should be done in the helper
 that we already wrote.
 Each new test requires just a short test function
 and a short test macro.
@@ -1052,8 +1034,7 @@ the tests pass.
 Add a test for exercising the scenario in which the `MathReceiver`
 component sends a result back to `MathSender`.
 
-1. Add the following function signature in the "Tests"
-   section of to `Tester.hpp`:
+1. Add the following function signature in the "Tests" section of `Tester.hpp`:
 
    ```c++
    //! Test receipt of a result
@@ -1189,7 +1170,7 @@ We will use the same five steps as for the
 Create the directory `Ref/MathReceiver`.
 
 **Create the FPP model file:**
-In the directory `Ref/MathReceiver`, create a file
+In directory `Ref/MathReceiver`, create a file
 `MathReceiver.fpp` with the following contents:
 
 ```fpp
@@ -1327,7 +1308,7 @@ We will explain the function of these ports below.
 
 1. **Parameters:** There is one **parameter**.
 A parameter is a constant that is configurable by command.
-In this case, there is one parameter `FACTOR`.
+In this case there is one parameter `FACTOR`.
 It has the default value 1.0 until its value is changed by command.
 When doing math, the `MathReceiver` component performs the requested
 operation and then multiplies by this factor.
@@ -1342,7 +1323,7 @@ _(v1 + v2) f_.
       is updated by command.
       This event is **throttled** to a limit of three.
       That means that after the event is emitted three times
-      it will not be emitted anymore, until the throttling
+      it will not be emitted any more, until the throttling
       is cleared by command (see below).
 
    1. `OPERATION_PERFORMED`: Emitted when this component
@@ -1355,7 +1336,7 @@ _(v1 + v2) f_.
 the event throttle.
 
 1. **Telemetry:**
-There are two telemetry channels: one for reporting
+There two telemetry channels: one for reporting
 the last operation received and one for reporting
 the factor parameter.
 
@@ -1543,11 +1524,11 @@ of the function.
 Here we do the following:
 
 1. If the parameter identifier is `PARAMID_FACTOR` (the parameter
-identifier corresponding to the `FACTOR` parameter,
+identifier corresponding to the `FACTOR` parameter),
 then get the parameter value and emit an event report.
 
 1. Otherwise fail an assertion.
-This code should never run because there are no other
+This code should never run, because there are no other
 parameters.
 
 <a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests"></a>
@@ -1647,7 +1628,7 @@ to the value `factor`.
 
 1. If `throttleState` is `NOT_THROTTLED`, then check
 that the event was emitted.
-Otherwise, check that the event was throttled (not emitted).
+Otherwise check that the event was throttled (not emitted).
 
 Add a function `computeResult` to `Tester.cpp`.
 
@@ -1747,7 +1728,7 @@ we wrote for the `MathSender` component.
 Notice that the method for invoking a port is different.
 Since the component is queued, we don't call `doDispatch`
 directly.
-Instead, we invoke `schedIn`.
+Instead we invoke `schedIn`.
 
 <a name="The-MathReceiver-Component_Write-and-Run-Unit-Tests_Write-and-Run-Tests"></a>
 #### 5.5.3. Write and Run Tests
@@ -1825,13 +1806,13 @@ This test is the same as the SUB test, except that it
 uses DIV instead of SUB.
 
 **Write a throttle test:**
-Add the following to the top of the `Tester.cpp` file:
+Add the following constant definition to the top of the `Tester.cpp` file:
 
 ```C++
 #define CMD_SEQ 42
 ```
 
-Add the following function to the "Tests" section of `Tester.cpp`:
+Then add the following function to the "Tests" section of `Tester.cpp`:
 
 ```c++
 void Tester ::
@@ -1854,7 +1835,7 @@ void Tester ::
     this->setFactor(factor, ThrottleState::THROTTLED);
 
     // send the command to clear the throttle
-    this->sendCmd_CLEAR_EVENT_THROTTLE(INSTANCE, CMD_SEQ);
+    this->sendCmd_CLEAR_EVENT_THROTTLE(TEST_INSTANCE_ID, CMD_SEQ);
     // invoke scheduler port to dispatch message
     const U32 context = STest::Pick::any();
     this->invoke_to_schedIn(0, context);
@@ -1875,11 +1856,11 @@ On each iteration, it calls `setFactor`.
 At the end of this loop, the `FACTOR_UPDATED` event should be
 throttled.
 
-Next, the test calls `setFactor` with a second argument of
+Next the test calls `setFactor` with a second argument of
 `ThrottleState::THROTTLED`.
 This code checks that the event is throttled.
 
-Next, the test sends the command `CLEAR_EVENT_THROTTLE`,
+Next the test sends the command `CLEAR_EVENT_THROTTLE`,
 checks for the corresponding notification event,
 and checks that the throttling is cleared.
 
@@ -1937,8 +1918,8 @@ It can also occur for very small values of `val2`.
 1. Should the error be caught in `MathSender` or `MathReceiver`?
 
 1. Suppose the design says that `MathSender` catches the error,
-and so it never sends requests to `MathReceiver` to divide by zero.
-What should `MathReceiver` do if it receives
+and so never sends requests to `MathReceiver` to divide by zero.
+What if anything should `MathReceiver` do if it receives
 a divide by zero request?
 Carry out the operation normally?
 Emit a warning?
@@ -1975,8 +1956,8 @@ add the following lines:
 
 ```fpp
 instance mathSender: Ref.MathSender base id 0xE00 \
-  queue size Default.queueSize \
-  stack size Default.stackSize \
+  queue size Default.QUEUE_SIZE \
+  stack size Default.STACK_SIZE \
   priority 100
 ```
 
@@ -2001,12 +1982,12 @@ add the following lines:
 
 ```fpp
 instance mathReceiver: Ref.MathReceiver base id 0x2700 \
-  queue size Default.queueSize
+  queue size Default.QUEUE_SIZE
 ```
 
 This code defines an instance `mathReceiver` of
 component `MathReceiver`.
-It has the base identifier 0x2700 and the default queue size.
+It has base identifier 0x2700 and the default queue size.
 
 **More information:**
 For more information on defining component instances,
@@ -2051,19 +2032,18 @@ Those ports will include the ports for the new instances
 Find the line that starts `connections RateGroups`.
 This is the beginning of the definition of the `RateGroups`
 connection graph.
-After the last entry for the `rateGroup1Comp` (rate group 1) add the line:
-```fpp
-rateGroup1Comp.RateGroupMemberOut[5] -> mathReceiver.schedIn
-```
+After the last entry for the `rateGroup1Comp` (rate group 1) add
+the following line:
 
-> You might need to change the array index 5 to be one greater than the previous `rateGroup1Comp` index. Otherwise you'll get a duplicate connection error.
+```fpp
+rateGroup1Comp.RateGroupMemberOut -> mathReceiver.schedIn
+```
 
 This line adds the connection that drives the `schedIn`
 port of the `mathReceiver` component instance.
 
 **Re-run the check for unconnected ports:**
-When this capability exists, you will be able to see
-that `mathReceiver.schedIn` is now connected
+You should see that `mathReceiver.schedIn` is now connected
 (it no longer appears in the list).
 
 **Add the Math connections:**
@@ -2108,7 +2088,7 @@ of the Ref topology.
 
 **Generate the layout:**
 For this step, we will use the F Prime Layout (FPL) tool.
-If FPL is not installed on your system, then install it now:
+If FPL is not installed on your system, then install it how:
 clone [this repository](https://github.com/fprime-community/fprime-layout)
 and follow the instructions.
 
@@ -2259,7 +2239,7 @@ At this point, if you stop and restart FSW, the parameter
 will return to its original value (the value before you
 sent the command).
 
-At some point, you may wish to update parameters more permanently.
+At some point you may wish to update parameters more permanently.
 You can do this by saving them to non-volatile storage.
 For the Ref application, "non-volatile storage" means the
 file system on your machine.
@@ -2307,9 +2287,9 @@ Select the log you wish to inspect from the drop-down menu.
 By default, there is no log selected.
 
 <a name="Conclusion"></a>
-### 8. Conclusion
+## 8. Conclusion
 
-The Math Component tutorial has shown us how to create simple types, ports, and
+The Math Component tutorial has shown us how to create simple types, ports and
 components for our application using the FPP modeling language. We have learned
 how to use `fprime-util` to generate implementation stubs, the build cache, and
 unit tests. We learned how to define our topology and use tools provided by

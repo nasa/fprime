@@ -13,7 +13,7 @@
 #ifndef CFDP_Checksum_HPP
 #define CFDP_Checksum_HPP
 
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace CFDP {
 

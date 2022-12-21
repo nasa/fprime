@@ -55,7 +55,7 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
     plugin_include_helper(AUTOCODER_NAME "${AUTOCODER_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
     # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}" "${GENERATED_SOURCES}")
-    _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
+    _filter_sources(AC_INPUT_SOURCES "${GENERATED_SOURCES}" "${AC_INPUT_SOURCES}")
 
     # Break early if there are no sources, no need to autocode nothing
     if (NOT AC_INPUT_SOURCES)
@@ -98,19 +98,13 @@ function(run_ac AUTOCODER_CMAKE SOURCES GENERATED_SOURCES)
             set(GENERATED_FILES "${GENERATED_FILES_LIST}")
         else()
             __ac_process_sources("${AC_INPUT_SOURCES}")
-            if (GENERATED_FILES)
-                set(CONSUMED_SOURCES "${AC_INPUT_SOURCES}")
-            endif()
+            set(CONSUMED_SOURCES "${AC_INPUT_SOURCES}")
         endif()
         set_property(DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES" "${MODULE_DEPENDENCIES}")
         set_property(DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED" "${GENERATED_FILES}")
         set_property(DIRECTORY PROPERTY "${SRCS_HASH}_CONSUMED" "${CONSUMED_SOURCES}")
         set_property(DIRECTORY PROPERTY "${SRCS_HASH}_FILE_DEPENDENCIES" "${FILE_DEPENDENCIES}")
         _describe_autocoder_run("${AUTOCODER_NAME}")
-        # Configure depends on this source file if it causes a change to module dependencies
-        if (MODULE_DEPENDENCIES)
-            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CONSUMED_SOURCES})
-        endif()
     endif()
     get_property(DEPS DIRECTORY PROPERTY "${SRCS_HASH}_DEPENDENCIES")
     get_property(GENS DIRECTORY PROPERTY "${SRCS_HASH}_GENERATED")
@@ -184,14 +178,15 @@ endfunction()
 # including an autocoder's CMake file and thus setting the active autocoder. Helper function.
 #
 # OUTPUT_NAME: name of output variable to set in parent scope
+# GENERATED_SOURCES: sources created by other autocoders
 # ...: any number of arguments containing lists of sources
 ####
-function(_filter_sources OUTPUT_NAME)
+function(_filter_sources OUTPUT_NAME GENERATED_SOURCES)
     set(OUTPUT_LIST)
     # Loop over the list and check
     foreach (SOURCE_LIST IN LISTS ARGN)
         foreach(SOURCE IN LISTS SOURCE_LIST)
-            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}")
+            cmake_language(CALL "${AUTOCODER_NAME}_is_supported" "${SOURCE}" "${GENERATED_SOURCES}")
             if (IS_SUPPORTED)
                 list(APPEND OUTPUT_LIST "${SOURCE}")
             endif()
@@ -230,8 +225,8 @@ function(__ac_process_sources SOURCES)
         add_custom_command(OUTPUT ${AUTOCODER_GENERATED} COMMAND ${AUTOCODER_SCRIPT} ${AUTOCODER_INPUTS} DEPENDS ${AUTOCODER_INPUTS} ${AUTOCODER_DEPENDENCIES})
     endif()
 
-    set(MODULE_DEPENDENCIES ${AUTOCODER_DEPENDENCIES} PARENT_SCOPE)
-    set(GENERATED_FILES ${AUTOCODER_GENERATED} PARENT_SCOPE)
-    set(FILE_DEPENDENCIES ${AUTOCODER_INPUTS} PARENT_SCOPE)
+    set(MODULE_DEPENDENCIES "${AUTOCODER_DEPENDENCIES}" PARENT_SCOPE)
+    set(GENERATED_FILES "${AUTOCODER_GENERATED}" PARENT_SCOPE)
+    set(FILE_DEPENDENCIES "${AUTOCODER_INPUTS}" PARENT_SCOPE)
 endfunction()
 

@@ -22,6 +22,7 @@ message(STATUS "Searching for F prime modules in: ${FPRIME_BUILD_LOCATIONS}")
 message(STATUS "Autocoder constants file: ${FPRIME_AC_CONSTANTS_FILE}")
 message(STATUS "Configuration header directory: ${FPRIME_CONFIG_DIR}")
 
+include(sanitizers) # Enable sanitizers if they are requested
 include(required)
 include(prescan) #Must come after required if tools detection is to be inherited
 include(platform/platform)
@@ -33,12 +34,6 @@ include(autocoder/autocoder)
 include(target/target)
 include(API)
 
-# Set the install directory for the package
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
-elseif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
-    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build-artifacts CACHE PATH "Install dir" FORCE)
-endif()
 message(STATUS "Installation directory: ${CMAKE_INSTALL_PREFIX}")
 
 # Setup the global include directories
@@ -61,9 +56,10 @@ endforeach()
 include_directories("${FPRIME_FRAMEWORK_PATH}")
 include_directories("${FPRIME_CONFIG_DIR}")
 
-# To prescan, either we register the prescan target or we run the prescan CMake
+# To prescan,register target process around safety check
 if (DEFINED FPRIME_PRESCAN)
-    register_fprime_target_helper(target/prescan FPRIME_TARGET_LIST)
+    register_fprime_list_helper(target/prescan FPRIME_TARGET_LIST)
+    setup_global_target(target/prescan)
 else()
     perform_prescan()
 endif()
@@ -71,6 +67,9 @@ endif()
 # FPP locations must come at the front of the list, then build
 register_fprime_target(target/fpp_locs)
 register_fprime_target(target/build)
+register_fprime_build_autocoder(autocoder/fpp)
+register_fprime_build_autocoder(autocoder/ai_xml)
+register_fprime_build_autocoder(autocoder/packets)
 register_fprime_target(target/noop)
 register_fprime_target(target/version)
 register_fprime_target(target/dict)

@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
@@ -24,7 +24,7 @@ jobs:
       run: ./ci/tests/Framework.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ci-framework-logs
@@ -35,7 +35,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
@@ -43,7 +43,7 @@ jobs:
       run: ./ci/tests/Ref.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ci-ref-logs
@@ -54,7 +54,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
@@ -64,7 +64,7 @@ jobs:
       run: ./ci/tests/30-ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ci-int-logs

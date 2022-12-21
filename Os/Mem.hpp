@@ -1,7 +1,7 @@
 #ifndef _Mem_hpp_
 #define _Mem_hpp_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Obj/ObjBase.hpp>
 #include <Fw/Types/Serializable.hpp>
 

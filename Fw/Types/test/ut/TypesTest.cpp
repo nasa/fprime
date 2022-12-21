@@ -1,4 +1,4 @@
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/IntervalTimer.hpp>
 #include <Os/InterruptLock.hpp>
@@ -727,12 +727,12 @@ void AssertTest() {
                                 FILE_NAME_ARG file,
                                 NATIVE_UINT_TYPE lineNo,
                                 NATIVE_UINT_TYPE numArgs,
-                                AssertArg arg1,
-                                AssertArg arg2,
-                                AssertArg arg3,
-                                AssertArg arg4,
-                                AssertArg arg5,
-                                AssertArg arg6
+                                FwAssertArgType arg1,
+                                FwAssertArgType arg2,
+                                FwAssertArgType arg3,
+                                FwAssertArgType arg4,
+                                FwAssertArgType arg5,
+                                FwAssertArgType arg6
                                 ) {
                 this->m_file = file;
                 this->m_lineNo = lineNo;
@@ -762,27 +762,27 @@ void AssertTest() {
                 return this->m_numArgs;
             }
 
-            AssertArg getArg1() {
+            FwAssertArgType getArg1() {
                 return this->m_arg1;
             }
 
-            AssertArg getArg2() {
+            FwAssertArgType getArg2() {
                 return this->m_arg2;
             }
 
-            AssertArg getArg3() {
+            FwAssertArgType getArg3() {
                 return this->m_arg3;
             }
 
-            AssertArg getArg4() {
+            FwAssertArgType getArg4() {
                 return this->m_arg4;
             }
 
-            AssertArg getArg5() {
+            FwAssertArgType getArg5() {
                 return this->m_arg5;
             }
 
-            AssertArg getArg6() {
+            FwAssertArgType getArg6() {
                 return this->m_arg6;
             }
 
@@ -795,15 +795,19 @@ void AssertTest() {
 
         private:
 
+#if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
+            FILE_NAME_ARG m_file = 0;
+#else
             FILE_NAME_ARG m_file = nullptr;
+#endif
             NATIVE_UINT_TYPE m_lineNo = 0;
             NATIVE_UINT_TYPE m_numArgs = 0;
-            AssertArg m_arg1 = 0;
-            AssertArg m_arg2 = 0;
-            AssertArg m_arg3 = 0;
-            AssertArg m_arg4 = 0;
-            AssertArg m_arg5 = 0;
-            AssertArg m_arg6 = 0;
+            FwAssertArgType m_arg1 = 0;
+            FwAssertArgType m_arg2 = 0;
+            FwAssertArgType m_arg3 = 0;
+            FwAssertArgType m_arg4 = 0;
+            FwAssertArgType m_arg5 = 0;
+            FwAssertArgType m_arg6 = 0;
             bool m_asserted = false;
 
     };

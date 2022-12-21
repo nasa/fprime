@@ -11,7 +11,7 @@
 // ======================================================================
 
 #include "Tester.hpp"
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 #include "Fw/Types/MallocAllocator.hpp"
 
 #define INSTANCE 0

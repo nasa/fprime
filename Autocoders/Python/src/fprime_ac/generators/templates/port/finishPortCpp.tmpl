@@ -50,11 +50,11 @@ ${return_type}Output${name}Port::invoke(${args_proto_string}) {
         _status = _buffer.serialize($arg[0]);
   #end if
   #set $num = $num + 1
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<AssertArg>(_status));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<FwAssertArgType>(_status));
 
  #end for
         _status = this->m_serPort->invokeSerial(_buffer);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<AssertArg>(_status));
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == _status,static_cast<FwAssertArgType>(_status));
     }
 \#else
     }

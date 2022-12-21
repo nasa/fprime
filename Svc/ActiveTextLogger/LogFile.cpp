@@ -119,7 +119,7 @@ namespace Svc {
             }
 
             NATIVE_INT_TYPE stat = snprintf(fileNameFinal,Fw::String::STRING_SIZE,
-                                            "%s%d",fileName,suffix);
+                                            "%s%" PRIu32,fileName,suffix);
 
             // If there was error, then just fail:
             if (stat <= 0) {

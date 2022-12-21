@@ -16,7 +16,7 @@
 #ifndef TYPES_MEMALLOCATOR_HPP_
 #define TYPES_MEMALLOCATOR_HPP_
 
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 
 /*!
  *
@@ -27,7 +27,9 @@
  * appropriate.
  *
  * The identifier can be used to look up a pre-allocated buffer by ID in an
- * embedded system.
+ * embedded system. Identifiers may be used only in a single call to an invocation.
+ * Some implementations of MemAllocator discard the identifier but components using
+ * the MemAllocator interface should not depend on the identifier to be discarded.
  *
  * The size is the requested size of the memory. If the allocator cannot return the
  * requested amount, it should return the actual amount and users should check.
@@ -45,7 +47,7 @@ namespace Fw {
         public:
             //! Allocate memory
             /*!
-             * \param identifier the memory segment identifier (if needed)
+             * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
              * \param size the requested size - changed to actual if different
              * \param recoverable - flag to indicate the memory could be recoverable
              * \return the pointer to memory. Zero if unable to allocate
@@ -56,7 +58,7 @@ namespace Fw {
                     bool& recoverable)=0;
             //! Deallocate memory
             /*!
-             * \param identifier the memory segment identifier (if needed)
+             * \param identifier the memory segment identifier, each identifier is to be used in once single allocation
              * \param ptr the pointer to memory returned by allocate()
              */
             virtual void deallocate(

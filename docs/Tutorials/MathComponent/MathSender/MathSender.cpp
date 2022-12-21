@@ -12,7 +12,7 @@
 
 
 #include <Ref/MathSender/MathSender.hpp>
-#include "Fw/Types/BasicTypes.hpp"
+#include <FpConfig.hpp>
 
 namespace Ref {
 

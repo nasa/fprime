@@ -12,7 +12,7 @@
  *  Revised March 2022
  *      Author: bocchino
  */
-#include <Fw/Types/BasicTypes.hpp>
+#include <FpConfig.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
@@ -22,13 +22,37 @@
 
 namespace Types {
 
-CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) :
-    m_store(buffer),
-    m_store_size(size),
+CircularBuffer :: CircularBuffer() :
+    m_store(nullptr),
+    m_store_size(0),
     m_head_idx(0),
-    m_allocated_size(0)
+    m_allocated_size(0),
+    m_high_water_mark(0)
 {
-  FW_ASSERT(m_store_size > 0);
+
+}
+
+CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) :
+    m_store(nullptr),
+    m_store_size(0),
+    m_head_idx(0),
+    m_allocated_size(0),
+    m_high_water_mark(0)
+{
+    setup(buffer, size);
+}
+
+void CircularBuffer :: setup(U8* const buffer, const NATIVE_UINT_TYPE size) {
+    FW_ASSERT(size > 0);
+    FW_ASSERT(buffer != nullptr);
+    FW_ASSERT(m_store == nullptr && m_store_size == 0); // Not already setup
+
+    // Initialize buffer data
+    m_store = buffer;
+    m_store_size = size;
+    m_head_idx = 0;
+    m_allocated_size = 0;
+    m_high_water_mark = 0;
 }
 
 NATIVE_UINT_TYPE CircularBuffer :: get_allocated_size() const {
@@ -36,6 +60,7 @@ NATIVE_UINT_TYPE CircularBuffer :: get_allocated_size() const {
 }
 
 NATIVE_UINT_TYPE CircularBuffer :: get_free_size() const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     FW_ASSERT(m_allocated_size <= m_store_size, m_allocated_size);
     return m_store_size - m_allocated_size;
 }
@@ -46,6 +71,7 @@ NATIVE_UINT_TYPE CircularBuffer :: advance_idx(NATIVE_UINT_TYPE idx, NATIVE_UINT
 }
 
 Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NATIVE_UINT_TYPE size) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     FW_ASSERT(buffer != nullptr);
     // Check there is sufficient space
     if (size > get_free_size()) {
@@ -60,14 +86,17 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
     }
     m_allocated_size += size;
     FW_ASSERT(m_allocated_size <= this->get_capacity(), m_allocated_size);
+    m_high_water_mark = (m_high_water_mark > m_allocated_size) ? m_high_water_mark : m_allocated_size;
     return Fw::FW_SERIALIZE_OK;
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(char& value, NATIVE_UINT_TYPE offset) const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     return peek(reinterpret_cast<U8&>(value), offset);
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     // Check there is sufficient data
     if ((sizeof(U8) + offset) > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -79,6 +108,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) c
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     // Check there is sufficient data
     if ((sizeof(U32) + offset) > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -96,6 +126,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) 
 }
 
 Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NATIVE_UINT_TYPE offset) const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     FW_ASSERT(buffer != nullptr);
     // Check there is sufficient data
     if ((size + offset) > m_allocated_size) {
@@ -112,6 +143,7 @@ Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NA
 }
 
 Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     // Check there is sufficient data
     if (amount > m_allocated_size) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
@@ -122,7 +154,16 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
 }
 
 NATIVE_UINT_TYPE CircularBuffer ::get_capacity() const {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0); // setup method was called
     return m_store_size;
+}
+
+NATIVE_UINT_TYPE CircularBuffer ::get_high_water_mark() const {
+    return m_high_water_mark;
+}
+
+void CircularBuffer ::clear_high_water_mark() {
+    m_high_water_mark = 0;
 }
 
 #ifdef CIRCULAR_DEBUG

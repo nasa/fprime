@@ -16,26 +16,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Checkout F´ Repository"
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: ./.github/actions/setup
     - name: Install RPI Toolchain
-      run: sudo git clone https://github.com/raspberrypi/tools.git /opt/rpi/tools
+      run: sudo apt update && sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
     - name: F prime CI step
       run: ./ci/tests/RPI.bash
     - name: Copy Tests
       run: mkdir -p artifact/RPI; cp -rp RPI/test RPI/build-artifacts artifact/RPI; cp -rp ci artifact
     # Build Artifacts
     - name: 'RPI Build Output'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: rpi-build
         path: artifact
         retention-days: 5
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: rpi-logs
@@ -47,14 +47,14 @@ jobs:
     needs: RPI
     steps:
     - name: RPI Build Download
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: rpi-build
     - name: RPI Integration Tests
       run: chmod +x RPI/build-artifacts/raspberrypi/bin/RPI; /bin/bash ci/tests/RPI-Ints.bash
     # Archive the outputs
     - name: 'Archive Logs'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: pi-int-logs

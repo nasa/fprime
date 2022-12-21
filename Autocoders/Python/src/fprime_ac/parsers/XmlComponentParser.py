@@ -1383,8 +1383,8 @@ class Port:
         @param name:  Name of port (each instance must be unique).
         @param direction: Direction of data flow (must be input or output)
         @param type:  Type of port (must have supporting include xml)
-        @param sync:  Kind of port (must be one of: asynch, synch, or guarded)
-        @param comment:  A single or multline comment
+        @param sync:  Kind of port (must be one of: async, sync, or guarded)
+        @param comment:  A single or multiline comment
         """
         # TODO: ADD NAMESPACE
         self.__name = name

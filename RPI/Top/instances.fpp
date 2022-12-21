@@ -50,12 +50,8 @@ module RPI {
     stack size Default.stackSize \
     priority 20 \
   {
-
-    phase Fpp.ToCpp.Phases.instances """
-    Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
-    """
-
     phase Fpp.ToCpp.Phases.readParameters """
+    prmDb.configure("PrmDb.dat");
     prmDb.readParamFile();
     """
 
@@ -312,16 +308,16 @@ module RPI {
 
   instance textLogger: Svc.PassiveTextLogger base id 1900
 
-  instance uartDrv: Drv.LinuxSerialDriver base id 2000 \
+  instance uartDrv: Drv.LinuxUartDriver base id 2000 \
   {
 
     phase Fpp.ToCpp.Phases.configComponents """
     {
       const bool status = uartDrv.open("/dev/serial0",
-          Drv::LinuxSerialDriverComponentImpl::BAUD_19200,
-          Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-          Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
-          true
+          Drv::LinuxUartDriver::BAUD_19200,
+          Drv::LinuxUartDriver::NO_FLOW,
+          Drv::LinuxUartDriver::PARITY_NONE,
+          1024
       );
       if (!status) {
         Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
@@ -434,5 +430,39 @@ module RPI {
     """
 
   }
+
+  instance uartBufferManager: Svc.BufferManager base id 2800 \
+  {
+
+    phase Fpp.ToCpp.Phases.configConstants """
+    enum {
+      STORE_SIZE = 3000,
+      QUEUE_SIZE = 30,
+      MGR_ID = 300
+    };
+    """
+
+    phase Fpp.ToCpp.Phases.configComponents """
+    {
+      Svc::BufferManager::BufferBins bufferBins;
+      memset(&bufferBins, 0, sizeof(bufferBins));
+      using namespace ConfigConstants::uartBufferManager;
+      bufferBins.bins[0].bufferSize = STORE_SIZE;
+      bufferBins.bins[0].numBuffers = QUEUE_SIZE;
+      uartBufferManager.setup(
+          MGR_ID,
+          0,
+          Allocation::mallocator,
+          // OK to supply a local object here: BufferManager makes a copy
+          bufferBins
+      );
+    }
+    """
+
+    phase Fpp.ToCpp.Phases.tearDownComponents """
+    uartBufferManager.cleanup();
+    """
+  }
+
 
 }
