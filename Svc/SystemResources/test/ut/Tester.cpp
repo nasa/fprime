@@ -93,7 +93,7 @@ void Tester ::test_tlm(bool enabled) {
                 Os::SystemResources::MemUtil memory_info;
                 ASSERT_TLM_CPU_SIZE((enabled) ? 1 : 0);
 
-                // Check that the filesystem reads well before asserting telemtry
+                // Check that the filesystem reads well before asserting telemetry
                 if (enabled && Os::SystemResources::getMemUtil(memory_info) == Os::SystemResources::SYSTEM_RESOURCES_OK) {
                     ASSERT_TLM_MEMORY_USED_SIZE(1);
                     ASSERT_TLM_MEMORY_TOTAL_SIZE(1);
@@ -102,7 +102,7 @@ void Tester ::test_tlm(bool enabled) {
                     ASSERT_TLM_MEMORY_USED_SIZE(0);
                     ASSERT_TLM_MEMORY_TOTAL_SIZE(0);
                 }
-                // Check that the filesystem reads well before asserting telemtry
+                // Check that the filesystem reads well before asserting telemetry
                 if (enabled && Os::FileSystem::getFreeSpace("/", free, total ) == Os::FileSystem::OP_OK) {
                     ASSERT_TLM_NON_VOLATILE_FREE_SIZE(1);
                     ASSERT_TLM_NON_VOLATILE_TOTAL_SIZE(1);

@@ -529,6 +529,7 @@ frox
 frsize
 fsanitize
 fsanitizers
+fsblkcnt
 fscanf
 fstream
 fstrength
