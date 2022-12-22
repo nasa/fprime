@@ -46,6 +46,7 @@ aps
 apxs
 AQuat
 AQueued
+arcsecond
 arduino
 argc
 argcomplete
@@ -198,6 +199,7 @@ cobj
 CODEFILE
 codegen
 codeql
+coldarm
 colno
 COLORSTYLE
 colorwheel
@@ -325,6 +327,7 @@ dicts
 dictvalue
 difflib
 diffs
+digitalcommons
 diles
 dinkel
 dirent
@@ -452,6 +455,7 @@ EXAMPLECOMPONENTIMPL
 excinfo
 executables
 exitcode
+Exoplanets
 expandtabs
 expr
 exprtokens
@@ -713,6 +717,7 @@ isnan
 isoschematron
 isr
 ISREG
+iss
 isspace
 isupper
 ITAR
@@ -901,6 +906,7 @@ nbits
 ncsl
 NDELAY
 ndiffs
+neascout
 Netscape
 newloc
 newroot
@@ -1113,12 +1119,14 @@ QNX
 qsf
 qtest
 qthelpproject
+Qualcomm
 quatchan
 RAbrack
 radd
 RAII
 Ramanan
 randtbl
+rapidscat
 raspberrypi
 raspi
 RATEGROUPDRIVER
@@ -1201,6 +1209,7 @@ sbin
 SBINDIR
 sbt
 scanf
+scatterometer
 sched
 schem
 schematron
@@ -1269,6 +1278,7 @@ SIZ
 sizeof
 sloc
 Smath
+smallsat
 SNDTIMEO
 snprintf
 sockaddr
@@ -1289,6 +1299,7 @@ SOURCEDIR
 sourceforge
 Sourcetrail
 sourcing
+spacetech
 sparc
 SPHINXBUILD
 SPHINXOPTS
@@ -1569,6 +1580,7 @@ vfs
 vhd
 vhdl
 VID
+viewcontent
 viewforum
 virt
 virtualbox
