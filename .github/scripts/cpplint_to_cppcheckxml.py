@@ -4,21 +4,20 @@
 # Reads from stdin and writes to stderr (to mimic cppcheck)
 # https://stackoverflow.com/questions/14172232/how-to-make-cpplint-work-with-jenkins-warnings-plugin
 
-import sys
 import re
+import sys
 import xml.sax.saxutils
 
 
-def cpplint_score_to_cppcheck_severity(err_score):
-    if err_score in [1, 2]:
+def cpplint_score_to_cppcheck_severity(err_score: int) -> str:
+    if err_score in {1, 2}:
         return "style"
-    if err_score in [3, 4]:
+    if err_score in {3, 4}:
         return "warning"
-    if err_score == 5:
-        return "error"
+    return "error" if err_score == 5 else ""
 
 
-def fmt_report_from_cpplint_to_cppcheck():
+def fmt_report_from_cpplint_to_cppcheck() -> None:
     sys.stderr.write("""<?xml version="1.0" encoding="UTF-8"?>\n""")
     sys.stderr.write("""<results version="2">\n""")
     sys.stderr.write("""<cppcheck version="1.90"/>\n""")
@@ -38,13 +37,13 @@ def fmt_report_from_cpplint_to_cppcheck():
             continue
 
         file_name, err_line, raw_err_msg, err_label, err_score = matched_subgroups
-        # prepare data to be used as an attribute value
+        # Prepare the data to be used as attribute values
         err_msg = xml.sax.saxutils.escape(raw_err_msg)
         err_msg = xml.sax.saxutils.quoteattr(err_msg)
 
         err_severity = cpplint_score_to_cppcheck_severity(int(err_score))
 
-        if err_severity in ["warning", "error"]:
+        if err_severity in {"warning", "error"}:
             sys.stderr.write(
                 f"""<error id="{err_label}" severity="{err_severity}" msg={err_msg} verbose="">\n"""
             )
