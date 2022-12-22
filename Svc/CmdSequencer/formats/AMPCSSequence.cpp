@@ -95,7 +95,7 @@ namespace Svc {
     else {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-            overflow ? Os::File::BAD_SIZE : fileStatus
+            overflow ? Os::FileSystem::OTHER_ERROR : fileStatus
       );
       status = false;
     }
