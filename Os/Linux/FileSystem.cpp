@@ -525,7 +525,7 @@ namespace Os {
 			DIR * dirPtr = nullptr;
 			struct dirent *direntData = nullptr;
 			U32 limitCount;
-			const FwSizeType loopLimit = std::numeric_limits<U32>::max();
+			const FwSizeType loopLimit = FpLimits::FwSizeType_MAX;
 
 			fileCount = 0;
 			if((dirPtr = ::opendir(directory)) == nullptr) {
