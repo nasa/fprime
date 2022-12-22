@@ -510,9 +510,9 @@ Status getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBy
     const FwSizeType total_blocks = static_cast<FwSizeType>(fsStat.f_blocks);
 
     // Check for casting and type error
-    if (((block_size < 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
-        ((free_blocks < 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
-        ((total_blocks < 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))) {
+    if (((block_size <= 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
+        ((free_blocks <= 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
+        ((total_blocks <= 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))) {
         return OTHER_ERROR;
     }
     // Check for overflow in multiplication
