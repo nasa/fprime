@@ -8,6 +8,19 @@ import re
 import sys
 import xml.sax.saxutils
 
+OUTPUT_FILE_XML_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+<cppcheck version="1.90"/>
+<errors>
+"""
+
+OUTPUT_FILE_XML_FOOTER = """</errors>
+</results>
+"""
+
+CPPLINT_ERR_REGEX = "([^:]*):([0-9]*):  ([^\[]*)\[([^\]]*)\] \[([0-9]*)\].*"
+CPPLINT_ERR_REGEX_NB_INFO = 5
+
 
 def cpplint_score_to_cppcheck_severity(err_score: int) -> str:
     if err_score in {1, 2}:
@@ -17,15 +30,22 @@ def cpplint_score_to_cppcheck_severity(err_score: int) -> str:
     return "error" if err_score == 5 else ""
 
 
-def fmt_report_from_cpplint_to_cppcheck() -> None:
-    sys.stderr.write("""<?xml version="1.0" encoding="UTF-8"?>\n""")
-    sys.stderr.write("""<results version="2">\n""")
-    sys.stderr.write("""<cppcheck version="1.90"/>\n""")
-    sys.stderr.write("""<errors>\n""")
+def write_if_relevant_error(
+    file_name: str, err_severity: str, err_label: str, err_msg: str, err_line: str
+) -> None:
+    if err_severity in {"warning", "error"}:
+        sys.stderr.write(
+            f"""<error id="{err_label}" severity="{err_severity}" msg={err_msg} verbose="">\n"""
+        )
+        sys.stderr.write(
+            f"""<location file="{file_name}" line="{err_line}" column="0"/>\n"""
+        )
+        sys.stderr.write("""</error>\n""")
 
-    compiled_regex = re.compile(
-        "([^:]*):([0-9]*):  ([^\[]*)\[([^\]]*)\] \[([0-9]*)\].*"
-    )
+
+def fmt_report_from_cpplint_to_cppcheck() -> None:
+    sys.stderr.write(OUTPUT_FILE_XML_HEADER)
+    compiled_regex = re.compile(CPPLINT_ERR_REGEX)
 
     for line in sys.stdin.readlines():
         matched_regex = compiled_regex.match(line.strip())
@@ -33,7 +53,7 @@ def fmt_report_from_cpplint_to_cppcheck() -> None:
             continue
 
         matched_subgroups = matched_regex.groups()
-        if len(matched_subgroups) != 5:
+        if len(matched_subgroups) != CPPLINT_ERR_REGEX_NB_INFO:
             continue
 
         file_name, err_line, raw_err_msg, err_label, err_score = matched_subgroups
@@ -43,17 +63,9 @@ def fmt_report_from_cpplint_to_cppcheck() -> None:
 
         err_severity = cpplint_score_to_cppcheck_severity(int(err_score))
 
-        if err_severity in {"warning", "error"}:
-            sys.stderr.write(
-                f"""<error id="{err_label}" severity="{err_severity}" msg={err_msg} verbose="">\n"""
-            )
-            sys.stderr.write(
-                f"""<location file="{file_name}" line="{err_line}" column="0"/>\n"""
-            )
-            sys.stderr.write("""</error>\n""")
+        write_if_relevant_error(file_name, err_severity, err_label, err_msg, err_line)
 
-    sys.stderr.write("""</errors>\n""")
-    sys.stderr.write("""</results>\n""")
+    sys.stderr.write(OUTPUT_FILE_XML_FOOTER)
 
 
 if __name__ == "__main__":
