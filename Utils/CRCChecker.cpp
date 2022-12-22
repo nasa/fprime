@@ -46,7 +46,7 @@ namespace Utils {
     }
 
     int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<U64>(int_file_size) != filesize)
+    if(static_cast<FwSizeType>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
     }
@@ -172,7 +172,7 @@ namespace Utils {
     }
 
     int_file_size = static_cast<NATIVE_INT_TYPE>(filesize);
-    if(static_cast<U64>(int_file_size) != filesize)
+    if(static_cast<FwSizeType>(int_file_size) != filesize)
     {
       return FAILED_FILE_SIZE_CAST;
     }

@@ -23,7 +23,7 @@ void testTestFileSystem() {
 	const char cur_dir[] = ".";
 	struct stat info;
 	FwSizeType file_size = 42;
-	FwSizeType file_count = 0;
+	U32 file_count = 0;
 	const char test_string[] = "This is a test file.";
 	NATIVE_INT_TYPE test_string_len = 0;
 

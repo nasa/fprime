@@ -331,6 +331,7 @@ namespace Os {
 		 * @param size The number of bytes to copy
 		 */
 		Status copyFileData(File source, File destination, FwSizeType size) {
+                        static_assert(FILE_SYSTEM_CHUNK_SIZE != 0, "FILE_SYSTEM_CHUNK_SIZE must be >0");
 			U8 fileBuffer[FILE_SYSTEM_CHUNK_SIZE];
 			File::Status file_status;
 
@@ -454,6 +455,9 @@ namespace Os {
 			if(FileSystem::OP_OK == fileStat) {
 				// Only check size if struct was initialized successfully
 				size = fileStatStruct.st_size;
+                                if (static_cast<off_t>(size) != fileStatStruct.st_size) {
+                                    return FileSystem::OTHER_ERROR;
+                                }
 			}
 
 			return fileStat;
@@ -514,9 +518,26 @@ namespace Os {
 				return stat;
 			}
 
-			totalBytes = static_cast<FwSizeType>(fsStat.f_blocks) * static_cast<FwSizeType>(fsStat.f_frsize);
-			freeBytes = static_cast<FwSizeType>(fsStat.f_bfree) * static_cast<FwSizeType>(fsStat.f_frsize);
-			return stat;
+                        const FwSizeType block_size = static_cast<FwSizeType>(fsStat.f_frsize);
+                        const FwSizeType free_blocks = static_cast<FwSizeType>(fsStat.f_bfree);
+                        const FwSizeType total_blocks = static_cast<FwSizeType>(fsStat.f_blocks);
+
+                        // Check for casting and type error
+                        if (((block_size < 0) || (static_cast<unsigned long>(block_size) != fsStat.f_frsize)) ||
+                            ((free_blocks < 0) || (static_cast<fsblkcnt_t>(free_blocks) != fsStat.f_bfree)) ||
+                            ((total_blocks < 0) || (static_cast<fsblkcnt_t>(block_size) != fsStat.f_blocks))
+                        ) {
+                            return OTHER_ERROR;
+                        }
+                        // Check for overflow in multiplication
+                        if (free_blocks > (FpLimits::FwSizeType_MAX / block_size) ||
+                            total_blocks > (FpLimits::FwSizeType_MAX / block_size))
+                        {
+                            return OTHER_ERROR;
+                        }
+                        freeBytes = free_blocks * block_size;
+                        totalBytes = total_blocks * block_size;
+                        return stat;
 		}
 
 		// Public function to get the file count for a given directory.
@@ -525,7 +546,7 @@ namespace Os {
 			DIR * dirPtr = nullptr;
 			struct dirent *direntData = nullptr;
 			U32 limitCount;
-			const FwSizeType loopLimit = FpLimits::FwSizeType_MAX;
+			const U32 loopLimit = FpLimits::U32_MAX;
 
 			fileCount = 0;
 			if((dirPtr = ::opendir(directory)) == nullptr) {

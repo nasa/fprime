@@ -84,16 +84,18 @@ namespace Svc {
     this->setFileName(seqFileName);
     const Os::FileSystem::Status fileStatus =
       Os::FileSystem::getFileSize(this->m_fileName.toChar(), fileSize);
+    bool overflow = static_cast<FwSizeType>(static_cast<U32>(fileSize)) != fileSize;
     if (
         fileStatus == Os::FileSystem::OP_OK and
-        fileSize >= sizeof(this->m_sequenceHeader)
+        fileSize >= sizeof(this->m_sequenceHeader) and
+        !overflow
     ) {
       this->m_header.m_fileSize = static_cast<U32>(fileSize - sizeof(this->m_sequenceHeader));
     }
     else {
       this->m_events.fileInvalid(
           CmdSequencer_FileReadStage::READ_HEADER_SIZE,
-          fileStatus
+            overflow ? Os::File::BAD_SIZE : fileStatus
       );
       status = false;
     }
