@@ -7,7 +7,6 @@ void testTestSystemResources() {
 
     Os::SystemResources::SystemResourcesStatus sys_res_status;
     Os::SystemResources::CpuTicks cpuUtil;
-    Os::SystemResources::MemUtil memUtil;
 
     U32 cpuCount;
     U32 cpuIndex;
