@@ -20,6 +20,7 @@ namespace Os {
         FileSystem::Status fs_status;
         FwSizeType fileSize = 0;
         fs_status = FileSystem::getFileSize(fileName, fileSize); //!< gets the size of the file (in bytes) at location path
+        // fileSize will be used as a NATIVE_INT_TYPE below and thus must cast cleanly to that type
         if( FileSystem::OP_OK != fs_status || static_cast<FwSizeType>(static_cast<NATIVE_INT_TYPE>(fileSize)) != fileSize) {
             return File::BAD_SIZE;
         }
