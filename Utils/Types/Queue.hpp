@@ -17,8 +17,6 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
-typedef U32 FwSizeType;  // TODO: replace with refactored types when available
-
 namespace Types {
 
 class Queue {

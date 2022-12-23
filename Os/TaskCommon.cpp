@@ -1,11 +1,10 @@
 #include <Os/Task.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Fw/Logger/Logger.hpp>
-#include <cstring>
-#include <limits>
+#include <FpConfig.hpp>
+
 
 namespace Os {
-    const NATIVE_UINT_TYPE Task::TASK_DEFAULT = std::numeric_limits<NATIVE_UINT_TYPE>::max();
+    const NATIVE_UINT_TYPE Task::TASK_DEFAULT = FpLimits::PlatformUIntType_MAX;
     
     TaskRegistry* Task::s_taskRegistry = nullptr;
     NATIVE_INT_TYPE Task::s_numTasks = 0;

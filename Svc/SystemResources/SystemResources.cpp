@@ -142,8 +142,8 @@ void SystemResources::Mem() {
 }
 
 void SystemResources::PhysMem() {
-    U64 total = 0;
-    U64 free = 0;
+    FwSizeType total = 0;
+    FwSizeType free = 0;
 
     if (Os::FileSystem::getFreeSpace("/", total, free) == Os::FileSystem::OP_OK) {
         this->tlmWrite_NON_VOLATILE_FREE(free / 1024);
