@@ -102,6 +102,7 @@ bfree
 bibtex
 Bies
 bindir
+binutils
 Bitfields
 bitmaps
 bitset
