@@ -93,6 +93,7 @@ Svc::FileDownlink Component</h1>
 <h2><a class="anchor" id="autotoc_md424"></a>
 1 Introduction</h2>
 <p><code>FileDownlink</code> is an active F´ component that manages spacecraft file downlink. Both operators and components on the spacecraft can add files to the file queue, which <code>FileDownlink</code> will downlink from. Operators can enqueue files using the <code>SendFile</code> and <code>SendPartial</code> commands, and components can enqueue files using the <code>SendFile</code> port. The <code>FileComplete</code> port broadcasts when a file downlink initiated by a port completes, allowing components to detect when a previous enqueued file downlink has completed. To prevent a continuous stream of file downlink traffic from saturating the communication link, a cooldown can be configured to add a delay between the completion of a file downlink and starting on the next file in the queue.</p>
+<p><b>Note:</b> file downlink is limited to processing files with a maximum file size of 4GiB. Larger files will result in a bad size error.</p>
 <h2><a class="anchor" id="autotoc_md425"></a>
 2 Requirements</h2>
 <table class="markdownTable">

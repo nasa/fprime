@@ -276,7 +276,7 @@ $(document).ready(function(){initNavTree('_serializable_8cpp_source.html',''); i
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    }</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor">#if FW_HAS_F64</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor">#if FW_HAS_F64 &amp;&amp; FW_HAS_64_BIT</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <a class="code" href="namespace_fw.html#aa232625e63c0c60a1fced2933334fc32">SerializeStatus</a> <a class="code" href="class_fw_1_1_serialize_buffer_base.html#ac7eef383cbb84ad69d09d036a7249cdf">SerializeBufferBase::serialize</a>(F64 val) {</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="comment">// floating point values need to be byte-swapped as well, so copy to U64 and use that routine</span></div>

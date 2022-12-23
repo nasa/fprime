@@ -92,9 +92,9 @@ $(document).ready(function(){initNavTree('_baremetal_2_file_system_8cpp.html',''
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="fp_config_8hpp_source.html">FpConfig.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="file_system_8hpp_source.html">Os/FileSystem.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="file_8hpp_source.html">Os/File.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="assert_8hpp_source.html">Fw/Types/Assert.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="file_8hpp_source.html">Os/File.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="file_system_8hpp_source.html">Os/FileSystem.hpp</a>&gt;</code><br />
 </div>
 <p><a href="baremetal_2_file_system_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -125,9 +125,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8d8d0bc159589ebf09030dff7b294816"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a8d8d0bc159589ebf09030dff7b294816">Os::FileSystem::copyFile</a> (const char *originPath, const char *destPath)</td></tr>
 <tr class="memdesc:a8d8d0bc159589ebf09030dff7b294816"><td class="mdescLeft">&#160;</td><td class="mdescRight">moves a file from origin to destination  <a href="namespace_os_1_1_file_system.html#a8d8d0bc159589ebf09030dff7b294816">More...</a><br /></td></tr>
 <tr class="separator:a8d8d0bc159589ebf09030dff7b294816"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a532586de0a715a818fa6e437792d6d82"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a532586de0a715a818fa6e437792d6d82">Os::FileSystem::getFileSize</a> (const char *path, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;size)</td></tr>
-<tr class="memdesc:a532586de0a715a818fa6e437792d6d82"><td class="mdescLeft">&#160;</td><td class="mdescRight">append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.  <a href="namespace_os_1_1_file_system.html#a532586de0a715a818fa6e437792d6d82">More...</a><br /></td></tr>
-<tr class="separator:a532586de0a715a818fa6e437792d6d82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dc2c43756fb8ed89c502f6d452ec473"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">Os::FileSystem::getFileSize</a> (const char *path, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;size)</td></tr>
+<tr class="memdesc:a4dc2c43756fb8ed89c502f6d452ec473"><td class="mdescLeft">&#160;</td><td class="mdescRight">append file origin to destination file. If boolean true, creates a brand new file if the destination doesn't exist.  <a href="namespace_os_1_1_file_system.html#a4dc2c43756fb8ed89c502f6d452ec473">More...</a><br /></td></tr>
+<tr class="separator:a4dc2c43756fb8ed89c502f6d452ec473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57ef865fb8cb2693f8df7241914403e1"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a57ef865fb8cb2693f8df7241914403e1">Os::FileSystem::changeWorkingDirectory</a> (const char *path)</td></tr>
 <tr class="memdesc:a57ef865fb8cb2693f8df7241914403e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">move current directory to path  <a href="namespace_os_1_1_file_system.html#a57ef865fb8cb2693f8df7241914403e1">More...</a><br /></td></tr>
 <tr class="separator:a57ef865fb8cb2693f8df7241914403e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,9 +137,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a7dc1cda7708fe268195a1bb34579af12"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12">Os::FileSystem::appendFile</a> (const char *originPath, const char *destPath, bool createMissingDest=false)</td></tr>
 <tr class="memdesc:a7dc1cda7708fe268195a1bb34579af12"><td class="mdescLeft">&#160;</td><td class="mdescRight">copies a file from origin to destination  <a href="namespace_os_1_1_file_system.html#a7dc1cda7708fe268195a1bb34579af12">More...</a><br /></td></tr>
 <tr class="separator:a7dc1cda7708fe268195a1bb34579af12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abad653e2beacc22dabf5c9292499d848"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">Os::FileSystem::getFreeSpace</a> (const char *path, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;totalBytes, <a class="el" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a> &amp;freeBytes)</td></tr>
-<tr class="memdesc:abad653e2beacc22dabf5c9292499d848"><td class="mdescLeft">&#160;</td><td class="mdescRight">get FS free and total space in bytes on filesystem containing path  <a href="namespace_os_1_1_file_system.html#abad653e2beacc22dabf5c9292499d848">More...</a><br /></td></tr>
-<tr class="separator:abad653e2beacc22dabf5c9292499d848"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08a5d8ccc71b6d83da1d4305d459988c"><td class="memItemLeft" align="right" valign="top">Status&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_os_1_1_file_system.html#a08a5d8ccc71b6d83da1d4305d459988c">Os::FileSystem::getFreeSpace</a> (const char *path, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;totalBytes, <a class="el" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> &amp;freeBytes)</td></tr>
+<tr class="memdesc:a08a5d8ccc71b6d83da1d4305d459988c"><td class="mdescLeft">&#160;</td><td class="mdescRight">get FS free and total space in bytes on filesystem containing path  <a href="namespace_os_1_1_file_system.html#a08a5d8ccc71b6d83da1d4305d459988c">More...</a><br /></td></tr>
+<tr class="separator:a08a5d8ccc71b6d83da1d4305d459988c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -174,17 +174,38 @@ $(document).ready(function(){initNavTree('_os_2_linux_2_system_resources_8cpp_so
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keyword">struct </span>sysinfo memory_info;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        sysinfo(&amp;memory_info);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">if</span> (memory_info.totalram &lt; memory_info.freeram) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        memory_util.total = <span class="keyword">static_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>(memory_info.totalram * memory_info.mem_unit); </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        memory_util.used = <span class="keyword">static_cast&lt;</span><a class="code" href="sha_8h.html#ae5a6272795b1b8e0045aa7a4319dceb8">U64</a><span class="keyword">&gt;</span>((memory_info.totalram - memory_info.freeram) * memory_info.mem_unit);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">SYSTEM_RESOURCES_OK</a>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> total_ram = <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(memory_info.totalram);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> free_ram = <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(memory_info.freeram);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keyword">const</span> <a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a> memory_unit = <span class="keyword">static_cast&lt;</span><a class="code" href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a><span class="keyword">&gt;</span>(memory_info.mem_unit);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">// Check for casting and type errors</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">if</span> (((total_ram &lt;= 0) || (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span><span class="keyword">&gt;</span>(total_ram) != memory_info.totalram)) ||</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            ((free_ram &lt;= 0) || (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span><span class="keyword">&gt;</span>(free_ram) != memory_info.freeram)) ||</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            ((memory_unit &lt;= 0) || (<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(memory_unit) != memory_info.mem_unit))</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        ) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="comment">// Check for invalid memory calculations</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">if</span> (total_ram &lt; free_ram) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="comment">// Check for overflow in multiplication</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">if</span> (total_ram &gt; (FpLimits::FwSizeType_MAX / memory_unit))</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6aaaf17c7d990fd20cd0e2b8dacf7f0105">SYSTEM_RESOURCES_ERROR</a>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        memory_util.total = total_ram * memory_unit;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        memory_util.used = (total_ram - free_ram) * memory_unit;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="namespace_os_1_1_system_resources.html#adf8c81979861abb1fbc0a7985c27dcc6a171dc463c15af6483fc367e8342522af">SYSTEM_RESOURCES_OK</a>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;}</div>
 <div class="ttc" id="a_assert_8hpp_html"><div class="ttname"><a href="assert_8hpp.html">Assert.hpp</a></div></div>
+<div class="ttc" id="a_fp_config_8hpp_html_a924ef0ded73e6ec8a0a0b55e9e555fc4"><div class="ttname"><a href="fp_config_8hpp.html#a924ef0ded73e6ec8a0a0b55e9e555fc4">FwSizeType</a></div><div class="ttdeci">PlatformSizeType FwSizeType</div><div class="ttdef"><b>Definition:</b> <a href="fp_config_8hpp_source.html#l00020">FpConfig.hpp:20</a></div></div>
 <div class="ttc" id="a_os_2_system_resources_8hpp_html"><div class="ttname"><a href="os_2_system_resources_8hpp.html">SystemResources.hpp</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_a1d44f29f3dcd5069d256d55a67372e9e"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#a1d44f29f3dcd5069d256d55a67372e9e">Os::SystemResources::getCpuTicks</a></div><div class="ttdeci">SystemResourcesStatus getCpuTicks(CpuTicks &amp;ticks, U32 cpu_index=0)</div><div class="ttdoc">Get the CPU tick information for a given CPU.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00023">SystemResources.cpp:23</a></div></div>
 <div class="ttc" id="anamespace_os_1_1_system_resources_html_a92ad97f8e7fccda7ea0334d50478c316"><div class="ttname"><a href="namespace_os_1_1_system_resources.html#a92ad97f8e7fccda7ea0334d50478c316">Os::SystemResources::getMemUtil</a></div><div class="ttdeci">SystemResourcesStatus getMemUtil(MemUtil &amp;memory_util)</div><div class="ttdoc">Calculate the across-all-cpu average tick information.</div><div class="ttdef"><b>Definition:</b> <a href="os_2_baremetal_2_system_resources_8cpp_source.html#l00031">SystemResources.cpp:31</a></div></div>
