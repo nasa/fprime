@@ -53,7 +53,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ github.workspace }}/cppcheck_err.sarif
-          checkout_path: ${{ github.workspace }}/source
           category: "cppcheck"
 
       - name: Archive static analysis artifacts to download and view

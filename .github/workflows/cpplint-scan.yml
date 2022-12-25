@@ -45,7 +45,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: ${{ github.workspace }}/cpplint_cppcheck_result.sarif
-          checkout_path: ${{ github.workspace }}/source
           category: "cpplint"
 
       - name: Archive static analysis artifacts to download and view
